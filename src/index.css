@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+@theme {
+  --color-gge-blue: #1d4ed8;
+  --color-gge-bg: #f8fafc;
+  --color-gge-warm: #f5f5f0;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply font-sans antialiased;
+  }
+}
+
+.glass-card {
+  @apply bg-white border border-slate-200 shadow-sm rounded-xl;
+}
+
+input:focus {
+  @apply outline-none ring-2 ring-gge-blue/20 border-gge-blue;
+}
