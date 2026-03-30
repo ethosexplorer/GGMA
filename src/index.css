@@ -20,3 +20,22 @@
 input:focus {
   @apply outline-none ring-2 ring-gge-blue/20 border-gge-blue;
 }
+
+/* Entity flag tooltip hover */
+.entity-flag-wrapper:hover .entity-flag-tooltip {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.entity-flag-tooltip::-webkit-scrollbar {
+  width: 5px;
+}
+
+.entity-flag-tooltip::-webkit-scrollbar-thumb {
+  background: #eab308;
+  border-radius: 10px;
+}
+
+.entity-flag-tooltip::-webkit-scrollbar-track {
+  background: transparent;
+}
