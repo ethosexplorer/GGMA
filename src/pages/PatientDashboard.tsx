@@ -1,11 +1,33 @@
-import React from 'react';
-import { Activity, Calendar, Stethoscope, Shield, FileText, Clock, Plus } from 'lucide-react';
+import React, { useState } from 'react';
+import { Activity, Calendar, Stethoscope, Shield, FileText, Clock, Plus, LayoutDashboard, CreditCard } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { StatCard } from '../components/StatCard';
 
-export const PatientDashboard = () => (
-  <div className="space-y-8">
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+import { SubscriptionPortal } from '../components/SubscriptionPortal';
+
+export const PatientDashboard = () => {
+  const [activeTab, setActiveTab] = useState<'overview' | 'subscription'>('overview');
+
+  return (
+  <div className="space-y-6">
+    <div className="flex bg-white rounded-xl border border-slate-200 p-1 w-max shadow-sm mb-6">
+      <button 
+        onClick={() => setActiveTab('overview')}
+        className={cn("px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2", activeTab === 'overview' ? "bg-slate-100 text-[#1a4731]" : "text-slate-500 hover:text-slate-700")}
+      >
+        <LayoutDashboard size={16} /> Overview
+      </button>
+      <button 
+        onClick={() => setActiveTab('subscription')}
+        className={cn("px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2", activeTab === 'subscription' ? "bg-[#1a4731] text-white shadow-md" : "text-slate-500 hover:bg-slate-50 hover:text-slate-700")}
+      >
+        <CreditCard size={16} /> Subscription & Billing
+      </button>
+    </div>
+
+    {activeTab === 'overview' && (
+      <>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <StatCard label="Heart Rate" value="72 bpm" trend={2} icon={Activity} color="bg-[#1a4731]" />
       <StatCard label="Next Checkup" value="Oct 12" icon={Calendar} color="bg-[#1a4731]" />
       <StatCard label="Active Meds" value="4" icon={Stethoscope} color="bg-emerald-500" />
@@ -75,5 +97,11 @@ export const PatientDashboard = () => (
         </button>
       </div>
     </div>
+    </>
+    )}
+
+    {activeTab === 'subscription' && (
+      <SubscriptionPortal userRole="user" initialPlanId="b2c_basic" />
+    )}
   </div>
-);
+)};

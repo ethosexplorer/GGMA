@@ -1,5 +1,5 @@
-import React from 'react';
-import { Building2, AlertCircle, Shield, Clock, Filter } from 'lucide-react';
+import React, { useState } from 'react';
+import { Building2, AlertCircle, Shield, Clock, Filter, LayoutDashboard, CreditCard } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { StatCard } from '../components/StatCard';
 
@@ -11,9 +11,31 @@ const Button = ({ children, className, icon: Icon, variant, ...props }: any) => 
   </button>
 );
 
-export const OversightDashboard = () => (
-  <div className="space-y-8">
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+import { SubscriptionPortal } from '../components/SubscriptionPortal';
+
+export const OversightDashboard = () => {
+  const [activeTab, setActiveTab] = useState<'overview' | 'subscription'>('overview');
+
+  return (
+  <div className="space-y-6">
+    <div className="flex bg-white rounded-xl border border-slate-200 p-1 w-max shadow-sm mb-6">
+      <button 
+        onClick={() => setActiveTab('overview')}
+        className={cn("px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2", activeTab === 'overview' ? "bg-slate-100 text-[#1a4731]" : "text-slate-500 hover:text-slate-700")}
+      >
+        <LayoutDashboard size={16} /> Overview
+      </button>
+      <button 
+        onClick={() => setActiveTab('subscription')}
+        className={cn("px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2", activeTab === 'subscription' ? "bg-[#1a4731] text-white shadow-md" : "text-slate-500 hover:bg-slate-50 hover:text-slate-700")}
+      >
+        <CreditCard size={16} /> Subscription & Billing
+      </button>
+    </div>
+
+    {activeTab === 'overview' && (
+      <>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <StatCard label="Total Entities" value="156" icon={Building2} color="bg-[#1a4731]" />
       <StatCard label="Active Alerts" value="12" icon={AlertCircle} color="bg-red-500" />
       <StatCard label="Compliance Rate" value="94.2%" trend={2} icon={Shield} color="bg-emerald-600" />
@@ -57,5 +79,11 @@ export const OversightDashboard = () => (
         ))}
       </div>
     </div>
+    </>
+    )}
+
+    {activeTab === 'subscription' && (
+      <SubscriptionPortal userRole="regulator" initialPlanId="fed_basic" />
+    )}
   </div>
-);
+)};

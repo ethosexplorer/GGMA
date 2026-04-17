@@ -1,77 +1,1284 @@
-import React from 'react';
-import { Building2, Shield, Clock, TrendingUp, Filter, Plus, MoreVertical } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Building2, Shield, Clock, TrendingUp, Plus, LayoutDashboard, CreditCard, PackageSearch, AlertCircle, ShoppingCart, Loader2, Trash2, Edit2, CheckCircle, XCircle, Sparkles, MapPin, BarChart2, Activity, MessageSquare, LogOut, FileText, ClipboardList, CheckSquare, UploadCloud, Calendar, Zap, AlertTriangle, Database } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { StatCard } from '../components/StatCard';
+import { SubscriptionPortal } from '../components/SubscriptionPortal';
+import { turso } from '../lib/turso';
+import { initializeDatabase } from '../lib/tursoMigrations';
 
-// Simple Button mock for the extraction
-const Button = ({ children, className, icon: Icon, variant, ...props }: any) => (
-  <button className={cn("inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg shadow-sm border", 
+// Simple Button mock
+const Button = ({ children, className, icon: Icon, variant, disabled, ...props }: any) => (
+  <button disabled={disabled} className={cn("inline-flex items-center justify-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg shadow-sm border transition-all disabled:opacity-50", 
     variant === "outline" ? "bg-white text-slate-700 border-slate-300 hover:bg-slate-50" : "bg-[#1a4731] text-white border-transparent hover:bg-[#153a28]",
     className)} {...props}>
     {Icon && <Icon size={14} />} {children}
   </button>
 );
 
-export const BusinessDashboard = () => (
-  <div className="space-y-8">
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <StatCard label="Active Entities" value="12" icon={Building2} color="bg-[#1a4731]" />
-      <StatCard label="Compliance Score" value="98%" trend={1} icon={Shield} color="bg-emerald-600" />
-      <StatCard label="Pending Audits" value="2" icon={Clock} color="bg-amber-500" />
-      <StatCard label="Total Revenue" value="$42.5k" trend={12} icon={TrendingUp} color="bg-indigo-600" />
-    </div>
+// Mini Sparkline Component
+const TrendSparkline = () => (
+  <svg viewBox="0 0 100 30" className="w-24 h-8 overflow-visible">
+    <path
+      d="M0 25 Q15 15, 30 20 T60 10 T90 5"
+      fill="none"
+      stroke="#10b981"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="drop-shadow-sm"
+    />
+    <circle cx="90" cy="5" r="4" fill="#10b981" />
+  </svg>
+);
 
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-      <div className="p-6 border-b border-slate-100 flex justify-between items-center">
-        <div>
-          <h3 className="font-bold text-slate-800">Entity Management</h3>
-          <p className="text-sm text-slate-500">Manage your business units and compliance status</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" icon={Filter} className="px-3 py-1.5 text-xs">Filter</Button>
-          <Button icon={Plus} className="px-3 py-1.5 text-xs">Add Entity</Button>
-        </div>
-      </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-left">
-          <thead className="bg-emerald-50 text-[#1a4731] text-xs uppercase tracking-wider font-bold">
-            <tr>
-              <th className="px-6 py-4">Entity Name</th>
-              <th className="px-6 py-4">Type</th>
-              <th className="px-6 py-4">State</th>
-              <th className="px-6 py-4">Status</th>
-              <th className="px-6 py-4">Last Audit</th>
-              <th className="px-6 py-4"></th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {[
-              { name: 'GGMA North Dispensary', type: 'Retail', state: 'Kansas', status: 'Compliant', date: 'Sep 20, 2023' },
-              { name: 'Green Valley Cultivation', type: 'Production', state: 'Missouri', status: 'Compliant', date: 'Aug 15, 2023' },
-              { name: 'Central Logistics Hub', type: 'Distribution', state: 'Kansas', status: 'Review', date: 'Oct 01, 2023' },
-              { name: 'West Coast Retail', type: 'Retail', state: 'Colorado', status: 'Compliant', date: 'Jul 12, 2023' },
-            ].map((item, i) => (
-              <tr key={i} className="hover:bg-slate-50 transition-colors">
-                <td className="px-6 py-4 font-medium text-slate-900">{item.name}</td>
-                <td className="px-6 py-4 text-sm text-slate-500">{item.type}</td>
-                <td className="px-6 py-4 text-sm text-slate-500">{item.state}</td>
-                <td className="px-6 py-4">
-                  <span className={cn(
-                    "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider",
-                    item.status === 'Compliant' ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"
-                  )}>
-                    {item.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-sm text-slate-500">{item.date}</td>
-                <td className="px-6 py-4 text-right">
-                  <button className="text-slate-400 hover:text-slate-600"><MoreVertical size={16} /></button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+// Mini CSS Bar Chart Component
+const MiniBarChart = ({ data }: { data: number[] }) => (
+  <div className="flex items-end gap-1 h-8">
+    {data.map((h, i) => (
+      <div key={i} className="w-2 bg-[#1a4731] rounded-t-sm" style={{ height: `${h}%`, opacity: 0.5 + (h / 100) }} />
+    ))}
   </div>
 );
+
+export const BusinessDashboard = ({ onLogout }: { onLogout?: () => void }) => {
+  const [activeTab, setActiveTab] = useState<'home' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'insurance' | 'documents' | 'subscription'>('home');
+  const [isInitializing, setIsInitializing] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [processingId, setProcessingId] = useState<string | null>(null);
+
+  // Data States
+  const [entities, setEntities] = useState<any[]>([]);
+  const [inventory, setInventory] = useState<any[]>([]);
+  const [transactions, setTransactions] = useState<any[]>([]);
+  const [alerts, setAlerts] = useState<any[]>([]);
+  const [policies, setPolicies] = useState<any[]>([]);
+  const [documents, setDocuments] = useState<any[]>([]);
+
+  // Form States
+  const [showAddEntity, setShowAddEntity] = useState(false);
+  const [editingEntity, setEditingEntity] = useState<any>(null);
+
+  const [showAddInventory, setShowAddInventory] = useState(false);
+  const [editingInventory, setEditingInventory] = useState<any>(null);
+
+  const [showAddTx, setShowAddTx] = useState(false);
+  const [showAddPolicy, setShowAddPolicy] = useState(false);
+  const [showAddDoc, setShowAddDoc] = useState(false);
+
+  const [newEntity, setNewEntity] = useState({ name: '', type: 'Retail', state: 'California' });
+  const [newItem, setNewItem] = useState({ entity_id: '', item_name: '', category: 'Flower', quantity: 0, unit: 'Grams', price: 0 });
+  const [newTx, setNewTx] = useState({ entity_id: '', amount: 0, type: 'B2C Sales' });
+  const [newPolicy, setNewPolicy] = useState({ entity_id: '', type: 'Grower Surety Bond', provider: '', amount: 0, expires_at: '' });
+  const [newDoc, setNewDoc] = useState({ entity_id: '', name: '', type: 'Compliance' });
+
+
+  useEffect(() => {
+    const setup = async () => {
+      try {
+        await initializeDatabase();
+        await fetchData();
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsInitializing(false);
+      }
+    };
+    setup();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const entRes = await turso.execute('SELECT * FROM entities ORDER BY created_at DESC');
+      setEntities(entRes.rows);
+
+      const invRes = await turso.execute(`
+        SELECT inventory.*, entities.name as entity_name 
+        FROM inventory 
+        LEFT JOIN entities ON inventory.entity_id = entities.id
+        ORDER BY inventory.id DESC
+      `);
+      setInventory(invRes.rows);
+
+      const txRes = await turso.execute(`
+        SELECT transactions.*, entities.name as entity_name 
+        FROM transactions 
+        LEFT JOIN entities ON transactions.entity_id = entities.id
+        ORDER BY transactions.date DESC
+      `);
+      setTransactions(txRes.rows);
+
+      const altRes = await turso.execute(`
+        SELECT compliance_alerts.*, entities.name as entity_name 
+        FROM compliance_alerts 
+        LEFT JOIN entities ON compliance_alerts.entity_id = entities.id
+        ORDER BY compliance_alerts.is_resolved ASC, compliance_alerts.date DESC
+      `);
+      setAlerts(altRes.rows);
+
+      const polRes = await turso.execute(`
+        SELECT insurance_policies.*, entities.name as entity_name 
+        FROM insurance_policies 
+        LEFT JOIN entities ON insurance_policies.entity_id = entities.id
+      `);
+      if(polRes.rows) setPolicies(polRes.rows);
+
+      const docRes = await turso.execute(`
+        SELECT documents.*, entities.name as entity_name 
+        FROM documents 
+        LEFT JOIN entities ON documents.entity_id = entities.id
+        ORDER BY documents.uploaded_at DESC
+      `);
+      if(docRes.rows) setDocuments(docRes.rows);
+    } catch (err) {
+      console.error('Error fetching data:', err);
+    }
+  };
+
+  /* ===================== ENTITIES CRUD ===================== */
+  const handleAddEntity = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const id = `ent-${Date.now()}`;
+      await turso.execute({
+        sql: `INSERT INTO entities (id, name, type, state, status, last_audit) VALUES (?, ?, ?, ?, 'Compliant', 'Just Now')`,
+        args: [id, newEntity.name, newEntity.type, newEntity.state]
+      });
+      setShowAddEntity(false);
+      setNewEntity({ name: '', type: 'Retail', state: 'California' });
+      await fetchData();
+    } catch(err) { console.error(err); } 
+    finally { setIsSubmitting(false); }
+  };
+
+  const handleUpdateEntity = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if(!editingEntity) return;
+    setIsSubmitting(true);
+    try {
+      await turso.execute({
+        sql: `UPDATE entities SET name = ?, type = ?, state = ? WHERE id = ?`,
+        args: [editingEntity.name, editingEntity.type, editingEntity.state, editingEntity.id]
+      });
+      setEditingEntity(null);
+      await fetchData();
+    } catch(err) { console.error(err); }
+    finally { setIsSubmitting(false); }
+  };
+
+  const handleDeleteEntity = async (id: string) => {
+    if(!confirm('Delete this entity? It will affect related inventory and transactions.')) return;
+    setProcessingId(id);
+    try {
+      await turso.execute({ sql: `DELETE FROM entities WHERE id = ?`, args: [id] });
+      await fetchData();
+    } catch(err) { console.error(err); }
+    finally { setProcessingId(null); }
+  };
+
+  /* ===================== INVENTORY CRUD ===================== */
+  const handleAddInventory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const id = `inv-${Date.now()}`;
+      await turso.execute({
+        sql: `INSERT INTO inventory (id, entity_id, item_name, category, quantity, unit, price) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        args: [id, newItem.entity_id, newItem.item_name, newItem.category, newItem.quantity, newItem.unit, newItem.price]
+      });
+      setShowAddInventory(false);
+      setNewItem({ entity_id: '', item_name: '', category: 'Flower', quantity: 0, unit: 'Grams', price: 0 });
+      await fetchData();
+    } catch(err) { console.error(err); }
+    finally { setIsSubmitting(false); }
+  };
+
+  const handleUpdateInventory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if(!editingInventory) return;
+    setIsSubmitting(true);
+    try {
+      await turso.execute({
+        sql: `UPDATE inventory SET item_name = ?, category = ?, quantity = ?, unit = ?, price = ? WHERE id = ?`,
+        args: [editingInventory.item_name, editingInventory.category, editingInventory.quantity, editingInventory.unit, editingInventory.price, editingInventory.id]
+      });
+      setEditingInventory(null);
+      await fetchData();
+    } catch(err) { console.error(err); }
+    finally { setIsSubmitting(false); }
+  };
+
+  const handleDeleteInventory = async (id: string) => {
+    if(!confirm('Delete this inventory item?')) return;
+    setProcessingId(id);
+    try {
+      await turso.execute({ sql: `DELETE FROM inventory WHERE id = ?`, args: [id] });
+      await fetchData();
+    } catch(err) { console.error(err); }
+    finally { setProcessingId(null); }
+  };
+
+  /* ===================== TRANSACTIONS CRUD ===================== */
+  const handleAddTx = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const id = `tx-${Date.now()}`;
+      const date = new Date().toISOString().split('T')[0];
+      await turso.execute({
+        sql: `INSERT INTO transactions (id, entity_id, date, amount, type, status) VALUES (?, ?, ?, ?, ?, 'Completed')`,
+        args: [id, newTx.entity_id, date, newTx.amount, newTx.type]
+      });
+      setShowAddTx(false);
+      setNewTx({ entity_id: '', amount: 0, type: 'B2C Sales' });
+      await fetchData();
+    } catch(err) { console.error(err); }
+    finally { setIsSubmitting(false); }
+  };
+
+  const handleDeleteTx = async (id: string) => {
+    if(!confirm('Void this transaction?')) return;
+    setProcessingId(id);
+    try {
+      await turso.execute({ sql: `DELETE FROM transactions WHERE id = ?`, args: [id] });
+      await fetchData();
+    } catch(err) { console.error(err); }
+    finally { setProcessingId(null); }
+  };
+
+  /* ===================== ALERTS CRUD ===================== */
+  const handleResolveAlert = async (id: string) => {
+    setProcessingId(id);
+    try {
+      await turso.execute({
+        sql: `UPDATE compliance_alerts SET is_resolved = 1, status = 'Resolved' WHERE id = ?`,
+        args: [id]
+      });
+      await fetchData();
+    } catch(err) { console.error(err); }
+    finally { setProcessingId(null); }
+  };
+
+  const handleAcknowledgeAlert = async (id: string) => {
+    setProcessingId(id);
+    try {
+      await turso.execute({
+        sql: `UPDATE compliance_alerts SET status = 'Acknowledged' WHERE id = ? AND is_resolved = 0`,
+        args: [id]
+      });
+      await fetchData();
+    } catch(err) { console.error(err); }
+    finally { setProcessingId(null); }
+  };
+
+  /* ===================== INSURANCE & DOCUMENTS CRUD ===================== */
+  const handleAddPolicy = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const id = `ins-${Date.now()}`;
+      await turso.execute({
+        sql: `INSERT INTO insurance_policies (id, entity_id, type, provider, amount, expires_at, status) VALUES (?, ?, ?, ?, ?, ?, 'Active')`,
+        args: [id, newPolicy.entity_id, newPolicy.type, newPolicy.provider, newPolicy.amount, newPolicy.expires_at]
+      });
+      setShowAddPolicy(false);
+      setNewPolicy({ entity_id: '', type: 'Grower Surety Bond', provider: '', amount: 0, expires_at: '' });
+      await fetchData();
+    } catch(err) { console.error(err); }
+    finally { setIsSubmitting(false); }
+  };
+
+  const handleAddDoc = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const id = `doc-${Date.now()}`;
+      const date = new Date().toLocaleDateString('en-US');
+      await turso.execute({
+        sql: `INSERT INTO documents (id, entity_id, name, type, uploaded_at, url) VALUES (?, ?, ?, ?, ?, '#')`,
+        args: [id, newDoc.entity_id, newDoc.name, newDoc.type, date]
+      });
+      setShowAddDoc(false);
+      setNewDoc({ entity_id: '', name: '', type: 'Compliance' });
+      await fetchData();
+    } catch(err) { console.error(err); }
+    finally { setIsSubmitting(false); }
+  };
+
+  if (isInitializing) {
+    return (
+      <div className="flex flex-col items-center justify-center p-20 gap-4">
+         <Loader2 className="animate-spin text-[#1a4731]" size={36} />
+         <p className="text-slate-500 font-medium">Connecting to Turso Database...</p>
+      </div>
+    );
+  }
+
+  const totalRevenue = transactions.reduce((acc, tx) => acc + Number(tx.amount || 0), 0);
+  
+  // Calculate dynamic weekly revenues for bar chart
+  const last7DaysTransactions = transactions.reduce((acc, tx) => {
+    const d = new Date(tx.date).getDay();
+    acc[d] = (acc[d] || 0) + Number(tx.amount || 0);
+    return acc;
+  }, {} as Record<number, number>);
+  const barChartDataRaw = [0, 1, 2, 3, 4, 5, 6].map(d => last7DaysTransactions[d] || Math.max(10, Math.random() * 50));
+  const maxBar = Math.max(...barChartDataRaw, 1);
+  const barChartHeights = barChartDataRaw.map(v => Math.max(10, (v / maxBar) * 100));
+
+  // Dynamic AI data
+  const lowStockAlerts = inventory.filter(i => i.quantity < 100);
+  const unresolvedAlerts = alerts.filter(a => a.is_resolved === 0);
+  const complianceScore = Math.max(0, 100 - (unresolvedAlerts.length * 5));
+
+  return (
+  <div className="max-w-[1200px] mx-auto space-y-8 pb-12">
+    {/* DASHBOARD HEADER & NAV */}
+    <div className="sticky top-4 z-40 flex flex-col xl:flex-row xl:items-center justify-between gap-4 p-2 rounded-[2rem] bg-white/70 backdrop-blur-2xl border border-white/80 shadow-xl shadow-slate-200/40">
+      <div className="flex items-center gap-4 pl-4 py-2">
+        <div className="w-12 h-12 bg-gradient-to-br from-[#1a4731] to-[#0f291c] rounded-2xl flex items-center justify-center text-white shadow-inner border border-emerald-900/50">
+          <Building2 size={24} />
+        </div>
+        <div>
+          <h2 className="text-2xl font-black text-slate-800 tracking-tight leading-none">Business Portal</h2>
+          <p className="text-sm text-slate-500 font-medium mt-1">Global Green Enterprise</p>
+        </div>
+      </div>
+      
+      <div className="flex overflow-x-auto hide-scrollbar gap-2 p-1.5 bg-slate-100/60 rounded-3xl w-full xl:w-auto border border-slate-200/50">
+        <button 
+          onClick={() => setActiveTab('home')}
+          className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'home' ? "bg-white text-[#1a4731] shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
+        >
+          <LayoutDashboard size={18} /> Dashboard
+        </button>
+        <button 
+          onClick={() => setActiveTab('pos')}
+          className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'pos' ? "bg-white text-[#1a4731] shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
+        >
+          <ShoppingCart size={18} /> POS & Sales
+        </button>
+        <button 
+          onClick={() => setActiveTab('inventory')}
+          className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'inventory' ? "bg-white text-[#1a4731] shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
+        >
+          <PackageSearch size={18} /> Inventory (SINC)
+        </button>
+        <button 
+          onClick={() => setActiveTab('locations')}
+          className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'locations' ? "bg-white text-[#1a4731] shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
+        >
+          <MapPin size={18} /> Locations
+        </button>
+        <button 
+          onClick={() => setActiveTab('compliance')}
+          className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap relative group", activeTab === 'compliance' ? "bg-white text-amber-600 shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
+        >
+          <Shield size={18} className={activeTab === 'compliance' ? "" : "group-hover:text-amber-500 transition-colors"} /> Compliance
+          {alerts.filter(a => a.is_resolved === 0).length > 0 && <span className="absolute top-2 right-3 w-2 h-2 rounded-full bg-red-500"></span>}
+        </button>
+        <button 
+          onClick={() => setActiveTab('integrations')}
+          className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'integrations' ? "bg-white text-indigo-600 shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-indigo-600 hover:bg-slate-200/50")}
+        >
+          <BarChart2 size={18} /> Integrations
+        </button>
+        <button 
+          onClick={() => setActiveTab('insurance')}
+          className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'insurance' ? "bg-white text-[#1a4731] shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
+        >
+          <ClipboardList size={18} /> Insurance & Bonding
+        </button>
+        <button 
+          onClick={() => setActiveTab('documents')}
+          className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'documents' ? "bg-white text-[#1a4731] shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
+        >
+          <FileText size={18} /> Vault
+        </button>
+        <div className="w-px h-8 bg-slate-200/80 mx-1 self-center" />
+        <button 
+          onClick={() => setActiveTab('subscription')}
+          className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'subscription' ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md shadow-amber-500/20" : "text-slate-500 hover:text-amber-600 hover:bg-slate-200/50")}
+        >
+          <Sparkles size={18} /> Settings
+        </button>
+        <button 
+          onClick={onLogout}
+          className="px-4 py-2.5 rounded-2xl text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors flex items-center justify-center shrink-0"
+          title="Sign Out"
+        >
+          <LogOut size={18} />
+        </button>
+      </div>
+    </div>
+
+    {/* HOME TAB - PERFORMANCE DESIGN */}
+    {activeTab === 'home' && (
+      <div className="space-y-6">
+        
+        {/* Subscription Upsell Banner */}
+        <div className="bg-gradient-to-r from-emerald-800 via-[#1a4731] to-emerald-900 rounded-[2rem] p-5 flex flex-col md:flex-row items-center justify-between text-white shadow-lg shadow-emerald-900/20 mb-4 border border-emerald-700/50 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-full bg-emerald-500/10 blur-2xl"></div>
+          <div className="flex items-center gap-4 relative z-10">
+             <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/10"><Sparkles className="text-emerald-300" size={24} /></div>
+             <div>
+                <h4 className="font-black text-lg tracking-wide">Upgrade to Pro API Sync</h4>
+                <p className="text-sm text-emerald-100/80 font-medium hidden sm:block">Automate compliance reports and enable live Metrc inventory tracking.</p>
+             </div>
+          </div>
+          <Button onClick={() => setActiveTab('subscription')} className="bg-white text-[#1a4731] hover:bg-slate-100 hover:scale-105 transition-all shadow-xl shadow-black/10 whitespace-nowrap mt-4 md:mt-0 font-black rounded-xl">
+            Upgrade Engine
+          </Button>
+        </div>
+
+        {/* TOP ROW WIDGETS (3-Cols) */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+           {/* Compliance Scorecard */}
+           <div className="bg-gradient-to-br from-[#0f291c] via-[#1a4731] to-[#246645] rounded-[2rem] border border-emerald-800/50 p-6 shadow-xl shadow-emerald-900/10 flex flex-col justify-between relative overflow-hidden min-h-[220px]">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+              <div className="relative z-10 flex justify-between items-start mb-4">
+                 <div>
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/20 border border-emerald-500/30 rounded-full text-emerald-300 text-[10px] font-black uppercase tracking-widest mb-3">
+                      <Shield size={12} /> Live Engine
+                    </div>
+                    <h3 className="text-2xl font-black text-white tracking-tight leading-none">Readiness</h3>
+                    <p className="text-xs font-medium text-emerald-100/80 mt-1">
+                      {unresolvedAlerts.length === 0 ? "Fully Compliant" : `${unresolvedAlerts.length} Action Gaps`}
+                    </p>
+                 </div>
+                 <div className="relative">
+                   <div className={cn("absolute inset-0 rounded-full blur-md opacity-60", complianceScore > 90 ? "bg-emerald-400" : complianceScore > 75 ? "bg-amber-400" : "bg-red-500", unresolvedAlerts.length > 0 && "animate-pulse")}></div>
+                   <div className={cn("relative w-16 h-16 rounded-full flex items-center justify-center font-black text-2xl shadow-inner border-[3px]", complianceScore > 90 ? "bg-gradient-to-br from-emerald-400 to-emerald-600 text-white border-emerald-300/50" : complianceScore > 75 ? "bg-gradient-to-br from-amber-400 to-amber-600 text-white border-amber-300/50" : "bg-gradient-to-br from-red-400 to-red-600 text-white border-red-300/50")}>
+                      {complianceScore}
+                   </div>
+                 </div>
+              </div>
+              
+              <div className="relative z-10 w-full mt-auto">
+                 <div className="w-full bg-black/20 rounded-full h-3 border border-white/5 overflow-hidden">
+                    <div className={cn("h-full rounded-full transition-all duration-1000 relative overflow-hidden", complianceScore > 90 ? "bg-emerald-400" : complianceScore > 75 ? "bg-amber-400" : "bg-red-500")} style={{ width: `${complianceScore}%` }}>
+                       <div className="absolute top-0 left-0 w-full h-full bg-white/20 blur-sm translate-x-[-100%] animate-[shimmer_2s_infinite]"></div>
+                    </div>
+                 </div>
+              </div>
+           </div>
+
+           {/* Metrc Integration Status */}
+           <div className="bg-white rounded-[2rem] border border-slate-200/60 p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative overflow-hidden group">
+             <div className="absolute top-0 right-0 w-1.5 h-full bg-blue-500"></div>
+             <div className="flex justify-between items-start mb-2">
+                <div>
+                  <h3 className="text-lg font-black text-slate-800 tracking-tight">Metrc Integration</h3>
+                  <div className="flex items-center gap-1.5 mt-1 text-sm font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md w-fit">
+                    <CheckCircle size={14} /> Validated
+                  </div>
+                </div>
+                <div className="bg-blue-50 p-2.5 rounded-xl text-blue-600">
+                  <Database size={20} />
+                </div>
+             </div>
+             <div className="space-y-3 mt-4">
+               <div className="flex items-center justify-between">
+                 <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">API Key</span>
+                 <span className="text-xs font-mono font-medium text-slate-800 bg-slate-100 px-2 py-1 rounded">sk_live_...942</span>
+               </div>
+               <div className="flex items-center justify-between">
+                 <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Last Sync</span>
+                 <span className="text-xs font-bold text-slate-600">2 mins ago</span>
+               </div>
+               <div className="flex items-center justify-between">
+                 <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Facility Ping</span>
+                 <span className="text-xs font-bold text-emerald-600">Online (4/4)</span>
+               </div>
+             </div>
+           </div>
+
+           {/* Insurance & Bonding Tracker */}
+           <div className="bg-white rounded-[2rem] border border-slate-200/60 p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative overflow-hidden group">
+             <div className="absolute top-0 right-0 w-1.5 h-full bg-violet-500"></div>
+             <div className="flex justify-between items-start mb-2">
+                <div>
+                  <h3 className="text-lg font-black text-slate-800 tracking-tight">Policies & Bonds</h3>
+                  <p className="text-xs font-bold text-slate-500 mt-1 uppercase tracking-widest">{policies.length} Active Records</p>
+                </div>
+                <div className="bg-violet-50 p-2.5 rounded-xl text-violet-600">
+                  <Shield size={20} />
+                </div>
+             </div>
+             
+             <div className="mt-4 space-y-3">
+               {policies.length > 0 ? policies.slice(0, 2).map((policy, idx) => (
+                 <div key={idx} className="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 bg-slate-50/50">
+                    <div>
+                      <p className="text-xs font-black text-slate-800 truncate max-w-[140px]">{policy.type}</p>
+                      <p className="text-[10px] font-bold text-slate-500">Limits: ${Number(policy.amount).toLocaleString()}</p>
+                    </div>
+                    <div className="text-right">
+                       <span className="text-[10px] font-bold text-violet-600 bg-violet-100 px-2 py-0.5 rounded-md">
+                         Active
+                       </span>
+                    </div>
+                 </div>
+               )) : (
+                 <div className="p-4 bg-amber-50 rounded-xl border border-amber-100 flex items-start gap-2">
+                    <AlertCircle size={16} className="text-amber-600 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-xs font-bold text-amber-800">No Policies Listed</p>
+                      <p className="text-[10px] text-amber-600 mt-1 cursor-pointer hover:underline" onClick={() => setActiveTab('insurance')}>Upload certificate to resolve.</p>
+                    </div>
+                 </div>
+               )}
+             </div>
+           </div>
+        </div>
+
+        {/* Main Performance Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Today's Revenue */}
+          <div className="bg-white rounded-3xl border border-slate-200/60 p-6 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-1.5 h-full bg-emerald-500"></div>
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <p className="text-xs font-black tracking-widest text-slate-400 uppercase mb-1">Today's Revenue</p>
+                <div className="flex items-baseline gap-2">
+                   <h3 className="text-3xl font-black text-slate-800">${totalRevenue.toLocaleString()}</h3>
+                   <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full flex items-center gap-1">
+                     <TrendingUp size={12} /> +8.2%
+                   </span>
+                </div>
+              </div>
+              <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl group-hover:bg-emerald-500 group-hover:text-white transition-colors duration-300">
+                 <Activity size={24} />
+              </div>
+            </div>
+            <div className="mt-2 pl-2">
+               <TrendSparkline />
+            </div>
+          </div>
+
+          {/* Monthly Revenue Chart */}
+          <div className="bg-white rounded-3xl border border-slate-200/60 p-6 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-1.5 h-full bg-indigo-500"></div>
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <p className="text-xs font-black tracking-widest text-slate-400 uppercase mb-1">Monthly Active</p>
+                <h3 className="text-3xl font-black text-slate-800">${(totalRevenue * 4.2).toLocaleString(undefined, { maximumFractionDigits: 0 })}</h3>
+              </div>
+              <div className="p-3 bg-indigo-50 text-indigo-600 rounded-2xl group-hover:bg-indigo-500 group-hover:text-white transition-colors duration-300">
+                 <BarChart2 size={24} />
+              </div>
+            </div>
+            <div className="mt-auto">
+               <MiniBarChart data={barChartHeights} />
+            </div>
+          </div>
+
+          {/* Active Locations */}
+          <div className="bg-white rounded-3xl border border-slate-200/60 p-6 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-1.5 h-full bg-[#1a4731]"></div>
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <p className="text-xs font-black tracking-widest text-slate-400 uppercase mb-1">Active Locations</p>
+                <div className="flex items-baseline gap-2">
+                   <h3 className="text-3xl font-black text-slate-800">{entities.filter(e => e.status === 'Compliant').length} <span className="text-lg text-slate-400">/ {entities.length}</span></h3>
+                </div>
+              </div>
+              <div className="p-3 bg-emerald-50 text-[#1a4731] rounded-2xl group-hover:bg-[#1a4731] group-hover:text-white transition-colors duration-300">
+                 <Building2 size={24} />
+              </div>
+            </div>
+            <p className="text-xs font-bold text-amber-600 bg-amber-50 px-3 py-1.5 rounded-xl w-fit inline-flex items-center gap-2 mt-auto">
+              <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span></span>
+              Action Req.
+            </p>
+          </div>
+        </div>
+
+        {/* Key Status Cards (4-Cols) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+           <div className="bg-white rounded-[2rem] border border-slate-200/60 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+              <div className="flex justify-between items-center mb-3">
+                 <h4 className="font-black text-slate-800 tracking-tight text-sm">Metrc Tracker</h4>
+                 <Database size={16} className="text-blue-500" />
+              </div>
+              <div className="space-y-2">
+                 <div className="flex justify-between items-center bg-slate-50 p-2 rounded-xl">
+                   <span className="text-[10px] font-bold text-slate-500 uppercase">Tags Active</span>
+                   <span className="text-xs font-black text-slate-800">4,208</span>
+                 </div>
+                 <div className="flex justify-between items-center bg-slate-50 p-2 rounded-xl">
+                   <span className="text-[10px] font-bold text-slate-500 uppercase">Status</span>
+                   <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-1"><CheckCircle size={10}/> Passing</span>
+                 </div>
+              </div>
+           </div>
+
+           <div className="bg-white rounded-[2rem] border border-slate-200/60 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+              <div className="flex justify-between items-center mb-3">
+                 <h4 className="font-black text-slate-800 tracking-tight text-sm">OMMA Checklist</h4>
+                 <Shield size={16} className="text-amber-500" />
+              </div>
+              <div className="space-y-2">
+                 <div className="flex justify-between items-center bg-amber-50 border border-amber-100 p-2 rounded-xl text-amber-700">
+                   <div className="flex items-center gap-1"><AlertTriangle size={12}/> <span className="text-[10px] font-bold uppercase">Larry Alerts</span></div>
+                   <span className="text-xs font-black">{unresolvedAlerts.length} Action(s)</span>
+                 </div>
+                 <div className="flex justify-between items-center bg-slate-50 p-2 rounded-xl">
+                   <span className="text-[10px] font-bold text-slate-500 uppercase">Audit Ready</span>
+                   <span className="text-[10px] font-bold text-slate-700">Pending</span>
+                 </div>
+              </div>
+           </div>
+
+           <div className="bg-white rounded-[2rem] border border-slate-200/60 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+              <div className="flex justify-between items-center mb-3">
+                 <h4 className="font-black text-slate-800 tracking-tight text-sm">SINC Inventory</h4>
+                 <PackageSearch size={16} className="text-emerald-500" />
+              </div>
+              <div className="space-y-2">
+                 <div className="flex justify-between items-center bg-emerald-50 border border-emerald-100 p-2 rounded-xl text-emerald-700">
+                   <span className="text-[10px] font-bold uppercase">Reconciliation</span>
+                   <span className="text-xs font-black">Matched 100%</span>
+                 </div>
+                 <div className="flex justify-between items-center bg-slate-50 p-2 rounded-xl">
+                   <span className="text-[10px] font-bold text-slate-500 uppercase">Physical Audit</span>
+                   <span className="text-[10px] font-bold text-slate-700">2w ago</span>
+                 </div>
+              </div>
+           </div>
+
+           <div className="bg-white rounded-[2rem] border border-slate-200/60 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+              <div className="flex justify-between items-center mb-3">
+                 <h4 className="font-black text-slate-800 tracking-tight text-sm">External Permits</h4>
+                 <FileText size={16} className="text-violet-500" />
+              </div>
+              <div className="space-y-2">
+                 <div className="flex flex-wrap gap-2">
+                   <span className="px-2 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase rounded-lg border border-emerald-100 flex items-center gap-1"><CheckCircle size={10}/> COO</span>
+                   <span className="px-2 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase rounded-lg border border-emerald-100 flex items-center gap-1"><CheckCircle size={10}/> OBNDD</span>
+                   <span className="px-2 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase rounded-lg border border-emerald-100 flex items-center gap-1"><CheckCircle size={10}/> Zoning</span>
+                 </div>
+              </div>
+           </div>
+        </div>
+
+        {/* Layout Split for Alerts & Chat */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+           <div className="lg:col-span-2 space-y-6">
+              
+              {/* Quick Actions Row */}
+              <div className="flex flex-col sm:flex-row items-center gap-3 overflow-x-auto hide-scrollbar pb-2 pt-2">
+                 <button onClick={() => setActiveTab('pos')} className="flex items-center gap-2 px-4 py-3 bg-white border border-slate-200/60 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:border-indigo-300 transition-all text-indigo-600 font-bold text-sm min-w-max">
+                   <ShoppingCart size={16} /> Open POS
+                 </button>
+                 <button onClick={() => setActiveTab('compliance')} className="flex items-center gap-2 px-4 py-3 bg-white border border-slate-200/60 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:border-amber-300 transition-all text-amber-600 font-bold text-sm min-w-max">
+                   <Shield size={16} /> OMMA Report
+                 </button>
+                 <button onClick={() => setActiveTab('documents')} className="flex items-center gap-2 px-4 py-3 bg-white border border-slate-200/60 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:border-slate-400 transition-all text-slate-700 font-bold text-sm min-w-max">
+                   <UploadCloud size={16} /> Upload Docs
+                 </button>
+                 <button onClick={() => {}} className="flex items-center gap-2 px-4 py-3 bg-white border border-slate-200/60 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:border-blue-300 transition-all text-blue-600 font-bold text-sm min-w-max">
+                   <Activity size={16} /> Refresh Status
+                 </button>
+                 <button onClick={() => {}} className="flex items-center gap-2 px-4 py-3 bg-white border border-slate-200/60 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:border-[#1a4731] transition-all text-[#1a4731] font-bold text-sm min-w-max sm:hidden">
+                   <MessageSquare size={16} /> Sylara Chat
+                 </button>
+              </div>
+
+              {/* Sylara Task List */}
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                  <div className="flex items-center gap-2">
+                     <CheckSquare className="text-emerald-600" size={18} />
+                     <h3 className="font-bold text-slate-800">Sylara Tasks</h3>
+                  </div>
+                  <span className="text-xs font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full">2 Pending</span>
+                </div>
+                <div className="divide-y divide-slate-100">
+                   {unresolvedAlerts.length > 0 && unresolvedAlerts.map(alert => (
+                     <div key={alert.id} className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                        <div className="flex items-start gap-3">
+                           <div className="mt-0.5"><AlertTriangle size={16} className="text-amber-500" /></div>
+                           <div>
+                              <h4 className="text-sm font-bold text-slate-800 line-clamp-1">{alert.message}</h4>
+                              <p className="text-xs text-slate-500 mt-0.5">Due: Immediately • Entity: {alert.entity_name}</p>
+                           </div>
+                        </div>
+                        <button onClick={() => setActiveTab('compliance')} className="text-xs font-bold text-[#1a4731] bg-emerald-50 px-3 py-1.5 rounded-lg hover:bg-emerald-100 whitespace-nowrap">Resolve</button>
+                     </div>
+                   ))}
+                   <div className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                        <div className="flex items-start gap-3">
+                           <div className="mt-0.5"><Clock size={16} className="text-blue-500" /></div>
+                           <div>
+                              <h4 className="text-sm font-bold text-slate-800">Renew Grower Bond ($50,000)</h4>
+                              <p className="text-xs text-slate-500 mt-0.5">Due in 45 days • Provider: ProSure Group</p>
+                           </div>
+                        </div>
+                        <button onClick={() => setActiveTab('insurance')} className="text-xs font-bold text-[#1a4731] bg-emerald-50 px-3 py-1.5 rounded-lg hover:bg-emerald-100 whitespace-nowrap">View</button>
+                   </div>
+                </div>
+              </div>
+
+              {/* Multi-Location Status Overview */}
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                  <h3 className="font-bold text-slate-800">Multi-Location Overview</h3>
+                  <button onClick={() => setActiveTab('locations')} className="text-xs font-bold text-[#1a4731] hover:underline">View All</button>
+                </div>
+                <div className="divide-y divide-slate-100">
+                  {entities.map((en, i) => {
+                     // mock sync time mapping based on index
+                     const syncTime = `${i + 1}m ago`;
+                     const isCompliant = en.status === 'Compliant';
+                     return (
+                       <div key={i} className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-slate-50 transition-colors">
+                         <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400">
+                               <MapPin size={20} />
+                            </div>
+                            <div>
+                               <h4 className="font-bold text-slate-800">{en.name}</h4>
+                               <p className="text-xs text-slate-500 font-medium">Synced: <span className="text-slate-700">{en.last_audit} via METRC API</span></p>
+                            </div>
+                         </div>
+                         <div className="flex items-center gap-6">
+                            <div className="text-right">
+                               <p className="font-bold text-slate-900">{inventory.filter(inv => inv.entity_id === en.id).length}</p>
+                               <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">SKUs</p>
+                            </div>
+                            <div className="w-[120px] flex justify-end">
+                              <span className={cn(
+                                "px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider whitespace-nowrap flex items-center gap-1",
+                                isCompliant ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"
+                              )}>
+                                {isCompliant ? <CheckCircle size={12}/> : <AlertCircle size={12}/>}
+                                {isCompliant ? '100% Compliant' : 'Action Required'}
+                              </span>
+                            </div>
+                         </div>
+                       </div>
+                     )
+                  })}
+                </div>
+              </div>
+           </div>
+           
+           <div className="lg:col-span-1">
+              {/* Sylara AI Chat Widget */}
+              <div className="bg-gradient-to-b from-[#1a4731] to-[#0f291c] rounded-2xl shadow-xl overflow-hidden flex flex-col h-full sticky top-[80px]">
+                 <div className="p-5 flex items-center gap-3 border-b border-white/10 shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white shadow-inner">
+                       <Sparkles size={20} />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-white leading-tight">Sylara AI</h3>
+                      <p className="text-[10px] text-emerald-200/80 uppercase font-bold tracking-widest flex items-center gap-1">
+                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Online
+                      </p>
+                    </div>
+                 </div>
+                 
+                 <div className="p-5 flex-1 flex flex-col gap-4 overflow-y-auto">
+                    <div className="bg-white/10 p-4 rounded-2xl rounded-tl-sm border border-white/10 backdrop-blur-sm self-start max-w-[90%]">
+                       <p className="text-sm font-medium text-emerald-50 leading-relaxed">
+                         {lowStockAlerts.length > 0 
+                            ? `Good morning! You have ${lowStockAlerts.length} SKUs running low across your active entities. Would you like to review procurement options?` 
+                            : unresolvedAlerts.length > 0
+                            ? `Good morning. You have ${unresolvedAlerts.length} unresolved compliance alerts. I can help clear them up.`
+                            : `Good morning! All your entities are compliant and well stocked. Let me know how I can assist.`}
+                       </p>
+                    </div>
+                    
+                    <div className="flex flex-col gap-2 mt-2">
+                       <button className="text-xs font-bold bg-white text-[#1a4731] px-4 py-2.5 rounded-xl text-left hover:bg-slate-100 transition-colors shadow-sm w-max self-end hidden sm:block">
+                         {lowStockAlerts.length > 0 ? "Review Procurement" : unresolvedAlerts.length > 0 ? "Review Alerts" : "Generate Report"}
+                       </button>
+                    </div>
+                 </div>
+                 
+                 <div className="p-4 bg-black/20 shrink-0">
+                    <div className="relative">
+                       <input type="text" placeholder="Ask Sylara to run an audit..." className="w-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm rounded-xl px-4 py-3 pr-10 focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all" />
+                       <button className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-white/50 hover:text-white transition-colors">
+                         <MessageSquare size={16} />
+                       </button>
+                    </div>
+                 </div>
+              </div>
+           </div>
+
+        </div>
+      </div>
+    )}
+
+    {/* POS & SALES TAB (former transactions) */}
+    {activeTab === 'pos' && (
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <h3 className="font-bold text-slate-800">POS & Sales Tracking</h3>
+              <p className="text-sm text-slate-500">Live operational sales inputs</p>
+            </div>
+            <Button onClick={() => setShowAddTx(!showAddTx)} icon={Plus}>Log Transaction</Button>
+          </div>
+
+          {showAddTx && (
+             <div className="p-6 bg-slate-50 border-b border-slate-100">
+                <form onSubmit={handleAddTx} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                   <div className="w-full">
+                     <label className="text-xs font-bold text-slate-600 mb-1 block">Entity</label>
+                     <select required value={newTx.entity_id} onChange={e => setNewTx({...newTx, entity_id: e.target.value})} className="w-full border border-slate-200 p-2 rounded-lg text-sm bg-white">
+                       <option value="">Select...</option>
+                       {entities.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
+                     </select>
+                   </div>
+                   <div className="w-full">
+                     <label className="text-xs font-bold text-slate-600 mb-1 block">Type</label>
+                     <select required value={newTx.type} onChange={e => setNewTx({...newTx, type: e.target.value})} className="w-full border border-slate-200 p-2 rounded-lg text-sm bg-white">
+                       <option>B2C Sales</option>
+                       <option>B2B Wholesale</option>
+                       <option>Transfer</option>
+                     </select>
+                   </div>
+                   <div className="w-full">
+                     <label className="text-xs font-bold text-slate-600 mb-1 block">Amount ($)</label>
+                     <input type="number" step="0.01" required value={newTx.amount} onChange={e => setNewTx({...newTx, amount: Number(e.target.value)})} className="w-full border border-slate-200 p-2 rounded-lg text-sm" placeholder="0.00" />
+                   </div>
+                   <Button type="submit" className="h-10 px-6 shrink-0" disabled={isSubmitting || !newTx.entity_id}>{isSubmitting ? 'Saving...' : 'Log Input'}</Button>
+                </form>
+             </div>
+          )}
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead className="bg-[#1a4731]/5 text-[#1a4731] text-xs uppercase tracking-wider font-bold">
+                <tr>
+                  <th className="px-6 py-4">Trans. ID</th>
+                  <th className="px-6 py-4">Date</th>
+                  <th className="px-6 py-4">Entity</th>
+                  <th className="px-6 py-4">Type</th>
+                  <th className="px-6 py-4">Amount</th>
+                  <th className="px-6 py-4">Status</th>
+                  <th className="px-6 py-4">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {transactions.length === 0 ? (
+                  <tr><td colSpan={7} className="p-8 text-center text-slate-500">No transactions recorded.</td></tr>
+                ) : transactions.map((item, i) => (
+                  <tr key={i} className="hover:bg-slate-50 transition-colors">
+                    <td className="px-6 py-4 font-mono text-xs text-slate-500">{item.id.split('-')[1] || item.id}</td>
+                    <td className="px-6 py-4 text-sm text-slate-800">{item.date}</td>
+                    <td className="px-6 py-4 text-sm font-medium text-slate-600">{item.entity_name}</td>
+                    <td className="px-6 py-4 text-sm text-slate-500">{item.type}</td>
+                    <td className="px-6 py-4 text-sm font-bold text-slate-900">${item.amount}</td>
+                    <td className="px-6 py-4">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-600">{item.status}</span>
+                    </td>
+                    <td className="px-6 py-4">
+                       <button onClick={() => handleDeleteTx(item.id)} disabled={processingId === item.id} title="Void Transaction" className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded disabled:opacity-50">
+                         {processingId === item.id ? <Loader2 size={16} className="animate-spin" /> : <XCircle size={16} />}
+                       </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+      </div>
+    )}
+
+    {/* LOCATIONS TAB (former Overview) */}
+    {activeTab === 'locations' && (
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h3 className="font-bold text-slate-800">Entity Licensing Visibility</h3>
+            <p className="text-sm text-slate-500">Manage your business units and basic compliance status</p>
+          </div>
+          <div className="flex gap-2">
+            <Button onClick={() => {setShowAddEntity(!showAddEntity); setEditingEntity(null);}} icon={Plus}>Add Entity</Button>
+          </div>
+        </div>
+        
+        {(showAddEntity || editingEntity) && (
+           <div className="p-6 bg-slate-50 border-b border-slate-100">
+              <form onSubmit={editingEntity ? handleUpdateEntity : handleAddEntity} className="flex flex-col md:flex-row gap-4 items-end">
+                 <div className="w-full">
+                   <label className="text-xs font-bold text-slate-600 mb-1 block">Entity Name</label>
+                   <input required value={editingEntity ? editingEntity.name : newEntity.name} onChange={e => editingEntity ? setEditingEntity({...editingEntity, name: e.target.value}) : setNewEntity({...newEntity, name: e.target.value})} className="w-full border border-slate-200 p-2 rounded-lg text-sm" placeholder="Dispensary LLC..." />
+                 </div>
+                 <div className="w-full">
+                   <label className="text-xs font-bold text-slate-600 mb-1 block">Type</label>
+                   <select value={editingEntity ? editingEntity.type : newEntity.type} onChange={e => editingEntity ? setEditingEntity({...editingEntity, type: e.target.value}) : setNewEntity({...newEntity, type: e.target.value})} className="w-full border border-slate-200 p-2 rounded-lg text-sm">
+                     <option>Retail</option>
+                     <option>Production</option>
+                     <option>Distribution</option>
+                   </select>
+                 </div>
+                 <div className="w-full">
+                   <label className="text-xs font-bold text-slate-600 mb-1 block">State / Jurisdiction</label>
+                   <input required value={editingEntity ? editingEntity.state : newEntity.state} onChange={e => editingEntity ? setEditingEntity({...editingEntity, state: e.target.value}) : setNewEntity({...newEntity, state: e.target.value})} className="w-full border border-slate-200 p-2 rounded-lg text-sm" placeholder="e.g. California" />
+                 </div>
+                 <div className="flex gap-2">
+                   <Button type="submit" className="h-10 px-6 shrink-0" disabled={isSubmitting}>{isSubmitting ? 'Saving...' : (editingEntity ? 'Update Entity' : 'Save Entity')}</Button>
+                   {editingEntity && <Button type="button" variant="outline" onClick={() => setEditingEntity(null)} className="h-10 px-4">Cancel</Button>}
+                 </div>
+              </form>
+           </div>
+        )}
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead className="bg-emerald-50 text-[#1a4731] text-xs uppercase tracking-wider font-bold">
+              <tr>
+                <th className="px-6 py-4">Entity Name</th>
+                <th className="px-6 py-4">Type</th>
+                <th className="px-6 py-4">State</th>
+                <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {entities.length === 0 ? (
+                <tr><td colSpan={5} className="p-8 text-center text-slate-500">No entities found.</td></tr>
+              ) : entities.map((item, i) => (
+                <tr key={i} className="hover:bg-slate-50 transition-colors">
+                  <td className="px-6 py-4 font-medium text-slate-900">{item.name}</td>
+                  <td className="px-6 py-4 text-sm text-slate-500">{item.type}</td>
+                  <td className="px-6 py-4 text-sm text-slate-500">{item.state}</td>
+                  <td className="px-6 py-4">
+                    <span className={cn(
+                      "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider",
+                      item.status === 'Compliant' ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"
+                    )}>
+                      {item.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 flex gap-2">
+                     <button onClick={() => {setEditingEntity(item); setShowAddEntity(false);}} className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded"><Edit2 size={16} /></button>
+                     <button onClick={() => handleDeleteEntity(item.id)} disabled={processingId === item.id} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded disabled:opacity-50">
+                       {processingId === item.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                     </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )}
+
+    {/* INVENTORY TAB */}
+    {activeTab === 'inventory' && (
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <h3 className="font-bold text-slate-800">Basic Inventory Tracking</h3>
+              <p className="text-sm text-slate-500">Track operations and daily inventory counts</p>
+            </div>
+            <Button onClick={() => {setShowAddInventory(!showAddInventory); setEditingInventory(null);}} icon={Plus}>Add Item</Button>
+          </div>
+
+          {(showAddInventory || editingInventory) && (
+             <div className="p-6 bg-slate-50 border-b border-slate-100">
+                <form onSubmit={editingInventory ? handleUpdateInventory : handleAddInventory} className="flex flex-col md:flex-row flex-wrap gap-4 items-end">
+                   <div className="w-full md:w-[15%]">
+                     <label className="text-xs font-bold text-slate-600 mb-1 block">Entity</label>
+                     <select required disabled={!!editingInventory} value={editingInventory ? editingInventory.entity_id : newItem.entity_id} onChange={e => !editingInventory && setNewItem({...newItem, entity_id: e.target.value})} className="w-full border border-slate-200 p-2 rounded-lg text-sm bg-white">
+                       <option value="">Select...</option>
+                       {entities.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
+                     </select>
+                   </div>
+                   <div className="flex-1 min-w-[200px]">
+                     <label className="text-xs font-bold text-slate-600 mb-1 block">Item Name</label>
+                     <input required value={editingInventory ? editingInventory.item_name : newItem.item_name} onChange={e => editingInventory ? setEditingInventory({...editingInventory, item_name: e.target.value}) : setNewItem({...newItem, item_name: e.target.value})} className="w-full border border-slate-200 p-2 rounded-lg text-sm" placeholder="Pineapple Express..." />
+                   </div>
+                   <div className="w-full md:w-[15%]">
+                     <label className="text-xs font-bold text-slate-600 mb-1 block">Category</label>
+                     <input required value={editingInventory ? editingInventory.category : newItem.category} onChange={e => editingInventory ? setEditingInventory({...editingInventory, category: e.target.value}) : setNewItem({...newItem, category: e.target.value})} className="w-full border border-slate-200 p-2 rounded-lg text-sm" placeholder="Flower" />
+                   </div>
+                   <div className="w-full md:w-[25%] flex gap-2">
+                     <div className="w-1/2">
+                       <label className="text-xs font-bold text-slate-600 mb-1 block">Quantity & Unit</label>
+                       <div className="flex">
+                         <input type="number" required value={editingInventory ? editingInventory.quantity : newItem.quantity} onChange={e => editingInventory ? setEditingInventory({...editingInventory, quantity: Number(e.target.value)}) : setNewItem({...newItem, quantity: Number(e.target.value)})} className="w-1/2 border border-slate-200 p-2 rounded-l-lg text-sm" placeholder="Qty" />
+                         <select value={editingInventory ? editingInventory.unit : newItem.unit} onChange={e => editingInventory ? setEditingInventory({...editingInventory, unit: e.target.value}) : setNewItem({...newItem, unit: e.target.value})} className="w-1/2 border-y border-r border-slate-200 p-2 rounded-r-lg text-sm bg-slate-100">
+                           <option>Grams</option>
+                           <option>Liters</option>
+                           <option>Units</option>
+                           <option>Pounds</option>
+                         </select>
+                       </div>
+                     </div>
+                     <div className="w-1/2">
+                       <label className="text-xs font-bold text-slate-600 mb-1 block">Value ($)</label>
+                       <input type="number" step="0.01" required value={editingInventory ? editingInventory.price : newItem.price} onChange={e => editingInventory ? setEditingInventory({...editingInventory, price: Number(e.target.value)}) : setNewItem({...newItem, price: Number(e.target.value)})} className="w-full border border-slate-200 p-2 rounded-lg text-sm" placeholder="$" />
+                     </div>
+                   </div>
+                   <div className="flex gap-2 w-full md:w-auto">
+                     <Button type="submit" className="h-10 px-6 shrink-0 w-full md:w-auto" disabled={isSubmitting || (!editingInventory && !newItem.entity_id)}>{isSubmitting ? 'Saving...' : (editingInventory ? 'Update' : 'Add')}</Button>
+                     {editingInventory && <Button type="button" variant="outline" onClick={() => setEditingInventory(null)} className="h-10 px-4">Cancel</Button>}
+                   </div>
+                </form>
+             </div>
+          )}
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead className="bg-[#1a4731]/5 text-[#1a4731] text-xs uppercase tracking-wider font-bold">
+                <tr>
+                  <th className="px-6 py-4">Item Name</th>
+                  <th className="px-6 py-4">Category</th>
+                  <th className="px-6 py-4">Location (Entity)</th>
+                  <th className="px-6 py-4">Quantity</th>
+                  <th className="px-6 py-4">Value</th>
+                  <th className="px-6 py-4">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {inventory.length === 0 ? (
+                  <tr><td colSpan={6} className="p-8 text-center text-slate-500">No inventory found.</td></tr>
+                ) : inventory.map((item, i) => (
+                  <tr key={i} className="hover:bg-slate-50 transition-colors">
+                    <td className="px-6 py-4 font-bold text-slate-800">{item.item_name}</td>
+                    <td className="px-6 py-4 text-sm text-slate-500">{item.category}</td>
+                    <td className="px-6 py-4 text-sm font-medium text-slate-600 bg-slate-50 border-r border-slate-100">{item.entity_name}</td>
+                    <td className="px-6 py-4 text-sm text-slate-800 font-bold">{item.quantity} {item.unit}</td>
+                    <td className="px-6 py-4 text-sm text-emerald-600 font-bold">${item.price}</td>
+                    <td className="px-6 py-4 flex gap-2">
+                       <button onClick={() => {setEditingInventory(item); setShowAddInventory(false);}} className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded"><Edit2 size={16} /></button>
+                       <button onClick={() => handleDeleteInventory(item.id)} disabled={processingId === item.id} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded disabled:opacity-50">
+                         {processingId === item.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                       </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+      </div>
+    )}
+
+    {/* COMPLIANCE TAB */}
+    {activeTab === 'compliance' && (
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col md:flex-row min-h-[400px]">
+        <div className="p-8 bg-[#1a4731] text-white flex-shrink-0 md:w-64 flex flex-col justify-between">
+           <div>
+             <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center p-1 mb-4 overflow-hidden">
+               <img src="/larry-logo.png" alt="Larry" className="w-full h-full object-cover rounded-full" />
+             </div>
+             <h3 className="font-bold text-xl mb-2">Larry (Cannabis)</h3>
+             <p className="text-sm text-emerald-100 opacity-90 leading-relaxed mb-6">
+               Your compliance monitoring and state requirement guidance agent.
+             </p>
+           </div>
+           
+           <div className="bg-white/10 p-4 rounded-xl border border-white/20">
+              <h4 className="text-xs font-bold text-emerald-200 uppercase tracking-widest mb-1">Sylara AI Tip</h4>
+              <p className="text-xs text-white leading-relaxed">Ensure you connect your API integrations in Sylara's settings to automatically track incoming sales.</p>
+           </div>
+        </div>
+        
+        <div className="flex-1 flex flex-col">
+          <div className="p-6 border-b border-slate-100">
+            <h3 className="font-bold text-slate-800">Compliance & Violation Reminders</h3>
+            <p className="text-sm text-slate-500">Automated monitoring alerts generated by Larry</p>
+          </div>
+          <div className="p-6 flex-1 bg-slate-50/50">
+             <div className="space-y-4">
+               {alerts.length === 0 ? (
+                  <div className="text-center p-10">
+                     <Shield className="mx-auto text-emerald-500 mb-3" size={40} />
+                     <p className="text-slate-500 font-bold">You are 100% Compliant!</p>
+                  </div>
+               ) : alerts.map((alt, i) => (
+                 <div key={i} className={cn("flex items-start gap-4 p-5 rounded-xl border shadow-sm transition-all", alt.is_resolved ? "bg-slate-50 border-slate-200 opacity-60" : "bg-white border-slate-200")}>
+                   <div className={cn("p-2 rounded-lg mt-0.5", 
+                      alt.is_resolved ? "bg-slate-200 text-slate-500" :
+                      alt.severity === 'High' ? "bg-red-100 text-red-600" :
+                      alt.severity === 'Medium' ? "bg-amber-100 text-amber-600" :
+                      "bg-emerald-100 text-emerald-600"
+                   )}>
+                     {alt.is_resolved ? <CheckCircle size={20} /> : <AlertCircle size={20} />}
+                   </div>
+                   <div className="flex-1">
+                     <div className="flex items-start justify-between gap-4">
+                       <div>
+                         <h4 className={cn("font-bold", alt.is_resolved ? "text-slate-500 line-through" : "text-slate-800")}>{alt.message}</h4>
+                         <p className="text-xs font-medium text-slate-500 mt-1">Impacts Entity: <span className="text-slate-800">{alt.entity_name}</span></p>
+                       </div>
+                       <span className="text-[10px] text-slate-400 font-bold uppercase whitespace-nowrap">{alt.date} • {alt.status}</span>
+                     </div>
+                     {!alt.is_resolved && (
+                       <div className="mt-4 flex gap-2">
+                         <button onClick={() => handleAcknowledgeAlert(alt.id)} disabled={processingId === alt.id} className="px-4 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-colors disabled:opacity-50">
+                            {processingId === alt.id ? 'Processing...' : 'Acknowledge'}
+                         </button>
+                         {(alt.severity === 'High' || alt.severity === 'Medium') && (
+                           <button onClick={() => handleResolveAlert(alt.id)} disabled={processingId === alt.id} className="px-4 py-1.5 bg-[#1a4731] hover:bg-[#153a28] text-white text-xs font-bold rounded-lg transition-colors disabled:opacity-50">
+                              {processingId === alt.id ? 'Resolving...' : 'Resolve Issue'}
+                           </button>
+                         )}
+                       </div>
+                     )}
+                   </div>
+                 </div>
+               ))}
+             </div>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {/* INSURANCE & BONDING TAB */}
+    {activeTab === 'insurance' && (
+      <div className="space-y-6">
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <h3 className="font-bold text-slate-800">Insurance & Bonding Tracker</h3>
+              <p className="text-sm text-slate-500">Manage policies, bonds, and attestations across all entities</p>
+            </div>
+            <Button onClick={() => setShowAddPolicy(!showAddPolicy)} icon={Plus}>Upload Certificate</Button>
+          </div>
+
+          {showAddPolicy && (
+             <div className="p-6 bg-slate-50 border-b border-slate-100">
+                <form onSubmit={handleAddPolicy} className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+                   <div className="w-full">
+                     <label className="text-xs font-bold text-slate-600 mb-1 block">Entity</label>
+                     <select required value={newPolicy.entity_id} onChange={e => setNewPolicy({...newPolicy, entity_id: e.target.value})} className="w-full border border-slate-200 p-2 rounded-lg text-sm bg-white">
+                       <option value="">Select...</option>
+                       {entities.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
+                     </select>
+                   </div>
+                   <div className="w-full">
+                     <label className="text-xs font-bold text-slate-600 mb-1 block">Type</label>
+                     <select required value={newPolicy.type} onChange={e => setNewPolicy({...newPolicy, type: e.target.value})} className="w-full border border-slate-200 p-2 rounded-lg text-sm bg-white">
+                       <option>Grower Surety Bond</option>
+                       <option>General Liability</option>
+                       <option>Waste Disposal Liab.</option>
+                     </select>
+                   </div>
+                   <div className="w-full">
+                     <label className="text-xs font-bold text-slate-600 mb-1 block">Provider</label>
+                     <input required value={newPolicy.provider} onChange={e => setNewPolicy({...newPolicy, provider: e.target.value})} className="w-full border border-slate-200 p-2 rounded-lg text-sm" placeholder="ProSure Group" />
+                   </div>
+                   <div className="w-full">
+                     <label className="text-xs font-bold text-slate-600 mb-1 block">Amount ($)</label>
+                     <input type="number" required value={newPolicy.amount} onChange={e => setNewPolicy({...newPolicy, amount: Number(e.target.value)})} className="w-full border border-slate-200 p-2 rounded-lg text-sm" placeholder="50000" />
+                   </div>
+                   <div className="w-full">
+                     <label className="text-xs font-bold text-slate-600 mb-1 block">Expires (MM/DD/YYYY)</label>
+                     <input required value={newPolicy.expires_at} onChange={e => setNewPolicy({...newPolicy, expires_at: e.target.value})} className="w-full border border-slate-200 p-2 rounded-lg text-sm" placeholder="12/31/2026" />
+                   </div>
+                   <Button type="submit" className="h-10 px-6 shrink-0 md:col-span-5" disabled={isSubmitting || !newPolicy.entity_id}>{isSubmitting ? 'Saving...' : 'Submit Policy'}</Button>
+                </form>
+             </div>
+          )}
+
+          <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {policies.map((pol, i) => (
+              <div key={i} className={cn("bg-white border rounded-xl p-5 relative overflow-hidden shadow-sm flex flex-col", pol.status === 'Not Uploaded' ? "border-red-200" : "")}>
+                 <div className={cn("absolute top-0 right-0 w-2 h-full", pol.status === 'Active' ? "bg-emerald-500" : pol.status === 'Not Uploaded' ? "bg-red-500" : "bg-amber-400")}></div>
+                 <div className="flex justify-between items-start mb-4">
+                    <div>
+                       <h4 className="font-bold text-slate-800">{pol.type}</h4>
+                       <p className="text-xl font-black text-slate-900 mt-1">${Number(pol.amount).toLocaleString()}</p>
+                    </div>
+                    <div className={cn("p-2 rounded-lg", pol.status === 'Not Uploaded' ? "bg-red-50" : "bg-slate-50")}>
+                      {pol.status === 'Not Uploaded' ? <AlertTriangle className="text-red-500" size={20} /> : <Shield className="text-slate-400" size={20} />}
+                    </div>
+                 </div>
+                 <div className="space-y-2 mb-6">
+                    <p className="text-xs text-slate-500 flex justify-between"><span>Provider:</span> <span className="font-bold text-slate-800">{pol.provider}</span></p>
+                    <p className="text-xs text-slate-500 flex justify-between"><span>Expires:</span> <span className={cn("font-bold", pol.status === 'Action Required' ? "text-red-600" : pol.status === 'Active' ? "text-emerald-600" : "text-amber-600")}>{pol.expires_at}</span></p>
+                    <p className="text-xs text-slate-500 flex justify-between"><span>Status:</span> <span className={cn("font-bold px-2 py-0.5 rounded-full", pol.status === 'Active' ? "text-emerald-600 bg-emerald-50" : pol.status === 'Not Uploaded' ? "text-red-600 bg-red-50" : "bg-amber-50 text-amber-600")}>{pol.status}</span></p>
+                    <p className="text-xs text-slate-500 flex justify-between"><span>Entity:</span> <span className="font-bold text-slate-800 truncate pl-4">{pol.entity_name}</span></p>
+                 </div>
+                 <Button onClick={() => setActiveTab('subscription')} className={cn("w-full mt-auto", pol.status === 'Not Uploaded' ? "bg-red-500 hover:bg-red-600 border-red-500 text-white" : pol.type === 'Grower Surety Bond' ? "bg-amber-50 hover:bg-amber-100 text-amber-700 border-amber-200" : "bg-slate-100 text-slate-600 hover:bg-slate-200 border-slate-200")}>
+                   {pol.status === 'Not Uploaded' ? 'Upload Certificate' : pol.type === 'Grower Surety Bond' ? 'Renew via Partner' : 'View Policy'}
+                 </Button>
+              </div>
+            ))}
+            {policies.length === 0 && <p className="text-slate-500 text-sm italic col-span-full">No active policies found.</p>}
+          </div>
+        </div>
+      </div>
+    )}
+
+    {/* DOCUMENT VAULT TAB */}
+    {activeTab === 'documents' && (
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h3 className="font-bold text-slate-800">OMMA Document Vault</h3>
+            <p className="text-sm text-slate-500">Secure cryptographic archive for all state-required files</p>
+          </div>
+          <Button onClick={() => setShowAddDoc(!showAddDoc)} icon={UploadCloud}>Upload New File</Button>
+        </div>
+
+        {showAddDoc && (
+             <div className="p-6 bg-slate-50 border-b border-slate-100">
+                <form onSubmit={handleAddDoc} className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                   <div className="w-full">
+                     <label className="text-xs font-bold text-slate-600 mb-1 block">Entity</label>
+                     <select required value={newDoc.entity_id} onChange={e => setNewDoc({...newDoc, entity_id: e.target.value})} className="w-full border border-slate-200 p-2 rounded-lg text-sm bg-white">
+                       <option value="">Select...</option>
+                       {entities.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
+                     </select>
+                   </div>
+                   <div className="w-full">
+                     <label className="text-xs font-bold text-slate-600 mb-1 block">Document Type</label>
+                     <select required value={newDoc.type} onChange={e => setNewDoc({...newDoc, type: e.target.value})} className="w-full border border-slate-200 p-2 rounded-lg text-sm bg-white">
+                       <option>Compliance</option>
+                       <option>Bond / Insurance</option>
+                       <option>SOP / Policies</option>
+                       <option>Tax / Financial</option>
+                     </select>
+                   </div>
+                   <div className="w-full">
+                     <label className="text-xs font-bold text-slate-600 mb-1 block">File Name</label>
+                     <input required value={newDoc.name} onChange={e => setNewDoc({...newDoc, name: e.target.value})} className="w-full border border-slate-200 p-2 rounded-lg text-sm" placeholder="file_name.pdf" />
+                   </div>
+                   <Button type="submit" className="h-10 px-6 shrink-0 md:col-span-3" disabled={isSubmitting || !newDoc.entity_id}>{isSubmitting ? 'Uploading...' : 'Secure Upload'}</Button>
+                </form>
+             </div>
+        )}
+
+        <div className="p-6 overflow-x-auto">
+           <table className="w-full text-left">
+              <thead className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider font-bold border-y border-slate-200">
+                <tr>
+                   <th className="px-4 py-3">Document Name</th>
+                   <th className="px-4 py-3">Type</th>
+                   <th className="px-4 py-3">Entity</th>
+                   <th className="px-4 py-3">Date Uploaded</th>
+                   <th className="px-4 py-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {documents.length === 0 ? (
+                  <tr><td colSpan={5} className="p-8 text-center text-slate-500">No documents found in vault.</td></tr>
+                ) : documents.map((doc, i) => (
+                  <tr key={i} className="hover:bg-slate-50">
+                     <td className="px-4 py-4 font-medium text-slate-800 flex items-center gap-2"><FileText size={16} className={doc.type === 'Compliance' ? 'text-emerald-500' : 'text-slate-400'}/> {doc.name}</td>
+                     <td className="px-4 py-4 text-sm text-slate-500">{doc.type}</td>
+                     <td className="px-4 py-4 text-sm text-slate-500">{doc.entity_name}</td>
+                     <td className="px-4 py-4 text-sm text-slate-500">{doc.uploaded_at}</td>
+                     <td className="px-4 py-4 text-right"><a href={doc.url} onClick={e => e.preventDefault()} className="text-xs font-bold text-[#1a4731] hover:underline">Download</a></td>
+                  </tr>
+                ))}
+              </tbody>
+           </table>
+        </div>
+      </div>
+    )}
+
+    {activeTab === 'subscription' && (
+      <SubscriptionPortal userRole="business" initialPlanId="b2bc_basic" />
+    )}
+  </div>
+)};

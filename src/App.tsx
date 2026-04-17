@@ -1,4 +1,5 @@
 import React, { Component, useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { getPlansForRole, getAddOnsForRole } from './lib/subscriptionPlans';
 import {
   Shield,
   User,
@@ -18,6 +19,7 @@ import {
   LayoutDashboard,
   Users,
   Settings,
+  BarChart2,
   BarChart3,
   Calendar,
   FileText,
@@ -37,6 +39,7 @@ import {
   Loader2,
   ArrowRight,
   Globe,
+  MapPin,
   Map as MapIcon,
   MessageSquare,
   ChevronDown,
@@ -55,7 +58,10 @@ import {
   Image,
   Paperclip,
   CircleCheck,
-  Circle
+  Circle,
+  ShoppingCart,
+  PackageSearch,
+  ClipboardList
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from './lib/utils';
@@ -80,6 +86,8 @@ import MapChart from './components/MapChart';
 import AdminExecutiveDashboard from './components/AdminExecutiveDashboard';
 import TeleHealthDashboard from './components/TeleHealthDashboard';
 import { LARRY_LEGAL_KNOWLEDGE } from './legalKnowledge';
+import { BusinessDashboard } from './pages/BusinessDashboard';
+import BusinessRegistrationPage from './pages/BusinessRegistrationPage';
 
 // --- Constants ---
 
@@ -267,11 +275,13 @@ const DashboardLayout = ({ children, role, onLogout, userProfile }: { children: 
       { icon: Settings, label: 'Settings' },
     ],
     business: [
-      { icon: LayoutDashboard, label: 'Compliance' },
-      { icon: Building2, label: 'Entities' },
-      { icon: FileText, label: 'Documents' },
-      { icon: Users, label: 'Team' },
-      { icon: Settings, label: 'Settings' },
+      { icon: LayoutDashboard, label: 'Dashboard' },
+      { icon: ShoppingCart, label: 'POS & Sales' },
+      { icon: PackageSearch, label: 'Inventory (SINC)' },
+      { icon: MapPin, label: 'Locations' },
+      { icon: Shield, label: 'Compliance' },
+      { icon: BarChart2, label: 'Integrations' },
+      { icon: ClipboardList, label: 'Insurance & Bonding' },
     ],
     admin: [
       { icon: LayoutDashboard, label: 'System' },
@@ -504,69 +514,6 @@ const PatientDashboard = () => (
   </div>
 );
 
-const BusinessDashboard = () => (
-  <div className="space-y-8">
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <StatCard label="Active Entities" value="12" icon={Building2} color="bg-[#1a4731]" />
-      <StatCard label="Compliance Score" value="98%" trend={1} icon={Shield} color="bg-emerald-600" />
-      <StatCard label="Pending Audits" value="2" icon={Clock} color="bg-amber-500" />
-      <StatCard label="Total Revenue" value="$42.5k" trend={12} icon={TrendingUp} color="bg-indigo-600" />
-    </div>
-
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-      <div className="p-6 border-b border-slate-100 flex justify-between items-center">
-        <div>
-          <h3 className="font-bold text-slate-800">Entity Management</h3>
-          <p className="text-sm text-slate-500">Manage your business units and compliance status</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" icon={Filter} className="px-3 py-1.5 text-xs">Filter</Button>
-          <Button icon={Plus} className="px-3 py-1.5 text-xs">Add Entity</Button>
-        </div>
-      </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-left">
-          <thead className="bg-emerald-50 text-[#1a4731] text-xs uppercase tracking-wider font-bold">
-            <tr>
-              <th className="px-6 py-4">Entity Name</th>
-              <th className="px-6 py-4">Type</th>
-              <th className="px-6 py-4">State</th>
-              <th className="px-6 py-4">Status</th>
-              <th className="px-6 py-4">Last Audit</th>
-              <th className="px-6 py-4"></th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {[
-              { name: 'GGMA North Dispensary', type: 'Retail', state: 'Kansas', status: 'Compliant', date: 'Sep 20, 2023' },
-              { name: 'Green Valley Cultivation', type: 'Production', state: 'Missouri', status: 'Compliant', date: 'Aug 15, 2023' },
-              { name: 'Central Logistics Hub', type: 'Distribution', state: 'Kansas', status: 'Review', date: 'Oct 01, 2023' },
-              { name: 'West Coast Retail', type: 'Retail', state: 'Colorado', status: 'Compliant', date: 'Jul 12, 2023' },
-            ].map((item, i) => (
-              <tr key={i} className="hover:bg-slate-50 transition-colors">
-                <td className="px-6 py-4 font-medium text-slate-900">{item.name}</td>
-                <td className="px-6 py-4 text-sm text-slate-500">{item.type}</td>
-                <td className="px-6 py-4 text-sm text-slate-500">{item.state}</td>
-                <td className="px-6 py-4">
-                  <span className={cn(
-                    "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider",
-                    item.status === 'Compliant' ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"
-                  )}>
-                    {item.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-sm text-slate-500">{item.date}</td>
-                <td className="px-6 py-4 text-right">
-                  <button className="text-slate-400 hover:text-slate-600"><MoreVertical size={16} /></button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-);
 
 const AdminDashboard = () => (
   <div className="space-y-8">
@@ -1672,10 +1619,11 @@ const ForgotPasswordScreen = ({ onBack, onReset }: { onBack: () => void; onReset
   );
 };
 
-const SignupScreen = ({ onLogin, onComplete, initialRole = 'user' }: {
+const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }: {
   key?: string,
   onLogin: () => void,
   onComplete: (email: string, pass: string, role: string, data: any) => Promise<void>,
+  onNavigate?: (view: string) => void,
   initialRole?: string
 }) => {
   const [step, setStep] = useState(1);
@@ -1698,6 +1646,9 @@ const SignupScreen = ({ onLogin, onComplete, initialRole = 'user' }: {
     isProvider: false,
     patientSubRole: '',
     selectedPlan: '',
+    selectedBillingCycle: 'monthly',
+    businessType: 'cannabis',
+    selectedAddOns: [] as string[],
     medicalProviderLicense: '',
     npi: '',
     caregiverPatientId: '',
@@ -2024,54 +1975,6 @@ const SignupScreen = ({ onLogin, onComplete, initialRole = 'user' }: {
                                         </select>
                                     </div>
 
-                                    {/* Subscription Plan Picker – shown for TeleHealth roles */}
-                                    {(formData.patientSubRole === 'telehealth-patient' || formData.patientSubRole === 'telehealth-caregiver') && (
-                                      <div className="md:col-span-2 space-y-4">
-                                        <label className="text-sm font-medium text-slate-700">Choose a Subscription Plan <span className="text-red-500">*</span></label>
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                          {[
-                                            { id: 'basic', name: 'Basic', price: '$29', period: '/mo', features: ['Unlimited messaging', '2 video visits/mo', 'Digital health records'] },
-                                            { id: 'standard', name: 'Standard', price: '$59', period: '/mo', badge: 'Popular', features: ['Everything in Basic', '5 video visits/mo', 'Priority scheduling', 'Prescription management'] },
-                                            { id: 'premium', name: 'Premium', price: '$99', period: '/mo', features: ['Everything in Standard', 'Unlimited video visits', '24/7 on-call support', 'Dedicated care coordinator'] },
-                                          ].map((plan) => (
-                                            <button
-                                              key={plan.id}
-                                              type="button"
-                                              onClick={() => setFormData(p => ({...p, selectedPlan: plan.id}))}
-                                              className={cn(
-                                                "relative flex flex-col items-start p-5 rounded-xl border-2 transition-all text-left group",
-                                                formData.selectedPlan === plan.id
-                                                  ? "border-[#1a4731] bg-[#f2f7f4] ring-1 ring-[#1a4731]/10 shadow-md"
-                                                  : "border-slate-200 hover:border-slate-300 hover:shadow-sm bg-white"
-                                              )}
-                                            >
-                                              {(plan as any).badge && (
-                                                <span className="absolute -top-2.5 right-4 bg-[#1a4731] text-white text-[10px] font-bold uppercase tracking-wider px-3 py-0.5 rounded-full shadow-sm">{(plan as any).badge}</span>
-                                              )}
-                                              <h4 className="font-bold text-base text-slate-800 mb-1">{plan.name}</h4>
-                                              <div className="flex items-baseline gap-0.5 mb-4">
-                                                <span className="text-2xl font-extrabold text-[#1a4731]">{plan.price}</span>
-                                                <span className="text-sm text-slate-500 font-medium">{plan.period}</span>
-                                              </div>
-                                              <ul className="space-y-2 w-full">
-                                                {plan.features.map((f, i) => (
-                                                  <li key={i} className="flex items-center gap-2 text-sm text-slate-600">
-                                                    <CheckCircle2 size={14} className={cn(formData.selectedPlan === plan.id ? "text-[#1a4731]" : "text-slate-400")} />
-                                                    {f}
-                                                  </li>
-                                                ))}
-                                              </ul>
-                                              {formData.selectedPlan === plan.id && (
-                                                <div className="absolute top-4 right-4">
-                                                  <CheckCircle2 size={22} className="fill-[#1a4731] text-white" />
-                                                </div>
-                                              )}
-                                            </button>
-                                          ))}
-                                        </div>
-                                      </div>
-                                    )}
-
                                     <div className="md:col-span-2">
                                         <AddressAutocompleteInput label="Physical Address" name="address" value={formData.address} required />
                                     </div>
@@ -2094,6 +1997,21 @@ const SignupScreen = ({ onLogin, onComplete, initialRole = 'user' }: {
 
                              {selectedRole === 'business' && (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <div className="space-y-1.5 md:col-span-2">
+                                        <label className="text-sm font-medium text-slate-700">Business Industry Setup</label>
+                                        <div className="flex gap-4">
+                                            <label className={cn("flex-1 p-3 rounded-lg border-2 cursor-pointer flex justify-between items-center", formData.businessType === 'cannabis' ? "border-[#1a4731] bg-emerald-50 text-[#1a4731]" : "border-slate-200")}>
+                                              <span className="font-bold text-sm">Cannabis Industry</span>
+                                              <input type="radio" name="businessType" value="cannabis" checked={formData.businessType === 'cannabis'} onChange={handleInputChange} className="hidden" />
+                                              {formData.businessType === 'cannabis' && <CheckCircle2 size={18} />}
+                                            </label>
+                                            <label className={cn("flex-1 p-3 rounded-lg border-2 cursor-pointer flex justify-between items-center", formData.businessType === 'traditional' ? "border-[#1a4731] bg-emerald-50 text-[#1a4731]" : "border-slate-200")}>
+                                              <span className="font-bold text-sm">Traditional Business</span>
+                                              <input type="radio" name="businessType" value="traditional" checked={formData.businessType === 'traditional'} onChange={handleInputChange} className="hidden" />
+                                              {formData.businessType === 'traditional' && <CheckCircle2 size={18} />}
+                                            </label>
+                                        </div>
+                                    </div>
                                     <Input label="Business Name" name="companyName" value={formData.companyName} onChange={handleInputChange} required />
                                     <Input label="EIN (Tax ID)" name="ein" value={formData.ein} onChange={handleInputChange} required />
                                     <div className="space-y-1.5">
@@ -2156,6 +2074,116 @@ const SignupScreen = ({ onLogin, onComplete, initialRole = 'user' }: {
                                     <Input label="Organization / Department" name="department" value={formData.department} onChange={handleInputChange} required />
                                 </div>
                              )}
+                             {/* SUBSCRIPTION PLAN SELECTION (Global) */}
+                             {selectedRole !== 'executive' && (
+                                <div className="mt-8 space-y-6 pt-6 border-t border-emerald-100/50 relative">
+                                  <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                                      <div>
+                                        <h3 className="text-base font-bold text-slate-800">Choose a Subscription Plan <span className="text-red-500">*</span></h3>
+                                        <p className="text-sm text-slate-500">Select the plan that best fits your operational needs.</p>
+                                      </div>
+                                      
+                                      <div className="flex bg-slate-100 p-1 rounded-lg">
+                                        <button type="button" onClick={() => setFormData(p => ({...p, selectedBillingCycle: 'monthly'}))} className={cn("px-4 py-1.5 text-sm font-bold rounded-md transition-all", formData.selectedBillingCycle === 'monthly' ? "bg-white shadow-sm text-slate-900" : "text-slate-500 hover:text-slate-700")}>Monthly</button>
+                                        <button type="button" onClick={() => setFormData(p => ({...p, selectedBillingCycle: 'annual'}))} className={cn("px-4 py-1.5 text-sm font-bold rounded-md transition-all", formData.selectedBillingCycle === 'annual' ? "bg-white shadow-sm text-slate-900" : "text-slate-500 hover:text-slate-700")}>Annual (Save up to 20%)</button>
+                                      </div>
+                                  </div>
+
+                                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    {getPlansForRole(selectedRole, formData.businessType as any, formData.jurisdiction).map((plan) => (
+                                       <button
+                                          key={plan.id}
+                                          type="button"
+                                          onClick={() => setFormData(p => ({...p, selectedPlan: plan.id}))}
+                                          className={cn(
+                                            "relative flex flex-col items-start p-5 rounded-xl border-2 transition-all text-left group",
+                                            formData.selectedPlan === plan.id
+                                              ? "border-[#1a4731] bg-[#f2f7f4] ring-1 ring-[#1a4731]/20 shadow-md"
+                                              : "border-slate-200 hover:border-slate-300 hover:shadow-sm bg-white"
+                                          )}
+                                        >
+                                          <h4 className="font-bold text-base text-slate-800 mb-1">{plan.name}</h4>
+                                          <div className="flex items-baseline gap-0.5 mb-3">
+                                            <span className="text-3xl font-extrabold text-[#1a4731]">{plan.annualPrice === 'Custom' ? 'Custom' : `$${formData.selectedBillingCycle === 'monthly' ? plan.monthlyPrice : plan.annualPrice}`}</span>
+                                            {plan.annualPrice !== 'Custom' && (
+                                               <span className="text-sm text-slate-500 font-medium">{formData.selectedBillingCycle === 'monthly' ? '/mo' : '/yr'}</span>
+                                            )}
+                                          </div>
+                                          {plan.bestFor && <p className="text-xs text-slate-600 mb-4 font-medium px-2.5 py-1 bg-white border border-slate-100 rounded-md shadow-sm opacity-90 break-words w-full">{plan.bestFor}</p>}
+                                          
+                                          <div className="w-full h-px bg-slate-100 my-1"></div>
+
+                                          <ul className="space-y-3 w-full mt-3 flex-1 pb-4">
+                                            {plan.features?.map((feature: string, idx: number) => (
+                                              <li key={idx} className="flex items-start gap-2.5 text-xs text-slate-600 leading-tight">
+                                                <CheckCircle2 size={14} className="text-[#1a4731] shrink-0 mt-0.5" />
+                                                <span className="break-words font-medium text-left">{feature}</span>
+                                              </li>
+                                            ))}
+                                            {!plan.features && plan.aiLevel && (
+                                              <li className="flex items-start gap-2.5 text-sm text-slate-600">
+                                                <CheckCircle2 size={16} className="text-[#1a4731] shrink-0 mt-0.5" />
+                                                <span className="break-words font-medium">{plan.aiLevel}</span>
+                                              </li>
+                                            )}
+                                            {plan.tokensMonth && (
+                                              <li className="flex items-start gap-2.5 text-sm text-slate-600">
+                                                <CheckCircle2 size={16} className="text-[#1a4731] shrink-0 mt-0.5" />
+                                                <span className="break-words font-medium">{plan.tokensMonth} AI Tokens</span>
+                                              </li>
+                                            )}
+                                            {plan.contractType && (
+                                              <li className="flex items-start gap-2.5 text-sm text-slate-600">
+                                                <CheckCircle2 size={16} className="text-[#1a4731] shrink-0 mt-0.5" />
+                                                <span className="break-words font-medium">{plan.contractType}</span>
+                                              </li>
+                                            )}
+                                            {!plan.features && !plan.aiLevel && !plan.tokensMonth && !plan.contractType && (
+                                              <li className="flex items-start gap-2.5 text-sm text-slate-600">
+                                                <CheckCircle2 size={16} className="text-[#1a4731] shrink-0 mt-0.5" />
+                                                <span className="break-words font-medium">Standard Compliance Access</span>
+                                              </li>
+                                            )}
+                                          </ul>
+                                          {formData.selectedPlan === plan.id && (
+                                            <div className="absolute top-4 right-4">
+                                              <CheckCircle2 size={24} className="fill-[#1a4731] text-white" />
+                                            </div>
+                                          )}
+                                        </button>
+                                    ))}
+                                  </div>
+
+                                  {getAddOnsForRole(selectedRole, formData.businessType as any).length > 0 && (
+                                      <div className="mt-8 pt-6 border-t border-slate-200/60">
+                                         <h4 className="font-bold text-slate-800 mb-4">Optional Add-Ons (Monthly)</h4>
+                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                                            {getAddOnsForRole(selectedRole, formData.businessType as any).map(addon => {
+                                               const isSelected = formData.selectedAddOns.includes(addon.id);
+                                               return (
+                                                 <label key={addon.id} className={cn("flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-colors shadow-sm", isSelected ? "bg-[#f2f7f4] border-[#1a4731]" : "bg-white border-slate-200 hover:border-slate-300")}>
+                                                    <input 
+                                                      type="checkbox" 
+                                                      className="mt-1 w-5 h-5 rounded text-[#1a4731] focus:ring-[#1a4731]"
+                                                      checked={isSelected}
+                                                      onChange={(e) => {
+                                                        if (e.target.checked) setFormData(p => ({...p, selectedAddOns: [...p.selectedAddOns, addon.id]}));
+                                                        else setFormData(p => ({...p, selectedAddOns: p.selectedAddOns.filter(id => id !== addon.id)}));
+                                                      }}
+                                                    />
+                                                    <div className="flex-1">
+                                                       <p className="font-bold text-sm text-slate-800">{addon.name}</p>
+                                                       <p className="text-xs text-[#1a4731] font-bold mt-1">+${addon.price}/mo {addon.per ? `per ${addon.per}` : ''}</p>
+                                                    </div>
+                                                 </label>
+                                               )
+                                            })}
+                                         </div>
+                                      </div>
+                                  )}
+                                </div>
+                             )}
+
                         </div>
                         
                         {/* Hidden Submit to catch enter key */}
@@ -2267,7 +2295,11 @@ const SignupScreen = ({ onLogin, onComplete, initialRole = 'user' }: {
                                     <tr className="border-b border-slate-100"><td className="py-3 px-4 font-semibold text-slate-500">Full Name</td><td className="py-3 px-4 font-bold text-slate-900">{formData.firstName || 'Not provided'}</td></tr>
                                     <tr className="border-b border-slate-100"><td className="py-3 px-4 font-semibold text-slate-500">Email Address</td><td className="py-3 px-4 font-bold text-slate-900">{formData.email || 'Not provided'}</td></tr>
                                     <tr className="border-b border-slate-100"><td className="py-3 px-4 font-semibold text-slate-500">State / Region</td><td className="py-3 px-4 font-bold text-slate-900">{formData.state}</td></tr>
-                                    <tr className="border-b border-slate-100"><td className="py-3 px-4 font-semibold text-slate-500">Verified Documents</td><td className="py-3 px-4 font-bold text-emerald-600 flex items-center gap-1.5"><CheckCircle2 size={16}/> {uploads.dlFront && uploads.dlBack ? 'ID Scanned and Verified' : 'Pending Upload'}</td></tr>
+                                    <tr className="border-b border-slate-100"><td className="py-3 px-4 font-semibold text-slate-500">Subscription Plan</td><td className="py-3 px-4 font-bold text-[#1a4731]">{!formData.selectedPlan && selectedRole !== 'executive' ? 'Missing Plan' : formData.selectedPlan} ({formData.selectedBillingCycle})</td></tr>
+                                    {formData.selectedAddOns.length > 0 && (
+                                        <tr className="border-b border-slate-100"><td className="py-3 px-4 font-semibold text-slate-500 mt-2">Active Add-Ons</td><td className="py-3 px-4 text-xs font-bold text-slate-700">{formData.selectedAddOns.join(', ')}</td></tr>
+                                    )}
+                                    <tr className="border-b border-slate-100"><td className="py-3 px-4 font-semibold text-slate-500 mt-2">Verified Documents</td><td className="py-3 px-4 font-bold text-emerald-600 flex items-center gap-1.5"><CheckCircle2 size={16}/> {uploads.dlFront && uploads.dlBack ? 'ID Scanned and Verified' : 'Pending Upload'}</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -2294,6 +2326,14 @@ const SignupScreen = ({ onLogin, onComplete, initialRole = 'user' }: {
                         <Button 
                             className="w-full sm:w-auto px-8" 
                             onClick={() => {
+                                if (step === 1 && selectedRole === 'business' && onNavigate) {
+                                    onNavigate('business-signup');
+                                    return;
+                                }
+                                if (step === 2 && selectedRole !== 'executive' && !formData.selectedPlan) {
+                                    alert("Please select a subscription plan to continue.");
+                                    return;
+                                }
                                 if (step === 3 && (!uploads.dlFront || !uploads.dlBack || !privacyConsent)) {
                                     alert("Please complete required uploads and HIPAA consent.");
                                     return;
@@ -5328,7 +5368,7 @@ export default function App() {
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [userProfile, setUserProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState<'landing' | 'login' | 'signup' | 'forgot-password' | 'dashboard' | 'patient-portal' | 'patient-signup' | 'support' | 'larry-chatbot'>('landing');
+  const [view, setView] = useState<'landing' | 'login' | 'signup' | 'forgot-password' | 'dashboard' | 'patient-portal' | 'patient-signup' | 'business-signup' | 'support' | 'larry-chatbot' | 'larry-business'>('landing');
   const [initialRole, setInitialRole] = useState<string | undefined>(undefined);
 
   useEffect(() => {
@@ -5384,10 +5424,17 @@ export default function App() {
       // Fallback for Missing Firebase Auth Setup or invalid testing credentials
       if (error.code === 'auth/operation-not-allowed' || error.code === 'auth/network-request-failed' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential' || (error.message && error.message.includes('400')) || (error.message && error.message.includes('404')) || (error.message && error.message.includes('operation-not-allowed'))) {
         console.warn('Simulating login due to Firebase Email/Password Auth constraints during testing.');
+        let computedRole = initialRole || 'Patient / Caregiver';
+        const lowerEmail = email.toLowerCase();
+        if (lowerEmail.includes('admin')) computedRole = 'admin';
+        else if (lowerEmail.includes('business') || lowerEmail.includes('company') || lowerEmail.includes('dispensary') || lowerEmail.includes('grower')) computedRole = 'business';
+        else if (lowerEmail.includes('oversight') || lowerEmail.includes('regulator')) computedRole = 'oversight';
+        else if (lowerEmail.includes('exec')) computedRole = 'executive';
+
         const simulatedProfile = {
           uid: 'simulated-local-' + Date.now(),
           email: email,
-          role: initialRole || 'Patient / Caregiver',
+          role: computedRole,
           displayName: email.split('@')[0],
           createdAt: new Date().toISOString(),
         };
@@ -5532,6 +5579,14 @@ export default function App() {
               }}
             />
           )}
+          {view === 'business-signup' && (
+            <BusinessRegistrationPage
+              onNavigate={(v) => {
+                setView(v as any);
+              }}
+              onComplete={handleSignup}
+            />
+          )}
           {view === 'support' && (
             <SupportPage
               onNavigate={(v) => {
@@ -5560,6 +5615,9 @@ export default function App() {
               key="signup"
               onLogin={() => setView('login')}
               onComplete={handleSignup}
+              onNavigate={(v) => {
+                setView(v as any);
+              }}
               initialRole={initialRole}
             />
           )}
@@ -5586,7 +5644,7 @@ export default function App() {
                 userProfile={userProfile}
               >
                 {(userProfile.role === 'user' || userProfile.role === 'Patient / Caregiver') && <PatientDashboard />}
-                {userProfile.role === 'business' && <BusinessDashboard />}
+                {userProfile.role === 'business' && <BusinessDashboard onLogout={handleLogout} />}
                 {userProfile.role === 'oversight' && <OversightDashboard />}
                 {userProfile.role === 'executive' && <ExecutiveDashboard />}
               </DashboardLayout>

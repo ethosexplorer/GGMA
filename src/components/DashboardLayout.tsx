@@ -9,6 +9,7 @@ import TeleHealthDashboard from './TeleHealthDashboard';
 
 export const DashboardLayout = ({ role, onLogout, userProfile }: { role: string, onLogout: () => void, userProfile: any }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const navigate = useNavigate();
 
   const menuItems = {
@@ -141,14 +142,30 @@ export const DashboardLayout = ({ role, onLogout, userProfile }: { role: string,
               <Bell size={20} />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
             </button>
-            <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
-              <div className="text-right hidden sm:block">
-                <p className="text-sm font-medium text-slate-900">Jane Doe</p>
-                <p className="text-xs text-slate-500 capitalize">{role}</p>
-              </div>
-              <div className="w-9 h-9 rounded-full bg-slate-200 border border-slate-300 overflow-hidden">
-                <img src="https://picsum.photos/seed/jane/100/100" alt="Profile" className="w-full h-full object-cover" />
-              </div>
+            <div className="relative">
+              <button onClick={() => setIsProfileOpen(!isProfileOpen)} className="flex items-center gap-3 pl-4 border-l border-slate-200 hover:bg-slate-50 transition-colors p-1 pr-2 rounded-lg cursor-pointer">
+                <div className="text-right hidden sm:block">
+                  <p className="text-sm font-medium text-slate-900">{userProfile?.displayName || 'Jane Doe'}</p>
+                  <p className="text-xs text-slate-500 capitalize">{role}</p>
+                </div>
+                <div className="w-9 h-9 rounded-full bg-slate-200 border border-slate-300 overflow-hidden shrink-0">
+                  <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(userProfile?.displayName || 'Jane Doe')}&background=random`} alt="Profile" className="w-full h-full object-cover" />
+                </div>
+              </button>
+
+              {isProfileOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white border border-slate-200 shadow-lg rounded-xl overflow-hidden z-50">
+                   <div className="p-3 border-b border-slate-100">
+                      <p className="text-sm font-bold truncate text-slate-800">{userProfile?.email || 'user@example.com'}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">Account Settings</p>
+                   </div>
+                   <div className="p-1.5">
+                      <button onClick={() => { setIsProfileOpen(false); onLogout(); navigate('/'); }} className="w-full flex items-center gap-2 px-3 py-2 text-sm font-medium text-red-600 rounded-lg hover:bg-red-50 hover:text-red-700 transition-colors">
+                         <LogOut size={16} /> Logout
+                      </button>
+                   </div>
+                </div>
+              )}
             </div>
           </div>
         </header>
