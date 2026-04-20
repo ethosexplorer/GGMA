@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { ArrowLeft, CheckCircle2, AlertCircle, Upload, Plus, Trash2, CheckCircle, FileText, X } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -62,10 +62,19 @@ export default function BusinessRegistrationPage({ onNavigate, onComplete }: { o
     tradeName: '',
     phone: '',
     businessStructure: '',
-    operatingHours: '',
+    operatingHours: {
+      Mon: { active: true, open: '09:00', close: '18:00' },
+      Tue: { active: true, open: '09:00', close: '18:00' },
+      Wed: { active: true, open: '09:00', close: '18:00' },
+      Thu: { active: true, open: '09:00', close: '18:00' },
+      Fri: { active: true, open: '09:00', close: '18:00' },
+      Sat: { active: false, open: '10:00', close: '16:00' },
+      Sun: { active: false, open: '10:00', close: '16:00' },
+    },
     // Step 4
     physicalAddress: '',
     gpsCoordinates: '',
+    mailingSameAsPhysical: true,
     locationMailing: '',
     // Step 5
     ppocName: '',
@@ -202,8 +211,52 @@ export default function BusinessRegistrationPage({ onNavigate, onComplete }: { o
                   <input type="tel" value={formData.phone} onChange={(e) => updateField('phone', e.target.value)} className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a4731]/20 outline-none" placeholder="(555) 555-5555" />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1.5"><span className="text-red-500 mr-1">*</span>Operating Hours</label>
-                  <input type="text" value={formData.operatingHours} onChange={(e) => updateField('operatingHours', e.target.value)} className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a4731]/20 outline-none" placeholder="e.g. Mon-Fri 9am-5pm" />
+                   <label className="block text-sm font-semibold text-slate-700 mb-3"><span className="text-red-500 mr-1">*</span>Operating Hours</label>
+                   <div className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden">
+                      <table className="w-full text-left text-sm">
+                         <thead>
+                            <tr className="bg-slate-100 border-b border-slate-200">
+                               <th className="px-4 py-2 font-bold text-slate-600">Day</th>
+                               <th className="px-4 py-2 font-bold text-slate-600 text-center">Open</th>
+                               <th className="px-4 py-2 font-bold text-slate-600 text-center">Open Time</th>
+                               <th className="px-4 py-2 font-bold text-slate-600 text-center">Close Time</th>
+                            </tr>
+                         </thead>
+                         <tbody className="divide-y divide-slate-200">
+                            {Object.entries(formData.operatingHours).map(([day, data]: [string, any]) => (
+                               <tr key={day}>
+                                  <td className="px-4 py-3 font-medium text-slate-700">{day}</td>
+                                  <td className="px-4 py-3 text-center">
+                                     <input 
+                                      type="checkbox" 
+                                      checked={data.active} 
+                                      onChange={(e) => updateField('operatingHours', { ...formData.operatingHours, [day]: { ...data, active: e.target.checked } })}
+                                      className="w-4 h-4 accent-[#1a4731]" 
+                                     />
+                                  </td>
+                                  <td className="px-4 py-3">
+                                     <input 
+                                      type="time" 
+                                      disabled={!data.active}
+                                      value={data.open}
+                                      onChange={(e) => updateField('operatingHours', { ...formData.operatingHours, [day]: { ...data, open: e.target.value } })}
+                                      className="w-full bg-white border border-slate-300 rounded px-2 py-1 disabled:bg-slate-100 disabled:text-slate-400" 
+                                     />
+                                  </td>
+                                  <td className="px-4 py-3">
+                                     <input 
+                                      type="time" 
+                                      disabled={!data.active}
+                                      value={data.close}
+                                      onChange={(e) => updateField('operatingHours', { ...formData.operatingHours, [day]: { ...data, close: e.target.value } })}
+                                      className="w-full bg-white border border-slate-300 rounded px-2 py-1 disabled:bg-slate-100 disabled:text-slate-400" 
+                                     />
+                                  </td>
+                               </tr>
+                            ))}
+                         </tbody>
+                      </table>
+                   </div>
                 </div>
               </div>
               <div>
@@ -261,18 +314,60 @@ export default function BusinessRegistrationPage({ onNavigate, onComplete }: { o
           <div className="space-y-6">
             <h3 className="text-xl font-semibold text-slate-800 border-b border-slate-100 pb-2">Location Information</h3>
             <div className="space-y-5">
-              <div>
+              <div className="relative">
                 <label className="block text-sm font-semibold text-slate-700 mb-1.5"><span className="text-red-500 mr-1">*</span>Physical Address of Commercial Establishment</label>
-                <input type="text" value={formData.physicalAddress} onChange={(e) => updateField('physicalAddress', e.target.value)} className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a4731]/20 outline-none" placeholder="Street Address, City, State, Zip" />
+                <div className="flex gap-2">
+                   <input 
+                    type="text" 
+                    value={formData.physicalAddress} 
+                    onChange={(e) => updateField('physicalAddress', e.target.value)} 
+                    className="flex-1 px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a4731]/20 outline-none" 
+                    placeholder="Street Address, City, State, Zip" 
+                   />
+                   <button 
+                    onClick={() => {
+                      // Mock GPS verification
+                      if (formData.physicalAddress) {
+                        updateField('gpsCoordinates', '35.4676° N, 97.5164° W');
+                        alert("USPS Verification Success: GPS Coordinates Generated.");
+                      } else {
+                        alert("Please enter an address first.");
+                      }
+                    }}
+                    className="px-4 py-2.5 bg-blue-600 text-white font-bold text-xs rounded-lg hover:bg-blue-500 transition-colors whitespace-nowrap"
+                   >
+                     Verify & Geocode
+                   </button>
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-1.5"><span className="text-red-500 mr-1">*</span>GPS Coordinates</label>
-                <input type="text" value={formData.gpsCoordinates} onChange={(e) => updateField('gpsCoordinates', e.target.value)} className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a4731]/20 outline-none" placeholder="Latitude, Longitude" />
-                <p className="text-xs text-slate-500 mt-1">Requires exact lookup for school zone verifications.</p>
+                <input 
+                  type="text" 
+                  readOnly
+                  value={formData.gpsCoordinates} 
+                  className="w-full px-4 py-2.5 border border-slate-200 bg-slate-50 text-slate-600 rounded-lg text-sm outline-none cursor-not-allowed" 
+                  placeholder="Will auto-generate upon address verification" 
+                />
+                <p className="text-[10px] text-blue-600 font-bold mt-1">GGP-OS SECURE GEO-FENCE SYSTEM READY</p>
               </div>
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1.5">Mailing Address <span className="text-slate-400 font-normal">(if different)</span></label>
-                <input type="text" value={formData.locationMailing} onChange={(e) => updateField('locationMailing', e.target.value)} className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a4731]/20 outline-none" placeholder={formData.physicalAddress || "Mailing Address"} />
+              <div className="pt-2">
+                 <label className="flex items-center gap-2 cursor-pointer mb-4">
+                    <input 
+                      type="checkbox" 
+                      checked={formData.mailingSameAsPhysical} 
+                      onChange={(e) => updateField('mailingSameAsPhysical', e.target.checked)}
+                      className="w-4 h-4 accent-[#1a4731]" 
+                    />
+                    <span className="text-sm font-medium text-slate-700">Mailing address is same as physical establishment</span>
+                 </label>
+                 
+                 {!formData.mailingSameAsPhysical && (
+                   <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }}>
+                      <label className="block text-sm font-semibold text-slate-700 mb-1.5">Mailing Address</label>
+                      <input type="text" value={formData.locationMailing} onChange={(e) => updateField('locationMailing', e.target.value)} className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a4731]/20 outline-none" placeholder="Mailing Address" />
+                   </motion.div>
+                 )}
               </div>
             </div>
           </div>

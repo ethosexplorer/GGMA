@@ -1,4 +1,5 @@
 import React, { Component, useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { STATE_RESOURCES } from './stateResources';
 import { getPlansForRole, getAddOnsForRole } from './lib/subscriptionPlans';
 import {
   Shield,
@@ -61,7 +62,10 @@ import {
   Circle,
   ShoppingCart,
   PackageSearch,
-  ClipboardList
+  ClipboardList,
+  Cpu,
+  Gavel,
+  Headphones,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from './lib/utils';
@@ -83,11 +87,26 @@ import {
 } from 'firebase/firestore';
 import { auth, db } from './firebase';
 import MapChart from './components/MapChart';
-import AdminExecutiveDashboard from './components/AdminExecutiveDashboard';
+import { AdminDashboard } from './pages/AdminDashboard';
+import { FounderDashboard } from './pages/FounderDashboard';
+import { RegulatorDashboard } from './pages/RegulatorDashboard';
+import { OperationsDashboard } from './pages/OperationsDashboard';
+import { ExternalAdminDashboard } from './pages/ExternalAdminDashboard';
 import TeleHealthDashboard from './components/TeleHealthDashboard';
 import { LARRY_LEGAL_KNOWLEDGE } from './legalKnowledge';
 import { BusinessDashboard } from './pages/BusinessDashboard';
 import BusinessRegistrationPage from './pages/BusinessRegistrationPage';
+import { FederalDashboard } from './pages/FederalDashboard';
+import { ProviderDashboard } from './pages/ProviderDashboard';
+import { AttorneyDashboard } from './pages/AttorneyDashboard';
+import { PublicHealthDashboard } from './pages/PublicHealthDashboard';
+import { CareWalletDashboard } from './pages/CareWalletDashboard';
+import { EnforcementDashboard } from './pages/EnforcementDashboard';
+import { StateAuthorityDashboard } from './pages/StateAuthorityDashboard';
+import { BackOfficeDashboard } from './pages/BackOfficeDashboard';
+import ProviderRegistrationPage from './pages/ProviderRegistrationPage';
+import { PatientDashboard } from './pages/PatientDashboard';
+import { OversightDashboard } from './pages/OversightDashboard';
 
 // --- Constants ---
 
@@ -304,6 +323,16 @@ const DashboardLayout = ({ children, role, onLogout, userProfile }: { children: 
       { icon: FileText, label: 'Reports' },
       { icon: Users, label: 'Entities' },
       { icon: Settings, label: 'Settings' },
+    ],
+    federal: [
+      { icon: LayoutDashboard, label: 'Nationwide Overview' },
+      { icon: Globe, label: 'Interstate Monitoring' },
+      { icon: Shield, label: 'Enforcement & Intel' },
+      { icon: Activity, label: 'Public Health & Labs' },
+      { icon: BarChart3, label: 'Revenue & Taxation' },
+      { icon: FileText, label: 'Policy Scenarios' },
+      { icon: Sparkles, label: 'Sylara Federal AI' },
+      { icon: Settings, label: 'Settings' },
     ]
   };
 
@@ -312,11 +341,13 @@ const DashboardLayout = ({ children, role, onLogout, userProfile }: { children: 
     business: 'bg-[#1a4731]',
     admin: 'bg-slate-800',
     executive: 'bg-indigo-700',
-    oversight: 'bg-amber-600'
+    oversight: 'bg-amber-600',
+    federal: 'bg-blue-900'
   };
 
   const safeRoleMatch = (role || '').toLowerCase();
-  const normalizedRole = safeRoleMatch.includes('admin') ? 'admin' 
+  const normalizedRole = safeRoleMatch.includes('federal') ? 'federal'
+    : safeRoleMatch.includes('admin') ? 'admin' 
     : safeRoleMatch.includes('exec') ? 'executive'
     : safeRoleMatch.includes('over') ? 'oversight'
     : safeRoleMatch.includes('business') ? 'business'
@@ -333,7 +364,7 @@ const DashboardLayout = ({ children, role, onLogout, userProfile }: { children: 
         isSidebarOpen ? "w-64" : "w-20"
       )}>
         <div className={cn("p-6 flex items-center", isSidebarOpen ? "justify-center" : "justify-center")}>
-          <img src="/ggp-os-logo.png" alt="GGP-OS Logo" className={cn("object-contain transition-all duration-300", isSidebarOpen ? "w-28 h-28" : "w-12 h-12")} onError={(e) => {
+          <img src="/logo.png" alt="GGMA Logo" className={cn("object-contain transition-all duration-300", isSidebarOpen ? "w-28 h-28" : "w-12 h-12")} onError={(e) => {
             (e.target as HTMLImageElement).style.display = 'none';
             (e.target as HTMLImageElement).parentElement?.querySelector('.fallback-logo')?.classList.remove('hidden');
           }} />
@@ -395,6 +426,7 @@ const DashboardLayout = ({ children, role, onLogout, userProfile }: { children: 
               <Bell size={20} />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
             </button>
+            <div className="flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-800 rounded-full border border-emerald-200 shadow-sm mr-2"><span className="font-bold text-xs uppercase tracking-wider">Care Wallet:</span><span className="font-black text-sm">0 Tokens</span><button className="ml-2 px-2 py-0.5 bg-[#1a4731] text-white rounded text-xs font-bold hover:bg-[#153a28] transition-colors">Buy</button></div>
             <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
               <div className="text-right hidden sm:block">
                 <p className="text-sm font-medium text-slate-900">Jane Doe</p>
@@ -439,83 +471,10 @@ const StatCard = ({ label, value, trend, icon: Icon, color }: any) => (
   </div>
 );
 
-const PatientDashboard = () => (
-  <div className="space-y-8">
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <StatCard label="Heart Rate" value="72 bpm" trend={2} icon={Activity} color="bg-[#1a4731]" />
-      <StatCard label="Next Checkup" value="Oct 12" icon={Calendar} color="bg-[#1a4731]" />
-      <StatCard label="Active Meds" value="4" icon={Stethoscope} color="bg-emerald-500" />
-      <StatCard label="Health Score" value="94/100" trend={5} icon={Shield} color="bg-indigo-500" />
-    </div>
-
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="font-bold text-slate-800">Recent Activity</h3>
-          <button className="text-sm text-[#1a4731] font-medium hover:underline">View All</button>
-        </div>
-        <div className="space-y-6">
-          {[
-            { title: 'Blood Test Results', date: 'Yesterday', type: 'Lab Report', status: 'Ready' },
-            { title: 'Appointment with Dr. Smith', date: '2 days ago', type: 'Cardiology', status: 'Completed' },
-            { title: 'Prescription Refill', date: '5 days ago', type: 'Pharmacy', status: 'Pending' },
-          ].map((item, i) => (
-            <div key={i} className="flex items-center justify-between p-4 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
-                  <FileText size={18} />
-                </div>
-                <div>
-                  <p className="font-semibold text-slate-900">{item.title}</p>
-                  <p className="text-xs text-slate-500">{item.type} • {item.date}</p>
-                </div>
-              </div>
-              <span className={cn(
-                "px-3 py-1 rounded-full text-xs font-medium",
-                item.status === 'Ready' ? "bg-emerald-50 text-emerald-600" :
-                  item.status === 'Completed' ? "bg-emerald-50 text-[#1a4731]" : "bg-amber-50 text-amber-600"
-              )}>
-                {item.status}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-        <h3 className="font-bold text-slate-800 mb-6">Upcoming Appointments</h3>
-        <div className="space-y-4">
-          <div className="p-4 rounded-xl bg-emerald-50 border border-blue-100">
-            <div className="flex justify-between items-start mb-2">
-              <p className="font-bold text-[#153a28]">General Checkup</p>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#1a4731]">Tomorrow</span>
-            </div>
-            <p className="text-sm text-[#1a4731]">Dr. Sarah Johnson</p>
-            <div className="flex items-center gap-2 mt-3 text-xs text-[#1a4731] font-medium">
-              <Clock size={14} />
-              <span>09:30 AM</span>
-            </div>
-          </div>
-          <div className="p-4 rounded-xl border border-slate-100">
-            <p className="font-bold text-slate-800">Dental Cleaning</p>
-            <p className="text-sm text-slate-500">Dr. Michael Chen</p>
-            <div className="flex items-center gap-2 mt-3 text-xs text-slate-400 font-medium">
-              <Clock size={14} />
-              <span>Oct 15, 02:00 PM</span>
-            </div>
-          </div>
-        </div>
-        <button className="w-full mt-6 py-2.5 rounded-xl border-2 border-dashed border-slate-200 text-slate-400 text-sm font-medium hover:bg-slate-50 transition-colors flex items-center justify-center gap-2">
-          <Plus size={16} />
-          Book New Appointment
-        </button>
-      </div>
-    </div>
-  </div>
-);
 
 
-const AdminDashboard = () => (
+
+const _LegacyAdminDashboard = () => (
   <div className="space-y-8">
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <StatCard label="Total Users" value="1,284" trend={8} icon={Users} color="bg-slate-800" />
@@ -644,54 +603,7 @@ const ExecutiveDashboard = () => (
   </div>
 );
 
-const OversightDashboard = () => (
-  <div className="space-y-8">
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <StatCard label="Total Entities" value="156" icon={Building2} color="bg-[#1a4731]" />
-      <StatCard label="Active Alerts" value="12" icon={AlertCircle} color="bg-red-500" />
-      <StatCard label="Compliance Rate" value="94.2%" trend={2} icon={Shield} color="bg-emerald-600" />
-      <StatCard label="Pending Reviews" value="45" icon={Clock} color="bg-amber-500" />
-    </div>
 
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h3 className="font-bold text-slate-800">Compliance Monitoring</h3>
-        <Button variant="outline" icon={Filter} className="px-3 py-1.5 text-xs">Filter Alerts</Button>
-      </div>
-      <div className="space-y-4">
-        {[
-          { entity: 'GGMA North Dispensary', issue: 'License Renewal Pending', severity: 'High', time: '1h ago' },
-          { entity: 'Green Valley Cultivation', issue: 'Monthly Report Overdue', severity: 'Medium', time: '4h ago' },
-          { entity: 'Central Logistics Hub', issue: 'Security Protocol Update', severity: 'Low', time: '1d ago' },
-        ].map((alert, i) => (
-          <div key={i} className="flex items-center justify-between p-4 border border-slate-100 rounded-xl hover:bg-slate-50 transition-colors">
-            <div className="flex items-center gap-4">
-              <div className={cn(
-                "w-2 h-2 rounded-full",
-                alert.severity === 'High' ? "bg-red-500" :
-                  alert.severity === 'Medium' ? "bg-amber-500" : "bg-emerald-500"
-              )}></div>
-              <div>
-                <p className="font-bold text-slate-900">{alert.entity}</p>
-                <p className="text-sm text-slate-500">{alert.issue}</p>
-              </div>
-            </div>
-            <div className="text-right">
-              <span className={cn(
-                "px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider",
-                alert.severity === 'High' ? "bg-red-50 text-red-600" :
-                  alert.severity === 'Medium' ? "bg-amber-50 text-amber-600" : "bg-emerald-50 text-[#1a4731]"
-              )}>
-                {alert.severity}
-              </span>
-              <p className="text-[10px] text-slate-400 mt-1 font-medium uppercase">{alert.time}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </div>
-);
 
 
 // --- Support Page with AI Chat ---
@@ -753,7 +665,7 @@ const SupportPage = ({ onNavigate }: { onNavigate: (view: 'landing') => void }) 
 
   const clearArticleView = () => setViewedArticle(null);
 
-const STATE_CANNABIS_RESOURCES: Record<string, any> = {
+const STATE_RESOURCES: Record<string, any> = {
   "Alabama": { program: "Alabama Medical Cannabis Commission", patientPortal: "https://amcc.alabama.gov/patients/", businessPortal: "https://amcc.alabama.gov/cannabis-business-applicants-2/", guide: "", resources: "https://256today.com/north-alabama-physicians-among-first-certified-to-qualify-medical-cannabis-patients/" },
   "Alaska": { program: "https://www.commerce.alaska.gov/web/amco/home.aspx", patientPortal: "Marijuana Registry Application", businessPortal: "https://accis.elicense365.com/#", guide: "https://www.commerce.alaska.gov/web/Portals/9/pub/ABC/AlcoholFAQ/Accessing%20the%20Public%20Search%20on%20AK-ACCIS.pdf", resources: "https://www.mpp.org/states/alaska/?state=AK" },
   "Arizona": { program: "AZDHS | Public Health Licensing - Medical Marijuana", patientPortal: "https://individual-licensing.azdhs.gov/s/login/?ec=302&startURL=%2Fs%2F", businessPortal: "https://www.azdhs.gov/licensing/medical-marijuana/", guide: "", resources: "https://www.mpp.org/states/arizona/?state=AZ" },
@@ -828,7 +740,7 @@ const STATE_CANNABIS_RESOURCES: Record<string, any> = {
       let foundState = "";
       const lowerQuery = userMessage.toLowerCase();
       
-      for (const stateName of Object.keys(STATE_CANNABIS_RESOURCES)) {
+      for (const stateName of Object.keys(STATE_RESOURCES)) {
          if (lowerQuery.includes(stateName.toLowerCase())) {
             foundState = stateName;
             break;
@@ -836,7 +748,7 @@ const STATE_CANNABIS_RESOURCES: Record<string, any> = {
       }
 
       if (foundState) {
-         const info = STATE_CANNABIS_RESOURCES[foundState];
+         const info = STATE_RESOURCES[foundState];
          let lines = [`Here are the cannabis legal resources and portals for **${foundState}**:`];
          if (info.program) lines.push(`• **State Cannabis Program**: ${info.program.startsWith('http') ? `[Link](${info.program})` : info.program}`);
          if (info.patientPortal) lines.push(`• **Patient/Caregiver/Physician Portal**: ${info.patientPortal.startsWith('http') ? `[Portal Link](${info.patientPortal})` : info.patientPortal}`);
@@ -896,14 +808,10 @@ const STATE_CANNABIS_RESOURCES: Record<string, any> = {
             const contentToReturn = fullBlockMatch ? LARRY_LEGAL_KNOWLEDGE.substring(fullBlockMatch.index || 0).split(/\n\n(?:WA|WI)/)[0] : bestMatch;
             
             botResponse = `Based on my legal resources database:\n\n${contentToReturn.trim()}`;
-         } else if (docs && docs.length > 0) {
-            // Simple heuristic: just show a snippet from the top result
-            const snippet = docs[0].snippet.replace(/(<([^>]+)>)/gi, "");
-            botResponse = `Based on a web search: ${snippet}...\n\nCan I help you with anything else regarding GGMA?`;
          } else if (lowerQuery.includes('application')) {
             botResponse = 'For application issues, you can navigate to the "Patient Portal" or contact our support team using the form.';
          } else {
-            botResponse = 'I am your Assistant. Try asking about specific US States to get Cannabis regulations, portals, and guides. You can also ask me general questions about recent WA and WI bills, or I will search the web for general inquiries!';
+            botResponse = 'I am your Assistant. Try asking about specific US States to get Cannabis regulations, portals, and guides. You can also ask me general questions about recent WA and WI bills, or I will search my database for general inquiries!';
          }
       }
 
@@ -1000,7 +908,7 @@ const STATE_CANNABIS_RESOURCES: Record<string, any> = {
                       Search our nationwide database for up-to-date state-specific cannabis regulations, limits, and public health guidelines.
                     </p>
                   </div>
-                  <button className="px-6 py-2 border border-slate-200 bg-white text-slate-800 font-bold text-sm rounded-lg hover:bg-slate-50 shadow-sm transition-all whitespace-nowrap">
+                  <button onClick={() => onNavigate('landing')} className="px-6 py-2 border border-slate-200 bg-white text-slate-800 font-bold text-sm rounded-lg hover:bg-slate-50 shadow-sm transition-all whitespace-nowrap">
                     Access Aggregator
                   </button>
                 </div>
@@ -1013,7 +921,7 @@ const STATE_CANNABIS_RESOURCES: Record<string, any> = {
                       { q: "How do I apply for a patient card?", a: "Go to the Patient Portal and complete the application with your ID and physician recommendation." },
                       { q: "What documents do I need?", a: "You need a valid state ID or driver's license, and a certified physician recommendation." }
                     ] },
-                    { title: 'Business Onboarding', desc: 'Details on EIN verification, adding multiple locations, and POS integration.', icon: Building2, qas: [
+                    { title: 'Business Access', desc: 'Details on EIN verification, adding multiple locations, and POS integration.', icon: Building2, qas: [
                       { q: "How do I register my dispensary?", a: "Select the Business role during signup, provide your EIN and organizational details, and upload your state license." },
                       { q: "Can I add multiple locations?", a: "Yes, after your primary business account is approved, you can add sub-locations from your dashboard." }
                     ] },
@@ -1111,7 +1019,7 @@ const STATE_CANNABIS_RESOURCES: Record<string, any> = {
 
           {/* Right Column (Form) */}
           <div className="w-full lg:w-[400px] shrink-0">
-            <div className="bg-[#A3B18A] rounded-2xl p-8 sticky top-24 text-white">
+            <div className="bg-[#0D6EFD] rounded-2xl p-8 sticky top-24 text-white shadow-lg">
               <h2 className="text-2xl font-bold mb-3">Contact Support</h2>
               <p className="text-white/80 text-sm mb-8 leading-relaxed">
                 Need more help? Send us a message and our support team will get back to you.
@@ -1148,7 +1056,7 @@ const STATE_CANNABIS_RESOURCES: Record<string, any> = {
                     Click to upload screenshots
                   </button>
                 </div>
-                <button type="button" className="w-full mt-4 py-3 bg-white text-[#8A9A73] font-bold rounded-lg hover:bg-white/90 transition-colors shadow-sm">
+                <button type="button" className="w-full mt-4 py-3 bg-white text-[#0D6EFD] font-bold rounded-lg hover:bg-white/90 transition-colors shadow-sm">
                   Submit Request
                 </button>
               </form>
@@ -1167,13 +1075,13 @@ const STATE_CANNABIS_RESOURCES: Record<string, any> = {
                 exit={{ opacity: 0, y: 20, scale: 0.9 }}
                 className="bg-white border text-sm border-slate-200 rounded-2xl shadow-xl w-[350px] overflow-hidden mb-4 flex flex-col h-[450px]"
               >
-                <div className="bg-[#1a4731] p-4 text-white flex items-center gap-3">
+                <div className="bg-[#0D6EFD] p-4 text-white flex items-center gap-3">
                   <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center overflow-hidden">
-                    <img src="/larry-logo.png" alt="L.A.R.R.Y" className="w-full h-full object-cover" />
+                    <img src="/larry-logo.png" alt="Sylara" className="w-full h-full object-cover" />
                   </div>
                   <div>
-                    <h3 className="font-bold leading-tight">L.A.R.R.Y AI Assistant</h3>
-                    <p className="text-[11px] text-white/80">Powered by Web Search</p>
+                    <h3 className="font-bold leading-tight">Sylara Legal AI</h3>
+                    <p className="text-[11px] text-white/80">Powered by Sylara OS</p>
                   </div>
                   <button onClick={() => setChatOpen(false)} className="ml-auto text-white/80 hover:text-white">
                     <XCircle size={20} />
@@ -1209,7 +1117,7 @@ const STATE_CANNABIS_RESOURCES: Record<string, any> = {
                       placeholder="Ask about Cannabis rules..."
                       className="flex-1 px-3 py-2 bg-slate-100 border-transparent rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1a4731]/20 focus:bg-white"
                     />
-                    <button type="submit" disabled={!inputValue.trim() || isTyping} className="p-2 bg-[#1a4731] text-white rounded-lg hover:bg-[#153a28] disabled:opacity-50">
+                    <button type="submit" disabled={!inputValue.trim() || isTyping} className="p-2 bg-[#0D6EFD] text-white rounded-lg hover:bg-blue-700 disabled:opacity-50">
                       <Send size={18} />
                     </button>
                   </form>
@@ -1222,7 +1130,7 @@ const STATE_CANNABIS_RESOURCES: Record<string, any> = {
           onClick={() => setChatOpen(!chatOpen)}
           className="w-14 h-14 bg-gradient-to-tr from-[#1a4731] to-[#2c6e4d] text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all hover:scale-105 overflow-hidden p-0"
         >
-           {chatOpen ? <XCircle size={24} /> : <img src="/larry-logo.png" alt="L.A.R.R.Y" className="w-10 h-10 object-cover rounded-full" />}
+           {chatOpen ? <XCircle size={24} /> : <img src="/larry-logo.png" alt="Sylara" className="w-10 h-10 object-cover rounded-full" />}
            {!chatOpen && (
              <span className="absolute -top-1 -right-1 flex h-4 w-4">
                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#a3b18a] opacity-75"></span>
@@ -1269,6 +1177,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
       {/* Hero Section */}
       <section className="pt-20 pb-32 px-6">
         <div className="max-w-4xl mx-auto text-center space-y-8">
+          <p className="text-[#1a4731] font-bold tracking-[0.3em] uppercase text-xs mb-[-10px] opacity-70">Global Green introducing</p>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
             State Detection: Kansas Jurisdiction applied
@@ -1346,15 +1255,15 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
               <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#81C784] to-[#2E7D32] flex items-center justify-center mb-6 shadow-lg shadow-green-200/50">
                 <Building2 className="text-white" size={36} />
               </div>
-              <h3 className="text-xl font-bold text-[#3E2723] mb-3">Business Onboarding</h3>
+              <h3 className="text-xl font-bold text-[#3E2723] mb-3">Business Portal</h3>
               <p className="text-slate-500 text-sm leading-relaxed mb-4">
                 Integrate point-of-sale systems, manage seed-to-sale inventory, and ensure facility compliance with local mandates.
               </p>
               <p className="text-sm italic text-slate-600 mb-6">
-                Dispensary, Cultivation, Distribution, Manufacturing
+                Dispensary, Cultivation, Manufacturing, Medical Providers, Medcard Services
               </p>
               <button
-                onClick={() => onNavigate('signup', 'business')}
+                onClick={() => { onNavigate('signup', 'Business');  }}
                 className="px-8 py-2.5 bg-[#1a4731] text-white rounded-lg font-semibold hover:bg-[#153a28] transition-all shadow-sm hover:shadow-md"
               >
                 Business Onboarding
@@ -1366,18 +1275,18 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
               <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#FFB74D] to-[#E65100] flex items-center justify-center mb-6 shadow-lg shadow-orange-200/50">
                 <Shield className="text-white" size={36} />
               </div>
-              <h3 className="text-xl font-bold text-[#3E2723] mb-3">Government / Admin</h3>
+              <h3 className="text-xl font-bold text-[#3E2723] mb-3">Oversight & RIP Portal</h3>
               <p className="text-slate-500 text-sm leading-relaxed mb-4">
-                Authorized regulatory access for public safety monitoring, auditing, and multi-state compliance verification.
+                Authorized command center for real-time intelligence, policing (RIP), and regulatory oversight.
               </p>
               <p className="text-sm italic text-slate-600 mb-6">
-                Federal, State, Municipal, Oversight
+                Law Enforcement (RIP), Regulators, Executives, Operations
               </p>
               <button
-                onClick={() => onNavigate('login', 'admin')}
+                onClick={() => { onNavigate('signup', 'Oversight');  }}
                 className="px-8 py-2.5 bg-[#1a4731] text-white rounded-lg font-semibold hover:bg-[#153a28] transition-all shadow-sm hover:shadow-md"
               >
-                Admin Login
+                Oversight Access
               </button>
             </div>
           </div>
@@ -1406,7 +1315,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
         <div className="max-w-6xl mx-auto text-center space-y-8">
           <div className="flex flex-col items-center">
             <div className="flex items-center opacity-60 hover:opacity-100 transition-opacity">
-              <img src="/ggp-os-logo.png" alt="GGP-OS Logo" className="w-32 h-32 object-contain grayscale hover:grayscale-0 transition-all" onError={(e) => {
+              <img src="/gghp-logo.png" alt="GGHP Logo" className="w-64 h-24 object-contain hover:scale-110 transition-all cursor-pointer" onError={(e) => {
                 (e.target as HTMLImageElement).style.display = 'none';
                 (e.target as HTMLImageElement).parentElement?.querySelector('.fallback-logo')?.classList.remove('hidden');
               }} />
@@ -1430,13 +1339,30 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
           </div>
         </div>
       </footer>
+
+      {/* Floating Sylara Call Center Agent Widget */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <button 
+          onClick={() => onNavigate('support')}
+          className="bg-purple-700 text-white p-4 rounded-full shadow-2xl hover:bg-purple-800 hover:scale-105 transition-all flex items-center gap-3 group"
+        >
+          <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center overflow-hidden shadow-inner">
+            <img src="/larry-logo.png" alt="Sylara" className="w-full h-full object-cover" />
+          </div>
+          <div className="hidden md:block text-left pr-2">
+            <div className="text-sm font-bold leading-tight">Sylara AI Agent</div>
+            <div className="text-[11px] text-white/80">Call or Text 24/7</div>
+          </div>
+        </button>
+      </div>
+
     </div>
   );
 };
 
 // --- Screens ---
 
-const LoginScreen = ({ onLogin, onSignUp, onForgotPassword }: { onLogin: (email: string, pass: string) => Promise<void>; onSignUp: () => void; onForgotPassword: () => void; key?: string }) => {
+const LoginScreen = ({ onLogin, onSignUp, onForgotPassword }: { onLogin: (email: string, pass: string) => Promise<void>; onSignUp: () => void; onForgotPassword: () => void; onBack?: () => void; initialRole?: any; key?: string }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -1456,79 +1382,131 @@ const LoginScreen = ({ onLogin, onSignUp, onForgotPassword }: { onLogin: (email:
     }
   };
 
+  const samplePlans = getPlansForRole('business', 'cannabis', 'National').slice(0, 3); // Get 3 plans to showcase
+
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-[500px] bg-white border border-slate-200 rounded-2xl shadow-sm p-8 md:p-12"
+        className="w-full max-w-[1000px] bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col md:flex-row"
       >
-        <div className="flex flex-col items-center text-center mb-6">
-          <img src="/logo.png" alt="GGMA Logo" className="w-56 h-56 sm:w-64 sm:h-64 object-contain mb-4" onError={(e) => {
-            (e.target as HTMLImageElement).style.display = 'none';
-            (e.target as HTMLImageElement).parentElement?.querySelector('.fallback-logo')?.classList.remove('hidden');
-          }} />
-          <div className="fallback-logo hidden w-24 h-24 bg-[#1a4731] rounded-2xl flex items-center justify-center mb-4 shadow-lg">
-            <Shield className="text-white" size={48} />
+        {/* LOGIN FORM SECTION */}
+        <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
+          <div className="flex flex-col items-center text-center mb-6">
+            <img src="/logo.png" alt="GGMA Logo" className="w-40 h-40 sm:w-48 sm:h-48 object-contain mb-4" onError={(e) => {
+              (e.target as HTMLImageElement).style.display = 'none';
+              (e.target as HTMLImageElement).parentElement?.querySelector('.fallback-logo')?.classList.remove('hidden');
+            }} />
+            <div className="fallback-logo hidden w-20 h-20 bg-[#1a4731] rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+              <Shield className="text-white" size={40} />
+            </div>
+            <h2 className="text-2xl font-semibold text-slate-900 mt-2">Welcome Back</h2>
+            <p className="text-slate-500 mt-1">Sign in to your account to continue</p>
           </div>
-          <h2 className="text-2xl font-semibold text-slate-900 mt-2">Welcome Back</h2>
-          <p className="text-slate-500 mt-1">Sign in to your account to continue</p>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <div className="bg-red-50 border border-red-100 p-4 rounded-lg flex items-start gap-3">
+                <AlertCircle size={20} className="text-red-500 shrink-0 mt-0.5" />
+                <p className="text-sm text-red-700">{error}</p>
+              </div>
+            )}
+
+            <div className="space-y-4">
+              <Input
+                label="Email Address"
+                placeholder="jane.doe@example.com"
+                type="email"
+                value={email}
+                onChange={(e: any) => setEmail(e.target.value)}
+                required
+              />
+
+              <Input
+                label="Password"
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••••••"
+                value={password}
+                onChange={(e: any) => setPassword(e.target.value)}
+                required
+                rightElement={
+                  <button type="button" onClick={onForgotPassword} className="text-xs font-medium text-[#1a4731] hover:underline">
+                    Forgot Password?
+                  </button>
+                }
+                icon={showPassword ? EyeOff : Eye}
+                className="cursor-pointer"
+                onClickIcon={() => setShowPassword(!showPassword)}
+              />
+            </div>
+
+            <Button
+              type="submit"
+              className="w-full py-3.5 text-lg"
+              icon={loading ? Loader2 : LogIn}
+              disabled={loading}
+            >
+              {loading ? 'Signing in...' : 'Sign In to Dashboard'}
+            </Button>
+
+            <div className="pt-6 border-t border-slate-100 text-center">
+              <p className="text-sm text-slate-600">
+                Don't have an account?{' '}
+                <button type="button" onClick={onSignUp} className="text-[#1a4731] font-semibold hover:underline">
+                  Sign up
+                </button>
+              </p>
+            </div>
+          </form>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {error && (
-            <div className="bg-red-50 border border-red-100 p-4 rounded-lg flex items-start gap-3">
-              <AlertCircle size={20} className="text-red-500 shrink-0 mt-0.5" />
-              <p className="text-sm text-red-700">{error}</p>
-            </div>
-          )}
-
-          <div className="space-y-4">
-            <Input
-              label="Email Address"
-              placeholder="jane.doe@example.com"
-              type="email"
-              value={email}
-              onChange={(e: any) => setEmail(e.target.value)}
-              required
-            />
-
-            <Input
-              label="Password"
-              type={showPassword ? "text" : "password"}
-              placeholder="••••••••••••"
-              value={password}
-              onChange={(e: any) => setPassword(e.target.value)}
-              required
-              rightElement={
-                <button type="button" onClick={onForgotPassword} className="text-xs font-medium text-[#1a4731] hover:underline">
-                  Forgot Password?
-                </button>
-              }
-              icon={showPassword ? EyeOff : Eye}
-              className="cursor-pointer"
-              onClickIcon={() => setShowPassword(!showPassword)}
-            />
+        {/* SUBSCRIPTIONS SECTION */}
+        <div className="w-full md:w-1/2 bg-[#f8fbf9] p-8 md:p-12 border-t md:border-t-0 md:border-l border-slate-200 flex flex-col justify-center">
+          <h3 className="text-2xl font-bold text-[#1a4731] mb-2 text-center md:text-left">Platform Subscriptions</h3>
+          <p className="text-slate-600 mb-8 text-sm text-center md:text-left">
+            Log in to manage your plan and secure your digital footprint.
+          </p>
+          
+          <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+            {samplePlans.map((plan, idx) => (
+              <div key={idx} className={cn("bg-white p-5 rounded-xl border shadow-sm transition-all relative", plan.id === 'pro' ? 'border-[#1a4731]/50 shadow-md' : 'border-slate-200')}>
+                {plan.id === 'pro' && (
+                  <div className="absolute top-0 right-0 bg-[#1a4731] text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg rounded-tr-xl uppercase tracking-wider">
+                    Recommended
+                  </div>
+                )}
+                <div className="flex justify-between items-start mb-2">
+                  <h4 className={cn("font-bold text-lg", plan.id === 'pro' ? 'text-[#1a4731]' : 'text-slate-800')}>{plan.name}</h4>
+                  <span className="font-extrabold text-[#1a4731] text-[10px] uppercase tracking-wider bg-[#1a4731]/5 px-2 py-1 rounded">View Post-Login</span>
+                </div>
+                {plan.bestFor && <p className="text-xs text-slate-600 mb-3 bg-slate-50 p-1.5 rounded-md border border-slate-100 italic">{plan.bestFor}</p>}
+                <ul className="space-y-2 mt-3">
+                  {plan.features?.slice(0, 3).map((feature: string, fIdx: number) => (
+                    <li key={fIdx} className="flex items-start gap-2 text-xs text-slate-600">
+                      <CheckCircle2 size={14} className="text-[#1a4731] shrink-0 mt-0.5" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                  {(!plan.features || plan.features.length === 0) && plan.aiLevel && (
+                    <li className="flex items-start gap-2 text-xs text-slate-600">
+                      <CheckCircle2 size={14} className="text-[#1a4731] shrink-0 mt-0.5" />
+                      <span>{plan.aiLevel} AI Support</span>
+                    </li>
+                  )}
+                </ul>
+              </div>
+            ))}
           </div>
 
-          <Button
-            type="submit"
-            className="w-full py-3.5 text-lg"
-            icon={loading ? Loader2 : LogIn}
-            disabled={loading}
-          >
-            {loading ? 'Signing in...' : 'Sign In to Dashboard'}
-          </Button>
-
-          <div className="pt-6 border-t border-slate-100 text-center">
-            <p className="text-sm text-slate-600">
-              Don't have an account?{' '}
-              <button type="button" onClick={onSignUp} className="text-[#1a4731] font-semibold hover:underline">
-                Sign up
-              </button>
+          <div className="mt-8 pt-6 border-t border-slate-200 text-center">
+            <p className="text-xs text-slate-500 leading-relaxed">
+              Subscriptions, API add-ons, and payment methods are fully integrated within your secure Dashboard. <br/>
+              <span className="font-semibold text-slate-700">Login required to view tailored plans.</span>
             </p>
           </div>
-        </form>
+        </div>
+
       </motion.div>
     </div>
   );
@@ -1621,6 +1599,7 @@ const ForgotPasswordScreen = ({ onBack, onReset }: { onBack: () => void; onReset
 
 const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }: {
   key?: string,
+  onBack?: () => void,
   onLogin: () => void,
   onComplete: (email: string, pass: string, role: string, data: any) => Promise<void>,
   onNavigate?: (view: string) => void,
@@ -1680,13 +1659,23 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
   
   const [privacyConsent, setPrivacyConsent] = useState(false);
 
-  const roles = [
-    { id: 'user', label: 'Patient / Caregiver', icon: User, desc: 'Individuals seeking healthcare services, patients, or caregivers managing care.' },
-    { id: 'provider', label: 'Medical Provider', icon: Stethoscope, desc: 'Licensed medical providers, physicians, and healthcare professionals.' },
-    { id: 'business', label: 'Business', icon: Building2, desc: 'Dispensary, Cultivator, Processor, Lab, or Transport organization.' },
-    { id: 'attorney', label: 'Attorney / Law Firm Admin', icon: Briefcase, desc: 'Legal counsel or administrative staff managing compliance.' },
-    { id: 'regulator', label: 'Regulator / Enforcement / Public Health Official', icon: Shield, desc: 'Government agency staff ensuring safety and compliance.' },
-    { id: 'executive', label: 'Executive / Platform Admin', icon: BarChart3, desc: 'Internal system management. Requires pre-approved invitation code.' },
+      const roles = [
+    { id: 'patient', label: 'Patient / Caregiver', category: 'Patient', icon: User, desc: 'Individuals seeking medical cannabis access and health management.' },
+    
+    // BUSINESS PORTAL
+    { id: 'business_owner', label: 'Business Entity (Owner/CEO)', category: 'Business', icon: Building2, desc: 'Commercial operators requiring state-integrated compliance tools.' },
+    { id: 'compliance_service', label: 'Patient / Compliance Business Service', category: 'Business', icon: Users, desc: 'Companies that manage cards and compliance for their own client base.' },
+    { id: 'medical_provider_md', label: 'Medical Provider (Physician)', category: 'Business', icon: Stethoscope, desc: 'Licensed professionals performing evaluations and certifications.' },
+    { id: 'attorney_lawyer', label: 'Attorney / Law Firm', category: 'Business', icon: Gavel, desc: 'Legal counsel managing licensing and compliance portfolios.' },
+    
+    // OVERSIGHT PORTAL
+    { id: 'executive_founder', label: 'Executive Founder', category: 'Oversight', icon: BarChart3, desc: 'Super-user access for ultimate platform governance and visibility.' },
+    { id: 'internal_admin', label: 'Internal Administrator', category: 'Oversight', icon: Shield, desc: 'Platform management and high-level operational support.' },
+    { id: 'regulator_state', label: 'State Regulator / Authority', category: 'Oversight', icon: Activity, desc: 'Government oversight for approvals and jurisdiction tracking.' },
+    { id: 'enforcement_rip', label: 'Law Enforcement (RIP)', category: 'Oversight', icon: Shield, desc: 'Real-time Intelligence & Policing for field officers.' },
+
+    // OPERATIONS PORTAL
+    { id: 'ops_staff', label: 'Operations / Call Center', category: 'Operations', icon: Headphones, desc: 'Support agents managing human-in-the-loop workflows.' },
   ];
 
   const handleInputChange = (e: any) => {
@@ -1890,40 +1879,47 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
             
             {/* --- STEP 1: ROLE SELECTION --- */}
             {step === 1 && (
-                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    <div className="mb-6 flex items-center justify-between">
-                        <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm">1</div>
-                        <h2 className="text-lg font-bold text-slate-800 flex-1 ml-4 border-b border-slate-100 pb-2">Select Your Role Context</h2>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {roles.map((role) => (
-                            <button
-                                key={role.id}
-                                onClick={() => setSelectedRole(role.id)}
-                                className={cn(
-                                    "flex flex-col items-start p-5 rounded-xl border-2 transition-all text-left group relative overflow-hidden",
-                                    selectedRole === role.id
-                                    ? "border-[#1a4731] bg-[#f2f7f4] ring-1 ring-[#1a4731]/10"
-                                    : "border-slate-200 hover:border-slate-300 hover:shadow-md bg-white"
-                                )}
-                            >
-                                <div className={cn(
-                                    "w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-105",
-                                    selectedRole === role.id ? "bg-[#1a4731] text-white shadow-md shadow-[#1a4731]/20" : "bg-slate-100 text-slate-500"
-                                )}>
-                                    <role.icon size={24} />
-                                </div>
-                                <h3 className="font-bold text-base mb-2">{role.label}</h3>
-                                <p className="text-sm text-slate-500 leading-relaxed font-medium">{role.desc}</p>
-                                
-                                {selectedRole === role.id && (
-                                    <div className="absolute top-4 right-4 text-[#1a4731]">
-                                        <CheckCircle2 size={24} className="fill-[#1a4731] text-white" />
-                                    </div>
-                                )}
-                            </button>
-                        ))}
-                    </div>
+                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-10">
+                    {['Patient', 'Business', 'Oversight', 'Operations'].filter(cat => !initialRole || initialRole === 'all' || cat === initialRole).map((cat) => (
+                        <div key={cat} className="space-y-4">
+                            <h2 className="text-lg font-bold text-slate-800 border-b border-slate-100 pb-2 flex items-center gap-2 capitalize">
+                                {cat === 'Patient' && <Users size={18} className="text-blue-500" />}
+                                {cat === 'Business' && <Building2 size={18} className="text-[#1a4731]" />}
+                                {cat === 'Oversight' && <Shield size={18} className="text-orange-500" />}
+                                {cat === 'Operations' && <Headphones size={18} className="text-indigo-500" />}
+                                {cat}
+                            </h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {roles.filter(r => r.category === cat).map((role) => (
+                                    <button
+                                        key={role.id}
+                                        onClick={() => setSelectedRole(role.id)}
+                                        className={cn(
+                                            "flex flex-col items-start p-5 rounded-xl border-2 transition-all text-left group relative overflow-hidden",
+                                            selectedRole === role.id
+                                            ? "border-[#1a4731] bg-[#f2f7f4] ring-1 ring-[#1a4731]/10"
+                                            : "border-slate-200 hover:border-slate-300 hover:shadow-md bg-white"
+                                        )}
+                                    >
+                                        <div className={cn(
+                                            "w-10 h-10 rounded-xl flex items-center justify-center mb-3 transition-transform group-hover:scale-105",
+                                            selectedRole === role.id ? "bg-[#1a4731] text-white shadow-md" : "bg-slate-100 text-slate-500"
+                                        )}>
+                                            <role.icon size={20} />
+                                        </div>
+                                        <h3 className="font-bold text-sm mb-1">{role.label}</h3>
+                                        <p className="text-xs text-slate-500 leading-relaxed font-medium">{role.desc}</p>
+                                        
+                                        {selectedRole === role.id && (
+                                            <div className="absolute top-4 right-4 text-[#1a4731]">
+                                                <CheckCircle2 size={20} className="fill-[#1a4731] text-white" />
+                                            </div>
+                                        )}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
                 </div>
             )}
 
@@ -1942,14 +1938,14 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
                         <div className="bg-slate-50/50 p-6 rounded-xl border border-slate-100 space-y-5">
                             <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">Common Required Fields</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                <Input label="Full Name (First & Last)" name="firstName" value={formData.firstName} onChange={handleInputChange} placeholder="E.g., Sarah Jenkins" required />
-                                <Input label="Email Address" type="email" name="email" value={formData.email} onChange={handleInputChange} placeholder="sarah@example.com" required />
-                                <Input label="Date of Birth (DOB)" name="dob" type="date" value={formData.dob} onChange={handleInputChange} required />
-                                <Input label="Password (8+ chars)" name="password" type="password" value={formData.password} onChange={handleInputChange} required />
-                                <Input label="Driver's License / State ID Number" name="dlNumber" value={formData.dlNumber} onChange={handleInputChange} placeholder="X0000000" required />
-                                <Input label="Phone Number" name="phone" type="tel" value={formData.phone} onChange={handleInputChange} placeholder="(555) 000-0000" required />
+                                <Input label={<span>Full Name (First & Last) <span className="text-red-500">*</span></span>} name="firstName" value={formData.firstName} onChange={handleInputChange} placeholder="E.g., Sarah Jenkins" required />
+                                <Input label={<span>Email Address <span className="text-red-500">*</span></span>} type="email" name="email" value={formData.email} onChange={handleInputChange} placeholder="sarah@example.com" required />
+                                <Input label={<span>Date of Birth (DOB) <span className="text-red-500">*</span></span>} name="dob" type="date" value={formData.dob} onChange={handleInputChange} required />
+                                <Input label={<span>Password (8+ chars) <span className="text-red-500">*</span></span>} name="password" type="password" value={formData.password} onChange={handleInputChange} required />
+                                <Input label={<span>Driver's License / State ID Number <span className="text-red-500">*</span></span>} name="dlNumber" value={formData.dlNumber} onChange={handleInputChange} placeholder="X0000000" required />
+                                <Input label={<span>Phone Number <span className="text-red-500">*</span></span>} name="phone" type="tel" value={formData.phone} onChange={handleInputChange} placeholder="(555) 000-0000" required />
                                 <div className="space-y-1.5 md:col-span-2">
-                                    <label className="text-sm font-medium text-slate-700">Resident / Operating State</label>
+                                    <label className="text-sm font-medium text-slate-700">Resident / Operating State <span className="text-red-500">*</span></label>
                                     <select name="state" value={formData.state} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-slate-900 focus:ring-2 focus:ring-[#1a4731]/20">
                                         <option value="National">National (Federal Context)</option>
                                         {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
@@ -1961,6 +1957,49 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
                         {/* ROLE SPECIFIC FIELDS */}
                         <div className="bg-emerald-50/30 p-6 rounded-xl border border-emerald-100/50 space-y-5">
                              <h3 className="text-sm font-bold text-emerald-800 uppercase tracking-wider mb-2">Role Specific Details Configuration</h3>
+                             <div className="mb-6 space-y-1.5 bg-white p-4 rounded-lg border border-emerald-100 shadow-sm">
+                                <label className="text-sm font-bold text-emerald-900">Entity Title or Position (For Approval Routing) <span className="text-red-500">*</span></label>
+                                <select name="entityTitleOrPosition" value={formData.entityTitleOrPosition} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:ring-2 focus:ring-[#1a4731]/20 font-medium" required>
+                                    <option value="">-- Select Your Exact Title/Position --</option>
+                                    
+                                            <optgroup label="Patient Portal Roles">
+                                        <option value="Primary Adult Patient">Primary Adult Patient</option>
+                                        <option value="Registered Caregiver">Registered Caregiver</option>
+                                        <option value="Minor Patient Guardian">Minor Patient Guardian</option>
+                                    </optgroup>
+                                    
+                                    <optgroup label="Business & Provider Roles">
+                                        <option value="Business Owner / CEO">Business Owner / CEO</option>
+                                        <option value="General Manager">General Manager</option>
+                                        <option value="Chief Compliance Officer">Chief Compliance Officer</option>
+                                        <option value="General Counsel / Attorney">General Counsel / Attorney</option>
+                                        <option value="Paralegal / Legal Staff">Paralegal / Legal Staff</option>
+                                        <option value="Medical Director">Medical Director</option>
+                                        <option value="Physician (MD/DO)">Physician (MD/DO)</option>
+                                        <option value="PA / NP / LPN">PA / NP / LPN</option>
+                                        <option value="Medical Office Staff">Medical Office Staff</option>
+                                        <option value="Compliance Service Admin">Compliance Service Admin</option>
+                                    </optgroup>
+                                    
+                                    <optgroup label="Oversight & RIP Roles">
+                                        <option value="Executive Founder">Executive Founder</option>
+                                        <option value="Internal Administrator">Internal Administrator</option>
+                                        <option value="State Authority Director">State Authority Director</option>
+                                        <option value="Chief of Police / Sheriff">Chief of Police / Sheriff</option>
+                                        <option value="Field Inspector">Field Inspector</option>
+                                    </optgroup>
+
+                                    <optgroup label="Operations (Call Center) Roles">
+                                        <option value="Operations Manager">Operations Manager</option>
+                                        <option value="Call Center Supervisor">Call Center Supervisor</option>
+                                        <option value="Escalation Specialist">Escalation Specialist</option>
+                                        <option value="Support Agent">Support Agent</option>
+                                    </optgroup>
+                                </select>
+                                <p className="text-xs text-slate-500 mt-2">This determines your dashboard features and goes to our paralegal queue for verification.</p>
+                             </div>
+                             
+
                              
                              {selectedRole === 'user' && (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -1984,21 +2023,32 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
                                 </div>
                              )}
 
-                             {selectedRole === 'provider' && (
+                             { selectedRole?.startsWith('medical_provider_') && (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                     <div className="md:col-span-2">
-                                        <AddressAutocompleteInput label="Practice / Office Address" name="address" value={formData.address} required />
+                                        <AddressAutocompleteInput label={<span>Practice / Clinic Address <span className="text-red-500">*</span></span>} name="address" value={formData.address} required />
                                     </div>
-                                    <Input label="Provider License Number" name="medicalProviderLicense" value={formData.medicalProviderLicense} onChange={handleInputChange} required />
-                                    <Input label="NPI (National Provider ID)" name="npi" value={formData.npi} onChange={handleInputChange} required />
-                                    <Input label="Linked Patient ID (Optional)" name="caregiverPatientId" value={formData.caregiverPatientId} onChange={handleInputChange} />
+                                    <Input label={<span>Professional License Number <span className="text-red-500">*</span></span>} name="medicalProviderLicense" value={formData.medicalProviderLicense} onChange={handleInputChange} required />
+                                    <Input label={<span>NPI (National Provider ID)</span>} name="npi" value={formData.npi} onChange={handleInputChange} />
+                                    <Input label="DEI / State Controlled Substance Registration" name="caregiverPatientId" value={formData.caregiverPatientId} onChange={handleInputChange} placeholder="Optional for staff" />
                                 </div>
                              )}
 
+                             {selectedRole === 'compliance_service' && (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <Input label={<span>Company Name <span className="text-red-500">*</span></span>} name="companyName" value={formData.companyName} onChange={handleInputChange} required />
+                                    <Input label={<span>Tax ID / EIN <span className="text-red-500">*</span></span>} name="ein" value={formData.ein} onChange={handleInputChange} required />
+                                    <div className="md:col-span-2">
+                                        <AddressAutocompleteInput label="Business Address" name="address" value={formData.address} required />
+                                    </div>
+                                    <Input label="Number of Managed Clients" type="number" name="clientCount" value={formData.employeeCount} onChange={handleInputChange} />
+                                </div>
+                             )}
+                             
                              {selectedRole === 'business' && (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                     <div className="space-y-1.5 md:col-span-2">
-                                        <label className="text-sm font-medium text-slate-700">Business Industry Setup</label>
+                                        <label className="text-sm font-medium text-slate-700">Business Industry Setup <span className="text-red-500">*</span></label>
                                         <div className="flex gap-4">
                                             <label className={cn("flex-1 p-3 rounded-lg border-2 cursor-pointer flex justify-between items-center", formData.businessType === 'cannabis' ? "border-[#1a4731] bg-emerald-50 text-[#1a4731]" : "border-slate-200")}>
                                               <span className="font-bold text-sm">Cannabis Industry</span>
@@ -2012,10 +2062,10 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
                                             </label>
                                         </div>
                                     </div>
-                                    <Input label="Business Name" name="companyName" value={formData.companyName} onChange={handleInputChange} required />
-                                    <Input label="EIN (Tax ID)" name="ein" value={formData.ein} onChange={handleInputChange} required />
+                                    <Input label={<span>Business Name <span className="text-red-500">*</span></span>} name="companyName" value={formData.companyName} onChange={handleInputChange} required />
+                                    <Input label={<span>EIN (Tax ID) <span className="text-red-500">*</span></span>} name="ein" value={formData.ein} onChange={handleInputChange} required />
                                     <div className="space-y-1.5">
-                                        <label className="text-sm font-medium text-slate-700">Organization Type</label>
+                                        <label className="text-sm font-medium text-slate-700">Organization Type <span className="text-red-500">*</span></label>
                                         <select name="organizationType" value={formData.organizationType} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg">
                                             <option>Dispensary</option>
                                             <option>Cultivator</option>
@@ -2026,18 +2076,46 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
                                     </div>
                                     <Input label="Business License Number (If held)" name="businessLicenseNumber" value={formData.businessLicenseNumber} onChange={handleInputChange} />
                                     <div className="md:col-span-2">
-                                        <AddressAutocompleteInput label="Physical Business Address" name="address" value={formData.address} required />
+                                        <AddressAutocompleteInput label={<span>Physical Business Address <span className="text-red-500">*</span></span>} name="address" value={formData.address} required />
+                                        <div className="mt-2 flex items-center gap-4 text-[10px] font-mono text-slate-400">
+                                            <div className="bg-slate-100 px-2 py-1 rounded flex items-center gap-1"><MapPin size={10}/> GPS: {formData.address ? '35.4676, -97.5164' : 'Pending Verification'}</div>
+                                            <div className="bg-slate-100 px-2 py-1 rounded flex items-center gap-1"><CheckCircle size={10} className="text-emerald-500"/> USPS Address Verified</div>
+                                        </div>
                                     </div>
+                                    <div className="md:col-span-2 flex items-center gap-3">
+                                        <input type="checkbox" id="mailingSame" className="w-4 h-4 text-[#1a4731] border-slate-300 rounded focus:ring-[#1a4731]" />
+                                        <label htmlFor="mailingSame" className="text-sm text-slate-600 font-medium">Mailing address is same as physical</label>
+                                    </div>
+                                    
+                                    <div className="md:col-span-2 border-t border-slate-100 pt-6 mt-2">
+                                        <h4 className="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2"><Clock size={16} className="text-blue-500"/> Operating Hours</h4>
+                                        <div className="space-y-3">
+                                            {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
+                                                <div key={day} className="flex items-center gap-4">
+                                                    <label className="flex items-center gap-2 w-32">
+                                                        <input type="checkbox" defaultChecked={day !== 'Sunday'} className="w-4 h-4 rounded border-slate-300 text-[#1a4731] focus:ring-[#1a4731]" />
+                                                        <span className="text-sm font-medium text-slate-600">{day}</span>
+                                                    </label>
+                                                    <div className="flex items-center gap-2">
+                                                        <input type="time" defaultValue="09:00" className="px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg" />
+                                                        <span className="text-slate-400 text-xs">to</span>
+                                                        <input type="time" defaultValue="21:00" className="px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg" />
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
                                     <Input label="Number of Employees" type="number" name="employeeCount" value={formData.employeeCount} onChange={handleInputChange} />
                                 </div>
                              )}
 
-                             {selectedRole === 'attorney' && (
+                             { (selectedRole === 'attorney_lawyer' || selectedRole === 'attorney_staff') && (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                    <Input label="Bar Number" name="barNumber" value={formData.barNumber} onChange={handleInputChange} required />
-                                    <Input label="Law Firm Name" name="lawFirmName" value={formData.lawFirmName} onChange={handleInputChange} required />
+                                    <Input label="State Bar Number (Mandatory for Attorneys)" name="barNumber" value={formData.barNumber} onChange={handleInputChange} required={selectedRole === 'attorney_lawyer'} placeholder="BAR-XXXXX" />
+                                    <Input label="Law Firm / Legal Dept Name" name="lawFirmName" value={formData.lawFirmName} onChange={handleInputChange} required />
                                     <div className="md:col-span-2">
-                                        <Input label="Practice Areas" name="practiceAreas" placeholder="e.g. Cannabis Regulatory, Licensing, Taxation" value={(formData.practiceAreas as string[]).join(', ')} onChange={(e: any) => setFormData(p => ({...p, practiceAreas: e.target.value.split(', ')}))} required />
+                                        <Input label="Legal Practice Areas" name="practiceAreas" placeholder="e.g. Regulatory Compliance, Licensing, Administrative Law" value={(formData.practiceAreas as string[] || []).join(', ')} onChange={(e: any) => setFormData(p => ({...p, practiceAreas: e.target.value.split(', ')}))} required />
                                     </div>
                                     <div className="md:col-span-2">
                                         <AddressAutocompleteInput label="Firm Address" name="address" value={formData.address} required />
@@ -2045,20 +2123,13 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
                                 </div>
                              )}
 
-                             {selectedRole === 'regulator' && (
+                             { (selectedRole === 'regulator_state' || selectedRole === 'enforcement_rip' || selectedRole === 'executive_founder' || selectedRole === 'internal_admin') && (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                    <Input label="Agency Name" name="agencyName" value={formData.agencyName} onChange={handleInputChange} required />
-                                    <Input label="Official Title / Position" name="officialTitle" value={formData.officialTitle} onChange={handleInputChange} required />
-                                    <div className="space-y-1.5">
-                                        <label className="text-sm font-medium text-slate-700">Jurisdiction Level</label>
-                                        <select name="jurisdiction" value={formData.jurisdiction} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg">
-                                            <option>Federal</option>
-                                            <option>State</option>
-                                            <option>County</option>
-                                            <option>Municipal</option>
-                                        </select>
+                                    <Input label={<span>Agency / Department Name <span className="text-red-500">*</span></span>} name="companyName" value={formData.companyName} onChange={handleInputChange} required />
+                                    <Input label={<span>Official ID / Badge Number <span className="text-red-500">*</span></span>} name="officialId" value={formData.officialId} onChange={handleInputChange} required />
+                                    <div className="md:col-span-2">
+                                        <AddressAutocompleteInput label="Agency Headquarters Address" name="address" value={formData.address} required />
                                     </div>
-                                    <Input label="Official ID / Badge Number" name="badgeNumber" value={formData.badgeNumber} onChange={handleInputChange} required />
                                 </div>
                              )}
 
@@ -2075,112 +2146,30 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
                                 </div>
                              )}
                              {/* SUBSCRIPTION PLAN SELECTION (Global) */}
-                             {selectedRole !== 'executive' && (
+                             {!selectedRole.startsWith('executive') && selectedRole !== 'backoffice_staff' && (
                                 <div className="mt-8 space-y-6 pt-6 border-t border-emerald-100/50 relative">
-                                  <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                                      <div>
-                                        <h3 className="text-base font-bold text-slate-800">Choose a Subscription Plan <span className="text-red-500">*</span></h3>
-                                        <p className="text-sm text-slate-500">Select the plan that best fits your operational needs.</p>
-                                      </div>
-                                      
-                                      <div className="flex bg-slate-100 p-1 rounded-lg">
-                                        <button type="button" onClick={() => setFormData(p => ({...p, selectedBillingCycle: 'monthly'}))} className={cn("px-4 py-1.5 text-sm font-bold rounded-md transition-all", formData.selectedBillingCycle === 'monthly' ? "bg-white shadow-sm text-slate-900" : "text-slate-500 hover:text-slate-700")}>Monthly</button>
-                                        <button type="button" onClick={() => setFormData(p => ({...p, selectedBillingCycle: 'annual'}))} className={cn("px-4 py-1.5 text-sm font-bold rounded-md transition-all", formData.selectedBillingCycle === 'annual' ? "bg-white shadow-sm text-slate-900" : "text-slate-500 hover:text-slate-700")}>Annual (Save up to 20%)</button>
-                                      </div>
+                                  <div className="bg-[#f2f7f4] border border-[#1a4731]/20 p-6 rounded-xl flex flex-col items-center text-center">
+                                    <Sparkles size={32} className="text-[#1a4731] mb-4" />
+                                    <h3 className="text-xl font-bold text-slate-800 mb-2">Create Your Free Account Today!</h3>
+                                    <p className="text-slate-600 max-w-md mx-auto mb-4">
+                                      Unlock advanced AI capabilities, multi-state aggregation, and priority compliance routing. Scale your dashboard with tailored modules.
+                                    </p>
+                                    <div className="grid grid-cols-2 gap-3 w-full max-w-sm mb-4">
+                                       <div className="bg-white p-2.5 rounded-lg border border-slate-100 text-xs font-bold text-slate-700 flex items-center gap-2">
+                                          <CheckCircle2 size={12} className="text-emerald-500" /> Advanced AI
+                                       </div>
+                                       <div className="bg-white p-2.5 rounded-lg border border-slate-100 text-xs font-bold text-slate-700 flex items-center gap-2">
+                                          <CheckCircle2 size={12} className="text-emerald-500" /> Multi-State
+                                       </div>
+                                       <div className="bg-white p-2.5 rounded-lg border border-slate-100 text-xs font-bold text-slate-700 flex items-center gap-2">
+                                          <CheckCircle2 size={12} className="text-emerald-500" /> Priority Support
+                                       </div>
+                                       <div className="bg-white p-2.5 rounded-lg border border-slate-100 text-xs font-bold text-slate-700 flex items-center gap-2">
+                                          <CheckCircle2 size={12} className="text-emerald-500" /> Custom API
+                                       </div>
+                                    </div>
+                                    <p className="text-[10px] text-slate-400 font-medium">Pricing and tier selection available post-login for registered free accounts.</p>
                                   </div>
-
-                                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    {getPlansForRole(selectedRole, formData.businessType as any, formData.jurisdiction).map((plan) => (
-                                       <button
-                                          key={plan.id}
-                                          type="button"
-                                          onClick={() => setFormData(p => ({...p, selectedPlan: plan.id}))}
-                                          className={cn(
-                                            "relative flex flex-col items-start p-5 rounded-xl border-2 transition-all text-left group",
-                                            formData.selectedPlan === plan.id
-                                              ? "border-[#1a4731] bg-[#f2f7f4] ring-1 ring-[#1a4731]/20 shadow-md"
-                                              : "border-slate-200 hover:border-slate-300 hover:shadow-sm bg-white"
-                                          )}
-                                        >
-                                          <h4 className="font-bold text-base text-slate-800 mb-1">{plan.name}</h4>
-                                          <div className="flex items-baseline gap-0.5 mb-3">
-                                            <span className="text-3xl font-extrabold text-[#1a4731]">{plan.annualPrice === 'Custom' ? 'Custom' : `$${formData.selectedBillingCycle === 'monthly' ? plan.monthlyPrice : plan.annualPrice}`}</span>
-                                            {plan.annualPrice !== 'Custom' && (
-                                               <span className="text-sm text-slate-500 font-medium">{formData.selectedBillingCycle === 'monthly' ? '/mo' : '/yr'}</span>
-                                            )}
-                                          </div>
-                                          {plan.bestFor && <p className="text-xs text-slate-600 mb-4 font-medium px-2.5 py-1 bg-white border border-slate-100 rounded-md shadow-sm opacity-90 break-words w-full">{plan.bestFor}</p>}
-                                          
-                                          <div className="w-full h-px bg-slate-100 my-1"></div>
-
-                                          <ul className="space-y-3 w-full mt-3 flex-1 pb-4">
-                                            {plan.features?.map((feature: string, idx: number) => (
-                                              <li key={idx} className="flex items-start gap-2.5 text-xs text-slate-600 leading-tight">
-                                                <CheckCircle2 size={14} className="text-[#1a4731] shrink-0 mt-0.5" />
-                                                <span className="break-words font-medium text-left">{feature}</span>
-                                              </li>
-                                            ))}
-                                            {!plan.features && plan.aiLevel && (
-                                              <li className="flex items-start gap-2.5 text-sm text-slate-600">
-                                                <CheckCircle2 size={16} className="text-[#1a4731] shrink-0 mt-0.5" />
-                                                <span className="break-words font-medium">{plan.aiLevel}</span>
-                                              </li>
-                                            )}
-                                            {plan.tokensMonth && (
-                                              <li className="flex items-start gap-2.5 text-sm text-slate-600">
-                                                <CheckCircle2 size={16} className="text-[#1a4731] shrink-0 mt-0.5" />
-                                                <span className="break-words font-medium">{plan.tokensMonth} AI Tokens</span>
-                                              </li>
-                                            )}
-                                            {plan.contractType && (
-                                              <li className="flex items-start gap-2.5 text-sm text-slate-600">
-                                                <CheckCircle2 size={16} className="text-[#1a4731] shrink-0 mt-0.5" />
-                                                <span className="break-words font-medium">{plan.contractType}</span>
-                                              </li>
-                                            )}
-                                            {!plan.features && !plan.aiLevel && !plan.tokensMonth && !plan.contractType && (
-                                              <li className="flex items-start gap-2.5 text-sm text-slate-600">
-                                                <CheckCircle2 size={16} className="text-[#1a4731] shrink-0 mt-0.5" />
-                                                <span className="break-words font-medium">Standard Compliance Access</span>
-                                              </li>
-                                            )}
-                                          </ul>
-                                          {formData.selectedPlan === plan.id && (
-                                            <div className="absolute top-4 right-4">
-                                              <CheckCircle2 size={24} className="fill-[#1a4731] text-white" />
-                                            </div>
-                                          )}
-                                        </button>
-                                    ))}
-                                  </div>
-
-                                  {getAddOnsForRole(selectedRole, formData.businessType as any).length > 0 && (
-                                      <div className="mt-8 pt-6 border-t border-slate-200/60">
-                                         <h4 className="font-bold text-slate-800 mb-4">Optional Add-Ons (Monthly)</h4>
-                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                                            {getAddOnsForRole(selectedRole, formData.businessType as any).map(addon => {
-                                               const isSelected = formData.selectedAddOns.includes(addon.id);
-                                               return (
-                                                 <label key={addon.id} className={cn("flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-colors shadow-sm", isSelected ? "bg-[#f2f7f4] border-[#1a4731]" : "bg-white border-slate-200 hover:border-slate-300")}>
-                                                    <input 
-                                                      type="checkbox" 
-                                                      className="mt-1 w-5 h-5 rounded text-[#1a4731] focus:ring-[#1a4731]"
-                                                      checked={isSelected}
-                                                      onChange={(e) => {
-                                                        if (e.target.checked) setFormData(p => ({...p, selectedAddOns: [...p.selectedAddOns, addon.id]}));
-                                                        else setFormData(p => ({...p, selectedAddOns: p.selectedAddOns.filter(id => id !== addon.id)}));
-                                                      }}
-                                                    />
-                                                    <div className="flex-1">
-                                                       <p className="font-bold text-sm text-slate-800">{addon.name}</p>
-                                                       <p className="text-xs text-[#1a4731] font-bold mt-1">+${addon.price}/mo {addon.per ? `per ${addon.per}` : ''}</p>
-                                                    </div>
-                                                 </label>
-                                               )
-                                            })}
-                                         </div>
-                                      </div>
-                                  )}
                                 </div>
                              )}
 
@@ -2295,10 +2284,7 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
                                     <tr className="border-b border-slate-100"><td className="py-3 px-4 font-semibold text-slate-500">Full Name</td><td className="py-3 px-4 font-bold text-slate-900">{formData.firstName || 'Not provided'}</td></tr>
                                     <tr className="border-b border-slate-100"><td className="py-3 px-4 font-semibold text-slate-500">Email Address</td><td className="py-3 px-4 font-bold text-slate-900">{formData.email || 'Not provided'}</td></tr>
                                     <tr className="border-b border-slate-100"><td className="py-3 px-4 font-semibold text-slate-500">State / Region</td><td className="py-3 px-4 font-bold text-slate-900">{formData.state}</td></tr>
-                                    <tr className="border-b border-slate-100"><td className="py-3 px-4 font-semibold text-slate-500">Subscription Plan</td><td className="py-3 px-4 font-bold text-[#1a4731]">{!formData.selectedPlan && selectedRole !== 'executive' ? 'Missing Plan' : formData.selectedPlan} ({formData.selectedBillingCycle})</td></tr>
-                                    {formData.selectedAddOns.length > 0 && (
-                                        <tr className="border-b border-slate-100"><td className="py-3 px-4 font-semibold text-slate-500 mt-2">Active Add-Ons</td><td className="py-3 px-4 text-xs font-bold text-slate-700">{formData.selectedAddOns.join(', ')}</td></tr>
-                                    )}
+                                    <tr className="border-b border-slate-100"><td className="py-3 px-4 font-semibold text-slate-500">Subscription Plan</td><td className="py-3 px-4 font-bold text-slate-900">Selected After Login</td></tr>
                                     <tr className="border-b border-slate-100"><td className="py-3 px-4 font-semibold text-slate-500 mt-2">Verified Documents</td><td className="py-3 px-4 font-bold text-emerald-600 flex items-center gap-1.5"><CheckCircle2 size={16}/> {uploads.dlFront && uploads.dlBack ? 'ID Scanned and Verified' : 'Pending Upload'}</td></tr>
                                 </tbody>
                             </table>
@@ -2330,9 +2316,8 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
                                     onNavigate('business-signup');
                                     return;
                                 }
-                                if (step === 2 && selectedRole !== 'executive' && !formData.selectedPlan) {
-                                    alert("Please select a subscription plan to continue.");
-                                    return;
+                                if (step === 2 && !selectedRole.startsWith('executive') && selectedRole !== 'backoffice_staff') {
+                                    // Subscription selection has been deferred to login
                                 }
                                 if (step === 3 && (!uploads.dlFront || !uploads.dlBack || !privacyConsent)) {
                                     alert("Please complete required uploads and HIPAA consent.");
@@ -2364,7 +2349,7 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
 };
 
 // --- L.A.R.R.Y AI Chatbot for Med Card / Business License Assistance ---
-const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card' }: { onNavigate: (view: 'patient-signup' | 'landing' | 'dashboard' | 'patient-portal') => void, onProfileCreated?: (profile: any) => void, variant?: 'med-card' | 'business' }) => {
+const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card' }: any) => {
   const isBusiness = variant === 'business';
   const [messages, setMessages] = useState<{role: 'user'|'bot', text: string}[]>([
     { role: 'bot', text: isBusiness
@@ -2584,59 +2569,8 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping, availableSlots]);
 
-  const STATE_RESOURCES: Record<string, any> = {
-    "Alabama": { program: "Alabama Medical Cannabis Commission", patientPortal: "https://amcc.alabama.gov/patients/", businessPortal: "https://amcc.alabama.gov/cannabis-business-applicants-2/", guide: "", resources: "https://256today.com/north-alabama-physicians-among-first-certified-to-qualify-medical-cannabis-patients/", status: "Not Yet Operational", year: "2021", conditions: ["Autism Spectrum Disorder (ASD)", "Cancer-related cachexia, nausea or vomiting, weight loss, or chronic pain", "Crohn’s Disease", "Depression", "Epilepsy or a condition causing seizures", "HIV/AIDS-related nausea or weight loss", "Panic disorder", "Parkinson’s disease", "Persistent nausea that is not significantly responsive to traditional treatment", "Post Traumatic Stress Disorder (PTSD)", "Sickle Cell Anemia", "Spasticity associated with a motor neuron disease, including ALS", "Spasticity associated with Multiple Sclerosis or a spinal cord injury", "Terminal illness", "Tourette’s Syndrome", "A condition causing chronic or intractable pain"] },
-    "Alaska": { program: "https://www.commerce.alaska.gov/web/amco/home.aspx", patientPortal: "Marijuana Registry Application", businessPortal: "https://accis.elicense365.com/#", guide: "https://www.commerce.alaska.gov/web/Portals/9/pub/ABC/AlcoholFAQ/Accessing%20the%20Public%20Search%20on%20AK-ACCIS.pdf", resources: "https://www.mpp.org/states/alaska/?state=AK", status: "Operational", year: "1998", conditions: ["Cachexia", "Cancer", "Chronic Pain", "Glaucoma", "HIV or AIDS", "Multiple Sclerosis", "Nausea", "Seizures"] },
-    "Arizona": { program: "AZDHS | Public Health Licensing - Medical Marijuana", patientPortal: "https://individual-licensing.azdhs.gov/s/login/?ec=302&startURL=%2Fs%2F", businessPortal: "https://www.azdhs.gov/licensing/medical-marijuana/", guide: "", resources: "https://www.mpp.org/states/arizona/?state=AZ", status: "Operational", year: "2011", conditions: ["Alzheimer’s Disease", "Amyotrophic Lateral Sclerosis (Lou Gehrig’s disease)", "Cachexia or wasting syndrome", "Cancer", "Chronic pain", "Crohn’s Disease", "Glaucoma", "Hepatitis C", "HIV or AIDS", "Nausea", "Persistent Muscle Spasms", "PTSD", "Seizures"] },
-    "Arkansas": { program: "Medical Marijuana Program", patientPortal: "https://mmj.adh.arkansas.gov/", businessPortal: "https://www.dfa.arkansas.gov/office/medical-marijuana-commission/applications-and-forms/", guide: "https://www.dfa.arkansas.gov/wp-content/uploads/00101_-_00118_Redacted.pdf", resources: "https://www.mpp.org/states/arkansas/?state=AR", status: "Operational", year: "2016", conditions: ["ALS", "Alzheimer’s disease", "Cachexia or wasting syndrome", "Cancer", "Chronic or debilitating disease", "Crohn’s disease", "Fibromyalgia", "Glaucoma", "Hepatitis C", "HIV/AIDS", "Intractable pain", "Multiple sclerosis", "Peripheral neuropathy", "PTSD", "Seizures", "Severe arthritis", "Severe nausea", "Severe and persistent muscle spasms", "Tourette’s syndrome", "Ulcerative colitis", "Any medical condition approved by the Department of Health"] },
-    "California": { program: "https://www.cannabis.ca.gov/", patientPortal: "https://www.cdph.ca.gov/Programs/CHSI/Pages/MMICP.aspx", businessPortal: "https://www.cannabis.ca.gov/applicants/", guide: "", resources: "https://www.mpp.org/states/california/?state=CA", status: "Operational", year: "1996", conditions: ["Anorexia", "Arthritis", "Cachexia", "Cancer", "Chronic Pain", "HIV or AIDS", "Glaucoma", "Migraine", "Persistent Muscle Spasms", "Severe Nausea", "Seizures", "Any debilitating illness deemed appropriate"] },
-    "Colorado": { program: "https://cdphe.colorado.gov/", patientPortal: "https://cdphe.colorado.gov/medical-marijuana-registry-patients", businessPortal: "https://med.colorado.gov/marijuana-business-owner-license-application", guide: "", resources: "https://www.mpp.org/states/colorado/?state=CO" },
-    "Connecticut": { program: "https://portal.ct.gov/cannabis/medical-marijuana-program?language=en_US", patientPortal: "https://biznet.ct.gov/AccountMaint/Login.aspx", businessPortal: "https://portal.ct.gov/cannabis/knowledge-base/articles/licensing/licensing-home-page?language=en_US", guide: "https://portal.ct.gov/cannabis/knowledge-base/articles/mmp/register-for-a-medical-marijuana-card?language=en_US", resources: "https://www.mpp.org/states/connecticut/?state=CT" },
-    "Delaware": { program: "https://omc.delaware.gov/medical/index.shtml?dc=appProc", patientPortal: "https://patients.de.biotr.ac/registration", businessPortal: "https://omc.delaware.gov/adult/licensing/contentFolder/pdfs/matrix.pdf", guide: "https://omc.delaware.gov/adult/licensing/contentFolder/pdfs/matrix.pdf", resources: "https://www.mpp.org/states/delaware/?state=DE" },
-    "District Of Columbia": { program: "https://abca.dc.gov/page/patients%E2%80%94dc-residents", patientPortal: "https://octo.quickbase.com/db/bscn22va8?a=dbpage&pageid=23", businessPortal: "https://abca.dc.gov/page/medical-cannabis-program#gsc.tab=0", guide: "", resources: "https://www.mpp.org/states/district-of-columbia/?state=DC" },
-    "Florida": { program: "https://mmuregistry.flhealth.gov/spa/", patientPortal: "https://mmuregistry.flhealth.gov/spa/login", businessPortal: "https://knowthefactsmmj.com/wp-content/uploads/_documents/form-dh8013-ommu-042018-application-for-medical-marijuana-treatment-center-registration.pdf", guide: "", resources: "https://www.mpp.org/states/florida/?state=FL" },
-    "Georgia": { program: "https://www.gmcc.ga.gov/patients/patient-resources", patientPortal: "https://dph.georgia.gov/low-thc-oil-registry/patients-and-caregivers", businessPortal: "https://www.gmcc.ga.gov/licensing/dispensing-license", guide: "https://drive.google.com/file/d/1fE7ssVack5s48xVXcI_yLKZyPoqoIunm/view", resources: "https://www.mpp.org/states/georgia/?state=GA" },
-    "Hawaii": { program: "https://medmj.ehawaii.gov/medmj/welcome", patientPortal: "Login Required", businessPortal: "https://health.hawaii.gov/medicalcannabis/", guide: "", resources: "https://www.mpp.org/states/hawaii/?state=HI" },
-    "Idaho": { program: "https://idahocannabis.org/medical", patientPortal: "https://idahocannabis.org/medical", businessPortal: "https://agri.idaho.gov/", guide: "https://agri.idaho.gov/", resources: "https://www.mpp.org/states/idaho/?state=ID" },
-    "Illinois": { program: "https://dph.illinois.gov/topics-services/prevention-wellness/medical-cannabis.html", patientPortal: "Login Required", businessPortal: "", guide: "", resources: "https://www.mpp.org/states/illinois/?state=IL" },
-    "Indiana": { program: "https://indianacannabis.org/medical", patientPortal: "", businessPortal: "", guide: "", resources: "https://www.mpp.org/states/indiana/?state=IN" },
-    "Iowa": { program: "https://hhs.iowa.gov/health-prevention/medical-cannabis/patients-caregivers", patientPortal: "https://idph.my.salesforce-sites.com/IowaReg", businessPortal: "", guide: "", resources: "https://www.mpp.org/states/iowa/?state=IA" },
-    "Kansas": { program: "https://kansasstatecannabis.org/medical", patientPortal: "", businessPortal: "", guide: "", resources: "https://www.mpp.org/states/kansas/?state=KS" },
-    "Kentucky": { program: "https://kymedcan.ky.gov/Pages/index.aspx", patientPortal: "https://kymedcan.ky.gov/patients-and-caregivers/Pages/default.aspx", businessPortal: "https://kymedcan.ky.gov/businesses/Pages/default.aspx", guide: "", resources: "https://www.mpp.org/states/kentucky/?state=KY" },
-    "Louisiana": { program: "https://ldh.la.gov/page/medical-marijuana", patientPortal: "Requires prescription from regular doctor", businessPortal: "https://ldh.la.gov/assets/oph/Center-EH/sanitarian/fooddrug/marijuana/Marijuana-Retailer-Plans-Review-Questionnaire---1-26.Fillable.pdf", guide: "", resources: "https://www.mpp.org/states/louisiana/?state=LA" },
-    "Maine": { program: "https://www.maine.gov/dafs/ocp/medical-use/applications-forms/registryidentificationcard-instructions", patientPortal: "https://licensing.web.maine.gov/cgi-bin/online/licensing/begin.pl?board_number=421", businessPortal: "https://licensing.web.maine.gov/cgi-bin/online/licensing/begin.pl?board_number=421", guide: "https://www.maine.gov/dafs/ocp/medical-use/applications-forms/registryidentificationcard-instructions", resources: "https://www.mpp.org/states/maine/?state=ME" },
-    "Maryland": { program: "https://cannabis.maryland.gov/Pages/Medical_Cannabis.aspx", patientPortal: "https://cannabis.maryland.gov/Pages/patients.aspx", businessPortal: "https://cannabis.maryland.gov/Pages/Industry_Licensees_and_Registrants.aspx", guide: "https://cannabis.maryland.gov/Documents/Infographics/DesignateCaregiver_Patient_Process.pdf", resources: "https://www.mpp.org/states/maryland/?state=MD" },
-    "Massachusetts": { program: "https://masscannabiscontrol.com/new-patients/register-as-a-new-patient/", patientPortal: "https://patient.massciportal.com/mmj-patient/login", businessPortal: "https://masscannabiscontrol.com/license-types/", guide: "", resources: "https://www.mpp.org/states/massachusetts/?state=MA" },
-    "Michigan": { program: "https://www.michigan.gov/cra/sections/mmp", patientPortal: "https://aca-prod.accela.com/MIMM/Default.aspx", businessPortal: "https://www.michigan.gov/cra/sections/mmp", guide: "", resources: "https://www.mpp.org/states/michigan/?state=MI" },
-    "Minnesota": { program: "https://mn.gov/ocm/businesses/licensing/license-types/", patientPortal: "https://cannabis.web.health.state.mn.us/", businessPortal: "https://mn.gov/ocm/businesses/licensing/license-types/", guide: "https://www.mda.state.mn.us/plants/hemp/firsttimeapplicants", resources: "https://www.mpp.org/states/minnesota/?state=MN" },
-    "Mississippi": { program: "https://ms-doh-public.nls.egov.com/login", patientPortal: "https://www.mmcp.ms.gov/patients-caregivers", businessPortal: "https://www.mmcp.ms.gov/businesses", guide: "https://msdh.ms.gov/page/30,0,425.html", resources: "https://www.mpp.org/states/mississippi/?state=MS" },
-    "Missouri": { program: "https://mo-public.mycomplia.com/login", patientPortal: "https://mo-public.mycomplia.com/register", businessPortal: "https://mo-public.mycomplia.com/register", guide: "", resources: "https://www.mpp.org/states/missouri/?state=MO" },
-    "Montana": { program: "https://revenue.mt.gov/", patientPortal: "https://tap.dor.mt.gov/_/", businessPortal: "https://tap.dor.mt.gov/", guide: "", resources: "https://www.mpp.org/states/montana/?state=MT" },
-    "Nebraska": { program: "https://lcc.nebraska.gov/medical-cannabis/medical-cannabis-commission-how-apply", patientPortal: "https://lcc.nebraska.gov/medical-cannabis/medical-cannabis-commission-how-apply", businessPortal: "https://lcc.nebraska.gov/medical-cannabis/medical-cannabis-commission-how-apply", guide: "", resources: "https://www.mpp.org/states/nebraska/?state=NE" },
-    "Nevada": { program: "https://www.dpbh.nv.gov/regulatory/medical-marijuana/medical-marijuana-patient-cardholder-registry/", patientPortal: "https://mmportal.nv.gov/PatientRegistryOnline/PatientRegistryOLCreateLogin", businessPortal: "", guide: "", resources: "https://www.mpp.org/states/nevada/?state=NV" },
-    "New Hampshire": { program: "https://www.dhhs.nh.gov/programs-services/population-health/therapeutic-cannabis/therapeutic-cannabis-applications-and", patientPortal: "https://www.dhhs.nh.gov/sites/g/files/ehbemt476/files/documents/2021-11/tcp-applicationpatient.pdf", businessPortal: "", guide: "", resources: "https://www.mpp.org/states/new-hampshire/?state=NH" },
-    "New Jersey": { program: "https://www.nj.gov/cannabis/medicinalcannabis/patient-registration/", patientPortal: "https://njmcp.crc.nj.gov/web/#/home/createAdultPatientUser", businessPortal: "https://www.nj.gov/cannabis/businesses/recreational/license-application-process/", guide: "", resources: "https://www.mpp.org/states/new-jersey/?state=NJ" },
-    "New Mexico": { program: "https://www.rld.nm.gov/cannabis/licensing/new-applications/apply-for-license/", patientPortal: "https://www.rld.nm.gov/cannabis/licensing/new-applications/", businessPortal: "https://www.rld.nm.gov/cannabis/licensing/apply-renew-a-cannabis-license/", guide: "", resources: "https://www.mpp.org/states/new-mexico/?state=NM" },
-    "New York": { program: "https://cannabis.ny.gov/medical-cannabis-program-applications", patientPortal: "https://cannabis.ny.gov/patients", businessPortal: "https://cannabis.ny.gov/licensing", guide: "", resources: "https://www.mpp.org/states/new-york/?state=NY" },
-    "North Carolina": { program: "https://northcarolinastatecannabis.org/medical", patientPortal: "", businessPortal: "", guide: "", resources: "https://www.mpp.org/states/north-carolina/?state=NC" },
-    "North Dakota": { program: "https://mmregistration.health.nd.gov/", patientPortal: "https://mmregistration.health.nd.gov/", businessPortal: "", guide: "", resources: "https://www.mpp.org/states/north-dakota/?state=ND" },
-    "Ohio": { program: "https://com.ohio.gov/divisions-and-programs/cannabis-control/patients-caregivers/obtain-medical-marijuana", patientPortal: "https://com.ohio.gov/divisions-and-programs/cannabis-control/patients-caregivers/patient-and-caregiver-registry", businessPortal: "https://com.ohio.gov/divisions-and-programs/cannabis-control", guide: "", resources: "https://www.mpp.org/states/ohio/?state=OH" },
-    "Oklahoma": { program: "https://oklahoma.gov/omma/apply.html", patientPortal: "", businessPortal: "", guide: "", resources: "https://www.mpp.org/states/oklahoma/?state=OK" },
-    "Oregon": { program: "https://www.oregon.gov/oha/ph/diseasesconditions/chronicdisease/medicalmarijuanaprogram/pages/forms.aspx", patientPortal: "https://www.oregon.gov/oha/ph/diseasesconditions/chronicdisease/medicalmarijuanaprogram/pages/forms.aspx#online", businessPortal: "https://ommpsystem.oregon.gov/", guide: "", resources: "https://www.mpp.org/states/oregon/?state=OR" },
-    "Pennsylvania": { program: "https://www.pa.gov/services/health/register-for-the-medical-marijuana-program", patientPortal: "https://padohmmp.custhelp.com/app/login", businessPortal: "", guide: "", resources: "https://www.mpp.org/states/pennsylvania/?state=PA" },
-    "Rhode Island": { program: "https://health.ri.gov/medical-marijuana/information/patients-caregivers", patientPortal: "Login Required", businessPortal: "", guide: "", resources: "https://www.mpp.org/states/rhode-island/?state=RI" },
-    "South Carolina": { program: "https://southcarolinastatecannabis.org/medical", patientPortal: "", businessPortal: "", guide: "", resources: "https://www.mpp.org/states/south-carolina/?state=SC" },
-    "South Dakota": { program: "https://medcannabisapplication.sd.gov/", patientPortal: "https://medcannabis.sd.gov/", businessPortal: "https://medcannabis.sd.gov/Establishments/Forms.aspx", guide: "", resources: "https://www.mpp.org/states/south-dakota/?state=SD" },
-    "Tennessee": { program: "https://www.tn.gov/agriculture/businesses/hemp/hemp-derived-cannabinoids/hemp-derived-cannabinoids-licensing.html", patientPortal: "", businessPortal: "https://www.tn.gov/abc.html", guide: "", resources: "https://www.mpp.org/states/tennessee/?state=TN" },
-    "Texas": { program: "https://www.texas.gov/health-services/texas-medical-marijuana/", patientPortal: "", businessPortal: "", guide: "", resources: "https://www.mpp.org/states/texas/?state=TX" },
-    "Utah": { program: "https://medicalcannabis.utah.gov/patients/apply-for-patient-card/", patientPortal: "Login Required", businessPortal: "https://medicalcannabis.utah.gov/patients/apply-for-patient-card/", guide: "", resources: "https://www.mpp.org/states/utah/?state=UT" },
-    "Vermont": { program: "https://ccb.vermont.gov/med-forms", patientPortal: "https://ccb.vermont.gov/forms", businessPortal: "https://ccb.vermont.gov/applications", guide: "", resources: "https://www.mpp.org/states/vermont/?state=VT" },
-    "Virginia": { program: "https://cca.virginia.gov/medicalcannabis", patientPortal: "https://cca.virginia.gov/medicalcannabis/patients", businessPortal: "https://cca.virginia.gov/medicalcannabis/patients", guide: "", resources: "https://www.mpp.org/states/virginia/?state=VA" },
-    "Washington": { program: "https://doh.wa.gov/you-and-your-family/cannabis/medical-cannabis/patient-information", patientPortal: "", businessPortal: "", guide: "", resources: "https://www.mpp.org/states/washington/?state=WA" },
-    "West Virginia": { program: "https://omc.wv.gov/patient-application/Pages/default.aspx", patientPortal: "https://omc.wv.gov/patients/Pages/default.aspx", businessPortal: "https://omc.wv.gov/industry/application/Pages/default.aspx", guide: "", resources: "https://www.mpp.org/states/west-virginia/?state=WV" },
-    "Wisconsin": { program: "https://docs.legis.wisconsin.gov/2025/related/proposals/sb534", patientPortal: "", businessPortal: "", guide: "", resources: "https://www.mpp.org/states/wisconsin/?state=WI" },
-    "Wyoming": { program: "https://wyomingcannabis.org/medical", patientPortal: "", businessPortal: "", guide: "", resources: "https://www.mpp.org/states/wyoming/?state=WY" }
-  };
+  // STATE_RESOURCES — imported from ./stateResources.ts (all 50 states + DC)
+  // See: src/stateResources.ts for the complete typed dataset
 
   const handleSend = async (e?: React.FormEvent, overrideText?: string) => {
     e?.preventDefault();
@@ -4434,80 +4368,12 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
             </form>
           </div>
         </div>
-
-
       </div>
     </div>
-  );
-};
+    );
+  };
 
-const PatientPortalPage = ({ onNavigate }: { onNavigate: (view: 'patient-signup' | 'landing') => void }) => {
-  return (
-    <div className="min-h-screen bg-[#F8F9FA]">
-      {/* Header */}
-      <nav className="bg-white border-b border-slate-200 px-6 h-20 flex items-center justify-between sticky top-0 z-50">
-        <div className="flex items-center">
-          <img src="/ggp-os-logo.png" alt="GGP-OS Logo" className="h-14 md:h-16 w-auto object-contain object-left" onError={(e) => {
-            (e.target as HTMLImageElement).style.display = 'none';
-          }} />
-        </div>
-        <button
-          onClick={() => onNavigate('landing')}
-          className="flex items-center gap-2 text-slate-500 hover:text-[#1a4731] text-sm font-medium transition-colors"
-        >
-          <ArrowLeft size={16} />
-          Back to Home
-        </button>
-      </nav>
 
-      {/* Main Content */}
-      <main className="flex items-center justify-center px-4" style={{ minHeight: 'calc(100vh - 80px)' }}>
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
-          className="w-full max-w-xl"
-        >
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-10 md:p-14 flex flex-col items-center text-center">
-            {/* Blue Circle Icon */}
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#4FC3F7] to-[#0288D1] flex items-center justify-center mb-8 shadow-xl shadow-blue-200/40">
-              <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="2" y="4" width="20" height="16" rx="2" />
-                <circle cx="8" cy="10" r="2" />
-                <path d="M5 16c0-1 1-2 3-2s3 1 3 2" />
-                <line x1="14" y1="9" x2="20" y2="9" />
-                <line x1="14" y1="13" x2="18" y2="13" />
-                <circle cx="19" cy="17" r="2.5" fill="white" stroke="white" />
-                <path d="M18 17l0.7 0.7 1.6-1.6" stroke="#0288D1" strokeWidth="1.5" />
-              </svg>
-            </div>
-
-            {/* Title */}
-            <h1 className="text-2xl md:text-3xl font-bold text-[#3E2723] mb-4">Patient Portal</h1>
-
-            {/* Description */}
-            <p className="text-slate-500 text-base leading-relaxed mb-5 max-w-md">
-              Access the patient portal to apply for a license or manage an existing license.
-            </p>
-
-            {/* Categories */}
-            <p className="text-sm italic text-slate-600 mb-8">
-              Adult, Minor, Caregiver, Short-Term, Out-of-State
-            </p>
-
-            {/* CTA Button */}
-            <button
-              onClick={() => onNavigate('patient-signup')}
-              className="px-10 py-3 bg-[#1a4731] text-white rounded-lg font-semibold text-base hover:bg-[#153a28] transition-all shadow-md hover:shadow-lg active:scale-[0.98]"
-            >
-              Patient Portal
-            </button>
-          </div>
-        </motion.div>
-      </main>
-    </div>
-  );
-};
 
 // --- Patient Signup / License Application ---
 
@@ -4522,7 +4388,7 @@ const PATIENT_STEPS = [
   'Confirmation'
 ];
 
-const PatientSignupPage = ({ onNavigate }: { onNavigate: (view: 'patient-portal' | 'landing') => void }) => {
+const PatientSignupPage = ({ onNavigate }: any) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [showAuraError, setShowAuraError] = useState(false);
   const [auraErrorSource, setAuraErrorSource] = useState<'patient' | 'resident' | ''>('');
@@ -5038,7 +4904,7 @@ const PatientSignupPage = ({ onNavigate }: { onNavigate: (view: 'patient-portal'
         );
 
       case 6: { // Application Review
-        const licenseTypeLabels: Record<string, string> = {
+        const licenseTypeLabels: any = {
           'adult-2year': 'Adult Patient 2-Year License',
           'adult-60day': 'Adult Patient 60-Day Temporary License',
           'minor-2year': 'Minor Patient 2-Year License',
@@ -5048,137 +4914,107 @@ const PatientSignupPage = ({ onNavigate }: { onNavigate: (view: 'patient-portal'
           'out-of-state-minor': 'Out-of-State Minor 30-Day Temporary License',
         };
 
-        // Each review section: title, fields array, optional condition
-        const reviewSections = [
-          {
-            title: 'License Eligibility Criteria',
-            icon: '📋',
-            fields: [
-              { label: 'Patient Or Legal Guardian', value: formData.isPatientOrGuardian === 'yes' ? 'Yes' : formData.isPatientOrGuardian === 'no' ? 'No' : '—' },
-              { label: 'State Resident', value: formData.isStateResident === 'yes' ? 'Yes' : formData.isStateResident === 'no' ? 'No' : '—' },
-              { label: 'Adult License (18+)', value: formData.isAdultLicense === 'yes' ? 'Yes' : formData.isAdultLicense === 'no' ? 'No' : '—' },
-              { label: 'License Type', value: licenseTypeLabels[formData.licenseType] || '—' },
-            ],
-          },
-          {
-            title: 'Personal Information',
-            icon: '👤',
-            fields: [
-              { label: 'First Name', value: formData.firstName || '—' },
-              { label: 'Last Name', value: formData.lastName || '—' },
-              { label: 'Date of Birth', value: formData.dateOfBirth || '—' },
-              { label: 'Email Address', value: formData.email || '—' },
-              { label: 'Phone Number', value: formData.phone || '—' },
-              { label: 'Street Address', value: formData.address || '—' },
-              { label: 'City', value: formData.city || '—' },
-              { label: 'State', value: formData.state || '—' },
-              { label: 'ZIP Code', value: formData.zip || '—' },
-            ],
-          },
-          ...(isCaregiverLicense ? [{
+        const reviewSections = [];
+        reviewSections.push({
+          title: 'License Eligibility Criteria',
+          icon: '📋',
+          fields: [
+            { label: 'Patient Or Legal Guardian', value: formData.isPatientOrGuardian === 'yes' ? 'Yes' : formData.isPatientOrGuardian === 'no' ? 'No' : '-' },
+            { label: 'State Resident', value: formData.isStateResident === 'yes' ? 'Yes' : formData.isStateResident === 'no' ? 'No' : '-' },
+            { label: 'Adult License (18+)', value: formData.isAdultLicense === 'yes' ? 'Yes' : formData.isAdultLicense === 'no' ? 'No' : '-' },
+            { label: 'License Type', value: licenseTypeLabels[formData.licenseType] || '-' },
+          ],
+        });
+        reviewSections.push({
+          title: 'Personal Information',
+          icon: '👤',
+          fields: [
+            { label: 'First Name', value: formData.firstName || '-' },
+            { label: 'Last Name', value: formData.lastName || '-' },
+            { label: 'Date of Birth', value: formData.dateOfBirth || '-' },
+            { label: 'Email Address', value: formData.email || '-' },
+            { label: 'Phone Number', value: formData.phone || '-' },
+            { label: 'Street Address', value: formData.address || '-' },
+            { label: 'City', value: formData.city || '-' },
+            { label: 'State', value: formData.state || '-' },
+            { label: 'ZIP Code', value: formData.zip || '-' },
+          ],
+        });
+        
+        if (isCaregiverLicense) {
+          reviewSections.push({
             title: 'Caregiver Patient Information',
             icon: '🤝',
             fields: [
-              { label: 'Patient First Name', value: formData.caregiverFirstName || '—' },
-              { label: 'Patient Last Name', value: formData.caregiverLastName || '—' },
-              { label: 'Relationship to Patient', value: formData.caregiverRelationship ? formData.caregiverRelationship.replace('-', ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()) : '—' },
+              { label: 'Patient First Name', value: formData.caregiverFirstName || '-' },
+              { label: 'Patient Last Name', value: formData.caregiverLastName || '-' },
+              { label: 'Relationship to Patient', value: formData.caregiverRelationship ? formData.caregiverRelationship.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) : '-' },
             ],
-          }] : []),
-          {
-            title: 'Proof of Identity',
-            icon: '🪪',
-            fields: [
-              { label: 'Identification Type', value: formData.idType ? formData.idType.replace(/-/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()) : '—' },
-              { label: 'ID Number', value: formData.idNumber ? `••••${formData.idNumber.slice(-4)}` : '—' },
-              { label: 'ID Document', value: 'Uploaded ✓' },
-            ],
-          },
-          {
-            title: 'Digital Photo Requirements',
-            icon: '📸',
-            fields: [
-              { label: 'Photo', value: 'Uploaded ✓' },
-            ],
-          },
-          {
-            title: 'Attestation',
-            icon: '✅',
-            fields: [
-              { label: 'Certification Agreed', value: formData.attestationAgreed ? 'Yes — Agreed' : 'No' },
-            ],
-          },
-        ];
+          });
+        }
+        
+        reviewSections.push({
+          title: 'Proof of Identity',
+          icon: '🪪',
+          fields: [
+            { label: 'Identification Type', value: formData.idType ? formData.idType.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) : '-' },
+            { label: 'ID Number', value: formData.idNumber ? `••••${formData.idNumber.slice(-4)}` : '-' },
+            { label: 'ID Document', value: 'Uploaded ✓' },
+          ],
+        });
+        reviewSections.push({
+          title: 'Digital Photo Requirements',
+          icon: '📸',
+          fields: [
+            { label: 'Photo', value: 'Uploaded ✓' },
+          ],
+        });
+        reviewSections.push({
+          title: 'Attestation',
+          icon: '✅',
+          fields: [
+            { label: 'Certification Agreed', value: formData.attestationAgreed ? 'Yes - Agreed' : 'No' },
+          ],
+        });
 
         return (
           <div className="space-y-4">
-            {/* SLDS-style intro text */}
             <div className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-lg p-4">
               <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
               </svg>
               <p className="text-sm text-blue-800 leading-relaxed">
-                Please review all sections below before submitting your application. Click on any section header to expand or collapse it. If you need to make changes, use the <strong>Back</strong> button to navigate to the relevant step.
+                Please review all sections below before submitting your application.
               </p>
             </div>
 
-            {/* Accordion Sections */}
             {reviewSections.map((section, sIdx) => (
               <details key={sIdx} open className="group border border-slate-200 rounded-lg overflow-hidden bg-white shadow-sm">
-                {/* Section Header — SLDS-style */}
                 <summary className="flex items-center gap-3 px-5 py-3.5 bg-gradient-to-r from-slate-50 to-white cursor-pointer select-none hover:from-slate-100 transition-colors list-none [&::-webkit-details-marker]:hidden">
-                  <svg className="w-4 h-4 text-slate-400 transition-transform group-open:rotate-90" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                  </svg>
                   <span className="text-xs">{section.icon}</span>
                   <h3 className="text-sm font-bold text-[#16325c] tracking-wide">{section.title}</h3>
                 </summary>
-                {/* Section Body — two-column record detail grid */}
                 <div className="border-t border-slate-200 px-5 py-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
                     {section.fields.map((field, fIdx) => (
                       <div key={fIdx} className="flex flex-col">
                         <dt className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">{field.label}</dt>
-                        <dd className="text-sm text-slate-900 font-medium break-words">
-                          {field.value === '—' ? (
-                            <span className="text-slate-300 italic">Not provided</span>
-                          ) : (
-                            field.value
-                          )}
-                        </dd>
+                        <dd className="text-sm text-slate-900 font-medium break-words">{field.value}</dd>
                       </div>
                     ))}
                   </div>
                 </div>
               </details>
             ))}
-
-            {/* Footer note */}
-            <div className="flex items-center gap-2 px-1 pt-2">
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 text-amber-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
-              </svg>
-              <p className="text-xs text-slate-500">By clicking <strong>Submit Application</strong>, you confirm all information above is accurate.</p>
-            </div>
           </div>
         );
       }
 
-      case 7: // Confirmation
+      case 7:
         return (
           <div className="text-center py-8">
-            <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle className="text-emerald-600" size={40} />
-            </div>
             <h3 className="text-2xl font-bold text-slate-900 mb-3">Application Submitted!</h3>
-            <p className="text-slate-500 leading-relaxed max-w-md mx-auto">
-              Your patient license application has been received. You will receive a confirmation email shortly. Processing typically takes 5-7 business days.
-            </p>
-            <button
-              onClick={() => onNavigate('landing')}
-              className="mt-8 px-8 py-3 bg-[#1a4731] text-white rounded-lg font-semibold hover:bg-[#153a28] transition-all"
-            >
-              Return to Home
-            </button>
+            <button onClick={() => onNavigate('landing')} className="mt-8 px-8 py-3 bg-[#1a4731] text-white rounded-lg font-semibold">Return Home</button>
           </div>
         );
 
@@ -5364,12 +5200,16 @@ const PatientSignupPage = ({ onNavigate }: { onNavigate: (view: 'patient-portal'
   );
 };
 
+// PendingApprovalScreen removed in favor of ShadowedDashboard
+
+
 export default function App() {
-  const [user, setUser] = useState<FirebaseUser | null>(null);
-  const [userProfile, setUserProfile] = useState<any>(null);
+  const [user, setUser] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState<'landing' | 'login' | 'signup' | 'forgot-password' | 'dashboard' | 'patient-portal' | 'patient-signup' | 'business-signup' | 'support' | 'larry-chatbot' | 'larry-business'>('landing');
-  const [initialRole, setInitialRole] = useState<string | undefined>(undefined);
+  const [view, setView] = useState('landing');
+  const [initialRole, setInitialRole] = useState(undefined);
+  const [isDemoUnlocked, setIsDemoUnlocked] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -5381,7 +5221,7 @@ export default function App() {
           if (docSnap.exists()) {
             const data = docSnap.data();
             setUserProfile(data);
-            setView(prev => prev === 'larry-chatbot' ? prev : (data.role === 'user' || data.role === 'Patient / Caregiver' ? 'patient-portal' : 'dashboard'));
+            setView(prev => prev === 'larry-chatbot' ? prev : 'dashboard');
           } else {
             // This might happen if signup process was interrupted
             setUserProfile(null);
@@ -5400,6 +5240,57 @@ export default function App() {
 
     return () => unsubscribe();
   }, []);
+
+        const renderDashboardByRole = (profile: any) => {
+    if (!profile) return null;
+    const role = profile.role;
+    
+    // 1. OVERSIGHT PORTAL
+    if (role === 'executive_founder') {
+      return <FounderDashboard onLogout={handleLogout} user={profile} />;
+    }
+    if (role === 'internal_admin' || role === 'admin') {
+      return <AdminDashboard onLogout={handleLogout} user={profile} />;
+    }
+    if (role === 'regulator_state' || role?.startsWith('regulator')) {
+      return <RegulatorDashboard onLogout={handleLogout} user={profile} />; 
+    }
+    if (role === 'enforcement_rip' || role === 'RIP' || role?.startsWith('enforcement')) {
+      return <EnforcementDashboard onLogout={handleLogout} user={profile} />;
+    }
+
+    // 2. OPERATIONS / CALL CENTER PORTAL
+    if (role === 'ops_staff' || role?.startsWith('ops_')) {
+      return <OperationsDashboard onLogout={handleLogout} user={profile} />;
+    }
+
+    // 3. BUSINESS PORTAL
+    if (role === 'business_owner' || role === 'business_entity' || role === 'compliance_service' || role?.startsWith('business_')) {
+      return <BusinessDashboard onLogout={handleLogout} user={profile} />;
+    }
+    if (role?.startsWith('medical_provider_')) {
+      return <ProviderDashboard onLogout={handleLogout} user={profile} />;
+    }
+    if (role?.startsWith('attorney_')) {
+      return <AttorneyDashboard onLogout={handleLogout} user={profile} />;
+    }
+
+    // 4. PATIENT PORTAL
+    if (role === 'user' || role === 'Patient / Caregiver' || role === 'patient') {
+      return (
+        <DashboardLayout role={role} onLogout={handleLogout} userProfile={profile}>
+          <PatientDashboard user={profile} />
+        </DashboardLayout>
+      );
+    }
+    
+    // Default
+    return (
+      <DashboardLayout role={role} onLogout={handleLogout} userProfile={profile}>
+        <PatientDashboard user={profile} />
+      </DashboardLayout>
+    );
+  };
 
   const handleLogin = async (email: string, pass: string) => {
     // For admin role, bypass Firebase auth (Email/Password provider not enabled)
@@ -5439,7 +5330,7 @@ export default function App() {
           createdAt: new Date().toISOString(),
         };
         setUserProfile(simulatedProfile);
-        setView((simulatedProfile.role === 'user' || simulatedProfile.role === 'Patient / Caregiver') ? 'patient-portal' : 'dashboard');
+        setView('dashboard');
       } else {
         throw error;
       }
@@ -5449,6 +5340,10 @@ export default function App() {
   const handleSignup = async (email: string, pass: string, role: string, details: any) => {
     console.log('[App.handleSignup] Attempting registration:', { email, role, timestamp: new Date().toISOString() });
     
+    // Roles that require manual approval (all except patient and business)
+    const requiresApproval = role !== 'user' && role !== 'Patient / Caregiver' && role !== 'business';
+    const status = requiresApproval ? 'Pending' : 'Active';
+
     // For admin role, bypass Firebase auth (Email/Password provider not enabled)
     if (role === 'admin') {
       console.log('[App.handleSignup] Admin signup bypass - skipping Firebase auth:', { email, role });
@@ -5456,6 +5351,7 @@ export default function App() {
         uid: 'admin-local-' + Date.now(),
         email: email,
         role: 'admin',
+        status: status,
         displayName: `${details.firstName || ''} ${details.lastName || ''}`.trim() || email.split('@')[0],
         createdAt: new Date().toISOString(),
         ...details
@@ -5485,12 +5381,13 @@ export default function App() {
           uid: 'simulated-local-' + Date.now(),
           email: email,
           role: role,
+          status: status,
           displayName: role === 'business' ? details.companyName : `${details.firstName} ${details.lastName}`,
           createdAt: new Date().toISOString(),
           ...details
         };
         setUserProfile(simulatedProfile);
-        setView((role === 'user' || role === 'Patient / Caregiver') ? 'patient-portal' : 'dashboard');
+        setView('dashboard');
         return;
       }
       throw authError;
@@ -5500,6 +5397,7 @@ export default function App() {
       uid: firebaseUser.uid,
       email: firebaseUser.email,
       role: role,
+      status: status,
       displayName: role === 'business' ? details.companyName : `${details.firstName} ${details.lastName}`,
       createdAt: serverTimestamp(),
       ...details
@@ -5509,7 +5407,7 @@ export default function App() {
       await setDoc(doc(db, 'users', firebaseUser.uid), profile);
       console.log('[App.handleSignup] User profile saved to Firestore:', { uid: firebaseUser.uid, role });
       setUserProfile(profile);
-      setView((role === 'user' || role === 'Patient / Caregiver') ? 'patient-portal' : 'dashboard');
+      setView('dashboard');
     } catch (error) {
       console.error('[App.handleSignup] Firestore write error:', error);
       handleFirestoreError(error, OperationType.CREATE, `users/${firebaseUser.uid}`);
@@ -5543,7 +5441,7 @@ export default function App() {
             <LandingPage
               onNavigate={(v, role) => {
                 setView(v as any);
-                setInitialRole(role);
+                if (role) setInitialRole(role);
               }}
             />
           )}
@@ -5565,13 +5463,7 @@ export default function App() {
               variant="business"
             />
           )}
-          {view === 'patient-portal' && (
-            <PatientPortalPage
-              onNavigate={(v) => {
-                setView(v as any);
-              }}
-            />
-          )}
+
           {view === 'patient-signup' && (
             <PatientSignupPage
               onNavigate={(v) => {
@@ -5597,58 +5489,102 @@ export default function App() {
 
           {view === 'login' && (
             <LoginScreen
-              key="login"
               onLogin={handleLogin}
               onSignUp={() => setView('signup')}
               onForgotPassword={() => setView('forgot-password')}
-            />
-          )}
-          {view === 'forgot-password' && (
-            <ForgotPasswordScreen
-              key="forgot-password"
-              onBack={() => setView('login')}
-              onReset={handlePasswordReset}
+              onBack={() => setView('landing')}
+              initialRole={initialRole}
+              key="login"
             />
           )}
           {view === 'signup' && (
             <SignupScreen
-              key="signup"
+              onBack={() => setView('landing')}
               onLogin={() => setView('login')}
               onComplete={handleSignup}
-              onNavigate={(v) => {
-                setView(v as any);
-              }}
+              onNavigate={setView}
               initialRole={initialRole}
+              key="signup"
             />
           )}
-          {view === 'dashboard' && userProfile && userProfile.role === 'admin' && (
-            <motion.div
-              key="dashboard-admin"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <AdminExecutiveDashboard onLogout={handleLogout} user={userProfile} />
-            </motion.div>
+          {view === 'forgot-password' && (
+            <ForgotPasswordScreen
+              onBack={() => setView('login')}
+              onReset={handlePasswordReset}
+              key="forgot-password"
+            />
           )}
-          {view === 'dashboard' && userProfile && userProfile.role !== 'admin' && (
-            <motion.div
-              key="dashboard"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <DashboardLayout
-                role={userProfile.role}
-                onLogout={handleLogout}
-                userProfile={userProfile}
-              >
-                {(userProfile.role === 'user' || userProfile.role === 'Patient / Caregiver') && <PatientDashboard />}
-                {userProfile.role === 'business' && <BusinessDashboard onLogout={handleLogout} />}
-                {userProfile.role === 'oversight' && <OversightDashboard />}
-                {userProfile.role === 'executive' && <ExecutiveDashboard />}
-              </DashboardLayout>
-            </motion.div>
+          {view === 'patient-portal' && (
+            <PatientDashboard
+              onLogout={handleLogout}
+              user={userProfile}
+              onSignup={() => setView('patient-signup')}
+              key="patient-portal"
+            />
+          )}
+          {view === 'provider-signup' && (
+            <ProviderRegistrationPage
+              onNavigate={setView}
+              key="provider-signup"
+            />
+          )}
+
+          {view === 'dashboard' && userProfile && (
+            <AnimatePresence mode="wait">
+              {userProfile.status === 'Pending' && !isDemoUnlocked ? (
+                <div key="shadow-mode" className="relative min-h-screen">
+                  {/* Preview Mode Overlay */}
+                  <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/10 backdrop-blur-[2px] pointer-events-none">
+                    <motion.div 
+                      initial={{ scale: 0.9, opacity: 0 }} 
+                      animate={{ scale: 1, opacity: 1 }}
+                      className="max-w-2xl w-full bg-white/95 backdrop-blur-2xl border border-[#1a4731]/30 p-10 rounded-3xl shadow-2xl pointer-events-auto flex flex-col items-center text-center space-y-6"
+                    >
+                        <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center text-amber-600 mb-2">
+                            <Clock size={40} className="animate-pulse" />
+                        </div>
+                        <div>
+                            <h2 className="text-3xl font-black text-slate-800 mb-2">Verification in Progress</h2>
+                            <p className="text-slate-600">
+                              Your <strong>{userProfile.role.replace(/_/g, ' ')}</strong> credentials are currently undergoing secure validation. 
+                              You can explore the dashboard below in <strong>Shadow Mode</strong> to familiarize yourself with the tools.
+                            </p>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                            <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100 text-left">
+                                <h4 className="text-xs font-bold text-[#1a4731] uppercase tracking-widest mb-2 flex items-center gap-2"><BookOpen size={14}/> Education Center</h4>
+                                <p className="text-xs text-slate-500 leading-relaxed">Learn how to use Larry AI for automated compliance enforcement and strategic oversight in your jurisdiction.</p>
+                            </div>
+                            <div className="bg-[#1a4731] p-5 rounded-2xl border border-[#1a4731] text-left text-white shadow-lg">
+                                <h4 className="text-xs font-bold uppercase tracking-widest mb-2 flex items-center gap-2"><Sparkles size={14}/> Fast Track Approval</h4>
+                                <p className="text-xs text-white/80 font-medium leading-relaxed">Upgrade to an <strong>Enterprise Subscription</strong> now to prioritize your background check and unlock all AI nodes instantly.</p>
+                            </div>
+                        </div>
+                        
+                        <div className="flex gap-4 w-full pt-4">
+                            <button onClick={handleLogout} className="flex-1 px-4 py-2 border border-slate-300 rounded-lg font-semibold hover:bg-slate-50 transition-all">Sign Out</button>
+                            <button onClick={() => setIsDemoUnlocked(true)} className="flex-1 bg-[#1a4731] text-white py-2 rounded-lg font-semibold hover:bg-[#153a28] transition-all">Upgrade & Unlock</button>
+                        </div>
+                    </motion.div>
+                  </div>
+                  {/* Blurred Dashboard */}
+                  <div className="pointer-events-none select-none h-screen overflow-hidden">
+                    {renderDashboardByRole(userProfile)}
+                  </div>
+                </div>
+              ) : (
+                <motion.div 
+                  key="active-dashboard" 
+                  initial={{ opacity: 0, y: 10 }} 
+                  animate={{ opacity: 1, y: 0 }} 
+                  exit={{ opacity: 0, y: -10 }}
+                  className="min-h-screen"
+                >
+                  {renderDashboardByRole(userProfile)}
+                </motion.div>
+              )}
+            </AnimatePresence>
           )}
         </AnimatePresence>
       </div>

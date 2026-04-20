@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Building2, Shield, Clock, TrendingUp, Plus, LayoutDashboard, CreditCard, PackageSearch, AlertCircle, ShoppingCart, Loader2, Trash2, Edit2, CheckCircle, XCircle, Sparkles, MapPin, BarChart2, Activity, MessageSquare, LogOut, FileText, ClipboardList, CheckSquare, UploadCloud, Calendar, Zap, AlertTriangle, Database } from 'lucide-react';
+import { Wallet, Users, Building2, Shield, Clock, TrendingUp, Plus, LayoutDashboard, CreditCard, PackageSearch, AlertCircle, ShoppingCart, Loader2, Trash2, Edit2, CheckCircle, XCircle, Sparkles, MapPin, BarChart2, Activity, MessageSquare, LogOut, FileText, ClipboardList, CheckSquare, UploadCloud, Calendar, Zap, AlertTriangle, Database } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { StatCard } from '../components/StatCard';
+import { CareWalletTab } from '../components/shared/CareWalletTab';
 import { SubscriptionPortal } from '../components/SubscriptionPortal';
 import { turso } from '../lib/turso';
 import { initializeDatabase } from '../lib/tursoMigrations';
@@ -40,8 +41,9 @@ const MiniBarChart = ({ data }: { data: number[] }) => (
   </div>
 );
 
-export const BusinessDashboard = ({ onLogout }: { onLogout?: () => void }) => {
-  const [activeTab, setActiveTab] = useState<'home' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'insurance' | 'documents' | 'subscription'>('home');
+export const BusinessDashboard = ({ onLogout, user }: { onLogout?: () => void | Promise<void>, user?: any }) => {
+  const [demoUnlocked, setDemoUnlocked] = useState(false);
+  const [activeTab, setActiveTab] = useState<'home' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'insurance' | 'documents' | 'subscription' | 'integrations' | 'staff' | 'traceability' | 'readiness' | 'wallet'>('home');
   const [isInitializing, setIsInitializing] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [processingId, setProcessingId] = useState<string | null>(null);
@@ -340,7 +342,7 @@ export const BusinessDashboard = ({ onLogout }: { onLogout?: () => void }) => {
           <Building2 size={24} />
         </div>
         <div>
-          <h2 className="text-2xl font-black text-slate-800 tracking-tight leading-none">Business Portal</h2>
+          <h2 className="text-2xl font-black text-slate-800 tracking-tight leading-none">{user?.role === 'compliance_service' ? 'Compliance Service Portal' : 'Business Portal'}</h2>
           <p className="text-sm text-slate-500 font-medium mt-1">Global Green Enterprise</p>
         </div>
       </div>
@@ -368,7 +370,7 @@ export const BusinessDashboard = ({ onLogout }: { onLogout?: () => void }) => {
           onClick={() => setActiveTab('locations')}
           className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'locations' ? "bg-white text-[#1a4731] shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
         >
-          <MapPin size={18} /> Locations
+          {user?.role === 'compliance_service' ? <Users size={18} /> : <MapPin size={18} />} {user?.role === 'compliance_service' ? 'Managed Clients' : 'Locations'}
         </button>
         <button 
           onClick={() => setActiveTab('compliance')}
@@ -376,6 +378,24 @@ export const BusinessDashboard = ({ onLogout }: { onLogout?: () => void }) => {
         >
           <Shield size={18} className={activeTab === 'compliance' ? "" : "group-hover:text-amber-500 transition-colors"} /> Compliance
           {alerts.filter(a => a.is_resolved === 0).length > 0 && <span className="absolute top-2 right-3 w-2 h-2 rounded-full bg-red-500"></span>}
+        </button>
+        <button 
+          onClick={() => setActiveTab('staff')}
+          className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'staff' ? "bg-white text-[#1a4731] shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
+        >
+          <ClipboardList size={18} /> Staff
+        </button>
+        <button 
+          onClick={() => setActiveTab('traceability')}
+          className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'traceability' ? "bg-white text-[#1a4731] shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
+        >
+          <Database size={18} /> Traceability
+        </button>
+        <button 
+          onClick={() => setActiveTab('readiness')}
+          className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'readiness' ? "bg-white text-amber-600 shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-amber-600 hover:bg-slate-200/50")}
+        >
+          <CheckSquare size={18} /> OMMA Ready
         </button>
         <button 
           onClick={() => setActiveTab('integrations')}
@@ -395,9 +415,15 @@ export const BusinessDashboard = ({ onLogout }: { onLogout?: () => void }) => {
         >
           <FileText size={18} /> Vault
         </button>
+        <button 
+          onClick={() => setActiveTab('wallet')}
+          className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'wallet' ? "bg-white text-[#1a4731] shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
+        >
+          <Wallet size={18} /> Care Wallet
+        </button>
         <div className="w-px h-8 bg-slate-200/80 mx-1 self-center" />
         <button 
-          onClick={() => setActiveTab('subscription')}
+          onClick={() => { setDemoUnlocked(true); setActiveTab('home'); }}
           className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'subscription' ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md shadow-amber-500/20" : "text-slate-500 hover:text-amber-600 hover:bg-slate-200/50")}
         >
           <Sparkles size={18} /> Settings
@@ -1273,6 +1299,213 @@ export const BusinessDashboard = ({ onLogout }: { onLogout?: () => void }) => {
                 ))}
               </tbody>
            </table>
+        </div>
+      </div>
+    )}
+
+    {activeTab === 'staff' && (
+      <div className="space-y-6">
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+            <div><h3 className="font-bold text-slate-800">Staff & Employee Management</h3><p className="text-sm text-slate-500">OMMA agent cards, background checks, role assignments</p></div>
+            <Button icon={Plus}>Add Employee</Button>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead className="bg-slate-50 text-xs uppercase text-slate-500 font-bold tracking-wider border-b"><tr><th className="px-4 py-3">Employee</th><th className="px-4 py-3">Role</th><th className="px-4 py-3">OMMA Card</th><th className="px-4 py-3">Background</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Actions</th></tr></thead>
+              <tbody className="divide-y divide-slate-100">
+                {[
+                  { name: 'Marcus Johnson', role: 'Budtender', card: 'Active', cardExp: '12/2026', bg: 'Clear', status: 'Active' },
+                  { name: 'Sarah Kim', role: 'Manager', card: 'Active', cardExp: '08/2026', bg: 'Clear', status: 'Active' },
+                  { name: 'James Ortiz', role: 'Compliance Officer', card: 'Expiring', cardExp: '05/2026', bg: 'Clear', status: 'Active' },
+                  { name: 'Emily Tran', role: 'Budtender', card: 'Pending', cardExp: 'N/A', bg: 'Pending', status: 'Onboarding' },
+                ].map((emp, i) => (
+                  <tr key={i} className="hover:bg-slate-50">
+                    <td className="px-4 py-4"><div className="flex items-center gap-3"><div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs">{emp.name[0]}</div><span className="font-bold text-sm text-slate-800">{emp.name}</span></div></td>
+                    <td className="px-4 py-4 text-sm text-slate-600">{emp.role}</td>
+                    <td className="px-4 py-4"><span className={cn("px-2 py-0.5 rounded-full text-[10px] font-bold", emp.card === 'Active' ? "bg-emerald-50 text-emerald-600" : emp.card === 'Expiring' ? "bg-amber-50 text-amber-600" : "bg-blue-50 text-blue-600")}>{emp.card} {emp.cardExp !== 'N/A' && `(${emp.cardExp})`}</span></td>
+                    <td className="px-4 py-4"><span className={cn("px-2 py-0.5 rounded-full text-[10px] font-bold", emp.bg === 'Clear' ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600")}>{emp.bg}</span></td>
+                    <td className="px-4 py-4"><span className={cn("px-2 py-0.5 rounded-full text-[10px] font-bold", emp.status === 'Active' ? "bg-emerald-50 text-emerald-600" : "bg-blue-50 text-blue-600")}>{emp.status}</span></td>
+                    <td className="px-4 py-4"><button className="text-xs font-bold text-[#1a4731] hover:underline">Manage</button></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+            <h4 className="font-bold text-slate-800 text-sm mb-3">RBAC Roles</h4>
+            <div className="space-y-2">{['Owner (Full Access)', 'Manager (Operations)', 'Budtender (POS Only)', 'Compliance Officer (Audits)', 'Inventory Clerk (SINC)'].map((r, i) => <div key={i} className="flex items-center justify-between p-2 bg-slate-50 rounded-lg text-xs"><span className="font-medium text-slate-700">{r}</span><CheckCircle size={12} className="text-emerald-500" /></div>)}</div>
+          </div>
+          <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+            <h4 className="font-bold text-slate-800 text-sm mb-3">Training Compliance</h4>
+            <div className="space-y-2">{['OMMA Agent Training', 'POS & Cash Handling', 'Compliance & SOPs', 'Safety & Security'].map((t, i) => <div key={i} className="flex items-center justify-between p-2 bg-slate-50 rounded-lg text-xs"><span className="font-medium text-slate-700">{t}</span><span className="font-bold text-emerald-600">100%</span></div>)}</div>
+          </div>
+          <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+            <h4 className="font-bold text-slate-800 text-sm mb-3">Upcoming Expirations</h4>
+            <div className="space-y-2">
+              <div className="p-3 bg-amber-50 border border-amber-100 rounded-lg"><p className="text-xs font-bold text-amber-800">James Ortiz – OMMA Card</p><p className="text-[10px] text-amber-600">Expires May 2026 • 36 days</p></div>
+              <div className="p-3 bg-blue-50 border border-blue-100 rounded-lg"><p className="text-xs font-bold text-blue-800">Emily Tran – Background Check</p><p className="text-[10px] text-blue-600">Pending OSBI • Submitted 04/15</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {activeTab === 'traceability' && (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div><h3 className="text-xl font-bold text-slate-800">Seed-to-Sale Traceability</h3><p className="text-sm text-slate-500">Full chain-of-custody from cultivation → processing → retail sale</p></div>
+          <div className="flex gap-2">
+            <Button icon={Plus}>New Harvest Batch</Button>
+            <Button variant="outline" icon={FileText}>Export Manifest</Button>
+          </div>
+        </div>
+        {/* Traceability Pipeline */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {[
+            { stage: 'Cultivation', count: 142, icon: '🌱', color: 'emerald', desc: 'Active plants tagged' },
+            { stage: 'Processing', count: 38, icon: '⚗️', color: 'blue', desc: 'Batches in extraction' },
+            { stage: 'Testing', count: 12, icon: '🔬', color: 'violet', desc: 'Awaiting lab results' },
+            { stage: 'Retail Ready', count: 84, icon: '🏪', color: 'amber', desc: 'Cleared for dispensary' },
+          ].map((s, i) => (
+            <div key={i} className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex justify-between items-start mb-3">
+                <span className="text-2xl">{s.icon}</span>
+                <span className={cn("text-[10px] font-bold uppercase px-2 py-0.5 rounded-full", `bg-${s.color}-50 text-${s.color}-600`)}>{s.stage}</span>
+              </div>
+              <h3 className="text-3xl font-black text-slate-800">{s.count}</h3>
+              <p className="text-xs text-slate-500 mt-1">{s.desc}</p>
+            </div>
+          ))}
+        </div>
+        {/* Active Batches */}
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="p-5 border-b border-slate-100 bg-slate-50"><h3 className="font-bold text-slate-800">Active Batch Tracking</h3></div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead className="bg-slate-50 text-xs uppercase text-slate-500 font-bold border-b"><tr><th className="px-4 py-3">Batch ID</th><th className="px-4 py-3">Strain</th><th className="px-4 py-3">Stage</th><th className="px-4 py-3">Qty</th><th className="px-4 py-3">Metrc Tag</th><th className="px-4 py-3">280E</th><th className="px-4 py-3">Status</th></tr></thead>
+              <tbody className="divide-y divide-slate-100">
+                {[
+                  { id: 'HB-2026-0412', strain: 'Blue Dream', stage: 'Retail Ready', qty: '24 units', tag: '1A4FF010...482', tax: 'COGS', status: 'Cleared' },
+                  { id: 'HB-2026-0411', strain: 'OG Kush', stage: 'Testing', qty: '5 lbs', tag: '1A4FF010...491', tax: 'COGS', status: 'Lab Pending' },
+                  { id: 'HB-2026-0408', strain: 'Sour Diesel', stage: 'Processing', qty: '12 lbs', tag: '1A4FF010...503', tax: 'COGS', status: 'In Extract' },
+                  { id: 'HB-2026-0401', strain: 'Girl Scout', stage: 'Cultivation', qty: '48 plants', tag: '1A4FF010...518', tax: 'COGS', status: 'Vegetative' },
+                ].map((b, i) => (
+                  <tr key={i} className="hover:bg-slate-50">
+                    <td className="px-4 py-3 font-mono text-xs font-bold text-slate-800">{b.id}</td>
+                    <td className="px-4 py-3 text-sm font-medium text-slate-700">{b.strain}</td>
+                    <td className="px-4 py-3"><span className={cn("px-2 py-0.5 rounded-full text-[10px] font-bold", b.stage === 'Retail Ready' ? "bg-emerald-50 text-emerald-600" : b.stage === 'Testing' ? "bg-violet-50 text-violet-600" : b.stage === 'Processing' ? "bg-blue-50 text-blue-600" : "bg-amber-50 text-amber-600")}>{b.stage}</span></td>
+                    <td className="px-4 py-3 text-sm text-slate-600">{b.qty}</td>
+                    <td className="px-4 py-3 font-mono text-[10px] text-slate-500">{b.tag}</td>
+                    <td className="px-4 py-3"><span className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] font-bold">{b.tax}</span></td>
+                    <td className="px-4 py-3 text-xs font-bold text-slate-600">{b.status}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        {/* Recall Management */}
+        <div className="bg-red-50 rounded-2xl border border-red-200 p-5">
+          <div className="flex items-center gap-3 mb-3"><AlertTriangle className="text-red-500" size={20} /><h3 className="font-bold text-red-800">Recall Management</h3></div>
+          <p className="text-sm text-red-700 mb-3">OMMA recall alerts feed directly into SINC inventory. Affected batches are auto-flagged and blocked from sale.</p>
+          <div className="flex gap-3">
+            <div className="flex-1 bg-white rounded-xl border border-red-100 p-3"><p className="text-xs font-bold text-slate-800">Active Recalls</p><p className="text-2xl font-black text-red-600">0</p><p className="text-[10px] text-emerald-600 font-bold">All Clear</p></div>
+            <div className="flex-1 bg-white rounded-xl border border-red-100 p-3"><p className="text-xs font-bold text-slate-800">Quarantined</p><p className="text-2xl font-black text-slate-800">0</p><p className="text-[10px] text-slate-500">No affected batches</p></div>
+            <div className="flex-1 bg-white rounded-xl border border-red-100 p-3"><p className="text-xs font-bold text-slate-800">Last Check</p><p className="text-2xl font-black text-slate-800">2m</p><p className="text-[10px] text-slate-500">Larry auto-scan</p></div>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {activeTab === 'readiness' && (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div><h3 className="text-xl font-bold text-slate-800">OMMA Pre-Inspection Readiness Scorecard</h3><p className="text-sm text-slate-500">Larry auto-audits against the official OMMA inspection form (v5.3)</p></div>
+          <Button icon={FileText}>Export OMMA Report</Button>
+        </div>
+        {/* Overall Score */}
+        <div className="bg-gradient-to-r from-[#0f291c] to-[#1a4731] rounded-2xl p-6 text-white flex items-center justify-between">
+          <div>
+            <p className="text-emerald-200 text-xs font-bold uppercase tracking-widest mb-1">Overall Readiness</p>
+            <h2 className="text-5xl font-black">{complianceScore}%</h2>
+            <p className="text-emerald-100/80 text-sm mt-1">{unresolvedAlerts.length === 0 ? 'All OMMA checklist items passing' : `${unresolvedAlerts.length} items need attention`}</p>
+          </div>
+          <div className="text-right">
+            <p className="text-emerald-200 text-xs font-bold">Last Larry Scan</p>
+            <p className="text-white font-bold">Just Now</p>
+            <p className="text-emerald-200 text-xs mt-2">Next OMMA Window</p>
+            <p className="text-white font-bold">~45 days</p>
+          </div>
+        </div>
+        {/* Checklist Sections */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[
+            { section: 'General Observations & Premises', items: ['License conspicuously posted', 'Records match OMMA account', 'No unapproved material changes', 'OBNDD registration valid'], pass: 4 },
+            { section: 'Security Measures', items: ['24/7 video surveillance (90-day)', 'Alarm system with LE notification', 'Restricted access controls', 'Visitor log maintained'], pass: 4 },
+            { section: 'Inventory Tracking (SINC/Metrc)', items: ['Real-time reporting active', 'Owner/manager is admin', 'Physical reconciliation current', 'Waste logs complete'], pass: 3 },
+            { section: 'Patient Transactions', items: ['Patient ID verified per sale', 'Purchase limits enforced', '280E tagging on all sales', 'Receipt generation active'], pass: 4 },
+            { section: 'Packaging & Labeling', items: ['Child-resistant packaging', 'OMMA warning labels present', 'Batch # on all products', 'THC/CBD % displayed'], pass: 4 },
+            { section: 'Facility & Location', items: ['1,000-ft school buffer', 'Certificate of Occupancy valid', 'Certificate of Compliance filed', 'Zoning approval current'], pass: 3 },
+          ].map((sec, i) => (
+            <div key={i} className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+              <div className="flex justify-between items-center mb-3">
+                <h4 className="font-bold text-slate-800 text-sm">{sec.section}</h4>
+                <span className={cn("text-xs font-bold px-2 py-0.5 rounded-full", sec.pass === sec.items.length ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600")}>{sec.pass}/{sec.items.length}</span>
+              </div>
+              <div className="space-y-1.5">
+                {sec.items.map((item, j) => (
+                  <div key={j} className="flex items-center gap-2 text-xs">
+                    {j < sec.pass ? <CheckCircle size={14} className="text-emerald-500 shrink-0" /> : <AlertTriangle size={14} className="text-amber-500 shrink-0" />}
+                    <span className={j < sec.pass ? "text-slate-600" : "text-amber-700 font-bold"}>{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+        {/* Penalty Risk */}
+        <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+          <h4 className="font-bold text-slate-800 mb-3 flex items-center gap-2"><AlertTriangle size={16} className="text-red-500" /> Penalty Risk Estimator</h4>
+          <p className="text-sm text-slate-500 mb-4">Based on current gaps, Larry estimates the following risk if OMMA inspects today:</p>
+          <div className="grid grid-cols-3 gap-4">
+            <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl text-center"><p className="text-xs font-bold text-emerald-700">Fine Risk</p><p className="text-2xl font-black text-emerald-600">${unresolvedAlerts.length * 5000}</p></div>
+            <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl text-center"><p className="text-xs font-bold text-amber-700">Suspension Risk</p><p className="text-2xl font-black text-amber-600">{unresolvedAlerts.length > 2 ? 'Medium' : 'Low'}</p></div>
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl text-center"><p className="text-xs font-bold text-slate-700">Embargo Risk</p><p className="text-2xl font-black text-slate-600">{unresolvedAlerts.length > 3 ? 'High' : 'Low'}</p></div>
+          </div>
+        </div>
+      </div>
+    )}
+
+     
+    
+    
+    
+    
+    {activeTab === 'wallet' && <CareWalletTab userRole="business" />}
+    {activeTab === 'integrations' && (
+      <div className="space-y-6">
+        <div><h3 className="text-xl font-bold text-slate-800">Integrations & API Connections</h3><p className="text-sm text-slate-500">Connect your business to state systems, payment processors, and third-party tools</p></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[
+            { name: 'Metrc (State Traceability)', status: 'Connected', color: 'emerald', desc: 'Auto-sync inventory & sales' },
+            { name: 'Care Wallet / Credit Engine', status: 'Connected', color: 'emerald', desc: 'Patient wallet & compassion points' },
+            { name: 'OMMA Portal', status: 'Connected', color: 'emerald', desc: 'License status & recall feeds' },
+            { name: 'Payment Gateway', status: 'Connected', color: 'emerald', desc: 'Visa/MC/Discover processing' },
+            { name: 'Checkr (Background Checks)', status: 'Available', color: 'blue', desc: 'Employee background verification' },
+            { name: 'QuickBooks / 280E', status: 'Available', color: 'blue', desc: 'Tax-compliant accounting sync' },
+          ].map((int, i) => (
+            <div key={i} className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex justify-between items-start mb-3">
+                <h4 className="font-bold text-slate-800 text-sm">{int.name}</h4>
+                <span className={cn("px-2 py-0.5 rounded-full text-[10px] font-bold", int.status === 'Connected' ? "bg-emerald-50 text-emerald-600" : "bg-blue-50 text-blue-600")}>{int.status}</span>
+              </div>
+              <p className="text-xs text-slate-500 mb-3">{int.desc}</p>
+              <button className={cn("w-full py-2 rounded-lg text-xs font-bold transition-colors", int.status === 'Connected' ? "bg-slate-100 text-slate-600 hover:bg-slate-200" : "bg-[#1a4731] text-white hover:bg-[#153a28]")}>{int.status === 'Connected' ? 'Configure' : 'Connect Now'}</button>
+            </div>
+          ))}
         </div>
       </div>
     )}
