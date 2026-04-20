@@ -1665,13 +1665,13 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
     // BUSINESS PORTAL ROLES
     { id: 'compliance_service', label: 'Patient / Compliance Business Service', category: 'Business', icon: Users, desc: 'Companies that manage cards and compliance for their own client base.' },
     { id: 'business', label: 'Business Entity (Dispensary/Cultivator)', category: 'Business', icon: Building2, desc: 'Commercial operators requiring state-integrated compliance tools.' },
-    { id: 'provider', label: 'Medical Provider', category: 'Business', icon: Stethoscope, desc: 'Physicians and clinics performing evaluations and certifications.' },
-    { id: 'attorney', label: 'Attorney / Law Firm', category: 'Business', icon: Briefcase, desc: 'Legal counsel managing multi-state licensing and compliance portfolios.' },
+    { id: 'provider', label: 'Medical Provider', category: 'Business', icon: Stethoscope, desc: 'Physicians and certifications.' },
+    { id: 'attorney', label: 'Attorney / Law Firm', category: 'Business', icon: Briefcase, desc: 'Legal counsel managing multi-state licensing portfolios.' },
     
     // OVERSIGHT PORTAL ROLES
     { id: 'enforcement_state', label: 'Law Enforcement (RIP)', category: 'Oversight', icon: Shield, desc: 'Real-time Intelligence & Policing (RIP) for authorized agencies.' },
     { id: 'regulator_state', label: 'Regulator / Authority', category: 'Oversight', icon: Activity, desc: 'State-level licensing authority and legal oversight bodies.' },
-    { id: 'executive_founder', label: 'Executive Founder', category: 'Oversight', icon: BarChart3, desc: 'Platform Founder and Leadership. Ultimate Oversight Command.' },
+    // Executive Founder role removed from public signup for security
     { id: 'backoffice_staff', label: 'Operations & Support', category: 'Oversight', icon: Cpu, desc: 'Operational staff managing back-office AI systems.' },
   ];
 
@@ -5209,20 +5209,48 @@ export default function App() {
   const [isDemoUnlocked, setIsDemoUnlocked] = useState(false);
 
   useEffect(() => {
+    const FOUNDER_EMAIL = "globalgreenhp@gmail.com";
+    const OVERSIGHT_EMAILS = ["ryanj.ferrari@icloud.com", "bobmooregreenenergy@gmail.com"];
+    
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         setUser(firebaseUser);
         try {
           const docRef = doc(db, 'users', firebaseUser.uid);
           const docSnap = await getDoc(docRef);
+          const lowerEmail = firebaseUser.email?.toLowerCase();
+          
           if (docSnap.exists()) {
             const data = docSnap.data();
+            // Securely ensure role is correct for privileged users
+            if (lowerEmail === FOUNDER_EMAIL && data.role !== 'executive_founder') {
+              data.role = 'executive_founder';
+              await setDoc(docRef, data, { merge: true });
+            } else if (OVERSIGHT_EMAILS.includes(lowerEmail) && data.role !== 'regulator_state') {
+              data.role = 'regulator_state';
+              await setDoc(docRef, data, { merge: true });
+            }
             setUserProfile(data);
             setView(prev => prev === 'larry-chatbot' ? prev : 'dashboard');
           } else {
-            // This might happen if signup process was interrupted
-            setUserProfile(null);
-            setView('login');
+            // Auto-provision privileged profiles
+            if (lowerEmail === FOUNDER_EMAIL || OVERSIGHT_EMAILS.includes(lowerEmail)) {
+               const isFounder = lowerEmail === FOUNDER_EMAIL;
+               const privilegedProfile = {
+                 uid: firebaseUser.uid,
+                 email: firebaseUser.email,
+                 role: isFounder ? 'executive_founder' : 'regulator_state',
+                 displayName: isFounder ? 'Shantell Robinson' : (lowerEmail.includes('ferrari') ? 'Ryan Ferrari' : 'Bob Moore'),
+                 status: 'Active',
+                 createdAt: new Date().toISOString()
+               };
+               await setDoc(docRef, privilegedProfile);
+               setUserProfile(privilegedProfile);
+               setView('dashboard');
+            } else {
+              setUserProfile(null);
+              setView('login');
+            }
           }
         } catch (error) {
           handleFirestoreError(error, OperationType.GET, `users/${firebaseUser.uid}`);
@@ -5243,7 +5271,10 @@ export default function App() {
     const role = profile.role;
     
     // Oversight Portal Routing
-    if (role === 'admin' || role === 'executive_founder' || role === 'executive_ceo') {
+    if (role === 'executive_founder' || role === 'executive_ceo') {
+      return <FounderDashboard onLogout={handleLogout} user={profile} />;
+    }
+    if (role === 'admin' || role === 'regulator_state' || role?.startsWith('regulator') || role?.startsWith('backoffice')) {
       return <OversightDashboard onLogout={handleLogout} user={profile} />;
     }
     if (role === 'enforcement_state' || role?.startsWith('enforcement')) {
@@ -5287,17 +5318,25 @@ export default function App() {
   };
 
   const handleLogin = async (email: string, pass: string) => {
-    // For admin role, bypass Firebase auth (Email/Password provider not enabled)
-    if (initialRole === 'admin') {
-      console.log('[App.handleLogin] Admin login bypass - skipping Firebase auth:', { email });
-      const adminProfile = {
-        uid: 'admin-local-' + Date.now(),
+    const FOUNDER_EMAIL = "globalgreenhp@gmail.com";
+    const OVERSIGHT_EMAILS = ["ryanj.ferrari@icloud.com", "bobmooregreenenergy@gmail.com"];
+    const lowerEmail = email.toLowerCase();
+    
+    // Privileged login override
+    if (initialRole === 'admin' || lowerEmail === FOUNDER_EMAIL || OVERSIGHT_EMAILS.includes(lowerEmail)) {
+      console.log('[App.handleLogin] Privileged login override:', { email });
+      const isFounder = lowerEmail === FOUNDER_EMAIL;
+      const isAdmin = initialRole === 'admin';
+      
+      const privilegedProfile = {
+        uid: 'privileged-local-' + (isFounder ? 'founder' : (isAdmin ? 'admin' : 'oversight')),
         email: email,
-        role: 'admin',
-        displayName: email.split('@')[0],
+        role: isFounder ? 'executive_founder' : (isAdmin ? 'admin' : 'regulator_state'),
+        displayName: isFounder ? 'Shantell Robinson' : (lowerEmail.includes('ferrari') ? 'Ryan Ferrari' : (lowerEmail.includes('moore') ? 'Bob Moore' : email.split('@')[0])),
+        status: 'Active',
         createdAt: new Date().toISOString(),
       };
-      setUserProfile(adminProfile);
+      setUserProfile(privilegedProfile);
       setView('dashboard');
       return;
     }
@@ -5306,21 +5345,22 @@ export default function App() {
       await signInWithEmailAndPassword(auth, email, pass);
     } catch (error: any) {
       console.warn('[App.handleLogin] Firebase Auth Error (Gracefully handled):', error.message || error);
-      // Fallback for Missing Firebase Auth Setup or invalid testing credentials
-      if (error.code === 'auth/operation-not-allowed' || error.code === 'auth/network-request-failed' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential' || (error.message && error.message.includes('400')) || (error.message && error.message.includes('404')) || (error.message && error.message.includes('operation-not-allowed'))) {
-        console.warn('Simulating login due to Firebase Email/Password Auth constraints during testing.');
+      if (error.code === 'auth/operation-not-allowed' || error.code === 'auth/network-request-failed' || (error.message && error.message.includes('400')) || (error.message && error.message.includes('404'))) {
         let computedRole = initialRole || 'Patient / Caregiver';
         const lowerEmail = email.toLowerCase();
-        if (lowerEmail.includes('admin')) computedRole = 'admin';
+        
+        if (lowerEmail === FOUNDER_EMAIL) computedRole = 'executive_founder';
+        else if (lowerEmail.includes('admin')) computedRole = 'admin';
         else if (lowerEmail.includes('business') || lowerEmail.includes('company') || lowerEmail.includes('dispensary') || lowerEmail.includes('grower')) computedRole = 'business';
         else if (lowerEmail.includes('oversight') || lowerEmail.includes('regulator')) computedRole = 'oversight';
         else if (lowerEmail.includes('exec')) computedRole = 'executive';
-
+        
         const simulatedProfile = {
           uid: 'simulated-local-' + Date.now(),
           email: email,
           role: computedRole,
-          displayName: email.split('@')[0],
+          displayName: lowerEmail === FOUNDER_EMAIL ? "Shantell Robinson" : email.split('@')[0],
+          status: 'Active',
           createdAt: new Date().toISOString(),
         };
         setUserProfile(simulatedProfile);

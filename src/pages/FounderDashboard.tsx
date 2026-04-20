@@ -4,10 +4,16 @@ import {
   Briefcase, HeartPulse, Scale, Gavel, FileCheck, CheckCircle2,
   Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
-  Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Globe, Zap, Database
+  Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Globe, Zap, Database,
+  FlaskConical, CreditCard, Map as MapIcon
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
+import { FederalDashboard } from './FederalDashboard';
+import { PublicHealthDashboard } from './PublicHealthDashboard';
+import { OperationsDashboard } from './OperationsDashboard';
+import { AdminDashboard } from './AdminDashboard';
+import { SubscriptionPortal } from '../components/SubscriptionPortal';
 
 const NAV_ITEMS = [
   { section: 'FOUNDER EXCLUSIVE' },
@@ -24,6 +30,12 @@ const NAV_ITEMS = [
   { id: 'approvals', label: 'Agency Approvals', icon: UserCheck, badge: '12' },
   { id: 'applications', label: 'Applications Queue', icon: FileText, badge: '502' },
   { id: 'compliance', label: 'Compliance Monitor', icon: FileCheck },
+  { section: 'OVERSIGHT HUB' },
+  { id: 'federal', label: 'Federal Command', icon: Globe },
+  { id: 'public_health', label: 'Public Health & Labs', icon: FlaskConical },
+  { id: 'operations', label: 'Ops & Support Center', icon: Cpu },
+  { id: 'state_admin', label: 'State Licensing (Admin)', icon: Shield },
+  { id: 'subscription', label: 'Platform Billing', icon: CreditCard },
   { section: 'SYSTEM CONTROL' },
   { id: 'reports', label: 'Master Analytics', icon: BarChart3 },
   { id: 'logs', label: 'System Logs', icon: Database },
@@ -104,20 +116,162 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
 
   const renderFinancials = () => (
     <div className="space-y-6">
-      <h2 className="text-2xl font-black text-slate-800">Global Financials</h2>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {[{l:'Total Revenue',v:'$18.2M',t:'+22%'},{l:'MRR',v:'$1.52M',t:'+8%'},{l:'Token Sales',v:'$4.1M',t:'+34%'},{l:'Subscriptions',v:'12,402',t:'+310'}].map((s,i)=>(
-          <div key={i} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm"><p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">{s.l}</p><div className="flex items-end justify-between"><h3 className="text-2xl font-black text-slate-800">{s.v}</h3><span className="text-[10px] font-bold px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded-full">{s.t}</span></div></div>
-        ))}
-      </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-          <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2"><TrendingUp size={18} className="text-emerald-500"/>Revenue by Portal</h3>
-          <div className="space-y-3">{[{n:'Patient Portal',v:'$6.2M',p:34},{n:'Business Portal',v:'$8.1M',p:45},{n:'Oversight Portal',v:'$2.4M',p:13},{n:'Operations',v:'$1.5M',p:8}].map((r,i)=>(<div key={i} className="flex items-center gap-4"><span className="text-sm font-bold text-slate-600 w-32">{r.n}</span><div className="flex-1 bg-slate-100 rounded-full h-3"><div className="bg-indigo-500 h-3 rounded-full" style={{width:`${r.p}%`}}/></div><span className="text-sm font-black text-slate-800 w-16 text-right">{r.v}</span></div>))}</div>
+      <div className="bg-indigo-950 p-8 rounded-3xl text-white shadow-2xl relative overflow-hidden mb-8">
+        <div className="absolute top-0 right-0 p-8 opacity-10"><Wallet size={120} /></div>
+        <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div>
+            <h2 className="text-3xl font-black tracking-tight mb-2">Global Financial Command</h2>
+            <p className="text-indigo-200">Consolidated revenue across all jurisdictions and service tiers.</p>
+          </div>
+          <div className="text-center md:text-right px-8 py-4 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md">
+            <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Total Network Reserves</p>
+            <p className="text-4xl font-black text-white">$14.8M</p>
+          </div>
         </div>
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-          <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2"><Wallet size={18} className="text-blue-500"/>Care Wallet Transactions</h3>
-          <div className="space-y-2">{[{d:'Token Purchase - Patient #4821',a:'+$250.00',t:'2m ago'},{d:'B2B Transfer - Apex → GreenLeaf',a:'+$1,200.00',t:'8m ago'},{d:'Subscription - Pro Plan',a:'+$149.00',t:'22m ago'},{d:'POS Transaction - Westside Disp.',a:'+$89.50',t:'1h ago'}].map((tx,i)=>(<div key={i} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100"><div><p className="text-sm font-bold text-slate-700">{tx.d}</p><p className="text-[10px] text-slate-400">{tx.t}</p></div><span className="text-sm font-bold text-emerald-600">{tx.a}</span></div>))}</div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="font-bold text-slate-800">Revenue Trajectory (P&L)</h3>
+              <select className="bg-slate-50 border border-slate-200 text-xs font-bold px-3 py-1.5 rounded-lg outline-none cursor-pointer">
+                <option>Last 12 Months</option>
+                <option>Quarterly</option>
+              </select>
+            </div>
+            <div className="h-64 flex items-end justify-between gap-2 px-2">
+              {[40, 55, 45, 70, 65, 80, 95, 85, 90, 100, 110, 120].map((h, i) => (
+                <div key={i} className="w-full bg-slate-100 rounded-t-lg relative group overflow-hidden">
+                  <div className="absolute bottom-0 w-full bg-indigo-600 rounded-t-lg transition-all duration-700 group-hover:bg-indigo-400" style={{ height: `${h * 0.7}%` }}>
+                    <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] py-1 px-2 rounded font-bold transition-opacity whitespace-nowrap shadow-xl z-20">
+                      ${(h/10).toFixed(1)}M
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+            <h3 className="font-bold text-slate-800 mb-6 flex items-center gap-2"><Database size={18} className="text-indigo-500"/> Revenue Streams</h3>
+            <div className="space-y-5">
+              {[
+                { n: 'Care Wallet Transactions', v: '$8.4M', p: 55, c: 'bg-indigo-600' },
+                { n: 'Business License Fees', v: '$3.2M', p: 25, c: 'bg-emerald-500' },
+                { n: 'Patient Registration Fees', v: '$1.8M', p: 15, c: 'bg-blue-500' },
+                { n: 'B2B Compliance Services', v: '$1.4M', p: 5, c: 'bg-amber-500' }
+              ].map((s, i) => (
+                <div key={i} className="space-y-2">
+                  <div className="flex justify-between text-sm font-bold">
+                    <span className="text-slate-600">{s.n}</span>
+                    <span className="text-slate-900 font-black">{s.v}</span>
+                  </div>
+                  <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
+                    <div className={cn("h-full rounded-full transition-all duration-1000", s.c)} style={{ width: `${s.p}%` }}></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+            <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2"><ArrowUpRight size={18} className="text-emerald-500"/> God View Insights</h3>
+            <div className="space-y-4">
+              <div className="p-5 bg-gradient-to-br from-emerald-50 to-white border border-emerald-100 rounded-2xl shadow-sm">
+                <p className="text-[10px] font-black text-emerald-800 uppercase tracking-[0.1em] mb-2 flex items-center gap-2"><Zap size={12}/> Valuation Pulse</p>
+                <p className="text-sm text-emerald-700 leading-relaxed font-bold">Platform enterprise value has increased by 14.2% since the Oklahoma RIP integration went live.</p>
+              </div>
+              <div className="p-5 bg-gradient-to-br from-indigo-50 to-white border border-indigo-100 rounded-2xl shadow-sm">
+                <p className="text-[10px] font-black text-indigo-800 uppercase tracking-[0.1em] mb-2 flex items-center gap-2"><Globe size={12}/> Global Expansion</p>
+                <p className="text-sm text-indigo-700 leading-relaxed font-bold">B2B drug inventory tracking systems are seeing 4.2x faster adoption in emerging markets.</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-slate-900 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><Download size={64} /></div>
+            <h4 className="font-black text-sm uppercase tracking-widest mb-2">Master Ledger</h4>
+            <p className="text-xs text-slate-400 mb-6">Export full nationwide financial audit logs for Q2 2026.</p>
+            <button className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-bold transition-all shadow-lg text-sm">Download Financial PDF</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderJurisdictionMap = () => (
+    <div className="space-y-6">
+      <div className="bg-slate-900 p-8 rounded-3xl text-white shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-8 opacity-10"><Globe size={120} /></div>
+        <div className="relative z-10">
+          <h2 className="text-3xl font-black tracking-tight mb-2">Nationwide Jurisdiction Oversight</h2>
+          <p className="text-slate-400 font-medium">Live deployment status and compliance health across the United States.</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 bg-white border border-slate-200 rounded-3xl p-12 shadow-sm h-[600px] flex flex-col items-center justify-center relative overflow-hidden group">
+          {/* Map Visualization with Grid Effect */}
+          <div className="absolute inset-0 opacity-[0.03] pointer-events-none group-hover:opacity-[0.05] transition-opacity duration-1000">
+             <div className="grid grid-cols-20 grid-rows-20 w-full h-full">
+               {Array.from({length: 400}).map((_, i) => (
+                 <div key={i} className="border-[0.5px] border-slate-900" />
+               ))}
+             </div>
+          </div>
+          
+          <div className="relative z-10 text-center space-y-6">
+            <div className="w-24 h-24 bg-indigo-50 text-indigo-600 rounded-[2.5rem] flex items-center justify-center mx-auto shadow-inner border border-indigo-100 mb-8 transform group-hover:rotate-12 transition-transform duration-700">
+              <Globe size={48} className="animate-pulse" />
+            </div>
+            <h3 className="text-3xl font-black text-slate-800 tracking-tighter uppercase">National Grid Active</h3>
+            <p className="text-slate-500 max-w-sm mx-auto text-sm leading-relaxed font-medium">Cross-referencing live METRC data, seed-to-sale logs, and state licensing registries across 14 active jurisdictions.</p>
+          </div>
+
+          <div className="absolute bottom-10 left-10 right-10 grid grid-cols-3 gap-6">
+             {[{l:'States Active',v:'14',c:'text-indigo-600'},{l:'Under Integration',v:'8',c:'text-amber-600'},{l:'Legal Pending',v:'4',c:'text-red-600'}].map((st,i)=>(
+               <div key={i} className="p-6 bg-white border border-slate-100 rounded-2xl text-center shadow-sm hover:shadow-md transition-shadow">
+                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{st.l}</p>
+                 <p className={cn("text-3xl font-black", st.c)}>{st.v}</p>
+               </div>
+             ))}
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm overflow-hidden">
+            <div className="flex items-center justify-between mb-8">
+               <h3 className="font-bold text-slate-800 flex items-center gap-2"><MapIcon size={20} className="text-indigo-500"/> Priority Hubs</h3>
+               <span className="text-[10px] font-black bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full">REAL-TIME</span>
+            </div>
+            <div className="space-y-6">
+              {[
+                { s: 'Oklahoma', r: '$4.2M', st: 'Critical', c: 'text-red-600' },
+                { s: 'California', r: '$3.8M', st: 'Stable', c: 'text-emerald-600' },
+                { s: 'Colorado', r: '$2.9M', st: 'Stable', c: 'text-emerald-600' },
+                { s: 'Michigan', r: '$2.1M', st: 'Review', c: 'text-amber-600' }
+              ].map((st, i) => (
+                <div key={i} className="flex items-center justify-between group cursor-pointer">
+                  <div className="flex items-center gap-4">
+                    <div className="w-2 h-2 rounded-full bg-slate-200 group-hover:bg-indigo-500 transition-colors" />
+                    <div>
+                      <p className="text-sm font-black text-slate-800 group-hover:text-indigo-600 transition-colors uppercase tracking-tight">{st.s}</p>
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{st.r} Net Revenue</p>
+                    </div>
+                  </div>
+                  <span className={cn("text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full", 
+                    st.st === 'Critical' ? "bg-red-50 text-red-600" : 
+                    st.st === 'Review' ? "bg-amber-50 text-amber-600" : 
+                    "bg-emerald-50 text-emerald-600"
+                  )}>{st.st}</span>
+                </div>
+              ))}
+            </div>
+            <button className="w-full mt-10 py-4 text-xs font-black text-indigo-600 bg-indigo-50 rounded-2xl hover:bg-indigo-600 hover:text-white transition-all uppercase tracking-widest shadow-sm">Initialize State Drill-down</button>
+          </div>
         </div>
       </div>
     </div>
@@ -139,14 +293,103 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
   );
 
   const renderUserMgmt = () => (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-black text-slate-800">User Management</h2>
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-slate-100 flex items-center justify-between"><span className="font-bold text-slate-700">All Platform Users</span><span className="text-xs bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full font-bold">1,204,891 Total</span></div>
-        <table className="w-full text-sm"><thead><tr className="bg-slate-50 text-left"><th className="px-4 py-3 font-bold text-slate-500 text-xs uppercase">Name</th><th className="px-4 py-3 font-bold text-slate-500 text-xs uppercase">Role</th><th className="px-4 py-3 font-bold text-slate-500 text-xs uppercase">State</th><th className="px-4 py-3 font-bold text-slate-500 text-xs uppercase">Status</th><th className="px-4 py-3 font-bold text-slate-500 text-xs uppercase">Actions</th></tr></thead>
-        <tbody>{[{n:'Marcus Johnson',r:'Business Admin',st:'OK',s:'Active'},{n:'Sarah Connor',r:'Patient',st:'TX',s:'Pending'},{n:'Dr. Rachel Kim',r:'Provider',st:'CA',s:'Active'},{n:'Ofc. Davis',r:'RIP Officer',st:'OK',s:'Active'},{n:'Emily Tran',r:'Regulator',st:'CO',s:'Suspended'}].map((u,i)=>(<tr key={i} className="border-b border-slate-50 hover:bg-slate-50"><td className="px-4 py-3 font-bold text-slate-800">{u.n}</td><td className="px-4 py-3 text-slate-600">{u.r}</td><td className="px-4 py-3 text-slate-600">{u.st}</td><td className="px-4 py-3"><span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-full",u.s==='Active'?"bg-emerald-50 text-emerald-600":u.s==='Pending'?"bg-amber-50 text-amber-600":"bg-red-50 text-red-600")}>{u.s}</span></td><td className="px-4 py-3"><button className="text-xs font-bold text-indigo-600 hover:underline">View</button></td></tr>))}</tbody></table>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+      <div className="flex justify-between items-center bg-indigo-900 p-8 rounded-3xl text-white shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-8 opacity-10"><Shield size={120} /></div>
+        <div className="relative z-10">
+          <h2 className="text-3xl font-black tracking-tight mb-2">Global Access Control</h2>
+          <p className="text-indigo-200">Executive override enabled. Create, suspend, or assign invite codes for any role.</p>
+        </div>
+        <div className="relative z-10 flex gap-4">
+           <button className="px-6 py-3 bg-white text-indigo-900 font-bold rounded-xl shadow-lg hover:bg-indigo-50 transition-colors flex items-center gap-2">
+             <Plus size={18} /> Generate Invite Code
+           </button>
+           <button className="px-6 py-3 bg-indigo-800 text-white font-bold border border-indigo-700 rounded-xl hover:bg-indigo-700 transition-colors flex items-center gap-2">
+             <Settings size={18} /> Role Permissions
+           </button>
+        </div>
       </div>
-    </div>
+
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+        <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+          <div className="flex items-center gap-4">
+            <h3 className="font-bold text-slate-800 flex items-center gap-2"><Users size={18} className="text-indigo-500"/> Active Privileged Accounts</h3>
+            <span className="text-xs bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full font-bold">1,204,891 Total Platform Users</span>
+          </div>
+          <div className="flex gap-2">
+             <div className="relative">
+               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+               <input type="text" placeholder="Search by name or email..." className="pl-8 pr-4 py-1.5 text-sm border border-slate-200 rounded-lg outline-none focus:border-indigo-500" />
+             </div>
+             <select className="border border-slate-200 text-sm font-bold text-slate-600 rounded-lg px-3 outline-none">
+               <option>All Roles</option>
+               <option>Executive</option>
+               <option>State Regulator</option>
+               <option>Federal Oversight</option>
+               <option>VIP / Investor</option>
+             </select>
+          </div>
+        </div>
+        <table className="w-full text-sm text-left">
+          <thead className="bg-slate-50 border-b border-slate-100">
+            <tr>
+              <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase tracking-wider">User / Email</th>
+              <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase tracking-wider">Assigned Role</th>
+              <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase tracking-wider">Jurisdiction</th>
+              <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase tracking-wider">Status</th>
+              <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase tracking-wider text-right">Executive Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100">
+            {[
+              { n: 'Marcus Johnson', e: 'marcus@ggp-os.com', r: 'Executive / Founder', j: 'Global (All)', s: 'Active', invite: 'Claimed' },
+              { n: 'Sen. Robert Chen', e: 'rchen@senate.gov', r: 'Federal Oversight', j: 'Nationwide (US)', s: 'Active', invite: 'Claimed' },
+              { n: 'Emily Davis', e: 'emily.d@omma.ok.gov', r: 'State Regulator', j: 'Oklahoma', s: 'Active', invite: 'Claimed' },
+              { n: 'Pending VIP', e: 'j.smith@capital.vc', r: 'VIP / Investor', j: 'Global (Read-Only)', s: 'Pending', invite: 'INV-4921-X9' },
+              { n: 'Sarah Jenkins', e: 's.jenkins@ggp-os.com', r: 'System Ops', j: 'Global (Support)', s: 'Suspended', invite: 'Claimed' }
+            ].map((u,i) => (
+              <tr key={i} className="hover:bg-slate-50 transition-colors group">
+                <td className="px-6 py-4">
+                  <p className="font-bold text-slate-800">{u.n}</p>
+                  <p className="text-xs text-slate-500">{u.e}</p>
+                </td>
+                <td className="px-6 py-4">
+                  <span className={cn("text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full border", 
+                    u.r.includes('Executive') ? "bg-indigo-50 text-indigo-700 border-indigo-200" :
+                    u.r.includes('Federal') ? "bg-blue-50 text-blue-700 border-blue-200" :
+                    u.r.includes('VIP') ? "bg-amber-50 text-amber-700 border-amber-200" :
+                    "bg-slate-100 text-slate-700 border-slate-200"
+                  )}>{u.r}</span>
+                </td>
+                <td className="px-6 py-4 text-xs font-bold text-slate-600">{u.j}</td>
+                <td className="px-6 py-4">
+                  {u.s === 'Active' ? (
+                    <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-600"><CheckCircle2 size={14}/> Active</span>
+                  ) : u.s === 'Pending' ? (
+                    <div className="space-y-1">
+                      <span className="flex items-center gap-1.5 text-xs font-bold text-amber-600"><Clock size={14}/> Pending Join</span>
+                      <p className="text-[10px] text-slate-500 font-mono">Code: {u.invite}</p>
+                    </div>
+                  ) : (
+                    <span className="flex items-center gap-1.5 text-xs font-bold text-red-600"><AlertTriangle size={14}/> Suspended</span>
+                  )}
+                </td>
+                <td className="px-6 py-4 text-right opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex justify-end gap-2">
+                    <button className="px-3 py-1.5 bg-slate-100 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-200">Edit</button>
+                    {u.s !== 'Suspended' ? (
+                      <button className="px-3 py-1.5 bg-red-50 text-red-600 text-xs font-bold rounded-lg hover:bg-red-100">Deactivate</button>
+                    ) : (
+                      <button className="px-3 py-1.5 bg-emerald-50 text-emerald-600 text-xs font-bold rounded-lg hover:bg-emerald-100">Restore</button>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </motion.div>
   );
 
   const renderApprovals = () => (
@@ -204,10 +447,20 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
 
   const getContent = () => {
     switch (activeTab) {
+      case 'federal': 
+        return <div className="h-full w-full -m-10"><FederalDashboard user={user} onLogout={onLogout} /></div>;
+      case 'public_health': 
+        return <div className="h-full w-full -m-10"><PublicHealthDashboard user={user} onLogout={onLogout} /></div>;
+      case 'operations': 
+        return <div className="h-full w-full -m-10"><OperationsDashboard user={user} onLogout={onLogout} /></div>;
+      case 'state_admin': 
+        return <div className="h-full w-full -m-10"><AdminDashboard user={user} onLogout={onLogout} /></div>;
+      case 'subscription': 
+        return <SubscriptionPortal userRole="executive_founder" initialPlanId="fed_pro" />;
       case 'overview': return renderOverview();
       case 'global_financials': return renderFinancials();
       case 'system_health': return renderSystemHealth();
-      case 'jurisdiction_map': return renderOverview();
+      case 'jurisdiction_map': return renderJurisdictionMap();
       case 'users': return renderUserMgmt();
       case 'patients': return renderUserMgmt();
       case 'business': return renderUserMgmt();
