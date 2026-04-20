@@ -166,6 +166,13 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
     </div>
   );
 
+  const renderCompliance = () => (
+    <div className="space-y-6">
+      <h2 className="text-2xl font-black text-slate-800">Compliance Monitor</h2>
+      <div className="space-y-3">{[{e:'Apex Health LLC',f:'Daily sales volume exceeded threshold',s:'High',t:'2h ago'},{e:'UID-8922',f:'Failed seed-to-sale sync — 3 consecutive',s:'Critical',t:'4h ago'},{e:'GreenLeaf Farms',f:'Inventory discrepancy detected',s:'Medium',t:'1d ago'}].map((c,i)=>(<div key={i} className={cn("bg-white border rounded-2xl p-5 shadow-sm",c.s==='Critical'?"border-red-200":"border-slate-200")}><div className="flex items-center justify-between mb-2"><p className="font-bold text-slate-800">{c.e}</p><span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-full",c.s==='Critical'?"bg-red-50 text-red-600":c.s==='High'?"bg-amber-50 text-amber-600":"bg-blue-50 text-blue-600")}>{c.s}</span></div><p className="text-sm text-slate-600">{c.f}</p><p className="text-[10px] text-slate-400 mt-1">{c.t}</p></div>))}</div>
+    </div>
+  );
+
   const renderReports = () => (
     <div className="space-y-6">
       <h2 className="text-2xl font-black text-slate-800">Master Analytics</h2>
@@ -206,7 +213,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       case 'business': return renderUserMgmt();
       case 'approvals': return renderApprovals();
       case 'applications': return renderApplications();
-      case 'compliance': return renderApplications();
+      case 'compliance': return renderCompliance();
       case 'reports': return renderReports();
       case 'logs': return renderLogs();
       case 'settings': return renderSettings();

@@ -34,16 +34,16 @@ const newRender = `  const renderDashboardByRole = (profile: any) => {
     
     // Oversight Portal Routing
     if (role === 'admin' || role === 'executive_founder' || role === 'executive_ceo') {
-      return <AdminDashboard onLogout={handleLogout} user={profile} />;
+      return <OversightDashboard onLogout={handleLogout} user={profile} />;
     }
     if (role === 'enforcement_state' || role?.startsWith('enforcement')) {
       return <EnforcementDashboard onLogout={handleLogout} user={profile} />;
     }
     if (role === 'regulator_state' || role?.startsWith('regulator')) {
-      return <AdminDashboard onLogout={handleLogout} user={profile} />; // Use Oversight Command
+      return <OversightDashboard onLogout={handleLogout} user={profile} />;
     }
     if (role === 'backoffice_staff' || role?.startsWith('backoffice')) {
-      return <AdminDashboard onLogout={handleLogout} user={profile} />; // Use Oversight Command
+      return <OversightDashboard onLogout={handleLogout} user={profile} />;
     }
 
     // Business Portal Routing

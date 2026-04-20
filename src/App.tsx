@@ -1659,23 +1659,20 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
   
   const [privacyConsent, setPrivacyConsent] = useState(false);
 
-      const roles = [
-    { id: 'patient', label: 'Patient / Caregiver', category: 'Patient', icon: User, desc: 'Individuals seeking medical cannabis access and health management.' },
+        const roles = [
+    { id: 'user', label: 'Patient / Caregiver', category: 'Patient', icon: User, desc: 'Individuals seeking medical cannabis access and health management.' },
     
-    // BUSINESS PORTAL
-    { id: 'business_owner', label: 'Business Entity (Owner/CEO)', category: 'Business', icon: Building2, desc: 'Commercial operators requiring state-integrated compliance tools.' },
+    // BUSINESS PORTAL ROLES
     { id: 'compliance_service', label: 'Patient / Compliance Business Service', category: 'Business', icon: Users, desc: 'Companies that manage cards and compliance for their own client base.' },
-    { id: 'medical_provider_md', label: 'Medical Provider (Physician)', category: 'Business', icon: Stethoscope, desc: 'Licensed professionals performing evaluations and certifications.' },
-    { id: 'attorney_lawyer', label: 'Attorney / Law Firm', category: 'Business', icon: Gavel, desc: 'Legal counsel managing licensing and compliance portfolios.' },
+    { id: 'business', label: 'Business Entity (Dispensary/Cultivator)', category: 'Business', icon: Building2, desc: 'Commercial operators requiring state-integrated compliance tools.' },
+    { id: 'provider', label: 'Medical Provider', category: 'Business', icon: Stethoscope, desc: 'Physicians and clinics performing evaluations and certifications.' },
+    { id: 'attorney', label: 'Attorney / Law Firm', category: 'Business', icon: Briefcase, desc: 'Legal counsel managing multi-state licensing and compliance portfolios.' },
     
-    // OVERSIGHT PORTAL
-    { id: 'executive_founder', label: 'Executive Founder', category: 'Oversight', icon: BarChart3, desc: 'Super-user access for ultimate platform governance and visibility.' },
-    { id: 'internal_admin', label: 'Internal Administrator', category: 'Oversight', icon: Shield, desc: 'Platform management and high-level operational support.' },
-    { id: 'regulator_state', label: 'State Regulator / Authority', category: 'Oversight', icon: Activity, desc: 'Government oversight for approvals and jurisdiction tracking.' },
-    { id: 'enforcement_rip', label: 'Law Enforcement (RIP)', category: 'Oversight', icon: Shield, desc: 'Real-time Intelligence & Policing for field officers.' },
-
-    // OPERATIONS PORTAL
-    { id: 'ops_staff', label: 'Operations / Call Center', category: 'Operations', icon: Headphones, desc: 'Support agents managing human-in-the-loop workflows.' },
+    // OVERSIGHT PORTAL ROLES
+    { id: 'enforcement_state', label: 'Law Enforcement (RIP)', category: 'Oversight', icon: Shield, desc: 'Real-time Intelligence & Policing (RIP) for authorized agencies.' },
+    { id: 'regulator_state', label: 'Regulator / Authority', category: 'Oversight', icon: Activity, desc: 'State-level licensing authority and legal oversight bodies.' },
+    { id: 'executive_founder', label: 'Executive Founder', category: 'Oversight', icon: BarChart3, desc: 'Platform Founder and Leadership. Ultimate Oversight Command.' },
+    { id: 'backoffice_staff', label: 'Operations & Support', category: 'Oversight', icon: Cpu, desc: 'Operational staff managing back-office AI systems.' },
   ];
 
   const handleInputChange = (e: any) => {
@@ -5241,42 +5238,37 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
-        const renderDashboardByRole = (profile: any) => {
+          const renderDashboardByRole = (profile: any) => {
     if (!profile) return null;
     const role = profile.role;
     
-    // 1. OVERSIGHT PORTAL
-    if (role === 'executive_founder') {
-      return <FounderDashboard onLogout={handleLogout} user={profile} />;
+    // Oversight Portal Routing
+    if (role === 'admin' || role === 'executive_founder' || role === 'executive_ceo') {
+      return <OversightDashboard onLogout={handleLogout} user={profile} />;
     }
-    if (role === 'internal_admin' || role === 'admin') {
-      return <AdminDashboard onLogout={handleLogout} user={profile} />;
-    }
-    if (role === 'regulator_state' || role?.startsWith('regulator')) {
-      return <RegulatorDashboard onLogout={handleLogout} user={profile} />; 
-    }
-    if (role === 'enforcement_rip' || role === 'RIP' || role?.startsWith('enforcement')) {
+    if (role === 'enforcement_state' || role?.startsWith('enforcement')) {
       return <EnforcementDashboard onLogout={handleLogout} user={profile} />;
     }
-
-    // 2. OPERATIONS / CALL CENTER PORTAL
-    if (role === 'ops_staff' || role?.startsWith('ops_')) {
-      return <OperationsDashboard onLogout={handleLogout} user={profile} />;
+    if (role === 'regulator_state' || role?.startsWith('regulator')) {
+      return <OversightDashboard onLogout={handleLogout} user={profile} />;
+    }
+    if (role === 'backoffice_staff' || role?.startsWith('backoffice')) {
+      return <OversightDashboard onLogout={handleLogout} user={profile} />;
     }
 
-    // 3. BUSINESS PORTAL
-    if (role === 'business_owner' || role === 'business_entity' || role === 'compliance_service' || role?.startsWith('business_')) {
-      return <BusinessDashboard onLogout={handleLogout} user={profile} />;
-    }
-    if (role?.startsWith('medical_provider_')) {
+    // Business Portal Routing
+    if (role === 'provider') {
       return <ProviderDashboard onLogout={handleLogout} user={profile} />;
     }
-    if (role?.startsWith('attorney_')) {
+    if (role === 'attorney') {
       return <AttorneyDashboard onLogout={handleLogout} user={profile} />;
     }
+    if (role === 'business' || role === 'compliance_service') {
+      return <BusinessDashboard onLogout={handleLogout} user={profile} />;
+    }
 
-    // 4. PATIENT PORTAL
-    if (role === 'user' || role === 'Patient / Caregiver' || role === 'patient') {
+    // Patient Portal Routing
+    if (role === 'user' || role === 'Patient / Caregiver') {
       return (
         <DashboardLayout role={role} onLogout={handleLogout} userProfile={profile}>
           <PatientDashboard user={profile} />
@@ -5284,10 +5276,12 @@ export default function App() {
       );
     }
     
-    // Default
+    // Fallback
     return (
       <DashboardLayout role={role} onLogout={handleLogout} userProfile={profile}>
-        <PatientDashboard user={profile} />
+        <div className="p-20 text-center">
+          <h2 className="text-2xl font-bold">Dashboard for {role} not implemented yet.</h2>
+        </div>
       </DashboardLayout>
     );
   };

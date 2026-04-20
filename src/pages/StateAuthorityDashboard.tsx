@@ -332,6 +332,39 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
             </motion.div>
           )}
 
+          {/* COMPLIANCE & ENFORCEMENT TAB */}
+          {activeTab === 'compliance' && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-8">
+              <div className="flex justify-between items-end mb-8">
+                <div>
+                  <h2 className="text-3xl font-black text-white mb-2">Compliance Monitoring</h2>
+                  <p className="text-slate-400">Real-time LARRY AI alerts, operator flags, and active enforcement investigations.</p>
+                </div>
+                <button className="px-5 py-2.5 bg-green-600 rounded-xl text-sm font-bold shadow-lg">Run Full Audit Scan</button>
+              </div>
+              <div className="space-y-4">
+                {[{e:'Apex Health LLC',f:'Daily sales volume exceeded threshold by 42%',s:'High',t:'2h ago'},{e:'UID-8922 (Transport)',f:'Failed seed-to-sale GPS ping — 3 consecutive',s:'Critical',t:'4h ago'},{e:'GreenLeaf Farms',f:'Inventory discrepancy detected in vault B',s:'Medium',t:'1d ago'},{e:'OKC Wellness Dispensary',f:'Patient limit override requested',s:'Low',t:'2d ago'}].map((c,i)=>(
+                  <div key={i} className={cn("bg-slate-900 border rounded-2xl p-6 shadow-sm",c.s==='Critical'?"border-red-900/50":c.s==='High'?"border-amber-900/50":"border-slate-800")}>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className={cn("w-2 h-2 rounded-full",c.s==='Critical'?'bg-red-500 animate-ping':c.s==='High'?'bg-amber-500':'bg-blue-500')} />
+                        <p className="font-bold text-white text-lg">{c.e}</p>
+                      </div>
+                      <span className={cn("text-[10px] font-black tracking-widest uppercase px-3 py-1 rounded-full",c.s==='Critical'?"bg-red-500/20 text-red-400 border border-red-500/30":c.s==='High'?"bg-amber-500/20 text-amber-400 border border-amber-500/30":"bg-blue-500/20 text-blue-400 border border-blue-500/30")}>
+                        {c.s} Priority
+                      </span>
+                    </div>
+                    <p className="text-sm text-slate-300 font-medium">{c.f}</p>
+                    <div className="flex items-center justify-between mt-4">
+                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{c.t}</p>
+                      <button className="text-xs font-bold text-blue-400 hover:text-blue-300 transition-colors">Assign Investigator</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
           {/* Lease Management Tab */}
           {activeTab === 'lease' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6">

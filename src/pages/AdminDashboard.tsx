@@ -78,10 +78,78 @@ export const AdminDashboard = ({ onLogout, user }: { onLogout?: () => void | Pro
 
   const renderUsers = () => (
     <div className="space-y-6">
-      <h2 className="text-xl font-black text-slate-800">User Management</h2>
+      <div className="flex justify-between items-center bg-white border border-slate-200 p-8 rounded-3xl shadow-sm relative overflow-hidden">
+        <div className="relative z-10">
+          <h2 className="text-2xl font-black text-slate-800 tracking-tight mb-2">Staff & User Management</h2>
+          <p className="text-slate-500 text-sm">Manage state-level staff, inspectors, and patient/business accounts.</p>
+        </div>
+        <div className="relative z-10 flex gap-4">
+           <button className="px-5 py-2.5 bg-slate-800 text-white text-sm font-bold rounded-xl shadow-md hover:bg-slate-700 transition-colors flex items-center gap-2">
+             <Plus size={16} /> Create Staff Invite
+           </button>
+        </div>
+      </div>
+
       <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-        <table className="w-full text-sm"><thead><tr className="bg-slate-50 text-left"><th className="px-4 py-3 font-bold text-slate-500 text-xs uppercase">Name</th><th className="px-4 py-3 font-bold text-slate-500 text-xs uppercase">Email</th><th className="px-4 py-3 font-bold text-slate-500 text-xs uppercase">Role</th><th className="px-4 py-3 font-bold text-slate-500 text-xs uppercase">Status</th><th className="px-4 py-3 font-bold text-slate-500 text-xs uppercase">Date</th></tr></thead>
-        <tbody>{MOCK_USERS.map((u,i)=>(<tr key={i} className="border-b border-slate-50 hover:bg-slate-50"><td className="px-4 py-3 font-bold text-slate-800">{u.name}</td><td className="px-4 py-3 text-slate-500">{u.email}</td><td className="px-4 py-3 text-slate-600">{u.role}</td><td className="px-4 py-3"><span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-full",u.status==='Active'?"bg-emerald-50 text-emerald-600":u.status==='Pending'?"bg-amber-50 text-amber-600":"bg-red-50 text-red-600")}>{u.status}</span></td><td className="px-4 py-3 text-slate-500 text-xs">{u.date}</td></tr>))}</tbody></table>
+        <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+          <h3 className="font-bold text-slate-800 text-sm flex items-center gap-2"><Users size={16} className="text-indigo-500"/> Account Directory</h3>
+          <div className="flex gap-2">
+             <select className="border border-slate-200 text-xs font-bold text-slate-600 rounded-lg px-2 py-1 outline-none">
+               <option>All Accounts</option>
+               <option>State Staff</option>
+               <option>Compliance Agent</option>
+               <option>Business Admin</option>
+               <option>Patient</option>
+             </select>
+          </div>
+        </div>
+        <table className="w-full text-sm">
+          <thead className="bg-slate-50 border-b border-slate-100">
+            <tr>
+              <th className="px-4 py-3 font-bold text-slate-500 text-xs uppercase text-left">Name / Email</th>
+              <th className="px-4 py-3 font-bold text-slate-500 text-xs uppercase text-left">Role</th>
+              <th className="px-4 py-3 font-bold text-slate-500 text-xs uppercase text-left">Status</th>
+              <th className="px-4 py-3 font-bold text-slate-500 text-xs uppercase text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100">
+            {[
+              ...MOCK_USERS,
+              { name: 'David Smith', email: 'dsmith@state.gov', role: 'Compliance Inspector', status: 'Active', date: 'Apr 19, 2026' },
+              { name: 'Pending Agent', email: 'tbd@state.gov', role: 'Staff Reviewer', status: 'Pending Invite', date: 'Apr 20, 2026' }
+            ].map((u,i) => (
+              <tr key={i} className="hover:bg-slate-50 group">
+                <td className="px-4 py-3">
+                  <p className="font-bold text-slate-800">{u.name}</p>
+                  <p className="text-xs text-slate-500">{u.email}</p>
+                </td>
+                <td className="px-4 py-3 text-slate-600 text-xs font-bold">{u.role}</td>
+                <td className="px-4 py-3">
+                  {u.status === 'Pending Invite' ? (
+                     <div className="space-y-1">
+                       <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-600">Pending Join</span>
+                       <p className="text-[10px] text-slate-500 font-mono">Code: STF-9821</p>
+                     </div>
+                  ) : (
+                     <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-full", u.status==='Active' ? "bg-emerald-50 text-emerald-600" : u.status==='Pending' ? "bg-amber-50 text-amber-600" : "bg-red-50 text-red-600")}>
+                       {u.status}
+                     </span>
+                  )}
+                </td>
+                <td className="px-4 py-3 text-right opacity-0 group-hover:opacity-100 transition-opacity">
+                   <div className="flex justify-end gap-2">
+                     <button className="px-3 py-1.5 bg-slate-100 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-200">Edit</button>
+                     {u.status !== 'Suspended' ? (
+                       <button className="px-3 py-1.5 bg-red-50 text-red-600 text-xs font-bold rounded-lg hover:bg-red-100">Suspend</button>
+                     ) : (
+                       <button className="px-3 py-1.5 bg-emerald-50 text-emerald-600 text-xs font-bold rounded-lg hover:bg-emerald-100">Restore</button>
+                     )}
+                   </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
@@ -134,6 +202,16 @@ export const AdminDashboard = ({ onLogout, user }: { onLogout?: () => void | Pro
       <h2 className="text-xl font-black text-slate-800">AI Monitoring</h2>
       <div className="grid grid-cols-3 gap-4">{[{l:'Sylara Sessions',v:'842',s:'Active'},{l:'L.A.R.R.Y Assists',v:'1,204',s:'Today'},{l:'Auto-Resolved',v:'89%',s:'Rate'}].map((s,i)=>(<div key={i} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm text-center"><p className="text-[10px] font-bold text-slate-500 uppercase">{s.l}</p><p className="text-xl font-black text-slate-800">{s.v}</p><p className="text-[10px] text-emerald-600 font-bold">{s.s}</p></div>))}</div>
       <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm"><h3 className="font-bold text-slate-800 mb-3">AI Activity Feed</h3><div className="space-y-2">{['Sylara resolved 42 patient inquiries — avg 18s response','L.A.R.R.Y completed 8 med-card applications','Escalation: Complex legal query routed to paralegal','Sylara voice call handled — patient renewal assistance'].map((l,i)=>(<div key={i} className="p-3 bg-slate-50 rounded-xl text-sm text-slate-700 flex items-center gap-3"><Bot size={16} className="text-indigo-500 shrink-0"/>{l}</div>))}</div></div>
+    </div>
+  );
+
+  const renderApplications = () => (
+    <div className="space-y-6">
+      <h2 className="text-xl font-black text-slate-800">Applications Queue</h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        {[{l:'New Today',v:'48'},{l:'Under Review',v:'342'},{l:'Awaiting Docs',v:'112'}].map((s,i)=>(<div key={i} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm text-center"><p className="text-[10px] font-bold text-slate-500 uppercase">{s.l}</p><p className="text-xl font-black text-slate-800">{s.v}</p></div>))}
+      </div>
+      <div className="space-y-2">{[{id:'APP-5021',n:'Jane Smith',t:'Patient Card - Adult',st:'Under Review',d:'Apr 18'},{id:'APP-5020',n:'GreenLeaf Farms',t:'Cultivator License',st:'Awaiting Docs',d:'Apr 18'},{id:'APP-5019',n:'Dr. Martin',t:'Provider Registration',st:'New',d:'Apr 17'},{id:'APP-5018',n:'CannaCare LLC',t:'Dispensary License',st:'Under Review',d:'Apr 17'}].map((a,i)=>(<div key={i} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex items-center justify-between"><div><p className="font-bold text-slate-800 text-sm">{a.id} — {a.n}</p><p className="text-xs text-slate-500">{a.t} • {a.d}</p></div><span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-full",a.st==='New'?"bg-blue-50 text-blue-600":a.st==='Under Review'?"bg-amber-50 text-amber-600":"bg-orange-50 text-orange-600")}>{a.st}</span></div>))}</div>
     </div>
   );
 

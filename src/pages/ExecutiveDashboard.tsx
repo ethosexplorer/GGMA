@@ -45,7 +45,7 @@ const NAV_ITEMS = [
   { id: 'analytics', label: 'Analytics & Intel', icon: Activity },
   { section: 'CORE SYSTEM' },
   { id: 'audit_logs', label: 'Audit & Logs', icon: FileText },
-  { id: 'system_control', label: 'System Control', icon: Settings },
+  { id: 'system_control', label: 'Global Access Control', icon: Shield },
   { id: 'alert_center', label: 'Alert Center', icon: AlertCircle, badge: '14' },
 ];
 
@@ -266,6 +266,103 @@ export const ExecutiveDashboard = ({ onLogout, user }: any) => {
     </motion.div>
   );
 
+  const renderAccessControl = () => (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+      <div className="flex justify-between items-center bg-indigo-900 p-8 rounded-3xl text-white shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-8 opacity-10"><Shield size={120} /></div>
+        <div className="relative z-10">
+          <h2 className="text-3xl font-black tracking-tight mb-2">Global Access Control</h2>
+          <p className="text-indigo-200">Executive override enabled. Create, suspend, or assign invite codes for any role.</p>
+        </div>
+        <div className="relative z-10 flex gap-4">
+           <button className="px-6 py-3 bg-white text-indigo-900 font-bold rounded-xl shadow-lg hover:bg-indigo-50 transition-colors flex items-center gap-2">
+             <Plus size={18} /> Generate Invite Code
+           </button>
+           <button className="px-6 py-3 bg-indigo-800 text-white font-bold border border-indigo-700 rounded-xl hover:bg-indigo-700 transition-colors flex items-center gap-2">
+             <Settings size={18} /> Role Permissions
+           </button>
+        </div>
+      </div>
+
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+        <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+          <h3 className="font-bold text-slate-800 flex items-center gap-2"><Users size={18} className="text-indigo-500"/> Active Privileged Accounts</h3>
+          <div className="flex gap-2">
+             <div className="relative">
+               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+               <input type="text" placeholder="Search by name or email..." className="pl-8 pr-4 py-1.5 text-sm border border-slate-200 rounded-lg outline-none focus:border-indigo-500" />
+             </div>
+             <select className="border border-slate-200 text-sm font-bold text-slate-600 rounded-lg px-3 outline-none">
+               <option>All Roles</option>
+               <option>Executive</option>
+               <option>State Regulator</option>
+               <option>Federal Oversight</option>
+               <option>VIP / Investor</option>
+             </select>
+          </div>
+        </div>
+        <table className="w-full text-sm text-left">
+          <thead className="bg-slate-50 border-b border-slate-100">
+            <tr>
+              <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase tracking-wider">User / Email</th>
+              <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase tracking-wider">Assigned Role</th>
+              <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase tracking-wider">Jurisdiction</th>
+              <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase tracking-wider">Status</th>
+              <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase tracking-wider text-right">Executive Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100">
+            {[
+              { n: 'Marcus Johnson', e: 'marcus@ggp-os.com', r: 'Executive / Founder', j: 'Global (All)', s: 'Active', invite: 'Claimed' },
+              { n: 'Sen. Robert Chen', e: 'rchen@senate.gov', r: 'Federal Oversight', j: 'Nationwide (US)', s: 'Active', invite: 'Claimed' },
+              { n: 'Emily Davis', e: 'emily.d@omma.ok.gov', r: 'State Regulator', j: 'Oklahoma', s: 'Active', invite: 'Claimed' },
+              { n: 'Pending VIP', e: 'j.smith@capital.vc', r: 'VIP / Investor', j: 'Global (Read-Only)', s: 'Pending', invite: 'INV-4921-X9' },
+              { n: 'Sarah Jenkins', e: 's.jenkins@ggp-os.com', r: 'System Ops', j: 'Global (Support)', s: 'Suspended', invite: 'Claimed' }
+            ].map((u,i) => (
+              <tr key={i} className="hover:bg-slate-50 transition-colors group">
+                <td className="px-6 py-4">
+                  <p className="font-bold text-slate-800">{u.n}</p>
+                  <p className="text-xs text-slate-500">{u.e}</p>
+                </td>
+                <td className="px-6 py-4">
+                  <span className={cn("text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full border", 
+                    u.r.includes('Executive') ? "bg-indigo-50 text-indigo-700 border-indigo-200" :
+                    u.r.includes('Federal') ? "bg-blue-50 text-blue-700 border-blue-200" :
+                    u.r.includes('VIP') ? "bg-amber-50 text-amber-700 border-amber-200" :
+                    "bg-slate-100 text-slate-700 border-slate-200"
+                  )}>{u.r}</span>
+                </td>
+                <td className="px-6 py-4 text-xs font-bold text-slate-600">{u.j}</td>
+                <td className="px-6 py-4">
+                  {u.s === 'Active' ? (
+                    <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-600"><CheckCircle size={14}/> Active</span>
+                  ) : u.s === 'Pending' ? (
+                    <div className="space-y-1">
+                      <span className="flex items-center gap-1.5 text-xs font-bold text-amber-600"><Clock size={14}/> Pending Join</span>
+                      <p className="text-[10px] text-slate-500 font-mono">Code: {u.invite}</p>
+                    </div>
+                  ) : (
+                    <span className="flex items-center gap-1.5 text-xs font-bold text-red-600"><AlertCircle size={14}/> Suspended</span>
+                  )}
+                </td>
+                <td className="px-6 py-4 text-right opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex justify-end gap-2">
+                    <button className="px-3 py-1.5 bg-slate-100 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-200">Edit</button>
+                    {u.s !== 'Suspended' ? (
+                      <button className="px-3 py-1.5 bg-red-50 text-red-600 text-xs font-bold rounded-lg hover:bg-red-100">Deactivate</button>
+                    ) : (
+                      <button className="px-3 py-1.5 bg-emerald-50 text-emerald-600 text-xs font-bold rounded-lg hover:bg-emerald-100">Restore</button>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </motion.div>
+  );
+
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden font-sans selection:bg-indigo-100 selection:text-indigo-900">
       
@@ -376,7 +473,7 @@ export const ExecutiveDashboard = ({ onLogout, user }: any) => {
             {activeTab === 'ai_control' && renderModulePlaceholder('AI Control Panel', 'Sylara activity, Larry enforcement logs, AI decisions, and Override controls.', Cpu)}
             {activeTab === 'analytics' && renderModulePlaceholder('Analytics & Intelligence', 'Growth metrics, User behavior, Revenue projections, and Risk forecasting.', Activity)}
             {activeTab === 'audit_logs' && renderModulePlaceholder('Audit & Logs', 'Immutable audit trail of every action. User + system actions.', FileText)}
-            {activeTab === 'system_control' && renderModulePlaceholder('System Control', 'Feature toggles, Permissions, Access control, and System configuration.', Settings)}
+            {activeTab === 'system_control' && renderAccessControl()}
             {activeTab === 'alert_center' && renderModulePlaceholder('Alert Center', 'High-risk alerts, Financial anomalies, Compliance breaches, and System errors.', AlertCircle)}
           </AnimatePresence>
         </main>
