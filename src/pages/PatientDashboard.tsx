@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
   Activity, Calendar, Stethoscope, Shield, FileText, Clock, Plus, LayoutDashboard, CreditCard,
   Wallet, Award, Search, FolderOpen, Heart, Bell, Sparkles, TrendingUp, Users, Briefcase, Lock, 
-  ArrowRight, CheckCircle2, Zap, Brain, Video
+  ArrowRight, CheckCircle2, Zap, Brain, Video, Globe, ChevronRight
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
