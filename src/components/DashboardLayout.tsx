@@ -78,7 +78,7 @@ export const DashboardLayout = ({ role, onLogout, userProfile }: { role: string,
         isSidebarOpen ? "w-64" : "w-20"
       )}>
         <div className="p-6 flex items-center justify-center">
-          <img src="/ggp-os-logo.png" alt="GGP-OS Logo" className={cn("object-contain transition-all duration-300", isSidebarOpen ? "w-28 h-28" : "w-12 h-12")} onError={(e) => {
+          <img src="/gghp-branding.png" alt="GGHP Logo" className={cn("object-contain transition-all duration-300", isSidebarOpen ? "w-28 h-28" : "w-12 h-12")} onError={(e) => {
             (e.target as HTMLImageElement).style.display = 'none';
             (e.target as HTMLImageElement).parentElement?.querySelector('.fallback-logo')?.classList.remove('hidden');
           }} />

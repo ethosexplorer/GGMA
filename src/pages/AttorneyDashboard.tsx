@@ -50,7 +50,7 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
       <div className="w-64 bg-[#0a1f16] border-r border-[#153a28] text-slate-300 hidden md:flex flex-col">
         <div className="p-6 pb-2">
           <div className="flex items-center gap-3 text-white mb-6">
-            <img src="/logo.png" alt="GGMA Logo" className="w-12 h-12 object-contain" />
+            <img src="/gghp-branding.png" alt="GGHP Logo" className="w-12 h-12 object-contain" />
             <div>
               <h2 className="font-black text-xl leading-tight tracking-tight">L.A.R.R.Y. C.</h2>
               <p className="text-[9px] text-emerald-500/80 font-bold tracking-widest uppercase">Legal Archive & Compliance</p>

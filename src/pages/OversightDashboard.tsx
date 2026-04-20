@@ -10,10 +10,12 @@ import { PublicHealthDashboard } from './PublicHealthDashboard';
 import { OperationsDashboard } from './OperationsDashboard';
 import { AdminDashboard } from './AdminDashboard';
 import { SubscriptionPortal } from '../components/SubscriptionPortal';
+import { AuditLogsTab } from '../components/oversight/AuditLogsTab';
 
 const NAV_ITEMS = [
   { section: 'MAIN OVERSIGHT' },
   { id: 'overview', label: 'Master Command', icon: LayoutDashboard },
+  { id: 'audit_logs', label: 'System Audit Logs', icon: FileText },
   { section: 'SPECIALIZED PORTALS' },
   { id: 'federal', label: 'Federal Command', icon: Globe },
   { id: 'public_health', label: 'Public Health & Labs', icon: FlaskConical },
@@ -74,6 +76,7 @@ export const OversightDashboard = ({ onLogout, user }: { onLogout?: () => void, 
   const getContent = () => {
     switch (activeTab) {
       case 'overview': return renderOverview();
+      case 'audit_logs': return <div className="p-8 h-full overflow-hidden"><AuditLogsTab /></div>;
       case 'federal': 
         // We use a negative margin trick to make the embedded dashboard fill the container
         return <div className="h-full w-full -m-0"><FederalDashboard user={user} onLogout={onLogout} /></div>;
@@ -95,7 +98,7 @@ export const OversightDashboard = ({ onLogout, user }: { onLogout?: () => void, 
       <div className="w-64 bg-slate-950 border-r border-slate-900 flex flex-col shrink-0 z-50 shadow-2xl">
         <div className="p-5 pb-4">
           <div className="flex items-center gap-3 mb-6">
-            <img src="/logo.png" alt="GGMA Logo" className="w-10 h-10 object-contain" />
+            <img src="/gghp-branding.png" alt="GGHP Logo" className="w-10 h-10 object-contain" />
             <div>
               <h2 className="font-black text-sm text-white leading-tight">Oversight Hub</h2>
               <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">Unified Command</p>

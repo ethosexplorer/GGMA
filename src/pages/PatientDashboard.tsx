@@ -15,6 +15,7 @@ import { CreditScoreTab } from '../components/patient/CreditScoreTab';
 import { ProviderDirectoryTab } from '../components/patient/ProviderDirectoryTab';
 import { AttorneyDirectoryTab } from '../components/patient/AttorneyDirectoryTab';
 import { DocumentVaultTab } from '../components/patient/DocumentVaultTab';
+import { ComplianceTravelTab } from '../components/patient/ComplianceTravelTab';
 
 const Button = ({ children, className, disabled, ...props }: any) => (
   <button
@@ -32,6 +33,7 @@ const Button = ({ children, className, disabled, ...props }: any) => (
 const tabs = [
   { id: 'overview', label: 'Health Hub', icon: LayoutDashboard },
   { id: 'applications', label: 'Applications', icon: FileText },
+  { id: 'travel', label: 'Travel & Reciprocity', icon: Globe },
   { id: 'telehealth', label: 'Telehealth', icon: Video },
   { id: 'cards', label: 'My Cards', icon: CreditCard },
   { id: 'wallet', label: 'Care Wallet', icon: Wallet },
@@ -283,6 +285,19 @@ export const PatientDashboard = ({ user }: { user?: any; onLogout?: () => void; 
                 </div>
              </div>
              {isSubscribed && <ApplicationsTab />}
+        {/* ─── TRAVEL TAB ─── */}
+        {activeTab === 'travel' && (
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6 relative min-h-[600px]">
+             {!isSubscribed && (
+               <ShadowOverlay 
+                 title="Nationwide Travel Intel" 
+                 description="Unlock real-time reciprocity data, legal travel safeguards, and state-specific permit applications." 
+                 moduleName="Travel Hub"
+               />
+             )}
+             <div className={cn("transition-all duration-500", !isSubscribed && "blur-md pointer-events-none")}>
+                <ComplianceTravelTab />
+             </div>
           </motion.div>
         )}
 
@@ -330,8 +345,8 @@ export const PatientDashboard = ({ user }: { user?: any; onLogout?: () => void; 
                       <div className="space-y-3">
                          {[1,2].map(i => (
                            <div key={i} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-transparent hover:border-slate-200">
-                              <span className="text-sm font-bold text-slate-700">Consultation Summary - Mar {12+i}, 2026</span>
-                              <FileText size={18} className="text-slate-400" />
+                               <span className="text-sm font-bold text-slate-700">Consultation Summary - Mar {12+i}, 2026</span>
+                               <FileText size={18} className="text-slate-400" />
                            </div>
                          ))}
                       </div>

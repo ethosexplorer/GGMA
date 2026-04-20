@@ -364,7 +364,7 @@ const DashboardLayout = ({ children, role, onLogout, userProfile }: { children: 
         isSidebarOpen ? "w-64" : "w-20"
       )}>
         <div className={cn("p-6 flex items-center", isSidebarOpen ? "justify-center" : "justify-center")}>
-          <img src="/logo.png" alt="GGMA Logo" className={cn("object-contain transition-all duration-300", isSidebarOpen ? "w-28 h-28" : "w-12 h-12")} onError={(e) => {
+          <img src="/gghp-branding.png" alt="GGHP Logo" className={cn("object-contain transition-all duration-300", isSidebarOpen ? "w-28 h-28" : "w-12 h-12")} onError={(e) => {
             (e.target as HTMLImageElement).style.display = 'none';
             (e.target as HTMLImageElement).parentElement?.querySelector('.fallback-logo')?.classList.remove('hidden');
           }} />
@@ -1144,9 +1144,38 @@ const STATE_RESOURCES: Record<string, any> = {
 };
 
 const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | 'patient-portal' | 'support' | 'larry-chatbot' | 'larry-business', role?: string) => void }) => {
+  const [platformAlert, setPlatformAlert] = useState('🚨 SYSTEM NOTICE: NATIONWIDE COMPLIANCE AUDIT IN PROGRESS • ALL NODES OPERATIONAL • FEDERAL DIRECTIVE IF12270 APPLIED');
+  const [inTheKnowNews, setInTheKnowNews] = useState([
+    'OMMA Legislative Update: New rules for 2026 commercial licensing now active',
+    'Florida transitions to Fully Legal status - Platform infrastructure updated',
+    'Kansas approves Medical Cannabis - Registry now accepting applications',
+    'Sylara AI processed 50,000+ compliance checks this hour'
+  ]);
+
+  useEffect(() => {
+    // Sync with Founder's Emergency Broadcast
+    const syncAlert = () => {
+      const savedAlert = localStorage.getItem('gghp_platform_alert');
+      if (savedAlert) setPlatformAlert(savedAlert);
+    };
+    syncAlert();
+    window.addEventListener('storage', syncAlert);
+    const interval = setInterval(syncAlert, 1000); // Polling for demo
+    return () => {
+      window.removeEventListener('storage', syncAlert);
+      clearInterval(interval);
+    };
+  }, []);
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA]">
+    <div className="min-h-screen bg-[#F8F9FA] overflow-x-hidden">
+      {/* URGENT PLATFORM ALERT TICKER */}
+      <div className="bg-red-600 text-white py-2 overflow-hidden whitespace-nowrap border-b border-red-700 relative z-[60]">
+        <div className="inline-block animate-marquee-fast font-black text-sm uppercase tracking-widest">
+          {platformAlert} &nbsp; • &nbsp; {platformAlert} &nbsp; • &nbsp; {platformAlert}
+        </div>
+      </div>
+
       {/* Navigation */}
       <nav className="bg-white border-b border-slate-200 px-6 h-20 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center">
@@ -1162,8 +1191,8 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
         </div>
 
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
-          <a href="#" className="hover:text-[#1a4731] transition-colors">State Facts</a>
-          <a href="#" className="hover:text-[#1a4731] transition-colors">Compliance Standards</a>
+          <a href="#state-facts" className="hover:text-[#1a4731] transition-colors">State Facts</a>
+          <a href="#jurisdiction-intelligence" className="hover:text-[#1a4731] transition-colors">Compliance Standards</a>
           <button onClick={() => onNavigate('support')} className="hover:text-[#1a4731] transition-colors font-medium">Help & Support</button>
           <button onClick={() => onNavigate('larry-chatbot')} className="hover:text-[#1a4731] transition-colors font-medium">Med Card Assistance</button>
           <button onClick={() => onNavigate('larry-business')} className="hover:text-[#1a4731] transition-colors font-medium">Business License Assistance</button>
@@ -1174,21 +1203,30 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
         </div>
       </nav>
 
+      {/* "IN THE KNOW" NEWS TICKER */}
+      <div className="bg-[#1a4731] text-emerald-100 py-3 border-b border-emerald-900/20 overflow-hidden whitespace-nowrap relative z-40">
+        <div className="inline-block animate-marquee font-bold text-xs uppercase tracking-[0.2em]">
+          <span className="bg-emerald-400 text-[#1a4731] px-2 py-0.5 rounded text-[9px] mr-4">IN THE KNOW</span>
+          {inTheKnowNews.join(' • ')} &nbsp; • &nbsp; {inTheKnowNews.join(' • ')}
+        </div>
+      </div>
+
       {/* Hero Section */}
-      <section className="pt-20 pb-32 px-6">
+      <section className="pt-20 pb-20 px-6 relative overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[120%] h-[500px] bg-gradient-to-b from-emerald-50/50 to-transparent -z-10 blur-3xl"></div>
         <div className="max-w-4xl mx-auto text-center space-y-8">
           <p className="text-[#1a4731] font-bold tracking-[0.3em] uppercase text-xs mb-[-10px] opacity-70">Global Green introducing</p>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-            State Detection: Kansas Jurisdiction applied
+            Infrastructure Active: 50 States + DC Secure
           </div>
 
-          <h1 className="text-5xl md:text-6xl font-extrabold text-[#1a4731] leading-[1.1] tracking-tight">
-            Regulated Compliance <br /> Infrastructure for Public Safety
+          <h1 className="text-5xl md:text-7xl font-extrabold text-[#1a4731] leading-[1.05] tracking-tight">
+            The Gold Standard in <br /> <span className="text-emerald-600">Compliance Infrastructure</span>
           </h1>
 
-          <p className="text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed">
-            A nationwide aggregator establishing secure, role-based access control and transparent compliance tracking for state-specific cannabis laws.
+          <p className="text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed font-medium">
+            A nationwide aggregator establishing secure, role-based access control and transparent compliance tracking for the medical marijuana authority.
           </p>
 
           <div className="max-w-2xl mx-auto relative group">
@@ -1197,18 +1235,42 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
             </div>
             <input
               type="text"
-              placeholder="Search state laws, statutes, or business regulati..."
-              className="w-full pl-12 pr-32 py-4 bg-white border border-slate-200 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600/10 transition-all"
+              placeholder="Search state laws, statutes, or business regulations..."
+              className="w-full pl-12 pr-32 py-5 bg-white border border-slate-200 rounded-3xl shadow-xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 transition-all text-lg"
             />
-            <button className="absolute right-2 top-2 bottom-2 px-6 bg-[#a3b18a] hover:bg-[#8da9c4] text-white rounded-xl text-sm font-bold transition-all">
+            <button className="absolute right-2.5 top-2.5 bottom-2.5 px-8 bg-[#1a4731] hover:bg-[#153a28] text-white rounded-2xl text-sm font-bold transition-all shadow-lg shadow-emerald-900/20">
               Quick Search
             </button>
           </div>
 
-          <button className="inline-flex items-center gap-2 px-8 py-4 bg-[#1a4731] text-white rounded-xl font-bold hover:bg-[#153a28] transition-all shadow-lg shadow-[#1a4731]/20">
-            Access Nationwide Aggregator
-            <ArrowRight size={18} />
-          </button>
+          <div className="flex flex-wrap justify-center gap-4 pt-4">
+            <button onClick={() => onNavigate('login')} className="px-8 py-4 bg-[#1a4731] text-white rounded-2xl font-bold hover:bg-[#153a28] transition-all shadow-xl shadow-emerald-900/20 flex items-center gap-2">
+              Access Enterprise Hub
+              <ArrowRight size={18} />
+            </button>
+            <a href="#membership-tiers" className="px-8 py-4 bg-white border border-slate-200 text-slate-700 rounded-2xl font-bold hover:bg-slate-50 transition-all">
+              View Compliance Tiers
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* GGHP Infrastructure Banner */}
+      <section className="px-6 py-10">
+        <div className="max-w-6xl mx-auto">
+          <div className="bg-slate-900 rounded-[3rem] overflow-hidden shadow-2xl relative border border-white/10 group">
+             <img src="/gghp-branding.png" alt="GGHP Platform" className="w-full h-auto opacity-90 group-hover:opacity-100 transition-opacity duration-700" />
+             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
+             <div className="absolute bottom-12 left-12 right-12 flex flex-col md:flex-row justify-between items-end gap-6">
+                <div>
+                  <h2 className="text-3xl font-black text-white mb-2 uppercase tracking-tighter">GGHP Secure Infrastructure</h2>
+                  <p className="text-emerald-400 font-bold uppercase tracking-widest text-xs">Global Green Hybrid Platform • Nationwide RIP Integration</p>
+                </div>
+                <div className="px-6 py-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 text-white text-sm font-bold">
+                   50 States Live • 24/7 Monitoring
+                </div>
+             </div>
+          </div>
         </div>
       </section>
 
@@ -1257,10 +1319,10 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
               </div>
               <h3 className="text-xl font-bold text-[#3E2723] mb-3">Business Portal</h3>
               <p className="text-slate-500 text-sm leading-relaxed mb-4">
-                Integrate point-of-sale systems, manage seed-to-sale inventory, and ensure facility compliance with local mandates.
+                The centralized hub for all professional operations. Manage seed-to-sale inventory, POS integrations, medical consultations, and legal case management.
               </p>
-              <p className="text-sm italic text-slate-600 mb-6">
-                Dispensary, Cultivation, Manufacturing, Medical Providers, Medcard Services
+              <p className="text-sm italic text-slate-600 mb-6 font-bold">
+                Providers, Attorneys, Dispensaries, Cultivation, Manufacturing, Medcard Services
               </p>
               <button
                 onClick={() => { onNavigate('signup', 'Business');  }}
@@ -1293,20 +1355,123 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
         </div>
       </section>
 
-      {/* Regulations Section */}
-      <section className="py-24 px-6">
+      {/* Subscription Tiers Section */}
+      <section id="membership-tiers" className="py-24 px-6 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16 space-y-4">
-            <div className="text-[11px] font-bold text-[#1a4731] uppercase tracking-[0.2em]">Nationwide Aggregator</div>
-            <h2 className="text-3xl font-bold text-[#1a4731]">State Cannabis Facts & Regulations</h2>
-            <p className="text-slate-500 max-w-2xl mx-auto">
-              Real-time legislative data, local jurisdiction mandates, and aggregated regulatory frameworks across the United States. Ensure compliance before you operate.
+             <h2 className="text-4xl font-black text-slate-900 tracking-tight">Compliance Membership Tiers</h2>
+             <p className="text-slate-500 max-w-2xl mx-auto text-lg">Scalable infrastructure for patients, commercial entities, and regulatory bodies.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+             {[
+               { n: 'Patient / Caregiver', p: 'Free', f: ['Digital Med Card Storage', 'State Fact Access', 'L.A.R.R.Y AI Assistance'], b: 'emerald' },
+               { n: 'Commercial Enterprise', p: '$499/mo', f: ['Full METRC Integration', 'Seed-to-Sale Tracking', 'Compliance Audit Shield'], b: 'blue', popular: true },
+               { n: 'Government / RIP', p: 'Custom', f: ['Real-time Intelligence (RIP)', 'Nationwide Aggregator Access', 'Executive Oversight Tools'], b: 'slate' }
+             ].map((plan, i) => (
+               <div key={i} className={cn("p-10 rounded-[2.5rem] border transition-all flex flex-col relative", 
+                 plan.popular ? "border-blue-500 bg-blue-50/30 shadow-2xl scale-105 z-10" : "border-slate-200 hover:border-emerald-500/30 hover:bg-emerald-50/10"
+               )}>
+                 {plan.popular && <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg">Most Scalable</div>}
+                 <h3 className="text-2xl font-black text-slate-800 mb-2">{plan.n}</h3>
+                 <div className="flex items-baseline gap-1 mb-8">
+                    <span className="text-4xl font-black text-slate-900">{plan.p}</span>
+                    {plan.p !== 'Free' && plan.p !== 'Custom' && <span className="text-slate-500 font-bold">/month</span>}
+                 </div>
+                 <div className="space-y-4 mb-10 flex-1">
+                    {plan.f.map((f, j) => (
+                      <div key={j} className="flex items-center gap-3 text-sm font-bold text-slate-600">
+                        <CheckCircle2 size={18} className="text-emerald-500" /> {f}
+                      </div>
+                    ))}
+                 </div>
+                 <button className={cn("w-full py-4 rounded-2xl font-black transition-all", 
+                   plan.popular ? "bg-blue-600 text-white hover:bg-blue-700 shadow-xl shadow-blue-600/20" : "bg-slate-900 text-white hover:bg-slate-800 shadow-xl shadow-slate-900/20"
+                 )}>Initialize Integration</button>
+               </div>
+             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Partners & Paid Advertisements */}
+      <section className="py-20 border-t border-slate-100 bg-slate-50/30">
+        <div className="max-w-6xl mx-auto px-6">
+           <p className="text-center text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-12">Strategic Infrastructure Partners & Sponsors</p>
+           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 opacity-50 grayscale hover:grayscale-0 transition-all duration-700">
+              {['Apex Health', 'Verity Labs', 'GreenGrid', 'SecureLogix', 'OMMA', 'METRC'].map((p, i) => (
+                <div key={i} className="flex items-center justify-center h-12 bg-transparent border border-transparent rounded-xl hover:border-slate-200 hover:bg-white hover:shadow-sm transition-all font-black text-slate-900 text-sm italic">
+                  {p}
+                </div>
+              ))}
+           </div>
+        </div>
+      </section>
+
+      {/* Maps & Stats Section */}
+      <section id="jurisdiction-intelligence" className="py-24 px-6 bg-slate-50 border-t border-slate-200">
+        <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-16 items-center">
+          <div className="lg:w-1/2 space-y-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase tracking-widest border border-emerald-200">
+               Live Data Feed
+            </div>
+            <h2 className="text-5xl font-black text-slate-900 tracking-tight leading-[1.1]">
+              Real-time <br /> <span className="text-emerald-600">State Jurisdiction</span> Intelligence
+            </h2>
+            <p className="text-lg text-slate-500 leading-relaxed font-medium">
+              We've uploaded regulatory facts and compliance standards for all 50 states. Our nationwide aggregator Establishment monitors 400+ data points hourly to ensure you are never out of compliance.
             </p>
+            <div className="grid grid-cols-2 gap-6">
+               <div className="p-6 bg-white rounded-3xl border border-slate-200 shadow-sm">
+                  <p className="text-3xl font-black text-slate-900">100%</p>
+                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">US Territory Coverage</p>
+               </div>
+               <div className="p-6 bg-white rounded-3xl border border-slate-200 shadow-sm">
+                  <p className="text-3xl font-black text-emerald-600">2.4M</p>
+                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Active Patient Records</p>
+               </div>
+            </div>
           </div>
 
-          <div className="relative bg-[#F8F9FA] rounded-3xl border border-slate-200 shadow-2xl overflow-hidden h-[400px] sm:h-[500px] md:h-[600px] lg:h-[750px] w-full flex items-center justify-center p-4 md:p-8">
+          <div className="lg:w-1/2 w-full h-[500px] bg-white rounded-[3rem] border border-slate-200 shadow-2xl overflow-hidden relative group">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none"></div>
             <MapChart />
           </div>
+        </div>
+      </section>
+
+      {/* State Facts & Compliance Standards Grid */}
+      <section id="state-facts" className="py-24 px-6 bg-white">
+        <div className="max-w-6xl mx-auto">
+           <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-16">
+              <div className="space-y-4">
+                 <h2 className="text-4xl font-black text-slate-900 tracking-tight">Compliance & State Facts</h2>
+                 <p className="text-slate-500 font-medium">Deep-dive into state-specific statutes, tax laws, and operational standards.</p>
+              </div>
+              <button className="px-6 py-3 bg-emerald-50 text-emerald-700 rounded-xl font-bold border border-emerald-100 hover:bg-emerald-100 transition-all flex items-center gap-2">
+                 Explore Full Database <ArrowRight size={18} />
+              </button>
+           </div>
+           
+           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                { s: 'Oklahoma', t: '7% Excise Tax', c: 'Open Medical', d: '2,400 Dispensaries' },
+                { s: 'Florida', t: '0% Excise Tax', c: 'Strict Medical', d: '630 Dispensaries' },
+                { s: 'California', t: '15% Excise Tax', c: 'Full Recreational', d: '1,100 Dispensaries' },
+                { s: 'Texas', t: 'Low THC Only', c: 'Restrictive', d: '3 Active Hubs' }
+              ].map((st, i) => (
+                <div key={i} className="p-8 bg-slate-50 rounded-[2rem] border border-slate-100 hover:bg-white hover:shadow-xl hover:scale-[1.02] transition-all cursor-pointer group">
+                   <h4 className="text-xl font-black text-slate-900 mb-4">{st.s}</h4>
+                   <div className="space-y-3">
+                      <div className="flex items-center gap-2 text-xs font-bold text-slate-500"><Activity size={14} className="text-emerald-500" /> {st.t}</div>
+                      <div className="flex items-center gap-2 text-xs font-bold text-slate-500"><Shield size={14} className="text-blue-500" /> {st.c}</div>
+                      <div className="flex items-center gap-2 text-xs font-bold text-slate-500"><Building2 size={14} className="text-amber-500" /> {st.d}</div>
+                   </div>
+                   <div className="mt-8 pt-6 border-t border-slate-200 flex items-center justify-between text-emerald-600 font-bold text-xs uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                      Read Statutes <ChevronRight size={14} />
+                   </div>
+                </div>
+              ))}
+           </div>
         </div>
       </section>
 
@@ -1394,7 +1559,7 @@ const LoginScreen = ({ onLogin, onSignUp, onForgotPassword }: { onLogin: (email:
         {/* LOGIN FORM SECTION */}
         <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
           <div className="flex flex-col items-center text-center mb-6">
-            <img src="/logo.png" alt="GGMA Logo" className="w-40 h-40 sm:w-48 sm:h-48 object-contain mb-4" onError={(e) => {
+            <img src="/gghp-branding.png" alt="GGHP Logo" className="w-40 h-40 sm:w-48 sm:h-48 object-contain mb-4" onError={(e) => {
               (e.target as HTMLImageElement).style.display = 'none';
               (e.target as HTMLImageElement).parentElement?.querySelector('.fallback-logo')?.classList.remove('hidden');
             }} />
@@ -1662,11 +1827,11 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
         const roles = [
     { id: 'user', label: 'Patient / Caregiver', category: 'Patient', icon: User, desc: 'Individuals seeking medical cannabis access and health management.' },
     
-    // BUSINESS PORTAL ROLES
-    { id: 'compliance_service', label: 'Patient / Compliance Business Service', category: 'Business', icon: Users, desc: 'Companies that manage cards and compliance for their own client base.' },
-    { id: 'business', label: 'Business Entity (Dispensary/Cultivator)', category: 'Business', icon: Building2, desc: 'Commercial operators requiring state-integrated compliance tools.' },
-    { id: 'provider', label: 'Medical Provider', category: 'Business', icon: Stethoscope, desc: 'Physicians and certifications.' },
-    { id: 'attorney', label: 'Attorney / Law Firm', category: 'Business', icon: Briefcase, desc: 'Legal counsel managing multi-state licensing portfolios.' },
+    // BUSINESS PORTAL ROLES (Professional Entities)
+    { id: 'compliance_service', label: 'Compliance Business Service', category: 'Business', icon: Users, desc: 'Companies managing cards and compliance for clients.' },
+    { id: 'business', label: 'Commercial Entity (Dispensary/Cultivator)', category: 'Business', icon: Building2, desc: 'Dispensaries, growers, and processors requiring state-integrated tools.' },
+    { id: 'provider', label: 'Medical Provider / Physician', category: 'Business', icon: Stethoscope, desc: 'Licensed medical professionals conducting consultations and certifications.' },
+    { id: 'attorney', label: 'Attorney / Law Firm', category: 'Business', icon: Briefcase, desc: 'Legal counsel managing multi-state licensing and compliance portfolios.' },
     
     // OVERSIGHT PORTAL ROLES
     { id: 'enforcement_state', label: 'Law Enforcement (RIP)', category: 'Oversight', icon: Shield, desc: 'Real-time Intelligence & Policing (RIP) for authorized agencies.' },
@@ -1811,11 +1976,9 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
     <div className="min-h-screen bg-[#FDFBF7] flex flex-col font-sans">
       {/* Header */}
       <header className="px-8 py-6 flex justify-between items-center border-b border-slate-200/50 bg-white sticky top-0 z-10">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-[#1a4731] rounded-lg flex items-center justify-center">
-             <Shield className="text-white" size={20} />
-          </div>
-          <span className="font-bold text-xl text-slate-800 tracking-tight">GGP-OS</span>
+        <div className="flex items-center gap-4">
+          <img src="/gghp-branding.png" alt="GGHP Logo" className="h-12 w-auto object-contain" />
+          <span className="font-bold text-xl text-slate-800 tracking-tight hidden sm:inline">GGHP Secure Registry</span>
         </div>
         <button
           onClick={onLogin}
@@ -5025,7 +5188,7 @@ const PatientSignupPage = ({ onNavigate }: any) => {
       {/* Header */}
       <nav className="bg-white border-b border-slate-200 px-6 h-16 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-4">
-          <img src="/ggp-os-logo.png" alt="GGP-OS Logo" className="h-10 md:h-12 w-auto object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+          <img src="/gghp-branding.png" alt="GGHP Logo" className="h-10 md:h-12 w-auto object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
           <span className="text-sm font-semibold text-slate-600 hidden md:inline">Patient License Application</span>
         </div>
         <button

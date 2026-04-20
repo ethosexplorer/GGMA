@@ -244,7 +244,7 @@ export const AdminDashboard = ({ onLogout, user }: { onLogout?: () => void | Pro
       <div className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col hidden md:flex shrink-0">
         <div className="p-5 pb-2">
           <div className="flex items-center gap-3 mb-4">
-            <img src="/logo.png" alt="GGMA Logo" className="w-12 h-12 object-contain" />
+            <img src="/gghp-branding.png" alt="GGHP Logo" className="w-12 h-12 object-contain" />
             <div>
               <h2 className="font-bold text-sm text-white leading-tight">Admin Command</h2>
               <p className="text-[10px] text-indigo-400 font-bold uppercase tracking-wider">Jesus View • Administrator</p>

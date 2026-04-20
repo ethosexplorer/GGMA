@@ -12,9 +12,11 @@ import { ReportingTab } from '../components/federal/ReportingTab';
 import { SAMGovRulesTab } from '../components/federal/SAMGovRulesTab';
 import { LeaseAuditTab } from '../components/federal/LeaseAuditTab';
 import { SubscriptionPortal } from '../components/SubscriptionPortal';
+import { LegislativeIntelTab } from '../components/federal/LegislativeIntelTab';
 
 const tabs = [
   { id: 'overview', label: 'Nationwide Overview', icon: LayoutDashboard },
+  { id: 'intel', label: 'Legislative Intel', icon: BookOpen },
   { id: 'interstate', label: 'Interstate Monitoring', icon: Globe },
   { id: 'enforcement', label: 'Enforcement & Intel', icon: Shield },
   { id: 'research', label: 'Public Health & Labs', icon: Activity },
@@ -35,7 +37,7 @@ export const FederalDashboard = ({ onLogout, user }: { onLogout?: () => void, us
       {/* Top Header */}
       <header className="bg-[#0b1525] border-b border-[#1e3a5f]/40 px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <img src="/ggp-os-logo.png" alt="GGP-OS" className="w-10 h-10 object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display='none'; }} />
+          <img src="/gghp-branding.png" alt="GGP-OS" className="w-10 h-10 object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display='none'; }} />
           <div>
             <h1 className="text-sm font-extrabold text-white tracking-wide">GGP-OS Federal Administrative Dashboard</h1>
             <p className="text-[10px] text-blue-300/50 font-semibold uppercase tracking-widest">Nationwide Oversight Privilege • All 50 States + DC Live • Real-Time</p>
@@ -80,6 +82,7 @@ export const FederalDashboard = ({ onLogout, user }: { onLogout?: () => void, us
         {/* Main Content */}
         <main className="flex-1 p-6 overflow-auto">
           {activeTab === 'overview' && <FederalOverviewTab />}
+          {activeTab === 'intel' && <LegislativeIntelTab />}
           {activeTab === 'interstate' && <InterstateMonitoringTab />}
           {activeTab === 'enforcement' && <EnforcementIntelTab />}
           {activeTab === 'research' && <ResearchHealthTab />}

@@ -5,7 +5,7 @@ import {
   Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
   Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Globe, Zap, Database,
-  FlaskConical, CreditCard, Map as MapIcon
+  FlaskConical, CreditCard, Map as MapIcon, BookOpen
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
@@ -14,6 +14,7 @@ import { PublicHealthDashboard } from './PublicHealthDashboard';
 import { OperationsDashboard } from './OperationsDashboard';
 import { AdminDashboard } from './AdminDashboard';
 import { SubscriptionPortal } from '../components/SubscriptionPortal';
+import { LegislativeIntelTab } from '../components/federal/LegislativeIntelTab';
 
 const NAV_ITEMS = [
   { section: 'FOUNDER EXCLUSIVE' },
@@ -38,12 +39,20 @@ const NAV_ITEMS = [
   { id: 'subscription', label: 'Platform Billing', icon: CreditCard },
   { section: 'SYSTEM CONTROL' },
   { id: 'reports', label: 'Master Analytics', icon: BarChart3 },
+  { id: 'intel', label: 'Global Intelligence', icon: BookOpen },
   { id: 'logs', label: 'System Logs', icon: Database },
   { id: 'settings', label: 'God Settings', icon: Settings },
 ];
 
 export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | Promise<void>, user?: any }) => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [broadcastMsg, setBroadcastMsg] = useState('🚨 SYSTEM NOTICE: NATIONWIDE COMPLIANCE AUDIT IN PROGRESS • ALL NODES OPERATIONAL • FEDERAL DIRECTIVE IF12270 APPLIED');
+  const [broadcastType, setBroadcastType] = useState('Urgent Alert (Red)');
+
+  const handleBroadcast = () => {
+    localStorage.setItem('gghp_platform_alert', broadcastMsg);
+    alert('Broadcast Pushed Globally');
+  };
 
   const renderOverview = () => (
     <div className="space-y-6">
@@ -67,6 +76,56 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
         </div>
       </div>
 
+      {/* EMERGENCY BROADCAST COMMAND */}
+      <div className="bg-red-50 border-2 border-red-200 rounded-3xl p-8 shadow-xl relative overflow-hidden group">
+         <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 transition-transform duration-700 text-red-600"><Shield size={120} /></div>
+         <div className="relative z-10">
+            <div className="flex items-center gap-3 mb-4">
+               <div className="w-10 h-10 bg-red-600 text-white rounded-xl flex items-center justify-center animate-pulse shadow-lg shadow-red-600/30">
+                  <Bell size={20} />
+               </div>
+               <h3 className="text-xl font-black text-red-900 tracking-tight">Executive Emergency Broadcast</h3>
+            </div>
+            
+            <div className="flex flex-col md:flex-row gap-6 items-end">
+               <div className="flex-1 space-y-2 w-full">
+                  <label className="text-[10px] font-black text-red-700 uppercase tracking-widest">Active Alert Message (Pushed to Landing Page & All Portals)</label>
+                  <input 
+                    type="text" 
+                    value={broadcastMsg}
+                    onChange={(e) => setBroadcastMsg(e.target.value)}
+                    placeholder="E.g., SYSTEM NOTICE: NATIONWIDE COMPLIANCE AUDIT IN PROGRESS..." 
+                    className="w-full px-6 py-4 bg-white border-2 border-red-100 rounded-2xl outline-none focus:border-red-500 font-bold text-red-900 shadow-inner"
+                  />
+               </div>
+               <div className="flex gap-3">
+                  <select 
+                    value={broadcastType}
+                    onChange={(e) => setBroadcastType(e.target.value)}
+                    className="px-6 py-4 bg-white border-2 border-red-100 rounded-2xl font-bold text-slate-700 outline-none"
+                  >
+                     <option>Urgent Alert (Red)</option>
+                     <option>Info Ticker (Green)</option>
+                     <option>Success Blast (Emerald)</option>
+                  </select>
+                  <button 
+                    onClick={handleBroadcast}
+                    className="px-10 py-4 bg-red-600 text-white rounded-2xl font-black hover:bg-red-700 transition-all shadow-xl shadow-red-600/20 active:scale-95"
+                  >
+                     BROADCAST LIVE
+                  </button>
+               </div>
+            </div>
+            <div className="mt-6 flex items-center gap-6">
+               <div className="flex items-center gap-2 text-[10px] font-black text-red-600">
+                  <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></div>
+                  SYSTEM BROADCAST ACTIVE
+               </div>
+               <div className="text-[10px] font-black text-slate-400">LAST UPDATED: 2M AGO BY FOUNDER</div>
+            </div>
+         </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {[
           { label: 'Active States', value: '42', trend: '+2', color: 'blue' },
@@ -86,30 +145,95 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
          <div className="lg:col-span-2 bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
-            <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-3"><Globe size={22} className="text-indigo-500" /> Jurisdiction Activity Heatmap</h3>
-            <div className="h-80 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex items-center justify-center">
-               <p className="text-slate-400 font-bold italic">Dynamic SVG US Map Placeholder</p>
+            <div className="flex justify-between items-center mb-6">
+               <h3 className="text-lg font-bold text-slate-800 flex items-center gap-3"><Globe size={22} className="text-indigo-500" /> Jurisdiction Performance Matrix</h3>
+               <div className="flex gap-2">
+                  <span className="px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-bold rounded-full border border-emerald-100 uppercase tracking-widest">Live Sync</span>
+               </div>
+            </div>
+            <div className="overflow-x-auto">
+               <table className="w-full text-sm">
+                  <thead>
+                     <tr className="border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">
+                        <th className="pb-4">State Hub</th>
+                        <th className="pb-4">Active Patients</th>
+                        <th className="pb-4">Commercial Density</th>
+                        <th className="pb-4">Compliance Score</th>
+                        <th className="pb-4">Revenue Pulse</th>
+                     </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-50">
+                     {[
+                        { s: 'Oklahoma', p: '242,102', d: '2,400', c: 98, r: '+12.4%', up: true },
+                        { s: 'California', p: '892,401', d: '1,102', c: 94, r: '+4.2%', up: true },
+                        { s: 'Florida', p: '631,092', d: '680', c: 99, r: '+22.1%', up: true },
+                        { s: 'Colorado', p: '142,881', d: '542', c: 96, r: '-2.1%', up: false },
+                        { s: 'Missouri', p: '88,401', d: '210', c: 92, r: '+8.4%', up: true },
+                     ].map((row, i) => (
+                        <tr key={i} className="group hover:bg-slate-50 transition-colors">
+                           <td className="py-4 font-black text-slate-800">{row.s}</td>
+                           <td className="py-4 text-slate-600 font-bold">{row.p}</td>
+                           <td className="py-4 text-slate-600 font-bold">{row.d}</td>
+                           <td className="py-4">
+                              <div className="flex items-center gap-2">
+                                 <div className="flex-1 h-1.5 bg-slate-100 rounded-full max-w-[60px]">
+                                    <div className={cn("h-full rounded-full", row.c > 95 ? "bg-emerald-500" : "bg-amber-500")} style={{ width: `${row.c}%` }}></div>
+                                 </div>
+                                 <span className="text-[10px] font-black">{row.c}%</span>
+                              </div>
+                           </td>
+                           <td className="py-4">
+                              <span className={cn("font-black", row.up ? "text-emerald-500" : "text-red-500")}>{row.r}</span>
+                           </td>
+                        </tr>
+                     ))}
+                  </tbody>
+               </table>
             </div>
          </div>
          <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm flex flex-col">
-            <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-3"><Zap size={22} className="text-amber-500" /> System Real-time Feed</h3>
-            <div className="flex-1 space-y-4">
-               {[
-                 { msg: 'OMMA API batch sync success', time: '1m ago', color: 'emerald' },
-                 { msg: 'New RIP Unit registered: TX-DPS', time: '4m ago', color: 'blue' },
-                 { msg: 'Flagged anomaly in MO dispensary #442', time: '12m ago', color: 'red' },
-                 { msg: 'Sylara processed 402 card apps', time: '15m ago', color: 'indigo' },
-               ].map((log, i) => (
-                 <div key={i} className="flex gap-3 items-start p-3 hover:bg-slate-50 rounded-xl transition-colors">
-                    <div className={cn("w-2 h-2 rounded-full mt-1.5", `bg-${log.color}-500`)}></div>
-                    <div>
-                       <p className="text-sm font-bold text-slate-700">{log.msg}</p>
-                       <p className="text-[10px] text-slate-400 font-medium">{log.time}</p>
-                    </div>
-                 </div>
-               ))}
+            <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-3"><Zap size={22} className="text-amber-500" /> Network Health Pulse</h3>
+            <div className="flex-1 flex flex-col justify-between">
+               <div className="h-40 flex items-end justify-between gap-1">
+                  {[30, 45, 35, 60, 55, 70, 65, 80, 85, 90, 85, 95].map((h, i) => (
+                     <div key={i} className="flex-1 bg-slate-100 rounded-full relative group">
+                        <div className="absolute bottom-0 w-full bg-emerald-500 rounded-full transition-all duration-700" style={{ height: `${h}%` }}></div>
+                     </div>
+                  ))}
+               </div>
+               <div className="mt-6 pt-6 border-t border-slate-100 space-y-4">
+                  <div className="flex justify-between items-center">
+                     <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Sylara AI Response</span>
+                     <span className="text-sm font-black text-emerald-600">42ms</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                     <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Care Wallet Throughput</span>
+                     <span className="text-sm font-black text-blue-600">2.4k txn/sec</span>
+                  </div>
+               </div>
             </div>
          </div>
+      </div>
+
+      {/* Global Intelligence Quick Links */}
+      <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+        <div className="flex items-center justify-between mb-8">
+           <h3 className="text-lg font-bold text-slate-800 flex items-center gap-3"><BookOpen size={22} className="text-amber-500" /> Global Intelligence Command</h3>
+           <button onClick={() => setActiveTab('intel')} className="text-xs font-black text-indigo-600 uppercase tracking-widest hover:underline">View All Sources</button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+           {[
+             { t: 'CRS: Cannabis State of Play', c: 'Federal', u: 'https://www.congress.gov/crs-product/IF12270' },
+             { t: 'NCSL Legislation Database', c: 'State', u: 'https://www.ncsl.org/health/state-cannabis-legislation-database' },
+             { t: 'FDA Regulation Guide', c: 'Federal', u: 'https://www.fda.gov/news-events/public-health-focus/fda-regulation-cannabis-and-cannabis-derived-products-including-cannabidiol-cbd' },
+             { t: 'Marijuana Moment', c: 'News', u: 'https://www.marijuanamoment.net/' }
+           ].map((source, i) => (
+             <a key={i} href={source.u} target="_blank" rel="noopener noreferrer" className="p-5 bg-slate-50 rounded-2xl border border-slate-100 hover:bg-indigo-50 hover:border-indigo-200 transition-all group">
+                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 group-hover:text-indigo-400">{source.c}</p>
+                <h4 className="text-sm font-bold text-slate-800 group-hover:text-indigo-900 leading-tight">{source.t}</h4>
+             </a>
+           ))}
+        </div>
       </div>
     </div>
   );
@@ -129,21 +253,26 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
           </div>
         </div>
       </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="font-bold text-slate-800">Revenue Trajectory (P&L)</h3>
-              <select className="bg-slate-50 border border-slate-200 text-xs font-bold px-3 py-1.5 rounded-lg outline-none cursor-pointer">
-                <option>Last 12 Months</option>
-                <option>Quarterly</option>
-              </select>
+              <h3 className="font-bold text-slate-800 flex items-center gap-2"><TrendingUp size={18} className="text-indigo-500"/> Revenue Trajectory (P&L)</h3>
+              <div className="flex gap-2">
+                 <button className="px-3 py-1 bg-slate-50 text-[10px] font-bold text-slate-600 rounded-lg border border-slate-200">1D</button>
+                 <button className="px-3 py-1 bg-indigo-50 text-[10px] font-bold text-indigo-600 rounded-lg border border-indigo-200">1W</button>
+                 <button className="px-3 py-1 bg-slate-50 text-[10px] font-bold text-slate-600 rounded-lg border border-slate-200">1M</button>
+              </div>
             </div>
-            <div className="h-64 flex items-end justify-between gap-2 px-2">
+            <div className="h-64 flex items-end justify-between gap-2 px-2 relative">
+               <div className="absolute inset-0 flex flex-col justify-between py-2 pointer-events-none opacity-20">
+                  <div className="border-t border-slate-900 border-dashed w-full"></div>
+                  <div className="border-t border-slate-900 border-dashed w-full"></div>
+                  <div className="border-t border-slate-900 border-dashed w-full"></div>
+               </div>
               {[40, 55, 45, 70, 65, 80, 95, 85, 90, 100, 110, 120].map((h, i) => (
-                <div key={i} className="w-full bg-slate-100 rounded-t-lg relative group overflow-hidden">
-                  <div className="absolute bottom-0 w-full bg-indigo-600 rounded-t-lg transition-all duration-700 group-hover:bg-indigo-400" style={{ height: `${h * 0.7}%` }}>
+                <div key={i} className="w-full bg-slate-100/50 rounded-t-lg relative group overflow-hidden">
+                  <div className="absolute bottom-0 w-full bg-gradient-to-t from-indigo-700 to-indigo-500 rounded-t-lg transition-all duration-700 group-hover:from-indigo-500 group-hover:to-indigo-300" style={{ height: `${h * 0.7}%` }}>
                     <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] py-1 px-2 rounded font-bold transition-opacity whitespace-nowrap shadow-xl z-20">
                       ${(h/10).toFixed(1)}M
                     </div>
@@ -154,48 +283,50 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
           </div>
 
           <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-            <h3 className="font-bold text-slate-800 mb-6 flex items-center gap-2"><Database size={18} className="text-indigo-500"/> Revenue Streams</h3>
-            <div className="space-y-5">
-              {[
-                { n: 'Care Wallet Transactions', v: '$8.4M', p: 55, c: 'bg-indigo-600' },
-                { n: 'Business License Fees', v: '$3.2M', p: 25, c: 'bg-emerald-500' },
-                { n: 'Patient Registration Fees', v: '$1.8M', p: 15, c: 'bg-blue-500' },
-                { n: 'B2B Compliance Services', v: '$1.4M', p: 5, c: 'bg-amber-500' }
-              ].map((s, i) => (
-                <div key={i} className="space-y-2">
-                  <div className="flex justify-between text-sm font-bold">
-                    <span className="text-slate-600">{s.n}</span>
-                    <span className="text-slate-900 font-black">{s.v}</span>
-                  </div>
-                  <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
-                    <div className={cn("h-full rounded-full transition-all duration-1000", s.c)} style={{ width: `${s.p}%` }}></div>
-                  </div>
-                </div>
-              ))}
+            <h3 className="font-bold text-slate-800 mb-6 flex items-center gap-2"><Building2 size={18} className="text-emerald-500"/> Jurisdiction Revenue Breakdown</h3>
+            <div className="space-y-4">
+               {[
+                 { s: 'Oklahoma', r: '$4.2M', g: '+14%', p: 85, c: 'bg-emerald-500' },
+                 { s: 'Florida', r: '$3.8M', g: '+28%', p: 76, c: 'bg-blue-500' },
+                 { s: 'California', r: '$2.9M', g: '+2%', p: 58, c: 'bg-indigo-500' },
+                 { s: 'New Jersey', r: '$1.4M', g: '+8%', p: 28, c: 'bg-amber-500' }
+               ].map((row, i) => (
+                 <div key={i} className="flex items-center gap-4 group cursor-pointer">
+                    <div className="w-24 text-sm font-bold text-slate-600">{row.s}</div>
+                    <div className="flex-1 h-2 bg-slate-50 rounded-full overflow-hidden">
+                       <div className={cn("h-full rounded-full transition-all duration-1000", row.c)} style={{ width: `${row.p}%` }}></div>
+                    </div>
+                    <div className="w-32 text-right">
+                       <span className="text-sm font-black text-slate-800">{row.r}</span>
+                       <span className="text-[10px] font-bold text-emerald-600 ml-2">{row.g}</span>
+                    </div>
+                 </div>
+               ))}
             </div>
           </div>
         </div>
 
         <div className="space-y-6">
           <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-            <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2"><ArrowUpRight size={18} className="text-emerald-500"/> God View Insights</h3>
-            <div className="space-y-4">
-              <div className="p-5 bg-gradient-to-br from-emerald-50 to-white border border-emerald-100 rounded-2xl shadow-sm">
-                <p className="text-[10px] font-black text-emerald-800 uppercase tracking-[0.1em] mb-2 flex items-center gap-2"><Zap size={12}/> Valuation Pulse</p>
-                <p className="text-sm text-emerald-700 leading-relaxed font-bold">Platform enterprise value has increased by 14.2% since the Oklahoma RIP integration went live.</p>
-              </div>
-              <div className="p-5 bg-gradient-to-br from-indigo-50 to-white border border-indigo-100 rounded-2xl shadow-sm">
-                <p className="text-[10px] font-black text-indigo-800 uppercase tracking-[0.1em] mb-2 flex items-center gap-2"><Globe size={12}/> Global Expansion</p>
-                <p className="text-sm text-indigo-700 leading-relaxed font-bold">B2B drug inventory tracking systems are seeing 4.2x faster adoption in emerging markets.</p>
-              </div>
+            <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2"><Shield size={18} className="text-blue-500"/> Financial Liquidity Score</h3>
+            <div className="text-center py-6 space-y-2">
+               <p className="text-5xl font-black text-slate-900">98.2</p>
+               <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Optimal Reserves</p>
+               <div className="w-full h-1.5 bg-slate-100 rounded-full mt-4">
+                  <div className="h-full bg-emerald-500 rounded-full" style={{ width: '98%' }}></div>
+               </div>
             </div>
+            <p className="text-xs text-slate-400 font-medium leading-relaxed mt-4">
+               System liquidity is currently backing 12 jurisdictions with 100% solvency for all B2B transactions via the Care Wallet infrastructure.
+            </p>
           </div>
 
-          <div className="bg-slate-900 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><Download size={64} /></div>
-            <h4 className="font-black text-sm uppercase tracking-widest mb-2">Master Ledger</h4>
-            <p className="text-xs text-slate-400 mb-6">Export full nationwide financial audit logs for Q2 2026.</p>
-            <button className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-bold transition-all shadow-lg text-sm">Download Financial PDF</button>
+          <div className="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-700"><Activity size={64} /></div>
+            <h4 className="font-black text-sm uppercase tracking-widest mb-2">Network Reserves</h4>
+            <p className="text-4xl font-black mb-1">$14.8M</p>
+            <p className="text-[10px] font-bold text-indigo-200 mb-6 uppercase tracking-widest">+1.2M THIS MONTH</p>
+            <button className="w-full py-3 bg-white text-indigo-600 rounded-xl font-bold transition-all shadow-lg text-sm hover:bg-indigo-50">View Master Ledger</button>
           </div>
         </div>
       </div>
@@ -468,6 +599,8 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       case 'applications': return renderApplications();
       case 'compliance': return renderCompliance();
       case 'reports': return renderReports();
+      case 'intel': 
+        return <div className="h-full w-full -m-10 bg-[#080e1a] p-10 min-h-screen overflow-auto"><LegislativeIntelTab /></div>;
       case 'logs': return renderLogs();
       case 'settings': return renderSettings();
       default: return renderOverview();
@@ -479,7 +612,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       <div className="w-64 bg-slate-950 border-r border-slate-900 flex flex-col hidden md:flex shrink-0">
         <div className="p-6 pb-2">
           <div className="flex items-center gap-3 mb-6">
-            <img src="/logo.png" alt="GGMA Logo" className="w-12 h-12 object-contain" />
+            <img src="/gghp-branding.png" alt="GGHP Logo" className="w-12 h-12 object-contain" />
             <div>
               <h2 className="font-black text-sm text-white leading-tight tracking-tight uppercase">Founder Command</h2>
               <p className="text-[10px] text-emerald-400 font-black tracking-widest uppercase">God View • Platform Owner</p>
