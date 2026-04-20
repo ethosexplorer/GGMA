@@ -285,6 +285,9 @@ export const PatientDashboard = ({ user }: { user?: any; onLogout?: () => void; 
                 </div>
              </div>
              {isSubscribed && <ApplicationsTab />}
+          </motion.div>
+        )}
+
         {/* ─── TRAVEL TAB ─── */}
         {activeTab === 'travel' && (
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6 relative min-h-[600px]">
