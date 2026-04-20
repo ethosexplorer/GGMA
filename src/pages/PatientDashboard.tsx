@@ -13,7 +13,7 @@ import { ApplicationsTab } from '../components/patient/ApplicationsTab';
 import { MyCardsTab } from '../components/patient/MyCardsTab';
 import { CreditScoreTab } from '../components/patient/CreditScoreTab';
 import { ProviderDirectoryTab } from '../components/patient/ProviderDirectoryTab';
-import { AttorneyDirectoryTab } from '../components/patient/AttorneyDirectoryTab';
+import { AttorneyMarketplaceTab } from '../components/shared/AttorneyMarketplaceTab';
 import { DocumentVaultTab } from '../components/patient/DocumentVaultTab';
 import { ComplianceTravelTab } from '../components/patient/ComplianceTravelTab';
 
@@ -383,7 +383,11 @@ export const PatientDashboard = ({ user }: { user?: any; onLogout?: () => void; 
         {activeTab === 'providers' && isSubscribed && <ProviderDirectoryTab />}
 
         {/* ─── FIND ATTORNEYS TAB ─── */}
-        {activeTab === 'attorneys' && isSubscribed && <AttorneyDirectoryTab />}
+        {activeTab === 'attorneys' && isSubscribed && (
+          <div className="h-[800px] rounded-[3rem] overflow-hidden border border-slate-200 shadow-2xl">
+            <AttorneyMarketplaceTab />
+          </div>
+        )}
 
         {/* ─── DOCUMENTS TAB ─── */}
         {activeTab === 'documents' && isSubscribed && <DocumentVaultTab />}

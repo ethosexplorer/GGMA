@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Wallet, Users, Building2, Shield, Clock, TrendingUp, Plus, LayoutDashboard, CreditCard, PackageSearch, AlertCircle, ShoppingCart, Loader2, Trash2, Edit2, CheckCircle, XCircle, Sparkles, MapPin, BarChart2, Activity, MessageSquare, LogOut, FileText, ClipboardList, CheckSquare, UploadCloud, Calendar, Zap, AlertTriangle, Database } from 'lucide-react';
+import { Wallet, Users, Building2, Shield, Clock, TrendingUp, Plus, LayoutDashboard, CreditCard, PackageSearch, AlertCircle, ShoppingCart, Loader2, Trash2, Edit2, CheckCircle, XCircle, Sparkles, MapPin, BarChart2, Activity, MessageSquare, LogOut, FileText, ClipboardList, CheckSquare, UploadCloud, Calendar, Zap, AlertTriangle, Database, Gavel } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { StatCard } from '../components/StatCard';
 import { CareWalletTab } from '../components/shared/CareWalletTab';
@@ -7,6 +7,7 @@ import { SubscriptionPortal } from '../components/SubscriptionPortal';
 import { turso } from '../lib/turso';
 import { initializeDatabase } from '../lib/tursoMigrations';
 import { ComplianceEngineTab } from '../components/business/ComplianceEngineTab';
+import { AttorneyMarketplaceTab } from '../components/shared/AttorneyMarketplaceTab';
 
 // Simple Button mock
 const Button = ({ children, className, icon: Icon, variant, disabled, ...props }: any) => (
@@ -44,7 +45,7 @@ const MiniBarChart = ({ data }: { data: number[] }) => (
 
 export const BusinessDashboard = ({ onLogout, user }: { onLogout?: () => void | Promise<void>, user?: any }) => {
   const [demoUnlocked, setDemoUnlocked] = useState(false);
-  const [activeTab, setActiveTab] = useState<'home' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'insurance' | 'documents' | 'subscription' | 'integrations' | 'staff' | 'traceability' | 'readiness' | 'wallet'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'insurance' | 'documents' | 'subscription' | 'integrations' | 'staff' | 'traceability' | 'readiness' | 'wallet' | 'attorneys'>('home');
   const [isInitializing, setIsInitializing] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [processingId, setProcessingId] = useState<string | null>(null);
@@ -421,6 +422,12 @@ export const BusinessDashboard = ({ onLogout, user }: { onLogout?: () => void | 
           className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'wallet' ? "bg-white text-[#1a4731] shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
         >
           <Wallet size={18} /> Care Wallet
+        </button>
+        <button 
+          onClick={() => setActiveTab('attorneys')}
+          className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap relative group", activeTab === 'attorneys' ? "bg-white text-emerald-600 shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
+        >
+          <Gavel size={18} className={activeTab === 'attorneys' ? "" : "group-hover:text-emerald-500 transition-colors"} /> Attorney Marketplace
         </button>
         <div className="w-px h-8 bg-slate-200/80 mx-1 self-center" />
         <button 
@@ -1442,6 +1449,12 @@ export const BusinessDashboard = ({ onLogout, user }: { onLogout?: () => void | 
             </div>
           ))}
         </div>
+      </div>
+    )}
+
+    {activeTab === 'attorneys' && (
+      <div className="h-[800px] rounded-3xl overflow-hidden border border-slate-200 shadow-2xl">
+        <AttorneyMarketplaceTab />
       </div>
     )}
 
