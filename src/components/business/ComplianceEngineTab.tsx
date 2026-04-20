@@ -142,7 +142,7 @@ export const ComplianceEngineTab = () => {
                <div className="space-y-4">
                   {[
                     { n: 'OMMA API (OK)', s: 'Online', d: 'Stable' },
-                    { s: 'METRC API (CA)', s: 'Online', d: 'Stable' },
+                    { n: 'METRC API (CA)', s: 'Online', d: 'Stable' },
                     { n: 'SINC Node (TX)', s: 'Syncing', d: '92%' }
                   ].map((node, i) => (
                     <div key={i} className="flex justify-between items-center text-xs">

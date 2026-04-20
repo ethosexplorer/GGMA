@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Filter, Download, Shield, User, Clock, MapPin, Eye, FileText, AlertCircle, CheckCircle } from 'lucide-react';
+import { Search, Filter, Download, Shield, User, Clock, MapPin, Eye, FileText, AlertCircle, CheckCircle, Cpu } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 export const AuditLogsTab = () => {
