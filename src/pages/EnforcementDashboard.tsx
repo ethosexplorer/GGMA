@@ -21,7 +21,7 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
   // Breathalyzer state
   const [breathTestState, setBreathTestState] = useState<'idle' | 'blowing' | 'analyzing' | 'complete'>('idle');
   const [breathLevel, setBreathLevel] = useState(0);
-  const [breathResult, setBreathResult] = useState<{thc: number, pass: boolean} | null>(null);
+  const [breathResult, setBreathResult] = useState<{thc: number, pass: boolean, probability2hr: number} | null>(null);
 
   const MOCK_PATIENT = {
     name: 'Jason Thorne',
@@ -62,7 +62,8 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
           clearInterval(interval);
           setBreathTestState('analyzing');
           setTimeout(() => {
-             setBreathResult({ thc: 0.02, pass: true });
+             // 94% probability that consumption occurred within the last 2 hours based on THC peak
+             setBreathResult({ thc: 0.02, pass: true, probability2hr: 94 });
              setBreathTestState('complete');
           }, 2000);
           return 100;
@@ -439,8 +440,14 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
                     <div className="text-8xl font-black text-emerald-400 mb-2">
                        {breathResult.thc} <span className="text-3xl text-emerald-600">ng/mL</span>
                     </div>
-                    <div className="inline-block bg-emerald-900/30 text-emerald-400 px-6 py-2 rounded-full font-black tracking-widest border border-emerald-500/30 mb-10 text-xl">
+                    <div className="inline-block bg-emerald-900/30 text-emerald-400 px-6 py-2 rounded-full font-black tracking-widest border border-emerald-500/30 mb-4 text-xl">
                        {breathResult.pass ? 'PASS - BELOW LIMIT' : 'FAIL - IMPAIRED'}
+                    </div>
+
+                    <div className="bg-slate-800/80 border border-blue-500/30 p-4 rounded-2xl mb-10 max-w-sm mx-auto shadow-[0_0_15px_rgba(59,130,246,0.15)]">
+                       <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1 flex items-center justify-center gap-2"><Clock size={12}/> AI Recency Analysis</p>
+                       <p className="text-xl font-black text-white">{breathResult.probability2hr}% Probability</p>
+                       <p className="text-xs text-blue-400 mt-1 font-bold">Of consumption within the last 2 hours</p>
                     </div>
                     
                     <div className="bg-slate-800/50 p-6 rounded-3xl mb-8 flex items-center justify-center gap-4 text-slate-400">
