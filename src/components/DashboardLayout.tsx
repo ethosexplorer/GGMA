@@ -7,7 +7,7 @@ import {
 import { cn } from '../lib/utils';
 import TeleHealthDashboard from './TeleHealthDashboard';
 
-export const DashboardLayout = ({ role, onLogout, userProfile }: { role: string, onLogout: () => void, userProfile: any }) => {
+export const DashboardLayout = ({ role, onLogout, userProfile, children }: { role: string, onLogout: () => void, userProfile: any, children?: React.ReactNode }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const navigate = useNavigate();
@@ -171,7 +171,10 @@ export const DashboardLayout = ({ role, onLogout, userProfile }: { role: string,
         </header>
 
         <main className="flex-1 p-0 overflow-auto">
-             <div className="p-8"><Outlet /></div>
+             <div className="p-8">
+               {children}
+               <Outlet />
+             </div>
         </main>
       </div>
     </div>

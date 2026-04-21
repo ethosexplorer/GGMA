@@ -13,6 +13,9 @@ export async function initializeDatabase() {
         state TEXT NOT NULL,
         status TEXT NOT NULL,
         last_audit TEXT NOT NULL,
+        metrc_integrator_key TEXT,
+        metrc_user_key TEXT,
+        metrc_license_number TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
@@ -26,6 +29,7 @@ export async function initializeDatabase() {
         quantity INTEGER NOT NULL,
         unit TEXT NOT NULL,
         price REAL NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY(entity_id) REFERENCES entities(id)
       )
     `);
@@ -38,6 +42,7 @@ export async function initializeDatabase() {
         amount REAL NOT NULL,
         type TEXT NOT NULL,
         status TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY(entity_id) REFERENCES entities(id)
       )
     `);
@@ -51,6 +56,7 @@ export async function initializeDatabase() {
         date TEXT NOT NULL,
         status TEXT NOT NULL,
         is_resolved INTEGER DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY(entity_id) REFERENCES entities(id)
       )
     `);
@@ -64,6 +70,7 @@ export async function initializeDatabase() {
         amount REAL NOT NULL,
         expires_at TEXT NOT NULL,
         status TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY(entity_id) REFERENCES entities(id)
       )
     `);
@@ -76,9 +83,27 @@ export async function initializeDatabase() {
         type TEXT NOT NULL,
         uploaded_at TEXT NOT NULL,
         url TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY(entity_id) REFERENCES entities(id)
       )
     `);
+
+    // Migration: Add created_at if missing
+    const tablesToMigrate = ['inventory', 'transactions', 'compliance_alerts', 'insurance_policies', 'documents'];
+    for (const table of tablesToMigrate) {
+      try {
+        await turso.execute(`ALTER TABLE ${table} ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP`);
+      } catch (e) {
+        // Column probably already exists
+      }
+    }
+
+    // Add Metrc columns to entities if missing
+    try {
+      await turso.execute(`ALTER TABLE entities ADD COLUMN metrc_integrator_key TEXT`);
+      await turso.execute(`ALTER TABLE entities ADD COLUMN metrc_user_key TEXT`);
+      await turso.execute(`ALTER TABLE entities ADD COLUMN metrc_license_number TEXT`);
+    } catch (e) {}
 
     // --- Metrc Compliance & Care OS Tables ---
 
@@ -178,13 +203,12 @@ export async function initializeDatabase() {
     if (rows[0] && rows[0].count === 0) {
       console.log('Inserting initial mock data...');
       
-      const entitiesQuery = `
-        INSERT INTO entities (id, name, type, state, status, last_audit) VALUES 
-        ('ent-1', 'GGMA North Dispensary', 'Retail', 'Oklahoma', 'Compliant', 'Apr 21, 2026'),
-        ('ent-2', 'Green Valley Cultivation', 'Production', 'Oklahoma', 'Compliant', 'Apr 15, 2026'),
-        ('ent-3', 'Central Logistics Hub', 'Distribution', 'Oklahoma', 'Review', 'Apr 20, 2026')
-      `;
-      await turso.execute(entitiesQuery);
+      await turso.execute(`
+        INSERT OR IGNORE INTO entities (id, name, type, state, status, last_audit, metrc_integrator_key, metrc_user_key, metrc_license_number) VALUES
+        ('ent-1', 'GGMA North Dispensary', 'Retail', 'Oklahoma', 'Compliant', 'Apr 21, 2026', 'MOCK_INT_123', 'MOCK_USER_123', '123-OK-DISP'),
+        ('ent-2', 'Green Valley Cultivation', 'Production', 'Oklahoma', 'Compliant', 'Apr 15, 2026', 'MOCK_INT_456', 'MOCK_USER_456', '456-OK-GROW'),
+        ('ent-3', 'Central Logistics Hub', 'Distribution', 'Oklahoma', 'Review', 'Apr 20, 2026', NULL, NULL, NULL)
+      `);
 
       const inventoryQuery = `
         INSERT INTO inventory (id, entity_id, item_name, category, quantity, unit, price) VALUES 

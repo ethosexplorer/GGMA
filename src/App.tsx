@@ -1,4 +1,5 @@
 import React, { Component, useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { STATE_RESOURCES } from './stateResources';
 import { getPlansForRole, getAddOnsForRole } from './lib/subscriptionPlans';
 import {
@@ -2607,7 +2608,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       '🏢 GGMA Licensing',
       '🕵️ RIP Intelligence',
       '🛡️ SINC Compliance',
-      '📅 Book 30min Consultation',
+      '📅 Book 15min Consultation',
       '🏥 Telehealth',
       '💻 IT Support',
       '⭐ Basic Subscription',
@@ -3993,22 +3994,22 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         setIsTyping(false);
         return;
       } else if (lower.includes('shantell') || lower.includes('speak')) {
-        response = '👤 **Human Care Coordination**\n\nI am routing you to **Shantell Robinson**. When booking, please include a **detailed message** about your needs so we can prepare your file.\n\n📞 **Med Card Line**: 405-492-7487\n📞 **Telehealth Line**: 405-252-1178\n🔗 **[Book a Session via Calendly (April 2026)](https://calendly.com/globalgreenenterprize/30min?month=2026-04)**';
+        response = '👤 **Human Care Coordination**\n\nI am routing you to **Shantell Robinson**. When booking, please include a **detailed message** about your needs so we can prepare your file.\n\n📞 **Med Card Line**: 405-492-7487\n📞 **Telehealth Line**: 405-252-1178\n🔗 **[Book a Session via Calendly (April 2026)](https://calendly.com/globalgreenenterprize/15min?month=2026-04)**';
         setSignupStep(0);
       } else {
         response = 'No problem. If you\'re not ready for an appointment, I can help you with **GGMA Licensing** or **IT Support**. What would you like to explore?';
         setSignupStep(0);
       }
-    } else if (lower.includes('consultation') || lower.includes('book 30min')) {
+    } else if (lower.includes('consultation') || lower.includes('book 15min')) {
       response = 'Sure! Here are our available appointment times. Pick a slot and I’ll lock it in for you! 📅';
       setMessages(prev => [...prev, { role: 'bot', text: response }]);
       setSignupStep(11);
       fetchCalendlySlots();
       return;
     } else if (lower.includes('business expert') || lower.includes('commercial consultant')) {
-      response = '🏢 **Commercial Compliance Consultation**\n\nI am routing you to our **Business Licensing Experts**. Please leave a **detailed message** in the booking notes about your business entity type.\n\n📞 **Business Line**: 405-492-7297\n🔗 **[Book Business Consultation (Calendly - April 2026)](https://calendly.com/globalgreenenterprize/30min?month=2026-04)**';
+      response = '🏢 **Commercial Compliance Consultation**\n\nI am routing you to our **Business Licensing Experts**. Please leave a **detailed message** in the booking notes about your business entity type.\n\n📞 **Business Line**: 405-492-7297\n🔗 **[Book Business Consultation (Calendly - April 2026)](https://calendly.com/globalgreenenterprize/15min?month=2026-04)**';
     } else if (lower.includes('human') || lower.includes('coordinator') || lower.includes('shantell') || lower.includes('speak with someone')) {
-      response = '👤 **Human Care Coordination**\n\nI am routing you to **Shantell Robinson**. When booking, please include a **detailed message** about your needs so we can prepare your file.\n\n📞 **Med Card Line**: 405-492-7487\n📞 **Telehealth Line**: 405-252-1178\n🔗 **[Book a Session via Calendly (April 2026)](https://calendly.com/globalgreenenterprize/30min?month=2026-04)**';
+      response = '👤 **Human Care Coordination**\n\nI am routing you to **Shantell Robinson**. When booking, please include a **detailed message** about your needs so we can prepare your file.\n\n📞 **Med Card Line**: 405-492-7487\n📞 **Telehealth Line**: 405-252-1178\n🔗 **[Book a Session via Calendly (April 2026)](https://calendly.com/globalgreenenterprize/15min?month=2026-04)**';
     } else if (lower.includes('fee schedule')) {
       response = '💰 **OMMA Fee Schedule (2026)**\n\n• **Dispensary**: $2,500 - $10,000 (Based on tax)\n• **Grower/Processor**: Tiered from $2,500 to $50,000+\n• **Patient Card**: $104.30 (Standard) / $22.50 (Reduced)\n\nWould you like the detailed tier breakdown for a specific license type?';
       setMessages(prev => [...prev, { 
@@ -4027,7 +4028,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       fetchCalendlySlots();
       return;
     } else if (lower.includes('human') || lower.includes('coordinator') || lower.includes('shantell') || lower.includes('speak with someone')) {
-      response = '👤 **Human Care Coordination**\n\nI am routing you to **Shantell Robinson**, our lead Human Care Coordinator. When booking, please include a **detailed message** about your needs.\n\n📞 **Med Card Line**: 405-492-7487\n📞 **Telehealth Line**: 405-252-1178\n🏢 **Global Green**: 405-492-7297\n\n🔗 **[Book a Session via Calendly (April 2026)](https://calendly.com/globalgreenenterprize/30min?month=2026-04)**';
+      response = '👤 **Human Care Coordination**\n\nI am routing you to **Shantell Robinson**, our lead Human Care Coordinator. When booking, please include a **detailed message** about your needs.\n\n📞 **Med Card Line**: 405-492-7487\n📞 **Telehealth Line**: 405-252-1178\n🏢 **Global Green**: 405-492-7297\n\n🔗 **[Book a Session via Calendly (April 2026)](https://calendly.com/globalgreenenterprize/15min?month=2026-04)**';
     } else if (lower === 'yes' || lower === 'yeah' || lower === 'yep') {
       response = 'Great! I am ready to assist. Would you like to begin your **Licensing Intake**, or do you have questions about our other sectors like **RIP Intelligence** or **SINC Compliance**?';
     } else if (['cancer', 'pain', 'ptsd', 'glaucoma', 'seizure', 'anxiety', 'epilepsy', 'crohn', 'sclerosis', 'als', 'alzheimer', 'anorexia', 'migraine', 'arthritis', 'nausea', 'autism', 'hiv', 'aids', 'parkinson', 'tourette'].some(condition => lower.includes(condition))) {
@@ -4046,7 +4047,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
           '🏢 GGMA Licensing',
           '🕵️ RIP Intelligence',
           '🛡️ SINC Compliance',
-          '📅 Book 30min Consultation',
+          '📅 Book 15min Consultation',
           '🏥 Telehealth',
           '💻 IT Support',
           '⭐ Basic Subscription',
@@ -4115,7 +4116,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         { label: '🏢 GGMA Licensing', text: 'I have a question about GGMA licensing.' },
         { label: '🕵️ RIP Intelligence', text: 'Tell me about RIP enforcement.' },
         { label: '🛡️ SINC Compliance', text: 'What is SINC infrastructure?' },
-        { label: '📅 Book 30min Consultation (April 2026)', text: 'https://calendly.com/globalgreenenterprize/30min?month=2026-04' },
+        { label: '📅 Book 15min Consultation (April 2026)', text: 'https://calendly.com/globalgreenenterprize/15min?month=2026-04' },
         { label: '🏥 Telehealth', text: 'I need assistance with a Telehealth appointment.' },
         { label: '💻 IT Support', text: 'I need technical assistance with the platform.' },
         { label: '⭐ Basic Subscription', text: 'Tell me about the Basic Subscription.' },
@@ -4364,7 +4365,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
                       </p>
                     </div>
                     <button
-                      onClick={() => window.open('https://calendly.com/globalgreenenterprize/30min', '_blank')}
+                      onClick={() => window.open('https://calendly.com/globalgreenenterprize/15min', '_blank')}
                       className="w-full bg-[#1a4731] text-white py-3 rounded-xl text-sm font-black hover:bg-[#0f2a1f] transition-all shadow-lg flex items-center justify-center gap-2"
                     >
                       📅 Open Secure Booking Portal
@@ -5822,12 +5823,26 @@ const PatientSignupPage = ({ onNavigate }: any) => {
 
 
 export default function App() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState('landing');
   const [initialRole, setInitialRole] = useState(undefined);
   const [isDemoUnlocked, setIsDemoUnlocked] = useState(false);
+
+  // Sync view state with URL path for deep linking
+  useEffect(() => {
+    const path = location.pathname;
+    if (path === '/login') setView('login');
+    else if (path === '/signup') setView('signup');
+    else if (path.startsWith('/dashboard')) setView('dashboard');
+    else if (path === '/larry-chatbot') setView('larry-chatbot');
+    else if (path === '/support') setView('support');
+    else if (path === '/business-signup') setView('business-signup');
+    else if (path === '/patient-signup') setView('patient-signup');
+  }, [location.pathname]);
 
   useEffect(() => {
     const FOUNDER_EMAIL = "globalgreenhp@gmail.com";
@@ -5887,10 +5902,16 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
-          const renderDashboardByRole = (profile: any) => {
+  const renderDashboardByRole = (profile: any) => {
     if (!profile) return null;
     const role = profile.role;
+    const path = location.pathname;
     
+    // Extract sub-tab if any (e.g., /dashboard/business/readiness -> readiness)
+    const subTab = path.split('/').pop();
+    const validTabs = ['home', 'analytics', 'pos', 'inventory', 'locations', 'compliance', 'insurance', 'documents', 'subscription', 'integrations', 'staff', 'traceability', 'readiness', 'wallet', 'attorneys', 'reporting'];
+    const initialTab = validTabs.includes(subTab || '') ? subTab : undefined;
+
     // Oversight Portal Routing
     if (role === 'executive_founder' || role === 'executive_ceo') {
       return <FounderDashboard onLogout={handleLogout} user={profile} />;
@@ -5901,12 +5922,6 @@ export default function App() {
     if (role === 'enforcement_state' || role?.startsWith('enforcement')) {
       return <EnforcementDashboard onLogout={handleLogout} user={profile} />;
     }
-    if (role === 'regulator_state' || role?.startsWith('regulator')) {
-      return <OversightDashboard onLogout={handleLogout} user={profile} />;
-    }
-    if (role === 'backoffice_staff' || role?.startsWith('backoffice')) {
-      return <OversightDashboard onLogout={handleLogout} user={profile} />;
-    }
 
     // Business Portal Routing
     if (role === 'provider') {
@@ -5916,7 +5931,7 @@ export default function App() {
       return <AttorneyDashboard onLogout={handleLogout} user={profile} />;
     }
     if (role === 'business' || role === 'compliance_service') {
-      return <BusinessDashboard onLogout={handleLogout} user={profile} />;
+      return <BusinessDashboard onLogout={handleLogout} user={profile} initialTab={initialTab} />;
     }
 
     // Patient Portal Routing

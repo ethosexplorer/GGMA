@@ -81,13 +81,25 @@ export class ReportingEngine {
    * Submits a report to the state regulatory API using the MetrcConnector.
    */
   static async submitToState(reportData: string, type: string, facilityId: string) {
-    // 1. Fetch facility credentials from Turso (Mocked for this implementation)
-    // In production, these would be retrieved from an encrypted vault linked to the facility
+    // 1. Fetch facility credentials from Turso
+    const entityRes = await turso.execute({
+      sql: "SELECT metrc_integrator_key, metrc_user_key, metrc_license_number FROM entities WHERE id = ?",
+      args: [facilityId]
+    });
+
+    const entity = entityRes.rows[0];
+    if (!entity || !entity.metrc_integrator_key) {
+      return {
+        success: false,
+        error: `No Metrc credentials found for facility ${facilityId}. Please configure them in settings.`
+      };
+    }
+
     const credentials = {
-      integratorApiKey: 'INTEGRATOR_ABC_123',
-      userApiKey: 'USER_XYZ_789',
-      licenseNumber: '123-OK-DISPENSARY',
-      environment: 'sandbox' as const
+      integratorApiKey: entity.metrc_integrator_key as string,
+      userApiKey: entity.metrc_user_key as string,
+      licenseNumber: entity.metrc_license_number as string,
+      environment: 'sandbox' as const // Defaulting to sandbox for safety
     };
 
     const connector = new MetrcConnector(credentials);

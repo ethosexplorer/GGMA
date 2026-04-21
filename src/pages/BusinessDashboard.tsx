@@ -47,9 +47,9 @@ const MiniBarChart = ({ data }: { data: number[] }) => (
   </div>
 );
 
-export const BusinessDashboard = ({ onLogout, user }: { onLogout?: () => void | Promise<void>, user?: any }) => {
+export const BusinessDashboard = ({ onLogout, user, initialTab }: { onLogout?: () => void | Promise<void>, user?: any, initialTab?: any }) => {
   const [demoUnlocked, setDemoUnlocked] = useState(false);
-  const [activeTab, setActiveTab] = useState<'home' | 'analytics' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'insurance' | 'documents' | 'subscription' | 'integrations' | 'staff' | 'traceability' | 'readiness' | 'wallet' | 'attorneys' | 'reporting'>('analytics');
+  const [activeTab, setActiveTab] = useState<'home' | 'analytics' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'insurance' | 'documents' | 'subscription' | 'integrations' | 'staff' | 'traceability' | 'readiness' | 'wallet' | 'attorneys' | 'reporting'>(initialTab || 'analytics');
   const [isInitializing, setIsInitializing] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [processingId, setProcessingId] = useState<string | null>(null);
