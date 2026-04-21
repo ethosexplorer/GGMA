@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   Building2, Users, FileText, Settings, Shield, Activity, Bell,
   Globe, HeartPulse, Cpu, LayoutDashboard, LogOut, ArrowLeft, 
-  FlaskConical, CreditCard, ChevronRight, Clock
+  FlaskConical, CreditCard, ChevronRight, Clock, Phone
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { FederalDashboard } from './FederalDashboard';
@@ -35,8 +35,8 @@ export const OversightDashboard = ({ onLogout, user }: { onLogout?: () => void, 
     <div className="space-y-6 p-8">
       <div className="flex justify-between items-center mb-8">
         <div>
-           <h1 className="text-3xl font-black text-slate-800 tracking-tight">Oversight Command Hub</h1>
-           <p className="text-slate-500 font-medium">Unified access to all governance, health, and operational portals.</p>
+           <h1 className="text-3xl font-black text-slate-800 tracking-tight">GGHP Oversight Command Hub</h1>
+           <p className="text-slate-500 font-medium">Unified access to Global Green Enterprise Inc sectors: GGMA, RIP, and SINC.</p>
         </div>
       </div>
 

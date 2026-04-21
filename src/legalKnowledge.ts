@@ -693,6 +693,10 @@ This proprietary framework establishes a financial stabilizing system for the ca
 
 AUTHORIZED ENTITIES:
 - Global Green Enterprise Inc.
+- Global Green Hybrid Platform (GGHP)
+- Global Green Marijuana Authority (GGMA)
+- Research & Intelligence Protocol (RIP)
+- Secure Intelligence & Network Compliance (SINC)
 - GGE Compassion Allocation
 - Global Green Platform Trust
 

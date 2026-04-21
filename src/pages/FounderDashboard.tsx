@@ -46,7 +46,7 @@ const NAV_ITEMS = [
 
 export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | Promise<void>, user?: any }) => {
   const [activeTab, setActiveTab] = useState('overview');
-  const [broadcastMsg, setBroadcastMsg] = useState('🚨 SYSTEM NOTICE: NATIONWIDE COMPLIANCE AUDIT IN PROGRESS • ALL NODES OPERATIONAL • FEDERAL DIRECTIVE IF12270 APPLIED');
+  const [broadcastMsg, setBroadcastMsg] = useState('🚨 SYSTEM NOTICE: NATIONWIDE COMPLIANCE AUDIT IN PROGRESS • GLOBAL GREEN HYBRID PLATFORM (GGHP) • ALL SECTORS (GGMA/RIP/SINC) OPERATIONAL');
   const [broadcastType, setBroadcastType] = useState('Urgent Alert (Red)');
 
   const handleBroadcast = () => {
@@ -61,7 +61,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
            <div className="space-y-2">
              <h2 className="text-3xl font-black tracking-tight">Welcome, Founder.</h2>
-             <p className="text-indigo-200 font-medium">Platform state: <span className="text-emerald-400 font-bold">Operational</span> • Jurisdiction: <span className="text-white font-bold">Nationwide (US)</span></p>
+             <p className="text-indigo-200 font-medium">Platform state: <span className="text-emerald-400 font-bold">Operational</span> • Umbrella: <span className="text-white font-bold">GGHP (Global Green Enterprise Inc)</span></p>
            </div>
            <div className="flex gap-4">
               <div className="text-center px-6 border-r border-white/10">

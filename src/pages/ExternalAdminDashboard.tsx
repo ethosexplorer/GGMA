@@ -46,7 +46,7 @@ export const ExternalAdminDashboard = ({ onLogout, user }: { onLogout?: () => vo
           </div>
           <div>
             <h3 className="text-sm font-bold text-emerald-800">Sylara AI Assistant</h3>
-            <p className="text-sm text-emerald-700">"Welcome back to {entityName} Admin — you have 3 pending renewals and 1 anomaly at Westside Hub. Would you like me to prepare them or escalate to Global Green Executive review?"</p>
+            <p className="text-sm text-emerald-700">"Welcome back to {entityName} Admin — part of the Global Green Hybrid Platform (GGHP). You have 3 pending renewals and 1 anomaly at Westside Hub. Would you like me to prepare them or escalate to Executive review?"</p>
           </div>
         </div>
         <div className="flex gap-2 shrink-0">

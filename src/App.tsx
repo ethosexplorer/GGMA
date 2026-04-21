@@ -1148,7 +1148,7 @@ const STATE_RESOURCES: Record<string, any> = {
 };
 
 const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | 'patient-portal' | 'support' | 'larry-chatbot' | 'larry-business', role?: string) => void }) => {
-  const [platformAlert, setPlatformAlert] = useState('🚨 SYSTEM NOTICE: NATIONWIDE COMPLIANCE AUDIT IN PROGRESS • ALL NODES OPERATIONAL • FEDERAL DIRECTIVE IF12270 APPLIED');
+  const [broadcastMsg, setBroadcastMsg] = useState('🚨 SYSTEM NOTICE: NATIONWIDE COMPLIANCE AUDIT IN PROGRESS • GLOBAL GREEN HYBRID PLATFORM (GGHP) • ALL SECTORS (GGMA/RIP/SINC) OPERATIONAL');
   const [inTheKnowNews, setInTheKnowNews] = useState([
     'OMMA Legislative Update: New rules for 2026 commercial licensing now active',
     'Florida transitions to Fully Legal status - Platform infrastructure updated',
@@ -1160,7 +1160,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
     // Sync with Founder's Emergency Broadcast
     const syncAlert = () => {
       const savedAlert = localStorage.getItem('gghp_platform_alert');
-      if (savedAlert) setPlatformAlert(savedAlert);
+      if (savedAlert) setBroadcastMsg(savedAlert);
     };
     syncAlert();
     window.addEventListener('storage', syncAlert);
@@ -1176,7 +1176,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
       {/* URGENT PLATFORM ALERT TICKER */}
       <div className="bg-red-600 text-white py-2 overflow-hidden whitespace-nowrap border-b border-red-700 relative z-[60]">
         <div className="inline-block animate-marquee-fast font-black text-sm uppercase tracking-widest">
-          {platformAlert} &nbsp; • &nbsp; {platformAlert} &nbsp; • &nbsp; {platformAlert}
+          {broadcastMsg} &nbsp; • &nbsp; {broadcastMsg} &nbsp; • &nbsp; {broadcastMsg}
         </div>
       </div>
 
@@ -1194,12 +1194,19 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
           </div>
         </div>
 
-        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
+        <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
           <a href="#state-facts" className="hover:text-[#1a4731] transition-colors">State Facts</a>
-          <a href="#jurisdiction-intelligence" className="hover:text-[#1a4731] transition-colors">Compliance Standards</a>
-          <button onClick={() => onNavigate('support')} className="hover:text-[#1a4731] transition-colors font-medium">Help & Support</button>
-          <button onClick={() => onNavigate('larry-chatbot')} className="hover:text-[#1a4731] transition-colors font-medium">Med Card Assistance</button>
-          <button onClick={() => onNavigate('larry-business')} className="hover:text-[#1a4731] transition-colors font-medium">Business License Assistance</button>
+          <button onClick={() => onNavigate('patient-portal')} className="hover:text-[#1a4731] transition-colors font-medium">GGMA Sector</button>
+          <button onClick={() => onNavigate('signup', 'Oversight')} className="hover:text-[#1a4731] transition-colors font-medium">RIP Intelligence</button>
+          <button onClick={() => {}} className="hover:text-[#1a4731] transition-colors font-medium">SINC Compliance</button>
+          <div className="h-6 w-px bg-slate-200 mx-2" />
+          <button 
+            onClick={() => onNavigate('larry-chatbot')} 
+            className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-[#1a4731] rounded-xl border border-emerald-100 font-bold hover:bg-emerald-100 transition-all shadow-sm group"
+          >
+            <Phone size={16} className="text-emerald-600 group-hover:scale-110 transition-transform" />
+            GGE AI Call Center
+          </button>
         </div>
 
         <div className="flex items-center gap-3">
@@ -1219,7 +1226,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
       <section className="pt-20 pb-20 px-6 relative overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[120%] h-[500px] bg-gradient-to-b from-emerald-50/50 to-transparent -z-10 blur-3xl"></div>
         <div className="max-w-4xl mx-auto text-center space-y-8">
-          <p className="text-[#1a4731] font-bold tracking-[0.3em] uppercase text-xs mb-[-10px] opacity-70">Global Green introducing</p>
+          <p className="text-[#1a4731] font-bold tracking-[0.3em] uppercase text-xs mb-[-10px] opacity-70">Global Green Enterprise Inc introducing</p>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
             Infrastructure Active: 50 States + DC Secure
@@ -1230,7 +1237,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
           </h1>
 
           <p className="text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed font-medium">
-            A nationwide aggregator establishing secure, role-based access control and transparent compliance tracking for the medical marijuana authority.
+            Global Green Enterprise Inc introduces the Global Green Hybrid Platform (GGHP) — a unified compliance ecosystem for GGMA, RIP, and SINC.
           </p>
 
           <div className="max-w-2xl mx-auto relative group">
@@ -1267,8 +1274,9 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
              <div className="absolute bottom-12 left-12 right-12 flex flex-col md:flex-row justify-between items-end gap-6">
                 <div>
-                  <h2 className="text-3xl font-black text-white mb-2 uppercase tracking-tighter">GGHP Secure Infrastructure</h2>
-                  <p className="text-emerald-400 font-bold uppercase tracking-widest text-xs">Global Green Hybrid Platform • Nationwide RIP Integration</p>
+                  <h2 className="text-3xl font-black text-white mb-2 uppercase tracking-tighter">GGHP</h2>
+                  <p className="text-indigo-200 font-medium">Platform state: <span className="text-emerald-400 font-bold">Operational</span> • Umbrella: <span className="text-white font-bold">GGHP (Global Green Enterprise Inc)</span></p>
+                  <p className="text-emerald-400 font-bold uppercase tracking-widest text-xs">Global Green Hybrid Platform (GGHP) • GGMA • RIP • SINC</p>
                 </div>
                 <div className="px-6 py-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 text-white text-sm font-bold">
                    50 States Live • 24/7 Monitoring
@@ -1301,9 +1309,9 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
                   <path d="M17.2 16l0.5 0.5 1.1-1.1" stroke="#0288D1" strokeWidth="1.5" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-[#3E2723] mb-3">Patient Portal</h3>
+              <h3 className="text-xl font-bold text-[#3E2723] mb-3">Patient Portal (GGMA)</h3>
               <p className="text-slate-500 text-sm leading-relaxed mb-4">
-                Access the patient portal to apply for a license or manage an existing license.
+                The GGMA Consumer Sector. Securely apply for your medical license, manage renewals, and access your digital Care Wallet.
               </p>
               <p className="text-sm italic text-slate-600 mb-6">
                 Adult, Minor, Caregiver, Short-Term, Out-of-State
@@ -1321,9 +1329,9 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
               <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#81C784] to-[#2E7D32] flex items-center justify-center mb-6 shadow-lg shadow-green-200/50">
                 <Building2 className="text-white" size={36} />
               </div>
-              <h3 className="text-xl font-bold text-[#3E2723] mb-3">Business Portal</h3>
+              <h3 className="text-xl font-bold text-[#3E2723] mb-3">Business Portal (GGE)</h3>
               <p className="text-slate-500 text-sm leading-relaxed mb-4">
-                The centralized hub for all professional operations. Manage seed-to-sale inventory, POS integrations, medical consultations, and legal case management.
+                The GGE B2B Sector. Centralized hub for professional operations, seed-to-sale inventory, and compliance audit shielding.
               </p>
               <p className="text-sm italic text-slate-600 mb-6 font-bold">
                 Providers, Attorneys, Dispensaries, Cultivation, Manufacturing, Medcard Services
@@ -1341,9 +1349,9 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
               <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#FFB74D] to-[#E65100] flex items-center justify-center mb-6 shadow-lg shadow-orange-200/50">
                 <Shield className="text-white" size={36} />
               </div>
-              <h3 className="text-xl font-bold text-[#3E2723] mb-3">Oversight & RIP Portal</h3>
+              <h3 className="text-xl font-bold text-[#3E2723] mb-3">Oversight Portal (RIP/SINC)</h3>
               <p className="text-slate-500 text-sm leading-relaxed mb-4">
-                Authorized command center for real-time intelligence, policing (RIP), and regulatory oversight.
+                The Governance Sector. Authorized command center for real-time intelligence (RIP) and secure infrastructure compliance (SINC).
               </p>
               <p className="text-sm italic text-slate-600 mb-6">
                 Law Enforcement (RIP), Regulators, Executives, Operations
@@ -1368,7 +1376,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
              {[
-               { n: 'Patient / Caregiver', p: 'Free', f: ['Digital Med Card Storage', 'State Fact Access', 'L.A.R.R.Y AI Assistance'], b: 'emerald' },
+               { n: 'Patient / Caregiver', p: 'Free', f: ['Digital Med Card Storage', 'State Fact Access', 'L.A.R.R.Y AI Assistance', 'Concierge Support (One-time fee without sub)'], b: 'emerald' },
                { n: 'Commercial Enterprise', p: '$499/mo', f: ['Full METRC Integration', 'Seed-to-Sale Tracking', 'Compliance Audit Shield'], b: 'blue', popular: true },
                { n: 'Government / RIP', p: 'Custom', f: ['Real-time Intelligence (RIP)', 'Nationwide Aggregator Access', 'Executive Oversight Tools'], b: 'slate' }
              ].map((plan, i) => (
@@ -1448,8 +1456,8 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
         <div className="max-w-6xl mx-auto">
            <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-16">
               <div className="space-y-4">
-                 <h2 className="text-4xl font-black text-slate-900 tracking-tight">Compliance & State Facts</h2>
-                 <p className="text-slate-500 font-medium">Deep-dive into state-specific statutes, tax laws, and operational standards.</p>
+                 <h1 className="text-3xl font-black text-slate-800 tracking-tight">GGHP Oversight Command Hub</h1>
+            <p className="text-slate-500 font-medium">Unified access to Global Green Enterprise Inc sectors: GGMA, RIP, and SINC.</p>
               </div>
               <button className="px-6 py-3 bg-emerald-50 text-emerald-700 rounded-xl font-bold border border-emerald-100 hover:bg-emerald-100 transition-all flex items-center gap-2">
                  Explore Full Database <ArrowRight size={18} />
@@ -1553,7 +1561,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
           </div>
 
           <p className="text-[11px] text-slate-400 max-w-3xl mx-auto leading-relaxed uppercase tracking-wide">
-            Disclaimer: The Global Green Marijuana Authority (GGMA) infrastructure is designed to aggregate and assist with regulatory compliance. Compliance is subject to state, local, and federal jurisdictions. Use of this platform does not constitute legal advice. By accessing this portal, you agree to our terms of service, multi-factor authentication requirements, and role-based data restrictions.
+            Disclaimer: Global Green Enterprise Inc (GGHP) infrastructure is designed to aggregate and assist with regulatory compliance across GGMA, RIP, and SINC sectors. Compliance is subject to state, local, and federal jurisdictions. Use of this platform does not constitute legal advice. By accessing this portal, you agree to our terms of service, multi-factor authentication requirements, and role-based data restrictions.
           </p>
 
           <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 text-xs font-bold text-slate-600 uppercase tracking-widest">
@@ -3397,15 +3405,15 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       if (lower === 'yes' || lower === 'yeah' || lower === 'yep') {
         setBusinessData(prev => ({ ...prev, attestationsConfirmed: true }));
         response = '✅ **Attestations Confirmed!**\n\n**Section 8: Document Uploads**\n\nThe following documents are required for your application:\n\n' +
-          '📄 Affidavit of Lawful Presence\n' +
-          '📄 Proof of Oklahoma Residency (75% ownership)\n' +
-          '📄 OSBI Background Check (each owner)\n' +
-          '📄 National Background Check Attestation\n' +
-          '📄 ID copies (each person of interest)\n' +
-          '📄 Certificate of Compliance\n' +
-          '📄 Certificate(s) of Occupancy & Site Plans\n' +
-          '📄 Certificate of Good Standing\n' +
-          '📄 Ownership Disclosure Documentation\n' +
+          '📄 **Affidavit of Lawful Presence**\n' +
+          '📄 **Proof of Oklahoma Residency (75% ownership)**\n' +
+          '📄 **OSBI Background Check (each owner)**\n' +
+          '📄 **National Background Check Attestation**\n' +
+          '📄 **ID copies (each person of interest)**\n' +
+          '📄 **Certificate of Compliance**\n' +
+          '📄 **Certificate(s) of Occupancy & Site Plans**\n' +
+          '📄 **Certificate of Good Standing**\n' +
+          '📄 **Ownership Disclosure Documentation**\n' +
           (businessData.licenseType === 'Processor' ? '📄 Hazardous License / Chemical Safety Data Sheets\n' : '') +
           (businessData.licenseType === 'Dispensary' ? '📄 Dispensary Distance Attestation (1,000 ft from schools)\n' : '') +
           (businessData.licenseType === 'Grower' ? '📄 Grow Facility Distance Attestation (1,000 ft from schools)\n' : '') +
@@ -5684,7 +5692,7 @@ export default function App() {
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-10 h-10 text-[#1a4731] animate-spin" />
-          <p className="text-slate-500 font-medium">Loading GGMA Platform...</p>
+          <p className="text-slate-500 font-medium">Loading Global Green Hybrid Platform...</p>
         </div>
       </div>
     );
