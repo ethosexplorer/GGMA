@@ -72,7 +72,7 @@ export const CareWalletDashboard = ({ onLogout, user }: { onLogout?: () => void,
           </button>
           <button onClick={() => setActiveTab('credit')} className={cn("w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left", activeTab === 'credit' ? "bg-slate-800 text-white shadow-md border border-slate-700" : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200")}>
             <TrendingUp size={16} className={cn(activeTab === 'credit' ? "text-blue-400" : "text-slate-500")} />
-            C³ Credit Score
+            C³ Compassion Score
           </button>
           <button onClick={() => setActiveTab('cards')} className={cn("w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left", activeTab === 'cards' ? "bg-slate-800 text-white shadow-md border border-slate-700" : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200")}>
             <CreditCard size={16} className={cn(activeTab === 'cards' ? "text-purple-400" : "text-slate-500")} />
@@ -149,12 +149,12 @@ export const CareWalletDashboard = ({ onLogout, user }: { onLogout?: () => void,
                 </div>
               </div>
 
-              {/* C3 Credit Score Card */}
+              {/* C3 Compassion Score Card */}
               <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm flex flex-col justify-center">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h3 className="text-slate-800 font-bold uppercase tracking-wider text-sm flex items-center gap-2">
-                      <TrendingUp size={16} className="text-blue-500" /> C³ Credit Architecture
+                      <TrendingUp size={16} className="text-blue-500" /> C³ Compassion Architecture
                     </h3>
                     <p className="text-slate-500 text-xs mt-1">Closed-Loop Behavioral Scoring Engine</p>
                   </div>
@@ -211,7 +211,7 @@ export const CareWalletDashboard = ({ onLogout, user }: { onLogout?: () => void,
                       Sylara Financial Insight <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-blue-500/30 text-blue-200 border border-blue-500/50">Active</span>
                     </h4>
                     <p className="text-sm text-blue-100/90 mt-1 leading-relaxed">
-                      "Marcus, you've maintained a positive Compassion Balance for 3 straight months and earned 450 Care Points. If you continue this payment discipline for 30 more days, you will unlock a 10% discount on telehealth visits and pre-qualify for our Phase 2 revolving credit line."
+                      "Marcus, you've maintained a positive Compassion Balance for 3 straight months and earned 450 Care Points. If you continue this payment discipline for 30 more days, you will unlock a 10% discount on telehealth visits and pre-qualify for our Phase 2 revolving provision line."
                     </p>
                   </div>
                 </div>

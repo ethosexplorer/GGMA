@@ -85,7 +85,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
               onClick={() => setShowCreditModal(true)}
               className="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl font-bold text-sm transition-all flex items-center gap-2 border border-white/20 backdrop-blur-sm"
             >
-              <TrendingUp size={16} className="text-blue-400" /> GGE Line of Credit
+              <TrendingUp size={16} className="text-blue-400" /> GGE Compassion Allocation
             </button>
             <button 
               onClick={() => setShowDisposableCard(true)}
@@ -98,16 +98,16 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Chronic Cardz Line of Credit */}
+        {/* GGE Compassion Allocation */}
         <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-blue-500/10 transition-colors" />
           <div className="flex justify-between items-start mb-4">
             <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
               <TrendingUp size={20} />
             </div>
-            <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-2 py-1 rounded-full border border-blue-100 uppercase tracking-tighter">Private Label Credit</span>
+            <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-2 py-1 rounded-full border border-blue-100 uppercase tracking-tighter">Private Label Allocation</span>
           </div>
-          <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Available GGE Credit Line</h3>
+          <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Available GGE Allocation</h3>
           <div className="flex items-baseline gap-2 mb-4">
             <h2 className="text-3xl font-black text-slate-800">${(lineOfCredit - utilizedCredit).toLocaleString()}</h2>
             <span className="text-xs font-bold text-slate-400">/ ${lineOfCredit.toLocaleString()}</span>
@@ -116,7 +116,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
             <div className="bg-blue-500 h-full transition-all duration-1000" style={{ width: `${(utilizedCredit / lineOfCredit) * 100}%` }} />
           </div>
           <p className="text-[10px] text-slate-500 leading-tight">
-            <strong>GGE Credit System:</strong> Utilizing GGE proprietary "Seed-to-Patient" financial framework.
+            <strong>GGE Allocation System:</strong> Utilizing GGE proprietary "Seed-to-Patient" financial framework.
           </p>
         </div>
 
@@ -158,7 +158,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
             </div>
           </div>
           <p className="text-[11px] text-emerald-100/90 leading-relaxed italic mb-4">
-            "Your GGE Line of Credit and Compassion Balance are under 24/7 audit by the Larry Compliance Division. All transactions are GGP-OS verified."
+            "Your GGE Compassion Allocation and Compassion Balance are under 24/7 audit by the Larry Compliance Division. All transactions are GGP-OS verified."
           </p>
           <div className="flex items-center justify-between pt-2 border-t border-emerald-800/50">
             <span className="text-[9px] text-[#D4AF77] font-bold uppercase tracking-widest">SLA Rating: A+</span>

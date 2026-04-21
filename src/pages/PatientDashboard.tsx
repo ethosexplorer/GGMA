@@ -139,7 +139,7 @@ export const PatientDashboard = ({ user }: { user?: any; onLogout?: () => void; 
             {!isSubscribed && (
               <ShadowOverlay 
                 title="Your Health Intelligence" 
-                description="The Health Hub provides real-time scoring, C³ credit tracking, and instant medical card status. Upgrade to unlock the full patient dashboard." 
+                description="The Health Hub provides real-time scoring, C³ compassion tracking, and instant medical card status. Upgrade to unlock the full patient dashboard." 
                 moduleName="Health Hub"
               />
             )}

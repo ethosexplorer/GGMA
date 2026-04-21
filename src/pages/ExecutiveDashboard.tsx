@@ -32,7 +32,7 @@ const NAV_ITEMS = [
   { id: 'overview', label: 'Global Overview', icon: Globe },
   { section: 'FINANCIAL' },
   { id: 'financial_command', label: 'Financial Command', icon: BarChart3 },
-  { id: 'credit_engine', label: 'Credit Engine (Core)', icon: Wallet },
+  { id: 'allocation_engine', label: 'Provision Engine (Core)', icon: Wallet },
   { section: 'OPERATIONS' },
   { id: 'ecosystem', label: 'Ecosystem Activity', icon: Users },
   { id: 'compliance_command', label: 'Compliance Command', icon: Shield },
@@ -156,7 +156,7 @@ export const ExecutiveDashboard = ({ onLogout, user }: any) => {
             <div className="divide-y divide-slate-100">
               {[
                 { id: 'APP-9921', type: 'Business Override', applicant: 'Apex Health LLC', status: 'Compliance Locked', time: '10 mins ago', risk: 'High' },
-                { id: 'APP-9920', type: 'Credit Line Auth', applicant: 'Green Leaf Co', status: 'Pending Approval', time: '1 hour ago', risk: 'Medium' },
+                { id: 'APP-9920', type: 'Allocation Auth', applicant: 'Green Leaf Co', status: 'Pending Approval', time: '1 hour ago', risk: 'Medium' },
                 { id: 'SYS-001', type: 'System Protocol', applicant: 'Larry C.', status: 'State Rules Updated', time: '3 hours ago', risk: 'Low' },
                 { id: 'APP-9918', type: 'Partner API Key', applicant: 'Checkr Inc', status: 'Pending Key Gen', time: '5 hours ago', risk: 'Low' },
               ].map((item, i) => (
@@ -464,7 +464,7 @@ export const ExecutiveDashboard = ({ onLogout, user }: any) => {
           <AnimatePresence mode="wait">
             {activeTab === 'overview' && renderOverview()}
             {activeTab === 'financial_command' && renderModulePlaceholder('Financial Command', 'Total Wallet Balances, Revenue Streams, Processing volume (Kurv), Network reserves, and Cash flow tracking.', BarChart3)}
-            {activeTab === 'credit_engine' && renderModulePlaceholder('Credit Engine (Core)', 'Patient/Business balances, Network reserve, Virtual card activity, and Credit activation pipeline.', Wallet)}
+            {activeTab === 'allocation_engine' && renderModulePlaceholder('Provision Engine (Core)', 'Patient/Business balances, Network reserve, Virtual card activity, and Allocation activation pipeline.', Wallet)}
             {activeTab === 'ecosystem' && renderModulePlaceholder('Ecosystem Activity', 'Global view of Patients, Businesses, Providers, Attorneys, and Backoffice clients.', Users)}
             {activeTab === 'compliance_command' && renderModulePlaceholder('Compliance Command', 'Global compliance status, Violations by type, High-risk entities, and State-by-state compliance.', Shield)}
             {activeTab === 'enforcement_intel' && renderModulePlaceholder('Enforcement Intelligence', 'Real-time flags, Active violations, Enforcement actions, and Rapid testing triggers.', Gavel)}

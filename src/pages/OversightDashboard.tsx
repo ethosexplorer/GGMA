@@ -23,7 +23,7 @@ const NAV_ITEMS = [
   { id: 'operations', label: 'Ops & Support Center', icon: Cpu },
   { id: 'state_admin', label: 'State Licensing (Admin)', icon: Shield },
   { id: 'virtual_attendant', label: 'GGE World Call Center', icon: Phone },
-  { id: 'processor', label: 'NomadCash™ Processor', icon: Activity },
+  { id: 'processor', label: 'GGE Processor', icon: Activity },
   { section: 'SYSTEM' },
   { id: 'subscription', label: 'Billing & Tiers', icon: CreditCard },
 ];
@@ -96,7 +96,7 @@ export const OversightDashboard = ({ onLogout, user }: { onLogout?: () => void, 
           <div className="p-8 space-y-6 overflow-y-auto h-full">
             <div className="flex justify-between items-center mb-8">
               <div>
-                <h1 className="text-3xl font-black text-slate-800 tracking-tight">NomadCash™ Master Command</h1>
+                <h1 className="text-3xl font-black text-slate-800 tracking-tight">GGE Processor Master Command</h1>
                 <p className="text-slate-500">Real-time oversight of the standalone private settlement rail.</p>
               </div>
               <div className="flex items-center gap-3">
@@ -133,7 +133,7 @@ export const OversightDashboard = ({ onLogout, user }: { onLogout?: () => void, 
                    {[
                      { t: '14:02:11', e: 'B2B SETTLEMENT', d: 'Dispensary #482 → Lab #11', a: 'COMPLIANT' },
                      { t: '13:58:42', e: 'RELOAD NODE', d: 'Kiosk OK-49 (Cash Confirmation)', a: 'COMPLIANT' },
-                     { t: '13:45:12', e: 'CREDIT UTIL', d: 'Chronic Cardz™ #8821 (Case Unlock)', a: 'COMPLIANT' },
+                     { t: '13:45:12', e: 'ALLOCATION UTIL', d: 'GGE Allocation #8821 (Case Unlock)', a: 'COMPLIANT' },
                    ].map((log, i) => (
                      <div key={i} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10 text-xs">
                        <span className="font-mono text-slate-400">{log.t}</span>

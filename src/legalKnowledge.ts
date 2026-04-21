@@ -678,9 +678,9 @@ RECENCY INDEX FORMULA (RAPID TESTING)
 R = [Δ9-THC] / ([11-OH-THC] + [THCCOOH] + ε)
 This dual-channel formula feeds directly into Larry's predictive models as a leading indicator for enforcement and public health risks.
 
-=== CHRONIC CARDZ™ PRIVATE LABEL CREDIT (INTELLECTUAL PROPERTY & COPYRIGHT) ===
+=== GGE COMPASSION ALLOCATION™ PRIVATE LABEL PROVISION (INTELLECTUAL PROPERTY & COPYRIGHT) ===
 
-TITLE OF WORK: Closed-Loop Private Label Line of Credit for the Cannabis Industry (Seed-to-Patient Financial Framework)
+TITLE OF WORK: Closed-Loop Private Label Compassion Allocation for the Cannabis Industry (Seed-to-Patient Financial Framework)
 COPYRIGHT HOLDER: Shantell Robinson, Founder/Trust Executor
 ORIGIN DATE: 2020 (Vision), 2021 (Active Development)
 EVIDENCE OF ORIGINALITY: 
@@ -689,11 +689,11 @@ EVIDENCE OF ORIGINALITY:
 - Witness testimony from initial development collaborators.
 
 DESCRIPTION:
-This proprietary framework establishes a financial stabilizing system for the cannabis industry, providing a "domino effect" of support from cultivation to patient care. It integrates e-wallet and private-label credit functionalities (e.g., Chronic Cardz) to manage utilization for medical cannabis and related longevity services (healthcare, retirement, insurance).
+This proprietary framework establishes a financial stabilizing system for the cannabis industry, providing a "domino effect" of support from cultivation to patient care. It integrates e-wallet and private-label allocation functionalities (e.g., GGE Compassion Allocation) to manage utilization for medical cannabis and related longevity services (healthcare, retirement, insurance).
 
 AUTHORIZED ENTITIES:
 - Global Green Enterprise Inc.
-- Chronic Cardz
+- GGE Compassion Allocation
 - Global Green Platform Trust
 
 === CARE WALLET SYSTEM (CLOSED-LOOP FINANCIAL INFRASTRUCTURE) ===
@@ -721,7 +721,7 @@ This is NOT a bank, credit card, loan, or lending platform. It is a closed-loop 
 
 CARE WALLET TIERS
 Bronze (FREE): Basic wallet, load funds, spend in ecosystem, basic history, Larry silent compliance.
-Silver ($19/mo): + Virtual Card (NomadCash), spending limits/categories, categorized tracking, faster processing.
+Silver ($19/mo): + Virtual Card (GGE Disposable), spending limits/categories, categorized tracking, faster processing.
 Gold ($49/mo): + Sylara AI spending insights, smart alerts, auto-reload prompts, analytics, Larry proactive compliance.
 Platinum ($99/mo): + Multiple virtual cards, role-based usage, full ecosystem routing, full financial dashboard, full AI.
 
@@ -730,12 +730,12 @@ Disposable Card: one-time use virtual card (expires after 15 minutes).
 Physical Card Request: mailed debit-style card (7-10 business days).
 AI Agent: role-specific autonomous assistant layered on any tier.
 
-=== C³ SCORE — CANNABIS COMPASSION CREDIT SCORE ===
+=== C³ SCORE — CANNABIS COMPASSION SCORE ===
 
 C³ SCORE OVERVIEW
 Proprietary, closed-loop scoring system built into Care Wallet / Compassion Balance ecosystem.
 Range: 300-850 (mirrors FICO for familiarity). Updated real-time by Larry, daily refresh by Sylara.
-Determines who gets what: credit access, limits, rewards, insurance advantages.
+Determines who gets what: resource access, limits, rewards, insurance advantages.
 
 C³ SCORE FACTORS (WEIGHTS)
 Payment Discipline (35%, max 300 pts): Consistent cash reloads + responsible spending patterns.
@@ -743,7 +743,7 @@ Care Points Behavior (25%, max 212 pts): Compassion Points earned & redeemed res
 Compliance & Larry Score (20%, max 170 pts): Regulatory adherence, inventory accuracy, audit readiness.
 Insurance & Risk Structure (10%, max 85 pts): Bonding history, claims, risk controls.
 Tenure & Ecosystem Depth (5%, max 42 pts): Time in platform + cross-dashboard usage.
-Traditional/Alt Data (5%, max 41 pts): Optional credit file or alternative data (Boost, Self-style).
+Traditional/Alt Data (5%, max 41 pts): Optional financial file or alternative data (Boost, Self-style).
 
 CARE POINTS MULTIPLIER
 500+ Care Points in 90 days = +5% bonus to C³ Score.
@@ -751,14 +751,14 @@ CARE POINTS MULTIPLIER
 Consistent high Care Points with low volatility = +15% Compassion Premium.
 
 C³ SCORE TIERS
-Bronze (300-549): Basic Care Wallet. No credit access. Points Multiplier: 1x.
+Bronze (300-549): Basic Care Wallet. No allocation access. Points Multiplier: 1x.
 Silver (550-649): Care Builder Plus. Virtual card priority. Points Multiplier: 1.5x. Pre-approved for Tier 1 revolving (Phase 2).
 Gold (650-749): Care Builder Premium. Insurance discounts up to 15%. Points Multiplier: 2x. Pre-approved for Tier 2 revolving (Phase 2).
 Platinum (750-850): Full Ecosystem Master. Points Multiplier: 5x. Pre-approved for Tier 3 revolving (Phase 2). Full Sylara + Larry access.
 
-=== CARE BUILDER (CREDIT-BUILDING ADD-ON) ===
+=== CARE BUILDER (PROVISION-BUILDING ADD-ON) ===
 
-Care Builder turns consistent Care Wallet usage into a structured credit-building journey.
+Care Builder turns consistent Care Wallet usage into a structured provision-building journey.
 Users commit to regular reloads and responsible ecosystem spending.
 Platform maintains immutable audit log of reloads, spends, and responsible usage.
 Basic ($9/mo, 6-month): tracking, Sylara reminders, monthly reports, milestones.
