@@ -28,12 +28,41 @@ export const DocumentVaultTab = () => {
 
   return (
     <div className="space-y-6">
-      {/* Security Banner */}
-      <div className="bg-emerald-50 rounded-2xl border border-emerald-200 p-4 flex items-center gap-3">
-        <Lock size={20} className="text-emerald-600 shrink-0" />
+      {/* OMMA 2026 Compliance Header */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="bg-[#1a4731] rounded-2xl p-6 text-white shadow-lg shadow-emerald-900/10 relative overflow-hidden">
+          <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+          <div className="relative z-10">
+            <h4 className="text-xs font-black uppercase tracking-[0.2em] text-emerald-400 mb-2">OMMA 2026 Compliance</h4>
+            <h3 className="text-xl font-black mb-2">Required for Adult Patient License</h3>
+            <ul className="text-xs space-y-1.5 text-emerald-100/90 font-medium">
+              <li className="flex items-center gap-2">✅ Signed Recommendation (dated within 30 days)</li>
+              <li className="flex items-center gap-2">✅ Passport Photo (white background, {'<'} 6 mo)</li>
+              <li className="flex items-center gap-2">✅ OK Driver's License or Proof of Residency</li>
+              <li className="flex items-center gap-2">✅ OK-Registered Physician (SB 1066)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col justify-between shadow-sm">
+          <div className="flex items-start gap-3">
+            <Shield size={24} className="text-emerald-600 mt-1" />
+            <div>
+              <h4 className="font-bold text-slate-800">SB 1066 Physician Verification</h4>
+              <p className="text-xs text-slate-500 leading-relaxed">Ensure your doctor is registered with OMMA before uploading your recommendation form.</p>
+            </div>
+          </div>
+          <button className="w-full mt-4 py-2.5 rounded-xl bg-slate-100 text-slate-800 text-xs font-black hover:bg-emerald-50 hover:text-emerald-700 transition-all border border-slate-200">
+            Verify Physician Registration Status
+          </button>
+        </div>
+      </div>
+
+      <div className="bg-blue-50 rounded-2xl border border-blue-200 p-4 flex items-center gap-3">
+        <Lock size={20} className="text-blue-600 shrink-0" />
         <div>
-          <h4 className="font-bold text-emerald-800 text-sm">Secure Document Vault</h4>
-          <p className="text-xs text-emerald-700">All documents are encrypted at rest and in transit. HIPAA-compliant storage with full audit trail. Only you control access.</p>
+          <h4 className="font-bold text-blue-900 text-sm">Secure Document Vault</h4>
+          <p className="text-xs text-blue-700">All documents are encrypted with HIPAA-compliant storage and full audit trails.</p>
         </div>
       </div>
 

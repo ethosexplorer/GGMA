@@ -1205,8 +1205,8 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
             onClick={() => onNavigate('larry-chatbot')} 
             className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-[#1a4731] rounded-xl border border-emerald-100 font-bold hover:bg-emerald-100 transition-all shadow-sm group"
           >
-            <Phone size={16} className="text-emerald-600 group-hover:scale-110 transition-transform" />
-            GGE AI Call Center (1-405-492-7297)
+            <Calendar size={16} className="text-emerald-600 group-hover:scale-110 transition-transform" />
+            Book with GGE AI Concierge
           </button>
         </div>
 
@@ -1588,8 +1588,8 @@ const SylaraFloatingWidget = ({ onClick }: { onClick: () => void }) => (
         <img src="/larry-logo.png" alt="Sylara" className="w-full h-full object-cover" />
       </div>
       <div className="hidden md:block text-left pr-2">
-        <div className="text-sm font-bold leading-tight">Sylara AI Agent</div>
-        <div className="text-[11px] text-white/80">Call or Text 1-405-492-7297</div>
+        <div className="text-sm font-bold leading-tight">Sylara Intake Agent</div>
+        <div className="text-[11px] text-white/80">GGHP Onboarding & Support</div>
       </div>
     </button>
   </div>
@@ -2581,10 +2581,34 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
 // --- L.A.R.R.Y AI Chatbot for Med Card / Business License Assistance ---
 const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card' }: any) => {
   const isBusiness = variant === 'business';
-  const [messages, setMessages] = useState<{role: 'user'|'bot', text: string}[]>([
-    { role: 'bot', text: isBusiness
-      ? '👋 Hello! I am **L.A.R.R.Y** — your **Licensed Application & Regulatory Resource guide**. I\'m here to help you with **Cannabis Business Licensing** and helping you complete your application for submission. \n\nI can help you with:\n• Understanding business license eligibility\n• Finding your state\'s business licensing portal\n• Answering questions about the process\n\nWhich **state** are you applying in? Or pick a quick action below!'
-      : '👋 Hello! I am **L.A.R.R.Y** — your **Licensed Application & Regulatory Resource guide**. I\'m here to help you apply for a **Cannabis Medical Card** and helping you complete application for submission. \n\nI can help you with:\n• Understanding eligibility requirements\n• Finding your state\'s application portal\n• Answering questions about the process\n\nWhich **state** are you applying in? Or pick a quick action below!' }
+  const isGeneral = variant === 'general';
+  
+  const getGreeting = () => {
+    if (isBusiness) return '👋 Hello! I am **Sylara** — your **Intake & Support Agent** for the **Global Green Hybrid Platform (GGHP)**. I\'m here to guide you through **Cannabis Business Licensing** and resolve any operational hurdles before passing your file to **L.A.R.R.Y** for final Authority approval. \n\nHow can I assist your business today?';
+    
+    if (isGeneral) return '👋 Welcome to the **Global Green Hybrid Platform (GGHP)** Concierge. I am **Sylara**, your Intake Agent. \n\nI handle:\n• **Intake & Onboarding** (GGMA)\n• **Operational Support**\n• **Escalations & Alerts**\n• **L.A.R.R.Y** Authority Transfers\n\nHow can I help you navigate the ecosystem today?';
+    
+    return '👋 Hello! I am **Sylara** — your **Intake Agent** for **Diversity Health & Wellness (CCardz)**. I will walk you through your **Medical License** intake and prepare your file for the **L.A.R.R.Y Authority Engine**. \n\nI\'ll help you with:\n• Complete Medical Intake\n• Care Wallet Setup\n• Direct Booking with Providers\n\nAre you ready to begin? Or pick a quick action below!';
+  };
+
+  const getInitialChoices = () => {
+    if (isBusiness) return ['Start Business Intake', 'Speak with Business Expert', 'View Fee Schedule'];
+    if (isGeneral) return [
+      '🏢 GGMA Licensing',
+      '🕵️ RIP Intelligence',
+      '🛡️ SINC Compliance',
+      '📅 Book 30min Consultation',
+      '🏥 Telehealth',
+      '💻 IT Support',
+      '💬 General Support',
+      '🏛️ Administration',
+      '⚖️ Legal Support'
+    ];
+    return ['Start Patient Intake', 'Book Physician ($45)', 'Speak with Shantell'];
+  };
+
+  const [messages, setMessages] = useState<{role: 'user'|'bot', text: string, choices?: string[]}[]>([
+    { role: 'bot', text: getGreeting(), choices: getInitialChoices() }
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -2598,21 +2622,15 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
   const [isEditingReview, setIsEditingReview] = useState(false);
 
   const [signupStep, setSignupStep] = useState<number>(0);
+  const [currentPersona, setCurrentPersona] = useState<'sylara' | 'larry'>('sylara');
 
   // Chat Session ID for storing to database
   const [sessionId] = useState(() => `session_${Math.random().toString(36).substr(2, 9)}_${Date.now()}`);
 
   const [signupData, setSignupData] = useState({ 
-    fullName: '', 
-    email: '', 
-    dob: '', 
-    idNumber: '', 
-    phone: '', 
-    state: '', 
-    role: '', 
-    address: '', 
-    password: '',
-    selectedLicense: '' 
+    fullName: '', email: '', dob: '', idNumber: '', phone: '', state: '', role: '', address: '', password: '', selectedLicense: '',
+    ssn: '', insurance: '', qualifyingCondition: '', ethnicity: '', genderIdentify: '', idType: '', physicalAddress: '', mailingAddress: '',
+    ageVerified: false
   });
 
   // License eligibility tracking for chatbot flow (steps 20-25)
@@ -2705,12 +2723,17 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     setBookingError(null);
     setAvailableSlots([]);
     setSelectedTime(null);
+
+    // Fail-safe: If no token, don't even try the API
+    if (!CALENDLY_TOKEN || CALENDLY_TOKEN === '') {
+      setBookingError('AUTH_REQUIRED');
+      setSlotsLoading(false);
+      return;
+    }
+
     try {
-      // 1. start_time must be in the future (add 1 minute buffer to be safe against server clock skew)
       const now = new Date();
       now.setMinutes(now.getMinutes() + 1);
-      
-      // 2. date range can be no greater than 1 week (7 days)
       const end = new Date(now);
       end.setDate(end.getDate() + 7);
       
@@ -2728,13 +2751,19 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
           },
         }
       );
+      
+      if (res.status === 401) {
+        setBookingError('AUTH_REQUIRED');
+        return;
+      }
+
       if (!res.ok) throw new Error(await res.text());
       const data = await res.json();
       const times: string[] = (data.collection || []).map((slot: any) => slot.start_time);
       setAvailableSlots(times);
-      if (times.length === 0) setBookingError('No available slots found in the next 3 weeks. Please call 405-492-7487.');
+      if (times.length === 0) setBookingError('No available slots found. Please use the direct booking link.');
     } catch (err: any) {
-      setBookingError(err.message || 'Failed to load available times. Please call 405-492-7487.');
+      setBookingError('AUTH_REQUIRED'); // Treat generic failures as auth issues to trigger fallback
     } finally {
       setSlotsLoading(false);
     }
@@ -2817,9 +2846,81 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     await new Promise(r => setTimeout(r, 800 + Math.random() * 600));
 
     const lower = text.toLowerCase();
+    
+    // Persona Switching Logic
+    if (lower.includes('compliance') || lower.includes('authority') || lower.includes('larry') || lower.includes('regulation')) {
+      setCurrentPersona('larry');
+    } else if (lower.includes('support') || lower.includes('sylara') || lower.includes('intake')) {
+      setCurrentPersona('sylara');
+    }
+
     let response = '';
 
-    if (signupStep === 98) {
+    if (signupStep === 0) {
+      if (lower.includes('ggma') || lower.includes('oklahoma') || lower.includes('omma') || lower.includes('assistance')) {
+        response = '🏢 **GGMA Licensing & Assistance**\n\nI can assist you with your regulatory requirements. To provide the correct guidance, is your inquiry regarding a **Patient License** or a **Commercial Business License**?';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Patient Licensing', 'Business Licensing'] 
+        } as any]);
+        setSignupStep(999);
+        setIsTyping(false);
+        return;
+      } else if (lower.includes('rip')) {
+        response = '🕵️ **RIP (Regulatory Intelligence Policing)** handles enforcement, background verification, and intelligence oversight for the ecosystem.\n\nOur RIP agents ensure that all participants meet strict security and compliance standards. Would you like to speak with a RIP Intelligence officer or view the oversight portal?';
+        setSignupStep(0); 
+      } else if (lower.includes('sinc')) {
+        response = '🛡️ **SINC (Secure Infrastructure & Network Compliance)** provides the encrypted backbone and audit-trail infrastructure for GGHP.\n\nWe ensure that all business operations are 100% compliant with state and federal regulations. Do you need help setting up SINC compliance for your business?';
+        setSignupStep(0);
+      } else if (lower.includes('telehealth')) {
+        response = '🏥 **Telehealth Services**\n\nOur network provides direct access to licensed providers for medical recommendations. You can book an appointment directly through our integrated booking system.\n\nWould you like the booking link for a medical consultation?';
+        setSignupStep(0);
+      } else if (lower.includes('it support') || lower.includes('technical')) {
+        response = '💻 **IT & Technical Support**\n\nI can help resolve technical issues with your portal, Care Wallet, or application status. Please describe the issue you are experiencing, or type **"agent"** to speak with a technician.';
+        setSignupStep(0);
+      } else if (lower.includes('legal') || lower.includes('administration')) {
+        response = '⚖️ **Legal & Administration**\n\nOur legal team handles compliance auditing, contract management, and regulatory filings. For administration inquiries, we handle account oversight and records management.\n\nWhich department would you like to reach?';
+        setSignupStep(0);
+      } else if (lower.includes('start') || lower.includes('apply') || lower.includes('license')) {
+        response = 'Great! Can I create an account for you to begin your application? (Yes / No)';
+        setSignupStep(99);
+      } else {
+        response = 'I\'m here to help you navigate the **Global Green Hybrid Platform (GGHP)**. \n\nYou can ask me about **GGMA Licensing**, **RIP Enforcement**, **SINC Compliance**, or general services like **Telehealth** and **IT Support**.\n\nWhat would you like to explore first?';
+      }
+    } else if (signupStep === 999) {
+      if (lower.includes('patient')) {
+        response = '🏥 **Medical Card Assistance (2026 Rules)**\n\n' +
+          'We handle the entire intake for your Patient License:\n' +
+          '• **Physician Rec**: Direct booking for **$35.00**.\n' +
+          '• **GGE Processing**: Complete file sync for **$10.00**.\n' +
+          '• **Total Portal Cost**: **$45.00**.\n\n' +
+          'Would you like to **Book Physician ($45)** or **Speak with Shantell**?';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Book Physician ($45)', 'Speak with Shantell', 'Start Patient Intake'] 
+        } as any]);
+        setIsTyping(false);
+        return;
+      } else if (lower.includes('business') || lower.includes('commercial')) {
+        response = '🏢 **Commercial Business License Assistance**\n\n' +
+          'We provide full-spectrum support for Oklahoma Cannabis Businesses:\n' +
+          '• **Entity Setup**: LLC/Corp registration for OMMA compliance.\n' +
+          '• **Licensing Tiers**: Grower, Processor, and Dispensary filings.\n' +
+          '• **SINC Audit**: Pre-inspection compliance reviews.\n\n' +
+          'Commercial consulting starts with a professional review. Would you like to **Speak with an Expert** or **Start Business Intake**?';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Speak with Business Expert', 'Start Business Intake', 'View Fee Schedule'] 
+        } as any]);
+        setIsTyping(false);
+        return;
+      } else {
+        response = 'Please specify if you are looking for a **Patient** or **Commercial Business** license.';
+      }
+    } else if (signupStep === 98) {
       if (lower.includes('first') || lower.includes('new')) {
         response = '🏢 Great! Let\'s begin your **Commercial License Application**.\n\n**Section 1: First-Time Registration**\n\nWhat is your **Full Name** (First & Last)? This will be the individual responsible for the account and license information.';
         setSignupStep(100);
@@ -2979,8 +3080,22 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       }
     } else if (signupStep === 1) {
       setSignupData(prev => ({ ...prev, fullName: text }));
-      setSignupStep(2);
-      response = `Great to meet you, ${text}! What is your **Email Address**?`;
+      setSignupStep(1.1);
+      response = `Great to meet you, ${text}! Are you **21 years of age or older**?`;
+      setMessages(prev => [...prev, { 
+        role: 'bot', 
+        text: response,
+        choices: ['Yes', 'No']
+      } as any]);
+      return;
+    } else if (signupStep === 1.1) {
+      if (lower === 'yes' || lower === 'yeah' || lower === 'yep') {
+        setSignupData(prev => ({ ...prev, ageVerified: true }));
+        setSignupStep(2);
+        response = `Excellent. What is your **Email Address**?`;
+      } else {
+        response = `⚠️ You must be 21+ to use this platform. If you are a minor patient, please have a legal guardian start the application.`;
+      }
     } else if (signupStep === 2) {
       if (!text.includes('@') || !text.includes('.')) {
         response = `That doesn't look like a valid email. Please provide your **Email Address**.`;
@@ -2991,43 +3106,76 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       }
     } else if (signupStep === 3) {
       setSignupData(prev => ({ ...prev, dob: text }));
-      setSignupStep(4);
-      response = `Got it. Please provide your **Driver's License or State ID Number**.`;
-    } else if (signupStep === 4) {
+      setSignupStep(3.1);
+      response = `Got it. For identity verification, what is your **Social Security Number (SSN)**? \n\n*(This is encrypted and handled by the L.A.R.R.Y Secure Node)*`;
+    } else if (signupStep === 3.1) {
+      setSignupData(prev => ({ ...prev, ssn: text }));
+      setSignupStep(3.2);
+      response = `Thank you. What is your **Sex** (as shown on ID)?`;
+    } else if (signupStep === 3.2) {
+      setSignupData(prev => ({ ...prev, sex: text }));
+      setSignupStep(3.3);
+      response = `What **Gender** do you identify with?`;
+    } else if (signupStep === 3.3) {
+      setSignupData(prev => ({ ...prev, genderIdentify: text }));
+      setSignupStep(3.4);
+      response = `What is your **Preferred Language**?`;
+    } else if (signupStep === 3.4) {
+      setSignupData(prev => ({ ...prev, preferredLanguage: text }));
+      setSignupStep(3.5);
+      response = `What is your **Ethnicity**?`;
+    } else if (signupStep === 3.5) {
+      setSignupData(prev => ({ ...prev, ethnicity: text }));
+      setSignupStep(3.6);
+      response = `What **Type of Identification** are you providing? (e.g., Driver's License, Passport, State ID)`;
+    } else if (signupStep === 3.6) {
+      setSignupData(prev => ({ ...prev, idType: text }));
+      setSignupStep(3.7);
+      response = `What is the **Identification Number**?`;
+    } else if (signupStep === 3.7) {
       setSignupData(prev => ({ ...prev, idNumber: text }));
-      setSignupStep(5);
-      response = `What is the best **Phone Number** to reach you at?`;
-    } else if (signupStep === 5) {
-      setSignupData(prev => ({ ...prev, phone: text }));
       setSignupStep(6);
-      response = `In which **Resident / Operating State** are you located?`;
+      response = `Excellent. Now, what is the **Physical Address** listed on your Identification?`;
+    } else if (signupStep === 4) {
+      setSignupData(prev => ({ ...prev, phone: text }));
+      setSignupStep(4.1);
+      response = `Is there a specific **Text/Messaging Phone Number** you'd like to use? (Type **"same"** if it is the same as above)`;
+    } else if (signupStep === 4.1) {
+      setSignupData(prev => ({ ...prev, textPhone: text === 'same' ? signupData.phone : text }));
+      setSignupStep(9);
+      response = `Sylara Intake Complete. Finally, please provide a secure **Password** (minimum 8 characters) for your new account.\n\n*(Your password will be hidden in the chat)*`;
     } else if (signupStep === 6) {
-      setSignupData(prev => ({ ...prev, state: text }));
-      // If license eligibility was already completed, skip the Patient/Caregiver question
-      if (signupData.selectedLicense) {
-        const autoRole = signupData.selectedLicense.toLowerCase().includes('caregiver') ? 'Caregiver' : 'Patient';
-        setSignupData(prev => ({ ...prev, state: text, role: autoRole }));
-        setSignupStep(8);
-        response = `Great. What is your **Physical Address**? (e.g. 123 Example St, City, State ZIP)`;
-      } else {
-        setSignupStep(7);
-        response = `Almost there! Are you applying as a **Patient** or **Caregiver**?`;
-      }
-    } else if (signupStep === 7) {
-      setSignupData(prev => ({ ...prev, role: text }));
-      setSignupStep(8);
-      response = `Great. What is your **Physical Address**? (e.g. 123 Example St, City, State ZIP)`;
-    } else if (signupStep === 8) {
-      setSignupData(prev => ({ ...prev, address: text }));
-      setSignupStep(8.5);
-      response = `Please **upload** a copy of your Government-issued ID or Medical Document by clicking the 📎 **attachment icon** below.`;
-    } else if (signupStep === 8.5) {
-      if (lower === 'skip') {
-        setSignupStep(9);
-        response = `No problem, you can upload it later. Finally, please provide a secure **Password** (minimum 8 characters) for your new account.\n\n*(Your password will be hidden in the chat)*`;
-      } else {
-        response = `Please use the 📎 **attachment icon** below to upload your document, or type **"skip"** to provide it later.`;
-      }
+      setSignupData(prev => ({ ...prev, physicalAddress: text, address: text }));
+      setSignupStep(6.1);
+      response = `Is your **Mailing Address** different from your physical address? (Yes / Provide Address or No)`;
+    } else if (signupStep === 6.1) {
+      setSignupData(prev => ({ ...prev, mailingAddress: (lower === 'no' || lower === 'same') ? signupData.physicalAddress : text }));
+      setSignupStep(6.2);
+      response = `What is your current **Employment Status** and **Occupation**?`;
+    } else if (signupStep === 6.2) {
+      setSignupData(prev => ({ ...prev, employment: text }));
+      setSignupStep(12);
+      response = `Do you currently have **Insurance**? (Yes / No)`;
+    } else if (signupStep === 12) {
+      setSignupData(prev => ({ ...prev, insurance: text }));
+      setSignupStep(13);
+      response = `What is your **Qualifying Condition** or reason for wanting a Medical Card?`;
+      setMessages(prev => [...prev, { 
+        role: 'bot', 
+        text: response,
+        choices: ['Chronic Pain', 'PTSD', 'Anxiety', 'Insomnia', 'Arthritis', 'Nausea', 'Other']
+      } as any]);
+      return;
+    } else if (signupStep === 13) {
+      setSignupData(prev => ({ ...prev, qualifyingCondition: text }));
+      setSignupStep(4);
+      response = `Got it. What is the best **Phone Number** to reach you at?`;
+      setMessages(prev => [...prev, { 
+        role: 'bot', 
+        text: response,
+        choices: ['Book Physician ($45)', 'Speak with Human']
+      } as any]);
+      return;
     } else if (signupStep === 9) {
       if (text.length < 8) {
         response = `Password must be at least 8 characters. Please choose a secure password.`;
@@ -3051,6 +3199,18 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
               phone: finalData.phone,
               state: finalData.state,
               address: finalData.address,
+              ssn: finalData.ssn,
+              sex: finalData.sex,
+              genderIdentify: finalData.genderIdentify,
+              preferredLanguage: finalData.preferredLanguage,
+              ethnicity: finalData.ethnicity,
+              idType: finalData.idType,
+              physicalAddress: finalData.physicalAddress,
+              mailingAddress: finalData.mailingAddress,
+              employment: finalData.employment,
+              insurance: finalData.insurance,
+              qualifyingCondition: finalData.qualifyingCondition,
+              textPhone: finalData.textPhone,
               createdAt: serverTimestamp(),
             };
             await setDoc(doc(db, 'users', firebaseUser.uid), profile);
@@ -3067,6 +3227,18 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
                   phone: finalData.phone,
                   state: finalData.state,
                   address: finalData.address,
+                  ssn: finalData.ssn,
+                  sex: finalData.sex,
+                  genderIdentify: finalData.genderIdentify,
+                  preferredLanguage: finalData.preferredLanguage,
+                  ethnicity: finalData.ethnicity,
+                  idType: finalData.idType,
+                  physicalAddress: finalData.physicalAddress,
+                  mailingAddress: finalData.mailingAddress,
+                  employment: finalData.employment,
+                  insurance: finalData.insurance,
+                  qualifyingCondition: finalData.qualifyingCondition,
+                  textPhone: finalData.textPhone,
                   createdAt: new Date().toISOString(),
                };
             } else {
@@ -3078,10 +3250,10 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
             onProfileCreated(profile);
           }
           
-          response = `Account has been created and are you ready to start your official application process for your medical card.`;
+          response = `🛡️ **L.A.R.R.Y AUTHORITY ENGAGED**\n\nI am the **L.A.R.R.Y Enforcement Engine**. I have verified the data gathered by Sylara. Your secure account is active and your file is ready for official **Authority Submission**. \n\nAre you ready to proceed to your Official Application Dashboard?`;
           setSignupStep(10);
         } catch (error: any) {
-          response = `Account has been created and are you ready to start your official application process for your medical card.`;
+          response = `🛡️ **L.A.R.R.Y AUTHORITY ENGAGED**\n\nI am the **L.A.R.R.Y Enforcement Engine**. I have verified the data gathered by Sylara. Your secure account is active and your file is ready for official **Authority Submission**. \n\nAre you ready to proceed to your Official Application Dashboard?`;
           setSignupStep(10);
         }
       }
@@ -3762,18 +3934,61 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         response = 'Are you a **first time user** or **returning user**?';
       } else {
         setSignupStep(99);
-        response = 'Awesome! Can I create an account for you to begin your application. Yes or No';
+        response = 'Excellent. I can help you establish your secure profile to begin the official intake process. Shall we proceed with creating your account? (Yes / No)';
       }
-    } else if (lower === 'yes' || lower === 'yeah' || lower === 'yep' || lower.includes('i do') || lower.includes('i have') || ['cancer', 'pain', 'ptsd', 'glaucoma', 'seizure', 'anxiety', 'epilepsy', 'crohn', 'sclerosis', 'als', 'alzheimer', 'anorexia', 'migraine', 'arthritis', 'nausea', 'autism', 'hiv', 'aids', 'parkinson', 'tourette'].some(condition => lower.includes(condition))) {
+    } else if (lower.includes('consultation') || lower.includes('book 30min')) {
+      response = 'Sure! Here are our available appointment times. Pick a slot and I’ll lock it in for you! 📅';
+      setMessages(prev => [...prev, { role: 'bot', text: response }]);
+      setSignupStep(11);
+      fetchCalendlySlots();
+      return;
+    } else if (lower.includes('business expert') || lower.includes('commercial consultant')) {
+      response = '🏢 **Commercial Compliance Consultation**\n\nI am routing you to our **Business Licensing Experts**. Please leave a **detailed message** in the booking notes about your business entity type.\n\n📞 **Business Line**: 405-492-7297\n🔗 **[Book Business Consultation (Calendly)](https://calendly.com/globalgreenenterprize/30min)**';
+    } else if (lower.includes('human') || lower.includes('coordinator') || lower.includes('shantell') || lower.includes('speak with someone')) {
+      response = '👤 **Human Care Coordination**\n\nI am routing you to **Shantell Robinson**. When booking, please include a **detailed message** about your needs so we can prepare your file.\n\n📞 **Med Card Line**: 405-492-7487\n📞 **Telehealth Line**: 405-252-1178\n🔗 **[Book a Session via Calendly](https://calendly.com/globalgreenenterprize/30min)**';
+    } else if (lower.includes('fee schedule')) {
+      response = '💰 **OMMA Fee Schedule (2026)**\n\n• **Dispensary**: $2,500 - $10,000 (Based on tax)\n• **Grower/Processor**: Tiered from $2,500 to $50,000+\n• **Patient Card**: $104.30 (Standard) / $22.50 (Reduced)\n\nWould you like the detailed tier breakdown for a specific license type?';
+      setMessages(prev => [...prev, { 
+        role: 'bot', 
+        text: response, 
+        choices: ['Grower Fees', 'Processor Fees', 'Dispensary Fees'] 
+      } as any]);
+    } else if (lower.includes('business intake')) {
+      response = '🏢 Understood. Let\'s start your **Commercial Business License Application**. \n\nCan I create an account for you to begin?';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Yes', 'No'] } as any]);
       setSignupStep(99);
-      response = 'Yes you do qualify! 🎉\n\nCan I create an account for you to begin your application. Yes or No';
+    } else if (lower.includes('book physician') || lower.includes('doctor') || lower.includes('recommendation')) {
+      response = '⚕️ **Physician Evaluation & Sync ($45.00)**\n\nYou can book your medical recommendation through our official partner, **Renew Oklahoma Card**. The total cost is **$45.00** ($35 Doctor + $10 GGE Processing).\n\n🔗 **[Book Your $45 Evaluation Here](https://www.renewoklahomacard.com/)**\n\nI have already pre-filled your dashboard with your intake data to save you time during the appointment!';
+    } else if (lower.includes('human') || lower.includes('coordinator') || lower.includes('shantell') || lower.includes('speak with someone')) {
+      response = '👤 **Human Care Coordination**\n\nI am routing you to **Shantell Robinson**, our lead Human Care Coordinator. When booking, please include a **detailed message** about your needs.\n\n📞 **Med Card Line**: 405-492-7487\n📞 **Telehealth Line**: 405-252-1178\n🏢 **Global Green**: 405-492-7297\n\n🔗 **[Book a Session via Calendly](https://calendly.com/globalgreenenterprize/30min)**';
+    } else if (lower === 'yes' || lower === 'yeah' || lower === 'yep') {
+      response = 'Great! I am ready to assist. Would you like to begin your **Licensing Intake**, or do you have questions about our other sectors like **RIP Intelligence** or **SINC Compliance**?';
+    } else if (['cancer', 'pain', 'ptsd', 'glaucoma', 'seizure', 'anxiety', 'epilepsy', 'crohn', 'sclerosis', 'als', 'alzheimer', 'anorexia', 'migraine', 'arthritis', 'nausea', 'autism', 'hiv', 'aids', 'parkinson', 'tourette'].some(condition => lower.includes(condition))) {
+      response = 'That sounds like a qualifying medical condition. To ensure you receive the correct state certification, I can begin your intake process now. \n\nCan I create an account for you to begin? (Yes / No)';
+      setSignupStep(99);
     } else if (lower === 'no' || lower === 'nope' || lower === 'none' || lower.includes('don\'t') || lower.includes('do not') || lower.includes('none of')) {
-      response = 'Unfortunately you do not qualify for medical card but I can check for CBD in your state for you. Would you like me to do that?';
+      response = 'No problem. If you\'re not ready for an application, you can explore our **IT Support**, **Legal Compliance**, or **Telehealth** nodes. \n\nHow can I help you navigate the ecosystem today?';
     } else if (lower.includes('talk') || lower.includes('speak') || lower.includes('human') || lower.includes('agent') || lower.includes('support') || lower.includes('call') || lower.includes('phone')) {
-      response = 'Would you like to speak with Live Agent if so you can call to 405-492-7487';
+      response = 'I can route you to a live department representative. For immediate assistance, you can call our administration line at **405-492-7297**. \n\nWould you like me to open a support ticket for you instead?';
     } else {
-      response = 'Congratulation! Yes you do qualify.\n\nCan I create an account for you to begin your application. Yes or No';
-      setSignupStep(99);
+      response = 'I\'m here to help you navigate the **Global Green Hybrid Platform (GGHP)**. Select an area below to explore:';
+      setMessages(prev => [...prev, { 
+        role: 'bot', 
+        text: response,
+        choices: [
+          '🏢 GGMA Licensing',
+          '🕵️ RIP Intelligence',
+          '🛡️ SINC Compliance',
+          '📅 Book 30min Consultation',
+          '🏥 Telehealth',
+          '💻 IT Support',
+          '💬 General Support',
+          '🏛️ Administration',
+          '⚖️ Legal Support'
+        ]
+      } as any]);
+      setIsTyping(false);
+      return;
     }
   }
 
@@ -3823,18 +4038,29 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
 
   const quickActions = isBusiness
     ? [
-        { label: '🏢 Start Application', text: 'start' },
-        { label: '📋 How to Apply', text: 'How do I apply for a business license?' },
-        { label: '✅ Am I Eligible?', text: 'What are the eligibility requirements?' },
-        { label: '💰 Costs & Fees', text: 'How much does a business license cost?' },
-        { label: '📄 Required Docs', text: 'What documents do I need?' },
+        { label: '📜 Business License', text: 'How do I apply for a commercial license?' },
+        { label: '⚖️ Legal Compliance', text: 'What are the current regulatory requirements?' },
+        { label: '📈 Scaling Tools', text: 'How can GGHP help my business grow?' },
+        { label: '📞 Talk to Agent', text: 'I need to speak with a human representative.' }
+      ]
+    : isGeneral
+    ? [
+        { label: '🏢 GGMA Licensing', text: 'I have a question about GGMA licensing.' },
+        { label: '🕵️ RIP Intelligence', text: 'Tell me about RIP enforcement.' },
+        { label: '🛡️ SINC Compliance', text: 'What is SINC infrastructure?' },
+        { label: '📅 Book 30min Consultation', text: 'https://calendly.com/globalgreenenterprize/30min?month=2026-04' },
+        { label: '🏥 Telehealth', text: 'I need assistance with a Telehealth appointment.' },
+        { label: '💻 IT Support', text: 'I need technical assistance with the platform.' },
+        { label: '💬 General Support', text: 'I have a general question about GGHP services.' },
+        { label: '🏛️ Administration', text: 'I need to reach the Administration department.' },
+        { label: '⚖️ Legal Support', text: 'I need legal compliance assistance.' }
       ]
     : [
-        { label: '📅 Book Appointment', text: 'Book an appointment' },
-        { label: '📋 How to Apply', text: 'How do I apply for a medical cannabis card?' },
-        { label: '✅ Am I Eligible?', text: 'What are the eligibility requirements?' },
-        { label: '💰 Costs & Fees', text: 'How much does a medical card cost?' },
-        { label: '📄 Required Docs', text: 'What documents do I need?' },
+        { label: '📅 Book Medical Intake', text: 'https://book.carepatron.com/Diversity-Health---Wellness-Network--GoHealthUSA---CCardz-/Shantell-R-?p=MeBev6pvQWuqD4djocNXFg&s=cOEr6HSN' },
+        { label: '📋 How to Apply', text: 'How do I start my med card application?' },
+        { label: '✅ Am I Eligible?', text: 'Am I eligible for a medical card?' },
+        { label: '💰 Costs & Fees', text: 'What are the costs for a med card?' },
+        { label: '📄 Required Docs', text: 'What documents do I need for my application?' }
       ];
 
   // Entity tooltip text for cannabis business licensing
@@ -3905,12 +4131,12 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       {/* Header */}
       <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200/60 px-6 h-16 flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-[#1a4731] to-emerald-600 rounded-xl flex items-center justify-center shadow-md shadow-emerald-900/20">
-            <Bot className="text-white" size={22} />
+          <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center shadow-md transition-all", currentPersona === 'sylara' ? "bg-gradient-to-br from-purple-500 to-purple-700 shadow-purple-900/20" : "bg-gradient-to-br from-[#1a4731] to-emerald-600 shadow-emerald-900/20")}>
+            {currentPersona === 'sylara' ? <Headphones className="text-white" size={22} /> : <Bot className="text-white" size={22} />}
           </div>
           <div>
-            <span className="font-bold text-slate-800 text-lg tracking-tight">L.A.R.R.Y</span>
-            <span className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider block -mt-1">{isBusiness ? 'Business License Assistant' : 'Med Card Assistant'}</span>
+            <span className="font-bold text-slate-800 text-lg tracking-tight">Sylara</span>
+            <span className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider block -mt-1">Sylara Intake Agent</span>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -3942,17 +4168,46 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
               className={cn("flex gap-3", msg.role === 'user' ? "justify-end" : "justify-start")}
             >
               {msg.role === 'bot' && (
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
-                  <Bot size={18} />
+                <div className="w-9 h-9 rounded-xl overflow-hidden shrink-0 shadow-sm mt-1 border border-slate-200 bg-white">
+                  <img 
+                    src={currentPersona === 'sylara' ? '/sylara-human.png' : '/larry-human.png'} 
+                    alt={currentPersona === 'sylara' ? 'Sylara' : 'Larry'} 
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = currentPersona === 'sylara' ? '/sylara-logo.svg' : '/larry-logo.png';
+                    }}
+                  />
                 </div>
               )}
               <div className={cn(
-                "max-w-[85%] px-5 py-3.5 rounded-2xl text-sm leading-relaxed whitespace-pre-line shadow-sm",
+                "max-w-[85%] px-5 py-3.5 rounded-2xl text-sm shadow-sm",
                 msg.role === 'user'
                   ? "bg-[#1a4731] text-white rounded-br-md"
                   : "bg-white border border-slate-200/80 text-slate-700 rounded-bl-md"
               )}>
-                {msg.role === 'bot' ? renderText(msg.text) : msg.text}
+                {msg.role === 'bot' && (
+                  <div className="text-[10px] font-black uppercase tracking-widest mb-1 opacity-50 flex items-center gap-1.5">
+                    {currentPersona === 'sylara' ? <Headphones size={10} className="text-purple-600" /> : <Shield size={10} className="text-emerald-600" />}
+                    {currentPersona === 'sylara' ? 'Sylara Intake Agent' : 'L.A.R.R.Y Enforcement Engine'}
+                  </div>
+                )}
+                <div className="leading-relaxed whitespace-pre-line">
+                  {msg.role === 'bot' ? renderText(msg.text) : msg.text}
+                </div>
+                {msg.role === 'bot' && (msg as any).choices && (
+                  <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-slate-100">
+                    {(msg as any).choices.map((choice: string, i: number) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => handleSend(undefined, choice)}
+                        className="px-4 py-2 bg-emerald-50 border border-emerald-200 text-[#1a4731] rounded-xl text-xs font-bold hover:bg-emerald-500 hover:text-white hover:border-emerald-600 transition-all shadow-sm active:scale-95"
+                      >
+                        {choice}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
               {msg.role === 'user' && (
                 <div className="w-9 h-9 rounded-xl bg-slate-200 flex items-center justify-center text-slate-500 shrink-0 mt-1">
@@ -3963,8 +4218,15 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
           ))}
           {isTyping && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0">
-                <Bot size={18} />
+              <div className="w-9 h-9 rounded-xl overflow-hidden shrink-0 shadow-sm border border-slate-200 bg-white">
+                <img 
+                  src={currentPersona === 'sylara' ? '/sylara-human.png' : '/larry-human.png'} 
+                  alt="Typing..." 
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = currentPersona === 'sylara' ? '/sylara-logo.svg' : '/larry-logo.png';
+                  }}
+                />
               </div>
               <div className="bg-white border border-slate-200/80 px-5 py-4 rounded-2xl rounded-bl-md shadow-sm">
                 <div className="flex gap-1.5">
@@ -3978,8 +4240,8 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
           {/* ── Calendly Slot Picker — shown when signupStep === 11 ── */}
           {signupStep === 11 && (
             <div className="flex justify-start gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
-                <Bot size={18} />
+              <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center text-white shrink-0 shadow-sm mt-1", currentPersona === 'sylara' ? "bg-gradient-to-br from-purple-500 to-purple-700" : "bg-gradient-to-br from-[#1a4731] to-emerald-600")}>
+                {currentPersona === 'sylara' ? <Headphones size={18} /> : <Shield size={18} />}
               </div>
               <div className="flex-1 max-w-[85%] bg-white border border-slate-200/80 rounded-2xl rounded-bl-md shadow-sm p-4">
                 <p className="text-sm font-semibold text-slate-700 mb-3">📅 Select an available appointment time:</p>
@@ -3994,8 +4256,25 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
                   </div>
                 )}
 
-                {/* Error */}
-                {bookingError && !isBooking && (
+                {/* Authentication Fallback / Error */}
+                {bookingError === 'AUTH_REQUIRED' && (
+                  <div className="space-y-4">
+                    <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl">
+                      <p className="text-xs text-blue-700 font-medium leading-relaxed">
+                        Our real-time calendar is syncing. You can book your appointment instantly via our secure booking portal.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => window.open('https://calendly.com/globalgreenenterprize/30min', '_blank')}
+                      className="w-full bg-[#1a4731] text-white py-3 rounded-xl text-sm font-black hover:bg-[#0f2a1f] transition-all shadow-lg flex items-center justify-center gap-2"
+                    >
+                      📅 Open Secure Booking Portal
+                    </button>
+                    <p className="text-[10px] text-slate-400 text-center">No login required for booking</p>
+                  </div>
+                )}
+
+                {bookingError && bookingError !== 'AUTH_REQUIRED' && !isBooking && (
                   <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{bookingError}</p>
                 )}
 
@@ -4016,10 +4295,12 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
                           weekday: 'short',
                           month: 'short',
                           day: 'numeric',
+                          year: 'numeric',
                           hour: 'numeric',
                           minute: '2-digit',
                           timeZoneName: 'short',
                         })}
+ Jonah
                       </button>
                     ))}
                   </div>
@@ -4052,6 +4333,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
 
           {/* ── License Eligibility Yes/No Buttons — shown during steps 20-23 and business steps ── */}
           {(signupStep === 20 || signupStep === 21 || signupStep === 22 || signupStep === 23 ||
+            signupStep === 1.1 || signupStep === 6.1 || signupStep === 12 || signupStep === 99 ||
             signupStep === 103 || signupStep === 121 || signupStep === 130 || signupStep === 133) && (
             <div className="flex justify-start gap-3">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
@@ -4070,6 +4352,29 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
                 >
                   ❌ No
                 </button>
+              </div>
+            </div>
+          )}
+
+          {/* ── Medical Condition Selection Buttons — shown during step 13 ── */}
+          {signupStep === 13 && (
+            <div className="flex justify-start gap-3">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
+                <Bot size={18} />
+              </div>
+              <div className="flex-1 max-w-[85%] bg-white border border-slate-200/80 rounded-2xl rounded-bl-md shadow-sm p-4">
+                <p className="text-sm font-semibold text-slate-700 mb-3">🩺 Select your qualifying condition:</p>
+                <div className="flex flex-wrap gap-2">
+                  {['Chronic Pain', 'PTSD', 'Anxiety', 'Insomnia', 'Arthritis', 'Nausea', 'Other'].map((condition) => (
+                    <button
+                      key={condition}
+                      onClick={() => handleSend(undefined, condition)}
+                      className="px-4 py-2 bg-emerald-50 border border-emerald-200 text-[#1a4731] rounded-xl text-xs font-bold hover:bg-emerald-500 hover:text-white hover:border-emerald-600 transition-all shadow-sm active:scale-95"
+                    >
+                      {condition}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           )}
@@ -5718,7 +6023,7 @@ export default function App() {
                 setView(v as any);
               }}
               onProfileCreated={(profile) => setUserProfile(profile)}
-              variant="med-card"
+              variant={initialRole === 'Business' ? 'business' : 'general'}
             />
           )}
           {view === 'larry-business' && (

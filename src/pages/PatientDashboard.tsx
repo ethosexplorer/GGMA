@@ -284,7 +284,7 @@ export const PatientDashboard = ({ user }: { user?: any; onLogout?: () => void; 
                    </Button>
                 </div>
              </div>
-             {isSubscribed && <ApplicationsTab />}
+             <ApplicationsTab user={user} />
           </motion.div>
         )}
 
