@@ -66,6 +66,7 @@ import {
   Cpu,
   Gavel,
   Headphones,
+  Phone
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from './lib/utils';
@@ -1205,7 +1206,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
             className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-[#1a4731] rounded-xl border border-emerald-100 font-bold hover:bg-emerald-100 transition-all shadow-sm group"
           >
             <Phone size={16} className="text-emerald-600 group-hover:scale-110 transition-transform" />
-            GGE AI Call Center
+            GGE AI Call Center (1-405-492-7297)
           </button>
         </div>
 
@@ -1568,30 +1569,31 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
             <a href="#" className="hover:text-[#1a4731] transition-colors">Terms of Service</a>
             <a href="#" className="hover:text-[#1a4731] transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-[#1a4731] transition-colors">Accessibility</a>
-            <a href="#" className="hover:text-[#1a4731] transition-colors">Contact Support</a>
+            <a href="tel:14054927297" className="hover:text-[#1a4731] transition-colors font-black">Support: 1-405-492-7297</a>
           </div>
         </div>
       </footer>
 
-      {/* Floating Sylara Call Center Agent Widget */}
-      <div className="fixed bottom-6 right-6 z-50">
-        <button 
-          onClick={() => onNavigate('support')}
-          className="bg-purple-700 text-white p-4 rounded-full shadow-2xl hover:bg-purple-800 hover:scale-105 transition-all flex items-center gap-3 group"
-        >
-          <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center overflow-hidden shadow-inner">
-            <img src="/larry-logo.png" alt="Sylara" className="w-full h-full object-cover" />
-          </div>
-          <div className="hidden md:block text-left pr-2">
-            <div className="text-sm font-bold leading-tight">Sylara AI Agent</div>
-            <div className="text-[11px] text-white/80">Call or Text 24/7</div>
-          </div>
-        </button>
-      </div>
-
     </div>
   );
 };
+
+const SylaraFloatingWidget = ({ onClick }: { onClick: () => void }) => (
+  <div className="fixed bottom-6 right-6 z-50">
+    <button 
+      onClick={onClick}
+      className="bg-purple-700 text-white p-4 rounded-full shadow-2xl hover:bg-purple-800 hover:scale-105 transition-all flex items-center gap-3 group"
+    >
+      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center overflow-hidden shadow-inner">
+        <img src="/larry-logo.png" alt="Sylara" className="w-full h-full object-cover" />
+      </div>
+      <div className="hidden md:block text-left pr-2">
+        <div className="text-sm font-bold leading-tight">Sylara AI Agent</div>
+        <div className="text-[11px] text-white/80">Call or Text 1-405-492-7297</div>
+      </div>
+    </button>
+  </div>
+);
 
 // --- Screens ---
 
@@ -5852,6 +5854,11 @@ export default function App() {
             </AnimatePresence>
           )}
         </AnimatePresence>
+        
+        {/* Persistent Sylara Support for Unauthenticated Users */}
+        {['landing', 'login', 'signup', 'forgot-password', 'support', 'patient-signup', 'business-signup', 'provider-signup'].includes(view as string) && (
+          <SylaraFloatingWidget onClick={() => setView('support')} />
+        )}
       </div>
     </ErrorBoundary>
   );
