@@ -80,6 +80,99 @@ export async function initializeDatabase() {
       )
     `);
 
+    // --- Metrc Compliance & Care OS Tables ---
+
+    await turso.execute(`
+      CREATE TABLE IF NOT EXISTS plant_batches (
+        id TEXT PRIMARY KEY,
+        strain TEXT NOT NULL,
+        count INTEGER NOT NULL,
+        status TEXT NOT NULL,
+        facility_id TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(facility_id) REFERENCES entities(id)
+      )
+    `);
+
+    await turso.execute(`
+      CREATE TABLE IF NOT EXISTS plants (
+        id TEXT PRIMARY KEY,
+        batch_id TEXT NOT NULL,
+        tag_id TEXT UNIQUE NOT NULL,
+        phase TEXT NOT NULL,
+        facility_id TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(batch_id) REFERENCES plant_batches(id),
+        FOREIGN KEY(facility_id) REFERENCES entities(id)
+      )
+    `);
+
+    await turso.execute(`
+      CREATE TABLE IF NOT EXISTS harvests (
+        id TEXT PRIMARY KEY,
+        plant_id TEXT NOT NULL,
+        weight REAL NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(plant_id) REFERENCES plants(id)
+      )
+    `);
+
+    await turso.execute(`
+      CREATE TABLE IF NOT EXISTS packages (
+        id TEXT PRIMARY KEY,
+        source_type TEXT NOT NULL, -- plant | harvest | package
+        source_id TEXT NOT NULL,
+        tag_id TEXT UNIQUE NOT NULL,
+        weight REAL NOT NULL,
+        status TEXT NOT NULL,
+        facility_id TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(facility_id) REFERENCES entities(id)
+      )
+    `);
+
+    await turso.execute(`
+      CREATE TABLE IF NOT EXISTS transfers (
+        id TEXT PRIMARY KEY,
+        from_facility TEXT NOT NULL,
+        to_facility TEXT NOT NULL,
+        status TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(from_facility) REFERENCES entities(id),
+        FOREIGN KEY(to_facility) REFERENCES entities(id)
+      )
+    `);
+
+    await turso.execute(`
+      CREATE TABLE IF NOT EXISTS transfer_items (
+        id TEXT PRIMARY KEY,
+        transfer_id TEXT NOT NULL,
+        package_id TEXT NOT NULL,
+        FOREIGN KEY(transfer_id) REFERENCES transfers(id),
+        FOREIGN KEY(package_id) REFERENCES packages(id)
+      )
+    `);
+
+    await turso.execute(`
+      CREATE TABLE IF NOT EXISTS wallets (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        balance REAL DEFAULT 0,
+        type TEXT NOT NULL DEFAULT 'personal', -- personal | facility
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    await turso.execute(`
+      CREATE TABLE IF NOT EXISTS audit_logs (
+        id TEXT PRIMARY KEY,
+        action TEXT NOT NULL,
+        user_id TEXT NOT NULL,
+        data TEXT NOT NULL, -- JSON string
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     // Insert mock data if DB is empty
     const { rows } = await turso.execute('SELECT COUNT(*) as count FROM entities');
     if (rows[0] && rows[0].count === 0) {
@@ -87,9 +180,9 @@ export async function initializeDatabase() {
       
       const entitiesQuery = `
         INSERT INTO entities (id, name, type, state, status, last_audit) VALUES 
-        ('ent-1', 'GGMA North Dispensary', 'Retail', 'Kansas', 'Compliant', 'Sep 20, 2026'),
-        ('ent-2', 'Green Valley Cultivation', 'Production', 'Missouri', 'Compliant', 'Aug 15, 2026'),
-        ('ent-3', 'Central Logistics Hub', 'Distribution', 'Kansas', 'Review', 'Oct 01, 2026')
+        ('ent-1', 'GGMA North Dispensary', 'Retail', 'Oklahoma', 'Compliant', 'Apr 21, 2026'),
+        ('ent-2', 'Green Valley Cultivation', 'Production', 'Oklahoma', 'Compliant', 'Apr 15, 2026'),
+        ('ent-3', 'Central Logistics Hub', 'Distribution', 'Oklahoma', 'Review', 'Apr 20, 2026')
       `;
       await turso.execute(entitiesQuery);
 
@@ -103,11 +196,36 @@ export async function initializeDatabase() {
 
       const txQuery = `
         INSERT INTO transactions (id, entity_id, date, amount, type, status) VALUES 
-        ('tx-1', 'ent-1', '2026-10-14', 1250.00, 'B2C Sales', 'Completed'),
-        ('tx-2', 'ent-3', '2026-10-15', 5400.00, 'B2B Wholesale', 'Processing'),
-        ('tx-3', 'ent-1', '2026-10-15', 315.00, 'B2C Sales', 'Completed')
+        ('tx-1', 'ent-1', '2026-04-14', 1250.00, 'B2C Sales', 'Completed'),
+        ('tx-2', 'ent-3', '2026-04-15', 5400.00, 'B2B Wholesale', 'Processing'),
+        ('tx-3', 'ent-1', '2026-04-15', 315.00, 'B2C Sales', 'Completed')
       `;
       await turso.execute(txQuery);
+
+      // --- Compliance Mock Data ---
+      await turso.execute(`
+        INSERT INTO plant_batches (id, strain, count, status, facility_id) VALUES 
+        ('pb-1', 'OG Kush', 100, 'IMMATURE', 'ent-2'),
+        ('pb-2', 'Sour Diesel', 50, 'VEGETATIVE', 'ent-2')
+      `);
+
+      await turso.execute(`
+        INSERT INTO plants (id, batch_id, tag_id, phase, facility_id) VALUES 
+        ('p-1', 'pb-2', '1A4FF0100000022000001001', 'FLOWERING', 'ent-2'),
+        ('p-2', 'pb-2', '1A4FF0100000022000001002', 'FLOWERING', 'ent-2')
+      `);
+
+      await turso.execute(`
+        INSERT INTO packages (id, source_type, source_id, tag_id, weight, status, facility_id) VALUES 
+        ('pkg-1', 'harvest', 'h-1', '1A4FF0100000022000002001', 500.0, 'ACTIVE', 'ent-2'),
+        ('pkg-2', 'package', 'pkg-1', '1A4FF0100000022000002002', 100.0, 'IN_TRANSIT', 'ent-2')
+      `);
+
+      await turso.execute(`
+        INSERT INTO wallets (id, user_id, balance, type) VALUES 
+        ('wal-1', 'admin-1', 15000000.0, 'personal'),
+        ('wal-2', 'ent-1', 500000.0, 'facility')
+      `);
 
       const alertsQuery = `
         INSERT INTO compliance_alerts (id, entity_id, message, severity, date, status, is_resolved) VALUES 

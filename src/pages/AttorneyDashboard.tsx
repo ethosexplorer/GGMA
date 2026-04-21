@@ -308,6 +308,42 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                       <p className="text-sm text-slate-600">"The best legal representation I've had. The AI system made uploading my docs seamless."</p>
                     </div>
                   </div>
+                
+                {/* Client Reviews & Ratings */}
+                <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mt-6">
+                  <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+                    <div>
+                      <h3 className="font-bold text-slate-800 text-lg flex items-center gap-2">
+                        <UserCheck size={20} className="text-[#1a4731]" /> Client Reviews & Ratings
+                      </h3>
+                      <p className="text-sm text-slate-500">Top-rated attorneys receive "Top Counsel" acknowledgement and priority case routing.</p>
+                    </div>
+                    <div className="bg-[#1a4731] text-white px-3 py-1 rounded-lg text-sm font-bold flex items-center gap-1">
+                      A+ Rating (4.9/5)
+                    </div>
+                  </div>
+                  <div className="p-5 space-y-4">
+                    <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <p className="font-bold text-slate-800">GreenLeaf LLC</p>
+                          <p className="text-xs text-slate-500">Business Setup • 2 days ago</p>
+                        </div>
+                        <div className="text-emerald-500 flex tracking-tighter">★★★★★</div>
+                      </div>
+                      <p className="text-sm text-slate-600">"Alex was incredibly fast and handled our entire state compliance application within 24 hours. Highly recommended."</p>
+                    </div>
+                    <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <p className="font-bold text-slate-800">Michael S.</p>
+                          <p className="text-xs text-slate-500">Patient Appeal • 1 week ago</p>
+                        </div>
+                        <div className="text-emerald-500 flex tracking-tighter">★★★★★</div>
+                      </div>
+                      <p className="text-sm text-slate-600">"The best legal representation I've had. The AI system made uploading my docs seamless."</p>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Add-on Upsells Section */}

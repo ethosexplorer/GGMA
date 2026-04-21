@@ -1197,9 +1197,9 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
 
         <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
           <a href="#state-facts" className="hover:text-[#1a4731] transition-colors">State Facts</a>
-          <button onClick={() => onNavigate('patient-portal')} className="hover:text-[#1a4731] transition-colors font-medium">GGMA Sector</button>
-          <button onClick={() => onNavigate('signup', 'Oversight')} className="hover:text-[#1a4731] transition-colors font-medium">RIP Intelligence</button>
-          <button onClick={() => onNavigate('signup', 'Business')} className="hover:text-[#1a4731] transition-colors font-medium">SINC Compliance</button>
+          <button onClick={() => onNavigate('larry-chatbot', 'ggma')} className="hover:text-[#1a4731] transition-colors font-medium">GGMA Sector</button>
+          <button onClick={() => onNavigate('larry-chatbot', 'rip')} className="hover:text-[#1a4731] transition-colors font-medium">RIP Intelligence</button>
+          <button onClick={() => onNavigate('larry-chatbot', 'sinc')} className="hover:text-[#1a4731] transition-colors font-medium">SINC Compliance</button>
           <div className="h-6 w-px bg-slate-200 mx-2" />
           <button 
             onClick={() => onNavigate('larry-chatbot')} 
@@ -2581,18 +2581,28 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
 // --- L.A.R.R.Y AI Chatbot for Med Card / Business License Assistance ---
 const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card' }: any) => {
   const isBusiness = variant === 'business';
-  const isGeneral = variant === 'general';
+  const isGeneral = variant === 'general' || variant === 'ggma' || variant === 'rip' || variant === 'sinc';
   
   const getGreeting = () => {
-    if (isBusiness) return '👋 Hello! I am **Sylara** — your **Intake & Support Agent** for the **Global Green Hybrid Platform (GGHP)**. I\'m here to guide you through **Cannabis Business Licensing** and resolve any operational hurdles before passing your file to **L.A.R.R.Y** for final Authority approval. \n\nHow can I assist your business today?';
+    const date = "April 21, 2026";
+    const metrcStatus = "Validated Metrc Integrator (Active)";
+    if (variant === 'ggma') return `👋 Welcome to the **GGMA Sector**. I am **Sylara**, your **Intake Agent**. We are an official **${metrcStatus}**. I handle all regulatory onboarding, card processing, and registry management. \n\nHow can I assist with your GGMA licensing today?`;
+    if (variant === 'rip') return `🕵️ **RIP Intelligence Portal**. I am **Sylara**, coordinating with the **L.A.R.R.Y Enforcement Engine**. We are a **${metrcStatus}** as of ${date}. We handle real-time background checks, field oversight, and compliance policing via live sync. \n\nWhat intelligence or oversight task do you need assistance with?`;
+    if (variant === 'sinc') return `🛡️ **SINC Compliance Infrastructure**. I am **Sylara**, managing your secure operational backbone. SINC is a **${metrcStatus}**. We ensure audit-trails, encrypted records, and network integrity across all state jurisdictions. \n\nHow can I help secure your business today?`;
     
-    if (isGeneral) return '👋 Welcome to the **Global Green Hybrid Platform (GGHP)** Concierge. I am **Sylara**, your Intake Agent. \n\nI handle:\n• **Intake & Onboarding** (GGMA)\n• **Operational Support**\n• **Escalations & Alerts**\n• **L.A.R.R.Y** Authority Transfers\n\nHow can I help you navigate the ecosystem today?';
+    if (isBusiness) return `👋 Hello! I am **Sylara** — your **Intake & Support Agent**. Global Green Enterprise Inc is now a **${metrcStatus}**. I'm here to guide you through **Cannabis Business Licensing** and resolve any operational hurdles before passing your file to **L.A.R.R.Y** for final Authority approval. \n\nHow can I assist your business today?`;
     
-    return '👋 Hello! I am **Sylara** — your **Intake Agent** for **Diversity Health & Wellness (CCardz)**. I will walk you through your **Medical License** intake and prepare your file for the **L.A.R.R.Y Authority Engine**. \n\nI\'ll help you with:\n• Complete Medical Intake\n• Care Wallet Setup\n• Direct Booking with Providers\n\nAre you ready to begin? Or pick a quick action below!';
+    if (isGeneral) return `👋 Welcome to the **Global Green Hybrid Platform (GGHP)** Concierge. I am **Sylara**, your Intake Agent. \n\n**Integration Status:** ${metrcStatus} (Active).\n\nI handle:\n• **Intake & Onboarding** (GGMA)\n• **Operational Support**\n• **Escalations & Alerts**\n• **L.A.R.R.Y** Authority Transfers\n\nHow can I help you navigate the ecosystem today?`;
+    
+    return `👋 Hello! I am **Sylara** — your **Intake Agent**. We are a **${metrcStatus}** (v5.3). I will walk you through your **Medical License** intake and prepare your file for the **L.A.R.R.Y Authority Engine**. \n\nI'll help you with:\n• Complete Medical Intake\n• Care Wallet Setup\n• Direct Booking with Providers\n\nAre you ready to begin? Or pick a quick action below!`;
   };
 
   const getInitialChoices = () => {
-    if (isBusiness) return ['Start Business Intake', 'Speak with Business Expert', 'View Fee Schedule'];
+    if (variant === 'ggma') return ['Start Patient Intake', 'View Fee Schedule', 'Speak with Shantell', '⭐ Basic Subscription', '💎 Professional Subscription', '🚀 Enterprise Subscription'];
+    if (variant === 'rip') return ['Field Intelligence', 'Background Verification', 'Enforcement Status', '⭐ Basic Subscription', '💎 Professional Subscription', '🚀 Enterprise Subscription'];
+    if (variant === 'sinc') return ['Audit Audit Shield', 'Network Integrity', 'Secure Records', '⭐ Basic Subscription', '💎 Professional Subscription', '🚀 Enterprise Subscription'];
+    
+    if (isBusiness) return ['Start Business Intake', 'Speak with Business Expert', 'View Fee Schedule', '⭐ Basic Subscription', '💎 Professional Subscription', '🚀 Enterprise Subscription'];
     if (isGeneral) return [
       '🏢 GGMA Licensing',
       '🕵️ RIP Intelligence',
@@ -2604,7 +2614,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       '💎 Professional Subscription',
       '🚀 Enterprise Subscription'
     ];
-    return ['Start Patient Intake', 'Book Physician ($45)', 'Speak with Shantell'];
+    return ['Start Patient Intake', 'Book Physician ($45)', 'Speak with Shantell', '⭐ Basic Subscription', '💎 Professional Subscription', '🚀 Enterprise Subscription'];
   };
 
   const [messages, setMessages] = useState<{role: 'user'|'bot', text: string, choices?: string[]}[]>([
@@ -2847,6 +2857,37 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
 
     const lower = text.toLowerCase();
     
+    // Handle Subscription Keywords
+    if (lower.includes('subscription')) {
+      let subResponse = '';
+      let subChoices = ['Yes, Upgrade Now', 'View All Tiers', 'Maybe Later'];
+      
+      if (lower.includes('basic')) {
+        subResponse = '⭐ **Basic Subscription ($9.99/mo)**\n\n• Digital Med Card Storage\n• Real-time State Fact Access\n• Basic L.A.R.R.Y AI Assistance\n• 24/7 Portal Access\n\nWould you like to **Upgrade to Basic**?';
+      } else if (lower.includes('professional')) {
+        subResponse = '💎 **Professional Subscription ($49.99/mo)**\n\n• All Basic Features\n• Priority Intake Processing\n• Direct Care Wallet B2B Transactions\n• Seed-to-Sale Preview Tools\n• Priority Support Escalation\n\nWould you like to **Upgrade to Professional**?';
+      } else if (lower.includes('enterprise')) {
+        subResponse = '🚀 **Enterprise Subscription ($499.00/mo)**\n\n• All Professional Features\n• **Validated Metrc Integrator Sync**\n• Unlimited Facilities\n• 50,000 Monthly API Calls (5/sec)\n• Compliance Audit Shielding\n• Dedicated Sylara Support Agent\n\nWould you like to **Upgrade to Enterprise**?';
+      } else {
+        subResponse = 'We offer tiered subscription packages to streamline your compliance journey:\n\n⭐ **Basic**: Essential storage & AI access.\n💎 **Professional**: Priority processing & B2B tools.\n🚀 **Enterprise**: Full METRC integration & Audit Shield.\n\nWhich tier would you like to explore?';
+        subChoices = ['Basic Subscription', 'Professional Subscription', 'Enterprise Subscription', 'Back to Main'];
+      }
+      
+      setMessages(prev => [...prev, { role: 'bot', text: subResponse, choices: subChoices } as any]);
+      setIsTyping(false);
+      return;
+    }
+
+    if (lower === 'view all tiers') {
+       setMessages(prev => [...prev, { 
+         role: 'bot', 
+         text: 'Here are our high-conversion administrative intake packages:', 
+         choices: ['⭐ Basic Subscription', '💎 Professional Subscription', '🚀 Enterprise Subscription', 'Main Menu'] 
+       } as any]);
+       setIsTyping(false);
+       return;
+    }
+    
     // Persona Switching Logic
     if (lower.includes('compliance') || lower.includes('authority') || lower.includes('larry') || lower.includes('regulation')) {
       setCurrentPersona('larry');
@@ -2874,8 +2915,15 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         response = '🛡️ **SINC (Secure Infrastructure & Network Compliance)** provides the encrypted backbone and audit-trail infrastructure for GGHP.\n\nWe ensure that all business operations are 100% compliant with state and federal regulations. Do you need help setting up SINC compliance for your business?';
         setSignupStep(0);
       } else if (lower.includes('telehealth')) {
-        response = '🏥 **Telehealth Services**\n\nOur network provides direct access to licensed providers for medical recommendations. You can book an appointment directly through our integrated booking system.\n\nWould you like the booking link for a medical consultation?';
-        setSignupStep(0);
+        response = '🏥 **Telehealth Services**\n\nOur network provides direct access to licensed providers for medical recommendations. You can book an appointment directly through our integrated booking system.\n\nWould you like to **Book a Consultation** now?';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Book Consultation', 'Speak with Shantell', 'Not Now'] 
+        } as any]);
+        setSignupStep(10);
+        setIsTyping(false);
+        return;
       } else if (lower.includes('it support') || lower.includes('technical')) {
         response = '💻 **IT & Technical Support**\n\nI can help resolve technical issues with your portal, Care Wallet, or application status. Please describe the issue you are experiencing, or type **"agent"** to speak with a technician.';
         setSignupStep(0);
@@ -2909,11 +2957,11 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
           '• **Entity Setup**: LLC/Corp registration for OMMA compliance.\n' +
           '• **Licensing Tiers**: Grower, Processor, and Dispensary filings.\n' +
           '• **SINC Audit**: Pre-inspection compliance reviews.\n\n' +
-          'Commercial consulting starts with a professional review. Would you like to **Speak with an Expert** or **Start Business Intake**?';
+          'Commercial consulting starts with a professional review. Would you like to **Book Business Consultation** or **Start Business Intake**?';
         setMessages(prev => [...prev, { 
           role: 'bot', 
           text: response,
-          choices: ['Speak with Business Expert', 'Start Business Intake', 'View Fee Schedule'] 
+          choices: ['Book Business Consultation', 'Start Business Intake', 'View Fee Schedule'] 
         } as any]);
         setIsTyping(false);
         return;
@@ -3936,6 +3984,21 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         setSignupStep(99);
         response = 'Excellent. I can help you establish your secure profile to begin the official intake process. Shall we proceed with creating your account? (Yes / No)';
       }
+    } else if (signupStep === 10) {
+      if (lower.includes('yes') || lower.includes('book') || lower.includes('ready') || lower.includes('consultation')) {
+        response = 'Sure! Here are our available appointment times for your **Telehealth Consultation**. Pick a slot and I’ll lock it in for you! 📅';
+        setMessages(prev => [...prev, { role: 'bot', text: response }]);
+        setSignupStep(11);
+        fetchCalendlySlots();
+        setIsTyping(false);
+        return;
+      } else if (lower.includes('shantell') || lower.includes('speak')) {
+        response = '👤 **Human Care Coordination**\n\nI am routing you to **Shantell Robinson**. When booking, please include a **detailed message** about your needs so we can prepare your file.\n\n📞 **Med Card Line**: 405-492-7487\n📞 **Telehealth Line**: 405-252-1178\n🔗 **[Book a Session via Calendly (April 2026)](https://calendly.com/globalgreenenterprize/30min?month=2026-04)**';
+        setSignupStep(0);
+      } else {
+        response = 'No problem. If you\'re not ready for an appointment, I can help you with **GGMA Licensing** or **IT Support**. What would you like to explore?';
+        setSignupStep(0);
+      }
     } else if (lower.includes('consultation') || lower.includes('book 30min')) {
       response = 'Sure! Here are our available appointment times. Pick a slot and I’ll lock it in for you! 📅';
       setMessages(prev => [...prev, { role: 'bot', text: response }]);
@@ -3957,8 +4020,12 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       response = '🏢 Understood. Let\'s start your **Commercial Business License Application**. \n\nCan I create an account for you to begin?';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Yes', 'No'] } as any]);
       setSignupStep(99);
-    } else if (lower.includes('book physician') || lower.includes('doctor') || lower.includes('recommendation')) {
-      response = '⚕️ **Physician Evaluation & Sync ($45.00)**\n\nYou can book your medical recommendation through our official partner, **Renew Oklahoma Card**. The total cost is **$45.00** ($35 Doctor + $10 GGE Processing).\n\n🔗 **[Book Your $45 Evaluation Here](https://www.renewoklahomacard.com/)**\n\nI have already pre-filled your dashboard with your intake data to save you time during the appointment!';
+    } else if (lower.includes('book physician') || lower.includes('doctor') || lower.includes('recommendation') || lower.includes('med card intake')) {
+      response = '⚕️ **Medical Intake & Physician Evaluation**\n\nI am opening our integrated booking system for your evaluation. The total cost is **$45.00** ($35 Doctor + $10 GGE Processing).\n\nPick a slot below to begin! 📅';
+      setMessages(prev => [...prev, { role: 'bot', text: response }]);
+      setSignupStep(11);
+      fetchCalendlySlots();
+      return;
     } else if (lower.includes('human') || lower.includes('coordinator') || lower.includes('shantell') || lower.includes('speak with someone')) {
       response = '👤 **Human Care Coordination**\n\nI am routing you to **Shantell Robinson**, our lead Human Care Coordinator. When booking, please include a **detailed message** about your needs.\n\n📞 **Med Card Line**: 405-492-7487\n📞 **Telehealth Line**: 405-252-1178\n🏢 **Global Green**: 405-492-7297\n\n🔗 **[Book a Session via Calendly (April 2026)](https://calendly.com/globalgreenenterprize/30min?month=2026-04)**';
     } else if (lower === 'yes' || lower === 'yeah' || lower === 'yep') {
@@ -4194,18 +4261,50 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
                 <div className="leading-relaxed whitespace-pre-line">
                   {msg.role === 'bot' ? renderText(msg.text) : msg.text}
                 </div>
-                {msg.role === 'bot' && (msg as any).choices && (
-                  <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-slate-100">
-                    {(msg as any).choices.map((choice: string, i: number) => (
-                      <button
-                        key={i}
-                        type="button"
-                        onClick={() => handleSend(undefined, choice)}
-                        className="px-4 py-2 bg-emerald-50 border border-emerald-200 text-[#1a4731] rounded-xl text-xs font-bold hover:bg-emerald-500 hover:text-white hover:border-emerald-600 transition-all shadow-sm active:scale-95"
-                      >
-                        {choice}
-                      </button>
-                    ))}
+                {msg.role === 'bot' && (msg as any).choices && Array.isArray((msg as any).choices) && (
+                  <div className={cn(
+                    "mt-4 pt-4 border-t border-slate-100",
+                    i === 0 ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3" : "flex flex-wrap gap-2"
+                  )}>
+                    {(msg as any).choices.map((choice: string, idx: number) => {
+                      const isSubscription = choice.includes('Subscription');
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => handleSend(undefined, choice)}
+                          className={cn(
+                            "px-4 py-3 rounded-xl text-xs font-bold transition-all shadow-sm active:scale-95 text-left flex flex-col justify-between h-full group",
+                            i === 0 
+                              ? isSubscription 
+                                ? "bg-slate-900 text-white border-slate-800 hover:bg-slate-800" 
+                                : "bg-white border border-slate-200 text-[#1a4731] hover:bg-emerald-50 hover:border-emerald-300"
+                              : "bg-emerald-50 border border-emerald-200 text-[#1a4731] hover:bg-emerald-500 hover:text-white hover:border-emerald-600 px-4 py-2"
+                          )}
+                        >
+                          <span className="flex items-center gap-2">
+                             {choice.includes('GGMA') && <Users size={14} className="text-blue-500" />}
+                             {choice.includes('RIP') && <Shield size={14} className="text-amber-500" />}
+                             {choice.includes('SINC') && <Lock size={14} className="text-emerald-500" />}
+                             {choice.includes('Book') && <Calendar size={14} className="text-purple-500" />}
+                             {choice.includes('Telehealth') && <Video size={14} className="text-red-500" />}
+                             {choice.includes('IT Support') && <Wrench size={14} className="text-slate-500" />}
+                             {choice.includes('Basic') && <Sparkles size={14} className="text-emerald-400" />}
+                             {choice.includes('Professional') && <TrendingUp size={14} className="text-blue-400" />}
+                             {choice.includes('Enterprise') && <Cpu size={14} className="text-purple-400" />}
+                             {choice}
+                          </span>
+                          {i === 0 && (
+                            <span className="text-[9px] opacity-60 mt-1 block font-medium group-hover:opacity-100">
+                              {choice.includes('Intake') ? 'Start application' : 
+                               choice.includes('Subscription') ? 'View tier details' : 
+                               choice.includes('Book') ? 'Schedule consultation' : 
+                               'Click to explore'}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -4797,21 +4896,6 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
 
           <div ref={chatEndRef} />
         </div>
-
-        {/* Quick Actions */}
-        {messages.length <= 1 && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="flex flex-wrap gap-2 mb-4">
-            {quickActions.map((qa, i) => (
-              <button
-                key={i}
-                onClick={() => handleSend(undefined, qa.text)}
-                className="px-4 py-2 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 hover:bg-emerald-50 hover:border-emerald-200 hover:text-[#1a4731] transition-all shadow-sm"
-              >
-                {qa.label}
-              </button>
-            ))}
-          </motion.div>
-        )}
 
         {/* Input - ChatGPT Style */}
         <div className="relative">
@@ -6018,11 +6102,16 @@ export default function App() {
           )}
           {view === 'larry-chatbot' && (
             <LarryMedCardChatbot
-              onNavigate={(v) => {
-                setView(v as any);
+              onNavigate={(v: any, variant: any) => {
+                if (variant) {
+                   setView('larry-chatbot');
+                   setInitialRole(variant); // Reuse initialRole for variant mapping
+                } else {
+                   setView(v);
+                }
               }}
-              onProfileCreated={(profile) => setUserProfile(profile)}
-              variant={initialRole === 'Business' ? 'business' : 'general'}
+              onProfileCreated={(profile: any) => setUserProfile(profile)}
+              variant={initialRole || 'general'}
             />
           )}
           {view === 'larry-business' && (
@@ -6118,7 +6207,7 @@ export default function App() {
                             <h2 className="text-3xl font-black text-slate-800 mb-2">Verification in Progress</h2>
                             <p className="text-slate-600">
                               Your <strong>{userProfile.role.replace(/_/g, ' ')}</strong> credentials are currently undergoing secure validation. 
-                              You can explore the dashboard below in <strong>Shadow Mode</strong> to familiarize yourself with the tools.
+                              You can explore the dashboard below in <strong>Preview Mode</strong> to familiarize yourself with the tools.
                             </p>
                         </div>
                         
@@ -6161,7 +6250,7 @@ export default function App() {
         
         {/* Persistent Sylara Support for Unauthenticated Users */}
         {['landing', 'login', 'signup', 'forgot-password', 'support', 'patient-signup', 'business-signup', 'provider-signup'].includes(view as string) && (
-          <SylaraFloatingWidget onClick={() => setView('support')} />
+          <SylaraFloatingWidget onClick={() => setView('larry-chatbot')} />
         )}
       </div>
     </ErrorBoundary>

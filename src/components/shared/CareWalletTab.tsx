@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Wallet, CreditCard, ArrowUpCircle, ArrowDownCircle, Shield, Sparkles, Clock, MapPin, TrendingUp, Star, Zap, Lock, Activity } from 'lucide-react';
+import { Wallet, CreditCard, ArrowUpCircle, ArrowDownCircle, Shield, Sparkles, Clock, MapPin, TrendingUp, Star, Zap, Lock, Activity, Briefcase, Database } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 const walletTiers = [
@@ -173,7 +173,8 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
           { id: 'overview', label: 'Transactions' },
           { id: 'tiers', label: 'Wallet Tiers' },
           { id: 'locations', label: 'Reload Locations' },
-        ].map((s) => (
+          userRole === 'business' && { id: 'b2b', label: 'B2B Transactions' },
+        ].filter(Boolean).map((s) => (
           <button
             key={s.id}
             onClick={() => setActiveSection(s.id as typeof activeSection)}
@@ -408,6 +409,70 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
           </div>
         </div>
       )}
+
+      {/* B2B Transactions (Business Only) */}
+      {activeSection === 'b2b' && userRole === 'business' && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="font-bold text-slate-800">Approved Vendor Payments</h3>
+              <button className="px-4 py-2 bg-[#1a4731] text-white rounded-lg text-xs font-bold hover:bg-[#153a28]">Add New Vendor</button>
+            </div>
+            <div className="space-y-4">
+              {[
+                { name: 'Apex Cultivation LLC', type: 'Inventory Purchase', amount: 4500, status: 'Pending Approval' },
+                { name: 'SecureMovers Logistics', type: 'Transport Fee', amount: 350, status: 'Scheduled' },
+                { name: 'OMMA Regulatory Fees', type: 'Compliance Payment', amount: 2500, status: 'Processing' },
+              ].map((v, i) => (
+                <div key={i} className="flex items-center justify-between p-4 rounded-xl border border-slate-100 hover:bg-slate-50 transition-colors">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600">
+                      <Briefcase size={18} />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-slate-900 text-sm">{v.name}</p>
+                      <p className="text-xs text-slate-500">{v.type}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold text-sm text-slate-800">${v.amount.toLocaleString()}</p>
+                    <p className="text-[10px] text-amber-600 font-bold uppercase">{v.status}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <div className="bg-gradient-to-br from-blue-900 to-indigo-900 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-4 opacity-10"><Database size={80} /></div>
+              <h4 className="font-bold mb-2 flex items-center gap-2 text-blue-300"><Zap size={18} /> B2B Batch Settlement</h4>
+              <p className="text-sm text-blue-100/80 mb-6">Settling B2B invoices via GGE-Private Rail reduces transaction costs by 85% compared to traditional banking.</p>
+              <div className="bg-white/10 rounded-xl p-4 border border-white/20 mb-6">
+                 <div className="flex justify-between items-center text-xs mb-2">
+                   <span className="opacity-70 font-medium">Daily Settlement Limit</span>
+                   <span className="font-bold">$25,000.00</span>
+                 </div>
+                 <div className="w-full h-1.5 bg-white/10 rounded-full">
+                   <div className="h-full bg-blue-400 rounded-full" style={{ width: '45%' }} />
+                 </div>
+              </div>
+              <button className="w-full py-4 bg-blue-500 hover:bg-blue-400 text-white rounded-2xl font-black shadow-lg shadow-blue-900/30 transition-all">INITIATE BULK SETTLEMENT</button>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+               <div className="flex items-center gap-2 mb-4">
+                 <Shield size={18} className="text-emerald-600" />
+                 <h4 className="font-bold text-slate-800">SINC Traceability Sync</h4>
+               </div>
+               <p className="text-xs text-slate-500 leading-relaxed">
+                 All B2B transactions are automatically logged to your Metrc account via the SINC Integrator API. No manual entry required for tax-compliant purchase logs.
+               </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Reload Modal (Cash Simulation) */}
       {showReloadModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">

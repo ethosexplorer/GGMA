@@ -9,6 +9,9 @@ import { turso } from '../lib/turso';
 import { initializeDatabase } from '../lib/tursoMigrations';
 import { ComplianceEngineTab } from '../components/business/ComplianceEngineTab';
 import { AttorneyMarketplaceTab } from '../components/shared/AttorneyMarketplaceTab';
+import { DashboardAnalytics } from '../components/DashboardAnalytics';
+import { RegulatoryReportingTab } from '../components/business/RegulatoryReportingTab';
+import { StressTestEngine, StressTestResult } from '../lib/compliance/StressTestEngine';
 
 // Simple Button mock
 const Button = ({ children, className, icon: Icon, variant, disabled, ...props }: any) => (
@@ -46,7 +49,7 @@ const MiniBarChart = ({ data }: { data: number[] }) => (
 
 export const BusinessDashboard = ({ onLogout, user }: { onLogout?: () => void | Promise<void>, user?: any }) => {
   const [demoUnlocked, setDemoUnlocked] = useState(false);
-  const [activeTab, setActiveTab] = useState<'home' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'insurance' | 'documents' | 'subscription' | 'integrations' | 'staff' | 'traceability' | 'readiness' | 'wallet' | 'attorneys'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'analytics' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'insurance' | 'documents' | 'subscription' | 'integrations' | 'staff' | 'traceability' | 'readiness' | 'wallet' | 'attorneys' | 'reporting'>('analytics');
   const [isInitializing, setIsInitializing] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [processingId, setProcessingId] = useState<string | null>(null);
@@ -75,6 +78,8 @@ export const BusinessDashboard = ({ onLogout, user }: { onLogout?: () => void | 
   const [newTx, setNewTx] = useState({ entity_id: '', amount: 0, type: 'B2C Sales' });
   const [newPolicy, setNewPolicy] = useState({ entity_id: '', type: 'Grower Surety Bond', provider: '', amount: 0, expires_at: '' });
   const [newDoc, setNewDoc] = useState({ entity_id: '', name: '', type: 'Compliance' });
+  const [stressTestResult, setStressTestResult] = useState<StressTestResult | null>(null);
+  const [isStressTesting, setIsStressTesting] = useState(false);
 
 
   useEffect(() => {
@@ -90,6 +95,18 @@ export const BusinessDashboard = ({ onLogout, user }: { onLogout?: () => void | 
     };
     setup();
   }, []);
+
+  const runStressTest = async () => {
+    setIsStressTesting(true);
+    try {
+      const result = await StressTestEngine.runStressTest(entities[0]?.id || 'ent-1', 50);
+      setStressTestResult(result);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsStressTesting(false);
+    }
+  };
 
   const fetchData = async () => {
     try {
@@ -352,10 +369,22 @@ export const BusinessDashboard = ({ onLogout, user }: { onLogout?: () => void | 
       
       <div className="flex overflow-x-auto hide-scrollbar gap-2 p-1.5 bg-slate-100/60 rounded-3xl w-full xl:w-auto border border-slate-200/50">
         <button 
+          onClick={() => setActiveTab('analytics')}
+          className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'analytics' ? "bg-white text-[#1a4731] shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
+        >
+          <BarChart2 size={18} /> Analytics
+        </button>
+        <button 
           onClick={() => setActiveTab('home')}
           className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'home' ? "bg-white text-[#1a4731] shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
         >
           <LayoutDashboard size={18} /> Dashboard
+        </button>
+        <button 
+          onClick={() => setActiveTab('reporting')}
+          className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'reporting' ? "bg-white text-[#1a4731] shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
+        >
+          <FileText size={18} /> Reporting
         </button>
         <button 
           onClick={() => setActiveTab('pos')}
@@ -518,12 +547,12 @@ export const BusinessDashboard = ({ onLogout, user }: { onLogout?: () => void | 
                  <span className="text-xs font-mono font-medium text-slate-800 bg-slate-100 px-2 py-1 rounded">sk_live_...942</span>
                </div>
                <div className="flex items-center justify-between">
-                 <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Last Sync</span>
-                 <span className="text-xs font-bold text-slate-600">2 mins ago</span>
+                 <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Rate Limit</span>
+                 <span className="text-xs font-bold text-slate-600">5 calls / sec</span>
                </div>
                <div className="flex items-center justify-between">
-                 <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Facility Ping</span>
-                 <span className="text-xs font-bold text-emerald-600">Online (4/4)</span>
+                 <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Monthly Limit</span>
+                 <span className="text-xs font-bold text-emerald-600">50,000 (Unlimited Facilities)</span>
                </div>
              </div>
            </div>
@@ -722,14 +751,34 @@ export const BusinessDashboard = ({ onLogout, user }: { onLogout?: () => void | 
 
               {/* Sylara Task List */}
               <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-                  <div className="flex items-center gap-2">
-                     <CheckSquare className="text-emerald-600" size={18} />
-                     <h3 className="font-bold text-slate-800">Sylara Tasks</h3>
-                  </div>
-                  <span className="text-xs font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full">2 Pending</span>
-                </div>
-                <div className="divide-y divide-slate-100">
+                 <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                   <div className="flex items-center gap-2">
+                      <CheckSquare className="text-emerald-600" size={18} />
+                      <h3 className="font-bold text-slate-800">Sylara Tasks</h3>
+                   </div>
+                   <span className="text-xs font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full">3 Pending</span>
+                 </div>
+                 <div className="divide-y divide-slate-100">
+                    <div className="p-4 flex items-center justify-between bg-amber-50/50 hover:bg-amber-50 transition-colors">
+                         <div className="flex items-start gap-3">
+                            <div className="mt-0.5"><Zap size={16} className="text-amber-500" /></div>
+                            <div>
+                               <h4 className="text-sm font-bold text-slate-800">Complete Metrc API Training & Test</h4>
+                               <p className="text-xs text-slate-500 mt-0.5">Due: Today (April 21, 2026) • Assignee: Shantell Robinson</p>
+                            </div>
+                         </div>
+                         <button onClick={() => window.open('https://www.metrc.com/integrators/training/', '_blank')} className="text-xs font-bold text-white bg-amber-600 px-3 py-1.5 rounded-lg hover:bg-amber-700 whitespace-nowrap">Take Test</button>
+                    </div>
+                    <div className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                         <div className="flex items-start gap-3">
+                            <div className="mt-0.5"><CheckCircle size={16} className="text-emerald-500" /></div>
+                            <div>
+                               <h4 className="text-sm font-bold text-slate-800">Production Go-Live Readiness Audit</h4>
+                               <p className="text-xs text-slate-500 mt-0.5">Automated check for facility IDs and item mappings • Status: Pending</p>
+                            </div>
+                         </div>
+                         <button className="text-xs font-bold text-[#1a4731] bg-emerald-50 px-3 py-1.5 rounded-lg hover:bg-emerald-100 whitespace-nowrap">Run Audit</button>
+                    </div>
                    {unresolvedAlerts.length > 0 && unresolvedAlerts.map(alert => (
                      <div key={alert.id} className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
                         <div className="flex items-start gap-3">
@@ -1411,8 +1460,33 @@ export const BusinessDashboard = ({ onLogout, user }: { onLogout?: () => void | 
         </div>
         {/* Penalty Risk */}
         <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-          <h4 className="font-bold text-slate-800 mb-3 flex items-center gap-2"><AlertTriangle size={16} className="text-red-500" /> Penalty Risk Estimator</h4>
-          <p className="text-sm text-slate-500 mb-4">Based on current gaps, Larry estimates the following risk if OMMA inspects today:</p>
+          <div className="flex justify-between items-center mb-4">
+            <h4 className="font-bold text-slate-800 flex items-center gap-2"><AlertTriangle size={16} className="text-red-500" /> Penalty Risk Estimator</h4>
+            <button 
+              disabled={isStressTesting}
+              onClick={runStressTest}
+              className={cn(
+                "px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2",
+                isStressTesting ? "bg-slate-100 text-slate-400" : "bg-red-50 text-red-600 hover:bg-red-100"
+              )}
+            >
+              {isStressTesting ? <Loader2 className="animate-spin" size={14} /> : <Activity size={14} />}
+              Run Engine Stress Test
+            </button>
+          </div>
+          
+          {stressTestResult ? (
+            <div className="mb-4 p-4 bg-slate-900 rounded-xl font-mono text-[10px] text-emerald-400 border border-slate-800 animate-in zoom-in-95 duration-300">
+               <p className="font-bold mb-2">>> STRESS TEST COMPLETED</p>
+               <p>ACTIONS PROCESSED: {stressTestResult.totalActions}</p>
+               <p>ANOMALIES DETECTED: {stressTestResult.anomaliesDetected}</p>
+               <p>LATENCY: {stressTestResult.processingTimeMs}ms</p>
+               <p>INTEGRITY STATUS: {stressTestResult.dbIntegrity}</p>
+            </div>
+          ) : (
+            <p className="text-sm text-slate-500 mb-4">Based on current gaps, Larry estimates the following risk if OMMA inspects today:</p>
+          )}
+          
           <div className="grid grid-cols-3 gap-4">
             <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl text-center"><p className="text-xs font-bold text-emerald-700">Fine Risk</p><p className="text-2xl font-black text-emerald-600">${unresolvedAlerts.length * 5000}</p></div>
             <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl text-center"><p className="text-xs font-bold text-amber-700">Suspension Risk</p><p className="text-2xl font-black text-amber-600">{unresolvedAlerts.length > 2 ? 'Medium' : 'Low'}</p></div>
@@ -1462,6 +1536,14 @@ export const BusinessDashboard = ({ onLogout, user }: { onLogout?: () => void | 
       <div className="h-[800px] rounded-3xl overflow-hidden border border-slate-200 shadow-2xl">
         <AttorneyMarketplaceTab />
       </div>
+    )}
+
+    {activeTab === 'analytics' && (
+      <DashboardAnalytics facilityId={entities[0]?.id || 'ent-1'} />
+    )}
+
+    {activeTab === 'reporting' && (
+      <RegulatoryReportingTab facilityId={entities[0]?.id || 'ent-1'} />
     )}
 
     {activeTab === 'subscription' && (

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Shield, Zap, AlertTriangle, CheckCircle, Database, Search, Activity, RefreshCw, BarChart2 } from 'lucide-react';
+import { Shield, Zap, AlertTriangle, CheckCircle, Database, Search, Activity, RefreshCw, BarChart2, ArrowRight, ClipboardList } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { ComplianceWorkflowConsole } from './ComplianceWorkflowConsole';
 
 export const ComplianceEngineTab = () => {
   const [isSyncing, setIsSyncing] = useState(false);
@@ -14,7 +15,7 @@ export const ComplianceEngineTab = () => {
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="bg-slate-900 rounded-[3rem] p-10 text-white relative overflow-hidden shadow-2xl">
          <div className="absolute top-0 right-0 p-10 opacity-10"><Shield size={120} /></div>
-         <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
+         <div className="relative z-10 flex flex-row justify-between items-center gap-8">
             <div className="max-w-xl">
                <h2 className="text-4xl font-black tracking-tight mb-4 leading-none">Global Compliance Engine</h2>
                <p className="text-slate-400 font-medium text-lg leading-relaxed">
@@ -26,6 +27,18 @@ export const ComplianceEngineTab = () => {
                <p className="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Compliance Health</p>
             </div>
          </div>
+      </div>
+
+      {/* METRC Seed-to-Sale Operational Console */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between px-4">
+          <h3 className="text-xl font-black text-slate-800 flex items-center gap-2">
+            <ClipboardList className="text-emerald-600" size={24} /> 
+            Seed-to-Sale Operations
+          </h3>
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 px-3 py-1 rounded-full">Metrc Certified Module</span>
+        </div>
+        <ComplianceWorkflowConsole />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
