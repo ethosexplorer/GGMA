@@ -78,7 +78,8 @@ export class MetrcConnector {
       throw new Error(`Metrc API Error (${response.status}): ${JSON.stringify(errorData)}`);
     }
 
-    return response.json();
+    const text = await response.text();
+    return text ? JSON.parse(text) : { success: true };
   }
 
   // --- Plants ---
@@ -111,5 +112,27 @@ export class MetrcConnector {
   // --- General ---
   async getFacilities() {
     return this.request('/facilities/v1');
+  }
+
+  // --- Setup ---
+  async createStrains(strains: any[]) {
+    return this.request('/strains/v1/create', 'POST', strains);
+  }
+
+  async createLocations(locations: any[]) {
+    return this.request('/locations/v1/create', 'POST', locations);
+  }
+
+  async createItems(items: any[]) {
+    return this.request('/items/v1/create', 'POST', items);
+  }
+
+  // --- Waste ---
+  async recordPlantWaste(wasteData: any[]) {
+    return this.request('/plants/v2/recordwaste', 'POST', wasteData);
+  }
+
+  async getWasteReasons() {
+    return this.request('/plants/v2/waste/reasons');
   }
 }
