@@ -16,12 +16,36 @@ export class MetrcConnector {
 
   constructor(private config: MetrcConfig) {
     this.baseUrl = config.environment === 'production' 
-      ? 'https://api-ok.metrc.com' // Example for Oklahoma
+      ? 'https://api-ok.metrc.com' 
       : 'https://sandbox-api-ok.metrc.com';
     
-    // Auth: Basic [Base64(integrator_api_key:user_api_key)]
+    // Standard Auth: Basic [Base64(integrator_api_key:user_api_key)]
+    // Connect Auth: x-metrc-key (for sandbox setup)
     const credentials = btoa(`${config.integratorApiKey}:${config.userApiKey}`);
     this.authHeader = `Basic ${credentials}`;
+  }
+
+  /**
+   * Performs the initial sandbox provisioning to generate a User API Key.
+   * This is required if you are not pairing with a licensee.
+   */
+  async setupSandbox() {
+    const url = `${this.baseUrl}/sandbox/v2/integrator/setup`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'x-metrc-key': this.config.integratorApiKey,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(`Sandbox Setup Failed (${response.status}): ${JSON.stringify(errorData)}`);
+    }
+
+    return response.json();
   }
 
   /**
@@ -84,8 +108,8 @@ export class MetrcConnector {
     return this.request('/sales/v2/receipts', 'POST', receipts);
   }
 
-  // --- Transfers ---
-  async getIncomingTransfers() {
-    return this.request('/transfers/v2/incoming');
+  // --- General ---
+  async getFacilities() {
+    return this.request('/facilities/v1');
   }
 }
