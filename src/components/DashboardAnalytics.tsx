@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   DollarSign, Package, Truck, Wallet, AlertTriangle, 
-  TrendingUp, Activity, ShieldAlert, BarChart3, CheckCircle2 
+  TrendingUp, Activity, ShieldAlert, BarChart3, CheckCircle2, Sparkles
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { turso } from '../lib/turso';

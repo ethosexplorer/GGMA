@@ -11,6 +11,37 @@ const VALID_TRANSITIONS: Record<PlantPhase, PlantPhase[]> = {
 
 export class MetrcEngine {
   /**
+   * Creates a new plant batch (Immature phase).
+   */
+  static async createPlantBatch(strain: string, count: number, facilityId: string, userId: string = 'system') {
+    const id = crypto.randomUUID();
+    await turso.execute({
+      sql: `INSERT INTO plant_batches (id, strain, count, status, facility_id) VALUES (?, ?, ?, 'IMMATURE', ?)`,
+      args: [id, strain, count, facilityId]
+    });
+    
+    // Also create the individual plant records in IMMATURE phase
+    for (let i = 0; i < count; i++) {
+      await turso.execute({
+        sql: `INSERT INTO plants (id, batch_id, tag_id, phase, facility_id) VALUES (?, ?, NULL, 'IMMATURE', ?)`,
+        args: [crypto.randomUUID(), id, facilityId]
+      });
+    }
+
+    await turso.execute({
+      sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)',
+      args: [
+        crypto.randomUUID(),
+        'CREATE_PLANT_BATCH',
+        userId,
+        JSON.stringify({ id, strain, count, facilityId })
+      ]
+    });
+
+    return id;
+  }
+
+  /**
    * Updates a plant's growth phase following Metrc state machine rules.
    */
   static async updatePlantPhase(plantId: string, newPhase: PlantPhase, userId: string) {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Leaf, Package, Truck, ClipboardList, Plus, Search, Tag, Zap, AlertCircle, ArrowRight, ShieldCheck, Database, Wallet } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { complianceService } from '../../lib/compliance';
+import { MetrcEngine as complianceService } from '../../lib/metrc/MetrcEngine';
 import { turso } from '../../lib/turso';
 
 type Module = 'plants' | 'packages' | 'transfers' | 'audit' | 'wallet';

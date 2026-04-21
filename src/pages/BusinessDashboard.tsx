@@ -1477,7 +1477,7 @@ export const BusinessDashboard = ({ onLogout, user }: { onLogout?: () => void | 
           
           {stressTestResult ? (
             <div className="mb-4 p-4 bg-slate-900 rounded-xl font-mono text-[10px] text-emerald-400 border border-slate-800 animate-in zoom-in-95 duration-300">
-               <p className="font-bold mb-2">>> STRESS TEST COMPLETED</p>
+               <p className="font-bold mb-2">&gt;&gt; STRESS TEST COMPLETED</p>
                <p>ACTIONS PROCESSED: {stressTestResult.totalActions}</p>
                <p>ANOMALIES DETECTED: {stressTestResult.anomaliesDetected}</p>
                <p>LATENCY: {stressTestResult.processingTimeMs}ms</p>

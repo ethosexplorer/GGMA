@@ -251,34 +251,9 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                       </tbody>
                     </table>
                   </div>
+                </div>
                 
-                {/* Client Reviews & Ratings */}
-                <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mt-6">
-                  <div className="p-5 border-b border-slate-100 flex items-center justify-between">
-                    <div>
-                      <h3 className="font-bold text-slate-800 text-lg flex items-center gap-2">
-                        <UserCheck size={20} className="text-blue-600" /> Patient Reviews & Ratings
-                      </h3>
-                      <p className="text-sm text-slate-500">Top-rated providers receive "Top Provider" acknowledgement and priority lead routing.</p>
-                    </div>
-                    <div className="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm font-bold flex items-center gap-1">
-                      A Rating (4.8/5)
-                    </div>
-                  </div>
-                  <div className="p-5 space-y-4">
-                    <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <p className="font-bold text-slate-800">Sarah J.</p>
-                          <p className="text-xs text-slate-500">Telehealth Visit • Yesterday</p>
-                        </div>
-                        <div className="text-emerald-500 flex tracking-tighter">★★★★★</div>
-                      </div>
-                      <p className="text-sm text-slate-600">"Dr. Doe was very attentive and the entire process through the patient portal was smooth."</p>
-                    </div>
-                  </div>
-                
-                {/* Client Reviews & Ratings */}
+                {/* Patient Reviews & Ratings */}
                 <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mt-6">
                   <div className="p-5 border-b border-slate-100 flex items-center justify-between">
                     <div>
@@ -400,28 +375,6 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                     </button>
                   </div>
                 </div>
-
-                {/* Patient Reviews & Ratings */}
-                <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mt-6">
-                  <div className="p-5 border-b border-slate-100 flex items-center justify-between">
-                    <div>
-                      <h3 className="font-bold text-slate-800 text-lg flex items-center gap-2">
-                        <UserCheck size={20} className="text-blue-600" /> Patient Reviews & Ratings
-                      </h3>
-                      <p className="text-sm text-slate-500">Top-rated providers receive "Top Provider" acknowledgement.</p>
-                    </div>
-                    <div className="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm font-bold">
-                      A Rating (4.8/5)
-                    </div>
-                  </div>
-                  <div className="p-5 space-y-4">
-                    <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
-                      <p className="font-bold text-slate-800">Sarah J.</p>
-                      <p className="text-sm text-slate-600">"Dr. Jane was very attentive and the entire process through the patient portal was smooth."</p>
-                    </div>
-                  </div>
-                </div>
-
               </div>
             </div>
           </div>
@@ -445,14 +398,12 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
               onCancel={() => setShowCertWizard(false)} 
               onComplete={() => {
                 setShowCertWizard(false);
-                // Add success toast logic here later
                 alert('Certification Filed Successfully');
               }} 
             />
           </div>
         </div>
       )}
-    </div>
     </div>
   );
 };
