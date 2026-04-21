@@ -1,5 +1,6 @@
 import { turso } from '../turso';
 import { MultiStateAdapter } from './MultiStateAdapter';
+import { MetrcConnector } from '../metrc/MetrcConnector';
 
 export interface ReportConfig {
   facilityId: string;
@@ -137,5 +138,3 @@ export class ReportingEngine {
     }
   }
 }
-
-import { MetrcConnector } from '../metrc/MetrcConnector';
