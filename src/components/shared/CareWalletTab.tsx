@@ -4,7 +4,7 @@ import { cn } from '../../lib/utils';
 
 const walletTiers = [
   { id: 'bronze', name: 'Bronze', price: 'Free', color: 'from-amber-700 to-amber-900', badge: '🟤', features: ['Compassion Balance (Cash Only)', 'Ecosystem-Only Spending', 'Basic Transaction Ledger', 'Larry Silent Compliance', 'Sylara Basic Guidance'] },
-  { id: 'silver', name: 'Silver', price: '$19/mo', color: 'from-slate-400 to-slate-600', badge: '⚪', features: ['Everything in Bronze +', 'NomadCash Virtual Card', 'Care Points Tier 1 (1.5x Multiplier)', 'Categorized Spending Tracking', 'Faster Cash Clearing'] },
+  { id: 'silver', name: 'Silver', price: '$19/mo', color: 'from-slate-400 to-slate-600', badge: '⚪', features: ['Everything in Bronze +', 'GGE Disposable Virtual Card', 'Care Points Tier 1 (1.5x Multiplier)', 'Categorized Spending Tracking', 'Faster Cash Clearing'] },
   { id: 'gold', name: 'Gold', price: '$49/mo', color: 'from-yellow-500 to-amber-600', badge: '🟡', features: ['Everything in Silver +', 'Care Points Tier 2 (2x Multiplier)', 'Sylara Smart Balance Alerts', 'Larry Proactive Violation Block', 'Telehealth & Legal Discounts'] },
   { id: 'platinum', name: 'Platinum', price: '$99/mo', color: 'from-purple-500 to-indigo-700', badge: '🔴', features: ['Everything in Gold +', 'Unlimited Virtual Cards', 'Care Points Tier 3 (5x Multiplier)', 'Full System Routing Access', 'Full Sylara + Larry Autonomous AI'] },
 ];
@@ -85,13 +85,13 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
               onClick={() => setShowCreditModal(true)}
               className="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl font-bold text-sm transition-all flex items-center gap-2 border border-white/20 backdrop-blur-sm"
             >
-              <TrendingUp size={16} className="text-blue-400" /> Chronic Cardz™ Credit
+              <TrendingUp size={16} className="text-blue-400" /> GGE Line of Credit
             </button>
             <button 
               onClick={() => setShowDisposableCard(true)}
               className="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl font-bold text-sm transition-all flex items-center gap-2 border border-white/20 backdrop-blur-sm"
             >
-              <Zap size={16} className="text-amber-400" /> NomadCash™ Disposable
+              <Zap size={16} className="text-amber-400" /> GGE Disposable
             </button>
           </div>
         </div>
@@ -107,7 +107,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
             </div>
             <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-2 py-1 rounded-full border border-blue-100 uppercase tracking-tighter">Private Label Credit</span>
           </div>
-          <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Available Credit Line</h3>
+          <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Available GGE Credit Line</h3>
           <div className="flex items-baseline gap-2 mb-4">
             <h2 className="text-3xl font-black text-slate-800">${(lineOfCredit - utilizedCredit).toLocaleString()}</h2>
             <span className="text-xs font-bold text-slate-400">/ ${lineOfCredit.toLocaleString()}</span>
@@ -116,7 +116,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
             <div className="bg-blue-500 h-full transition-all duration-1000" style={{ width: `${(utilizedCredit / lineOfCredit) * 100}%` }} />
           </div>
           <p className="text-[10px] text-slate-500 leading-tight">
-            <strong>GGE Credit System:</strong> Utilizing Chronic Cardz proprietary "Seed-to-Patient" financial framework.
+            <strong>GGE Credit System:</strong> Utilizing GGE proprietary "Seed-to-Patient" financial framework.
           </p>
         </div>
 
@@ -127,13 +127,13 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
             <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600">
               <Wallet size={20} />
             </div>
-            <span className="text-[10px] font-black text-purple-600 bg-purple-50 px-2 py-1 rounded-full border border-purple-100 uppercase tracking-tighter">NomadCash Node</span>
+            <span className="text-[10px] font-black text-purple-600 bg-purple-50 px-2 py-1 rounded-full border border-purple-100 uppercase tracking-tighter">GGE Cash Node</span>
           </div>
           <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Settlement Account</h3>
           <div className="space-y-2 mb-4">
             <div className="flex justify-between items-center bg-slate-50 p-2 rounded-lg border border-slate-100">
               <span className="text-[9px] font-bold text-slate-400 uppercase">SWIFT/IBAN</span>
-              <span className="text-[10px] font-mono font-bold text-slate-700">NOMAD-GGE-2291</span>
+              <span className="text-[10px] font-mono font-bold text-slate-700">GGE-NODE-2291</span>
             </div>
             <div className="flex justify-between items-center bg-slate-50 p-2 rounded-lg border border-slate-100">
               <span className="text-[9px] font-bold text-slate-400 uppercase">Routing</span>
@@ -158,7 +158,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
             </div>
           </div>
           <p className="text-[11px] text-emerald-100/90 leading-relaxed italic mb-4">
-            "Your Chronic Cardz line of credit and Compassion Balance are under 24/7 audit by the Larry Compliance Division. All transactions are GGP-OS verified."
+            "Your GGE Line of Credit and Compassion Balance are under 24/7 audit by the Larry Compliance Division. All transactions are GGP-OS verified."
           </p>
           <div className="flex items-center justify-between pt-2 border-t border-emerald-800/50">
             <span className="text-[9px] text-[#D4AF77] font-bold uppercase tracking-widest">SLA Rating: A+</span>
@@ -484,7 +484,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
           <div className="bg-white rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden border border-slate-200 animate-in zoom-in-95 duration-200">
             <div className="p-6 bg-gradient-to-br from-slate-900 to-slate-800 text-white text-center">
               <h3 className="text-xl font-black text-[#D4AF77] flex items-center justify-center gap-2 uppercase tracking-tighter">
-                <Zap size={24} /> NomadCash™
+                <Zap size={24} /> GGE Disposable™
               </h3>
               <p className="text-slate-400 text-[10px] mt-1 font-bold uppercase tracking-widest">Disposable Virtual Card</p>
             </div>
@@ -509,7 +509,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
 
               <button 
                 onClick={() => {
-                  alert('NomadCash Disposable Card Generated: **** **** **** 9011 (Exp: 15min)');
+                  alert('GGE Disposable Card Generated: **** **** **** 9011 (Exp: 15min)');
                   setShowDisposableCard(false);
                 }}
                 className="w-full py-4 bg-[#1a4731] text-white rounded-2xl font-black shadow-lg shadow-emerald-900/20 hover:bg-[#153a28] transition-all"
