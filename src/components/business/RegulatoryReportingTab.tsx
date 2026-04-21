@@ -36,7 +36,7 @@ export const RegulatoryReportingTab: React.FC<{ facilityId: string }> = ({ facil
     setSubmissionStatus(null);
     try {
       const reportData = await ReportingEngine.generateReport({ facilityId, type: activeReport, format: 'json' });
-      const result = await ReportingEngine.submitToState(reportData as string, activeReport);
+      const result = await ReportingEngine.submitToState(reportData as string, activeReport, facilityId);
       setSubmissionStatus(result);
     } catch (err) {
       console.error('Submission failed:', err);
