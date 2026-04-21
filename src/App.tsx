@@ -1199,7 +1199,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
           <a href="#state-facts" className="hover:text-[#1a4731] transition-colors">State Facts</a>
           <button onClick={() => onNavigate('patient-portal')} className="hover:text-[#1a4731] transition-colors font-medium">GGMA Sector</button>
           <button onClick={() => onNavigate('signup', 'Oversight')} className="hover:text-[#1a4731] transition-colors font-medium">RIP Intelligence</button>
-          <button onClick={() => {}} className="hover:text-[#1a4731] transition-colors font-medium">SINC Compliance</button>
+          <button onClick={() => onNavigate('signup', 'Business')} className="hover:text-[#1a4731] transition-colors font-medium">SINC Compliance</button>
           <div className="h-6 w-px bg-slate-200 mx-2" />
           <button 
             onClick={() => onNavigate('larry-chatbot')} 
@@ -2600,9 +2600,9 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       '📅 Book 30min Consultation',
       '🏥 Telehealth',
       '💻 IT Support',
-      '💬 General Support',
-      '🏛️ Administration',
-      '⚖️ Legal Support'
+      '⭐ Basic Subscription',
+      '💎 Professional Subscription',
+      '🚀 Enterprise Subscription'
     ];
     return ['Start Patient Intake', 'Book Physician ($45)', 'Speak with Shantell'];
   };
@@ -3943,9 +3943,9 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       fetchCalendlySlots();
       return;
     } else if (lower.includes('business expert') || lower.includes('commercial consultant')) {
-      response = '🏢 **Commercial Compliance Consultation**\n\nI am routing you to our **Business Licensing Experts**. Please leave a **detailed message** in the booking notes about your business entity type.\n\n📞 **Business Line**: 405-492-7297\n🔗 **[Book Business Consultation (Calendly)](https://calendly.com/globalgreenenterprize/30min)**';
+      response = '🏢 **Commercial Compliance Consultation**\n\nI am routing you to our **Business Licensing Experts**. Please leave a **detailed message** in the booking notes about your business entity type.\n\n📞 **Business Line**: 405-492-7297\n🔗 **[Book Business Consultation (Calendly - April 2026)](https://calendly.com/globalgreenenterprize/30min?month=2026-04)**';
     } else if (lower.includes('human') || lower.includes('coordinator') || lower.includes('shantell') || lower.includes('speak with someone')) {
-      response = '👤 **Human Care Coordination**\n\nI am routing you to **Shantell Robinson**. When booking, please include a **detailed message** about your needs so we can prepare your file.\n\n📞 **Med Card Line**: 405-492-7487\n📞 **Telehealth Line**: 405-252-1178\n🔗 **[Book a Session via Calendly](https://calendly.com/globalgreenenterprize/30min)**';
+      response = '👤 **Human Care Coordination**\n\nI am routing you to **Shantell Robinson**. When booking, please include a **detailed message** about your needs so we can prepare your file.\n\n📞 **Med Card Line**: 405-492-7487\n📞 **Telehealth Line**: 405-252-1178\n🔗 **[Book a Session via Calendly (April 2026)](https://calendly.com/globalgreenenterprize/30min?month=2026-04)**';
     } else if (lower.includes('fee schedule')) {
       response = '💰 **OMMA Fee Schedule (2026)**\n\n• **Dispensary**: $2,500 - $10,000 (Based on tax)\n• **Grower/Processor**: Tiered from $2,500 to $50,000+\n• **Patient Card**: $104.30 (Standard) / $22.50 (Reduced)\n\nWould you like the detailed tier breakdown for a specific license type?';
       setMessages(prev => [...prev, { 
@@ -3960,7 +3960,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     } else if (lower.includes('book physician') || lower.includes('doctor') || lower.includes('recommendation')) {
       response = '⚕️ **Physician Evaluation & Sync ($45.00)**\n\nYou can book your medical recommendation through our official partner, **Renew Oklahoma Card**. The total cost is **$45.00** ($35 Doctor + $10 GGE Processing).\n\n🔗 **[Book Your $45 Evaluation Here](https://www.renewoklahomacard.com/)**\n\nI have already pre-filled your dashboard with your intake data to save you time during the appointment!';
     } else if (lower.includes('human') || lower.includes('coordinator') || lower.includes('shantell') || lower.includes('speak with someone')) {
-      response = '👤 **Human Care Coordination**\n\nI am routing you to **Shantell Robinson**, our lead Human Care Coordinator. When booking, please include a **detailed message** about your needs.\n\n📞 **Med Card Line**: 405-492-7487\n📞 **Telehealth Line**: 405-252-1178\n🏢 **Global Green**: 405-492-7297\n\n🔗 **[Book a Session via Calendly](https://calendly.com/globalgreenenterprize/30min)**';
+      response = '👤 **Human Care Coordination**\n\nI am routing you to **Shantell Robinson**, our lead Human Care Coordinator. When booking, please include a **detailed message** about your needs.\n\n📞 **Med Card Line**: 405-492-7487\n📞 **Telehealth Line**: 405-252-1178\n🏢 **Global Green**: 405-492-7297\n\n🔗 **[Book a Session via Calendly (April 2026)](https://calendly.com/globalgreenenterprize/30min?month=2026-04)**';
     } else if (lower === 'yes' || lower === 'yeah' || lower === 'yep') {
       response = 'Great! I am ready to assist. Would you like to begin your **Licensing Intake**, or do you have questions about our other sectors like **RIP Intelligence** or **SINC Compliance**?';
     } else if (['cancer', 'pain', 'ptsd', 'glaucoma', 'seizure', 'anxiety', 'epilepsy', 'crohn', 'sclerosis', 'als', 'alzheimer', 'anorexia', 'migraine', 'arthritis', 'nausea', 'autism', 'hiv', 'aids', 'parkinson', 'tourette'].some(condition => lower.includes(condition))) {
@@ -3982,9 +3982,9 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
           '📅 Book 30min Consultation',
           '🏥 Telehealth',
           '💻 IT Support',
-          '💬 General Support',
-          '🏛️ Administration',
-          '⚖️ Legal Support'
+          '⭐ Basic Subscription',
+          '💎 Professional Subscription',
+          '🚀 Enterprise Subscription'
         ]
       } as any]);
       setIsTyping(false);
@@ -4048,12 +4048,12 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         { label: '🏢 GGMA Licensing', text: 'I have a question about GGMA licensing.' },
         { label: '🕵️ RIP Intelligence', text: 'Tell me about RIP enforcement.' },
         { label: '🛡️ SINC Compliance', text: 'What is SINC infrastructure?' },
-        { label: '📅 Book 30min Consultation', text: 'https://calendly.com/globalgreenenterprize/30min?month=2026-04' },
+        { label: '📅 Book 30min Consultation (April 2026)', text: 'https://calendly.com/globalgreenenterprize/30min?month=2026-04' },
         { label: '🏥 Telehealth', text: 'I need assistance with a Telehealth appointment.' },
         { label: '💻 IT Support', text: 'I need technical assistance with the platform.' },
-        { label: '💬 General Support', text: 'I have a general question about GGHP services.' },
-        { label: '🏛️ Administration', text: 'I need to reach the Administration department.' },
-        { label: '⚖️ Legal Support', text: 'I need legal compliance assistance.' }
+        { label: '⭐ Basic Subscription', text: 'Tell me about the Basic Subscription.' },
+        { label: '💎 Professional Subscription', text: 'Tell me about the Professional Subscription.' },
+        { label: '🚀 Enterprise Subscription', text: 'Tell me about the Enterprise Subscription.' }
       ]
     : [
         { label: '📅 Book Medical Intake', text: 'https://book.carepatron.com/Diversity-Health---Wellness-Network--GoHealthUSA---CCardz-/Shantell-R-?p=MeBev6pvQWuqD4djocNXFg&s=cOEr6HSN' },
@@ -4300,7 +4300,6 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
                           minute: '2-digit',
                           timeZoneName: 'short',
                         })}
- Jonah
                       </button>
                     ))}
                   </div>
