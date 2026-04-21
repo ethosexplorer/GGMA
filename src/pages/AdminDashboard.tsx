@@ -188,11 +188,11 @@ export const AdminDashboard = ({ onLogout, user }: { onLogout?: () => void | Pro
 
   const renderWallet = () => (
     <div className="space-y-6">
-      <h2 className="text-xl font-black text-slate-800">Care Wallet System</h2>
-      <div className="grid grid-cols-3 gap-4">{[{l:'Total Wallet Volume',v:'$2.4M'},{l:'Active Wallets',v:'18,902'},{l:'B2B Transfers Today',v:'142'}].map((s,i)=>(<div key={i} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm text-center"><p className="text-[10px] font-bold text-slate-500 uppercase">{s.l}</p><p className="text-xl font-black text-slate-800">{s.v}</p></div>))}</div>
+      <h2 className="text-xl font-black text-slate-800">Care Wallet System (Compassion Balance)</h2>
+      <div className="grid grid-cols-3 gap-4">{[{l:'Total Ecosystem Volume',v:'$2.4M'},{l:'Active Wallets',v:'18,902'},{l:'B2B Transfers Today',v:'142'}].map((s,i)=>(<div key={i} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm text-center"><p className="text-[10px] font-bold text-slate-500 uppercase">{s.l}</p><p className="text-xl font-black text-slate-800">{s.v}</p></div>))}</div>
       <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-        <h3 className="font-bold text-slate-800 mb-3">Recent Transactions</h3>
-        <div className="space-y-2">{[{d:'Patient #4821 → Apex Dispensary',a:'$89.50',t:'POS Purchase'},{d:'GreenLeaf → CannaCare Processing',a:'$4,200.00',t:'B2B Transfer'},{d:'Token Purchase — Jane Smith',a:'$500.00',t:'Top-up'},{d:'Subscription — Pro Plan Renewal',a:'$149.00',t:'Recurring'}].map((tx,i)=>(<div key={i} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl"><div><p className="text-sm font-bold text-slate-700">{tx.d}</p><p className="text-[10px] text-slate-400">{tx.t}</p></div><span className="text-sm font-bold text-emerald-600">+{tx.a}</span></div>))}</div>
+        <h3 className="font-bold text-slate-800 mb-3">Recent Closed-Loop Transactions</h3>
+        <div className="space-y-2">{[{d:'Patient #4821 → Apex Dispensary',a:'$89.50',t:'POS Purchase'},{d:'GreenLeaf → CannaCare Processing',a:'$4,200.00',t:'B2B Transfer'},{d:'Compassion Reload — Jane Smith',a:'$500.00',t:'Cash Kiosk'},{d:'Subscription — Pro Plan Renewal',a:'$149.00',t:'System Fee'}].map((tx,i)=>(<div key={i} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl"><div><p className="text-sm font-bold text-slate-700">{tx.d}</p><p className="text-[10px] text-slate-400">{tx.t}</p></div><span className="text-sm font-bold text-emerald-600">+{tx.a}</span></div>))}</div>
       </div>
     </div>
   );

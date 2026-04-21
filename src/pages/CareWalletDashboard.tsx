@@ -14,10 +14,17 @@ const transactions = [
 ];
 
 const c3Factors = [
-  { name: 'Payment Discipline', weight: '35%', score: 95, max: 100, status: 'Excellent', color: 'bg-emerald-500' },
-  { name: 'Care Points Behavior', weight: '25%', score: 88, max: 100, status: 'Good', color: 'bg-blue-500' },
-  { name: 'Compliance & Larry', weight: '20%', score: 100, max: 100, status: 'Perfect', color: 'bg-purple-500' },
-  { name: 'Ecosystem Tenure', weight: '5%', score: 70, max: 100, status: 'Growing', color: 'bg-amber-500' },
+  { name: 'Compassion Discipline', weight: '35%', score: 95, max: 100, status: 'Excellent', color: 'bg-emerald-500' },
+  { name: 'Incentive Engagement', weight: '25%', score: 88, max: 100, status: 'Good', color: 'bg-blue-500' },
+  { name: 'Larry Enforcement Node', weight: '20%', score: 100, max: 100, status: 'Secure', color: 'bg-purple-500' },
+  { name: 'System Tenure', weight: '5%', score: 70, max: 100, status: 'Growing', color: 'bg-amber-500' },
+];
+
+const loyaltyTiers = [
+  { name: 'Bronze', threshold: 0, multiplier: '1x', color: 'text-amber-700', bg: 'bg-amber-50' },
+  { name: 'Silver', threshold: 500, multiplier: '1.5x', color: 'text-slate-500', bg: 'bg-slate-50' },
+  { name: 'Gold', threshold: 2500, multiplier: '2x', color: 'text-yellow-600', bg: 'bg-yellow-50' },
+  { name: 'Platinum', threshold: 10000, multiplier: '5x', color: 'text-purple-600', bg: 'bg-purple-50' },
 ];
 
 export const CareWalletDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
@@ -28,7 +35,7 @@ export const CareWalletDashboard = ({ onLogout, user }: { onLogout?: () => void,
     setIsReloading(true);
     setTimeout(() => {
       setIsReloading(false);
-      alert('Locator: Found 3 Approved Cash Reload Kiosks within 5 miles.');
+      alert('GGP-OS SECURE LOCATOR: 3 Approved Cash-Only Reload Kiosks verified within 5 miles. Please present your digital ID at the kiosk to load your Compassion Balance.');
     }, 1500);
   };
 
@@ -147,37 +154,41 @@ export const CareWalletDashboard = ({ onLogout, user }: { onLogout?: () => void,
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h3 className="text-slate-800 font-bold uppercase tracking-wider text-sm flex items-center gap-2">
-                      <TrendingUp size={16} className="text-blue-500" /> C³ Credit Score
+                      <TrendingUp size={16} className="text-blue-500" /> C³ Credit Architecture
                     </h3>
-                    <p className="text-slate-500 text-xs mt-1">Cannabis Compassion Credit Score</p>
+                    <p className="text-slate-500 text-xs mt-1">Closed-Loop Behavioral Scoring Engine</p>
                   </div>
-                  <span className="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-bold">Gold Tier</span>
+                  <div className="flex flex-col items-end">
+                    <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-[10px] font-black uppercase tracking-tighter border border-yellow-200">Silver Reward Tier</span>
+                    <span className="text-[9px] text-slate-400 mt-1 uppercase tracking-widest font-bold">1.5x Multiplier Active</span>
+                  </div>
                 </div>
                 
                 <div className="flex items-center gap-8 mt-2">
                   <div className="relative w-32 h-32 flex items-center justify-center shrink-0">
-                    {/* SVG Gauge placeholder */}
                     <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
                       <path className="text-slate-100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3" strokeDasharray="100, 100" />
                       <path className="text-blue-500" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3" strokeDasharray="80, 100" />
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-3xl font-black text-slate-800">685</span>
+                      <span className="text-3xl font-black text-slate-800">712</span>
                       <span className="text-[10px] font-bold text-slate-400">/ 850</span>
                     </div>
                   </div>
                   
                   <div className="flex-1 space-y-3">
-                    <p className="text-sm font-bold text-emerald-600 flex items-center gap-1">
-                      <ArrowUpRight size={14} /> +24 Points this month
-                    </p>
-                    <p className="text-sm text-slate-600">
-                      Your consistent cash reloads and responsible Care Points behavior have bumped you into the Gold Tier!
-                    </p>
-                    <div className="bg-slate-50 p-2 rounded-lg border border-slate-100 flex items-start gap-2">
-                      <Lock size={14} className="text-slate-400 mt-0.5" />
-                      <p className="text-xs text-slate-500">
-                        <strong>Future Phase:</strong> C³ Scores and payment histories will be eligible for furnishing to traditional credit bureaus once integrated.
+                    <div className="grid grid-cols-2 gap-2 mb-2">
+                      {loyaltyTiers.map((t, idx) => (
+                        <div key={idx} className={cn("p-2 rounded-lg border text-center", t.name === 'Silver' ? "border-slate-300 bg-slate-50 shadow-sm" : "border-transparent opacity-40")}>
+                          <p className={cn("text-[9px] font-black uppercase tracking-tighter", t.color)}>{t.name}</p>
+                          <p className="text-[10px] font-bold text-slate-700">{t.multiplier}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="bg-emerald-50 p-2 rounded-lg border border-emerald-100 flex items-start gap-2">
+                      <ShieldCheck size={14} className="text-emerald-600 mt-0.5" />
+                      <p className="text-[10px] text-emerald-800 leading-tight">
+                        <strong>Ecosystem Integrity:</strong> Your C³ score is built exclusively on internal GGP behaviors. Positive habit milestones are logged in the <strong>Audit Vault</strong>.
                       </p>
                     </div>
                   </div>
@@ -208,20 +219,27 @@ export const CareWalletDashboard = ({ onLogout, user }: { onLogout?: () => void,
                 {/* C3 Factors Breakdown */}
                 <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
                   <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
-                    <Target size={18} className="text-blue-500" /> Credit Building Milestones (Care Builder)
+                    <Target size={18} className="text-[#1a4731]" /> Behavioral Enforcement Metrics
                   </h3>
                   <div className="space-y-4">
                     {c3Factors.map((factor, i) => (
                       <div key={i}>
                         <div className="flex justify-between items-end mb-1">
-                          <span className="text-sm font-bold text-slate-700">{factor.name} <span className="text-slate-400 font-normal">({factor.weight})</span></span>
-                          <span className="text-xs font-bold text-slate-500">{factor.status}</span>
+                          <span className="text-xs font-bold text-slate-700 uppercase tracking-tight">{factor.name} <span className="text-slate-400 font-normal">({factor.weight})</span></span>
+                          <span className="text-[10px] font-black text-slate-500 uppercase">{factor.status}</span>
                         </div>
-                        <div className="w-full bg-slate-100 rounded-full h-2">
-                          <div className={cn("h-2 rounded-full", factor.color)} style={{ width: `${(factor.score / factor.max) * 100}%` }}></div>
+                        <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                          <div className={cn("h-full rounded-full transition-all duration-1000", factor.color)} style={{ width: `${(factor.score / factor.max) * 100}%` }}></div>
                         </div>
                       </div>
                     ))}
+                  </div>
+                  <div className="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-100 flex items-center gap-3">
+                    <ShieldCheck size={20} className="text-emerald-600" />
+                    <div>
+                      <p className="text-[10px] font-black text-slate-800 uppercase tracking-widest leading-tight">Larry Enforcement Engine</p>
+                      <p className="text-[9px] text-slate-500 uppercase font-bold">Rule-Based Behavioral Guardrails: Active</p>
+                    </div>
                   </div>
                 </div>
               </div>

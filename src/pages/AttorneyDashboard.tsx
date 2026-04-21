@@ -13,7 +13,7 @@ const sidebarItems = [
   { id: 'active', label: 'My Active Cases', icon: Briefcase },
   { id: 'library', label: 'Law Library', icon: BookOpen },
   { id: 'reports', label: 'Reports', icon: BarChart2 },
-  { id: 'billing', label: 'Billing & Tokens', icon: CreditCard },
+  { id: 'billing', label: 'Billing & Compassion Balance', icon: CreditCard },
 ];
 
 const availableCases = [
@@ -156,7 +156,7 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
               <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600"><Lock size={20} /></div>
-                  <p className="text-sm font-semibold text-slate-600">Response Tokens</p>
+                  <p className="text-sm font-semibold text-slate-600">Case Unlock Balance</p>
                 </div>
                 <div className="flex items-end gap-3">
                   <h3 className="text-3xl font-black text-slate-900">{tokens}</h3>
@@ -405,7 +405,7 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                     </button>
                     <button className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 text-slate-700 border border-transparent hover:border-slate-200 transition-all group">
                       <div className="flex items-center gap-2 font-medium">
-                        <CreditCard size={16} className="text-emerald-500" /> Care Wallet & Financials
+                        <CreditCard size={16} className="text-emerald-500" /> Compassion Balance & Financials
                       </div>
                       <ChevronRight size={16} className="text-slate-400 group-hover:text-emerald-500" />
                     </button>

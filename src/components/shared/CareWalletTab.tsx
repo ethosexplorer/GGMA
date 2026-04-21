@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Wallet, CreditCard, ArrowUpCircle, ArrowDownCircle, Shield, Sparkles, Clock, MapPin, TrendingUp, Star, Zap, Lock } from 'lucide-react';
+import { Wallet, CreditCard, ArrowUpCircle, ArrowDownCircle, Shield, Sparkles, Clock, MapPin, TrendingUp, Star, Zap, Lock, Activity } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 const walletTiers = [
-  { id: 'bronze', name: 'Bronze', price: 'Free', color: 'from-amber-700 to-amber-900', badge: '🟤', features: ['Basic Care Wallet', 'Load funds with cash', 'Spend in ecosystem', 'Basic transaction history', 'Larry silent compliance'] },
-  { id: 'silver', name: 'Silver', price: '$19/mo', color: 'from-slate-400 to-slate-600', badge: '⚪', features: ['Everything in Bronze +', 'Virtual Card (NomadCash)', 'Spending limits & categories', 'Categorized tracking', 'Faster processing'] },
-  { id: 'gold', name: 'Gold', price: '$49/mo', color: 'from-yellow-500 to-amber-600', badge: '🟡', features: ['Everything in Silver +', 'AI spending insights (Sylara)', 'Smart balance alerts', 'Auto-reload prompts', 'Larry proactive compliance'] },
-  { id: 'platinum', name: 'Platinum', price: '$99/mo', color: 'from-purple-500 to-indigo-700', badge: '🔴', features: ['Everything in Gold +', 'Multiple virtual cards', 'Role-based usage', 'Full financial dashboard', 'Full Sylara + Larry AI'] },
+  { id: 'bronze', name: 'Bronze', price: 'Free', color: 'from-amber-700 to-amber-900', badge: '🟤', features: ['Compassion Balance (Cash Only)', 'Ecosystem-Only Spending', 'Basic Transaction Ledger', 'Larry Silent Compliance', 'Sylara Basic Guidance'] },
+  { id: 'silver', name: 'Silver', price: '$19/mo', color: 'from-slate-400 to-slate-600', badge: '⚪', features: ['Everything in Bronze +', 'NomadCash Virtual Card', 'Care Points Tier 1 (1.5x Multiplier)', 'Categorized Spending Tracking', 'Faster Cash Clearing'] },
+  { id: 'gold', name: 'Gold', price: '$49/mo', color: 'from-yellow-500 to-amber-600', badge: '🟡', features: ['Everything in Silver +', 'Care Points Tier 2 (2x Multiplier)', 'Sylara Smart Balance Alerts', 'Larry Proactive Violation Block', 'Telehealth & Legal Discounts'] },
+  { id: 'platinum', name: 'Platinum', price: '$99/mo', color: 'from-purple-500 to-indigo-700', badge: '🔴', features: ['Everything in Gold +', 'Unlimited Virtual Cards', 'Care Points Tier 3 (5x Multiplier)', 'Full System Routing Access', 'Full Sylara + Larry Autonomous AI'] },
 ];
 
 const recentTransactions = [
@@ -31,9 +31,15 @@ interface CareWalletTabProps {
 
 export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
   const [activeSection, setActiveSection] = useState<'overview' | 'tiers' | 'locations'>('overview');
+  const [showReloadModal, setShowReloadModal] = useState(false);
+  const [showCreditModal, setShowCreditModal] = useState(false);
+  const [showDisposableCard, setShowDisposableCard] = useState(false);
+  const [reloadAmount, setReloadAmount] = useState('100');
   const currentTier = 'silver';
   const compassionBalance = 198.50;
   const carePoints = 742;
+  const lineOfCredit = 5000;
+  const utilizedCredit = 1250;
 
   return (
     <div className="space-y-6">
@@ -68,13 +74,95 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
               <span className="text-sm text-emerald-300/70">Larry: All Clear</span>
             </div>
           </div>
-          <div className="flex gap-3 mt-6">
-            <button className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-white rounded-xl font-bold text-sm transition-all flex items-center gap-2 shadow-lg shadow-emerald-900/30">
-              <ArrowUpCircle size={16} /> Reload Funds
+          <div className="flex flex-wrap gap-3 mt-6">
+            <button 
+              onClick={() => setShowReloadModal(true)}
+              className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-white rounded-xl font-bold text-sm transition-all flex items-center gap-2 shadow-lg shadow-emerald-900/30"
+            >
+              <ArrowUpCircle size={16} /> Load Cash
             </button>
-            <button className="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl font-bold text-sm transition-all flex items-center gap-2 backdrop-blur-sm">
-              <CreditCard size={16} /> Virtual Card
+            <button 
+              onClick={() => setShowCreditModal(true)}
+              className="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl font-bold text-sm transition-all flex items-center gap-2 border border-white/20 backdrop-blur-sm"
+            >
+              <TrendingUp size={16} className="text-blue-400" /> Chronic Cardz™ Credit
             </button>
+            <button 
+              onClick={() => setShowDisposableCard(true)}
+              className="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl font-bold text-sm transition-all flex items-center gap-2 border border-white/20 backdrop-blur-sm"
+            >
+              <Zap size={16} className="text-amber-400" /> NomadCash™ Disposable
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Chronic Cardz Line of Credit */}
+        <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-blue-500/10 transition-colors" />
+          <div className="flex justify-between items-start mb-4">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+              <TrendingUp size={20} />
+            </div>
+            <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-2 py-1 rounded-full border border-blue-100 uppercase tracking-tighter">Private Label Credit</span>
+          </div>
+          <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Available Credit Line</h3>
+          <div className="flex items-baseline gap-2 mb-4">
+            <h2 className="text-3xl font-black text-slate-800">${(lineOfCredit - utilizedCredit).toLocaleString()}</h2>
+            <span className="text-xs font-bold text-slate-400">/ ${lineOfCredit.toLocaleString()}</span>
+          </div>
+          <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-4">
+            <div className="bg-blue-500 h-full transition-all duration-1000" style={{ width: `${(utilizedCredit / lineOfCredit) * 100}%` }} />
+          </div>
+          <p className="text-[10px] text-slate-500 leading-tight">
+            <strong>GGE Credit System:</strong> Utilizing Chronic Cardz proprietary "Seed-to-Patient" financial framework.
+          </p>
+        </div>
+
+        {/* NomadCash Settlement Info */}
+        <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-full blur-3xl -mr-16 -mt-16" />
+          <div className="flex justify-between items-start mb-4">
+            <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600">
+              <Wallet size={20} />
+            </div>
+            <span className="text-[10px] font-black text-purple-600 bg-purple-50 px-2 py-1 rounded-full border border-purple-100 uppercase tracking-tighter">NomadCash Node</span>
+          </div>
+          <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Settlement Account</h3>
+          <div className="space-y-2 mb-4">
+            <div className="flex justify-between items-center bg-slate-50 p-2 rounded-lg border border-slate-100">
+              <span className="text-[9px] font-bold text-slate-400 uppercase">SWIFT/IBAN</span>
+              <span className="text-[10px] font-mono font-bold text-slate-700">NOMAD-GGE-2291</span>
+            </div>
+            <div className="flex justify-between items-center bg-slate-50 p-2 rounded-lg border border-slate-100">
+              <span className="text-[9px] font-bold text-slate-400 uppercase">Routing</span>
+              <span className="text-[10px] font-mono font-bold text-slate-700">012291482</span>
+            </div>
+          </div>
+          <p className="text-[10px] text-slate-500 leading-tight">
+            <strong>Self-Built Processor:</strong> Connected via GGE-Private Settlement Rail. Direct bank-to-ecosystem bridge active.
+          </p>
+        </div>
+
+        {/* Larry Compliance Division */}
+        <div className="bg-[#0A3D2A] rounded-3xl p-6 shadow-lg border border-[#1a4731] relative overflow-hidden lg:col-span-1 md:col-span-2">
+          <div className="absolute top-0 right-0 p-4 opacity-10"><Shield size={80} className="text-[#D4AF77]" /></div>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-[#D4AF77]/20 flex items-center justify-center text-[#D4AF77]">
+              <Shield size={20} />
+            </div>
+            <div>
+              <h3 className="text-[#D4AF77] font-black text-xs uppercase tracking-widest">Compliance Division</h3>
+              <p className="text-[9px] text-emerald-400 font-bold">Led by Larry, Compliance Intelligence</p>
+            </div>
+          </div>
+          <p className="text-[11px] text-emerald-100/90 leading-relaxed italic mb-4">
+            "Your Chronic Cardz line of credit and Compassion Balance are under 24/7 audit by the Larry Compliance Division. All transactions are GGP-OS verified."
+          </p>
+          <div className="flex items-center justify-between pt-2 border-t border-emerald-800/50">
+            <span className="text-[9px] text-[#D4AF77] font-bold uppercase tracking-widest">SLA Rating: A+</span>
+            <span className="text-[9px] text-[#D4AF77] font-bold uppercase tracking-widest">KYC: Verified</span>
           </div>
         </div>
       </div>
@@ -163,22 +251,28 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
               <p className="text-sm text-emerald-700">"Your spending is well-balanced. Consider reloading $100 this week to maintain a comfortable buffer for your upcoming telehealth visit."</p>
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-2">
+                <div className="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded-full border border-emerald-100 text-[10px] font-bold uppercase tracking-wider">
+                  <Activity size={10} className="animate-pulse" /> Node: Active
+                </div>
+              </div>
               <h4 className="font-bold text-slate-800 mb-3 flex items-center gap-2">
-                <Shield size={16} className="text-emerald-600" /> Larry Compliance
+                <Shield size={16} className="text-emerald-600" /> Larry Enforcement
               </h4>
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm">
-                  <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                  <span className="text-slate-600">All transactions compliant</span>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-slate-500">Compliance Status</span>
+                  <span className="text-emerald-600 font-bold uppercase tracking-wider">Perfect</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                  <span className="text-slate-600">No flagged activity</span>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-slate-500">Risk Mitigation</span>
+                  <span className="text-emerald-600 font-bold uppercase tracking-wider">Autonomous</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                  <span className="text-slate-600">Purchase limits: OK</span>
+                <div className="pt-2 border-t border-slate-50 mt-2">
+                  <div className="flex items-center gap-2 text-[10px] text-slate-400 italic">
+                    <Lock size={10} /> Larry is currently enforcing GGP-OS Rule #402 (Closed-Loop Integrity)
+                  </div>
                 </div>
               </div>
             </div>
@@ -186,25 +280,35 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
             {/* Care Points Rewards */}
             <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-2xl border border-yellow-200 p-6">
               <h4 className="font-bold text-yellow-800 mb-3 flex items-center gap-2">
-                <Star size={16} className="text-yellow-600" /> Care Points & Rewards
+                <Star size={16} className="text-yellow-600" /> Care Points & Incentives
               </h4>
-              <p className="text-sm text-yellow-700 mb-3">
-                Compassion Balance is your money. <strong>Care Points</strong> are rewards you earn for responsible usage.
+              <p className="text-sm text-yellow-700 mb-3 leading-relaxed">
+                <span className="font-bold text-yellow-900 block mb-1 underline decoration-yellow-300">Financial Integrity Layer:</span>
+                Compassion Balance is your money. <strong>Care Points</strong> are internal incentives earned for responsible usage and consistent reloads.
               </p>
               <ul className="space-y-2 mb-3">
                 <li className="flex items-start gap-2 text-xs text-yellow-800">
                   <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 mt-1.5 shrink-0" />
-                  Unlock credit building features
+                  Silver Tier: 1.5x Point Multiplier (Unlocked)
+                </li>
+                <li className="flex items-start gap-2 text-xs text-yellow-800 font-bold">
+                  <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 mt-1.5 shrink-0" />
+                  Partner Perks: 10% off legal consultation fee
                 </li>
                 <li className="flex items-start gap-2 text-xs text-yellow-800">
                   <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 mt-1.5 shrink-0" />
-                  Product & service discounts at approved partners
-                </li>
-                <li className="flex items-start gap-2 text-xs text-yellow-800">
-                  <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 mt-1.5 shrink-0" />
-                  Data Sharing (Opt-In): Share diagnosis data with dispensaries to help them stock what you need, and earn extra rewards. (Future Implementation)
+                  Health Data Opt-In: Earn 250 bonus points
                 </li>
               </ul>
+              <div className="mt-4 p-2 bg-yellow-200/50 rounded-lg border border-yellow-300/50">
+                <div className="flex justify-between items-center text-[10px] font-bold text-yellow-800 uppercase tracking-tighter">
+                  <span>Next Reward Tier</span>
+                  <span>742 / 1000 Points</span>
+                </div>
+                <div className="w-full h-1.5 bg-yellow-300/50 rounded-full mt-1">
+                  <div className="h-full bg-yellow-600 rounded-full" style={{ width: '74.2%' }} />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -300,6 +404,131 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
                 <h4 className="font-bold text-amber-800 text-sm">Closed-Loop System</h4>
               </div>
               <p className="text-xs text-amber-700">Funds can only be used within the GGP-OS ecosystem. No withdrawals, no external transfers, no P2P. Every transaction is logged by Larry for full compliance.</p>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Reload Modal (Cash Simulation) */}
+      {showReloadModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden border border-slate-200 animate-in zoom-in-95 duration-200">
+            <div className="p-6 bg-gradient-to-br from-[#1a4731] to-[#0f2d1e] text-white">
+              <h3 className="text-xl font-black flex items-center gap-2">
+                <ArrowUpCircle size={24} className="text-emerald-400" /> Cash Reload Center
+              </h3>
+              <p className="text-emerald-300/70 text-xs mt-1 font-semibold uppercase tracking-wider">Compassion Balance Integrity</p>
+            </div>
+            
+            <div className="p-8 space-y-6">
+              <div>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Select Reload Amount</label>
+                <div className="grid grid-cols-3 gap-3">
+                  {['50', '100', '250'].map(amt => (
+                    <button 
+                      key={amt}
+                      onClick={() => setReloadAmount(amt)}
+                      className={cn(
+                        "py-3 rounded-xl font-black transition-all border-2",
+                        reloadAmount === amt ? "bg-emerald-50 border-emerald-500 text-emerald-800" : "bg-slate-50 border-slate-100 text-slate-400 hover:border-slate-200"
+                      )}
+                    >
+                      ${amt}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100 space-y-3">
+                <div className="flex items-start gap-3">
+                  <MapPin size={18} className="text-emerald-600 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-bold text-emerald-800">Verified GGP Kiosk Nearby</p>
+                    <p className="text-xs text-emerald-600/80">QuikTrip #441 — Memorial (0.8 mi)</p>
+                  </div>
+                </div>
+                <p className="text-[10px] text-emerald-700/60 font-medium leading-relaxed italic">
+                  Present your digital ID or phone number to the kiosk or staff. Hand over cash to replenish your Compassion Balance instantly.
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                <button 
+                  onClick={() => {
+                    alert('Simulated Cash Deposit Confirmed. Balance Updated.');
+                    setShowReloadModal(false);
+                  }}
+                  className="w-full py-4 bg-[#1a4731] text-white rounded-2xl font-black shadow-lg shadow-emerald-900/20 hover:bg-[#153a28] transition-all"
+                >
+                  CONFIRM CASH RECEIVED
+                </button>
+                <button 
+                  onClick={() => setShowReloadModal(false)}
+                  className="w-full py-3 bg-white text-slate-400 font-bold text-sm hover:text-slate-600 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+            
+            <div className="px-8 py-4 bg-slate-50 border-t border-slate-100 text-center">
+              <p className="text-[9px] text-slate-400 uppercase tracking-widest font-black flex items-center justify-center gap-2">
+                <Shield size={10} /> System Enforced by Larry C.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* NomadCash Disposable Card Modal */}
+      {showDisposableCard && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden border border-slate-200 animate-in zoom-in-95 duration-200">
+            <div className="p-6 bg-gradient-to-br from-slate-900 to-slate-800 text-white text-center">
+              <h3 className="text-xl font-black text-[#D4AF77] flex items-center justify-center gap-2 uppercase tracking-tighter">
+                <Zap size={24} /> NomadCash™
+              </h3>
+              <p className="text-slate-400 text-[10px] mt-1 font-bold uppercase tracking-widest">Disposable Virtual Card</p>
+            </div>
+            
+            <div className="p-8 space-y-6">
+              <div className="bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl p-6 border-2 border-dashed border-slate-300 flex flex-col items-center justify-center space-y-4">
+                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-inner">
+                  <CreditCard size={32} className="text-slate-300" />
+                </div>
+                <p className="text-xs font-bold text-slate-500 uppercase">Ready to Generate</p>
+              </div>
+
+              <div className="bg-amber-50 p-4 rounded-xl border border-amber-100">
+                <div className="flex items-center gap-3 text-amber-800 mb-1">
+                  <Clock size={16} />
+                  <span className="text-xs font-bold">Expires in 15 Minutes</span>
+                </div>
+                <p className="text-[9px] text-amber-700/70 leading-relaxed">
+                  Generate a one-time use virtual card for a secure transaction. The card will automatically terminate after purchase or 15 minutes.
+                </p>
+              </div>
+
+              <button 
+                onClick={() => {
+                  alert('NomadCash Disposable Card Generated: **** **** **** 9011 (Exp: 15min)');
+                  setShowDisposableCard(false);
+                }}
+                className="w-full py-4 bg-[#1a4731] text-white rounded-2xl font-black shadow-lg shadow-emerald-900/20 hover:bg-[#153a28] transition-all"
+              >
+                CREATE DISPOSABLE CARD
+              </button>
+              
+              <button 
+                onClick={() => setShowDisposableCard(false)}
+                className="w-full text-slate-400 text-xs font-bold hover:text-slate-600 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+            
+            <div className="px-8 py-4 bg-slate-50 border-t border-slate-100 text-center">
+              <p className="text-[9px] text-slate-400 uppercase tracking-widest font-black flex items-center justify-center gap-2">
+                <Shield size={10} /> Compliance Node: Active
+              </p>
             </div>
           </div>
         </div>
