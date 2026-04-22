@@ -41,6 +41,7 @@ const NAV_ITEMS = [
   { id: 'reports', label: 'Master Analytics', icon: BarChart3 },
   { id: 'intel', label: 'Global Intelligence', icon: BookOpen },
   { id: 'logs', label: 'System Logs', icon: Database },
+  { id: 'support_tickets', label: 'Support Tickets', icon: MessageSquare, badge: '12' },
   { id: 'settings', label: 'God Settings', icon: Settings },
 ];
 
@@ -296,11 +297,12 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
               <p className="text-xs font-black text-[#D4AF77] uppercase tracking-widest">Compliance Division Override</p>
               <p className="text-[10px] opacity-80">Larry has verified the last 1,284 transactions for 280E audit trails.</p>
             </div>
+          </div>
           <button className="px-4 py-2 bg-[#D4AF77] text-emerald-900 rounded-xl text-[10px] font-black uppercase shadow-lg">View Audit Logs</button>
         </div>
       </div>
 
-       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
          <div className="lg:col-span-2 space-y-6">
            {/* Executive Action Required */}
            <div className="bg-amber-50 border-2 border-amber-200 rounded-[2rem] p-6 shadow-xl shadow-amber-900/5 relative overflow-hidden">
@@ -340,10 +342,9 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                  </div>
                  <button className="px-6 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-black hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-900/10">Approve & Rotate Keys</button>
               </div>
-
-             </div>
            </div>
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+
+           <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
             <div className="flex justify-between items-center mb-6">
               <h3 className="font-bold text-slate-800 flex items-center gap-2"><TrendingUp size={18} className="text-indigo-500"/> Revenue Trajectory (P&L)</h3>
               <div className="flex gap-2">
@@ -369,32 +370,9 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
               ))}
             </div>
           </div>
+         </div>
 
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-            <h3 className="font-bold text-slate-800 mb-6 flex items-center gap-2"><Building2 size={18} className="text-emerald-500"/> Jurisdiction Revenue Breakdown</h3>
-            <div className="space-y-4">
-               {[
-                 { s: 'Oklahoma', r: '$4.2M', g: '+14%', p: 85, c: 'bg-emerald-500' },
-                 { s: 'Florida', r: '$3.8M', g: '+28%', p: 76, c: 'bg-blue-500' },
-                 { s: 'California', r: '$2.9M', g: '+2%', p: 58, c: 'bg-indigo-500' },
-                 { s: 'New Jersey', r: '$1.4M', g: '+8%', p: 28, c: 'bg-amber-500' }
-               ].map((row, i) => (
-                 <div key={i} className="flex items-center gap-4 group cursor-pointer">
-                    <div className="w-24 text-sm font-bold text-slate-600">{row.s}</div>
-                    <div className="flex-1 h-2 bg-slate-50 rounded-full overflow-hidden">
-                       <div className={cn("h-full rounded-full transition-all duration-1000", row.c)} style={{ width: `${row.p}%` }}></div>
-                    </div>
-                    <div className="w-32 text-right">
-                       <span className="text-sm font-black text-slate-800">{row.r}</span>
-                       <span className="text-[10px] font-bold text-emerald-600 ml-2">{row.g}</span>
-                    </div>
-                 </div>
-               ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-6">
+         <div className="space-y-6">
           <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
             <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2"><Shield size={18} className="text-blue-500"/> Financial Liquidity Score</h3>
             <div className="text-center py-6 space-y-2">
@@ -417,7 +395,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
             <button className="w-full py-3 bg-white text-indigo-600 rounded-xl font-bold transition-all shadow-lg text-sm hover:bg-indigo-50">View Master Ledger</button>
           </div>
         </div>
-      </div>
+       </div>
     </div>
   );
 
@@ -492,21 +470,6 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
             <button className="w-full mt-10 py-4 text-xs font-black text-indigo-600 bg-indigo-50 rounded-2xl hover:bg-indigo-600 hover:text-white transition-all uppercase tracking-widest shadow-sm">Initialize State Drill-down</button>
           </div>
         </div>
-      </div>
-    </div>
-  );
-
-  const renderSystemHealth = () => (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-black text-slate-800">System Health & AI Monitor</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {[{l:'API Uptime',v:'99.97%',s:'Optimal'},{l:'Sylara AI Load',v:'42%',s:'Normal'},{l:'L.A.R.R.Y Sessions',v:'1,204',s:'Active'}].map((s,i)=>(
-          <div key={i} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm"><p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">{s.l}</p><h3 className="text-2xl font-black text-slate-800">{s.v}</h3><span className="text-[10px] font-bold text-emerald-600">{s.s}</span></div>
-        ))}
-      </div>
-      <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-        <h3 className="font-bold text-slate-800 mb-4">Real-time Service Status</h3>
-        <div className="space-y-2">{[{n:'Firebase Auth',s:'Online'},{n:'Turso Database',s:'Online'},{n:'OMMA API Sync',s:'Online'},{n:'Sylara NLP Engine',s:'Online'},{n:'Care Wallet Ledger',s:'Online'},{n:'RIP Command Feed',s:'Online'}].map((sv,i)=>(<div key={i} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl"><span className="text-sm font-bold text-slate-700">{sv.n}</span><span className="flex items-center gap-2 text-xs font-bold text-emerald-600"><div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"/>{sv.s}</span></div>))}</div>
       </div>
     </div>
   );
@@ -664,6 +627,152 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
     </div>
   );
 
+  const SystemFreezeAlert = () => (
+    <div className="fixed bottom-10 right-10 z-[100] animate-bounce">
+      <div className="bg-red-600 text-white p-4 rounded-2xl shadow-2xl border-4 border-red-400 flex items-center gap-4 max-w-sm">
+        <div className="w-12 h-12 bg-white text-red-600 rounded-xl flex items-center justify-center shrink-0">
+          <AlertTriangle size={24} />
+        </div>
+        <div>
+          <h4 className="text-sm font-black uppercase tracking-tight">System Freeze Detected</h4>
+          <p className="text-[10px] font-bold opacity-90">AI Guardian is initiating immediate fix protocols for OK-Sector.</p>
+        </div>
+        <button className="px-3 py-1.5 bg-white text-red-600 rounded-lg text-[10px] font-black uppercase">Dismiss</button>
+      </div>
+    </div>
+  );
+
+  const renderOpsCenter = () => (
+    <div className="h-full w-full -m-10"><OperationsDashboard user={user} onLogout={onLogout} /></div>
+  );
+
+  const renderSupportTickets = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-black text-slate-800">Support & Escalations</h2>
+        <div className="flex gap-3">
+          <span className="px-4 py-2 bg-red-50 text-red-600 text-xs font-bold rounded-xl border border-red-100 flex items-center gap-2">
+            <AlertTriangle size={14} /> 3 Critical Escalations
+          </span>
+        </div>
+      </div>
+      <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
+        <table className="w-full text-sm text-left">
+          <thead className="bg-slate-50 border-b border-slate-100">
+            <tr>
+              <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase">Ticket ID</th>
+              <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase">Subject</th>
+              <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase">User</th>
+              <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase">Priority</th>
+              <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase">Status</th>
+              <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-50">
+            {[
+              { id: 'TKT-1021', s: 'Metrc Sync Timeout', u: 'marcus@apex.com', p: 'Critical', st: 'Escalated' },
+              { id: 'TKT-1020', s: 'Payment Gateway Error', u: 'jane@smith.com', p: 'High', st: 'In Progress' },
+              { id: 'TKT-1019', s: 'Portal Login Freeze', u: 'bob@moore.org', p: 'High', st: 'New' },
+              { id: 'TKT-1018', s: 'Document Verification', u: 'emily@davis.gov', p: 'Medium', st: 'Open' },
+            ].map((t, i) => (
+              <tr key={i} className="hover:bg-slate-50 transition-colors group">
+                <td className="px-6 py-4 font-mono font-bold text-indigo-600">{t.id}</td>
+                <td className="px-6 py-4 font-bold text-slate-800">{t.s}</td>
+                <td className="px-6 py-4 text-slate-500">{t.u}</td>
+                <td className="px-6 py-4">
+                  <span className={cn("text-[10px] font-black uppercase px-2 py-1 rounded-full", 
+                    t.p === 'Critical' ? "bg-red-100 text-red-600" : "bg-amber-100 text-amber-600"
+                  )}>{t.p}</span>
+                </td>
+                <td className="px-6 py-4">
+                  <span className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
+                    <div className={cn("w-1.5 h-1.5 rounded-full", t.st === 'Escalated' ? "bg-red-500" : "bg-blue-500")} />
+                    {t.st}
+                  </span>
+                </td>
+                <td className="px-6 py-4 text-right">
+                  <button className="px-4 py-2 bg-slate-800 text-white text-xs font-bold rounded-xl opacity-0 group-hover:opacity-100 transition-all">Review</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+
+  const renderAutoFixMonitor = () => (
+    <div className="space-y-6">
+      <div className="bg-slate-900 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden border border-slate-800">
+        <div className="absolute top-0 right-0 p-8 opacity-20"><Zap size={120} className="text-amber-400" /></div>
+        <div className="relative z-10">
+          <h3 className="text-2xl font-black mb-2 flex items-center gap-3">
+            <Bot size={28} className="text-indigo-400" /> AI System Guardian
+          </h3>
+          <p className="text-slate-400 font-medium">Real-time proactive monitoring & automated resolution engine.</p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
+            <h4 className="text-xs font-black text-indigo-400 uppercase tracking-[0.2em] mb-6 flex items-center justify-between">
+              Live Fix Feed
+              <span className="flex items-center gap-2 text-emerald-400">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></div>
+                Monitoring
+              </span>
+            </h4>
+            <div className="space-y-4 max-h-[300px] overflow-y-auto custom-scrollbar">
+              {[
+                { t: '12:04 PM', m: 'Metrc Sync anomaly detected in OK-Sector', s: 'REVOLVED', r: 'Retried connection via secondary gateway', c: 'text-emerald-400' },
+                { t: '11:58 AM', m: 'Database high-latency alert (>500ms)', s: 'OPTIMIZED', r: 'Re-indexed compliance_logs table', c: 'text-blue-400' },
+                { t: '11:45 AM', m: 'Unauthorized API access attempt (IP: 192.168.1.4)', s: 'BLOCKED', r: 'IP added to global firewall blacklist', c: 'text-red-400' },
+                { t: '11:32 AM', m: 'Care Wallet timeout in POS-Bridge', s: 'FIXED', r: 'Auto-flushed redis cache for bridge-04', c: 'text-emerald-400' },
+              ].map((log, i) => (
+                <div key={i} className="flex gap-4 group">
+                  <span className="text-[10px] font-mono text-slate-500 mt-1">{log.t}</span>
+                  <div className="flex-1 border-l-2 border-white/5 pl-4 pb-4">
+                    <p className="text-sm font-bold text-white group-hover:text-indigo-300 transition-colors">{log.m}</p>
+                    <div className="mt-2 flex items-center gap-3">
+                      <span className={cn("text-[10px] font-black uppercase px-2 py-0.5 rounded-lg bg-white/5", log.c)}>{log.s}</span>
+                      <p className="text-[10px] text-slate-400">{log.r}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <div className="bg-indigo-600/20 border border-indigo-500/30 rounded-2xl p-6">
+              <h4 className="text-sm font-bold text-white mb-4">Auto-Fix Engine Status</h4>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-slate-400">Detection Speed</span>
+                  <span className="text-xs font-bold text-white">0.02s</span>
+                </div>
+                <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                  <div className="h-full bg-indigo-500" style={{ width: '98%' }}></div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-slate-400">Success Rate</span>
+                  <span className="text-xs font-bold text-white">99.4%</span>
+                </div>
+                <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                  <div className="h-full bg-emerald-500" style={{ width: '99.4%' }}></div>
+                </div>
+              </div>
+            </div>
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 text-center">
+              <p className="text-3xl font-black text-white">4,281</p>
+              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">Issues Auto-Resolved (24h)</p>
+              <button className="mt-6 w-full py-3 bg-indigo-600 text-white rounded-xl text-xs font-black hover:bg-indigo-500 transition-all shadow-xl shadow-indigo-600/20">View Detailed AI Logs</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   const getContent = () => {
     switch (activeTab) {
       case 'federal': 
@@ -671,14 +780,14 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       case 'public_health': 
         return <div className="h-full w-full -m-10"><PublicHealthDashboard user={user} onLogout={onLogout} /></div>;
       case 'operations': 
-        return <div className="h-full w-full -m-10"><OperationsDashboard user={user} onLogout={onLogout} /></div>;
+        return renderOpsCenter();
       case 'state_admin': 
         return <div className="h-full w-full -m-10"><AdminDashboard user={user} onLogout={onLogout} /></div>;
       case 'subscription': 
         return <SubscriptionPortal userRole="executive_founder" initialPlanId="fed_pro" />;
       case 'overview': return renderOverview();
       case 'global_financials': return renderFinancials();
-      case 'system_health': return renderSystemHealth();
+      case 'system_health': return renderAutoFixMonitor();
       case 'jurisdiction_map': return renderJurisdictionMap();
       case 'users': return renderUserMgmt();
       case 'patients': return renderUserMgmt();
@@ -690,6 +799,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       case 'intel': 
         return <div className="h-full w-full -m-10 bg-[#080e1a] p-10 min-h-screen overflow-auto"><LegislativeIntelTab /></div>;
       case 'logs': return renderLogs();
+      case 'support_tickets': return renderSupportTickets();
       case 'settings': return renderSettings();
       default: return renderOverview();
     }
@@ -744,6 +854,9 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
           </div>
         </div>
         <div className="flex-1 overflow-y-auto p-10">{getContent()}</div>
+        
+        {/* Proactive System Alert */}
+        <SystemFreezeAlert />
       </div>
     </div>
   );

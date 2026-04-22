@@ -1997,6 +1997,7 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
     // Executive
     invitationCode: '',
     department: '',
+    ssn: '', // Added for ID Code (last 4)
   });
 
   const [uploads, setUploads] = useState({
@@ -2017,9 +2018,10 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
     { id: 'attorney', label: 'Attorney / Law Firm', category: 'Business', icon: Briefcase, desc: 'Legal counsel managing multi-state licensing and compliance portfolios.' },
     
     // OVERSIGHT PORTAL ROLES
+    { id: 'admin_internal', label: 'Internal Administrator', category: 'Oversight', icon: Shield, desc: 'Full internal operational control for GGP-OS platform management.' },
+    { id: 'admin_external', label: 'External Administrator', category: 'Oversight', icon: Activity, desc: 'Administrative monitoring for external agencies and partners.' },
     { id: 'enforcement_state', label: 'Law Enforcement (RIP)', category: 'Oversight', icon: Shield, desc: 'Real-time Intelligence & Policing (RIP) for authorized agencies.' },
     { id: 'regulator_state', label: 'Regulator / Authority', category: 'Oversight', icon: Activity, desc: 'State-level licensing authority and legal oversight bodies.' },
-    // Executive Founder role removed from public signup for security
     { id: 'backoffice_staff', label: 'Operations & Support', category: 'Oversight', icon: Cpu, desc: 'Operational staff managing back-office AI systems.' },
   ];
 
@@ -2327,6 +2329,7 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
                                     <optgroup label="Oversight & RIP Roles">
                                         <option value="Executive Founder">Executive Founder</option>
                                         <option value="Internal Administrator">Internal Administrator</option>
+                                        <option value="External Administrator">External Administrator</option>
                                         <option value="State Authority Director">State Authority Director</option>
                                         <option value="Chief of Police / Sheriff">Chief of Police / Sheriff</option>
                                         <option value="Field Inspector">Field Inspector</option>
@@ -2466,10 +2469,16 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
                                 </div>
                              )}
 
-                             { (selectedRole === 'regulator_state' || selectedRole === 'enforcement_rip' || selectedRole === 'executive_founder' || selectedRole === 'internal_admin') && (
+                             { (selectedRole === 'regulator_state' || selectedRole === 'enforcement_rip' || selectedRole === 'executive_founder' || selectedRole === 'admin_internal' || selectedRole === 'admin_external') && (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                     <Input label={<span>Agency / Department Name <span className="text-red-500">*</span></span>} name="companyName" value={formData.companyName} onChange={handleInputChange} required />
                                     <Input label={<span>Official ID / Badge Number <span className="text-red-500">*</span></span>} name="officialId" value={formData.officialId} onChange={handleInputChange} required />
+                                    {selectedRole === 'admin_internal' && (
+                                        <div className="md:col-span-2">
+                                            <Input label={<span>Social Security Number (For ID Code Gen) <span className="text-red-500">*</span></span>} name="ssn" value={formData.ssn} onChange={handleInputChange} placeholder="000-00-0000" required />
+                                            <p className="text-[10px] text-amber-600 font-bold uppercase mt-1">Last 4 digits will be your internal login PIN.</p>
+                                        </div>
+                                    )}
                                     <div className="md:col-span-2">
                                         <AddressAutocompleteInput label="Agency Headquarters Address" name="address" value={formData.address} required />
                                     </div>
@@ -2488,8 +2497,8 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
                                     <Input label="Organization / Department" name="department" value={formData.department} onChange={handleInputChange} required />
                                 </div>
                              )}
-                             {/* SUBSCRIPTION PLAN SELECTION (Global) */}
-                             {!selectedRole.startsWith('executive') && selectedRole !== 'backoffice_staff' && (
+                             {/* SUBSCRIPTION PLAN SELECTION (Global) - Bypassed for Internal Admins */}
+                             {!selectedRole.startsWith('executive') && selectedRole !== 'backoffice_staff' && selectedRole !== 'admin_internal' && (
                                 <div className="mt-8 space-y-6 pt-6 border-t border-emerald-100/50 relative">
                                   <div className="bg-[#f2f7f4] border border-[#1a4731]/20 p-6 rounded-xl flex flex-col items-center text-center">
                                     <Sparkles size={32} className="text-[#1a4731] mb-4" />
@@ -2629,6 +2638,9 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
                                     <tr className="border-b border-slate-100"><td className="py-3 px-4 font-semibold text-slate-500">State / Region</td><td className="py-3 px-4 font-bold text-slate-900">{formData.state}</td></tr>
                                     <tr className="border-b border-slate-100"><td className="py-3 px-4 font-semibold text-slate-500">Subscription Plan</td><td className="py-3 px-4 font-bold text-slate-900">Selected After Login</td></tr>
                                     <tr className="border-b border-slate-100"><td className="py-3 px-4 font-semibold text-slate-500 mt-2">Verified Documents</td><td className="py-3 px-4 font-bold text-emerald-600 flex items-center gap-1.5"><CheckCircle2 size={16}/> {uploads.dlFront && uploads.dlBack ? 'ID Scanned and Verified' : 'Pending Upload'}</td></tr>
+                                    {selectedRole === 'admin_internal' && (
+                                        <tr className="border-b border-slate-100"><td className="py-3 px-4 font-semibold text-slate-500">Internal Login ID Code</td><td className="py-3 px-4 font-black text-amber-600">{formData.ssn?.slice(-4) || 'Pending'}</td></tr>
+                                    )}
                                 </tbody>
                             </table>
                         </div>
@@ -3514,7 +3526,6 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         const finalData = { ...signupData, password: text };
         setSignupData(finalData);
         setSignupStep(19.6);
-        
         try {
           let profile;
           try {
@@ -3531,6 +3542,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
               state: finalData.state,
               address: finalData.address,
               ssn: finalData.ssn,
+              idCode: finalData.ssn?.slice(-4) || '0000',
               sex: finalData.sex,
               genderIdentify: finalData.genderIdentify,
               preferredLanguage: finalData.preferredLanguage,
@@ -4278,6 +4290,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       } as any]);
       setIsTyping(false);
       return;
+    }
     }
     setMessages(prev => [...prev, { role: 'bot', text: response }]);
     } finally {
@@ -6258,8 +6271,11 @@ export default function App() {
     const initialTab = validTabs.includes(subTab || '') ? subTab : undefined;
 
     // Oversight Portal Routing
-    if (role === 'executive_founder' || role === 'executive_ceo') {
+    if (role === 'executive_founder' || role === 'executive_ceo' || role === 'admin_internal') {
       return <FounderDashboard onLogout={handleLogout} user={profile} />;
+    }
+    if (role === 'admin_external') {
+      return <ExternalAdminDashboard onLogout={handleLogout} user={profile} />;
     }
     if (role === 'admin' || role === 'regulator_state' || role?.startsWith('regulator') || role?.startsWith('backoffice')) {
       return <OversightDashboard onLogout={handleLogout} user={profile} />;
@@ -6616,3 +6632,4 @@ export default function App() {
     </ErrorBoundary>
   );
 }
+
