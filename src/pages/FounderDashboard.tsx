@@ -5,7 +5,8 @@ import {
   Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
   Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Globe, Zap, Database,
-  FlaskConical, CreditCard, Map as MapIcon, BookOpen, UserPlus, Trash2
+  FlaskConical, CreditCard, Map as MapIcon, BookOpen, UserPlus, Trash2,
+  MapPin, Target, Layers, TrendingDown, Box, PieChart
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
@@ -500,166 +501,412 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
     }
   };
 
-  const renderUserMgmt = () => (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-      <div className="flex justify-between items-center bg-indigo-900 p-8 rounded-3xl text-white shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 p-8 opacity-10"><Shield size={120} /></div>
-        <div className="relative z-10">
-          <h2 className="text-3xl font-black tracking-tight mb-2">Supreme Personnel Command</h2>
-          <p className="text-indigo-200">The Founder's override. Ultimate authority to authorize, suspend, or terminate any entity.</p>
-        </div>
-        <div className="relative z-10 flex gap-4">
-           <div className="px-6 py-3 bg-white/10 border border-white/20 rounded-xl flex flex-col items-center">
-             <span className="text-[10px] font-black text-indigo-300 uppercase">Total Force</span>
-             <span className="text-xl font-black text-white">{counts.users.toLocaleString()}</span>
-           </div>
-           <button className="px-6 py-3 bg-white text-indigo-900 font-bold rounded-xl shadow-lg hover:bg-indigo-50 transition-colors flex items-center gap-2">
-             <UserPlus size={18} /> Direct Hire / Invite
-           </button>
-        </div>
-      </div>
+  const renderManagementView = (mode: 'users' | 'patients' | 'business') => {
+    const config = {
+      users: {
+        title: "Supreme Personnel Command",
+        desc: "The Founder's override. Ultimate authority to authorize, suspend, or terminate any privileged entity.",
+        icon: Users,
+        metricLabel: "Total Force",
+        metricValue: counts.users,
+        tableTitle: "Active Privileged Accounts",
+        tableDesc: "Executive, Regulatory, and Support Staff",
+        roles: ['Executive', 'Regulator', 'Staff'],
+        data: [
+          { n: 'Marcus Johnson', e: 'marcus@ggp-os.com', r: 'Executive / Founder', j: 'Global (All)', s: 'Active', invite: 'Claimed' },
+          { n: 'Sen. Robert Chen', e: 'rchen@senate.gov', r: 'Federal Oversight', j: 'Nationwide (US)', s: 'Active', invite: 'Claimed' },
+          { n: 'Emily Davis', e: 'emily.d@omma.ok.gov', r: 'State Regulator', j: 'Oklahoma', s: 'Active', invite: 'Claimed' },
+          { n: 'Sarah Jenkins', e: 's.jenkins@ggp-os.com', r: 'System Ops', j: 'Global (Support)', s: 'Suspended', invite: 'Claimed' }
+        ]
+      },
+      patients: {
+        title: "Registry Sovereignty Oversight",
+        desc: "Unified citizen oversight. Monitor patient distribution, card status, and state-level registration metrics.",
+        icon: HeartPulse,
+        metricLabel: "Active Citizens",
+        metricValue: counts.patients,
+        tableTitle: "Unified Patient Registry",
+        tableDesc: "Medical Card Holders & Registered Caregivers",
+        roles: ['Patient', 'Caregiver'],
+        data: [
+          { n: 'John Doe', e: 'j.doe@email.com', r: 'Primary Patient', j: 'Oklahoma', s: 'Active', invite: 'N/A' },
+          { n: 'Alice Smith', e: 'alice.s@provider.com', r: 'Caregiver', j: 'Missouri', s: 'Active', invite: 'N/A' },
+          { n: 'Michael Ross', e: 'm.ross@health.com', r: 'Minor Patient', j: 'Oklahoma', s: 'Pending', invite: 'DOC-9921' },
+          { n: 'David Miller', e: 'd.miller@test.com', r: 'Primary Patient', j: 'Texas', s: 'Suspended', invite: 'N/A' }
+        ]
+      },
+      business: {
+        title: "Economic Infrastructure Control",
+        desc: "Commercial force monitoring. Audit verified entities, POS integrations, and B2B infrastructure health.",
+        icon: Building2,
+        metricLabel: "Verified Entities",
+        metricValue: counts.businesses,
+        tableTitle: "Verified Commercial Entities",
+        tableDesc: "Dispensaries, Cultivators, and Legal Firms",
+        roles: ['Business', 'Attorney'],
+        data: [
+          { n: 'Apex Dispensary', e: 'hq@apex-med.com', r: 'Dispensary / Retail', j: 'Oklahoma City', s: 'Active', invite: 'LIC-001' },
+          { n: 'GreenLeaf Farms', e: 'ops@greenleaf.com', r: 'Cultivator / Grow', j: 'Tulsa', s: 'Active', invite: 'LIC-002' },
+          { n: 'Ortiz Law Firm', e: 'legal@ortiz.com', r: 'Legal / Compliance', j: 'Global', s: 'Active', invite: 'N/A' },
+          { n: 'CannaLogic POS', e: 'dev@cannalogic.io', r: 'Integrator / Tech', j: 'National', s: 'Suspended', invite: 'API-992' }
+        ]
+      }
+    }[mode];
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-3xl border-2 border-slate-100 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center"><Users size={24}/></div>
-            <div className="flex items-center gap-1 text-emerald-600 font-bold text-xs"><TrendingUp size={14}/> +12%</div>
+    return (
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+        <div className="flex justify-between items-center bg-slate-900 p-8 rounded-3xl text-white shadow-xl relative overflow-hidden border border-slate-800">
+          <div className="absolute top-0 right-0 p-8 opacity-10"><config.icon size={120} /></div>
+          <div className="relative z-10">
+            <h2 className="text-3xl font-black tracking-tight mb-2">{config.title}</h2>
+            <p className="text-slate-400 font-medium">{config.desc}</p>
           </div>
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Personnel Force</p>
-          <h3 className="text-2xl font-black text-slate-800">{counts.users.toLocaleString()}</h3>
-        </div>
-        <div className="bg-white p-6 rounded-3xl border-2 border-slate-100 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center"><HeartPulse size={24}/></div>
-            <div className="flex items-center gap-1 text-emerald-600 font-bold text-xs"><TrendingUp size={14}/> +8%</div>
-          </div>
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Registry Sovereignty</p>
-          <h3 className="text-2xl font-black text-slate-800">{counts.patients.toLocaleString()}</h3>
-        </div>
-        <div className="bg-white p-6 rounded-3xl border-2 border-slate-100 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center"><Building2 size={24}/></div>
-            <div className="flex items-center gap-1 text-emerald-600 font-bold text-xs"><TrendingUp size={14}/> +15%</div>
-          </div>
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Economic Infrastructure</p>
-          <h3 className="text-2xl font-black text-slate-800">{counts.businesses.toLocaleString()}</h3>
-        </div>
-      </div>
-
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-        <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-          <div className="flex items-center gap-4">
-            <h3 className="font-bold text-slate-800 flex items-center gap-2"><Users size={18} className="text-indigo-500"/> Active Privileged Accounts</h3>
-            <span className="text-xs bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full font-bold">1,204,891 Total Platform Users</span>
-          </div>
-          <div className="flex gap-2">
-             <div className="relative">
-               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-               <input type="text" placeholder="Search by name or email..." className="pl-8 pr-4 py-1.5 text-sm border border-slate-200 rounded-lg outline-none focus:border-indigo-500" />
+          <div className="relative z-10 flex gap-4">
+             <div className="px-6 py-3 bg-white/5 border border-white/10 rounded-xl flex flex-col items-center">
+               <span className="text-[10px] font-black text-indigo-300 uppercase">{config.metricLabel}</span>
+               <span className="text-xl font-black text-white">{config.metricValue.toLocaleString()}</span>
              </div>
-             <select className="border border-slate-200 text-sm font-bold text-slate-600 rounded-lg px-3 outline-none">
-               <option>All Roles</option>
-               <option>Executive</option>
-               <option>State Regulator</option>
-               <option>Federal Oversight</option>
-               <option>VIP / Investor</option>
-             </select>
+             <button className="px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl shadow-lg hover:bg-indigo-500 transition-colors flex items-center gap-2">
+               <UserPlus size={18} /> Direct Manage
+             </button>
           </div>
         </div>
-        <table className="w-full text-sm text-left">
-          <thead className="bg-slate-50 border-b border-slate-100">
-            <tr>
-              <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase tracking-wider">User / Email</th>
-              <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase tracking-wider">Assigned Role</th>
-              <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase tracking-wider">Jurisdiction</th>
-              <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase tracking-wider">Status</th>
-              <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase tracking-wider text-right">Executive Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {[
-              { n: 'Marcus Johnson', e: 'marcus@ggp-os.com', r: 'Executive / Founder', j: 'Global (All)', s: 'Active', invite: 'Claimed' },
-              { n: 'Sen. Robert Chen', e: 'rchen@senate.gov', r: 'Federal Oversight', j: 'Nationwide (US)', s: 'Active', invite: 'Claimed' },
-              { n: 'Emily Davis', e: 'emily.d@omma.ok.gov', r: 'State Regulator', j: 'Oklahoma', s: 'Active', invite: 'Claimed' },
-              { n: 'Pending VIP', e: 'j.smith@capital.vc', r: 'VIP / Investor', j: 'Global (Read-Only)', s: 'Pending', invite: 'INV-4921-X9' },
-              { n: 'Sarah Jenkins', e: 's.jenkins@ggp-os.com', r: 'System Ops', j: 'Global (Support)', s: 'Suspended', invite: 'Claimed' }
-            ].map((u,i) => (
-              <tr key={i} className="hover:bg-slate-50 transition-colors group">
-                <td className="px-6 py-4">
-                  <p className="font-bold text-slate-800">{u.n}</p>
-                  <p className="text-xs text-slate-500">{u.e}</p>
-                </td>
-                <td className="px-6 py-4">
-                  <span className={cn("text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full border", 
-                    u.r.includes('Executive') ? "bg-indigo-50 text-indigo-700 border-indigo-200" :
-                    u.r.includes('Federal') ? "bg-blue-50 text-blue-700 border-blue-200" :
-                    u.r.includes('VIP') ? "bg-amber-50 text-amber-700 border-amber-200" :
-                    "bg-slate-100 text-slate-700 border-slate-200"
-                  )}>{u.r}</span>
-                </td>
-                <td className="px-6 py-4 text-xs font-bold text-slate-600">{u.j}</td>
-                <td className="px-6 py-4">
-                  {u.s === 'Active' ? (
-                    <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-600"><CheckCircle2 size={14}/> Active</span>
-                  ) : u.s === 'Pending' ? (
-                    <div className="space-y-1">
-                      <span className="flex items-center gap-1.5 text-xs font-bold text-amber-600"><Clock size={14}/> Pending Join</span>
-                      <p className="text-[10px] text-slate-500 font-mono">Code: {u.invite}</p>
-                    </div>
-                  ) : (
-                    <span className="flex items-center gap-1.5 text-xs font-bold text-red-600"><AlertTriangle size={14}/> Suspended</span>
-                  )}
-                </td>
-                <td className="px-6 py-4 text-right opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div className="flex justify-end gap-2">
-                    {u.s === 'Suspended' ? (
-                      <button onClick={() => handleHireFire(u.e, 'activate')} className="px-3 py-1.5 bg-emerald-500 text-white text-[10px] font-black rounded-lg hover:bg-emerald-600 uppercase">Authorize</button>
-                    ) : (
-                      <button onClick={() => handleHireFire(u.e, 'suspend')} className="px-3 py-1.5 bg-amber-500 text-white text-[10px] font-black rounded-lg hover:bg-amber-600 uppercase">Suspend</button>
-                    )}
-                    <button onClick={() => handleHireFire(u.e, 'terminate')} className="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-500 hover:text-white transition-all">
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                </td>
+
+        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+          <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+            <div className="flex items-center gap-4">
+              <h3 className="font-bold text-slate-800 flex items-center gap-2"><config.icon size={18} className="text-indigo-500"/> {config.tableTitle}</h3>
+              <span className="text-xs bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full font-bold">{config.tableDesc}</span>
+            </div>
+            <div className="flex gap-2">
+               <div className="relative">
+                 <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                 <input type="text" placeholder="Search registry..." className="pl-8 pr-4 py-1.5 text-sm border border-slate-200 rounded-lg outline-none focus:border-indigo-500" />
+               </div>
+            </div>
+          </div>
+          <table className="w-full text-sm text-left">
+            <thead className="bg-slate-50 border-b border-slate-100">
+              <tr>
+                <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase tracking-wider">Entity / Email</th>
+                <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase tracking-wider">Classification</th>
+                <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase tracking-wider">Region</th>
+                <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase tracking-wider">Command Status</th>
+                <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase tracking-wider text-right">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </motion.div>
-  );
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {config.data.map((u, i) => (
+                <tr key={i} className="hover:bg-slate-50 transition-colors group">
+                  <td className="px-6 py-4">
+                    <p className="font-bold text-slate-800">{u.n}</p>
+                    <p className="text-xs text-slate-500">{u.e}</p>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={cn("text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full border bg-slate-50 text-slate-700 border-slate-200")}>
+                      {u.r}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-xs font-bold text-slate-600">{u.j}</td>
+                  <td className="px-6 py-4">
+                    {u.s === 'Active' ? (
+                      <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-600"><CheckCircle2 size={14}/> Verified</span>
+                    ) : u.s === 'Pending' ? (
+                      <span className="flex items-center gap-1.5 text-xs font-bold text-amber-600"><Clock size={14}/> Processing</span>
+                    ) : (
+                      <span className="flex items-center gap-1.5 text-xs font-bold text-red-600"><AlertTriangle size={14}/> Locked</span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 text-right opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex justify-end gap-2">
+                      <button onClick={() => handleHireFire(u.e, 'activate')} className="px-3 py-1.5 bg-emerald-500 text-white text-[10px] font-black rounded-lg hover:bg-emerald-600 uppercase">Grant Access</button>
+                      <button onClick={() => handleHireFire(u.e, 'suspend')} className="px-3 py-1.5 bg-amber-500 text-white text-[10px] font-black rounded-lg hover:bg-amber-600 uppercase">Lock</button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </motion.div>
+    );
+  };
 
   const renderApprovals = () => (
     <div className="space-y-6">
-      <h2 className="text-2xl font-black text-slate-800">Agency Approvals Queue</h2>
-      <div className="space-y-3">{[{id:'AUTH-991',n:'Officer Davis',r:'Law Enforcement',a:'OKC PD',b:'OKC-4921',d:'Apr 18'},{id:'AUTH-992',n:'Dr. Emily Chen',r:'Health Official',a:'State Health',b:'DOH-8812',d:'Apr 18'},{id:'AUTH-993',n:'Apex Holdings LLC',r:'Business Entity',a:'Private',b:'EIN-44210',d:'Apr 17'},{id:'AUTH-994',n:'James Ortiz, Esq.',r:'Attorney',a:'Ortiz Law',b:'BAR-99201',d:'Apr 17'}].map((a,i)=>(<div key={i} className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex items-center justify-between"><div className="flex items-center gap-4"><div className="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center"><UserCheck size={20}/></div><div><p className="font-bold text-slate-800">{a.n} <span className="text-slate-400 font-normal">— {a.r}</span></p><p className="text-xs text-slate-500">{a.a} • Badge: {a.b} • {a.d}</p></div></div><div className="flex gap-2"><button className="px-4 py-2 bg-emerald-600 text-white text-xs font-bold rounded-lg hover:bg-emerald-700">Approve</button><button className="px-4 py-2 bg-red-50 text-red-600 text-xs font-bold rounded-lg hover:bg-red-100">Deny</button></div></div>))}</div>
+      <div className="flex justify-between items-center">
+         <div>
+            <h2 className="text-3xl font-black text-slate-900 tracking-tight italic">Agency Approval War Room</h2>
+            <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Credential Verification • Public Health • Law Enforcement</p>
+         </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+         {['OMMA', 'DOH', 'OSBI', 'DEA'].map((agency, i) => (
+           <div key={i} className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col items-center text-center">
+              <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-3"><Shield size={20}/></div>
+              <p className="text-[10px] font-black text-slate-400 uppercase mb-1">{agency} Channel</p>
+              <p className="text-xl font-black text-slate-800">42 <span className="text-[10px] text-emerald-500">Live</span></p>
+           </div>
+         ))}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+         <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden h-[400px]">
+            <div className="absolute inset-0 opacity-20">
+               <svg viewBox="0 0 400 200" className="w-full h-full fill-indigo-500">
+                  <circle cx="200" cy="100" r="80" stroke="white" strokeWidth="1" fill="none" />
+                  <circle cx="200" cy="100" r="1" fill="white" />
+                  <line x1="200" y1="100" x2="300" y2="20" stroke="white" strokeWidth="0.5" />
+               </svg>
+            </div>
+            <div className="relative z-10">
+               <h3 className="text-lg font-black uppercase tracking-widest italic text-indigo-400 mb-4">Scanning Agency Nodes...</h3>
+               <div className="space-y-4">
+                  {['Sector 4-G Check-In', 'Node 12 Verified', 'Auth Stream Primary'].map((msg, i) => (
+                    <div key={i} className="flex items-center gap-3 text-[10px] font-mono text-emerald-400">
+                       <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-ping" />
+                       {msg}
+                    </div>
+                  ))}
+               </div>
+            </div>
+         </div>
+
+         <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
+            <h3 className="font-black text-sm uppercase tracking-widest text-slate-800 mb-6">Pending Credentials</h3>
+            <div className="space-y-3">
+               {[
+                 { n: 'Officer Davis', r: 'Law Enforcement', a: 'OKC PD', d: 'Apr 18', c: 'bg-blue-50 text-blue-600' },
+                 { n: 'Dr. Emily Chen', r: 'Health Official', a: 'State Health', d: 'Apr 18', c: 'bg-emerald-50 text-emerald-600' },
+                 { n: 'Apex Holdings LLC', r: 'Business Entity', a: 'Private', d: 'Apr 17', c: 'bg-indigo-50 text-indigo-600' },
+               ].map((a, i) => (
+                 <div key={i} className="bg-slate-50 border border-slate-100 rounded-2xl p-4 flex items-center justify-between group hover:border-indigo-200 transition-all">
+                    <div className="flex items-center gap-4">
+                       <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-slate-100 group-hover:bg-indigo-600 group-hover:text-white transition-all"><UserCheck size={20}/></div>
+                       <div>
+                          <p className="font-black text-sm text-slate-800">{a.n}</p>
+                          <p className="text-[10px] text-slate-500 font-bold">{a.r} • {a.a}</p>
+                       </div>
+                    </div>
+                    <div className="flex gap-2">
+                       <button className="px-4 py-2 bg-indigo-600 text-white text-[10px] font-black rounded-lg uppercase">Grant</button>
+                    </div>
+                 </div>
+               ))}
+            </div>
+         </div>
+      </div>
     </div>
   );
 
   const renderApplications = () => (
     <div className="space-y-6">
-      <h2 className="text-2xl font-black text-slate-800">Applications Queue</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-        {[{l:'New Today',v:'48'},{l:'Under Review',v:'342'},{l:'Awaiting Docs',v:'112'}].map((s,i)=>(<div key={i} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm text-center"><p className="text-[10px] font-bold text-slate-500 uppercase">{s.l}</p><p className="text-xl font-black text-slate-800">{s.v}</p></div>))}
+      <div className="flex justify-between items-center bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm relative overflow-hidden">
+         <div className="absolute top-0 right-0 p-8 opacity-5"><Layers size={120} /></div>
+         <div className="relative z-10">
+            <h2 className="text-3xl font-black text-slate-900 tracking-tight">Applications Command Queue</h2>
+            <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Registry Intake Monitoring • Multi-State Sync</p>
+         </div>
+         <div className="relative z-10 flex gap-3">
+            <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100 flex flex-col items-center">
+               <span className="text-[10px] font-black text-emerald-600 uppercase">Approved (24h)</span>
+               <span className="text-xl font-black text-emerald-700">842</span>
+            </div>
+            <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 flex flex-col items-center">
+               <span className="text-[10px] font-black text-amber-600 uppercase">Pending Review</span>
+               <span className="text-xl font-black text-amber-700">342</span>
+            </div>
+         </div>
       </div>
-      <div className="space-y-2">{[{id:'APP-5021',n:'Jane Smith',t:'Patient Card - Adult',st:'Under Review',d:'Apr 18'},{id:'APP-5020',n:'GreenLeaf Farms',t:'Cultivator License',st:'Awaiting Docs',d:'Apr 18'},{id:'APP-5019',n:'Dr. Martin',t:'Provider Registration',st:'New',d:'Apr 17'},{id:'APP-5018',n:'CannaCare LLC',t:'Dispensary License',st:'Under Review',d:'Apr 17'}].map((a,i)=>(<div key={i} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex items-center justify-between"><div><p className="font-bold text-slate-800 text-sm">{a.id} — {a.n}</p><p className="text-xs text-slate-500">{a.t} • {a.d}</p></div><span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-full",a.st==='New'?"bg-blue-50 text-blue-600":a.st==='Under Review'?"bg-amber-50 text-amber-600":"bg-orange-50 text-orange-600")}>{a.st}</span></div>))}</div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+         <div className="bg-white border border-slate-200 rounded-[2.5rem] overflow-hidden shadow-sm">
+            <div className="p-6 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
+               <h3 className="font-black text-sm uppercase tracking-widest text-slate-800">Geospatial Distribution</h3>
+               <span className="text-[10px] font-bold text-slate-400 uppercase">Live Map Feed</span>
+            </div>
+            <div className="p-8 flex items-center justify-center bg-slate-900 min-h-[300px] relative">
+               <div className="absolute inset-0 opacity-30">
+                  <svg viewBox="0 0 400 200" className="w-full h-full fill-slate-700">
+                     <rect x="50" y="50" width="300" height="100" rx="10" />
+                     <circle cx="100" cy="80" r="4" className="fill-emerald-500 animate-pulse" />
+                     <circle cx="200" cy="120" r="6" className="fill-blue-500 animate-pulse" />
+                     <circle cx="300" cy="70" r="4" className="fill-amber-500 animate-pulse" />
+                  </svg>
+               </div>
+               <div className="relative z-10 text-center">
+                  <p className="text-white font-black text-2xl">MAP OVERLAY ACTIVE</p>
+                  <p className="text-indigo-400 text-[10px] font-bold uppercase tracking-[0.3em]">Geographic Density Monitoring</p>
+               </div>
+            </div>
+         </div>
+
+         <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
+            <h3 className="font-black text-sm uppercase tracking-widest text-slate-800 mb-6 flex justify-between items-center">
+               Priority Queue
+               <button className="text-indigo-600 text-[10px] font-black uppercase hover:underline">View All</button>
+            </h3>
+            <div className="space-y-4">
+               {[
+                 { id: 'APP-5021', n: 'Jane Smith', t: 'Patient Card', st: 'Urgent', d: '2m ago', c: 'text-red-600 bg-red-50 border-red-100' },
+                 { id: 'APP-5020', n: 'GreenLeaf Farms', t: 'Cultivator', st: 'In Review', d: '15m ago', c: 'text-amber-600 bg-amber-50 border-amber-100' },
+                 { id: 'APP-5019', n: 'Dr. Martin', t: 'Provider', st: 'New', d: '1h ago', c: 'text-blue-600 bg-blue-50 border-blue-100' },
+                 { id: 'APP-5018', n: 'CannaCare LLC', t: 'Dispensary', st: 'In Review', d: '2h ago', c: 'text-amber-600 bg-amber-50 border-amber-100' },
+               ].map((a, i) => (
+                 <div key={i} className="flex items-center justify-between p-4 rounded-2xl border border-slate-50 hover:border-slate-200 transition-all cursor-pointer group">
+                    <div className="flex items-center gap-4">
+                       <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs group-hover:bg-indigo-600 group-hover:text-white transition-all">#{i+1}</div>
+                       <div>
+                          <p className="font-black text-sm text-slate-800">{a.n}</p>
+                          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">{a.id} • {a.t}</p>
+                       </div>
+                    </div>
+                    <div className="text-right">
+                       <span className={cn("text-[9px] font-black uppercase px-2 py-0.5 rounded-full border", a.c)}>{a.st}</span>
+                       <p className="text-[9px] text-slate-400 mt-1 font-bold">{a.d}</p>
+                    </div>
+                 </div>
+               ))}
+            </div>
+         </div>
+      </div>
     </div>
   );
 
   const renderCompliance = () => (
     <div className="space-y-6">
-      <h2 className="text-2xl font-black text-slate-800">Compliance Monitor</h2>
-      <div className="space-y-3">{[{e:'Apex Health LLC',f:'Daily sales volume exceeded threshold',s:'High',t:'2h ago'},{e:'UID-8922',f:'Failed seed-to-sale sync — 3 consecutive',s:'Critical',t:'4h ago'},{e:'GreenLeaf Farms',f:'Inventory discrepancy detected',s:'Medium',t:'1d ago'}].map((c,i)=>(<div key={i} className={cn("bg-white border rounded-2xl p-5 shadow-sm",c.s==='Critical'?"border-red-200":"border-slate-200")}><div className="flex items-center justify-between mb-2"><p className="font-bold text-slate-800">{c.e}</p><span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-full",c.s==='Critical'?"bg-red-50 text-red-600":c.s==='High'?"bg-amber-50 text-amber-600":"bg-blue-50 text-blue-600")}>{c.s}</span></div><p className="text-sm text-slate-600">{c.f}</p><p className="text-[10px] text-slate-400 mt-1">{c.t}</p></div>))}</div>
+      <div className="flex justify-between items-end mb-4">
+        <div>
+           <h2 className="text-3xl font-black text-slate-900 tracking-tight">Compliance War Room</h2>
+           <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Real-Time Predictive Anomaly Detection</p>
+        </div>
+        <div className="flex gap-2">
+           <button className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-black shadow-lg shadow-indigo-600/20">Predictive Audit</button>
+           <button className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-black">History</button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 bg-slate-50 border-2 border-slate-100 rounded-[2.5rem] p-8 relative overflow-hidden min-h-[400px]">
+           <div className="absolute inset-0 opacity-10 pointer-events-none">
+              <svg viewBox="0 0 800 400" className="w-full h-full fill-none stroke-slate-300 stroke-2">
+                 <path d="M0,350 Q200,300 400,350 T800,300" />
+                 <path d="M0,300 Q200,250 400,300 T800,250" strokeDasharray="5,5" />
+              </svg>
+           </div>
+           
+           <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-8 flex items-center gap-2">
+              <Target size={16} className="text-red-500" /> Risk Vector Analysis (7D)
+           </h3>
+
+           <div className="flex items-end justify-between h-48 gap-4 px-4">
+              {[60, 45, 80, 55, 90, 70, 85].map((h, i) => (
+                <div key={i} className="flex-1 flex flex-col items-center gap-3">
+                   <div 
+                     className={cn("w-full rounded-t-xl transition-all duration-1000", h > 80 ? "bg-red-500 shadow-[0_0_20px_rgba(239,68,68,0.4)]" : "bg-indigo-500")}
+                     style={{ height: `${h}%` }}
+                   ></div>
+                   <span className="text-[10px] font-bold text-slate-400 uppercase">Day {i+1}</span>
+                </div>
+              ))}
+           </div>
+
+           <div className="mt-12 grid grid-cols-2 gap-4">
+              <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-4">
+                 <div className="w-12 h-12 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center animate-pulse"><AlertTriangle size={24}/></div>
+                 <div>
+                    <p className="text-[10px] font-black text-slate-400 uppercase">Critical Vectors</p>
+                    <p className="text-xl font-black text-slate-800">12 Pending</p>
+                 </div>
+              </div>
+              <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-4">
+                 <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center"><CheckCircle2 size={24}/></div>
+                 <div>
+                    <p className="text-[10px] font-black text-slate-400 uppercase">Auto-Resolved</p>
+                    <p className="text-xl font-black text-slate-800">1.2k today</p>
+                 </div>
+              </div>
+           </div>
+        </div>
+
+        <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm flex flex-col">
+           <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-6">Recent Violations</h3>
+           <div className="flex-1 space-y-4">
+              {[
+                { e: 'Apex Health', f: 'Sales Cap Violation', s: 'High', t: '2h ago', c: 'bg-red-50 text-red-600' },
+                { e: 'GreenLeaf Farms', f: 'Inventory Lag', s: 'Medium', t: '4h ago', c: 'bg-amber-50 text-amber-600' },
+                { e: 'Metro Transport', f: 'GPS Drift Anomaly', s: 'Low', t: '1d ago', c: 'bg-blue-50 text-blue-600' },
+              ].map((c, i) => (
+                <div key={i} className="p-4 rounded-2xl border border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer group">
+                   <div className="flex justify-between items-start mb-1">
+                      <p className="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors">{c.e}</p>
+                      <span className={cn("text-[8px] font-black uppercase px-2 py-0.5 rounded-full", c.c)}>{c.s}</span>
+                   </div>
+                   <p className="text-xs text-slate-500 font-medium">{c.f}</p>
+                   <p className="text-[10px] text-slate-400 mt-2 font-bold">{c.t}</p>
+                </div>
+              ))}
+           </div>
+           <button className="mt-6 w-full py-3 bg-slate-900 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-all">View All Audit Logs</button>
+        </div>
+      </div>
     </div>
   );
 
   const renderReports = () => (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-black text-slate-800">Master Analytics</h2>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm"><h3 className="font-bold text-slate-800 mb-4">Monthly Growth</h3><div className="h-48 bg-gradient-to-t from-indigo-50 to-white rounded-xl border border-slate-100 flex items-end justify-around px-4 pb-4">{[40,55,45,70,65,80,92].map((h,i)=>(<div key={i} className="w-8 bg-indigo-500 rounded-t-lg" style={{height:`${h}%`}}/>))}</div><div className="flex justify-around mt-2 text-[10px] text-slate-400 font-bold">{['Jan','Feb','Mar','Apr','May','Jun','Jul'].map(m=>(<span key={m}>{m}</span>))}</div></div>
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm"><h3 className="font-bold text-slate-800 mb-4">Top States by Revenue</h3><div className="space-y-3">{[{s:'Oklahoma',v:'$4.2M',p:85},{s:'California',v:'$3.8M',p:76},{s:'Colorado',v:'$2.9M',p:58},{s:'Michigan',v:'$2.1M',p:42},{s:'Oregon',v:'$1.8M',p:36}].map((st,i)=>(<div key={i} className="flex items-center gap-3"><span className="text-sm font-bold text-slate-600 w-24">{st.s}</span><div className="flex-1 bg-slate-100 rounded-full h-2.5"><div className="bg-emerald-500 h-2.5 rounded-full" style={{width:`${st.p}%`}}/></div><span className="text-sm font-black text-slate-800 w-16 text-right">{st.v}</span></div>))}</div></div>
+    <div className="space-y-8">
+      <div className="flex justify-between items-center bg-slate-950 p-10 rounded-[3rem] text-white relative overflow-hidden shadow-2xl">
+         <div className="absolute top-0 right-0 p-10 opacity-10"><BarChart3 size={160} /></div>
+         <div className="relative z-10">
+            <h2 className="text-4xl font-black italic tracking-tighter uppercase mb-2">Master Analytics Intelligence</h2>
+            <p className="text-indigo-400 font-black tracking-widest text-xs uppercase">Predictive Revenue • Market Saturation • Growth Vectors</p>
+         </div>
+         <div className="relative z-10 flex gap-6">
+            <div className="text-right">
+               <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Global Gross Revenue</p>
+               <p className="text-3xl font-black text-emerald-400">$482.9M <span className="text-xs font-bold text-emerald-500/50">+18%</span></p>
+            </div>
+         </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+         <div className="lg:col-span-2 bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
+            <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-10 flex items-center gap-3">
+               <TrendingUp size={18} className="text-indigo-600" /> Revenue Forecast & Market Velocity
+            </h3>
+            <div className="h-64 flex items-end justify-between gap-2 px-4">
+               {[40, 55, 45, 70, 85, 65, 95, 80, 100, 90, 110, 130].map((v, i) => (
+                 <div key={i} className="flex-1 group relative">
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-slate-900 text-white text-[8px] font-black px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                       ${v}M
+                    </div>
+                    <div className="w-full bg-slate-100 rounded-t-lg transition-all duration-500 hover:bg-indigo-600" style={{ height: `${v * 0.4}%` }}></div>
+                    <p className="text-[8px] font-black text-slate-400 mt-2 text-center">M{i+1}</p>
+                 </div>
+               ))}
+            </div>
+         </div>
+
+         <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
+            <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-10">Market Saturation</h3>
+            <div className="relative w-48 h-48 mx-auto">
+               <div className="absolute inset-0 rounded-full border-[16px] border-slate-100"></div>
+               <div className="absolute inset-0 rounded-full border-[16px] border-indigo-600 border-t-transparent border-r-transparent rotate-45"></div>
+               <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <p className="text-3xl font-black text-slate-800">84%</p>
+                  <p className="text-[10px] font-black text-slate-400 uppercase">Capacity</p>
+               </div>
+            </div>
+            <div className="mt-10 space-y-4">
+               {['Oklahoma: High', 'Missouri: Emerging', 'Florida: Critical'].map((label, i) => (
+                 <div key={i} className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-600">{label.split(':')[0]}</span>
+                    <span className={cn("text-[10px] font-black px-2 py-0.5 rounded-lg", i===2?"bg-red-50 text-red-600":"bg-emerald-50 text-emerald-600")}>{label.split(':')[1]}</span>
+                 </div>
+               ))}
+            </div>
+         </div>
       </div>
     </div>
   );
@@ -705,49 +952,70 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
   const renderSupportTickets = () => (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-black text-slate-800">Support & Escalations</h2>
-        <div className="flex gap-3">
-          <span className="px-4 py-2 bg-red-50 text-red-600 text-xs font-bold rounded-xl border border-red-100 flex items-center gap-2">
-            <AlertTriangle size={14} /> 3 Critical Escalations
-          </span>
-        </div>
+         <div>
+            <h2 className="text-3xl font-black text-slate-900 tracking-tight italic">Support Intelligence Hub</h2>
+            <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Active Resolution Streams • AI-Assisted Support</p>
+         </div>
+         <div className="flex items-center gap-4 px-6 py-3 bg-white border border-slate-200 rounded-2xl shadow-sm">
+            <div className="flex flex-col items-end">
+               <p className="text-[10px] font-black text-slate-400 uppercase">Avg. Response</p>
+               <p className="text-lg font-black text-emerald-600">0.4m</p>
+            </div>
+            <div className="w-px h-8 bg-slate-100"></div>
+            <div className="flex flex-col items-end">
+               <p className="text-[10px] font-black text-slate-400 uppercase">SLA Success</p>
+               <p className="text-lg font-black text-indigo-600">99.9%</p>
+            </div>
+         </div>
       </div>
-      <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+         {[
+           { l: 'Critical Tickets', v: '0', c: 'text-emerald-600', i: Shield },
+           { l: 'Pending Approval', v: '12', c: 'text-amber-600', i: Clock },
+           { l: 'Active Chats', v: '42', c: 'text-indigo-600', i: MessageSquare },
+         ].map((s, i) => (
+           <div key={i} className="bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm flex items-center gap-5">
+              <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center bg-slate-50", s.c)}><s.i size={24}/></div>
+              <div>
+                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{s.l}</p>
+                 <p className="text-2xl font-black text-slate-800">{s.v}</p>
+              </div>
+           </div>
+         ))}
+      </div>
+
+      <div className="bg-white border border-slate-200 rounded-[2.5rem] shadow-sm overflow-hidden">
         <table className="w-full text-sm text-left">
           <thead className="bg-slate-50 border-b border-slate-100">
             <tr>
-              <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase">Ticket ID</th>
-              <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase">Subject</th>
-              <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase">User</th>
-              <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase">Priority</th>
-              <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase">Status</th>
-              <th className="px-6 py-4 font-bold text-slate-500 text-xs uppercase text-right">Action</th>
+              <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-[0.2em]">Ticket Ref</th>
+              <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-[0.2em]">Subject / Entity</th>
+              <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-[0.2em]">Agent Assignment</th>
+              <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-[0.2em]">Status</th>
+              <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-[0.2em] text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
             {[
-              { id: 'TKT-1021', s: 'Metrc Sync Timeout', u: 'marcus@apex.com', p: 'Critical', st: 'Escalated' },
-              { id: 'TKT-1020', s: 'Payment Gateway Error', u: 'jane@smith.com', p: 'High', st: 'In Progress' },
-              { id: 'TKT-1019', s: 'Portal Login Freeze', u: 'bob@moore.org', p: 'High', st: 'New' },
-              { id: 'TKT-1018', s: 'Document Verification', u: 'emily@davis.gov', p: 'Medium', st: 'Open' },
+              { id: 'SUP-9921', s: 'POS Integration Timeout', e: 'Apex Health', a: 'AI Guardian', st: 'In Progress', c: 'text-blue-600 bg-blue-50' },
+              { id: 'SUP-9920', s: 'License Renewal Inquiry', e: 'GreenLeaf Farms', a: 'Sarah Jenkins', st: 'Pending', c: 'text-amber-600 bg-amber-50' },
+              { id: 'SUP-9919', s: 'Account Access Reset', e: 'John Doe', a: 'Bob Moore', st: 'Resolved', c: 'text-emerald-600 bg-emerald-50' },
             ].map((t, i) => (
-              <tr key={i} className="hover:bg-slate-50 transition-colors group">
-                <td className="px-6 py-4 font-mono font-bold text-indigo-600">{t.id}</td>
-                <td className="px-6 py-4 font-bold text-slate-800">{t.s}</td>
-                <td className="px-6 py-4 text-slate-500">{t.u}</td>
+              <tr key={i} className="hover:bg-slate-50 group transition-colors">
+                <td className="px-6 py-4 font-mono text-[10px] font-black text-indigo-600">{t.id}</td>
                 <td className="px-6 py-4">
-                  <span className={cn("text-[10px] font-black uppercase px-2 py-1 rounded-full", 
-                    t.p === 'Critical' ? "bg-red-100 text-red-600" : "bg-amber-100 text-amber-600"
-                  )}>{t.p}</span>
+                  <p className="font-bold text-slate-800">{t.s}</p>
+                  <p className="text-xs text-slate-400 font-medium">{t.e}</p>
+                </td>
+                <td className="px-6 py-4 text-xs font-bold text-slate-600 flex items-center gap-2">
+                   <div className="w-6 h-6 rounded-full bg-slate-200 border border-white" /> {t.a}
                 </td>
                 <td className="px-6 py-4">
-                  <span className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
-                    <div className={cn("w-1.5 h-1.5 rounded-full", t.st === 'Escalated' ? "bg-red-500" : "bg-blue-500")} />
-                    {t.st}
-                  </span>
+                   <span className={cn("text-[9px] font-black uppercase px-2 py-0.5 rounded-full", t.c)}>{t.st}</span>
                 </td>
-                <td className="px-6 py-4 text-right">
-                  <button className="px-4 py-2 bg-slate-800 text-white text-xs font-bold rounded-xl opacity-0 group-hover:opacity-100 transition-all">Review</button>
+                <td className="px-6 py-4 text-right opacity-0 group-hover:opacity-100 transition-all">
+                  <button className="px-4 py-2 bg-slate-800 text-white text-xs font-black rounded-xl hover:bg-black transition-colors">Intercept</button>
                 </td>
               </tr>
             ))}
@@ -845,9 +1113,9 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       case 'global_financials': return renderFinancials();
       case 'system_health': return renderAutoFixMonitor();
       case 'jurisdiction_map': return renderJurisdictionMap();
-      case 'users': return renderUserMgmt();
-      case 'patients': return renderUserMgmt();
-      case 'business': return renderUserMgmt();
+      case 'users': return renderManagementView('users');
+      case 'patients': return renderManagementView('patients');
+      case 'business': return renderManagementView('business');
       case 'approvals': return renderApprovals();
       case 'applications': return renderApplications();
       case 'compliance': return renderCompliance();
