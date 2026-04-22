@@ -1,4 +1,4 @@
-import { MetrcConnector } from './src/lib/metrc/MetrcConnector.ts';
+import { MetrcConnector } from '../src/lib/metrc/MetrcConnector';
 
 async function checkReasons() {
   const c = new MetrcConnector({ 

@@ -1,4 +1,4 @@
-import { MetrcConnector } from './src/lib/metrc/MetrcConnector.ts';
+import { MetrcConnector } from '../src/lib/metrc/MetrcConnector';
 
 async function seedSandbox() {
   console.log('--- Seeding Metrc Sandbox Data ---');
