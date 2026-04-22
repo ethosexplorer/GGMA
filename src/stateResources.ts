@@ -20,6 +20,10 @@ export interface StateResource {
   compliancePage?: string;
   checklistItems?: string[];
   complianceSource?: string;
+  biddingPortals?: {
+    state: string;
+    city: string;
+  };
 }
 
 export const STATE_RESOURCES: Record<string, StateResource> = {

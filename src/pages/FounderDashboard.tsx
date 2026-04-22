@@ -19,6 +19,7 @@ import { SubscriptionPortal } from '../components/SubscriptionPortal';
 import { LegislativeIntelTab } from '../components/federal/LegislativeIntelTab';
 import { onSnapshot, collection, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
+import { METRC_MANUAL } from '../data/metrcManual';
 
 const NAV_ITEMS = [
   { section: 'FOUNDER EXCLUSIVE' },
@@ -36,11 +37,13 @@ const NAV_ITEMS = [
   { id: 'approvals', label: 'Agency Approvals', icon: UserCheck, badge: '12' },
   { id: 'applications', label: 'Applications Queue', icon: FileText, badge: '502' },
   { id: 'compliance', label: 'Compliance Monitor', icon: FileCheck },
+  { id: 'regulatory_library', label: 'Regulatory Library', icon: BookOpen },
   { section: 'OVERSIGHT HUB' },
   { id: 'federal', label: 'Federal Command', icon: Globe },
   { id: 'public_health', label: 'Public Health & Labs', icon: FlaskConical },
   { id: 'operations', label: 'Ops & Support Center', icon: Cpu },
-  { id: 'internal_admin', label: 'Internal Admin', icon: Shield },
+  { id: 'internal_admin', label: 'Internal Admin', icon: Shield, badge: '!' },
+  { id: 'rapid_testing', label: 'Rapid Testing Hub', icon: FlaskConical },
   { id: 'state_authority', label: 'State Authority (External)', icon: Gavel },
   { id: 'subscription', label: 'Platform Billing', icon: CreditCard },
   { section: 'SYSTEM CONTROL' },
@@ -53,6 +56,8 @@ const NAV_ITEMS = [
 
 export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | Promise<void>, user?: any }) => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [regSearch, setRegSearch] = useState('');
+  const [regCat, setRegCat] = useState<string | null>(null);
   const [broadcastMsg, setBroadcastMsg] = useState('🚨 SYSTEM NOTICE: NATIONWIDE COMPLIANCE AUDIT IN PROGRESS • GLOBAL GREEN HYBRID PLATFORM (GGHP) • ALL SECTORS (GGMA/RIP/SINC) OPERATIONAL');
   const [broadcastType, setBroadcastType] = useState('Urgent Alert (Red)');
 
@@ -792,10 +797,6 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       </div>
     </motion.div>
   );
-        </div>
-      </motion.div>
-    );
-  };
 
   const renderApprovals = () => (
     <div className="space-y-6">
@@ -1085,6 +1086,70 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
     </div>
   );
 
+  const renderRegulatoryLibrary = () => {
+    const filtered = METRC_MANUAL.filter(s => 
+      (s.title.toLowerCase().includes(regSearch.toLowerCase()) || s.content.toLowerCase().includes(regSearch.toLowerCase())) &&
+      (!regCat || s.category === regCat)
+    );
+
+    return (
+      <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-700">
+        <div className="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden">
+           <div className="absolute top-0 right-0 p-10 opacity-10"><BookOpen size={160} /></div>
+           <h2 className="text-4xl font-black italic uppercase tracking-tighter mb-2">Regulatory Intelligence Hub</h2>
+           <p className="text-indigo-200 font-medium">Native METRC User Guide & State Law Repository. Synchronized with Oklahoma OMMA Title 63.</p>
+           
+           <div className="mt-8 flex flex-col md:flex-row gap-4">
+              <div className="relative flex-1">
+                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                 <input 
+                    type="text" 
+                    placeholder="Search laws, SOPs, or compliance rules..." 
+                    value={regSearch}
+                    onChange={(e) => setRegSearch(e.target.value)}
+                    className="w-full pl-12 pr-6 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:border-indigo-500 transition-all text-sm backdrop-blur-md"
+                 />
+              </div>
+              <div className="flex gap-2">
+                 {['Overview', 'Operations', 'Admin', 'Inventory', 'Compliance'].map(cat => (
+                   <button 
+                     key={cat}
+                     onClick={() => setRegCat(regCat === cat ? null : cat)}
+                     className={cn(
+                       "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border",
+                       regCat === cat ? "bg-indigo-600 border-indigo-500 text-white shadow-lg" : "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10"
+                     )}
+                   >
+                     {cat}
+                   </button>
+                 ))}
+              </div>
+           </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+           {filtered.map((item, i) => (
+             <div key={i} className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group">
+                <div className="flex justify-between items-start mb-4">
+                   <span className="text-[9px] font-black uppercase px-2 py-1 bg-slate-100 text-slate-500 rounded-lg group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">{item.category}</span>
+                   <button className="text-slate-300 hover:text-indigo-600 transition-colors"><ArrowUpRight size={18} /></button>
+                </div>
+                <h3 className="text-lg font-black text-slate-800 mb-3 group-hover:text-indigo-700 transition-colors">{item.title}</h3>
+                <p className="text-sm text-slate-500 leading-relaxed line-clamp-4">{item.content}</p>
+                <div className="mt-6 pt-6 border-t border-slate-50 flex justify-between items-center">
+                   <span className="text-[10px] font-bold text-slate-400 italic">Source: Metrc Guide 2021 v11.1</span>
+                   <button className="text-[10px] font-black text-indigo-600 uppercase tracking-widest hover:underline">Read Full Section</button>
+                </div>
+             </div>
+           ))}
+           {filtered.length === 0 && (
+             <div className="col-span-full py-20 text-center text-slate-400 italic">No regulatory matches found for "{regSearch}"</div>
+           )}
+        </div>
+      </div>
+    );
+  };
+
   const renderSettings = () => (
     <div className="space-y-6">
       <h2 className="text-2xl font-black text-slate-800">Platform Settings</h2>
@@ -1355,6 +1420,117 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       </div>
     </div>
   );
+  const renderRapidTestingHub = () => (
+    <div className="space-y-8 animate-in fade-in zoom-in-95 duration-700">
+      <div className="bg-gradient-to-br from-indigo-600 via-indigo-900 to-slate-950 p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden border border-white/10">
+        <div className="absolute top-0 right-0 p-10 opacity-20"><FlaskConical size={160} className="animate-pulse text-indigo-400" /></div>
+        <div className="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-12">
+           <div className="max-w-2xl">
+              <h2 className="text-4xl font-black tracking-tighter mb-4 italic uppercase">Rapid Testing Command</h2>
+              <p className="text-indigo-200 font-medium text-lg">National laboratory infrastructure. Monitoring purity standards, chemical analysis velocity, and emergency recall protocols across 42 jurisdictions.</p>
+              <div className="flex gap-4 mt-8">
+                 <div className="px-6 py-3 bg-white/10 border border-white/20 rounded-2xl backdrop-blur-md">
+                    <p className="text-[10px] font-black text-indigo-300 uppercase tracking-widest mb-1">Active Labs</p>
+                    <p className="text-2xl font-black">184</p>
+                 </div>
+                 <div className="px-6 py-3 bg-white/10 border border-white/20 rounded-2xl backdrop-blur-md">
+                    <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">Pass Rate</p>
+                    <p className="text-2xl font-black">94.2%</p>
+                 </div>
+              </div>
+           </div>
+           <div className="bg-white/5 border border-white/10 rounded-[2.5rem] p-8 backdrop-blur-xl shadow-2xl text-center min-w-[280px]">
+              <p className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em] mb-2">Tests Processed (24h)</p>
+              <p className="text-5xl font-black">42,891</p>
+              <div className="mt-4 flex items-center justify-center gap-2 text-emerald-400 font-bold text-sm">
+                 <TrendingUp size={16} /> +18.5% Ingress
+              </div>
+           </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+         {/* Live Lab Sync Stream */}
+         <div className="lg:col-span-2 bg-white border border-slate-200 rounded-[3rem] p-8 shadow-sm">
+            <div className="flex justify-between items-center mb-8">
+               <h3 className="text-xl font-black text-slate-800 flex items-center gap-3">
+                  <Activity size={24} className="text-indigo-600" /> Lab Integration Pulse
+               </h3>
+               <span className="text-[10px] font-black bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full border border-emerald-100">ALL NODES SYNCED</span>
+            </div>
+            <div className="space-y-4">
+               {[
+                 { l: 'Apex Analytics (OKC)', v: '182 tests/hr', st: 'Optimal', p: '99.9%' },
+                 { l: 'GreenRiver Labs (Tulsa)', v: '142 tests/hr', st: 'Optimal', p: '98.8%' },
+                 { l: 'Metro Testing (Miami)', v: '204 tests/hr', st: 'Maintenance', p: '92.4%' },
+                 { l: 'Sovereign Lab (Dallas)', v: '89 tests/hr', st: 'Optimal', p: '99.4%' },
+               ].map((lab, i) => (
+                 <div key={i} className="flex items-center justify-between p-5 bg-slate-50 rounded-2xl border border-slate-100 hover:border-indigo-200 transition-all group">
+                    <div className="flex items-center gap-4">
+                       <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-indigo-600">
+                          <FlaskConical size={20} />
+                       </div>
+                       <div>
+                          <p className="font-black text-slate-800">{lab.l}</p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase">{lab.v}</p>
+                       </div>
+                    </div>
+                    <div className="flex items-center gap-8">
+                       <div className="text-right">
+                          <p className="text-[10px] font-black text-slate-400 uppercase">Purity Baseline</p>
+                          <p className="text-sm font-black text-slate-800">{lab.p}</p>
+                       </div>
+                       <span className={cn("text-[9px] font-black uppercase px-2 py-1 rounded-lg", lab.st === 'Optimal' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600')}>
+                          {lab.st}
+                       </span>
+                    </div>
+                 </div>
+               ))}
+            </div>
+         </div>
+
+         {/* Emergency Recall Center */}
+         <div className="space-y-6">
+            <div className="bg-red-600 rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden group">
+               <div className="absolute top-0 right-0 p-6 opacity-20 group-hover:rotate-12 transition-transform"><AlertTriangle size={80} /></div>
+               <h3 className="text-lg font-black italic uppercase mb-4">Recall Intercept</h3>
+               <p className="text-red-100 text-xs font-bold leading-relaxed mb-8">Rapid impurity detection has triggered 1 potential recall event in the OK-Sector.</p>
+               
+               <div className="bg-white/10 border border-white/20 rounded-2xl p-4 mb-6">
+                  <p className="text-[10px] font-black text-red-200 uppercase mb-1">Batch ID: #RE-9921</p>
+                  <p className="text-sm font-bold">Impurities Detected: Pesticide X-4</p>
+                  <p className="text-[10px] opacity-80 mt-1 italic">Source: GreenLeaf Farms (Tulsa)</p>
+               </div>
+               
+               <button className="w-full py-4 bg-white text-red-600 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-red-50 transition-all shadow-xl">
+                  EXECUTE NATIONWIDE RECALL
+               </button>
+            </div>
+
+            <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
+               <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-6 flex items-center gap-2">
+                  <Zap size={18} className="text-amber-500" /> AI Purity Sentinel
+               </h3>
+               <div className="space-y-4">
+                  <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                     Sylara is cross-referencing lab data with POS sales velocity. If a batch fails, the system auto-freezes all relevant Care Wallet transactions at the point of sale within <span className="text-indigo-600 font-black">400ms</span>.
+                  </p>
+                  <div className="pt-4 border-t border-slate-100">
+                     <div className="flex justify-between text-[10px] font-black uppercase mb-1">
+                        <span className="text-slate-400">Chemical Anomaly Detection</span>
+                        <span className="text-indigo-600">Active</span>
+                     </div>
+                     <div className="h-1 bg-slate-100 rounded-full overflow-hidden">
+                        <div className="h-full bg-indigo-500 animate-pulse" style={{ width: '100%' }}></div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+    </div>
+  );
+
   const renderAutoFixMonitor = () => (
     <div className="space-y-6">
       <div className="bg-slate-900 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden border border-slate-800">
@@ -1451,12 +1627,14 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       case 'approvals': return renderApprovals();
       case 'applications': return renderApplications();
       case 'compliance': return renderCompliance();
+      case 'regulatory_library': return renderRegulatoryLibrary();
       case 'reports': return renderReports();
       case 'intel': 
         return <div className="h-full w-full -m-10 bg-[#080e1a] p-10 min-h-screen overflow-auto"><LegislativeIntelTab /></div>;
       case 'logs': return renderLogs();
       case 'support_tickets': return renderSupportTickets();
       case 'hr_intelligence': return renderHRIntelligence();
+      case 'rapid_testing': return renderRapidTestingHub();
       case 'settings': return renderSettings();
       default: return renderOverview();
     }

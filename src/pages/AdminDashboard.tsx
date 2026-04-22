@@ -4,60 +4,61 @@ import {
   Briefcase, HeartPulse, Scale, Gavel, FileCheck, CheckCircle2,
   Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
-  Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Headphones
+  Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Headphones,
+  Zap, UserPlus, GraduationCap, FlaskConical, BookOpen
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
+import { METRC_MANUAL } from '../data/metrcManual';
 
 const NAV_ITEMS = [
-  { section: 'MAIN' },
+  { section: 'INTERNAL COMMAND' },
   { id: 'overview', label: 'Admin Overview', icon: Activity },
+  { id: 'staffing', label: 'Staffing Intelligence', icon: UserPlus },
+  { id: 'negligence', label: 'Negligence Intercept', icon: Shield, badge: '1' },
   { section: 'MANAGEMENT' },
-  { id: 'users', label: 'User Management', icon: Users },
-  { id: 'patients', label: 'Patient Management', icon: HeartPulse },
-  { id: 'business', label: 'Business Management', icon: Building2 },
+  { id: 'users', label: 'User Directory', icon: Users },
+  { id: 'patients', label: 'Patient Registry', icon: HeartPulse },
+  { id: 'business', label: 'Commercial Nodes', icon: Building2 },
   { section: 'OPS & COMPLIANCE' },
   { id: 'approvals', label: 'Agency Approvals', icon: UserCheck, badge: '8' },
   { id: 'applications', label: 'Applications Queue', icon: FileText, badge: '342' },
   { id: 'compliance', label: 'Compliance Monitor', icon: FileCheck },
-  { section: 'OPERATIONS & AI' },
-  { id: 'wallet', label: 'Care Wallet System', icon: Wallet },
-  { id: 'backoffice', label: 'Backoffice Operations', icon: Cpu },
-  { id: 'ai_monitor', label: 'AI Monitoring', icon: MonitorPlay },
-  { id: 'support', label: 'Support Tickets', icon: MessageSquare },
-];
-
-const MOCK_USERS = [
-  { name: 'Marcus Johnson', email: 'marcus@apexhealth.com', role: 'Business Admin', status: 'Active', date: 'Apr 18, 2026' },
-  { name: 'Sarah Connor', email: 'sarah@greenvalley.com', role: 'Patient', status: 'Pending', date: 'Apr 17, 2026' },
-  { name: 'Dr. Rachel Kim', email: 'rkim@provider.org', role: 'Physician', status: 'Active', date: 'Apr 16, 2026' },
-  { name: 'James Ortiz', email: 'jortiz@dispensary.com', role: 'Dispensary Mgr', status: 'Suspended', date: 'Apr 15, 2026' },
-  { name: 'Emily Tran', email: 'emily@westside.com', role: 'External Admin', status: 'Active', date: 'Apr 14, 2026' },
-];
-
-const MOCK_APPROVALS = [
-  { id: 'AUTH-991', name: 'Officer Davis', role: 'Law Enforcement', agency: 'OKC PD', badge: 'OKC-4921', status: 'Pending', date: 'Apr 18, 2026' },
-  { id: 'AUTH-992', name: 'Dr. Emily Chen', role: 'Health Official', agency: 'State Health', badge: 'DOH-8812', status: 'Pending', date: 'Apr 18, 2026' },
+  { section: 'SYSTEM CONTROL' },
+  { id: 'ai_monitor', label: 'AI Monitoring', icon: Bot },
+  { id: 'regulatory_library', label: 'Regulatory Library', icon: BookOpen },
+  { id: 'support', label: 'Support Hub', icon: MessageSquare },
+  { id: 'settings', label: 'Admin Settings', icon: Settings },
 ];
 
 export const AdminDashboard = ({ onLogout, user }: { onLogout?: () => void | Promise<void>, user?: any }) => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [regSearch, setRegSearch] = useState('');
+  const [regCat, setRegCat] = useState<string | null>(null);
 
   const renderOverview = () => (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div className="space-y-6 animate-in fade-in duration-500">
+      <div className="bg-gradient-to-br from-indigo-900 via-slate-900 to-indigo-900 rounded-[2.5rem] p-10 text-white shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-10 opacity-10"><Shield size={160} /></div>
+        <div className="relative z-10">
+          <h2 className="text-4xl font-black tracking-tighter mb-2 italic uppercase">Internal Admin Command</h2>
+          <p className="text-indigo-200 font-medium text-lg">System-wide administrative hub. Managing the human force and operational integrity.</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {[
           { label: 'Total Patients', value: '42,901', trend: '+12%', color: 'blue' },
           { label: 'Active Businesses', value: '1,422', trend: '+3%', color: 'emerald' },
-          { label: 'Pending Approvals', value: '342', trend: 'Critical', color: 'amber' },
+          { label: 'Staff Efficiency', value: '96.2%', trend: 'Optimal', color: 'indigo' },
           { label: 'System Revenue', value: '$2.4M', trend: '+18%', color: 'indigo' },
         ].map((stat, i) => (
-          <div key={i} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">{stat.label}</p>
             <div className="flex items-end justify-between">
-              <h3 className="text-2xl font-black text-slate-800">{stat.value}</h3>
-              <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-full", 
-                stat.trend.includes('+') ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600")}>
+              <h3 className="text-3xl font-black text-slate-800">{stat.value}</h3>
+              <span className={cn("text-[10px] font-bold px-2 py-1 rounded-lg", 
+                stat.trend.includes('+') || stat.trend === 'Optimal' ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600")}>
                 {stat.trend}
               </span>
             </div>
@@ -65,13 +66,173 @@ export const AdminDashboard = ({ onLogout, user }: { onLogout?: () => void | Pro
         ))}
       </div>
       
-      <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-        <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
-          <Activity size={18} className="text-indigo-500" /> Platform Activity Pulse
-        </h3>
-        <div className="h-64 bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 flex items-center justify-center">
-          <p className="text-slate-400 font-medium">Activity Chart Visualization</p>
-        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+         <div className="lg:col-span-2 bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+            <h3 className="text-lg font-bold text-slate-800 flex items-center gap-3 mb-6"><Activity size={22} className="text-indigo-500" /> Operational Throughput</h3>
+            <div className="h-64 flex items-end justify-between gap-2 px-2 relative">
+               {[40, 55, 45, 70, 65, 80, 95, 85, 90, 100, 110, 120].map((h, i) => (
+                 <div key={i} className="flex-1 bg-slate-100 rounded-t-lg relative group overflow-hidden">
+                   <div className="absolute bottom-0 w-full bg-indigo-500 transition-all duration-700" style={{ height: `${h * 0.6}%` }}></div>
+                 </div>
+               ))}
+            </div>
+         </div>
+         <div className="bg-slate-900 rounded-3xl p-8 text-white relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-8 opacity-10"><Zap size={80} className="text-amber-500" /></div>
+            <h3 className="text-lg font-bold mb-6 flex items-center gap-3"><Bot size={22} className="text-indigo-400" /> AI Guardian Status</h3>
+            <div className="space-y-6">
+               <div>
+                  <div className="flex justify-between text-[10px] font-black uppercase mb-1">
+                     <span className="text-slate-500">Auto-Resolution Rate</span>
+                     <span className="text-emerald-400">92%</span>
+                  </div>
+                  <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                     <div className="h-full bg-emerald-500" style={{ width: '92%' }}></div>
+                  </div>
+               </div>
+               <div>
+                  <div className="flex justify-between text-[10px] font-black uppercase mb-1">
+                     <span className="text-slate-500">Human Handover Req</span>
+                     <span className="text-amber-400">8%</span>
+                  </div>
+                  <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                     <div className="h-full bg-amber-500" style={{ width: '8%' }}></div>
+                  </div>
+               </div>
+               <p className="text-xs text-slate-400 italic mt-6">"Sylara is currently managing 2,402 active support threads. No critical human interventions required at this moment."</p>
+            </div>
+         </div>
+      </div>
+    </div>
+  );
+
+  const renderStaffing = () => (
+    <div className="space-y-8 animate-in slide-in-from-right-4 duration-500">
+      <div className="flex justify-between items-end bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm relative overflow-hidden">
+         <div className="absolute top-0 right-0 p-8 opacity-5"><UserPlus size={120} /></div>
+         <div>
+            <h2 className="text-3xl font-black text-slate-900 tracking-tight italic uppercase">Staffing Intelligence</h2>
+            <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Human Performance Monitoring • Live Clock-ins • Resource Allocation</p>
+         </div>
+         <div className="flex gap-4">
+            <div className="bg-indigo-50 border border-indigo-200 px-6 py-4 rounded-2xl text-center">
+               <p className="text-[10px] font-black text-indigo-600 uppercase mb-1">Active Human Sentinels</p>
+               <p className="text-2xl font-black text-slate-800">428</p>
+            </div>
+         </div>
+      </div>
+
+      <div className="bg-white border border-slate-200 rounded-[2.5rem] shadow-sm overflow-hidden">
+         <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+            <h3 className="font-black text-slate-800 text-lg flex items-center gap-3"><Users size={22} className="text-indigo-600"/> Real-Time Monitoring Queue</h3>
+            <div className="flex gap-2">
+               <input type="text" placeholder="Search staff..." className="px-4 py-2 text-xs border border-slate-200 rounded-xl outline-none focus:border-indigo-500 w-64" />
+            </div>
+         </div>
+         <table className="w-full text-sm text-left">
+            <thead className="bg-slate-50 border-b border-slate-100">
+               <tr>
+                  <th className="px-8 py-5 font-black text-slate-500 text-[10px] uppercase tracking-widest">Employee / Title</th>
+                  <th className="px-8 py-5 font-black text-slate-500 text-[10px] uppercase tracking-widest">Clock-In</th>
+                  <th className="px-8 py-5 font-black text-slate-500 text-[10px] uppercase tracking-widest">Efficiency</th>
+                  <th className="px-8 py-5 font-black text-slate-500 text-[10px] uppercase tracking-widest">Current Task</th>
+                  <th className="px-8 py-5 font-black text-slate-500 text-[10px] uppercase tracking-widest text-right">Command</th>
+               </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-50">
+               {[
+                 { n: 'Sarah Jenkins', r: 'Staffing Architect', t: '08:02 AM', e: '98%', job: 'Onboarding Oversight', st: 'Optimal' },
+                 { n: 'Marcus Thorne', r: 'Conflict Arbiter', t: '09:12 AM', e: '84%', job: 'Legal Escalation #402', st: 'Warning' },
+                 { n: 'Alexander Voss', r: 'Legal Guardian', t: '08:55 AM', e: '99%', job: 'Registry Audit', st: 'Optimal' },
+                 { n: 'Elena Rodriguez', r: 'Quality Sentinel', t: '07:45 AM', e: '96%', job: 'Public Health Sync', st: 'Optimal' },
+               ].map((staff, i) => (
+                 <tr key={i} className="hover:bg-slate-50 transition-colors group">
+                    <td className="px-8 py-6">
+                       <div className="flex items-center gap-3">
+                          <div className={cn("w-2 h-2 rounded-full", staff.st === 'Warning' ? 'bg-red-500 animate-pulse' : 'bg-emerald-500')} />
+                          <div>
+                             <p className="font-black text-slate-800">{staff.n}</p>
+                             <p className="text-[10px] font-bold text-slate-400 uppercase">{staff.r}</p>
+                          </div>
+                       </div>
+                    </td>
+                    <td className="px-8 py-6 font-bold text-slate-600">{staff.t}</td>
+                    <td className="px-8 py-6">
+                       <span className={cn("font-black", staff.st === 'Warning' ? 'text-red-600' : 'text-emerald-600')}>{staff.e}</span>
+                    </td>
+                    <td className="px-8 py-6 text-xs font-bold text-slate-500 italic">{staff.job}</td>
+                    <td className="px-8 py-6 text-right">
+                       <button className={cn("px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all", 
+                          staff.st === 'Warning' ? "bg-red-600 text-white shadow-lg" : "bg-slate-100 text-slate-500 hover:bg-slate-800 hover:text-white"
+                       )}>
+                          {staff.st === 'Warning' ? 'Intercept' : 'Audit'}
+                       </button>
+                    </td>
+                 </tr>
+               ))}
+            </tbody>
+         </table>
+      </div>
+    </div>
+  );
+
+  const renderNegligence = () => (
+    <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
+      <div className="bg-red-600 p-8 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden">
+         <div className="absolute top-0 right-0 p-8 opacity-20"><AlertTriangle size={120} /></div>
+         <h2 className="text-3xl font-black italic uppercase tracking-tighter mb-2">Negligence Intercept</h2>
+         <p className="text-red-100 font-medium">Critical performance breaches and idle task monitoring. Handle immediately.</p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+         <div className="bg-white border-2 border-red-100 rounded-[2.5rem] p-8 shadow-sm">
+            <h3 className="text-sm font-black text-red-900 uppercase tracking-widest mb-6 flex items-center gap-2">
+               <Shield size={18} className="text-red-600" /> Active Negligence Alerts
+            </h3>
+            <div className="space-y-4">
+               {[
+                 { n: 'Marcus Thorne', r: 'Conflict Arbiter', m: 'Legal Escalation #402 has been idle for 42 minutes. Threshold: 30m.', t: '42m Idle' },
+                 { n: 'System Monitor', r: 'Auto-Sentinel', m: 'Unusually low throughput on Support Channel #12.', t: 'Pattern Divergence' },
+               ].map((alert, i) => (
+                 <div key={i} className="p-5 bg-red-50 border border-red-100 rounded-2xl relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-1.5 h-full bg-red-600"></div>
+                    <div className="flex justify-between items-start mb-2">
+                       <div>
+                          <p className="font-black text-red-900">{alert.n}</p>
+                          <p className="text-[10px] font-bold text-red-700 uppercase tracking-wider">{alert.r}</p>
+                       </div>
+                       <span className="text-[9px] font-black uppercase px-2 py-0.5 bg-red-600 text-white rounded-lg animate-pulse">{alert.t}</span>
+                    </div>
+                    <p className="text-xs text-red-800 font-medium leading-relaxed">{alert.m}</p>
+                    <div className="mt-4 flex gap-2">
+                       <button className="px-4 py-2 bg-red-600 text-white text-[10px] font-black rounded-xl hover:bg-red-700 uppercase">Direct Intercept</button>
+                       <button className="px-4 py-2 bg-white border border-red-200 text-red-600 text-[10px] font-black rounded-xl hover:bg-red-50 uppercase">Issue Warning</button>
+                    </div>
+                 </div>
+               ))}
+            </div>
+         </div>
+         <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden border border-slate-800">
+            <div className="absolute bottom-0 right-0 p-8 opacity-10"><MonitorPlay size={120} className="text-indigo-500" /></div>
+            <h3 className="text-sm font-black text-indigo-400 uppercase tracking-widest mb-6">Efficiency Sentinel (AI)</h3>
+            <div className="space-y-6">
+               <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                  <p className="text-xs text-slate-400 font-medium leading-relaxed italic">
+                     "Sylara is analyzing clock-in patterns and task resolution velocity. 1 sentinel (M. Thorne) is currently under-performing based on historical baseline for Complex Arbitration."
+                  </p>
+               </div>
+               <div className="pt-4 border-t border-white/10">
+                  <div className="flex justify-between items-center mb-4">
+                     <span className="text-[10px] font-black uppercase text-slate-500">Global Staffing Health</span>
+                     <span className="text-emerald-400 font-black">96.8 / 100</span>
+                  </div>
+                  <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+                     <div className="h-full bg-emerald-500" style={{ width: '96.8%' }}></div>
+                  </div>
+               </div>
+               <button className="w-full py-3 bg-white/10 border border-white/20 text-white rounded-xl text-xs font-black hover:bg-white/20 transition-all uppercase">Full Performance Audit</button>
+            </div>
+         </div>
       </div>
     </div>
   );
@@ -114,9 +275,10 @@ export const AdminDashboard = ({ onLogout, user }: { onLogout?: () => void | Pro
           </thead>
           <tbody className="divide-y divide-slate-100">
             {[
-              ...MOCK_USERS,
-              { name: 'David Smith', email: 'dsmith@state.gov', role: 'Compliance Inspector', status: 'Active', date: 'Apr 19, 2026' },
-              { name: 'Pending Agent', email: 'tbd@state.gov', role: 'Staff Reviewer', status: 'Pending Invite', date: 'Apr 20, 2026' }
+              { name: 'Marcus Johnson', email: 'marcus@apexhealth.com', role: 'Business Admin', status: 'Active', date: 'Apr 18, 2026' },
+              { name: 'Sarah Connor', email: 'sarah@greenvalley.com', role: 'Patient', status: 'Pending', date: 'Apr 17, 2026' },
+              { name: 'Dr. Rachel Kim', email: 'rkim@provider.org', role: 'Physician', status: 'Active', date: 'Apr 16, 2026' },
+              { name: 'David Smith', email: 'dsmith@state.gov', role: 'Compliance Inspector', status: 'Active', date: 'Apr 19, 2026' }
             ].map((u,i) => (
               <tr key={i} className="hover:bg-slate-50 group">
                 <td className="px-4 py-3">
@@ -125,25 +287,14 @@ export const AdminDashboard = ({ onLogout, user }: { onLogout?: () => void | Pro
                 </td>
                 <td className="px-4 py-3 text-slate-600 text-xs font-bold">{u.role}</td>
                 <td className="px-4 py-3">
-                  {u.status === 'Pending Invite' ? (
-                     <div className="space-y-1">
-                       <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-600">Pending Join</span>
-                       <p className="text-[10px] text-slate-500 font-mono">Code: STF-9821</p>
-                     </div>
-                  ) : (
-                     <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-full", u.status==='Active' ? "bg-emerald-50 text-emerald-600" : u.status==='Pending' ? "bg-amber-50 text-amber-600" : "bg-red-50 text-red-600")}>
-                       {u.status}
-                     </span>
-                  )}
+                  <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-full", u.status==='Active' ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600")}>
+                    {u.status}
+                  </span>
                 </td>
                 <td className="px-4 py-3 text-right opacity-0 group-hover:opacity-100 transition-opacity">
                    <div className="flex justify-end gap-2">
                      <button className="px-3 py-1.5 bg-slate-100 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-200">Edit</button>
-                     {u.status !== 'Suspended' ? (
-                       <button className="px-3 py-1.5 bg-red-50 text-red-600 text-xs font-bold rounded-lg hover:bg-red-100">Suspend</button>
-                     ) : (
-                       <button className="px-3 py-1.5 bg-emerald-50 text-emerald-600 text-xs font-bold rounded-lg hover:bg-emerald-100">Restore</button>
-                     )}
+                     <button className="px-3 py-1.5 bg-red-50 text-red-600 text-xs font-bold rounded-lg hover:bg-red-100">Suspend</button>
                    </div>
                 </td>
               </tr>
@@ -154,136 +305,128 @@ export const AdminDashboard = ({ onLogout, user }: { onLogout?: () => void | Pro
     </div>
   );
 
-  const renderApprovals = () => (
-    <div className="space-y-6">
-      <h2 className="text-xl font-black text-slate-800">Agency Approvals</h2>
-      <div className="space-y-3">{MOCK_APPROVALS.map((a,i)=>(<div key={i} className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex items-center justify-between"><div><p className="font-bold text-slate-800">{a.name} <span className="text-slate-400">— {a.role}</span></p><p className="text-xs text-slate-500">{a.agency} • {a.badge} • {a.date}</p></div><div className="flex gap-2"><button className="px-4 py-2 bg-emerald-600 text-white text-xs font-bold rounded-lg">Approve</button><button className="px-4 py-2 bg-red-50 text-red-600 text-xs font-bold rounded-lg">Deny</button></div></div>))}</div>
-    </div>
-  );
+  const renderRegulatoryLibrary = () => {
+    const filtered = METRC_MANUAL.filter(s => 
+      (s.title.toLowerCase().includes(regSearch.toLowerCase()) || s.content.toLowerCase().includes(regSearch.toLowerCase())) &&
+      (!regCat || s.category === regCat)
+    );
 
-  const renderPatients = () => (
-    <div className="space-y-6">
-      <h2 className="text-xl font-black text-slate-800">Patient Management</h2>
-      <div className="grid grid-cols-3 gap-4 mb-4">{[{l:'Total Patients',v:'42,901'},{l:'Active Cards',v:'38,210'},{l:'Pending Renewals',v:'4,691'}].map((s,i)=>(<div key={i} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm text-center"><p className="text-[10px] font-bold text-slate-500 uppercase">{s.l}</p><p className="text-xl font-black text-slate-800">{s.v}</p></div>))}</div>
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-        <table className="w-full text-sm"><thead><tr className="bg-slate-50"><th className="px-4 py-3 text-left font-bold text-slate-500 text-xs uppercase">Patient</th><th className="px-4 py-3 text-left font-bold text-slate-500 text-xs uppercase">Card ID</th><th className="px-4 py-3 text-left font-bold text-slate-500 text-xs uppercase">Type</th><th className="px-4 py-3 text-left font-bold text-slate-500 text-xs uppercase">Expires</th><th className="px-4 py-3 text-left font-bold text-slate-500 text-xs uppercase">Status</th></tr></thead>
-        <tbody>{[{n:'Jane Smith',c:'OK-4821-2291',t:'Adult',e:'Dec 2026',s:'Active'},{n:'Mike Davis',c:'OK-4822-1102',t:'Caregiver',e:'Nov 2026',s:'Active'},{n:'Sarah Lee',c:'OK-4823-0091',t:'Minor',e:'Oct 2026',s:'Renewal'},{n:'Tom Garcia',c:'OK-4824-5521',t:'Adult',e:'Sep 2026',s:'Expired'}].map((p,i)=>(<tr key={i} className="border-b border-slate-50"><td className="px-4 py-3 font-bold text-slate-800">{p.n}</td><td className="px-4 py-3 text-slate-600 font-mono text-xs">{p.c}</td><td className="px-4 py-3 text-slate-600">{p.t}</td><td className="px-4 py-3 text-slate-500 text-xs">{p.e}</td><td className="px-4 py-3"><span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-full",p.s==='Active'?"bg-emerald-50 text-emerald-600":p.s==='Renewal'?"bg-amber-50 text-amber-600":"bg-red-50 text-red-600")}>{p.s}</span></td></tr>))}</tbody></table>
+    return (
+      <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-700">
+        <div className="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden">
+           <div className="absolute top-0 right-0 p-10 opacity-10"><BookOpen size={160} /></div>
+           <h2 className="text-4xl font-black italic uppercase tracking-tighter mb-2">Regulatory Intelligence Hub</h2>
+           <p className="text-indigo-200 font-medium">Native METRC User Guide & State Law Repository. Consult for Internal Policy Enforcement.</p>
+           
+           <div className="mt-8 flex flex-col md:flex-row gap-4">
+              <div className="relative flex-1">
+                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                 <input 
+                    type="text" 
+                    placeholder="Search laws, SOPs, or compliance rules..." 
+                    value={regSearch}
+                    onChange={(e) => setRegSearch(e.target.value)}
+                    className="w-full pl-12 pr-6 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:border-indigo-500 transition-all text-sm backdrop-blur-md"
+                 />
+              </div>
+              <div className="flex gap-2">
+                 {['Overview', 'Operations', 'Admin', 'Inventory', 'Compliance'].map(cat => (
+                   <button 
+                     key={cat}
+                     onClick={() => setRegCat(regCat === cat ? null : cat)}
+                     className={cn(
+                       "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border",
+                       regCat === cat ? "bg-indigo-600 border-indigo-500 text-white shadow-lg" : "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10"
+                     )}
+                   >
+                     {cat}
+                   </button>
+                 ))}
+              </div>
+           </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+           {filtered.map((item, i) => (
+             <div key={i} className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group">
+                <div className="flex justify-between items-start mb-4">
+                   <span className="text-[9px] font-black uppercase px-2 py-1 bg-slate-100 text-slate-500 rounded-lg group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">{item.category}</span>
+                   <button className="text-slate-300 hover:text-indigo-600 transition-colors"><ArrowUpRight size={18} /></button>
+                </div>
+                <h3 className="text-lg font-black text-slate-800 mb-3 group-hover:text-indigo-700 transition-colors">{item.title}</h3>
+                <p className="text-sm text-slate-500 leading-relaxed line-clamp-4">{item.content}</p>
+                <div className="mt-6 pt-6 border-t border-slate-50 flex justify-between items-center">
+                   <span className="text-[10px] font-bold text-slate-400 italic">Source: Metrc Guide 2021 v11.1</span>
+                   <button className="text-[10px] font-black text-indigo-600 uppercase tracking-widest hover:underline">Read Full Section</button>
+                </div>
+             </div>
+           ))}
+           {filtered.length === 0 && (
+             <div className="col-span-full py-20 text-center text-slate-400 italic">No regulatory matches found for "{regSearch}"</div>
+           )}
+        </div>
       </div>
-    </div>
-  );
-
-  const renderBusiness = () => (
-    <div className="space-y-6">
-      <h2 className="text-xl font-black text-slate-800">Business Management</h2>
-      <div className="space-y-3">{[{n:'Apex Health LLC',t:'Dispensary',st:'OK',s:'Active',l:'OMMA-D-4421'},{n:'GreenLeaf Farms',t:'Cultivator',st:'OK',s:'Active',l:'OMMA-G-2210'},{n:'CannaCare Processing',t:'Processor',st:'OK',s:'Under Review',l:'OMMA-P-1192'},{n:'Westside Transport',t:'Transport',st:'TX',s:'Pending',l:'TX-TR-0081'}].map((b,i)=>(<div key={i} className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex items-center justify-between"><div className="flex items-center gap-4"><div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center"><Building2 size={20}/></div><div><p className="font-bold text-slate-800">{b.n}</p><p className="text-xs text-slate-500">{b.t} • {b.st} • License: {b.l}</p></div></div><span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-full",b.s==='Active'?"bg-emerald-50 text-emerald-600":"bg-amber-50 text-amber-600")}>{b.s}</span></div>))}</div>
-    </div>
-  );
-
-  const renderCompliance = () => (
-    <div className="space-y-6">
-      <h2 className="text-xl font-black text-slate-800">Compliance Monitor</h2>
-      <div className="space-y-3">{[{e:'Apex Health LLC',f:'Daily sales volume exceeded threshold',s:'High',t:'2h ago'},{e:'UID-8922',f:'Failed seed-to-sale sync — 3 consecutive',s:'Critical',t:'4h ago'},{e:'GreenLeaf Farms',f:'Inventory discrepancy detected',s:'Medium',t:'1d ago'}].map((c,i)=>(<div key={i} className={cn("bg-white border rounded-2xl p-5 shadow-sm",c.s==='Critical'?"border-red-200":"border-slate-200")}><div className="flex items-center justify-between mb-2"><p className="font-bold text-slate-800">{c.e}</p><span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-full",c.s==='Critical'?"bg-red-50 text-red-600":c.s==='High'?"bg-amber-50 text-amber-600":"bg-blue-50 text-blue-600")}>{c.s}</span></div><p className="text-sm text-slate-600">{c.f}</p><p className="text-[10px] text-slate-400 mt-1">{c.t}</p></div>))}</div>
-    </div>
-  );
-
-  const renderWallet = () => (
-    <div className="space-y-6">
-      <h2 className="text-xl font-black text-slate-800">Care Wallet System (Compassion Balance)</h2>
-      <div className="grid grid-cols-3 gap-4">{[{l:'Total Ecosystem Volume',v:'$2.4M'},{l:'Active Wallets',v:'18,902'},{l:'B2B Transfers Today',v:'142'}].map((s,i)=>(<div key={i} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm text-center"><p className="text-[10px] font-bold text-slate-500 uppercase">{s.l}</p><p className="text-xl font-black text-slate-800">{s.v}</p></div>))}</div>
-      <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-        <h3 className="font-bold text-slate-800 mb-3">Recent Closed-Loop Transactions</h3>
-        <div className="space-y-2">{[{d:'Patient #4821 → Apex Dispensary',a:'$89.50',t:'POS Purchase'},{d:'GreenLeaf → CannaCare Processing',a:'$4,200.00',t:'B2B Transfer'},{d:'Compassion Reload — Jane Smith',a:'$500.00',t:'Cash Kiosk'},{d:'Subscription — Pro Plan Renewal',a:'$149.00',t:'System Fee'}].map((tx,i)=>(<div key={i} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl"><div><p className="text-sm font-bold text-slate-700">{tx.d}</p><p className="text-[10px] text-slate-400">{tx.t}</p></div><span className="text-sm font-bold text-emerald-600">+{tx.a}</span></div>))}</div>
-      </div>
-    </div>
-  );
-
-  const renderAI = () => (
-    <div className="space-y-6">
-      <h2 className="text-xl font-black text-slate-800">AI Monitoring</h2>
-      <div className="grid grid-cols-3 gap-4">{[{l:'Sylara Sessions',v:'842',s:'Active'},{l:'L.A.R.R.Y Assists',v:'1,204',s:'Today'},{l:'Auto-Resolved',v:'89%',s:'Rate'}].map((s,i)=>(<div key={i} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm text-center"><p className="text-[10px] font-bold text-slate-500 uppercase">{s.l}</p><p className="text-xl font-black text-slate-800">{s.v}</p><p className="text-[10px] text-emerald-600 font-bold">{s.s}</p></div>))}</div>
-      <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm"><h3 className="font-bold text-slate-800 mb-3">AI Activity Feed</h3><div className="space-y-2">{['Sylara resolved 42 patient inquiries — avg 18s response','L.A.R.R.Y completed 8 med-card applications','Escalation: Complex legal query routed to paralegal','Sylara voice call handled — patient renewal assistance'].map((l,i)=>(<div key={i} className="p-3 bg-slate-50 rounded-xl text-sm text-slate-700 flex items-center gap-3"><Bot size={16} className="text-indigo-500 shrink-0"/>{l}</div>))}</div></div>
-    </div>
-  );
-
-  const renderApplications = () => (
-    <div className="space-y-6">
-      <h2 className="text-xl font-black text-slate-800">Applications Queue</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-        {[{l:'New Today',v:'48'},{l:'Under Review',v:'342'},{l:'Awaiting Docs',v:'112'}].map((s,i)=>(<div key={i} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm text-center"><p className="text-[10px] font-bold text-slate-500 uppercase">{s.l}</p><p className="text-xl font-black text-slate-800">{s.v}</p></div>))}
-      </div>
-      <div className="space-y-2">{[{id:'APP-5021',n:'Jane Smith',t:'Patient Card - Adult',st:'Under Review',d:'Apr 18'},{id:'APP-5020',n:'GreenLeaf Farms',t:'Cultivator License',st:'Awaiting Docs',d:'Apr 18'},{id:'APP-5019',n:'Dr. Martin',t:'Provider Registration',st:'New',d:'Apr 17'},{id:'APP-5018',n:'CannaCare LLC',t:'Dispensary License',st:'Under Review',d:'Apr 17'}].map((a,i)=>(<div key={i} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex items-center justify-between"><div><p className="font-bold text-slate-800 text-sm">{a.id} — {a.n}</p><p className="text-xs text-slate-500">{a.t} • {a.d}</p></div><span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-full",a.st==='New'?"bg-blue-50 text-blue-600":a.st==='Under Review'?"bg-amber-50 text-amber-600":"bg-orange-50 text-orange-600")}>{a.st}</span></div>))}</div>
-    </div>
-  );
-
-  const renderSupport = () => (
-    <div className="space-y-6">
-      <h2 className="text-xl font-black text-slate-800">Support Tickets</h2>
-      <div className="space-y-3">{[{id:'TKT-1021',s:'Login Issue',u:'sarah@email.com',st:'Open',p:'High'},{id:'TKT-1020',s:'Card Renewal Help',u:'mike@email.com',st:'In Progress',p:'Medium'},{id:'TKT-1019',s:'POS Integration Error',u:'apex@business.com',st:'Escalated',p:'Critical'},{id:'TKT-1018',s:'Document Upload Failed',u:'jane@email.com',st:'Resolved',p:'Low'}].map((t,i)=>(<div key={i} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex items-center justify-between"><div><p className="font-bold text-slate-800 text-sm">{t.id}: {t.s}</p><p className="text-xs text-slate-500">{t.u}</p></div><div className="flex gap-2"><span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-full",t.p==='Critical'?"bg-red-50 text-red-600":t.p==='High'?"bg-amber-50 text-amber-600":"bg-slate-100 text-slate-600")}>{t.p}</span><span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-full",t.st==='Resolved'?"bg-emerald-50 text-emerald-600":"bg-blue-50 text-blue-600")}>{t.st}</span></div></div>))}</div>
-    </div>
-  );
+    );
+  };
 
   const getContent = () => {
     switch (activeTab) {
       case 'overview': return renderOverview();
+      case 'staffing': return renderStaffing();
+      case 'negligence': return renderNegligence();
       case 'users': return renderUsers();
-      case 'patients': return renderPatients();
-      case 'business': return renderBusiness();
-      case 'approvals': return renderApprovals();
-      case 'applications': return renderApplications();
-      case 'compliance': return renderCompliance();
-      case 'wallet': return renderWallet();
-      case 'backoffice': return renderSupport();
-      case 'ai_monitor': return renderAI();
-      case 'support': return renderSupport();
+      case 'patients': return <div>Patient Management Placeholder</div>;
+      case 'business': return <div>Business Management Placeholder</div>;
+      case 'approvals': return <div>Agency Approvals Placeholder</div>;
+      case 'applications': return <div>Applications Queue Placeholder</div>;
+      case 'compliance': return <div>Compliance Monitor Placeholder</div>;
+      case 'ai_monitor': return <div>AI Monitoring Placeholder</div>;
+      case 'regulatory_library': return renderRegulatoryLibrary();
+      case 'support': return <div>Support Hub Placeholder</div>;
+      case 'settings': return <div>Admin Settings Placeholder</div>;
       default: return renderOverview();
     }
   };
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] bg-slate-50 text-slate-800 font-sans">
-      <div className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col hidden md:flex shrink-0">
-        <div className="p-5 pb-2">
-          <div className="flex items-center gap-3 mb-4">
-            <img src="/gghp-branding.png" alt="GGHP Logo" className="w-12 h-12 object-contain" />
+      <div className="w-64 bg-slate-950 border-r border-slate-900 flex flex-col hidden md:flex shrink-0">
+        <div className="p-6 pb-2">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-indigo-600 text-white rounded-xl flex items-center justify-center shadow-lg"><Shield size={20} /></div>
             <div>
-              <h2 className="font-bold text-sm text-white leading-tight">Admin Command</h2>
-              <p className="text-[10px] text-indigo-400 font-bold uppercase tracking-wider">Jesus View • Administrator</p>
-            </div>
-          </div>
-          <div className="p-2.5 rounded-lg bg-slate-800 border border-slate-700 flex items-center gap-3 mb-2">
-            <div className="w-8 h-8 rounded-full overflow-hidden border border-slate-600">
-              <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.displayName || "Admin")}&background=4F46E5&color=fff&size=32`} alt="" className="w-full h-full" />
-            </div>
-            <div>
-              <p className="text-xs font-bold text-white">{user?.displayName || "Admin"}</p>
-              <p className="text-[10px] text-slate-400">Internal Operations</p>
+              <h2 className="font-black text-sm text-white leading-tight uppercase tracking-tight">Internal Admin</h2>
+              <p className="text-[10px] text-indigo-400 font-black tracking-widest uppercase">Operational Control</p>
             </div>
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto px-3 pb-4 space-y-0.5">
+        <div className="flex-1 overflow-y-auto px-4 pb-6 space-y-1">
           {NAV_ITEMS.map((item, i) => {
-            if ('section' in item) return <div key={i} className="pt-4 pb-1 px-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">{item.section}</div>;
+            if ('section' in item) return <div key={i} className="pt-6 pb-2 px-3 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{item.section}</div>;
             return (
-              <button key={item.id} onClick={() => setActiveTab(item.id!)} className={cn("w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all text-left", activeTab === item.id ? "bg-slate-800 text-white border border-slate-700" : "text-slate-400 hover:bg-slate-800/50")}>
-                <span className="flex items-center gap-3">{item.icon && <item.icon size={16} />} {item.label}</span>
-                {item.badge && <span className="text-[10px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded-full font-bold">{item.badge}</span>}
+              <button key={item.id} onClick={() => setActiveTab(item.id!)} className={cn("w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold transition-all text-left", activeTab === item.id ? "bg-indigo-600 text-white shadow-xl shadow-indigo-900/40" : "text-slate-400 hover:bg-white/5 hover:text-slate-100")}>
+                <span className="flex items-center gap-3">{item.icon && <item.icon size={18} className={activeTab === item.id ? "text-white" : "text-slate-500"} />} {item.label}</span>
+                {item.badge && <span className="text-[10px] bg-red-500 text-white px-2 py-0.5 rounded-full font-black">{item.badge}</span>}
               </button>
             );
           })}
         </div>
-        <button onClick={onLogout} className="p-4 border-t border-slate-800 flex items-center gap-3 text-slate-500 hover:text-white transition-colors">
-          <LogOut size={16} /> <span className="text-sm font-bold">Sign Out</span>
+        <button onClick={onLogout} className="p-6 border-t border-white/5 flex items-center gap-3 text-slate-500 hover:text-white transition-colors">
+          <LogOut size={18} /> <span className="text-sm font-black uppercase tracking-widest">Admin Exit</span>
         </button>
       </div>
 
       <div className="flex-1 flex flex-col h-[calc(100vh-4rem)] overflow-hidden">
-        <div className="h-16 border-b border-slate-200 flex items-center justify-between px-8 bg-white shrink-0">
-          <h1 className="text-xl font-black text-slate-800 tracking-tight capitalize">{activeTab.replace('_', ' ')}</h1>
-          <div className="flex items-center gap-4">
-            <button className="p-2 text-slate-400 hover:text-slate-600 relative"><Bell size={20} /><span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white" /></button>
+        <div className="h-20 border-b border-slate-200 flex items-center justify-between px-10 bg-white shrink-0">
+          <h1 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">{activeTab.replace('_', ' ')}</h1>
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-100">
+               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+               SYSTEM OPERATIONAL
+            </div>
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto p-8">{getContent()}</div>
+        <div className="flex-1 overflow-y-auto p-10">{getContent()}</div>
       </div>
     </div>
   );

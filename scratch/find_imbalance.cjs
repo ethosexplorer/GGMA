@@ -1,19 +1,17 @@
 const fs = require('fs');
 
-function findImbalance(filename) {
-    const lines = fs.readFileSync(filename, 'utf8').split('\n');
-    let balance = 0;
-    for (let i = 0; i < lines.length; i++) {
-        const opens = (lines[i].match(/<div/g) || []).length;
-        const closes = (lines[i].match(/<\/div>/g) || []).length;
-        balance += opens - closes;
-        if (opens !== 0 || closes !== 0) {
-            console.log(`L${i+1}: Balance: ${balance} (${lines[i].trim()})`);
-        }
+const content = fs.readFileSync('c:/GGMA/GGMA/src/pages/FounderDashboard.tsx', 'utf8');
+const lines = content.split('\n');
+
+let balance = 0;
+for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    for (let char of line) {
+        if (char === '{') balance++;
+        if (char === '}') balance--;
+    }
+    if (balance === 0 && i > 100) {
+        console.log(`Balance hit 0 at line ${i + 1}: ${line}`);
+        // Let's keep going to see if it becomes 0 again.
     }
 }
-
-console.log('--- Attorney ---');
-findImbalance('src/pages/AttorneyDashboard.tsx');
-console.log('--- Provider ---');
-findImbalance('src/pages/ProviderDashboard.tsx');

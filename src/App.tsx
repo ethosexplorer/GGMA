@@ -93,7 +93,7 @@ import { auth, db } from './firebase';
 import MapChart from './components/MapChart';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { FounderDashboard } from './pages/FounderDashboard';
-import { RegulatorDashboard } from './pages/RegulatorDashboard';
+import { StateAuthorityDashboard } from './pages/StateAuthorityDashboard';
 import { OperationsDashboard } from './pages/OperationsDashboard';
 import { ExternalAdminDashboard } from './pages/ExternalAdminDashboard';
 import TeleHealthDashboard from './components/TeleHealthDashboard';
@@ -106,7 +106,6 @@ import { AttorneyDashboard } from './pages/AttorneyDashboard';
 import { PublicHealthDashboard } from './pages/PublicHealthDashboard';
 import { CareWalletDashboard } from './pages/CareWalletDashboard';
 import { EnforcementDashboard } from './pages/EnforcementDashboard';
-import { StateAuthorityDashboard } from './pages/StateAuthorityDashboard';
 import { BackOfficeDashboard } from './pages/BackOfficeDashboard';
 import ProviderRegistrationPage from './pages/ProviderRegistrationPage';
 import { PatientDashboard } from './pages/PatientDashboard';
@@ -2779,7 +2778,7 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
 
 // --- L.A.R.R.Y AI Chatbot for Med Card / Business License Assistance ---
 const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card' }: any) => {
-  const isBusiness = variant === 'business';
+  const [isBusiness, setIsBusiness] = useState(variant === 'business');
   const isGeneral = variant === 'general' || variant === 'ggma' || variant === 'rip' || variant === 'sinc';
   
   const getGreeting = () => {
@@ -6352,7 +6351,7 @@ export default function App() {
       return <ExternalAdminDashboard onLogout={handleLogout} user={profile} />;
     }
     if (role === 'admin' || role === 'regulator_state' || role?.startsWith('regulator') || role?.startsWith('backoffice')) {
-      return <OversightDashboard onLogout={handleLogout} user={profile} />;
+      return <StateAuthorityDashboard onLogout={handleLogout} user={profile} />;
     }
     if (role === 'enforcement_state' || role?.startsWith('enforcement')) {
       return <EnforcementDashboard onLogout={handleLogout} user={profile} />;
