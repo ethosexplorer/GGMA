@@ -1191,7 +1191,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       </div>
     </div>
   );
-
+  const renderAutoFixMonitor = () => (
     <div className="space-y-6">
       <div className="bg-slate-900 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden border border-slate-800">
         <div className="absolute top-0 right-0 p-8 opacity-20"><Zap size={120} className="text-amber-400" /></div>
