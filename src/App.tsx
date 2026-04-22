@@ -1152,6 +1152,7 @@ const STATE_RESOURCES: Record<string, any> = {
 const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | 'patient-portal' | 'support' | 'larry-chatbot' | 'larry-business', role?: string) => void }) => {
   const [broadcastMsg, setBroadcastMsg] = useState('🚨 SYSTEM NOTICE: NATIONWIDE COMPLIANCE AUDIT IN PROGRESS • GLOBAL GREEN HYBRID PLATFORM (GGHP) • ALL SECTORS (GGMA/RIP/SINC) OPERATIONAL');
   const [inTheKnowNews, setInTheKnowNews] = useState([
+    'C³ Score (Compassion, Compliance & Community) now active for all Care Wallets',
     'OMMA Legislative Update: New rules for 2026 commercial licensing now active',
     'Florida transitions to Fully Legal status - Platform infrastructure updated',
     'Kansas approves Medical Cannabis - Registry now accepting applications',
@@ -1378,9 +1379,9 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
              {[
-               { n: 'Patient / Caregiver', p: 'Free', f: ['Digital Med Card Storage', 'State Fact Access', 'L.A.R.R.Y AI Assistance', 'Concierge Support (One-time fee without sub)'], b: 'emerald' },
-               { n: 'Commercial Enterprise', p: '$499/mo', f: ['Full METRC Integration', 'Seed-to-Sale Tracking', 'Compliance Audit Shield'], b: 'blue', popular: true },
-               { n: 'Government / RIP', p: 'Custom', f: ['Real-time Intelligence (RIP)', 'Nationwide Aggregator Access', 'Executive Oversight Tools'], b: 'slate' }
+               { n: 'Basic Tier', p: '$9.99/mo', f: ['Patients: Med Card Storage & Alerts', 'Businesses: Basic Compliance Audit', 'Unified Care Wallet Access'], b: 'emerald' },
+               { n: 'Professional Tier', p: '$49.99/mo', f: ['Patients: Priority Intake & Provider Sync', 'Businesses: B2B Tax-Tracking & POS', 'Advanced Anomaly Detection'], b: 'blue', popular: true },
+               { n: 'Enterprise Hub', p: '$499/mo', f: ['Patients: Legal Admin Advocacy', 'Businesses: Full Metrc Integrator Sync', 'Nationwide RIP Intelligence Access'], b: 'slate' }
              ].map((plan, i) => (
                <div key={i} className={cn("p-10 rounded-[2.5rem] border transition-all flex flex-col relative", 
                  plan.popular ? "border-blue-500 bg-blue-50/30 shadow-2xl scale-105 z-10" : "border-slate-200 hover:border-emerald-500/30 hover:bg-emerald-50/10"
@@ -1418,6 +1419,59 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
                 </div>
               ))}
            </div>
+        </div>
+      </section>
+
+      {/* C3 Introduction Section */}
+      <section className="py-24 px-6 bg-gradient-to-br from-slate-900 to-[#1a4731] text-white relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+          <div className="grid grid-cols-12 h-full">
+            {Array.from({ length: 48 }).map((_, i) => (
+              <div key={i} className="border-r border-b border-white/20"></div>
+            ))}
+          </div>
+        </div>
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-16 relative z-10">
+          <div className="md:w-1/2 space-y-8">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-500/20 rounded-full border border-emerald-400/30 text-emerald-300 text-xs font-black uppercase tracking-widest">
+              ✨ Introducing the Industry Standard
+            </div>
+            <h2 className="text-5xl font-black tracking-tight leading-tight">
+              What is <span className="text-emerald-400">C³</span>?
+            </h2>
+            <p className="text-xl text-emerald-50/80 leading-relaxed font-medium">
+              C³ stands for **Compassion, Compliance & Community**. It is our proprietary real-time trust metric that rewards ethical participation across the Global Green ecosystem.
+            </p>
+            <div className="space-y-6">
+              {[
+                { t: 'Compassion', d: 'Rewards accessible patient care and social equity participation.' },
+                { t: 'Compliance', d: 'Verifies real-time adherence to Metrc and state statutes via L.A.R.R.Y.' },
+                { t: 'Community', d: 'Measures engagement with our educational and operational support hubs.' }
+              ].map((item, i) => (
+                <div key={i} className="flex gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center shrink-0 border border-emerald-500/30 font-black text-emerald-400">
+                    {i + 1}
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-bold text-white">{item.t}</h4>
+                    <p className="text-emerald-100/60 text-sm leading-relaxed">{item.d}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="md:w-1/2 w-full aspect-square bg-white/5 rounded-[4rem] border border-white/10 backdrop-blur-3xl flex flex-col items-center justify-center p-12 text-center relative group">
+            <div className="absolute inset-0 bg-emerald-400/20 blur-[100px] rounded-full scale-50 group-hover:scale-75 transition-transform duration-1000 opacity-50"></div>
+            <div className="text-8xl font-black text-emerald-400 mb-4 tracking-tighter relative">C³</div>
+            <div className="text-2xl font-bold text-white mb-2 relative">Score Verification Active</div>
+            <p className="text-emerald-100/40 text-sm mb-8 relative">Integrated across all GGMA, RIP, and SINC sectors</p>
+            <button 
+              onClick={() => onNavigate('larry-chatbot')}
+              className="px-10 py-4 bg-emerald-500 hover:bg-emerald-400 text-[#1a4731] rounded-2xl font-black transition-all shadow-xl shadow-emerald-500/20 relative"
+            >
+              View Your Score Potential
+            </button>
+          </div>
         </div>
       </section>
 
@@ -2675,14 +2729,22 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
 
   // Auto-save chats to Firestore whenever messages change
   useEffect(() => {
-    if (messages.length > 0) {
-      setDoc(doc(db, 'larry_chats', sessionId), {
-        messages,
-        isBusiness,
-        userEmail: businessData?.email || signupData?.email || 'anonymous',
-        lastUpdated: serverTimestamp()
-      }, { merge: true }).catch(err => console.error("Error saving chat:", err));
-    }
+    const saveChat = async () => {
+      if (messages.length > 0) {
+        try {
+          await setDoc(doc(db, 'larry_chats', sessionId), {
+            messages,
+            isBusiness,
+            userEmail: businessData?.email || signupData?.email || 'anonymous',
+            lastUpdated: serverTimestamp()
+          }, { merge: true });
+        } catch (err) {
+          // Silently fail persistence to avoid UI hangs
+          console.warn("Chat persistence skipped (expected in demo):", err);
+        }
+      }
+    };
+    saveChat();
   }, [messages, sessionId, isBusiness, businessData?.email, signupData?.email]);
   const BUSINESS_LICENSE_TYPES = [
     'Dispensary', 'Grower', 'Processor', 'Laboratory',
@@ -2718,6 +2780,19 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
   };
 
   // ── Calendly integration ─────────────────────────────────────────────────
+  // Listen for Calendly success events to automatically trigger post-booking flow
+  useEffect(() => {
+    const handleCalendlyMessage = (e: MessageEvent) => {
+      if (e.data.event && e.data.event === 'calendly.event_scheduled') {
+        // Find the "scheduled" logic in handleSend and trigger it manually
+        const scheduledText = "I have scheduled my consultation";
+        handleSend(undefined, scheduledText);
+      }
+    };
+    window.addEventListener('message', handleCalendlyMessage);
+    return () => window.removeEventListener('message', handleCalendlyMessage);
+  }, []);
+
   // Token & event type are read from .env (VITE_CALENDLY_TOKEN / VITE_CALENDLY_EVENT_TYPE)
   const CALENDLY_TOKEN = import.meta.env.VITE_CALENDLY_TOKEN as string || '';
   const CALENDLY_EVENT_TYPE = import.meta.env.VITE_CALENDLY_EVENT_TYPE as string
@@ -2853,25 +2928,34 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     
     if (!overrideText) setInputValue('');
     setIsTyping(true);
-
-    await new Promise(r => setTimeout(r, 800 + Math.random() * 600));
+    try {
+      await new Promise(r => setTimeout(r, 800 + Math.random() * 600));
 
     const lower = text.toLowerCase();
     
     // Handle Subscription Keywords
     if (lower.includes('subscription')) {
       let subResponse = '';
-      let subChoices = ['Yes, Upgrade Now', 'View All Tiers', 'Maybe Later'];
+      let subChoices = ['View All Tiers', 'Main Menu'];
       
       if (lower.includes('basic')) {
-        subResponse = '⭐ **Basic Subscription ($9.99/mo)**\n\n• Digital Med Card Storage\n• Real-time State Fact Access\n• Basic L.A.R.R.Y AI Assistance\n• 24/7 Portal Access\n\nWould you like to **Upgrade to Basic**?';
+        subResponse = `⭐ **Basic Subscription ($9.99/mo)**\n\n` +
+          `• **For Patients**: Digital Med Card Storage, automated renewal alerts, and L.A.R.R.Y basic assistance.\n` +
+          `• **For Businesses**: Essential portal access, employee verification tools, and basic compliance oversight.\n\n` +
+          `**Benefit**: Start your digital compliance journey with zero friction.`;
       } else if (lower.includes('professional')) {
-        subResponse = '💎 **Professional Subscription ($49.99/mo)**\n\n• All Basic Features\n• Priority Intake Processing\n• Direct Care Wallet B2B Transactions\n• Seed-to-Sale Preview Tools\n• Priority Support Escalation\n\nWould you like to **Upgrade to Professional**?';
+        subResponse = `💎 **Professional Subscription ($49.99/mo)**\n\n` +
+          `• **For Patients**: Priority Intake Processing, direct physician sync, and Care Wallet B2B rewards.\n` +
+          `• **For Businesses**: Priority B2B transactions, automated tax-tracking, and seed-to-sale preview tools.\n\n` +
+          `**Benefit**: Perfect for active patients and growing B2B entities.`;
       } else if (lower.includes('enterprise')) {
-        subResponse = '🚀 **Enterprise Subscription ($499.00/mo)**\n\n• All Professional Features\n• **Validated Metrc Integrator Sync**\n• Unlimited Facilities\n• 50,000 Monthly API Calls (5/sec)\n• Compliance Audit Shielding\n• Dedicated Sylara Support Agent\n\nWould you like to **Upgrade to Enterprise**?';
+        subResponse = `🚀 **Enterprise Subscription ($499.00/mo)**\n\n` +
+          `• **For Patients**: Full legal advocacy (Paralegal access), zero renewal fees forever, and 24/7 VIP Telehealth.\n` +
+          `• **For Businesses**: **Validated Metrc Integrator Sync**, SINC Audit Shield, and unlimited location management.\n\n` +
+          `**Benefit**: The total-package solution for serious operators and high-value patients.`;
       } else {
-        subResponse = 'We offer tiered subscription packages to streamline your compliance journey:\n\n⭐ **Basic**: Essential storage & AI access.\n💎 **Professional**: Priority processing & B2B tools.\n🚀 **Enterprise**: Full METRC integration & Audit Shield.\n\nWhich tier would you like to explore?';
-        subChoices = ['Basic Subscription', 'Professional Subscription', 'Enterprise Subscription', 'Back to Main'];
+        subResponse = 'We offer tiered subscription packages tailored for both Patients and Businesses:\n\n⭐ **Basic**: Essential storage & AI access.\n💎 **Professional**: Priority processing & B2B tools.\n🚀 **Enterprise**: Full METRC integration & Audit Shield.\n\nWhich tier would you like to explore?';
+        subChoices = ['Basic Subscription', 'Professional Subscription', 'Enterprise Subscription', 'Main Menu'];
       }
       
       setMessages(prev => [...prev, { role: 'bot', text: subResponse, choices: subChoices } as any]);
@@ -2899,6 +2983,78 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     let response = '';
 
     // ── Global Keywords (Always active) ──────────────────────────────────────
+    if (lower.includes('c3') || lower.includes('compassion score') || lower.includes('community score')) {
+      response = '✨ **Introducing C³ (Compassion, Compliance & Community)**\n\nThe C³ Score is the heartbeat of the Global Green ecosystem. It is a real-time trust metric that measures your positive impact on the industry.\n\n• **Compassion**: Rewarding patient care and accessibility.\n• **Compliance**: Real-time adherence to state (Metrc) and federal standards.\n• **Community**: Engagement with GGE educational and support hubs.\n\n**Benefits**: High C³ Scores unlock lower subscription fees, priority processing, and exclusive access to the L.A.R.R.Y Premium Insights.';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['View My C3 Score', 'How to Improve C3', 'Main Menu'] } as any]);
+      setIsTyping(false);
+      return;
+    }
+
+    if (lower.includes('i scheduled') || lower.includes('i have scheduled') || lower.includes('done booking') || lower.includes('booked it') || lower.includes('already scheduled') || lower === 'scheduled' || lower === 'done' || lower.includes('completed')) {
+      if (isBusiness || lower.includes('business') || lower.includes('commercial')) {
+        setIsBusiness(true);
+        response = 'Excellent! I have noted that your consultation is now scheduled. We look forward to speaking with you and reviewing your business file! 🎉\n\n' +
+          '**Since you are looking at the Commercial side, here is how you can maximize your GGP-OS experience:**\n\n' +
+          '💳 **Care Wallet**: Your unified B2B ledger for instant compliance-validated transactions and digital revenue management.\n' +
+          '⭐ **Subscription**: Our **Enterprise Hub** unlocks full **Metrc Sync**, automated **RIP oversight**, and dedicated **SINC infrastructure**.\n' +
+          '⚖️ **Legal & Admin**: Access specialized Paralegal and Legal Admin support for your entity filings.\n' +
+          '🏥 **Telehealth**: Direct provider access for certifications and renewals.\n\n' +
+          'How else can I help you navigate the platform today?';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['🏢 GGMA Licensing', '🕵️ RIP Intelligence', '🛡️ SINC Compliance', '📈 Subscription Benefits', '💰 Care Wallet Info', '👋 No thanks, Goodbye']
+        } as any]);
+      } else {
+        response = 'Excellent! I have noted that your consultation is now scheduled. We look forward to speaking with you! 🎉\n\n' +
+          '**As a Patient, here are some benefits you can explore right now:**\n\n' +
+          '⭐ **Subscription**: Professional and Enterprise tiers unlock priority card processing and physician sync.\n' +
+          '💳 **Care Wallet**: A secure digital wallet for tracking your medical purchases, renewals, and qualifying documents.\n' +
+          '🏥 **Telehealth & Legal**: Access specialized physician evaluations and legal counsel for card processing.\n\n' +
+          'How else can I help you navigate the platform today?';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['🏢 GGMA Licensing', '🏥 Telehealth & Legal', '💰 Care Wallet Info', '📈 Subscription Benefits', '👋 No thanks, Goodbye']
+        } as any]);
+      }
+      setIsTyping(false);
+      return;
+    }
+
+    if (lower.includes('goodbye') || lower.includes('no thanks') || lower.includes('i\'m done') || lower === 'exit') {
+      response = 'No problem! I understand. We welcome you back anytime if you need assistance or have further questions about the Global Green Hybrid Platform. \n\nHave a wonderful day! 👋';
+      setMessages(prev => [...prev, { role: 'bot', text: response }]);
+      setIsTyping(false);
+      setSignupStep(0);
+      return;
+    }
+
+    if (lower.includes('wallet info') || lower.includes('what is care wallet')) {
+      response = '💳 **What is the Care Wallet?**\n\nThe Care Wallet is our integrated digital ledger designed for the cannabis ecosystem. \n\n• **For Patients**: Store medical card details, track purchase history, and manage renewal dates.\n• **For Businesses**: A B2B transaction hub that ensures every dollar spent is compliance-validated and tax-ready.\n• **Benefit**: It eliminates manual reconciliation and ensures you are always "audit-ready" for L.A.R.R.Y enforcement.';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Subscription Benefits', 'Main Menu', 'Goodbye'] } as any]);
+      setIsTyping(false);
+      return;
+    }
+
+    if (lower.includes('subscription benefits') || lower.includes('why subscribe')) {
+      if (isBusiness) {
+        response = '⭐ **GGHP Business Subscriptions**\n\n• **Basic**: Essential portal access & L.A.R.R.Y oversight.\n• **Professional**: Priority B2B transactions & Care Wallet integration.\n• **Enterprise**: Full **Metrc Sync**, SINC Audit Shield, and 1-on-1 Sylara Support.\n\n**Benefit**: Stay 100% compliant and avoid costly fines with automated reporting.';
+      } else {
+        response = '⭐ **GGHP Patient Subscriptions**\n\n• **Basic**: Secure Med Card storage & L.A.R.R.Y assist.\n• **Professional**: Priority Card Processing & Provider access.\n• **Enterprise**: Complete legal coverage, zero renewal fees, and automated physician sync.\n\n**Benefit**: A worry-free cannabis journey from intake to renewal.';
+      }
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['View All Tiers', 'Goodbye'] } as any]);
+      setIsTyping(false);
+      return;
+    }
+
+    if (lower.includes('telehealth & legal') || lower.includes('attorney') || lower.includes('paralegal')) {
+      response = '⚖️ **Telehealth & Legal Services**\n\nWe connect you with licensed physicians for certifications and specialized attorneys for administrative support. \n\n**Attorney Consultation**: I am routing you to our **Paralegal & Legal Admin Team**. They will review your case facts first to find the most qualified attorney for your specific needs.\n\nWould you like to view our **Provider Directory** or speak with an **Admin/Paralegal**?';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Provider Directory', 'Speak with Admin/Paralegal', 'Main Menu', 'Goodbye'] } as any]);
+      setIsTyping(false);
+      return;
+    }
+
     if (lower.includes('consultation') || lower.includes('book 15min') || lower.includes('schedule') || lower.includes('appointment') || lower.includes('slot')) {
       if ((window as any).Calendly) {
         (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenenterprize/15-min-meeting' });
@@ -2952,6 +3108,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       }
     } else if (signupStep === 999) {
       if (lower.includes('patient')) {
+        setIsBusiness(false);
         response = '🏥 **Medical Card Assistance (2026 Rules)**\n\n' +
           'We handle the entire intake for your Patient License:\n' +
           '• **Physician Rec**: Direct booking for **$35.00**.\n' +
@@ -2963,9 +3120,11 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
           text: response,
           choices: ['Book Physician ($45)', 'Speak with Shantell', 'Start Patient Intake'] 
         } as any]);
+        setIsBusiness(false);
         setIsTyping(false);
         return;
       } else if (lower.includes('business') || lower.includes('commercial')) {
+        setIsBusiness(true);
         response = '🏢 **Commercial Business License Assistance**\n\n' +
           'We provide full-spectrum support for Oklahoma Cannabis Businesses:\n' +
           '• **Entity Setup**: LLC/Corp registration for OMMA compliance.\n' +
@@ -2977,6 +3136,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
           text: response,
           choices: ['Book Business Consultation', 'Start Business Intake', 'View Fee Schedule'] 
         } as any]);
+        setIsBusiness(true);
         setIsTyping(false);
         return;
       } else {
@@ -4062,8 +4222,9 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     }
   }
 
-    setMessages(prev => [...prev, { role: 'bot', text: response }]);
-    setIsTyping(false);
+    } finally {
+      setIsTyping(false);
+    }
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
