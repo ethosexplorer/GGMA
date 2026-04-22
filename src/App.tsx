@@ -2898,6 +2898,19 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
 
     let response = '';
 
+    // ── Global Keywords (Always active) ──────────────────────────────────────
+    if (lower.includes('consultation') || lower.includes('book 15min') || lower.includes('schedule') || lower.includes('appointment') || lower.includes('slot')) {
+      if ((window as any).Calendly) {
+        (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenenterprize/15-min-meeting' });
+        response = 'I have opened our secure booking portal for you! Please pick a slot that works best for your 15-minute consultation. 📅';
+      } else {
+        response = 'Sure! You can book your 15-minute consultation instantly via our secure portal: \n\n🔗 **[Book 15min Consultation](https://calendly.com/globalgreenenterprize/15-min-meeting)**';
+      }
+      setMessages(prev => [...prev, { role: 'bot', text: response }]);
+      setIsTyping(false);
+      return;
+    }
+
     if (signupStep === 0) {
       if (lower.includes('ggma') || lower.includes('oklahoma') || lower.includes('omma') || lower.includes('assistance')) {
         response = '🏢 **GGMA Licensing & Assistance**\n\nI can assist you with your regulatory requirements. To provide the correct guidance, is your inquiry regarding a **Patient License** or a **Commercial Business License**?';
@@ -3972,11 +3985,6 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       } else {
         response = '**Documents Required for GGMA Application:**\n\nTo complete your submission *within this application*, please have ready:\n\n📄 **Government-issued photo ID** (Driver\'s License or State ID)\n📄 **Proof of state residency** (utility bill, lease, or voter registration)\n📄 **Physician recommendation/certification**\n\nYou will be able to securely upload all of these directly in Step 3 of our Patient Signup process! Click **Back** -> **Sign up** to begin.';
       }
-    } else if (lower.includes('book') || lower.includes('appointment') || lower.includes('schedule') || lower.includes('available time') || lower.includes('slot')) {
-      // Direct booking intent — jump straight to slot picker
-      setSignupStep(11);
-      if (availableSlots.length === 0) fetchCalendlySlots();
-      response = `Sure! Here are our available appointment times. Pick a slot and I’ll lock it in for you! 📅`;
     } else if (lower.includes('start') || lower.includes('begin') || lower.includes('ready')) {
       if (isBusiness) {
         setSignupStep(98);
@@ -3999,13 +4007,6 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       } else {
         response = 'No problem. If you\'re not ready for an appointment, I can help you with **GGMA Licensing** or **IT Support**. What would you like to explore?';
         setSignupStep(0);
-      }
-    } else if (lower.includes('consultation') || lower.includes('book 15min') || lower.includes('schedule')) {
-      if ((window as any).Calendly) {
-        (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenenterprize/15-min-meeting' });
-        response = 'I have opened our secure booking portal for you! Please pick a 15-minute slot that works best for your consultation. 📅';
-      } else {
-        response = 'Sure! You can book your 15-minute consultation instantly via our secure portal: \n\n🔗 **[Book 15min Consultation](https://calendly.com/globalgreenenterprize/15-min-meeting)**';
       }
     } else if (lower.includes('business expert') || lower.includes('commercial consultant')) {
       response = '🏢 **Commercial Compliance Consultation**\n\nI am routing you to our **Business Licensing Experts**. Please leave a **detailed message** in the booking notes about your business entity type.\n\n📞 **Business Line**: 405-492-7297\n🔗 **[Book Business Consultation](https://calendly.com/globalgreenenterprize/15-min-meeting)**';
