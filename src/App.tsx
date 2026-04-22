@@ -2904,6 +2904,14 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     'OK Driver\'s License', 'OK State ID', 'Passport', 'Tribal ID'
   ];
 
+  const getPatientRequiredDocuments = () => [
+    'Proof of Identity (Front)',
+    'Proof of Identity (Back)',
+    'Proof of Residency',
+    'Medical Records (Optional)',
+    'Digital Photo (Selfie)'
+  ];
+
   const getRequiredDocuments = () => {
     const base = [
       'Affidavit of Lawful Presence',
@@ -3167,7 +3175,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
 
     if (lower.includes('goodbye') || lower.includes('no thanks') || lower.includes('i\'m done') || lower === 'exit') {
       response = 'No problem! I understand. We welcome you back anytime if you need assistance or have further questions about the Global Green Hybrid Platform. \n\nHave a wonderful day! 👋';
-      setMessages(prev => [...prev, { role: 'bot', text: response }]);
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] }]);
       setIsTyping(false);
       setSignupStep(0);
       return;
@@ -3238,7 +3246,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     if (lower.includes('review') || lower.includes('video review')) {
       window.open('https://vocalvideo.com/c/ccardzmedcard-com-as6sui63', '_blank');
       response = 'Thank you for sharing your experience! Your testimonial helps build the **GGMA Sector** community trust. 💚';
-      setMessages(prev => [...prev, { role: 'bot', text: response }]);
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] }]);
       setIsTyping(false);
       return;
     }
@@ -3255,32 +3263,74 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         setIsTyping(false);
         return;
       } else if (lower.includes('rip')) {
-        response = '🕵️ **RIP (Regulatory Intelligence Policing)** handles enforcement, background verification, and intelligence oversight for the ecosystem.\n\nOur RIP agents ensure that all participants meet strict security and compliance standards. Would you like to speak with a RIP Intelligence officer or view the oversight portal?';
-        setSignupStep(0); 
-      } else if (lower.includes('sinc')) {
-        response = '🛡️ **SINC (Secure Infrastructure & Network Compliance)** provides the encrypted backbone and audit-trail infrastructure for GGHP.\n\nWe ensure that all business operations are 100% compliant with state and federal regulations. Do you need help setting up SINC compliance for your business?';
-        setSignupStep(0);
-      } else if (lower.includes('telehealth')) {
-        response = '🏥 **Telehealth Services**\n\nOur network provides direct access to licensed providers for medical recommendations. You can book an appointment directly through our integrated booking system.\n\nWould you like to **Book a Consultation** now?';
+        response = '🕵️ **RIP (Regulatory Intelligence Policing)** handles enforcement, background verification, and intelligence oversight.\n\nAre you a **Regulatory Officer** or a **Business Owner** seeking intelligence services?';
         setMessages(prev => [...prev, { 
           role: 'bot', 
           text: response,
-          choices: ['Book Consultation', 'Speak with Shantell', 'Not Now'] 
+          choices: ['Regulatory Officer', 'Business Owner', 'Main Menu'] 
         } as any]);
-        setSignupStep(10);
+        setSignupStep(400);
+        setIsTyping(false);
+        return;
+      } else if (lower.includes('sinc')) {
+        response = '🛡️ **SINC (Secure Infrastructure & Network Compliance)** provides the encrypted backbone and audit-trail infrastructure for GGHP.\n\nWhich compliance area do you need to secure today?';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Audit Shield', 'Network Integrity', 'Secure Records', 'Main Menu'] 
+        } as any]);
+        setSignupStep(500);
+        setIsTyping(false);
+        return;
+      } else if (lower.includes('telehealth')) {
+        response = '🏥 **Telehealth Services**\n\nOur network provides direct access to licensed providers for medical recommendations.\n\nWho is the evaluation for?';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['New Patient Evaluation', 'Renewal Evaluation', 'Main Menu'] 
+        } as any]);
+        setSignupStep(700);
         setIsTyping(false);
         return;
       } else if (lower.includes('it support') || lower.includes('technical')) {
-        response = '💻 **IT & Technical Support**\n\nI can help resolve technical issues with your portal, Care Wallet, or application status. Please describe the issue you are experiencing, or type **"agent"** to speak with a technician.';
-        setSignupStep(0);
+        response = '💻 **IT & Technical Support**\n\nI can help resolve technical issues with your portal, Care Wallet, or application status.\n\nWhat category does your issue fall into?';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Care Wallet Issue', 'Portal Login', 'Metrc Sync Error', 'Hardware Support', 'Main Menu'] 
+        } as any]);
+        setSignupStep(600);
+        setIsTyping(false);
+        return;
       } else if (lower.includes('legal') || lower.includes('administration')) {
-        response = '⚖️ **Legal & Administration**\n\nOur legal team handles compliance auditing, contract management, and regulatory filings. For administration inquiries, we handle account oversight and records management.\n\nWhich department would you like to reach?';
+        response = '⚖️ **Legal & Administration**\n\nOur legal team handles compliance auditing, contract management, and regulatory filings.\n\nWhich department do you need?';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Speak with Admin/Paralegal', 'Legal Advocacy', 'Main Menu'] 
+        } as any]);
         setSignupStep(0);
+        setIsTyping(false);
+        return;
       } else if (lower.includes('start') || lower.includes('apply') || lower.includes('license')) {
-        response = 'Great! Can I create an account for you to begin your application? (Yes / No)';
+        response = 'Great! Can I create an account for you to begin your application?';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Yes', 'No'] 
+        } as any]);
         setSignupStep(99);
+        setIsTyping(false);
+        return;
       } else {
         response = 'I\'m here to help you navigate the **Global Green Hybrid Platform (GGHP)**. \n\nYou can ask me about **GGMA Licensing**, **RIP Enforcement**, **SINC Compliance**, or general services like **Telehealth** and **IT Support**.\n\nWhat would you like to explore first?';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: getInitialChoices()
+        } as any]);
+        setIsTyping(false);
+        return;
       }
     } else if (signupStep === 999) {
       if (lower.includes('start patient intake')) {
@@ -3327,6 +3377,13 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         return;
       } else {
         response = 'Please specify if you are looking for a **Patient** or **Commercial Business** license.';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Patient Licensing', 'Business Licensing'] 
+        } as any]);
+        setIsTyping(false);
+        return;
       }
     } else if (signupStep === 98) {
       if (lower.includes('first') || lower.includes('new')) {
@@ -3337,6 +3394,13 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         setSignupStep(97);
       } else {
         response = 'Please specify if you are a **first time user** or a **returning user**.';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['First Time User', 'Returning User'] 
+        } as any]);
+        setIsTyping(false);
+        return;
       }
     } else if (signupStep === 97) {
       setBusinessData(prev => ({ ...prev, email: text }));
@@ -3347,7 +3411,14 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       setBusinessData(prev => ({ ...prev, password: text }));
       setSignupData(prev => ({ ...prev, password: text }));
       response = '✅ **Thank you!**\n\nAre you applying for a **New application** or a **Renewal application**?';
+      setMessages(prev => [...prev, { 
+        role: 'bot', 
+        text: response,
+        choices: ['New Application', 'Renewal Application'] 
+      } as any]);
       setSignupStep(95);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 95) {
       if (lower.includes('new')) {
         if (isBusiness) {
@@ -3371,6 +3442,13 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         }
       } else {
         response = 'Please specify if this is a **New application** or a **Renewal application**.';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['New Application', 'Renewal Application'] 
+        } as any]);
+        setIsTyping(false);
+        return;
       }
     } else if (signupStep === 99) {
       if (lower === 'yes' || lower === 'yeah' || lower === 'yep' || lower.includes('sure') || lower.includes('ok')) {
@@ -3389,6 +3467,13 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         fetchCalendlySlots();
       } else {
         response = 'Please answer **Yes** or **No**. Can I create an account for you to begin your application?';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Yes', 'No'] 
+        } as any]);
+        setIsTyping(false);
+        return;
       }
     } else if (signupStep === 20) {
       // License Eligibility: Are you a Patient Or Legal Guardian?
@@ -3403,6 +3488,13 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         setSignupStep(22);
       } else {
         response = 'Please answer **Yes** or **No**. Are you a **Patient Or Legal Guardian**?';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Yes', 'No'] 
+        } as any]);
+        setIsTyping(false);
+        return;
       }
     } else if (signupStep === 21) {
       // License Eligibility: Are you an Oklahoma State Resident?
@@ -3417,6 +3509,13 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         setSignupStep(23);
       } else {
         response = `Please answer **Yes** or **No**. Are you a **${stateName} State Resident**?`;
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Yes', 'No'] 
+        } as any]);
+        setIsTyping(false);
+        return;
       }
     } else if (signupStep === 22) {
       // License Eligibility: Are you a Caregiver? (only reached when NOT patient/guardian)
@@ -3431,6 +3530,13 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         setSignupStep(0);
       } else {
         response = 'Please answer **Yes** or **No**. Are you a **Caregiver**?';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Yes', 'No'] 
+        } as any]);
+        setIsTyping(false);
+        return;
       }
     } else if (signupStep === 23) {
       // License Eligibility: Are you applying for an adult patient license?
@@ -3467,6 +3573,13 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         }
       } else {
         response = 'Please answer **Yes** or **No**. Are you applying for an **adult patient license**?';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Yes', 'No'] 
+        } as any]);
+        setIsTyping(false);
+        return;
       }
     } else if (signupStep === 25) {
       // License selection from multiple options
@@ -3503,6 +3616,14 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         response = `Excellent. What is your **Email Address**?`;
       } else {
         response = `⚠️ You must be 21+ to use this platform. If you are a minor patient, please have a legal guardian start the application.`;
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Main Menu'] 
+        } as any]);
+        setSignupStep(0);
+        setIsTyping(false);
+        return;
       }
     } else if (signupStep === 2) {
       if (!text.includes('@') || !text.includes('.')) {
@@ -3550,11 +3671,25 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     } else if (signupStep === 8) {
       setSignupData(prev => ({ ...prev, appType: text }));
       setSignupStep(9);
-      response = `Have you registered your account under the **New MMJ Portal**? (Yes / No)`;
+      response = `Have you registered your account under the **New MMJ Portal**?`;
+      setMessages(prev => [...prev, { 
+        role: 'bot', 
+        text: response,
+        choices: ['Yes', 'No'] 
+      } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 9) {
       setSignupData(prev => ({ ...prev, portalRegistered: lower.includes('yes') }));
       setSignupStep(10.1);
-      response = `Do you have a **Primary Care Provider**? (Yes / No)`;
+      response = `Do you have a **Primary Care Provider**?`;
+      setMessages(prev => [...prev, { 
+        role: 'bot', 
+        text: response,
+        choices: ['Yes', 'No'] 
+      } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 10.1) {
       if (lower.includes('yes')) {
         setSignupStep(11.1);
@@ -3570,7 +3705,14 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     } else if (signupStep === 12) {
       setSignupData(prev => ({ ...prev, qualifyingCondition: text }));
       setSignupStep(13);
-      response = `Do you have any **Allergies**? (Yes / No)`;
+      response = `Do you have any **Allergies**?`;
+      setMessages(prev => [...prev, { 
+        role: 'bot', 
+        text: response,
+        choices: ['Yes', 'No'] 
+      } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 13) {
       setSignupData(prev => ({ ...prev, allergies: text }));
       setSignupStep(14);
@@ -3578,16 +3720,33 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     } else if (signupStep === 14) {
       setSignupData(prev => ({ ...prev, lastDoctorVisit: text }));
       setSignupStep(15);
-      response = `📋 **Document Upload Center**\n\nI need a few documents to complete your file. Please follow the prompts below:\n\n1. **Medical Records** (if any)\n2. **Front & Back of your ID** (All 4 corners visible)\n3. **Digital Selfie** (White wall, no smile)\n4. **Insurance Cards** (if any)\n\nAre you ready to upload your **Medical Records**? (Yes / Skip)`;
+      response = `📋 **Document Upload Center**\n\nI need a few documents to complete your file. Please follow the prompts in the **Upload Panel** below.\n\nYou must upload all required documents before we can proceed to the final step.\n\nAre you ready to begin uploads?`;
+      setMessages(prev => [...prev, { 
+        role: 'bot', 
+        text: response,
+        choices: ['Ready to Upload', 'Skip for Now'] 
+      } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 15) {
-      // Transition to File Upload UI
-      setSignupStep(16);
-      response = `Please upload your **Medical Records** or previous certification files. If you don't have them, you can click skip.`;
-    } else if (signupStep >= 16 && signupStep <= 18) {
-       if (lower === 'done' || lower === 'continue') {
-         setSignupStep(19);
-         response = `Final step: Would you like to **Opt-In** to subscribe for 2-way messaging for renewal alerts and status updates? (Yes / No)`;
-       }
+      if (lower.includes('ready')) {
+        setSignupStep(16);
+        response = `Please use the **Patient Document Upload Center** below. Once all documents are uploaded, the continue button will activate.`;
+      } else {
+        setSignupStep(19);
+        response = `Understood. You can upload them later in your portal. \n\nFinal step: Would you like to **Opt-In** to subscribe for 2-way messaging for renewal alerts and status updates?`;
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Yes', 'No'] } as any]);
+        setIsTyping(false);
+        return;
+      }
+    } else if (signupStep === 16) {
+      if (lower === 'done' || lower === 'continue') {
+        setSignupStep(19);
+        response = `Excellent. Final step: Would you like to **Opt-In** to subscribe for 2-way messaging for renewal alerts and status updates?`;
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Yes', 'No'] } as any]);
+        setIsTyping(false);
+        return;
+      }
     } else if (signupStep === 19) {
       setSignupData(prev => ({ ...prev, smsOptIn: lower.includes('yes') }));
       setSignupStep(19.5);
@@ -3680,9 +3839,23 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         response = '✅ **Registration Complete!**\n\n**Section 2: Account Recognition**\n\n📧 An email will be sent to your registered email address. Click the link in the email to confirm your address and begin the application process.\n\n**Section 3: General Information**\n\nWhat is the **Individual Owner Name or Primary Entity Name** for the commercial establishment?';
         setSignupStep(105);
       } else if (lower === 'no' || lower === 'nope') {
-        response = 'You must accept the Terms and Conditions to proceed. Do you accept the **Terms and Conditions**? (Yes / No)';
+        response = 'You must accept the Terms and Conditions to proceed. Do you accept the **Terms and Conditions**?';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Yes', 'No'] 
+        } as any]);
+        setIsTyping(false);
+        return;
       } else {
         response = 'Please answer **Yes** or **No**. Do you accept the **Terms and Conditions**?';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Yes', 'No'] 
+        } as any]);
+        setIsTyping(false);
+        return;
       }
     }
     // Section 3: General Information
@@ -3707,8 +3880,15 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       }
       if (selectedType) {
         setBusinessData(prev => ({ ...prev, licenseType: selectedType }));
-        response = `You selected: **${selectedType}**.\n\nWould you like to review the Oklahoma fee structure for this license type before we continue? (Yes / No)`;
+        response = `You selected: **${selectedType}**.\n\nWould you like to review the Oklahoma fee structure for this license type before we continue?`;
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Yes', 'No'] 
+        } as any]);
         setSignupStep(1065);
+        setIsTyping(false);
+        return;
       } else {
         response = 'Please select a valid license type (1-8).\n\n' + BUSINESS_LICENSE_TYPES.map((t, i) => `${i + 1}. ${t}`).join('\n');
       }
@@ -3863,6 +4043,13 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         setSignupStep(122);
       } else {
         response = 'Please answer **Yes** or **No**. Do you need to add another owner/officer?';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Yes', 'No'] 
+        } as any]);
+        setIsTyping(false);
+        return;
       }
     }
     // Section 5: Location Information
@@ -3879,8 +4066,15 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
           const lon = parseFloat(geoData[0].lon).toFixed(6);
           const coords = `${lat}, ${lon}`;
           setBusinessData(prev => ({ ...prev, gpsCoordinates: coords }));
-          response = `📍 I found the **GPS Coordinates** for your address:\n\n**Latitude:** ${lat}\n**Longitude:** ${lon}\n**Coordinates:** ${coords}\n\nAre these coordinates correct? (Yes / No)`;
+          response = `📍 I found the **GPS Coordinates** for your address:\n\n**Latitude:** ${lat}\n**Longitude:** ${lon}\n**Coordinates:** ${coords}\n\nAre these coordinates correct?`;
+          setMessages(prev => [...prev, { 
+            role: 'bot', 
+            text: response,
+            choices: ['Yes', 'No'] 
+          } as any]);
           setSignupStep(123);
+          setIsTyping(false);
+          return;
         } else {
           response = 'I could not find GPS coordinates for that address. Please enter the **GPS Coordinates** (Latitude & Longitude) manually. You can look them up at [gps-coordinates.org](https://gps-coordinates.org/)';
           setSignupStep(123);
@@ -3894,7 +4088,14 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       // If user confirms auto-geocoded coordinates
       if ((lower === 'yes' || lower === 'yeah' || lower === 'yep') && businessData.gpsCoordinates) {
         response = 'Is the **Mailing Address** for the establishment different from the physical address? If so, provide it. (Type **"same"** if same)';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Same as Physical', 'Different Address'] 
+        } as any]);
         setSignupStep(124);
+        setIsTyping(false);
+        return;
       } else if (lower === 'no' || lower === 'nope') {
         setBusinessData(prev => ({ ...prev, gpsCoordinates: '' }));
         response = 'No problem! Please enter the correct **GPS Coordinates** (Latitude & Longitude) manually. You can look them up at [gps-coordinates.org](https://gps-coordinates.org/)';
@@ -3941,8 +4142,15 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         '8️⃣ The business has obtained all applicable **local licenses and permits**.\n' +
         '9️⃣ No individual with ownership interest is a **law enforcement officer** or OMMA employee.\n' +
         '🔟 You understand responsibilities for **transporter agent ID cards** and **security measures**.\n\n' +
-        'Do you **confirm and attest** to all of the above? (Yes / No)';
+        'Do you **confirm and attest** to all of the above?';
+      setMessages(prev => [...prev, { 
+        role: 'bot', 
+        text: response,
+        choices: ['Yes, I Attest', 'No'] 
+      } as any]);
       setSignupStep(130);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 130) {
       if (lower === 'yes' || lower === 'yeah' || lower === 'yep') {
         setBusinessData(prev => ({ ...prev, attestationsConfirmed: true }));
@@ -4000,6 +4208,13 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         setSignupStep(134);
       } else {
         response = 'Please reply with **1** (Surety Bond) or **2** (Land Ownership).';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['1. Surety Bond', '2. Land Ownership'] 
+        } as any]);
+        setIsTyping(false);
+        return;
       }
     } else if (signupStep === 133) {
       if (lower === 'yes' || lower === 'yeah' || lower === 'yep') {
@@ -4010,6 +4225,13 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         setSignupStep(0);
       } else {
         response = 'Please answer **Yes** or **No**. Are you ready to submit your application?';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Yes', 'No'] 
+        } as any]);
+        setIsTyping(false);
+        return;
       }
     }
     // ── Step 134: Application Review ──
@@ -4025,6 +4247,13 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         response = '✅ **Changes Saved!**\n\nNow that we have finished your application, you will receive a callback to **REVIEW** application to ensure 1st time approval accuracy, then **PAY** your state fee and then **SUBMIT** your application for state approval of business license.\n\nPlease review your updated application and type **"confirm"** to proceed to payment, or **"edit"** to make more changes.';
       } else {
         response = 'Please review your application above and type **"confirm"** to proceed to payment, or **"edit"** if you need to make changes.';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Confirm & Proceed', 'Edit Application'] 
+        } as any]);
+        setIsTyping(false);
+        return;
       }
     }
     // ── Cost & Fees Flow ──
@@ -4126,8 +4355,15 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       }
       if (selectedType) {
         setBusinessData(prev => ({ ...prev, licenseType: selectedType }));
-        response = `You selected: **${selectedType}**.\n\nAre you ready to start your **Commercial License Application**? (Yes / No)`;
+        response = `You selected: **${selectedType}**.\n\nAre you ready to start your **Commercial License Application**?`;
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Yes', 'No'] 
+        } as any]);
         setSignupStep(203);
+        setIsTyping(false);
+        return;
       } else {
         response = 'Please select a valid license type (1-8).\n\n' + BUSINESS_LICENSE_TYPES.map((t, i) => `${i + 1}. ${t}`).join('\n');
       }
@@ -4140,6 +4376,13 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         setSignupStep(0);
       } else {
         response = 'Please answer **Yes** or **No**. Are you ready to start the application?';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Yes', 'No'] 
+        } as any]);
+        setIsTyping(false);
+        return;
       }
     }
     // ── Patient Fee Flow ──
@@ -4293,9 +4536,23 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       if (isBusiness) {
         setSignupStep(98);
         response = 'Are you a **first time user** or **returning user**?';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['First Time User', 'Returning User'] 
+        } as any]);
+        setIsTyping(false);
+        return;
       } else {
         setSignupStep(99);
-        response = 'Excellent. I can help you establish your secure profile to begin the official intake process. Shall we proceed with creating your account? (Yes / No)';
+        response = 'Excellent. I can help you establish your secure profile to begin the official intake process. Shall we proceed with creating your account?';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Yes', 'No'] 
+        } as any]);
+        setIsTyping(false);
+        return;
       }
     } else if (signupStep === 10) {
       if (lower.includes('yes') || lower.includes('book') || lower.includes('ready') || lower.includes('consultation')) {
@@ -4997,6 +5254,89 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
                     </button>
                   ))}
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── Patient Document Upload Panel — shown during step 16 ── */}
+          {signupStep === 16 && (
+            <div className="flex justify-start gap-3">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
+                <Bot size={18} />
+              </div>
+              <div className="flex-1 max-w-[90%] bg-white border border-slate-200/80 rounded-2xl rounded-bl-md shadow-sm p-5">
+                <p className="text-sm font-bold text-slate-800 mb-1">🏥 Patient Document Upload</p>
+                <p className="text-xs text-slate-500 mb-4">Click on each document to upload. All documents must be verified before proceeding.</p>
+
+                {/* Document Checklist */}
+                <div className="space-y-2 mb-5">
+                  {getPatientRequiredDocuments().map((docName) => {
+                    const isUploaded = !!uploadedDocuments[docName];
+                    return (
+                      <div
+                        key={docName}
+                        className={`flex items-center gap-3 p-3 rounded-xl border transition-all cursor-pointer group ${
+                          isUploaded
+                            ? 'bg-emerald-50 border-emerald-200'
+                            : 'bg-slate-50 border-slate-200 hover:bg-amber-50 hover:border-amber-300'
+                        }`}
+                        onClick={() => {
+                          if (!isUploaded) {
+                            setPendingDocLabel(docName);
+                            fileInputRef.current?.click();
+                          }
+                        }}
+                      >
+                        {isUploaded ? (
+                          <CircleCheck size={20} className="text-emerald-500 shrink-0" />
+                        ) : (
+                          <Circle size={20} className="text-slate-300 group-hover:text-amber-400 shrink-0" />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className={`text-sm font-medium truncate ${isUploaded ? 'text-emerald-700' : 'text-slate-700'}`}>{docName}</p>
+                          {isUploaded && (
+                            <p className="text-xs text-emerald-500 truncate">✓ {uploadedDocuments[docName]}</p>
+                          )}
+                        </div>
+                        {!isUploaded && (
+                          <span className="text-xs text-slate-400 group-hover:text-amber-600 font-medium shrink-0">Click to upload</span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Upload progress bar */}
+                <div className="mb-4">
+                  <div className="flex justify-between items-center mb-1.5">
+                    <span className="text-xs font-semibold text-slate-600">
+                      {Object.keys(uploadedDocuments).length} / {getPatientRequiredDocuments().length} documents uploaded
+                    </span>
+                    <span className="text-xs font-bold text-emerald-600">
+                      {Math.round((Object.keys(uploadedDocuments).length / getPatientRequiredDocuments().length) * 100)}%
+                    </span>
+                  </div>
+                  <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full transition-all duration-500 ease-out"
+                      style={{ width: `${(Object.keys(uploadedDocuments).length / getPatientRequiredDocuments().length) * 100}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Proceed button - only enabled when all docs uploaded */}
+                {Object.keys(uploadedDocuments).length >= getPatientRequiredDocuments().length ? (
+                  <button
+                    onClick={() => handleSend(undefined, 'continue')}
+                    className="mt-4 w-full py-3 bg-gradient-to-r from-[#1a4731] to-emerald-600 text-white rounded-xl text-sm font-bold hover:from-[#0f2a1f] hover:to-emerald-700 transition-all shadow-md shadow-emerald-200/50"
+                  >
+                    ✅ Documents Uploaded — Continue
+                  </button>
+                ) : (
+                  <div className="mt-4 w-full py-3 bg-slate-100 text-slate-400 rounded-xl text-sm font-medium text-center cursor-not-allowed border border-slate-200">
+                    ⏳ Upload all required documents to proceed
+                  </div>
+                )}
               </div>
             </div>
           )}
