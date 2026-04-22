@@ -904,4 +904,38 @@ C3 SCORE IMPACT (LAB COMPLIANCE & RI SENSITIVITY)
 C3 Score = 35% Payment Discipline + 25% Care Points + 20% Compliance/Larry + 10% Insurance + 5% Tenure + 5% Alt Data.
 Lab Compliance Sub-weighting (inside 20% bucket): Clean COAs (40%), RI Sensitivity/Accuracy (30%), State Routing (20%), Audit Logging (10%).
 Accurate RI flagging boosts C3 Score. Labs with 95%+ RI accuracy unlock Gold tier.
+
+=== CORPORATE ENTITY DATA (SAM.GOV) ===
+
+ENTITY: GLOBAL GREEN ENTERPRISE INC
+UEI: SCXFBFXTDFN1
+Legal Business Name: GLOBAL GREEN ENTERPRISE INC
+Physical Address: 2831 NE 23rd St Ste B, Oklahoma City, OK 73121-2437 USA
+EIN: *****1574
+Structure: Corporate Entity, Not Tax Exempt
+Socio-Economic: Women-Owned Business, WOSB, Minority-Owned Business, Black American Owned, American Indian Owned.
+Bank: MIDDLESEX FED. SAVINGS, F.A. (Routing: *******50, Account: *******43)
+NAICS: 541511 (Programming), 541611 (Management), 541620 (Environmental), 541690 (Technical), 624190 (Family Services), 813319 (Social Advocacy).
+Vendor Portals:
+- BizNet CT (https://biznet.ct.gov/AccountMaint/Login.aspx | Email: globalgreenenterprize@gmail.com)
+POC: SHANTELL ROBINSON, globalgreenenterprize@gmail.com, (405)541-8222.
+
+ENTITY: DIVERSITY HEALTH AND WELLNESS LLC
+UEI: TY1BQ3XK3925 | CAGE: 9KXZ2
+Legal Business Name: DIVERSITY HEALTH AND WELLNESS LLC
+DBA: Diversity Health Network
+Physical Address: 2831 NE 23RD ST STE B, Oklahoma City, OK 73121-2437 USA
+EIN: *****9297
+Structure: Sole Proprietorship, LLC
+Socio-Economic: Minority-Owned, Self Certified SDB, WOSB, Women-Owned, Labor Surplus Area Firm, Black American Owned, American Indian Owned.
+Bank: MIDDLESEX FED. SAVINGS, F.A. (Routing: *******50, Account: *******45)
+Vendor Portals: 
+- OK Supplier Portal (ID: 0000633448 | User: Diversity1)
+- BidNet Direct (Active)
+- BizNet CT (https://biznet.ct.gov/AccountMaint/Login.aspx)
+Bidding Links:
+- OK State Solicitations: https://www.ok.gov/dcs/solicit/app/contractSearch.php
+- OKC Municipal Bids: https://www.okc.gov/Infrastructure-Development/Bids-Auctions-and-Sales/Bidding
+Contract Eligibility: Municipal, City, County, State, and Federal.
+POC: Shantell Robinson, diversityhealthandwellness@gmail.com, 405 492-7297.
 `;

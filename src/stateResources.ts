@@ -544,7 +544,11 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     regulator: "Oklahoma Medical Marijuana Authority",
     compliancePage: "https://oklahoma.gov/omma/businesses/inspections-and-compliance.html",
     checklistItems: ["Post-approval checklist","OBNDD registration","METRC","Tax compliance","Fire/safety","Water compliance"],
-    complianceSource: "https://oklahoma.gov/omma/businesses/inspections-and-compliance.html"
+    complianceSource: "https://oklahoma.gov/omma/businesses/inspections-and-compliance.html",
+    biddingPortals: {
+      state: "https://www.ok.gov/dcs/solicit/app/contractSearch.php",
+      city: "https://www.okc.gov/Infrastructure-Development/Bids-Auctions-and-Sales/Bidding"
+    }
   },
   "Oregon": {
     program: "https://www.oregon.gov/oha/ph/diseasesconditions/chronicdisease/medicalmarijuanaprogram/pages/forms.aspx",
