@@ -68,7 +68,8 @@ import {
   Gavel,
   Headphones,
   Phone,
-  Star
+  Star,
+  ArrowUpCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from './lib/utils';
