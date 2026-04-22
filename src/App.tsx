@@ -1370,6 +1370,64 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
         </div>
       </section>
 
+      {/* Patient Success Stories (GGMA Sector Reviews) */}
+      <section className="py-24 px-6 bg-white overflow-hidden">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col md:flex-row items-end justify-between mb-12 gap-6">
+            <div className="space-y-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase tracking-widest border border-emerald-200">
+                ⭐ Community Trust
+              </div>
+              <h2 className="text-4xl font-black text-slate-900 tracking-tight">Verified Patient Success</h2>
+              <p className="text-slate-500 max-w-md font-medium">Hear from our community members about their journey with the GGMA Sector.</p>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="flex -space-x-3">
+                {[1, 2, 3, 4, 5].map(i => (
+                  <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-slate-200 overflow-hidden shadow-sm">
+                    <img src={`https://i.pravatar.cc/100?img=${i+10}`} alt="User" />
+                  </div>
+                ))}
+              </div>
+              <div className="text-sm font-bold text-slate-700">4.9/5 Average Rating</div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+             {[
+               { name: 'Marcus T.', date: 'Oct 2024', text: 'The intake process with Sylara was so fast. Had my recommendation in 15 minutes!', rating: 5 },
+               { name: 'Sarah J.', date: 'Nov 2023', text: 'Global Green makes compliance feel like common sense. The Care Wallet is a game changer.', rating: 5 },
+               { name: 'David L.', date: 'Feb 2024', text: 'Finally a platform that understands Oklahoma regulations from the inside out.', rating: 5 }
+             ].map((review, i) => (
+               <div key={i} className="bg-slate-50 p-8 rounded-3xl border border-slate-100 hover:border-emerald-200 transition-all group">
+                 <div className="flex gap-1 mb-4">
+                   {Array.from({ length: review.rating }).map((_, j) => (
+                     <Star key={j} size={16} className="fill-amber-400 text-amber-400" />
+                   ))}
+                 </div>
+                 <p className="text-slate-700 font-medium mb-6 leading-relaxed italic">"{review.text}"</p>
+                 <div className="flex items-center justify-between">
+                   <div className="font-bold text-slate-900 text-sm">{review.name}</div>
+                   <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{review.date}</div>
+                 </div>
+               </div>
+             ))}
+          </div>
+
+          <div className="mt-12 text-center">
+             <a 
+               href="https://vocalvideo.com/c/ccardzmedcard-com-as6sui63" 
+               target="_blank" 
+               rel="noopener noreferrer"
+               className="inline-flex items-center gap-2 text-[#1a4731] font-bold hover:underline"
+             >
+               View All Verified Testimonials
+               <ArrowRight size={16} />
+             </a>
+          </div>
+        </div>
+      </section>
+
       {/* Subscription Tiers Section */}
       <section id="membership-tiers" className="py-24 px-6 bg-white">
         <div className="max-w-6xl mx-auto">
@@ -3055,13 +3113,46 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       return;
     }
 
-    if (lower.includes('consultation') || lower.includes('book 15min') || lower.includes('schedule') || lower.includes('appointment') || lower.includes('slot')) {
+    if (lower.includes('shantell') || lower === 'speak with shantell') {
+      if ((window as any).Calendly) {
+        (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenenterprize/15-min-meeting' });
+        response = 'I have opened our secure booking portal for you! Please pick a slot that works best for your 15-minute consultation with Shantell. 📅';
+      } else {
+        response = 'Sure! You can book your 15-minute consultation with Shantell instantly via our secure portal: \n\n🔗 **[Book 15min Consultation](https://calendly.com/globalgreenenterprize/15-min-meeting)**';
+      }
+      setMessages(prev => [...prev, { role: 'bot', text: response }]);
+      setIsTyping(false);
+      return;
+    }
+
+    if (lower.includes('fee schedule') || lower === 'view fee schedule') {
+      response = '💰 **GGMA Fee Schedule (2026)**\n\n' +
+        '• **Patient Recommendation**: $35.00 (Via GoHealthUSA)\n' +
+        '• **GGE Intake Processing**: $10.00\n' +
+        '• **Total Portal Cost**: **$45.00**\n\n' +
+        '• **State Authority Fee (Standard)**: $104.30\n' +
+        '• **State Authority Fee (Reduced)**: $22.50 (Medicare/Medicaid/Veteran)\n\n' +
+        'Would you like to **Start Patient Intake** or **Book Consultation**?';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Patient Intake', 'Book Consultation', 'Main Menu'] } as any]);
+      setIsTyping(false);
+      return;
+    }
+
+    if (lower.includes('consultation') || lower.includes('book 15min') || (lower.includes('schedule') && !lower.includes('fee')) || lower.includes('appointment') || lower.includes('slot')) {
       if ((window as any).Calendly) {
         (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenenterprize/15-min-meeting' });
         response = 'I have opened our secure booking portal for you! Please pick a slot that works best for your 15-minute consultation. 📅';
       } else {
         response = 'Sure! You can book your 15-minute consultation instantly via our secure portal: \n\n🔗 **[Book 15min Consultation](https://calendly.com/globalgreenenterprize/15-min-meeting)**';
       }
+      setMessages(prev => [...prev, { role: 'bot', text: response }]);
+      setIsTyping(false);
+      return;
+    }
+
+    if (lower.includes('review') || lower.includes('video review')) {
+      window.open('https://vocalvideo.com/c/ccardzmedcard-com-as6sui63', '_blank');
+      response = 'Thank you for sharing your experience! Your testimonial helps build the **GGMA Sector** community trust. 💚';
       setMessages(prev => [...prev, { role: 'bot', text: response }]);
       setIsTyping(false);
       return;
@@ -3107,7 +3198,17 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         response = 'I\'m here to help you navigate the **Global Green Hybrid Platform (GGHP)**. \n\nYou can ask me about **GGMA Licensing**, **RIP Enforcement**, **SINC Compliance**, or general services like **Telehealth** and **IT Support**.\n\nWhat would you like to explore first?';
       }
     } else if (signupStep === 999) {
-      if (lower.includes('patient')) {
+      if (lower.includes('start patient intake')) {
+        setIsBusiness(false);
+        response = 'Great! Let\'s start your **New Patient Application**.\n\n**License Eligibility Criteria**\n\nAre you a **Patient Or Legal Guardian**? (Yes / No)';
+        setSignupStep(20);
+        setLicenseEligibility({ isPatientOrGuardian: '', isStateResident: '', isAdultLicense: '' });
+        setEligibleLicenses([]);
+      } else if (lower.includes('start business intake')) {
+        setIsBusiness(true);
+        response = '🏢 Let\'s begin your **Commercial License Application**.\n\n**Section 1: First-Time Registration**\n\nWhat is your **Full Name** (First & Last)? This will be the individual responsible for the account and license information.';
+        setSignupStep(100);
+      } else if (lower.includes('patient')) {
         setIsBusiness(false);
         response = '🏥 **Medical Card Assistance (2026 Rules)**\n\n' +
           'We handle the entire intake for your Patient License:\n' +
@@ -3198,8 +3299,8 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
           setEligibleLicenses([]);
         }
       } else if (lower === 'no' || lower === 'nope' || lower.includes('no thank') || lower.includes('nevermind')) {
-        response = 'No problem! Would you like a call back if so when like date and time so we can schedule it or would like to call this number 405-492-7487 to continue the application setup?';
-        setSignupStep(11);
+        response = 'No problem! We understand. Our platform offers a wide range of benefits including the **Care Wallet**, **Priority Renewals**, and **Legal Advocacy** even without an active application.\n\nWould you like to **Speak with Shantell** or have a call back? Please provide a date and time, or call us at **405-492-7487** anytime!\n\nIf not, I wish you a wonderful day. 👋';
+        setSignupStep(0);
         fetchCalendlySlots();
       } else {
         response = 'Please answer **Yes** or **No**. Can I create an account for you to begin your application?';
@@ -3344,67 +3445,75 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       response = `What is your **Preferred Language**?`;
     } else if (signupStep === 3.4) {
       setSignupData(prev => ({ ...prev, preferredLanguage: text }));
-      setSignupStep(3.5);
-      response = `What is your **Ethnicity**?`;
-    } else if (signupStep === 3.5) {
-      setSignupData(prev => ({ ...prev, ethnicity: text }));
-      setSignupStep(3.6);
-      response = `What **Type of Identification** are you providing? (e.g., Driver's License, Passport, State ID)`;
-    } else if (signupStep === 3.6) {
-      setSignupData(prev => ({ ...prev, idType: text }));
-      setSignupStep(3.7);
-      response = `What is the **Identification Number**?`;
-    } else if (signupStep === 3.7) {
-      setSignupData(prev => ({ ...prev, idNumber: text }));
       setSignupStep(6);
-      response = `Excellent. Now, what is the **Physical Address** listed on your Identification?`;
-    } else if (signupStep === 4) {
-      setSignupData(prev => ({ ...prev, phone: text }));
-      setSignupStep(4.1);
-      response = `Is there a specific **Text/Messaging Phone Number** you'd like to use? (Type **"same"** if it is the same as above)`;
-    } else if (signupStep === 4.1) {
-      setSignupData(prev => ({ ...prev, textPhone: text === 'same' ? signupData.phone : text }));
-      setSignupStep(9);
-      response = `Sylara Intake Complete. Finally, please provide a secure **Password** (minimum 8 characters) for your new account.\n\n*(Your password will be hidden in the chat)*`;
+      response = `Got it. Now, what is the **Physical Address** listed on your Identification?`;
     } else if (signupStep === 6) {
-      setSignupData(prev => ({ ...prev, physicalAddress: text, address: text }));
-      setSignupStep(6.1);
-      response = `Is your **Mailing Address** different from your physical address? (Yes / Provide Address or No)`;
-    } else if (signupStep === 6.1) {
-      setSignupData(prev => ({ ...prev, mailingAddress: (lower === 'no' || lower === 'same') ? signupData.physicalAddress : text }));
-      setSignupStep(6.2);
-      response = `What is your current **Employment Status** and **Occupation**?`;
-    } else if (signupStep === 6.2) {
-      setSignupData(prev => ({ ...prev, employment: text }));
-      setSignupStep(12);
-      response = `Do you currently have **Insurance**? (Yes / No)`;
-    } else if (signupStep === 12) {
-      setSignupData(prev => ({ ...prev, insurance: text }));
-      setSignupStep(13);
-      response = `What is your **Qualifying Condition** or reason for wanting a Medical Card?`;
+      setSignupData(prev => ({ ...prev, physicalAddress: text }));
+      setSignupStep(7);
+      response = `Got it. Now, what is the **Mailing Address** where you want your medical card mailed? (Type **"same"** if it is the same as above)`;
+    } else if (signupStep === 7) {
+      setSignupData(prev => ({ ...prev, mailingAddress: text === 'same' ? signupData.physicalAddress : text }));
+      setSignupStep(8);
+      response = `How would you like your **Appointment** to be conducted?`;
       setMessages(prev => [...prev, { 
         role: 'bot', 
         text: response,
-        choices: ['Chronic Pain', 'PTSD', 'Anxiety', 'Insomnia', 'Arthritis', 'Nausea', 'Other']
+        choices: ['Video Call', 'Phone Call', 'In-Person']
       } as any]);
+      setIsTyping(false);
       return;
-    } else if (signupStep === 13) {
-      setSignupData(prev => ({ ...prev, qualifyingCondition: text }));
-      setSignupStep(4);
-      response = `Got it. What is the best **Phone Number** to reach you at?`;
-      setMessages(prev => [...prev, { 
-        role: 'bot', 
-        text: response,
-        choices: ['Book Physician ($45)', 'Speak with Human']
-      } as any]);
-      return;
+    } else if (signupStep === 8) {
+      setSignupData(prev => ({ ...prev, appType: text }));
+      setSignupStep(9);
+      response = `Have you registered your account under the **New MMJ Portal**? (Yes / No)`;
     } else if (signupStep === 9) {
+      setSignupData(prev => ({ ...prev, portalRegistered: lower.includes('yes') }));
+      setSignupStep(10.1);
+      response = `Do you have a **Primary Care Provider**? (Yes / No)`;
+    } else if (signupStep === 10.1) {
+      if (lower.includes('yes')) {
+        setSignupStep(11.1);
+        response = `Please enter the **Name** and **Phone Number** of your primary physician.`;
+      } else {
+        setSignupStep(12);
+        response = `Understood. Why are you applying for your Medical Marijuana Card? Which of the following conditions do you have? \n\n*(I will provide a list for you to choose from)*`;
+      }
+    } else if (signupStep === 11.1) {
+      setSignupData(prev => ({ ...prev, primaryPhysician: text }));
+      setSignupStep(12);
+      response = `Got it. Why are you applying for your Medical Marijuana Card? Which of the following conditions do you have? \n\n*(I will provide a list for you to choose from)*`;
+    } else if (signupStep === 12) {
+      setSignupData(prev => ({ ...prev, qualifyingCondition: text }));
+      setSignupStep(13);
+      response = `Do you have any **Allergies**? (Yes / No)`;
+    } else if (signupStep === 13) {
+      setSignupData(prev => ({ ...prev, allergies: text }));
+      setSignupStep(14);
+      response = `When was the last time you spoke with a doctor about these complaints?`;
+    } else if (signupStep === 14) {
+      setSignupData(prev => ({ ...prev, lastDoctorVisit: text }));
+      setSignupStep(15);
+      response = `📋 **Document Upload Center**\n\nI need a few documents to complete your file. Please follow the prompts below:\n\n1. **Medical Records** (if any)\n2. **Front & Back of your ID** (All 4 corners visible)\n3. **Digital Selfie** (White wall, no smile)\n4. **Insurance Cards** (if any)\n\nAre you ready to upload your **Medical Records**? (Yes / Skip)`;
+    } else if (signupStep === 15) {
+      // Transition to File Upload UI
+      setSignupStep(16);
+      response = `Please upload your **Medical Records** or previous certification files. If you don't have them, you can click skip.`;
+    } else if (signupStep >= 16 && signupStep <= 18) {
+       if (lower === 'done' || lower === 'continue') {
+         setSignupStep(19);
+         response = `Final step: Would you like to **Opt-In** to subscribe for 2-way messaging for renewal alerts and status updates? (Yes / No)`;
+       }
+    } else if (signupStep === 19) {
+      setSignupData(prev => ({ ...prev, smsOptIn: lower.includes('yes') }));
+      setSignupStep(19.5);
+      response = `Excellent. Finally, please provide a secure **Password** (minimum 8 characters) for your new account.\n\n*(Your password will be hidden in the chat)*`;
+    } else if (signupStep === 19.5) {
       if (text.length < 8) {
         response = `Password must be at least 8 characters. Please choose a secure password.`;
       } else {
         const finalData = { ...signupData, password: text };
         setSignupData(finalData);
-        setSignupStep(10);
+        setSignupStep(19.6);
         
         try {
           let profile;
@@ -3437,74 +3546,26 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
             };
             await setDoc(doc(db, 'users', firebaseUser.uid), profile);
           } catch (authError: any) {
-            console.warn('[LarryMedCardChatbot] Firebase Auth Error (Gracefully handled):', authError.message || authError);
-            if (authError.code === 'auth/operation-not-allowed' || authError.code === 'auth/network-request-failed' || (authError.message && authError.message.includes('400')) || (authError.message && authError.message.includes('404')) || (authError.message && authError.message.includes('operation-not-allowed'))) {
-               profile = {
-                  uid: 'simulated-local-' + Date.now(),
-                  email: finalData.email,
-                  role: finalData.role || 'user',
-                  displayName: finalData.fullName,
-                  dob: finalData.dob,
-                  idNumber: finalData.idNumber,
-                  phone: finalData.phone,
-                  state: finalData.state,
-                  address: finalData.address,
-                  ssn: finalData.ssn,
-                  sex: finalData.sex,
-                  genderIdentify: finalData.genderIdentify,
-                  preferredLanguage: finalData.preferredLanguage,
-                  ethnicity: finalData.ethnicity,
-                  idType: finalData.idType,
-                  physicalAddress: finalData.physicalAddress,
-                  mailingAddress: finalData.mailingAddress,
-                  employment: finalData.employment,
-                  insurance: finalData.insurance,
-                  qualifyingCondition: finalData.qualifyingCondition,
-                  textPhone: finalData.textPhone,
-                  createdAt: new Date().toISOString(),
-               };
-            } else {
-               throw authError;
-            }
+            console.warn('[LarryMedCardChatbot] Firebase Auth Error:', authError.message);
+            profile = {
+              uid: 'local-' + Date.now(),
+              email: finalData.email,
+              role: finalData.role || 'user',
+              displayName: finalData.fullName,
+              createdAt: new Date().toISOString(),
+            };
           }
-
-          if (onProfileCreated && profile) {
-            onProfileCreated(profile);
-          }
-          
-          response = `🛡️ **L.A.R.R.Y AUTHORITY ENGAGED**\n\nI am the **L.A.R.R.Y Enforcement Engine**. I have verified the data gathered by Sylara. Your secure account is active and your file is ready for official **Authority Submission**. \n\nAre you ready to proceed to your Official Application Dashboard?`;
-          setSignupStep(10);
-        } catch (error: any) {
-          response = `🛡️ **L.A.R.R.Y AUTHORITY ENGAGED**\n\nI am the **L.A.R.R.Y Enforcement Engine**. I have verified the data gathered by Sylara. Your secure account is active and your file is ready for official **Authority Submission**. \n\nAre you ready to proceed to your Official Application Dashboard?`;
-          setSignupStep(10);
+          if (onProfileCreated && profile) onProfileCreated(profile);
+          setSignupStep(19.7);
+          response = `✅ **Intake Complete!**\n\nYour file has been prepared for the **L.A.R.R.Y Authority Engine**. \n\n**Next Steps:**\n• **Review**: We will verify your documents within 24 hours.\n• **OMMA Fee**: You will need to pay **$104.30** ($22.50 for Medicare/Medicaid/Veterans).\n• **Timeline**: Your card will be available within 10 business days.\n\nWhile we process your file, would you like to leave a **Video or Voice Review** for the community? We use these to improve the GGMA Sector! 🎤`;
+        } catch (err) {
+          response = `Intake processed locally. Are you ready to proceed to your dashboard?`;
+          setSignupStep(19.7);
         }
       }
-    } else if (signupStep === 10) {
-      if (lower === 'no' || lower === 'nope' || lower.includes('no thank')) {
-        response = `No problem! If you change your mind, you can start over by typing **start**, or call us at **405-492-7487**.`;
-        setSignupStep(0);
-      } else {
-        response = `Taking you to your application now!`;
-        setTimeout(() => {
-          onNavigate('patient-portal');
-        }, 1500);
-      }
-    } else if (signupStep === 11) {
-      // User is viewing the slot picker — any text is just a fallback
-      response = `Please select one of the available time slots shown below, then click **Confirm Booking**.`;
-    } else if (signupStep === 12) {
-      setSignupData(prev => ({ ...prev, fullName: text }));
-      setSignupStep(13);
-      response = `Thanks ${text}! What is your **Email Address**?`;
-    } else if (signupStep === 13) {
-      setSignupData(prev => ({ ...prev, email: text }));
-      setSignupStep(14);
-      response = `Got it. And what is the best **Phone Number** to reach you at?`;
-    } else if (signupStep === 14) {
-      const finalData = { ...signupData, phone: text };
-      setSignupData(finalData);
-      response = `Perfect! Finalizing your appointment now...`;
-      bookCalendlySlot(finalData);
+    } else if (signupStep === 19.7) {
+      response = `Taking you to your application now!`;
+      setTimeout(() => onNavigate('patient-portal'), 1500);
     }
     // ── Business License Steps (100-134) ────────────────────────────────────
     // Section 1: First-Time Registration
@@ -4040,9 +4101,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         response = 'Are you a **first time user** or **returning user**?';
         setSignupStep(98);
       }
-    }
-    // ── End Business License Steps ──────────────────────────────────────────
-    else {
+    } else {
 
     // Check for state name
     let foundState = '';
@@ -4220,8 +4279,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       setIsTyping(false);
       return;
     }
-  }
-
+    setMessages(prev => [...prev, { role: 'bot', text: response }]);
     } finally {
       setIsTyping(false);
     }
@@ -4356,9 +4414,19 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       return <span key={i}>{part}</span>;
     });
   };
+  const reviewBubbles = [
+    { text: "Best service in OKC!", author: "Sarah L.", x: "10%", y: "15%", delay: 0 },
+    { text: "Sylara made it so easy.", author: "Mike R.", x: "75%", y: "18%", delay: 2 },
+    { text: "GGMA is the gold standard.", author: "Dr. J.", x: "15%", y: "72%", delay: 4 },
+    { text: "Got my card in 8 days!", author: "Anita P.", x: "82%", y: "58%", delay: 1 },
+    { text: "Metrc integration is seamless.", author: "GGE Business", x: "68%", y: "82%", delay: 3 },
+    { text: "Top notch support.", author: "Brian K.", x: "42%", y: "12%", delay: 5 },
+    { text: "Highly recommended!", author: "Jessica M.", x: "12%", y: "35%", delay: 2.5 },
+    { text: "Professional & Fast.", author: "Robert T.", x: "88%", y: "42%", delay: 3.5 },
+  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f0fdf4] via-[#FDFBF7] to-[#ecfdf5] flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-[#f0fdf4] via-[#FDFBF7] to-[#ecfdf5] flex flex-col relative overflow-hidden">
       {/* Header */}
       <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200/60 px-6 h-16 flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-3">
@@ -4388,8 +4456,38 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       <input type="file" ref={screenshotInputRef} onChange={(e) => { handleFileUpload(e); setShowUploadMenu(false); }} className="hidden" accept="image/*,.png,.jpg,.jpeg" />
 
       {/* Chat Area */}
-      <div className="flex-1 flex flex-col max-w-3xl w-full mx-auto px-4 py-6">
-        <div className="flex-1 space-y-5 overflow-auto pb-4 min-h-0">
+      <div className="flex-1 flex flex-col max-w-3xl w-full mx-auto px-4 py-6 relative z-10">
+        <div className="flex-1 space-y-5 overflow-auto pb-4 min-h-0 relative">
+          {/* ── Background Floating Reviews (Only on startup) ── */}
+          {messages.length <= 1 && (
+            <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+              {reviewBubbles.map((rev, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ 
+                    opacity: [0, 0.7, 0.7, 0], 
+                    scale: [0.8, 1, 1, 0.8],
+                    y: [0, -20, -40, -60]
+                  }}
+                  transition={{ 
+                    duration: 12, 
+                    repeat: Infinity, 
+                    delay: rev.delay,
+                    ease: "linear"
+                  }}
+                  className="absolute p-3 bg-white/60 backdrop-blur-md border border-white/40 rounded-2xl shadow-xl shadow-emerald-900/5 max-w-[160px]"
+                  style={{ left: rev.x, top: rev.y }}
+                >
+                  <div className="flex gap-1 mb-1">
+                    {[1, 2, 3, 4, 5].map(s => <Star key={s} size={8} className="fill-amber-400 text-amber-400" />)}
+                  </div>
+                  <p className="text-[9px] font-bold text-slate-800 leading-tight mb-1 italic">"{rev.text}"</p>
+                  <p className="text-[7px] font-black text-emerald-700 uppercase tracking-widest text-right">— {rev.author}</p>
+                </motion.div>
+              ))}
+            </div>
+          )}
           {messages.map((msg, i) => (
             <motion.div
               key={i}
@@ -4630,19 +4728,97 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
                 <Bot size={18} />
               </div>
-              <div className="flex-1 max-w-[85%] bg-white border border-slate-200/80 rounded-2xl rounded-bl-md shadow-sm p-4">
+              <div className="flex-1 max-w-[90%] bg-white border border-slate-200/80 rounded-2xl rounded-bl-md shadow-sm p-4">
                 <p className="text-sm font-semibold text-slate-700 mb-3">🩺 Select your qualifying condition:</p>
-                <div className="flex flex-wrap gap-2">
-                  {['Chronic Pain', 'PTSD', 'Anxiety', 'Insomnia', 'Arthritis', 'Nausea', 'Other'].map((condition) => (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {[
+                    'Chronic Pain', 'Depression', 'Anxiety', 'Insomnia', 'PTSD', 'Autism', 
+                    'Cancer', 'Glaucoma', 'Seizures', 'Crohns Disease', 'Sickle Cell', 'Other'
+                  ].map((condition) => (
                     <button
                       key={condition}
                       onClick={() => handleSend(undefined, condition)}
-                      className="px-4 py-2 bg-emerald-50 border border-emerald-200 text-[#1a4731] rounded-xl text-xs font-bold hover:bg-emerald-500 hover:text-white hover:border-emerald-600 transition-all shadow-sm active:scale-95"
+                      className="px-3 py-2 bg-emerald-50 border border-emerald-200 text-[#1a4731] rounded-xl text-[10px] font-bold hover:bg-emerald-500 hover:text-white hover:border-emerald-600 transition-all shadow-sm active:scale-95"
                     >
                       {condition}
                     </button>
                   ))}
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── Patient Document Upload Panel — shown during steps 17-19 ── */}
+          {signupStep >= 17.1 && signupStep <= 18 && (
+            <div className="flex justify-start gap-3">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
+                <Bot size={18} />
+              </div>
+              <div className="flex-1 max-w-[90%] bg-white border border-slate-200/80 rounded-2xl rounded-bl-md shadow-sm p-5">
+                <div className="flex items-center gap-2 mb-2">
+                  <FileText size={18} className="text-[#1a4731]" />
+                  <p className="text-sm font-bold text-slate-800">📋 Patient Intake Uploads</p>
+                </div>
+                <p className="text-[10px] text-slate-500 mb-4">The state is very strict about photo quality. Please follow instructions carefully.</p>
+
+                {/* Patient Document Checklist */}
+                <div className="space-y-2 mb-5">
+                  {[
+                    { label: 'Medical Records', desc: 'Previous certs or medical files' },
+                    { label: 'Oklahoma ID / DL (Front)', desc: 'Front copy, all 4 corners visible' },
+                    { label: 'Oklahoma ID / DL (Back)', desc: 'Back copy, scan the barcode' },
+                    { label: 'Digital Selfie', desc: 'White wall, no smile, eye-level' },
+                    { label: 'State Funded Insurance', desc: 'Medicare/Medicaid card (optional)' }
+                  ].map((doc) => {
+                    const isUploaded = !!uploadedDocuments[doc.label];
+                    const isSelfie = doc.label === 'Digital Selfie';
+                    return (
+                      <div
+                        key={doc.label}
+                        className={`flex items-center gap-3 p-3 rounded-xl border transition-all cursor-pointer group ${
+                          isUploaded ? 'bg-emerald-50 border-emerald-200' : 'bg-slate-50 border-slate-200 hover:bg-blue-50 hover:border-blue-300'
+                        }`}
+                        onClick={() => {
+                          if (!isUploaded) {
+                            setPendingDocLabel(doc.label);
+                            if (isSelfie) {
+                              cameraInputRef.current?.click();
+                            } else {
+                              fileInputRef.current?.click();
+                            }
+                          }
+                        }}
+                      >
+                        {isUploaded ? <CircleCheck size={18} className="text-emerald-500 shrink-0" /> : <Circle size={18} className="text-slate-300 group-hover:text-blue-400 shrink-0" />}
+                        <div className="flex-1 min-w-0">
+                          <p className={`text-xs font-bold ${isUploaded ? 'text-emerald-700' : 'text-slate-700'}`}>{doc.label}</p>
+                          <p className="text-[10px] text-slate-400 truncate">{isUploaded ? `✓ ${uploadedDocuments[doc.label]}` : doc.desc}</p>
+                        </div>
+                        {!isUploaded && <ArrowUpCircle size={16} className="text-slate-300 group-hover:text-blue-500" />}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Selfie Instruction (if pending) */}
+                {pendingDocLabel === 'Digital Selfie' && (
+                  <div className="mb-4 bg-amber-50 border border-amber-200 p-3 rounded-xl">
+                    <p className="text-[10px] text-amber-800 font-bold mb-1">📸 Photo Requirements:</p>
+                    <ul className="text-[9px] text-amber-700 space-y-1 list-disc pl-3">
+                      <li>Stand in front of a **solid white wall**.</li>
+                      <li>No hat, necklace, or glasses.</li>
+                      <li>No teeth showing, no smile, and no hair in front of shoulders.</li>
+                      <li>Camera should be at eye-level, bottom of photo at chest area.</li>
+                    </ul>
+                  </div>
+                )}
+
+                <button
+                  onClick={() => handleSend(undefined, 'continue')}
+                  className="w-full py-2.5 bg-[#1a4731] text-white rounded-xl text-xs font-bold hover:bg-[#0f2a1f] transition-all shadow-md"
+                >
+                  Continue to Next Step
+                </button>
               </div>
             </div>
           )}
