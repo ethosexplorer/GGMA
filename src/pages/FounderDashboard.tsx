@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Building2, Users, FileText, Settings, Shield, Activity, Bell,
   Briefcase, HeartPulse, Scale, Gavel, FileCheck, CheckCircle2,
   Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
   Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Globe, Zap, Database,
-  FlaskConical, CreditCard, Map as MapIcon, BookOpen
+  FlaskConical, CreditCard, Map as MapIcon, BookOpen, UserPlus, Trash2
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
@@ -15,6 +15,8 @@ import { OperationsDashboard } from './OperationsDashboard';
 import { AdminDashboard } from './AdminDashboard';
 import { SubscriptionPortal } from '../components/SubscriptionPortal';
 import { LegislativeIntelTab } from '../components/federal/LegislativeIntelTab';
+import { onSnapshot, collection, doc, updateDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 
 const NAV_ITEMS = [
   { section: 'FOUNDER EXCLUSIVE' },
@@ -23,10 +25,10 @@ const NAV_ITEMS = [
   { id: 'jurisdiction_map', label: 'Nationwide Oversight', icon: Globe },
   { section: 'MAIN' },
   { id: 'overview', label: 'God Overview', icon: Activity },
-  { section: 'MANAGEMENT' },
-  { id: 'users', label: 'User Management', icon: Users },
-  { id: 'patients', label: 'Patient Management', icon: HeartPulse },
-  { id: 'business', label: 'Business Management', icon: Building2 },
+  { section: 'SUPREME COMMAND' },
+  { id: 'users', label: 'Personnel Force (Total)', icon: Users },
+  { id: 'patients', label: 'Registry Sovereignty', icon: HeartPulse },
+  { id: 'business', label: 'Economic Infrastructure', icon: Building2 },
   { section: 'OPS & COMPLIANCE' },
   { id: 'approvals', label: 'Agency Approvals', icon: UserCheck, badge: '12' },
   { id: 'applications', label: 'Applications Queue', icon: FileText, badge: '502' },
@@ -474,21 +476,73 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
     </div>
   );
 
+  // LIVE PLATFORM PULSE (Real-time listeners)
+  const [counts, setCounts] = useState({ users: 1204891, patients: 891022, businesses: 42891, tickets: 12 });
+  
+  useEffect(() => {
+    // Real-time listener for total force
+    const unsub = onSnapshot(collection(db, 'users'), (snap) => {
+      const total = snap.size;
+      // We'll simulate a base number since it's a demo, but in real life snap.size is the truth
+      setCounts(prev => ({ ...prev, users: 1204891 + total }));
+    });
+    return () => unsub();
+  }, []);
+
+  const handleHireFire = async (uid: string, action: 'activate' | 'suspend' | 'terminate') => {
+    try {
+      const userRef = doc(db, 'users', uid);
+      const status = action === 'activate' ? 'Active' : (action === 'suspend' ? 'Suspended' : 'Terminated');
+      await updateDoc(userRef, { status });
+      alert(`SUPREME COMMAND: User status updated to ${status}`);
+    } catch (err) {
+      console.error('Supreme Command Error:', err);
+    }
+  };
+
   const renderUserMgmt = () => (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
       <div className="flex justify-between items-center bg-indigo-900 p-8 rounded-3xl text-white shadow-xl relative overflow-hidden">
         <div className="absolute top-0 right-0 p-8 opacity-10"><Shield size={120} /></div>
         <div className="relative z-10">
-          <h2 className="text-3xl font-black tracking-tight mb-2">Global Access Control</h2>
-          <p className="text-indigo-200">Executive override enabled. Create, suspend, or assign invite codes for any role.</p>
+          <h2 className="text-3xl font-black tracking-tight mb-2">Supreme Personnel Command</h2>
+          <p className="text-indigo-200">The Founder's override. Ultimate authority to authorize, suspend, or terminate any entity.</p>
         </div>
         <div className="relative z-10 flex gap-4">
+           <div className="px-6 py-3 bg-white/10 border border-white/20 rounded-xl flex flex-col items-center">
+             <span className="text-[10px] font-black text-indigo-300 uppercase">Total Force</span>
+             <span className="text-xl font-black text-white">{counts.users.toLocaleString()}</span>
+           </div>
            <button className="px-6 py-3 bg-white text-indigo-900 font-bold rounded-xl shadow-lg hover:bg-indigo-50 transition-colors flex items-center gap-2">
-             <Plus size={18} /> Generate Invite Code
+             <UserPlus size={18} /> Direct Hire / Invite
            </button>
-           <button className="px-6 py-3 bg-indigo-800 text-white font-bold border border-indigo-700 rounded-xl hover:bg-indigo-700 transition-colors flex items-center gap-2">
-             <Settings size={18} /> Role Permissions
-           </button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="bg-white p-6 rounded-3xl border-2 border-slate-100 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center"><Users size={24}/></div>
+            <div className="flex items-center gap-1 text-emerald-600 font-bold text-xs"><TrendingUp size={14}/> +12%</div>
+          </div>
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Personnel Force</p>
+          <h3 className="text-2xl font-black text-slate-800">{counts.users.toLocaleString()}</h3>
+        </div>
+        <div className="bg-white p-6 rounded-3xl border-2 border-slate-100 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center"><HeartPulse size={24}/></div>
+            <div className="flex items-center gap-1 text-emerald-600 font-bold text-xs"><TrendingUp size={14}/> +8%</div>
+          </div>
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Registry Sovereignty</p>
+          <h3 className="text-2xl font-black text-slate-800">{counts.patients.toLocaleString()}</h3>
+        </div>
+        <div className="bg-white p-6 rounded-3xl border-2 border-slate-100 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center"><Building2 size={24}/></div>
+            <div className="flex items-center gap-1 text-emerald-600 font-bold text-xs"><TrendingUp size={14}/> +15%</div>
+          </div>
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Economic Infrastructure</p>
+          <h3 className="text-2xl font-black text-slate-800">{counts.businesses.toLocaleString()}</h3>
         </div>
       </div>
 
@@ -558,12 +612,14 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                 </td>
                 <td className="px-6 py-4 text-right opacity-0 group-hover:opacity-100 transition-opacity">
                   <div className="flex justify-end gap-2">
-                    <button className="px-3 py-1.5 bg-slate-100 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-200">Edit</button>
-                    {u.s !== 'Suspended' ? (
-                      <button className="px-3 py-1.5 bg-red-50 text-red-600 text-xs font-bold rounded-lg hover:bg-red-100">Deactivate</button>
+                    {u.s === 'Suspended' ? (
+                      <button onClick={() => handleHireFire(u.e, 'activate')} className="px-3 py-1.5 bg-emerald-500 text-white text-[10px] font-black rounded-lg hover:bg-emerald-600 uppercase">Authorize</button>
                     ) : (
-                      <button className="px-3 py-1.5 bg-emerald-50 text-emerald-600 text-xs font-bold rounded-lg hover:bg-emerald-100">Restore</button>
+                      <button onClick={() => handleHireFire(u.e, 'suspend')} className="px-3 py-1.5 bg-amber-500 text-white text-[10px] font-black rounded-lg hover:bg-amber-600 uppercase">Suspend</button>
                     )}
+                    <button onClick={() => handleHireFire(u.e, 'terminate')} className="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-500 hover:text-white transition-all">
+                      <Trash2 size={14} />
+                    </button>
                   </div>
                 </td>
               </tr>
