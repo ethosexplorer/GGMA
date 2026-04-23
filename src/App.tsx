@@ -1402,6 +1402,151 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
         </div>
       </section>
 
+      {/* ═══ CREDENTIALS, CERTIFICATIONS & TRUST ═══ */}
+      <section id="credentials-section" className="py-20 px-6 bg-gradient-to-b from-slate-50 to-white border-y border-slate-200/50">
+        <div className="max-w-6xl mx-auto">
+          {/* Section Header */}
+          <div className="text-center mb-12 space-y-3">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-[11px] font-black text-emerald-700 uppercase tracking-widest">
+              <Shield size={12} /> Verified &amp; Registered
+            </div>
+            <h2 className="text-3xl font-black text-slate-900 tracking-tight">Credentials &amp; Certifications</h2>
+            <p className="text-slate-500 max-w-2xl mx-auto">Fully registered across all levels of Oklahoma government. Built by 30+ years of corporate leadership and 8 years of cannabis industry expertise.</p>
+          </div>
+
+          {/* Government Registration Badges */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+            <div className="bg-white rounded-2xl p-5 border-2 border-blue-100 hover:border-blue-300 transition-all hover:shadow-lg hover:-translate-y-1 cursor-default">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-2xl">🇺🇸</span>
+                <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-blue-100 text-blue-700">✅ ACTIVE</span>
+              </div>
+              <h4 className="font-bold text-slate-900 text-sm">SAM.gov</h4>
+              <p className="text-slate-500 text-[11px] mb-1">Federal Supplier</p>
+              <p className="text-slate-400 text-[10px] font-mono">CAGE: 9KXZ2</p>
+            </div>
+            <div className="bg-white rounded-2xl p-5 border-2 border-emerald-100 hover:border-emerald-300 transition-all hover:shadow-lg hover:-translate-y-1 cursor-default">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-2xl">🏛️</span>
+                <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-700">✅ REGISTERED</span>
+              </div>
+              <h4 className="font-bold text-slate-900 text-sm">OMES</h4>
+              <p className="text-slate-500 text-[11px] mb-1">State Vendor</p>
+              <p className="text-slate-400 text-[10px] font-mono">Oklahoma State Procurement</p>
+            </div>
+            <div className="bg-white rounded-2xl p-5 border-2 border-purple-100 hover:border-purple-300 transition-all hover:shadow-lg hover:-translate-y-1 cursor-default">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-2xl">🏙️</span>
+                <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-purple-100 text-purple-700">✅ APPROVED</span>
+              </div>
+              <h4 className="font-bold text-slate-900 text-sm">OKC City &amp; Trusts</h4>
+              <p className="text-slate-500 text-[11px] mb-1">Municipal Approved</p>
+              <p className="text-slate-400 text-[10px] font-mono">BidNet Direct • City of OKC</p>
+            </div>
+            <div className="bg-white rounded-2xl p-5 border-2 border-rose-100 hover:border-rose-300 transition-all hover:shadow-lg hover:-translate-y-1 cursor-default">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-2xl">👩‍💼</span>
+                <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-rose-100 text-rose-700">✅ CERTIFIED</span>
+              </div>
+              <h4 className="font-bold text-slate-900 text-sm">WOSB</h4>
+              <p className="text-slate-500 text-[11px] mb-1">Woman-Owned Small Business</p>
+              <p className="text-slate-400 text-[10px] font-mono">SBA Certification</p>
+            </div>
+          </div>
+
+          {/* Additional Registration Badges */}
+          <div className="flex flex-wrap justify-center gap-3 mb-12">
+            {[
+              { label: 'Oklahoma ERP/PeopleSoft', icon: '📊' },
+              { label: 'BidNet Direct (Municipal)', icon: '📋' },
+              { label: 'OKC Bids & Auctions', icon: '🔨' },
+              { label: 'County-Level Procurement', icon: '🏘️' },
+              { label: 'Metrc Validated Integrator', icon: '🔗' },
+              { label: 'HIPAA Compliant', icon: '🔒' },
+              { label: 'AES-256 Encryption', icon: '🛡️' },
+            ].map((badge, i) => (
+              <div key={i} className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 border border-slate-200 rounded-full text-[10px] font-bold text-slate-600 hover:bg-emerald-50 hover:border-emerald-200 hover:text-emerald-700 transition-all">
+                <span>{badge.icon}</span> {badge.label}
+              </div>
+            ))}
+          </div>
+
+          {/* Founder Credentials + Company Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            {/* Founder Card */}
+            <div className="bg-gradient-to-br from-[#1a4731] to-[#0d2b1e] rounded-2xl p-8 text-white relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full -translate-y-8 translate-x-8 blur-2xl"></div>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+                <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Founder &amp; CEO</span>
+              </div>
+              <h3 className="text-2xl font-black mb-4">Shantell Robinson</h3>
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center gap-3">
+                  <span className="text-emerald-400 text-lg">🌿</span>
+                  <div>
+                    <p className="text-white font-bold text-sm">8 Years in Cannabis</p>
+                    <p className="text-emerald-200/70 text-[11px]">Regulatory compliance, licensing, and patient advocacy</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-emerald-400 text-lg">🏢</span>
+                  <div>
+                    <p className="text-white font-bold text-sm">30+ Years Corporate Administration</p>
+                    <p className="text-emerald-200/70 text-[11px]">Enterprise build, structure, and management leadership</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-emerald-400 text-lg">🔗</span>
+                  <div>
+                    <p className="text-white font-bold text-sm">Validated Metrc Integrator</p>
+                    <p className="text-emerald-200/70 text-[11px]">Oklahoma sandbox certified — production API access</p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                <span className="px-3 py-1 bg-white/10 rounded-full text-[10px] font-bold text-emerald-300 border border-white/10">Global Green Enterprise Inc</span>
+                <span className="px-3 py-1 bg-white/10 rounded-full text-[10px] font-bold text-emerald-300 border border-white/10">Diversity Health &amp; Wellness LLC</span>
+              </div>
+            </div>
+
+            {/* Company Highlights */}
+            <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
+              <div className="flex items-center gap-2 mb-6">
+                <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
+                <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Platform Highlights</span>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { value: '50', label: 'States + DC', sub: 'Infrastructure Active' },
+                  { value: '26', label: 'Languages', sub: 'Global Accessibility' },
+                  { value: '22+', label: 'Polls Active', sub: 'Community Engagement' },
+                  { value: '99.9%', label: 'Uptime SLA', sub: 'Enterprise Reliability' },
+                  { value: '3', label: 'AI Engines', sub: 'Sylara • L.A.R.R.Y • SINC' },
+                  { value: '5', label: 'Gov Levels', sub: 'Federal → City Registered' },
+                ].map((stat, i) => (
+                  <div key={i} className="text-center p-3 rounded-xl bg-slate-50 hover:bg-emerald-50 transition-colors">
+                    <p className="text-2xl font-black text-[#1a4731]">{stat.value}</p>
+                    <p className="text-xs font-bold text-slate-700">{stat.label}</p>
+                    <p className="text-[10px] text-slate-400">{stat.sub}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Trust Partners Bar */}
+          <div className="text-center">
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4">Integrated With &amp; Registered On</p>
+            <div className="flex flex-wrap justify-center items-center gap-4 opacity-60 hover:opacity-100 transition-opacity">
+              {['SAM.gov', 'OMES', 'Metrc', 'BidNet Direct', 'OKC City', 'OK ERP', 'Calendly', 'Stripe', 'GoHealthUSA'].map((partner, i) => (
+                <span key={i} className="text-xs font-black text-slate-500 uppercase tracking-wider px-3 py-1.5 bg-slate-100 rounded-full border border-slate-200">{partner}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Portals Section */}
       <section className="py-24 bg-slate-100/50 border-y border-slate-200 px-6">
         <div className="max-w-6xl mx-auto">
