@@ -1316,8 +1316,8 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
             onClick={() => onNavigate('larry-chatbot')} 
             className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-[#1a4731] rounded-xl border border-emerald-100 font-bold hover:bg-emerald-100 transition-all shadow-sm group"
           >
-            <Calendar size={16} className="text-emerald-600 group-hover:scale-110 transition-transform" />
-            Book with GGE AI Concierge
+            <MessageCircle size={16} className="text-emerald-600 group-hover:scale-110 transition-transform" />
+            Chat with SYLARA Our AI Cannabis Concierge
           </button>
         </div>
 
