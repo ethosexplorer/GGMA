@@ -43,6 +43,23 @@ interface Poll {
 
 // ─── Poll Data ───
 const POLLS: Poll[] = [
+  // ─── 🚨 BREAKING NEWS POLLS (FIRST) ───
+  { id: 'federal_reschedule', category: 'legal', question: '🚨 BREAKING: Cannabis rescheduled from Schedule I to Schedule III — What does this mean for Oklahoma?', subtitle: 'The federal government has officially moved marijuana from Schedule I (alongside heroin) to Schedule III. OBN Director Donnie Anderson says this "opens opportunities for tax breaks and banking options."', icon: <Zap size={20} />, color: 'red', bgGradient: 'from-red-600 to-rose-800', didYouKnow: 'Schedule III means cannabis businesses will NO LONGER be penalized under IRS Code 280E — which previously prevented them from deducting normal business expenses. This could save Oklahoma businesses $50M+ annually.', actionItem: 'Contact your representative to support the SAFE Banking Act — which would give cannabis businesses full access to banking services alongside rescheduling.', deadline: 'SAFE Banking vote expected: Summer 2026', options: [
+    { id: 'game_changer', label: 'Game changer — finally legitimate', emoji: '🎉', votes: 4567 },
+    { id: 'good_start', label: 'Good start, but full legalization needed', emoji: '📈', votes: 3234 },
+    { id: 'helps_business', label: 'Great for business — tax relief is huge', emoji: '💼', votes: 2876 },
+    { id: 'more_research', label: 'Opens up much-needed clinical research', emoji: '🔬', votes: 1987 },
+    { id: 'concerned', label: 'Concerned about more federal oversight', emoji: '😟', votes: 876 },
+    { id: 'other', label: 'Other (comment below)', emoji: '💬', votes: 432 },
+  ]},
+  { id: 'ok_enforcement', category: 'legal', question: 'Oklahoma went from 8,400 cannabis farms to fewer than 1,400 — Is the crackdown working?', subtitle: 'OBN MET agents have seized 2.2M illegal plants, 290,000 lbs of processed marijuana, and made 400+ arrests since 2021. Many operations were tied to black market trafficking and straw ownership schemes.', icon: <Shield size={20} />, color: 'amber', bgGradient: 'from-amber-600 to-orange-800', didYouKnow: 'California has only 4,800 licensed grows with 10x Oklahoma\'s population. Oklahoma\'s pre-crackdown number of 8,400 was considered extremely high by industry standards.', actionItem: 'If you suspect illegal cannabis operations, report anonymously to OBN\'s tip-line: 800-522-8031', options: [
+    { id: 'necessary', label: 'Necessary — illegal ops hurt legitimate businesses', emoji: '✅', votes: 2345 },
+    { id: 'too_aggressive', label: 'Too aggressive — hurting small legal growers', emoji: '😰', votes: 1876 },
+    { id: 'right_direction', label: 'Right direction but needs more transparency', emoji: '🎯', votes: 1654 },
+    { id: 'ptsd_access', label: 'Focus on patient access, not just enforcement', emoji: '💚', votes: 2134 },
+    { id: 'veterans', label: 'Prioritize veterans & first responder access', emoji: '🇺🇸', votes: 1987 },
+    { id: 'other', label: 'Other (comment below)', emoji: '💬', votes: 321 },
+  ]},
   {
     id: 'natural_healing',
     category: 'healing',

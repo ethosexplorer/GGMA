@@ -1228,10 +1228,13 @@ const STATE_RESOURCES: Record<string, any> = {
 const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | 'patient-portal' | 'support' | 'larry-chatbot' | 'larry-business', role?: string) => void }) => {
   const [broadcastMsg, setBroadcastMsg] = useState('🚨 SYSTEM NOTICE: NATIONWIDE COMPLIANCE AUDIT IN PROGRESS • GLOBAL GREEN HYBRID PLATFORM (GGHP) • ALL SECTORS (GGMA/RIP/SINC) OPERATIONAL');
   const [inTheKnowNews, setInTheKnowNews] = useState([
-    'C³ Score (Compassion, Compliance & Community) now active for all Care Wallets',
-    'OMMA Legislative Update: New rules for 2026 commercial licensing now active',
-    'Florida transitions to Fully Legal status - Platform infrastructure updated',
-    'Kansas approves Medical Cannabis - Registry now accepting applications',
+    '🚨 BREAKING: Federal Marijuana Rescheduling — Schedule I → Schedule III NOW OFFICIAL',
+    'OBN Director Anderson: "Opens opportunities for tax breaks, banking, and clinical research"',
+    'Oklahoma Grows Down 83%: From 8,400 farms in 2022 to fewer than 1,400 after OBN crackdown',
+    'OBN MET seized 2.2M illegal plants & 290,000 lbs processed marijuana since 2021 — 400+ arrests',
+    'Schedule III = 280E Tax Relief for legal cannabis businesses — SINC compliance engine ready',
+    'VA PTSD Access: Veterans and first responders call for medical cannabis prescribing rights',
+    'OMMA Legislative Update: HB 2179 tiered licensing fees now active for all commercial licenses',
     'Sylara AI processed 50,000+ compliance checks this hour'
   ]);
 
