@@ -1,11 +1,11 @@
-import { MetrcConnector } from '../src/lib/metrc/MetrcConnector';
+import { MetrcConnector } from '../src/lib/metrc/MetrcConnector.ts';
 
 async function reportWaste() {
   console.log('--- Metrc Waste Reporting Test ---');
   
   const integratorKey = 'nbY-MmTbILyceAe2izW4vO6GILlqHU5a9s2ySaISiOGtRq6v';
   const userKey = '5U55J9JxjYEgl6vlblmJRirN8xFrwOLtG995kCt7JR5qxJ8k';
-  const license = 'SF-SBX-OK-11-6801';
+  const license = 'SF-SBX-OK-1-6801';
 
   const connector = new MetrcConnector({
     integratorApiKey: integratorKey,

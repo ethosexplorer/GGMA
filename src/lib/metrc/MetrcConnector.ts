@@ -14,7 +14,10 @@ export class MetrcConnector {
   private baseUrl: string;
   private authHeader: string;
 
-  constructor(private config: MetrcConfig) {
+  private config: MetrcConfig;
+
+  constructor(config: MetrcConfig) {
+    this.config = config;
     this.baseUrl = config.environment === 'production' 
       ? 'https://api-ok.metrc.com' 
       : 'https://sandbox-api-ok.metrc.com';
@@ -111,7 +114,11 @@ export class MetrcConnector {
 
   // --- General ---
   async getFacilities() {
-    return this.request('/facilities/v1');
+    return this.request('/facilities/v2');
+  }
+
+  async getFacilitiesV2() {
+    return this.request('/facilities/v2');
   }
 
   // --- Setup ---

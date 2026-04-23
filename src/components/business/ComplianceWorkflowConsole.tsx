@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Leaf, Package, Truck, ClipboardList, Plus, Search, Tag, Zap, AlertCircle, ArrowRight, ShieldCheck, Database, Wallet } from 'lucide-react';
+import { Leaf, Package, Truck, ClipboardList, Plus, Search, Tag, Zap, AlertCircle, ArrowRight, ShieldCheck, Database, Wallet, Loader2 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { MetrcEngine as complianceService } from '../../lib/metrc/MetrcEngine';
+import { MetrcConnector } from '../../lib/metrc/MetrcConnector';
 import { turso } from '../../lib/turso';
 
 type Module = 'plants' | 'packages' | 'transfers' | 'audit' | 'wallet';
@@ -18,6 +19,16 @@ export const ComplianceWorkflowConsole = () => {
   const [showAddBatch, setShowAddBatch] = useState(false);
   const [newBatch, setNewBatch] = useState({ strain: '', count: 10 });
   const [isLoading, setIsLoading] = useState(false);
+  const [metrcStatus, setMetrcStatus] = useState<'connected' | 'disconnected' | 'error'>('disconnected');
+  const [metrcFacilities, setMetrcFacilities] = useState<any[]>([]);
+  const [selectedFacility, setSelectedFacility] = useState<string>('');
+  const [showMetrcConfig, setShowMetrcConfig] = useState(false);
+  const [metrcConfig, setMetrcConfig] = useState({
+    integratorApiKey: '',
+    userApiKey: '',
+    licenseNumber: '',
+    environment: 'sandbox' as const
+  });
 
   useEffect(() => {
     fetchData();
@@ -62,6 +73,40 @@ export const ComplianceWorkflowConsole = () => {
     }
   };
 
+  const handleMetrcSync = async () => {
+    if (!metrcConfig.integratorApiKey || !metrcConfig.userApiKey) {
+      setShowMetrcConfig(true);
+      return;
+    }
+    
+    setIsLoading(true);
+    setMetrcStatus('disconnected');
+    try {
+      const connector = new MetrcConnector(metrcConfig);
+      const facilities = await connector.getFacilitiesV2();
+      setMetrcFacilities(facilities);
+      setMetrcStatus('connected');
+      setShowMetrcConfig(false);
+      // Persist config for demo
+      localStorage.setItem('metrc_sandbox_config', JSON.stringify(metrcConfig));
+    } catch (err) {
+      console.error('Metrc Sync Error:', err);
+      setMetrcStatus('error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const saved = localStorage.getItem('metrc_sandbox_config');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setMetrcConfig(parsed);
+      } catch (e) {}
+    }
+  }, []);
+
   return (
     <div className="bg-white border border-slate-200 rounded-[2.5rem] shadow-xl overflow-hidden flex flex-col md:flex-row h-[800px]">
       {/* Sidebar Navigation */}
@@ -102,7 +147,38 @@ export const ComplianceWorkflowConsole = () => {
           <Wallet size={18} /> Care Wallet Integration
         </button>
         
-        <div className="mt-auto pt-6 border-t border-slate-200">
+        <div className="mt-auto pt-6 border-t border-slate-200 space-y-4">
+          <div className="px-4 py-3 bg-slate-100 rounded-2xl border border-slate-200">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Metrc Sync</span>
+              <div className={cn("w-2 h-2 rounded-full", 
+                metrcStatus === 'connected' ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]" : 
+                metrcStatus === 'error' ? "bg-red-500" : "bg-slate-300")} />
+            </div>
+            <button 
+              onClick={handleMetrcSync}
+              className="w-full py-2 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
+            >
+              <Database size={12} /> {metrcStatus === 'connected' ? 'Re-Sync V2' : 'Connect Sandbox'}
+            </button>
+          </div>
+
+          {metrcStatus === 'connected' && metrcFacilities.length > 0 && (
+            <div className="px-4 py-3 bg-blue-50 rounded-2xl border border-blue-100">
+              <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-2 block">Active Facility</label>
+              <select 
+                value={selectedFacility} 
+                onChange={e => setSelectedFacility(e.target.value)}
+                className="w-full bg-white border border-blue-200 rounded-xl px-3 py-2 text-xs font-bold text-blue-900 outline-none"
+              >
+                <option value="">Select Facility...</option>
+                {metrcFacilities.map((f, i) => (
+                  <option key={i} value={f.LicenseNumber}>{f.Name} ({f.LicenseNumber})</option>
+                ))}
+              </select>
+            </div>
+          )}
+          
           <button 
             onClick={() => setActiveModule('audit')}
             className={cn("flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all w-full", 
@@ -371,6 +447,62 @@ export const ComplianceWorkflowConsole = () => {
           </div>
         )}
       </div>
+
+      {/* Metrc Configuration Modal */}
+      {showMetrcConfig && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white rounded-[2.5rem] w-full max-w-md p-8 shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-300">
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <h3 className="text-2xl font-black text-slate-800 tracking-tight">Metrc Sandbox Setup</h3>
+                <p className="text-sm text-slate-500 font-medium">Enter your sandbox credentials to enable live V2 synchronization.</p>
+              </div>
+              <button onClick={() => setShowMetrcConfig(false)} className="p-2 hover:bg-slate-100 rounded-xl transition-colors">
+                <AlertCircle className="text-slate-400" size={24} />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">Integrator API Key</label>
+                <input 
+                  type="password"
+                  value={metrcConfig.integratorApiKey}
+                  onChange={e => setMetrcConfig({...metrcConfig, integratorApiKey: e.target.value})}
+                  className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm font-mono focus:ring-2 ring-blue-500/20 outline-none"
+                  placeholder="Paste Integrator Key..."
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">User API Key (Optional)</label>
+                <input 
+                  type="password"
+                  value={metrcConfig.userApiKey}
+                  onChange={e => setMetrcConfig({...metrcConfig, userApiKey: e.target.value})}
+                  className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm font-mono focus:ring-2 ring-blue-500/20 outline-none"
+                  placeholder="Paste User Key..."
+                />
+              </div>
+              <div className="p-4 bg-blue-50 border border-blue-100 rounded-2xl">
+                <div className="flex items-start gap-3">
+                  <Database className="text-blue-500 shrink-0 mt-0.5" size={18} />
+                  <p className="text-xs text-blue-700 font-medium leading-relaxed">
+                    This will use the <strong>GET /facilities/v2</strong> endpoint to retrieve all available licenses in your OK sandbox.
+                  </p>
+                </div>
+              </div>
+              <button 
+                onClick={handleMetrcSync}
+                disabled={isLoading || !metrcConfig.integratorApiKey}
+                className="w-full py-4 bg-[#1a4731] text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-emerald-900/20 flex items-center justify-center gap-2"
+              >
+                {isLoading ? <Loader2 className="animate-spin" size={18} /> : <Database size={18} />}
+                Authenticate & Sync V2
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { MetrcConnector } from './src/lib/metrc/MetrcConnector.ts';
+import { MetrcConnector } from '../src/lib/metrc/MetrcConnector.ts';
 
 async function generateSandboxKey() {
   console.log('--- Metrc Sandbox Provisioning ---');

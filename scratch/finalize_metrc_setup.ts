@@ -1,5 +1,5 @@
-import { MetrcConnector } from './src/lib/metrc/MetrcConnector.ts';
-import { turso } from './src/lib/turso.ts';
+import { MetrcConnector } from '../src/lib/metrc/MetrcConnector.ts';
+import { turso } from '../src/lib/turso.ts';
 
 async function verifyAndConnect() {
   console.log('--- Metrc Final Connectivity Check ---');
