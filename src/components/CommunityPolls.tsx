@@ -470,38 +470,34 @@ export const FeaturedPoll = () => {
           </div>
         </div>
 
-        {/* 💡 Did You Know + Action Item — shown after voting or always if present */}
+        {/* 💡 Did You Know + Action Item — ALWAYS VISIBLE */}
         {(poll.didYouKnow || poll.actionItem) && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3"
-          >
+          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
             {poll.didYouKnow && (
-              <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+              <div className="bg-gradient-to-br from-amber-500/15 to-yellow-500/5 border-2 border-amber-400/30 rounded-xl p-4 shadow-lg shadow-amber-500/5">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-lg">💡</span>
-                  <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest">Did You Know?</span>
+                  <span className="text-xl">💡</span>
+                  <span className="text-[11px] font-black text-amber-400 uppercase tracking-widest">Did You Know?</span>
                 </div>
                 <p className="text-emerald-100 text-xs leading-relaxed">{poll.didYouKnow}</p>
               </div>
             )}
             {poll.actionItem && (
-              <div className="bg-emerald-500/10 border border-emerald-400/20 rounded-xl p-4">
+              <div className="bg-gradient-to-br from-emerald-500/15 to-green-500/5 border-2 border-emerald-400/30 rounded-xl p-4 shadow-lg shadow-emerald-500/5">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-lg">📢</span>
-                  <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Take Action</span>
+                  <span className="text-xl">📢</span>
+                  <span className="text-[11px] font-black text-emerald-400 uppercase tracking-widest">Take Action</span>
                 </div>
                 <p className="text-emerald-100 text-xs leading-relaxed mb-2">{poll.actionItem}</p>
                 {poll.deadline && (
-                  <div className="flex items-center gap-1.5 px-2.5 py-1 bg-red-500/20 rounded-lg w-fit">
-                    <span className="text-[10px]">⏰</span>
-                    <span className="text-[10px] font-black text-red-300">{poll.deadline}</span>
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/20 border border-red-400/30 rounded-lg w-fit animate-pulse">
+                    <span className="text-sm">⏰</span>
+                    <span className="text-[11px] font-black text-red-300">{poll.deadline}</span>
                   </div>
                 )}
               </div>
             )}
-          </motion.div>
+          </div>
         )}
       </div>
     </div>
