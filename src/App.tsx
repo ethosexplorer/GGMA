@@ -3224,14 +3224,104 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     }
 
     if (lower.includes('fee schedule') || lower === 'view fee schedule') {
-      response = '💰 **GGMA Fee Schedule (2026)**\n\n' +
-        '• **Patient Recommendation**: $35.00 (Via GoHealthUSA)\n' +
-        '• **GGE Intake Processing**: $10.00\n' +
-        '• **Total Portal Cost**: **$45.00**\n\n' +
-        '• **State Authority Fee (Standard)**: $104.30\n' +
-        '• **State Authority Fee (Reduced)**: $22.50 (Medicare/Medicaid/Veteran)\n\n' +
-        'Would you like to **Start Patient Intake** or **Book Consultation**?';
-      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Patient Intake', 'Book Consultation', 'Main Menu'] } as any]);
+      if (isBusiness || variant === 'sinc' || variant === 'business') {
+        // ─── BUSINESS FEE SCHEDULE (OMMA Tiered Licensing) ───
+        response = '💰 **OMMA Commercial License Fee Schedule (2026)**\n' +
+          '_Per HB 2179 (2022) amended by SB 813 (2023) — 63 O.S. § 427.14_\n\n' +
+          '🌿 **GROWER — Indoor / Greenhouse / Light Deprivation**\n' +
+          '| Tier | Canopy Size | Fee | Total w/ CC |\n' +
+          '|------|------------|-----|-------------|\n' +
+          '| Tier 1 | Up to 10,000 sq ft | $2,500 | $2,558.30 |\n' +
+          '| Tier 2 | 10,001–20,000 sq ft | $5,000 | $5,114.55 |\n' +
+          '| Tier 3 | 20,001–40,000 sq ft | $10,000 | $10,227.05 |\n' +
+          '| Tier 4 | 40,001–60,000 sq ft | $20,000 | $20,452.04 |\n' +
+          '| Tier 5 | 60,001–80,000 sq ft | $30,000 | $30,677.05 |\n' +
+          '| Tier 6 | 80,001–99,999 sq ft | $40,000 | $40,902.05 |\n' +
+          '| Tier 7 | 100,000+ sq ft | $50,000 + $0.25/sq ft | Varies |\n\n' +
+          'Which license type would you like more details on?';
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Grower Outdoor Fees', 'Processor Fees', 'Dispensary Fees', 'Start Business Intake', 'Main Menu'] } as any]);
+        setIsTyping(false);
+        return;
+      } else {
+        // ─── PATIENT FEE SCHEDULE ───
+        response = '💰 **GGMA Patient Fee Schedule (2026)**\n\n' +
+          '• **Patient Recommendation**: $35.00 (Via GoHealthUSA)\n' +
+          '• **GGE Intake Processing**: $10.00\n' +
+          '• **Total Portal Cost**: **$45.00**\n\n' +
+          '• **State Authority Fee (Standard)**: $104.30\n' +
+          '• **State Authority Fee (Reduced)**: $22.50 (Medicare/Medicaid/Veteran)\n\n' +
+          'Would you like to **Start Patient Intake** or **Book Consultation**?';
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Patient Intake', 'Book Consultation', 'Main Menu'] } as any]);
+        setIsTyping(false);
+        return;
+      }
+    }
+
+    // Handle specific business fee drilldowns
+    if (lower.includes('grower outdoor') || lower === 'grower outdoor fees') {
+      response = '🌿 **GROWER — Outdoor License Fees**\n' +
+        '_Per 63 O.S. § 427.14_\n\n' +
+        '| Tier | Acreage | Fee | Total w/ CC |\n' +
+        '|------|---------|-----|-------------|\n' +
+        '| Tier 1 | Up to 2.5 acres | $2,500 | $2,558.30 |\n' +
+        '| Tier 2 | 2.5–5 acres | $5,000 | $5,114.55 |\n' +
+        '| Tier 3 | 5–10 acres | $10,000 | $10,227.05 |\n' +
+        '| Tier 4 | 10–20 acres | $20,000 | $20,452.04 |\n' +
+        '| Tier 5 | 20–30 acres | $30,000 | $30,677.05 |\n' +
+        '| Tier 6 | 30–40 acres | $40,000 | $40,902.05 |\n' +
+        '| Tier 7 | 40–50 acres | $50,000 | $51,127.04 |\n' +
+        '| Tier 8 | 50+ acres | $50,000 + $250/acre | Varies |\n\n' +
+        'Ready to apply?';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Business Intake', 'Processor Fees', 'Dispensary Fees', 'Main Menu'] } as any]);
+      setIsTyping(false);
+      return;
+    }
+
+    if (lower.includes('processor fee') || lower === 'processor fees') {
+      response = '⚗️ **PROCESSOR License Fees**\n' +
+        '_Initial nonrefundable fee: $2,500. Annual fee based on production._\n\n' +
+        '| Tier | Production Volume | Fee | Total w/ CC |\n' +
+        '|------|------------------|-----|-------------|\n' +
+        '| Tier 1 | Up to 10,000 lbs biomass / 100L concentrate | $2,500 | $2,558.30 |\n' +
+        '| Tier 2 | 10,001–50,000 lbs / 101–350L | $5,000 | $5,114.55 |\n' +
+        '| Tier 3 | 50,001–150,000 lbs / 351–650L | $10,000 | $10,227.05 |\n' +
+        '| Tier 4 | 150,001–300,000 lbs / 651–1,000L | $15,000 | $15,339.55 |\n' +
+        '| Tier 5 | 300,001+ lbs / 1,001L+ | $20,000 | $20,452.04 |\n\n' +
+        '_Note: Nonliquid concentrates = 1 liter per 1,000 grams._\n\n' +
+        'Ready to apply?';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Business Intake', 'Grower Outdoor Fees', 'Dispensary Fees', 'Main Menu'] } as any]);
+      setIsTyping(false);
+      return;
+    }
+
+    if (lower.includes('dispensary fee') || lower === 'dispensary fees') {
+      response = '🏪 **DISPENSARY License Fees**\n' +
+        '_Initial nonrefundable fee: $2,500_\n\n' +
+        '**Annual fee** = 10% of combined annual state sales tax + state excise (medical marijuana) tax from the previous 12 months.\n\n' +
+        '• **Minimum fee**: $2,500\n' +
+        '• **Maximum fee**: $10,000\n' +
+        '• **CC Processing**: 2.25% of (fee + $2)\n\n' +
+        '📋 _The state sales tax calculation includes only sales tax payable to the State of Oklahoma, not local government taxes._\n\n' +
+        'Ready to apply?';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Business Intake', 'Grower Outdoor Fees', 'Processor Fees', 'Main Menu'] } as any]);
+      setIsTyping(false);
+      return;
+    }
+
+    if (lower.includes('grower fee') || lower === 'grower fees') {
+      response = '🌿 **GROWER — Indoor / Greenhouse / Light Deprivation Fees**\n' +
+        '_Per 63 O.S. § 427.14_\n\n' +
+        '| Tier | Canopy Size | Fee | Total w/ CC |\n' +
+        '|------|------------|-----|-------------|\n' +
+        '| Tier 1 | Up to 10,000 sq ft | $2,500 | $2,558.30 |\n' +
+        '| Tier 2 | 10,001–20,000 sq ft | $5,000 | $5,114.55 |\n' +
+        '| Tier 3 | 20,001–40,000 sq ft | $10,000 | $10,227.05 |\n' +
+        '| Tier 4 | 40,001–60,000 sq ft | $20,000 | $20,452.04 |\n' +
+        '| Tier 5 | 60,001–80,000 sq ft | $30,000 | $30,677.05 |\n' +
+        '| Tier 6 | 80,001–99,999 sq ft | $40,000 | $40,902.05 |\n' +
+        '| Tier 7 | 100,000+ sq ft | $50,000 + $0.25/sq ft | Varies |\n\n' +
+        'Want outdoor acreage fees instead?';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Grower Outdoor Fees', 'Processor Fees', 'Dispensary Fees', 'Start Business Intake'] } as any]);
       setIsTyping(false);
       return;
     }
