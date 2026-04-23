@@ -18,52 +18,63 @@ export interface AddOn {
 }
 
 export const CANNABIS_B2B_PLANS: SubscriptionPlan[] = [
-  { 
-    id: 'b2bc_basic', 
-    name: 'Basic', 
-    monthlyPrice: 299, 
-    annualPrice: 2990, 
-    bestFor: 'Single-location operators', 
+  {
+    id: 'b2bc_starter',
+    name: 'Starter',
+    monthlyPrice: 199,
+    annualPrice: 1990,
+    bestFor: 'Single-location dispensaries — replaces standalone POS ($300+/mo) + Metrc ($40/mo) at a lower total cost',
     aiLevel: 'Basic Sylara + Larry Guidance',
     features: [
-      'Business Operations Dashboard (daily ops, basic inventory + transaction tracking)',
-      'Larry (Cannabis): basic compliance monitoring + state requirement guidance',
-      'Basic licensing visibility + compliance reminders',
-      'Sylara AI: assists with workflows + questions',
-      'Basic reporting + transaction visibility'
+      'Full SINC POS system (Visa/MC/debit-ready, receipts, daily drawer)',
+      'Real-time Metrc seed-to-sale sync (auto-push inventory changes)',
+      'Basic compliance dashboard + state requirement alerts',
+      'Inventory tracking with barcode/tag scanning',
+      'Larry (Cannabis): passive compliance monitoring + flagged risks',
+      'Sylara AI: workflow assistance + question answering',
+      'Standard reporting + exportable sales/tax summaries',
+      'Single-location, up to 5 user accounts',
+      'Save $140+/mo vs. separate POS + Metrc'
     ]
   },
-  { 
-    id: 'b2bc_pro', 
-    name: 'Medium', 
-    monthlyPrice: 699, 
-    annualPrice: 6990, 
-    bestFor: 'Growing / multi-location operators', 
+  {
+    id: 'b2bc_pro',
+    name: 'Professional',
+    monthlyPrice: 249,
+    annualPrice: 2490,
+    bestFor: 'Growing dispensaries & multi-location operators — all-in-one POS + compliance + AI for less than POS alone',
     aiLevel: 'Real-time Alerts + Automation',
     features: [
-      'Everything in Basic',
-      'Enhanced inventory + sales tracking',
-      'Multi-user access',
-      'Larry: real-time compliance alerts + violation detection',
-      'Automated compliance reports + renewal tracking',
-      'Sylara: workflow automation + smarter guidance',
-      'Performance dashboard + compliance scoring'
+      'Everything in Starter',
+      'Advanced POS (customer loyalty, discounts, split payments, returns)',
+      'Larry: real-time compliance alerts + violation detection + auto-flagging',
+      'Full inventory management with low-stock alerts & reorder triggers',
+      'Multi-location dashboard (up to 5 locations)',
+      'Unlimited user accounts with role-based access',
+      'Automated compliance reports + license renewal tracking',
+      'Sylara: workflow automation + smarter business guidance',
+      'Performance scoring + daily compliance health checks',
+      'Sales analytics + tax reconciliation tools'
     ]
   },
-  { 
-    id: 'b2bc_enterprise', 
-    name: 'Full AI', 
-    monthlyPrice: 1499, 
-    annualPrice: 14990, 
-    bestFor: 'Scalable End-to-End Management', 
+  {
+    id: 'b2bc_enterprise',
+    name: 'Enterprise',
+    monthlyPrice: 299,
+    annualPrice: 2990,
+    bestFor: 'Multi-state operators & MSOs — complete seed-to-sale + POS + AI compliance engine',
     aiLevel: 'End-to-End Automation & Real-time Action',
     features: [
-      'Everything in Medium',
-      'End-to-end business management (multi-location support)',
-      'Larry: real-time enforcement + audit readiness + automated actions',
-      'Full licensing lifecycle (apply → manage → renew)',
-      'Sylara: full business assistant + decision support + automation',
-      'Revenue analytics, risk analysis, predictive insights'
+      'Everything in Professional',
+      'White-label POS branded to your dispensary',
+      'Unlimited locations with centralized multi-state management',
+      'Larry: real-time enforcement + audit readiness + automated corrective actions',
+      'Full licensing lifecycle (apply → manage → renew) across all states',
+      'Sylara: full business assistant + decision support + predictive automation',
+      'Revenue analytics, risk analysis, predictive sales insights',
+      'Care Wallet integration (stored value, patient loyalty)',
+      'Dedicated account manager + priority support + SLA',
+      'Custom API integrations (payroll, banking, ERP)'
     ]
   }
 ];
@@ -328,7 +339,14 @@ export const COMMON_B2B_ADDONS: AddOn[] = [
 ];
 
 export const CANNABIS_ADDONS: AddOn[] = [
-  { id: 'addon_multi_state', name: 'Multi-State Expansion Pack', price: 99, per: 'additional state' }
+  { id: 'addon_multi_state', name: 'Multi-State Expansion Pack', price: 99, per: 'additional state/mo' },
+  { id: 'addon_whitelabel_pos', name: 'White-Label / Custom-Branded POS', price: 49, per: 'month' },
+  { id: 'addon_payment_processing', name: 'Advanced Payment Processing (NomadCash / Blue Sky)', price: 0, per: 'revenue share — no monthly fee' },
+  { id: 'addon_care_wallet', name: 'Care Wallet Integration (Patient Loyalty + Stored Value)', price: 29, per: 'month' },
+  { id: 'addon_onsite_training', name: 'On-Site Training & POS Setup', price: 1500, per: 'one-time' },
+  { id: 'addon_analytics_pro', name: 'Premium AI Predictive Analytics (Sales Forecasting)', price: 49, per: 'month' },
+  { id: 'addon_delivery', name: 'Delivery Management & Route Optimization', price: 79, per: 'month' },
+  { id: 'addon_loyalty', name: 'Customer Loyalty & Rewards Program Engine', price: 39, per: 'month' }
 ];
 
 export const ATTORNEY_ADDONS: AddOn[] = [
