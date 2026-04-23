@@ -141,9 +141,74 @@ export const FEDERAL_PLANS: SubscriptionPlan[] = [
 ];
 
 export const STATE_PLANS: SubscriptionPlan[] = [
-  { id: 'state_basic', name: 'State Authority Basic (Lease)', monthlyPrice: 2999, annualPrice: 30590, bestFor: 'Smaller states or pilot programs', contractType: '1-year lease', aiLevel: 'Basic Sylara Guidance + Larry Alert Mode' },
-  { id: 'state_pro', name: 'State Authority Pro (Lease)', monthlyPrice: 7999, annualPrice: 81590, bestFor: 'Most state regulatory agencies', contractType: '1–2 year lease', aiLevel: 'Full Sylara Guidance + Larry Enforcement Mode' },
-  { id: 'state_enterprise', name: 'State Authority Enterprise (Lease)', monthlyPrice: 0, annualPrice: 'Custom', bestFor: 'Large/complex states', contractType: '2–5 year multi-year lease (preferred)', aiLevel: 'Unlimited Sylara + Larry + Custom State AI' }
+  {
+    id: 'state_basic',
+    name: 'State Authority Basic',
+    monthlyPrice: 4999,
+    annualPrice: 50990,
+    bestFor: 'Smaller states, pilot programs, or single-program agencies (replaces Thentia-only licensing at a fraction of multi-vendor cost)',
+    contractType: '1-Year Lease',
+    aiLevel: 'Basic Sylara Guidance + Larry Alert Mode',
+    features: [
+      'Unified MedPortal — patient, caregiver & business licensing in one system (replaces Thentia/Complia)',
+      'Real-time license application processing + automated renewal tracking',
+      'Basic compliance dashboard with violation alerts',
+      'Larry (Cannabis): passive compliance monitoring + flagged risk notifications',
+      'Seed-to-sale visibility via Metrc API integration (read-only sync)',
+      'Up to 50,000 active licenses managed',
+      'Role-based access for up to 25 state staff accounts',
+      'Standard reporting + exportable state compliance summaries',
+      'Secure cloud hosting with FedRAMP-ready controls',
+      'Dedicated onboarding specialist (first 90 days)',
+    ]
+  },
+  {
+    id: 'state_pro',
+    name: 'State Authority Pro',
+    monthlyPrice: 12999,
+    annualPrice: 132590,
+    bestFor: 'Most state regulatory agencies — eliminates need for separate Thentia ($0.35–$0.50/license/mo) + Metrc admin contracts',
+    contractType: '1–2 Year Lease',
+    aiLevel: 'Full Sylara Guidance + Larry Enforcement Mode',
+    features: [
+      'Everything in Basic',
+      'Full bi-directional Metrc integration (read + write — no separate Metrc admin contract needed)',
+      'Larry real-time enforcement engine — proactive violation detection + auto-flagging',
+      'Advanced applicant screening + background check integration',
+      'Patient & provider program oversight with telehealth monitoring',
+      'Revenue, tax & economic analytics dashboard',
+      'Multi-program support (Medical + Adult-Use + Hemp in one portal)',
+      'Unlimited active licenses managed',
+      'Unlimited state staff accounts with audit trails',
+      'Public transparency portal (consumer-facing license verification)',
+      'Automated federal reporting + USDA/FDA data export',
+      'Quarterly strategy reviews with GGP-OS account team',
+    ]
+  },
+  {
+    id: 'state_enterprise',
+    name: 'State Authority Enterprise',
+    monthlyPrice: 0,
+    annualPrice: 'Custom',
+    bestFor: 'Large or complex states (OK, CA, CO, FL) — full replacement for Thentia + Metrc admin + custom enforcement tools',
+    contractType: '2–5 Year Multi-Year Agreement (Preferred)',
+    aiLevel: 'Unlimited Sylara + Larry + Custom State AI Agents',
+    features: [
+      'Everything in Pro',
+      'Complete white-label MedPortal branded to your state agency',
+      'Larry unified intelligence engine — real-time statewide enforcement + predictive risk scoring',
+      'Custom AI agents trained on your state\'s specific statutes & regulations',
+      'Policy impact simulator — model regulatory changes before implementation',
+      'Full seed-to-sale closed-loop infrastructure (replace or augment Metrc entirely)',
+      'Cross-agency data sharing with law enforcement, public health & revenue',
+      'Interstate commerce readiness + reciprocity management',
+      'SAM.gov compliance automation for federal grant eligibility',
+      'Dedicated state program manager + 24/7 priority support',
+      'Custom API integrations with existing state systems (ERP, PDMP, etc.)',
+      'On-site training + annual compliance audit support',
+      'Executive analytics with legislative reporting tools',
+    ]
+  }
 ];
 
 export const EXTERNAL_ADMIN_PLANS: SubscriptionPlan[] = [
@@ -173,13 +238,16 @@ export const NON_CANNABIS_BACKOFFICE_PLANS: SubscriptionPlan[] = [
 ];
 
 export const STATE_ADDONS: AddOn[] = [
-  { id: 'state_add_inventory', name: 'Real-Time Business & Inventory Monitoring', price: 10000, per: 'year (starting)' },
-  { id: 'state_add_patient', name: 'Patient & Provider Program Oversight', price: 8000, per: 'year' },
-  { id: 'state_add_risk', name: 'Risk, Violation & Enforcement Support', price: 12000, per: 'year' },
-  { id: 'state_add_revenue', name: 'Revenue, Tax & Economic Analytics', price: 15000, per: 'year' },
-  { id: 'state_add_multi', name: 'Multi-Program / Multi-Jurisdiction Tools', price: 20000, per: 'year' },
-  { id: 'state_add_ai', name: 'Premium AI Regulatory Guidance (Sylara for State)', price: 15000, per: 'year (starting)' },
-  { id: 'state_add_reports', name: 'Advanced Reporting & Public Transparency Tools', price: 8000, per: 'year' }
+  { id: 'state_add_inventory', name: 'Real-Time Business & Inventory Monitoring (Metrc Overlay)', price: 15000, per: 'year' },
+  { id: 'state_add_patient', name: 'Patient & Provider Program Oversight + Telehealth', price: 12000, per: 'year' },
+  { id: 'state_add_risk', name: 'Risk, Violation & Predictive Enforcement (Larry Pro)', price: 18000, per: 'year' },
+  { id: 'state_add_revenue', name: 'Revenue, Tax & Economic Impact Analytics', price: 20000, per: 'year' },
+  { id: 'state_add_multi', name: 'Multi-Program / Multi-Jurisdiction Management', price: 25000, per: 'year' },
+  { id: 'state_add_ai', name: 'Premium Sylara State AI (Unlimited Tokens + Custom Training)', price: 24000, per: 'year' },
+  { id: 'state_add_reports', name: 'Advanced Reporting, Public Transparency & FOIA Tools', price: 10000, per: 'year' },
+  { id: 'state_add_interstate', name: 'Interstate Commerce & Reciprocity Module', price: 15000, per: 'year' },
+  { id: 'state_add_lab', name: 'Lab Testing & Public Health Integration', price: 12000, per: 'year' },
+  { id: 'state_add_training', name: 'On-Site Staff Training & Annual Compliance Audit', price: 8000, per: 'engagement' }
 ];
 
 export const BACKOFFICE_ADDONS: AddOn[] = [
