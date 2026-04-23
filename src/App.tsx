@@ -112,6 +112,7 @@ import { PatientDashboard } from './pages/PatientDashboard';
 import { OversightDashboard } from './pages/OversightDashboard';
 import { PricingTiers } from './components/PricingTiers';
 import { LanguageSelector } from './components/LanguageSelector';
+import { FeaturedPoll, StickyPollWidget } from './components/CommunityPolls';
 
 // --- Constants ---
 
@@ -1293,6 +1294,9 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
         </div>
       </nav>
 
+      {/* 🗳️ COMMUNITY POLLS — Featured Banner */}
+      <FeaturedPoll />
+
       {/* "IN THE KNOW" NEWS TICKER */}
       <div className="bg-[#1a4731] text-emerald-100 py-3 border-b border-emerald-900/20 overflow-hidden whitespace-nowrap relative z-40">
         <div className="inline-block animate-marquee font-bold text-xs uppercase tracking-[0.2em]">
@@ -1727,6 +1731,9 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
           </div>
         </div>
       </footer>
+
+      {/* 🗳️ Sticky Poll Widget — appears on scroll */}
+      <StickyPollWidget />
 
     </div>
   );
