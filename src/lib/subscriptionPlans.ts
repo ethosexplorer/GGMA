@@ -8,6 +8,8 @@ export interface SubscriptionPlan {
   contractType?: string;
   tokensMonth?: string;
   features?: string[];
+  trialDays?: number;      // e.g. 30 = 30-day free trial
+  trialPrice?: number;     // 0 = free trial, or introductory rate
 }
 
 export interface AddOn {
@@ -16,6 +18,17 @@ export interface AddOn {
   price: number;
   per?: string; // e.g. "integration", "additional state"
 }
+
+// ─── TRIAL & INTRODUCTORY PRICING TERMS ───
+export const TRIAL_TERMS = {
+  trialDays: 30,
+  trialPrice: 0,
+  requiresCard: true,
+  autoRenews: true,
+  cancellationPolicy: 'Cancel anytime before your trial ends to avoid charges. If you do not cancel, your subscription will automatically renew at the standard rate.',
+  agreementText: 'I understand that a valid credit or debit card is required to start my free trial. After the 30-day trial period, my subscription will automatically convert to the selected plan at the listed monthly rate. I may cancel at any time before the trial ends to avoid being charged. By checking this box, I authorize Global Green Enterprise Inc. to charge my payment method on file upon trial expiration and on each subsequent billing cycle until I cancel.',
+  shortDisclosure: 'Free for 30 days. Credit/debit card required. Auto-renews at listed price. Cancel anytime.',
+};
 
 export const CANNABIS_B2B_PLANS: SubscriptionPlan[] = [
   {

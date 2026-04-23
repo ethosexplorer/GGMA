@@ -22,6 +22,8 @@ import {
   Globe,
   Handshake,
   TrendingUp,
+  AlertTriangle,
+  Gift,
 } from 'lucide-react';
 import {
   CANNABIS_B2B_PLANS,
@@ -56,6 +58,7 @@ import {
   BACKOFFICE_ADDONS,
   ADMIN_ADDONS,
   STATE_APPLICATION_FEES,
+  TRIAL_TERMS,
 } from '../lib/subscriptionPlans';
 
 // ─── Tab Configuration ───
@@ -138,6 +141,7 @@ const PlanCard = ({ plan, index, total, billing }: { key?: string; plan: Subscri
   const isMid = total === 3 && index === 1;
   const isPopular = isMid || (total === 4 && index === 2);
   const price = formatPrice(plan, billing);
+  const hasTrial = plan.monthlyPrice > 0 && price !== 'Custom';
 
   return (
     <motion.div
@@ -156,6 +160,14 @@ const PlanCard = ({ plan, index, total, billing }: { key?: string; plan: Subscri
         </div>
       )}
 
+      {/* Free Trial Badge */}
+      {hasTrial && (
+        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl mb-4 w-fit shadow-sm">
+          <Gift size={12} className="text-white" />
+          <span className="text-[10px] font-black text-white uppercase tracking-widest">30 Days Free</span>
+        </div>
+      )}
+
       {/* Header */}
       <h3 className="text-xl font-black text-slate-800 mb-1">{plan.name}</h3>
       {plan.bestFor && (
@@ -163,14 +175,35 @@ const PlanCard = ({ plan, index, total, billing }: { key?: string; plan: Subscri
       )}
 
       {/* Price */}
-      <div className="flex items-baseline gap-1 mb-1">
-        <span className="text-4xl font-black text-slate-900">{price}</span>
-        {price !== 'Free' && price !== 'Custom' && (
-          <span className="text-sm font-bold text-slate-400">
-            /{billing === 'monthly' ? 'mo' : 'yr'}
-          </span>
+      {hasTrial && (
+        <div className="flex items-baseline gap-2 mb-1">
+          <span className="text-4xl font-black text-emerald-600">$0</span>
+          <span className="text-sm font-bold text-slate-400">for 30 days</span>
+        </div>
+      )}
+      <div className={`flex items-baseline gap-1 ${hasTrial ? 'mb-1' : 'mb-1'}`}>
+        {hasTrial ? (
+          <span className="text-lg font-bold text-slate-400">then {price}<span className="text-xs">/{billing === 'monthly' ? 'mo' : 'yr'}</span></span>
+        ) : (
+          <>
+            <span className="text-4xl font-black text-slate-900">{price}</span>
+            {price !== 'Free' && price !== 'Custom' && (
+              <span className="text-sm font-bold text-slate-400">
+                /{billing === 'monthly' ? 'mo' : 'yr'}
+              </span>
+            )}
+          </>
         )}
       </div>
+
+      {/* Auto-charge disclosure */}
+      {hasTrial && (
+        <p className="text-[10px] text-amber-700 font-bold mb-4 flex items-start gap-1">
+          <CreditCard size={11} className="shrink-0 mt-0.5" />
+          Card required. Auto-renews after trial.
+        </p>
+      )}
+
       {billing === 'annual' && typeof plan.annualPrice === 'number' && plan.monthlyPrice > 0 && (
         <p className="text-xs text-emerald-600 font-bold mb-4">
           Save {Math.round((1 - plan.annualPrice / (plan.monthlyPrice * 12)) * 100)}% vs monthly
@@ -220,7 +253,7 @@ const PlanCard = ({ plan, index, total, billing }: { key?: string; plan: Subscri
             : 'bg-slate-900 text-white hover:bg-slate-800 shadow-lg shadow-slate-900/10'
         }`}
       >
-        {price === 'Custom' ? 'Contact Sales' : 'Get Started'}
+        {price === 'Custom' ? 'Contact Sales' : price === 'Free' ? 'Get Started Free' : 'Start Free Trial'}
       </button>
     </motion.div>
   );
@@ -448,8 +481,29 @@ export const PricingTiers = ({ onNavigate }: { onNavigate?: (view: string) => vo
           </div>
         )}
 
+        {/* Trial Agreement & Auto-Charge Disclosure */}
+        <div className="max-w-3xl mx-auto mt-12">
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6">
+            <div className="flex items-start gap-3 mb-4">
+              <AlertTriangle size={18} className="text-amber-600 shrink-0 mt-0.5" />
+              <div>
+                <h4 className="font-black text-amber-900 text-sm">Free Trial & Auto-Renewal Notice</h4>
+                <p className="text-xs text-amber-700 leading-relaxed mt-1">{TRIAL_TERMS.shortDisclosure}</p>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl p-4 border border-amber-100">
+              <p className="text-[11px] text-slate-600 leading-relaxed">
+                {TRIAL_TERMS.agreementText}
+              </p>
+            </div>
+            <p className="text-[10px] text-amber-600 mt-3 font-medium">
+              {TRIAL_TERMS.cancellationPolicy}
+            </p>
+          </div>
+        </div>
+
         {/* Bottom CTA */}
-        <div className="text-center mt-16">
+        <div className="text-center mt-12">
           <p className="text-sm text-slate-500 mb-4 font-medium">
             Need a custom plan? Our team can build a tailored package for your organization.
           </p>
