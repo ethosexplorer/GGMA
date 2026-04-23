@@ -111,6 +111,7 @@ import ProviderRegistrationPage from './pages/ProviderRegistrationPage';
 import { PatientDashboard } from './pages/PatientDashboard';
 import { OversightDashboard } from './pages/OversightDashboard';
 import { PricingTiers } from './components/PricingTiers';
+import { LanguageSelector } from './components/LanguageSelector';
 
 // --- Constants ---
 
@@ -1287,6 +1288,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
         </div>
 
         <div className="flex items-center gap-3">
+          <LanguageSelector currentLanguage="en" onLanguageChange={(code) => { console.log('Language:', code); document.documentElement.lang = code; }} compact />
           <Button onClick={() => onNavigate('login')}>Login</Button>
         </div>
       </nav>
