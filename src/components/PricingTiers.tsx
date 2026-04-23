@@ -20,6 +20,8 @@ import {
   Headphones,
   BarChart3,
   Globe,
+  Handshake,
+  TrendingUp,
 } from 'lucide-react';
 import {
   CANNABIS_B2B_PLANS,
@@ -39,6 +41,9 @@ import {
   EXTERNAL_ADMIN_PLANS,
   FINANCE_AI_PLANS,
   COMBINED_ENF_FIN_PLANS,
+  PARTNER_PLANS,
+  PARTNER_ADDONS,
+  VOLUME_INCENTIVES,
   type SubscriptionPlan,
   type AddOn,
   COMMON_B2B_ADDONS,
@@ -65,6 +70,7 @@ const TIER_TABS = [
   { id: 'state', label: 'State Authority', icon: Shield, color: 'from-orange-500 to-red-600', accent: 'orange' },
   { id: 'federal', label: 'Federal', icon: Globe, color: 'from-blue-800 to-slate-900', accent: 'blue' },
   { id: 'enforcement', label: 'Enforcement', icon: Activity, color: 'from-red-600 to-red-900', accent: 'red' },
+  { id: 'partners', label: 'Partners', icon: Handshake, color: 'from-cyan-500 to-teal-700', accent: 'cyan' },
 ] as const;
 
 type TabId = typeof TIER_TABS[number]['id'];
@@ -81,6 +87,7 @@ function getPlansForTab(tabId: TabId): SubscriptionPlan[] {
     case 'state': return STATE_PLANS;
     case 'federal': return FEDERAL_PLANS;
     case 'enforcement': return [...ENFORCEMENT_PLANS, ...FINANCE_AI_PLANS];
+    case 'partners': return PARTNER_PLANS;
     default: return [];
   }
 }
@@ -97,6 +104,7 @@ function getAddOnsForTab(tabId: TabId): AddOn[] {
     case 'federal': return FEDERAL_ADDONS;
     case 'enforcement': return [];
     case 'provider': return [];
+    case 'partners': return PARTNER_ADDONS;
     default: return [];
   }
 }
@@ -113,6 +121,7 @@ function getTabDescription(tabId: TabId): string {
     case 'state': return 'State regulatory agencies overseeing licensing, compliance monitoring, and public health data.';
     case 'federal': return 'Federal interagency coordination — DEA, FDA, HHS — with nationwide intelligence and enforcement.';
     case 'enforcement': return 'Law enforcement, rapid testing intelligence, and financial crime analytics.';
+    case 'partners': return 'Earn recurring revenue by referring or reselling SINC to dispensaries, operators, and state agencies.';
     default: return '';
   }
 }
@@ -397,6 +406,45 @@ export const PricingTiers = ({ onNavigate }: { onNavigate?: (view: string) => vo
                 </motion.div>
               )}
             </AnimatePresence>
+          </div>
+        )}
+
+        {/* Volume Incentives (Partners tab only) */}
+        {activeTab === 'partners' && (
+          <div className="max-w-5xl mx-auto mt-12">
+            <div className="bg-gradient-to-br from-cyan-50 to-teal-50 border border-cyan-200 rounded-2xl p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 bg-cyan-500 rounded-xl flex items-center justify-center">
+                  <TrendingUp size={20} className="text-white" />
+                </div>
+                <div>
+                  <h4 className="font-black text-slate-800 text-base">Volume Incentives</h4>
+                  <p className="text-xs text-slate-500">The more clients you bring, the more you earn</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {VOLUME_INCENTIVES.map((v, i) => (
+                  <div key={i} className="bg-white rounded-xl p-4 border border-cyan-100 hover:border-cyan-300 transition-all hover:shadow-sm">
+                    <p className="font-black text-cyan-800 text-sm mb-1">{v.threshold}</p>
+                    <p className="text-xs text-slate-600">{v.bonus}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-6 pt-6 border-t border-cyan-200 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                <div>
+                  <p className="text-2xl font-black text-slate-900">$74.70</p>
+                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Monthly per referral (Affiliate)</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-black text-emerald-600">$80–$100</p>
+                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Monthly margin per client (Reseller)</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-black text-slate-900">80–90%</p>
+                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Gross margin on software</p>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 

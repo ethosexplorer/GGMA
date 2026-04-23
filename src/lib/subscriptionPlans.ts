@@ -611,3 +611,91 @@ export const CROSS_DASHBOARD_ADDONS: AddOn[] = [
   { id: 'addon_x_traditional_bo', name: 'Traditional Back-Office Suite', price: 79 },
   { id: 'addon_x_help_dashboard', name: 'Help / Support Dashboard', price: 29 },
 ];
+
+// ─── B2B PARTNER / DISTRIBUTION PROGRAM ───
+export interface PartnerIncentive {
+  threshold: string;
+  bonus: string;
+}
+
+export const PARTNER_PLANS: SubscriptionPlan[] = [
+  {
+    id: 'partner_affiliate',
+    name: 'Referral Affiliate',
+    monthlyPrice: 0,
+    annualPrice: 0,
+    bestFor: 'Consultants, accountants, compliance advisors, influencers — earn recurring commissions with zero inventory or resale risk',
+    contractType: 'No Commitment',
+    aiLevel: 'Partner Portal + Tracking Dashboard',
+    features: [
+      'No upfront cost — free to join',
+      '30% recurring commission on referred clients (first 12 months)',
+      '20% recurring commission after month 12 (lifetime residual)',
+      'Example: 1 dispensary at $249/mo = $74.70/mo passive income',
+      'Unique partner referral code + branded tracking links',
+      'Real-time commission dashboard (clients, revenue, payouts)',
+      'Co-branded marketing materials (decks, emails, banners)',
+      'Monthly ACH payouts (Net 30)',
+      'Dedicated partner success manager',
+      'No sales quota — refer at your own pace',
+    ]
+  },
+  {
+    id: 'partner_reseller',
+    name: 'Authorized Reseller',
+    monthlyPrice: 149,
+    annualPrice: 1490,
+    bestFor: 'POS companies, cannabis consultants, managed service providers — buy wholesale at $149–$169 and resell at $249 (32–40% margin)',
+    contractType: '1-Year Agreement',
+    aiLevel: 'Full Partner Portal + White-Label Options',
+    features: [
+      'Wholesale pricing: $149–$169/license/mo (retail $249)',
+      'You keep $80–$100/mo per client (32–40% gross margin)',
+      'Minimum 5 clients to qualify as Authorized Reseller',
+      'White-label / co-branded SINC portal option',
+      'Full demo environment for client presentations',
+      'Partner-branded onboarding kit + training materials',
+      'Tier 1 support: you handle initial client setup',
+      'Tier 2 escalation: GGP-OS handles all technical issues',
+      'Quarterly business reviews with partner success team',
+      'Priority access to new features + beta programs',
+    ]
+  },
+  {
+    id: 'partner_strategic',
+    name: 'Strategic Distribution Partner',
+    monthlyPrice: 0,
+    annualPrice: 'Custom',
+    bestFor: 'Banks (Blue Sky), state associations, MSOs — enterprise-level distribution with custom revenue share and co-marketing funds',
+    contractType: '2–3 Year Strategic Agreement',
+    aiLevel: 'Custom Integration + Co-Marketing Fund',
+    features: [
+      'Custom wholesale pricing (negotiated volume tiers)',
+      'Embedded SINC inside partner\'s existing platform',
+      'Revenue share on payment processing fees (NomadCash / Blue Sky)',
+      'Co-marketing fund ($5K–$25K/year based on volume)',
+      'Joint webinars, events, and state conference sponsorships',
+      'Dedicated partner engineering liaison for API integration',
+      'Custom reporting + partner analytics dashboard',
+      'Named account executive + quarterly exec alignment calls',
+      'First-to-market access on new state launches',
+      'Exclusive territory protection (negotiable)',
+    ]
+  }
+];
+
+export const PARTNER_ADDONS: AddOn[] = [
+  { id: 'partner_add_whitelabel', name: 'White-Label Portal (Your Brand on SINC)', price: 199, per: 'month' },
+  { id: 'partner_add_demo', name: 'Dedicated Demo Environment', price: 49, per: 'month' },
+  { id: 'partner_add_comarketing', name: 'Co-Marketing Material Pack (Decks, Flyers, Emails)', price: 0, per: 'included' },
+  { id: 'partner_add_training', name: 'Partner Sales Training & Certification', price: 500, per: 'one-time' },
+  { id: 'partner_add_api', name: 'Partner API Access (Custom Integration)', price: 99, per: 'month' },
+  { id: 'partner_add_territory', name: 'Exclusive Territory Protection', price: 0, per: 'Strategic tier only' },
+];
+
+export const VOLUME_INCENTIVES: PartnerIncentive[] = [
+  { threshold: '10+ Active Clients', bonus: '+5% additional margin or commission' },
+  { threshold: '25+ Active Clients', bonus: '+10% additional margin or commission' },
+  { threshold: '50+ Active Clients', bonus: '+15% margin + co-marketing fund eligibility' },
+  { threshold: '100+ Active Clients', bonus: 'Custom strategic pricing + dedicated support team' },
+];
