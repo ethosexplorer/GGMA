@@ -1,0 +1,421 @@
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import {
+  CheckCircle2,
+  Sparkles,
+  Building2,
+  Shield,
+  User,
+  Stethoscope,
+  Briefcase,
+  Gavel,
+  Activity,
+  Cpu,
+  Star,
+  ChevronDown,
+  ChevronUp,
+  ArrowRight,
+  Wallet,
+  CreditCard,
+  Headphones,
+  BarChart3,
+  Globe,
+} from 'lucide-react';
+import {
+  CANNABIS_B2B_PLANS,
+  TRADITIONAL_B2B_PLANS,
+  B2C_PLANS,
+  PROVIDER_PLANS,
+  CANNABIS_ATTORNEY_PLANS,
+  GENERAL_ATTORNEY_PLANS,
+  STATE_PLANS,
+  FEDERAL_PLANS,
+  ENFORCEMENT_PLANS,
+  PUBLIC_HEALTH_PLANS,
+  CARE_WALLET_PLANS,
+  CARE_BUILDER_PLANS,
+  CANNABIS_BACKOFFICE_PLANS,
+  NON_CANNABIS_BACKOFFICE_PLANS,
+  EXTERNAL_ADMIN_PLANS,
+  FINANCE_AI_PLANS,
+  COMBINED_ENF_FIN_PLANS,
+  type SubscriptionPlan,
+  type AddOn,
+  COMMON_B2B_ADDONS,
+  CANNABIS_ADDONS,
+  ATTORNEY_ADDONS,
+  FEDERAL_ADDONS,
+  STATE_ADDONS,
+  PATIENT_ADDONS,
+  PUBLIC_HEALTH_ADDONS,
+  BACKOFFICE_ADDONS,
+  ADMIN_ADDONS,
+  STATE_APPLICATION_FEES,
+} from '../lib/subscriptionPlans';
+
+// ─── Tab Configuration ───
+const TIER_TABS = [
+  { id: 'patient', label: 'Patient (B2C)', icon: User, color: 'from-sky-500 to-blue-600', accent: 'sky' },
+  { id: 'cannabis_b2b', label: 'Cannabis B2B', icon: Building2, color: 'from-emerald-500 to-green-700', accent: 'emerald' },
+  { id: 'traditional_b2b', label: 'Traditional B2B', icon: BarChart3, color: 'from-violet-500 to-purple-700', accent: 'violet' },
+  { id: 'provider', label: 'Providers', icon: Stethoscope, color: 'from-teal-500 to-cyan-700', accent: 'teal' },
+  { id: 'attorney', label: 'Attorneys', icon: Gavel, color: 'from-amber-500 to-orange-600', accent: 'amber' },
+  { id: 'backoffice', label: 'Back Office', icon: Cpu, color: 'from-rose-500 to-pink-700', accent: 'rose' },
+  { id: 'care_wallet', label: 'Care Wallet', icon: CreditCard, color: 'from-indigo-500 to-blue-700', accent: 'indigo' },
+  { id: 'state', label: 'State Authority', icon: Shield, color: 'from-orange-500 to-red-600', accent: 'orange' },
+  { id: 'federal', label: 'Federal', icon: Globe, color: 'from-blue-800 to-slate-900', accent: 'blue' },
+  { id: 'enforcement', label: 'Enforcement', icon: Activity, color: 'from-red-600 to-red-900', accent: 'red' },
+] as const;
+
+type TabId = typeof TIER_TABS[number]['id'];
+
+function getPlansForTab(tabId: TabId): SubscriptionPlan[] {
+  switch (tabId) {
+    case 'patient': return B2C_PLANS;
+    case 'cannabis_b2b': return CANNABIS_B2B_PLANS;
+    case 'traditional_b2b': return TRADITIONAL_B2B_PLANS;
+    case 'provider': return PROVIDER_PLANS;
+    case 'attorney': return [...CANNABIS_ATTORNEY_PLANS, ...GENERAL_ATTORNEY_PLANS];
+    case 'backoffice': return [...CANNABIS_BACKOFFICE_PLANS, ...NON_CANNABIS_BACKOFFICE_PLANS];
+    case 'care_wallet': return [...CARE_WALLET_PLANS, ...CARE_BUILDER_PLANS];
+    case 'state': return STATE_PLANS;
+    case 'federal': return FEDERAL_PLANS;
+    case 'enforcement': return [...ENFORCEMENT_PLANS, ...FINANCE_AI_PLANS];
+    default: return [];
+  }
+}
+
+function getAddOnsForTab(tabId: TabId): AddOn[] {
+  switch (tabId) {
+    case 'patient': return PATIENT_ADDONS;
+    case 'cannabis_b2b': return [...COMMON_B2B_ADDONS, ...CANNABIS_ADDONS];
+    case 'traditional_b2b': return COMMON_B2B_ADDONS;
+    case 'attorney': return ATTORNEY_ADDONS;
+    case 'backoffice': return BACKOFFICE_ADDONS;
+    case 'care_wallet': return [];
+    case 'state': return STATE_ADDONS;
+    case 'federal': return FEDERAL_ADDONS;
+    case 'enforcement': return [];
+    case 'provider': return [];
+    default: return [];
+  }
+}
+
+function getTabDescription(tabId: TabId): string {
+  switch (tabId) {
+    case 'patient': return 'Individual patients & caregivers seeking medical cannabis access and health management.';
+    case 'cannabis_b2b': return 'Dispensaries, cultivators, processors — full seed-to-sale compliance with Metrc integration.';
+    case 'traditional_b2b': return 'Non-cannabis businesses leveraging our AI-powered operations and compliance platform.';
+    case 'provider': return 'Licensed medical professionals conducting consultations, certifications, and telehealth.';
+    case 'attorney': return 'Cannabis & general legal counsel managing licensing, compliance portfolios, and client cases.';
+    case 'backoffice': return 'AI-powered operational support for cannabis and general businesses — virtual attendants, scheduling, CRM.';
+    case 'care_wallet': return 'Closed-loop stored value cards, credit-building programs, and ecosystem-wide spending.';
+    case 'state': return 'State regulatory agencies overseeing licensing, compliance monitoring, and public health data.';
+    case 'federal': return 'Federal interagency coordination — DEA, FDA, HHS — with nationwide intelligence and enforcement.';
+    case 'enforcement': return 'Law enforcement, rapid testing intelligence, and financial crime analytics.';
+    default: return '';
+  }
+}
+
+function formatPrice(plan: SubscriptionPlan, billing: 'monthly' | 'annual'): string {
+  if (billing === 'monthly') {
+    return plan.monthlyPrice === 0 ? 'Free' : `$${plan.monthlyPrice.toLocaleString()}`;
+  }
+  return typeof plan.annualPrice === 'string' ? plan.annualPrice : `$${plan.annualPrice.toLocaleString()}`;
+}
+
+// ─── Plan Card ───
+const PlanCard = ({ plan, index, total, billing }: { key?: string; plan: SubscriptionPlan; index: number; total: number; billing: 'monthly' | 'annual' }) => {
+  const isMid = total === 3 && index === 1;
+  const isPopular = isMid || (total === 4 && index === 2);
+  const price = formatPrice(plan, billing);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.08, duration: 0.4 }}
+      className={`relative flex flex-col rounded-[2rem] border p-8 transition-all ${
+        isPopular
+          ? 'border-emerald-500 bg-emerald-50/30 shadow-2xl scale-[1.03] z-10'
+          : 'border-slate-200 bg-white hover:border-emerald-300 hover:shadow-lg'
+      }`}
+    >
+      {isPopular && (
+        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-emerald-500 to-green-600 text-white px-5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg whitespace-nowrap">
+          ⭐ Most Popular
+        </div>
+      )}
+
+      {/* Header */}
+      <h3 className="text-xl font-black text-slate-800 mb-1">{plan.name}</h3>
+      {plan.bestFor && (
+        <p className="text-xs text-slate-500 italic mb-4 leading-relaxed">{plan.bestFor}</p>
+      )}
+
+      {/* Price */}
+      <div className="flex items-baseline gap-1 mb-1">
+        <span className="text-4xl font-black text-slate-900">{price}</span>
+        {price !== 'Free' && price !== 'Custom' && (
+          <span className="text-sm font-bold text-slate-400">
+            /{billing === 'monthly' ? 'mo' : 'yr'}
+          </span>
+        )}
+      </div>
+      {billing === 'annual' && typeof plan.annualPrice === 'number' && plan.monthlyPrice > 0 && (
+        <p className="text-xs text-emerald-600 font-bold mb-4">
+          Save {Math.round((1 - plan.annualPrice / (plan.monthlyPrice * 12)) * 100)}% vs monthly
+        </p>
+      )}
+
+      {/* AI Level */}
+      {plan.aiLevel && (
+        <div className="flex items-center gap-2 px-3 py-2 bg-slate-100 rounded-xl mb-5 border border-slate-200">
+          <Sparkles size={14} className="text-purple-500 shrink-0" />
+          <span className="text-[11px] font-bold text-slate-600 leading-snug">{plan.aiLevel}</span>
+        </div>
+      )}
+
+      {/* Contract Type */}
+      {plan.contractType && (
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-50 rounded-lg mb-4 border border-amber-200">
+          <span className="text-[10px] font-black text-amber-700 uppercase tracking-wider">{plan.contractType}</span>
+        </div>
+      )}
+
+      {/* Tokens */}
+      {plan.tokensMonth && (
+        <div className="text-xs font-bold text-slate-500 mb-4">
+          <span className="text-slate-800">{plan.tokensMonth}</span> tokens/mo
+        </div>
+      )}
+
+      {/* Features */}
+      {plan.features && plan.features.length > 0 && (
+        <div className="space-y-3 mb-8 flex-1">
+          {plan.features.map((f, j) => (
+            <div key={j} className="flex items-start gap-2.5 text-[13px] text-slate-600">
+              <CheckCircle2 size={16} className="text-emerald-500 shrink-0 mt-0.5" />
+              <span className="leading-snug">{f}</span>
+            </div>
+          ))}
+        </div>
+      )}
+      {(!plan.features || plan.features.length === 0) && <div className="flex-1" />}
+
+      {/* CTA */}
+      <button
+        className={`w-full py-3.5 rounded-2xl font-black text-sm transition-all ${
+          isPopular
+            ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-xl shadow-emerald-600/20'
+            : 'bg-slate-900 text-white hover:bg-slate-800 shadow-lg shadow-slate-900/10'
+        }`}
+      >
+        {price === 'Custom' ? 'Contact Sales' : 'Get Started'}
+      </button>
+    </motion.div>
+  );
+};
+
+// ─── Add-On Card ───
+const AddOnCard = ({ addon }: { key?: string; addon: AddOn }) => (
+  <div className="flex items-center justify-between p-4 bg-white rounded-xl border border-slate-200 hover:border-emerald-300 transition-all hover:shadow-sm">
+    <div className="flex-1">
+      <p className="font-bold text-slate-800 text-sm">{addon.name}</p>
+      {addon.per && <p className="text-[11px] text-slate-400 mt-0.5">per {addon.per}</p>}
+    </div>
+    <div className="text-right shrink-0 ml-4">
+      <span className="font-black text-emerald-700 text-sm">
+        ${typeof addon.price === 'number' ? addon.price.toLocaleString(undefined, { minimumFractionDigits: addon.price % 1 !== 0 ? 2 : 0 }) : addon.price}
+      </span>
+      {!addon.per && <span className="text-[10px] text-slate-400 font-bold">/mo</span>}
+    </div>
+  </div>
+);
+
+// ─── Main Component ───
+export const PricingTiers = ({ onNavigate }: { onNavigate?: (view: string) => void }) => {
+  const [activeTab, setActiveTab] = useState<TabId>('patient');
+  const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly');
+  const [showAddOns, setShowAddOns] = useState(false);
+
+  const plans = getPlansForTab(activeTab);
+  const addons = getAddOnsForTab(activeTab);
+  const description = getTabDescription(activeTab);
+  const activeTabConfig = TIER_TABS.find(t => t.id === activeTab)!;
+
+  return (
+    <section id="membership-tiers" className="py-24 px-6 bg-gradient-to-b from-white via-slate-50/50 to-white">
+      <div className="max-w-7xl mx-auto">
+
+        {/* Header */}
+        <div className="text-center mb-12 space-y-4">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-100 rounded-full border border-emerald-200 text-emerald-700 text-[10px] font-black uppercase tracking-widest">
+            <Star size={12} className="fill-emerald-500 text-emerald-500" />
+            Transparent Pricing
+          </div>
+          <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
+            Compliance Membership <span className="text-emerald-600">Tiers</span>
+          </h2>
+          <p className="text-slate-500 max-w-2xl mx-auto text-lg font-medium">
+            Scalable infrastructure for patients, commercial entities, and regulatory bodies. Choose your role to see tailored plans.
+          </p>
+        </div>
+
+        {/* Tab Navigation */}
+        <div className="mb-8">
+          <div className="flex flex-wrap justify-center gap-2 max-w-5xl mx-auto">
+            {TIER_TABS.map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => { setActiveTab(tab.id); setShowAddOns(false); }}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all border ${
+                  activeTab === tab.id
+                    ? 'bg-slate-900 text-white border-slate-900 shadow-lg shadow-slate-900/20'
+                    : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:border-slate-300'
+                }`}
+              >
+                <tab.icon size={14} />
+                <span className="hidden sm:inline">{tab.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Tab Description + Billing Toggle */}
+        <div className="flex flex-col md:flex-row items-center justify-between mb-10 gap-6 max-w-5xl mx-auto">
+          <div className="flex items-center gap-4">
+            <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${activeTabConfig.color} flex items-center justify-center shadow-lg`}>
+              <activeTabConfig.icon size={22} className="text-white" />
+            </div>
+            <div>
+              <h3 className="text-lg font-black text-slate-800">{activeTabConfig.label}</h3>
+              <p className="text-sm text-slate-500 max-w-md">{description}</p>
+            </div>
+          </div>
+
+          {/* Billing Toggle */}
+          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
+            <button
+              onClick={() => setBilling('monthly')}
+              className={`px-5 py-2 rounded-lg text-xs font-black uppercase tracking-wider transition-all ${
+                billing === 'monthly' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+              }`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setBilling('annual')}
+              className={`px-5 py-2 rounded-lg text-xs font-black uppercase tracking-wider transition-all ${
+                billing === 'annual' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+              }`}
+            >
+              Annual
+              <span className="ml-1.5 text-[9px] bg-emerald-500 text-white px-1.5 py-0.5 rounded-full font-black">SAVE</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Application Fees Note (Patient tab only) */}
+        {activeTab === 'patient' && (
+          <div className="max-w-5xl mx-auto mb-8">
+            <div className="bg-sky-50 border border-sky-200 rounded-2xl p-6 flex flex-col md:flex-row items-start gap-6">
+              <div className="flex-1">
+                <h4 className="font-black text-sky-900 text-sm mb-2">State Application Fees (Separate from Subscription)</h4>
+                <p className="text-xs text-sky-700 leading-relaxed mb-3">{STATE_APPLICATION_FEES.note}</p>
+                <div className="flex gap-6">
+                  <div>
+                    <span className="text-lg font-black text-sky-900">${STATE_APPLICATION_FEES.withStateInsurance.total}</span>
+                    <p className="text-[10px] text-sky-600 font-bold">{STATE_APPLICATION_FEES.withStateInsurance.eligibility}</p>
+                  </div>
+                  <div className="border-l border-sky-200 pl-6">
+                    <span className="text-lg font-black text-sky-900">${STATE_APPLICATION_FEES.withoutStateInsurance.total}</span>
+                    <p className="text-[10px] text-sky-600 font-bold">{STATE_APPLICATION_FEES.withoutStateInsurance.eligibility}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Plans Grid */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab + billing}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.3 }}
+            className="max-w-6xl mx-auto"
+          >
+            <div className={`grid gap-6 ${
+              plans.length <= 3 ? 'grid-cols-1 md:grid-cols-3' :
+              plans.length === 4 ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4' :
+              plans.length <= 6 ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' :
+              'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+            }`}>
+              {plans.map((plan, i) => (
+                <PlanCard key={plan.id} plan={plan} index={i} total={plans.length} billing={billing} />
+              ))}
+            </div>
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Add-Ons Section */}
+        {addons.length > 0 && (
+          <div className="max-w-5xl mx-auto mt-12">
+            <button
+              onClick={() => setShowAddOns(!showAddOns)}
+              className="w-full flex items-center justify-between p-5 bg-white border border-slate-200 rounded-2xl hover:border-emerald-300 transition-all shadow-sm"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
+                  <Sparkles size={18} className="text-emerald-600" />
+                </div>
+                <div className="text-left">
+                  <h4 className="font-black text-slate-800 text-sm">Available Add-Ons</h4>
+                  <p className="text-xs text-slate-500">{addons.length} modular enhancements available for this tier</p>
+                </div>
+              </div>
+              {showAddOns ? <ChevronUp size={20} className="text-slate-400" /> : <ChevronDown size={20} className="text-slate-400" />}
+            </button>
+
+            <AnimatePresence>
+              {showAddOns && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="overflow-hidden"
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4 pt-4">
+                    {addons.map(addon => (
+                      <AddOnCard key={addon.id} addon={addon} />
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
+
+        {/* Bottom CTA */}
+        <div className="text-center mt-16">
+          <p className="text-sm text-slate-500 mb-4 font-medium">
+            Need a custom plan? Our team can build a tailored package for your organization.
+          </p>
+          <button
+            onClick={() => onNavigate?.('login')}
+            className="inline-flex items-center gap-2 px-8 py-4 bg-slate-900 text-white rounded-2xl font-black hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/20"
+          >
+            Start Free Today
+            <ArrowRight size={18} />
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default PricingTiers;

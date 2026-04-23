@@ -110,6 +110,7 @@ import { BackOfficeDashboard } from './pages/BackOfficeDashboard';
 import ProviderRegistrationPage from './pages/ProviderRegistrationPage';
 import { PatientDashboard } from './pages/PatientDashboard';
 import { OversightDashboard } from './pages/OversightDashboard';
+import { PricingTiers } from './components/PricingTiers';
 
 // --- Constants ---
 
@@ -1502,42 +1503,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
       </section>
 
       {/* Subscription Tiers Section */}
-      <section id="membership-tiers" className="py-24 px-6 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16 space-y-4">
-             <h2 className="text-4xl font-black text-slate-900 tracking-tight">Compliance Membership Tiers</h2>
-             <p className="text-slate-500 max-w-2xl mx-auto text-lg">Scalable infrastructure for patients, commercial entities, and regulatory bodies.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-             {[
-               { n: 'Basic Tier', p: '$9.99/mo', f: ['Patients: Med Card Storage & Alerts', 'Businesses: Basic Compliance Audit', 'Unified Care Wallet Access'], b: 'emerald' },
-               { n: 'Professional Tier', p: '$49.99/mo', f: ['Patients: Priority Intake & Provider Sync', 'Businesses: B2B Tax-Tracking & POS', 'Advanced Anomaly Detection'], b: 'blue', popular: true },
-               { n: 'Enterprise Hub', p: '$499/mo', f: ['Patients: Legal Admin Advocacy', 'Businesses: Full Metrc Integrator Sync', 'Nationwide RIP Intelligence Access'], b: 'slate' }
-             ].map((plan, i) => (
-               <div key={i} className={cn("p-10 rounded-[2.5rem] border transition-all flex flex-col relative", 
-                 plan.popular ? "border-blue-500 bg-blue-50/30 shadow-2xl scale-105 z-10" : "border-slate-200 hover:border-emerald-500/30 hover:bg-emerald-50/10"
-               )}>
-                 {plan.popular && <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-600 text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg">Most Scalable</div>}
-                 <h3 className="text-2xl font-black text-slate-800 mb-2">{plan.n}</h3>
-                 <div className="flex items-baseline gap-1 mb-8">
-                    <span className="text-4xl font-black text-slate-900">{plan.p}</span>
-                    {plan.p !== 'Free' && plan.p !== 'Custom' && <span className="text-slate-500 font-bold">/month</span>}
-                 </div>
-                 <div className="space-y-4 mb-10 flex-1">
-                    {plan.f.map((f, j) => (
-                      <div key={j} className="flex items-center gap-3 text-sm font-bold text-slate-600">
-                        <CheckCircle2 size={18} className="text-emerald-500" /> {f}
-                      </div>
-                    ))}
-                 </div>
-                 <button className={cn("w-full py-4 rounded-2xl font-black transition-all", 
-                   plan.popular ? "bg-blue-600 text-white hover:bg-blue-700 shadow-xl shadow-blue-600/20" : "bg-slate-900 text-white hover:bg-slate-800 shadow-xl shadow-slate-900/20"
-                 )}>Initialize Integration</button>
-               </div>
-             ))}
-          </div>
-        </div>
-      </section>
+      <PricingTiers onNavigate={(view) => onNavigate(view as any)} />
 
       {/* Partners & Paid Advertisements */}
       <section className="py-20 border-t border-slate-100 bg-slate-50/30">
