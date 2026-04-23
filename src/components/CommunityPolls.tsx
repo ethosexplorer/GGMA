@@ -185,6 +185,7 @@ export const FeaturedPoll = () => {
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string[]>>({});
   const [hasVoted, setHasVoted] = useState<Record<string, boolean>>({});
   const [isExpanded, setIsExpanded] = useState(true);
+  const [commentText, setCommentText] = useState<Record<string, string>>({});
 
   const poll = POLLS[currentPollIndex];
   const totalVotes = poll.options.reduce((sum, o) => sum + o.votes, 0);
@@ -327,6 +328,19 @@ export const FeaturedPoll = () => {
             })}
           </motion.div>
         </AnimatePresence>
+
+        {/* Comment box — shown when 'other' is selected */}
+        {(selectedOptions[poll.id] || []).includes('other') && (
+          <div className="mt-3 max-w-2xl">
+            <textarea
+              value={commentText[poll.id] || ''}
+              onChange={e => setCommentText({ ...commentText, [poll.id]: e.target.value })}
+              placeholder="Share your thoughts... we're listening 💬"
+              className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white text-sm placeholder:text-emerald-300/40 focus:outline-none focus:ring-2 focus:ring-emerald-400/30 focus:border-emerald-400/50 resize-none"
+              rows={2}
+            />
+          </div>
+        )}
 
         {/* Submit button for multi-select + Stats */}
         <div className="flex items-center justify-between mt-4">

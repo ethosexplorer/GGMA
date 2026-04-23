@@ -1258,6 +1258,36 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
           {broadcastMsg} &nbsp; • &nbsp; {broadcastMsg} &nbsp; • &nbsp; {broadcastMsg}
         </div>
       </div>
+      {/* 🌐 LANGUAGE BAR — Always visible at the very top */}
+      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-6 py-2 flex items-center justify-between z-[60] relative">
+        <div className="flex items-center gap-3">
+          <Globe size={14} className="text-emerald-400" />
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest hidden sm:inline">Speak Your Language:</span>
+          <div className="flex items-center gap-1">
+            {[
+              { code: 'en', flag: '🇺🇸', label: 'EN' },
+              { code: 'es', flag: '🇲🇽', label: 'ES' },
+              { code: 'zh', flag: '🇨🇳', label: '中文' },
+              { code: 'vi', flag: '🇻🇳', label: 'VI' },
+              { code: 'ko', flag: '🇰🇷', label: '한' },
+              { code: 'ar', flag: '🇸🇦', label: 'عر' },
+            ].map(lang => (
+              <button
+                key={lang.code}
+                onClick={() => { document.documentElement.lang = lang.code; }}
+                className="px-2 py-1 rounded-md text-xs hover:bg-white/10 transition-colors text-white/80 hover:text-white flex items-center gap-1"
+              >
+                <span>{lang.flag}</span>
+                <span className="text-[9px] font-bold hidden md:inline">{lang.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <LanguageSelector currentLanguage="en" onLanguageChange={(code) => { document.documentElement.lang = code; }} compact />
+          <span className="text-[10px] text-emerald-400 font-bold hidden lg:inline">26 Languages • Sylara AI speaks yours</span>
+        </div>
+      </div>
 
       {/* Navigation */}
       <nav className="bg-white border-b border-slate-200 px-6 h-20 flex items-center justify-between sticky top-0 z-50">
