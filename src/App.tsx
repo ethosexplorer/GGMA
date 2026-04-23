@@ -2801,11 +2801,11 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
   };
 
   const getInitialChoices = () => {
-    if (variant === 'ggma') return ['Start Patient Intake', 'View Fee Schedule', 'Speak with Shantell', '⭐ Basic Subscription', '💎 Professional Subscription', '🚀 Enterprise Subscription'];
-    if (variant === 'rip') return ['Field Intelligence', 'Background Verification', 'Enforcement Status', '⭐ Basic Subscription', '💎 Professional Subscription', '🚀 Enterprise Subscription'];
-    if (variant === 'sinc') return ['Audit Audit Shield', 'Network Integrity', 'Secure Records', '⭐ Basic Subscription', '💎 Professional Subscription', '🚀 Enterprise Subscription'];
+    if (variant === 'ggma') return ['Start Patient Intake', 'Start Business Intake', 'View Patient Fee Schedule', 'View Business Fee Schedule', 'Speak with Shantell', 'View Subscription Plans'];
+    if (variant === 'rip') return ['Field Intelligence Report', 'Background Verification Check', 'Enforcement Status Inquiry', 'Compliance Audit Request', 'Contact Oversight Division', 'View State Authority Plans'];
+    if (variant === 'sinc') return ['Start Business Intake', 'Audit Shield Setup', 'Seed-to-Sale Compliance', 'Network Integrity Check', 'View Business Fee Schedule', 'View Subscription Plans'];
     
-    if (isBusiness) return ['Start Business Intake', 'Speak with Business Expert', 'View Fee Schedule', '⭐ Basic Subscription', '💎 Professional Subscription', '🚀 Enterprise Subscription'];
+    if (isBusiness) return ['Start Business Intake', 'View Business Fee Schedule', 'Speak with Business Expert', 'View Subscription Plans'];
     if (isGeneral) return [
       '🏢 GGMA Licensing',
       '🕵️ RIP Intelligence',
@@ -2813,11 +2813,10 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       '📅 Book 15min Consultation',
       '🏥 Telehealth',
       '💻 IT Support',
-      '⭐ Basic Subscription',
-      '💎 Professional Subscription',
-      '🚀 Enterprise Subscription'
+      '❓ General Support',
+      '💰 View Subscription Plans'
     ];
-    return ['Start Patient Intake', 'Book Physician ($45)', 'Speak with Shantell', '⭐ Basic Subscription', '💎 Professional Subscription', '🚀 Enterprise Subscription'];
+    return ['Start Patient Intake', 'Book Physician ($45)', 'Speak with Shantell', 'View Subscription Plans'];
   };
 
   const [messages, setMessages] = useState<{role: 'user'|'bot', text: string, choices?: string[]}[]>([
@@ -3089,32 +3088,59 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
 
     const lower = text.toLowerCase();
     
-    // Handle Subscription Keywords
-    if (lower.includes('subscription')) {
-      let subResponse = '';
-      let subChoices = ['View All Tiers', 'Main Menu'];
-      
-      if (lower.includes('basic')) {
-        subResponse = `⭐ **Basic Subscription ($9.99/mo)**\n\n` +
-          `• **For Patients**: Digital Med Card Storage, automated renewal alerts, and L.A.R.R.Y basic assistance.\n` +
-          `• **For Businesses**: Essential portal access, employee verification tools, and basic compliance oversight.\n\n` +
-          `**Benefit**: Start your digital compliance journey with zero friction.`;
-      } else if (lower.includes('professional')) {
-        subResponse = `💎 **Professional Subscription ($49.99/mo)**\n\n` +
-          `• **For Patients**: Priority Intake Processing, direct physician sync, and Care Wallet B2B rewards.\n` +
-          `• **For Businesses**: Priority B2B transactions, automated tax-tracking, and seed-to-sale preview tools.\n\n` +
-          `**Benefit**: Perfect for active patients and growing B2B entities.`;
-      } else if (lower.includes('enterprise')) {
-        subResponse = `🚀 **Enterprise Subscription ($499.00/mo)**\n\n` +
-          `• **For Patients**: Full legal advocacy (Paralegal access), zero renewal fees forever, and 24/7 VIP Telehealth.\n` +
-          `• **For Businesses**: **Validated Metrc Integrator Sync**, SINC Audit Shield, and unlimited location management.\n\n` +
-          `**Benefit**: The total-package solution for serious operators and high-value patients.`;
-      } else {
-        subResponse = 'We offer tiered subscription packages tailored for both Patients and Businesses:\n\n⭐ **Basic**: Essential storage & AI access.\n💎 **Professional**: Priority processing & B2B tools.\n🚀 **Enterprise**: Full METRC integration & Audit Shield.\n\nWhich tier would you like to explore?';
-        subChoices = ['Basic Subscription', 'Professional Subscription', 'Enterprise Subscription', 'Main Menu'];
-      }
-      
-      setMessages(prev => [...prev, { role: 'bot', text: subResponse, choices: subChoices } as any]);
+    // Handle Subscription / Pricing Keywords → redirect to landing page pricing
+    if (lower.includes('subscription plan') || lower.includes('view subscription') || lower.includes('state authority plan') || lower.includes('pricing')) {
+      response = '💰 **Subscription Plans**\n\nI\'m redirecting you to our **Pricing & Plans** page where you can see the full breakdown of all tiers:\n\n• **Patient Plans** — starting at $9.99/mo\n• **Business Plans** — All-in-One starting at $149/mo\n• **State Authority Plans** — starting at $4,999/mo\n• **Partner/Reseller** — wholesale opportunities\n\n_30-Day Free Trial available on all paid tiers._';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+      // Scroll to pricing on landing page
+      onNavigate('landing');
+      setTimeout(() => {
+        const pricingEl = document.getElementById('pricing-section') || document.querySelector('[data-pricing]');
+        if (pricingEl) pricingEl.scrollIntoView({ behavior: 'smooth' });
+      }, 500);
+      setIsTyping(false);
+      return;
+    }
+
+    // Handle split fee schedule buttons
+    if (lower.includes('patient fee schedule') || lower === 'view patient fee schedule') {
+      response = '💰 **GGMA Patient Fee Schedule (2026)**\n\n' +
+        '• **Patient Recommendation**: $35.00 (Via GoHealthUSA)\n' +
+        '• **GGE Intake Processing**: $10.00\n' +
+        '• **Total Portal Cost**: **$45.00**\n\n' +
+        '• **State Authority Fee (Standard)**: $104.30\n' +
+        '• **State Authority Fee (Reduced)**: $22.50 (Medicare/Medicaid/Veteran)\n\n' +
+        '_This is for Patient Medical Card applications only. Business fees are separate._';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Patient Intake', 'View Business Fee Schedule', 'Book Physician ($45)', 'Main Menu'] } as any]);
+      setIsTyping(false);
+      return;
+    }
+
+    if (lower.includes('business fee schedule') || lower === 'view business fee schedule') {
+      setIsBusiness(true);
+      response = '💰 **OMMA Commercial License Fee Schedule (2026)**\n' +
+        '_Per HB 2179 (2022) amended by SB 813 (2023) — 63 O.S. § 427.14_\n\n' +
+        '🌿 **GROWER — Indoor / Greenhouse / Light Deprivation**\n' +
+        '| Tier | Canopy Size | Fee | Total w/ CC |\n' +
+        '|------|------------|-----|-------------|\n' +
+        '| Tier 1 | Up to 10,000 sq ft | $2,500 | $2,558.30 |\n' +
+        '| Tier 2 | 10,001–20,000 sq ft | $5,000 | $5,114.55 |\n' +
+        '| Tier 3 | 20,001–40,000 sq ft | $10,000 | $10,227.05 |\n' +
+        '| Tier 4 | 40,001–60,000 sq ft | $20,000 | $20,452.04 |\n' +
+        '| Tier 5 | 60,001–80,000 sq ft | $30,000 | $30,677.05 |\n' +
+        '| Tier 6 | 80,001–99,999 sq ft | $40,000 | $40,902.05 |\n' +
+        '| Tier 7 | 100,000+ sq ft | $50,000 + $0.25/sq ft | Varies |\n\n' +
+        '_These are OMMA state licensing fees, separate from our platform subscription._\n\n' +
+        'Which license type do you need details on?';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Grower Outdoor Fees', 'Processor Fees', 'Dispensary Fees', 'Start Business Intake', 'Main Menu'] } as any]);
+      setIsTyping(false);
+      return;
+    }
+
+    // Legacy subscription keyword handling (for old links)
+    if (lower.includes('basic subscription') || lower.includes('professional subscription') || lower.includes('enterprise subscription')) {
+      response = '💰 **Subscription Plans**\n\nLet me take you to our full **Pricing & Plans** page where you can compare all tiers side-by-side with the 30-day free trial.\n\nWould you like me to redirect you?';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['View Subscription Plans', 'Main Menu'] } as any]);
       setIsTyping(false);
       return;
     }
@@ -3358,41 +3384,50 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         setIsTyping(false);
         return;
       } else if (lower.includes('rip')) {
-        response = '🕵️ **RIP (Regulatory Intelligence Policing)** handles enforcement, background verification, and intelligence oversight.\n\nAre you a **Regulatory Officer** or a **Business Owner** seeking intelligence services?';
+        response = '🕵️ **RIP (Regulatory Intelligence Policing)**\n\nRIP handles enforcement, background verification, and regulatory oversight for **government and state authority entities only**.\n\nWhich government function do you need?';
         setMessages(prev => [...prev, { 
           role: 'bot', 
           text: response,
-          choices: ['Regulatory Officer', 'Business Owner', 'Main Menu'] 
+          choices: ['Field Intelligence Report', 'Background Verification Check', 'Enforcement Status Inquiry', 'Compliance Audit Request', 'Contact Oversight Division', 'Main Menu'] 
         } as any]);
         setSignupStep(400);
         setIsTyping(false);
         return;
       } else if (lower.includes('sinc')) {
-        response = '🛡️ **SINC (Secure Infrastructure & Network Compliance)** provides the encrypted backbone and audit-trail infrastructure for GGHP.\n\nWhich compliance area do you need to secure today?';
+        response = '🛡️ **SINC (Secure Infrastructure & Network Compliance)**\n\nSINC is the operational backbone for **Cannabis Businesses** — seed-to-sale tracking, Metrc integration, audit shielding, and encrypted compliance records.\n\nHow can we help your business?';
         setMessages(prev => [...prev, { 
           role: 'bot', 
           text: response,
-          choices: ['Audit Shield', 'Network Integrity', 'Secure Records', 'Main Menu'] 
+          choices: ['Start Business Intake', 'Audit Shield Setup', 'Seed-to-Sale Compliance', 'Network Integrity Check', 'View Business Fee Schedule', 'Main Menu'] 
         } as any]);
         setSignupStep(500);
         setIsTyping(false);
         return;
       } else if (lower.includes('telehealth')) {
-        response = '🏥 **Telehealth Services**\n\nOur network provides direct access to licensed providers for medical recommendations.\n\nWho is the evaluation for?';
+        response = '🏥 **Telehealth Services**\n\nOur Telehealth network connects you with licensed physicians for:\n\n• **General Doctor Visits** — non-emergency consultations\n• **Medical Card Recommendation** — physician evaluation for OMMA card\n• **Follow-up Visits** — check-ins and ongoing care\n• **Prescription Consultations** — medication management\n\nWhat type of visit do you need?';
         setMessages(prev => [...prev, { 
           role: 'bot', 
           text: response,
-          choices: ['New Patient Evaluation', 'Renewal Evaluation', 'Main Menu'] 
+          choices: ['General Doctor Visit', 'Medical Card Recommendation ($45)', 'Follow-up / Check-in', 'Prescription Consultation', 'Main Menu'] 
         } as any]);
         setSignupStep(700);
         setIsTyping(false);
         return;
-      } else if (lower.includes('it support') || lower.includes('technical')) {
-        response = '💻 **IT & Technical Support**\n\nI can help resolve technical issues with your portal, Care Wallet, or application status.\n\nWhat category does your issue fall into?';
+      } else if (lower.includes('general support') || lower.includes('question') || lower.includes('help')) {
+        response = '❓ **General Support**\n\nI can help with anything! Here are common topics:\n\n• **Account & Login Issues**\n• **Application Status Check**\n• **Billing & Subscription Questions**\n• **How the Platform Works**\n• **Contact a Human Representative**\n\nWhat do you need help with?';
         setMessages(prev => [...prev, { 
           role: 'bot', 
           text: response,
-          choices: ['Care Wallet Issue', 'Portal Login', 'Metrc Sync Error', 'Hardware Support', 'Main Menu'] 
+          choices: ['Account & Login', 'Application Status', 'Billing Question', 'How Does This Work?', 'Speak with Shantell', 'Main Menu'] 
+        } as any]);
+        setIsTyping(false);
+        return;
+      } else if (lower.includes('it support') || lower.includes('technical')) {
+        response = '💻 **IT & Technical Support**\n\nI can help resolve technical issues or answer general platform questions.\n\nWhat do you need?';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Portal Login Issue', 'Care Wallet Problem', 'Metrc Sync Error', 'App Not Loading', 'General Question', 'Main Menu'] 
         } as any]);
         setSignupStep(600);
         setIsTyping(false);
