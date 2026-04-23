@@ -28,7 +28,7 @@ interface PollOption {
 
 interface Poll {
   id: string;
-  category: 'healing' | 'education' | 'demographics' | 'growth' | 'support';
+  category: 'healing' | 'education' | 'demographics' | 'growth' | 'support' | 'economic' | 'legal' | 'political' | 'culture' | 'business' | 'lifestyle';
   question: string;
   subtitle?: string;
   options: PollOption[];
@@ -36,6 +36,9 @@ interface Poll {
   icon: React.ReactNode;
   color: string;
   bgGradient: string;
+  didYouKnow?: string;
+  actionItem?: string;
+  deadline?: string;
 }
 
 // ─── Poll Data ───
@@ -177,6 +180,78 @@ const POLLS: Poll[] = [
       { id: 'equity', label: 'Social equity & inclusion', emoji: '⚖️', votes: 654 },
     ]
   },
+  // ─── ECONOMIC ───
+  { id: 'econ_jobs', category: 'economic', question: 'Should your state invest in cannabis industry job training programs?', subtitle: 'The cannabis industry created 440,000+ jobs nationwide in 2025.', icon: <TrendingUp size={20} />, color: 'emerald', bgGradient: 'from-green-500 to-emerald-700', didYouKnow: 'Oklahoma\'s medical cannabis industry generates over $1.5B in annual revenue and employs 30,000+ workers.', actionItem: 'Contact your state representative to support HB 2742 (Cannabis Workforce Development Act).', deadline: 'Committee vote: May 15, 2026', options: [
+    { id: 'strongly_yes', label: 'Absolutely — jobs are the priority', emoji: '💼', votes: 2134 },
+    { id: 'yes_targeted', label: 'Yes, especially in underserved areas', emoji: '🎯', votes: 1567 },
+    { id: 'private_sector', label: 'Let the private sector handle it', emoji: '🏢', votes: 876 },
+    { id: 'not_sure', label: 'Need more information', emoji: '🤔', votes: 432 },
+  ]},
+  { id: 'econ_tax', category: 'economic', question: 'Where should cannabis tax revenue go?', subtitle: 'States collected $3.7B in cannabis tax revenue in 2025 — where should YOUR state put it?', icon: <BarChart3 size={20} />, color: 'amber', bgGradient: 'from-amber-500 to-yellow-600', didYouKnow: 'Colorado has collected over $2.1B in cannabis tax revenue since 2014 — funding schools, roads, and public health.', options: [
+    { id: 'education', label: 'Public education & schools', emoji: '🏫', votes: 2345 },
+    { id: 'healthcare', label: 'Healthcare & mental health', emoji: '🏥', votes: 1876 },
+    { id: 'infrastructure', label: 'Roads & infrastructure', emoji: '🛣️', votes: 987 },
+    { id: 'equity', label: 'Social equity programs', emoji: '⚖️', votes: 1234 },
+    { id: 'law_enforcement', label: 'Drug prevention & treatment', emoji: '🛡️', votes: 654 },
+  ]},
+  { id: 'econ_small_biz', category: 'business', question: 'Is it too expensive for small businesses to enter the cannabis industry?',  subtitle: 'Average dispensary startup costs range from $150K-$500K before opening.', icon: <BarChart3 size={20} />, color: 'violet', bgGradient: 'from-violet-500 to-purple-700', didYouKnow: 'Oklahoma has the most cannabis licenses per capita of any state — but 40% of licensees report difficulty accessing banking.', actionItem: 'Support the SAFE Banking Act (HR 2891) to give cannabis businesses access to normal banking.', deadline: 'Senate vote expected: Summer 2026', options: [
+    { id: 'way_too_high', label: 'Way too expensive — shuts out minorities', emoji: '🚫', votes: 1987 },
+    { id: 'high_but_worth', label: 'High but worth the investment', emoji: '📈', votes: 1234 },
+    { id: 'reasonable', label: 'Reasonable for the industry', emoji: '✅', votes: 432 },
+    { id: 'lower_barriers', label: 'States should lower barriers', emoji: '🔓', votes: 1876 },
+  ]},
+  // ─── LEGAL & POLITICAL ───
+  { id: 'legal_federal', category: 'legal', question: 'Should cannabis be rescheduled from Schedule I at the federal level?', subtitle: 'DEA currently classifies cannabis alongside heroin. The rescheduling process is underway.', icon: <Zap size={20} />, color: 'blue', bgGradient: 'from-blue-600 to-indigo-800', didYouKnow: 'In August 2023, HHS recommended rescheduling cannabis to Schedule III. The DEA is reviewing this recommendation.', actionItem: 'Write to your congressperson supporting the MORE Act or STATES Act.', deadline: 'DEA final rule expected: Q3 2026', options: [
+    { id: 'deschedule', label: 'Remove from scheduling entirely', emoji: '🗽', votes: 2456 },
+    { id: 'schedule3', label: 'Move to Schedule III (medical)', emoji: '📋', votes: 1876 },
+    { id: 'states_decide', label: 'Let each state decide', emoji: '🏛️', votes: 1345 },
+    { id: 'keep_schedule1', label: 'Keep current classification', emoji: '🔒', votes: 234 },
+  ]},
+  { id: 'legal_expungement', category: 'legal', question: 'Should people with past cannabis convictions have their records expunged?', subtitle: '40,000+ Americans are currently incarcerated for cannabis offenses.', icon: <Heart size={20} />, color: 'rose', bgGradient: 'from-rose-500 to-red-700', didYouKnow: '6.5 million Americans have been arrested for cannabis since 2001. Black Americans are 3.7x more likely to be arrested despite equal usage rates.', actionItem: 'Support the Cannabis Justice Act in your state legislature — check if your state has an expungement bill pending.', options: [
+    { id: 'yes_all', label: 'Yes — expunge all cannabis records', emoji: '💚', votes: 2876 },
+    { id: 'yes_nonviolent', label: 'Yes, but only non-violent offenses', emoji: '✅', votes: 1654 },
+    { id: 'case_by_case', label: 'Review case by case', emoji: '⚖️', votes: 876 },
+    { id: 'no', label: 'No — the law was the law', emoji: '🚫', votes: 345 },
+  ]},
+  { id: 'political_trust', category: 'political', question: 'Do you trust your state legislature to create fair cannabis policy?', subtitle: 'Your voice shapes policy. Tell us how you feel about your state\'s approach.', icon: <Globe size={20} />, color: 'slate', bgGradient: 'from-slate-600 to-slate-800', options: [
+    { id: 'strong_trust', label: 'Yes, they\'re doing great', emoji: '🏛️', votes: 567 },
+    { id: 'somewhat', label: 'Somewhat — room for improvement', emoji: '🤏', votes: 1876 },
+    { id: 'not_really', label: 'Not really — too influenced by lobbyists', emoji: '😐', votes: 2345 },
+    { id: 'no_trust', label: 'Not at all — need voter-led reform', emoji: '📢', votes: 1234 },
+  ]},
+  { id: 'political_vote', category: 'political', question: 'Would a candidate\'s stance on cannabis influence your vote?', icon: <TrendingUp size={20} />, color: 'red', bgGradient: 'from-red-500 to-rose-700', didYouKnow: '68% of Americans now support cannabis legalization — the highest ever recorded (Gallup 2025).', options: [
+    { id: 'major_factor', label: 'Yes — it\'s a major factor', emoji: '🗳️', votes: 1987 },
+    { id: 'one_of_many', label: 'It\'s one of several important issues', emoji: '📊', votes: 2345 },
+    { id: 'minor', label: 'Minor factor', emoji: '🤷', votes: 876 },
+    { id: 'no_impact', label: 'Doesn\'t affect my vote', emoji: '❌', votes: 543 },
+  ]},
+  // ─── CULTURE & LIFESTYLE ───
+  { id: 'culture_stigma', category: 'culture', question: 'Has the stigma around cannabis changed in your community?', subtitle: 'Breaking stigma starts with honest conversations. Your answer matters.', icon: <Sparkles size={20} />, color: 'pink', bgGradient: 'from-pink-500 to-fuchsia-600', didYouKnow: 'In 1969, only 12% of Americans supported legalization. Today it\'s 68%. That\'s a generational shift.', options: [
+    { id: 'much_better', label: 'Yes — much more accepted now', emoji: '🌈', votes: 2134 },
+    { id: 'somewhat_better', label: 'Getting better, slowly', emoji: '🌤️', votes: 1876 },
+    { id: 'same', label: 'About the same as always', emoji: '😐', votes: 876 },
+    { id: 'still_bad', label: 'Still very stigmatized here', emoji: '🙈', votes: 654 },
+    { id: 'worse', label: 'Actually getting worse', emoji: '📉', votes: 123 },
+  ]},
+  { id: 'culture_gen', category: 'lifestyle', question: 'Which generation do you think is driving cannabis normalization?', icon: <Users size={20} />, color: 'cyan', bgGradient: 'from-cyan-500 to-blue-600', didYouKnow: 'Gen Z (18-25) uses cannabis at lower rates than Millennials but supports legalization at higher rates (79%).', options: [
+    { id: 'gen_z', label: 'Gen Z (18–27)', emoji: '📱', votes: 1234 },
+    { id: 'millennials', label: 'Millennials (28–43)', emoji: '💻', votes: 2345 },
+    { id: 'gen_x', label: 'Gen X (44–59)', emoji: '🎸', votes: 987 },
+    { id: 'boomers', label: 'Boomers (60+)', emoji: '✌️', votes: 654 },
+    { id: 'all_together', label: 'All generations equally', emoji: '🤝', votes: 1567 },
+  ]},
+  { id: 'culture_wellness', category: 'lifestyle', question: 'Do you view cannabis as part of a wellness routine — like yoga, meditation, or vitamins?', icon: <Leaf size={20} />, color: 'green', bgGradient: 'from-green-400 to-teal-600', options: [
+    { id: 'absolutely', label: 'Yes — it\'s my wellness tool', emoji: '🧘', votes: 1876 },
+    { id: 'sometimes', label: 'Sometimes, alongside other practices', emoji: '🌿', votes: 1543 },
+    { id: 'medical_only', label: 'Only for medical necessity', emoji: '💊', votes: 1234 },
+    { id: 'not_wellness', label: 'No, I don\'t see it that way', emoji: '🤔', votes: 654 },
+  ]},
+  { id: 'biz_entrepreneur', category: 'business', question: 'Would you start a cannabis business if barriers were lower?', subtitle: 'The cannabis industry is projected to reach $72B by 2030.', icon: <TrendingUp size={20} />, color: 'amber', bgGradient: 'from-amber-400 to-orange-600', didYouKnow: 'Women own only 22% of cannabis businesses. Minority ownership is under 15% in most states.', actionItem: 'Check your state\'s social equity program for reduced licensing fees and mentorship opportunities.', options: [
+    { id: 'already_in', label: 'I\'m already in the industry', emoji: '🏪', votes: 567 },
+    { id: 'yes_planning', label: 'Yes — I\'m planning to', emoji: '📝', votes: 1234 },
+    { id: 'interested', label: 'Interested but barriers are too high', emoji: '🚧', votes: 1876 },
+    { id: 'not_interested', label: 'Not interested in cannabis business', emoji: '🤷', votes: 987 },
+  ]},
 ];
 
 // ─── Featured Poll (top banner) ───
@@ -190,9 +265,17 @@ export const FeaturedPoll = () => {
   const poll = POLLS[currentPollIndex];
   const totalVotes = poll.options.reduce((sum, o) => sum + o.votes, 0);
 
+  // Auto-rotate every 12 seconds (pauses when user has voted on current poll)
+  useEffect(() => {
+    if (hasVoted[poll.id]) return;
+    const timer = setInterval(() => {
+      setCurrentPollIndex(prev => (prev + 1) % POLLS.length);
+    }, 12000);
+    return () => clearInterval(timer);
+  }, [currentPollIndex, hasVoted, poll.id]);
+
   const handleVote = (optionId: string) => {
     if (hasVoted[poll.id]) return;
-
     const currentSelections = selectedOptions[poll.id] || [];
     if (poll.allowMultiple) {
       if (currentSelections.includes(optionId)) {
@@ -202,14 +285,18 @@ export const FeaturedPoll = () => {
       }
     } else {
       setSelectedOptions({ ...selectedOptions, [poll.id]: [optionId] });
-      // Auto-submit for single-choice polls
-      setTimeout(() => setHasVoted({ ...hasVoted, [poll.id]: true }), 300);
+      setTimeout(() => {
+        setHasVoted({ ...hasVoted, [poll.id]: true });
+        // Auto-advance 3s after voting
+        setTimeout(() => setCurrentPollIndex(prev => (prev + 1) % POLLS.length), 3000);
+      }, 300);
     }
   };
 
   const submitMultiVote = () => {
     if ((selectedOptions[poll.id] || []).length > 0) {
       setHasVoted({ ...hasVoted, [poll.id]: true });
+      setTimeout(() => setCurrentPollIndex(prev => (prev + 1) % POLLS.length), 3000);
     }
   };
 
@@ -362,9 +449,43 @@ export const FeaturedPoll = () => {
           <div className="flex items-center gap-4 text-[10px] text-emerald-500/60 font-bold">
             <span>{totalVotes.toLocaleString()} total votes</span>
             <span>•</span>
-            <span className="capitalize">{poll.category}</span>
+            <span className="px-2 py-0.5 bg-white/10 rounded-full capitalize">{poll.category}</span>
           </div>
         </div>
+
+        {/* 💡 Did You Know + Action Item — shown after voting or always if present */}
+        {(poll.didYouKnow || poll.actionItem) && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3"
+          >
+            {poll.didYouKnow && (
+              <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-lg">💡</span>
+                  <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest">Did You Know?</span>
+                </div>
+                <p className="text-emerald-100 text-xs leading-relaxed">{poll.didYouKnow}</p>
+              </div>
+            )}
+            {poll.actionItem && (
+              <div className="bg-emerald-500/10 border border-emerald-400/20 rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-lg">📢</span>
+                  <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Take Action</span>
+                </div>
+                <p className="text-emerald-100 text-xs leading-relaxed mb-2">{poll.actionItem}</p>
+                {poll.deadline && (
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 bg-red-500/20 rounded-lg w-fit">
+                    <span className="text-[10px]">⏰</span>
+                    <span className="text-[10px] font-black text-red-300">{poll.deadline}</span>
+                  </div>
+                )}
+              </div>
+            )}
+          </motion.div>
+        )}
       </div>
     </div>
   );
