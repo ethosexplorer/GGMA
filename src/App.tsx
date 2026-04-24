@@ -3680,12 +3680,61 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       setSignupStep(0);
       setIsTyping(false);
       return;
+    } else if (
+      lower.includes('intelligence report') || 
+      lower.includes('background verification') || 
+      lower.includes('enforcement status') || 
+      lower.includes('compliance audit') || 
+      lower.includes('contact oversight') ||
+      lower.includes('state authority plan')
+    ) {
+      // RIP Intelligence Options
+      response = 'I have submitted your request to the **L.A.R.R.Y Enforcement Engine**. An oversight representative will be assigned to this inquiry.\n\nWould you like to return to the Main Menu?';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+      setSignupStep(0);
+      setIsTyping(false);
+      return;
+    } else if (
+      lower.includes('audit shield') || 
+      lower.includes('seed-to-sale') || 
+      lower.includes('network integrity')
+    ) {
+      // SINC Compliance Options
+      response = 'I have submitted your SINC query. A compliance specialist will review your request and reach out shortly.\n\nWould you like to return to the Main Menu?';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+      setSignupStep(0);
+      setIsTyping(false);
+      return;
+    } else if (
+      lower.includes('doctor visit') || 
+      lower.includes('medical card recommendation') || 
+      lower.includes('follow-up') || 
+      lower.includes('prescription consultation')
+    ) {
+      // Telehealth Options
+      window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
+      response = '📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book via Calendly](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n📞 **Telehealth Line**: 405-252-1178';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+      setSignupStep(0);
+      setIsTyping(false);
+      return;
+    } else if (
+      lower.includes('account & login') || 
+      lower.includes('application status') || 
+      lower.includes('billing question') || 
+      lower.includes('how does this work')
+    ) {
+      // General Support Options
+      response = 'I have flagged your support request. You can also call us directly at **405-492-7297** for immediate assistance.\n\nWould you like to return to the Main Menu?';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+      setSignupStep(0);
+      setIsTyping(false);
+      return;
     }
 
     // === MAIN STATE MACHINE ===
     if (signupStep === 0) {
-
-      } else if (lower.includes('start') || lower.includes('apply') || lower.includes('license')) {
+      if (lower.includes('start') || lower.includes('apply') || lower.includes('license')) {
         response = 'Great! Can I create an account for you to begin your application?';
         setMessages(prev => [...prev, { 
           role: 'bot', 
@@ -3705,43 +3754,6 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         setIsTyping(false);
         return;
       }
-    } else if (signupStep === 400) {
-      // RIP Intelligence Options
-      response = 'I have submitted your request to the **L.A.R.R.Y Enforcement Engine**. An oversight representative will be assigned to this inquiry.\n\nWould you like to return to the Main Menu?';
-      setMessages(prev => [...prev, { 
-        role: 'bot', 
-        text: response,
-        choices: ['Main Menu'] 
-      } as any]);
-      setSignupStep(0);
-      setIsTyping(false);
-      return;
-    } else if (signupStep === 500) {
-      // SINC Compliance Options
-      response = 'I have submitted your SINC query. A compliance specialist will review your request and reach out shortly.\n\nWould you like to return to the Main Menu?';
-      setMessages(prev => [...prev, { 
-        role: 'bot', 
-        text: response,
-        choices: ['Main Menu'] 
-      } as any]);
-      setSignupStep(0);
-      setIsTyping(false);
-      return;
-    } else if (signupStep === 700) {
-      // Telehealth Options
-      window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
-      response = '📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book via Calendly](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n📞 **Telehealth Line**: 405-252-1178';
-      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
-      setSignupStep(0);
-      setIsTyping(false);
-      return;
-    } else if (signupStep === 800) {
-      // General Support Options
-      response = 'I have flagged your support request. You can also call us directly at **405-492-7297** for immediate assistance.\n\nWould you like to return to the Main Menu?';
-      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
-      setSignupStep(0);
-      setIsTyping(false);
-      return;
     } else if (signupStep === 850) {
       // Find an Attorney Options
       window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
