@@ -60,6 +60,8 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
   const [regCat, setRegCat] = useState<string | null>(null);
   const [broadcastMsg, setBroadcastMsg] = useState('🚨 SYSTEM NOTICE: NATIONWIDE COMPLIANCE AUDIT IN PROGRESS • GLOBAL GREEN HYBRID PLATFORM (GGHP) • ALL SECTORS (GGMA/RIP/SINC) OPERATIONAL');
   const [broadcastType, setBroadcastType] = useState('Urgent Alert (Red)');
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [pin, setPin] = useState('');
 
   const handleBroadcast = () => {
     localStorage.setItem('gghp_platform_alert', broadcastMsg);
@@ -1799,8 +1801,30 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] bg-slate-50 text-slate-800 font-sans">
-      <div className="w-64 bg-slate-950 border-r border-slate-900 flex flex-col hidden md:flex shrink-0">
+    <div className="flex h-screen overflow-hidden bg-slate-50 text-slate-800 font-sans relative">
+      {!isUnlocked && (
+        <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-slate-900/60 backdrop-blur-2xl animate-in fade-in duration-300">
+          <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-2xl text-center max-w-sm w-full animate-in zoom-in-95 duration-500">
+            <Lock size={48} className="text-indigo-500 mx-auto mb-6" />
+            <h2 className="text-2xl font-black text-slate-900 mb-2">Founder Access Required</h2>
+            <p className="text-slate-500 text-sm mb-6">Enter 4-digit Oversight PIN</p>
+            <input 
+              type="password" 
+              maxLength={4} 
+              value={pin} 
+              onChange={(e) => {
+                 setPin(e.target.value);
+                 if (e.target.value === '1234') setIsUnlocked(true);
+              }} 
+              className="w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 rounded-xl p-4 text-center text-3xl font-black text-slate-800 tracking-[1em] mb-4 outline-none transition-all" 
+              placeholder="••••"
+            />
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-4">Executive Clearance Only</p>
+          </div>
+        </div>
+      )}
+
+      <div className={cn("w-64 bg-slate-950 border-r border-slate-900 flex flex-col hidden md:flex shrink-0 transition-all duration-500", !isUnlocked && "blur-md opacity-50 pointer-events-none")}>
         <div className="p-6 pb-2">
           <div className="flex items-center gap-3 mb-6">
             <img src="/gghp-branding.png" alt="GGHP Logo" className="w-12 h-12 object-contain" />
@@ -1835,7 +1859,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
         </button>
       </div>
 
-      <div className="flex-1 flex flex-col h-[calc(100vh-4rem)] overflow-hidden">
+      <div className={cn("flex-1 flex flex-col h-[calc(100vh)] overflow-hidden transition-all duration-500", !isUnlocked && "blur-xl scale-[0.98] opacity-50 pointer-events-none")}>
         <div className="h-20 border-b border-slate-200 flex items-center justify-between px-10 bg-white shrink-0">
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">{activeTab.replace('_', ' ')}</h1>
           <div className="flex items-center gap-6">

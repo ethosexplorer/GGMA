@@ -1414,6 +1414,22 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
             </div>
 
             <div className="flex-1 overflow-y-auto pr-2 space-y-5 custom-scrollbar relative z-10">
+               {/* BREAKING: LEAP Rescheduling */}
+               <div className="group">
+                 <div className="flex items-center gap-2 mb-1">
+                   <span className="bg-red-600 text-white px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-widest animate-pulse">Breaking</span>
+                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">April 23, 2026</p>
+                 </div>
+                 <h4 className="text-sm font-bold text-slate-800 mb-2 group-hover:text-[#1a4731] transition-colors">Cannabis Officially Rescheduled: Schedule I → Schedule III</h4>
+                 <ul className="text-xs text-slate-600 space-y-1.5 ml-4 list-disc marker:text-emerald-500">
+                    <li><strong className="text-slate-800">Acting Attorney General</strong> signed order moving state-licensed medical marijuana from Schedule I to Schedule III of the CSA.</li>
+                    <li><strong className="text-slate-800">LEAP Confirms:</strong> Law Enforcement Action Partnership (@PoliceForReform) verified — rescheduling has officially taken place.</li>
+                    <li><strong className="text-slate-800">GGHP Impact:</strong> DEA registration tracking, 280E tax deductions, and banking access modules now active across all portals.</li>
+                 </ul>
+               </div>
+
+               <div className="w-full h-px bg-slate-100"></div>
+
                {/* Update 1 */}
                <div className="group">
                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">April 23, 2026</p>
