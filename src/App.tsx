@@ -4311,7 +4311,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       response = 'Is the **Mailing Address** different from residence? If so, provide it. (Type **"same"** if same as residence)';
       setSignupStep(120);
     } else if (signupStep === 120) {
-      const mailing = lower === 'same' ? businessData.ownerResidence : text;
+      const mailing = lower.includes('same') ? businessData.ownerResidence : text;
       setBusinessData(prev => ({ ...prev, ownerMailing: mailing, ownersCompleted: prev.ownersCompleted + 1 }));
       response = `✅ Owner/Officer **${businessData.ownerName}** added! (${businessData.ownersCompleted + 1} total)\n\nDo you need to **add another owner/officer**? (Yes / No)`;
       setSignupStep(121);
@@ -4389,7 +4389,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         setSignupStep(124);
       }
     } else if (signupStep === 124) {
-      const mailing = lower === 'same' ? businessData.physicalAddress : text;
+      const mailing = lower.includes('same') ? businessData.physicalAddress : text;
       setBusinessData(prev => ({ ...prev, locationMailing: mailing }));
       response = '✅ **Location Information Complete!**\n\n**Section 6: Primary Contact & Registered Agent**\n\nWho is the **Primary Point of Contact (PPOC)**? Please provide their **Full Name** (First, Middle, Last, Suffix).';
       setSignupStep(125);
@@ -4409,10 +4409,11 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       setSignupStep(128);
     } else if (signupStep === 128) {
       setBusinessData(prev => ({ ...prev, ppocEmail: text }));
-      response = 'What is the PPOC\'s **Address**? (Street Address, City, State, Zip)';
+      response = 'What is the PPOC\'s **Address**? (Street Address, City, State, Zip) (Type **"same"** if same as physical location)';
       setSignupStep(129);
     } else if (signupStep === 129) {
-      setBusinessData(prev => ({ ...prev, ppocAddress: text }));
+      const ppocAddr = lower.includes('same') ? businessData.physicalAddress : text;
+      setBusinessData(prev => ({ ...prev, ppocAddress: ppocAddr }));
       response = '✅ **Primary Contact Complete!**\n\n**Section 7: Questions & Verifications**\n\nPlease review and confirm the following attestations:\n\n' +
         '1️⃣ The commercial entity will **not** be located on tribal lands.\n' +
         '2️⃣ The establishment pledges **not to divert** marijuana to unauthorized individuals.\n' +
@@ -4518,7 +4519,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     }
     // ── Step 134: Application Review ──
     else if (signupStep === 134) {
-      if (lower === 'confirm' || lower === 'yes' || lower === 'proceed' || lower === 'continue' || lower === 'pay') {
+      if (lower === 'confirm' || lower === 'yes' || lower === 'proceed' || lower === 'continue' || lower === 'pay' || lower.includes('submit')) {
         response = '🎉 **Application Complete!**\n\nNow that we have finished your application, you will receive a callback to **REVIEW** application to ensure 1st time approval accuracy, then **PAY** your state fee and then **SUBMIT** your application for state approval of business license.\n\nI want to thank you for allowing me to assist you in this process. If you have any questions feel free to login your portal and chat with me directly 24/7 by clicking the **"help/support"** tab. Thank you and Goodbye 👋';
         setSignupStep(0);
       } else if (lower === 'edit' || lower === 'change') {
@@ -7013,14 +7014,19 @@ export default function App() {
     
     // Privileged login override
     if (initialRole === 'admin' || lowerEmail === FOUNDER_EMAIL || OVERSIGHT_EMAILS.includes(lowerEmail)) {
+      if (lowerEmail === 'ryanj.ferrari@icloud.com' && pass !== 'Globalgreen1') {
+        alert("Invalid credentials.");
+        return;
+      }
+      
       console.log('[App.handleLogin] Privileged login override:', { email });
       const isFounder = lowerEmail === FOUNDER_EMAIL;
-      const isAdmin = initialRole === 'admin';
+      const isAdmin = initialRole === 'admin' || lowerEmail === 'ryanj.ferrari@icloud.com';
       
       const privilegedProfile = {
         uid: 'privileged-local-' + (isFounder ? 'founder' : (isAdmin ? 'admin' : 'oversight')),
         email: email,
-        role: isFounder ? 'executive_founder' : (isAdmin ? 'admin' : 'regulator_state'),
+        role: isFounder ? 'executive_founder' : (isAdmin ? 'admin_internal' : 'regulator_state'),
         displayName: isFounder ? 'Shantell Robinson' : (lowerEmail.includes('ferrari') ? 'Ryan Ferrari' : (lowerEmail.includes('moore') ? 'Bob Moore' : email.split('@')[0])),
         status: 'Active',
         createdAt: new Date().toISOString(),
