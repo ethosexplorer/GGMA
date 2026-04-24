@@ -44,9 +44,9 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
   return (
     <div className="space-y-6">
       {/* Balance Hero Card */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#0f2d1e] via-[#1a4731] to-[#0d3320] rounded-2xl p-8 text-white shadow-xl">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-300/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+      <div className="relative overflow-hidden bg-[#1a4731] bg-gradient-to-br from-emerald-950 via-[#1a4731] to-emerald-950 rounded-2xl p-8 text-white shadow-xl">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-300/10 rounded-full translate-y-1/2 -translate-x-1/2" />
         <div className="relative z-10">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
@@ -444,7 +444,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
           </div>
 
           <div className="space-y-6">
-            <div className="bg-gradient-to-br from-blue-900 to-indigo-900 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
+            <div className="bg-blue-900 bg-gradient-to-br from-blue-900 to-indigo-900 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-10"><Database size={80} /></div>
               <h4 className="font-bold mb-2 flex items-center gap-2 text-blue-300"><Zap size={18} /> B2B Batch Settlement</h4>
               <p className="text-sm text-blue-100/80 mb-6">Settling B2B invoices via GGE-Private Rail reduces transaction costs by 85% compared to traditional banking.</p>
