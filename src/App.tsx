@@ -3049,6 +3049,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       '🏢 GGMA Licensing',
       '🕵️ RIP Intelligence',
       '🛡️ SINC Compliance',
+      '⚖️ Find an Attorney',
       '📅 Book 15min Consultation',
       '🏥 Telehealth',
       '💻 IT Support',
@@ -3474,9 +3475,14 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       return;
     }
 
-    if (lower.includes('telehealth & legal') || lower.includes('attorney') || lower.includes('paralegal')) {
-      response = '⚖️ **Telehealth & Legal Services**\n\nWe connect you with licensed physicians for certifications and specialized attorneys for administrative support. \n\n**Attorney Consultation**: I am routing you to our **Paralegal & Legal Admin Team**. They will review your case facts first to find the most qualified attorney for your specific needs.\n\nWould you like to view our **Provider Directory** or speak with an **Admin/Paralegal**?';
-      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Provider Directory', 'Speak with Admin/Paralegal', 'Main Menu', 'Goodbye'] } as any]);
+    if (lower.includes('telehealth & legal') || lower.includes('attorney') || lower.includes('paralegal') || lower.includes('find an attorney')) {
+      response = '⚖️ **Find an Attorney / Legal Network**\n\nOur **Attorney Marketplace** connects you with bar-verified legal counsel specializing in cannabis law, compliance, and defense.\n\nWhat type of legal representation are you looking for?';
+      setMessages(prev => [...prev, { 
+        role: 'bot', 
+        text: response, 
+        choices: ['Individual Representation', 'Business/Commercial Counsel', 'Provider/Malpractice Defense', 'Speak with Admin/Paralegal', 'Main Menu'] 
+      } as any]);
+      setSignupStep(850);
       setIsTyping(false);
       return;
     }
@@ -3732,6 +3738,22 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     } else if (signupStep === 800) {
       // General Support Options
       response = 'I have flagged your support request. You can also call us directly at **405-492-7297** for immediate assistance.\n\nWould you like to return to the Main Menu?';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+      setSignupStep(0);
+      setIsTyping(false);
+      return;
+    } else if (signupStep === 850) {
+      // Find an Attorney Options
+      window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
+      if (lower.includes('individual')) {
+        response = '⚖️ **Individual Representation**\n\nI am routing you to an intake specialist to match you with an attorney for patient rights, expungement, or personal defense.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Attorney Match Consultation](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n📞 **Legal Line**: 405-492-7297';
+      } else if (lower.includes('business') || lower.includes('commercial')) {
+        response = '🏢 **Business & Commercial Counsel**\n\nI am routing you to a specialist to connect you with corporate counsel for OMMA licensing, METRC compliance, or B2B contracts.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Corporate Counsel Match](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n📞 **Business Legal Line**: 405-492-7297';
+      } else if (lower.includes('provider') || lower.includes('malpractice')) {
+        response = '🏥 **Provider & Malpractice Defense**\n\nI am routing you to a specialist to match you with an attorney experienced in medical board defense and cannabis malpractice.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Provider Defense Match](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n📞 **Provider Legal Line**: 405-492-7297';
+      } else {
+        response = '⚖️ **Legal & Administration**\n\nI am routing you to our **Paralegal & Legal Admin Team** to review your case facts first.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Legal Intake](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n📞 **Legal Line**: 405-492-7297';
+      }
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
@@ -5100,12 +5122,11 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         { label: '🏢 GGMA Licensing', text: 'I have a question about GGMA licensing.' },
         { label: '🕵️ RIP Intelligence', text: 'Tell me about RIP enforcement.' },
         { label: '🛡️ SINC Compliance', text: 'What is SINC infrastructure?' },
+        { label: '⚖️ Find an Attorney', text: 'I need to find an attorney.' },
         { label: '📅 Book 15min Consultation', text: 'I want to book a 15min consultation.' },
         { label: '🏥 Telehealth', text: 'I need assistance with a Telehealth appointment.' },
         { label: '💻 IT Support', text: 'I need technical assistance with the platform.' },
-        { label: '⭐ Basic Subscription', text: 'Tell me about the Basic Subscription.' },
-        { label: '💎 Professional Subscription', text: 'Tell me about the Professional Subscription.' },
-        { label: '🚀 Enterprise Subscription', text: 'Tell me about the Enterprise Subscription.' }
+        { label: '❓ General Support', text: 'I have a general question.' }
       ]
     : [
         { label: '📅 Book Medical Intake', text: 'https://book.carepatron.com/Diversity-Health---Wellness-Network--GoHealthUSA---CCardz-/Shantell-R-?p=MeBev6pvQWuqD4djocNXFg&s=cOEr6HSN' },
