@@ -360,7 +360,7 @@ const Button = ({ children, variant = 'primary', className, icon: Icon, ...props
 
 // --- Dashboards ---
 
-const DashboardLayout = ({ children, role, onLogout, userProfile }: { children: React.ReactNode, role: string, onLogout: () => void, userProfile: any }) => {
+const DashboardLayout = ({ children, role, onLogout, userProfile, onOpenConcierge }: { children: React.ReactNode, role: string, onLogout: () => void, userProfile: any, onOpenConcierge?: () => void }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [activeSection, setActiveSection] = useState('Overview');
 
@@ -474,7 +474,16 @@ const DashboardLayout = ({ children, role, onLogout, userProfile }: { children: 
           ))}
         </nav>
 
-        <div className="p-4 border-t border-slate-100">
+        <div className="p-4 border-t border-slate-100 space-y-2">
+          {onOpenConcierge && (
+            <button
+              onClick={onOpenConcierge}
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-white bg-[#1a4731] hover:bg-[#153a28] shadow-sm transition-colors"
+            >
+              <Sparkles size={20} />
+              {isSidebarOpen && <span className="text-sm font-black">Concierge Action</span>}
+            </button>
+          )}
           <button
             onClick={onLogout}
             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-red-500 hover:bg-red-50 transition-colors"
@@ -7165,27 +7174,27 @@ export default function App() {
 
     // Business Portal Routing
     if (role === 'provider') {
-      return <ProviderDashboard onLogout={handleLogout} user={profile} />;
+      return <ProviderDashboard onLogout={handleLogout} user={profile} onOpenConcierge={() => setShowLarryModal(true)} />;
     }
     if (role === 'attorney') {
-      return <AttorneyDashboard onLogout={handleLogout} user={profile} />;
+      return <AttorneyDashboard onLogout={handleLogout} user={profile} onOpenConcierge={() => setShowLarryModal(true)} />;
     }
     if (role === 'business' || role === 'compliance_service') {
-      return <BusinessDashboard onLogout={handleLogout} user={profile} initialTab={initialTab} />;
+      return <BusinessDashboard onLogout={handleLogout} user={profile} initialTab={initialTab} onOpenConcierge={() => setShowLarryModal(true)} />;
     }
 
     // Patient Portal Routing
     if (role === 'user' || role === 'Patient / Caregiver') {
       return (
-        <DashboardLayout role={role} onLogout={handleLogout} userProfile={profile}>
-          <PatientDashboard user={profile} />
+        <DashboardLayout role={role} onLogout={handleLogout} userProfile={profile} onOpenConcierge={() => setShowLarryModal(true)}>
+          <PatientDashboard user={profile} onOpenConcierge={() => setShowLarryModal(true)} />
         </DashboardLayout>
       );
     }
     
     // Fallback
     return (
-      <DashboardLayout role={role} onLogout={handleLogout} userProfile={profile}>
+      <DashboardLayout role={role} onLogout={handleLogout} userProfile={profile} onOpenConcierge={() => setShowLarryModal(true)}>
         <div className="p-20 text-center">
           <h2 className="text-2xl font-bold">Dashboard for {role} not implemented yet.</h2>
         </div>

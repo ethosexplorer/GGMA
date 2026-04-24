@@ -44,7 +44,7 @@ const tabs = [
   { id: 'subscription', label: 'Membership', icon: Sparkles },
 ];
 
-export const PatientDashboard = ({ user }: { user?: any; onLogout?: () => void; onSignup?: () => void; key?: string }) => {
+export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, key }: { user?: any; onLogout?: () => void; onSignup?: () => void; onOpenConcierge?: () => void; key?: string }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [demoUnlocked, setDemoUnlocked] = useState(false); 
   const isSubscribed = user?.subscriptionStatus === 'Active' || user?.planId || demoUnlocked;
@@ -116,6 +116,11 @@ export const PatientDashboard = ({ user }: { user?: any; onLogout?: () => void; 
         </div>
         
         <div className="hidden xl:flex items-center gap-3">
+           {onOpenConcierge && (
+             <button onClick={onOpenConcierge} className="mr-2 flex items-center gap-2 px-4 py-2 bg-[#1a4731] text-white rounded-xl font-black shadow-md hover:shadow-lg hover:-translate-y-0.5 hover:bg-[#153a28] transition-all text-sm">
+               <Sparkles size={16} className="text-emerald-300" /> Start New Action
+             </button>
+           )}
            <div className="text-right">
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Account Status</p>
               <p className={cn("text-xs font-bold", isSubscribed ? "text-emerald-600" : "text-amber-500")}>

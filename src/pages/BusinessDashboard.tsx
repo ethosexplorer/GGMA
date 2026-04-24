@@ -47,7 +47,7 @@ const MiniBarChart = ({ data }: { data: number[] }) => (
   </div>
 );
 
-export const BusinessDashboard = ({ onLogout, user, initialTab }: { onLogout?: () => void | Promise<void>, user?: any, initialTab?: any }) => {
+export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge }: { onLogout?: () => void | Promise<void>, user?: any, initialTab?: any, onOpenConcierge?: () => void }) => {
   const [demoUnlocked, setDemoUnlocked] = useState(false);
   const [activeTab, setActiveTab] = useState<'home' | 'analytics' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'insurance' | 'documents' | 'subscription' | 'integrations' | 'staff' | 'traceability' | 'readiness' | 'wallet' | 'attorneys' | 'reporting'>(initialTab || 'analytics');
   const [isInitializing, setIsInitializing] = useState(true);
@@ -762,7 +762,12 @@ export const BusinessDashboard = ({ onLogout, user, initialTab }: { onLogout?: (
                  <button onClick={() => {}} className="flex items-center gap-2 px-4 py-3 bg-white border border-slate-200/60 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:border-blue-300 transition-all text-blue-600 font-bold text-sm min-w-max">
                    <Activity size={16} /> Refresh Status
                  </button>
-                 <button onClick={() => {}} className="flex items-center gap-2 px-4 py-3 bg-white border border-slate-200/60 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:border-[#1a4731] transition-all text-[#1a4731] font-bold text-sm min-w-max sm:hidden">
+                 {onOpenConcierge && (
+                   <button onClick={onOpenConcierge} className="flex items-center gap-2 px-4 py-3 bg-[#1a4731] text-white border border-transparent rounded-2xl shadow-md hover:shadow-lg hover:-translate-y-0.5 hover:bg-[#153a28] transition-all font-black text-sm min-w-max ml-auto">
+                     <Sparkles size={16} className="text-emerald-300" /> Start New Action
+                   </button>
+                 )}
+                 <button onClick={onOpenConcierge || (() => {})} className="flex items-center gap-2 px-4 py-3 bg-white border border-slate-200/60 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:border-[#1a4731] transition-all text-[#1a4731] font-bold text-sm min-w-max sm:hidden">
                    <MessageSquare size={16} /> Sylara Chat
                  </button>
               </div>
