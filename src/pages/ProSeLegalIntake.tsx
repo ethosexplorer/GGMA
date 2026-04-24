@@ -42,7 +42,7 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
             <Scale size={24} className="text-amber-400" />
           </div>
           <div className="hidden sm:block">
-            <span className="font-black text-xl text-slate-800 tracking-tight block">GGHP Pro Se Advocacy</span>
+            <span className="font-black text-xl text-slate-800 tracking-tight block">GGHP Legal Advocacy</span>
             <span className="text-[10px] font-bold text-amber-600 uppercase tracking-widest block">Legal Intake • Strategy • Empowerment</span>
           </div>
         </div>
@@ -56,9 +56,9 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
 
       <main className="flex-1 max-w-4xl w-full mx-auto p-6 md:p-12">
         <div className="mb-10 text-center">
-          <h1 className="text-4xl font-black text-slate-800 tracking-tight mb-4">Pro Se Legal Advocacy Intake</h1>
+          <h1 className="text-4xl font-black text-slate-800 tracking-tight mb-4">Legal Advocacy Intake</h1>
           <p className="text-slate-500 max-w-2xl mx-auto">
-            The legal system often weaponizes procedure against those fighting for the truth. Our Pro Se Advocacy program is designed to level the playing field and help the righteous win.
+            The legal system often weaponizes procedure against those fighting for the truth. Our Legal Advocacy program is designed to level the playing field and help the righteous win—whether you need ethical representation or guidance to fight Pro Se.
           </p>
         </div>
 
