@@ -1998,7 +1998,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
             <a href="#" className="hover:text-[#1a4731] transition-colors">Terms of Service</a>
             <a href="#" className="hover:text-[#1a4731] transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-[#1a4731] transition-colors">Accessibility</a>
-            <a href="tel:14054927297" className="hover:text-[#1a4731] transition-colors font-black">Support: 1-405-492-7297</a>
+            <a href="tel:14054927297" className="hover:text-[#1a4731] transition-colors font-black"></a>
           </div>
         </div>
       </footer>
@@ -3305,7 +3305,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       setAvailableSlots([]);
       setSelectedTime(null);
     } catch (err: any) {
-      setBookingError(err.message || 'Could not book this slot. Please try another or call 405-492-7487.');
+      setBookingError(err.message || 'Could not book this slot. Please try another.');
     } finally {
       setIsBooking(false);
     }
@@ -3498,7 +3498,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
 
     if (lower.includes('shantell') || lower === 'speak with shantell') {
       window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
-      response = 'Sure! I\'ve opened the booking page for you. If it didn\'t open, click the link below:\n\n🔗 [Book 15min Consultation with Shantell](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\nYou can also call us directly at **405-492-7487**.';
+      response = 'Sure! I\'ve opened the booking page for you. If it didn\'t open, click the link below:\n\n🔗 [Book 15min Consultation with Shantell](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] }]);
       setIsTyping(false);
       return;
@@ -3609,7 +3609,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
 
     if (lower.includes('consultation') || lower.includes('book 15min') || (lower.includes('schedule') && !lower.includes('fee')) || lower.includes('appointment') || lower.includes('slot')) {
       window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
-      response = 'Sure! I\'ve opened the booking page for you. If it didn\'t open, click below:\n\n🔗 [Book 15min Consultation](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\nYou can also call us directly at **405-492-7487**.';
+      response = 'Sure! I\'ve opened the booking page for you. If it didn\'t open, click below:\n\n🔗 [Book 15min Consultation](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] }]);
       setIsTyping(false);
       return;
@@ -3677,62 +3677,78 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       return;
     } else if (lower.includes('it support') || lower.includes('technical') || lower.includes('portal login issue') || lower.includes('app not loading') || lower.includes('metrc sync error')) {
       window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
-      response = '💻 **IT & Technical Support**\n\nI am routing you to our **IT Support Team**.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Technical Support](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n📞 **Tech Support Line**: 405-492-7297';
+      response = '💻 **IT & Technical Support**\n\nI am routing you to our **IT Support Team**.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Technical Support](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
       return;
     } else if (lower.includes('legal') || lower.includes('administration') || lower.includes('admin/paralegal') || lower.includes('paralegal')) {
       window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
-      response = '⚖️ **Legal & Administration**\n\nI am routing you to our **Legal & Admin Team**.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Legal/Admin Consultation](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n📞 **Legal Line**: 405-492-7297';
+      response = '⚖️ **Legal & Administration**\n\nI am routing you to our **Legal & Admin Team**.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Legal/Admin Consultation](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
       return;
     } else if (lower.includes('intelligence report')) {
-      response = '🕵️ **Field Intelligence Report Logged**\n\nL.A.R.R.Y is analyzing the geospatial data and recent enforcement activities in your sector. Our team will cross-reference this with OMMA compliance heatmaps and will follow up with you promptly with a comprehensive update.\n\nWould you like to return to the Main Menu?';
+      response = '🕵️ **Field Intelligence Report Logged**\n\nL.A.R.R.Y is analyzing the geospatial data and recent enforcement activities in your sector. Our team will cross-reference this with OMMA compliance heatmaps and will follow up with you promptly with a comprehensive update.
+
+*(A copy of this ticket has been securely routed to Shantell\'s priority queue — Flagged: 🟣 Purple)*\n\nWould you like to return to the Main Menu?';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
       return;
     } else if (lower.includes('background verification')) {
-      response = '🛡️ **Background Verification Check Initiated**\n\nWe are running a secure cross-check against OSBI, DEA databases, and state records. Once the identity and history sweep is complete, our compliance officer will contact you promptly to review the findings.\n\nWould you like to return to the Main Menu?';
+      response = '🛡️ **Background Verification Check Initiated**\n\nWe are running a secure cross-check against OSBI, DEA databases, and state records. Once the identity and history sweep is complete, our compliance officer will contact you promptly to review the findings.
+
+*(A copy of this ticket has been securely routed to Shantell\'s priority queue — Flagged: 🟣 Purple)*\n\nWould you like to return to the Main Menu?';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
       return;
     } else if (lower.includes('enforcement status')) {
-      response = '📋 **Enforcement Status Inquiry Received**\n\nL.A.R.R.Y is pulling active injunctions, fines, and pending legal actions on the requested entity. A regulatory paralegal will review the findings and will reach out to you promptly to discuss the next steps.\n\nWould you like to return to the Main Menu?';
+      response = '📋 **Enforcement Status Inquiry Received**\n\nL.A.R.R.Y is pulling active injunctions, fines, and pending legal actions on the requested entity. A regulatory paralegal will review the findings and will reach out to you promptly to discuss the next steps.
+
+*(A copy of this ticket has been securely routed to Shantell\'s priority queue — Flagged: 🟣 Purple)*\n\nWould you like to return to the Main Menu?';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
       return;
     } else if (lower.includes('compliance audit')) {
-      response = '📊 **Compliance Audit Request Filed**\n\nWe have queued a full seed-to-sale (Metrc) reconciliation and physical site audit protocol. An auditor will be assigned to schedule the physical walkthrough and will contact you promptly to confirm the details.\n\nWould you like to return to the Main Menu?';
+      response = '📊 **Compliance Audit Request Filed**\n\nWe have queued a full seed-to-sale (Metrc) reconciliation and physical site audit protocol. An auditor will be assigned to schedule the physical walkthrough and will contact you promptly to confirm the details.
+
+*(A copy of this ticket has been securely routed to Shantell\'s priority queue — Flagged: 🟣 Purple)*\n\nWould you like to return to the Main Menu?';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
       return;
     } else if (lower.includes('contact oversight') || lower.includes('state authority plan')) {
-      response = '📞 **Connecting to Oversight Division**\n\nYour request has been escalated to a senior state authority liaison. They will review your current clearance level and will reach out to you promptly to assist you further.\n\nWould you like to return to the Main Menu?';
+      response = '📞 **Connecting to Oversight Division**\n\nYour request has been escalated to a senior state authority liaison. They will review your current clearance level and will reach out to you promptly to assist you further.
+
+*(A copy of this ticket has been securely routed to Shantell\'s priority queue — Flagged: 🟣 Purple)*\n\nWould you like to return to the Main Menu?';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
       return;
     } else if (lower.includes('audit shield')) {
-      response = '🛡️ **Audit Shield Setup Requested**\n\nWe are preparing your firewall and automated Metrc synchronization parameters to protect your facility from random inspections. A SINC technician will follow up with you promptly to finalize the deployment.\n\nWould you like to return to the Main Menu?';
+      response = '🛡️ **Audit Shield Setup Requested**\n\nWe are preparing your firewall and automated Metrc synchronization parameters to protect your facility from random inspections. A SINC technician will follow up with you promptly to finalize the deployment.
+
+*(A copy of this ticket has been securely routed to Shantell\'s priority queue — Flagged: 🟣 Purple)*\n\nWould you like to return to the Main Menu?';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
       return;
     } else if (lower.includes('seed-to-sale')) {
-      response = '🌱 **Seed-to-Sale Compliance Inquiry**\n\nL.A.R.R.Y is auditing your inventory API endpoints for discrepancy alerts. Our compliance integration team will review your tracing history and will contact you promptly with a full report.\n\nWould you like to return to the Main Menu?';
+      response = '🌱 **Seed-to-Sale Compliance Inquiry**\n\nL.A.R.R.Y is auditing your inventory API endpoints for discrepancy alerts. Our compliance integration team will review your tracing history and will contact you promptly with a full report.
+
+*(A copy of this ticket has been securely routed to Shantell\'s priority queue — Flagged: 🟣 Purple)*\n\nWould you like to return to the Main Menu?';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
       return;
     } else if (lower.includes('network integrity')) {
-      response = '🔌 **Network Integrity Check Initiated**\n\nWe are scanning your local network and point-of-sale hardware for vulnerabilities. An IT security specialist will run diagnostics and will reach out to you promptly with the results.\n\nWould you like to return to the Main Menu?';
+      response = '🔌 **Network Integrity Check Initiated**\n\nWe are scanning your local network and point-of-sale hardware for vulnerabilities. An IT security specialist will run diagnostics and will reach out to you promptly with the results.
+
+*(A copy of this ticket has been securely routed to Shantell\'s priority queue — Flagged: 🟣 Purple)*\n\nWould you like to return to the Main Menu?';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
@@ -3745,37 +3761,45 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     ) {
       // Telehealth Options
       window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
-      response = '📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book via Calendly](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n📞 **Telehealth Line**: 405-252-1178';
+      response = '📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book via Calendly](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
       return;
     } else if (lower.includes('account & login')) {
-      response = '🔐 **Account & Login Ticket Created**\n\nOur IT team has been notified of your access issue. A support specialist will check your credentials and will contact you promptly to restore your access.\n\nWould you like to return to the Main Menu?';
+      response = '🔐 **Account & Login Ticket Created**\n\nOur IT team has been notified of your access issue. A support specialist will check your credentials and will contact you promptly to restore your access.
+
+*(A copy of this ticket has been securely routed to Shantell\'s priority queue — Flagged: 🟣 Purple)*\n\nWould you like to return to the Main Menu?';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
       return;
     } else if (lower.includes('application status')) {
-      response = '📋 **Application Status Inquiry**\n\nL.A.R.R.Y is querying the state portal for your exact application timeline. A compliance agent will review the findings and will follow up with you promptly to provide a status update.\n\nWould you like to return to the Main Menu?';
+      response = '📋 **Application Status Inquiry**\n\nL.A.R.R.Y is querying the state portal for your exact application timeline. A compliance agent will review the findings and will follow up with you promptly to provide a status update.
+
+*(A copy of this ticket has been securely routed to Shantell\'s priority queue — Flagged: 🟣 Purple)*\n\nWould you like to return to the Main Menu?';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
       return;
     } else if (lower.includes('billing question')) {
-      response = '💳 **Billing Ticket Created**\n\nYour inquiry has been routed to our finance department. A billing specialist will review your Care Wallet or Subscription and will reach out to you promptly to ensure everything is correct.\n\nWould you like to return to the Main Menu?';
+      response = '💳 **Billing Ticket Created**\n\nYour inquiry has been routed to our finance department. A billing specialist will review your Care Wallet or Subscription and will reach out to you promptly to ensure everything is correct.
+
+*(A copy of this ticket has been securely routed to Shantell\'s priority queue — Flagged: 🟣 Purple)*\n\nWould you like to return to the Main Menu?';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
       return;
     } else if (lower.includes('how does this work')) {
-      response = '🧠 **Educational Request Logged**\n\nWe are preparing a custom onboarding packet based on your profile to explain how GGHP works for you. A concierge guide will contact you promptly to walk you through your personalized strategy.\n\nWould you like to return to the Main Menu?';
+      response = '🧠 **Educational Request Logged**\n\nWe are preparing a custom onboarding packet based on your profile to explain how GGHP works for you. A concierge guide will contact you promptly to walk you through your personalized strategy.
+
+*(A copy of this ticket has been securely routed to Shantell\'s priority queue — Flagged: 🟣 Purple)*\n\nWould you like to return to the Main Menu?';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
       return;
     } else if (lower.includes('speak with shantell') || lower.includes('human')) {
-      response = '👩‍💼 **Direct Escalation to Management**\n\nI have priority-routed this to Shantell or the next available senior representative. They have been notified of the urgency and will reach out to you promptly. You can also call us directly at **405-492-7297**.\n\nWould you like to return to the Main Menu?';
+      response = '👩‍💼 **Direct Escalation to Management**\n\nI have priority-routed this to Shantell or the next available senior representative. I have priority-routed this directly to Shantell's personal queue (Flagged: 🟣 Priority Purple). She has been notified of the urgency and will reach out to you promptly.\n\nWould you like to return to the Main Menu?';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
@@ -3808,13 +3832,13 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       // Find an Attorney Options
       window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
       if (lower.includes('individual')) {
-        response = '⚖️ **Individual Representation**\n\nI am routing you to an intake specialist to match you with an attorney for patient rights, expungement, or personal defense.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Attorney Match Consultation](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n📞 **Legal Line**: 405-492-7297';
+        response = '⚖️ **Individual Representation**\n\nI am routing you to an intake specialist to match you with an attorney for patient rights, expungement, or personal defense.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Attorney Match Consultation](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n';
       } else if (lower.includes('business') || lower.includes('commercial')) {
-        response = '🏢 **Business & Commercial Counsel**\n\nI am routing you to a specialist to connect you with corporate counsel for OMMA licensing, METRC compliance, or B2B contracts.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Corporate Counsel Match](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n📞 **Business Legal Line**: 405-492-7297';
+        response = '🏢 **Business & Commercial Counsel**\n\nI am routing you to a specialist to connect you with corporate counsel for OMMA licensing, METRC compliance, or B2B contracts.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Corporate Counsel Match](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n';
       } else if (lower.includes('provider') || lower.includes('malpractice')) {
-        response = '🏥 **Provider & Malpractice Defense**\n\nI am routing you to a specialist to match you with an attorney experienced in medical board defense and cannabis malpractice.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Provider Defense Match](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n📞 **Provider Legal Line**: 405-492-7297';
+        response = '🏥 **Provider & Malpractice Defense**\n\nI am routing you to a specialist to match you with an attorney experienced in medical board defense and cannabis malpractice.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Provider Defense Match](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n';
       } else {
-        response = '⚖️ **Legal & Administration**\n\nI am routing you to our **Paralegal & Legal Admin Team** to review your case facts first.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Legal Intake](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n📞 **Legal Line**: 405-492-7297';
+        response = '⚖️ **Legal & Administration**\n\nI am routing you to our **Paralegal & Legal Admin Team** to review your case facts first.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Legal Intake](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n';
       }
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
@@ -3950,7 +3974,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
           setEligibleLicenses([]);
         }
       } else if (lower === 'no' || lower === 'nope' || lower.includes('no thank') || lower.includes('nevermind')) {
-        response = 'No problem! We understand. Our platform offers a wide range of benefits including the **Care Wallet**, **Priority Renewals**, and **Legal Advocacy** even without an active application.\n\nWould you like to **Speak with Shantell** or have a call back? Please provide a date and time, or call us at **405-492-7487** anytime!\n\nIf not, I wish you a wonderful day. 👋';
+        response = 'No problem! We understand. Our platform offers a wide range of benefits including the **Care Wallet**, **Priority Renewals**, and **Legal Advocacy** even without an active application.\n\nWould you like to **Speak with Shantell** or have a call back? Please provide a date and time, anytime!\n\nIf not, I wish you a wonderful day. 👋';
         setSignupStep(0);
         fetchCalendlySlots();
       } else {
@@ -4710,7 +4734,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         response = '🎉 **Application Complete!**\n\nNow that we have finished your application, you will receive a callback to **REVIEW** application to ensure 1st time approval accuracy, then **PAY** your state fee and then **SUBMIT** your application for state approval of business license.\n\nI want to thank you for allowing me to assist you in this process. If you have any questions feel free to login your portal and chat with me directly 24/7 by clicking the **"help/support"** tab. Thank you and Goodbye 👋';
         setSignupStep(0);
       } else if (lower === 'no' || lower === 'nope') {
-        response = 'No problem! Your progress has been saved. Type **start** when you\'re ready to continue, or call us at **405-492-7487** for assistance.';
+        response = 'No problem! Your progress has been saved. Type **start** when you\'re ready to continue, for assistance.';
         setSignupStep(0);
       } else {
         response = 'Please answer **Yes** or **No**. Are you ready to submit your application?';
@@ -4861,7 +4885,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         response = 'Are you a **first time user** or **returning user**?';
         setSignupStep(98);
       } else if (lower === 'no' || lower === 'nope') {
-        response = 'No problem! If you change your mind, type **start** when you\'re ready to continue, or call us at **405-492-7487** for assistance.';
+        response = 'No problem! If you change your mind, type **start** when you\'re ready to continue, for assistance.';
         setSignupStep(0);
       } else {
         response = 'Please answer **Yes** or **No**. Are you ready to start the application?';
@@ -5046,10 +5070,10 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     } else if (signupStep === 10) {
       if (lower.includes('yes') || lower.includes('book') || lower.includes('ready') || lower.includes('consultation')) {
         window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
-        response = 'Sure! I\'ve opened the booking page. If it didn\'t open, click below:\n\n🔗 [Book Telehealth Session](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n📞 **Telehealth Line**: 405-252-1178';
+        response = 'Sure! I\'ve opened the booking page. If it didn\'t open, click below:\n\n🔗 [Book Telehealth Session](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n';
       } else if (lower.includes('shantell') || lower.includes('speak')) {
         window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
-        response = '👤 **Human Care Coordination**\n\nI am routing you to **Shantell Robinson**.\n\n📞 **Med Card Line**: 405-492-7487\n📞 **Telehealth Line**: 405-252-1178\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book a Session via Calendly](https://calendly.com/globalgreenenterprize/15-min-meeting)';
+        response = '👤 **Human Care Coordination**\n\nI am routing you to **Shantell Robinson**.\n\n\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book a Session via Calendly](https://calendly.com/globalgreenenterprize/15-min-meeting)';
         setSignupStep(0);
       } else {
         response = 'No problem. If you\'re not ready for an appointment, I can help you with **GGMA Licensing** or **IT Support**. What would you like to explore?';
@@ -5057,10 +5081,10 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       }
     } else if (lower.includes('business expert') || lower.includes('commercial consultant') || lower.includes('business consultation') || lower.includes('book business')) {
       window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
-      response = '🏢 **Commercial Compliance Consultation**\n\nI am routing you to our **Business Licensing Experts**.\n\n📞 **Business Line**: 405-492-7297\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Business Consultation](https://calendly.com/globalgreenenterprize/15-min-meeting)';
+      response = '🏢 **Commercial Compliance Consultation**\n\nI am routing you to our **Business Licensing Experts**.\n\n\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Business Consultation](https://calendly.com/globalgreenenterprize/15-min-meeting)';
     } else if (lower.includes('human') || lower.includes('coordinator') || lower.includes('shantell') || lower.includes('speak with someone')) {
       window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
-      response = '👤 **Human Care Coordination**\n\nI am routing you to **Shantell Robinson**.\n\n📞 **Med Card Line**: 405-492-7487\n📞 **Telehealth Line**: 405-252-1178\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book a Session via Calendly](https://calendly.com/globalgreenenterprize/15-min-meeting)';
+      response = '👤 **Human Care Coordination**\n\nI am routing you to **Shantell Robinson**.\n\n\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book a Session via Calendly](https://calendly.com/globalgreenenterprize/15-min-meeting)';
     } else if (lower.includes('fee schedule')) {
       response = '💰 **OMMA Fee Schedule (2026)**\n\n• **Dispensary**: $2,500 - $10,000 (Based on tax)\n• **Grower/Processor**: Tiered from $2,500 to $50,000+\n• **Patient Card**: $104.30 (Standard) / $22.50 (Reduced)\n\nWould you like the detailed tier breakdown for a specific license type?';
       setMessages(prev => [...prev, { 
@@ -5083,19 +5107,19 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       return;
     } else if (lower.includes('medical card evaluation') || lower.includes('med card eval')) {
       window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
-      response = '💳 **Medical Card Evaluation ($45)**\n\nYour evaluation includes:\n• **$35** — Physician Consultation\n• **$10** — GGE Processing Fee\n\n📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book Online via Calendly](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n📞 **Call to Schedule**: 405-492-7487';
+      response = '💳 **Medical Card Evaluation ($45)**\n\nYour evaluation includes:\n• **$35** — Physician Consultation\n• **$10** — GGE Processing Fee\n\n📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book Online via Calendly](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Patient Intake', 'I Already Scheduled', 'Main Menu'] } as any]);
       setIsTyping(false);
       return;
     } else if (lower.includes('general telehealth wellness') || lower.includes('general telehealth')) {
       window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
-      response = '🏥 **General Telehealth Wellness Visit**\n\nConnect with a licensed physician for:\n• Non-emergency consultations\n• Follow-up visits\n• Prescription management\n• General health questions\n\n📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book Online via Calendly](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n📞 **Telehealth Line**: 405-252-1178';
+      response = '🏥 **General Telehealth Wellness Visit**\n\nConnect with a licensed physician for:\n• Non-emergency consultations\n• Follow-up visits\n• Prescription management\n• General health questions\n\n📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book Online via Calendly](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setIsTyping(false);
       return;
     } else if (lower.includes('human') || lower.includes('coordinator') || lower.includes('shantell') || lower.includes('speak with someone')) {
       window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
-      response = '👤 **Human Care Coordination**\n\nI am routing you to **Shantell Robinson**, our lead Human Care Coordinator.\n\n📞 **Med Card Line**: 405-492-7487\n📞 **Telehealth Line**: 405-252-1178\n🏢 **Global Green**: 405-492-7297\n\n📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book a 15-Min Session via Calendly](https://calendly.com/globalgreenenterprize/15-min-meeting)';
+      response = '👤 **Human Care Coordination**\n\nI am routing you to **Shantell Robinson**, our lead Human Care Coordinator.\n\n\n\n📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book a 15-Min Session via Calendly](https://calendly.com/globalgreenenterprize/15-min-meeting)';
     } else if (lower === 'yes' || lower === 'yeah' || lower === 'yep') {
       response = 'Great! I am ready to assist. Would you like to begin your **Licensing Intake**, or do you have questions about our other sectors like **RIP Intelligence** or **SINC Compliance**?';
     } else if (['cancer', 'pain', 'ptsd', 'glaucoma', 'seizure', 'anxiety', 'epilepsy', 'crohn', 'sclerosis', 'als', 'alzheimer', 'anorexia', 'migraine', 'arthritis', 'nausea', 'autism', 'hiv', 'aids', 'parkinson', 'tourette'].some(condition => lower.includes(condition))) {
@@ -5104,7 +5128,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     } else if (lower === 'no' || lower === 'nope' || lower === 'none' || lower.includes('don\'t') || lower.includes('do not') || lower.includes('none of')) {
       response = 'No problem. If you\'re not ready for an application, you can explore our **IT Support**, **Legal Compliance**, or **Telehealth** nodes. \n\nHow can I help you navigate the ecosystem today?';
     } else if (lower.includes('talk') || lower.includes('speak') || lower.includes('human') || lower.includes('agent') || lower.includes('support') || lower.includes('call') || lower.includes('phone')) {
-      response = 'I can route you to a live department representative. For immediate assistance, you can call our administration line at **405-492-7297**. \n\nWould you like me to open a support ticket for you instead?';
+      response = 'I can route you to a live department representative. \n\nWould you like me to open a support ticket for you instead?';
     } else {
       response = 'I\'m here to help you navigate the **Global Green Hybrid Platform (GGHP)**. Select an area below to explore:';
       setMessages(prev => [...prev, { 
