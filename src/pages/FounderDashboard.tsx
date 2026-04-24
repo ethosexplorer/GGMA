@@ -17,6 +17,7 @@ import { AdminDashboard } from './AdminDashboard';
 import { StateAuthorityDashboard } from './StateAuthorityDashboard';
 import { SubscriptionPortal } from '../components/SubscriptionPortal';
 import { LegislativeIntelTab } from '../components/federal/LegislativeIntelTab';
+import { JudicialMonitorTab } from '../components/federal/JudicialMonitorTab';
 import { onSnapshot, collection, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { METRC_MANUAL } from '../data/metrcManual';
@@ -45,6 +46,7 @@ const NAV_ITEMS = [
   { id: 'internal_admin', label: 'Internal Admin', icon: Shield, badge: '!' },
   { id: 'rapid_testing', label: 'Rapid Testing Hub', icon: FlaskConical },
   { id: 'state_authority', label: 'State Authority (External)', icon: Gavel },
+  { id: 'judicial', label: 'Judicial Monitor', icon: Scale },
   { id: 'subscription', label: 'Platform Billing', icon: CreditCard },
   { section: 'SYSTEM CONTROL' },
   { id: 'reports', label: 'Master Analytics', icon: BarChart3 },
@@ -1795,6 +1797,8 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       case 'support_tickets': return renderSupportTickets();
       case 'hr_intelligence': return renderHRIntelligence();
       case 'rapid_testing': return renderRapidTestingHub();
+      case 'judicial':
+        return <div className="h-full w-full -m-10 bg-[#080e1a] p-10 min-h-screen overflow-auto"><JudicialMonitorTab /></div>;
       case 'settings': return renderSettings();
       default: return renderOverview();
     }
