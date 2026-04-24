@@ -1240,7 +1240,7 @@ const STATE_RESOURCES: Record<string, any> = {
   );
 };
 
-const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | 'patient-portal' | 'support' | 'larry-chatbot' | 'larry-business', role?: string) => void }) => {
+const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | 'patient-portal' | 'support' | 'larry-chatbot' | 'larry-business' | 'legal-advocacy', role?: string) => void }) => {
   const [broadcastMsg, setBroadcastMsg] = useState('🚨 SYSTEM NOTICE: NATIONWIDE COMPLIANCE AUDIT IN PROGRESS • GLOBAL GREEN HYBRID PLATFORM (GGHP) • ALL SECTORS (GGMA/RIP/SINC) OPERATIONAL');
   const [inTheKnowNews, setInTheKnowNews] = useState([
     '🚨 BREAKING: Federal Marijuana Rescheduling — Schedule I → Schedule III NOW OFFICIAL',
@@ -7365,10 +7365,10 @@ export default function App() {
 
     // Business Portal Routing
     if (role === 'provider') {
-      return <ProviderDashboard onLogout={handleLogout} user={profile} onOpenConcierge={() => setShowLarryModal(true)} />;
+      return <ProviderDashboard onLogout={handleLogout} user={profile} />;
     }
     if (role === 'attorney') {
-      return <AttorneyDashboard onLogout={handleLogout} user={profile} onOpenConcierge={() => setShowLarryModal(true)} />;
+      return <AttorneyDashboard onLogout={handleLogout} user={profile} />;
     }
     if (role === 'business' || role === 'compliance_service') {
       return <BusinessDashboard onLogout={handleLogout} user={profile} initialTab={initialTab} onOpenConcierge={() => setShowLarryModal(true)} />;

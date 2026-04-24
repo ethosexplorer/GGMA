@@ -27,8 +27,8 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
 
   const openCalendly = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (window.Calendly) {
-      window.Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/legal-consultation' });
+    if ((window as any).Calendly) {
+      (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/legal-consultation' });
     } else {
       window.open('https://calendly.com/globalgreenhpmeet/legal-consultation', '_blank');
     }
