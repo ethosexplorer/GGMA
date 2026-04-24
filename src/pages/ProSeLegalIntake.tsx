@@ -11,6 +11,7 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
   const [formData, setFormData] = useState({
     caseType: '',
     courtLevel: '',
+    industryScope: '',
     hasDeadlines: false,
     deadlinesDesc: '',
     opposingCounselMisconduct: false,
@@ -100,11 +101,25 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
                       value={formData.courtLevel}
                       onChange={e => setFormData({...formData, courtLevel: e.target.value})}
                     >
-                      <option value="">Select Jurisdiction...</option>
+                      <option value="">Select Jurisdiction Level...</option>
                       <option value="federal_district">Federal District Court</option>
                       <option value="federal_appellate">Federal Appellate Court (Circuit)</option>
-                      <option value="state_civil">State Civil Court</option>
+                      <option value="state_civil">State Court (Civil)</option>
+                      <option value="state_criminal">State Court (Criminal)</option>
+                      <option value="municipal">Municipal Court</option>
                       <option value="administrative">Administrative / Regulatory Agency</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Industry Scope</label>
+                    <select 
+                      className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all font-medium text-slate-700"
+                      value={formData.industryScope}
+                      onChange={e => setFormData({...formData, industryScope: e.target.value})}
+                    >
+                      <option value="">Select Scope...</option>
+                      <option value="cannabis">Cannabis Related</option>
+                      <option value="non_cannabis">Non-Cannabis Related</option>
                     </select>
                   </div>
                   <div>
@@ -135,7 +150,7 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
                       />
                     )}
                   </div>
-                  <button onClick={handleNext} disabled={!formData.courtLevel || !formData.caseType} className="w-full py-4 bg-slate-900 text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-800 disabled:opacity-50 transition-all mt-8">
+                  <button onClick={handleNext} disabled={!formData.courtLevel || !formData.caseType || !formData.industryScope} className="w-full py-4 bg-slate-900 text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-800 disabled:opacity-50 transition-all mt-8">
                     Continue to Misconduct Scan <ChevronRight size={18} />
                   </button>
                 </div>
@@ -207,7 +222,7 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
                 </div>
                 <h2 className="text-3xl font-black text-slate-800 mb-4">Intake Complete. Let's Strategize.</h2>
                 <p className="text-slate-600 max-w-lg mx-auto mb-10 leading-relaxed font-medium">
-                  Your case details have been securely logged into the GGHP platform. The next step is to schedule a direct 1-on-1 strategy session with our Founder & Lead Pro Se Advocate.
+                  Your case details have been securely logged. Once you schedule your session, I will review the intake. If this is a case you can handle yourself (Pro Se), I will help you build your strategy. If it requires formal representation, I will match you with the appropriate ethical attorney and provide a direct referral.
                 </p>
 
                 <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 max-w-md mx-auto text-left mb-10">
