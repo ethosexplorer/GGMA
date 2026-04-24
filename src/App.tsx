@@ -112,6 +112,7 @@ import { EnforcementDashboard } from './pages/EnforcementDashboard';
 import { BackOfficeDashboard } from './pages/BackOfficeDashboard';
 import ProviderRegistrationPage from './pages/ProviderRegistrationPage';
 import { EducationPortal } from './pages/EducationPortal';
+import { ProSeLegalIntake } from './pages/ProSeLegalIntake';
 import { PatientDashboard } from './pages/PatientDashboard';
 import { OversightDashboard } from './pages/OversightDashboard';
 import { PricingTiers } from './components/PricingTiers';
@@ -1327,6 +1328,9 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
           <button onClick={() => onNavigate('larry-chatbot', 'ggma')} className="hover:text-[#1a4731] transition-colors font-medium">GGMA Sector</button>
           <button onClick={() => onNavigate('larry-chatbot', 'rip')} className="hover:text-[#1a4731] transition-colors font-medium">RIP Intelligence</button>
           <button onClick={() => onNavigate('larry-chatbot', 'sinc')} className="hover:text-[#1a4731] transition-colors font-medium">SINC Compliance</button>
+          <button onClick={() => onNavigate('legal-advocacy' as any)} className="hover:text-amber-600 transition-colors font-bold text-amber-700 flex items-center gap-1">
+            <Scale size={14} /> Pro Se Advocacy
+          </button>
           <div className="h-6 w-px bg-slate-200 mx-2" />
           <button 
             onClick={() => onNavigate('larry-chatbot')} 
@@ -7573,6 +7577,13 @@ export default function App() {
 
           {view === 'education' && (
             <EducationPortal onBack={() => setView('landing')} />
+          )}
+
+          {view === 'legal-advocacy' && (
+            <ProSeLegalIntake 
+              onBack={() => setView('landing')} 
+              onComplete={() => setView('landing')} 
+            />
           )}
 
           {view === 'dashboard' && userProfile && (
