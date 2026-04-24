@@ -14,6 +14,9 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
     industryScope: '',
     hasDeadlines: false,
     deadlinesDesc: '',
+    incidentDate: '',
+    incidentTime: '',
+    incidentLocation: '',
     opposingCounselMisconduct: false,
     misconductDesc: '',
     summary: ''
@@ -55,7 +58,7 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
         <div className="mb-10 text-center">
           <h1 className="text-4xl font-black text-slate-800 tracking-tight mb-4">Pro Se Legal Advocacy Intake</h1>
           <p className="text-slate-500 max-w-2xl mx-auto">
-            The legal system often weaponizes procedure against those fighting for the truth. Our Pro Se Advocacy program is designed to level the playing field and help the righteous win. We welcome ethical attorneys, law enforcement, and judicial officers to our platform—but if we have to expose misconduct, we will. They will either do the absolute best for the people they serve, or they will face me.
+            The legal system often weaponizes procedure against those fighting for the truth. Our Pro Se Advocacy program is designed to level the playing field and help the righteous win.
           </p>
         </div>
 
@@ -63,8 +66,9 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
         <div className="flex items-center justify-center gap-4 mb-12">
           {[
             { num: 1, label: 'Case Triage' },
-            { num: 2, label: 'Misconduct Scan' },
-            { num: 3, label: 'Schedule Review' }
+            { num: 2, label: 'Incident Details' },
+            { num: 3, label: 'Misconduct Scan' },
+            { num: 4, label: 'Schedule Review' }
           ].map((s, i) => (
             <div key={i} className="flex items-center gap-4">
               <div className={cn(
@@ -78,7 +82,7 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
                 "text-[10px] font-bold uppercase tracking-widest",
                 step === s.num ? "text-amber-600" : step > s.num ? "text-slate-800" : "text-slate-400"
               )}>{s.label}</span>
-              {i < 2 && <div className="w-12 h-px bg-slate-200"></div>}
+              {i < 3 && <div className="w-12 h-px bg-slate-200"></div>}
             </div>
           ))}
         </div>
@@ -151,7 +155,7 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
                     )}
                   </div>
                   <button onClick={handleNext} disabled={!formData.courtLevel || !formData.caseType || !formData.industryScope} className="w-full py-4 bg-slate-900 text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-800 disabled:opacity-50 transition-all mt-8">
-                    Continue to Misconduct Scan <ChevronRight size={18} />
+                    Continue to Incident Details <ChevronRight size={18} />
                   </button>
                 </div>
               </motion.div>
@@ -159,6 +163,70 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
 
             {step === 2 && (
               <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+                <div className="flex items-center gap-3 mb-8">
+                  <AlertTriangle className="text-amber-500" size={24} />
+                  <h2 className="text-2xl font-black text-slate-800">Incident Details</h2>
+                </div>
+                
+                <p className="text-slate-600 mb-6 font-medium">To properly evaluate your needs (e.g., criminal defense, civil rights violation, traffic stop, or corporate litigation), provide the specific occurrence details below.</p>
+
+                <div className="space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Date of Occurrence</label>
+                      <input 
+                        type="date"
+                        className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-amber-500 font-medium text-slate-700"
+                        value={formData.incidentDate}
+                        onChange={e => setFormData({...formData, incidentDate: e.target.value})}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Time of Occurrence</label>
+                      <input 
+                        type="time"
+                        className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-amber-500 font-medium text-slate-700"
+                        value={formData.incidentTime}
+                        onChange={e => setFormData({...formData, incidentTime: e.target.value})}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Location / Jurisdiction</label>
+                    <input 
+                      type="text" placeholder="e.g., City, County, or Specific Address"
+                      className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-amber-500 font-medium text-slate-700"
+                      value={formData.incidentLocation}
+                      onChange={e => setFormData({...formData, incidentLocation: e.target.value})}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Statement of Facts</label>
+                    <textarea 
+                      rows={5}
+                      placeholder="Give a clear chronological statement of what happened, case numbers (if any), and charges/claims involved..."
+                      className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-amber-500 font-medium text-slate-700"
+                      value={formData.summary}
+                      onChange={e => setFormData({...formData, summary: e.target.value})}
+                    />
+                  </div>
+
+                  <div className="flex gap-4 mt-8">
+                    <button onClick={() => setStep(1)} className="px-6 py-4 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition-all">
+                      Back
+                    </button>
+                    <button onClick={handleNext} disabled={!formData.summary} className="flex-1 py-4 bg-slate-900 text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-800 disabled:opacity-50 transition-all">
+                      Continue to Misconduct Scan <ChevronRight size={18} />
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {step === 3 && (
+              <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
                 <div className="flex items-center gap-3 mb-8">
                   <ShieldAlert className="text-red-500" size={24} />
                   <h2 className="text-2xl font-black text-slate-800">Attorney Misconduct Scan</h2>
@@ -192,22 +260,11 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
                     </div>
                   )}
 
-                  <div>
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Brief Case Summary</label>
-                    <textarea 
-                      rows={5}
-                      placeholder="Give a brief summary of the facts of your case before we meet..."
-                      className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-amber-500 font-medium text-slate-700"
-                      value={formData.summary}
-                      onChange={e => setFormData({...formData, summary: e.target.value})}
-                    />
-                  </div>
-
                   <div className="flex gap-4 mt-8">
-                    <button onClick={() => setStep(1)} className="px-6 py-4 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition-all">
+                    <button onClick={() => setStep(2)} className="px-6 py-4 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition-all">
                       Back
                     </button>
-                    <button onClick={handleNext} disabled={!formData.summary} className="flex-1 py-4 bg-slate-900 text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-800 disabled:opacity-50 transition-all">
+                    <button onClick={handleNext} className="flex-1 py-4 bg-slate-900 text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-800 transition-all">
                       Finalize & Schedule <ChevronRight size={18} />
                     </button>
                   </div>
@@ -215,8 +272,8 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
               </motion.div>
             )}
 
-            {step === 3 && (
-              <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="text-center py-8">
+            {step === 4 && (
+              <motion.div key="step4" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="text-center py-8">
                 <div className="w-24 h-24 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6">
                   <CalendarClock size={40} className="text-amber-600" />
                 </div>
