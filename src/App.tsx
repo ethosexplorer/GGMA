@@ -1553,37 +1553,42 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
 
           {/* Founder Credentials + Company Stats */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-            {/* Founder Card */}
-            <div className="bg-[#0f2d1e] rounded-2xl p-8 text-white relative overflow-hidden group border border-emerald-900/50 shadow-xl">
-              {/* Founder Image (Cropped hands and up) */}
-              <div className="absolute inset-y-0 right-0 w-[60%] z-0 opacity-80 transition-opacity duration-700 pointer-events-none">
+            {/* Accreditations Card */}
+            <div className="bg-[#0f2d1e] rounded-2xl p-8 text-white relative overflow-hidden group border border-emerald-900/50 shadow-xl flex flex-col justify-center">
+              {/* Neon Shield Map Badge */}
+              <div className="absolute inset-y-0 right-0 w-[50%] z-0 flex items-center justify-center opacity-80 transition-opacity duration-700 pointer-events-none">
                  <div className="absolute inset-0 bg-gradient-to-r from-[#0f2d1e] via-[#0f2d1e]/80 to-transparent z-10"></div>
-                 <div className="absolute bottom-0 inset-x-0 h-1/3 bg-gradient-to-t from-[#0f2d1e] to-transparent z-10"></div>
-                 <img src="/founder.png" alt="Founder" className="w-full h-[120%] object-cover object-[center_20%] -translate-y-[10%]" />
+                 <div className="absolute right-[-40px] top-1/2 -translate-y-1/2">
+                   <div className="relative flex items-center justify-center">
+                     <MapIcon size={280} className="text-emerald-900/40 absolute" strokeWidth={1} />
+                     <Shield size={180} className="text-emerald-400 drop-shadow-[0_0_30px_rgba(52,211,153,0.6)] relative z-20" strokeWidth={1.5} />
+                     <div className="absolute w-[200px] h-[200px] bg-emerald-500/20 blur-[60px] rounded-full"></div>
+                   </div>
+                 </div>
               </div>
 
-              <div className="relative z-10 md:max-w-[70%]">
-                <div className="flex items-center gap-2 mb-6 inline-flex bg-[#0f2d1e]/80 px-3 py-1.5 rounded-full border border-emerald-800/30 backdrop-blur-sm">
+              <div className="relative z-10 md:max-w-[75%]">
+                <div className="flex items-center gap-2 mb-6 inline-flex bg-[#0f2d1e]/80 px-3 py-1.5 rounded-full border border-emerald-800/30 backdrop-blur-sm shadow-[0_0_15px_rgba(52,211,153,0.1)]">
                   <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
-                  <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Founder &amp; CEO</span>
+                  <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Platform Accreditations</span>
                 </div>
                 <div className="space-y-4 mb-6">
-                  <div className="flex items-center gap-4 bg-[#0f2d1e]/60 p-3 rounded-xl backdrop-blur-md border border-white/5">
-                    <span className="text-emerald-400 text-xl">🌿</span>
+                  <div className="flex items-center gap-4 bg-[#0f2d1e]/60 p-3 rounded-xl backdrop-blur-md border border-white/5 hover:border-emerald-500/30 transition-colors">
+                    <span className="text-emerald-400 text-xl drop-shadow-[0_0_10px_rgba(52,211,153,0.5)]">🌿</span>
                     <div>
                       <p className="text-white font-black text-sm">8 Years in Cannabis</p>
                       <p className="text-emerald-100/80 text-[11px] font-medium leading-relaxed">Regulatory compliance, licensing, and patient advocacy</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4 bg-[#0f2d1e]/60 p-3 rounded-xl backdrop-blur-md border border-white/5">
-                    <span className="text-emerald-400 text-xl">🏢</span>
+                  <div className="flex items-center gap-4 bg-[#0f2d1e]/60 p-3 rounded-xl backdrop-blur-md border border-white/5 hover:border-emerald-500/30 transition-colors">
+                    <span className="text-emerald-400 text-xl drop-shadow-[0_0_10px_rgba(52,211,153,0.5)]">🏢</span>
                     <div>
                       <p className="text-white font-black text-sm">30+ Years Corporate Administration</p>
                       <p className="text-emerald-100/80 text-[11px] font-medium leading-relaxed">Enterprise build, structure, and management leadership</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4 bg-[#0f2d1e]/60 p-3 rounded-xl backdrop-blur-md border border-white/5">
-                    <span className="text-emerald-400 text-xl">🔗</span>
+                  <div className="flex items-center gap-4 bg-[#0f2d1e]/60 p-3 rounded-xl backdrop-blur-md border border-white/5 hover:border-emerald-500/30 transition-colors">
+                    <span className="text-emerald-400 text-xl drop-shadow-[0_0_10px_rgba(52,211,153,0.5)]">🔗</span>
                     <div>
                       <p className="text-white font-black text-sm">Validated Metrc Integrator</p>
                       <p className="text-emerald-100/80 text-[11px] font-medium leading-relaxed">Oklahoma sandbox certified — production API access</p>
@@ -1591,9 +1596,9 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
                   </div>
                 </div>
               </div>
-              <div className="flex gap-2 flex-wrap">
-                <span className="px-3 py-1 bg-white/10 rounded-full text-[10px] font-bold text-emerald-300 border border-white/10">Global Green Enterprise Inc</span>
-                <span className="px-3 py-1 bg-white/10 rounded-full text-[10px] font-bold text-emerald-300 border border-white/10">Diversity Health &amp; Wellness LLC</span>
+              <div className="flex gap-2 flex-wrap relative z-10">
+                <span className="px-3 py-1 bg-white/10 rounded-full text-[10px] font-bold text-emerald-300 border border-white/10 hover:bg-emerald-500/20 transition-colors cursor-default">Global Green Enterprise Inc</span>
+                <span className="px-3 py-1 bg-white/10 rounded-full text-[10px] font-bold text-emerald-300 border border-white/10 hover:bg-emerald-500/20 transition-colors cursor-default">Diversity Health & Wellness LLC</span>
               </div>
             </div>
 
