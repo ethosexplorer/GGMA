@@ -142,234 +142,254 @@ export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => voi
               <AlertTriangle size={16} /> Issue Recall
             </button>
           </div>
-        </header>
-
-        {/* Content Area */}
+        </header>        {/* Content Area */}
         <div className="flex-1 overflow-y-auto p-6">
           <div className="max-w-7xl mx-auto space-y-6">
             
-            {/* KPI Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600"><Thermometer size={20} /></div>
-                  <p className="text-sm font-semibold text-slate-600">Contamination Events</p>
-                </div>
-                <div className="flex items-end gap-3">
-                  <h3 className="text-3xl font-black text-slate-900">3</h3>
-                  <span className="text-sm font-bold text-orange-500 mb-1">+2 this month</span>
-                </div>
-              </div>
-              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600"><UploadCloud size={20} /></div>
-                  <p className="text-sm font-semibold text-slate-600">Pending Lab Uploads</p>
-                </div>
-                <div className="flex items-end gap-3">
-                  <h3 className="text-3xl font-black text-slate-900">18</h3>
-                  <span className="text-xs font-bold text-slate-400 mb-1.5">Awaiting calibration</span>
-                </div>
-              </div>
-              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-red-600"><ShieldAlert size={20} /></div>
-                  <p className="text-sm font-semibold text-slate-600">Active Recalls</p>
-                </div>
-                <div className="flex items-end gap-3">
-                  <h3 className="text-3xl font-black text-slate-900">1</h3>
-                  <span className="text-xs font-bold text-amber-500 mb-1.5">Resolution in progress</span>
-                </div>
-              </div>
-              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600"><Activity size={20} /></div>
-                  <p className="text-sm font-semibold text-slate-600">Exposure Risk Level</p>
-                </div>
-                <div className="flex items-end gap-3">
-                  <h3 className="text-2xl font-black text-amber-500">MODERATE</h3>
-                  <span className="text-xs font-bold text-slate-400 mb-1.5">Recent flags</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              
-              {/* Left Column (Lab Standards Engine) */}
-              <div className="lg:col-span-2 space-y-6">
-                
-                {/* Sylara Insight */}
-                <div className="bg-slate-900 bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl border border-slate-700 p-6 flex items-start gap-4 shadow-lg">
-                  <div className="w-12 h-12 rounded-xl bg-emerald-500 flex items-center justify-center text-white shrink-0 shadow-lg shadow-emerald-900/20">
-                    <Activity size={24} />
+            {activeTab === 'dashboard' && (
+              <>
+                {/* KPI Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600"><Thermometer size={20} /></div>
+                      <p className="text-sm font-semibold text-slate-600">Contamination Events</p>
+                    </div>
+                    <div className="flex items-end gap-3">
+                      <h3 className="text-3xl font-black text-slate-900">3</h3>
+                      <span className="text-sm font-bold text-orange-500 mb-1">+2 this month</span>
+                    </div>
                   </div>
-                  <div className="flex-1 text-white">
-                    <h4 className="font-bold flex items-center gap-2 text-lg">
-                      Sylara Public Health Assistant <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-500/30 text-emerald-200 border border-emerald-500/50">Active</span>
-                    </h4>
-                    <p className="text-sm text-slate-300 mt-1 leading-relaxed">
-                      "Dr. Jenkins, a new microbial exceedance (TYM 18,400 CFU/g) was flagged in Batch #882, accompanied by a High Recency Index (8.7) field test. Exposure risk elevated to MODERATE. Would you like me to draft the Class II recall notice, alert the Patient Dashboard, and notify the 4 affected retailers?"
-                    </p>
-                    <div className="flex gap-3 mt-4">
-                      <button className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-bold transition-colors shadow-md text-slate-900">
-                        Draft Recall & Notify
-                      </button>
-                      <button className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 hover:bg-white/20 text-white text-sm font-bold transition-colors">
-                        View Exposed Patients
-                      </button>
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600"><UploadCloud size={20} /></div>
+                      <p className="text-sm font-semibold text-slate-600">Pending Lab Uploads</p>
+                    </div>
+                    <div className="flex items-end gap-3">
+                      <h3 className="text-3xl font-black text-slate-900">18</h3>
+                      <span className="text-xs font-bold text-slate-400 mb-1.5">Awaiting calibration</span>
+                    </div>
+                  </div>
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-red-600"><ShieldAlert size={20} /></div>
+                      <p className="text-sm font-semibold text-slate-600">Active Recalls</p>
+                    </div>
+                    <div className="flex items-end gap-3">
+                      <h3 className="text-3xl font-black text-slate-900">1</h3>
+                      <span className="text-xs font-bold text-amber-500 mb-1.5">Resolution in progress</span>
+                    </div>
+                  </div>
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600"><Activity size={20} /></div>
+                      <p className="text-sm font-semibold text-slate-600">Exposure Risk Level</p>
+                    </div>
+                    <div className="flex items-end gap-3">
+                      <h3 className="text-2xl font-black text-amber-500">MODERATE</h3>
+                      <span className="text-xs font-bold text-slate-400 mb-1.5">Recent flags</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Lab Standards Engine */}
-                <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                  <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-                    <div>
-                      <h3 className="font-bold text-slate-800 text-lg flex items-center gap-2">
-                        <Settings size={20} className="text-slate-500" /> Lab Standards Engine
-                      </h3>
-                      <p className="text-sm text-slate-500">Auto-validates COAs & Rapid Tests against state limits via Larry.</p>
-                    </div>
-                    <div className="flex gap-2">
-                      <button className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 bg-white hover:bg-slate-50">State Mapping: Strict</button>
-                      <button className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 bg-white hover:bg-slate-50">Calibrate Tests</button>
-                    </div>
-                  </div>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   
-                  <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Active Protocols List */}
-                    <div className="space-y-3">
-                      <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Active Protocols</h4>
-                      {labProtocols.map((protocol, i) => (
-                        <div key={i} className="flex items-center justify-between p-3 rounded-xl border border-slate-100 bg-slate-50">
-                          <div className="flex items-center gap-3">
-                            <protocol.icon size={18} className={protocol.color} />
-                            <span className="text-sm font-semibold text-slate-700">{protocol.name}</span>
-                          </div>
-                          <span className={cn(
-                            "px-2 py-0.5 rounded text-[10px] font-bold uppercase border",
-                            protocol.status.includes('Overlay') ? "bg-blue-50 text-blue-600 border-blue-200" : "bg-emerald-50 text-emerald-600 border-emerald-200"
-                          )}>
-                            {protocol.status}
-                          </span>
+                  {/* Left Column (Lab Standards Engine) */}
+                  <div className="lg:col-span-2 space-y-6">
+                    
+                    {/* Sylara Insight */}
+                    <div className="bg-slate-900 bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl border border-slate-700 p-6 flex items-start gap-4 shadow-lg">
+                      <div className="w-12 h-12 rounded-xl bg-emerald-500 flex items-center justify-center text-white shrink-0 shadow-lg shadow-emerald-900/20">
+                        <Activity size={24} />
+                      </div>
+                      <div className="flex-1 text-white">
+                        <h4 className="font-bold flex items-center gap-2 text-lg">
+                          Sylara Public Health Assistant <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-500/30 text-emerald-200 border border-emerald-500/50">Active</span>
+                        </h4>
+                        <p className="text-sm text-slate-300 mt-1 leading-relaxed">
+                          "Dr. Jenkins, a new microbial exceedance (TYM 18,400 CFU/g) was flagged in Batch #882, accompanied by a High Recency Index (8.7) field test. Exposure risk elevated to MODERATE. Would you like me to draft the Class II recall notice, alert the Patient Dashboard, and notify the 4 affected retailers?"
+                        </p>
+                        <div className="flex gap-3 mt-4">
+                          <button className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-bold transition-colors shadow-md text-slate-900">
+                            Draft Recall & Notify
+                          </button>
+                          <button className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 hover:bg-white/20 text-white text-sm font-bold transition-colors">
+                            View Exposed Patients
+                          </button>
                         </div>
-                      ))}
+                      </div>
                     </div>
 
-                    {/* Upload / Pair Actions */}
-                    <div className="space-y-4">
-                      <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Data Ingestion</h4>
-                      <div 
-                        onClick={handleUpload}
-                        className="border-2 border-dashed border-slate-300 rounded-xl p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-slate-50 hover:border-blue-400 transition-colors group"
-                      >
-                        <UploadCloud size={32} className="text-slate-400 group-hover:text-blue-500 mb-2 transition-colors" />
-                        <h4 className="font-bold text-slate-700">Upload Test Results (COA)</h4>
-                        <p className="text-xs text-slate-500 mt-1">PDF or XML. Larry auto-scans upon upload.</p>
+                    {/* Lab Standards Engine */}
+                    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                      <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                        <div>
+                          <h3 className="font-bold text-slate-800 text-lg flex items-center gap-2">
+                            <Settings size={20} className="text-slate-500" /> Lab Standards Engine
+                          </h3>
+                          <p className="text-sm text-slate-500">Auto-validates COAs & Rapid Tests against state limits via Larry.</p>
+                        </div>
+                        <div className="flex gap-2">
+                          <button className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 bg-white hover:bg-slate-50">State Mapping: Strict</button>
+                          <button className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 bg-white hover:bg-slate-50">Calibrate Tests</button>
+                        </div>
                       </div>
                       
-                      <button 
-                        onClick={handlePair}
-                        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm transition-all shadow-md"
-                      >
-                        <Smartphone size={18} className="text-blue-400" /> 
-                        {isPairing ? 'Pairing...' : 'Pair Rapid Test Device (Dual-Channel)'}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Device Comparison (Sales/Info Sheet) */}
-                <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-                  <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
-                    <Smartphone size={18} className="text-blue-500" /> Rapid Testing Device Comparison
-                  </h3>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm">
-                      <thead className="bg-slate-50 text-slate-500 text-xs uppercase font-bold">
-                        <tr>
-                          <th className="px-4 py-3 rounded-tl-xl">Feature</th>
-                          <th className="px-4 py-3 bg-blue-50 text-blue-700">Your Dual-Channel RI</th>
-                          <th className="px-4 py-3">Traditional Immunoassay</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-100">
-                        <tr>
-                          <td className="px-4 py-3 font-medium text-slate-700">Recency Differentiation</td>
-                          <td className="px-4 py-3 font-bold text-blue-700 bg-blue-50/50">Excellent (Probabilistic 0-9.99)</td>
-                          <td className="px-4 py-3 text-slate-600">Limited (Residual overlaps)</td>
-                        </tr>
-                        <tr>
-                          <td className="px-4 py-3 font-medium text-slate-700">Sensitivity Short Post-Use</td>
-                          <td className="px-4 py-3 font-bold text-blue-700 bg-blue-50/50">High (Detects Parent Spike)</td>
-                          <td className="px-4 py-3 text-amber-600">Poor (25-50% misses)</td>
-                        </tr>
-                        <tr>
-                          <td className="px-4 py-3 font-medium text-slate-700">Ecosystem Flow</td>
-                          <td className="px-4 py-3 font-bold text-blue-700 bg-blue-50/50 rounded-bl-xl">Auto-routes to Enforcement/Patient</td>
-                          <td className="px-4 py-3 text-slate-600">Manual tracking</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column (Alerts Timeline) */}
-              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
-                <div className="p-5 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white z-10">
-                  <h3 className="font-bold text-slate-800 flex items-center gap-2">
-                    <Clock size={18} className="text-slate-500" /> Alerts & Recall Timeline
-                  </h3>
-                </div>
-                
-                <div className="p-5 flex-1 overflow-y-auto">
-                  <div className="relative border-l-2 border-slate-100 ml-3 space-y-8 pb-4">
-                    
-                    {timelineEvents.map((event) => (
-                      <div key={event.id} className="relative pl-6">
-                        <div className={cn(
-                          "absolute -left-[9px] top-1 w-4 h-4 rounded-full border-4 border-white",
-                          event.urgency === 'critical' ? "bg-red-500" :
-                          event.urgency === 'error' ? "bg-orange-500" :
-                          event.urgency === 'warning' ? "bg-amber-500" : "bg-blue-500"
-                        )}></div>
-                        
-                        <div className="mb-1 flex items-center justify-between">
-                          <span className={cn(
-                            "text-xs font-bold uppercase",
-                            event.urgency === 'critical' ? "text-red-500" :
-                            event.urgency === 'error' ? "text-orange-500" :
-                            event.urgency === 'warning' ? "text-amber-600" : "text-blue-500"
-                          )}>
-                            {event.time}
-                          </span>
-                        </div>
-                        <h4 className="font-bold text-slate-800 text-sm">{event.title}</h4>
-                        <p className="text-sm text-slate-500 mt-1 mb-3">{event.desc}</p>
-                        
-                        <div className="flex flex-wrap gap-2">
-                          {event.actions.map((action, i) => (
-                            <button key={i} className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors">
-                              {action}
-                            </button>
+                      <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Active Protocols List */}
+                        <div className="space-y-3">
+                          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Active Protocols</h4>
+                          {labProtocols.map((protocol, i) => (
+                            <div key={i} className="flex items-center justify-between p-3 rounded-xl border border-slate-100 bg-slate-50">
+                              <div className="flex items-center gap-3">
+                                <protocol.icon size={18} className={protocol.color} />
+                                <span className="text-sm font-semibold text-slate-700">{protocol.name}</span>
+                              </div>
+                              <span className={cn(
+                                "px-2 py-0.5 rounded text-[10px] font-bold uppercase border",
+                                protocol.status.includes('Overlay') ? "bg-blue-50 text-blue-600 border-blue-200" : "bg-emerald-50 text-emerald-600 border-emerald-200"
+                              )}>
+                                {protocol.status}
+                              </span>
+                            </div>
                           ))}
                         </div>
+
+                        {/* Upload / Pair Actions */}
+                        <div className="space-y-4">
+                          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Data Ingestion</h4>
+                          <div 
+                            onClick={handleUpload}
+                            className="border-2 border-dashed border-slate-300 rounded-xl p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-slate-50 hover:border-blue-400 transition-colors group"
+                          >
+                            <UploadCloud size={32} className="text-slate-400 group-hover:text-blue-500 mb-2 transition-colors" />
+                            <h4 className="font-bold text-slate-700">Upload Test Results (COA)</h4>
+                            <p className="text-xs text-slate-500 mt-1">PDF or XML. Larry auto-scans upon upload.</p>
+                          </div>
+                          
+                          <button 
+                            onClick={handlePair}
+                            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm transition-all shadow-md"
+                          >
+                            <Smartphone size={18} className="text-blue-400" /> 
+                            {isPairing ? 'Pairing...' : 'Pair Rapid Test Device (Dual-Channel)'}
+                          </button>
+                        </div>
                       </div>
-                    ))}
-                    
-                    {/* Older Event */}
-                    <div className="relative pl-6">
-                      <div className="absolute -left-[9px] top-1 w-4 h-4 rounded-full border-4 border-white bg-slate-300"></div>
-                      <div className="mb-1"><span className="text-xs font-bold uppercase text-slate-400">Last Week</span></div>
-                      <h4 className="font-bold text-slate-600 text-sm">Lab Upload: GreenLeaf Ext.</h4>
-                      <p className="text-sm text-slate-400 mt-1">All protocols PASS. Compassion Points awarded.</p>
                     </div>
 
+                    {/* Device Comparison (Sales/Info Sheet) */}
+                    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                      <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <Smartphone size={18} className="text-blue-500" /> Rapid Testing Device Comparison
+                      </h3>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left text-sm">
+                          <thead className="bg-slate-50 text-slate-500 text-xs uppercase font-bold">
+                            <tr>
+                              <th className="px-4 py-3 rounded-tl-xl">Feature</th>
+                              <th className="px-4 py-3 bg-blue-50 text-blue-700">Your Dual-Channel RI</th>
+                              <th className="px-4 py-3">Traditional Immunoassay</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100">
+                            <tr>
+                              <td className="px-4 py-3 font-medium text-slate-700">Recency Differentiation</td>
+                              <td className="px-4 py-3 font-bold text-blue-700 bg-blue-50/50">Excellent (Probabilistic 0-9.99)</td>
+                              <td className="px-4 py-3 text-slate-600">Limited (Residual overlaps)</td>
+                            </tr>
+                            <tr>
+                              <td className="px-4 py-3 font-medium text-slate-700">Sensitivity Short Post-Use</td>
+                              <td className="px-4 py-3 font-bold text-blue-700 bg-blue-50/50">High (Detects Parent Spike)</td>
+                              <td className="px-4 py-3 text-amber-600">Poor (25-50% misses)</td>
+                            </tr>
+                            <tr>
+                              <td className="px-4 py-3 font-medium text-slate-700">Ecosystem Flow</td>
+                              <td className="px-4 py-3 font-bold text-blue-700 bg-blue-50/50 rounded-bl-xl">Auto-routes to Enforcement/Patient</td>
+                              <td className="px-4 py-3 text-slate-600">Manual tracking</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
 
-            </div>
+                  {/* Right Column (Alerts Timeline) */}
+                  <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+                    <div className="p-5 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white z-10">
+                      <h3 className="font-bold text-slate-800 flex items-center gap-2">
+                        <Clock size={18} className="text-slate-500" /> Alerts & Recall Timeline
+                      </h3>
+                    </div>
+                    
+                    <div className="p-5 flex-1 overflow-y-auto">
+                      <div className="relative border-l-2 border-slate-100 ml-3 space-y-8 pb-4">
+                        
+                        {timelineEvents.map((event) => (
+                          <div key={event.id} className="relative pl-6">
+                            <div className={cn(
+                              "absolute -left-[9px] top-1 w-4 h-4 rounded-full border-4 border-white",
+                              event.urgency === 'critical' ? "bg-red-500" :
+                              event.urgency === 'error' ? "bg-orange-500" :
+                              event.urgency === 'warning' ? "bg-amber-500" : "bg-blue-500"
+                            )}></div>
+                            
+                            <div className="mb-1 flex items-center justify-between">
+                              <span className={cn(
+                                "text-xs font-bold uppercase",
+                                event.urgency === 'critical' ? "text-red-500" :
+                                event.urgency === 'error' ? "text-orange-500" :
+                                event.urgency === 'warning' ? "text-amber-600" : "text-blue-500"
+                              )}>
+                                {event.time}
+                              </span>
+                            </div>
+                            <h4 className="font-bold text-slate-800 text-sm">{event.title}</h4>
+                            <p className="text-sm text-slate-500 mt-1 mb-3">{event.desc}</p>
+                            
+                            <div className="flex flex-wrap gap-2">
+                              {event.actions.map((action, i) => (
+                                <button key={i} className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors">
+                                  {action}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                        
+                        {/* Older Event */}
+                        <div className="relative pl-6">
+                          <div className="absolute -left-[9px] top-1 w-4 h-4 rounded-full border-4 border-white bg-slate-300"></div>
+                          <div className="mb-1"><span className="text-xs font-bold uppercase text-slate-400">Last Week</span></div>
+                          <h4 className="font-bold text-slate-600 text-sm">Lab Upload: GreenLeaf Ext.</h4>
+                          <p className="text-sm text-slate-400 mt-1">All protocols PASS. Compassion Points awarded.</p>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </>
+            )}
+
+            {activeTab !== 'dashboard' && (
+              <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center shadow-sm">
+                <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-400">
+                  <Activity size={32} />
+                </div>
+                <h2 className="text-2xl font-black text-slate-800 mb-2 uppercase tracking-tight">
+                  {sidebarItems.find(i => i.id === activeTab)?.label}
+                </h2>
+                <p className="text-slate-500 max-w-lg mx-auto">
+                  Detailed analytics and enforcement controls for {sidebarItems.find(i => i.id === activeTab)?.label} are active in the full production suite. L.A.R.R.Y is currently aggregating data from state Metrc nodes.
+                </p>
+                <button onClick={() => setActiveTab('dashboard')} className="mt-8 px-6 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-all shadow-md">
+                  Return to Dashboard
+                </button>
+              </div>
+            )}
+
           </div>
         </div>
       </div>

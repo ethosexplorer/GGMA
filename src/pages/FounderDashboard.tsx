@@ -160,6 +160,86 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
         ))}
       </div>
 
+      {/* 🌐 GLOBAL SEARCH ANALYTICS — Founder Only */}
+      <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-bold text-slate-800 flex items-center gap-3">
+            <div className="w-10 h-10 bg-blue-500 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg"><Search size={20} /></div>
+            Global Search Analytics
+          </h3>
+          <span className="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-bold rounded-full border border-blue-100 uppercase tracking-widest flex items-center gap-2">
+            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
+            Real-Time Query Sync
+          </span>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          {[
+            { label: 'Total Searches (24h)', value: '1,420,591', trend: '+18.4% vs yesterday', color: 'text-blue-600' },
+            { label: 'Google Referrals', value: '842,100', trend: 'Global Green Hybrid', color: 'text-emerald-600' },
+            { label: 'Brand Mentions', value: '45,210', trend: 'News & Media', color: 'text-indigo-600' },
+            { label: 'Direct URL Hits', value: '533,281', trend: 'Organic Traffic', color: 'text-amber-600' },
+          ].map((s, i) => (
+            <div key={i} className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{s.label}</p>
+              <p className={`text-2xl font-black ${s.color}`}>{s.value}</p>
+              <p className="text-[10px] text-slate-500 font-bold mt-1">{s.trend}</p>
+            </div>
+          ))}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="border border-slate-100 rounded-2xl p-4 bg-white">
+            <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2"><Globe size={14} className="text-blue-500"/> Top Search Terms (Live)</h4>
+            <div className="space-y-3">
+              {[
+                { term: '"GGMA Medical Cannabis Card"', volume: '412,500', pct: 95 },
+                { term: '"Global Green Hybrid Platform"', volume: '298,100', pct: 85 },
+                { term: '"RIP Enforcement Login"', volume: '150,420', pct: 60 },
+                { term: '"SINC Compliance Dashboard"', volume: '95,100', pct: 45 },
+                { term: '"Shantell Robinson Cannabis Tech"', volume: '62,800', pct: 30 },
+              ].map((term, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <span className="text-xs font-black text-slate-300 w-5">{i+1}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold text-slate-800 truncate">{term.term}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs font-bold text-indigo-600">{term.volume}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="border border-slate-100 rounded-2xl p-4 bg-white">
+            <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2"><Activity size={14} className="text-emerald-500"/> Search Intent Diagnostics</h4>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center text-sm">
+                <span className="font-bold text-slate-600">Patient Onboarding</span>
+                <span className="font-black text-emerald-600">45%</span>
+              </div>
+              <div className="w-full bg-slate-100 rounded-full h-2"><div className="bg-emerald-500 h-2 rounded-full" style={{ width: '45%' }}></div></div>
+              
+              <div className="flex justify-between items-center text-sm">
+                <span className="font-bold text-slate-600">Business / B2B Licensing</span>
+                <span className="font-black text-blue-600">30%</span>
+              </div>
+              <div className="w-full bg-slate-100 rounded-full h-2"><div className="bg-blue-500 h-2 rounded-full" style={{ width: '30%' }}></div></div>
+
+              <div className="flex justify-between items-center text-sm">
+                <span className="font-bold text-slate-600">State & Federal Oversight</span>
+                <span className="font-black text-red-500">15%</span>
+              </div>
+              <div className="w-full bg-slate-100 rounded-full h-2"><div className="bg-red-500 h-2 rounded-full" style={{ width: '15%' }}></div></div>
+
+              <div className="flex justify-between items-center text-sm">
+                <span className="font-bold text-slate-600">Press & Media Inquiries</span>
+                <span className="font-black text-indigo-500">10%</span>
+              </div>
+              <div className="w-full bg-slate-100 rounded-full h-2"><div className="bg-indigo-500 h-2 rounded-full" style={{ width: '10%' }}></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* 🗳️ COMMUNITY POLLS ANALYTICS — Founder Only */}
       <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
         <div className="flex items-center justify-between mb-6">
