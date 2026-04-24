@@ -1311,7 +1311,17 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <LanguageSelector currentLanguage="en" onLanguageChange={(code) => { document.documentElement.lang = code; }} compact />
+          <LanguageSelector currentLanguage="en" onLanguageChange={(code) => { 
+            const gCode = code === 'zh' ? 'zh-CN' : code;
+            if (gCode === 'en') {
+              document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+              document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + window.location.hostname;
+            } else {
+              document.cookie = `googtrans=/en/${gCode}; path=/;`;
+              document.cookie = `googtrans=/en/${gCode}; path=/; domain=` + window.location.hostname;
+            }
+            window.location.reload();
+          }} compact />
           <span className="text-[10px] text-emerald-400 font-bold hidden lg:inline">26 Languages • Sylara AI speaks yours</span>
         </div>
       </div>
@@ -1352,7 +1362,17 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
         </div>
 
         <div className="flex items-center gap-3">
-          <LanguageSelector currentLanguage="en" onLanguageChange={(code) => { console.log('Language:', code); document.documentElement.lang = code; }} compact />
+          <LanguageSelector currentLanguage="en" onLanguageChange={(code) => { 
+            const gCode = code === 'zh' ? 'zh-CN' : code;
+            if (gCode === 'en') {
+              document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+              document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + window.location.hostname;
+            } else {
+              document.cookie = `googtrans=/en/${gCode}; path=/;`;
+              document.cookie = `googtrans=/en/${gCode}; path=/; domain=` + window.location.hostname;
+            }
+            window.location.reload();
+          }} compact />
           <Button onClick={() => onNavigate('login')}>Login</Button>
         </div>
       </nav>
@@ -1948,15 +1968,26 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
                  <button 
                    onClick={() => onNavigate('legal-advocacy')}
-                   className="flex-1 px-6 py-4 bg-emerald-500 text-slate-900 rounded-2xl font-black hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/20 text-center"
+                   className="flex-1 px-4 py-4 bg-emerald-500 text-slate-900 rounded-2xl font-black hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/20 text-center text-sm"
                  >
-                    Find Legal Counsel
+                    Intake & Schedule Consult
                  </button>
                  <button 
-                   onClick={() => onNavigate('signup', 'Business')}
-                   className="flex-1 px-6 py-4 bg-slate-800 text-emerald-400 rounded-2xl font-black border border-slate-700 hover:bg-slate-700 transition-all shadow-xl text-center"
+                   onClick={() => {
+                     const code = window.prompt("🔒 LEGAL MARKETPLACE IS LOCKED.\n\nPlease subscribe or enter Access Code:");
+                     if (code === '1234') {
+                       alert("✅ Access Granted: Welcome to the Legal Marketplace.");
+                       onNavigate('login');
+                     } else if (code !== null) {
+                       alert("❌ Access Denied: Invalid Code. Please subscribe to unlock.");
+                     }
+                   }}
+                   className="relative flex-1 px-4 py-4 bg-slate-800/80 backdrop-blur-md text-slate-500 rounded-2xl font-black border border-slate-700 hover:border-emerald-500 hover:text-emerald-400 transition-all shadow-xl text-center text-sm group"
                  >
-                    Join as an Attorney
+                    <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px] rounded-2xl flex items-center justify-center group-hover:bg-slate-900/80 transition-all">
+                      <Lock size={16} className="mr-2" /> <span className="group-hover:hidden">Locked</span><span className="hidden group-hover:inline">Unlock (Code: 1234)</span>
+                    </div>
+                    Legal Marketplace
                  </button>
               </div>
               <div className="mt-4 flex items-center gap-4 px-6 py-4 bg-white/5 border border-white/10 rounded-2xl w-max">
