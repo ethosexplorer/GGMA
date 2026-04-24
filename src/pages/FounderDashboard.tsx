@@ -53,6 +53,7 @@ const NAV_ITEMS = [
   { id: 'intel', label: 'Global Intelligence', icon: BookOpen },
   { id: 'logs', label: 'System Logs', icon: Database },
   { id: 'support_tickets', label: 'Support Tickets', icon: MessageSquare, badge: '12' },
+  { id: 'internal_scheduler', label: 'Internal Scheduler', icon: Clock, badge: 'Priority' },
   { id: 'settings', label: 'God Settings', icon: Settings },
 ];
 
@@ -1417,6 +1418,96 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
     </div>
   );
 
+  const renderInternalScheduler = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+         <div>
+            <h2 className="text-3xl font-black text-slate-900 tracking-tight italic">Shantell's Internal Scheduler</h2>
+            <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Private Executive Queue • Color-Coded Departments</p>
+         </div>
+      </div>
+
+      <div className="bg-white border border-slate-200 rounded-[2.5rem] shadow-sm overflow-hidden p-8">
+        <h3 className="font-black text-slate-800 text-lg mb-6 flex items-center gap-3"><Clock size={20} className="text-indigo-600" /> My Upcoming Appointments & Tickets</h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <div className="p-4 rounded-xl bg-purple-50 border border-purple-100 flex items-center gap-3">
+             <div className="w-4 h-4 rounded-full bg-purple-600"></div>
+             <span className="text-xs font-bold text-slate-700">Direct Priority (Shantell)</span>
+          </div>
+          <div className="p-4 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center gap-3">
+             <div className="w-4 h-4 rounded-full bg-indigo-600"></div>
+             <span className="text-xs font-bold text-slate-700">RIP Intelligence / Ops</span>
+          </div>
+          <div className="p-4 rounded-xl bg-amber-50 border border-amber-100 flex items-center gap-3">
+             <div className="w-4 h-4 rounded-full bg-amber-500"></div>
+             <span className="text-xs font-bold text-slate-700">SINC / Business Compliance</span>
+          </div>
+          <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center gap-3">
+             <div className="w-4 h-4 rounded-full bg-emerald-500"></div>
+             <span className="text-xs font-bold text-slate-700">Telehealth / Patients</span>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+           {[
+             { time: 'Today, 10:00 AM', t: 'Direct Escalation (Human Coord)', e: 'Apex Health CEO', c: 'bg-purple-100 border-purple-200 text-purple-900', dot: 'bg-purple-600', type: 'Call' },
+             { time: 'Today, 1:30 PM', t: 'Business License Review', e: 'GreenLeaf Farms', c: 'bg-amber-50 border-amber-200 text-amber-900', dot: 'bg-amber-500', type: 'Appointment' },
+             { time: 'Today, 3:00 PM', t: 'Metrc Integration Sync', e: 'SINC Tech Team', c: 'bg-amber-50 border-amber-200 text-amber-900', dot: 'bg-amber-500', type: 'Ticket' },
+             { time: 'Tomorrow, 9:00 AM', t: 'Field Intel Briefing', e: 'OK-Sector Enforcement', c: 'bg-indigo-50 border-indigo-200 text-indigo-900', dot: 'bg-indigo-600', type: 'Appointment' },
+             { time: 'Tomorrow, 11:15 AM', t: 'Telehealth Escalation', e: 'Dr. Smith', c: 'bg-emerald-50 border-emerald-200 text-emerald-900', dot: 'bg-emerald-500', type: 'Call' },
+           ].map((item, i) => (
+             <div key={i} className={`p-5 rounded-2xl border flex items-center justify-between ${item.c}`}>
+               <div className="flex items-center gap-4">
+                 <div className={`w-3 h-3 rounded-full ${item.dot} shadow-sm`}></div>
+                 <div>
+                   <p className="text-sm font-black">{item.t}</p>
+                   <p className="text-xs font-medium opacity-80">{item.e}</p>
+                 </div>
+               </div>
+               <div className="text-right flex items-center gap-6">
+                 <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-white/50">{item.type}</span>
+                 <div className="font-mono text-xs font-bold">{item.time}</div>
+               </div>
+             </div>
+           ))}
+        </div>
+      </div>
+      
+      <div className="bg-slate-900 border border-slate-800 rounded-[2.5rem] shadow-2xl overflow-hidden p-8">
+         <h3 className="font-black text-white text-lg mb-2">General Support Ticket Queue (Round-Robin)</h3>
+         <p className="text-slate-400 text-xs mb-6">These tickets are visible to Call Center & Management for round-robin assignment.</p>
+         
+         <table className="w-full text-sm text-left">
+           <thead className="border-b border-slate-800">
+             <tr>
+               <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-[0.2em]">Ticket Ref</th>
+               <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-[0.2em]">Subject</th>
+               <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-[0.2em]">Status</th>
+               <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-[0.2em] text-right">Actions</th>
+             </tr>
+           </thead>
+           <tbody className="divide-y divide-slate-800">
+             {[
+               { id: 'SUP-9921', s: 'POS Integration Timeout', st: 'Unassigned', c: 'text-slate-300' },
+               { id: 'SUP-9920', s: 'License Renewal Inquiry', st: 'Unassigned', c: 'text-slate-300' },
+               { id: 'SUP-9919', s: 'Account Access Reset', st: 'Assigned: Call Center', c: 'text-emerald-400' },
+             ].map((t, i) => (
+               <tr key={i} className="hover:bg-slate-800 group transition-colors">
+                 <td className="px-6 py-4 font-mono text-[10px] font-black text-indigo-400">{t.id}</td>
+                 <td className="px-6 py-4 font-bold text-white">{t.s}</td>
+                 <td className="px-6 py-4 font-bold text-[10px] uppercase tracking-wider text-slate-400">{t.st}</td>
+                 <td className="px-6 py-4 text-right">
+                   <button className="px-4 py-2 bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-indigo-600 hover:text-white transition-colors">Assign to Me</button>
+                 </td>
+               </tr>
+             ))}
+           </tbody>
+         </table>
+      </div>
+    </div>
+  );
+
   const renderHRIntelligence = () => (
     <div className="space-y-8 animate-in fade-in duration-700">
       <div className="flex justify-between items-end">
@@ -1795,6 +1886,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
         return <div className="h-full w-full -m-10 bg-[#080e1a] p-10 min-h-screen overflow-auto"><LegislativeIntelTab /></div>;
       case 'logs': return renderLogs();
       case 'support_tickets': return renderSupportTickets();
+      case 'internal_scheduler': return renderInternalScheduler();
       case 'hr_intelligence': return renderHRIntelligence();
       case 'rapid_testing': return renderRapidTestingHub();
       case 'judicial':
