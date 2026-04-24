@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LayoutDashboard, Globe, Activity, Shield, DollarSign, Scale, Sparkles, FileText, BookOpen, Lock, CreditCard } from 'lucide-react';
+import { LayoutDashboard, Globe, Activity, Shield, DollarSign, Scale, Sparkles, FileText, BookOpen, Lock, CreditCard, Gavel } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { FederalOverviewTab } from '../components/federal/FederalOverviewTab';
 import { InterstateMonitoringTab } from '../components/federal/InterstateMonitoringTab';
@@ -13,6 +13,7 @@ import { SAMGovRulesTab } from '../components/federal/SAMGovRulesTab';
 import { LeaseAuditTab } from '../components/federal/LeaseAuditTab';
 import { SubscriptionPortal } from '../components/SubscriptionPortal';
 import { LegislativeIntelTab } from '../components/federal/LegislativeIntelTab';
+import { JudicialMonitorTab } from '../components/federal/JudicialMonitorTab';
 
 const tabs = [
   { id: 'overview', label: 'Nationwide Overview', icon: LayoutDashboard },
@@ -26,6 +27,7 @@ const tabs = [
   { id: 'reporting', label: 'Reporting & Coordination', icon: FileText },
   { id: 'sam', label: 'Rules & SAM.gov', icon: BookOpen },
   { id: 'audit', label: 'Lease & Audit Logs', icon: Lock },
+  { id: 'judicial', label: 'Judicial Monitor', icon: Gavel },
   { id: 'subscription', label: 'Subscription', icon: CreditCard },
 ];
 
@@ -117,6 +119,7 @@ export const FederalDashboard = ({ onLogout, user }: { onLogout?: () => void, us
           {activeTab === 'reporting' && <ReportingTab />}
           {activeTab === 'sam' && <SAMGovRulesTab />}
           {activeTab === 'audit' && <LeaseAuditTab />}
+          {activeTab === 'judicial' && <JudicialMonitorTab />}
           {activeTab === 'subscription' && <SubscriptionPortal userRole="regulator" initialPlanId="fed_pro" />}
         </main>
       </div>
