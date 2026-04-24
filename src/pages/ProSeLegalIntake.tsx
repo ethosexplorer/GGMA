@@ -55,7 +55,7 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
         <div className="mb-10 text-center">
           <h1 className="text-4xl font-black text-slate-800 tracking-tight mb-4">Pro Se Legal Advocacy Intake</h1>
           <p className="text-slate-500 max-w-2xl mx-auto">
-            The legal system often weaponizes procedure against those fighting for the truth. Our Pro Se Advocacy program is designed to level the playing field and help the righteous win. We welcome ethical, high-performing attorneys to our platform—but if we have to expose misconduct, we will. Attorneys will either do the absolute best for their clients, or they will face me.
+            The legal system often weaponizes procedure against those fighting for the truth. Our Pro Se Advocacy program is designed to level the playing field and help the righteous win. We welcome ethical attorneys, law enforcement, and judicial officers to our platform—but if we have to expose misconduct, we will. They will either do the absolute best for the people they serve, or they will face me.
           </p>
         </div>
 
