@@ -697,6 +697,79 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
             <button className="w-full mt-10 py-3 bg-white/5 border border-white/10 text-white rounded-xl text-xs font-black hover:bg-white/10 transition-all">Full Security Log</button>
          </div>
       </div>
+
+      {/* Universal Onboarding & Provisioning Engine */}
+      <div className="bg-gradient-to-br from-indigo-950 via-slate-900 to-slate-950 p-8 rounded-[2.5rem] shadow-xl border border-indigo-500/30 relative overflow-hidden">
+         <div className="absolute top-0 right-0 p-8 opacity-10"><UserPlus size={120} className="text-indigo-400" /></div>
+         <h3 className="font-black text-2xl text-white mb-2 italic uppercase">Universal Onboarding Engine</h3>
+         <p className="text-indigo-300 text-xs font-bold uppercase tracking-widest mb-8">Provision Identities • Assign Dashboards • Manage Hierarchy</p>
+         
+         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+            <div className="space-y-6">
+               <div>
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 block">Legal Identity (Name/Email)</label>
+                  <input type="text" placeholder="e.g. Sarah Jenkins (sarah@ggp-os.com)" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors" />
+               </div>
+               <div className="grid grid-cols-2 gap-4">
+                  <div>
+                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 block">Entity Origin</label>
+                     <select className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 appearance-none cursor-pointer">
+                        <option className="bg-slate-900">Internal Core (Staff)</option>
+                        <option className="bg-slate-900">External Node (Business/Agency)</option>
+                     </select>
+                  </div>
+                  <div>
+                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 block">Department / Sector</label>
+                     <select className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 appearance-none cursor-pointer">
+                        <option className="bg-slate-900">Compliance & Audit</option>
+                        <option className="bg-slate-900">Federal Oversight</option>
+                        <option className="bg-slate-900">Quality Assurance</option>
+                        <option className="bg-slate-900">Field Operations</option>
+                        <option className="bg-slate-900">State Regulation</option>
+                     </select>
+                  </div>
+               </div>
+               <div className="grid grid-cols-2 gap-4">
+                  <div>
+                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 block">Job Title / Designation</label>
+                     <input type="text" placeholder="e.g. Senior Auditor" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors" />
+                  </div>
+                  <div>
+                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 block">Dashboard Provision</label>
+                     <select className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 appearance-none cursor-pointer">
+                        <option className="bg-slate-900">Admin Command (Level 4)</option>
+                        <option className="bg-slate-900">State Authority (Level 3)</option>
+                        <option className="bg-slate-900">Federal Intel (Level 5)</option>
+                        <option className="bg-slate-900">Operations Hub (Level 2)</option>
+                     </select>
+                  </div>
+               </div>
+            </div>
+            
+            <div className="bg-black/20 border border-white/5 rounded-[2rem] p-8 flex flex-col justify-between">
+               <div>
+                  <h4 className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-4 flex items-center gap-2"><Settings size={14}/> Active Duties & Permissions</h4>
+                  <div className="space-y-3">
+                     {[
+                        { l: 'Can intercept AI negligence', c: true },
+                        { l: 'Access to B2B Financials', c: false },
+                        { l: 'Authorization to Suspend Licenses', c: false },
+                        { l: 'Direct Federal Reporting Line', c: false },
+                        { l: 'Edit/Update Regulatory Library', c: true }
+                     ].map((duty, i) => (
+                       <label key={i} className="flex items-center gap-3 cursor-pointer group">
+                          <input type="checkbox" className="accent-indigo-500 w-4 h-4 cursor-pointer" defaultChecked={duty.c} />
+                          <span className="text-sm font-bold text-slate-300 group-hover:text-white transition-colors">{duty.l}</span>
+                       </label>
+                     ))}
+                  </div>
+               </div>
+               <button className="w-full mt-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-black uppercase tracking-widest rounded-xl text-xs shadow-lg shadow-indigo-600/20 transition-all border border-indigo-400/50">
+                  Provision Identity & Deploy Dashboard
+               </button>
+            </div>
+         </div>
+      </div>
     </motion.div>
   );
 
