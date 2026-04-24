@@ -1530,11 +1530,10 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
             {/* Founder Card */}
             <div className="bg-emerald-900 bg-gradient-to-br from-emerald-900 to-emerald-950 rounded-2xl p-8 text-white relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full -translate-y-8 translate-x-8 blur-2xl"></div>
-              <div className="flex items-center gap-2 mb-4">
+              <div className="flex items-center gap-2 mb-6">
                 <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
                 <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Founder &amp; CEO</span>
               </div>
-              <h3 className="text-2xl font-black mb-4">Shantell Robinson</h3>
               <div className="space-y-3 mb-6">
                 <div className="flex items-center gap-3">
                   <span className="text-emerald-400 text-lg">🌿</span>
