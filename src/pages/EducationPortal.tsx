@@ -84,18 +84,24 @@ export const EducationPortal = ({ onBack }: { onBack: () => void }) => {
         {activeTab === 'programs' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {[
-              { title: 'Metrc Integration Mastery', desc: 'Master the API and compliance rules of the Metrc state systems. Grant-funded.', hrs: '40 Hrs', tag: 'Core Program' },
-              { title: 'SINC Oversight Directives', desc: 'Training for law enforcement and regulators on identifying compliance issues.', hrs: '24 Hrs', tag: 'Gov / Law Enforcement' },
-              { title: 'Retail Compliance Pro', desc: 'Frontline budtender and manager training for point-of-sale compliance.', hrs: '16 Hrs', tag: 'Business' },
+              { title: 'Metrc Integration Mastery', desc: 'Master the API and compliance rules of the Metrc state systems. Grant-funded.', hrs: '40 Hrs', tag: 'Core Program', price: '$2,495' },
+              { title: 'SINC Oversight Directives', desc: 'Training for law enforcement and regulators on identifying compliance issues.', hrs: '24 Hrs', tag: 'Gov / Law Enforcement', price: '$1,850' },
+              { title: 'Retail Compliance Pro', desc: 'Frontline budtender and manager training for point-of-sale compliance.', hrs: '16 Hrs', tag: 'Business', price: '$750' },
             ].map((prog, i) => (
-              <div key={i} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all group">
-                <span className="px-3 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold uppercase tracking-widest rounded-full">{prog.tag}</span>
-                <h3 className="text-xl font-bold text-slate-800 mt-4 mb-2">{prog.title}</h3>
-                <p className="text-slate-500 text-sm mb-6 leading-relaxed">{prog.desc}</p>
-                <div className="flex items-center justify-between mt-auto">
-                  <span className="flex items-center gap-2 text-sm font-bold text-emerald-600"><Clock size={16} /> {prog.hrs}</span>
-                  <button className="w-8 h-8 rounded-full bg-slate-50 group-hover:bg-slate-900 text-slate-400 group-hover:text-white flex items-center justify-center transition-colors">
-                    <ChevronRight size={16} />
+              <div key={i} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all group flex flex-col">
+                <div className="flex justify-between items-start mb-4">
+                  <span className="px-3 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold uppercase tracking-widest rounded-full">{prog.tag}</span>
+                  <div className="text-right">
+                    <span className="block text-lg font-black text-emerald-600">{prog.price}</span>
+                    <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Per Seat / Grant Eligible</span>
+                  </div>
+                </div>
+                <h3 className="text-xl font-bold text-slate-800 mb-2">{prog.title}</h3>
+                <p className="text-slate-500 text-sm mb-6 leading-relaxed flex-1">{prog.desc}</p>
+                <div className="flex items-center justify-between mt-auto border-t border-slate-100 pt-4">
+                  <span className="flex items-center gap-2 text-sm font-bold text-slate-600"><Clock size={16} className="text-emerald-500" /> {prog.hrs}</span>
+                  <button className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-slate-800 transition-colors">
+                    Enroll <ChevronRight size={14} />
                   </button>
                 </div>
               </div>
