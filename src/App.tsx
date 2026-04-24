@@ -70,7 +70,8 @@ import {
   Headphones,
   Phone,
   Star,
-  ArrowUpCircle
+  ArrowUpCircle,
+  Home
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from './lib/utils';
@@ -1386,9 +1387,9 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
       {/* GGHP Infrastructure Banner & News Column */}
       <section className="px-6 py-10">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 bg-slate-900 rounded-[3rem] overflow-hidden shadow-2xl relative border border-white/10 group flex flex-col h-full min-h-[400px]">
-             <img src="/gghp-branding.png" alt="GGHP Platform" className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-700" />
-             <div className="absolute inset-0 bg-slate-950 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent"></div>
+          <div className="lg:col-span-2 bg-[#1a4731] rounded-[3rem] overflow-hidden shadow-2xl relative border border-white/10 group flex flex-col h-full min-h-[400px]">
+             <img src="/gghp-branding.png" alt="GGHP Platform" className="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-700" onError={(e) => { (e.target as HTMLImageElement).style.display='none'; }} />
+             <div className="absolute inset-0 bg-gradient-to-t from-[#0f2d1e] via-[#0f2d1e]/40 to-transparent"></div>
              <div className="absolute bottom-12 left-12 right-12 flex flex-col md:flex-row justify-between items-end gap-6">
                 <div>
                   <h2 className="text-3xl font-black text-white mb-2 uppercase tracking-tighter">GGHP</h2>
@@ -4928,13 +4929,26 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Yes', 'No'] } as any]);
       setSignupStep(99);
     } else if (lower.includes('book physician') || lower.includes('doctor') || lower.includes('recommendation') || lower.includes('med card intake')) {
-      response = '⚕️ **Medical Intake & Physician Evaluation**\n\nI am opening our integrated booking system for your evaluation. The total cost is **$45.00** ($35 Doctor + $10 GGE Processing).\n\nPick a slot below to begin! 📅';
-      setMessages(prev => [...prev, { role: 'bot', text: response }]);
-      setSignupStep(11);
-      fetchCalendlySlots();
+      response = '⚕️ **Physician Booking**\n\nWhat type of visit do you need?\n\n• **Medical Card Evaluation ($45)** — physician recommendation for OMMA card\n• **General Telehealth Wellness** — non-emergency consultation\n\nSelect below to proceed! 📅';
+      setMessages(prev => [...prev, { 
+        role: 'bot', 
+        text: response,
+        choices: ['Medical Card Evaluation ($45)', 'General Telehealth Wellness', 'Main Menu'] 
+      } as any]);
+      setIsTyping(false);
+      return;
+    } else if (lower.includes('medical card evaluation') || lower.includes('med card eval')) {
+      response = '💳 **Medical Card Evaluation ($45)**\n\nYour evaluation includes:\n• **$35** — Physician Consultation\n• **$10** — GGE Processing Fee\n\n📞 **Call to Schedule**: 405-492-7487\n🔗 **[Book Online via Calendly](https://calendly.com/globalgreenenterprize/15-min-meeting)**\n\nAfter booking, return here to continue your intake!';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Patient Intake', 'I Already Scheduled', 'Main Menu'] } as any]);
+      setIsTyping(false);
+      return;
+    } else if (lower.includes('general telehealth wellness') || lower.includes('general telehealth')) {
+      response = '🏥 **General Telehealth Wellness Visit**\n\nConnect with a licensed physician for:\n• Non-emergency consultations\n• Follow-up visits\n• Prescription management\n• General health questions\n\n📞 **Telehealth Line**: 405-252-1178\n🔗 **[Book Online via Calendly](https://calendly.com/globalgreenenterprize/15-min-meeting)**';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+      setIsTyping(false);
       return;
     } else if (lower.includes('human') || lower.includes('coordinator') || lower.includes('shantell') || lower.includes('speak with someone')) {
-      response = '👤 **Human Care Coordination**\n\nI am routing you to **Shantell Robinson**, our lead Human Care Coordinator. When booking, please include a **detailed message** about your needs.\n\n📞 **Med Card Line**: 405-492-7487\n📞 **Telehealth Line**: 405-252-1178\n🏢 **Global Green**: 405-492-7297\n\n🔗 **[Book a Session via Calendly](https://calendly.com/globalgreenenterprize/15-min-meeting)**';
+      response = '👤 **Human Care Coordination**\n\nI am routing you to **Shantell Robinson**, our lead Human Care Coordinator.\n\n📞 **Med Card Line**: 405-492-7487\n📞 **Telehealth Line**: 405-252-1178\n🏢 **Global Green**: 405-492-7297\n\n🔗 **[Book a 15-Min Session via Calendly](https://calendly.com/globalgreenenterprize/15-min-meeting)**\n\n*Click the Calendly link above to book directly — no app needed!*';
     } else if (lower === 'yes' || lower === 'yeah' || lower === 'yep') {
       response = 'Great! I am ready to assist. Would you like to begin your **Licensing Intake**, or do you have questions about our other sectors like **RIP Intelligence** or **SINC Compliance**?';
     } else if (['cancer', 'pain', 'ptsd', 'glaucoma', 'seizure', 'anxiety', 'epilepsy', 'crohn', 'sclerosis', 'als', 'alzheimer', 'anorexia', 'migraine', 'arthritis', 'nausea', 'autism', 'hiv', 'aids', 'parkinson', 'tourette'].some(condition => lower.includes(condition))) {
@@ -7433,6 +7447,17 @@ export default function App() {
           )}
         </AnimatePresence>
         
+        {/* Floating Home Button - appears on every view except landing */}
+        {view !== 'landing' && (
+          <button
+            onClick={() => { setView('landing'); setUserProfile(null); }}
+            className="fixed bottom-6 left-6 z-[90] w-14 h-14 bg-[#1a4731] hover:bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-2xl shadow-emerald-900/40 transition-all hover:scale-110 border-2 border-emerald-400/30"
+            title="Return to Home"
+          >
+            <Home size={24} />
+          </button>
+        )}
+
         {/* Persistent Sylara Support everywhere */}
         {view !== 'larry-chatbot' && (
           <SylaraFloatingWidget onClick={() => setShowLarryModal(true)} />
