@@ -31,10 +31,35 @@ const tabs = [
 
 export const FederalDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [pin, setPin] = useState('');
 
   return (
-    <div className="min-h-screen bg-[#080e1a]">
-      {/* Top Header */}
+    <div className="h-screen bg-[#080e1a] overflow-hidden relative">
+      {!isUnlocked && (
+        <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-[#080e1a]/80 backdrop-blur-2xl animate-in fade-in duration-300">
+          <div className="bg-[#0b1525] p-8 rounded-[2rem] border border-blue-900/50 shadow-2xl shadow-blue-900/20 text-center max-w-sm w-full animate-in zoom-in-95 duration-500">
+            <Lock size={48} className="text-blue-500 mx-auto mb-6" />
+            <h2 className="text-2xl font-black text-white mb-2">Restricted Access</h2>
+            <p className="text-blue-300/60 text-sm mb-6">Enter 4-digit Federal PIN</p>
+            <input 
+              type="password" 
+              maxLength={4} 
+              value={pin} 
+              onChange={(e) => {
+                 setPin(e.target.value);
+                 if (e.target.value === '1234') setIsUnlocked(true);
+              }} 
+              className="w-full bg-[#080e1a] border border-blue-900/50 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 rounded-xl p-4 text-center text-3xl font-black text-white tracking-[1em] mb-4 outline-none transition-all" 
+              placeholder="••••"
+            />
+            <p className="text-[10px] font-bold text-red-500 uppercase tracking-widest mt-4">Federal Personnel Only</p>
+          </div>
+        </div>
+      )}
+
+      <div className={cn("h-full flex flex-col transition-all duration-500", !isUnlocked && "blur-xl scale-[0.98] opacity-50 pointer-events-none")}>
+        {/* Top Header */}
       <header className="bg-[#0b1525] border-b border-[#1e3a5f]/40 px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <img src="/gghp-branding.png" alt="GGP-OS" className="w-10 h-10 object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display='none'; }} />
@@ -94,6 +119,7 @@ export const FederalDashboard = ({ onLogout, user }: { onLogout?: () => void, us
           {activeTab === 'audit' && <LeaseAuditTab />}
           {activeTab === 'subscription' && <SubscriptionPortal userRole="regulator" initialPlanId="fed_pro" />}
         </main>
+      </div>
       </div>
     </div>
   );

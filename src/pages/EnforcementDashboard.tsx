@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   ShieldAlert, Map, Search, FileText, Activity, MapPin, CheckCircle2, 
-  XCircle, AlertTriangle, AlertCircle, Fingerprint, Zap, Crosshair, HelpCircle, Download, Bot, CreditCard, Shield, Clock, Wind, Car, User, Wifi
+  XCircle, AlertTriangle, AlertCircle, Fingerprint, Zap, Crosshair, HelpCircle, Download, Bot, CreditCard, Shield, Clock, Wind, Car, User, Wifi, Lock
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
@@ -17,6 +17,8 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
   const [rapidTestStep, setRapidTestStep] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPatient, setSelectedPatient] = useState<any>(null);
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [pin, setPin] = useState('');
   
   // Breathalyzer state
   const [breathTestState, setBreathTestState] = useState<'idle' | 'blowing' | 'analyzing' | 'complete'>('idle');
@@ -74,9 +76,31 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] bg-slate-950 text-slate-300 font-sans">
+    <div className="flex h-screen overflow-hidden bg-slate-950 text-slate-300 font-sans relative">
+      {!isUnlocked && (
+        <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-slate-950/80 backdrop-blur-2xl animate-in fade-in duration-300">
+          <div className="bg-slate-900 p-8 rounded-[2rem] border border-emerald-900/50 shadow-2xl shadow-emerald-900/20 text-center max-w-sm w-full animate-in zoom-in-95 duration-500">
+            <Lock size={48} className="text-emerald-500 mx-auto mb-6" />
+            <h2 className="text-2xl font-black text-white mb-2">Restricted Access</h2>
+            <p className="text-slate-400 text-sm mb-6">Enter 4-digit Enforcement PIN</p>
+            <input 
+              type="password" 
+              maxLength={4} 
+              value={pin} 
+              onChange={(e) => {
+                 setPin(e.target.value);
+                 if (e.target.value === '1234') setIsUnlocked(true);
+              }} 
+              className="w-full bg-slate-950 border border-emerald-900/50 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 rounded-xl p-4 text-center text-3xl font-black text-white tracking-[1em] mb-4 outline-none transition-all" 
+              placeholder="••••"
+            />
+            <p className="text-[10px] font-bold text-red-500 uppercase tracking-widest mt-4">Authorized Personnel Only</p>
+          </div>
+        </div>
+      )}
+
       {/* LEFT SIDEBAR */}
-      <div className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col hidden md:flex shrink-0">
+      <div className={cn("w-64 bg-slate-900 border-r border-slate-800 flex flex-col hidden md:flex shrink-0 transition-all duration-500", !isUnlocked && "blur-md opacity-50 pointer-events-none")}>
         <div className="p-5 pb-2">
           <div className="flex items-center gap-3 mb-6">
             <img src="/gghp-branding.png" alt="GGHP Logo" className="w-12 h-12 object-contain" />
@@ -141,7 +165,7 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
       </div>
 
       {/* MAIN CONTENT AREA */}
-      <div className="flex-1 flex flex-col h-[calc(100vh-4rem)] overflow-hidden">
+      <div className={cn("flex-1 flex flex-col h-[calc(100vh)] overflow-hidden transition-all duration-500", !isUnlocked && "blur-xl scale-[0.98] opacity-50 pointer-events-none")}>
         
         {/* Original Rapid Testing Screen */}
         {activeTab === 'rapid_testing' && (

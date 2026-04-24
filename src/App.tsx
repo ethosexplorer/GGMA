@@ -1528,32 +1528,40 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
           {/* Founder Credentials + Company Stats */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
             {/* Founder Card */}
-            <div className="bg-emerald-900 bg-gradient-to-br from-emerald-900 to-emerald-950 rounded-2xl p-8 text-white relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full -translate-y-8 translate-x-8 blur-2xl"></div>
-              <div className="flex items-center gap-2 mb-6">
-                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
-                <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Founder &amp; CEO</span>
+            <div className="bg-[#0f2d1e] rounded-2xl p-8 text-white relative overflow-hidden group border border-emerald-900/50 shadow-xl">
+              {/* Founder Image (Cropped hands and up) */}
+              <div className="absolute inset-y-0 right-0 w-[60%] z-0 opacity-80 transition-opacity duration-700 pointer-events-none">
+                 <div className="absolute inset-0 bg-gradient-to-r from-[#0f2d1e] via-[#0f2d1e]/80 to-transparent z-10"></div>
+                 <div className="absolute bottom-0 inset-x-0 h-1/3 bg-gradient-to-t from-[#0f2d1e] to-transparent z-10"></div>
+                 <img src="/founder.png" alt="Founder" className="w-full h-[120%] object-cover object-[center_20%] -translate-y-[10%]" />
               </div>
-              <div className="space-y-3 mb-6">
-                <div className="flex items-center gap-3">
-                  <span className="text-emerald-400 text-lg">🌿</span>
-                  <div>
-                    <p className="text-white font-bold text-sm">8 Years in Cannabis</p>
-                    <p className="text-emerald-200/70 text-[11px]">Regulatory compliance, licensing, and patient advocacy</p>
-                  </div>
+
+              <div className="relative z-10 md:max-w-[70%]">
+                <div className="flex items-center gap-2 mb-6 inline-flex bg-[#0f2d1e]/80 px-3 py-1.5 rounded-full border border-emerald-800/30 backdrop-blur-sm">
+                  <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+                  <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Founder &amp; CEO</span>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-emerald-400 text-lg">🏢</span>
-                  <div>
-                    <p className="text-white font-bold text-sm">30+ Years Corporate Administration</p>
-                    <p className="text-emerald-200/70 text-[11px]">Enterprise build, structure, and management leadership</p>
+                <div className="space-y-4 mb-6">
+                  <div className="flex items-center gap-4 bg-[#0f2d1e]/60 p-3 rounded-xl backdrop-blur-md border border-white/5">
+                    <span className="text-emerald-400 text-xl">🌿</span>
+                    <div>
+                      <p className="text-white font-black text-sm">8 Years in Cannabis</p>
+                      <p className="text-emerald-100/80 text-[11px] font-medium leading-relaxed">Regulatory compliance, licensing, and patient advocacy</p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-emerald-400 text-lg">🔗</span>
-                  <div>
-                    <p className="text-white font-bold text-sm">Validated Metrc Integrator</p>
-                    <p className="text-emerald-200/70 text-[11px]">Oklahoma sandbox certified — production API access</p>
+                  <div className="flex items-center gap-4 bg-[#0f2d1e]/60 p-3 rounded-xl backdrop-blur-md border border-white/5">
+                    <span className="text-emerald-400 text-xl">🏢</span>
+                    <div>
+                      <p className="text-white font-black text-sm">30+ Years Corporate Administration</p>
+                      <p className="text-emerald-100/80 text-[11px] font-medium leading-relaxed">Enterprise build, structure, and management leadership</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 bg-[#0f2d1e]/60 p-3 rounded-xl backdrop-blur-md border border-white/5">
+                    <span className="text-emerald-400 text-xl">🔗</span>
+                    <div>
+                      <p className="text-white font-black text-sm">Validated Metrc Integrator</p>
+                      <p className="text-emerald-100/80 text-[11px] font-medium leading-relaxed">Oklahoma sandbox certified — production API access</p>
+                    </div>
                   </div>
                 </div>
               </div>

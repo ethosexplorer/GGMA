@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   Building2, ShieldCheck, Landmark, FileCheck, DollarSign, Activity, 
   Map as MapIcon, Settings, Download, Search, AlertCircle, FileText, CheckCircle2, XCircle,
-  TrendingUp, Users, ShieldAlert, Bot, HelpCircle, Gavel, Scale, Clock, LogOut
+  TrendingUp, Users, ShieldAlert, Bot, HelpCircle, Gavel, Scale, Clock, LogOut, Lock
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
@@ -10,6 +10,8 @@ import { motion } from 'motion/react';
 export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
   const [activeTab, setActiveTab] = useState('legal_oversight');
   const [selectedApplicant, setSelectedApplicant] = useState<any>(null);
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [pin, setPin] = useState('');
   
   const getRoleTitle = () => user?.role === 'regulator_state' ? 'Marijuana Authority' : 'Regulator Authority';
   const getJurisdiction = () => 'STATE JURISDICTION';
@@ -203,10 +205,31 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
   );
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] bg-slate-50 text-slate-800 font-sans">
-      
-      {/* LEFT SIDEBAR (INTERNAL / EXTERNAL NAVIGATION) */}
-      <div className="w-72 bg-slate-950 border-r border-slate-900 flex flex-col hidden md:flex shrink-0">
+    <div className="flex h-screen overflow-hidden bg-slate-50 relative">
+      {!isUnlocked && (
+        <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-slate-900/60 backdrop-blur-2xl animate-in fade-in duration-300">
+          <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-2xl text-center max-w-sm w-full animate-in zoom-in-95 duration-500">
+            <Lock size={48} className="text-indigo-500 mx-auto mb-6" />
+            <h2 className="text-2xl font-black text-slate-900 mb-2">Restricted Access</h2>
+            <p className="text-slate-500 text-sm mb-6">Enter 4-digit Regulatory PIN</p>
+            <input 
+              type="password" 
+              maxLength={4} 
+              value={pin} 
+              onChange={(e) => {
+                 setPin(e.target.value);
+                 if (e.target.value === '1234') setIsUnlocked(true);
+              }} 
+              className="w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 rounded-xl p-4 text-center text-3xl font-black text-slate-800 tracking-[1em] mb-4 outline-none transition-all" 
+              placeholder="••••"
+            />
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-4">Authorized Personnel Only</p>
+          </div>
+        </div>
+      )}
+
+      {/* Main Sidebar */}
+      <div className={cn("w-full md:w-64 bg-[#1a4731] text-white flex flex-col shrink-0 transition-all duration-500", !isUnlocked && "blur-md opacity-50 pointer-events-none")}>
         <div className="p-6 pb-2">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-12 h-12 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
@@ -250,7 +273,7 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
       </div>
 
       {/* MAIN VIEW */}
-      <div className="flex-1 flex flex-col h-[calc(100vh-4rem)] overflow-hidden">
+      <div className={cn("flex-1 flex flex-col h-[calc(100vh)] overflow-hidden transition-all duration-500", !isUnlocked && "blur-md scale-[0.98] opacity-50 pointer-events-none")}>
         <div className="h-20 border-b border-slate-200 flex items-center justify-between px-10 bg-white shrink-0">
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter uppercase italic">{activeTab.replace('_', ' ')}</h1>
           <div className="flex items-center gap-6">
