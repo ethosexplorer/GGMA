@@ -3608,68 +3608,77 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       return;
     }
 
+    // === GLOBAL TOP-LEVEL CATEGORY NAVIGATION ===
+    // These intercept at any step to reset the flow to the requested sector
+    if (lower.includes('ggma') || lower.includes('oklahoma') || lower.includes('omma')) {
+      response = '🏢 **GGMA Licensing & Assistance**\n\nI can assist you with your regulatory requirements. To provide the correct guidance, is your inquiry regarding a **Patient License** or a **Commercial Business License**?';
+      setMessages(prev => [...prev, { 
+        role: 'bot', 
+        text: response,
+        choices: ['Patient Licensing', 'Business Licensing'] 
+      } as any]);
+      setSignupStep(999);
+      setIsTyping(false);
+      return;
+    } else if (lower.includes('rip intelligence') || lower === 'rip enforcement' || lower.includes('rip enforcement') || lower === 'tell me about rip enforcement.') {
+      response = '🕵️ **RIP (Regulatory Intelligence Policing)**\n\nRIP handles enforcement, background verification, and regulatory oversight for **government and state authority entities only**.\n\nWhich government function do you need?';
+      setMessages(prev => [...prev, { 
+        role: 'bot', 
+        text: response,
+        choices: ['Field Intelligence Report', 'Background Verification Check', 'Enforcement Status Inquiry', 'Compliance Audit Request', 'Contact Oversight Division', 'Main Menu'] 
+      } as any]);
+      setSignupStep(400);
+      setIsTyping(false);
+      return;
+    } else if (lower.includes('sinc') || lower.includes('secure infrastructure')) {
+      response = '🛡️ **SINC (Secure Infrastructure & Network Compliance)**\n\nSINC is the operational backbone for **Cannabis Businesses** — seed-to-sale tracking, Metrc integration, audit shielding, and encrypted compliance records.\n\nHow can we help your business?';
+      setMessages(prev => [...prev, { 
+        role: 'bot', 
+        text: response,
+        choices: ['Start Business Intake', 'Audit Shield Setup', 'Seed-to-Sale Compliance', 'Network Integrity Check', 'View Business Fee Schedule', 'Main Menu'] 
+      } as any]);
+      setSignupStep(500);
+      setIsTyping(false);
+      return;
+    } else if (lower.includes('telehealth') && !lower.includes('wellness')) {
+      response = '🏥 **Telehealth Services**\n\nOur Telehealth network connects you with licensed physicians for:\n\n• **General Doctor Visits** — non-emergency consultations\n• **Medical Card Recommendation** — physician evaluation for OMMA card\n• **Follow-up Visits** — check-ins and ongoing care\n• **Prescription Consultations** — medication management\n\nWhat type of visit do you need?';
+      setMessages(prev => [...prev, { 
+        role: 'bot', 
+        text: response,
+        choices: ['General Doctor Visit', 'Medical Card Recommendation ($45)', 'Follow-up / Check-in', 'Prescription Consultation', 'Main Menu'] 
+      } as any]);
+      setSignupStep(700);
+      setIsTyping(false);
+      return;
+    } else if (lower.includes('general support') || lower.includes('question') || lower.includes('help')) {
+      response = '❓ **General Support**\n\nI can help with anything! Here are common topics:\n\n• **Account & Login Issues**\n• **Application Status Check**\n• **Billing & Subscription Questions**\n• **How the Platform Works**\n• **Contact a Human Representative**\n\nWhat do you need help with?';
+      setMessages(prev => [...prev, { 
+        role: 'bot', 
+        text: response,
+        choices: ['Account & Login', 'Application Status', 'Billing Question', 'How Does This Work?', 'Speak with Shantell', 'Main Menu'] 
+      } as any]);
+      setSignupStep(800);
+      setIsTyping(false);
+      return;
+    } else if (lower.includes('it support') || lower.includes('technical') || lower.includes('portal login issue') || lower.includes('app not loading') || lower.includes('metrc sync error')) {
+      window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
+      response = '💻 **IT & Technical Support**\n\nI am routing you to our **IT Support Team**.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Technical Support](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n📞 **Tech Support Line**: 405-492-7297';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+      setSignupStep(0);
+      setIsTyping(false);
+      return;
+    } else if (lower.includes('legal') || lower.includes('administration') || lower.includes('admin/paralegal') || lower.includes('paralegal')) {
+      window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
+      response = '⚖️ **Legal & Administration**\n\nI am routing you to our **Legal & Admin Team**.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Legal/Admin Consultation](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n📞 **Legal Line**: 405-492-7297';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+      setSignupStep(0);
+      setIsTyping(false);
+      return;
+    }
+
+    // === MAIN STATE MACHINE ===
     if (signupStep === 0) {
-      if (lower.includes('ggma') || lower.includes('oklahoma') || lower.includes('omma') || lower.includes('assistance')) {
-        response = '🏢 **GGMA Licensing & Assistance**\n\nI can assist you with your regulatory requirements. To provide the correct guidance, is your inquiry regarding a **Patient License** or a **Commercial Business License**?';
-        setMessages(prev => [...prev, { 
-          role: 'bot', 
-          text: response,
-          choices: ['Patient Licensing', 'Business Licensing'] 
-        } as any]);
-        setSignupStep(999);
-        setIsTyping(false);
-        return;
-      } else if (lower.includes('rip')) {
-        response = '🕵️ **RIP (Regulatory Intelligence Policing)**\n\nRIP handles enforcement, background verification, and regulatory oversight for **government and state authority entities only**.\n\nWhich government function do you need?';
-        setMessages(prev => [...prev, { 
-          role: 'bot', 
-          text: response,
-          choices: ['Field Intelligence Report', 'Background Verification Check', 'Enforcement Status Inquiry', 'Compliance Audit Request', 'Contact Oversight Division', 'Main Menu'] 
-        } as any]);
-        setSignupStep(400);
-        setIsTyping(false);
-        return;
-      } else if (lower.includes('sinc')) {
-        response = '🛡️ **SINC (Secure Infrastructure & Network Compliance)**\n\nSINC is the operational backbone for **Cannabis Businesses** — seed-to-sale tracking, Metrc integration, audit shielding, and encrypted compliance records.\n\nHow can we help your business?';
-        setMessages(prev => [...prev, { 
-          role: 'bot', 
-          text: response,
-          choices: ['Start Business Intake', 'Audit Shield Setup', 'Seed-to-Sale Compliance', 'Network Integrity Check', 'View Business Fee Schedule', 'Main Menu'] 
-        } as any]);
-        setSignupStep(500);
-        setIsTyping(false);
-        return;
-      } else if (lower.includes('telehealth')) {
-        response = '🏥 **Telehealth Services**\n\nOur Telehealth network connects you with licensed physicians for:\n\n• **General Doctor Visits** — non-emergency consultations\n• **Medical Card Recommendation** — physician evaluation for OMMA card\n• **Follow-up Visits** — check-ins and ongoing care\n• **Prescription Consultations** — medication management\n\nWhat type of visit do you need?';
-        setMessages(prev => [...prev, { 
-          role: 'bot', 
-          text: response,
-          choices: ['General Doctor Visit', 'Medical Card Recommendation ($45)', 'Follow-up / Check-in', 'Prescription Consultation', 'Main Menu'] 
-        } as any]);
-        setSignupStep(700);
-        setIsTyping(false);
-        return;
-      } else if (lower.includes('general support') || lower.includes('question') || lower.includes('help')) {
-        response = '❓ **General Support**\n\nI can help with anything! Here are common topics:\n\n• **Account & Login Issues**\n• **Application Status Check**\n• **Billing & Subscription Questions**\n• **How the Platform Works**\n• **Contact a Human Representative**\n\nWhat do you need help with?';
-        setMessages(prev => [...prev, { 
-          role: 'bot', 
-          text: response,
-          choices: ['Account & Login', 'Application Status', 'Billing Question', 'How Does This Work?', 'Speak with Shantell', 'Main Menu'] 
-        } as any]);
-        setIsTyping(false);
-        return;
-      } else if (lower.includes('it support') || lower.includes('technical') || lower.includes('portal login issue') || lower.includes('app not loading') || lower.includes('metrc sync error')) {
-        window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
-        response = '💻 **IT & Technical Support**\n\nI am routing you to our **IT Support Team**.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Technical Support](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n📞 **Tech Support Line**: 405-492-7297';
-        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
-        setIsTyping(false);
-        return;
-      } else if (lower.includes('legal') || lower.includes('administration') || lower.includes('admin/paralegal') || lower.includes('paralegal')) {
-        window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
-        response = '⚖️ **Legal & Administration**\n\nI am routing you to our **Legal & Admin Team**.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Legal/Admin Consultation](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n📞 **Legal Line**: 405-492-7297';
-        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
-        setIsTyping(false);
-        return;
+
       } else if (lower.includes('start') || lower.includes('apply') || lower.includes('license')) {
         response = 'Great! Can I create an account for you to begin your application?';
         setMessages(prev => [...prev, { 
@@ -3690,6 +3699,43 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         setIsTyping(false);
         return;
       }
+    } else if (signupStep === 400) {
+      // RIP Intelligence Options
+      response = 'I have submitted your request to the **L.A.R.R.Y Enforcement Engine**. An oversight representative will be assigned to this inquiry.\n\nWould you like to return to the Main Menu?';
+      setMessages(prev => [...prev, { 
+        role: 'bot', 
+        text: response,
+        choices: ['Main Menu'] 
+      } as any]);
+      setSignupStep(0);
+      setIsTyping(false);
+      return;
+    } else if (signupStep === 500) {
+      // SINC Compliance Options
+      response = 'I have submitted your SINC query. A compliance specialist will review your request and reach out shortly.\n\nWould you like to return to the Main Menu?';
+      setMessages(prev => [...prev, { 
+        role: 'bot', 
+        text: response,
+        choices: ['Main Menu'] 
+      } as any]);
+      setSignupStep(0);
+      setIsTyping(false);
+      return;
+    } else if (signupStep === 700) {
+      // Telehealth Options
+      window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
+      response = '📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book via Calendly](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n📞 **Telehealth Line**: 405-252-1178';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+      setSignupStep(0);
+      setIsTyping(false);
+      return;
+    } else if (signupStep === 800) {
+      // General Support Options
+      response = 'I have flagged your support request. You can also call us directly at **405-492-7297** for immediate assistance.\n\nWould you like to return to the Main Menu?';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+      setSignupStep(0);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 999) {
       if (lower.includes('start patient intake')) {
         setIsBusiness(false);
