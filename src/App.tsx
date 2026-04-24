@@ -1895,19 +1895,25 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
               </p>
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
                  <button 
-                   onClick={() => onNavigate('signup', 'Business')}
-                   className="px-10 py-4 bg-emerald-500 text-slate-900 rounded-2xl font-black hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/20"
+                   onClick={() => onNavigate('login')}
+                   className="flex-1 px-6 py-4 bg-emerald-500 text-slate-900 rounded-2xl font-black hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/20 text-center"
                  >
-                    Access Marketplace
+                    Find Legal Counsel
                  </button>
-                 <div className="flex items-center gap-4 px-6 py-4 bg-white/5 border border-white/10 rounded-2xl">
-                    <div className="flex -space-x-3">
-                       {[1,2,3].map(i => (
-                         <div key={i} className="w-8 h-8 rounded-full border-2 border-slate-900 bg-slate-800 flex items-center justify-center text-[10px] font-bold">ATY</div>
-                       ))}
-                    </div>
-                    <span className="text-xs font-bold text-slate-300">120+ Verified Attorneys</span>
+                 <button 
+                   onClick={() => onNavigate('signup', 'Business')}
+                   className="flex-1 px-6 py-4 bg-slate-800 text-emerald-400 rounded-2xl font-black border border-slate-700 hover:bg-slate-700 transition-all shadow-xl text-center"
+                 >
+                    Join as an Attorney
+                 </button>
+              </div>
+              <div className="mt-4 flex items-center gap-4 px-6 py-4 bg-white/5 border border-white/10 rounded-2xl w-max">
+                 <div className="flex -space-x-3">
+                    {[1,2,3].map(i => (
+                      <div key={i} className="w-8 h-8 rounded-full border-2 border-slate-900 bg-slate-800 flex items-center justify-center text-[10px] font-bold">ATY</div>
+                    ))}
                  </div>
+                 <span className="text-xs font-bold text-slate-300">120+ Verified Attorneys Active</span>
               </div>
            </div>
            
