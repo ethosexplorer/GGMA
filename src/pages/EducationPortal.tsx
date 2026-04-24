@@ -45,7 +45,10 @@ export const EducationPortal = ({ onBack }: { onBack: () => void }) => {
               Welcome to our private-sector academy. We offer accredited On-The-Job Training, Certificates of Compliance, and Continuing Education funded by top-tier grants. Learn from the architects of the Global Green platform.
             </p>
             <div className="flex flex-wrap gap-4">
-              <button className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold rounded-xl shadow-lg shadow-emerald-900/20 transition-all flex items-center gap-2">
+              <button 
+                onClick={() => window.open('https://calendly.com/globalgreenenterprize/online-classes', '_blank')}
+                className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold rounded-xl shadow-lg shadow-emerald-900/20 transition-all flex items-center gap-2"
+              >
                 <PlayCircle size={20} /> Start Training
               </button>
               <button className="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold rounded-xl transition-all flex items-center gap-2">

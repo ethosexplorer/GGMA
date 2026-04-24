@@ -3507,8 +3507,8 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     }
 
     if (lower.includes('shantell') || lower === 'speak with shantell') {
-      window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
-      response = 'Sure! I\'ve opened the booking page for you. If it didn\'t open, click the link below:\n\n🔗 [Book 15min Consultation with Shantell](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n';
+      window.open('https://calendly.com/globalgreenhpmeet/business-meeting', '_blank');
+      response = 'Sure! I\'ve opened the booking page for you. If it didn\'t open, click the link below:\n\n🔗 [Book Business Meeting with Shantell](https://calendly.com/globalgreenhpmeet/business-meeting)\n\n';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] }]);
       setIsTyping(false);
       return;
@@ -3612,8 +3612,8 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     }
 
     if (lower.includes('consultation') || lower.includes('book 15min') || (lower.includes('schedule') && !lower.includes('fee')) || lower.includes('appointment') || lower.includes('slot')) {
-      window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
-      response = 'Sure! I\'ve opened the booking page for you. If it didn\'t open, click below:\n\n🔗 [Book 15min Consultation](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n';
+      window.open('https://calendly.com/globalgreenhpmeet/health-wellness-consultation', '_blank');
+      response = 'Sure! I\'ve opened the booking page for you. If it didn\'t open, click below:\n\n🔗 [Book Health & Wellness Consultation](https://calendly.com/globalgreenhpmeet/health-wellness-consultation)\n\n';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] }]);
       setIsTyping(false);
       return;
@@ -3680,15 +3680,15 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       setIsTyping(false);
       return;
     } else if (lower.includes('it support') || lower.includes('technical') || lower.includes('portal login issue') || lower.includes('app not loading') || lower.includes('metrc sync error')) {
-      window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
-      response = '💻 **IT & Technical Support**\n\nI am routing you to our **IT Support Team**.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Technical Support](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n';
+      window.open('https://calendly.com/globalgreenhpmeet/it-technical-support', '_blank');
+      response = '💻 **IT & Technical Support**\n\nI am routing you to our **IT Support Team**.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Technical Support](https://calendly.com/globalgreenhpmeet/it-technical-support)\n\n';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
       return;
     } else if (lower.includes('legal') || lower.includes('administration') || lower.includes('admin/paralegal') || lower.includes('paralegal')) {
-      window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
-      response = '⚖️ **Legal & Administration**\n\nI am routing you to our **Legal & Admin Team**.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Legal/Admin Consultation](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n';
+      window.open('https://calendly.com/globalgreenhpmeet/legal-consultation', '_blank');
+      response = '⚖️ **Legal & Administration**\n\nI am routing you to our **Legal & Admin Team**.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Legal/Admin Consultation](https://calendly.com/globalgreenhpmeet/legal-consultation)\n\n';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
@@ -3748,8 +3748,8 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       lower.includes('prescription consultation')
     ) {
       // Telehealth Options
-      window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
-      response = '📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book via Calendly](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n';
+      window.open('https://calendly.com/globalgreenhpmeet/medical-card-recommendation', '_blank');
+      response = '📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book Medical Card / Doctor Visit via Calendly](https://calendly.com/globalgreenhpmeet/medical-card-recommendation)\n\n';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
