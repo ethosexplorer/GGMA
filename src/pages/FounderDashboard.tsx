@@ -1616,50 +1616,81 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-         {/* Staff Negligence & Performance Monitor */}
+         {/* Corporate Structure & Departments */}
          <div className="lg:col-span-2 space-y-6">
             <div className="bg-white border border-slate-200 rounded-[3rem] p-8 shadow-sm">
                <div className="flex justify-between items-center mb-8">
                   <h3 className="text-xl font-black text-slate-800 flex items-center gap-3">
-                     <Users size={24} className="text-indigo-600" /> Active Sentinel Force
+                     <Building2 size={24} className="text-indigo-600" /> Corporate Structure & Departments
                   </h3>
                   <div className="flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-full text-[10px] font-black text-slate-500">
                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                     Live Performance Tracking
+                     Live Org Chart
                   </div>
                </div>
+               
                <div className="space-y-4">
                   {[
-                    { n: 'Alexander Voss', r: 'Sovereign Legal Guardian', s: '98.4%', c: '08:02 AM', st: 'Optimal', p: 'OK-Sector' },
-                    { n: 'Elena Rodriguez', r: 'Elite Quality Sentinel', s: '99.1%', c: '07:55 AM', st: 'Optimal', p: 'FL-Sector' },
-                    { n: 'Marcus Thorne', r: 'Complex Conflict Arbiter', s: '84.2%', c: '09:12 AM', st: 'Warning', p: 'MO-Sector' },
-                    { n: 'Sarah Jenkins', r: 'Staffing Architect', s: '95.0%', c: '08:30 AM', st: 'Optimal', p: 'Global' },
-                  ].map((staff, i) => (
-                    <div key={i} className="flex items-center justify-between p-5 bg-slate-50 rounded-[2rem] border border-slate-100 hover:border-indigo-200 transition-all group">
-                       <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center overflow-hidden">
-                             <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(staff.n)}&background=f1f5f9&color=6366f1&bold=true`} alt="" />
+                    { 
+                      dept: 'Executive & Strategy', head: 'Shantell Robinson (Founder)', 
+                      ai: { count: 12, desc: 'Sylara Global Monitors, Data Aggregators' }, 
+                      humans: { count: 3, desc: 'Founder, CEO, Chief Legal' }, 
+                      color: 'bg-indigo-500' 
+                    },
+                    { 
+                      dept: 'Medical & Clinical Intake', head: 'Dr. Sarah Jenkins', 
+                      ai: { count: 850, desc: 'Sylara Patient Intake Agents, HIPAA Validators' }, 
+                      humans: { count: 24, desc: 'Licensed Physicians, RNs, Final-Reviewers' }, 
+                      color: 'bg-emerald-500' 
+                    },
+                    { 
+                      dept: 'Regulatory & Compliance', head: 'Marcus Johnson', 
+                      ai: { count: 1420, desc: 'L.A.R.R.Y Enforcement Bots, Metrc Sync Nodes' }, 
+                      humans: { count: 18, desc: 'Compliance Officers, Legal Analysts' }, 
+                      color: 'bg-blue-500' 
+                    },
+                    { 
+                      dept: 'Engineering & SysOps', head: 'Ryan Ferrari', 
+                      ai: { count: 310, desc: 'Automated DevSecOps, Load Balancers, Q/A' }, 
+                      humans: { count: 12, desc: 'System Architects, DB Administrators' }, 
+                      color: 'bg-amber-500' 
+                    },
+                    { 
+                      dept: 'Education & Grants', head: 'Pending Placement', 
+                      ai: { count: 15, desc: 'Sylara Training Tutors, Curriculum Generators' }, 
+                      humans: { count: 8, desc: 'Academy Instructors, Grant Writers' }, 
+                      color: 'bg-purple-500' 
+                    },
+                  ].map((dept, i) => (
+                    <div key={i} className="flex flex-col md:flex-row md:items-center justify-between p-5 bg-slate-50 rounded-[2rem] border border-slate-100 hover:border-indigo-200 transition-all group gap-4">
+                       <div className="flex items-center gap-4 flex-1">
+                          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-md ${dept.color}`}>
+                             <Layers size={20} />
                           </div>
                           <div>
-                             <p className="font-black text-slate-800 leading-tight">{staff.n}</p>
-                             <p className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider">{staff.r}</p>
+                             <p className="font-black text-slate-800 leading-tight">{dept.dept}</p>
+                             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mt-1">Head: {dept.head}</p>
                           </div>
                        </div>
-                       <div className="flex items-center gap-8">
-                          <div className="text-right">
-                             <p className="text-[10px] font-black text-slate-400 uppercase">Efficiency</p>
-                             <p className={cn("text-sm font-black", staff.st === 'Warning' ? 'text-red-600' : 'text-emerald-600')}>{staff.s}</p>
+                       
+                       <div className="flex items-center gap-6 md:w-1/2">
+                          <div className="flex-1 bg-white border border-slate-200 rounded-xl p-3 shadow-sm relative overflow-hidden group-hover:border-indigo-300 transition-colors">
+                             <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500"></div>
+                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1"><Bot size={12} className="text-indigo-500" /> AI Force</p>
+                             <div className="flex items-baseline gap-2 mt-1">
+                                <span className="text-lg font-black text-slate-800">{dept.ai.count}</span>
+                                <span className="text-[9px] font-bold text-slate-400 truncate w-full block">{dept.ai.desc}</span>
+                             </div>
                           </div>
-                          <div className="text-right">
-                             <p className="text-[10px] font-black text-slate-400 uppercase">Clock-In</p>
-                             <p className="text-sm font-bold text-slate-700">{staff.c}</p>
+                          
+                          <div className="flex-1 bg-white border border-slate-200 rounded-xl p-3 shadow-sm relative overflow-hidden group-hover:border-emerald-300 transition-colors">
+                             <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
+                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1"><Users size={12} className="text-emerald-500" /> Humans</p>
+                             <div className="flex items-baseline gap-2 mt-1">
+                                <span className="text-lg font-black text-slate-800">{dept.humans.count}</span>
+                                <span className="text-[9px] font-bold text-slate-400 truncate w-full block">{dept.humans.desc}</span>
+                             </div>
                           </div>
-                          <button className={cn(
-                             "px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all",
-                             staff.st === 'Warning' ? "bg-red-600 text-white shadow-lg shadow-red-600/20" : "bg-slate-200 text-slate-500 opacity-0 group-hover:opacity-100"
-                          )}>
-                             {staff.st === 'Warning' ? 'Intercept Negligence' : 'Audit Logs'}
-                          </button>
                        </div>
                     </div>
                   ))}
@@ -1675,15 +1706,16 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                      <span className="text-4xl font-black">96.8</span>
                      <span className="text-sm font-bold text-emerald-400">/ 100</span>
                   </div>
-                  <p className="text-xs text-slate-400 leading-relaxed font-medium">Sylara AI is successfully managing 84.8% of platform throughput. The Human Sentinel Force is handling the high-hierarchy 15.2% with minimal variance.</p>
+                  <p className="text-xs text-slate-400 leading-relaxed font-medium">Sylara AI is successfully managing 98.4% of platform throughput. The Human Sentinel Force is handling the high-hierarchy 1.6% (final authorizations, legal reviews, curriculum approvals) with zero variance.</p>
                </div>
                <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
-                  <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">Staffing Duties Breakdown</h4>
+                  <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">Throughput by Dept</h4>
                   <div className="space-y-4">
                      {[
-                       { l: 'Quality Assurance (UQA)', p: 45, c: 'bg-indigo-500' },
-                       { l: 'Legal/Regulatory Design', p: 30, c: 'bg-emerald-500' },
-                       { l: 'Complex Arbitration', p: 25, c: 'bg-amber-500' },
+                       { l: 'Regulatory & Compliance', p: 45, c: 'bg-blue-500' },
+                       { l: 'Medical & Clinical Intake', p: 35, c: 'bg-emerald-500' },
+                       { l: 'Education & Academy', p: 15, c: 'bg-purple-500' },
+                       { l: 'Executive Strategy', p: 5, c: 'bg-indigo-500' },
                      ].map((d, i) => (
                        <div key={i}>
                           <div className="flex justify-between text-[10px] font-black uppercase mb-1">
