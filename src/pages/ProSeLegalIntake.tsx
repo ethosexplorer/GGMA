@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Scale, FileText, AlertTriangle, ShieldAlert, CalendarClock, 
-  ChevronRight, CheckCircle2, UserCheck, Lock, Gavel, FileSignature, Upload
+  ChevronRight, CheckCircle2, UserCheck, Lock, Gavel, FileSignature, Upload, X
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
@@ -21,6 +21,7 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
     misconductDesc: '',
     summary: ''
   });
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
   const handleNext = () => setStep(step + 1);
 
@@ -221,15 +222,43 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
                         <p className="mb-2 text-sm text-slate-500"><span className="font-semibold">Click to upload</span> or drag and drop</p>
                         <p className="text-xs text-slate-500">PDF, PNG, JPG (MAX. 10MB)</p>
                       </div>
-                      <input type="file" className="hidden" multiple />
+                      <input 
+                        type="file" 
+                        className="hidden" 
+                        multiple 
+                        onChange={(e) => {
+                          if (e.target.files) {
+                            setUploadedFiles([...uploadedFiles, ...Array.from(e.target.files)]);
+                          }
+                        }}
+                      />
                     </label>
+                    {uploadedFiles.length > 0 && (
+                      <div className="mt-4 space-y-2">
+                        {uploadedFiles.map((file, idx) => (
+                          <div key={idx} className="flex items-center justify-between p-3 bg-white border border-slate-200 rounded-lg shadow-sm">
+                            <span className="text-sm font-medium text-slate-700 truncate">{file.name}</span>
+                            <button 
+                              onClick={() => setUploadedFiles(uploadedFiles.filter((_, i) => i !== idx))}
+                              className="p-1 hover:bg-slate-100 rounded-md transition-colors"
+                            >
+                              <X size={16} className="text-slate-400 hover:text-red-500" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex gap-4 mt-8">
                     <button onClick={() => setStep(1)} className="px-6 py-4 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition-all">
                       Back
                     </button>
-                    <button onClick={handleNext} disabled={!formData.summary} className="flex-1 py-4 bg-slate-900 text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-800 disabled:opacity-50 transition-all">
+                    <button 
+                      onClick={handleNext} 
+                      disabled={!formData.summary || !formData.incidentDate || !formData.incidentTime || !formData.incidentLocation} 
+                      className="flex-1 py-4 bg-slate-900 text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-800 disabled:opacity-50 transition-all"
+                    >
                     Continue to Rights Violation Scan <ChevronRight size={18} />
                     </button>
                   </div>
