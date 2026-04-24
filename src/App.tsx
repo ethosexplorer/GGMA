@@ -3542,16 +3542,14 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     if (lower.includes('grower outdoor') || lower === 'grower outdoor fees') {
       response = '🌿 **GROWER — Outdoor License Fees**\n' +
         '_Per 63 O.S. § 427.14_\n\n' +
-        '| Tier | Acreage | Fee | Total w/ CC |\n' +
-        '|------|---------|-----|-------------|\n' +
-        '| Tier 1 | Up to 2.5 acres | $2,500 | $2,558.30 |\n' +
-        '| Tier 2 | 2.5–5 acres | $5,000 | $5,114.55 |\n' +
-        '| Tier 3 | 5–10 acres | $10,000 | $10,227.05 |\n' +
-        '| Tier 4 | 10–20 acres | $20,000 | $20,452.04 |\n' +
-        '| Tier 5 | 20–30 acres | $30,000 | $30,677.05 |\n' +
-        '| Tier 6 | 30–40 acres | $40,000 | $40,902.05 |\n' +
-        '| Tier 7 | 40–50 acres | $50,000 | $51,127.04 |\n' +
-        '| Tier 8 | 50+ acres | $50,000 + $250/acre | Varies |\n\n' +
+        '• **Tier 1** (Up to 2.5 acres): **$2,500** _($2,558.30 w/ CC)_\n' +
+        '• **Tier 2** (2.5–5 acres): **$5,000** _($5,114.55 w/ CC)_\n' +
+        '• **Tier 3** (5–10 acres): **$10,000** _($10,227.05 w/ CC)_\n' +
+        '• **Tier 4** (10–20 acres): **$20,000** _($20,452.04 w/ CC)_\n' +
+        '• **Tier 5** (20–30 acres): **$30,000** _($30,677.05 w/ CC)_\n' +
+        '• **Tier 6** (30–40 acres): **$40,000** _($40,902.05 w/ CC)_\n' +
+        '• **Tier 7** (40–50 acres): **$50,000** _($51,127.04 w/ CC)_\n' +
+        '• **Tier 8** (50+ acres): **$50,000 + $250/acre**\n\n' +
         'Ready to apply?';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Business Intake', 'Processor Fees', 'Dispensary Fees', 'Main Menu'] } as any]);
       setIsTyping(false);
@@ -3561,13 +3559,11 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     if (lower.includes('processor fee') || lower === 'processor fees') {
       response = '⚗️ **PROCESSOR License Fees**\n' +
         '_Initial nonrefundable fee: $2,500. Annual fee based on production._\n\n' +
-        '| Tier | Production Volume | Fee | Total w/ CC |\n' +
-        '|------|------------------|-----|-------------|\n' +
-        '| Tier 1 | Up to 10,000 lbs biomass / 100L concentrate | $2,500 | $2,558.30 |\n' +
-        '| Tier 2 | 10,001–50,000 lbs / 101–350L | $5,000 | $5,114.55 |\n' +
-        '| Tier 3 | 50,001–150,000 lbs / 351–650L | $10,000 | $10,227.05 |\n' +
-        '| Tier 4 | 150,001–300,000 lbs / 651–1,000L | $15,000 | $15,339.55 |\n' +
-        '| Tier 5 | 300,001+ lbs / 1,001L+ | $20,000 | $20,452.04 |\n\n' +
+        '• **Tier 1** (Up to 10k lbs / 100L): **$2,500** _($2,558.30 w/ CC)_\n' +
+        '• **Tier 2** (10k–50k lbs / 101–350L): **$5,000** _($5,114.55 w/ CC)_\n' +
+        '• **Tier 3** (50k–150k lbs / 351–650L): **$10,000** _($10,227.05 w/ CC)_\n' +
+        '• **Tier 4** (150k–300k lbs / 651–1k L): **$15,000** _($15,339.55 w/ CC)_\n' +
+        '• **Tier 5** (300k+ lbs / 1,001L+): **$20,000** _($20,452.04 w/ CC)_\n\n' +
         '_Note: Nonliquid concentrates = 1 liter per 1,000 grams._\n\n' +
         'Ready to apply?';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Business Intake', 'Grower Outdoor Fees', 'Dispensary Fees', 'Main Menu'] } as any]);
@@ -3592,15 +3588,13 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     if (lower.includes('grower fee') || lower === 'grower fees') {
       response = '🌿 **GROWER — Indoor / Greenhouse / Light Deprivation Fees**\n' +
         '_Per 63 O.S. § 427.14_\n\n' +
-        '| Tier | Canopy Size | Fee | Total w/ CC |\n' +
-        '|------|------------|-----|-------------|\n' +
-        '| Tier 1 | Up to 10,000 sq ft | $2,500 | $2,558.30 |\n' +
-        '| Tier 2 | 10,001–20,000 sq ft | $5,000 | $5,114.55 |\n' +
-        '| Tier 3 | 20,001–40,000 sq ft | $10,000 | $10,227.05 |\n' +
-        '| Tier 4 | 40,001–60,000 sq ft | $20,000 | $20,452.04 |\n' +
-        '| Tier 5 | 60,001–80,000 sq ft | $30,000 | $30,677.05 |\n' +
-        '| Tier 6 | 80,001–99,999 sq ft | $40,000 | $40,902.05 |\n' +
-        '| Tier 7 | 100,000+ sq ft | $50,000 + $0.25/sq ft | Varies |\n\n' +
+        '• **Tier 1** (Up to 10k sq ft): **$2,500** _($2,558.30 w/ CC)_\n' +
+        '• **Tier 2** (10k–20k sq ft): **$5,000** _($5,114.55 w/ CC)_\n' +
+        '• **Tier 3** (20k–40k sq ft): **$10,000** _($10,227.05 w/ CC)_\n' +
+        '• **Tier 4** (40k–60k sq ft): **$20,000** _($20,452.04 w/ CC)_\n' +
+        '• **Tier 5** (60k–80k sq ft): **$30,000** _($30,677.05 w/ CC)_\n' +
+        '• **Tier 6** (80k–99,999 sq ft): **$40,000** _($40,902.05 w/ CC)_\n' +
+        '• **Tier 7** (100k+ sq ft): **$50,000 + $0.25/sq ft**\n\n' +
         'Want outdoor acreage fees instead?';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Grower Outdoor Fees', 'Processor Fees', 'Dispensary Fees', 'Start Business Intake'] } as any]);
       setIsTyping(false);

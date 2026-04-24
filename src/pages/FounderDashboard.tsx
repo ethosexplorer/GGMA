@@ -1430,31 +1430,39 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       <div className="bg-white border border-slate-200 rounded-[2.5rem] shadow-sm overflow-hidden p-8">
         <h3 className="font-black text-slate-800 text-lg mb-6 flex items-center gap-3"><Clock size={20} className="text-indigo-600" /> My Upcoming Appointments & Tickets</h3>
         
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
           <div className="p-4 rounded-xl bg-purple-50 border border-purple-100 flex items-center gap-3">
              <div className="w-4 h-4 rounded-full bg-purple-600"></div>
              <span className="text-xs font-bold text-slate-700">Direct Priority (Shantell)</span>
           </div>
           <div className="p-4 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center gap-3">
              <div className="w-4 h-4 rounded-full bg-indigo-600"></div>
-             <span className="text-xs font-bold text-slate-700">RIP Intelligence / Ops</span>
+             <span className="text-xs font-bold text-slate-700">RIP Intel / Ops</span>
           </div>
           <div className="p-4 rounded-xl bg-amber-50 border border-amber-100 flex items-center gap-3">
              <div className="w-4 h-4 rounded-full bg-amber-500"></div>
-             <span className="text-xs font-bold text-slate-700">SINC / Business Compliance</span>
+             <span className="text-xs font-bold text-slate-700">SINC / Compliance</span>
           </div>
           <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center gap-3">
              <div className="w-4 h-4 rounded-full bg-emerald-500"></div>
-             <span className="text-xs font-bold text-slate-700">Telehealth / Patients</span>
+             <span className="text-xs font-bold text-slate-700">Telehealth</span>
+          </div>
+          <div className="p-4 rounded-xl bg-cyan-50 border border-cyan-100 flex items-center gap-3">
+             <div className="w-4 h-4 rounded-full bg-cyan-500"></div>
+             <span className="text-xs font-bold text-slate-700">State Authority</span>
+          </div>
+          <div className="p-4 rounded-xl bg-red-50 border border-red-100 flex items-center gap-3">
+             <div className="w-4 h-4 rounded-full bg-red-600"></div>
+             <span className="text-xs font-bold text-slate-700">Federal Oversight</span>
           </div>
         </div>
 
         <div className="space-y-4">
            {[
              { time: 'Today, 10:00 AM', t: 'Direct Escalation (Human Coord)', e: 'Apex Health CEO', c: 'bg-purple-100 border-purple-200 text-purple-900', dot: 'bg-purple-600', type: 'Call' },
-             { time: 'Today, 1:30 PM', t: 'Business License Review', e: 'GreenLeaf Farms', c: 'bg-amber-50 border-amber-200 text-amber-900', dot: 'bg-amber-500', type: 'Appointment' },
+             { time: 'Today, 1:30 PM', t: 'OMMA State Regulator Review', e: 'Emily Davis (OK)', c: 'bg-cyan-50 border-cyan-200 text-cyan-900', dot: 'bg-cyan-500', type: 'Call' },
              { time: 'Today, 3:00 PM', t: 'Metrc Integration Sync', e: 'SINC Tech Team', c: 'bg-amber-50 border-amber-200 text-amber-900', dot: 'bg-amber-500', type: 'Ticket' },
-             { time: 'Tomorrow, 9:00 AM', t: 'Field Intel Briefing', e: 'OK-Sector Enforcement', c: 'bg-indigo-50 border-indigo-200 text-indigo-900', dot: 'bg-indigo-600', type: 'Appointment' },
+             { time: 'Tomorrow, 9:00 AM', t: 'DOJ Intel Review', e: 'Federal Oversight Office', c: 'bg-red-50 border-red-200 text-red-900', dot: 'bg-red-600', type: 'Appointment' },
              { time: 'Tomorrow, 11:15 AM', t: 'Telehealth Escalation', e: 'Dr. Smith', c: 'bg-emerald-50 border-emerald-200 text-emerald-900', dot: 'bg-emerald-500', type: 'Call' },
            ].map((item, i) => (
              <div key={i} className={`p-5 rounded-2xl border flex items-center justify-between ${item.c}`}>
