@@ -3129,17 +3129,22 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       const startStr = now.toISOString().replace(/\.\d{3}Z$/, 'Z');
       const endStr = end.toISOString().replace(/\.\d{3}Z$/, 'Z');
 
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+
       const res = await fetch(
         `https://api.calendly.com/event_type_available_times?` +
         `event_type=${encodeURIComponent(CALENDLY_EVENT_TYPE)}&` +
         `start_time=${encodeURIComponent(startStr)}&end_time=${encodeURIComponent(endStr)}`,
         {
+          signal: controller.signal,
           headers: {
             Authorization: `Bearer ${CALENDLY_TOKEN}`,
             'Content-Type': 'application/json',
           },
         }
       );
+      clearTimeout(timeoutId);
       
       if (res.status === 401) {
         setBookingError('AUTH_REQUIRED');
@@ -3387,12 +3392,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     }
 
     if (lower.includes('shantell') || lower === 'speak with shantell') {
-      if ((window as any).Calendly) {
-        (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenenterprize/15-min-meeting' });
-        response = 'I have opened our secure booking portal for you! Please pick a slot that works best for your 15-minute consultation with Shantell. 📅';
-      } else {
-        response = 'Sure! You can book your 15-minute consultation with Shantell instantly via our secure portal: \n\n🔗 **[Book 15min Consultation](https://calendly.com/globalgreenenterprize/15-min-meeting)**';
-      }
+      response = 'Sure! You can book your 15-minute consultation with Shantell instantly via our secure portal: \n\n🔗 **[Book 15min Consultation](https://calendly.com/globalgreenenterprize/15-min-meeting)**';
       setMessages(prev => [...prev, { role: 'bot', text: response }]);
       setIsTyping(false);
       return;
@@ -3502,12 +3502,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     }
 
     if (lower.includes('consultation') || lower.includes('book 15min') || (lower.includes('schedule') && !lower.includes('fee')) || lower.includes('appointment') || lower.includes('slot')) {
-      if ((window as any).Calendly) {
-        (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenenterprize/15-min-meeting' });
-        response = 'I have opened our secure booking portal for you! Please pick a slot that works best for your 15-minute consultation. 📅';
-      } else {
-        response = 'Sure! You can book your 15-minute consultation instantly via our secure portal: \n\n🔗 **[Book 15min Consultation](https://calendly.com/globalgreenenterprize/15-min-meeting)**';
-      }
+      response = 'Sure! You can book your 15-minute consultation instantly via our secure portal: \n\n🔗 **[Book 15min Consultation](https://calendly.com/globalgreenenterprize/15-min-meeting)**';
       setMessages(prev => [...prev, { role: 'bot', text: response }]);
       setIsTyping(false);
       return;
@@ -4835,12 +4830,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       }
     } else if (signupStep === 10) {
       if (lower.includes('yes') || lower.includes('book') || lower.includes('ready') || lower.includes('consultation')) {
-        if ((window as any).Calendly) {
-          (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenenterprize/15-min-meeting' });
-          response = 'I have opened our secure booking portal for your **Telehealth Consultation**. Please pick a slot that works best! 📅';
-        } else {
-          response = 'Sure! You can book your Telehealth consultation instantly via our secure portal: \n\n🔗 **[Book Telehealth Session](https://calendly.com/globalgreenenterprize/15-min-meeting)**';
-        }
+        response = 'Sure! You can book your Telehealth consultation instantly via our secure portal: \n\n🔗 **[Book Telehealth Session](https://calendly.com/globalgreenenterprize/15-min-meeting)**';
       } else if (lower.includes('shantell') || lower.includes('speak')) {
         response = '👤 **Human Care Coordination**\n\nI am routing you to **Shantell Robinson**. When booking, please include a **detailed message** about your needs so we can prepare your file.\n\n📞 **Med Card Line**: 405-492-7487\n📞 **Telehealth Line**: 405-252-1178\n🔗 **[Book a Session via Calendly](https://calendly.com/globalgreenenterprize/15-min-meeting)**';
         setSignupStep(0);
@@ -5249,11 +5239,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
                     </div>
                     <button
                       onClick={() => {
-                        if ((window as any).Calendly) {
-                          (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenenterprize/15-min-meeting' });
-                        } else {
-                          window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
-                        }
+                        window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
                       }}
                       className="w-full bg-[#1a4731] text-white py-3 rounded-xl text-sm font-black hover:bg-[#0f2a1f] transition-all shadow-lg flex items-center justify-center gap-2"
                     >
