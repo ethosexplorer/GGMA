@@ -16,6 +16,7 @@ import {
   MessageCircle,
   TrendingUp,
   Zap,
+  Shield,
 } from 'lucide-react';
 
 // ─── Poll Types ───
@@ -322,7 +323,7 @@ export const FeaturedPoll = () => {
 
   if (!isExpanded) {
     return (
-      <div style={{ background: 'linear-gradient(90deg, #1a4731 0%, #065f46 100%)' }} className="border-b border-emerald-900/30">
+      <div className="bg-gradient-to-r from-emerald-950 to-emerald-900 border-b border-emerald-900/30">
         <div className="max-w-7xl mx-auto px-6 py-2 flex items-center justify-between">
           <button onClick={() => setIsExpanded(true)} className="flex items-center gap-2 text-emerald-200 hover:text-white transition-colors text-xs font-bold">
             <Vote size={14} />
@@ -336,11 +337,11 @@ export const FeaturedPoll = () => {
   }
 
   return (
-    <div style={{ background: 'linear-gradient(135deg, #0d2b1e 0%, #1a4731 50%, #065f46 100%)' }} className="border-b border-emerald-700/30 relative overflow-hidden">
-      {/* Background Pattern — Safari-safe solid circles instead of blur */}
-      <div className="absolute inset-0" style={{ opacity: 0.05 }}>
-        <div className="absolute top-0 left-0 w-64 h-64 rounded-full" style={{ background: 'radial-gradient(circle, #34d399 0%, transparent 70%)' }} />
-        <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full" style={{ background: 'radial-gradient(circle, #4ade80 0%, transparent 70%)' }} />
+    <div className="bg-gradient-to-br from-emerald-950 via-emerald-900 to-emerald-800 border-b border-emerald-700/30 relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute top-0 left-0 w-64 h-64 bg-emerald-400 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-green-400 rounded-full blur-3xl" />
       </div>
 
       <div className="max-w-6xl mx-auto px-6 py-6 relative z-10">

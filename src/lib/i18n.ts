@@ -102,7 +102,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     'nav.ggmaSector': 'GGMA Sector',
     'nav.ripIntelligence': 'RIP Intelligence',
     'nav.sincCompliance': 'SINC Compliance',
-    'nav.bookConcierge': 'Book with GGE AI Concierge',
+    'nav.bookConcierge': 'Chat with SYLARA OUR AI Cannabis Concierge',
     'hero.tagline': 'GLOBAL GREEN ENTERPRISE INC INTRODUCING',
     'hero.title1': 'The Gold Standard in',
     'hero.title2': 'Compliance Infrastructure',

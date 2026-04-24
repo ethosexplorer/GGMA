@@ -139,7 +139,106 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        {[\n          { label: 'Active States', value: '42', trend: '+2', color: 'blue' },\n          { label: 'AI Sync Rate', value: '99.9%', trend: 'Optimal', color: 'emerald' },\n          { label: 'Law Enforcement Units', value: '842', trend: '+12', color: 'red' },\n          { label: 'Patient Certificates', value: '891,022', trend: '+45k', color: 'indigo' },\n        ].map((stat, i) => (\n          <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">\n            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">{stat.label}</p>\n            <div className="flex items-end justify-between">\n              <h3 className="text-3xl font-black text-slate-800">{stat.value}</h3>\n              <span className="text-[10px] font-bold px-2 py-1 bg-slate-100 rounded-lg text-slate-600">{stat.trend}</span>\n            </div>\n          </div>\n        ))}\n      </div>\n\n      {/* 🗳️ COMMUNITY POLLS ANALYTICS — Founder Only */}\n      <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">\n        <div className="flex items-center justify-between mb-6">\n          <h3 className="text-lg font-bold text-slate-800 flex items-center gap-3">\n            <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl flex items-center justify-center text-white shadow-lg"><BarChart3 size={20} /></div>\n            Community Polls Command\n          </h3>\n          <span className="px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-bold rounded-full border border-emerald-100 uppercase tracking-widest">Live Data</span>\n        </div>\n        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">\n          {[\n            { label: 'Total Votes', value: '87,420', trend: '+2.4k today', color: 'text-emerald-600' },\n            { label: 'Active Polls', value: '20', trend: '8 categories', color: 'text-indigo-600' },\n            { label: 'Engagement Rate', value: '34.2%', trend: '+8.1% vs last week', color: 'text-amber-600' },\n            { label: 'Comments Submitted', value: '1,247', trend: '+89 today', color: 'text-blue-600' },\n          ].map((s, i) => (\n            <div key={i} className="p-4 bg-slate-50 rounded-2xl border border-slate-100">\n              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{s.label}</p>\n              <p className={`text-2xl font-black ${s.color}`}>{s.value}</p>\n              <p className="text-[10px] text-slate-500 font-bold mt-1">{s.trend}</p>\n            </div>\n          ))}\n        </div>\n        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">\n          {/* Top Polls by Engagement */}\n          <div className="border border-slate-100 rounded-2xl p-4">\n            <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">🔥 Top Polls by Engagement</h4>\n            <div className="space-y-3">\n              {[\n                { q: 'Should cannabis be rescheduled from Schedule I?', v: '5,911', cat: 'Legal', pct: 92 },\n                { q: 'Do you believe cannabis is a natural source of healing?', v: '3,880', cat: 'Healing', pct: 87 },\n                { q: 'Should past cannabis convictions be expunged?', v: '5,751', cat: 'Legal', pct: 85 },\n                { q: 'Where should cannabis tax revenue go?', v: '7,096', cat: 'Economic', pct: 82 },\n                { q: 'Has the stigma around cannabis changed?', v: '5,663', cat: 'Culture', pct: 78 },\n              ].map((p, i) => (\n                <div key={i} className="flex items-center gap-3">\n                  <span className="text-xs font-black text-slate-300 w-5">{i+1}</span>\n                  <div className="flex-1 min-w-0">\n                    <p className="text-xs font-bold text-slate-700 truncate">{p.q}</p>\n                    <div className="flex items-center gap-2 mt-1">\n                      <span className="text-[9px] font-black text-slate-400 uppercase">{p.v} votes</span>\n                      <span className="text-[9px] font-black px-1.5 py-0.5 bg-indigo-50 text-indigo-600 rounded">{p.cat}</span>\n                    </div>\n                  </div>\n                  <div className="w-16 text-right">\n                    <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">\n                      <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${p.pct}%` }} />\n                    </div>\n                    <span className="text-[9px] font-black text-slate-400">{p.pct}%</span>\n                  </div>\n                </div>\n              ))}\n            </div>\n          </div>\n          {/* Category Breakdown */}\n          <div className="border border-slate-100 rounded-2xl p-4">\n            <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">📊 Votes by Category</h4>\n            <div className="space-y-3">\n              {[\n                { cat: 'Healing & Medical', votes: 15420, pct: 18, color: 'bg-emerald-500' },\n                { cat: 'Legal & Expungement', votes: 14200, pct: 16, color: 'bg-blue-600' },\n                { cat: 'Economic & Business', votes: 12890, pct: 15, color: 'bg-amber-500' },\n                { cat: 'Political & Policy', votes: 11340, pct: 13, color: 'bg-red-500' },\n                { cat: 'Culture & Lifestyle', votes: 10560, pct: 12, color: 'bg-pink-500' },\n                { cat: 'Demographics', votes: 9800, pct: 11, color: 'bg-indigo-500' },\n                { cat: 'Education', votes: 7450, pct: 9, color: 'bg-purple-500' },\n                { cat: 'Growth & Priorities', votes: 5760, pct: 6, color: 'bg-teal-500' },\n              ].map((c, i) => (\n                <div key={i} className="flex items-center gap-3">\n                  <div className={`w-2 h-2 rounded-full ${c.color} shrink-0`} />\n                  <span className="text-xs font-bold text-slate-700 flex-1">{c.cat}</span>\n                  <span className="text-[10px] font-black text-slate-400">{c.votes.toLocaleString()}</span>\n                  <div className="w-20">\n                    <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">\n                      <div className={`h-full rounded-full ${c.color}`} style={{ width: `${c.pct}%` }} />\n                    </div>\n                  </div>\n                  <span className="text-[10px] font-black text-slate-400 w-8 text-right">{c.pct}%</span>\n                </div>\n              ))}\n            </div>\n          </div>\n        </div>\n      </div>
+        {[
+          { label: 'Active States', value: '42', trend: '+2', color: 'blue' },
+          { label: 'AI Sync Rate', value: '99.9%', trend: 'Optimal', color: 'emerald' },
+          { label: 'Law Enforcement Units', value: '842', trend: '+12', color: 'red' },
+          { label: 'Patient Certificates', value: '891,022', trend: '+45k', color: 'indigo' },
+        ].map((stat, i) => (
+          <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">{stat.label}</p>
+            <div className="flex items-end justify-between">
+              <h3 className="text-3xl font-black text-slate-800">{stat.value}</h3>
+              <span className="text-[10px] font-bold px-2 py-1 bg-slate-100 rounded-lg text-slate-600">{stat.trend}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* 🗳️ COMMUNITY POLLS ANALYTICS — Founder Only */}
+      <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-bold text-slate-800 flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl flex items-center justify-center text-white shadow-lg"><BarChart3 size={20} /></div>
+            Community Polls Command
+          </h3>
+          <span className="px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-bold rounded-full border border-emerald-100 uppercase tracking-widest">Live Data</span>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          {[
+            { label: 'Total Votes', value: '87,420', trend: '+2.4k today', color: 'text-emerald-600' },
+            { label: 'Active Polls', value: '20', trend: '8 categories', color: 'text-indigo-600' },
+            { label: 'Engagement Rate', value: '34.2%', trend: '+8.1% vs last week', color: 'text-amber-600' },
+            { label: 'Comments Submitted', value: '1,247', trend: '+89 today', color: 'text-blue-600' },
+          ].map((s, i) => (
+            <div key={i} className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{s.label}</p>
+              <p className={`text-2xl font-black ${s.color}`}>{s.value}</p>
+              <p className="text-[10px] text-slate-500 font-bold mt-1">{s.trend}</p>
+            </div>
+          ))}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* Top Polls by Engagement */}
+          <div className="border border-slate-100 rounded-2xl p-4">
+            <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">🔥 Top Polls by Engagement</h4>
+            <div className="space-y-3">
+              {[
+                { q: 'Should cannabis be rescheduled from Schedule I?', v: '5,911', cat: 'Legal', pct: 92 },
+                { q: 'Do you believe cannabis is a natural source of healing?', v: '3,880', cat: 'Healing', pct: 87 },
+                { q: 'Should past cannabis convictions be expunged?', v: '5,751', cat: 'Legal', pct: 85 },
+                { q: 'Where should cannabis tax revenue go?', v: '7,096', cat: 'Economic', pct: 82 },
+                { q: 'Has the stigma around cannabis changed?', v: '5,663', cat: 'Culture', pct: 78 },
+              ].map((p, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <span className="text-xs font-black text-slate-300 w-5">{i+1}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold text-slate-700 truncate">{p.q}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-[9px] font-black text-slate-400 uppercase">{p.v} votes</span>
+                      <span className="text-[9px] font-black px-1.5 py-0.5 bg-indigo-50 text-indigo-600 rounded">{p.cat}</span>
+                    </div>
+                  </div>
+                  <div className="w-16 text-right">
+                    <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${p.pct}%` }} />
+                    </div>
+                    <span className="text-[9px] font-black text-slate-400">{p.pct}%</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          {/* Category Breakdown */}
+          <div className="border border-slate-100 rounded-2xl p-4">
+            <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">📊 Votes by Category</h4>
+            <div className="space-y-3">
+              {[
+                { cat: 'Healing & Medical', votes: 15420, pct: 18, color: 'bg-emerald-500' },
+                { cat: 'Legal & Expungement', votes: 14200, pct: 16, color: 'bg-blue-600' },
+                { cat: 'Economic & Business', votes: 12890, pct: 15, color: 'bg-amber-500' },
+                { cat: 'Political & Policy', votes: 11340, pct: 13, color: 'bg-red-500' },
+                { cat: 'Culture & Lifestyle', votes: 10560, pct: 12, color: 'bg-pink-500' },
+                { cat: 'Demographics', votes: 9800, pct: 11, color: 'bg-indigo-500' },
+                { cat: 'Education', votes: 7450, pct: 9, color: 'bg-purple-500' },
+                { cat: 'Growth & Priorities', votes: 5760, pct: 6, color: 'bg-teal-500' },
+              ].map((c, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <div className={`w-2 h-2 rounded-full ${c.color} shrink-0`} />
+                  <span className="text-xs font-bold text-slate-700 flex-1">{c.cat}</span>
+                  <span className="text-[10px] font-black text-slate-400">{c.votes.toLocaleString()}</span>
+                  <div className="w-20">
+                    <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className={`h-full rounded-full ${c.color}`} style={{ width: `${c.pct}%` }} />
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-black text-slate-400 w-8 text-right">{c.pct}%</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
          <div className="lg:col-span-2 bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">

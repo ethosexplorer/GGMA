@@ -44,7 +44,7 @@ export const LanguageSelector = ({ currentLanguage, onLanguageChange, compact = 
     setSearch('');
   };
 
-  const LanguageItem = ({ lang }: { lang: Language }) => (
+  const LanguageItem: React.FC<{ lang: Language }> = ({ lang }) => (
     <button
       onClick={() => handleSelect(lang.code)}
       className={`w-full flex items-center gap-3 px-4 py-2.5 hover:bg-emerald-50 transition-colors text-left ${

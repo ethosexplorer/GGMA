@@ -1254,7 +1254,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] overflow-x-hidden">
+    <div className="min-h-screen bg-slate-50 overflow-x-hidden">
       {/* URGENT PLATFORM ALERT TICKER */}
       <div className="bg-red-600 text-white py-2 overflow-hidden whitespace-nowrap border-b border-red-700 relative z-[60]">
         <div className="inline-block animate-marquee-fast font-black text-sm uppercase tracking-widest">
@@ -1314,10 +1314,10 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
           <div className="h-6 w-px bg-slate-200 mx-2" />
           <button 
             onClick={() => onNavigate('larry-chatbot')} 
-            className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-[#1a4731] rounded-xl border border-emerald-100 font-bold hover:bg-emerald-100 transition-all shadow-sm group"
+            className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-950 rounded-xl border border-emerald-100 font-bold hover:bg-emerald-100 transition-all shadow-sm group"
           >
-            <MessageCircle size={16} className="text-emerald-600 group-hover:scale-110 transition-transform" />
-            Chat with SYLARA Our AI Cannabis Concierge
+            <Calendar size={16} className="text-emerald-600 group-hover:scale-110 transition-transform" />
+            Chat with SYLARA OUR AI Cannabis Concierge
           </button>
         </div>
 
@@ -1331,9 +1331,9 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
       <FeaturedPoll />
 
       {/* "IN THE KNOW" NEWS TICKER */}
-      <div className="bg-[#1a4731] text-emerald-100 py-3 border-b border-emerald-900/20 overflow-hidden whitespace-nowrap relative z-40">
+      <div className="bg-emerald-950 text-emerald-100 py-3 border-b border-emerald-900/20 overflow-hidden whitespace-nowrap relative z-40">
         <div className="inline-block animate-marquee font-bold text-xs uppercase tracking-[0.2em]">
-          <span className="bg-emerald-400 text-[#1a4731] px-2 py-0.5 rounded text-[9px] mr-4">IN THE KNOW</span>
+          <span className="bg-emerald-400 text-emerald-950 px-2 py-0.5 rounded text-[9px] mr-4">IN THE KNOW</span>
           {inTheKnowNews.join(' • ')} &nbsp; • &nbsp; {inTheKnowNews.join(' • ')}
         </div>
       </div>
@@ -1342,7 +1342,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
       <section className="pt-20 pb-20 px-6 relative overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[120%] h-[500px] bg-gradient-to-b from-emerald-50/50 to-transparent -z-10 blur-3xl"></div>
         <div className="max-w-4xl mx-auto text-center space-y-8">
-          <p className="text-[#1a4731] font-bold tracking-[0.3em] uppercase text-xs mb-[-10px] opacity-70">Global Green Enterprise Inc introducing</p>
+          <p className="text-emerald-950 font-bold tracking-[0.3em] uppercase text-xs mb-[-10px] opacity-70">Global Green Enterprise Inc introducing</p>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
             Infrastructure Active: 50 States + DC Secure
@@ -1474,7 +1474,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
           {/* Founder Credentials + Company Stats */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
             {/* Founder Card */}
-            <div className="bg-gradient-to-br from-[#1a4731] to-[#0d2b1e] rounded-2xl p-8 text-white relative overflow-hidden">
+            <div className="bg-gradient-to-br from-emerald-900 to-emerald-950 rounded-2xl p-8 text-white relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full -translate-y-8 translate-x-8 blur-2xl"></div>
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
@@ -1526,7 +1526,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
                   { value: '5', label: 'Gov Levels', sub: 'Federal → City Registered' },
                 ].map((stat, i) => (
                   <div key={i} className="text-center p-3 rounded-xl bg-slate-50 hover:bg-emerald-50 transition-colors">
-                    <p className="text-2xl font-black text-[#1a4731]">{stat.value}</p>
+                    <p className="text-2xl font-black text-emerald-950">{stat.value}</p>
                     <p className="text-xs font-bold text-slate-700">{stat.label}</p>
                     <p className="text-[10px] text-slate-400">{stat.sub}</p>
                   </div>
@@ -1704,7 +1704,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
       </section>
 
       {/* C3 Introduction Section */}
-      <section className="py-24 px-6 bg-gradient-to-br from-slate-900 to-[#1a4731] text-white relative overflow-hidden">
+      <section className="py-24 px-6 bg-gradient-to-br from-slate-900 to-emerald-950 text-white relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
           <div className="grid grid-cols-12 h-full">
             {Array.from({ length: 48 }).map((_, i) => (
@@ -1748,7 +1748,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
             <p className="text-emerald-100/40 text-sm mb-8 relative">Integrated across all GGMA, RIP, and SINC sectors</p>
             <button 
               onClick={() => onNavigate('larry-chatbot')}
-              className="px-10 py-4 bg-emerald-500 hover:bg-emerald-400 text-[#1a4731] rounded-2xl font-black transition-all shadow-xl shadow-emerald-500/20 relative"
+              className="px-10 py-4 bg-emerald-500 hover:bg-emerald-400 text-emerald-950 rounded-2xl font-black transition-all shadow-xl shadow-emerald-500/20 relative"
             >
               View Your Score Potential
             </button>
@@ -3234,6 +3234,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     try {
       await new Promise(r => setTimeout(r, 800 + Math.random() * 600));
 
+    let response = '';
     const lower = text.toLowerCase();
     
     // Handle Subscription / Pricing Keywords → redirect to landing page pricing
@@ -3310,7 +3311,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       setCurrentPersona('sylara');
     }
 
-    let response = '';
+    // response variable already declared above
 
     // ── Global Keywords (Always active) ──────────────────────────────────────
     if (lower.includes('c3') || lower.includes('compassion score') || lower.includes('community score')) {
