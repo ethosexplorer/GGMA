@@ -208,6 +208,14 @@ const JUDICIAL_PROFILES = [
 
 const ACTIVE_CASES = [
   {
+    title: 'Robinson v. Oglala Sioux Tribe et al. (Appellate Case No. 25-6143)',
+    court: '10th Circuit Court of Appeals (Origin: W.D. Oklahoma)',
+    type: 'IP Theft / Sovereign Immunity Appeal',
+    status: 'Active / Pending Panel Decision',
+    nextHearing: 'Waiting on Panel (Briefs Ordered Jan 14, 2026)',
+    summary: 'Plaintiff Shantell Robinson appeals the dismissal of an IP infringement case involving the unauthorized appropriation of the "Omi Credit" platform. The district court dismissed via tribal sovereign immunity. The 10th Circuit is currently reviewing the appeal, with defendants ordered to submit paper copies as of Jan 14, 2026.',
+  },
+  {
     title: 'Canna Provisions v. DEA',
     court: '1st Circuit',
     type: 'Regulatory Challenge',
