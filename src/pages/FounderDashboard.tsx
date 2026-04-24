@@ -58,6 +58,11 @@ const NAV_ITEMS = [
 ];
 
 export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | Promise<void>, user?: any }) => {
+  const isMonica = user?.email?.toLowerCase() === 'mgreenstkc@gmail.com';
+  const firstName = user?.displayName ? user.displayName.split(' ')[0] : 'Shantell';
+  const fullName = user?.displayName || 'Shantell Robinson';
+  const userTitle = isMonica ? 'Chief Executive Compliance Director' : 'Founder';
+
   const [activeTab, setActiveTab] = useState('overview');
   const [regSearch, setRegSearch] = useState('');
   const [regCat, setRegCat] = useState<string | null>(null);
@@ -195,7 +200,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                 { term: '"Global Green Hybrid Platform"', volume: '298,100', pct: 85 },
                 { term: '"RIP Enforcement Login"', volume: '150,420', pct: 60 },
                 { term: '"SINC Compliance Dashboard"', volume: '95,100', pct: 45 },
-                { term: '"Shantell Robinson Cannabis Tech"', volume: '62,800', pct: 30 },
+                { term: `"${fullName} Cannabis Tech"`, volume: '62,800', pct: 30 },
               ].map((term, i) => (
                 <div key={i} className="flex items-center gap-3">
                   <span className="text-xs font-black text-slate-300 w-5">{i+1}</span>
@@ -503,10 +508,10 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
              </div>
              <div className="bg-white/60 backdrop-blur-md border border-amber-200 rounded-2xl p-4 flex items-center justify-between gap-4 relative z-10">
                 <div className="flex items-center gap-4">
-                   <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-white font-black text-xs">SR</div>
+                   <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-white font-black text-xs">{firstName.charAt(0)}{(fullName.split(' ')[1] || '').charAt(0)}</div>
                    <div>
                       <p className="text-sm font-bold text-slate-800">Metrc API Training & Certification Test</p>
-                      <p className="text-xs text-slate-500">Assigned: Shantell Robinson • Estimated: 2.5 Hours</p>
+                      <p className="text-xs text-slate-500">Assigned: {fullName} • Estimated: 2.5 Hours</p>
                    </div>
                 </div>
                 <button onClick={() => window.open('https://www.metrc.com/integrators/training/', '_blank')} className="px-6 py-2.5 bg-amber-600 text-white rounded-xl text-xs font-black hover:bg-amber-700 transition-all shadow-lg shadow-amber-900/10">Launch Certification Portal</button>
@@ -1502,7 +1507,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
     <div className="space-y-6">
       <div className="flex justify-between items-center">
          <div>
-            <h2 className="text-3xl font-black text-slate-900 tracking-tight italic">Shantell's Internal Scheduler</h2>
+            <h2 className="text-3xl font-black text-slate-900 tracking-tight italic">{firstName}'s Internal Scheduler</h2>
             <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Private Executive Queue • Color-Coded Departments</p>
          </div>
       </div>
@@ -1513,7 +1518,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
           <div className="p-4 rounded-xl bg-purple-50 border border-purple-100 flex items-center gap-3">
              <div className="w-4 h-4 rounded-full bg-purple-600"></div>
-             <span className="text-xs font-bold text-slate-700">Direct Priority (Shantell)</span>
+             <span className="text-xs font-bold text-slate-700">Direct Priority ({firstName})</span>
           </div>
           <div className="p-4 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center gap-3">
              <div className="w-4 h-4 rounded-full bg-indigo-600"></div>
@@ -1632,7 +1637,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                <div className="space-y-4">
                   {[
                     { 
-                      dept: 'Executive & Strategy', head: 'Shantell Robinson (Founder)', 
+                      dept: 'Executive & Strategy', head: `${fullName} (${userTitle})`, 
                       ai: { count: 12, desc: 'Sylara Global Monitors, Data Aggregators' }, 
                       humans: { count: 3, desc: 'Founder, CEO, Chief Legal' }, 
                       color: 'bg-indigo-500' 

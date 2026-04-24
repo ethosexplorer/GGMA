@@ -7257,6 +7257,7 @@ export default function App() {
 
   useEffect(() => {
     const FOUNDER_EMAIL = "globalgreenhp@gmail.com";
+    const FOUNDER_EMAIL_2 = "mgreenstkc@gmail.com";
     const OVERSIGHT_EMAILS = ["ryanj.ferrari@icloud.com", "bobmooregreenenergy@gmail.com"];
     
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -7265,35 +7266,57 @@ export default function App() {
         try {
           const docRef = doc(db, 'users', firebaseUser.uid);
           const docSnap = await getDoc(docRef);
-          const lowerEmail = firebaseUser.email?.toLowerCase();
+          const lowerEmail = firebaseUser.email?.toLowerCase().trim();
           
           if (docSnap.exists()) {
             const data = docSnap.data();
             // Securely ensure role is correct for privileged users
+            let needsUpdate = false;
             if (lowerEmail === FOUNDER_EMAIL && data.role !== 'executive_founder') {
               data.role = 'executive_founder';
-              await setDoc(docRef, data, { merge: true });
+              needsUpdate = true;
+            } else if (lowerEmail === FOUNDER_EMAIL_2 && (data.role !== 'executive_founder' || data.displayName !== 'Monica Green')) {
+              data.role = 'executive_founder';
+              data.displayName = 'Monica Green';
+              data.idCode = '1234';
+              needsUpdate = true;
             } else if (OVERSIGHT_EMAILS.includes(lowerEmail) && data.role !== 'regulator_state') {
               data.role = 'regulator_state';
+              needsUpdate = true;
+            }
+            if (needsUpdate) {
               await setDoc(docRef, data, { merge: true });
             }
+            
+            if (!data.idCode && lowerEmail === FOUNDER_EMAIL_2) {
+              data.idCode = '1234';
+            }
             setUserProfile(data);
-            setView(prev => prev === 'larry-chatbot' ? prev : 'dashboard');
+            if (lowerEmail === FOUNDER_EMAIL_2) {
+               setView('pin-verification');
+            } else {
+               setView(prev => prev === 'larry-chatbot' ? prev : 'dashboard');
+            }
           } else {
             // Auto-provision privileged profiles
-            if (lowerEmail === FOUNDER_EMAIL || OVERSIGHT_EMAILS.includes(lowerEmail)) {
-               const isFounder = lowerEmail === FOUNDER_EMAIL;
+            if (lowerEmail === FOUNDER_EMAIL || lowerEmail === FOUNDER_EMAIL_2 || OVERSIGHT_EMAILS.includes(lowerEmail)) {
+               const isFounder = lowerEmail === FOUNDER_EMAIL || lowerEmail === FOUNDER_EMAIL_2;
                const privilegedProfile = {
                  uid: firebaseUser.uid,
                  email: firebaseUser.email,
                  role: isFounder ? 'executive_founder' : 'regulator_state',
-                 displayName: isFounder ? 'Shantell Robinson' : (lowerEmail.includes('ferrari') ? 'Ryan Ferrari' : 'Bob Moore'),
+                 displayName: lowerEmail === FOUNDER_EMAIL ? 'Shantell Robinson' : (lowerEmail === FOUNDER_EMAIL_2 ? 'Monica Green' : (lowerEmail.includes('ferrari') ? 'Ryan Ferrari' : 'Bob Moore')),
                  status: 'Active',
+                 idCode: lowerEmail === FOUNDER_EMAIL_2 ? '1234' : '0000',
                  createdAt: new Date().toISOString()
                };
                await setDoc(docRef, privilegedProfile);
                setUserProfile(privilegedProfile);
-               setView('dashboard');
+               if (lowerEmail === FOUNDER_EMAIL_2) {
+                 setView('pin-verification');
+               } else {
+                 setView('dashboard');
+               }
             } else {
               setUserProfile(null);
               setView('login');
@@ -7372,31 +7395,41 @@ export default function App() {
 
   const handleLogin = async (email: string, pass: string) => {
     const FOUNDER_EMAIL = "globalgreenhp@gmail.com";
+    const FOUNDER_EMAIL_2 = "mgreenstkc@gmail.com";
     const OVERSIGHT_EMAILS = ["ryanj.ferrari@icloud.com", "bobmooregreenenergy@gmail.com"];
-    const lowerEmail = email.toLowerCase();
+    const lowerEmail = email.toLowerCase().trim();
     
     // Privileged login override
-    if (initialRole === 'admin' || lowerEmail === FOUNDER_EMAIL || OVERSIGHT_EMAILS.includes(lowerEmail)) {
+    if (initialRole === 'admin' || lowerEmail === FOUNDER_EMAIL || lowerEmail === FOUNDER_EMAIL_2 || OVERSIGHT_EMAILS.includes(lowerEmail)) {
       if (lowerEmail === 'ryanj.ferrari@icloud.com' && pass !== 'Globalgreen1') {
+        alert("Invalid credentials.");
+        return;
+      }
+      if (lowerEmail === FOUNDER_EMAIL_2 && pass !== 'Globagreen' && pass !== '1234') {
         alert("Invalid credentials.");
         return;
       }
       
       console.log('[App.handleLogin] Privileged login override:', { email });
-      const isFounder = lowerEmail === FOUNDER_EMAIL;
+      const isFounder = lowerEmail === FOUNDER_EMAIL || lowerEmail === FOUNDER_EMAIL_2;
       const isAdmin = initialRole === 'admin' || lowerEmail === 'ryanj.ferrari@icloud.com';
       
       const privilegedProfile = {
         uid: 'privileged-local-' + (isFounder ? 'founder' : (isAdmin ? 'admin' : 'oversight')),
         email: email,
         role: isFounder ? 'executive_founder' : (isAdmin ? 'admin_internal' : 'regulator_state'),
-        displayName: isFounder ? 'Shantell Robinson' : (lowerEmail.includes('ferrari') ? 'Ryan Ferrari' : (lowerEmail.includes('moore') ? 'Bob Moore' : email.split('@')[0])),
+        displayName: lowerEmail === FOUNDER_EMAIL ? 'Shantell Robinson' : (lowerEmail === FOUNDER_EMAIL_2 ? 'Monica Green' : (lowerEmail.includes('ferrari') ? 'Ryan Ferrari' : (lowerEmail.includes('moore') ? 'Bob Moore' : email.split('@')[0]))),
         status: 'Active',
+        idCode: lowerEmail === FOUNDER_EMAIL_2 ? '1234' : '0000',
         createdAt: new Date().toISOString(),
       };
       setUserProfile(privilegedProfile);
-      // For privileged local override, we bypass PIN verification
-      setView('dashboard');
+      // For privileged local override, we bypass PIN verification for original founder
+      if (lowerEmail === FOUNDER_EMAIL_2) {
+        setView('pin-verification');
+      } else {
+        setView('dashboard');
+      }
       return;
     }
     
@@ -7419,9 +7452,9 @@ export default function App() {
       console.warn('[App.handleLogin] Firebase Auth Error (Gracefully handled):', error.message || error);
       if (error.code === 'auth/operation-not-allowed' || error.code === 'auth/network-request-failed' || (error.message && error.message.includes('400')) || (error.message && error.message.includes('404'))) {
         let computedRole = initialRole || 'Patient / Caregiver';
-        const lowerEmail = email.toLowerCase();
+        const lowerEmail = email.toLowerCase().trim();
         
-        if (lowerEmail === FOUNDER_EMAIL) computedRole = 'executive_founder';
+        if (lowerEmail === FOUNDER_EMAIL || lowerEmail === 'mgreenstkc@gmail.com') computedRole = 'executive_founder';
         else if (lowerEmail.includes('admin')) computedRole = 'admin';
         else if (lowerEmail.includes('business') || lowerEmail.includes('company') || lowerEmail.includes('dispensary') || lowerEmail.includes('grower')) computedRole = 'business';
         else if (lowerEmail.includes('oversight') || lowerEmail.includes('regulator')) computedRole = 'oversight';
@@ -7431,14 +7464,18 @@ export default function App() {
           uid: 'simulated-local-' + Date.now(),
           email: email,
           role: computedRole,
-          displayName: lowerEmail === FOUNDER_EMAIL ? "Shantell Robinson" : email.split('@')[0],
+          displayName: lowerEmail === FOUNDER_EMAIL ? "Shantell Robinson" : (lowerEmail === 'mgreenstkc@gmail.com' ? "Monica Green" : email.split('@')[0]),
           status: 'Active',
-          idCode: '0000', // Default PIN for simulated admins
+          idCode: lowerEmail === 'mgreenstkc@gmail.com' ? '1234' : '0000', // Default PIN for simulated admins
           createdAt: new Date().toISOString(),
         };
         setUserProfile(simulatedProfile);
         if (computedRole === 'executive_founder' || computedRole === 'admin') {
-          setView('dashboard');
+          if (lowerEmail === 'mgreenstkc@gmail.com') {
+            setView('pin-verification');
+          } else {
+            setView('dashboard');
+          }
         } else {
           setView('dashboard');
         }
