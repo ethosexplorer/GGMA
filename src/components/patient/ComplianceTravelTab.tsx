@@ -14,7 +14,7 @@ export const ComplianceTravelTab = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-[3rem] p-10 text-white relative overflow-hidden shadow-2xl">
+      <div className="bg-indigo-600 bg-gradient-to-br from-indigo-600 to-blue-700 rounded-[3rem] p-10 text-white relative overflow-hidden shadow-2xl">
          <div className="absolute top-0 right-0 p-10 opacity-10"><Plane size={120} /></div>
          <div className="relative z-10 max-w-xl">
             <h2 className="text-4xl font-black tracking-tight mb-4 leading-none">Nationwide Travel & Reciprocity</h2>
@@ -119,3 +119,4 @@ export const ComplianceTravelTab = () => {
     </div>
   );
 };
+

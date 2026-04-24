@@ -39,7 +39,7 @@ export const ExternalAdminDashboard = ({ onLogout, user }: { onLogout?: () => vo
   const renderOverview = () => (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
       {/* Sylara Greeting */}
-      <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 p-4 rounded-xl flex items-start md:items-center justify-between gap-4 flex-col md:flex-row">
+      <div className="bg-emerald-50 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 p-4 rounded-xl flex items-start md:items-center justify-between gap-4 flex-col md:flex-row">
         <div className="flex items-start gap-4">
           <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center border border-emerald-100 shrink-0">
             <Bot size={20} className="text-emerald-600" />
@@ -222,3 +222,4 @@ export const ExternalAdminDashboard = ({ onLogout, user }: { onLogout?: () => vo
     </div>
   );
 };
+

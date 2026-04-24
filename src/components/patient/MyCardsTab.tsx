@@ -37,7 +37,7 @@ export const MyCardsTab = () => (
     {/* Cards Grid */}
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {myCards.map((card) => (
-        <div key={card.id} className="relative overflow-hidden bg-gradient-to-br from-[#0f2d1e] via-[#1a4731] to-[#0b3320] rounded-2xl p-6 text-white shadow-xl">
+        <div key={card.id} className="relative overflow-hidden bg-[#0f2d1e] bg-gradient-to-br from-[#0f2d1e] via-[#1a4731] to-[#0b3320] rounded-2xl p-6 text-white shadow-xl">
           <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-400/10 rounded-full -translate-y-1/2 translate-x-1/2" />
           <div className="absolute bottom-0 left-0 w-32 h-32 bg-emerald-300/5 rounded-full translate-y-1/2 -translate-x-1/2" />
           
@@ -152,3 +152,4 @@ export const MyCardsTab = () => (
     </div>
   </div>
 );
+

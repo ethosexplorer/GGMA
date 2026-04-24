@@ -374,7 +374,7 @@ export const ComplianceWorkflowConsole = () => {
 
         {activeModule === 'wallet' && (
           <div className="space-y-8 animate-in slide-in-from-right duration-300">
-            <div className="bg-gradient-to-br from-[#1a4731] to-[#0f291c] rounded-[2.5rem] p-10 text-white relative overflow-hidden shadow-2xl">
+            <div className="bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-[#0f291c] rounded-[2.5rem] p-10 text-white relative overflow-hidden shadow-2xl">
                <div className="absolute top-0 right-0 p-10 opacity-10"><Wallet size={120} /></div>
                <div className="relative z-10">
                   <p className="text-emerald-400 text-xs font-black uppercase tracking-[0.2em] mb-2">Care Wallet • Facility Account</p>
@@ -506,3 +506,4 @@ export const ComplianceWorkflowConsole = () => {
     </div>
   );
 };
+

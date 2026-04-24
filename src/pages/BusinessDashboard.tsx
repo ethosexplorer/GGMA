@@ -358,7 +358,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab }: { onLogout?: (
     {/* DASHBOARD HEADER & NAV */}
     <div className="sticky top-4 z-40 flex flex-col xl:flex-row xl:items-center justify-between gap-4 p-2 rounded-[2rem] bg-white/70 backdrop-blur-2xl border border-white/80 shadow-xl shadow-slate-200/40">
       <div className="flex items-center gap-4 pl-4 py-2">
-        <div className="w-12 h-12 bg-gradient-to-br from-[#1a4731] to-[#0f291c] rounded-2xl flex items-center justify-center text-white shadow-inner border border-emerald-900/50">
+        <div className="w-12 h-12 bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-[#0f291c] rounded-2xl flex items-center justify-center text-white shadow-inner border border-emerald-900/50">
           <Building2 size={24} />
         </div>
         <div>
@@ -462,7 +462,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab }: { onLogout?: (
         <div className="w-px h-8 bg-slate-200/80 mx-1 self-center" />
         <button 
           onClick={() => { setDemoUnlocked(true); setActiveTab('home'); }}
-          className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'subscription' ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md shadow-amber-500/20" : "text-slate-500 hover:text-amber-600 hover:bg-slate-200/50")}
+          className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'subscription' ? "bg-amber-500 bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md shadow-amber-500/20" : "text-slate-500 hover:text-amber-600 hover:bg-slate-200/50")}
         >
           <Sparkles size={18} /> Settings
         </button>
@@ -481,7 +481,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab }: { onLogout?: (
       <div className="space-y-6">
         
         {/* Subscription Upsell Banner */}
-        <div className="bg-gradient-to-r from-emerald-800 via-[#1a4731] to-emerald-900 rounded-[2rem] p-5 flex flex-col md:flex-row items-center justify-between text-white shadow-lg shadow-emerald-900/20 mb-4 border border-emerald-700/50 relative overflow-hidden">
+        <div className="bg-emerald-800 bg-gradient-to-r from-emerald-800 via-[#1a4731] to-emerald-900 rounded-[2rem] p-5 flex flex-col md:flex-row items-center justify-between text-white shadow-lg shadow-emerald-900/20 mb-4 border border-emerald-700/50 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-full bg-emerald-500/10 blur-2xl"></div>
           <div className="flex items-center gap-4 relative z-10">
              <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/10"><Sparkles className="text-emerald-300" size={24} /></div>
@@ -498,7 +498,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab }: { onLogout?: (
         {/* TOP ROW WIDGETS (3-Cols) */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
            {/* Compliance Scorecard */}
-           <div className="bg-gradient-to-br from-[#0f291c] via-[#1a4731] to-[#246645] rounded-[2rem] border border-emerald-800/50 p-6 shadow-xl shadow-emerald-900/10 flex flex-col justify-between relative overflow-hidden min-h-[220px]">
+           <div className="bg-[#0f291c] bg-gradient-to-br from-[#0f291c] via-[#1a4731] to-[#246645] rounded-[2rem] border border-emerald-800/50 p-6 shadow-xl shadow-emerald-900/10 flex flex-col justify-between relative overflow-hidden min-h-[220px]">
               <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
               <div className="relative z-10 flex justify-between items-start mb-4">
                  <div>
@@ -512,7 +512,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab }: { onLogout?: (
                  </div>
                  <div className="relative">
                    <div className={cn("absolute inset-0 rounded-full blur-md opacity-60", complianceScore > 90 ? "bg-emerald-400" : complianceScore > 75 ? "bg-amber-400" : "bg-red-500", unresolvedAlerts.length > 0 && "animate-pulse")}></div>
-                   <div className={cn("relative w-16 h-16 rounded-full flex items-center justify-center font-black text-2xl shadow-inner border-[3px]", complianceScore > 90 ? "bg-gradient-to-br from-emerald-400 to-emerald-600 text-white border-emerald-300/50" : complianceScore > 75 ? "bg-gradient-to-br from-amber-400 to-amber-600 text-white border-amber-300/50" : "bg-gradient-to-br from-red-400 to-red-600 text-white border-red-300/50")}>
+                   <div className={cn("relative w-16 h-16 rounded-full flex items-center justify-center font-black text-2xl shadow-inner border-[3px]", complianceScore > 90 ? "bg-emerald-400 bg-gradient-to-br from-emerald-400 to-emerald-600 text-white border-emerald-300/50" : complianceScore > 75 ? "bg-amber-400 bg-gradient-to-br from-amber-400 to-amber-600 text-white border-amber-300/50" : "bg-red-400 bg-gradient-to-br from-red-400 to-red-600 text-white border-red-300/50")}>
                       {complianceScore}
                    </div>
                  </div>
@@ -725,7 +725,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab }: { onLogout?: (
               </div>
            </div>
 
-           <div className="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-[2rem] border border-indigo-200/60 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative overflow-hidden">
+           <div className="bg-indigo-50 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-[2rem] border border-indigo-200/60 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative overflow-hidden">
               <div className="absolute -top-6 -right-6 w-16 h-16 bg-blue-500/10 rounded-full blur-xl"></div>
               <div className="flex justify-between items-center mb-3 relative z-10">
                  <h4 className="font-black text-indigo-900 tracking-tight text-sm">Federal (Sch III)</h4>
@@ -868,9 +868,9 @@ export const BusinessDashboard = ({ onLogout, user, initialTab }: { onLogout?: (
            
            <div className="lg:col-span-1">
               {/* Sylara AI Chat Widget */}
-              <div className="bg-gradient-to-b from-[#1a4731] to-[#0f291c] rounded-2xl shadow-xl overflow-hidden flex flex-col h-full sticky top-[80px]">
+              <div className="bg-[#1a4731] bg-gradient-to-b from-[#1a4731] to-[#0f291c] rounded-2xl shadow-xl overflow-hidden flex flex-col h-full sticky top-[80px]">
                  <div className="p-5 flex items-center gap-3 border-b border-white/10 shrink-0">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white shadow-inner">
+                    <div className="w-10 h-10 rounded-full bg-emerald-400 bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white shadow-inner">
                        <Sparkles size={20} />
                     </div>
                     <div>
@@ -1437,7 +1437,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab }: { onLogout?: (
           <Button icon={FileText}>Export OMMA Report</Button>
         </div>
         {/* Overall Score */}
-        <div className="bg-gradient-to-r from-[#0f291c] to-[#1a4731] rounded-2xl p-6 text-white flex items-center justify-between">
+        <div className="bg-[#0f291c] bg-gradient-to-r from-[#0f291c] to-[#1a4731] rounded-2xl p-6 text-white flex items-center justify-between">
           <div>
             <p className="text-emerald-200 text-xs font-bold uppercase tracking-widest mb-1">Overall Readiness</p>
             <h2 className="text-5xl font-black">{complianceScore}%</h2>
@@ -1574,3 +1574,4 @@ export const BusinessDashboard = ({ onLogout, user, initialTab }: { onLogout?: (
     )}
   </div>
 )};
+

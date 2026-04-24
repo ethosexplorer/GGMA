@@ -198,7 +198,7 @@ export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => voi
               <div className="lg:col-span-2 space-y-6">
                 
                 {/* Sylara Insight */}
-                <div className="bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl border border-slate-700 p-6 flex items-start gap-4 shadow-lg">
+                <div className="bg-slate-900 bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl border border-slate-700 p-6 flex items-start gap-4 shadow-lg">
                   <div className="w-12 h-12 rounded-xl bg-emerald-500 flex items-center justify-center text-white shrink-0 shadow-lg shadow-emerald-900/20">
                     <Activity size={24} />
                   </div>
@@ -376,3 +376,4 @@ export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => voi
     </div>
   );
 };
+

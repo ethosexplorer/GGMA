@@ -118,7 +118,7 @@ export const CareWalletDashboard = ({ onLogout, user }: { onLogout?: () => void,
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               
               {/* Compassion Balance Card */}
-              <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl border border-slate-700 p-8 shadow-xl relative overflow-hidden">
+              <div className="bg-slate-900 bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl border border-slate-700 p-8 shadow-xl relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
                 <div className="relative z-10">
                   <div className="flex justify-between items-start mb-6">
@@ -202,7 +202,7 @@ export const CareWalletDashboard = ({ onLogout, user }: { onLogout?: () => void,
               
               <div className="lg:col-span-2">
                 {/* Sylara Insight */}
-                <div className="bg-gradient-to-r from-blue-900 to-indigo-900 rounded-2xl border border-blue-800 p-6 flex items-start gap-4 shadow-md mb-6">
+                <div className="bg-blue-900 bg-gradient-to-r from-blue-900 to-indigo-900 rounded-2xl border border-blue-800 p-6 flex items-start gap-4 shadow-md mb-6">
                   <div className="w-12 h-12 rounded-xl bg-blue-500 flex items-center justify-center text-white shrink-0 shadow-lg shadow-blue-900/20">
                     <Zap size={24} />
                   </div>
@@ -248,7 +248,7 @@ export const CareWalletDashboard = ({ onLogout, user }: { onLogout?: () => void,
               <div className="space-y-6">
                 
                 {/* NomadCash / Virtual Card */}
-                <div className="bg-gradient-to-br from-purple-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+                <div className="bg-purple-600 bg-gradient-to-br from-purple-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
                   <div className="absolute top-0 right-0 p-4 opacity-20"><CreditCard size={120} /></div>
                   <div className="relative z-10">
                     <div className="flex justify-between items-center mb-8">
@@ -322,3 +322,4 @@ export const CareWalletDashboard = ({ onLogout, user }: { onLogout?: () => void,
     </div>
   );
 };
+

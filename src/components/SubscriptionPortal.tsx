@@ -115,7 +115,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
 
             {/* Quick Upgrade Section */}
             {currentPlan.monthlyPrice < 200 && (
-                <div className="bg-gradient-to-r from-slate-900 to-[#1a4731] p-6 rounded-2xl shadow-xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden group">
+                <div className="bg-slate-900 bg-gradient-to-r from-slate-900 to-[#1a4731] p-6 rounded-2xl shadow-xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden group">
                    <div className="absolute -right-10 -top-10 text-white/5 group-hover:scale-110 transition-transform duration-700">
                      <Zap size={150} />
                    </div>
@@ -166,3 +166,4 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
     </div>
   );
 };
+

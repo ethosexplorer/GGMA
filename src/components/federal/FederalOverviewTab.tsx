@@ -36,7 +36,7 @@ const recentActivity = [
 export const FederalOverviewTab = () => (
   <div className="space-y-6">
     {/* BREAKING NEWS BANNER */}
-    <div className="bg-gradient-to-r from-red-900/80 via-amber-900/60 to-red-900/80 p-5 rounded-2xl border border-red-500/50 shadow-lg shadow-red-900/20 relative overflow-hidden animate-in fade-in slide-in-from-top-4 duration-700">
+    <div className="bg-red-900 bg-gradient-to-r from-red-900/80 via-amber-900/60 to-red-900/80 p-5 rounded-2xl border border-red-500/50 shadow-lg shadow-red-900/20 relative overflow-hidden animate-in fade-in slide-in-from-top-4 duration-700">
       <div className="absolute top-0 left-0 w-1 h-full bg-red-500 animate-pulse"></div>
       <div className="flex flex-col md:flex-row gap-6 items-start md:items-center relative z-10">
         <div className="flex-1">
@@ -79,7 +79,7 @@ export const FederalOverviewTab = () => (
       <div className="lg:col-span-2 bg-[#0f1b2d] rounded-2xl border border-[#1e3a5f]/60 p-6">
         <h3 className="text-lg font-bold text-white mb-4">Interactive National Map</h3>
         <div className="bg-[#0a1628] rounded-xl h-80 flex items-center justify-center border border-[#1e3a5f]/40 relative overflow-hidden">
-          <div className="absolute inset-0 opacity-10 bg-gradient-to-br from-blue-500 to-transparent"></div>
+          <div className="absolute inset-0 opacity-10 bg-blue-500 bg-gradient-to-br from-blue-500 to-transparent"></div>
           <div className="text-center z-10">
             <Globe size={64} className="text-blue-400/50 mx-auto mb-3" />
             <p className="text-blue-300/60 font-bold text-sm">All 50 States + DC • Real-Time</p>
@@ -163,3 +163,4 @@ export const FederalOverviewTab = () => (
     </div>
   </div>
 );
+

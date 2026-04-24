@@ -155,14 +155,14 @@ const PlanCard = ({ plan, index, total, billing }: { key?: string; plan: Subscri
       }`}
     >
       {isPopular && (
-        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-emerald-500 to-green-600 text-white px-5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg whitespace-nowrap">
+        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-emerald-500 bg-gradient-to-r from-emerald-500 to-green-600 text-white px-5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg whitespace-nowrap">
           ⭐ Most Popular
         </div>
       )}
 
       {/* Free Trial Badge */}
       {hasTrial && (
-        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl mb-4 w-fit shadow-sm">
+        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-500 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl mb-4 w-fit shadow-sm">
           <Gift size={12} className="text-white" />
           <span className="text-[10px] font-black text-white uppercase tracking-widest">30 Days Free</span>
         </div>
@@ -445,7 +445,7 @@ export const PricingTiers = ({ onNavigate }: { onNavigate?: (view: string) => vo
         {/* Volume Incentives (Partners tab only) */}
         {activeTab === 'partners' && (
           <div className="max-w-5xl mx-auto mt-12">
-            <div className="bg-gradient-to-br from-cyan-50 to-teal-50 border border-cyan-200 rounded-2xl p-8">
+            <div className="bg-cyan-50 bg-gradient-to-br from-cyan-50 to-teal-50 border border-cyan-200 rounded-2xl p-8">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-cyan-500 rounded-xl flex items-center justify-center">
                   <TrendingUp size={20} className="text-white" />
@@ -521,3 +521,4 @@ export const PricingTiers = ({ onNavigate }: { onNavigate?: (view: string) => vo
 };
 
 export default PricingTiers;
+

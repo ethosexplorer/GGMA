@@ -33,7 +33,7 @@ export const CreditScoreTab = () => {
   return (
     <div className="space-y-6">
       {/* C³ Score Hero */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#0c1f14] via-[#163829] to-[#0a2a1a] rounded-2xl p-8 text-white shadow-xl">
+      <div className="relative overflow-hidden bg-[#0c1f14] bg-gradient-to-br from-[#0c1f14] via-[#163829] to-[#0a2a1a] rounded-2xl p-8 text-white shadow-xl">
         <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-400/5 rounded-full -translate-y-1/3 translate-x-1/3" />
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-6">
@@ -64,7 +64,7 @@ export const CreditScoreTab = () => {
           {/* Score Bar */}
           <div className="mt-6">
             <div className="h-3 bg-white/10 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-red-500 via-yellow-500 to-emerald-500 rounded-full" style={{ width: `${((currentScore - 300) / 550) * 100}%` }} />
+              <div className="h-full bg-red-500 bg-gradient-to-r from-red-500 via-yellow-500 to-emerald-500 rounded-full" style={{ width: `${((currentScore - 300) / 550) * 100}%` }} />
             </div>
             <div className="flex justify-between text-[10px] text-emerald-300/40 mt-1">
               <span>300</span>
@@ -200,3 +200,4 @@ export const CreditScoreTab = () => {
     </div>
   );
 };
+

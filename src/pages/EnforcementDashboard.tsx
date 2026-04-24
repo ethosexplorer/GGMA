@@ -116,7 +116,7 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
           <div className="my-2 border-t border-slate-800"></div>
           
           {/* Prominent Rapid Testing Tab */}
-          <button onClick={() => setActiveTab('rapid_testing')} className={cn("w-full flex items-center justify-between px-3 py-3 rounded-lg text-sm font-bold transition-all text-left shadow-lg border", activeTab === 'rapid_testing' ? "bg-gradient-to-r from-emerald-900 to-slate-900 text-emerald-400 border-emerald-500/50" : "bg-slate-800 text-slate-300 border-slate-700 hover:border-emerald-500/30")}>
+          <button onClick={() => setActiveTab('rapid_testing')} className={cn("w-full flex items-center justify-between px-3 py-3 rounded-lg text-sm font-bold transition-all text-left shadow-lg border", activeTab === 'rapid_testing' ? "bg-emerald-900 bg-gradient-to-r from-emerald-900 to-slate-900 text-emerald-400 border-emerald-500/50" : "bg-slate-800 text-slate-300 border-slate-700 hover:border-emerald-500/30")}>
             <span className="flex items-center gap-3"><Zap size={18} className="text-emerald-500" /> Rapid Testing</span>
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -125,7 +125,7 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
           </button>
 
           {/* New Interactive Breathalyzer Tab */}
-          <button onClick={() => setActiveTab('breathalyzer')} className={cn("w-full flex items-center justify-between px-3 py-3 rounded-lg text-sm font-bold transition-all text-left shadow-lg border mt-2", activeTab === 'breathalyzer' ? "bg-gradient-to-r from-blue-900 to-slate-900 text-blue-400 border-blue-500/50" : "bg-slate-800 text-slate-300 border-slate-700 hover:border-blue-500/30")}>
+          <button onClick={() => setActiveTab('breathalyzer')} className={cn("w-full flex items-center justify-between px-3 py-3 rounded-lg text-sm font-bold transition-all text-left shadow-lg border mt-2", activeTab === 'breathalyzer' ? "bg-blue-900 bg-gradient-to-r from-blue-900 to-slate-900 text-blue-400 border-blue-500/50" : "bg-slate-800 text-slate-300 border-slate-700 hover:border-blue-500/30")}>
             <span className="flex items-center gap-3"><Wind size={18} className="text-blue-500" /> Live Breathalyzer</span>
           </button>
           
@@ -686,3 +686,4 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
     </div>
   );
 };
+

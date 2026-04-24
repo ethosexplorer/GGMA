@@ -323,7 +323,7 @@ export const FeaturedPoll = () => {
 
   if (!isExpanded) {
     return (
-      <div className="bg-gradient-to-r from-emerald-950 to-emerald-900 border-b border-emerald-900/30">
+      <div className="bg-emerald-950 bg-gradient-to-r from-emerald-950 to-emerald-900 border-b border-emerald-900/30">
         <div className="max-w-7xl mx-auto px-6 py-2 flex items-center justify-between">
           <button onClick={() => setIsExpanded(true)} className="flex items-center gap-2 text-emerald-200 hover:text-white transition-colors text-xs font-bold">
             <Vote size={14} />
@@ -337,7 +337,7 @@ export const FeaturedPoll = () => {
   }
 
   return (
-    <div className="bg-gradient-to-br from-emerald-950 via-emerald-900 to-emerald-800 border-b border-emerald-700/30 relative overflow-hidden">
+    <div className="bg-emerald-950 bg-gradient-to-br from-emerald-950 via-emerald-900 to-emerald-800 border-b border-emerald-700/30 relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-0 left-0 w-64 h-64 bg-emerald-400 rounded-full blur-3xl" />
@@ -475,7 +475,7 @@ export const FeaturedPoll = () => {
         {(poll.didYouKnow || poll.actionItem) && (
           <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
             {poll.didYouKnow && (
-              <div className="bg-gradient-to-br from-amber-500/15 to-yellow-500/5 border-2 border-amber-400/30 rounded-xl p-4 shadow-lg shadow-amber-500/5">
+              <div className="bg-amber-500 bg-gradient-to-br from-amber-500/15 to-yellow-500/5 border-2 border-amber-400/30 rounded-xl p-4 shadow-lg shadow-amber-500/5">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-xl">💡</span>
                   <span className="text-[11px] font-black text-amber-400 uppercase tracking-widest">Did You Know?</span>
@@ -484,7 +484,7 @@ export const FeaturedPoll = () => {
               </div>
             )}
             {poll.actionItem && (
-              <div className="bg-gradient-to-br from-emerald-500/15 to-green-500/5 border-2 border-emerald-400/30 rounded-xl p-4 shadow-lg shadow-emerald-500/5">
+              <div className="bg-emerald-500 bg-gradient-to-br from-emerald-500/15 to-green-500/5 border-2 border-emerald-400/30 rounded-xl p-4 shadow-lg shadow-emerald-500/5">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-xl">📢</span>
                   <span className="text-[11px] font-black text-emerald-400 uppercase tracking-widest">Take Action</span>
@@ -544,7 +544,7 @@ export const StickyPollWidget = () => {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
             onClick={() => setIsOpen(true)}
-            className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl shadow-2xl shadow-emerald-500/30 flex items-center justify-center text-white hover:scale-110 transition-transform group relative"
+            className="w-14 h-14 bg-emerald-500 bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl shadow-2xl shadow-emerald-500/30 flex items-center justify-center text-white hover:scale-110 transition-transform group relative"
           >
             <Vote size={22} />
             <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-[9px] font-black text-white animate-pulse">
@@ -633,3 +633,4 @@ export const StickyPollWidget = () => {
 };
 
 export default FeaturedPoll;
+

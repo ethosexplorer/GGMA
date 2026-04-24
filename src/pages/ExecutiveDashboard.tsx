@@ -182,12 +182,12 @@ export const ExecutiveDashboard = ({ onLogout, user }: any) => {
 
         <div className="space-y-6">
           {/* Executive AI Assistant */}
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl shadow-xl border border-slate-700 text-white relative overflow-hidden flex flex-col" style={{ height: '400px' }}>
+          <div className="bg-slate-800 bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl shadow-xl border border-slate-700 text-white relative overflow-hidden flex flex-col" style={{ height: '400px' }}>
             <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
             
             <div className="p-6 pb-4 border-b border-slate-700 relative z-10 shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center shadow-inner">
+                <div className="w-10 h-10 rounded-full bg-indigo-500 bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center shadow-inner">
                   <MonitorPlay size={20} className="text-white" />
                 </div>
                 <div>
@@ -377,7 +377,7 @@ export const ExecutiveDashboard = ({ onLogout, user }: any) => {
           </div>
           
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 border-2 border-slate-800 shadow-inner flex items-center justify-center text-white font-bold">
+            <div className="w-10 h-10 rounded-full bg-indigo-400 bg-gradient-to-br from-indigo-400 to-purple-500 border-2 border-slate-800 shadow-inner flex items-center justify-center text-white font-bold">
               SJ
             </div>
             <div>
@@ -437,7 +437,7 @@ export const ExecutiveDashboard = ({ onLogout, user }: any) => {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden bg-slate-50 relative">
-        <div className="absolute top-0 inset-x-0 h-64 bg-gradient-to-b from-indigo-900/5 to-transparent pointer-events-none"></div>
+        <div className="absolute top-0 inset-x-0 h-64 bg-indigo-900 bg-gradient-to-b from-indigo-900/5 to-transparent pointer-events-none"></div>
         
         {/* Top Header */}
         <header className="h-16 px-8 flex items-center justify-between bg-white/50 backdrop-blur-md border-b border-slate-200/50 sticky top-0 z-10">
@@ -481,3 +481,4 @@ export const ExecutiveDashboard = ({ onLogout, user }: any) => {
     </div>
   );
 };
+

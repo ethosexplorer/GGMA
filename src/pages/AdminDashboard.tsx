@@ -38,7 +38,7 @@ export const AdminDashboard = ({ onLogout, user }: { onLogout?: () => void | Pro
 
   const renderOverview = () => (
     <div className="space-y-6 animate-in fade-in duration-500">
-      <div className="bg-gradient-to-br from-indigo-900 via-slate-900 to-indigo-900 rounded-[2.5rem] p-10 text-white shadow-2xl relative overflow-hidden">
+      <div className="bg-indigo-900 bg-gradient-to-br from-indigo-900 via-slate-900 to-indigo-900 rounded-[2.5rem] p-10 text-white shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 right-0 p-10 opacity-10"><Shield size={160} /></div>
         <div className="relative z-10">
           <h2 className="text-4xl font-black tracking-tighter mb-2 italic uppercase">Internal Admin Command</h2>
@@ -313,7 +313,7 @@ export const AdminDashboard = ({ onLogout, user }: { onLogout?: () => void | Pro
 
     return (
       <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-700">
-        <div className="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden">
+        <div className="bg-slate-900 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden">
            <div className="absolute top-0 right-0 p-10 opacity-10"><BookOpen size={160} /></div>
            <h2 className="text-4xl font-black italic uppercase tracking-tighter mb-2">Regulatory Intelligence Hub</h2>
            <p className="text-indigo-200 font-medium">Native METRC User Guide & State Law Repository. Consult for Internal Policy Enforcement.</p>
@@ -706,3 +706,4 @@ export const AdminDashboard = ({ onLogout, user }: { onLogout?: () => void | Pro
     </div>
   );
 };
+

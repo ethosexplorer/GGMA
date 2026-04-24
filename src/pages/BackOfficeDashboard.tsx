@@ -187,7 +187,7 @@ export const BackOfficeDashboard = ({ onLogout, user }: { onLogout?: () => void,
                 </div>
 
                 {/* Sylara Assistant Widget */}
-                <div className="bg-gradient-to-b from-indigo-900 to-slate-900 border border-indigo-800 rounded-2xl p-5 shadow-lg text-white">
+                <div className="bg-indigo-900 bg-gradient-to-b from-indigo-900 to-slate-900 border border-indigo-800 rounded-2xl p-5 shadow-lg text-white">
                   <div className="flex items-center gap-2 mb-4">
                     <Bot size={20} className="text-indigo-400" />
                     <h3 className="font-bold text-white">Sylara Operational AI</h3>
@@ -249,3 +249,4 @@ export const BackOfficeDashboard = ({ onLogout, user }: { onLogout?: () => void,
     </div>
   );
 };
+

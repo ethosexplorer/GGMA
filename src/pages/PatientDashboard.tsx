@@ -101,7 +101,7 @@ export const PatientDashboard = ({ user }: { user?: any; onLogout?: () => void; 
               className={cn(
                 "px-4 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 relative whitespace-nowrap",
                 activeTab === tab.id
-                  ? tab.id === 'subscription' ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md" : "bg-slate-100 text-[#1a4731]"
+                  ? tab.id === 'subscription' ? "bg-amber-500 bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md" : "bg-slate-100 text-[#1a4731]"
                   : "text-slate-500 hover:bg-slate-50 hover:text-slate-700",
                 !isSubscribed && tab.id !== 'applications' && tab.id !== 'subscription' && "opacity-70"
               )}
@@ -206,7 +206,7 @@ export const PatientDashboard = ({ user }: { user?: any; onLogout?: () => void; 
                   </div>
 
                   {/* Sylara Widget */}
-                  <div className="bg-gradient-to-br from-[#1a4731] to-[#0f291c] rounded-[2.5rem] p-8 text-white shadow-xl shadow-emerald-900/20 border border-emerald-800/50 relative overflow-hidden group">
+                  <div className="bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-[#0f291c] rounded-[2.5rem] p-8 text-white shadow-xl shadow-emerald-900/20 border border-emerald-800/50 relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-400/10 blur-2xl rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-emerald-400/20 transition-all"></div>
                     <div className="flex items-center gap-3 mb-6 relative z-10">
                       <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-emerald-400 border border-white/10">
@@ -271,7 +271,7 @@ export const PatientDashboard = ({ user }: { user?: any; onLogout?: () => void; 
                    <Button className="w-full bg-slate-900 text-white py-5 text-lg">Launch Self-Service</Button>
                 </div>
 
-                <div className="bg-gradient-to-br from-[#1a4731] to-[#0f291c] p-10 rounded-[3rem] border border-emerald-800/50 shadow-2xl flex flex-col relative overflow-hidden group">
+                <div className="bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-[#0f291c] p-10 rounded-[3rem] border border-emerald-800/50 shadow-2xl flex flex-col relative overflow-hidden group">
                    {!hasBasic && <Lock className="absolute top-10 right-10 text-emerald-400/30" size={32} />}
                    <div className="w-16 h-16 bg-emerald-500 text-white rounded-3xl flex items-center justify-center mb-8 shadow-lg shadow-emerald-950/40 group-hover:scale-110 transition-transform">
                       <Sparkles size={32} />
@@ -405,4 +405,5 @@ export const PatientDashboard = ({ user }: { user?: any; onLogout?: () => void; 
     </div>
   );
 };
+
 

@@ -148,7 +148,7 @@ const PinVerificationScreen = ({ userProfile, onVerify, onBack }: { userProfile:
   return (
     <div className="min-h-screen bg-[#080e1a] flex items-center justify-center p-4">
       <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="w-full max-w-md bg-[#111a2e] border border-slate-800 rounded-[2.5rem] p-10 shadow-2xl text-center relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+        <div className="absolute top-0 left-0 w-full h-1 bg-indigo-500 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
         <div className="w-20 h-20 bg-indigo-500/20 text-indigo-400 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-indigo-500/30">
           <Shield size={40} />
         </div>
@@ -1211,7 +1211,7 @@ const STATE_RESOURCES: Record<string, any> = {
 
         <button
           onClick={() => setChatOpen(!chatOpen)}
-          className="w-14 h-14 bg-gradient-to-tr from-[#1a4731] to-[#2c6e4d] text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all hover:scale-105 overflow-hidden p-0"
+          className="w-14 h-14 bg-[#1a4731] bg-gradient-to-tr from-[#1a4731] to-[#2c6e4d] text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all hover:scale-105 overflow-hidden p-0"
         >
            {chatOpen ? <XCircle size={24} /> : <img src="/larry-logo.png" alt="Sylara" className="w-10 h-10 object-cover rounded-full" />}
            {!chatOpen && (
@@ -1263,7 +1263,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
         </div>
       </div>
       {/* 🌐 LANGUAGE BAR — Always visible at the very top */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-6 py-2 flex items-center justify-between z-[60] relative">
+      <div className="bg-slate-900 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-6 py-2 flex items-center justify-between z-[60] relative">
         <div className="flex items-center gap-3">
           <Globe size={14} className="text-emerald-400" />
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest hidden sm:inline">Speak Your Language:</span>
@@ -1341,7 +1341,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
 
       {/* Hero Section */}
       <section className="pt-20 pb-20 px-6 relative overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[120%] h-[500px] bg-gradient-to-b from-emerald-50/50 to-transparent -z-10 blur-3xl"></div>
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[120%] h-[500px] bg-emerald-50 bg-gradient-to-b from-emerald-50/50 to-transparent -z-10 blur-3xl"></div>
         <div className="max-w-4xl mx-auto text-center space-y-8">
           <p className="text-emerald-950 font-bold tracking-[0.3em] uppercase text-xs mb-[-10px] opacity-70">Global Green Enterprise Inc introducing</p>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
@@ -1388,7 +1388,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 bg-slate-900 rounded-[3rem] overflow-hidden shadow-2xl relative border border-white/10 group flex flex-col h-full min-h-[400px]">
              <img src="/gghp-branding.png" alt="GGHP Platform" className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-700" />
-             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent"></div>
+             <div className="absolute inset-0 bg-slate-950 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent"></div>
              <div className="absolute bottom-12 left-12 right-12 flex flex-col md:flex-row justify-between items-end gap-6">
                 <div>
                   <h2 className="text-3xl font-black text-white mb-2 uppercase tracking-tighter">GGHP</h2>
@@ -1457,7 +1457,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
       </section>
 
       {/* ═══ CREDENTIALS, CERTIFICATIONS & TRUST ═══ */}
-      <section id="credentials-section" className="py-20 px-6 bg-gradient-to-b from-slate-50 to-white border-y border-slate-200/50">
+      <section id="credentials-section" className="py-20 px-6 bg-slate-50 bg-gradient-to-b from-slate-50 to-white border-y border-slate-200/50">
         <div className="max-w-6xl mx-auto">
           {/* Section Header */}
           <div className="text-center mb-12 space-y-3">
@@ -1528,7 +1528,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
           {/* Founder Credentials + Company Stats */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
             {/* Founder Card */}
-            <div className="bg-gradient-to-br from-emerald-900 to-emerald-950 rounded-2xl p-8 text-white relative overflow-hidden">
+            <div className="bg-emerald-900 bg-gradient-to-br from-emerald-900 to-emerald-950 rounded-2xl p-8 text-white relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full -translate-y-8 translate-x-8 blur-2xl"></div>
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
@@ -1612,7 +1612,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Patient Portal Card */}
             <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-all group flex flex-col items-center text-center">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#4FC3F7] to-[#0288D1] flex items-center justify-center mb-6 shadow-lg shadow-blue-200/50">
+              <div className="w-20 h-20 rounded-full bg-[#4FC3F7] bg-gradient-to-br from-[#4FC3F7] to-[#0288D1] flex items-center justify-center mb-6 shadow-lg shadow-blue-200/50">
                 <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="2" y="4" width="20" height="16" rx="2" />
                   <circle cx="8" cy="10" r="2" />
@@ -1641,7 +1641,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
 
             {/* Business Portal Card */}
             <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-all group flex flex-col items-center text-center">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#81C784] to-[#2E7D32] flex items-center justify-center mb-6 shadow-lg shadow-green-200/50">
+              <div className="w-20 h-20 rounded-full bg-[#81C784] bg-gradient-to-br from-[#81C784] to-[#2E7D32] flex items-center justify-center mb-6 shadow-lg shadow-green-200/50">
                 <Building2 className="text-white" size={36} />
               </div>
               <h3 className="text-xl font-bold text-[#3E2723] mb-3">Business Portal (GGE)</h3>
@@ -1661,7 +1661,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
 
             {/* Government / Admin Portal Card */}
             <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-all group flex flex-col items-center text-center">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#FFB74D] to-[#E65100] flex items-center justify-center mb-6 shadow-lg shadow-orange-200/50">
+              <div className="w-20 h-20 rounded-full bg-[#FFB74D] bg-gradient-to-br from-[#FFB74D] to-[#E65100] flex items-center justify-center mb-6 shadow-lg shadow-orange-200/50">
                 <Shield className="text-white" size={36} />
               </div>
               <h3 className="text-xl font-bold text-[#3E2723] mb-3">Oversight Portal (RIP/SINC)</h3>
@@ -1758,7 +1758,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
       </section>
 
       {/* C3 Introduction Section */}
-      <section className="py-24 px-6 bg-gradient-to-br from-slate-900 to-emerald-950 text-white relative overflow-hidden">
+      <section className="py-24 px-6 bg-slate-900 bg-gradient-to-br from-slate-900 to-emerald-950 text-white relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
           <div className="grid grid-cols-12 h-full">
             {Array.from({ length: 48 }).map((_, i) => (
@@ -1836,7 +1836,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
           </div>
 
           <div className="lg:w-1/2 w-full h-[500px] bg-white rounded-[3rem] border border-slate-200 shadow-2xl overflow-hidden relative group">
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none"></div>
+            <div className="absolute inset-0 bg-emerald-500 bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none"></div>
             <MapChart />
           </div>
         </div>
@@ -5105,11 +5105,11 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f0fdf4] via-[#FDFBF7] to-[#ecfdf5] flex flex-col relative overflow-hidden">
+    <div className="min-h-screen bg-[#f0fdf4] bg-gradient-to-br from-[#f0fdf4] via-[#FDFBF7] to-[#ecfdf5] flex flex-col relative overflow-hidden">
       {/* Header */}
       <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200/60 px-6 h-16 flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-3">
-          <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center shadow-md transition-all", currentPersona === 'sylara' ? "bg-gradient-to-br from-purple-500 to-purple-700 shadow-purple-900/20" : "bg-gradient-to-br from-[#1a4731] to-emerald-600 shadow-emerald-900/20")}>
+          <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center shadow-md transition-all", currentPersona === 'sylara' ? "bg-purple-500 bg-gradient-to-br from-purple-500 to-purple-700 shadow-purple-900/20" : "bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-emerald-600 shadow-emerald-900/20")}>
             {currentPersona === 'sylara' ? <Headphones className="text-white" size={22} /> : <Bot className="text-white" size={22} />}
           </div>
           <div>
@@ -5281,7 +5281,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
           {/* ── Calendly Slot Picker — shown when signupStep === 11 ── */}
           {signupStep === 11 && (
             <div className="flex justify-start gap-3">
-              <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center text-white shrink-0 shadow-sm mt-1", currentPersona === 'sylara' ? "bg-gradient-to-br from-purple-500 to-purple-700" : "bg-gradient-to-br from-[#1a4731] to-emerald-600")}>
+              <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center text-white shrink-0 shadow-sm mt-1", currentPersona === 'sylara' ? "bg-purple-500 bg-gradient-to-br from-purple-500 to-purple-700" : "bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-emerald-600")}>
                 {currentPersona === 'sylara' ? <Headphones size={18} /> : <Shield size={18} />}
               </div>
               <div className="flex-1 max-w-[85%] bg-white border border-slate-200/80 rounded-2xl rounded-bl-md shadow-sm p-4">
@@ -5378,7 +5378,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
             signupStep === 1.1 || signupStep === 6.1 || signupStep === 12 || signupStep === 99 ||
             signupStep === 103 || signupStep === 121 || signupStep === 130 || signupStep === 133) && (
             <div className="flex justify-start gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
+              <div className="w-9 h-9 rounded-xl bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
                 <Bot size={18} />
               </div>
               <div className="flex gap-3">
@@ -5401,7 +5401,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
           {/* ── Medical Condition Selection Buttons — shown during step 13 ── */}
           {signupStep === 13 && (
             <div className="flex justify-start gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
+              <div className="w-9 h-9 rounded-xl bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
                 <Bot size={18} />
               </div>
               <div className="flex-1 max-w-[90%] bg-white border border-slate-200/80 rounded-2xl rounded-bl-md shadow-sm p-4">
@@ -5427,7 +5427,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
           {/* ── Patient Document Upload Panel — shown during steps 17-19 ── */}
           {signupStep >= 17.1 && signupStep <= 18 && (
             <div className="flex justify-start gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
+              <div className="w-9 h-9 rounded-xl bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
                 <Bot size={18} />
               </div>
               <div className="flex-1 max-w-[90%] bg-white border border-slate-200/80 rounded-2xl rounded-bl-md shadow-sm p-5">
@@ -5502,7 +5502,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
           {/* ── License Selection Buttons — shown during step 25 ── */}
           {signupStep === 25 && eligibleLicenses.length > 0 && (
             <div className="flex justify-start gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
+              <div className="w-9 h-9 rounded-xl bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
                 <Bot size={18} />
               </div>
               <div className="flex-1 max-w-[85%] bg-white border border-slate-200/80 rounded-2xl rounded-bl-md shadow-sm p-4">
@@ -5525,7 +5525,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
           {/* ── Business License Type Selection — shown during step 106 ── */}
           {signupStep === 106 && (
             <div className="flex justify-start gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
+              <div className="w-9 h-9 rounded-xl bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
                 <Bot size={18} />
               </div>
               <div className="flex-1 max-w-[85%] bg-white border border-slate-200/80 rounded-2xl rounded-bl-md shadow-sm p-4">
@@ -5548,7 +5548,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
           {/* ── Business Structure Selection — shown during step 109 ── */}
           {signupStep === 109 && (
             <div className="flex justify-start gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
+              <div className="w-9 h-9 rounded-xl bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
                 <Bot size={18} />
               </div>
               <div className="flex-1 max-w-[85%] bg-white border border-slate-200/80 rounded-2xl rounded-bl-md shadow-sm p-4">
@@ -5571,7 +5571,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
           {/* ── ID Type Selection — shown during step 113 ── */}
           {signupStep === 113 && (
             <div className="flex justify-start gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
+              <div className="w-9 h-9 rounded-xl bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
                 <Bot size={18} />
               </div>
               <div className="flex-1 max-w-[85%] bg-white border border-slate-200/80 rounded-2xl rounded-bl-md shadow-sm p-4">
@@ -5594,7 +5594,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
           {/* ── Patient Document Upload Panel — shown during step 16 ── */}
           {signupStep === 16 && (
             <div className="flex justify-start gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
+              <div className="w-9 h-9 rounded-xl bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
                 <Bot size={18} />
               </div>
               <div className="flex-1 max-w-[90%] bg-white border border-slate-200/80 rounded-2xl rounded-bl-md shadow-sm p-5">
@@ -5651,7 +5651,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
                   </div>
                   <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full transition-all duration-500 ease-out"
+                      className="h-full bg-emerald-400 bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full transition-all duration-500 ease-out"
                       style={{ width: `${(Object.keys(uploadedDocuments).length / getPatientRequiredDocuments().length) * 100}%` }}
                     />
                   </div>
@@ -5661,7 +5661,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
                 {Object.keys(uploadedDocuments).length >= getPatientRequiredDocuments().length ? (
                   <button
                     onClick={() => handleSend(undefined, 'continue')}
-                    className="mt-4 w-full py-3 bg-gradient-to-r from-[#1a4731] to-emerald-600 text-white rounded-xl text-sm font-bold hover:from-[#0f2a1f] hover:to-emerald-700 transition-all shadow-md shadow-emerald-200/50"
+                    className="mt-4 w-full py-3 bg-[#1a4731] bg-gradient-to-r from-[#1a4731] to-emerald-600 text-white rounded-xl text-sm font-bold hover:from-[#0f2a1f] hover:to-emerald-700 transition-all shadow-md shadow-emerald-200/50"
                   >
                     ✅ Documents Uploaded — Continue
                   </button>
@@ -5677,7 +5677,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
           {/* ── Bond Selection — shown during step 132 (Growers only) ── */}
           {signupStep === 132 && (
             <div className="flex justify-start gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
+              <div className="w-9 h-9 rounded-xl bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
                 <Bot size={18} />
               </div>
               <div className="flex-1 max-w-[85%] bg-white border border-slate-200/80 rounded-2xl rounded-bl-md shadow-sm p-4">
@@ -5703,7 +5703,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
           {/* ── Document Upload Panel — ChatGPT style — shown during step 131 ── */}
           {signupStep === 131 && (
             <div className="flex justify-start gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
+              <div className="w-9 h-9 rounded-xl bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
                 <Bot size={18} />
               </div>
               <div className="flex-1 max-w-[90%] bg-white border border-slate-200/80 rounded-2xl rounded-bl-md shadow-sm p-5">
@@ -5760,7 +5760,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
                   </div>
                   <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full transition-all duration-500 ease-out"
+                      className="h-full bg-emerald-400 bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full transition-all duration-500 ease-out"
                       style={{ width: `${(Object.keys(uploadedDocuments).length / getRequiredDocuments().length) * 100}%` }}
                     />
                   </div>
@@ -5807,7 +5807,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
                 {Object.keys(uploadedDocuments).length >= getRequiredDocuments().length ? (
                   <button
                     onClick={() => handleSend(undefined, 'done')}
-                    className="mt-4 w-full py-3 bg-gradient-to-r from-[#1a4731] to-emerald-600 text-white rounded-xl text-sm font-bold hover:from-[#0f2a1f] hover:to-emerald-700 transition-all shadow-md shadow-emerald-200/50"
+                    className="mt-4 w-full py-3 bg-[#1a4731] bg-gradient-to-r from-[#1a4731] to-emerald-600 text-white rounded-xl text-sm font-bold hover:from-[#0f2a1f] hover:to-emerald-700 transition-all shadow-md shadow-emerald-200/50"
                   >
                     ✅ All Documents Uploaded — Continue
                   </button>
@@ -5823,7 +5823,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
           {/* ── Application Review Panel — shown during step 134 ── */}
           {signupStep === 134 && (
             <div className="flex justify-start gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
+              <div className="w-9 h-9 rounded-xl bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
                 <Bot size={18} />
               </div>
               <div className="flex-1 max-w-[90%] bg-white border border-slate-200/80 rounded-2xl rounded-bl-md shadow-sm p-5">
@@ -5967,7 +5967,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
                           setIsEditingReview(false);
                           setMessages(prev => [...prev, { role: 'bot', text: '✅ **Changes Saved!**\n\nNow that we have finished your application, you will receive a callback to **REVIEW** application to ensure 1st time approval accuracy, then **PAY** your state fee and then **SUBMIT** your application for state approval of business license.\n\nPlease review your updated application and click **"Confirm & Proceed to Payment"** or **"Edit"** to make more changes.' }]);
                         }}
-                        className="flex-1 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-xl text-sm font-bold hover:from-amber-600 hover:to-amber-700 transition-all shadow-md"
+                        className="flex-1 py-3 bg-amber-500 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-xl text-sm font-bold hover:from-amber-600 hover:to-amber-700 transition-all shadow-md"
                       >
                         💾 Save Changes
                       </button>
@@ -5982,7 +5982,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
                     <>
                       <button
                         onClick={() => handleSend(undefined, 'confirm')}
-                        className="flex-1 py-3 bg-gradient-to-r from-[#1a4731] to-emerald-600 text-white rounded-xl text-sm font-bold hover:from-[#0f2a1f] hover:to-emerald-700 transition-all shadow-md"
+                        className="flex-1 py-3 bg-[#1a4731] bg-gradient-to-r from-[#1a4731] to-emerald-600 text-white rounded-xl text-sm font-bold hover:from-[#0f2a1f] hover:to-emerald-700 transition-all shadow-md"
                       >
                         ✅ Confirm & Proceed to Payment
                       </button>
@@ -6719,7 +6719,7 @@ const PatientSignupPage = ({ onNavigate }: any) => {
 
             {reviewSections.map((section, sIdx) => (
               <details key={sIdx} open className="group border border-slate-200 rounded-lg overflow-hidden bg-white shadow-sm">
-                <summary className="flex items-center gap-3 px-5 py-3.5 bg-gradient-to-r from-slate-50 to-white cursor-pointer select-none hover:from-slate-100 transition-colors list-none [&::-webkit-details-marker]:hidden">
+                <summary className="flex items-center gap-3 px-5 py-3.5 bg-slate-50 bg-gradient-to-r from-slate-50 to-white cursor-pointer select-none hover:from-slate-100 transition-colors list-none [&::-webkit-details-marker]:hidden">
                   <span className="text-xs">{section.icon}</span>
                   <h3 className="text-sm font-bold text-[#16325c] tracking-wide">{section.title}</h3>
                 </summary>
@@ -7457,4 +7457,5 @@ export default function App() {
     </ErrorBoundary>
   );
 }
+
 

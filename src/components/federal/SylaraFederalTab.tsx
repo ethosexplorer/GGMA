@@ -22,7 +22,7 @@ export const SylaraFederalTab = () => {
   return (
     <div className="space-y-6">
       {/* Sylara Header */}
-      <div className="bg-gradient-to-r from-[#0f1b2d] via-[#1a2d4a] to-[#0f1b2d] rounded-2xl border border-blue-500/30 p-6 relative overflow-hidden">
+      <div className="bg-[#0f1b2d] bg-gradient-to-r from-[#0f1b2d] via-[#1a2d4a] to-[#0f1b2d] rounded-2xl border border-blue-500/30 p-6 relative overflow-hidden">
         <div className="absolute top-0 right-0 opacity-5"><Sparkles size={200} /></div>
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-2">
@@ -93,3 +93,4 @@ export const SylaraFederalTab = () => {
     </div>
   );
 };
+

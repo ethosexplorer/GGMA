@@ -68,7 +68,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
 
   const renderOverview = () => (
     <div className="space-y-6">
-      <div className="bg-gradient-to-r from-slate-900 to-indigo-900 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
+      <div className="bg-slate-900 bg-gradient-to-r from-slate-900 to-indigo-900 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-full bg-indigo-500/10 blur-3xl"></div>
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
            <div className="space-y-2">
@@ -159,7 +159,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-bold text-slate-800 flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl flex items-center justify-center text-white shadow-lg"><BarChart3 size={20} /></div>
+            <div className="w-10 h-10 bg-emerald-500 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl flex items-center justify-center text-white shadow-lg"><BarChart3 size={20} /></div>
             Community Polls Command
           </h3>
           <span className="px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-bold rounded-full border border-emerald-100 uppercase tracking-widest">Live Data</span>
@@ -457,7 +457,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                </div>
               {[40, 55, 45, 70, 65, 80, 95, 85, 90, 100, 110, 120].map((h, i) => (
                 <div key={i} className="w-full bg-slate-100/50 rounded-t-lg relative group overflow-hidden">
-                  <div className="absolute bottom-0 w-full bg-gradient-to-t from-indigo-700 to-indigo-500 rounded-t-lg transition-all duration-700 group-hover:from-indigo-500 group-hover:to-indigo-300" style={{ height: `${h * 0.7}%` }}>
+                  <div className="absolute bottom-0 w-full bg-indigo-700 bg-gradient-to-t from-indigo-700 to-indigo-500 rounded-t-lg transition-all duration-700 group-hover:from-indigo-500 group-hover:to-indigo-300" style={{ height: `${h * 0.7}%` }}>
                     <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] py-1 px-2 rounded font-bold transition-opacity whitespace-nowrap shadow-xl z-20">
                       ${(h/10).toFixed(1)}M
                     </div>
@@ -483,7 +483,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
             </p>
           </div>
 
-          <div className="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden group">
+          <div className="bg-indigo-600 bg-gradient-to-br from-indigo-600 to-blue-700 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-700"><Activity size={64} /></div>
             <h4 className="font-black text-sm uppercase tracking-widest mb-2">Network Reserves</h4>
             <p className="text-4xl font-black mb-1">$14.8M</p>
@@ -596,7 +596,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
 
   const renderPersonnelForce = () => (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-      <div className="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden border border-white/10">
+      <div className="bg-slate-900 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden border border-white/10">
         <div className="absolute top-0 right-0 p-10 opacity-10 rotate-12"><Users size={160} /></div>
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
            <div>
@@ -699,7 +699,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       </div>
 
       {/* Universal Onboarding & Provisioning Engine */}
-      <div className="bg-gradient-to-br from-indigo-950 via-slate-900 to-slate-950 p-8 rounded-[2.5rem] shadow-xl border border-indigo-500/30 relative overflow-hidden">
+      <div className="bg-indigo-950 bg-gradient-to-br from-indigo-950 via-slate-900 to-slate-950 p-8 rounded-[2.5rem] shadow-xl border border-indigo-500/30 relative overflow-hidden">
          <div className="absolute top-0 right-0 p-8 opacity-10"><UserPlus size={120} className="text-indigo-400" /></div>
          <h3 className="font-black text-2xl text-white mb-2 italic uppercase">Universal Onboarding Engine</h3>
          <p className="text-indigo-300 text-xs font-bold uppercase tracking-widest mb-8">Provision Identities • Assign Dashboards • Manage Hierarchy</p>
@@ -1252,7 +1252,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
 
     return (
       <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-700">
-        <div className="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden">
+        <div className="bg-slate-900 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden">
            <div className="absolute top-0 right-0 p-10 opacity-10"><BookOpen size={160} /></div>
            <h2 className="text-4xl font-black italic uppercase tracking-tighter mb-2">Regulatory Intelligence Hub</h2>
            <p className="text-indigo-200 font-medium">Native METRC User Guide & State Law Repository. Synchronized with Oklahoma OMMA Title 63.</p>
@@ -1519,7 +1519,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
 
          {/* The Foundry: Recruitment & Training Pipeline */}
          <div className="space-y-6">
-            <div className="bg-gradient-to-br from-slate-900 via-[#0a0f1c] to-slate-900 rounded-[3rem] p-8 text-white border border-slate-800 shadow-2xl relative overflow-hidden">
+            <div className="bg-slate-900 bg-gradient-to-br from-slate-900 via-[#0a0f1c] to-slate-900 rounded-[3rem] p-8 text-white border border-slate-800 shadow-2xl relative overflow-hidden">
                <div className="absolute top-0 right-0 p-8 opacity-20"><GraduationCap size={120} className="text-indigo-400" /></div>
                <div className="relative z-10">
                   <h3 className="text-2xl font-black mb-1 flex items-center gap-3 italic">
@@ -1580,7 +1580,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
   );
   const renderRapidTestingHub = () => (
     <div className="space-y-8 animate-in fade-in zoom-in-95 duration-700">
-      <div className="bg-gradient-to-br from-indigo-600 via-indigo-900 to-slate-950 p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden border border-white/10">
+      <div className="bg-indigo-600 bg-gradient-to-br from-indigo-600 via-indigo-900 to-slate-950 p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden border border-white/10">
         <div className="absolute top-0 right-0 p-10 opacity-20"><FlaskConical size={160} className="animate-pulse text-indigo-400" /></div>
         <div className="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-12">
            <div className="max-w-2xl">

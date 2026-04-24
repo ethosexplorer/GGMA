@@ -244,7 +244,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
               ))}
             </div>
 
-            <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-200 p-6">
+            <div className="bg-emerald-50 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-200 p-6">
               <div className="flex items-center gap-2 mb-3">
                 <Sparkles size={18} className="text-emerald-600" />
                 <h4 className="font-bold text-emerald-800">Sylara Insight</h4>
@@ -279,7 +279,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
             </div>
 
             {/* Care Points Rewards */}
-            <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-2xl border border-yellow-200 p-6">
+            <div className="bg-yellow-50 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-2xl border border-yellow-200 p-6">
               <h4 className="font-bold text-yellow-800 mb-3 flex items-center gap-2">
                 <Star size={16} className="text-yellow-600" /> Care Points & Incentives
               </h4>
@@ -477,7 +477,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
       {showReloadModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden border border-slate-200 animate-in zoom-in-95 duration-200">
-            <div className="p-6 bg-gradient-to-br from-[#1a4731] to-[#0f2d1e] text-white">
+            <div className="p-6 bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-[#0f2d1e] text-white">
               <h3 className="text-xl font-black flex items-center gap-2">
                 <ArrowUpCircle size={24} className="text-emerald-400" /> Cash Reload Center
               </h3>
@@ -547,7 +547,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
       {showDisposableCard && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden border border-slate-200 animate-in zoom-in-95 duration-200">
-            <div className="p-6 bg-gradient-to-br from-slate-900 to-slate-800 text-white text-center">
+            <div className="p-6 bg-slate-900 bg-gradient-to-br from-slate-900 to-slate-800 text-white text-center">
               <h3 className="text-xl font-black text-[#D4AF77] flex items-center justify-center gap-2 uppercase tracking-tighter">
                 <Zap size={24} /> GGE Disposable™
               </h3>
@@ -555,7 +555,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
             </div>
             
             <div className="p-8 space-y-6">
-              <div className="bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl p-6 border-2 border-dashed border-slate-300 flex flex-col items-center justify-center space-y-4">
+              <div className="bg-slate-100 bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl p-6 border-2 border-dashed border-slate-300 flex flex-col items-center justify-center space-y-4">
                 <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-inner">
                   <CreditCard size={32} className="text-slate-300" />
                 </div>
@@ -601,3 +601,4 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
     </div>
   );
 };
+

@@ -17,7 +17,7 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
   const renderLegalOversight = () => (
     <div className="space-y-6 animate-in fade-in duration-500">
       {/* BREAKING NEWS BANNER */}
-      <div className="bg-gradient-to-r from-emerald-900/80 via-teal-900/60 to-emerald-900/80 p-6 rounded-2xl border border-emerald-500/50 shadow-lg shadow-emerald-900/20 relative overflow-hidden">
+      <div className="bg-emerald-900 bg-gradient-to-r from-emerald-900/80 via-teal-900/60 to-emerald-900/80 p-6 rounded-2xl border border-emerald-500/50 shadow-lg shadow-emerald-900/20 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500 animate-pulse"></div>
         <div className="flex flex-col md:flex-row gap-6 items-start md:items-center relative z-10">
           <div className="flex-1">
@@ -42,7 +42,7 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
         </div>
       </div>
 
-      <div className="bg-gradient-to-br from-slate-900 to-slate-950 p-8 rounded-[2rem] border border-slate-800 shadow-2xl relative overflow-hidden">
+      <div className="bg-slate-900 bg-gradient-to-br from-slate-900 to-slate-950 p-8 rounded-[2rem] border border-slate-800 shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 right-0 p-8 opacity-10"><Gavel size={120} className="text-amber-500" /></div>
         <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter mb-2">Legalization & Policy Monitor</h2>
         <p className="text-slate-400 font-medium">Tracking legislative shifts, regulatory amendments, and official state legalization progress.</p>
@@ -365,3 +365,4 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
     </div>
   );
 };
+

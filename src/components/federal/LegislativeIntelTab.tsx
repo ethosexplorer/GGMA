@@ -61,7 +61,7 @@ export const LegislativeIntelTab = () => {
         ))}
       </div>
 
-      <div className="p-8 bg-gradient-to-br from-[#0b1525] to-[#0a1628] rounded-[2rem] border border-[#1e3a5f]/40 relative overflow-hidden group">
+      <div className="p-8 bg-[#0b1525] bg-gradient-to-br from-[#0b1525] to-[#0a1628] rounded-[2rem] border border-[#1e3a5f]/40 relative overflow-hidden group">
          <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
             <Shield size={120} className="text-blue-400" />
          </div>
@@ -75,3 +75,4 @@ export const LegislativeIntelTab = () => {
     </div>
   );
 };
+

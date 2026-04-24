@@ -40,7 +40,7 @@ export const AttorneyDirectoryTab = () => {
         </div>
       </div>
 
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-200 p-5">
+      <div className="bg-blue-50 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-200 p-5">
         <h3 className="font-bold text-blue-800 mb-1 flex items-center gap-2">
           <Shield size={16} className="text-blue-600" /> Legal Support & Attorney Integration
         </h3>
@@ -66,7 +66,7 @@ export const AttorneyDirectoryTab = () => {
             )}
 
             <div className="flex items-start gap-3 mb-3">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center text-blue-700 font-bold text-sm">
+              <div className="w-12 h-12 rounded-full bg-blue-100 bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center text-blue-700 font-bold text-sm">
                 {attorney.name.split(' ').slice(0, 2).map(n => n[0]).join('')}
               </div>
               <div className="flex-1 min-w-0">
@@ -132,3 +132,4 @@ export const AttorneyDirectoryTab = () => {
     </div>
   );
 };
+

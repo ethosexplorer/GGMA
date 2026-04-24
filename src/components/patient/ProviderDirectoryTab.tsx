@@ -62,7 +62,7 @@ export const ProviderDirectoryTab = () => {
 
       {/* Recommended Section */}
       {searchQuery === '' && selectedType === 'All' && (
-        <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl border border-emerald-200 p-5">
+        <div className="bg-emerald-50 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl border border-emerald-200 p-5">
           <h3 className="font-bold text-emerald-800 mb-1 flex items-center gap-2">
             <Star size={16} className="text-yellow-500" /> Recommended for You
           </h3>
@@ -87,7 +87,7 @@ export const ProviderDirectoryTab = () => {
             )}
 
             <div className="flex items-start gap-3 mb-3">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center text-emerald-700 font-bold text-sm">
+              <div className="w-12 h-12 rounded-full bg-emerald-100 bg-gradient-to-br from-emerald-100 to-teal-100 flex items-center justify-center text-emerald-700 font-bold text-sm">
                 {provider.name.split(' ').map(n => n[0]).join('')}
               </div>
               <div className="flex-1 min-w-0">
@@ -149,3 +149,4 @@ export const ProviderDirectoryTab = () => {
     </div>
   );
 };
+

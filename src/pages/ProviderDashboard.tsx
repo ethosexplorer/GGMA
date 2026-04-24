@@ -281,7 +281,7 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                 </div>
 
                 {/* Sylara Assistant Widget */}
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-200 p-6 flex items-start gap-4 shadow-sm">
+                <div className="bg-blue-50 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-200 p-6 flex items-start gap-4 shadow-sm">
                   <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center text-white shrink-0 shadow-lg shadow-blue-900/20">
                     <Zap size={24} />
                   </div>
@@ -407,3 +407,4 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
     </div>
   );
 };
+
