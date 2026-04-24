@@ -658,8 +658,8 @@ export const BusinessDashboard = ({ onLogout, user, initialTab }: { onLogout?: (
           </div>
         </div>
 
-        {/* Key Status Cards (4-Cols) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Key Status Cards (5-Cols) */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
            <div className="bg-white rounded-[2rem] border border-slate-200/60 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
               <div className="flex justify-between items-center mb-3">
                  <h4 className="font-black text-slate-800 tracking-tight text-sm">Metrc Tracker</h4>
@@ -721,6 +721,24 @@ export const BusinessDashboard = ({ onLogout, user, initialTab }: { onLogout?: (
                    <span className="px-2 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase rounded-lg border border-emerald-100 flex items-center gap-1"><CheckCircle size={10}/> COO</span>
                    <span className="px-2 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase rounded-lg border border-emerald-100 flex items-center gap-1"><CheckCircle size={10}/> OBNDD</span>
                    <span className="px-2 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase rounded-lg border border-emerald-100 flex items-center gap-1"><CheckCircle size={10}/> Zoning</span>
+                 </div>
+              </div>
+           </div>
+
+           <div className="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-[2rem] border border-indigo-200/60 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative overflow-hidden">
+              <div className="absolute -top-6 -right-6 w-16 h-16 bg-blue-500/10 rounded-full blur-xl"></div>
+              <div className="flex justify-between items-center mb-3 relative z-10">
+                 <h4 className="font-black text-indigo-900 tracking-tight text-sm">Federal (Sch III)</h4>
+                 <Building2 size={16} className="text-blue-600" />
+              </div>
+              <div className="space-y-2 relative z-10">
+                 <div className="flex justify-between items-center bg-white/60 p-2 rounded-xl text-indigo-800 border border-indigo-100">
+                   <span className="text-[10px] font-bold uppercase">DEA Registration</span>
+                   <span className="text-[10px] font-black text-amber-600 animate-pulse">Required</span>
+                 </div>
+                 <div className="flex justify-between items-center bg-white/60 p-2 rounded-xl text-indigo-800 border border-indigo-100">
+                   <span className="text-[10px] font-bold uppercase">280E Tax Relief</span>
+                   <span className="text-[10px] font-black text-emerald-600">Eligible</span>
                  </div>
               </div>
            </div>
