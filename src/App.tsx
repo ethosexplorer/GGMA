@@ -3118,7 +3118,9 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
   };
 
   const [messages, setMessages] = useState<{role: 'user'|'bot', text: string, choices?: string[]}[]>([
-    { role: 'bot', text: '🌎 **Welcome! / ¡Bienvenidos! / 欢迎 / Hoan nghênh**\n\nBefore we begin, please select your preferred language:', choices: ['English', 'Español', '中文', 'Tiếng Việt', '한국어', 'العربية'] }
+    { role: 'bot', text: '🌎 **Welcome! / ¡Bienvenidos! / 欢迎 / Hoan nghênh**\n\nBefore we begin, please select your preferred language:', choices: [
+      'English', 'Español', 'Português', 'Français', 'Kreyòl Ayisyen', '中文(简体)', '中文(繁體)', 'Tiếng Việt', '한국어', '日本語', 'Tagalog', 'Hmoob', 'हिन्दी', 'اردو', 'ဗမာစာ', 'ไทย', 'العربية', 'Soomaali', 'አማርኛ', 'Kiswahili', 'Deutsch', 'Italiano', 'Русский', 'Polski', 'Українська', 'Română', 'Diné Bizaad'
+    ] }
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -3388,13 +3390,20 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     setIsTyping(true);
     // Language selection step
     if (signupStep === -1) {
-      let code = 'en';
       const t = text.toLowerCase();
-      if (t.includes('español') || t === 'es') code = 'es';
-      else if (t.includes('中文') || t === 'zh') code = 'zh-CN';
-      else if (t.includes('việt') || t === 'vi') code = 'vi';
-      else if (t.includes('한국어') || t === 'ko') code = 'ko';
-      else if (t.includes('العربية') || t === 'ar') code = 'ar';
+      const match = [
+        { code: 'en', label: 'english' }, { code: 'es', label: 'español' }, { code: 'pt', label: 'português' },
+        { code: 'fr', label: 'français' }, { code: 'ht', label: 'kreyòl' }, { code: 'zh-CN', label: '简体' },
+        { code: 'zh-TW', label: '繁體' }, { code: 'vi', label: 'tiếng việt' }, { code: 'ko', label: '한국어' },
+        { code: 'ja', label: '日本語' }, { code: 'tl', label: 'tagalog' }, { code: 'hmn', label: 'hmoob' },
+        { code: 'hi', label: 'हिन्दी' }, { code: 'ur', label: 'اردو' }, { code: 'my', label: 'ဗမာစာ' },
+        { code: 'th', label: 'ไทย' }, { code: 'ar', label: 'العربية' }, { code: 'so', label: 'soomaali' },
+        { code: 'am', label: 'አማርኛ' }, { code: 'sw', label: 'kiswahili' }, { code: 'de', label: 'deutsch' },
+        { code: 'it', label: 'italiano' }, { code: 'ru', label: 'русский' }, { code: 'pl', label: 'polski' },
+        { code: 'uk', label: 'українська' }, { code: 'ro', label: 'română' }, { code: 'nv', label: 'diné' }
+      ].find(l => t.includes(l.label) || t === l.code);
+      
+      const code = match ? match.code : 'en';
       
       const select = document.querySelector('.goog-te-combo') as HTMLSelectElement;
       if (select) {
