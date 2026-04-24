@@ -16,6 +16,32 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
 
   const renderLegalOversight = () => (
     <div className="space-y-6 animate-in fade-in duration-500">
+      {/* BREAKING NEWS BANNER */}
+      <div className="bg-gradient-to-r from-emerald-900/80 via-teal-900/60 to-emerald-900/80 p-6 rounded-2xl border border-emerald-500/50 shadow-lg shadow-emerald-900/20 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500 animate-pulse"></div>
+        <div className="flex flex-col md:flex-row gap-6 items-start md:items-center relative z-10">
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="bg-emerald-600 text-white text-[10px] font-black px-2.5 py-1 rounded uppercase tracking-widest flex items-center gap-1.5 shadow-md">
+                <ShieldCheck size={12} />
+                OMMA / DOJ ALERT
+              </span>
+              <span className="text-teal-200 text-[10px] font-bold uppercase tracking-wider">April 23, 2026 • Federal Reclassification</span>
+            </div>
+            <h2 className="text-xl font-extrabold text-white leading-tight mb-2">DOJ Reclassifies Marijuana to Schedule III</h2>
+            <p className="text-sm text-teal-100/90 leading-relaxed max-w-4xl">
+              The U.S. Department of Justice issued a final order today to reclassify marijuana at the federal level. OMMA is actively monitoring this development. The move from Schedule I to Schedule III could strengthen OMMA's mission to protect patient health and safety through expanded research opportunities.
+              <strong className="text-white block mt-1">"New research findings have the potential to redefine how medical marijuana is grown, processed, tested, sold, recommended and consumed," Berry said.</strong>
+            </p>
+          </div>
+          <div className="shrink-0 flex gap-3 w-full md:w-auto">
+            <button className="flex-1 md:flex-none px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black rounded-xl transition-all shadow-lg uppercase tracking-widest text-center">
+              View DEA Registration Requirements
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div className="bg-gradient-to-br from-slate-900 to-slate-950 p-8 rounded-[2rem] border border-slate-800 shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 right-0 p-8 opacity-10"><Gavel size={120} className="text-amber-500" /></div>
         <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter mb-2">Legalization & Policy Monitor</h2>

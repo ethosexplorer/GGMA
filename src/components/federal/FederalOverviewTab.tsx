@@ -35,6 +35,35 @@ const recentActivity = [
 
 export const FederalOverviewTab = () => (
   <div className="space-y-6">
+    {/* BREAKING NEWS BANNER */}
+    <div className="bg-gradient-to-r from-red-900/80 via-amber-900/60 to-red-900/80 p-5 rounded-2xl border border-red-500/50 shadow-lg shadow-red-900/20 relative overflow-hidden animate-in fade-in slide-in-from-top-4 duration-700">
+      <div className="absolute top-0 left-0 w-1 h-full bg-red-500 animate-pulse"></div>
+      <div className="flex flex-col md:flex-row gap-6 items-start md:items-center relative z-10">
+        <div className="flex-1">
+          <div className="flex items-center gap-3 mb-2">
+            <span className="bg-red-600 text-white text-[10px] font-black px-2.5 py-1 rounded uppercase tracking-widest flex items-center gap-1.5 shadow-md">
+              <AlertCircle size={12} />
+              FEDERAL ALERT
+            </span>
+            <span className="text-amber-200 text-[10px] font-bold uppercase tracking-wider">April 23, 2026 • DOJ Final Order Issued</span>
+          </div>
+          <h2 className="text-xl font-extrabold text-white leading-tight mb-2">DOJ Reclassifies Marijuana to Schedule III</h2>
+          <p className="text-sm text-amber-100/90 leading-relaxed max-w-4xl">
+            The U.S. Department of Justice issued a final order today to reclassify marijuana at the federal level under Section 811 of the CSA. State medical markets will experience immediate compliance and transparency impacts. 
+            <strong className="text-white block mt-1">OMMA Director Adria G. Berry: "The move could strengthen OMMA's mission... bringing potential tax breaks, banking opportunities, and new DEA registration requirements."</strong>
+          </p>
+        </div>
+        <div className="shrink-0 flex gap-3 w-full md:w-auto">
+          <button className="flex-1 md:flex-none px-6 py-2.5 bg-red-600 hover:bg-red-500 text-white text-xs font-black rounded-xl transition-all shadow-lg uppercase tracking-widest text-center">
+            View DOJ Order
+          </button>
+          <button className="flex-1 md:flex-none px-6 py-2.5 bg-[#0a1628] border border-red-500/30 text-red-100 hover:bg-[#111f36] text-xs font-black rounded-xl transition-all uppercase tracking-widest text-center">
+            Assess State Impacts
+          </button>
+        </div>
+      </div>
+    </div>
+
     {/* KPI Row */}
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
       <FedStatCard label="Active Licenses (National)" value="48,291" trend={6} icon={Shield} color="bg-blue-800" />
