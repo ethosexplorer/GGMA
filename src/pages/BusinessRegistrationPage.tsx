@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'motion/react';
-import { ArrowLeft, CheckCircle2, AlertCircle, Upload, Plus, Trash2, CheckCircle, FileText, X } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, AlertCircle, Upload, Plus, Trash2, CheckCircle, FileText, X, Info } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
@@ -568,7 +568,16 @@ export default function BusinessRegistrationPage({ onNavigate, onComplete }: { o
             <div className="bg-[#1a4731]/10 p-5 rounded-xl border border-[#1a4731]/20">
                <label className="flex items-start gap-3 cursor-pointer">
                   <input type="checkbox" className="w-5 h-5 mt-0.5 accent-[#1a4731]" />
-                  <span className="text-sm font-semibold text-slate-800">I certify under penalty of perjury that this application is accurate and complete, and I submit it for processing.</span>
+                  <span className="text-sm font-semibold text-slate-800 flex items-center flex-wrap">
+                     <span>I certify under penalty of perjury that this application is accurate and complete, and I submit it for processing.</span>
+                     <div className="inline-flex items-center group relative ml-1.5 align-middle">
+                        <Info size={16} className="text-[#1a4731] hover:text-emerald-600 transition-colors cursor-help" />
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 text-white text-xs font-normal rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all shadow-xl z-50">
+                           By agreeing, you consent to our HIPAA-compliant data practices, OMMA reporting requirements, state open records policies, and platform financial terms.
+                           <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+                        </div>
+                     </div>
+                  </span>
                </label>
             </div>
           </div>

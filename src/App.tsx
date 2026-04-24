@@ -8,6 +8,7 @@ import {
   AlertCircle,
   Eye,
   EyeOff,
+  Info,
   Smartphone,
   LogIn,
   ChevronRight,
@@ -2874,8 +2875,15 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
 
                     <label className="flex items-start gap-3 cursor-pointer group bg-emerald-50/50 p-4 rounded-xl border border-emerald-100">
                         <input type="checkbox" className="mt-0.5 w-5 h-5 rounded text-[#1a4731] focus:ring-[#1a4731]" required />
-                        <span className="text-sm text-slate-800 font-medium leading-relaxed">
-                            I confirm all information is accurate and agree to platform terms of service. I understand this establishes an immutable digital footprint tracked by the GGP-OS compliance engine.
+                        <span className="text-sm text-slate-800 font-medium leading-relaxed flex items-center flex-wrap">
+                            <span>I confirm all information is accurate and agree to platform terms of service. I understand this establishes an immutable digital footprint tracked by the GGP-OS compliance engine.</span>
+                            <div className="inline-flex items-center group relative ml-1.5 align-middle">
+                               <Info size={16} className="text-[#1a4731] hover:text-emerald-600 transition-colors cursor-help" />
+                               <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 text-white text-xs font-normal rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all shadow-xl z-50">
+                                 By agreeing, you consent to our HIPAA-compliant data practices, Metrc reporting requirements, state open records policies, and the Care Wallet financial terms.
+                                 <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+                               </div>
+                            </div>
                         </span>
                     </label>
                 </div>
@@ -6550,9 +6558,15 @@ const PatientSignupPage = ({ onNavigate }: any) => {
             </div>
             <label className="flex items-start gap-3 cursor-pointer">
               <input type="checkbox" checked={formData.attestationAgreed} onChange={(e) => updateField('attestationAgreed', e.target.checked)} className="w-5 h-5 accent-[#1a4731] mt-0.5 rounded" />
-              <span className="text-sm text-slate-700 leading-relaxed">
-                I hereby certify that all statements made in this application are true and complete. I understand that false statements or omissions may be grounds for denial,
-                suspension, or revocation of my patient license.
+              <span className="text-sm text-slate-700 leading-relaxed flex items-center flex-wrap">
+                <span>I hereby certify that all statements made in this application are true and complete. I understand that false statements or omissions may be grounds for denial, suspension, or revocation of my patient license.</span>
+                <div className="inline-flex items-center group relative ml-1.5 align-middle">
+                   <Info size={16} className="text-[#1a4731] hover:text-emerald-600 transition-colors cursor-help" />
+                   <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 text-white text-xs font-normal rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all shadow-xl z-50">
+                     By agreeing, you consent to our HIPAA-compliant data practices, OMMA reporting requirements, and state open records policies.
+                     <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+                   </div>
+                </div>
               </span>
             </label>
           </div>

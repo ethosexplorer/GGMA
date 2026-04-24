@@ -16,7 +16,8 @@ import {
   Clock,
   Plus,
   Trash2,
-  CheckCircle
+  CheckCircle,
+  Info
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
@@ -451,8 +452,15 @@ export default function ProviderRegistrationPage({ onNavigate, onComplete }: Pro
                       onChange={(e) => updateField('termsAccepted', e.target.checked)}
                       className="w-5 h-5 accent-[#1a4731] rounded-lg mt-0.5"
                     />
-                    <div className="text-sm text-slate-600 leading-relaxed group-hover:text-slate-900 transition-colors">
-                      I attest that I am a licensed healthcare provider in good standing and that all information provided is accurate. I agree to the <span className="text-[#1a4731] font-bold underline cursor-pointer">Terms of Service</span> and <span className="text-[#1a4731] font-bold underline cursor-pointer">HIPAA Compliance Agreement</span>.
+                    <div className="text-sm text-slate-600 leading-relaxed group-hover:text-slate-900 transition-colors flex items-center flex-wrap">
+                      <span>I attest that I am a licensed healthcare provider in good standing and that all information provided is accurate. I agree to the <span className="text-[#1a4731] font-bold underline cursor-pointer">Terms of Service</span> and <span className="text-[#1a4731] font-bold underline cursor-pointer">HIPAA Compliance Agreement</span>.</span>
+                      <div className="inline-flex items-center group/tooltip relative ml-1.5 align-middle">
+                         <Info size={16} className="text-[#1a4731] hover:text-emerald-600 transition-colors cursor-help" />
+                         <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 text-white text-xs font-normal rounded-xl opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all shadow-xl z-50">
+                            By agreeing, you consent to our HIPAA-compliant data practices, state open records policies, and platform financial terms regarding telehealth compensation.
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+                         </div>
+                      </div>
                     </div>
                   </label>
                   {errors.termsAccepted && <p className="text-xs text-red-500">{errors.termsAccepted}</p>}
