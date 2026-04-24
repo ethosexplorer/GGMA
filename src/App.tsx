@@ -7300,8 +7300,8 @@ export default function App() {
         createdAt: new Date().toISOString(),
       };
       setUserProfile(privilegedProfile);
-      // For privileged local override, we trigger PIN verification
-      setView('pin-verification');
+      // For privileged local override, we bypass PIN verification
+      setView('dashboard');
       return;
     }
     
@@ -7314,7 +7314,7 @@ export default function App() {
         const profile = docSnap.data();
         if (profile.role === 'executive_founder' || profile.role === 'admin_internal' || profile.role === 'executive_ceo') {
           setUserProfile(profile);
-          setView('pin-verification');
+          setView('dashboard');
           return;
         }
         setUserProfile(profile);
@@ -7343,7 +7343,7 @@ export default function App() {
         };
         setUserProfile(simulatedProfile);
         if (computedRole === 'executive_founder' || computedRole === 'admin') {
-          setView('pin-verification');
+          setView('dashboard');
         } else {
           setView('dashboard');
         }
@@ -7405,7 +7405,7 @@ export default function App() {
         };
         setUserProfile(simulatedProfile);
         if (role === 'admin' || role === 'executive_founder' || role === 'admin_internal') {
-          setView('pin-verification');
+          setView('dashboard');
         } else {
           setView('dashboard');
         }
