@@ -8,3 +8,10 @@
 * **Business Meeting:**   https://calendly.com/globalgreenhpmeet/business-meeting
 * **Medical Card Recommendation:**  https://calendly.com/globalgreenhpmeet/medical-card-recommendation
 * **Health and Wellness Consultation:** https://calendly.com/globalgreenhpmeet/health-wellness-consultation
+
+## Education & Courses
+* **Metrc Integration Mastery:** https://calendly.com/globalgreenhpmeet/metrc-integration-mastery
+* **SINC Oversight Directives:** https://calendly.com/globalgreenhpmeet/sinc-oversight-directives
+* **Retail Compliance Pro:** https://calendly.com/globalgreenhpmeet/retail-compliance-pro
+* **Online Classes Consultation:** https://calendly.com/globalgreenhpmeet/online-classes
+
