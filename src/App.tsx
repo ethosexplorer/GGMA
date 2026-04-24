@@ -1556,15 +1556,10 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
             {/* Accreditations Card */}
             <div className="bg-[#0f2d1e] rounded-2xl p-8 text-white relative overflow-hidden group border border-emerald-900/50 shadow-xl flex flex-col justify-center">
               {/* Neon Shield Map Badge */}
-              <div className="absolute inset-y-0 right-0 w-[50%] z-0 flex items-center justify-center opacity-80 transition-opacity duration-700 pointer-events-none">
+              <div className="absolute inset-y-0 right-0 w-[55%] z-0 flex items-center justify-end opacity-90 transition-opacity duration-700 pointer-events-none pr-4 overflow-hidden">
                  <div className="absolute inset-0 bg-gradient-to-r from-[#0f2d1e] via-[#0f2d1e]/80 to-transparent z-10"></div>
-                 <div className="absolute right-[-40px] top-1/2 -translate-y-1/2">
-                   <div className="relative flex items-center justify-center">
-                     <MapIcon size={280} className="text-emerald-900/40 absolute" strokeWidth={1} />
-                     <Shield size={180} className="text-emerald-400 drop-shadow-[0_0_30px_rgba(52,211,153,0.6)] relative z-20" strokeWidth={1.5} />
-                     <div className="absolute w-[200px] h-[200px] bg-emerald-500/20 blur-[60px] rounded-full"></div>
-                   </div>
-                 </div>
+                 <div className="absolute bottom-0 inset-x-0 h-1/4 bg-gradient-to-t from-[#0f2d1e] to-transparent z-10"></div>
+                 <img src="/gghp-branding.png" alt="GGHP Badge" className="w-[120%] h-[120%] object-cover object-[center_30%] opacity-80 mix-blend-screen scale-125 translate-x-[15%]" />
               </div>
 
               <div className="relative z-10 md:max-w-[75%]">
