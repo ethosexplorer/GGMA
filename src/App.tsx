@@ -2969,8 +2969,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       '📅 Book 15min Consultation',
       '🏥 Telehealth',
       '💻 IT Support',
-      '❓ General Support',
-      '💰 View Subscription Plans'
+      '❓ General Support'
     ];
     return ['Start Patient Intake', 'Book Physician ($45)', 'Speak with Shantell', 'View Subscription Plans'];
   };
@@ -5182,6 +5181,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
                               {choice.includes('Intake') ? 'Start application' : 
                                choice.includes('Subscription') ? 'View tier details' : 
                                choice.includes('Book') ? 'Schedule consultation' : 
+                               choice.includes('General Support') ? 'Click to explore with communication on applications, and tabs with responses' :
                                'Click to explore'}
                             </span>
                           )}
