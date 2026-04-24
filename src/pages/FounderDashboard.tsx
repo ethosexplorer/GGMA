@@ -6,7 +6,7 @@ import {
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
   Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Globe, Zap, Database,
   FlaskConical, CreditCard, Map as MapIcon, BookOpen, UserPlus, Trash2,
-  MapPin, Target, Layers, TrendingDown, Box, PieChart, GraduationCap
+  MapPin, Target, Layers, TrendingDown, Box, PieChart, GraduationCap, Lock
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
