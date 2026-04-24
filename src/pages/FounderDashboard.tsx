@@ -58,7 +58,7 @@ const NAV_ITEMS = [
 ];
 
 export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | Promise<void>, user?: any }) => {
-  const isMonica = user?.email?.toLowerCase() === 'mgreenstkc@gmail.com';
+  const isMonica = (user?.email?.toLowerCase().includes('mgreen') || user?.email?.toLowerCase() === 'mgreenstkc@gmail.com');
   const firstName = user?.displayName ? user.displayName.split(' ')[0] : 'Shantell';
   const fullName = user?.displayName || 'Shantell Robinson';
   const userTitle = isMonica ? 'Chief Executive Compliance Director' : 'Founder';
