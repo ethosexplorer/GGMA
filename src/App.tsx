@@ -3792,7 +3792,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       setSignupStep(0);
       setIsTyping(false);
       return;
-    } else if (lower.includes('speak with shantell') || lower.includes('human')) {
+    } else if (lower.includes('speak with shantell') || lower.includes('human') || lower.includes('political') || lower.includes('media') || lower.includes('press') || lower.includes('enforcement') || lower.includes('state authority') || lower.includes('federal')) {
       response = '👩‍💼 **Direct Escalation to Management**\n\nI have priority-routed this to Shantell or the next available senior representative. I have priority-routed this directly to Shantell's personal queue (Flagged: 🟣 Priority Purple). She has been notified of the urgency and will reach out to you promptly.\n\nWould you like to return to the Main Menu?';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
@@ -5076,7 +5076,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     } else if (lower.includes('business expert') || lower.includes('commercial consultant') || lower.includes('business consultation') || lower.includes('book business')) {
       window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
       response = '🏢 **Commercial Compliance Consultation**\n\nI am routing you to our **Business Licensing Experts**.\n\n\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Business Consultation](https://calendly.com/globalgreenenterprize/15-min-meeting)';
-    } else if (lower.includes('human') || lower.includes('coordinator') || lower.includes('shantell') || lower.includes('speak with someone')) {
+    } else if (lower.includes('human') || lower.includes('coordinator') || lower.includes('shantell') || lower.includes('speak with someone') || lower.includes('political') || lower.includes('media') || lower.includes('press') || lower.includes('enforcement') || lower.includes('state authority') || lower.includes('federal')) {
       window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
       response = '👤 **Human Care Coordination**\n\nI am routing you to **Shantell Robinson**.\n\n\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book a Session via Calendly](https://calendly.com/globalgreenenterprize/15-min-meeting)';
     } else if (lower.includes('fee schedule')) {
@@ -5111,7 +5111,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setIsTyping(false);
       return;
-    } else if (lower.includes('human') || lower.includes('coordinator') || lower.includes('shantell') || lower.includes('speak with someone')) {
+    } else if (lower.includes('human') || lower.includes('coordinator') || lower.includes('shantell') || lower.includes('speak with someone') || lower.includes('political') || lower.includes('media') || lower.includes('press') || lower.includes('enforcement') || lower.includes('state authority') || lower.includes('federal')) {
       window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
       response = '👤 **Human Care Coordination**\n\nI am routing you to **Shantell Robinson**, our lead Human Care Coordinator.\n\n\n\n📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book a 15-Min Session via Calendly](https://calendly.com/globalgreenenterprize/15-min-meeting)';
     } else if (lower === 'yes' || lower === 'yeah' || lower === 'yep') {
