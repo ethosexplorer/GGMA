@@ -3118,7 +3118,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
   };
 
   const [messages, setMessages] = useState<{role: 'user'|'bot', text: string, choices?: string[]}[]>([
-    { role: 'bot', text: getGreeting(), choices: getInitialChoices() }
+    { role: 'bot', text: '🌎 **Welcome! / ¡Bienvenidos! / 欢迎 / Hoan nghênh**\n\nBefore we begin, please select your preferred language:', choices: ['English', 'Español', '中文', 'Tiếng Việt', '한국어', 'العربية'] }
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -3131,7 +3131,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
   const [showUploadMenu, setShowUploadMenu] = useState(false);
   const [isEditingReview, setIsEditingReview] = useState(false);
 
-  const [signupStep, setSignupStep] = useState<number>(0);
+  const [signupStep, setSignupStep] = useState<number>(-1);
   const [currentPersona, setCurrentPersona] = useState<'sylara' | 'larry'>('sylara');
 
   // Chat Session ID for storing to database
@@ -3386,6 +3386,38 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     
     if (!overrideText) setInputValue('');
     setIsTyping(true);
+    // Language selection step
+    if (signupStep === -1) {
+      let code = 'en';
+      const t = text.toLowerCase();
+      if (t.includes('español') || t === 'es') code = 'es';
+      else if (t.includes('中文') || t === 'zh') code = 'zh-CN';
+      else if (t.includes('việt') || t === 'vi') code = 'vi';
+      else if (t.includes('한국어') || t === 'ko') code = 'ko';
+      else if (t.includes('العربية') || t === 'ar') code = 'ar';
+      
+      const select = document.querySelector('.goog-te-combo') as HTMLSelectElement;
+      if (select) {
+        select.value = code;
+        select.dispatchEvent(new Event('change'));
+      } else {
+        if (code === 'en') {
+          document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+          document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + window.location.hostname;
+        } else {
+          document.cookie = `googtrans=/en/${code}; path=/;`;
+          document.cookie = `googtrans=/en/${code}; path=/; domain=` + window.location.hostname;
+        }
+      }
+      
+      setSignupStep(0);
+      setTimeout(() => {
+        setMessages(prev => [...prev, { role: 'bot', text: getGreeting(), choices: getInitialChoices() }]);
+        setIsTyping(false);
+      }, 600);
+      return;
+    }
+
     try {
       await new Promise(r => setTimeout(r, 800 + Math.random() * 600));
 
