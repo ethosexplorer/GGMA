@@ -6964,8 +6964,11 @@ export default function App() {
     const initialTab = validTabs.includes(subTab || '') ? subTab : undefined;
 
     // Oversight Portal Routing
-    if (role === 'executive_founder' || role === 'executive_ceo' || role === 'admin_internal') {
+    if (role === 'executive_founder' || role === 'executive_ceo') {
       return <FounderDashboard onLogout={handleLogout} user={profile} />;
+    }
+    if (role === 'admin_internal') {
+      return <AdminDashboard onLogout={handleLogout} user={profile} />;
     }
     if (role === 'admin_external') {
       return <ExternalAdminDashboard onLogout={handleLogout} user={profile} />;
