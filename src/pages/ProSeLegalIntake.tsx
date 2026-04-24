@@ -100,7 +100,7 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
                 
                 <div className="space-y-6">
                   <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Court Level</label>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Court Level <span className="text-red-500 ml-1">*</span></label>
                     <select 
                       className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all font-medium text-slate-700"
                       value={formData.courtLevel}
@@ -116,7 +116,7 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Industry Scope</label>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Industry Scope <span className="text-red-500 ml-1">*</span></label>
                     <select 
                       className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all font-medium text-slate-700"
                       value={formData.industryScope}
@@ -128,7 +128,7 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Nature of Suit</label>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Nature of Suit <span className="text-red-500 ml-1">*</span></label>
                     <input 
                       type="text" placeholder="e.g., Copyright Infringement, Civil Rights, Corporate Fraud"
                       className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-amber-500 font-medium text-slate-700"
@@ -174,7 +174,7 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
                 <div className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Date of Occurrence</label>
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Date of Occurrence <span className="text-red-500 ml-1">*</span></label>
                       <input 
                         type="date"
                         className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-amber-500 font-medium text-slate-700"
@@ -183,7 +183,7 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Time of Occurrence</label>
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Time of Occurrence <span className="text-red-500 ml-1">*</span></label>
                       <input 
                         type="time"
                         className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-amber-500 font-medium text-slate-700"
@@ -194,7 +194,7 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Location / Jurisdiction</label>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Location / Jurisdiction <span className="text-red-500 ml-1">*</span></label>
                     <input 
                       type="text" placeholder="e.g., City, County, or Specific Address"
                       className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-amber-500 font-medium text-slate-700"
@@ -204,7 +204,7 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Statement of Facts</label>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Statement of Facts <span className="text-red-500 ml-1">*</span></label>
                     <textarea 
                       rows={5}
                       placeholder="Give a clear chronological statement of what happened, case numbers (if any), and charges/claims involved..."
@@ -216,7 +216,7 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
 
                   <div>
                     <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Upload Relevant Documents (Citations, Tickets, Court Orders)</label>
-                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-300 rounded-xl cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors">
+                    <label className="relative flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-300 rounded-xl cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors">
                       <div className="flex flex-col items-center justify-center pt-5 pb-6">
                         <Upload className="w-8 h-8 mb-2 text-slate-400" />
                         <p className="mb-2 text-sm text-slate-500"><span className="font-semibold">Click to upload</span> or drag and drop</p>
@@ -224,7 +224,7 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
                       </div>
                       <input 
                         type="file" 
-                        className="hidden" 
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
                         multiple 
                         onChange={(e) => {
                           if (e.target.files) {
