@@ -50,6 +50,7 @@ import {
   Send,
   GraduationCap,
   Sparkles,
+  Scale,
   Search as SearchIcon,
   Briefcase,
   Bot,
