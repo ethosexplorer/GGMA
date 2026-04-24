@@ -3690,49 +3690,49 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       setIsTyping(false);
       return;
     } else if (lower.includes('intelligence report')) {
-      response = '🕵️ **Field Intelligence Report Logged**\n\nL.A.R.R.Y is analyzing the geospatial data and recent enforcement activities in your sector. Our team will cross-reference this with OMMA compliance heatmaps and will respond to you shortly.\n\nWould you like to return to the Main Menu?';
+      response = '🕵️ **Field Intelligence Report Logged**\n\nL.A.R.R.Y is analyzing the geospatial data and recent enforcement activities in your sector. Our team will cross-reference this with OMMA compliance heatmaps and will respond as soon as possible.\n\nWould you like to return to the Main Menu?';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
       return;
     } else if (lower.includes('background verification')) {
-      response = '🛡️ **Background Verification Check Initiated**\n\nWe are running a secure cross-check against OSBI, DEA databases, and state records. Once the identity and history sweep is complete, our compliance officer will respond to you shortly.\n\nWould you like to return to the Main Menu?';
+      response = '🛡️ **Background Verification Check Initiated**\n\nWe are running a secure cross-check against OSBI, DEA databases, and state records. Once the identity and history sweep is complete, our compliance officer will respond as soon as possible.\n\nWould you like to return to the Main Menu?';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
       return;
     } else if (lower.includes('enforcement status')) {
-      response = '📋 **Enforcement Status Inquiry Received**\n\nL.A.R.R.Y is pulling active injunctions, fines, and pending legal actions on the requested entity. A regulatory paralegal will review the findings and will respond to you shortly.\n\nWould you like to return to the Main Menu?';
+      response = '📋 **Enforcement Status Inquiry Received**\n\nL.A.R.R.Y is pulling active injunctions, fines, and pending legal actions on the requested entity. A regulatory paralegal will review the findings and will respond as soon as possible.\n\nWould you like to return to the Main Menu?';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
       return;
     } else if (lower.includes('compliance audit')) {
-      response = '📊 **Compliance Audit Request Filed**\n\nWe have queued a full seed-to-sale (Metrc) reconciliation and physical site audit protocol. An auditor will be assigned to schedule the physical walkthrough and will respond to you shortly.\n\nWould you like to return to the Main Menu?';
+      response = '📊 **Compliance Audit Request Filed**\n\nWe have queued a full seed-to-sale (Metrc) reconciliation and physical site audit protocol. An auditor will be assigned to schedule the physical walkthrough and will respond as soon as possible.\n\nWould you like to return to the Main Menu?';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
       return;
     } else if (lower.includes('contact oversight') || lower.includes('state authority plan')) {
-      response = '📞 **Connecting to Oversight Division**\n\nYour request has been escalated to a senior state authority liaison. They will review your current clearance level and will respond to you shortly.\n\nWould you like to return to the Main Menu?';
+      response = '📞 **Connecting to Oversight Division**\n\nYour request has been escalated to a senior state authority liaison. They will review your current clearance level and will respond as soon as possible.\n\nWould you like to return to the Main Menu?';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
       return;
     } else if (lower.includes('audit shield')) {
-      response = '🛡️ **Audit Shield Setup Requested**\n\nWe are preparing your firewall and automated Metrc synchronization parameters to protect your facility from random inspections. A SINC technician will respond to you shortly.\n\nWould you like to return to the Main Menu?';
+      response = '🛡️ **Audit Shield Setup Requested**\n\nWe are preparing your firewall and automated Metrc synchronization parameters to protect your facility from random inspections. A SINC technician will respond as soon as possible.\n\nWould you like to return to the Main Menu?';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
       return;
     } else if (lower.includes('seed-to-sale')) {
-      response = '🌱 **Seed-to-Sale Compliance Inquiry**\n\nL.A.R.R.Y is auditing your inventory API endpoints for discrepancy alerts. Our compliance integration team will review your tracing history and will respond to you shortly.\n\nWould you like to return to the Main Menu?';
+      response = '🌱 **Seed-to-Sale Compliance Inquiry**\n\nL.A.R.R.Y is auditing your inventory API endpoints for discrepancy alerts. Our compliance integration team will review your tracing history and will respond as soon as possible.\n\nWould you like to return to the Main Menu?';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
       return;
     } else if (lower.includes('network integrity')) {
-      response = '🔌 **Network Integrity Check Initiated**\n\nWe are scanning your local network and point-of-sale hardware for vulnerabilities. An IT security specialist will run diagnostics and will respond to you shortly.\n\nWould you like to return to the Main Menu?';
+      response = '🔌 **Network Integrity Check Initiated**\n\nWe are scanning your local network and point-of-sale hardware for vulnerabilities. An IT security specialist will run diagnostics and will respond as soon as possible.\n\nWould you like to return to the Main Menu?';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
@@ -3750,14 +3750,32 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       setSignupStep(0);
       setIsTyping(false);
       return;
-    } else if (
-      lower.includes('account & login') || 
-      lower.includes('application status') || 
-      lower.includes('billing question') || 
-      lower.includes('how does this work')
-    ) {
-      // General Support Options
-      response = 'I have flagged your support request. You can also call us directly at **405-492-7297** for immediate assistance.\n\nWould you like to return to the Main Menu?';
+    } else if (lower.includes('account & login')) {
+      response = '🔐 **Account & Login Ticket Created**\n\nOur IT team has been notified of your access issue. A support specialist will check your credentials and will respond as soon as possible.\n\nWould you like to return to the Main Menu?';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+      setSignupStep(0);
+      setIsTyping(false);
+      return;
+    } else if (lower.includes('application status')) {
+      response = '📋 **Application Status Inquiry**\n\nL.A.R.R.Y is querying the state portal for your exact application timeline. A compliance agent will review the findings and will respond as soon as possible.\n\nWould you like to return to the Main Menu?';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+      setSignupStep(0);
+      setIsTyping(false);
+      return;
+    } else if (lower.includes('billing question')) {
+      response = '💳 **Billing Ticket Created**\n\nYour inquiry has been routed to our finance department. A billing specialist will review your Care Wallet or Subscription and will respond as soon as possible.\n\nWould you like to return to the Main Menu?';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+      setSignupStep(0);
+      setIsTyping(false);
+      return;
+    } else if (lower.includes('how does this work')) {
+      response = '🧠 **Educational Request Logged**\n\nWe are preparing a custom onboarding packet based on your profile to explain how GGHP works for you. A concierge guide will respond as soon as possible.\n\nWould you like to return to the Main Menu?';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+      setSignupStep(0);
+      setIsTyping(false);
+      return;
+    } else if (lower.includes('speak with shantell') || lower.includes('human')) {
+      response = '👩‍💼 **Direct Escalation to Management**\n\nI have priority-routed this to Shantell or the next available senior representative. They will respond as soon as possible. You can also call us directly at **405-492-7297**.\n\nWould you like to return to the Main Menu?';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
