@@ -1285,14 +1285,23 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
             {[
               { code: 'en', flag: '🇺🇸', label: 'EN' },
               { code: 'es', flag: '🇲🇽', label: 'ES' },
-              { code: 'zh', flag: '🇨🇳', label: '中文' },
+              { code: 'zh-CN', flag: '🇨🇳', label: '中文' },
               { code: 'vi', flag: '🇻🇳', label: 'VI' },
               { code: 'ko', flag: '🇰🇷', label: '한' },
               { code: 'ar', flag: '🇸🇦', label: 'عر' },
             ].map(lang => (
               <button
                 key={lang.code}
-                onClick={() => { document.documentElement.lang = lang.code; }}
+                onClick={() => { 
+                  if (lang.code === 'en') {
+                    document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                    document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + window.location.hostname;
+                  } else {
+                    document.cookie = `googtrans=/en/${lang.code}; path=/;`;
+                    document.cookie = `googtrans=/en/${lang.code}; path=/; domain=` + window.location.hostname;
+                  }
+                  window.location.reload();
+                }}
                 className="px-2 py-1 rounded-md text-xs hover:bg-white/10 transition-colors text-white/80 hover:text-white flex items-center gap-1"
               >
                 <span>{lang.flag}</span>
@@ -1938,7 +1947,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
               </p>
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
                  <button 
-                   onClick={() => onNavigate('login')}
+                   onClick={() => onNavigate('legal-advocacy')}
                    className="flex-1 px-6 py-4 bg-emerald-500 text-slate-900 rounded-2xl font-black hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/20 text-center"
                  >
                     Find Legal Counsel
