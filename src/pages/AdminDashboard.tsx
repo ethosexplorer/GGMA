@@ -51,7 +51,7 @@ export const AdminDashboard = ({ onLogout, user }: { onLogout?: () => void | Pro
           { label: 'Total Patients', value: '42,901', trend: '+12%', color: 'blue' },
           { label: 'Active Businesses', value: '1,422', trend: '+3%', color: 'emerald' },
           { label: 'Staff Efficiency', value: '96.2%', trend: 'Optimal', color: 'indigo' },
-          { label: 'System Revenue', value: '$2.4M', trend: '+18%', color: 'indigo' },
+          { label: 'B2B Network Volume', value: '$84.2M', trend: '+18%', color: 'indigo' },
         ].map((stat, i) => (
           <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">{stat.label}</p>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Building2, ShieldCheck, Landmark, FileCheck, DollarSign, Activity, 
-  Map as MapIcon, Settings, Download, Search, AlertCircle, FileText, CheckCircle2,
+  Map as MapIcon, Settings, Download, Search, AlertCircle, FileText, CheckCircle2, XCircle,
   TrendingUp, Users, ShieldAlert, Bot, HelpCircle, Gavel, Scale, Clock, LogOut
 } from 'lucide-react';
 import { cn } from '../lib/utils';
@@ -9,6 +9,7 @@ import { motion } from 'motion/react';
 
 export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
   const [activeTab, setActiveTab] = useState('legal_oversight');
+  const [selectedApplicant, setSelectedApplicant] = useState<any>(null);
   
   const getRoleTitle = () => user?.role === 'regulator_state' ? 'Marijuana Authority' : 'Regulator Authority';
   const getJurisdiction = () => 'STATE JURISDICTION';
@@ -131,8 +132,8 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
                ].map((app, i) => (
                  <tr key={i} className="hover:bg-slate-50 transition-colors group">
                     <td className="px-8 py-6">
-                       <p className="font-black text-slate-800">{app.n}</p>
-                       <p className="text-[10px] font-bold text-slate-400 italic">{app.e}</p>
+                       <button onClick={() => setSelectedApplicant(app)} className="font-black text-indigo-600 hover:text-indigo-800 hover:underline text-left">{app.n}</button>
+                       <p className="text-[10px] font-bold text-slate-400 italic mt-1">{app.e}</p>
                     </td>
                     <td className="px-8 py-6 text-xs font-bold text-slate-600">{app.t}</td>
                     <td className="px-8 py-6 text-xs font-bold text-slate-400 uppercase">{app.r}</td>
@@ -206,7 +207,7 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
           ))}
           
           <div className="pt-8 pb-2 px-3 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Oversight</div>
-          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-500 hover:bg-white/5 hover:text-slate-100 transition-all">
+          <button onClick={() => window.dispatchEvent(new Event('open-larry-modal'))} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-500 hover:bg-white/5 hover:text-slate-100 transition-all">
              <Bot size={18} /> Ask Larry (Legal AI)
           </button>
         </div>
@@ -239,6 +240,102 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
            {activeTab === 'compliance' && <div className="text-center py-40 text-slate-400 font-bold uppercase tracking-widest italic">Live Compliance Shield Active...</div>}
         </div>
       </div>
+
+      {selectedApplicant && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-[2rem] w-full max-w-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+            <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <div>
+                <h3 className="text-2xl font-black text-slate-900 tracking-tight">{selectedApplicant.n}</h3>
+                <p className="text-sm font-bold text-slate-500">{selectedApplicant.t} • {selectedApplicant.r}</p>
+              </div>
+              <button onClick={() => setSelectedApplicant(null)} className="text-slate-400 hover:text-slate-600">
+                 <XCircle size={28} />
+              </button>
+            </div>
+            <div className="p-8 overflow-y-auto flex-1">
+               <div className="grid grid-cols-2 gap-8">
+                 <div>
+                   <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Contact Information</h4>
+                   <div className="space-y-4">
+                     <div>
+                       <p className="text-[10px] font-bold text-slate-400 uppercase">Email</p>
+                       <p className="text-sm font-bold text-slate-800">{selectedApplicant.e}</p>
+                     </div>
+                     <div>
+                       <p className="text-[10px] font-bold text-slate-400 uppercase">Phone</p>
+                       <p className="text-sm font-bold text-slate-800">(555) 123-4567</p>
+                     </div>
+                     <div>
+                       <p className="text-[10px] font-bold text-slate-400 uppercase">Address</p>
+                       <p className="text-sm font-bold text-slate-800">123 Commerce St, {selectedApplicant.r}, OK 73102</p>
+                     </div>
+                   </div>
+                 </div>
+                 <div>
+                   <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Application Details</h4>
+                   <div className="space-y-4">
+                     <div>
+                       <p className="text-[10px] font-bold text-slate-400 uppercase">Application ID</p>
+                       <p className="text-sm font-bold text-slate-800">APP-849201</p>
+                     </div>
+                     <div>
+                       <p className="text-[10px] font-bold text-slate-400 uppercase">Submission Date</p>
+                       <p className="text-sm font-bold text-slate-800">April 22, 2026</p>
+                     </div>
+                     <div>
+                       <p className="text-[10px] font-bold text-slate-400 uppercase">Background Check</p>
+                       <div className="flex items-center gap-1 text-emerald-600 text-sm font-bold mt-1">
+                         <CheckCircle2 size={16} /> Passed (OSBI)
+                       </div>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+               <div className="mt-8">
+                 <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Document Vault</h4>
+                 <div className="grid grid-cols-2 gap-4">
+                   <div className="p-4 border border-slate-200 rounded-xl flex items-center justify-between hover:bg-slate-50 cursor-pointer transition-colors group">
+                      <div className="flex items-center gap-3">
+                         <FileText size={20} className="text-indigo-500" />
+                         <span className="text-xs font-bold text-slate-700">Identification.pdf</span>
+                      </div>
+                      <Download size={16} className="text-slate-400 group-hover:text-indigo-500" />
+                   </div>
+                   <div className="p-4 border border-slate-200 rounded-xl flex items-center justify-between hover:bg-slate-50 cursor-pointer transition-colors group">
+                      <div className="flex items-center gap-3">
+                         <FileText size={20} className="text-indigo-500" />
+                         <span className="text-xs font-bold text-slate-700">Proof_of_Residency.pdf</span>
+                      </div>
+                      <Download size={16} className="text-slate-400 group-hover:text-indigo-500" />
+                   </div>
+                   <div className="p-4 border border-slate-200 rounded-xl flex items-center justify-between hover:bg-slate-50 cursor-pointer transition-colors group">
+                      <div className="flex items-center gap-3">
+                         <FileText size={20} className="text-indigo-500" />
+                         <span className="text-xs font-bold text-slate-700">Affidavit_Lawful_Presence.pdf</span>
+                      </div>
+                      <Download size={16} className="text-slate-400 group-hover:text-indigo-500" />
+                   </div>
+                   {selectedApplicant.t.includes('Cultivator') || selectedApplicant.t.includes('Dispensary') ? (
+                     <div className="p-4 border border-slate-200 rounded-xl flex items-center justify-between hover:bg-slate-50 cursor-pointer transition-colors group">
+                        <div className="flex items-center gap-3">
+                           <FileText size={20} className="text-indigo-500" />
+                           <span className="text-xs font-bold text-slate-700">Certificate_of_Compliance.pdf</span>
+                        </div>
+                        <Download size={16} className="text-slate-400 group-hover:text-indigo-500" />
+                     </div>
+                   ) : null}
+                 </div>
+               </div>
+            </div>
+            <div className="p-6 border-t border-slate-100 bg-slate-50 flex justify-end gap-3 shrink-0">
+               <button onClick={() => setSelectedApplicant(null)} className="px-6 py-3 rounded-xl font-black text-slate-500 hover:bg-slate-200 uppercase text-xs transition-colors">Cancel</button>
+               <button onClick={() => { setSelectedApplicant(null); }} className="px-6 py-3 rounded-xl font-black text-white bg-red-600 hover:bg-red-700 uppercase text-xs shadow-lg transition-colors">Deny Application</button>
+               <button onClick={() => { setSelectedApplicant(null); }} className="px-6 py-3 rounded-xl font-black text-white bg-emerald-600 hover:bg-emerald-700 uppercase text-xs shadow-lg transition-colors">Approve License</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -6882,6 +6882,13 @@ export default function App() {
   const [view, setView] = useState('landing');
   const [initialRole, setInitialRole] = useState(undefined);
   const [isDemoUnlocked, setIsDemoUnlocked] = useState(false);
+  const [showLarryModal, setShowLarryModal] = useState(false);
+
+  useEffect(() => {
+    const handleOpenLarry = () => setShowLarryModal(true);
+    window.addEventListener('open-larry-modal', handleOpenLarry);
+    return () => window.removeEventListener('open-larry-modal', handleOpenLarry);
+  }, []);
 
   // Sync view state with URL path for deep linking
   useEffect(() => {
@@ -7360,9 +7367,32 @@ export default function App() {
           )}
         </AnimatePresence>
         
-        {/* Persistent Sylara Support for Unauthenticated Users */}
-        {['landing', 'login', 'signup', 'forgot-password', 'support', 'patient-signup', 'business-signup', 'provider-signup'].includes(view as string) && (
-          <SylaraFloatingWidget onClick={() => setView('larry-chatbot')} />
+        {/* Persistent Sylara Support everywhere */}
+        {view !== 'larry-chatbot' && (
+          <SylaraFloatingWidget onClick={() => setShowLarryModal(true)} />
+        )}
+
+        {/* Floating Modal for Chatbot */}
+        {showLarryModal && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+            <div className="bg-white w-full max-w-4xl h-[90vh] rounded-[2.5rem] shadow-2xl relative overflow-hidden flex flex-col">
+              <button 
+                onClick={() => setShowLarryModal(false)}
+                className="absolute top-4 right-4 z-50 w-12 h-12 bg-white/90 hover:bg-red-50 text-slate-500 hover:text-red-500 rounded-full flex items-center justify-center shadow-sm transition-colors border border-slate-200"
+              >
+                <XCircle size={28} />
+              </button>
+              <div className="flex-1 overflow-y-auto relative z-10">
+                <LarryMedCardChatbot 
+                  onNavigate={(view: any, role: any) => { 
+                    setShowLarryModal(false); 
+                    setView(view); 
+                    if (role) setInitialRole(role); 
+                  }} 
+                />
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </ErrorBoundary>
