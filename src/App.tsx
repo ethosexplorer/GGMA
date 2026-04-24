@@ -1383,12 +1383,12 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
         </div>
       </section>
 
-      {/* GGHP Infrastructure Banner */}
+      {/* GGHP Infrastructure Banner & News Column */}
       <section className="px-6 py-10">
-        <div className="max-w-6xl mx-auto">
-          <div className="bg-slate-900 rounded-[3rem] overflow-hidden shadow-2xl relative border border-white/10 group">
-             <img src="/gghp-branding.png" alt="GGHP Platform" className="w-full h-auto opacity-90 group-hover:opacity-100 transition-opacity duration-700" />
-             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 bg-slate-900 rounded-[3rem] overflow-hidden shadow-2xl relative border border-white/10 group flex flex-col h-full min-h-[400px]">
+             <img src="/gghp-branding.png" alt="GGHP Platform" className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-700" />
+             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent"></div>
              <div className="absolute bottom-12 left-12 right-12 flex flex-col md:flex-row justify-between items-end gap-6">
                 <div>
                   <h2 className="text-3xl font-black text-white mb-2 uppercase tracking-tighter">GGHP</h2>
@@ -1399,6 +1399,59 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
                    50 States Live • 24/7 Monitoring
                 </div>
              </div>
+          </div>
+
+          {/* Strategic News & Updates Sidebar */}
+          <div className="bg-white rounded-[2rem] border border-slate-200 shadow-xl p-6 flex flex-col h-full relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+            
+            <div className="flex items-center justify-between mb-6 relative z-10">
+               <h3 className="text-xl font-black text-slate-800 tracking-tight">Regulatory Intelligence</h3>
+               <span className="bg-red-100 text-red-600 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest flex items-center gap-1 animate-pulse">
+                 <AlertCircle size={12} /> Live Updates
+               </span>
+            </div>
+
+            <div className="flex-1 overflow-y-auto pr-2 space-y-5 custom-scrollbar relative z-10">
+               {/* Update 1 */}
+               <div className="group">
+                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">April 23, 2026</p>
+                 <h4 className="text-sm font-bold text-slate-800 mb-2 group-hover:text-[#1a4731] transition-colors">DOJ Final Order: Schedule III Reclassification</h4>
+                 <ul className="text-xs text-slate-600 space-y-1.5 ml-4 list-disc marker:text-emerald-500">
+                    <li><strong className="text-slate-800">Tax Relief (280E):</strong> Immediate potential to deduct ordinary business expenses.</li>
+                    <li><strong className="text-slate-800">SINC Solution:</strong> Automated financial reconciliation for 280E deductions integrated with Metrc.</li>
+                    <li><strong className="text-slate-800">Compliance:</strong> New DEA Registration tracked inside GGHP automatically.</li>
+                 </ul>
+               </div>
+
+               <div className="w-full h-px bg-slate-100"></div>
+
+               {/* Update 2 */}
+               <div className="group">
+                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">April 6, 2026</p>
+                 <h4 className="text-sm font-bold text-slate-800 mb-2 group-hover:text-[#1a4731] transition-colors">OMMA: 7-Day Routine Inspection Windows</h4>
+                 <ul className="text-xs text-slate-600 space-y-1.5 ml-4 list-disc marker:text-emerald-500">
+                    <li><strong className="text-slate-800">The Problem:</strong> Licensees facing operational disruptions during unannounced audits.</li>
+                    <li><strong className="text-slate-800">SINC Solution:</strong> 24/7 AI-driven mock audits. Your business is audit-ready before OMMA even issues the 7-day notice.</li>
+                 </ul>
+               </div>
+
+               <div className="w-full h-px bg-slate-100"></div>
+
+               {/* Update 3 */}
+               <div className="group">
+                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Industry Trend</p>
+                 <h4 className="text-sm font-bold text-slate-800 mb-2 group-hover:text-[#1a4731] transition-colors">Combating Product Recalls</h4>
+                 <ul className="text-xs text-slate-600 space-y-1.5 ml-4 list-disc marker:text-emerald-500">
+                    <li><strong className="text-slate-800">The Threat:</strong> Recalls spanning back years due to laboratory failures.</li>
+                    <li><strong className="text-slate-800">SINC Solution:</strong> L.A.R.R.Y Enforcement Intelligence preemptively flags bad batches and untrusted lab results before they hit your shelves.</li>
+                 </ul>
+               </div>
+            </div>
+            
+            <button onClick={() => document.getElementById('membership-tiers')?.scrollIntoView({ behavior: 'smooth' })} className="w-full mt-6 py-3 bg-[#1a4731] text-white rounded-xl text-sm font-bold hover:bg-[#153a28] transition-colors shadow-lg shadow-emerald-900/20 relative z-10">
+               Secure Your Infrastructure
+            </button>
           </div>
         </div>
       </section>
