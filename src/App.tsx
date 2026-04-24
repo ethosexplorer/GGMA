@@ -1321,7 +1321,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
 
         <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
           <a href="#state-facts" className="hover:text-[#1a4731] transition-colors">State Facts</a>
-          <button onClick={() => setView('education')} className="hover:text-[#1a4731] transition-colors font-medium flex items-center gap-2">
+          <button onClick={() => onNavigate('education' as any)} className="hover:text-[#1a4731] transition-colors font-medium flex items-center gap-2">
             <GraduationCap size={16} className="text-emerald-600" /> Education Academy
           </button>
           <button onClick={() => onNavigate('larry-chatbot', 'ggma')} className="hover:text-[#1a4731] transition-colors font-medium">GGMA Sector</button>
