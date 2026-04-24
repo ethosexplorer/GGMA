@@ -726,6 +726,52 @@ export const AdminDashboard = ({ onLogout, user }: { onLogout?: () => void | Pro
           </div>
         </div>
         <div className="flex-1 overflow-y-auto p-10">{getContent()}</div>
+        
+        {/* LIVE OPERATIONS & CLIENT ESCALATION FEED (RIGHT SIDEBAR) */}
+        <div className={cn("w-80 bg-white border-l border-slate-200 flex flex-col shrink-0 transition-all duration-500 hidden xl:flex", !isUnlocked && "blur-md opacity-50 pointer-events-none")}>
+           <div className="h-20 border-b border-slate-200 flex items-center px-6 bg-slate-50 shrink-0">
+              <h3 className="font-black text-sm uppercase tracking-widest text-slate-800 flex items-center gap-2"><Activity size={16} className="text-indigo-600" /> Live Client Escalations</h3>
+           </div>
+           <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/50 custom-scrollbar">
+              <div className="p-4 bg-white border-l-4 border-amber-500 rounded-r-xl shadow-sm hover:shadow-md transition-all cursor-pointer">
+                 <div className="flex justify-between items-start mb-2">
+                    <span className="text-[9px] font-black uppercase tracking-widest text-amber-600 bg-amber-50 px-2 py-0.5 rounded">Business Alert</span>
+                    <span className="text-[9px] text-slate-400 font-bold">Just Now</span>
+                 </div>
+                 <p className="text-xs font-bold text-slate-800">Apex Health CEO requests account override.</p>
+                 <div className="mt-3 flex justify-between items-center">
+                    <button className="text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest flex items-center gap-1">Take Ticket</button>
+                    <span className="text-[9px] font-bold text-slate-400">Assigned: AI</span>
+                 </div>
+              </div>
+              <div className="p-4 bg-white border-l-4 border-emerald-500 rounded-r-xl shadow-sm hover:shadow-md transition-all cursor-pointer">
+                 <div className="flex justify-between items-start mb-2">
+                    <span className="text-[9px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">Patient Intake</span>
+                    <span className="text-[9px] text-slate-400 font-bold">3m ago</span>
+                 </div>
+                 <p className="text-xs font-bold text-slate-800">Patient licensing error during document upload.</p>
+                 <div className="mt-3 flex justify-between items-center">
+                    <button className="text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest flex items-center gap-1">Take Ticket</button>
+                    <span className="text-[9px] font-bold text-slate-400">Assigned: Call Center</span>
+                 </div>
+              </div>
+              <div className="p-4 bg-white border-l-4 border-blue-500 rounded-r-xl shadow-sm hover:shadow-md transition-all cursor-pointer">
+                 <div className="flex justify-between items-start mb-2">
+                    <span className="text-[9px] font-black uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded">System Check</span>
+                    <span className="text-[9px] text-slate-400 font-bold">12m ago</span>
+                 </div>
+                 <p className="text-xs font-bold text-slate-800">Daily OMMA sync verified by AI Sylara.</p>
+                 <div className="mt-3 flex justify-between items-center">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1">Auto-Resolved</span>
+                    <span className="text-[9px] font-bold text-slate-400">Assigned: AI</span>
+                 </div>
+              </div>
+              <div className="p-4 border-2 border-dashed border-slate-200 rounded-xl text-center text-slate-400 flex flex-col items-center justify-center">
+                 <Activity size={24} className="mb-2 opacity-50" />
+                 <p className="text-[10px] font-black uppercase tracking-widest">Listening for incoming issues...</p>
+              </div>
+           </div>
+        </div>
       </div>
     </div>
   );

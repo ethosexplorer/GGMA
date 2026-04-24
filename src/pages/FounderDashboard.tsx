@@ -1979,7 +1979,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
         {/* GLOBAL ALERTS STREAM (RIGHT SIDEBAR) */}
         <div className={cn("w-80 bg-white border-l border-slate-200 flex flex-col shrink-0 transition-all duration-500 hidden xl:flex", !isUnlocked && "blur-md opacity-50 pointer-events-none")}>
            <div className="h-20 border-b border-slate-200 flex items-center px-6 bg-slate-50 shrink-0">
-              <h3 className="font-black text-sm uppercase tracking-widest text-slate-800 flex items-center gap-2"><Bell size={16} className="text-indigo-600" /> Incoming Alerts Queue</h3>
+              <h3 className="font-black text-sm uppercase tracking-widest text-slate-800 flex items-center gap-2"><Bell size={16} className="text-indigo-600" /> Executive Oversight & Alert Queue</h3>
            </div>
            <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/50 custom-scrollbar">
               <div className="p-4 bg-white border-l-4 border-cyan-500 rounded-r-xl shadow-sm hover:shadow-md transition-all cursor-pointer">
@@ -2017,7 +2017,35 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
               
               <div className="p-4 border-2 border-dashed border-slate-200 rounded-xl text-center text-slate-400 flex flex-col items-center justify-center">
                  <Bell size={24} className="mb-2 opacity-50" />
-                 <p className="text-[10px] font-black uppercase tracking-widest">Listening for incoming alerts...</p>
+                 <p className="text-[10px] font-black uppercase tracking-widest">Listening for external alerts...</p>
+              </div>
+
+              {/* Admin & AI Operations Tracker */}
+              <div className="pt-4 mt-4 border-t border-slate-200">
+                 <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3 flex items-center gap-2"><Activity size={12} /> Internal Ops Status Checks</h4>
+                 <div className="space-y-3">
+                    <div className="p-3 bg-indigo-50 border border-indigo-100 rounded-xl">
+                       <div className="flex justify-between items-start mb-1">
+                          <span className="text-[9px] font-black uppercase tracking-widest text-indigo-600">AI Sylara</span>
+                          <span className="text-[9px] font-bold text-slate-400">1m ago</span>
+                       </div>
+                       <p className="text-xs font-bold text-slate-700">Daily Metrc Compliance Auto-Audit Completed.</p>
+                    </div>
+                    <div className="p-3 bg-emerald-50 border border-emerald-100 rounded-xl">
+                       <div className="flex justify-between items-start mb-1">
+                          <span className="text-[9px] font-black uppercase tracking-widest text-emerald-600">Call Center Ops</span>
+                          <span className="text-[9px] font-bold text-slate-400">8m ago</span>
+                       </div>
+                       <p className="text-xs font-bold text-slate-700">Patient Licensing issue TKT-9428 resolved by Sarah J.</p>
+                    </div>
+                    <div className="p-3 bg-emerald-50 border border-emerald-100 rounded-xl">
+                       <div className="flex justify-between items-start mb-1">
+                          <span className="text-[9px] font-black uppercase tracking-widest text-emerald-600">Admin Command</span>
+                          <span className="text-[9px] font-bold text-slate-400">12m ago</span>
+                       </div>
+                       <p className="text-xs font-bold text-slate-700">Business Escalation #402 handed over to Legal Sentinel.</p>
+                    </div>
+                 </div>
               </div>
            </div>
         </div>
