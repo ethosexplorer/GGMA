@@ -4202,12 +4202,26 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         response = `Please enter the **Name** and **Phone Number** of your primary physician.`;
       } else {
         setSignupStep(12);
-        response = `Understood. Why are you applying for your Medical Marijuana Card? Which of the following conditions do you have? \n\n*(I will provide a list for you to choose from)*`;
+        response = `Understood. Why are you applying for your Medical Marijuana Card? Which of the following conditions do you have?`;
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Chronic Pain', 'Depression', 'Anxiety', 'Insomnia', 'PTSD', 'Autism', 'Cancer', 'Glaucoma', 'Seizures', 'Crohns Disease', 'Sickle Cell', 'Other']
+        } as any]);
+        setIsTyping(false);
+        return;
       }
     } else if (signupStep === 11.1) {
       setSignupData(prev => ({ ...prev, primaryPhysician: text }));
       setSignupStep(12);
-      response = `Got it. Why are you applying for your Medical Marijuana Card? Which of the following conditions do you have? \n\n*(I will provide a list for you to choose from)*`;
+      response = `Got it. Why are you applying for your Medical Marijuana Card? Which of the following conditions do you have?`;
+      setMessages(prev => [...prev, { 
+        role: 'bot', 
+        text: response,
+        choices: ['Chronic Pain', 'Depression', 'Anxiety', 'Insomnia', 'PTSD', 'Autism', 'Cancer', 'Glaucoma', 'Seizures', 'Crohns Disease', 'Sickle Cell', 'Other']
+      } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 12) {
       setSignupData(prev => ({ ...prev, qualifyingCondition: text }));
       setSignupStep(13);
@@ -4226,21 +4240,28 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     } else if (signupStep === 14) {
       setSignupData(prev => ({ ...prev, lastDoctorVisit: text }));
       setSignupStep(15);
-      response = `📋 **Document Upload Center**\n\nI need a few documents to complete your file. Please follow the prompts in the **Upload Panel** below.\n\nYou must upload all required documents before we can proceed to the final step.\n\nAre you ready to begin uploads?`;
+      response = `📋 **Document Upload Center**\n\nI need a few documents to complete your file.\n\n📷 **Photo Instructions:** Please take a picture with all 4 corners of the document clearly visible, or scan it.\n\n⚠️ **Trouble Uploading?** If you cannot upload in this chat, you can:\n📱 **Text** your documents to **1-405-492-7487** (Include your Name & D.O.B)\n✉️ **Email** to **asstsupport@gmail.com**\n\nAre you ready to begin uploads?`;
       setMessages(prev => [...prev, { 
         role: 'bot', 
         text: response,
-        choices: ['Ready to Upload', 'Skip for Now'] 
+        choices: ['Ready to Upload', 'Skip for Now', 'I Will Email/Text Them'] 
       } as any]);
       setIsTyping(false);
       return;
     } else if (signupStep === 15) {
       if (lower.includes('ready')) {
         setSignupStep(16);
-        response = `Please use the **Patient Document Upload Center** below. Once all documents are uploaded, the continue button will activate.`;
+        response = `Please use the **Patient Document Upload Center** below.\n\n*(Note: Once uploaded, click **"Continue"** below the documents to proceed)*`;
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Continue'] 
+        } as any]);
+        setIsTyping(false);
+        return;
       } else {
         setSignupStep(19);
-        response = `Understood. You can upload them later in your portal. \n\nFinal step: Would you like to **Opt-In** to subscribe for 2-way messaging for renewal alerts and status updates?`;
+        response = `Understood. You can upload them later in your portal or via email/text. \n\nFinal step: Would you like to **Opt-In** to subscribe for 2-way messaging for renewal alerts and status updates?`;
         setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Yes', 'No'] } as any]);
         setIsTyping(false);
         return;
@@ -4674,7 +4695,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
           (businessData.licenseType === 'Processor' ? '📄 Hazardous License / Chemical Safety Data Sheets\n' : '') +
           (businessData.licenseType === 'Dispensary' ? '📄 Dispensary Distance Attestation (1,000 ft from schools)\n' : '') +
           (businessData.licenseType === 'Grower' ? '📄 Grow Facility Distance Attestation (1,000 ft from schools)\n' : '') +
-          '\nPlease use the 📎 **attachment icon** to upload your documents. You must upload at least one document to proceed.\n\nOnce you have uploaded your documents, type **"done"** to continue.';
+          '\n📷 **Photo Instructions:** Please ensure all 4 corners of the document are visible in the picture or scan.\n\n⚠️ **Trouble Uploading?** If you cannot upload in this chat, you can:\n📱 **Text** your documents to **1-405-492-7487** (Include Business Name & EIN)\n✉️ **Email** to **asstsupport@gmail.com**\n\nPlease use the **Business Document Upload Center** below to begin. Once uploaded, type **"done"** or click continue.';
         setBusinessData(prev => ({ ...prev, documentsUploadedCount: 0 }));
         setSignupStep(131);
       } else if (lower === 'no' || lower === 'nope') {
@@ -5161,22 +5182,26 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         if (signupStep === 8.5) {
           setSignupStep(9);
           setMessages(prev => [...prev, { role: 'bot', text: `Thanks! Document received. \n\nFinally, please provide a secure **Password** (minimum 8 characters) for your new account.\n\n*(Your password will be hidden in the chat)*` }]);
-        } else if (signupStep === 131) {
+        } else if (signupStep === 131 || signupStep === 16) {
           // If a pending doc label was set (user clicked a specific doc), mark it
           if (pendingDocLabel) {
             setUploadedDocuments(prev => ({ ...prev, [pendingDocLabel]: file.name }));
-            setBusinessData(prev => ({
-              ...prev,
-              documentsUploadedCount: prev.documentsUploadedCount + 1,
-            }));
+            if (signupStep === 131) {
+              setBusinessData(prev => ({
+                ...prev,
+                documentsUploadedCount: prev.documentsUploadedCount + 1,
+              }));
+            }
             setMessages(prev => [...prev, { role: 'bot', text: `✅ **${pendingDocLabel}** — uploaded: **${file.name}**` }]);
             setPendingDocLabel('');
           } else {
             // Generic upload — ask which document it is
-            setBusinessData(prev => ({
-              ...prev,
-              documentsUploadedCount: prev.documentsUploadedCount + 1,
-            }));
+            if (signupStep === 131) {
+              setBusinessData(prev => ({
+                ...prev,
+                documentsUploadedCount: prev.documentsUploadedCount + 1,
+              }));
+            }
             setMessages(prev => [...prev, { role: 'bot', text: `✅ Document received: **${file.name}**. Please select which document this is from the checklist above.` }]);
           }
         } else {
