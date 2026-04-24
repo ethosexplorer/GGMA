@@ -67,7 +67,7 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
           {[
             { num: 1, label: 'Case Triage' },
             { num: 2, label: 'Incident Details' },
-            { num: 3, label: 'Misconduct Scan' },
+            { num: 3, label: 'Rights Violation Scan' },
             { num: 4, label: 'Schedule Review' }
           ].map((s, i) => (
             <div key={i} className="flex items-center gap-4">
@@ -218,7 +218,7 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
                       Back
                     </button>
                     <button onClick={handleNext} disabled={!formData.summary} className="flex-1 py-4 bg-slate-900 text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-800 disabled:opacity-50 transition-all">
-                      Continue to Misconduct Scan <ChevronRight size={18} />
+                    Continue to Rights Violation Scan <ChevronRight size={18} />
                     </button>
                   </div>
                 </div>
@@ -229,10 +229,10 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
               <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
                 <div className="flex items-center gap-3 mb-8">
                   <ShieldAlert className="text-red-500" size={24} />
-                  <h2 className="text-2xl font-black text-slate-800">Attorney Misconduct Scan</h2>
+                  <h2 className="text-2xl font-black text-slate-800">Rights Violation & Misconduct Scan</h2>
                 </div>
                 
-                <p className="text-slate-600 mb-6 font-medium">Opposing counsel frequently uses procedural traps, manufactured evidence, and intimidation against Pro Se litigants. Document any suspected misconduct below.</p>
+                <p className="text-slate-600 mb-6 font-medium">Opposing counsel and law enforcement frequently use procedural traps, manufactured evidence, and intimidation. Document any suspected misconduct or rights violations below.</p>
 
                 <div className="space-y-6">
                   <div className="bg-red-50/30 border border-red-100 rounded-xl p-5">
