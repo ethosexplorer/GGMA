@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Scale, FileText, AlertTriangle, ShieldAlert, CalendarClock, 
-  ChevronRight, CheckCircle2, UserCheck, Lock, Gavel, FileSignature
+  ChevronRight, CheckCircle2, UserCheck, Lock, Gavel, FileSignature, Upload
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
@@ -27,9 +27,9 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
   const openCalendly = (e: React.MouseEvent) => {
     e.preventDefault();
     if (window.Calendly) {
-      window.Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenenterprize/15-min-meeting' });
+      window.Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/legal-consultation' });
     } else {
-      window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
+      window.open('https://calendly.com/globalgreenhpmeet/legal-consultation', '_blank');
     }
   };
 
@@ -207,10 +207,22 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
                     <textarea 
                       rows={5}
                       placeholder="Give a clear chronological statement of what happened, case numbers (if any), and charges/claims involved..."
-                      className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-amber-500 font-medium text-slate-700"
+                      className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-amber-500 font-medium text-slate-700 mb-4"
                       value={formData.summary}
                       onChange={e => setFormData({...formData, summary: e.target.value})}
                     />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Upload Relevant Documents (Citations, Tickets, Court Orders)</label>
+                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-300 rounded-xl cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors">
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <Upload className="w-8 h-8 mb-2 text-slate-400" />
+                        <p className="mb-2 text-sm text-slate-500"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+                        <p className="text-xs text-slate-500">PDF, PNG, JPG (MAX. 10MB)</p>
+                      </div>
+                      <input type="file" className="hidden" multiple />
+                    </label>
                   </div>
 
                   <div className="flex gap-4 mt-8">
