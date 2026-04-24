@@ -3658,24 +3658,16 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         } as any]);
         setIsTyping(false);
         return;
-      } else if (lower.includes('it support') || lower.includes('technical')) {
-        response = '💻 **IT & Technical Support**\n\nI can help resolve technical issues or answer general platform questions.\n\nWhat do you need?';
-        setMessages(prev => [...prev, { 
-          role: 'bot', 
-          text: response,
-          choices: ['Portal Login Issue', 'Care Wallet Problem', 'Metrc Sync Error', 'App Not Loading', 'General Question', 'Main Menu'] 
-        } as any]);
-        setSignupStep(600);
+      } else if (lower.includes('it support') || lower.includes('technical') || lower.includes('portal login issue') || lower.includes('app not loading') || lower.includes('metrc sync error')) {
+        window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
+        response = '💻 **IT & Technical Support**\n\nI am routing you to our **IT Support Team**.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Technical Support](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n📞 **Tech Support Line**: 405-492-7297';
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
         setIsTyping(false);
         return;
-      } else if (lower.includes('legal') || lower.includes('administration')) {
-        response = '⚖️ **Legal & Administration**\n\nOur legal team handles compliance auditing, contract management, and regulatory filings.\n\nWhich department do you need?';
-        setMessages(prev => [...prev, { 
-          role: 'bot', 
-          text: response,
-          choices: ['Speak with Admin/Paralegal', 'Legal Advocacy', 'Main Menu'] 
-        } as any]);
-        setSignupStep(0);
+      } else if (lower.includes('legal') || lower.includes('administration') || lower.includes('admin/paralegal') || lower.includes('paralegal')) {
+        window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
+        response = '⚖️ **Legal & Administration**\n\nI am routing you to our **Legal & Admin Team**.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Legal/Admin Consultation](https://calendly.com/globalgreenenterprize/15-min-meeting)\n\n📞 **Legal Line**: 405-492-7297';
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
         setIsTyping(false);
         return;
       } else if (lower.includes('start') || lower.includes('apply') || lower.includes('license')) {
@@ -4933,7 +4925,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         response = 'No problem. If you\'re not ready for an appointment, I can help you with **GGMA Licensing** or **IT Support**. What would you like to explore?';
         setSignupStep(0);
       }
-    } else if (lower.includes('business expert') || lower.includes('commercial consultant')) {
+    } else if (lower.includes('business expert') || lower.includes('commercial consultant') || lower.includes('business consultation') || lower.includes('book business')) {
       window.open('https://calendly.com/globalgreenenterprize/15-min-meeting', '_blank');
       response = '🏢 **Commercial Compliance Consultation**\n\nI am routing you to our **Business Licensing Experts**.\n\n📞 **Business Line**: 405-492-7297\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Business Consultation](https://calendly.com/globalgreenenterprize/15-min-meeting)';
     } else if (lower.includes('human') || lower.includes('coordinator') || lower.includes('shantell') || lower.includes('speak with someone')) {
