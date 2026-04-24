@@ -3985,9 +3985,8 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       // License Eligibility: Are you a Patient Or Legal Guardian?
       if (lower === 'yes' || lower === 'yeah' || lower === 'yep') {
         setLicenseEligibility(prev => ({ ...prev, isPatientOrGuardian: 'yes' }));
-        const stateName = signupData.state || 'your state';
-        response = `Are you a **${stateName} State Resident**? (Yes / No)`;
-        setSignupStep(21);
+        response = `What **State** are you applying for?`;
+        setSignupStep(20.5);
       } else if (lower === 'no' || lower === 'nope') {
         setLicenseEligibility(prev => ({ ...prev, isPatientOrGuardian: 'no' }));
         response = 'Are you a **Caregiver**? (Yes / No)';
@@ -4002,6 +4001,18 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         setIsTyping(false);
         return;
       }
+    } else if (signupStep === 20.5) {
+      const selectedState = text.trim();
+      setSignupData(prev => ({ ...prev, state: selectedState }));
+      response = `Are you a **${selectedState} State Resident**? (Yes / No)`;
+      setMessages(prev => [...prev, { 
+        role: 'bot', 
+        text: response,
+        choices: ['Yes', 'No'] 
+      } as any]);
+      setSignupStep(21);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 21) {
       // License Eligibility: Are you an Oklahoma State Resident?
       const stateName = signupData.state || 'the state';
@@ -5423,6 +5434,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
                         <button
                           key={idx}
                           type="button"
+                          disabled={isTyping}
                           onClick={() => handleSend(undefined, choice)}
                           className={cn(
                             "px-4 py-3 rounded-xl text-xs font-bold transition-all shadow-sm active:scale-95 text-left flex flex-col justify-between h-full group",
@@ -5430,7 +5442,8 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
                               ? isSubscription 
                                 ? "bg-slate-900 text-white border-slate-800 hover:bg-slate-800" 
                                 : "bg-white border border-slate-200 text-[#1a4731] hover:bg-emerald-50 hover:border-emerald-300"
-                              : "bg-emerald-50 border border-emerald-200 text-[#1a4731] hover:bg-emerald-500 hover:text-white hover:border-emerald-600 px-4 py-2"
+                              : "bg-emerald-50 border border-emerald-200 text-[#1a4731] px-4 py-2",
+                            isTyping ? "opacity-50 cursor-not-allowed" : i === 0 ? "" : "hover:bg-emerald-500 hover:text-white hover:border-emerald-600"
                           )}
                         >
                           <span className="flex items-center gap-2">
@@ -6288,7 +6301,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onFocus={() => setShowUploadMenu(false)}
-                placeholder="Message L.A.R.R.Y..."
+                placeholder="Message Sylara..."
                 className="flex-1 bg-transparent outline-none text-sm text-slate-800 placeholder:text-slate-400 py-2 min-w-0"
               />
               <button
