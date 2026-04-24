@@ -5,7 +5,7 @@ import {
   Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
   Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Headphones,
-  Zap, UserPlus, GraduationCap, FlaskConical, BookOpen
+  Zap, UserPlus, GraduationCap, FlaskConical, BookOpen, Phone, ShieldAlert
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
@@ -369,21 +369,296 @@ export const AdminDashboard = ({ onLogout, user }: { onLogout?: () => void | Pro
     );
   };
 
+  const renderSupport = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center bg-white border border-slate-200 p-8 rounded-[2rem] shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-8 opacity-5"><Headphones size={120} /></div>
+        <div className="relative z-10">
+          <h2 className="text-3xl font-black text-slate-800 tracking-tight italic uppercase mb-2">Ops & Call Center</h2>
+          <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Live Support Monitoring • Human Takeover Queue • Sylara Handoffs</p>
+        </div>
+        <div className="flex gap-4 relative z-10">
+          <div className="bg-emerald-50 border border-emerald-100 px-6 py-3 rounded-2xl text-center">
+            <p className="text-[10px] font-black text-emerald-600 uppercase">Sylara Handling</p>
+            <p className="text-2xl font-black text-slate-800">1,402</p>
+          </div>
+          <div className="bg-amber-50 border border-amber-100 px-6 py-3 rounded-2xl text-center">
+            <p className="text-[10px] font-black text-amber-600 uppercase">Human Queue</p>
+            <p className="text-2xl font-black text-slate-800">14</p>
+          </div>
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+         <div className="lg:col-span-2 bg-white border border-slate-200 rounded-[2rem] p-6 shadow-sm">
+            <h3 className="font-black text-slate-800 mb-6 flex items-center gap-2 uppercase tracking-widest text-sm"><MessageSquare size={16} className="text-indigo-600"/> Active Escelations</h3>
+            <div className="space-y-4">
+               {[
+                 { id: 'TKT-9428', u: 'Jane Doe (Patient)', t: 'Payment Error during Checkout', s: 'Awaiting Agent', time: '4m ago', prio: 'High' },
+                 { id: 'TKT-9429', u: 'GreenLeaf Farms', t: 'Compliance Form #4A Upload Failure', s: 'Sylara Escalated', time: '12m ago', prio: 'Urgent' },
+                 { id: 'TKT-9430', u: 'Dr. Smith', t: 'Provider Validation Stuck', s: 'Awaiting Agent', time: '1h ago', prio: 'Medium' },
+               ].map(tkt => (
+                 <div key={tkt.id} className="p-4 border border-slate-100 rounded-xl hover:bg-slate-50 flex items-center justify-between group">
+                    <div className="flex items-center gap-4">
+                       <div className={cn("w-2 h-10 rounded-full", tkt.prio === 'Urgent' ? 'bg-red-500' : tkt.prio === 'High' ? 'bg-amber-500' : 'bg-blue-500')}></div>
+                       <div>
+                          <p className="font-bold text-slate-800">{tkt.t}</p>
+                          <p className="text-xs font-medium text-slate-500">{tkt.id} • {tkt.u}</p>
+                       </div>
+                    </div>
+                    <div className="flex items-center gap-6">
+                       <div className="text-right">
+                          <p className="text-[10px] font-black uppercase text-amber-600 bg-amber-50 px-2 py-0.5 rounded">{tkt.s}</p>
+                          <p className="text-xs font-bold text-slate-400 mt-1">{tkt.time}</p>
+                       </div>
+                       <button className="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-black uppercase opacity-0 group-hover:opacity-100 transition-all">Takeover</button>
+                    </div>
+                 </div>
+               ))}
+            </div>
+         </div>
+         <div className="bg-slate-900 border border-slate-800 rounded-[2rem] p-6 text-white">
+            <h3 className="font-black mb-6 flex items-center gap-2 uppercase tracking-widest text-sm text-indigo-400"><Phone size={16}/> Call Center Load</h3>
+            <div className="space-y-6">
+               <div>
+                  <div className="flex justify-between text-xs font-bold mb-2"><span>Average Wait Time</span> <span className="text-emerald-400">1m 42s</span></div>
+                  <div className="flex justify-between text-xs font-bold mb-2"><span>Active Agents</span> <span className="text-white">42 / 50</span></div>
+                  <div className="flex justify-between text-xs font-bold mb-2"><span>Resolution Rate</span> <span className="text-emerald-400">94%</span></div>
+               </div>
+               <div className="pt-4 border-t border-white/10">
+                  <p className="text-[10px] uppercase font-black tracking-widest text-slate-500 mb-4">Agent Status Feed</p>
+                  <div className="space-y-3">
+                     <div className="flex justify-between items-center text-xs">
+                        <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div> Marcus T.</span>
+                        <span className="text-slate-400 font-bold italic">On Call (14m)</span>
+                     </div>
+                     <div className="flex justify-between items-center text-xs">
+                        <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div> Sarah J.</span>
+                        <span className="text-slate-400 font-bold italic">Available</span>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+    </div>
+  );
+
+  const renderPatients = () => (
+    <div className="space-y-6">
+      <div className="bg-white border border-slate-200 p-8 rounded-[2.5rem] shadow-sm">
+        <div className="flex justify-between items-center mb-6">
+           <h2 className="text-2xl font-black text-slate-800 tracking-tight uppercase italic">Patient Registry</h2>
+           <div className="flex gap-2">
+              <input type="text" placeholder="Search patients..." className="border border-slate-200 rounded-xl px-4 py-2 text-sm w-64 focus:outline-none focus:border-indigo-500" />
+           </div>
+        </div>
+        <table className="w-full text-sm text-left">
+           <thead className="bg-slate-50 border-b border-slate-100">
+              <tr>
+                 <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest">Patient Details</th>
+                 <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest">License Type</th>
+                 <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest">Status</th>
+                 <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest text-right">Actions</th>
+              </tr>
+           </thead>
+           <tbody className="divide-y divide-slate-50">
+              {[
+                { n: 'Amanda Collins', e: 'amanda.c@email.com', t: 'Adult Patient (2-Year)', s: 'Active' },
+                { n: 'Robert Vance', e: 'r.vance@email.com', t: 'Minor Patient', s: 'Pending Renewal' },
+                { n: 'Sarah Jenkins', e: 's.jenkins@email.com', t: 'Caregiver', s: 'Active' },
+              ].map((p, i) => (
+                <tr key={i} className="hover:bg-slate-50 group transition-colors">
+                   <td className="px-6 py-4">
+                      <p className="font-bold text-slate-800">{p.n}</p>
+                      <p className="text-[10px] font-bold text-slate-400">{p.e}</p>
+                   </td>
+                   <td className="px-6 py-4 font-bold text-slate-600 text-xs">{p.t}</td>
+                   <td className="px-6 py-4">
+                      <span className={cn("px-2 py-0.5 rounded text-[9px] font-black uppercase", p.s === 'Active' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600')}>{p.s}</span>
+                   </td>
+                   <td className="px-6 py-4 text-right">
+                      <button className="text-xs font-black text-indigo-600 hover:underline uppercase tracking-wider">Manage</button>
+                   </td>
+                </tr>
+              ))}
+           </tbody>
+        </table>
+      </div>
+    </div>
+  );
+
+  const renderBusiness = () => (
+    <div className="space-y-6">
+      <div className="bg-white border border-slate-200 p-8 rounded-[2.5rem] shadow-sm">
+        <h2 className="text-2xl font-black text-slate-800 tracking-tight uppercase italic mb-6">Commercial Nodes</h2>
+        <table className="w-full text-sm text-left">
+           <thead className="bg-slate-50 border-b border-slate-100">
+              <tr>
+                 <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest">Business Entity</th>
+                 <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest">Type</th>
+                 <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest">Metrc Status</th>
+                 <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest text-right">Actions</th>
+              </tr>
+           </thead>
+           <tbody className="divide-y divide-slate-50">
+              {[
+                { n: 'GreenLeaf Cultivation LLC', t: 'Cultivator', s: 'Synced' },
+                { n: 'Apex Dispensary', t: 'Dispensary', s: 'Warning' },
+                { n: 'Pure Extracts', t: 'Processor', s: 'Synced' },
+              ].map((b, i) => (
+                <tr key={i} className="hover:bg-slate-50 group transition-colors">
+                   <td className="px-6 py-4 font-bold text-slate-800">{b.n}</td>
+                   <td className="px-6 py-4 font-bold text-slate-600 text-xs uppercase">{b.t}</td>
+                   <td className="px-6 py-4">
+                      <span className={cn("px-2 py-0.5 rounded text-[9px] font-black uppercase flex items-center w-fit gap-1", b.s === 'Synced' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600')}>
+                        {b.s === 'Warning' ? <AlertTriangle size={10} /> : <CheckCircle2 size={10} />} {b.s}
+                      </span>
+                   </td>
+                   <td className="px-6 py-4 text-right">
+                      <button className="text-xs font-black text-indigo-600 hover:underline uppercase tracking-wider">Audit</button>
+                   </td>
+                </tr>
+              ))}
+           </tbody>
+        </table>
+      </div>
+    </div>
+  );
+
+  const renderApprovals = () => (
+    <div className="space-y-6">
+       <div className="bg-slate-900 p-8 rounded-[2.5rem] shadow-sm text-white">
+          <h2 className="text-2xl font-black italic uppercase tracking-tight mb-2">Agency Approvals Pipeline</h2>
+          <p className="text-slate-400 font-medium text-sm">Internal pre-screening queue before OMMA transmission.</p>
+       </div>
+       <div className="bg-white border border-slate-200 p-8 rounded-[2.5rem] shadow-sm">
+          <div className="p-10 border-2 border-dashed border-slate-200 rounded-2xl text-center">
+             <CheckCircle2 size={40} className="mx-auto text-emerald-500 mb-4" />
+             <h3 className="text-xl font-black text-slate-800 mb-2">Queue is Empty</h3>
+             <p className="text-slate-500 font-medium">Sylara AI has auto-screened and forwarded all pending applications to the State Authority.</p>
+          </div>
+       </div>
+    </div>
+  );
+
+  const renderApplications = () => (
+    <div className="space-y-6">
+       <div className="bg-white border border-slate-200 p-8 rounded-[2.5rem] shadow-sm">
+          <h2 className="text-2xl font-black text-slate-800 uppercase italic tracking-tight mb-6">Applications Queue</h2>
+          <table className="w-full text-sm text-left">
+             <thead className="bg-slate-50 border-b border-slate-100">
+                <tr>
+                   <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest">ID</th>
+                   <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest">Applicant</th>
+                   <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest">Progress</th>
+                   <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest text-right">Action</th>
+                </tr>
+             </thead>
+             <tbody className="divide-y divide-slate-50">
+                {[
+                  { id: 'APP-991', n: 'John Doe', p: 'Background Check' },
+                  { id: 'APP-992', n: 'Jane Smith', p: 'Document Verification' },
+                ].map((a, i) => (
+                  <tr key={i} className="hover:bg-slate-50">
+                     <td className="px-6 py-4 font-bold text-slate-600 text-xs">{a.id}</td>
+                     <td className="px-6 py-4 font-black text-slate-800">{a.n}</td>
+                     <td className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">{a.p}</td>
+                     <td className="px-6 py-4 text-right"><button className="text-xs font-black text-indigo-600 uppercase hover:underline">Review</button></td>
+                  </tr>
+                ))}
+             </tbody>
+          </table>
+       </div>
+    </div>
+  );
+
+  const renderCompliance = () => (
+    <div className="space-y-6">
+       <div className="bg-white border border-slate-200 p-8 rounded-[2.5rem] shadow-sm">
+          <h2 className="text-2xl font-black text-slate-800 uppercase italic tracking-tight mb-6 flex items-center gap-2"><ShieldAlert size={24} className="text-indigo-600"/> Compliance Monitor</h2>
+          <div className="space-y-4">
+             <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl flex items-center justify-between">
+                <div>
+                   <h4 className="font-bold text-amber-900">Missing Metrc API Key</h4>
+                   <p className="text-xs text-amber-700 font-medium">Business: Apex Dispensary</p>
+                </div>
+                <button className="px-4 py-2 bg-amber-600 text-white text-[10px] font-black uppercase rounded-lg">Send Notice</button>
+             </div>
+             <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center justify-between">
+                <div>
+                   <h4 className="font-bold text-emerald-900">Monthly Audit Completed</h4>
+                   <p className="text-xs text-emerald-700 font-medium">System-wide auto-audit finished 2 hours ago.</p>
+                </div>
+                <button className="px-4 py-2 bg-emerald-600 text-white text-[10px] font-black uppercase rounded-lg">View Log</button>
+             </div>
+          </div>
+       </div>
+    </div>
+  );
+
+  const renderAiMonitor = () => (
+    <div className="space-y-6">
+       <div className="bg-slate-950 text-white p-8 rounded-[2.5rem] border border-slate-800 relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-8 opacity-10"><Bot size={120} className="text-indigo-500"/></div>
+          <h2 className="text-2xl font-black italic uppercase tracking-tight mb-2">Sylara AI Telemetry</h2>
+          <p className="text-indigo-300 text-sm font-medium">Real-time artificial intelligence load and token usage.</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+             <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
+                <p className="text-[10px] uppercase font-black text-slate-400">Total Tokens (24h)</p>
+                <p className="text-2xl font-black mt-1">4.2M</p>
+             </div>
+             <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
+                <p className="text-[10px] uppercase font-black text-slate-400">Avg Response Time</p>
+                <p className="text-2xl font-black text-emerald-400 mt-1">450ms</p>
+             </div>
+             <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
+                <p className="text-[10px] uppercase font-black text-slate-400">Resolution Rate</p>
+                <p className="text-2xl font-black text-emerald-400 mt-1">98.2%</p>
+             </div>
+          </div>
+       </div>
+    </div>
+  );
+
+  const renderSettings = () => (
+    <div className="space-y-6">
+       <div className="bg-white border border-slate-200 p-8 rounded-[2.5rem] shadow-sm max-w-2xl">
+          <h2 className="text-2xl font-black text-slate-800 uppercase italic tracking-tight mb-6">Global Admin Settings</h2>
+          <div className="space-y-6">
+             <div>
+                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">System Status</label>
+                <div className="flex gap-4">
+                   <button className="flex-1 py-3 bg-emerald-50 border-2 border-emerald-500 text-emerald-700 font-black rounded-xl uppercase text-xs">Online</button>
+                   <button className="flex-1 py-3 bg-slate-50 border-2 border-slate-200 text-slate-500 font-black rounded-xl uppercase text-xs hover:bg-slate-100">Maintenance Mode</button>
+                </div>
+             </div>
+             <div>
+                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Auto-Escalation Threshold (Mins)</label>
+                <input type="number" defaultValue="5" className="w-full p-3 border border-slate-200 rounded-xl outline-none focus:border-indigo-500" />
+             </div>
+             <button className="w-full py-4 bg-slate-900 text-white font-black uppercase text-xs rounded-xl shadow-lg hover:bg-slate-800">Save Configuration</button>
+          </div>
+       </div>
+    </div>
+  );
+
   const getContent = () => {
     switch (activeTab) {
       case 'overview': return renderOverview();
       case 'staffing': return renderStaffing();
       case 'negligence': return renderNegligence();
       case 'users': return renderUsers();
-      case 'patients': return <div>Patient Management Placeholder</div>;
-      case 'business': return <div>Business Management Placeholder</div>;
-      case 'approvals': return <div>Agency Approvals Placeholder</div>;
-      case 'applications': return <div>Applications Queue Placeholder</div>;
-      case 'compliance': return <div>Compliance Monitor Placeholder</div>;
-      case 'ai_monitor': return <div>AI Monitoring Placeholder</div>;
+      case 'patients': return renderPatients();
+      case 'business': return renderBusiness();
+      case 'approvals': return renderApprovals();
+      case 'applications': return renderApplications();
+      case 'compliance': return renderCompliance();
+      case 'ai_monitor': return renderAiMonitor();
       case 'regulatory_library': return renderRegulatoryLibrary();
-      case 'support': return <div>Support Hub Placeholder</div>;
-      case 'settings': return <div>Admin Settings Placeholder</div>;
+      case 'support': return renderSupport();
+      case 'settings': return renderSettings();
       default: return renderOverview();
     }
   };
