@@ -7752,7 +7752,7 @@ export default function App() {
         {view !== 'landing' && (
           <button
             onClick={() => { setView('landing'); setUserProfile(null); }}
-            className="fixed top-6 left-6 z-[90] w-14 h-14 bg-[#1a4731] hover:bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-2xl shadow-emerald-900/40 transition-all hover:scale-110 border-2 border-emerald-400/30"
+            className="fixed bottom-6 left-6 z-[90] w-12 h-12 bg-[#1a4731] hover:bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-2xl shadow-emerald-900/40 transition-all hover:scale-110 border-2 border-emerald-400/30"
             title="Return to Home"
           >
             <Home size={24} />
@@ -7790,6 +7790,7 @@ export default function App() {
     </ErrorBoundary>
   );
 }
+
 
 
 
