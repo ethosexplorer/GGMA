@@ -698,7 +698,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
           </div>
           <div className="text-center md:text-right px-8 py-4 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md">
             <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">Total Network Gross</p>
-            <p className="text-4xl font-black text-white">$14.8M</p>
+            <p className="text-4xl font-black text-white">$28.3M</p>
           </div>
         </div>
       </div>
@@ -729,10 +729,17 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                   { n: 'Care Wallet Transactions', t: 'B2B Processor', g: '$6.5M', net: '$1.2M', s: 'Liquid', c: 'bg-blue-600' },
                   { n: 'Telehealth Consults', t: 'Service Fee', g: '$1.2M', net: '$950k', s: 'Settled', c: 'bg-emerald-600' },
                   { n: 'State Jurisdiction Licensing', t: 'Enterprise', g: '$1.1M', net: '$880k', s: 'Pending', c: 'bg-amber-500' },
-                  { n: 'Back Office Operations', t: 'Admin Services', g: '$0', net: '$0', s: 'In Setup', c: 'bg-slate-500' },
-                  { n: 'Attorney / Legal Retainers', t: 'Professional Services', g: '$0', net: '$0', s: 'Pending', c: 'bg-slate-500' },
-                  { n: 'Ecosystem Add-ons', t: 'Marketplace', g: '$0', net: '$0', s: 'Development', c: 'bg-indigo-500' },
-                  { n: 'Distributor Network Fees', t: 'Logistics', g: '$0', net: '$0', s: 'Pending', c: 'bg-slate-500' }
+                  { n: 'Back Office Operations (Cannabis)', t: 'Admin Services', g: '$2.4M', net: '$1.9M', s: 'Active', c: 'bg-emerald-600' },
+                  { n: 'Back Office Operations (General)', t: 'Admin Services', g: '$1.1M', net: '$820k', s: 'Active', c: 'bg-emerald-600' },
+                  { n: 'Attorney / Legal Retainers (Cannabis)', t: 'Professional Svc', g: '$1.8M', net: '$1.4M', s: 'Active', c: 'bg-emerald-600' },
+                  { n: 'Attorney / Legal Retainers (General)', t: 'Professional Svc', g: '$890k', net: '$680k', s: 'Active', c: 'bg-blue-600' },
+                  { n: 'Ecosystem Add-ons (Patient)', t: 'Marketplace', g: '$620k', net: '$540k', s: 'Active', c: 'bg-emerald-600' },
+                  { n: 'Ecosystem Add-ons (Cross-Dashboard)', t: 'Marketplace', g: '$1.3M', net: '$1.1M', s: 'Active', c: 'bg-blue-600' },
+                  { n: 'Distributor / Reseller Fees', t: 'Channel Revenue', g: '$950k', net: '$710k', s: 'Active', c: 'bg-emerald-600' },
+                  { n: 'Partner Affiliate Commissions', t: 'Partner Program', g: '$480k', net: '$380k', s: 'Active', c: 'bg-blue-600' },
+                  { n: 'Enforcement & Finance AI Bundles', t: 'Gov / Enterprise', g: '$2.1M', net: '$1.7M', s: 'Active', c: 'bg-indigo-600' },
+                  { n: 'Care Builder Credit Programs', t: 'FinTech', g: '$340k', net: '$290k', s: 'Active', c: 'bg-blue-600' },
+                  { n: 'Federal Dashboard Leases', t: 'Gov Contract', g: '$1.5M', net: '$1.2M', s: 'Pending', c: 'bg-amber-500' }
                 ].map((u, i) => (
                   <tr key={i} className="hover:bg-slate-50 transition-colors group">
                     <td className="px-6 py-5 font-black text-slate-800">{u.n}</td>
