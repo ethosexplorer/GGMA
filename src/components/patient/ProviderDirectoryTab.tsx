@@ -26,6 +26,7 @@ export const ProviderDirectoryTab = () => {
 
   const activeProviders = dbProviders.length > 0 ? dbProviders.map(t => ({ id: t.id, name: t.name, rating: 5.0, reviews: 120, nextAvail: 'Today', specialties: [t.specialty], tags: ['Verified'] })) : providers;
   const filtered = activeProviders.filter(p => {
+    const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.specialties.some(s => s.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesType = selectedType === 'All' ||
       (selectedType === 'Cannabis Recommendation' && (p.type === 'cannabis' || p.type === 'both')) ||
