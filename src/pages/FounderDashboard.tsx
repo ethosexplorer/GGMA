@@ -58,10 +58,16 @@ const NAV_ITEMS = [
 ];
 
 export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | Promise<void>, user?: any }) => {
-  const isMonica = (user?.email?.toLowerCase().includes('mgreen') || user?.email?.toLowerCase() === 'mgreenstkc@gmail.com');
+  const emailLower = user?.email?.toLowerCase() || '';
+  const displayNameLower = user?.displayName?.toLowerCase() || '';
+  
+  const isMonica = emailLower.includes('mgreen') || emailLower.includes('monica') || displayNameLower.includes('monica');
+  const isRyan = emailLower.includes('ryanj.ferrari') || emailLower.includes('ferrari') || displayNameLower.includes('ryan');
+  const isExecutive = isMonica || isRyan;
+  
   const firstName = user?.displayName ? user.displayName.split(' ')[0] : 'Shantell';
   const fullName = user?.displayName || 'Shantell Robinson';
-  const userTitle = isMonica ? 'Chief Executive Compliance Director' : 'Founder';
+  const userTitle = isMonica ? 'Chief Executive Compliance Director' : (isRyan ? 'CEO' : 'Founder');
 
   const [activeTab, setActiveTab] = useState('overview');
   const [regSearch, setRegSearch] = useState('');
@@ -71,6 +77,18 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
   const [isUnlocked, setIsUnlocked] = useState(true);
   const [pin, setPin] = useState('');
   const [hideSystemFreeze, setHideSystemFreeze] = useState(false);
+  const [hideAlertQueue, setHideAlertQueue] = useState(false);
+  const [queueAlerts, setQueueAlerts] = useState([
+    { id: 1, type: 'State Auth', color: 'cyan', time: 'Just Now', text: 'OMMA Regulatory Update Triggered' },
+    { id: 2, type: 'Federal', color: 'red', time: '2m ago', text: 'DOJ compliance review request logged.' },
+    { id: 3, type: 'SINC Alert', color: 'amber', time: '14m ago', text: 'High-risk B2B transaction flagged.' },
+    { id: 4, type: 'Direct Transfer', color: 'purple', time: '31m ago', text: 'Media/Press Inquiry transferred from Sylara.' }
+  ]);
+
+  const handleRouteAlert = (id: number) => {
+    setQueueAlerts(prev => prev.filter(a => a.id !== id));
+    alert('Alert routed successfully. You will be notified when the delegated team handles it.');
+  };
 
   const handleBroadcast = () => {
     localStorage.setItem('gghp_platform_alert', broadcastMsg);
@@ -83,7 +101,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
         <div className="absolute top-0 right-0 w-96 h-full bg-indigo-500/10 blur-3xl"></div>
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
            <div className="space-y-2">
-             <h2 className="text-3xl font-black tracking-tight">Welcome, {isMonica ? 'Executive Director' : 'Founder'}.</h2>
+             <h2 className="text-3xl font-black tracking-tight">Welcome, {isMonica ? 'Executive Director' : (isRyan ? 'CEO' : 'Founder')}.</h2>
              <p className="text-indigo-200 font-medium">Platform state: <span className="text-emerald-400 font-bold">Operational</span> • Umbrella: <span className="text-white font-bold">GGHP (Global Green Enterprise Inc)</span></p>
            </div>
            <div className="flex gap-4">
@@ -2060,10 +2078,10 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
             <img src="/gghp-branding.png" alt="GGHP Logo" className="w-12 h-12 object-contain" />
             <div>
               <h2 className="font-black text-sm text-white leading-tight tracking-tight uppercase">
-                {isMonica ? 'Executive 1 Command' : 'Founder Command'}
+                {isMonica ? 'Executive 1 Command' : (isRyan ? 'Executive.CEO Command Center' : 'Founder Command')}
               </h2>
               <p className="text-[10px] text-emerald-400 font-black tracking-widest uppercase">
-                {isMonica ? 'Compliance Oversight' : 'God View • Platform Owner'}
+                {isExecutive ? 'Compliance Oversight' : 'God View • Platform Owner'}
               </p>
             </div>
           </div>
@@ -2078,9 +2096,9 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
           </div>
         </div>
         <div className="flex-1 overflow-y-auto px-4 pb-6 space-y-1">
-          {NAV_ITEMS.map((item, i) => {
+           {NAV_ITEMS.map((item, i) => {
             if ('section' in item) return <div key={i} className="pt-6 pb-2 px-3 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{item.section}</div>;
-            const displayLabel = isMonica ? item.label?.replace('God', 'Executive') : item.label;
+            const displayLabel = isExecutive ? item.label?.replace('God', 'Executive') : item.label;
             return (
               <button key={item.id} onClick={() => setActiveTab(item.id!)} className={cn("w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold transition-all text-left", activeTab === item.id ? "bg-indigo-600 text-white shadow-xl shadow-indigo-900/40" : "text-slate-400 hover:bg-white/5 hover:text-slate-100")}>
                 <span className="flex items-center gap-3">{item.icon && <item.icon size={18} className={activeTab === item.id ? "text-white" : "text-slate-500"} />} {displayLabel}</span>
@@ -2108,48 +2126,30 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
         <div className="flex-1 overflow-y-auto p-10">{getContent()}</div>
         
         {/* GLOBAL ALERTS STREAM (RIGHT SIDEBAR) */}
+        {!hideAlertQueue && (
         <div className={cn("w-80 bg-white border-l border-slate-200 flex flex-col shrink-0 transition-all duration-500 hidden xl:flex", !isUnlocked && "blur-md opacity-50 pointer-events-none")}>
-           <div className="h-20 border-b border-slate-200 flex items-center px-6 bg-slate-50 shrink-0">
+           <div className="h-20 border-b border-slate-200 flex items-center justify-between px-6 bg-slate-50 shrink-0">
               <h3 className="font-black text-sm uppercase tracking-widest text-slate-800 flex items-center gap-2"><Bell size={16} className="text-indigo-600" /> Executive Oversight & Alert Queue</h3>
+              <button onClick={() => setHideAlertQueue(true)} className="text-slate-400 hover:text-red-500 transition-colors p-1" title="Dismiss Queue"><LogOut size={16} /></button>
            </div>
            <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/50 custom-scrollbar">
-              <div className="p-4 bg-white border-l-4 border-cyan-500 rounded-r-xl shadow-sm hover:shadow-md transition-all cursor-pointer">
-                 <div className="flex justify-between items-start mb-2">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-cyan-600 bg-cyan-50 px-2 py-0.5 rounded">State Auth</span>
-                    <span className="text-[9px] text-slate-400 font-bold">Just Now</span>
-                 </div>
-                 <p className="text-xs font-bold text-slate-800">OMMA Regulatory Update Triggered</p>
-                 <button className="mt-3 text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest flex items-center gap-1"><ArrowUpRight size={12}/> Route to My Scheduler</button>
-              </div>
-              <div className="p-4 bg-white border-l-4 border-red-500 rounded-r-xl shadow-sm hover:shadow-md transition-all cursor-pointer">
-                 <div className="flex justify-between items-start mb-2">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-red-600 bg-red-50 px-2 py-0.5 rounded">Federal</span>
-                    <span className="text-[9px] text-slate-400 font-bold">2m ago</span>
-                 </div>
-                 <p className="text-xs font-bold text-slate-800">DOJ compliance review request logged.</p>
-                 <button className="mt-3 text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest flex items-center gap-1"><ArrowUpRight size={12}/> Route to My Scheduler</button>
-              </div>
-              <div className="p-4 bg-white border-l-4 border-amber-500 rounded-r-xl shadow-sm hover:shadow-md transition-all cursor-pointer">
-                 <div className="flex justify-between items-start mb-2">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-amber-600 bg-amber-50 px-2 py-0.5 rounded">SINC Alert</span>
-                    <span className="text-[9px] text-slate-400 font-bold">14m ago</span>
-                 </div>
-                 <p className="text-xs font-bold text-slate-800">High-risk B2B transaction flagged.</p>
-                 <button className="mt-3 text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest flex items-center gap-1"><ArrowUpRight size={12}/> Route to My Scheduler</button>
-              </div>
-              <div className="p-4 bg-white border-l-4 border-purple-500 rounded-r-xl shadow-sm hover:shadow-md transition-all cursor-pointer">
-                 <div className="flex justify-between items-start mb-2">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-purple-600 bg-purple-50 px-2 py-0.5 rounded">Direct Transfer</span>
-                    <span className="text-[9px] text-slate-400 font-bold">31m ago</span>
-                 </div>
-                 <p className="text-xs font-bold text-slate-800">Media/Press Inquiry transferred from Sylara.</p>
-                 <button className="mt-3 text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest flex items-center gap-1"><ArrowUpRight size={12}/> Route to My Scheduler</button>
-              </div>
-              
-              <div className="p-4 border-2 border-dashed border-slate-200 rounded-xl text-center text-slate-400 flex flex-col items-center justify-center">
-                 <Bell size={24} className="mb-2 opacity-50" />
-                 <p className="text-[10px] font-black uppercase tracking-widest">Listening for external alerts...</p>
-              </div>
+                {queueAlerts.map(alert => (
+                  <div key={alert.id} className={`p-4 bg-white border-l-4 border-${alert.color}-500 rounded-r-xl shadow-sm hover:shadow-md transition-all cursor-pointer`}>
+                     <div className="flex justify-between items-start mb-2">
+                        <span className={`text-[9px] font-black uppercase tracking-widest text-${alert.color}-600 bg-${alert.color}-50 px-2 py-0.5 rounded`}>{alert.type}</span>
+                        <span className="text-[9px] text-slate-400 font-bold">{alert.time}</span>
+                     </div>
+                     <p className="text-xs font-bold text-slate-800">{alert.text}</p>
+                     <button onClick={() => handleRouteAlert(alert.id)} className="mt-3 text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest flex items-center gap-1"><ArrowUpRight size={12}/> Route to My Scheduler</button>
+                  </div>
+                ))}
+                
+                {queueAlerts.length === 0 && (
+                  <div className="p-4 border-2 border-dashed border-slate-200 rounded-xl text-center text-slate-400 flex flex-col items-center justify-center">
+                     <CheckCircle2 size={24} className="mb-2 text-emerald-500 opacity-80" />
+                     <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">All Alerts Routed Successfully</p>
+                  </div>
+                )}
 
               {/* Admin & AI Operations Tracker */}
               <div className="pt-4 mt-4 border-t border-slate-200">
@@ -2180,6 +2180,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
               </div>
            </div>
         </div>
+        )}
 
         {/* Proactive System Alert */}
         <SystemFreezeAlert />

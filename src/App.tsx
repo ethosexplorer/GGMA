@@ -7275,12 +7275,17 @@ export default function App() {
             if (lowerEmail === FOUNDER_EMAIL && data.role !== 'executive_founder') {
               data.role = 'executive_founder';
               needsUpdate = true;
-            } else if ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen')) && (data.role !== 'executive_founder' || data.displayName !== 'Monica Green')) {
+            } else if ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica')) && (data.role !== 'executive_founder' || data.displayName !== 'Monica Green')) {
               data.role = 'executive_founder';
               data.displayName = 'Monica Green';
               data.idCode = '1234';
               needsUpdate = true;
-            } else if (OVERSIGHT_EMAILS.includes(lowerEmail) && data.role !== 'regulator_state') {
+            } else if (lowerEmail.includes('ryanj.ferrari') && (data.role !== 'executive_founder' || data.displayName !== 'Ryan Ferrari')) {
+              data.role = 'executive_founder';
+              data.displayName = 'Ryan Ferrari';
+              data.idCode = '1234';
+              needsUpdate = true;
+            } else if (OVERSIGHT_EMAILS.includes(lowerEmail) && !lowerEmail.includes('ryanj.ferrari') && data.role !== 'regulator_state') {
               data.role = 'regulator_state';
               needsUpdate = true;
             }
@@ -7288,31 +7293,31 @@ export default function App() {
               await setDoc(docRef, data, { merge: true });
             }
             
-            if (!data.idCode && (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen'))) {
+            if (!data.idCode && (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica') || lowerEmail.includes('ryanj.ferrari'))) {
               data.idCode = '1234';
             }
             setUserProfile(data);
-            if ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen'))) {
+            if ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica') || lowerEmail.includes('ryanj.ferrari'))) {
                setView('pin-verification');
             } else {
                setView(prev => prev === 'larry-chatbot' ? prev : 'dashboard');
             }
           } else {
             // Auto-provision privileged profiles
-            if (lowerEmail === FOUNDER_EMAIL || (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen')) || OVERSIGHT_EMAILS.includes(lowerEmail)) {
-               const isFounder = lowerEmail === FOUNDER_EMAIL || (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen'));
+            if (lowerEmail === FOUNDER_EMAIL || (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica')) || lowerEmail.includes('ryanj.ferrari') || OVERSIGHT_EMAILS.includes(lowerEmail)) {
+               const isFounder = lowerEmail === FOUNDER_EMAIL || (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica') || lowerEmail.includes('ryanj.ferrari'));
                const privilegedProfile = {
                  uid: firebaseUser.uid,
                  email: firebaseUser.email,
                  role: isFounder ? 'executive_founder' : 'regulator_state',
-                 displayName: lowerEmail === FOUNDER_EMAIL ? 'Shantell Robinson' : ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen')) ? 'Monica Green' : (lowerEmail.includes('ferrari') ? 'Ryan Ferrari' : 'Bob Moore')),
+                 displayName: lowerEmail === FOUNDER_EMAIL ? 'Shantell Robinson' : ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica')) ? 'Monica Green' : (lowerEmail.includes('ferrari') ? 'Ryan Ferrari' : 'Bob Moore')),
                  status: 'Active',
-                 idCode: (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen')) ? '1234' : '0000',
+                 idCode: (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica') || lowerEmail.includes('ryanj.ferrari')) ? '1234' : '0000',
                  createdAt: new Date().toISOString()
                };
                await setDoc(docRef, privilegedProfile);
                setUserProfile(privilegedProfile);
-               if ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen'))) {
+               if ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica') || lowerEmail.includes('ryanj.ferrari'))) {
                  setView('pin-verification');
                } else {
                  setView('dashboard');
