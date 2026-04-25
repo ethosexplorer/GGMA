@@ -442,6 +442,101 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
     </div>
   );
 
+  const renderAccountingLedger = () => (
+    <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="space-y-6">
+      <div className="bg-emerald-950 bg-gradient-to-br from-emerald-950 via-slate-900 to-slate-950 p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden border border-emerald-500/30">
+        <div className="absolute top-0 right-0 p-10 opacity-10"><Wallet size={160} className="text-emerald-400" /></div>
+        <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div>
+            <h2 className="text-4xl font-black tracking-tighter mb-4 italic uppercase">QuickBooks Core Ledger</h2>
+            <p className="text-emerald-200 font-medium text-lg">Universal revenue breakdown, taxation vectors, and master settlement routing.</p>
+          </div>
+          <div className="text-center md:text-right px-8 py-4 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md">
+            <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">Total Network Gross</p>
+            <p className="text-4xl font-black text-white">$14.8M</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+         <div className="lg:col-span-3 bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
+            <div className="flex justify-between items-center mb-6">
+               <h3 className="font-black text-slate-800 text-lg flex items-center gap-3"><Activity size={20} className="text-emerald-600" /> Revenue Stream Vectors</h3>
+               <button className="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[10px] font-black text-slate-600 uppercase tracking-widest hover:bg-slate-100">Export CSV</button>
+            </div>
+            <table className="w-full text-sm text-left">
+              <thead className="bg-slate-50 border-b border-slate-100">
+                <tr>
+                  <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest">Origin Vector</th>
+                  <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest">Type</th>
+                  <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest">Gross Revenue</th>
+                  <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest">Net Profit</th>
+                  <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-50">
+                {[
+                  { n: 'Sylara Medical Subscriptions', t: 'SaaS / Recurring', g: '$4.2M', net: '$3.8M', s: 'Settled', c: 'bg-emerald-600' },
+                  { n: 'Metrc Integration Fees', t: 'API Gateway', g: '$1.8M', net: '$1.5M', s: 'Settled', c: 'bg-emerald-600' },
+                  { n: 'Care Wallet Transactions', t: 'B2B Processor', g: '$6.5M', net: '$1.2M', s: 'Liquid', c: 'bg-blue-600' },
+                  { n: 'Telehealth Consults', t: 'Service Fee', g: '$1.2M', net: '$950k', s: 'Settled', c: 'bg-emerald-600' },
+                  { n: 'State Jurisdiction Licensing', t: 'Enterprise', g: '$1.1M', net: '$880k', s: 'Pending', c: 'bg-amber-500' }
+                ].map((u, i) => (
+                  <tr key={i} className="hover:bg-slate-50 transition-colors group">
+                    <td className="px-6 py-5 font-black text-slate-800">{u.n}</td>
+                    <td className="px-6 py-5 text-xs font-bold text-slate-500">{u.t}</td>
+                    <td className="px-6 py-5 font-mono font-bold text-slate-700">{u.g}</td>
+                    <td className="px-6 py-5 font-mono font-black text-emerald-600">{u.net}</td>
+                    <td className="px-6 py-5">
+                      <span className={cn("text-[9px] font-black uppercase tracking-wider px-3 py-1 rounded-full text-white", u.c)}>{u.s}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+         </div>
+         <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white shadow-xl relative overflow-hidden">
+            <h3 className="font-black text-sm text-emerald-400 uppercase tracking-widest mb-6">Net Profit Distribution</h3>
+            <div className="space-y-6">
+               <div>
+                  <div className="flex justify-between text-[10px] font-black uppercase mb-1">
+                     <span className="text-slate-400">OpEx & Infrastructure</span>
+                     <span className="text-white">12%</span>
+                  </div>
+                  <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                     <div className="h-full bg-red-500" style={{ width: '12%' }}></div>
+                  </div>
+               </div>
+               <div>
+                  <div className="flex justify-between text-[10px] font-black uppercase mb-1">
+                     <span className="text-slate-400">R&D / Sylara AI Engine</span>
+                     <span className="text-white">24%</span>
+                  </div>
+                  <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                     <div className="h-full bg-indigo-500" style={{ width: '24%' }}></div>
+                  </div>
+               </div>
+               <div>
+                  <div className="flex justify-between text-[10px] font-black uppercase mb-1">
+                     <span className="text-slate-400">Founder Equity Net</span>
+                     <span className="text-emerald-400">64%</span>
+                  </div>
+                  <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                     <div className="h-full bg-emerald-500" style={{ width: '64%' }}></div>
+                  </div>
+               </div>
+               
+               <div className="mt-8 p-4 bg-white/5 rounded-2xl border border-white/10">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Available for Draw</p>
+                  <p className="text-2xl font-black text-emerald-400">$8.33M</p>
+               </div>
+               <button className="w-full mt-4 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all">Authorize Draw</button>
+            </div>
+         </div>
+      </div>
+    </motion.div>
+  );
+
   const renderFinancials = () => (
     <div className="space-y-6">
       <div className="bg-indigo-950 p-8 rounded-3xl text-white shadow-2xl relative overflow-hidden mb-8">
@@ -806,6 +901,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       </div>
 
       {/* Universal Onboarding & Provisioning Engine */}
+      {!isExecutive && (
       <div className="bg-indigo-950 bg-gradient-to-br from-indigo-950 via-slate-900 to-slate-950 p-8 rounded-[2.5rem] shadow-xl border border-indigo-500/30 relative overflow-hidden">
          <div className="absolute top-0 right-0 p-8 opacity-10"><UserPlus size={120} className="text-indigo-400" /></div>
          <h3 className="font-black text-2xl text-white mb-2 italic uppercase">Universal Onboarding Engine</h3>
@@ -877,6 +973,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
             </div>
          </div>
       </div>
+      )}
     </motion.div>
   );
 
@@ -1589,8 +1686,8 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
         <h3 className="font-black text-slate-800 text-lg mb-6 flex items-center gap-3"><Clock size={20} className="text-indigo-600" /> My Upcoming Appointments & Tickets</h3>
         
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-          <div className={cn("p-4 rounded-xl border flex items-center gap-3", isExecutive ? "bg-fuchsia-50 border-fuchsia-100" : "bg-purple-50 border-purple-100")}>
-             <div className={cn("w-4 h-4 rounded-full", isExecutive ? "bg-fuchsia-600" : "bg-purple-600")}></div>
+          <div className={cn("p-4 rounded-xl border flex items-center gap-3", isMonica ? "bg-fuchsia-50 border-fuchsia-100" : (isRyan ? "bg-blue-50 border-blue-100" : "bg-purple-50 border-purple-100"))}>
+             <div className={cn("w-4 h-4 rounded-full", isMonica ? "bg-fuchsia-600" : (isRyan ? "bg-blue-600" : "bg-purple-600"))}></div>
              <span className="text-xs font-bold text-slate-700">Direct Priority ({firstName})</span>
           </div>
           <div className="p-4 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center gap-3">
@@ -1617,7 +1714,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
 
         <div className="space-y-4">
            {[
-             { time: 'Today, 10:00 AM', t: 'Direct Escalation (Human Coord)', e: 'Apex Health CEO', c: isExecutive ? 'bg-fuchsia-100 border-fuchsia-200 text-fuchsia-900' : 'bg-purple-100 border-purple-200 text-purple-900', dot: isExecutive ? 'bg-fuchsia-600' : 'bg-purple-600', type: 'Call' },
+             { time: 'Today, 10:00 AM', t: 'Direct Escalation (Human Coord)', e: 'Apex Health CEO', c: isMonica ? 'bg-fuchsia-100 border-fuchsia-200 text-fuchsia-900' : (isRyan ? 'bg-blue-100 border-blue-200 text-blue-900' : 'bg-purple-100 border-purple-200 text-purple-900'), dot: isMonica ? 'bg-fuchsia-600' : (isRyan ? 'bg-blue-600' : 'bg-purple-600'), type: 'Call' },
              { time: 'Today, 1:30 PM', t: 'OMMA State Regulator Review', e: 'Emily Davis (OK)', c: 'bg-cyan-50 border-cyan-200 text-cyan-900', dot: 'bg-cyan-500', type: 'Call' },
              { time: 'Today, 3:00 PM', t: 'Metrc Integration Sync', e: 'SINC Tech Team', c: 'bg-amber-50 border-amber-200 text-amber-900', dot: 'bg-amber-500', type: 'Ticket' },
              { time: 'Tomorrow, 9:00 AM', t: 'DOJ Intel Review', e: 'Federal Oversight Office', c: 'bg-red-50 border-red-200 text-red-900', dot: 'bg-red-600', type: 'Appointment' },
