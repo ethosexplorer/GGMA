@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { turso } from '../../lib/turso';
 import { Search, MapPin, Star, Calendar, Video, Filter, ChevronRight, Shield } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -15,11 +16,16 @@ const serviceTypes = ['All', 'Cannabis Recommendation', 'Traditional Telehealth'
 
 export const ProviderDirectoryTab = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [dbProviders, setDbProviders] = useState<any[]>([]);
+
+  React.useEffect(() => {
+    turso.execute('SELECT * FROM providers LIMIT 10').then(res => setDbProviders(res.rows)).catch(console.error);
+  }, []);
   const [selectedType, setSelectedType] = useState('All');
   const [selectedProvider, setSelectedProvider] = useState<number | null>(null);
 
-  const filtered = providers.filter(p => {
-    const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  const activeProviders = dbProviders.length > 0 ? dbProviders.map(t => ({ id: t.id, name: t.name, rating: 5.0, reviews: 120, nextAvail: 'Today', specialties: [t.specialty], tags: ['Verified'] })) : providers;
+  const filtered = activeProviders.filter(p => {
       p.specialties.some(s => s.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesType = selectedType === 'All' ||
       (selectedType === 'Cannabis Recommendation' && (p.type === 'cannabis' || p.type === 'both')) ||
@@ -149,4 +155,6 @@ export const ProviderDirectoryTab = () => {
     </div>
   );
 };
+
+
 

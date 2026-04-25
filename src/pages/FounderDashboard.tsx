@@ -23,6 +23,7 @@ import { JudicialMonitorTab } from '../components/federal/JudicialMonitorTab';
 import { onSnapshot, collection, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { METRC_MANUAL } from '../data/metrcManual';
+import { turso } from '../lib/turso';
 
 const INITIAL_NAV_ITEMS = [
   { section: 'FOUNDER EXCLUSIVE' },
@@ -97,6 +98,11 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
   };
 
   const [activeTab, setActiveTab] = useState('overview');
+  const [founderLedger, setFounderLedger] = useState<any[]>([]);
+
+  useEffect(() => {
+    turso.execute('SELECT * FROM founder_ledger').then(res => setFounderLedger(res.rows)).catch(console.error);
+  }, []);
   const [regSearch, setRegSearch] = useState('');
   const [regCat, setRegCat] = useState<string | null>(null);
   const [broadcastMsg, setBroadcastMsg] = useState('🚨 SYSTEM NOTICE: NATIONWIDE COMPLIANCE AUDIT IN PROGRESS • GLOBAL GREEN HYBRID PLATFORM (GGHP) • ALL SECTORS (GGMA/RIP/SINC) OPERATIONAL');
@@ -723,7 +729,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
-                {[
+                {(founderLedger.length > 0 ? founderLedger : [
                   { n: 'Sylara Medical Subscriptions', t: 'SaaS / Recurring', g: '$4.2M', net: '$3.8M', s: 'Settled', c: 'bg-emerald-600' },
                   { n: 'Metrc Integration Fees', t: 'API Gateway', g: '$1.8M', net: '$1.5M', s: 'Settled', c: 'bg-emerald-600' },
                   { n: 'Care Wallet Transactions', t: 'B2B Processor', g: '$6.5M', net: '$1.2M', s: 'Liquid', c: 'bg-blue-600' },
@@ -740,14 +746,19 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                   { n: 'Enforcement & Finance AI Bundles', t: 'Gov / Enterprise', g: '$2.1M', net: '$1.7M', s: 'Active', c: 'bg-indigo-600' },
                   { n: 'Care Builder Credit Programs', t: 'FinTech', g: '$340k', net: '$290k', s: 'Active', c: 'bg-blue-600' },
                   { n: 'Federal Dashboard Leases', t: 'Gov Contract', g: '$1.5M', net: '$1.2M', s: 'Pending', c: 'bg-amber-500' }
-                ].map((u, i) => (
+                ]).map((u: any, i: number) => (
                   <tr key={i} className="hover:bg-slate-50 transition-colors group">
-                    <td className="px-6 py-5 font-black text-slate-800">{u.n}</td>
-                    <td className="px-6 py-5 text-xs font-bold text-slate-500">{u.t}</td>
-                    <td className="px-6 py-5 font-mono font-bold text-slate-700">{u.g}</td>
-                    <td className="px-6 py-5 font-mono font-black text-emerald-600">{u.net}</td>
+                    <td className="px-6 py-5 font-black text-slate-800">
+                      <div className="flex items-center gap-3">
+                        <div className={cn("w-2 h-2 rounded-full shadow-sm", u.color || u.c)}></div>
+                        <span className="font-bold text-slate-700">{u.origin_vector || u.n}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-5 text-xs font-bold text-slate-500">{u.type || u.t}</td>
+                    <td className="px-6 py-5 font-mono font-bold text-slate-700">{u.gross_revenue || u.g}</td>
+                    <td className="px-6 py-5 font-mono font-black text-emerald-600">{u.net_profit || u.net}</td>
                     <td className="px-6 py-5">
-                      <span className={cn("text-[9px] font-black uppercase tracking-wider px-3 py-1 rounded-full text-white", u.c)}>{u.s}</span>
+                      <span className={cn("text-[9px] font-black uppercase tracking-wider px-3 py-1 rounded-full text-white", u.color || u.c)}>{u.status || u.s}</span>
                     </td>
                   </tr>
                 ))}
@@ -2887,4 +2898,5 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
     </div>
   );
 };
+
 

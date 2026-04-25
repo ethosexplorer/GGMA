@@ -4,6 +4,7 @@ import {
   ArrowDownLeft, PlusCircle, Award, Target, Activity, Zap, Lock
 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { turso } from '../lib/turso';
 import { StatCard } from '../components/StatCard';
 
 const transactions = [
@@ -29,6 +30,11 @@ const loyaltyTiers = [
 
 export const CareWalletDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
   const [activeTab, setActiveTab] = useState('wallet');
+  const [dbTransactions, setDbTransactions] = useState<any[]>([]);
+
+  React.useEffect(() => {
+    turso.execute('SELECT * FROM wallet_transactions ORDER BY id DESC LIMIT 10').then(res => setDbTransactions(res.rows)).catch(console.error);
+  }, []);
   const [isReloading, setIsReloading] = useState(false);
 
   const handleReload = () => {
@@ -280,7 +286,7 @@ export const CareWalletDashboard = ({ onLogout, user }: { onLogout?: () => void,
                     </span>
                   </div>
                   <div className="space-y-4">
-                    {transactions.map((tx) => (
+                    {(dbTransactions.length > 0 ? dbTransactions.map(t => ({ id: t.id, type: t.transaction_type, amount: t.amount, date: t.created_at, merchant: t.description, status: 'Completed' })) : transactions).map((tx: any) => (
                       <div key={tx.id} className="flex items-center justify-between pb-3 border-b border-slate-50 last:border-0 last:pb-0">
                         <div className="flex items-center gap-3">
                           <div className={cn(
@@ -322,4 +328,5 @@ export const CareWalletDashboard = ({ onLogout, user }: { onLogout?: () => void,
     </div>
   );
 };
+
 

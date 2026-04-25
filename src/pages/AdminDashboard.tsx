@@ -33,6 +33,13 @@ const NAV_ITEMS = [
 
 export const AdminDashboard = ({ onLogout, user }: { onLogout?: () => void | Promise<void>, user?: any }) => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [dbPatients, setDbPatients] = useState<any[]>([]);
+  const [dbBusinesses, setDbBusinesses] = useState<any[]>([]);
+
+  React.useEffect(() => {
+    turso.execute('SELECT * FROM patients LIMIT 10').then(res => setDbPatients(res.rows)).catch(console.error);
+    turso.execute('SELECT * FROM businesses LIMIT 10').then(res => setDbBusinesses(res.rows)).catch(console.error);
+  }, []);
   const [regSearch, setRegSearch] = useState('');
   const [regCat, setRegCat] = useState<string | null>(null);
   
@@ -467,11 +474,11 @@ export const AdminDashboard = ({ onLogout, user }: { onLogout?: () => void | Pro
               </tr>
            </thead>
            <tbody className="divide-y divide-slate-50">
-              {[
+              {(dbPatients.length > 0 ? dbPatients.map(t => ({ n: t.name, e: t.email, t: t.medical_condition, s: t.status })) : [
                 { n: 'Amanda Collins', e: 'amanda.c@email.com', t: 'Adult Patient (2-Year)', s: 'Active' },
                 { n: 'Robert Vance', e: 'r.vance@email.com', t: 'Minor Patient', s: 'Pending Renewal' },
                 { n: 'Sarah Jenkins', e: 's.jenkins@email.com', t: 'Caregiver', s: 'Active' },
-              ].map((p, i) => (
+              ]).map((p: any, i: number) => (
                 <tr key={i} className="hover:bg-slate-50 group transition-colors">
                    <td className="px-6 py-4">
                       <p className="font-bold text-slate-800">{p.n}</p>
@@ -506,11 +513,11 @@ export const AdminDashboard = ({ onLogout, user }: { onLogout?: () => void | Pro
               </tr>
            </thead>
            <tbody className="divide-y divide-slate-50">
-              {[
+              {(dbBusinesses.length > 0 ? dbBusinesses.map(t => ({ n: t.business_name, t: t.license_type, l: 'Lic: ' + t.id, s: t.status })) : [
                 { n: 'GreenLeaf Cultivation LLC', t: 'Cultivator', s: 'Synced' },
                 { n: 'Apex Dispensary', t: 'Dispensary', s: 'Warning' },
                 { n: 'Pure Extracts', t: 'Processor', s: 'Synced' },
-              ].map((b, i) => (
+              ]).map((b: any, i: number) => (
                 <tr key={i} className="hover:bg-slate-50 group transition-colors">
                    <td className="px-6 py-4 font-bold text-slate-800">{b.n}</td>
                    <td className="px-6 py-4 font-bold text-slate-600 text-xs uppercase">{b.t}</td>
@@ -778,4 +785,6 @@ export const AdminDashboard = ({ onLogout, user }: { onLogout?: () => void | Pro
     </div>
   );
 };
+
+
 

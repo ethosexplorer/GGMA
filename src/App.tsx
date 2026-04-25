@@ -97,6 +97,7 @@ import { auth, db } from './firebase';
 import MapChart from './components/MapChart';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { FounderDashboard } from './pages/FounderDashboard';
+import { initDatabase } from './lib/initDb';
 import { StateAuthorityDashboard } from './pages/StateAuthorityDashboard';
 import { OperationsDashboard } from './pages/OperationsDashboard';
 import { ExternalAdminDashboard } from './pages/ExternalAdminDashboard';
@@ -7251,6 +7252,7 @@ export default function App() {
   const [showLarryModal, setShowLarryModal] = useState(false);
 
   useEffect(() => {
+    initDatabase();
     const handleOpenLarry = () => setShowLarryModal(true);
     window.addEventListener('open-larry-modal', handleOpenLarry);
     return () => window.removeEventListener('open-larry-modal', handleOpenLarry);
@@ -7825,6 +7827,10 @@ export default function App() {
     </ErrorBoundary>
   );
 }
+
+
+
+
 
 
 

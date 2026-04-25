@@ -13,7 +13,12 @@ const flags = [
 ];
 
 export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
-  const [activeTab, setActiveTab] = useState('rapid_testing'); 
+  const [activeTab, setActiveTab] = useState('rapid_testing');
+  const [dbLogs, setDbLogs] = useState<any[]>([]);
+
+  React.useEffect(() => {
+    turso.execute('SELECT * FROM enforcement_logs LIMIT 10').then(res => setDbLogs(res.rows)).catch(console.error);
+  }, []); 
   const [rapidTestStep, setRapidTestStep] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPatient, setSelectedPatient] = useState<any>(null);
@@ -684,13 +689,13 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
             <h1 className="text-3xl font-black text-white mb-6">System Audit Log</h1>
             <div className="bg-slate-900 rounded-3xl border border-slate-800 p-2 max-w-5xl shadow-xl">
               <div className="space-y-1">
-                 {[
+                 {(dbLogs.length > 0 ? dbLogs.map(l => ({ action: l.action, user: l.agency, time: l.logged_at, detail: l.notes })) : [
                    { action: 'User Login Authenticated', user: 'Officer Davis', time: '08:00 AM', detail: 'IP: 192.168.1.45' },
                    { action: 'License Search Query Executed', user: 'Officer Davis', time: '09:14 AM', detail: 'Target: OK-4892-2291' },
                    { action: 'Rapid Breathalyzer Test Initiated', user: 'Officer Davis', time: '09:16 AM', detail: 'Device SN: 88219' },
                    { action: 'Test Results Synchronized', user: 'System (LARRY AI)', time: '09:18 AM', detail: 'Hash: 0x9f8...a21' },
                    { action: 'Geofence Sector Updated', user: 'Officer Davis', time: '10:05 AM', detail: 'Sector 4' },
-                 ].map((log, i) => (
+                 ]).map((log: any, i: number) => (
                    <div key={i} className="flex items-center p-4 bg-slate-800/20 hover:bg-slate-800/50 rounded-xl transition-colors text-sm">
                      <span className="text-slate-500 w-32 font-mono text-xs">{log.time}</span>
                      <div className="flex items-center gap-2 w-48">
@@ -710,4 +715,6 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
     </div>
   );
 };
+
+
 
