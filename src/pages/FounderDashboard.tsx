@@ -47,11 +47,13 @@ const INITIAL_NAV_ITEMS = [
   { id: 'public_health', label: 'Public Health & Labs', icon: FlaskConical },
   { id: 'operations', label: 'Ops & Support Center', icon: Cpu },
   { id: 'internal_admin', label: 'Internal Admin', icon: Shield, badge: '!' },
-  { id: 'rapid_testing', label: 'Rapid Testing Hub', icon: FlaskConical },
   { id: 'state_authority', label: 'State Authority (External)', icon: Gavel },
   { id: 'judicial', label: 'Judicial Monitor', icon: Scale },
   { id: 'ip_monitor', label: 'IP / Patent Monitor', icon: Shield },
   { id: 'subscription', label: 'Platform Billing', icon: CreditCard },
+  { section: 'LAW ENFORCEMENT' },
+  { id: 'law_enforcement', label: 'Law Enforcement', icon: Shield },
+  { id: 'rapid_testing', label: 'Rapid Testing Hub', icon: FlaskConical },
   { section: 'SYSTEM CONTROL' },
   { id: 'reports', label: 'Master Analytics', icon: BarChart3 },
   { id: 'intel', label: 'Global Intelligence', icon: BookOpen },
@@ -2396,6 +2398,114 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
           </div>
         </div>
       </div>
+
+      {/* Roadside Testing Tracker (Copied from IP Monitor) */}
+      <div className="bg-slate-900 border-2 border-indigo-500 shadow-2xl shadow-indigo-900/50 rounded-[2rem] p-10 mt-12 relative overflow-hidden">
+         <div className="absolute top-0 right-0 w-64 h-full bg-indigo-500/10 blur-3xl"></div>
+         <div className="relative z-10">
+           <h2 className="text-2xl font-black text-white mb-2 flex items-center gap-3"><Globe className="text-indigo-400" /> Roadside Testing Regulations Tracker</h2>
+           <p className="text-indigo-300 text-sm font-bold mb-8">Current Landscape (April 2026) • Driving licensing demand for Tiered THC Patent</p>
+           
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+             <div className="bg-white/10 rounded-2xl p-6 border border-white/10">
+               <h4 className="text-xs font-black uppercase tracking-widest text-emerald-400 mb-4">Federal Level (DOT)</h4>
+               <ul className="space-y-3 text-sm text-slate-300 font-medium">
+                 <li><span className="text-white font-bold">Status:</span> DOT Part 40 permitted oral fluid testing (Dec 2024).</li>
+                 <li><span className="text-white font-bold">Rollout:</span> Mid-2026 (awaiting HHS dual-lab certification).</li>
+                 <li><span className="text-white font-bold">Impact:</span> Surging demand for recent-use testing over presence testing.</li>
+               </ul>
+             </div>
+             <div className="bg-white/10 rounded-2xl p-6 border border-white/10">
+               <h4 className="text-xs font-black uppercase tracking-widest text-indigo-400 mb-4">State Programs (Live)</h4>
+               <ul className="space-y-3 text-sm text-slate-300 font-medium">
+                 <li><span className="text-white font-bold">Alabama:</span> First comprehensive U.S. program since 2019. Extensive data pipeline.</li>
+                 <li><span className="text-white font-bold">Indiana:</span> Statewide deployment. 200+ devices screening for THC + 5 drugs.</li>
+                 <li><span className="text-white font-bold">Oklahoma:</span> DPS pilot launched early 2026. Zero-tolerance for active THC while driving.</li>
+               </ul>
+             </div>
+             <div className="bg-white/10 rounded-2xl p-6 border border-white/10">
+               <h4 className="text-xs font-black uppercase tracking-widest text-amber-400 mb-4">Evidentiary Gap</h4>
+               <p className="text-sm text-slate-300 font-medium leading-relaxed">
+                 Most existing devices detect THC presence long after impairment ends. Your patent solves this with <span className="text-white font-bold">2/5/10 ng/mL thresholds and temporal recency modeling</span>, allowing law enforcement to precisely determine use within the ~2-hour impairment window.
+               </p>
+             </div>
+           </div>
+         </div>
+      </div>
+    </div>
+  );
+
+  const renderLawEnforcement = () => (
+    <div className="space-y-8 animate-in fade-in duration-500">
+      <div className="bg-slate-950 border border-indigo-500/50 rounded-[3rem] p-10 text-white shadow-2xl relative overflow-hidden">
+         <div className="absolute top-0 right-0 p-8 opacity-5"><Shield size={160} /></div>
+         <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
+            <div>
+              <h2 className="text-4xl font-black italic tracking-tighter uppercase mb-2 flex items-center gap-3">
+                <Shield className="text-indigo-400" /> Law Enforcement Oversight
+              </h2>
+              <p className="text-indigo-300 font-bold uppercase tracking-widest text-sm">Real-time dispatch, field screening & evidentiary blockchain</p>
+            </div>
+            <div className="bg-white/5 px-8 py-4 rounded-2xl border border-white/10 text-center backdrop-blur-md">
+               <p className="text-[10px] uppercase tracking-[0.3em] font-black text-indigo-400 mb-2">Active Field Units</p>
+               <p className="text-4xl font-black">412</p>
+            </div>
+         </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white border border-slate-200 rounded-[2rem] p-8 shadow-sm">
+          <h3 className="text-xl font-black text-slate-800 mb-6 flex items-center gap-2"><Activity className="text-indigo-600" /> Active Dispatches & Stops</h3>
+          <div className="space-y-4">
+            {[
+              { id: 'DP-8291', status: 'Active Screen', unit: 'Unit 44 (Highway Patrol)', time: '2m ago', threat: 'High' },
+              { id: 'DP-8290', status: 'Evidence Logged', unit: 'Unit 12 (Metro)', time: '14m ago', threat: 'Low' },
+              { id: 'DP-8289', status: 'Lab Routing', unit: 'Unit 08 (County)', time: '45m ago', threat: 'Med' },
+            ].map(dispatch => (
+              <div key={dispatch.id} className="flex justify-between items-center p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div>
+                  <div className="text-sm font-black text-slate-700">{dispatch.unit}</div>
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{dispatch.id} • {dispatch.time}</div>
+                </div>
+                <div className="text-right">
+                  <span className="text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded bg-indigo-100 text-indigo-700">{dispatch.status}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-slate-900 border border-slate-800 rounded-[2rem] p-8 text-white shadow-xl">
+          <h3 className="text-xl font-black mb-6 flex items-center gap-2"><Database className="text-emerald-400" /> Evidentiary Blockchain</h3>
+          <div className="space-y-6">
+            <div className="bg-white/5 p-4 rounded-xl border border-white/10">
+              <div className="flex justify-between text-xs font-bold text-slate-400 mb-2">
+                <span>Chain of Custody Status</span>
+                <span className="text-emerald-400">100% Immutable</span>
+              </div>
+              <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                <div className="h-full bg-emerald-500 w-full"></div>
+              </div>
+            </div>
+            
+            <div className="space-y-3">
+              {[
+                { hash: '0x8f2...4b1', type: 'Oral Fluid Screen (2 ng/mL)', timestamp: '10:42 AM' },
+                { hash: '0x3a1...9c2', type: 'Chain of Custody Transfer', timestamp: '09:15 AM' },
+                { hash: '0x7b4...2a9', type: 'Lab Confirmation Request', timestamp: '08:30 AM' },
+              ].map((log, i) => (
+                <div key={i} className="flex gap-4 items-center group">
+                  <div className="w-2 h-2 rounded-full bg-emerald-400"></div>
+                  <div className="flex-1">
+                    <p className="text-xs font-bold text-slate-300">{log.type}</p>
+                    <p className="text-[9px] text-slate-500 font-mono mt-0.5">{log.hash} • {log.timestamp}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 
@@ -2434,6 +2544,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       case 'internal_scheduler': return renderInternalScheduler();
       case 'hr_intelligence': return renderHRIntelligence();
       case 'rapid_testing': return renderRapidTestingHub();
+      case 'law_enforcement': return renderLawEnforcement();
       case 'ip_monitor': return renderIPMonitor();
       case 'judicial':
         return <div className="h-full w-full -m-10 bg-[#080e1a] p-10 min-h-screen overflow-auto"><JudicialMonitorTab /></div>;
@@ -2526,7 +2637,9 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
           </div>
         ))}
       </div>
-      <div className="bg-indigo-900/20 border border-indigo-500/30 rounded-[2rem] p-10 mt-12 relative overflow-hidden">
+
+      <div className="bg-slate-900 border-2 border-indigo-500 shadow-2xl shadow-indigo-900/50 rounded-[2rem] p-10 mt-12 relative overflow-hidden">
+         <div className="absolute top-0 right-0 w-64 h-full bg-indigo-500/10 blur-3xl"></div>
          <div className="relative z-10">
            <h2 className="text-2xl font-black text-white mb-2 flex items-center gap-3"><Globe className="text-indigo-400" /> Roadside Testing Regulations Tracker</h2>
            <p className="text-indigo-300 text-sm font-bold mb-8">Current Landscape (April 2026) • Driving licensing demand for Tiered THC Patent</p>
