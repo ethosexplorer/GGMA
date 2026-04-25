@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { FileText, Upload, Clock, CheckCircle, AlertCircle, DollarSign, ChevronRight, Info, Sparkles } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -164,8 +164,8 @@ export const ApplicationsTab = ({ user }: { user?: any }) => {
                     <p className="text-[9px] text-emerald-300 text-center italic">* Leave a detailed message in notes</p>
                     <div className="pt-2 border-t border-white/10 mt-2">
                       <p className="text-[10px] font-black text-emerald-400 uppercase tracking-tighter mb-1">Direct Support Lines</p>
-                      <p className="text-[10px] text-white/70">Med Cards: <span className="font-bold text-white">405-492-7487</span></p>
-                      <p className="text-[10px] text-white/70">Telehealth: <span className="font-bold text-white">405-252-1178</span></p>
+                      <p className="text-[10px] text-white/70">Med Cards: <span className="font-bold text-white">844-333-4447</span></p>
+                      <p className="text-[10px] text-white/70">Telehealth: <span className="font-bold text-white">844-333-4447</span></p>
                     </div>
                   </div>
                </div>
@@ -307,5 +307,6 @@ export const ApplicationsTab = ({ user }: { user?: any }) => {
     </div>
   );
 };
+
 
 

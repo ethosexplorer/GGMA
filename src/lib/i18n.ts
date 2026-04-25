@@ -1,4 +1,4 @@
-// ─── Internationalization (i18n) System ───
+﻿// ─── Internationalization (i18n) System ───
 // Multi-language support for GGP-OS platform
 // Priority: Spanish (Monica Green's Hispanic client base), then global coverage
 
@@ -128,7 +128,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     'footer.terms': 'Terms of Service',
     'footer.privacy': 'Privacy Policy',
     'footer.accessibility': 'Accessibility',
-    'footer.support': 'Support: 1-405-492-7297',
+    'footer.support': 'Support: 1-844-333-4447',
     'common.language': 'Language',
     'common.selectLanguage': 'Select Language',
     'common.poweredBy': 'Powered by GGP-OS',
@@ -167,7 +167,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     'footer.terms': 'Términos de Servicio',
     'footer.privacy': 'Política de Privacidad',
     'footer.accessibility': 'Accesibilidad',
-    'footer.support': 'Soporte: 1-405-492-7297',
+    'footer.support': 'Soporte: 1-844-333-4447',
     'common.language': 'Idioma',
     'common.selectLanguage': 'Seleccionar Idioma',
     'common.poweredBy': 'Impulsado por GGP-OS',
@@ -206,7 +206,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     'footer.terms': '服务条款',
     'footer.privacy': '隐私政策',
     'footer.accessibility': '无障碍',
-    'footer.support': '支持热线: 1-405-492-7297',
+    'footer.support': '支持热线: 1-844-333-4447',
     'common.language': '语言',
     'common.selectLanguage': '选择语言',
     'common.poweredBy': '由 GGP-OS 驱动',
@@ -245,7 +245,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     'footer.terms': 'Điều Khoản Dịch Vụ',
     'footer.privacy': 'Chính Sách Bảo Mật',
     'footer.accessibility': 'Trợ Năng',
-    'footer.support': 'Hỗ Trợ: 1-405-492-7297',
+    'footer.support': 'Hỗ Trợ: 1-844-333-4447',
     'common.language': 'Ngôn Ngữ',
     'common.selectLanguage': 'Chọn Ngôn Ngữ',
     'common.poweredBy': 'Được hỗ trợ bởi GGP-OS',
@@ -284,7 +284,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     'footer.terms': '서비스 약관',
     'footer.privacy': '개인정보 처리방침',
     'footer.accessibility': '접근성',
-    'footer.support': '지원: 1-405-492-7297',
+    'footer.support': '지원: 1-844-333-4447',
     'common.language': '언어',
     'common.selectLanguage': '언어 선택',
     'common.poweredBy': 'GGP-OS 제공',
@@ -323,7 +323,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     'footer.terms': 'شروط الخدمة',
     'footer.privacy': 'سياسة الخصوصية',
     'footer.accessibility': 'إمكانية الوصول',
-    'footer.support': 'الدعم: 1-405-492-7297',
+    'footer.support': 'الدعم: 1-844-333-4447',
     'common.language': 'اللغة',
     'common.selectLanguage': 'اختر اللغة',
     'common.poweredBy': 'مدعوم من GGP-OS',
@@ -354,3 +354,4 @@ export function getLanguagesByRegion(): Record<string, Language[]> {
   }
   return grouped;
 }
+

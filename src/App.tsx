@@ -4083,7 +4083,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         response = 'You can apply for the following license:\n\n✅ **Caregiver**\n\nGreat! Now let\'s create your account. What is your **Full Name (First & Last)**?';
         setSignupStep(1);
       } else if (lower === 'no' || lower === 'nope') {
-        response = '❌ **You are not eligible to apply for any license.**\n\nIf you have any questions, feel free to call us at **405-492-7487** or type **start** to begin again.';
+        response = '❌ **You are not eligible to apply for any license.**\n\nIf you have any questions, feel free to call us at **844-333-4447** or type **start** to begin again.';
         setSignupStep(0);
       } else {
         response = 'Please answer **Yes** or **No**. Are you a **Caregiver**?';
@@ -4291,7 +4291,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     } else if (signupStep === 14) {
       setSignupData(prev => ({ ...prev, lastDoctorVisit: text }));
       setSignupStep(15);
-      response = `📋 **Document Upload Center**\n\nI need a few documents to complete your file.\n\n📷 **Photo Instructions:** Please take a picture with all 4 corners of the document clearly visible, or scan it.\n\n⚠️ **Trouble Uploading?** If you cannot upload in this chat, you can:\n📱 **Text** your documents to **1-405-492-7487** (Include your Name & D.O.B)\n✉️ **Email** to **asstsupport@gmail.com**\n\nAre you ready to begin uploads?`;
+      response = `📋 **Document Upload Center**\n\nI need a few documents to complete your file.\n\n📷 **Photo Instructions:** Please take a picture with all 4 corners of the document clearly visible, or scan it.\n\n⚠️ **Trouble Uploading?** If you cannot upload in this chat, you can:\n📱 **Text** your documents to **1-844-333-4447** (Include your Name & D.O.B)\n✉️ **Email** to **asstsupport@gmail.com**\n\nAre you ready to begin uploads?`;
       setMessages(prev => [...prev, { 
         role: 'bot', 
         text: response,
@@ -4746,7 +4746,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
           (businessData.licenseType === 'Processor' ? '📄 Hazardous License / Chemical Safety Data Sheets\n' : '') +
           (businessData.licenseType === 'Dispensary' ? '📄 Dispensary Distance Attestation (1,000 ft from schools)\n' : '') +
           (businessData.licenseType === 'Grower' ? '📄 Grow Facility Distance Attestation (1,000 ft from schools)\n' : '') +
-          '\n📷 **Photo Instructions:** Please ensure all 4 corners of the document are visible in the picture or scan.\n\n⚠️ **Trouble Uploading?** If you cannot upload in this chat, you can:\n📱 **Text** your documents to **1-405-492-7487** (Include Business Name & EIN)\n✉️ **Email** to **asstsupport@gmail.com**\n\nPlease use the **Business Document Upload Center** below to begin. Once uploaded, type **"done"** or click continue.';
+          '\n📷 **Photo Instructions:** Please ensure all 4 corners of the document are visible in the picture or scan.\n\n⚠️ **Trouble Uploading?** If you cannot upload in this chat, you can:\n📱 **Text** your documents to **1-844-333-4447** (Include Business Name & EIN)\n✉️ **Email** to **asstsupport@gmail.com**\n\nPlease use the **Business Document Upload Center** below to begin. Once uploaded, type **"done"** or click continue.';
         setBusinessData(prev => ({ ...prev, documentsUploadedCount: 0 }));
         setSignupStep(131);
       } else if (lower === 'no' || lower === 'nope') {
@@ -5150,7 +5150,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       response = '🏢 **Commercial Compliance Consultation**\n\nI am routing you to our **Business Licensing Experts**.\n\n\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Business Consultation](https://calendly.com/shantell-ggma/health-wellness-consultation)';
     } else if (lower.includes('book physician') || lower.includes('doctor') || lower.includes('recommendation') || lower.includes('med card intake') || lower.includes('patient licensing') || lower.includes('physician')) {
       if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma/health-wellness-consultation' }); } else { window.open('https://calendly.com/shantell-ggma/health-wellness-consultation', '_blank'); }
-      response = '⚕️ **Physician Booking & Patient Licensing**\n\nI am routing you directly to our physician booking portal.\n\n📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book Health & Wellness Consultation](https://calendly.com/shantell-ggma/health-wellness-consultation)\n\n📞 **Prefer to call?** Dial **1-405-492-7487**';
+      response = '⚕️ **Physician Booking & Patient Licensing**\n\nI am routing you directly to our physician booking portal.\n\n📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book Health & Wellness Consultation](https://calendly.com/shantell-ggma/health-wellness-consultation)\n\n📞 **Prefer to call?** Dial **1-844-333-4447**';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Patient Intake', 'I Already Scheduled', 'Main Menu'] } as any]);
       setIsTyping(false);
       return;
@@ -5169,7 +5169,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Yes', 'No'] } as any]);
       setSignupStep(99);
     } else if (lower.includes('book physician') || lower.includes('doctor') || lower.includes('recommendation') || lower.includes('med card intake') || lower.includes('patient licensing') || lower.includes('physician')) {
-      response = '⚕️ **Physician Booking & Patient Licensing**\n\nWhat type of visit do you need?\n\n• **Medical Card Evaluation ($45)** — physician recommendation for OMMA card (Call: 1-405-492-7487)\n• **General Telehealth Wellness** — non-emergency consultation (Call: 1-405-252-1178)\n\nSelect below to proceed to online booking! 📅';
+      response = '⚕️ **Physician Booking & Patient Licensing**\n\nWhat type of visit do you need?\n\n• **Medical Card Evaluation ($45)** — physician recommendation for OMMA card (Call: 1-844-333-4447)\n• **General Telehealth Wellness** — non-emergency consultation (Call: 1-844-333-4447)\n\nSelect below to proceed to online booking! 📅';
       setMessages(prev => [...prev, { 
         role: 'bot', 
         text: response,
@@ -5179,13 +5179,13 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       return;
     } else if (lower.includes('medical card evaluation') || lower.includes('med card eval') || lower.includes('medical card')) {
       if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma/health-wellness-consultation' }); } else { window.open('https://calendly.com/shantell-ggma/health-wellness-consultation', '_blank'); }
-      response = '💳 **Medical Card Evaluation ($45)**\n\nYour evaluation includes:\n• **$35** — Physician Consultation\n• **$10** — GGE Processing Fee\n\n📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book Online via Calendly](https://calendly.com/shantell-ggma/health-wellness-consultation)\n\n📞 **Prefer to call?** Dial **1-405-492-7487**';
+      response = '💳 **Medical Card Evaluation ($45)**\n\nYour evaluation includes:\n• **$35** — Physician Consultation\n• **$10** — GGE Processing Fee\n\n📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book Online via Calendly](https://calendly.com/shantell-ggma/health-wellness-consultation)\n\n📞 **Prefer to call?** Dial **1-844-333-4447**';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Patient Intake', 'I Already Scheduled', 'Main Menu'] } as any]);
       setIsTyping(false);
       return;
     } else if (lower.includes('general telehealth wellness') || lower.includes('general telehealth') || lower.includes('general health')) {
       if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma/health-wellness-consultation' }); } else { window.open('https://calendly.com/shantell-ggma/health-wellness-consultation', '_blank'); }
-      response = '🏥 **General Telehealth Wellness Visit**\n\nConnect with a licensed physician for:\n• Non-emergency consultations\n• Follow-up visits\n• Prescription management\n• General health questions\n\n📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book Online via Calendly](https://calendly.com/shantell-ggma/health-wellness-consultation)\n\n📞 **Prefer to call?** Dial **1-405-252-1178**';
+      response = '🏥 **General Telehealth Wellness Visit**\n\nConnect with a licensed physician for:\n• Non-emergency consultations\n• Follow-up visits\n• Prescription management\n• General health questions\n\n📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book Online via Calendly](https://calendly.com/shantell-ggma/health-wellness-consultation)\n\n📞 **Prefer to call?** Dial **1-844-333-4447**';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setIsTyping(false);
       return;
@@ -7790,6 +7790,7 @@ export default function App() {
     </ErrorBoundary>
   );
 }
+
 
 
 
