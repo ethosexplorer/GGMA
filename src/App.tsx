@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect, useMemo, useRef, useCallback } from 'react';
+﻿import React, { Component, useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { STATE_RESOURCES } from './stateResources';
 import { getPlansForRole, getAddOnsForRole } from './lib/subscriptionPlans';
@@ -3397,44 +3397,6 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     
     if (!overrideText) setInputValue('');
     setIsTyping(true);
-    // Language selection step
-    if (signupStep === -1) {
-      const t = text.toLowerCase();
-      const match = [
-        { code: 'en', label: 'english' }, { code: 'es', label: 'español' }, { code: 'pt', label: 'português' },
-        { code: 'fr', label: 'français' }, { code: 'ht', label: 'kreyòl' }, { code: 'zh-CN', label: '简体' },
-        { code: 'zh-TW', label: '繁體' }, { code: 'vi', label: 'tiếng việt' }, { code: 'ko', label: '한국어' },
-        { code: 'ja', label: '日本語' }, { code: 'tl', label: 'tagalog' }, { code: 'hmn', label: 'hmoob' },
-        { code: 'hi', label: 'हिन्दी' }, { code: 'ur', label: 'اردو' }, { code: 'my', label: 'ဗမာစာ' },
-        { code: 'th', label: 'ไทย' }, { code: 'ar', label: 'العربية' }, { code: 'so', label: 'soomaali' },
-        { code: 'am', label: 'አማርኛ' }, { code: 'sw', label: 'kiswahili' }, { code: 'de', label: 'deutsch' },
-        { code: 'it', label: 'italiano' }, { code: 'ru', label: 'русский' }, { code: 'pl', label: 'polski' },
-        { code: 'uk', label: 'українська' }, { code: 'ro', label: 'română' }, { code: 'nv', label: 'diné' }
-      ].find(l => t.includes(l.label) || t === l.code);
-      
-      const code = match ? match.code : 'en';
-      
-      const select = document.querySelector('.goog-te-combo') as HTMLSelectElement;
-      if (select) {
-        select.value = code;
-        select.dispatchEvent(new Event('change'));
-      } else {
-        if (code === 'en') {
-          document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-          document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + window.location.hostname;
-        } else {
-          document.cookie = `googtrans=/en/${code}; path=/;`;
-          document.cookie = `googtrans=/en/${code}; path=/; domain=` + window.location.hostname;
-        }
-      }
-      
-      setSignupStep(0);
-      setTimeout(() => {
-        setMessages(prev => [...prev, { role: 'bot', text: getGreeting(), choices: getInitialChoices() }]);
-        setIsTyping(false);
-      }, 600);
-      return;
-    }
 
     try {
       await new Promise(r => setTimeout(r, 800 + Math.random() * 600));
@@ -3446,12 +3408,12 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     if (lower.includes('subscription plan') || lower.includes('view subscription') || lower.includes('state authority plan') || lower.includes('pricing') || lower.includes('basic subscription') || lower.includes('professional subscription') || lower.includes('enterprise subscription')) {
       response = '?? **GGHP Subscription Plans**\n\n' +
         '**Patient Plans:**\n' +
-        '� **Basic**: $9.99/mo (Care Wallet + Telehealth)\n' +
-        '� **Premium**: $24.99/mo (Priority Support + AI Guardian)\n\n' +
+        '� **Basic**: $9.99/mo (Care Wallet + Telehealth)\n' +
+        '� **Premium**: $24.99/mo (Priority Support + AI Guardian)\n\n' +
         '**Business Plans:**\n' +
-        '� **Basic**: $149/mo (Compliance & POS)\n' +
-        '� **Professional**: $299/mo (Full Seed-to-Sale + Metrc)\n' +
-        '� **Enterprise**: Custom Pricing (Multi-State & API)\n\n' +
+        '� **Basic**: $149/mo (Compliance & POS)\n' +
+        '� **Professional**: $299/mo (Full Seed-to-Sale + Metrc)\n' +
+        '� **Enterprise**: Custom Pricing (Multi-State & API)\n\n' +
         '_All paid tiers include a 30-Day Free Trial._\n\n' +
         'To upgrade or start a trial, please select **Start Intake** below, or visit the main dashboard after logging in.';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Patient Intake', 'Start Business Intake', 'Main Menu'] } as any]);
@@ -7828,6 +7790,7 @@ export default function App() {
     </ErrorBoundary>
   );
 }
+
 
 
 
