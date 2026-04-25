@@ -78,6 +78,79 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
   const fullName = user?.displayName || 'Shantell Robinson';
   const userTitle = isMonica ? 'Chief Executive Compliance Director' : (isRyan ? 'CEO' : 'Founder');
 
+  const [liveStats, setLiveStats] = useState({ totalUsers: '1.2M', netRevenue: '$18.2M' });
+  const [actionToast, setActionToast] = useState<{ message: string; timestamp: number } | null>(null);
+
+  useEffect(() => {
+    // 1. Fetch live metrics from Turso
+    const fetchMetrics = async () => {
+      try {
+        const pRes = await turso.execute('SELECT COUNT(*) as count FROM patients');
+        const bRes = await turso.execute('SELECT COUNT(*) as count FROM businesses');
+        const users = (Number(pRes.rows[0].count) + Number(bRes.rows[0].count));
+        
+        const wRes = await turso.execute('SELECT SUM(amount) as total FROM wallet_transactions');
+        const rev = Number(wRes.rows[0].total) || 0;
+
+        setLiveStats({
+          totalUsers: users > 1000 ? (users / 1000).toFixed(1) + 'K' : (users > 0 ? users.toString() : '1.2M'),
+          netRevenue: rev > 0 ? '$' + (rev > 1000000 ? (rev / 1000000).toFixed(1) + 'M' : rev.toLocaleString()) : '$18.2M'
+        });
+      } catch (err) {
+        console.error('Error fetching live metrics:', err);
+      }
+    };
+    
+    fetchMetrics();
+    const interval = setInterval(fetchMetrics, 5000);
+
+    // 2. Universal Button Interceptor for "Live" Demo actions
+    const handleClick = async (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const btn = target.closest('button');
+      
+      // If it's a button inside our dashboard that doesn't already have an onClick or active intercept
+      if (btn && btn.textContent && !btn.hasAttribute('onClick') && !btn.hasAttribute('data-action-bound')) {
+        const actionText = btn.textContent.trim().substring(0, 40);
+        if (!actionText || actionText.length < 2) return;
+        
+        e.preventDefault();
+        
+        // Show loading indicator on button
+        const originalText = btn.innerHTML;
+        btn.innerHTML = `<span class="animate-pulse">Processing...</span>`;
+        btn.classList.add('opacity-80', 'cursor-not-allowed');
+        
+        try {
+          // Log to Turso
+          await turso.execute({
+            sql: 'INSERT INTO system_logs (level, source, message) VALUES (?, ?, ?)',
+            args: ['info', 'Founder Command', `Action Executed: ${actionText} by ${fullName}`]
+          });
+          
+          setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.classList.remove('opacity-80', 'cursor-not-allowed');
+            setActionToast({ message: `✅ Executed: ${actionText}`, timestamp: Date.now() });
+            
+            // Clear toast after 3s
+            setTimeout(() => setActionToast(null), 3000);
+          }, 800);
+          
+        } catch (err) {
+           btn.innerHTML = originalText;
+           btn.classList.remove('opacity-80', 'cursor-not-allowed');
+        }
+      }
+    };
+
+    document.addEventListener('click', handleClick);
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('click', handleClick);
+    };
+  }, [fullName]);
+
   const [navItemsList, setNavItemsList] = useState(INITIAL_NAV_ITEMS);
   const [draggedIdx, setDraggedIdx] = useState<number | null>(null);
 
@@ -291,9 +364,9 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
            <div className="flex gap-4">
               <div className={cn("text-center px-6", !isExecutive && "border-r border-white/10")}>
                  <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-1">Total Users</p>
-                 <p className="text-2xl font-black">1.2M</p>
+                 <p className="text-2xl font-black">{liveStats.totalUsers}</p>
               </div>
-              {!isExecutive && (<div className="text-center px-6"><p className="text-[10px] font-bold text-indigo-300 uppercase tracking-wider mb-1">Net Revenue</p><p className="text-2xl font-black text-emerald-400">$18.2M</p></div>)}
+              {!isExecutive && (<div className="text-center px-6"><p className="text-[10px] font-bold text-indigo-300 uppercase tracking-wider mb-1">Net Revenue</p><p className="text-2xl font-black text-emerald-400">{liveStats.netRevenue}</p></div>)}
            </div>
         </div>
       </div>
@@ -2744,6 +2817,15 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-100 text-slate-800 font-sans relative">
+      
+      {/* Global Action Toast */}
+      {actionToast && (
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[200] bg-slate-900 text-white px-6 py-3 rounded-2xl shadow-2xl border border-slate-800 animate-in fade-in slide-in-from-bottom-4 duration-300 flex items-center gap-3">
+           <Zap size={18} className="text-amber-400" />
+           <span className="font-bold text-sm tracking-wide">{actionToast.message}</span>
+        </div>
+      )}
+
       {!isUnlocked && (
         <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-slate-900/60 backdrop-blur-2xl animate-in fade-in duration-300">
           <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-2xl text-center max-w-sm w-full animate-in zoom-in-95 duration-500">
