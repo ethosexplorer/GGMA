@@ -109,6 +109,7 @@ import { ProviderDashboard } from './pages/ProviderDashboard';
 import { AttorneyDashboard } from './pages/AttorneyDashboard';
 import { PublicHealthDashboard } from './pages/PublicHealthDashboard';
 import { CareWalletDashboard } from './pages/CareWalletDashboard';
+import { generateGeminiResponse } from './lib/gemini';
 import { EnforcementDashboard } from './pages/EnforcementDashboard';
 import { BackOfficeDashboard } from './pages/BackOfficeDashboard';
 import ProviderRegistrationPage from './pages/ProviderRegistrationPage';
@@ -908,7 +909,12 @@ const STATE_RESOURCES: Record<string, any> = {
          } else if (lowerQuery.includes('application')) {
             botResponse = 'For application issues, you can navigate to the "Patient Portal" or contact our support team using the form.';
          } else {
-            botResponse = 'I am your Assistant. Try asking about specific US States to get Cannabis regulations, portals, and guides. You can also ask me general questions about recent WA and WI bills, or I will search my database for general inquiries!';
+            // Using LIVE Gemini Integration
+            try {
+               botResponse = await generateGeminiResponse(userMessage, 'general', messages.filter(m => m.role !== 'system'));
+            } catch (err) {
+               botResponse = 'I am your Assistant. Try asking about specific US States to get Cannabis regulations, portals, and guides. (Gemini AI service unavailable)';
+            }
          }
       }
 
