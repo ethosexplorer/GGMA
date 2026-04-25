@@ -7,7 +7,7 @@ import {
   Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Globe, Zap, Database,
   FlaskConical, CreditCard, Map as MapIcon, BookOpen, UserPlus, Trash2,
   MapPin, Target, Layers, TrendingDown, Box, PieChart, GraduationCap, Lock, GripVertical,
-  Calculator, Save, ExternalLink
+  Calculator, Save, ExternalLink, Printer
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
@@ -16,6 +16,7 @@ import { PublicHealthDashboard } from './PublicHealthDashboard';
 import { OperationsDashboard } from './OperationsDashboard';
 import { AdminDashboard } from './AdminDashboard';
 import { StateAuthorityDashboard } from './StateAuthorityDashboard';
+import { ExternalAdminDashboard } from './ExternalAdminDashboard';
 import { SubscriptionPortal } from '../components/SubscriptionPortal';
 import { LegislativeIntelTab } from '../components/federal/LegislativeIntelTab';
 import { JudicialMonitorTab } from '../components/federal/JudicialMonitorTab';
@@ -43,17 +44,18 @@ const INITIAL_NAV_ITEMS = [
   { id: 'compliance', label: 'Compliance Monitor', icon: FileCheck },
   { id: 'regulatory_library', label: 'Regulatory Library', icon: BookOpen },
   { section: 'OVERSIGHT HUB' },
+  { id: 'internal_admin', label: 'Internal Administrator', icon: Shield, badge: '!' },
+  { id: 'external_admin', label: 'External Administrator', icon: Activity },
+  { id: 'law_enforcement', label: 'Law Enforcement (RIP)', icon: Shield },
+  { id: 'state_authority', label: 'Regulator / Authority', icon: Gavel },
+  { id: 'operations', label: 'Operations & Support', icon: Cpu },
+  { section: 'FEDERAL & IP MONITORS' },
   { id: 'federal', label: 'Federal Command', icon: Globe },
   { id: 'public_health', label: 'Public Health & Labs', icon: FlaskConical },
-  { id: 'operations', label: 'Ops & Support Center', icon: Cpu },
-  { id: 'internal_admin', label: 'Internal Admin', icon: Shield, badge: '!' },
-  { id: 'state_authority', label: 'State Authority (External)', icon: Gavel },
   { id: 'judicial', label: 'Judicial Monitor', icon: Scale },
   { id: 'ip_monitor', label: 'IP / Patent Monitor', icon: Shield },
-  { id: 'subscription', label: 'Platform Billing', icon: CreditCard },
-  { section: 'LAW ENFORCEMENT' },
-  { id: 'law_enforcement', label: 'Law Enforcement', icon: Shield },
   { id: 'rapid_testing', label: 'Rapid Testing Hub', icon: FlaskConical },
+  { id: 'subscription', label: 'Platform Billing', icon: CreditCard },
   { section: 'SYSTEM CONTROL' },
   { id: 'reports', label: 'Master Analytics', icon: BarChart3 },
   { id: 'intel', label: 'Global Intelligence', icon: BookOpen },
@@ -2220,6 +2222,11 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
   );
   const renderRapidTestingHub = () => (
     <div className="space-y-8 animate-in fade-in zoom-in-95 duration-700">
+      <div className="flex justify-end print:hidden">
+        <button onClick={() => window.print()} className="flex items-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-indigo-700 shadow-xl transition-all">
+          <Printer size={18} /> Export / Print Report
+        </button>
+      </div>
       <div className="bg-indigo-600 bg-gradient-to-br from-indigo-600 via-indigo-900 to-slate-950 p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden border border-white/10">
         <div className="absolute top-0 right-0 p-10 opacity-20"><FlaskConical size={160} className="animate-pulse text-indigo-400" /></div>
         <div className="relative z-10 flex flex-col lg:flex-row justify-between items-center gap-12">
@@ -2437,6 +2444,11 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
 
   const renderLawEnforcement = () => (
     <div className="space-y-8 animate-in fade-in duration-500">
+      <div className="flex justify-end print:hidden">
+        <button onClick={() => window.print()} className="flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-slate-800 shadow-xl transition-all">
+          <Printer size={18} /> Export / Print Report
+        </button>
+      </div>
       <div className="bg-slate-950 border border-indigo-500/50 rounded-[3rem] p-10 text-white shadow-2xl relative overflow-hidden">
          <div className="absolute top-0 right-0 p-8 opacity-5"><Shield size={160} /></div>
          <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
@@ -2519,6 +2531,8 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
         return renderOpsCenter();
       case 'internal_admin': 
         return <div className="h-full w-full -m-10"><AdminDashboard user={user} onLogout={onLogout} /></div>;
+      case 'external_admin': 
+        return <div className="h-full w-full -m-10"><ExternalAdminDashboard user={user} onLogout={onLogout} /></div>;
       case 'state_authority':
         return <div className="h-full w-full -m-10"><StateAuthorityDashboard user={user} onLogout={onLogout} /></div>;
       case 'subscription': 
@@ -2734,7 +2748,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
         </div>
       )}
 
-      <div className={cn("w-64 bg-slate-950 border-r border-slate-900 flex flex-col hidden md:flex shrink-0 transition-all duration-500", !isUnlocked && "blur-md opacity-50 pointer-events-none")}>
+      <div className={cn("w-64 bg-slate-950 border-r border-slate-900 flex flex-col hidden md:flex shrink-0 transition-all duration-500 print:hidden", !isUnlocked && "blur-md opacity-50 pointer-events-none")}>
         <div className="p-6 pb-2">
           <div className="flex items-center gap-3 mb-6">
             <img src="/gghp-branding.png" alt="GGHP Logo" className="w-12 h-12 object-contain" />
@@ -2788,7 +2802,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       </div>
 
       <div className={cn("flex-1 flex flex-col h-[calc(100vh)] overflow-hidden transition-all duration-500", !isUnlocked && "blur-xl scale-[0.98] opacity-50 pointer-events-none")}>
-        <div className="h-20 border-b border-slate-200 flex items-center justify-between px-10 bg-white shrink-0">
+        <div className="h-20 border-b border-slate-200 flex items-center justify-between px-10 bg-white shrink-0 print:hidden">
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">{activeTab.replace('_', ' ')}</h1>
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-100">
@@ -2802,7 +2816,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
         
         {/* GLOBAL ALERTS STREAM (RIGHT SIDEBAR) */}
         {!hideAlertQueue && !isExecutive && (
-        <div className={cn("w-80 bg-white border-l border-slate-200 flex flex-col shrink-0 transition-all duration-500 hidden xl:flex", !isUnlocked && "blur-md opacity-50 pointer-events-none")}>
+        <div className={cn("w-80 bg-white border-l border-slate-200 flex flex-col shrink-0 transition-all duration-500 hidden xl:flex print:hidden", !isUnlocked && "blur-md opacity-50 pointer-events-none")}>
            <div className="h-20 border-b border-slate-200 flex items-center justify-between px-6 bg-slate-50 shrink-0">
               <h3 className="font-black text-sm uppercase tracking-widest text-slate-800 flex items-center gap-2"><Bell size={16} className="text-indigo-600" /> Executive Oversight & Alert Queue</h3>
               <button onClick={() => {

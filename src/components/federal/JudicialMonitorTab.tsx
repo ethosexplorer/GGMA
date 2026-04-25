@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Scale, Search, ExternalLink, Shield, TrendingUp, AlertTriangle, CheckCircle2, Clock, MapPin, Gavel, Users, BookOpen } from 'lucide-react';
+import { Scale, Search, ExternalLink, Shield, TrendingUp, AlertTriangle, CheckCircle2, Clock, MapPin, Gavel, Users, BookOpen, Database, Activity, Printer } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 const LANDMARK_CASES = [
@@ -267,7 +267,7 @@ const ACTIVE_CASES = [
 
 export const JudicialMonitorTab = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeSection, setActiveSection] = useState<'cases' | 'judges' | 'active'>('cases');
+  const [activeSection, setActiveSection] = useState<'cases' | 'judges' | 'active' | 'evidence'>('cases');
 
   const filteredCases = LANDMARK_CASES.filter(c =>
     c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -284,6 +284,11 @@ export const JudicialMonitorTab = () => {
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       {/* Hero Banner */}
+      <div className="flex justify-end print:hidden">
+        <button onClick={() => window.print()} className="flex items-center gap-2 bg-[#111f36] text-blue-200 border border-blue-900/30 px-6 py-3 rounded-xl font-bold hover:bg-[#152847] transition-all">
+          <Printer size={18} /> Export / Print Report
+        </button>
+      </div>
       <div className="bg-gradient-to-br from-[#0b1525] via-[#111f36] to-[#0b1525] rounded-[2rem] p-8 border border-blue-900/30 relative overflow-hidden">
         <div className="absolute top-0 right-0 p-8 opacity-10"><Gavel size={120} /></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2"></div>
@@ -331,6 +336,7 @@ export const JudicialMonitorTab = () => {
             { id: 'cases' as const, label: 'Landmark Rulings', icon: Scale },
             { id: 'judges' as const, label: 'Judicial Profiles', icon: Users },
             { id: 'active' as const, label: 'Active Litigation', icon: Clock },
+            { id: 'evidence' as const, label: 'Evidentiary Chain', icon: Shield },
           ].map(tab => (
             <button
               key={tab.id}
@@ -475,6 +481,77 @@ export const JudicialMonitorTab = () => {
               <p className="text-xs text-blue-200/60 leading-relaxed">{c.summary}</p>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Evidentiary Chain */}
+      {activeSection === 'evidence' && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-[#0b1525] border border-blue-900/20 rounded-[2rem] p-8 text-white">
+            <h3 className="text-xl font-black mb-2 flex items-center gap-2"><Database className="text-emerald-400" /> Immutable Evidentiary Ledger</h3>
+            <p className="text-xs text-blue-200/60 leading-relaxed mb-8">
+              Verifiable chain of custody for all forensic THC roadside tests. The Tiered Forensic Oral Fluid System automatically logs to a tamper-proof blockchain for court admissibility.
+            </p>
+            
+            <div className="space-y-6">
+              <div className="bg-[#111f36] p-4 rounded-xl border border-blue-900/30">
+                <div className="flex justify-between text-xs font-bold text-blue-300/60 mb-2">
+                  <span>Cryptographic Validation Status</span>
+                  <span className="text-emerald-400">100% Intact</span>
+                </div>
+                <div className="h-2 bg-blue-900/30 rounded-full overflow-hidden">
+                  <div className="h-full bg-emerald-500 w-full"></div>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                {[
+                  { hash: '0x8f2...4b1', type: 'Initial Screen (2 ng/mL) - Unit 44', time: '10:42:15 AM CST', validity: 'Verified' },
+                  { hash: '0x3a1...9c2', type: 'Sample Sealed & Logged', time: '10:48:33 AM CST', validity: 'Verified' },
+                  { hash: '0x7b4...2a9', type: 'Lab Routing - Apex Analytics', time: '11:15:00 AM CST', validity: 'Verified' },
+                  { hash: '0x1c9...8d5', type: 'Confirmation MS/MS Test', time: '02:30:11 PM CST', validity: 'Pending' },
+                ].map((log, i) => (
+                  <div key={i} className="flex gap-4 items-center group">
+                    <div className={cn("w-2 h-2 rounded-full", log.validity === 'Verified' ? "bg-emerald-400" : "bg-amber-400 animate-pulse")}></div>
+                    <div className="flex-1">
+                      <div className="flex justify-between items-center">
+                        <p className="text-xs font-bold text-blue-100">{log.type}</p>
+                        <span className={cn("text-[9px] font-black uppercase px-2 py-0.5 rounded", log.validity === 'Verified' ? "bg-emerald-900/40 text-emerald-400" : "bg-amber-900/40 text-amber-400")}>{log.validity}</span>
+                      </div>
+                      <p className="text-[10px] text-blue-400/50 font-mono mt-1">{log.hash} • {log.time}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-[#111f36] border border-blue-900/30 rounded-[2rem] p-8">
+            <h3 className="text-xl font-black text-white mb-6 flex items-center gap-2"><Activity className="text-blue-400" /> Daubert / Frye Admissibility</h3>
+            <div className="space-y-4">
+              <div className="bg-[#0b1525] rounded-xl p-5 border border-blue-900/20">
+                <h4 className="text-xs font-black uppercase tracking-widest text-emerald-400 mb-2">Scientific Validity</h4>
+                <p className="text-xs text-blue-200/70 leading-relaxed">
+                  The Tiered Forensic System establishes recency of use within the ~2 hour impairment window, distinguishing active impairment from mere presence of inactive metabolites (carboxy-THC).
+                </p>
+              </div>
+              <div className="bg-[#0b1525] rounded-xl p-5 border border-blue-900/20">
+                <h4 className="text-xs font-black uppercase tracking-widest text-emerald-400 mb-2">DOT Part 40 Alignment</h4>
+                <p className="text-xs text-blue-200/70 leading-relaxed">
+                  Screening protocols strictly adhere to the updated HHS/DOT guidelines for oral fluid testing (effective Dec 2024), utilizing the standard 2/5/10 ng/mL screening cutoffs.
+                </p>
+              </div>
+              <div className="bg-[#0b1525] rounded-xl p-5 border border-blue-900/20">
+                <h4 className="text-xs font-black uppercase tracking-widest text-emerald-400 mb-2">Evidentiary Packet Export</h4>
+                <p className="text-xs text-blue-200/70 leading-relaxed mb-4">
+                  Defense counsel and prosecutors can instantly retrieve complete, untampered digital case files directly from the GGP-OS ledger.
+                </p>
+                <button className="w-full py-3 bg-blue-900/50 hover:bg-blue-800/50 border border-blue-700/50 rounded-xl text-[10px] font-black text-white uppercase tracking-widest transition-all shadow-lg">
+                  Generate Admissibility Report
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
