@@ -49,6 +49,7 @@ const INITIAL_NAV_ITEMS = [
   { id: 'rapid_testing', label: 'Rapid Testing Hub', icon: FlaskConical },
   { id: 'state_authority', label: 'State Authority (External)', icon: Gavel },
   { id: 'judicial', label: 'Judicial Monitor', icon: Scale },
+  { id: 'ip_monitor', label: 'IP / Patent Monitor', icon: Shield },
   { id: 'subscription', label: 'Platform Billing', icon: CreditCard },
   { section: 'SYSTEM CONTROL' },
   { id: 'reports', label: 'Master Analytics', icon: BarChart3 },
@@ -119,6 +120,37 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
 
   const renderOverview = () => (
     <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-2">
+        <div className="col-span-4 bg-gradient-to-r from-emerald-900 to-teal-900 border border-emerald-400 rounded-3xl p-6 shadow-xl relative overflow-hidden">
+           <div className="absolute top-0 right-0 p-8 opacity-10 text-white"><Shield size={120} /></div>
+           <div className="relative z-10">
+              <h3 className="flex items-center gap-2 text-white font-black text-xl mb-6 uppercase tracking-tight">
+                <Shield className="h-6 w-6 text-emerald-400" />
+                Patent Status Dashboard
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {[
+                  { title: "Tiered Threshold Forensic Oral Fluid Screening System for Δ9-THC", status: "Provisional + Utility Filed", date: "March 2026", filings: 5 },
+                  { title: "Closed-Loop Private Label Revolving Line of Credit for the Cannabis Industry", status: "Provisional + Copyright", date: "Dec 2024", filings: 2 },
+                  { title: "Multi-Sided Regulatory Infrastructure System with AI-Driven Routing", status: "Provisional Filed", date: "2026", filings: 1 }
+                ].map((patent, index) => (
+                  <div key={index} className="bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/20 hover:bg-white/20 transition-colors">
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="text-white text-sm font-bold leading-snug">{patent.title}</h4>
+                    </div>
+                    <span className="inline-block bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded mb-3">{patent.status}</span>
+                    <p className="text-emerald-300 text-xs font-medium mb-3">{patent.date}</p>
+                    <div className="flex justify-between items-center text-xs text-white/80">
+                      <span className="flex items-center gap-1 font-bold"><FileText className="h-3 w-3" /> {patent.filings} Filings</span>
+                      <button onClick={() => setActiveTab('ip_monitor')} className="text-emerald-400 hover:text-white font-black uppercase tracking-widest transition-colors flex items-center gap-1">View <ArrowUpRight className="h-3 w-3 inline" /></button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+           </div>
+        </div>
+      </div>
+
       <div className="bg-slate-900 bg-gradient-to-r from-slate-900 to-indigo-900 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-full bg-indigo-500/10 blur-3xl"></div>
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
@@ -2282,12 +2314,103 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       case 'internal_scheduler': return renderInternalScheduler();
       case 'hr_intelligence': return renderHRIntelligence();
       case 'rapid_testing': return renderRapidTestingHub();
+      case 'ip_monitor': return renderIPMonitor();
       case 'judicial':
         return <div className="h-full w-full -m-10 bg-[#080e1a] p-10 min-h-screen overflow-auto"><JudicialMonitorTab /></div>;
       case 'settings': return renderSettings();
       default: return renderOverview();
     }
   };
+
+  const renderIPMonitor = () => (
+    <div className="space-y-8 animate-in fade-in duration-500">
+      <div className="bg-slate-900 rounded-[3rem] p-10 text-white shadow-2xl relative overflow-hidden">
+         <div className="absolute top-0 right-0 p-8 opacity-10"><Shield size={160} /></div>
+         <div className="relative z-10 flex justify-between items-center">
+            <div>
+              <h2 className="text-4xl font-black italic tracking-tighter uppercase mb-2">IP Monitor</h2>
+              <p className="text-emerald-400 font-bold uppercase tracking-widest text-sm">Your complete patent portfolio • Protected & trackable</p>
+            </div>
+            <div className="bg-white/10 px-6 py-3 rounded-2xl border border-white/20 text-center">
+               <p className="text-2xl font-black text-emerald-400">3</p>
+               <p className="text-[10px] uppercase tracking-widest font-bold">Active Assets</p>
+            </div>
+         </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+        {[
+          {
+            id: 1,
+            title: "Tiered Threshold Forensic Oral Fluid Screening System for Δ9-THC",
+            type: "Provisional + Utility Patent Application",
+            date: "March 26, 2026",
+            status: "Active",
+            filings: "5 USPTO submissions",
+            description: "Multi-channel microfluidic lateral flow device with tiered 2/5/10 ng/mL thresholds and ratio-based temporal recency modeling.",
+            files: [
+              { name: "Full Utility Patent Application.pdf" },
+              { name: "Provisional Application.pdf" },
+              { name: "Claims Set.pdf" },
+              { name: "Drawings (8 figures).pdf" },
+            ]
+          },
+          {
+            id: 2,
+            title: "Closed-Loop Private Label Revolving Line of Credit for the Cannabis Industry",
+            type: "Provisional Application + Copyright",
+            date: "December 2024",
+            status: "Registered",
+            filings: "Copyright TXu 2-461-818",
+            description: "Full closed-loop credit architecture, merchant processing, compliance engine, and jurisdiction-aware lending system.",
+            files: [
+              { name: "Provisional Patent.pdf" },
+              { name: "Drawings.pdf" },
+              { name: "Copyright Registration.pdf" },
+            ]
+          },
+          {
+            id: 3,
+            title: "Multi-Sided Regulatory Infrastructure System with AI-Driven Cross-Module Routing",
+            type: "Provisional Application",
+            date: "2026",
+            status: "Filed",
+            filings: "GGP-OS backbone",
+            description: "Unified AI routing platform integrating healthcare, legal, compliance, and business modules.",
+            files: [
+              { name: "Provisional Application.pdf" },
+            ]
+          }
+        ].map(asset => (
+          <div key={asset.id} className="bg-white rounded-[2rem] p-8 border border-slate-200 shadow-sm hover:border-emerald-400 transition-colors flex flex-col h-full group">
+            <h3 className="text-lg font-black text-slate-800 leading-snug mb-3">{asset.title}</h3>
+            <div className="flex flex-wrap gap-2 mb-4">
+              <span className="bg-slate-100 text-slate-600 px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-full">{asset.type}</span>
+              <span className="bg-emerald-100 text-emerald-700 px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-full">{asset.status}</span>
+            </div>
+            <div className="flex items-center gap-2 text-xs font-bold text-slate-400 mb-4">
+              <Clock size={14} /> <span>{asset.date}</span> • <span className="text-emerald-600">{asset.filings}</span>
+            </div>
+            <p className="text-sm text-slate-600 font-medium leading-relaxed mb-6 flex-1">{asset.description}</p>
+            <div className="pt-6 border-t border-slate-100">
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2"><FolderLock size={12} /> Attached Documents</p>
+              <div className="space-y-2">
+                {asset.files.map((file, idx) => (
+                  <button key={idx} className="w-full flex justify-between items-center p-3 bg-slate-50 hover:bg-slate-100 rounded-xl text-left transition-colors cursor-pointer group-hover:border-emerald-200 border border-transparent">
+                     <span className="text-xs font-bold text-slate-700 flex items-center gap-2"><FileText size={14} className="text-indigo-500" /> {file.name}</span>
+                     <Download size={14} className="text-slate-400 group-hover:text-indigo-600 transition-colors" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="text-center p-6 text-sm font-bold text-slate-400 italic">
+        All assets are permanently archived in the system. USPTO receipts and full specifications available on click.
+      </div>
+    </div>
+  );
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 text-slate-800 font-sans relative">
