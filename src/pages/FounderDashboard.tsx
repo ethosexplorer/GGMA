@@ -6,7 +6,7 @@ import {
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
   Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Globe, Zap, Database,
   FlaskConical, CreditCard, Map as MapIcon, BookOpen, UserPlus, Trash2,
-  MapPin, Target, Layers, TrendingDown, Box, PieChart, GraduationCap, Lock
+  MapPin, Target, Layers, TrendingDown, Box, PieChart, GraduationCap, Lock, GripVertical
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
@@ -22,7 +22,7 @@ import { onSnapshot, collection, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { METRC_MANUAL } from '../data/metrcManual';
 
-const NAV_ITEMS = [
+const INITIAL_NAV_ITEMS = [
   { section: 'FOUNDER EXCLUSIVE' },
   { id: 'accounting_ledger', label: 'Accounting Ledger (QuickBooks)', icon: TrendingUp },
   { id: 'global_financials', label: 'Global Financials', icon: TrendingUp },
@@ -70,6 +70,25 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
   const firstName = user?.displayName ? user.displayName.split(' ')[0] : 'Shantell';
   const fullName = user?.displayName || 'Shantell Robinson';
   const userTitle = isMonica ? 'Chief Executive Compliance Director' : (isRyan ? 'CEO' : 'Founder');
+
+  const [navItemsList, setNavItemsList] = useState(INITIAL_NAV_ITEMS);
+  const [draggedIdx, setDraggedIdx] = useState<number | null>(null);
+
+  const handleDragStart = (e: any, index: number) => {
+    setDraggedIdx(index);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e: any, index: number) => {
+    e.preventDefault();
+    if (draggedIdx === null || draggedIdx === index) return;
+    const newItems = [...navItemsList];
+    const item = newItems[draggedIdx];
+    newItems.splice(draggedIdx, 1);
+    newItems.splice(index, 0, item);
+    setDraggedIdx(index);
+    setNavItemsList(newItems);
+  };
 
   const [activeTab, setActiveTab] = useState('overview');
   const [regSearch, setRegSearch] = useState('');
@@ -474,7 +493,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
            },
            {
              t: 'Economic Infrastructure',
-             d: 'The commercial oversight map. It monitors every single commercial node (dispensaries, farms, labs) connected to SINC. It tracks tax ingress, active lab syncs, and allows the founder to trigger an Emergency Recall if a bad batch is detected on the map.'
+             d: 'The commercial oversight map. It monitors every single commercial node (dispensaries, farms, labs) connected to SINC. It integrates directly with Metrc because Metrc API Integration Fees are a core revenue stream. It tracks tax ingress, active lab syncs, and allows the founder to trigger an Emergency Recall if a bad batch is detected on the map.'
            },
            {
              t: 'Agency Approvals & Applications Queue',
@@ -494,7 +513,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
            },
            {
              t: 'Rapid Testing Hub (Breathalyzer Integration)',
-             d: 'CRITICAL FEATURE: This dashboard connects directly via Bluetooth/API to the SINC Breathalyzer. When an employee, driver, or operator uses the breathalyzer, it detects THC and alcohol ppm in their breath. The biometric reading is instantly logged on our immutable blockchain ledger. If an employee blows over the legal limit, SINC automatically suspends their operational dashboard, locks them out of fleet vehicles, and flags the HR/Compliance board. It provides indisputable liability protection for businesses.'
+             d: 'CRITICAL FEATURE: Designed first and foremost for Law Enforcement (DUI checks, roadside testing). It connects directly via Bluetooth/API to the SINC Breathalyzer. When an individual uses the breathalyzer, it detects THC and alcohol ppm in their breath. The biometric reading is instantly logged on our immutable blockchain ledger. When utilized internally by businesses, if an employee blows over the legal limit, SINC automatically suspends their operational dashboard and locks them out of fleet vehicles. It provides indisputable liability protection.'
            },
            {
              t: 'Judicial Monitor',
@@ -532,7 +551,10 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
          <div className="lg:col-span-3 bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
             <div className="flex justify-between items-center mb-6">
                <h3 className="font-black text-slate-800 text-lg flex items-center gap-3"><Activity size={20} className="text-emerald-600" /> Revenue Stream Vectors</h3>
-               <button className="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[10px] font-black text-slate-600 uppercase tracking-widest hover:bg-slate-100">Export CSV</button>
+               <div className="flex gap-2">
+                  <button className="px-4 py-2 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-100 transition-colors">+ Add Revenue Stream</button>
+                  <button className="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[10px] font-black text-slate-600 uppercase tracking-widest hover:bg-slate-100">Export CSV</button>
+               </div>
             </div>
             <table className="w-full text-sm text-left">
               <thead className="bg-slate-50 border-b border-slate-100">
@@ -550,7 +572,11 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                   { n: 'Metrc Integration Fees', t: 'API Gateway', g: '$1.8M', net: '$1.5M', s: 'Settled', c: 'bg-emerald-600' },
                   { n: 'Care Wallet Transactions', t: 'B2B Processor', g: '$6.5M', net: '$1.2M', s: 'Liquid', c: 'bg-blue-600' },
                   { n: 'Telehealth Consults', t: 'Service Fee', g: '$1.2M', net: '$950k', s: 'Settled', c: 'bg-emerald-600' },
-                  { n: 'State Jurisdiction Licensing', t: 'Enterprise', g: '$1.1M', net: '$880k', s: 'Pending', c: 'bg-amber-500' }
+                  { n: 'State Jurisdiction Licensing', t: 'Enterprise', g: '$1.1M', net: '$880k', s: 'Pending', c: 'bg-amber-500' },
+                  { n: 'Back Office Operations', t: 'Admin Services', g: '$0', net: '$0', s: 'In Setup', c: 'bg-slate-500' },
+                  { n: 'Attorney / Legal Retainers', t: 'Professional Services', g: '$0', net: '$0', s: 'Pending', c: 'bg-slate-500' },
+                  { n: 'Ecosystem Add-ons', t: 'Marketplace', g: '$0', net: '$0', s: 'Development', c: 'bg-indigo-500' },
+                  { n: 'Distributor Network Fees', t: 'Logistics', g: '$0', net: '$0', s: 'Pending', c: 'bg-slate-500' }
                 ].map((u, i) => (
                   <tr key={i} className="hover:bg-slate-50 transition-colors group">
                     <td className="px-6 py-5 font-black text-slate-800">{u.n}</td>
@@ -2311,12 +2337,25 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
           </div>
         </div>
         <div className="flex-1 overflow-y-auto px-4 pb-6 space-y-1">
-           {NAV_ITEMS.filter(item => !(isExecutive && (item.section === "FOUNDER EXCLUSIVE" || item.id === "global_financials" || item.id === "system_health" || item.id === "hr_intelligence" || item.id === "jurisdiction_map"))).map((item, i) => {
-            if ('section' in item) return <div key={i} className="pt-6 pb-2 px-3 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{item.section}</div>;
+           {navItemsList.map((item, i) => {
+            if (isExecutive && (item.section === "FOUNDER EXCLUSIVE" || item.id === "accounting_ledger" || item.id === "global_financials" || item.id === "system_health" || item.id === "hr_intelligence" || item.id === "launch_script" || item.id === "jurisdiction_map" || item.id === "approvals" || item.id === "federal" || item.id === "state_authority")) return null;
+            if ('section' in item) return <div key={`section-${i}`} onDragOver={(e) => handleDragOver(e, i)} className="pt-6 pb-2 px-3 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{item.section}</div>;
             const displayLabel = isExecutive ? item.label?.replace('God', 'Executive') : item.label;
             return (
-              <button key={item.id} onClick={() => setActiveTab(item.id!)} className={cn("w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold transition-all text-left", activeTab === item.id ? "bg-indigo-600 text-white shadow-xl shadow-indigo-900/40" : "text-slate-400 hover:bg-white/5 hover:text-slate-100")}>
-                <span className="flex items-center gap-3">{item.icon && <item.icon size={18} className={activeTab === item.id ? "text-white" : "text-slate-500"} />} {displayLabel}</span>
+              <button 
+                key={item.id || i} 
+                draggable
+                onDragStart={(e) => handleDragStart(e, i)}
+                onDragOver={(e) => handleDragOver(e, i)}
+                onDragEnd={() => setDraggedIdx(null)}
+                onClick={() => setActiveTab(item.id!)} 
+                className={cn("group cursor-grab active:cursor-grabbing w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold transition-all text-left", activeTab === item.id ? "bg-indigo-600 text-white shadow-xl shadow-indigo-900/40" : "text-slate-400 hover:bg-white/5 hover:text-slate-100", draggedIdx === i ? "opacity-30 border border-dashed border-indigo-400" : "")}
+              >
+                <span className="flex items-center gap-3">
+                  <GripVertical size={14} className={cn("transition-opacity", activeTab === item.id ? "text-white opacity-50" : "text-slate-500 opacity-0 group-hover:opacity-100")} />
+                  {item.icon && <item.icon size={18} className={activeTab === item.id ? "text-white" : "text-slate-500"} />} 
+                  {displayLabel}
+                </span>
                 {item.badge && <span className="text-[10px] bg-white/10 text-white px-2 py-0.5 rounded-full font-black">{item.badge}</span>}
               </button>
             );
