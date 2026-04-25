@@ -1589,8 +1589,8 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
         <h3 className="font-black text-slate-800 text-lg mb-6 flex items-center gap-3"><Clock size={20} className="text-indigo-600" /> My Upcoming Appointments & Tickets</h3>
         
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-          <div className="p-4 rounded-xl bg-purple-50 border border-purple-100 flex items-center gap-3">
-             <div className="w-4 h-4 rounded-full bg-purple-600"></div>
+          <div className={cn("p-4 rounded-xl border flex items-center gap-3", isExecutive ? "bg-fuchsia-50 border-fuchsia-100" : "bg-purple-50 border-purple-100")}>
+             <div className={cn("w-4 h-4 rounded-full", isExecutive ? "bg-fuchsia-600" : "bg-purple-600")}></div>
              <span className="text-xs font-bold text-slate-700">Direct Priority ({firstName})</span>
           </div>
           <div className="p-4 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center gap-3">
@@ -1617,7 +1617,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
 
         <div className="space-y-4">
            {[
-             { time: 'Today, 10:00 AM', t: 'Direct Escalation (Human Coord)', e: 'Apex Health CEO', c: 'bg-purple-100 border-purple-200 text-purple-900', dot: 'bg-purple-600', type: 'Call' },
+             { time: 'Today, 10:00 AM', t: 'Direct Escalation (Human Coord)', e: 'Apex Health CEO', c: isExecutive ? 'bg-fuchsia-100 border-fuchsia-200 text-fuchsia-900' : 'bg-purple-100 border-purple-200 text-purple-900', dot: isExecutive ? 'bg-fuchsia-600' : 'bg-purple-600', type: 'Call' },
              { time: 'Today, 1:30 PM', t: 'OMMA State Regulator Review', e: 'Emily Davis (OK)', c: 'bg-cyan-50 border-cyan-200 text-cyan-900', dot: 'bg-cyan-500', type: 'Call' },
              { time: 'Today, 3:00 PM', t: 'Metrc Integration Sync', e: 'SINC Tech Team', c: 'bg-amber-50 border-amber-200 text-amber-900', dot: 'bg-amber-500', type: 'Ticket' },
              { time: 'Tomorrow, 9:00 AM', t: 'DOJ Intel Review', e: 'Federal Oversight Office', c: 'bg-red-50 border-red-200 text-red-900', dot: 'bg-red-600', type: 'Appointment' },
@@ -2137,7 +2137,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
             </div>
             <div>
               <p className="text-xs font-black text-white">{user?.displayName || "Executive Founder"}</p>
-              <p className="text-[10px] text-slate-400 font-bold">Global Green Holdings</p>
+              <p className="text-[10px] text-slate-400 font-bold">{userTitle}</p>
             </div>
           </div>
         </div>

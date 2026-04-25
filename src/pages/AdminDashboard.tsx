@@ -35,7 +35,9 @@ export const AdminDashboard = ({ onLogout, user }: { onLogout?: () => void | Pro
   const [activeTab, setActiveTab] = useState('overview');
   const [regSearch, setRegSearch] = useState('');
   const [regCat, setRegCat] = useState<string | null>(null);
-  const [isUnlocked, setIsUnlocked] = useState(false);
+  
+  const isExecutive = user?.role === 'executive_founder' || user?.role === 'executive_ceo';
+  const [isUnlocked, setIsUnlocked] = useState(isExecutive);
   const [pin, setPin] = useState('');
 
   const renderOverview = () => (
