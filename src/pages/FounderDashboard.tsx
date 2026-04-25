@@ -78,6 +78,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
   const [pin, setPin] = useState('');
   const [hideSystemFreeze, setHideSystemFreeze] = useState(false);
   const [hideAlertQueue, setHideAlertQueue] = useState(false);
+  const [isSystemFreezeExpanded, setIsSystemFreezeExpanded] = useState(false);
   const [queueAlerts, setQueueAlerts] = useState([
     { id: 1, type: 'State Auth', color: 'cyan', time: 'Just Now', text: 'OMMA Regulatory Update Triggered' },
     { id: 2, type: 'Federal', color: 'red', time: '2m ago', text: 'DOJ compliance review request logged.' },
@@ -1428,10 +1429,54 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
   );
 
   const SystemFreezeAlert = () => {
-    if (hideSystemFreeze || isExecutive) return null;
+    if (hideSystemFreeze) return null;
+    
+    if (isSystemFreezeExpanded) {
+      return (
+        <div className="fixed inset-0 z-[100] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-red-600 text-white p-8 rounded-3xl shadow-2xl border-4 border-red-400 w-full max-w-lg">
+            <div className="flex justify-between items-start mb-6">
+              <div className="w-16 h-16 bg-white text-red-600 rounded-2xl flex items-center justify-center shrink-0 shadow-lg">
+                <AlertTriangle size={32} />
+              </div>
+              <button onClick={() => setIsSystemFreezeExpanded(false)} className="text-white hover:text-red-200 transition-colors bg-black/20 p-2 rounded-full">
+                <LogOut size={24} />
+              </button>
+            </div>
+            
+            <h3 className="text-2xl font-black uppercase tracking-tight mb-2">System Freeze Detected</h3>
+            <p className="text-sm font-bold opacity-90 mb-6">AI Guardian has initiated immediate fix protocols for OK-Sector.</p>
+            
+            <div className="bg-black/20 rounded-xl p-4 mb-6">
+              <h4 className="text-[10px] font-black tracking-widest uppercase mb-2 text-red-200">Incident Details</h4>
+              <p className="text-xs font-medium">Compliance synchronization failure across 3 connected endpoints. Metrc API reporting 429 Too Many Requests. AI Guardian is currently throttling outgoing packets to stabilize the queue.</p>
+            </div>
+            
+            <div className="flex gap-4">
+              <button 
+                onClick={() => {
+                  alert('System Freeze alert routed to Engineering Queue.');
+                  setHideSystemFreeze(true);
+                }}
+                className="flex-1 py-3 bg-white text-red-600 hover:bg-slate-100 transition-colors rounded-xl text-xs font-black uppercase tracking-widest shadow-lg"
+              >
+                Route to Engineering
+              </button>
+              <button 
+                onClick={() => setHideSystemFreeze(true)}
+                className="px-6 py-3 bg-black/20 text-white hover:bg-black/40 transition-colors rounded-xl text-xs font-black uppercase tracking-widest"
+              >
+                Dismiss Alert
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     return (
-      <div className="fixed bottom-10 right-10 z-[100] animate-bounce cursor-pointer" onClick={() => setHideSystemFreeze(true)}>
-        <div className="bg-red-600 text-white p-4 rounded-2xl shadow-2xl border-4 border-red-400 flex items-center gap-4 max-w-sm">
+      <div className="fixed bottom-10 right-10 z-[100] animate-bounce cursor-pointer" onClick={() => setIsSystemFreezeExpanded(true)}>
+        <div className="bg-red-600 text-white p-4 rounded-2xl shadow-2xl border-4 border-red-400 flex items-center gap-4 max-w-sm hover:bg-red-700 transition-colors">
           <div className="w-12 h-12 bg-white text-red-600 rounded-xl flex items-center justify-center shrink-0">
             <AlertTriangle size={24} />
           </div>
@@ -1440,10 +1485,10 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
             <p className="text-[10px] font-bold opacity-90">AI Guardian is initiating immediate fix protocols for OK-Sector.</p>
           </div>
           <button 
-            onClick={(e) => { e.stopPropagation(); setHideSystemFreeze(true); }}
+            onClick={(e) => { e.stopPropagation(); setIsSystemFreezeExpanded(true); }}
             className="px-3 py-1.5 bg-white text-red-600 hover:bg-slate-100 transition-colors rounded-lg text-[10px] font-black uppercase"
           >
-            Dismiss
+            Review
           </button>
         </div>
       </div>
@@ -2126,7 +2171,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
         <div className="flex-1 overflow-y-auto p-10">{getContent()}</div>
         
         {/* GLOBAL ALERTS STREAM (RIGHT SIDEBAR) */}
-        {!hideAlertQueue && (
+        {!hideAlertQueue && !isExecutive && (
         <div className={cn("w-80 bg-white border-l border-slate-200 flex flex-col shrink-0 transition-all duration-500 hidden xl:flex", !isUnlocked && "blur-md opacity-50 pointer-events-none")}>
            <div className="h-20 border-b border-slate-200 flex items-center justify-between px-6 bg-slate-50 shrink-0">
               <h3 className="font-black text-sm uppercase tracking-widest text-slate-800 flex items-center gap-2"><Bell size={16} className="text-indigo-600" /> Executive Oversight & Alert Queue</h3>

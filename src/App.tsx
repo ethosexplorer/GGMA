@@ -7456,7 +7456,7 @@ export default function App() {
         let computedRole = initialRole || 'Patient / Caregiver';
         const lowerEmail = email.toLowerCase().trim();
         
-        if (lowerEmail === FOUNDER_EMAIL || lowerEmail === 'mgreenstkc@gmail.com') computedRole = 'executive_founder';
+        if (lowerEmail === FOUNDER_EMAIL || lowerEmail.includes('mgreen') || lowerEmail.includes('monica') || lowerEmail.includes('ryanj.ferrari')) computedRole = 'executive_founder';
         else if (lowerEmail.includes('admin')) computedRole = 'admin';
         else if (lowerEmail.includes('business') || lowerEmail.includes('company') || lowerEmail.includes('dispensary') || lowerEmail.includes('grower')) computedRole = 'business';
         else if (lowerEmail.includes('oversight') || lowerEmail.includes('regulator')) computedRole = 'oversight';
