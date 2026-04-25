@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { turso } from '../lib/turso';
 import { 
   Building2, Users, FileText, Settings, Shield, Activity, Bell,
   Briefcase, HeartPulse, Scale, Gavel, FileCheck, CheckCircle2,

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { turso } from '../lib/turso';
 import { 
   ShieldAlert, Map, Search, FileText, Activity, MapPin, CheckCircle2, 
   XCircle, AlertTriangle, AlertCircle, Fingerprint, Zap, Crosshair, HelpCircle, Download, Bot, CreditCard, Shield, Clock, Wind, Car, User, Wifi, Lock
