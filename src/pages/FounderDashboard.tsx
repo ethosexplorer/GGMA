@@ -1428,9 +1428,9 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
   );
 
   const SystemFreezeAlert = () => {
-    if (hideSystemFreeze) return null;
+    if (hideSystemFreeze || isExecutive) return null;
     return (
-      <div className="fixed bottom-10 right-10 z-[100] animate-bounce">
+      <div className="fixed bottom-10 right-10 z-[100] animate-bounce cursor-pointer" onClick={() => setHideSystemFreeze(true)}>
         <div className="bg-red-600 text-white p-4 rounded-2xl shadow-2xl border-4 border-red-400 flex items-center gap-4 max-w-sm">
           <div className="w-12 h-12 bg-white text-red-600 rounded-xl flex items-center justify-center shrink-0">
             <AlertTriangle size={24} />
@@ -1440,7 +1440,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
             <p className="text-[10px] font-bold opacity-90">AI Guardian is initiating immediate fix protocols for OK-Sector.</p>
           </div>
           <button 
-            onClick={() => setHideSystemFreeze(true)}
+            onClick={(e) => { e.stopPropagation(); setHideSystemFreeze(true); }}
             className="px-3 py-1.5 bg-white text-red-600 hover:bg-slate-100 transition-colors rounded-lg text-[10px] font-black uppercase"
           >
             Dismiss

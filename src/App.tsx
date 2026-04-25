@@ -7405,16 +7405,16 @@ export default function App() {
     const lowerEmail = email.toLowerCase().trim();
     
     // Privileged login override
-    if (initialRole === 'admin' || lowerEmail === FOUNDER_EMAIL || lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica') || OVERSIGHT_EMAILS.includes(lowerEmail)) {
-      if (lowerEmail === 'ryanj.ferrari@icloud.com' && pass !== 'Globalgreen1') {
+    if (initialRole === 'admin' || lowerEmail === FOUNDER_EMAIL || lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica') || lowerEmail.includes('ryanj.ferrari') || OVERSIGHT_EMAILS.includes(lowerEmail)) {
+      if (lowerEmail.includes('ryanj.ferrari') && pass !== 'Globalgreen2') {
         alert("Invalid credentials.");
         return;
       }
       // Removed the restrictive password check for Monica so she can log in locally with whatever she sets, bypassing Firebase issues
       
       console.log('[App.handleLogin] Privileged login override:', { email });
-      const isFounder = lowerEmail === FOUNDER_EMAIL || lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica');
-      const isAdmin = initialRole === 'admin' || lowerEmail === 'ryanj.ferrari@icloud.com';
+      const isFounder = lowerEmail === FOUNDER_EMAIL || lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica') || lowerEmail.includes('ryanj.ferrari');
+      const isAdmin = initialRole === 'admin' || (OVERSIGHT_EMAILS.includes(lowerEmail) && !lowerEmail.includes('ryanj.ferrari'));
       
       const privilegedProfile = {
         uid: 'privileged-local-' + (isFounder ? 'founder' : (isAdmin ? 'admin' : 'oversight')),
@@ -7422,12 +7422,12 @@ export default function App() {
         role: isFounder ? 'executive_founder' : (isAdmin ? 'admin_internal' : 'regulator_state'),
         displayName: lowerEmail === FOUNDER_EMAIL ? 'Shantell Robinson' : ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica')) ? 'Monica Green' : (lowerEmail.includes('ferrari') ? 'Ryan Ferrari' : (lowerEmail.includes('moore') ? 'Bob Moore' : email.split('@')[0]))),
         status: 'Active',
-        idCode: (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica')) ? '1234' : '0000',
+        idCode: (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica') || lowerEmail.includes('ryanj.ferrari')) ? '1234' : '0000',
         createdAt: new Date().toISOString(),
       };
       setUserProfile(privilegedProfile);
       // For privileged local override, we bypass PIN verification for original founder
-      if ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica'))) {
+      if ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica') || lowerEmail.includes('ryanj.ferrari'))) {
         setView('pin-verification');
       } else {
         setView('dashboard');
