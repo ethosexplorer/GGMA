@@ -284,7 +284,7 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
                    <h3 className="text-2xl font-black text-white mb-3">Sylara AI Assisted</h3>
                    <p className="text-emerald-100/80 mb-10 flex-1 leading-relaxed">Let our AI engine drive. Automated document verification, instant compliance flagging, and direct-to-state API submission.</p>
                    <div className="bg-emerald-500/20 border border-emerald-400/30 px-5 py-2.5 rounded-2xl text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em] mb-6 w-fit">Recommended Path</div>
-                   <Button disabled={!hasBasic} className="w-full bg-emerald-500 text-white py-5 text-lg disabled:opacity-50 shadow-xl shadow-emerald-950/40">
+                   <Button onClick={onOpenConcierge} disabled={!hasBasic} className="w-full bg-emerald-500 text-white py-5 text-lg disabled:opacity-50 shadow-xl shadow-emerald-950/40">
                       {hasBasic ? 'Start AI Session' : 'Upgrade to Unlock Sylara'}
                    </Button>
                 </div>
@@ -410,5 +410,6 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
     </div>
   );
 };
+
 
 

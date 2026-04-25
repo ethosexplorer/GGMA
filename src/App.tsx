@@ -3140,7 +3140,10 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
   const [showUploadMenu, setShowUploadMenu] = useState(false);
   const [isEditingReview, setIsEditingReview] = useState(false);
 
-  const [signupStep, setSignupStep] = useState<number>(-1);
+  const [signupStep, setSignupStep] = useState<number>(() => {
+    if (variant === 'ggma' || variant === 'rip' || variant === 'sinc' || variant === 'business') return 0;
+    return -1;
+  });
   const [currentPersona, setCurrentPersona] = useState<'sylara' | 'larry'>('sylara');
 
   // Chat Session ID for storing to database
@@ -3439,16 +3442,19 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     let response = '';
     const lower = text.toLowerCase();
     
-    // Handle Subscription / Pricing Keywords → redirect to landing page pricing
-    if (lower.includes('subscription plan') || lower.includes('view subscription') || lower.includes('state authority plan') || lower.includes('pricing')) {
-      response = '💰 **Subscription Plans**\n\nI\'m redirecting you to our **Pricing & Plans** page where you can see the full breakdown of all tiers:\n\n• **Patient Plans** — starting at $9.99/mo\n• **Business Plans** — All-in-One starting at $149/mo\n• **State Authority Plans** — starting at $4,999/mo\n• **Partner/Reseller** — wholesale opportunities\n\n_30-Day Free Trial available on all paid tiers._';
-      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
-      // Scroll to pricing on landing page
-      onNavigate('landing');
-      setTimeout(() => {
-        const pricingEl = document.getElementById('pricing-section') || document.querySelector('[data-pricing]');
-        if (pricingEl) pricingEl.scrollIntoView({ behavior: 'smooth' });
-      }, 500);
+    // Handle Subscription / Pricing Keywords
+    if (lower.includes('subscription plan') || lower.includes('view subscription') || lower.includes('state authority plan') || lower.includes('pricing') || lower.includes('basic subscription') || lower.includes('professional subscription') || lower.includes('enterprise subscription')) {
+      response = '?? **GGHP Subscription Plans**\n\n' +
+        '**Patient Plans:**\n' +
+        '� **Basic**: $9.99/mo (Care Wallet + Telehealth)\n' +
+        '� **Premium**: $24.99/mo (Priority Support + AI Guardian)\n\n' +
+        '**Business Plans:**\n' +
+        '� **Basic**: $149/mo (Compliance & POS)\n' +
+        '� **Professional**: $299/mo (Full Seed-to-Sale + Metrc)\n' +
+        '� **Enterprise**: Custom Pricing (Multi-State & API)\n\n' +
+        '_All paid tiers include a 30-Day Free Trial._\n\n' +
+        'To upgrade or start a trial, please select **Start Intake** below, or visit the main dashboard after logging in.';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Patient Intake', 'Start Business Intake', 'Main Menu'] } as any]);
       setIsTyping(false);
       return;
     }
@@ -3488,13 +3494,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       return;
     }
 
-    // Legacy subscription keyword handling (for old links)
-    if (lower.includes('basic subscription') || lower.includes('professional subscription') || lower.includes('enterprise subscription')) {
-      response = '💰 **Subscription Plans**\n\nLet me take you to our full **Pricing & Plans** page where you can compare all tiers side-by-side with the 30-day free trial.\n\nWould you like me to redirect you?';
-      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['View Subscription Plans', 'Main Menu'] } as any]);
-      setIsTyping(false);
-      return;
-    }
+    
 
     if (lower === 'view all tiers') {
        setMessages(prev => [...prev, { 
@@ -3595,7 +3595,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
 
     if (lower.includes('live agent') || lower === 'Speak with a Live Agent') {
       const isBiz = isBusiness || variant === 'sinc' || variant === 'business';
-      const link = isBiz ? 'https://calendly.com/globalgreenhpmeet/business-meeting' : 'https://calendly.com/globalgreenhpmeet/general-patient-support';
+      const link = isBiz ? 'https://calendly.com/shantell-ggma/health-wellness-consultation' : 'https://calendly.com/shantell-ggma/health-wellness-consultation';
       const title = isBiz ? 'Book Business Meeting with live agent' : 'Book General Patient Support';
       if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: link }); } else { window.open(link, '_blank'); }
       response = `Sure! I've opened the booking page for you. If it didn't open, click the link below:\n\n🔗 [${title}](${link})\n\n`;
@@ -3702,8 +3702,8 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     }
 
     if (lower.includes('consultation') || lower.includes('book 15min') || (lower.includes('schedule') && !lower.includes('fee')) || lower.includes('appointment') || lower.includes('slot')) {
-      if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/health-wellness-consultation' }); } else { window.open('https://calendly.com/globalgreenhpmeet/health-wellness-consultation', '_blank'); }
-      response = 'Sure! I\'ve opened the booking page for you. If it didn\'t open, click below:\n\n🔗 [Book Health & Wellness Consultation](https://calendly.com/globalgreenhpmeet/health-wellness-consultation)\n\n';
+      if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma/health-wellness-consultation' }); } else { window.open('https://calendly.com/shantell-ggma/health-wellness-consultation', '_blank'); }
+      response = 'Sure! I\'ve opened the booking page for you. If it didn\'t open, click below:\n\n🔗 [Book Health & Wellness Consultation](https://calendly.com/shantell-ggma/health-wellness-consultation)\n\n';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] }]);
       setIsTyping(false);
       return;
@@ -3770,15 +3770,15 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       setIsTyping(false);
       return;
     } else if (lower.includes('it support') || lower.includes('technical') || lower.includes('portal login issue') || lower.includes('app not loading') || lower.includes('metrc sync error')) {
-      if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/it-technical-support' }); } else { window.open('https://calendly.com/globalgreenhpmeet/it-technical-support', '_blank'); }
-      response = '💻 **IT & Technical Support**\n\nI am routing you to our **IT Support Team**.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Technical Support](https://calendly.com/globalgreenhpmeet/it-technical-support)\n\n';
+      if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma/health-wellness-consultation' }); } else { window.open('https://calendly.com/shantell-ggma/health-wellness-consultation', '_blank'); }
+      response = '💻 **IT & Technical Support**\n\nI am routing you to our **IT Support Team**.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Technical Support](https://calendly.com/shantell-ggma/health-wellness-consultation)\n\n';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
       return;
     } else if (lower.includes('legal') || lower.includes('administration') || lower.includes('admin/paralegal') || lower.includes('paralegal')) {
-      if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/legal-consultation' }); } else { window.open('https://calendly.com/globalgreenhpmeet/legal-consultation', '_blank'); }
-      response = '⚖️ **Legal & Administration**\n\nI am routing you to our **Legal & Admin Team**.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Legal/Admin Consultation](https://calendly.com/globalgreenhpmeet/legal-consultation)\n\n';
+      if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma/health-wellness-consultation' }); } else { window.open('https://calendly.com/shantell-ggma/health-wellness-consultation', '_blank'); }
+      response = '⚖️ **Legal & Administration**\n\nI am routing you to our **Legal & Admin Team**.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Legal/Admin Consultation](https://calendly.com/shantell-ggma/health-wellness-consultation)\n\n';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
@@ -3838,8 +3838,8 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       lower.includes('prescription consultation')
     ) {
       // Telehealth Options
-      if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/medical-card-recommendation' }); } else { window.open('https://calendly.com/globalgreenhpmeet/medical-card-recommendation', '_blank'); }
-      response = '📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book Medical Card / Doctor Visit via Calendly](https://calendly.com/globalgreenhpmeet/medical-card-recommendation)\n\n';
+      if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma/health-wellness-consultation' }); } else { window.open('https://calendly.com/shantell-ggma/health-wellness-consultation', '_blank'); }
+      response = '📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book Medical Card / Doctor Visit via Calendly](https://calendly.com/shantell-ggma/health-wellness-consultation)\n\n';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
@@ -3900,15 +3900,15 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       }
     } else if (signupStep === 850) {
       // Find an Attorney Options
-      if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/legal-consultation' }); } else { window.open('https://calendly.com/globalgreenhpmeet/legal-consultation', '_blank'); }
+      if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma/health-wellness-consultation' }); } else { window.open('https://calendly.com/shantell-ggma/health-wellness-consultation', '_blank'); }
       if (lower.includes('individual')) {
-        response = '⚖️ **Individual Representation**\n\nI am routing you to an intake specialist to match you with an attorney for patient rights, expungement, or personal defense.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Attorney Match Consultation](https://calendly.com/globalgreenhpmeet/legal-consultation)\n\n';
+        response = '⚖️ **Individual Representation**\n\nI am routing you to an intake specialist to match you with an attorney for patient rights, expungement, or personal defense.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Attorney Match Consultation](https://calendly.com/shantell-ggma/health-wellness-consultation)\n\n';
       } else if (lower.includes('business') || lower.includes('commercial')) {
-        response = '🏢 **Business & Commercial Counsel**\n\nI am routing you to a specialist to connect you with corporate counsel for OMMA licensing, METRC compliance, or B2B contracts.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Corporate Counsel Match](https://calendly.com/globalgreenhpmeet/legal-consultation)\n\n';
+        response = '🏢 **Business & Commercial Counsel**\n\nI am routing you to a specialist to connect you with corporate counsel for OMMA licensing, METRC compliance, or B2B contracts.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Corporate Counsel Match](https://calendly.com/shantell-ggma/health-wellness-consultation)\n\n';
       } else if (lower.includes('provider') || lower.includes('malpractice')) {
-        response = '🏥 **Provider & Malpractice Defense**\n\nI am routing you to a specialist to match you with an attorney experienced in medical board defense and cannabis malpractice.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Provider Defense Match](https://calendly.com/globalgreenhpmeet/legal-consultation)\n\n';
+        response = '🏥 **Provider & Malpractice Defense**\n\nI am routing you to a specialist to match you with an attorney experienced in medical board defense and cannabis malpractice.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Provider Defense Match](https://calendly.com/shantell-ggma/health-wellness-consultation)\n\n';
       } else {
-        response = '⚖️ **Legal & Administration**\n\nI am routing you to our **Paralegal & Legal Admin Team** to review your case facts first.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Legal Intake](https://calendly.com/globalgreenhpmeet/legal-consultation)\n\n';
+        response = '⚖️ **Legal & Administration**\n\nI am routing you to our **Paralegal & Legal Admin Team** to review your case facts first.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Legal Intake](https://calendly.com/shantell-ggma/health-wellness-consultation)\n\n';
       }
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
@@ -5173,28 +5173,28 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       }
     } else if (signupStep === 10) {
       if (lower.includes('yes') || lower.includes('book') || lower.includes('ready') || lower.includes('consultation')) {
-        if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/medical-card-recommendation' }); } else { window.open('https://calendly.com/globalgreenhpmeet/medical-card-recommendation', '_blank'); }
-        response = 'Sure! I\'ve opened the booking page. If it didn\'t open, click below:\n\n🔗 [Book Telehealth Session](https://calendly.com/globalgreenhpmeet/medical-card-recommendation)\n\n';
+        if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma/health-wellness-consultation' }); } else { window.open('https://calendly.com/shantell-ggma/health-wellness-consultation', '_blank'); }
+        response = 'Sure! I\'ve opened the booking page. If it didn\'t open, click below:\n\n🔗 [Book Telehealth Session](https://calendly.com/shantell-ggma/health-wellness-consultation)\n\n';
       } else if (lower.includes('live agent') || lower.includes('speak')) {
-        if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/general-patient-support' }); } else { window.open('https://calendly.com/globalgreenhpmeet/general-patient-support', '_blank'); }
-        response = '👤 **Human Care Coordination**\n\nI am routing you to a **Live Agent**.\n\n\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book a Session via Calendly](https://calendly.com/globalgreenhpmeet/general-patient-support)';
+        if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma/health-wellness-consultation' }); } else { window.open('https://calendly.com/shantell-ggma/health-wellness-consultation', '_blank'); }
+        response = '👤 **Human Care Coordination**\n\nI am routing you to a **Live Agent**.\n\n\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book a Session via Calendly](https://calendly.com/shantell-ggma/health-wellness-consultation)';
         setSignupStep(0);
       } else {
         response = 'No problem. If you\'re not ready for an appointment, I can help you with **GGMA Licensing** or **IT Support**. What would you like to explore?';
         setSignupStep(0);
       }
     } else if (lower.includes('business expert') || lower.includes('commercial consultant') || lower.includes('business consultation') || lower.includes('book business')) {
-      if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/business-meeting' }); } else { window.open('https://calendly.com/globalgreenhpmeet/business-meeting', '_blank'); }
-      response = '🏢 **Commercial Compliance Consultation**\n\nI am routing you to our **Business Licensing Experts**.\n\n\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Business Consultation](https://calendly.com/globalgreenhpmeet/business-meeting)';
+      if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma/health-wellness-consultation' }); } else { window.open('https://calendly.com/shantell-ggma/health-wellness-consultation', '_blank'); }
+      response = '🏢 **Commercial Compliance Consultation**\n\nI am routing you to our **Business Licensing Experts**.\n\n\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Business Consultation](https://calendly.com/shantell-ggma/health-wellness-consultation)';
     } else if (lower.includes('book physician') || lower.includes('doctor') || lower.includes('recommendation') || lower.includes('med card intake') || lower.includes('patient licensing') || lower.includes('physician')) {
-      if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/health-wellness-consultation' }); } else { window.open('https://calendly.com/globalgreenhpmeet/health-wellness-consultation', '_blank'); }
-      response = '⚕️ **Physician Booking & Patient Licensing**\n\nI am routing you directly to our physician booking portal.\n\n📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book Health & Wellness Consultation](https://calendly.com/globalgreenhpmeet/health-wellness-consultation)\n\n📞 **Prefer to call?** Dial **1-405-492-7487**';
+      if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma/health-wellness-consultation' }); } else { window.open('https://calendly.com/shantell-ggma/health-wellness-consultation', '_blank'); }
+      response = '⚕️ **Physician Booking & Patient Licensing**\n\nI am routing you directly to our physician booking portal.\n\n📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book Health & Wellness Consultation](https://calendly.com/shantell-ggma/health-wellness-consultation)\n\n📞 **Prefer to call?** Dial **1-405-492-7487**';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Patient Intake', 'I Already Scheduled', 'Main Menu'] } as any]);
       setIsTyping(false);
       return;
     } else if (lower.includes('human') || lower.includes('coordinator') || lower.includes('live agent') || lower.includes('speak with someone') || lower.includes('political') || lower.includes('media') || lower.includes('press') || lower.includes('enforcement') || lower.includes('state authority') || lower.includes('federal')) {
-      if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/general-patient-support' }); } else { window.open('https://calendly.com/globalgreenhpmeet/general-patient-support', '_blank'); }
-      response = '👤 **Human Care Coordination**\n\nI am routing you to a **Live Agent**.\n\n\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book a Session via Calendly](https://calendly.com/globalgreenhpmeet/general-patient-support)';
+      if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma/health-wellness-consultation' }); } else { window.open('https://calendly.com/shantell-ggma/health-wellness-consultation', '_blank'); }
+      response = '👤 **Human Care Coordination**\n\nI am routing you to a **Live Agent**.\n\n\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book a Session via Calendly](https://calendly.com/shantell-ggma/health-wellness-consultation)';
     } else if (lower.includes('fee schedule')) {
       response = '💰 **OMMA Fee Schedule (2026)**\n\n• **Dispensary**: $2,500 - $10,000 (Based on tax)\n• **Grower/Processor**: Tiered from $2,500 to $50,000+\n• **Patient Card**: $104.30 (Standard) / $22.50 (Reduced)\n\nWould you like the detailed tier breakdown for a specific license type?';
       setMessages(prev => [...prev, { 
@@ -5216,20 +5216,20 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       setIsTyping(false);
       return;
     } else if (lower.includes('medical card evaluation') || lower.includes('med card eval') || lower.includes('medical card')) {
-      if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/medical-card-recommendation' }); } else { window.open('https://calendly.com/globalgreenhpmeet/medical-card-recommendation', '_blank'); }
-      response = '💳 **Medical Card Evaluation ($45)**\n\nYour evaluation includes:\n• **$35** — Physician Consultation\n• **$10** — GGE Processing Fee\n\n📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book Online via Calendly](https://calendly.com/globalgreenhpmeet/medical-card-recommendation)\n\n📞 **Prefer to call?** Dial **1-405-492-7487**';
+      if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma/health-wellness-consultation' }); } else { window.open('https://calendly.com/shantell-ggma/health-wellness-consultation', '_blank'); }
+      response = '💳 **Medical Card Evaluation ($45)**\n\nYour evaluation includes:\n• **$35** — Physician Consultation\n• **$10** — GGE Processing Fee\n\n📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book Online via Calendly](https://calendly.com/shantell-ggma/health-wellness-consultation)\n\n📞 **Prefer to call?** Dial **1-405-492-7487**';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Patient Intake', 'I Already Scheduled', 'Main Menu'] } as any]);
       setIsTyping(false);
       return;
     } else if (lower.includes('general telehealth wellness') || lower.includes('general telehealth') || lower.includes('general health')) {
-      if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/general-patient-support' }); } else { window.open('https://calendly.com/globalgreenhpmeet/general-patient-support', '_blank'); }
-      response = '🏥 **General Telehealth Wellness Visit**\n\nConnect with a licensed physician for:\n• Non-emergency consultations\n• Follow-up visits\n• Prescription management\n• General health questions\n\n📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book Online via Calendly](https://calendly.com/globalgreenhpmeet/general-patient-support)\n\n📞 **Prefer to call?** Dial **1-405-252-1178**';
+      if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma/health-wellness-consultation' }); } else { window.open('https://calendly.com/shantell-ggma/health-wellness-consultation', '_blank'); }
+      response = '🏥 **General Telehealth Wellness Visit**\n\nConnect with a licensed physician for:\n• Non-emergency consultations\n• Follow-up visits\n• Prescription management\n• General health questions\n\n📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book Online via Calendly](https://calendly.com/shantell-ggma/health-wellness-consultation)\n\n📞 **Prefer to call?** Dial **1-405-252-1178**';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setIsTyping(false);
       return;
     } else if (lower.includes('human') || lower.includes('coordinator') || lower.includes('live agent') || lower.includes('speak with someone') || lower.includes('political') || lower.includes('media') || lower.includes('press') || lower.includes('enforcement') || lower.includes('state authority') || lower.includes('federal')) {
-      if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/general-patient-support' }); } else { window.open('https://calendly.com/globalgreenhpmeet/general-patient-support', '_blank'); }
-      response = '👤 **Human Care Coordination**\n\nI am routing you to a **Live Agent**, our lead Human Care Coordinator.\n\n\n\n📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book a 15-Min Session via Calendly](https://calendly.com/globalgreenhpmeet/general-patient-support)';
+      if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma/health-wellness-consultation' }); } else { window.open('https://calendly.com/shantell-ggma/health-wellness-consultation', '_blank'); }
+      response = '👤 **Human Care Coordination**\n\nI am routing you to a **Live Agent**, our lead Human Care Coordinator.\n\n\n\n📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book a 15-Min Session via Calendly](https://calendly.com/shantell-ggma/health-wellness-consultation)';
     } else if (lower === 'yes' || lower === 'yeah' || lower === 'yep') {
       response = 'Great! I am ready to assist. Would you like to begin your **Licensing Intake**, or do you have questions about our other sectors like **RIP Intelligence** or **SINC Compliance**?';
     } else if (['cancer', 'pain', 'ptsd', 'glaucoma', 'seizure', 'anxiety', 'epilepsy', 'crohn', 'sclerosis', 'als', 'alzheimer', 'anorexia', 'migraine', 'arthritis', 'nausea', 'autism', 'hiv', 'aids', 'parkinson', 'tourette'].some(condition => lower.includes(condition))) {
@@ -5614,7 +5614,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
                     </div>
                     <button
                       onClick={() => {
-                        const link = isBusiness ? 'https://calendly.com/globalgreenhpmeet/business-meeting' : 'https://calendly.com/globalgreenhpmeet/general-patient-support';
+                        const link = isBusiness ? 'https://calendly.com/shantell-ggma/health-wellness-consultation' : 'https://calendly.com/shantell-ggma/health-wellness-consultation';
                         if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: link }); } else { window.open(link, '_blank'); }
                       }}
                       className="w-full bg-[#1a4731] text-white py-3 rounded-xl text-sm font-black hover:bg-[#0f2a1f] transition-all shadow-lg flex items-center justify-center gap-2"
@@ -7586,6 +7586,7 @@ export default function App() {
 
   const handleLogout = async () => {
     await signOut(auth);
+    window.location.href = '/';
   };
 
   const handlePasswordReset = async (email: string) => {
@@ -7827,6 +7828,8 @@ export default function App() {
     </ErrorBoundary>
   );
 }
+
+
 
 
 

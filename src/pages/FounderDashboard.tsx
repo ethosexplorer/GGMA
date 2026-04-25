@@ -384,7 +384,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
             { label: 'Brand Mentions', value: '45,210', trend: 'News & Media', color: 'text-indigo-600' },
             { label: 'Direct URL Hits', value: '533,281', trend: 'Organic Traffic', color: 'text-amber-600' },
           ].map((s, i) => (
-            <div key={i} className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+            <div key={i} className="p-4 bg-slate-100 rounded-2xl border border-slate-200">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{s.label}</p>
               <p className={`text-2xl font-black ${s.color}`}>{s.value}</p>
               <p className="text-[10px] text-slate-500 font-bold mt-1">{s.trend}</p>
@@ -392,7 +392,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
           ))}
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div className="border border-slate-100 rounded-2xl p-4 bg-white">
+          <div className="border border-slate-200 rounded-2xl p-4 bg-white">
             <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2"><Globe size={14} className="text-blue-500"/> Top Search Terms (Live)</h4>
             <div className="space-y-3">
               {[
@@ -414,7 +414,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
               ))}
             </div>
           </div>
-          <div className="border border-slate-100 rounded-2xl p-4 bg-white">
+          <div className="border border-slate-200 rounded-2xl p-4 bg-white">
             <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2"><Activity size={14} className="text-emerald-500"/> Search Intent Diagnostics</h4>
             <div className="space-y-4">
               <div className="flex justify-between items-center text-sm">
@@ -461,7 +461,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
             { label: 'Engagement Rate', value: '34.2%', trend: '+8.1% vs last week', color: 'text-amber-600' },
             { label: 'Comments Submitted', value: '1,247', trend: '+89 today', color: 'text-blue-600' },
           ].map((s, i) => (
-            <div key={i} className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+            <div key={i} className="p-4 bg-slate-100 rounded-2xl border border-slate-200">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{s.label}</p>
               <p className={`text-2xl font-black ${s.color}`}>{s.value}</p>
               <p className="text-[10px] text-slate-500 font-bold mt-1">{s.trend}</p>
@@ -470,7 +470,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Top Polls by Engagement */}
-          <div className="border border-slate-100 rounded-2xl p-4">
+          <div className="border border-slate-200 rounded-2xl p-4">
             <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">🔥 Top Polls by Engagement</h4>
             <div className="space-y-3">
               {[
@@ -500,7 +500,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
             </div>
           </div>
           {/* Category Breakdown */}
-          <div className="border border-slate-100 rounded-2xl p-4">
+          <div className="border border-slate-200 rounded-2xl p-4">
             <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">📊 Votes by Category</h4>
             <div className="space-y-3">
               {[
@@ -541,7 +541,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
             <div className="overflow-x-auto">
                <table className="w-full text-sm">
                   <thead>
-                     <tr className="border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">
+                     <tr className="border-b border-slate-200 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">
                         <th className="pb-4">State Hub</th>
                         <th className="pb-4">Active Patients</th>
                         <th className="pb-4">Commercial Density</th>
@@ -557,7 +557,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                         { s: 'Colorado', p: '142,881', d: '542', c: 96, r: '-2.1%', up: false },
                         { s: 'Missouri', p: '88,401', d: '210', c: 92, r: '+8.4%', up: true },
                      ].map((row, i) => (
-                        <tr key={i} className="group hover:bg-slate-50 transition-colors">
+                        <tr key={i} className="group hover:bg-slate-100 transition-colors">
                            <td className="py-4 font-black text-slate-800">{row.s}</td>
                            <td className="py-4 text-slate-600 font-bold">{row.p}</td>
                            <td className="py-4 text-slate-600 font-bold">{row.d}</td>
@@ -588,7 +588,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                      </div>
                   ))}
                </div>
-               <div className="mt-6 pt-6 border-t border-slate-100 space-y-4">
+               <div className="mt-6 pt-6 border-t border-slate-200 space-y-4">
                   <div className="flex justify-between items-center">
                      <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Sylara AI Response</span>
                      <span className="text-sm font-black text-emerald-600">42ms</span>
@@ -615,7 +615,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
              { t: 'FDA Regulation Guide', c: 'Federal', u: 'https://www.fda.gov/news-events/public-health-focus/fda-regulation-cannabis-and-cannabis-derived-products-including-cannabidiol-cbd' },
              { t: 'Marijuana Moment', c: 'News', u: 'https://www.marijuanamoment.net/' }
            ].map((source, i) => (
-             <a key={i} href={source.u} target="_blank" rel="noopener noreferrer" className="p-5 bg-slate-50 rounded-2xl border border-slate-100 hover:bg-indigo-50 hover:border-indigo-200 transition-all group">
+             <a key={i} href={source.u} target="_blank" rel="noopener noreferrer" className="p-5 bg-slate-100 rounded-2xl border border-slate-200 hover:bg-indigo-50 hover:border-indigo-200 transition-all group">
                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 group-hover:text-indigo-400">{source.c}</p>
                 <h4 className="text-sm font-bold text-slate-800 group-hover:text-indigo-900 leading-tight">{source.t}</h4>
              </a>
@@ -686,7 +686,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-2 flex items-center gap-2">
                  <div className="w-2 h-2 rounded-full bg-indigo-500"></div> {item.t}
                </h3>
-               <p className="text-sm text-slate-600 leading-relaxed font-medium pl-4 border-l-2 border-slate-100">{item.d}</p>
+               <p className="text-sm text-slate-600 leading-relaxed font-medium pl-4 border-l-2 border-slate-200">{item.d}</p>
             </div>
          ))}
       </div>
@@ -715,11 +715,11 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                <h3 className="font-black text-slate-800 text-lg flex items-center gap-3"><Activity size={20} className="text-emerald-600" /> Revenue Stream Vectors</h3>
                <div className="flex gap-2">
                   <button className="px-4 py-2 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-100 transition-colors">+ Add Revenue Stream</button>
-                  <button className="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[10px] font-black text-slate-600 uppercase tracking-widest hover:bg-slate-100">Export CSV</button>
+                  <button className="px-4 py-2 bg-slate-100 border border-slate-200 rounded-xl text-[10px] font-black text-slate-600 uppercase tracking-widest hover:bg-slate-100">Export CSV</button>
                </div>
             </div>
             <table className="w-full text-sm text-left">
-              <thead className="bg-slate-50 border-b border-slate-100">
+              <thead className="bg-slate-100 border-b border-slate-200">
                 <tr>
                   <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest">Origin Vector</th>
                   <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest">Type</th>
@@ -747,7 +747,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                   { n: 'Care Builder Credit Programs', t: 'FinTech', g: '$340k', net: '$290k', s: 'Active', c: 'bg-blue-600' },
                   { n: 'Federal Dashboard Leases', t: 'Gov Contract', g: '$1.5M', net: '$1.2M', s: 'Pending', c: 'bg-amber-500' }
                 ]).map((u: any, i: number) => (
-                  <tr key={i} className="hover:bg-slate-50 transition-colors group">
+                  <tr key={i} className="hover:bg-slate-100 transition-colors group">
                     <td className="px-6 py-5 font-black text-slate-800">
                       <div className="flex items-center gap-3">
                         <div className={cn("w-2 h-2 rounded-full shadow-sm", u.color || u.c)}></div>
@@ -836,17 +836,17 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100">
+          <div className="p-5 bg-slate-100 rounded-2xl border border-slate-200">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Ecosystem Processing (MTD)</p>
             <h3 className="text-2xl font-black text-slate-800">$428,910.00</h3>
             <p className="text-[10px] text-emerald-600 font-bold mt-1">+18.5% Growth</p>
           </div>
-          <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100">
+          <div className="p-5 bg-slate-100 rounded-2xl border border-slate-200">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Bank Settlement Buffer</p>
             <h3 className="text-2xl font-black text-slate-800">$125,000.00</h3>
             <p className="text-[10px] text-slate-500 font-bold mt-1">Status: Liquid</p>
           </div>
-          <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100">
+          <div className="p-5 bg-slate-100 rounded-2xl border border-slate-200">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">External Bank Bridge</p>
             <div className="flex items-center gap-2 mt-2">
               <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600"><Building2 size={16} /></div>
@@ -916,9 +916,9 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
             <div className="flex justify-between items-center mb-6">
               <h3 className="font-bold text-slate-800 flex items-center gap-2"><TrendingUp size={18} className="text-indigo-500"/> Revenue Trajectory (P&L)</h3>
               <div className="flex gap-2">
-                 <button className="px-3 py-1 bg-slate-50 text-[10px] font-bold text-slate-600 rounded-lg border border-slate-200">1D</button>
+                 <button className="px-3 py-1 bg-slate-100 text-[10px] font-bold text-slate-600 rounded-lg border border-slate-200">1D</button>
                  <button className="px-3 py-1 bg-indigo-50 text-[10px] font-bold text-indigo-600 rounded-lg border border-indigo-200">1W</button>
-                 <button className="px-3 py-1 bg-slate-50 text-[10px] font-bold text-slate-600 rounded-lg border border-slate-200">1M</button>
+                 <button className="px-3 py-1 bg-slate-100 text-[10px] font-bold text-slate-600 rounded-lg border border-slate-200">1M</button>
               </div>
             </div>
             <div className="h-64 flex items-end justify-between gap-2 px-2 relative">
@@ -998,7 +998,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
 
           <div className="absolute bottom-10 left-10 right-10 grid grid-cols-3 gap-6">
              {[{l:'States Active',v:'14',c:'text-indigo-600'},{l:'Under Integration',v:'8',c:'text-amber-600'},{l:'Legal Pending',v:'4',c:'text-red-600'}].map((st,i)=>(
-               <div key={i} className="p-6 bg-white border border-slate-100 rounded-2xl text-center shadow-sm hover:shadow-md transition-shadow">
+               <div key={i} className="p-6 bg-white border border-slate-200 rounded-2xl text-center shadow-sm hover:shadow-md transition-shadow">
                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{st.l}</p>
                  <p className={cn("text-3xl font-black", st.c)}>{st.v}</p>
                </div>
@@ -1096,7 +1096,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
          <div className="lg:col-span-2 bg-white border border-slate-200 rounded-[2.5rem] shadow-sm overflow-hidden">
-            <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+            <div className="p-8 border-b border-slate-200 flex justify-between items-center bg-slate-100/50">
                <h3 className="font-black text-slate-800 text-lg flex items-center gap-3"><Shield size={22} className="text-indigo-600"/> High-Hierarchy Personnel</h3>
                <div className="flex gap-2">
                   <div className="relative">
@@ -1106,7 +1106,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                </div>
             </div>
             <table className="w-full text-sm text-left">
-              <thead className="bg-slate-50 border-b border-slate-100">
+              <thead className="bg-slate-100 border-b border-slate-200">
                 <tr>
                   <th className="px-8 py-5 font-black text-slate-500 text-[10px] uppercase tracking-widest">Sentinel / Email</th>
                   <th className="px-8 py-5 font-black text-slate-500 text-[10px] uppercase tracking-widest">Clearance</th>
@@ -1120,7 +1120,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                   { n: 'Emily Davis', e: 'emily.d@omma.ok.gov', r: 'State Regulator', s: 'Active', c: 'bg-emerald-600' },
                   { n: 'Sarah Jenkins', e: 's.jenkins@ggp-os.com', r: 'System Ops', s: 'Suspended', c: 'bg-red-600' }
                 ].map((u, i) => (
-                  <tr key={i} className="hover:bg-slate-50 transition-colors group">
+                  <tr key={i} className="hover:bg-slate-100 transition-colors group">
                     <td className="px-8 py-6">
                       <div className="flex items-center gap-3">
                          <div className={cn("w-2 h-2 rounded-full animate-pulse", u.s === 'Active' ? 'bg-emerald-500' : 'bg-red-500')} />
@@ -1356,7 +1356,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       </div>
 
       <div className="bg-white border border-slate-200 rounded-[2.5rem] overflow-hidden shadow-sm">
-         <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+         <div className="p-8 border-b border-slate-200 flex justify-between items-center bg-slate-100/50">
             <h3 className="font-black text-slate-800 text-lg flex items-center gap-3"><Building2 size={22} className="text-emerald-600"/> Infrastructure Map</h3>
             <div className="flex gap-4">
                <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
@@ -1378,7 +1378,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                     { n: 'GreenLeaf Farms', e: 'ops@greenleaf.com', r: 'Cultivator / Grow', j: 'Tulsa', s: 'Active' },
                     { n: 'CannaLogic POS', e: 'dev@cannalogic.io', r: 'Integrator / Tech', j: 'National', s: 'Suspended' }
                   ].map((u, i) => (
-                    <div key={i} className="flex items-center justify-between p-5 bg-slate-50 rounded-2xl border border-slate-100 hover:border-emerald-200 transition-all group">
+                    <div key={i} className="flex items-center justify-between p-5 bg-slate-100 rounded-2xl border border-slate-200 hover:border-emerald-200 transition-all group">
                        <div className="flex items-center gap-4">
                           <div className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400">
                              <Building2 size={18} />
@@ -1479,9 +1479,9 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                  { n: 'Dr. Emily Chen', r: 'Health Official', a: 'State Health', d: 'Apr 18', c: 'bg-emerald-50 text-emerald-600' },
                  { n: 'Apex Holdings LLC', r: 'Business Entity', a: 'Private', d: 'Apr 17', c: 'bg-indigo-50 text-indigo-600' },
                ].map((a, i) => (
-                 <div key={i} className="bg-slate-50 border border-slate-100 rounded-2xl p-4 flex items-center justify-between group hover:border-indigo-200 transition-all">
+                 <div key={i} className="bg-slate-100 border border-slate-200 rounded-2xl p-4 flex items-center justify-between group hover:border-indigo-200 transition-all">
                     <div className="flex items-center gap-4">
-                       <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-slate-100 group-hover:bg-indigo-600 group-hover:text-white transition-all"><UserCheck size={20}/></div>
+                       <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-slate-200 group-hover:bg-indigo-600 group-hover:text-white transition-all"><UserCheck size={20}/></div>
                        <div>
                           <p className="font-black text-sm text-slate-800">{a.n}</p>
                           <p className="text-[10px] text-slate-500 font-bold">{a.r} • {a.a}</p>
@@ -1520,7 +1520,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
          <div className="bg-white border border-slate-200 rounded-[2.5rem] overflow-hidden shadow-sm">
-            <div className="p-6 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
+            <div className="p-6 bg-slate-100 border-b border-slate-200 flex justify-between items-center">
                <h3 className="font-black text-sm uppercase tracking-widest text-slate-800">Geospatial Distribution</h3>
                <span className="text-[10px] font-bold text-slate-400 uppercase">Live Map Feed</span>
             </div>
@@ -1552,7 +1552,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                  { id: 'APP-5019', n: 'Dr. Martin', t: 'Provider', st: 'New', d: '1h ago', c: 'text-blue-600 bg-blue-50 border-blue-100' },
                  { id: 'APP-5018', n: 'CannaCare LLC', t: 'Dispensary', st: 'In Review', d: '2h ago', c: 'text-amber-600 bg-amber-50 border-amber-100' },
                ].map((a, i) => (
-                 <div key={i} className="flex items-center justify-between p-4 rounded-2xl border border-slate-50 hover:border-slate-200 transition-all cursor-pointer group">
+                 <div key={i} className="flex items-center justify-between p-4 rounded-2xl border border-slate-200 hover:border-slate-200 transition-all cursor-pointer group">
                     <div className="flex items-center gap-4">
                        <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs group-hover:bg-indigo-600 group-hover:text-white transition-all">#{i+1}</div>
                        <div>
@@ -1586,7 +1586,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-slate-50 border-2 border-slate-100 rounded-[2.5rem] p-8 relative overflow-hidden min-h-[400px]">
+        <div className="lg:col-span-2 bg-slate-100 border-2 border-slate-200 rounded-[2.5rem] p-8 relative overflow-hidden min-h-[400px]">
            <div className="absolute inset-0 opacity-10 pointer-events-none">
               <svg viewBox="0 0 800 400" className="w-full h-full fill-none stroke-slate-300 stroke-2">
                  <path d="M0,350 Q200,300 400,350 T800,300" />
@@ -1636,7 +1636,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                 { e: 'GreenLeaf Farms', f: 'Inventory Lag', s: 'Medium', t: '4h ago', c: 'bg-amber-50 text-amber-600' },
                 { e: 'Metro Transport', f: 'GPS Drift Anomaly', s: 'Low', t: '1d ago', c: 'bg-blue-50 text-blue-600' },
               ].map((c, i) => (
-                <div key={i} className="p-4 rounded-2xl border border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer group">
+                <div key={i} className="p-4 rounded-2xl border border-slate-200 hover:bg-slate-100 transition-colors cursor-pointer group">
                    <div className="flex justify-between items-start mb-1">
                       <p className="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors">{c.e}</p>
                       <span className={cn("text-[8px] font-black uppercase px-2 py-0.5 rounded-full", c.c)}>{c.s}</span>
@@ -1689,7 +1689,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
          <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
             <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-10">Market Saturation</h3>
             <div className="relative w-48 h-48 mx-auto">
-               <div className="absolute inset-0 rounded-full border-[16px] border-slate-100"></div>
+               <div className="absolute inset-0 rounded-full border-[16px] border-slate-200"></div>
                <div className="absolute inset-0 rounded-full border-[16px] border-indigo-600 border-t-transparent border-r-transparent rotate-45"></div>
                <div className="absolute inset-0 flex flex-col items-center justify-center">
                   <p className="text-3xl font-black text-slate-800">84%</p>
@@ -1768,7 +1768,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                 </div>
                 <h3 className="text-lg font-black text-slate-800 mb-3 group-hover:text-indigo-700 transition-colors">{item.title}</h3>
                 <p className="text-sm text-slate-500 leading-relaxed line-clamp-4">{item.content}</p>
-                <div className="mt-6 pt-6 border-t border-slate-50 flex justify-between items-center">
+                <div className="mt-6 pt-6 border-t border-slate-200 flex justify-between items-center">
                    <span className="text-[10px] font-bold text-slate-400 italic">Source: Metrc Guide 2021 v11.1</span>
                    <button className="text-[10px] font-black text-indigo-600 uppercase tracking-widest hover:underline">Read Full Section</button>
                 </div>
@@ -1786,8 +1786,8 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
     <div className="space-y-6">
       <h2 className="text-2xl font-black text-slate-800">Platform Settings</h2>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4"><h3 className="font-bold text-slate-800">General Configuration</h3>{[{l:'Platform Name',v:'GGP-OS'},{l:'Default Jurisdiction',v:'National (US)'},{l:'MFA Enforcement',v:'Required for All'},{l:'Session Timeout',v:'30 minutes'}].map((c,i)=>(<div key={i} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl"><span className="text-sm font-medium text-slate-600">{c.l}</span><span className="text-sm font-bold text-slate-800">{c.v}</span></div>))}</div>
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4"><h3 className="font-bold text-slate-800">API Keys & Integrations</h3>{[{l:'OMMA Sync API',s:'Connected'},{l:'Firebase Auth',s:'Connected'},{l:'Geoapify Address',s:'Connected'},{l:'Stripe Payments',s:'Pending Setup'}].map((a,i)=>(<div key={i} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl"><span className="text-sm font-medium text-slate-600">{a.l}</span><span className={cn("text-xs font-bold px-2 py-0.5 rounded-full",a.s==='Connected'?"bg-emerald-50 text-emerald-600":"bg-amber-50 text-amber-600")}>{a.s}</span></div>))}</div>
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4"><h3 className="font-bold text-slate-800">General Configuration</h3>{[{l:'Platform Name',v:'GGP-OS'},{l:'Default Jurisdiction',v:'National (US)'},{l:'MFA Enforcement',v:'Required for All'},{l:'Session Timeout',v:'30 minutes'}].map((c,i)=>(<div key={i} className="flex items-center justify-between p-3 bg-slate-100 rounded-xl"><span className="text-sm font-medium text-slate-600">{c.l}</span><span className="text-sm font-bold text-slate-800">{c.v}</span></div>))}</div>
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4"><h3 className="font-bold text-slate-800">API Keys & Integrations</h3>{[{l:'OMMA Sync API',s:'Connected'},{l:'Firebase Auth',s:'Connected'},{l:'Geoapify Address',s:'Connected'},{l:'Stripe Payments',s:'Pending Setup'}].map((a,i)=>(<div key={i} className="flex items-center justify-between p-3 bg-slate-100 rounded-xl"><span className="text-sm font-medium text-slate-600">{a.l}</span><span className={cn("text-xs font-bold px-2 py-0.5 rounded-full",a.s==='Connected'?"bg-emerald-50 text-emerald-600":"bg-amber-50 text-amber-600")}>{a.s}</span></div>))}</div>
       </div>
     </div>
   );
@@ -1894,7 +1894,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
            { l: 'Active Chats', v: '42', c: 'text-indigo-600', i: MessageSquare },
          ].map((s, i) => (
            <div key={i} className="bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm flex items-center gap-5">
-              <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center bg-slate-50", s.c)}><s.i size={24}/></div>
+              <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center bg-slate-100", s.c)}><s.i size={24}/></div>
               <div>
                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{s.l}</p>
                  <p className="text-2xl font-black text-slate-800">{s.v}</p>
@@ -1905,7 +1905,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
 
       <div className="bg-white border border-slate-200 rounded-[2.5rem] shadow-sm overflow-hidden">
         <table className="w-full text-sm text-left">
-          <thead className="bg-slate-50 border-b border-slate-100">
+          <thead className="bg-slate-100 border-b border-slate-200">
             <tr>
               <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-[0.2em]">Ticket Ref</th>
               <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-[0.2em]">Subject / Entity</th>
@@ -1920,7 +1920,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
               { id: 'SUP-9920', s: 'License Renewal Inquiry', e: 'GreenLeaf Farms', a: 'Sarah Jenkins', st: 'Pending', c: 'text-amber-600 bg-amber-50' },
               { id: 'SUP-9919', s: 'Account Access Reset', e: 'John Doe', a: 'Bob Moore', st: 'Resolved', c: 'text-emerald-600 bg-emerald-50' },
             ].map((t, i) => (
-              <tr key={i} className="hover:bg-slate-50 group transition-colors">
+              <tr key={i} className="hover:bg-slate-100 group transition-colors">
                 <td className="px-6 py-4 font-mono text-[10px] font-black text-indigo-600">{t.id}</td>
                 <td className="px-6 py-4">
                   <p className="font-bold text-slate-800">{t.s}</p>
@@ -2107,7 +2107,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                       color: 'bg-purple-500' 
                     },
                   ].map((dept, i) => (
-                    <div key={i} className="flex flex-col md:flex-row md:items-center justify-between p-5 bg-slate-50 rounded-[2rem] border border-slate-100 hover:border-indigo-200 transition-all group gap-4">
+                    <div key={i} className="flex flex-col md:flex-row md:items-center justify-between p-5 bg-slate-100 rounded-[2rem] border border-slate-200 hover:border-indigo-200 transition-all group gap-4">
                        <div className="flex items-center gap-4 flex-1">
                           <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-md ${dept.color}`}>
                              <Layers size={20} />
@@ -2229,7 +2229,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                         <button className="px-3 py-1.5 bg-slate-100 text-slate-500 text-[9px] font-black rounded-lg">Warn Agent</button>
                      </div>
                   </div>
-                  <div className="p-4 bg-white/50 rounded-2xl border border-slate-100">
+                  <div className="p-4 bg-white/50 rounded-2xl border border-slate-200">
                      <p className="text-xs font-black text-slate-400 italic">No other critical negligence detected by Larry.</p>
                   </div>
                </div>
@@ -2288,7 +2288,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                  { l: 'Metro Testing (Miami)', v: '204 tests/hr', st: 'Maintenance', p: '92.4%' },
                  { l: 'Sovereign Lab (Dallas)', v: '89 tests/hr', st: 'Optimal', p: '99.4%' },
                ].map((lab, i) => (
-                 <div key={i} className="flex items-center justify-between p-5 bg-slate-50 rounded-2xl border border-slate-100 hover:border-indigo-200 transition-all group">
+                 <div key={i} className="flex items-center justify-between p-5 bg-slate-100 rounded-2xl border border-slate-200 hover:border-indigo-200 transition-all group">
                     <div className="flex items-center gap-4">
                        <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-indigo-600">
                           <FlaskConical size={20} />
@@ -2338,7 +2338,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                   <p className="text-xs text-slate-500 font-medium leading-relaxed">
                      Larry is cross-referencing lab data with POS sales velocity. If a batch fails, the system auto-freezes all relevant Care Wallet transactions at the point of sale within <span className="text-indigo-600 font-black">400ms</span>.
                   </p>
-                  <div className="pt-4 border-t border-slate-100">
+                  <div className="pt-4 border-t border-slate-200">
                      <div className="flex justify-between text-[10px] font-black uppercase mb-1">
                         <span className="text-slate-400">Chemical Anomaly Detection</span>
                         <span className="text-indigo-600">Active</span>
@@ -2492,7 +2492,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
               { id: 'DP-8290', status: 'Evidence Logged', unit: 'Unit 12 (Metro)', time: '14m ago', threat: 'Low' },
               { id: 'DP-8289', status: 'Lab Routing', unit: 'Unit 08 (County)', time: '45m ago', threat: 'Med' },
             ].map(dispatch => (
-              <div key={dispatch.id} className="flex justify-between items-center p-4 bg-slate-50 rounded-xl border border-slate-100">
+              <div key={dispatch.id} className="flex justify-between items-center p-4 bg-slate-100 rounded-xl border border-slate-200">
                 <div>
                   <div className="text-sm font-black text-slate-700">{dispatch.unit}</div>
                   <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{dispatch.id} • {dispatch.time}</div>
@@ -2655,11 +2655,11 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
               <Clock size={14} /> <span>{asset.date}</span> • <span className="text-emerald-600">{asset.filings}</span>
             </div>
             <p className="text-sm text-slate-600 font-medium leading-relaxed mb-6 flex-1">{asset.description}</p>
-            <div className="pt-6 border-t border-slate-100">
+            <div className="pt-6 border-t border-slate-200">
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2"><FolderLock size={12} /> Attached Documents</p>
               <div className="space-y-2">
                 {asset.files.map((file, idx) => (
-                  <button key={idx} className="w-full flex justify-between items-center p-3 bg-slate-50 hover:bg-slate-100 rounded-xl text-left transition-colors cursor-pointer group-hover:border-emerald-200 border border-transparent">
+                  <button key={idx} className="w-full flex justify-between items-center p-3 bg-slate-100 hover:bg-slate-100 rounded-xl text-left transition-colors cursor-pointer group-hover:border-emerald-200 border border-transparent">
                      <span className="text-xs font-bold text-slate-700 flex items-center gap-2"><FileText size={14} className="text-indigo-500" /> {file.name}</span>
                      <Download size={14} className="text-slate-400 group-hover:text-indigo-600 transition-colors" />
                   </button>
@@ -2708,7 +2708,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
           <Save className="h-6 w-6 text-emerald-600" /> Saved Valuation Snapshots
         </h2>
         {savedSnapshots.length === 0 ? (
-          <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2rem] p-12 text-center text-slate-400">
+          <div className="bg-slate-100 border-2 border-dashed border-slate-200 rounded-[2rem] p-12 text-center text-slate-400">
             <Calculator size={48} className="mx-auto mb-4 opacity-50" />
             <p className="font-bold">No snapshots saved yet. Go to the Overview tab to calculate and save a valuation.</p>
           </div>
@@ -2720,7 +2720,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                   <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{snap.timestamp}</div>
                   <div className="text-2xl font-black text-emerald-600">${snap.valuationMid.toLocaleString()} <span className="text-xs font-bold text-slate-500 uppercase">Mid Valuation</span></div>
                 </div>
-                <div className="flex flex-wrap gap-4 text-xs font-bold text-slate-600 bg-slate-50 px-6 py-3 rounded-xl border border-slate-100">
+                <div className="flex flex-wrap gap-4 text-xs font-bold text-slate-600 bg-slate-100 px-6 py-3 rounded-xl border border-slate-200">
                   <div className="flex flex-col"><span className="text-[9px] uppercase tracking-widest text-slate-400">Market</span> ${snap.marketSize}M</div>
                   <div className="flex flex-col"><span className="text-[9px] uppercase tracking-widest text-slate-400">Stage</span> {snap.stageMultiplier}x</div>
                   <div className="flex flex-col"><span className="text-[9px] uppercase tracking-widest text-slate-400">Claims</span> {snap.claimsStrength}/100</div>
@@ -2743,7 +2743,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
   );
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 text-slate-800 font-sans relative">
+    <div className="flex h-screen overflow-hidden bg-slate-100 text-slate-800 font-sans relative">
       {!isUnlocked && (
         <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-slate-900/60 backdrop-blur-2xl animate-in fade-in duration-300">
           <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-2xl text-center max-w-sm w-full animate-in zoom-in-95 duration-500">
@@ -2758,7 +2758,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                  setPin(e.target.value);
                  if (e.target.value === '1234') setIsUnlocked(true);
               }} 
-              className="w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 rounded-xl p-4 text-center text-3xl font-black text-slate-800 tracking-[1em] mb-4 outline-none transition-all" 
+              className="w-full bg-slate-100 border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 rounded-xl p-4 text-center text-3xl font-black text-slate-800 tracking-[1em] mb-4 outline-none transition-all" 
               placeholder="••••"
             />
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-4">Executive Clearance Only</p>
@@ -2827,7 +2827,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
                SYSTEM ONLINE
             </div>
-            <button className="relative p-2.5 bg-slate-50 rounded-xl text-slate-400 hover:text-indigo-600 transition-all"><Bell size={22} /><span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white" /></button>
+            <button className="relative p-2.5 bg-slate-100 rounded-xl text-slate-400 hover:text-indigo-600 transition-all"><Bell size={22} /><span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white" /></button>
           </div>
         </div>
         <div className="flex-1 overflow-y-auto p-10">{getContent()}</div>
@@ -2835,14 +2835,14 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
         {/* GLOBAL ALERTS STREAM (RIGHT SIDEBAR) */}
         {!hideAlertQueue && !isExecutive && (
         <div className={cn("w-80 bg-white border-l border-slate-200 flex flex-col shrink-0 transition-all duration-500 hidden xl:flex print:hidden", !isUnlocked && "blur-md opacity-50 pointer-events-none")}>
-           <div className="h-20 border-b border-slate-200 flex items-center justify-between px-6 bg-slate-50 shrink-0">
+           <div className="h-20 border-b border-slate-200 flex items-center justify-between px-6 bg-slate-100 shrink-0">
               <h3 className="font-black text-sm uppercase tracking-widest text-slate-800 flex items-center gap-2"><Bell size={16} className="text-indigo-600" /> Executive Oversight & Alert Queue</h3>
               <button onClick={() => {
                 localStorage.setItem('gghp_alert_queue_dismissed', 'true');
                 setHideAlertQueue(true);
               }} className="text-slate-400 hover:text-red-500 transition-colors p-1" title="Dismiss Queue"><LogOut size={16} /></button>
            </div>
-           <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/50 custom-scrollbar">
+           <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-100/50 custom-scrollbar">
                 {queueAlerts.map(alert => (
                   <div key={alert.id} className={`p-4 bg-white border-l-4 border-${alert.color}-500 rounded-r-xl shadow-sm hover:shadow-md transition-all cursor-pointer`}>
                      <div className="flex justify-between items-start mb-2">
@@ -2898,5 +2898,6 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
     </div>
   );
 };
+
 
 

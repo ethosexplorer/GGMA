@@ -536,7 +536,7 @@ export const StickyPollWidget = () => {
   if (!showAfterScroll) return null;
 
   return (
-    <div className="fixed left-4 top-1/3 z-50">
+    <div className="fixed bottom-20 right-4 sm:bottom-8 sm:right-8 z-50 flex flex-col items-end">
       <AnimatePresence>
         {!isOpen ? (
           <motion.button
@@ -556,10 +556,10 @@ export const StickyPollWidget = () => {
           </motion.button>
         ) : (
           <motion.div
-            initial={{ scale: 0.8, opacity: 0, x: -20 }}
-            animate={{ scale: 1, opacity: 1, x: 0 }}
-            exit={{ scale: 0.8, opacity: 0, x: -20 }}
-            className="w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden"
+            initial={{ scale: 0.8, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.8, opacity: 0, y: 20 }}
+            className="w-[calc(100vw-2rem)] sm:w-80 max-w-sm bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[70vh]"
           >
             {/* Widget Header */}
             <div className={`bg-gradient-to-r ${poll.bgGradient} p-4`}>
