@@ -76,8 +76,8 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
   const [broadcastType, setBroadcastType] = useState('Urgent Alert (Red)');
   const [isUnlocked, setIsUnlocked] = useState(true);
   const [pin, setPin] = useState('');
-  const [hideSystemFreeze, setHideSystemFreeze] = useState(false);
-  const [hideAlertQueue, setHideAlertQueue] = useState(false);
+  const [hideSystemFreeze, setHideSystemFreeze] = useState(() => localStorage.getItem('gghp_system_freeze_dismissed') === 'true');
+  const [hideAlertQueue, setHideAlertQueue] = useState(() => localStorage.getItem('gghp_alert_queue_dismissed') === 'true');
   const [isSystemFreezeExpanded, setIsSystemFreezeExpanded] = useState(false);
   const [queueAlerts, setQueueAlerts] = useState([
     { id: 1, type: 'State Auth', color: 'cyan', time: 'Just Now', text: 'OMMA Regulatory Update Triggered' },
@@ -106,14 +106,11 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
              <p className="text-indigo-200 font-medium">Platform state: <span className="text-emerald-400 font-bold">Operational</span> • Umbrella: <span className="text-white font-bold">GGHP (Global Green Enterprise Inc)</span></p>
            </div>
            <div className="flex gap-4">
-              <div className="text-center px-6 border-r border-white/10">
+              <div className={cn("text-center px-6", !isExecutive && "border-r border-white/10")}>
                  <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-1">Total Users</p>
                  <p className="text-2xl font-black">1.2M</p>
               </div>
-              <div className="text-center px-6">
-                 <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-wider mb-1">Net Revenue</p>
-                 <p className="text-2xl font-black text-emerald-400">$18.2M</p>
-              </div>
+              {!isExecutive && (<div className="text-center px-6"><p className="text-[10px] font-bold text-indigo-300 uppercase tracking-wider mb-1">Net Revenue</p><p className="text-2xl font-black text-emerald-400">$18.2M</p></div>)}
            </div>
         </div>
       </div>
@@ -1456,6 +1453,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
               <button 
                 onClick={() => {
                   alert('System Freeze alert routed to Engineering Queue.');
+                  localStorage.setItem('gghp_system_freeze_dismissed', 'true');
                   setHideSystemFreeze(true);
                 }}
                 className="flex-1 py-3 bg-white text-red-600 hover:bg-slate-100 transition-colors rounded-xl text-xs font-black uppercase tracking-widest shadow-lg"
@@ -1463,7 +1461,10 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                 Route to Engineering
               </button>
               <button 
-                onClick={() => setHideSystemFreeze(true)}
+                onClick={() => {
+                  localStorage.setItem('gghp_system_freeze_dismissed', 'true');
+                  setHideSystemFreeze(true);
+                }}
                 className="px-6 py-3 bg-black/20 text-white hover:bg-black/40 transition-colors rounded-xl text-xs font-black uppercase tracking-widest"
               >
                 Dismiss Alert
@@ -2141,7 +2142,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
           </div>
         </div>
         <div className="flex-1 overflow-y-auto px-4 pb-6 space-y-1">
-           {NAV_ITEMS.map((item, i) => {
+           {NAV_ITEMS.filter(item => !(isExecutive && (item.section === "FOUNDER EXCLUSIVE" || item.id === "global_financials" || item.id === "system_health" || item.id === "hr_intelligence" || item.id === "jurisdiction_map"))).map((item, i) => {
             if ('section' in item) return <div key={i} className="pt-6 pb-2 px-3 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{item.section}</div>;
             const displayLabel = isExecutive ? item.label?.replace('God', 'Executive') : item.label;
             return (
@@ -2175,7 +2176,10 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
         <div className={cn("w-80 bg-white border-l border-slate-200 flex flex-col shrink-0 transition-all duration-500 hidden xl:flex", !isUnlocked && "blur-md opacity-50 pointer-events-none")}>
            <div className="h-20 border-b border-slate-200 flex items-center justify-between px-6 bg-slate-50 shrink-0">
               <h3 className="font-black text-sm uppercase tracking-widest text-slate-800 flex items-center gap-2"><Bell size={16} className="text-indigo-600" /> Executive Oversight & Alert Queue</h3>
-              <button onClick={() => setHideAlertQueue(true)} className="text-slate-400 hover:text-red-500 transition-colors p-1" title="Dismiss Queue"><LogOut size={16} /></button>
+              <button onClick={() => {
+                localStorage.setItem('gghp_alert_queue_dismissed', 'true');
+                setHideAlertQueue(true);
+              }} className="text-slate-400 hover:text-red-500 transition-colors p-1" title="Dismiss Queue"><LogOut size={16} /></button>
            </div>
            <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/50 custom-scrollbar">
                 {queueAlerts.map(alert => (
@@ -2233,3 +2237,4 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
     </div>
   );
 };
+
