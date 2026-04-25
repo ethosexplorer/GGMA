@@ -1,7 +1,7 @@
 export const generateGeminiResponse = async (
   prompt: string,
   variant: 'med-card' | 'business' | 'general' | 'ggma' | 'rip' | 'sinc' = 'general',
-  history: {role: string, parts: {text: string}[]}[] = []
+  history: {role: string, text: string}[] = []
 ): Promise<string> => {
   const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
   
@@ -21,6 +21,11 @@ export const generateGeminiResponse = async (
     systemInstruction = "You are Sylara, the Intake Agent for commercial cannabis entities. You help cultivators, dispensaries, and attorneys navigate state compliance (like Metrc) and banking regulations.";
   }
 
+  const formattedHistory = history.map(msg => ({
+    role: msg.role === 'bot' ? 'model' : 'user',
+    parts: [{ text: msg.text }]
+  }));
+
   try {
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`, {
       method: 'POST',
@@ -32,7 +37,7 @@ export const generateGeminiResponse = async (
           parts: [{ text: systemInstruction }]
         },
         contents: [
-          ...history,
+          ...formattedHistory,
           {
             role: 'user',
             parts: [{ text: prompt }]
