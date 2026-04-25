@@ -156,7 +156,7 @@ export const ApplicationsTab = ({ user }: { user?: any }) => {
                   </a>
                   <div className="space-y-2">
                     <button 
-                      onClick={() => window.open('https://calendly.com/globalgreenenterprize/15min', '_blank')}
+                      onClick={() => ((window as any).Calendly ? (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenenterprize/15min' }) : window.open('https://calendly.com/globalgreenenterprize/15min', '_blank'))}
                       className="w-full py-2.5 bg-white/10 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white/20 transition-all border border-white/10"
                     >
                       💬 Book Coordinator (Calendly)
@@ -307,3 +307,4 @@ export const ApplicationsTab = ({ user }: { user?: any }) => {
     </div>
   );
 };
+
