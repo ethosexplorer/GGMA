@@ -24,9 +24,11 @@ import { METRC_MANUAL } from '../data/metrcManual';
 
 const NAV_ITEMS = [
   { section: 'FOUNDER EXCLUSIVE' },
+  { id: 'accounting_ledger', label: 'Accounting Ledger (QuickBooks)', icon: TrendingUp },
   { id: 'global_financials', label: 'Global Financials', icon: TrendingUp },
   { id: 'system_health', label: 'System Health / AI', icon: Zap },
   { id: 'hr_intelligence', label: 'HR Intelligence (Sylara)', icon: UserPlus },
+  { id: 'launch_script', label: 'Master Launch Script', icon: FileText },
   { id: 'jurisdiction_map', label: 'Nationwide Oversight', icon: Globe },
   { section: 'MAIN' },
   { id: 'overview', label: 'God Overview', icon: Activity },
@@ -438,6 +440,74 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
              </a>
            ))}
         </div>
+      </div>
+    </div>
+  );
+
+  const renderLaunchScript = () => (
+    <div className="max-w-5xl mx-auto space-y-8 pb-12 animate-in fade-in duration-500">
+      <div className="bg-slate-900 rounded-[3rem] p-10 text-white shadow-2xl relative overflow-hidden">
+         <div className="absolute top-0 right-0 p-8 opacity-10"><FileText size={160} /></div>
+         <div className="relative z-10">
+            <h2 className="text-4xl font-black italic tracking-tighter uppercase mb-2">Platform Launch Master Script</h2>
+            <p className="text-slate-400 font-medium">Use this reference sheet while presenting to investors, partners, or state authorities.</p>
+         </div>
+      </div>
+
+      <div className="space-y-4">
+         {[
+           {
+             t: 'Accounting Ledger (QuickBooks Core)',
+             d: 'Founder Exclusive: The financial backbone of the entire ecosystem. It breaks down revenue from Sylara Subscriptions, Metrc integrations, Care Wallet B2B transactions, Telehealth, and Jurisdictional licensing. It dynamically tracks gross revenue versus net profit, showing exactly where operational capital is distributed and what is available for founder draw.'
+           },
+           {
+             t: 'Universal Onboarding Engine',
+             d: 'Founder Exclusive: The identity provisioning system. Only the Founder can deploy dashboards, set administrative hierarchies, and assign specific operational clearances (like AI Negligence intercept) to executives, state regulators, and staff.'
+           },
+           {
+             t: 'Personnel Force Command',
+             d: 'The ultimate authority over human capital. Allows executives to track the active workforce, authorize new sentinels, suspend operators globally, and view the raw security/access logs of every login attempt across the network.'
+           },
+           {
+             t: 'Registry Sovereignty',
+             d: 'Monitors the flow of medical marijuana patients. Tracks the total verified citizens running through the system, the growth of the registry, and state-by-state reciprocity (how out-of-state patients are syncing into the local markets).'
+           },
+           {
+             t: 'Economic Infrastructure',
+             d: 'The commercial oversight map. It monitors every single commercial node (dispensaries, farms, labs) connected to SINC. It tracks tax ingress, active lab syncs, and allows the founder to trigger an Emergency Recall if a bad batch is detected on the map.'
+           },
+           {
+             t: 'Agency Approvals & Applications Queue',
+             d: 'The interface with state and federal entities. Shows the real-time processing of new business applications, provider credentials, and law enforcement integrations. Highlights priority applications and geospatial distribution of new licenses.'
+           },
+           {
+             t: 'Compliance War Room (Powered by Larry)',
+             d: 'The AI Negligence Intercept center. Larry (the Compliance AI) constantly scans POS sales and Metrc batches. If a budtender or farm manager makes a reporting error, Larry catches it and flags it before it triggers an OMMA audit. This is the shield that protects businesses from losing their licenses.'
+           },
+           {
+             t: 'Regulatory Library',
+             d: 'A dynamic, constantly updating repository of state and federal cannabis laws. As politicians pass new bills, the library updates to ensure the ecosystem\'s compliance algorithms remain perfectly legal.'
+           },
+           {
+             t: 'Federal Command & Public Health',
+             d: 'The high-level government oversight tabs. Prepares the network for DOJ/DEA reporting and monitors lab data for toxic impurities. This proves to investors that the system is ready for national legalization.'
+           },
+           {
+             t: 'Rapid Testing Hub (Breathalyzer Integration)',
+             d: 'CRITICAL FEATURE: This dashboard connects directly via Bluetooth/API to the SINC Breathalyzer. When an employee, driver, or operator uses the breathalyzer, it detects THC and alcohol ppm in their breath. The biometric reading is instantly logged on our immutable blockchain ledger. If an employee blows over the legal limit, SINC automatically suspends their operational dashboard, locks them out of fleet vehicles, and flags the HR/Compliance board. It provides indisputable liability protection for businesses.'
+           },
+           {
+             t: 'Judicial Monitor',
+             d: 'Tracks active, real-world lawsuits and state administrative actions (e.g., OMMA revoking licenses). The AI studies these real-world enforcement trends to better predict and prevent compliance failures for our clients.'
+           }
+         ].map((item, i) => (
+            <div key={i} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:border-indigo-300 transition-colors">
+               <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-2 flex items-center gap-2">
+                 <div className="w-2 h-2 rounded-full bg-indigo-500"></div> {item.t}
+               </h3>
+               <p className="text-sm text-slate-600 leading-relaxed font-medium pl-4 border-l-2 border-slate-100">{item.d}</p>
+            </div>
+         ))}
       </div>
     </div>
   );
@@ -1150,7 +1220,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                         </div>
                      </div>
                      <p className="text-xs text-slate-400 font-medium leading-relaxed pt-4 italic">
-                        Sylara is currently monitoring 42,891 commercial nodes. 3 nodes currently require manual Intercept due to POS bridge timing issues in OK-Sector.
+                        Larry is currently monitoring 42,891 commercial nodes. 3 nodes currently require manual Intercept due to POS bridge timing issues in OK-Sector.
                      </p>
                   </div>
                </div>
@@ -1646,7 +1716,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
           </thead>
           <tbody className="divide-y divide-slate-50">
             {[
-              { id: 'SUP-9921', s: 'POS Integration Timeout', e: 'Apex Health', a: 'AI Guardian', st: 'In Progress', c: 'text-blue-600 bg-blue-50' },
+              { id: 'SUP-9921', s: 'POS Integration Timeout', e: 'Apex Health', a: 'Larry', st: 'In Progress', c: 'text-blue-600 bg-blue-50' },
               { id: 'SUP-9920', s: 'License Renewal Inquiry', e: 'GreenLeaf Farms', a: 'Sarah Jenkins', st: 'Pending', c: 'text-amber-600 bg-amber-50' },
               { id: 'SUP-9919', s: 'Account Access Reset', e: 'John Doe', a: 'Bob Moore', st: 'Resolved', c: 'text-emerald-600 bg-emerald-50' },
             ].map((t, i) => (
@@ -1776,7 +1846,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       <div className="flex justify-between items-end">
          <div>
             <h2 className="text-4xl font-black text-slate-900 tracking-tighter italic uppercase">HR Intelligence Hub</h2>
-            <p className="text-slate-500 font-bold uppercase tracking-widest text-xs mt-1">Managed by Sylara AI • The 15% Sentinel Force</p>
+            <p className="text-slate-500 font-bold uppercase tracking-widest text-xs mt-1">Managed by Larry AI • The 15% Sentinel Force</p>
          </div>
          <div className="flex gap-4">
             <div className="bg-emerald-50 border border-emerald-200 px-6 py-4 rounded-[2rem] text-center shadow-sm">
@@ -1808,13 +1878,13 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                   {[
                     { 
                       dept: 'Executive & Strategy', head: `${fullName} (${userTitle})`, 
-                      ai: { count: 12, desc: 'Sylara Global Monitors, Data Aggregators' }, 
+                      ai: { count: 12, desc: 'Larry Global Monitors, Data Aggregators' }, 
                       humans: { count: 3, desc: 'Founder, CEO, Chief Legal' }, 
                       color: 'bg-indigo-500' 
                     },
                     { 
                       dept: 'Medical & Clinical Intake', head: 'Dr. Sarah Jenkins', 
-                      ai: { count: 850, desc: 'Sylara Patient Intake Agents, HIPAA Validators' }, 
+                      ai: { count: 850, desc: 'Larry Patient Intake Agents, HIPAA Validators' }, 
                       humans: { count: 24, desc: 'Licensed Physicians, RNs, Final-Reviewers' }, 
                       color: 'bg-emerald-500' 
                     },
@@ -1832,7 +1902,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                     },
                     { 
                       dept: 'Education & Grants', head: 'Pending Placement', 
-                      ai: { count: 15, desc: 'Sylara Training Tutors, Curriculum Generators' }, 
+                      ai: { count: 15, desc: 'Larry Training Tutors, Curriculum Generators' }, 
                       humans: { count: 8, desc: 'Academy Instructors, Grant Writers' }, 
                       color: 'bg-purple-500' 
                     },
@@ -1881,7 +1951,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                      <span className="text-4xl font-black">96.8</span>
                      <span className="text-sm font-bold text-emerald-400">/ 100</span>
                   </div>
-                  <p className="text-xs text-slate-400 leading-relaxed font-medium">Sylara AI is successfully managing 98.4% of platform throughput. The Human Sentinel Force is handling the high-hierarchy 1.6% (final authorizations, legal reviews, curriculum approvals) with zero variance.</p>
+                  <p className="text-xs text-slate-400 leading-relaxed font-medium">Larry AI is successfully managing 98.4% of platform throughput. The Human Sentinel Force is handling the high-hierarchy 1.6% (final authorizations, legal reviews, curriculum approvals) with zero variance.</p>
                </div>
                <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
                   <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">Throughput by Dept</h4>
@@ -1920,7 +1990,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                   <div className="space-y-8">
                      {[
                        { s: 'Advertising', l: 'Elite UQA Guardian', p: 100, st: 'Complete', c: 'text-emerald-400' },
-                       { s: 'Assessment', l: '14 Active Applicants', p: 65, st: 'Sylara Scoring', c: 'text-indigo-400' },
+                       { s: 'Assessment', l: '14 Active Applicants', p: 65, st: 'Larry Scoring', c: 'text-indigo-400' },
                        { s: 'The Academy', l: 'Training Phase 2/4', p: 40, st: 'Digital Handbook', c: 'text-amber-400' },
                        { s: 'Certification', l: 'Final Contract Sign', p: 10, st: 'Legal Queue', c: 'text-slate-500' },
                      ].map((step, i) => (
@@ -1960,7 +2030,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                      </div>
                   </div>
                   <div className="p-4 bg-white/50 rounded-2xl border border-slate-100">
-                     <p className="text-xs font-black text-slate-400 italic">No other critical negligence detected by Sylara.</p>
+                     <p className="text-xs font-black text-slate-400 italic">No other critical negligence detected by Larry.</p>
                   </div>
                </div>
             </div>
@@ -2061,7 +2131,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                </h3>
                <div className="space-y-4">
                   <p className="text-xs text-slate-500 font-medium leading-relaxed">
-                     Sylara is cross-referencing lab data with POS sales velocity. If a batch fails, the system auto-freezes all relevant Care Wallet transactions at the point of sale within <span className="text-indigo-600 font-black">400ms</span>.
+                     Larry is cross-referencing lab data with POS sales velocity. If a batch fails, the system auto-freezes all relevant Care Wallet transactions at the point of sale within <span className="text-indigo-600 font-black">400ms</span>.
                   </p>
                   <div className="pt-4 border-t border-slate-100">
                      <div className="flex justify-between text-[10px] font-black uppercase mb-1">
@@ -2166,6 +2236,8 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       case 'subscription': 
         return <SubscriptionPortal userRole="executive_founder" initialPlanId="fed_pro" />;
       case 'overview': return renderOverview();
+      case 'accounting_ledger': return renderAccountingLedger();
+      case 'launch_script': return renderLaunchScript();
       case 'global_financials': return renderFinancials();
       case 'system_health': return renderAutoFixMonitor();
       case 'jurisdiction_map': return renderJurisdictionMap();
