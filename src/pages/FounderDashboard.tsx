@@ -70,6 +70,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
   const [broadcastType, setBroadcastType] = useState('Urgent Alert (Red)');
   const [isUnlocked, setIsUnlocked] = useState(true);
   const [pin, setPin] = useState('');
+  const [hideSystemFreeze, setHideSystemFreeze] = useState(false);
 
   const handleBroadcast = () => {
     localStorage.setItem('gghp_platform_alert', broadcastMsg);
@@ -1408,20 +1409,28 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
     </div>
   );
 
-  const SystemFreezeAlert = () => (
-    <div className="fixed bottom-10 right-10 z-[100] animate-bounce">
-      <div className="bg-red-600 text-white p-4 rounded-2xl shadow-2xl border-4 border-red-400 flex items-center gap-4 max-w-sm">
-        <div className="w-12 h-12 bg-white text-red-600 rounded-xl flex items-center justify-center shrink-0">
-          <AlertTriangle size={24} />
+  const SystemFreezeAlert = () => {
+    if (hideSystemFreeze) return null;
+    return (
+      <div className="fixed bottom-10 right-10 z-[100] animate-bounce">
+        <div className="bg-red-600 text-white p-4 rounded-2xl shadow-2xl border-4 border-red-400 flex items-center gap-4 max-w-sm">
+          <div className="w-12 h-12 bg-white text-red-600 rounded-xl flex items-center justify-center shrink-0">
+            <AlertTriangle size={24} />
+          </div>
+          <div>
+            <h4 className="text-sm font-black uppercase tracking-tight">System Freeze Detected</h4>
+            <p className="text-[10px] font-bold opacity-90">AI Guardian is initiating immediate fix protocols for OK-Sector.</p>
+          </div>
+          <button 
+            onClick={() => setHideSystemFreeze(true)}
+            className="px-3 py-1.5 bg-white text-red-600 hover:bg-slate-100 transition-colors rounded-lg text-[10px] font-black uppercase"
+          >
+            Dismiss
+          </button>
         </div>
-        <div>
-          <h4 className="text-sm font-black uppercase tracking-tight">System Freeze Detected</h4>
-          <p className="text-[10px] font-bold opacity-90">AI Guardian is initiating immediate fix protocols for OK-Sector.</p>
-        </div>
-        <button className="px-3 py-1.5 bg-white text-red-600 rounded-lg text-[10px] font-black uppercase">Dismiss</button>
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderOpsCenter = () => (
     <div className="h-full w-full -m-10"><OperationsDashboard user={user} onLogout={onLogout} /></div>
