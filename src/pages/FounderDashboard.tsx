@@ -83,7 +83,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
         <div className="absolute top-0 right-0 w-96 h-full bg-indigo-500/10 blur-3xl"></div>
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
            <div className="space-y-2">
-             <h2 className="text-3xl font-black tracking-tight">Welcome, Founder.</h2>
+             <h2 className="text-3xl font-black tracking-tight">Welcome, {isMonica ? 'Executive Director' : 'Founder'}.</h2>
              <p className="text-indigo-200 font-medium">Platform state: <span className="text-emerald-400 font-bold">Operational</span> • Umbrella: <span className="text-white font-bold">GGHP (Global Green Enterprise Inc)</span></p>
            </div>
            <div className="flex gap-4">
@@ -2059,8 +2059,12 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
           <div className="flex items-center gap-3 mb-6">
             <img src="/gghp-branding.png" alt="GGHP Logo" className="w-12 h-12 object-contain" />
             <div>
-              <h2 className="font-black text-sm text-white leading-tight tracking-tight uppercase">Founder Command</h2>
-              <p className="text-[10px] text-emerald-400 font-black tracking-widest uppercase">God View • Platform Owner</p>
+              <h2 className="font-black text-sm text-white leading-tight tracking-tight uppercase">
+                {isMonica ? 'Executive 1 Command' : 'Founder Command'}
+              </h2>
+              <p className="text-[10px] text-emerald-400 font-black tracking-widest uppercase">
+                {isMonica ? 'Compliance Oversight' : 'God View • Platform Owner'}
+              </p>
             </div>
           </div>
           <div className="p-3 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-3 mb-4 backdrop-blur-md">
@@ -2076,9 +2080,10 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
         <div className="flex-1 overflow-y-auto px-4 pb-6 space-y-1">
           {NAV_ITEMS.map((item, i) => {
             if ('section' in item) return <div key={i} className="pt-6 pb-2 px-3 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{item.section}</div>;
+            const displayLabel = isMonica ? item.label?.replace('God', 'Executive') : item.label;
             return (
               <button key={item.id} onClick={() => setActiveTab(item.id!)} className={cn("w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold transition-all text-left", activeTab === item.id ? "bg-indigo-600 text-white shadow-xl shadow-indigo-900/40" : "text-slate-400 hover:bg-white/5 hover:text-slate-100")}>
-                <span className="flex items-center gap-3">{item.icon && <item.icon size={18} className={activeTab === item.id ? "text-white" : "text-slate-500"} />} {item.label}</span>
+                <span className="flex items-center gap-3">{item.icon && <item.icon size={18} className={activeTab === item.id ? "text-white" : "text-slate-500"} />} {displayLabel}</span>
                 {item.badge && <span className="text-[10px] bg-white/10 text-white px-2 py-0.5 rounded-full font-black">{item.badge}</span>}
               </button>
             );
