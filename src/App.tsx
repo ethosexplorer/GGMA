@@ -1901,7 +1901,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
             <div className="text-2xl font-bold text-white mb-2 relative">Score Verification Active</div>
             <p className="text-emerald-100/40 text-sm mb-8 relative">Integrated across all GGMA, RIP, and SINC sectors</p>
             <button 
-              onClick={() => onNavigate('larry-chatbot')}
+              onClick={() => { const el = document.getElementById('membership-tiers'); if (el) { el.scrollIntoView({ behavior: 'smooth' }); } else { onNavigate('login'); } }}
               className="px-10 py-4 bg-emerald-500 hover:bg-emerald-400 text-emerald-950 rounded-2xl font-black transition-all shadow-xl shadow-emerald-500/20 relative"
             >
               View Your Score Potential
