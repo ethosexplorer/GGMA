@@ -1,4 +1,4 @@
-export interface SubscriptionPlan {
+﻿export interface SubscriptionPlan {
   id: string;
   name: string;
   monthlyPrice: number;
@@ -307,7 +307,7 @@ export const GENERAL_ATTORNEY_PLANS: SubscriptionPlan[] = [
 ];
 
 export const B2C_PLANS: SubscriptionPlan[] = [
-  { id: 'b2c_basic', name: 'B2C Basic', monthlyPrice: 49, annualPrice: 499, aiLevel: 'Gemini Flash + Basic Sylara', tokensMonth: '500,000' },
+  { id: 'b2c_basic', name: 'B2C Basic', monthlyPrice: 49.99, annualPrice: 499, aiLevel: 'Gemini Flash + Basic Sylara', tokensMonth: '500,000', trialDays: 30 },
   { id: 'b2c_med', name: 'B2C Medium', monthlyPrice: 99, annualPrice: 1009, aiLevel: 'Gemini Flash + Enhanced Sylara', tokensMonth: '1,500,000' },
   { id: 'b2c_full', name: 'B2C Full AI', monthlyPrice: 199, annualPrice: 2029, aiLevel: 'Full Sylara + Larry', tokensMonth: 'Unlimited' }
 ];
@@ -712,3 +712,4 @@ export const VOLUME_INCENTIVES: PartnerIncentive[] = [
   { threshold: '50+ Active Clients', bonus: '+15% margin + co-marketing fund eligibility' },
   { threshold: '100+ Active Clients', bonus: 'Custom strategic pricing + dedicated support team' },
 ];
+

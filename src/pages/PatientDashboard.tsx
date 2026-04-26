@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   Activity, Calendar, Stethoscope, Shield, FileText, Clock, Plus, LayoutDashboard, CreditCard,
   Wallet, Award, Search, FolderOpen, Heart, Bell, Sparkles, TrendingUp, Users, Briefcase, Lock, 
@@ -46,7 +46,7 @@ const tabs = [
 
 export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, key }: { user?: any; onLogout?: () => void; onSignup?: () => void; onOpenConcierge?: () => void; key?: string }) => {
   const [activeTab, setActiveTab] = useState('overview');
-  const [demoUnlocked, setDemoUnlocked] = useState(false); 
+  const [demoUnlocked, setDemoUnlocked] = useState(true);
   const isSubscribed = user?.subscriptionStatus === 'Active' || user?.planId || demoUnlocked;
   const hasBasic = isSubscribed || user?.planId === 'b2c_basic';
 
@@ -77,7 +77,7 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
         </div>
 
         <button 
-           onClick={() => { setDemoUnlocked(true); setActiveTab('overview'); }} 
+           onClick={() => { setDemoUnlocked(true); setActiveTab('subscription'); }} 
            className="w-full bg-[#1a4731] text-white py-4 rounded-2xl font-black shadow-lg shadow-emerald-900/20 hover:scale-[1.02] transition-all flex items-center justify-center gap-2 group"
         >
            Upgrade to Unlock {moduleName}
@@ -116,6 +116,12 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
         </div>
         
         <div className="hidden xl:flex items-center gap-3">
+           <button 
+             onClick={() => setDemoUnlocked(!demoUnlocked)} 
+             className="mr-2 text-[9px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors border border-slate-200 px-2 py-1 rounded-lg"
+           >
+             Demo: {demoUnlocked ? 'Expire Trial' : 'Start Trial'}
+           </button>
            {onOpenConcierge && (
              <button onClick={onOpenConcierge} className="mr-2 flex items-center gap-2 px-4 py-2 bg-[#1a4731] text-white rounded-xl font-black shadow-md hover:shadow-lg hover:-translate-y-0.5 hover:bg-[#153a28] transition-all text-sm">
                <Sparkles size={16} className="text-emerald-300" /> Start New Action
@@ -123,12 +129,12 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
            )}
            <div className="text-right">
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Account Status</p>
-              <p className={cn("text-xs font-bold", isSubscribed ? "text-emerald-600" : "text-amber-500")}>
-                 {isSubscribed ? 'Premium Member' : 'Basic (Limited)'}
+              <p className={cn("text-xs font-bold", isSubscribed ? "text-emerald-600" : "text-slate-500")}>
+                 {isSubscribed ? '30-Day Free Trial' : 'Free Account (Locked)'}
               </p>
            </div>
-           <div className={cn("w-10 h-10 rounded-full flex items-center justify-center border", isSubscribed ? "bg-emerald-50 border-emerald-200 text-emerald-600" : "bg-amber-50 border-amber-200 text-amber-500")}>
-              {isSubscribed ? <Award size={20} /> : <Zap size={20} />}
+           <div className={cn("w-10 h-10 rounded-full flex items-center justify-center border", isSubscribed ? "bg-emerald-50 border-emerald-200 text-emerald-600" : "bg-slate-50 border-slate-200 text-slate-400")}>
+              {isSubscribed ? <Award size={20} /> : <Lock size={16} />}
            </div>
         </div>
       </div>
