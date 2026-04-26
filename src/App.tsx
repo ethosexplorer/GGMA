@@ -1320,7 +1320,20 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <LanguageSelector currentLanguage="en" onLanguageChange={(code) => { 
+            {jurisdiction && setJurisdiction && (
+              <div className="hidden md:flex items-center gap-2 mr-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
+                <MapPin size={14} className="text-emerald-600" />
+                <span className="text-xs font-bold text-slate-500 hidden lg:inline">Jurisdiction:</span>
+                <select 
+                  value={jurisdiction}
+                  onChange={(e) => setJurisdiction(e.target.value)}
+                  className="bg-transparent text-sm font-black text-[#1a4731] outline-none cursor-pointer w-24"
+                >
+                  {['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'].map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
+            )}
+            <LanguageSelector currentLanguage="en" onLanguageChange={(code) => { 
             const gCode = code === 'zh' ? 'zh-CN' : code;
             if (gCode === 'en') {
               document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
@@ -1371,7 +1384,20 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
         </div>
 
         <div className="flex items-center gap-3">
-          <LanguageSelector currentLanguage="en" onLanguageChange={(code) => { 
+            {jurisdiction && setJurisdiction && (
+              <div className="hidden md:flex items-center gap-2 mr-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
+                <MapPin size={14} className="text-emerald-600" />
+                <span className="text-xs font-bold text-slate-500 hidden lg:inline">Jurisdiction:</span>
+                <select 
+                  value={jurisdiction}
+                  onChange={(e) => setJurisdiction(e.target.value)}
+                  className="bg-transparent text-sm font-black text-[#1a4731] outline-none cursor-pointer w-24"
+                >
+                  {['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'].map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
+            )}
+            <LanguageSelector currentLanguage="en" onLanguageChange={(code) => { 
             const gCode = code === 'zh' ? 'zh-CN' : code;
             if (gCode === 'en') {
               document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
