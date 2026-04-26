@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, MapPin } from 'lucide-react';
+import { Shield, MapPin, ArrowLeft, Search } from 'lucide-react';
 
 const STATES = [
   'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia',
@@ -14,14 +14,19 @@ export const GlobalHeader = ({
   jurisdiction, 
   setJurisdiction, 
   roleOverride, 
-  setRoleOverride 
+  setRoleOverride,
+  handleBack,
+  canGoBack
 }: { 
   userProfile: any, 
   jurisdiction: string, 
   setJurisdiction: (s: string) => void,
   roleOverride: string | null,
-  setRoleOverride: (r: string | null) => void
+  setRoleOverride: (r: string | null) => void,
+  handleBack?: () => void,
+  canGoBack?: boolean
 }) => {
+  const [searchQuery, setSearchQuery] = React.useState("");
   // Only show if logged in
   if (!userProfile) return null;
   
@@ -31,7 +36,14 @@ export const GlobalHeader = ({
   return (
     <div className="fixed top-0 left-0 right-0 z-[300] bg-slate-900 border-b border-slate-700/50 shadow-lg px-6 py-2 flex justify-between items-center animate-in slide-in-from-top duration-300">
       
-      {/* Jurisdiction Dropdown */}
+      {/* Back Button & Jurisdiction Dropdown */}
+      <div className="flex items-center gap-4">
+        {canGoBack && (
+          <button onClick={handleBack} className="flex items-center gap-2 text-slate-300 hover:text-white transition-colors bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-600">
+            <ArrowLeft size={16} /> <span className="text-xs font-bold">Back</span>
+          </button>
+        )}
+
       <div className="flex items-center gap-3">
         <div className="w-8 h-8 bg-[#1a4731] rounded-full flex items-center justify-center text-emerald-400">
           <MapPin size={16} />
@@ -46,6 +58,7 @@ export const GlobalHeader = ({
           </select>
           <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">▼</div>
         </div>
+      </div>
       </div>
 
       {/* God Mode Simulator */}
@@ -68,6 +81,17 @@ export const GlobalHeader = ({
             <option value="admin_internal">Internal Admin Command</option>
             <option value="provider">Medical Provider</option>
           </select>
+
+          <div className="relative ml-2 flex items-center">
+            <Search size={14} className="absolute left-2 text-indigo-400" />
+            <input 
+              type="text" 
+              placeholder="Search user to impersonate..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="bg-indigo-900/50 border border-indigo-500/50 text-white text-xs px-3 py-1 pl-7 rounded outline-none focus:border-indigo-400 w-48"
+            />
+          </div>
         </div>
       )}
 

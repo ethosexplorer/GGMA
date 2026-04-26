@@ -1247,7 +1247,7 @@ const STATE_RESOURCES: Record<string, any> = {
   );
 };
 
-const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | 'patient-portal' | 'support' | 'larry-chatbot' | 'larry-business' | 'legal-advocacy', role?: string) => void }) => {
+const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate: (view: 'login' | 'signup' | 'patient-portal' | 'support' | 'larry-chatbot' | 'larry-business' | 'legal-advocacy', role?: string) => void, jurisdiction?: string, setJurisdiction?: (s: string) => void }) => {
   const [broadcastMsg, setBroadcastMsg] = useState('🚨 SYSTEM NOTICE: NATIONWIDE COMPLIANCE AUDIT IN PROGRESS • GLOBAL GREEN HYBRID PLATFORM (GGHP) • ALL SECTORS (GGMA/RIP/SINC) OPERATIONAL');
   const [inTheKnowNews, setInTheKnowNews] = useState([
     '🚨 BREAKING: Federal Marijuana Rescheduling — Schedule I → Schedule III NOW OFFICIAL',
@@ -3095,8 +3095,8 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     const date = "April 21, 2026";
     const metrcStatus = "Validated Metrc Integrator (Active)";
     if (variant === 'ggma') return `👋 Welcome to the **GGMA Sector**. I am **Sylara**, your **Intake Agent**. We are an official **${metrcStatus}**. I handle all regulatory onboarding, card processing, and registry management. \n\nHow can I assist with your GGMA licensing today?`;
-    if (variant === 'rip') return `🕵️ **RIP Intelligence Portal**. I am **Sylara**, coordinating with the **L.A.R.R.Y Enforcement Engine**. We are a **${metrcStatus}** as of ${date}. We handle real-time background checks, field oversight, and compliance policing via live sync. \n\nWhat intelligence or oversight task do you need assistance with?`;
-    if (variant === 'sinc') return `🛡️ **SINC Compliance Infrastructure**. I am **Sylara**, managing your secure operational backbone. SINC is a **${metrcStatus}**. We ensure audit-trails, encrypted records, and network integrity across all state jurisdictions. \n\nHow can I help secure your business today?`;
+    if (variant === 'rip') return `🕵️ **RIP Intelligence Portal**. I am **Sylara**, coordinating with the **L.A.R.R.Y Enforcement Engine**. Due to the highly sensitive nature of intelligence and enforcement operations, I can only provide basic guidance here. For secure access to field reports or oversight actions, you must create an official account. \n\nWould you like to begin intake?`;
+    if (variant === 'sinc') return `🛡️ **SINC Compliance Infrastructure**. I am **Sylara**, managing your secure operational backbone. Because SINC handles encrypted audit trails and seed-to-sale architecture, deep access requires an authenticated business account. \n\nWould you like to begin business intake?`;
     
     if (isBusiness) return `👋 Hello! I am **Sylara** — your **Intake & Support Agent**. Global Green Enterprise Inc is now a **${metrcStatus}**. I'm here to guide you through **Cannabis Business Licensing** and resolve any operational hurdles before passing your file to **L.A.R.R.Y** for final Authority approval. \n\nHow can I assist your business today?`;
     
@@ -3694,11 +3694,11 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       setIsTyping(false);
       return;
     } else if (lower.includes('rip intelligence') || lower === 'rip enforcement' || lower.includes('rip enforcement') || lower === 'tell me about rip enforcement.') {
-      response = '🕵️ **RIP (Regulatory Intelligence Policing)**\n\nRIP handles enforcement, background verification, and regulatory oversight for **government and state authority entities only**.\n\nWhich government function do you need?';
+      response = '🕵️ **RIP (Regulatory Intelligence Policing)**\n\nDue to the highly sensitive nature of intelligence and enforcement operations, I can only provide basic guidance here. For secure access to field reports or oversight actions, you must create an official account.\n\nWould you like to begin intake?';
       setMessages(prev => [...prev, { 
         role: 'bot', 
         text: response,
-        choices: ['Field Intelligence Report', 'Background Verification Check', 'Enforcement Status Inquiry', 'Compliance Audit Request', 'Contact Oversight Division', 'Main Menu'] 
+        choices: ['Start Official Intake', 'Basic Overview', 'Main Menu'] 
       } as any]);
       setSignupStep(400);
       setIsTyping(false);
