@@ -7,9 +7,10 @@ const applicationTypes = [
   { id: 'renewal', title: 'Card Renewal', desc: 'Renew your existing medical marijuana card', status: null, icon: '🔄' },
   { id: 'caregiver', title: 'Caregiver Application', desc: 'Apply to be a designated caregiver', status: null, icon: '🤝' },
   { id: 'amendment', title: 'Card Amendment', desc: 'Update information on your existing card', status: null, icon: '📝' },
+  { id: 'replacement', title: 'Card Replacement', desc: 'Request a replacement for a lost or stolen card', status: null, icon: '💳' },
 ];
 
-export const ApplicationsTab = ({ user }: { user?: any }) => {
+export const ApplicationsTab = ({ user, onStartApplication }: { user?: any, onStartApplication?: () => void }) => {
   const [view, setView] = useState<'hub' | 'new'>('hub');
   const [hasStateInsurance, setHasStateInsurance] = useState<boolean | null>(user?.insurance === 'Yes' ? true : user?.insurance === 'No' ? false : null);
   const [paymentState, setPaymentState] = useState<'idle' | 'invoicing' | 'sent' | 'paid'>('idle');
@@ -266,7 +267,11 @@ export const ApplicationsTab = ({ user }: { user?: any }) => {
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {applicationTypes.map((app) => (
-                <button key={app.id} className="text-left p-5 rounded-2xl border-2 border-slate-200 hover:border-emerald-300 hover:shadow-md transition-all group">
+                <button 
+                  key={app.id} 
+                  onClick={onStartApplication}
+                  className="text-left p-5 rounded-2xl border-2 border-slate-200 hover:border-emerald-300 hover:shadow-md transition-all group"
+                >
                   <div className="text-2xl mb-3">{app.icon}</div>
                   <h4 className="font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">{app.title}</h4>
                   <p className="text-sm text-slate-500 mt-1">{app.desc}</p>

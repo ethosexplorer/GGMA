@@ -299,7 +299,7 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
                    <h3 className="text-2xl font-black text-slate-800 mb-3">Manual Entry</h3>
                    <p className="text-slate-500 mb-10 flex-1 leading-relaxed">The traditional path. Manually upload documents, track state status, and resolve issues yourself. Perfect for simple renewals.</p>
                    <div className="bg-slate-50 px-5 py-2.5 rounded-2xl text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 w-fit">Standard Process</div>
-                   <Button onClick={() => window.open('https://www.renewoklahomacard.com/', '_blank')} className="w-full bg-slate-900 text-white py-5 text-lg hover:bg-slate-800 transition-colors">Launch Self-Service</Button>
+                   <Button onClick={() => window.open('https://oklahoma.gov/omma/apply.html', '_blank')} className="w-full bg-slate-900 text-white py-5 text-lg hover:bg-slate-800 transition-colors">Launch Self-Service</Button>
                 </div>
 
                 <div className="bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-[#0f291c] p-10 rounded-[3rem] border border-emerald-800/50 shadow-2xl flex flex-col relative overflow-hidden group">
@@ -318,7 +318,16 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
                    </Button>
                 </div>
              </div>
-             <ApplicationsTab user={user} />
+             <ApplicationsTab 
+                user={user} 
+                onStartApplication={() => {
+                   if (isSubscribed) {
+                      if (onOpenConcierge) onOpenConcierge();
+                   } else {
+                      window.open('https://oklahoma.gov/omma/apply.html', '_blank');
+                   }
+                }} 
+             />
           </motion.div>
         )}
 
