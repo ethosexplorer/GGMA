@@ -1306,35 +1306,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
       <div className="bg-slate-900 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-6 py-2 flex items-center justify-between z-[60] relative">
         <div className="flex items-center gap-3">
           <Globe size={14} className="text-emerald-400" />
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest hidden sm:inline">Speak Your Language:</span>
-          <div className="flex items-center gap-1">
-            {[
-              { code: 'en', flag: '🇺🇸', label: 'EN' },
-              { code: 'es', flag: '🇲🇽', label: 'ES' },
-              { code: 'zh-CN', flag: '🇨🇳', label: '中文' },
-              { code: 'vi', flag: '🇻🇳', label: 'VI' },
-              { code: 'ko', flag: '🇰🇷', label: '한' },
-              { code: 'ar', flag: '🇸🇦', label: 'عر' },
-            ].map(lang => (
-              <button
-                key={lang.code}
-                onClick={() => { 
-                  if (lang.code === 'en') {
-                    document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-                    document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + window.location.hostname;
-                  } else {
-                    document.cookie = `googtrans=/en/${lang.code}; path=/;`;
-                    document.cookie = `googtrans=/en/${lang.code}; path=/; domain=` + window.location.hostname;
-                  }
-                  window.location.reload();
-                }}
-                className="px-2 py-1 rounded-md text-xs hover:bg-white/10 transition-colors text-white/80 hover:text-white flex items-center gap-1"
-              >
-                <span>{lang.flag}</span>
-                <span className="text-[9px] font-bold hidden md:inline">{lang.label}</span>
-              </button>
-            ))}
-          </div>
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest hidden sm:inline">Speak Your Language</span>
         </div>
         <div className="flex items-center gap-3">
             {jurisdiction && setJurisdiction && (
@@ -3143,7 +3115,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
 
   const [messages, setMessages] = useState<{role: 'user'|'bot', text: string, choices?: string[]}[]>([
     { role: 'bot', text: '🌎 **Welcome! / ¡Bienvenidos! / 欢迎 / Hoan nghênh**\n\nBefore we begin, please select your preferred language:', choices: [
-      'English', 'Español', 'Português', 'Français', 'Kreyòl Ayisyen', '中文(简体)', '中文(繁體)', 'Tiếng Việt', '한국어', '日本語', 'Tagalog', 'Hmoob', 'हिन्दी', 'اردو', 'ဗမာစာ', 'ไทย', 'العربية', 'Soomaali', 'አማርኛ', 'Kiswahili', 'Deutsch', 'Italiano', 'Русский', 'Polski', 'Українська', 'Română', 'Diné Bizaad'
+      'English', 'Español', '中文(简体)', 'Tiếng Việt', '한국어', 'العربية', '+ More Languages...'
     ] }
   ]);
   const [inputValue, setInputValue] = useState('');
@@ -3423,6 +3395,30 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     let response = '';
     const lower = text.toLowerCase();
     
+    // Handle "More Languages" expansion
+    if (lower === '+ more languages...' || lower.includes('more languages')) {
+      setMessages(prev => {
+        const updated = [...prev];
+        // Remove the user's "More Languages" message
+        updated.pop();
+        // Replace the initial language choices with expanded list
+        updated[0] = { 
+          role: 'bot', 
+          text: '🌎 **Welcome! / ¡Bienvenidos! / 欢迎 / Hoan nghênh**\n\nBefore we begin, please select your preferred language:', 
+          choices: [
+            'English', 'Español', '中文(简体)', 'Tiếng Việt', '한국어', 'العربية',
+            'Português', 'Français', 'Kreyòl Ayisyen', '中文(繁體)', '日本語', 'Tagalog', 
+            'Hmoob', 'हिन्दी', 'اردو', 'ဗမာစာ', 'ไทย', 'Soomaali', 
+            'አማርኛ', 'Kiswahili', 'Deutsch', 'Italiano', 'Русский', 'Polski', 
+            'Українська', 'Română', 'Diné Bizaad'
+          ] 
+        };
+        return updated;
+      });
+      setIsTyping(false);
+      return;
+    }
+
     // Handle Subscription / Pricing Keywords
     if (lower.includes('subscription plan') || lower.includes('view subscription') || lower.includes('state authority plan') || lower.includes('pricing') || lower.includes('basic subscription') || lower.includes('professional subscription') || lower.includes('enterprise subscription')) {
       response = '?? **GGHP Subscription Plans**\n\n' +
