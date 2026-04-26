@@ -128,7 +128,7 @@ const TRANSLATIONS: Record<string, Translations> = {
     'footer.terms': 'Terms of Service',
     'footer.privacy': 'Privacy Policy',
     'footer.accessibility': 'Accessibility',
-    'footer.support': 'Support: 1-844-333-4447',
+    'footer.support': 'Support: 1-844-333-4447 | Admin: asstsupport@gmail.com',
     'common.language': 'Language',
     'common.selectLanguage': 'Select Language',
     'common.poweredBy': 'Powered by GGP-OS',
@@ -354,4 +354,5 @@ export function getLanguagesByRegion(): Record<string, Language[]> {
   }
   return grouped;
 }
+
 
