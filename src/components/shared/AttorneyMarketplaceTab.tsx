@@ -156,7 +156,7 @@ export const AttorneyMarketplaceTab = () => {
                   </div>
 
                   <div className="flex gap-2">
-                    <button onClick={() => ((window as any).Calendly ? (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma/health-wellness-consultation' }) : window.open('https://calendly.com/shantell-ggma/health-wellness-consultation', '_blank'))} className="flex-1 flex items-center justify-center gap-2 py-3 bg-[#1a4731] text-white rounded-2xl text-xs font-black hover:bg-[#153a28] shadow-lg shadow-emerald-900/20 transition-all">
+                    <button onClick={() => ((window as any).Calendly ? (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma' }) : window.open('https://calendly.com/shantell-ggma', '_blank'))} className="flex-1 flex items-center justify-center gap-2 py-3 bg-[#1a4731] text-white rounded-2xl text-xs font-black hover:bg-[#153a28] shadow-lg shadow-emerald-900/20 transition-all">
                        <MessageSquare size={16} /> Consult Now
                     </button>
                     <button className="px-4 py-3 bg-white border border-slate-200 rounded-2xl text-slate-700 hover:bg-slate-50 transition-all">
@@ -202,4 +202,5 @@ export const AttorneyMarketplaceTab = () => {
     </div>
   );
 };
+
 

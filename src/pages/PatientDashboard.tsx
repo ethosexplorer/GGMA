@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
   Activity, Calendar, Stethoscope, Shield, FileText, Clock, Plus, LayoutDashboard, CreditCard,
   Wallet, Award, Search, FolderOpen, Heart, Bell, Sparkles, TrendingUp, Users, Briefcase, Lock, 
@@ -329,7 +329,7 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
                       <p className="text-blue-100 text-lg font-medium">Connect with a specialist in under 15 minutes. Secure, private, and fully integrated with your Care Wallet.</p>
                       <div className="flex gap-4 pt-4">
                          <button 
-                           onClick={() => ((window as any).Calendly ? (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma/health-wellness-consultation' }) : window.open('https://calendly.com/shantell-ggma/health-wellness-consultation', '_blank'))}
+                           onClick={() => ((window as any).Calendly ? (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma' }) : window.open('https://calendly.com/shantell-ggma', '_blank'))}
                            className="bg-white text-blue-600 px-8 py-3 rounded-2xl font-black shadow-xl shadow-blue-900/20 hover:scale-105 transition-transform"
                          >
                            Book Now
@@ -423,6 +423,7 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
     </div>
   );
 };
+
 
 
 
