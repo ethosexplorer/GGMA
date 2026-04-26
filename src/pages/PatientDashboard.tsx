@@ -34,11 +34,10 @@ const tabs = [
   { id: 'overview', label: 'Health Hub', icon: LayoutDashboard },
   { id: 'applications', label: 'Applications', icon: FileText },
   { id: 'travel', label: 'Travel & Reciprocity', icon: Globe },
-  { id: 'telehealth', label: 'Telehealth', icon: Video },
+  { id: 'telehealth', label: 'Telehealth & Care Team', icon: Video },
   { id: 'cards', label: 'My Cards', icon: CreditCard },
   { id: 'wallet', label: 'Care Wallet', icon: Wallet },
   { id: 'c3score', label: 'C³ Score', icon: Award },
-  { id: 'providers', label: 'Care Team', icon: Search },
   { id: 'attorneys', label: 'Legal Counsel', icon: Briefcase },
   { id: 'documents', label: 'Vault', icon: FolderOpen },
   { id: 'subscription', label: 'Membership', icon: Sparkles },
@@ -364,13 +363,13 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
                       <p className="text-blue-100 text-lg font-medium">Connect with a specialist in under 15 minutes. Secure, private, and fully integrated with your Care Wallet.</p>
                       <div className="flex gap-4 pt-4">
                          <button 
-                           onClick={() => ((window as any).Calendly ? (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma' }) : window.open('https://calendly.com/shantell-ggma', '_blank'))}
+                           onClick={() => ((window as any).Calendly ? (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/health-wellness-consultation' }) : window.open('https://calendly.com/globalgreenhpmeet/health-wellness-consultation', '_blank'))}
                            className="bg-white text-blue-600 px-8 py-3 rounded-2xl font-black shadow-xl shadow-blue-900/20 hover:scale-105 transition-transform"
                          >
                            Book Now
                          </button>
                          <button 
-                           onClick={() => setActiveTab('providers')}
+                           onClick={() => document.getElementById('care-team-directory')?.scrollIntoView({ behavior: 'smooth' })}
                            className="bg-blue-500 text-white px-8 py-3 rounded-2xl font-black border border-blue-400 hover:bg-blue-400 transition-colors"
                          >
                            View Network
@@ -408,12 +407,17 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
                       </div>
                    </div>
                 </div>
+                
+                <div id="care-team-directory" className="mt-8 pt-8 border-t border-slate-200">
+                  <h2 className="text-3xl font-black tracking-tight text-slate-800 mb-6">Care Team Directory</h2>
+                  <ProviderDirectoryTab />
+                </div>
              </div>
           </motion.div>
         )}
 
         {/* ─── LOCKED TABS ─── */}
-        {(activeTab === 'cards' || activeTab === 'wallet' || activeTab === 'c3score' || activeTab === 'providers' || activeTab === 'attorneys' || activeTab === 'documents') && !isSubscribed && (
+        {(activeTab === 'cards' || activeTab === 'wallet' || activeTab === 'c3score' || activeTab === 'attorneys' || activeTab === 'documents') && !isSubscribed && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative min-h-[600px]">
              <ShadowOverlay 
                 title={`${tabs.find(t => t.id === activeTab)?.label} Locked`} 
@@ -434,9 +438,6 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
 
         {/* ─── C³ SCORE TAB ─── */}
         {activeTab === 'c3score' && isSubscribed && <CreditScoreTab />}
-
-        {/* ─── FIND PROVIDERS TAB ─── */}
-        {activeTab === 'providers' && isSubscribed && <ProviderDirectoryTab />}
 
         {/* ─── FIND ATTORNEYS TAB ─── */}
         {activeTab === 'attorneys' && isSubscribed && (

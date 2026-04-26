@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Search, Filter, Shield, Scale, MapPin, Star, MessageSquare, Briefcase, FileText, Globe, CheckCircle, ExternalLink, Gavel } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -92,13 +92,13 @@ export const AttorneyMarketplaceTab = () => {
           />
         </div>
         <div className="flex gap-2">
-          <button className="px-6 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-black text-slate-700 hover:border-[#1a4731] hover:text-[#1a4731] transition-all flex items-center gap-2">
+          <button onClick={() => alert('Opening Jurisdiction filter...')} className="px-6 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-black text-slate-700 hover:border-[#1a4731] hover:text-[#1a4731] transition-all flex items-center gap-2">
             <Filter size={18} /> Jurisdiction
           </button>
-          <button className="px-6 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-black text-slate-700 hover:border-[#1a4731] hover:text-[#1a4731] transition-all flex items-center gap-2">
+          <button onClick={() => alert('Opening Specialty filter...')} className="px-6 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-black text-slate-700 hover:border-[#1a4731] hover:text-[#1a4731] transition-all flex items-center gap-2">
             <Shield size={18} /> Specialty
           </button>
-          <button className="px-8 py-3.5 bg-[#1a4731] text-white rounded-2xl text-sm font-black hover:bg-[#153a28] shadow-lg shadow-emerald-900/20 transition-all">
+          <button onClick={() => alert('Finding optimal attorney matches based on your profile...')} className="px-8 py-3.5 bg-[#1a4731] text-white rounded-2xl text-sm font-black hover:bg-[#153a28] shadow-lg shadow-emerald-900/20 transition-all">
             Find Matches
           </button>
         </div>
@@ -156,7 +156,7 @@ export const AttorneyMarketplaceTab = () => {
                   </div>
 
                   <div className="flex gap-2">
-                    <button onClick={() => ((window as any).Calendly ? (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma' }) : window.open('https://calendly.com/shantell-ggma', '_blank'))} className="flex-1 flex items-center justify-center gap-2 py-3 bg-[#1a4731] text-white rounded-2xl text-xs font-black hover:bg-[#153a28] shadow-lg shadow-emerald-900/20 transition-all">
+                    <button onClick={() => ((window as any).Calendly ? (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/legal-consultation' }) : window.open('https://calendly.com/globalgreenhpmeet/legal-consultation', '_blank'))} className="flex-1 flex items-center justify-center gap-2 py-3 bg-[#1a4731] text-white rounded-2xl text-xs font-black hover:bg-[#153a28] shadow-lg shadow-emerald-900/20 transition-all">
                        <MessageSquare size={16} /> Consult Now
                     </button>
                     <button className="px-4 py-3 bg-white border border-slate-200 rounded-2xl text-slate-700 hover:bg-slate-50 transition-all">

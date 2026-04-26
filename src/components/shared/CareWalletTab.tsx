@@ -543,6 +543,40 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
           </div>
         </div>
       )}
+      {/* Compassion Allocation Modal */}
+      {showCreditModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden border border-slate-200 animate-in zoom-in-95 duration-200">
+            <div className="p-6 bg-blue-900 bg-gradient-to-br from-blue-900 to-slate-900 text-white text-center">
+              <h3 className="text-xl font-black text-blue-300 flex items-center justify-center gap-2 uppercase tracking-tighter">
+                <TrendingUp size={24} /> Compassion Allocation
+              </h3>
+            </div>
+            <div className="p-8 space-y-6 text-center">
+              <p className="text-sm font-medium text-slate-600">Your GGE Compassion Allocation is currently managed by Larry Compliance Division.</p>
+              <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                <p className="text-2xl font-black text-blue-800">${(lineOfCredit - utilizedCredit).toLocaleString()}</p>
+                <p className="text-[10px] uppercase font-bold text-blue-500 tracking-widest mt-1">Available Allocation</p>
+              </div>
+              <button 
+                onClick={() => {
+                  alert('Requesting allocation increase via Larry Compliance Division...');
+                  setShowCreditModal(false);
+                }}
+                className="w-full py-4 bg-blue-600 text-white rounded-2xl font-black shadow-lg shadow-blue-900/20 hover:bg-blue-500 transition-all"
+              >
+                REQUEST INCREASE
+              </button>
+              <button 
+                onClick={() => setShowCreditModal(false)}
+                className="w-full text-slate-400 text-xs font-bold hover:text-slate-600 transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* NomadCash Disposable Card Modal */}
       {showDisposableCard && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">

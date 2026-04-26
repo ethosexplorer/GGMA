@@ -14,8 +14,8 @@ const myCards = [
     photo: null,
   },
   {
-    id: 'OMMA-2026-CG-1123',
-    type: 'Caregiver Authorization',
+    id: 'OMMA-2026-MP-1123',
+    type: 'Minor Patient License',
     state: 'Oklahoma',
     status: 'Active',
     issued: 'Mar 1, 2026',
@@ -49,7 +49,7 @@ export const MyCardsTab = () => (
                </div>
                <div className="text-right">
                   <div className="text-[6px] font-bold tracking-widest text-blue-200 uppercase">Oklahoma Medical Marijuana</div>
-                  <div className="text-[10px] font-black tracking-tight uppercase leading-none">Adult Patient License</div>
+                  <div className="text-[10px] font-black tracking-tight uppercase leading-none">{card.type}</div>
                </div>
             </div>
 
@@ -68,7 +68,7 @@ export const MyCardsTab = () => (
                      </div>
                   </div>
                   <div className="bg-[#1b4f8a] text-white text-center text-[10px] font-black uppercase py-1 tracking-widest border border-[#1b4f8a]">
-                     {card.type.includes('Caregiver') ? 'Caregiver' : 'Patient'}
+                     {card.type.includes('Minor') ? 'Minor' : card.type.includes('Caregiver') ? 'Caregiver' : 'Patient'}
                   </div>
                </div>
 
@@ -98,13 +98,13 @@ export const MyCardsTab = () => (
           </div>
 
           <div className="flex gap-2">
-            <button className="flex-1 py-3 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-black transition-all flex items-center justify-center gap-1.5 shadow-sm">
+            <button onClick={() => alert('Opening scan module...')} className="flex-1 py-3 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-black transition-all flex items-center justify-center gap-1.5 shadow-sm">
               <QrCode size={14} /> Scan
             </button>
-            <button className="flex-1 py-3 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-black transition-all flex items-center justify-center gap-1.5 shadow-sm">
+            <button onClick={() => alert('Exporting card as PDF...')} className="flex-1 py-3 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-black transition-all flex items-center justify-center gap-1.5 shadow-sm">
               <Download size={14} /> Export
             </button>
-            <button className="flex-1 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white text-xs font-black transition-all flex items-center justify-center gap-1.5 shadow-sm shadow-emerald-900/20">
+            <button onClick={() => alert('Starting renewal process in Sylara AI...')} className="flex-1 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white text-xs font-black transition-all flex items-center justify-center gap-1.5 shadow-sm shadow-emerald-900/20">
               <RefreshCw size={14} /> Renew
             </button>
           </div>
