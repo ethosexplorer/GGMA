@@ -273,7 +273,7 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
                    <h3 className="text-2xl font-black text-slate-800 mb-3">Manual Entry</h3>
                    <p className="text-slate-500 mb-10 flex-1 leading-relaxed">The traditional path. Manually upload documents, track state status, and resolve issues yourself. Perfect for simple renewals.</p>
                    <div className="bg-slate-50 px-5 py-2.5 rounded-2xl text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 w-fit">Standard Process</div>
-                   <Button className="w-full bg-slate-900 text-white py-5 text-lg">Launch Self-Service</Button>
+                   <Button onClick={() => window.open('https://www.renewoklahomacard.com/', '_blank')} className="w-full bg-slate-900 text-white py-5 text-lg hover:bg-slate-800 transition-colors">Launch Self-Service</Button>
                 </div>
 
                 <div className="bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-[#0f291c] p-10 rounded-[3rem] border border-emerald-800/50 shadow-2xl flex flex-col relative overflow-hidden group">
@@ -284,7 +284,10 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
                    <h3 className="text-2xl font-black text-white mb-3">Sylara AI Assisted</h3>
                    <p className="text-emerald-100/80 mb-10 flex-1 leading-relaxed">Let our AI engine drive. Automated document verification, instant compliance flagging, and direct-to-state API submission.</p>
                    <div className="bg-emerald-500/20 border border-emerald-400/30 px-5 py-2.5 rounded-2xl text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em] mb-6 w-fit">Recommended Path</div>
-                   <Button onClick={onOpenConcierge} disabled={!hasBasic} className="w-full bg-emerald-500 text-white py-5 text-lg disabled:opacity-50 shadow-xl shadow-emerald-950/40">
+                   <Button 
+                      onClick={() => hasBasic ? onOpenConcierge?.() : setActiveTab('subscription')} 
+                      className="w-full bg-emerald-500 text-white py-5 text-lg hover:bg-emerald-400 transition-colors shadow-xl shadow-emerald-950/40"
+                   >
                       {hasBasic ? 'Start AI Session' : 'Upgrade to Unlock Sylara'}
                    </Button>
                 </div>
@@ -325,8 +328,18 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
                       <h2 className="text-4xl font-black tracking-tight leading-none">Instant Virtual Care</h2>
                       <p className="text-blue-100 text-lg font-medium">Connect with a specialist in under 15 minutes. Secure, private, and fully integrated with your Care Wallet.</p>
                       <div className="flex gap-4 pt-4">
-                         <button className="bg-white text-blue-600 px-8 py-3 rounded-2xl font-black shadow-xl shadow-blue-900/20">Book Now</button>
-                         <button className="bg-blue-500 text-white px-8 py-3 rounded-2xl font-black border border-blue-400">View Network</button>
+                         <button 
+                           onClick={() => ((window as any).Calendly ? (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma/health-wellness-consultation' }) : window.open('https://calendly.com/shantell-ggma/health-wellness-consultation', '_blank'))}
+                           className="bg-white text-blue-600 px-8 py-3 rounded-2xl font-black shadow-xl shadow-blue-900/20 hover:scale-105 transition-transform"
+                         >
+                           Book Now
+                         </button>
+                         <button 
+                           onClick={() => setActiveTab('providers')}
+                           className="bg-blue-500 text-white px-8 py-3 rounded-2xl font-black border border-blue-400 hover:bg-blue-400 transition-colors"
+                         >
+                           View Network
+                         </button>
                       </div>
                    </div>
                    <div className="w-48 h-48 bg-white/10 rounded-[3rem] flex items-center justify-center border border-white/20">

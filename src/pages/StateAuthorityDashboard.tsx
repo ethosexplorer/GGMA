@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { 
   Building2, ShieldCheck, Landmark, FileCheck, DollarSign, Activity, 
   Map as MapIcon, Settings, Download, Search, AlertCircle, FileText, CheckCircle2, XCircle,
@@ -28,7 +28,7 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
                 <ShieldCheck size={12} />
                 OMMA / DOJ ALERT
               </span>
-              <span className="text-teal-200 text-[10px] font-bold uppercase tracking-wider">April 23, 2026 • Federal Reclassification</span>
+              <span className="text-teal-200 text-[10px] font-bold uppercase tracking-wider">{new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })} • Federal Reclassification</span>
             </div>
             <h2 className="text-xl font-extrabold text-white leading-tight mb-2">DOJ Reclassifies Marijuana to Schedule III</h2>
             <p className="text-sm text-teal-100/90 leading-relaxed max-w-4xl">
@@ -388,4 +388,5 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
     </div>
   );
 };
+
 

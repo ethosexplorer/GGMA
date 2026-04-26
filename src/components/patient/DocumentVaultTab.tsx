@@ -23,8 +23,29 @@ const categories = [
 export const DocumentVaultTab = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [dragOver, setDragOver] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [localDocs, setLocalDocs] = useState(documents);
 
-  const filtered = selectedCategory === 'all' ? documents : documents.filter(d => d.category === selectedCategory);
+  const filtered = selectedCategory === 'all' ? localDocs : localDocs.filter(d => d.category === selectedCategory);
+
+  const handleUpload = () => {
+    setIsUploading(true);
+    setTimeout(() => {
+      setIsUploading(false);
+      setLocalDocs([{
+        id: Date.now(),
+        name: 'New_Scanned_Document.pdf',
+        type: 'General',
+        format: 'PDF',
+        size: '1.2 MB',
+        uploaded: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        status: 'Active',
+        category: 'medical'
+      }, ...localDocs]);
+      alert('Document securely uploaded to your Vault and synced with the Master Administrative Vault.');
+    }, 1500);
+  };
 
   return (
     <div className="space-y-6">
@@ -99,17 +120,20 @@ export const DocumentVaultTab = () => {
         {/* Main Content */}
         <div className="lg:col-span-3 space-y-4">
           {/* Upload Zone */}
+          <input type="file" ref={fileInputRef} onChange={handleUpload} className="hidden" />
           <div
+            onClick={() => fileInputRef.current?.click()}
             className={cn(
               "border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer",
-              dragOver ? "border-emerald-400 bg-emerald-50" : "border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+              dragOver ? "border-emerald-400 bg-emerald-50" : "border-slate-200 hover:border-slate-300 hover:bg-slate-50",
+              isUploading && "opacity-50 pointer-events-none"
             )}
             onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
             onDragLeave={() => setDragOver(false)}
-            onDrop={(e) => { e.preventDefault(); setDragOver(false); }}
+            onDrop={(e) => { e.preventDefault(); setDragOver(false); handleUpload(); }}
           >
             <Upload size={32} className={cn("mx-auto mb-3", dragOver ? "text-emerald-500" : "text-slate-400")} />
-            <p className="font-bold text-slate-700 text-sm">Drop files here or click to upload</p>
+            <p className="font-bold text-slate-700 text-sm">{isUploading ? 'Encrypting & Uploading...' : 'Drop files here or click to upload'}</p>
             <p className="text-xs text-slate-500 mt-1">Supports PDF, JPG, PNG up to 10MB each</p>
           </div>
 

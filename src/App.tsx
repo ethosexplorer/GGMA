@@ -1473,7 +1473,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
                <div className="group">
                  <div className="flex items-center gap-2 mb-1">
                    <span className="bg-red-600 text-white px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-widest animate-pulse">Breaking</span>
-                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">April 23, 2026</p>
+                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</p>
                  </div>
                  <h4 className="text-sm font-bold text-slate-800 mb-2 group-hover:text-[#1a4731] transition-colors">Cannabis Officially Rescheduled: Schedule I → Schedule III</h4>
                  <ul className="text-xs text-slate-600 space-y-1.5 ml-4 list-disc marker:text-emerald-500">
@@ -1487,7 +1487,7 @@ const LandingPage = ({ onNavigate }: { onNavigate: (view: 'login' | 'signup' | '
 
                {/* Update 1 */}
                <div className="group">
-                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">April 23, 2026</p>
+                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</p>
                  <h4 className="text-sm font-bold text-slate-800 mb-2 group-hover:text-[#1a4731] transition-colors">DOJ Final Order: Schedule III Reclassification</h4>
                  <ul className="text-xs text-slate-600 space-y-1.5 ml-4 list-disc marker:text-emerald-500">
                     <li><strong className="text-slate-800">Tax Relief (280E):</strong> Immediate potential to deduct ordinary business expenses.</li>
@@ -7790,6 +7790,7 @@ export default function App() {
     </ErrorBoundary>
   );
 }
+
 
 
 

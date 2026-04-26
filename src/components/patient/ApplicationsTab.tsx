@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { FileText, Upload, Clock, CheckCircle, AlertCircle, DollarSign, ChevronRight, Info, Sparkles } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -12,6 +12,7 @@ const applicationTypes = [
 export const ApplicationsTab = ({ user }: { user?: any }) => {
   const [view, setView] = useState<'hub' | 'new'>('hub');
   const [hasStateInsurance, setHasStateInsurance] = useState<boolean | null>(user?.insurance === 'Yes' ? true : user?.insurance === 'No' ? false : null);
+  const [paymentState, setPaymentState] = useState<'idle' | 'invoicing' | 'sent' | 'paid'>('idle');
 
   const hasIntakeData = !!(user?.ssn || user?.qualifyingCondition || user?.idNumber);
 
@@ -146,14 +147,53 @@ export const ApplicationsTab = ({ user }: { user?: any }) => {
                     <span className="text-emerald-200">Doctor + Processing Total:</span>
                     <span className="font-black text-lg">$45.00</span>
                   </div>
-                  <a 
-                    href="https://www.renewoklahomacard.com/" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="w-full py-3 bg-emerald-500 text-white rounded-xl text-xs font-black hover:bg-emerald-400 transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/20"
-                  >
-                    🚀 Start Application ($45)
-                  </a>
+                  {paymentState === 'idle' && (
+                    <button 
+                      onClick={() => {
+                        setPaymentState('invoicing');
+                        setTimeout(() => setPaymentState('sent'), 1500);
+                      }}
+                      className="w-full py-3 bg-emerald-500 text-white rounded-xl text-xs font-black hover:bg-emerald-400 transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/20"
+                    >
+                      💳 Pay $45 Evaluation Fee
+                    </button>
+                  )}
+
+                  {paymentState === 'invoicing' && (
+                    <button disabled className="w-full py-3 bg-emerald-500/50 text-white rounded-xl text-xs font-black flex items-center justify-center gap-2">
+                      Generating Invoice...
+                    </button>
+                  )}
+
+                  {paymentState === 'sent' && (
+                    <div className="space-y-2">
+                      <div className="p-3 bg-blue-500/20 text-blue-200 text-xs font-bold rounded-xl border border-blue-500/30 text-center">
+                        Invoice sent! Please check your email and complete the $45 payment to continue.
+                      </div>
+                      <button 
+                        onClick={() => setPaymentState('paid')}
+                        className="w-full py-3 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500 transition-all"
+                      >
+                        ✅ I Have Paid
+                      </button>
+                    </div>
+                  )}
+
+                  {paymentState === 'paid' && (
+                    <div className="space-y-2">
+                      <div className="p-3 bg-emerald-500/20 text-emerald-200 text-xs font-bold rounded-xl border border-emerald-500/30 text-center flex items-center justify-center gap-2">
+                        <CheckCircle size={16} /> Payment Verified
+                      </div>
+                      <a 
+                        href="https://www.renewoklahomacard.com/" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="w-full py-3 bg-emerald-500 text-white rounded-xl text-xs font-black hover:bg-emerald-400 transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/20"
+                      >
+                        🚀 Start OMMA Application
+                      </a>
+                    </div>
+                  )}
                   <div className="space-y-2">
                     <button 
                       onClick={() => ((window as any).Calendly ? (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma/health-wellness-consultation' }) : window.open('https://calendly.com/shantell-ggma/health-wellness-consultation', '_blank'))}

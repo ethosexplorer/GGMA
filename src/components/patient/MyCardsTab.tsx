@@ -37,60 +37,76 @@ export const MyCardsTab = () => (
     {/* Cards Grid */}
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {myCards.map((card) => (
-        <div key={card.id} className="relative overflow-hidden bg-[#0f2d1e] bg-gradient-to-br from-[#0f2d1e] via-[#1a4731] to-[#0b3320] rounded-2xl p-6 text-white shadow-xl">
-          <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-400/10 rounded-full -translate-y-1/2 translate-x-1/2" />
-          <div className="absolute bottom-0 left-0 w-32 h-32 bg-emerald-300/5 rounded-full translate-y-1/2 -translate-x-1/2" />
-          
-          <div className="relative z-10">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <CreditCard size={18} className="text-emerald-300" />
-                <span className="text-emerald-300/80 text-xs font-bold uppercase tracking-wider">{card.state}</span>
-              </div>
-              <span className={cn(
-                "px-3 py-1 rounded-full text-xs font-bold",
-                card.status === 'Active' ? "bg-emerald-500/30 text-emerald-200" : "bg-red-500/30 text-red-200"
-              )}>
-                {card.status}
-              </span>
+        <div key={card.id} className="space-y-4">
+          {/* Authentic OMMA Card Replica */}
+          <div className="bg-white shadow-xl overflow-hidden border border-slate-200 relative w-full aspect-[1.6] rounded-xl flex flex-col">
+            {/* Header */}
+            <div className="bg-[#1b4f8a] px-3 py-2 flex justify-between items-center text-white border-b-4 border-blue-900 shrink-0">
+               <div className="flex items-center gap-2">
+                  <div className="text-[7px] leading-tight font-black uppercase tracking-tighter">
+                    Oklahoma<br/>Medical Marijuana<br/>Authority
+                  </div>
+               </div>
+               <div className="text-right">
+                  <div className="text-[6px] font-bold tracking-widest text-blue-200 uppercase">Oklahoma Medical Marijuana</div>
+                  <div className="text-[10px] font-black tracking-tight uppercase leading-none">Adult Patient License</div>
+               </div>
             </div>
 
-            <h3 className="text-lg font-bold mb-1">{card.type}</h3>
-            <p className="text-emerald-300/60 text-sm font-mono">{card.id}</p>
+            {/* Body */}
+            <div className="p-3 flex gap-4 flex-1 relative bg-white">
+               {/* Watermark */}
+               <div className="absolute inset-0 flex items-center justify-center opacity-[0.04] pointer-events-none">
+                  <span className="text-6xl font-black uppercase -rotate-12 tracking-[0.3em]">VALID</span>
+               </div>
+               
+               {/* Photo Column */}
+               <div className="w-24 flex flex-col z-10 shrink-0">
+                  <div className="flex-1 bg-slate-100 border border-slate-300 flex items-end justify-center overflow-hidden">
+                     <div className="w-20 h-24 bg-slate-300 rounded-t-full mt-4 mx-auto flex items-center justify-center border-b-0 border-slate-400">
+                        <span className="text-slate-400 text-4xl">👤</span>
+                     </div>
+                  </div>
+                  <div className="bg-[#1b4f8a] text-white text-center text-[10px] font-black uppercase py-1 tracking-widest border border-[#1b4f8a]">
+                     {card.type.includes('Caregiver') ? 'Caregiver' : 'Patient'}
+                  </div>
+               </div>
 
-            <div className="grid grid-cols-2 gap-4 mt-6">
-              <div>
-                <p className="text-emerald-300/50 text-[10px] uppercase tracking-wider">Issued</p>
-                <p className="text-sm font-semibold">{card.issued}</p>
-              </div>
-              <div>
-                <p className="text-emerald-300/50 text-[10px] uppercase tracking-wider">Expires</p>
-                <p className="text-sm font-semibold">{card.expires}</p>
-              </div>
-            </div>
+               {/* Info Column */}
+               <div className="flex-1 flex flex-col justify-between z-10 py-1">
+                  <div>
+                     <div className="text-[8px] font-bold text-slate-800 uppercase">Sample</div>
+                     <div className="font-bold text-slate-900 leading-none text-sm mb-1">Sally Ann</div>
+                     <div className="font-bold text-slate-800 text-xs leading-tight">Oklahoma City</div>
+                     <div className="font-bold text-slate-800 text-xs leading-tight">Oklahoma County</div>
+                  </div>
+                  
+                  <div className="space-y-0.5">
+                     <div className="font-bold text-slate-900 text-[10px]">DOB: 01/20/1990</div>
+                     <div className="font-bold text-red-600 text-[10px]">EXP: {card.expires}</div>
+                  </div>
 
-            {/* Expiration Progress */}
-            <div className="mt-4">
-              <div className="flex justify-between text-xs mb-1">
-                <span className="text-emerald-300/60">{card.daysLeft} days remaining</span>
-                <span className="text-emerald-300/60">{Math.round((card.daysLeft / 730) * 100)}%</span>
-              </div>
-              <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-                <div className="h-full bg-emerald-400 rounded-full" style={{ width: `${Math.round((card.daysLeft / 730) * 100)}%` }} />
-              </div>
-            </div>
+                  <div>
+                     <div className="text-[9px] font-bold text-slate-800 uppercase">Patient ID#:</div>
+                     <div className="font-mono text-xs font-black text-slate-900 tracking-wider -mt-0.5">{card.id}</div>
+                  </div>
 
-            <div className="flex gap-2 mt-5">
-              <button className="flex-1 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5">
-                <QrCode size={14} /> Show QR
-              </button>
-              <button className="flex-1 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5">
-                <Download size={14} /> Download
-              </button>
-              <button className="flex-1 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5">
-                <RefreshCw size={14} /> Renew
-              </button>
+                  {/* Barcode Mock */}
+                  <div className="h-6 w-full max-w-[120px] opacity-70 mt-1" style={{ backgroundImage: 'repeating-linear-gradient(to right, #000, #000 2px, transparent 2px, transparent 4px, #000 4px, #000 5px, transparent 5px, transparent 7px)' }}></div>
+               </div>
             </div>
+          </div>
+
+          <div className="flex gap-2">
+            <button className="flex-1 py-3 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-black transition-all flex items-center justify-center gap-1.5 shadow-sm">
+              <QrCode size={14} /> Scan
+            </button>
+            <button className="flex-1 py-3 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-black transition-all flex items-center justify-center gap-1.5 shadow-sm">
+              <Download size={14} /> Export
+            </button>
+            <button className="flex-1 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white text-xs font-black transition-all flex items-center justify-center gap-1.5 shadow-sm shadow-emerald-900/20">
+              <RefreshCw size={14} /> Renew
+            </button>
           </div>
         </div>
       ))}

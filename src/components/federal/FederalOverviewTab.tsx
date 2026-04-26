@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Shield, Globe, AlertCircle, TrendingUp, Activity, FileText } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -45,7 +45,7 @@ export const FederalOverviewTab = () => (
               <AlertCircle size={12} />
               FEDERAL ALERT
             </span>
-            <span className="text-amber-200 text-[10px] font-bold uppercase tracking-wider">April 23, 2026 • DOJ Final Order Issued</span>
+            <span className="text-amber-200 text-[10px] font-bold uppercase tracking-wider">{new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })} • DOJ Final Order Issued</span>
           </div>
           <h2 className="text-xl font-extrabold text-white leading-tight mb-2">DOJ Reclassifies Marijuana to Schedule III</h2>
           <p className="text-sm text-amber-100/90 leading-relaxed max-w-4xl">
@@ -163,4 +163,5 @@ export const FederalOverviewTab = () => (
     </div>
   </div>
 );
+
 

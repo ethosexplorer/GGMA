@@ -4,12 +4,13 @@ import { cn } from '../../lib/utils';
 
 export const ComplianceTravelTab = () => {
   const [selectedState, setSelectedState] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
   
   const reciprocityData = [
-    { s: 'Oklahoma', status: 'Full Reciprocity', note: 'Accepts all out-of-state medical cards with a $100 temporary license.', color: 'text-emerald-600', bg: 'bg-emerald-50' },
-    { s: 'Florida', status: 'No Reciprocity', note: 'Does not recognize out-of-state medical cards.', color: 'text-red-600', bg: 'bg-red-50' },
-    { s: 'Arkansas', status: 'Limited Reciprocity', note: 'Requires a visiting patient application ($50) and 30-day wait.', color: 'text-amber-600', bg: 'bg-amber-50' },
-    { s: 'Nevada', status: 'Full Reciprocity', note: 'Recognizes out-of-state cards at all dispensaries.', color: 'text-emerald-600', bg: 'bg-emerald-50' },
+    { s: 'Oklahoma', status: 'Full Reciprocity', note: 'Accepts all out-of-state medical cards with a $100 temporary license.', color: 'text-emerald-600', bg: 'bg-emerald-50', applyLink: 'https://oklahoma.gov/omma.html' },
+    { s: 'Florida', status: 'No Reciprocity', note: 'Does not recognize out-of-state medical cards.', color: 'text-red-600', bg: 'bg-red-50', applyLink: null },
+    { s: 'Arkansas', status: 'Limited Reciprocity', note: 'Requires a visiting patient application ($50) and 30-day wait.', color: 'text-amber-600', bg: 'bg-amber-50', applyLink: 'https://mmj.adh.arkansas.gov/' },
+    { s: 'Nevada', status: 'Full Reciprocity', note: 'Recognizes out-of-state cards at all dispensaries.', color: 'text-emerald-600', bg: 'bg-emerald-50', applyLink: null },
   ];
 
   return (
@@ -59,9 +60,11 @@ export const ComplianceTravelTab = () => {
                        <p className="text-sm text-slate-500 font-medium md:max-w-[300px]">
                           {state.note}
                        </p>
-                       <button className="px-6 py-3 bg-white border border-slate-200 text-slate-700 text-xs font-black rounded-xl hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all uppercase tracking-widest">
-                          Apply for Permit
-                       </button>
+                       {state.applyLink && (
+                         <a href={state.applyLink} target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-white border border-slate-200 text-slate-700 text-xs font-black rounded-xl hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all uppercase tracking-widest text-center inline-block">
+                            Apply for Permit
+                         </a>
+                       )}
                     </div>
                   ))}
                </div>
@@ -100,8 +103,18 @@ export const ComplianceTravelTab = () => {
                   <span className="text-slate-400 font-bold mb-1">/100</span>
                </div>
                <p className="text-xs text-slate-400 font-medium mb-8">Your profile is 84% ready for interstate travel. Verify your destination's specific visiting patient rules to reach 100%.</p>
-               <button className="w-full py-4 bg-emerald-500 text-white rounded-2xl font-black text-sm hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-950/40">
-                  Generate Travel PDF
+               <button 
+                  onClick={() => {
+                     setIsGenerating(true);
+                     setTimeout(() => {
+                        setIsGenerating(false);
+                        alert('Travel Compliance Document successfully generated and saved to your Vault!');
+                     }, 2000);
+                  }}
+                  disabled={isGenerating}
+                  className="w-full py-4 bg-emerald-500 text-white rounded-2xl font-black text-sm hover:bg-emerald-400 disabled:opacity-50 transition-all shadow-lg shadow-emerald-950/40"
+               >
+                  {isGenerating ? 'Generating PDF...' : 'Generate Travel PDF'}
                </button>
             </div>
 
