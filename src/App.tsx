@@ -123,6 +123,7 @@ import { LanguageSelector } from './components/LanguageSelector';
 import { FeaturedPoll, StickyPollWidget } from './components/CommunityPolls';
 import { GlobalHeader } from './components/GlobalHeader';
 import { RoleSelectorScreen } from './components/RoleSelectorScreen';
+import { fetchRegulatoryFeed, formatFeedDate, type RegulatoryUpdate } from './lib/regulatoryFeed';
 
 // --- Constants ---
 
@@ -1250,6 +1251,22 @@ const STATE_RESOURCES: Record<string, any> = {
 };
 
 const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate: (view: 'login' | 'signup' | 'patient-portal' | 'support' | 'larry-chatbot' | 'larry-business' | 'legal-advocacy', role?: string) => void, jurisdiction?: string, setJurisdiction?: (s: string) => void }) => {
+  const [liveFeed, setLiveFeed] = useState<RegulatoryUpdate[]>([]);
+  const [feedLoading, setFeedLoading] = useState(true);
+  
+  useEffect(() => {
+    fetchRegulatoryFeed(5).then(items => {
+      setLiveFeed(items);
+      setFeedLoading(false);
+    }).catch(() => setFeedLoading(false));
+    
+    // Refresh every hour
+    const interval = setInterval(() => {
+      fetchRegulatoryFeed(5).then(items => setLiveFeed(items));
+    }, 30 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
+  
   const [broadcastMsg, setBroadcastMsg] = useState('🚨 SYSTEM NOTICE: NATIONWIDE COMPLIANCE AUDIT IN PROGRESS • GLOBAL GREEN HYBRID PLATFORM (GGHP) • ALL SECTORS (GGMA/RIP/SINC) OPERATIONAL');
   
     const [inTheKnowNews, setInTheKnowNews] = useState([
@@ -1450,7 +1467,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
              </div>
           </div>
 
-          {/* Strategic News & Updates Sidebar */}
+          {/* Strategic News & Updates Sidebar — LIVE FEED */}
           <div className="bg-white rounded-[2rem] border border-slate-200 shadow-xl p-6 flex flex-col h-full relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
             
@@ -1462,56 +1479,59 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
             </div>
 
             <div className="flex-1 overflow-y-auto pr-2 space-y-5 custom-scrollbar relative z-10">
-               {/* BREAKING: LEAP Rescheduling */}
-               <div className="group">
-                 <div className="flex items-center gap-2 mb-1">
-                   <span className="bg-red-600 text-white px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-widest animate-pulse">Breaking</span>
-                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</p>
+               {liveFeed.length > 0 ? (
+                 <>
+                   {liveFeed.map((item, idx) => (
+                     <div key={idx}>
+                       {idx > 0 && <div className="w-full h-px bg-slate-100 mb-5"></div>}
+                       <div className="group cursor-pointer" onClick={() => window.open(item.link, '_blank')}>
+                         <div className="flex items-center gap-2 mb-1">
+                           {item.isBreaking && (
+                             <span className="bg-red-600 text-white px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-widest animate-pulse">Breaking</span>
+                           )}
+                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{formatFeedDate(item.pubDate)}</p>
+                         </div>
+                         <h4 className="text-sm font-bold text-slate-800 mb-2 group-hover:text-[#1a4731] transition-colors leading-snug">{item.title}</h4>
+                         <p className="text-xs text-slate-500 leading-relaxed">{item.description}</p>
+                         <p className="text-[10px] text-emerald-600 font-bold mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity">Read full article →</p>
+                       </div>
+                     </div>
+                   ))}
+                   <div className="pt-4 border-t border-slate-100">
+                     <p className="text-[10px] text-slate-400 text-center">
+                       Source: <a href="https://www.marijuanamoment.net" target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:underline">Marijuana Moment</a> • Updates every 30 min
+                     </p>
+                   </div>
+                 </>
+               ) : feedLoading ? (
+                 <div className="flex flex-col items-center justify-center py-8 gap-3">
+                   <div className="w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+                   <p className="text-xs text-slate-400 font-bold">Loading live regulatory feed...</p>
                  </div>
-                 <h4 className="text-sm font-bold text-slate-800 mb-2 group-hover:text-[#1a4731] transition-colors">Cannabis Officially Rescheduled: Schedule I → Schedule III</h4>
-                 <ul className="text-xs text-slate-600 space-y-1.5 ml-4 list-disc marker:text-emerald-500">
-                    <li><strong className="text-slate-800">Acting Attorney General</strong> signed order moving state-licensed medical marijuana from Schedule I to Schedule III of the CSA.</li>
-                    <li><strong className="text-slate-800">LEAP Confirms:</strong> Law Enforcement Action Partnership (@PoliceForReform) verified — rescheduling has officially taken place.</li>
-                    <li><strong className="text-slate-800">GGHP Impact:</strong> DEA registration tracking, 280E tax deductions, and banking access modules now active across all portals.</li>
-                 </ul>
-               </div>
-
-               <div className="w-full h-px bg-slate-100"></div>
-
-               {/* Update 1 */}
-               <div className="group">
-                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</p>
-                 <h4 className="text-sm font-bold text-slate-800 mb-2 group-hover:text-[#1a4731] transition-colors">DOJ Final Order: Schedule III Reclassification</h4>
-                 <ul className="text-xs text-slate-600 space-y-1.5 ml-4 list-disc marker:text-emerald-500">
-                    <li><strong className="text-slate-800">Tax Relief (280E):</strong> Immediate potential to deduct ordinary business expenses.</li>
-                    <li><strong className="text-slate-800">SINC Solution:</strong> Automated financial reconciliation for 280E deductions integrated with Metrc.</li>
-                    <li><strong className="text-slate-800">Compliance:</strong> New DEA Registration tracked inside GGHP automatically.</li>
-                 </ul>
-               </div>
-
-               <div className="w-full h-px bg-slate-100"></div>
-
-               {/* Update 2 */}
-               <div className="group">
-                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">April 6, 2026</p>
-                 <h4 className="text-sm font-bold text-slate-800 mb-2 group-hover:text-[#1a4731] transition-colors">OMMA: 7-Day Routine Inspection Windows</h4>
-                 <ul className="text-xs text-slate-600 space-y-1.5 ml-4 list-disc marker:text-emerald-500">
-                    <li><strong className="text-slate-800">The Problem:</strong> Licensees facing operational disruptions during unannounced audits.</li>
-                    <li><strong className="text-slate-800">SINC Solution:</strong> 24/7 AI-driven mock audits. Your business is audit-ready before OMMA even issues the 7-day notice.</li>
-                 </ul>
-               </div>
-
-               <div className="w-full h-px bg-slate-100"></div>
-
-               {/* Update 3 */}
-               <div className="group">
-                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Industry Trend</p>
-                 <h4 className="text-sm font-bold text-slate-800 mb-2 group-hover:text-[#1a4731] transition-colors">Combating Product Recalls</h4>
-                 <ul className="text-xs text-slate-600 space-y-1.5 ml-4 list-disc marker:text-emerald-500">
-                    <li><strong className="text-slate-800">The Threat:</strong> Recalls spanning back years due to laboratory failures.</li>
-                    <li><strong className="text-slate-800">SINC Solution:</strong> L.A.R.R.Y Enforcement Intelligence preemptively flags bad batches and untrusted lab results before they hit your shelves.</li>
-                 </ul>
-               </div>
+               ) : (
+                 <>
+                   {/* Fallback to hardcoded content */}
+                   <div className="group">
+                     <div className="flex items-center gap-2 mb-1">
+                       <span className="bg-red-600 text-white px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-widest animate-pulse">Breaking</span>
+                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</p>
+                     </div>
+                     <h4 className="text-sm font-bold text-slate-800 mb-2 group-hover:text-[#1a4731] transition-colors">Cannabis Officially Rescheduled: Schedule I → Schedule III</h4>
+                     <ul className="text-xs text-slate-600 space-y-1.5 ml-4 list-disc marker:text-emerald-500">
+                        <li><strong className="text-slate-800">Acting Attorney General</strong> signed order moving state-licensed medical marijuana from Schedule I to Schedule III of the CSA.</li>
+                        <li><strong className="text-slate-800">GGHP Impact:</strong> DEA registration tracking, 280E tax deductions, and banking access modules now active across all portals.</li>
+                     </ul>
+                   </div>
+                   <div className="w-full h-px bg-slate-100"></div>
+                   <div className="group">
+                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Industry Trend</p>
+                     <h4 className="text-sm font-bold text-slate-800 mb-2 group-hover:text-[#1a4731] transition-colors">OMMA: 7-Day Routine Inspection Windows</h4>
+                     <ul className="text-xs text-slate-600 space-y-1.5 ml-4 list-disc marker:text-emerald-500">
+                        <li><strong className="text-slate-800">SINC Solution:</strong> 24/7 AI-driven mock audits. Your business is audit-ready before OMMA even issues the 7-day notice.</li>
+                     </ul>
+                   </div>
+                 </>
+               )}
             </div>
             
             <button onClick={() => document.getElementById('membership-tiers')?.scrollIntoView({ behavior: 'smooth' })} className="w-full mt-6 py-3 bg-[#1a4731] text-white rounded-xl text-sm font-bold hover:bg-[#153a28] transition-colors shadow-lg shadow-emerald-900/20 relative z-10">
