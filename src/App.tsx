@@ -1300,22 +1300,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
           {broadcastMsg} &nbsp; • &nbsp; {broadcastMsg} &nbsp; • &nbsp; {broadcastMsg}
         </div>
       </div>
-        {/* STATES DROPDOWN BAR */}
-        <div className="bg-slate-100 border-b border-slate-200 px-6 py-2 flex items-center justify-center z-[55] relative shadow-inner">
-          {jurisdiction && setJurisdiction && (
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg">
-              <MapPin size={16} className="text-red-600 animate-bounce" />
-              <span className="text-sm font-black text-slate-700 uppercase tracking-widest">Select Jurisdiction:</span>
-              <select 
-                value={jurisdiction}
-                onChange={(e) => setJurisdiction(e.target.value)}
-                className="bg-transparent text-sm font-black text-[#1a4731] outline-none cursor-pointer border-b-2 border-[#1a4731] pb-0.5 ml-2"
-              >
-                {['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'].map(s => <option key={s} value={s}>{s}</option>)}
-              </select>
-            </div>
-          )}
-        </div>
+
 
       {/* 🌐 LANGUAGE BAR — Always visible at the very top */}
       <div className="bg-slate-900 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-6 py-2 flex items-center justify-between z-[60] relative">
@@ -1416,30 +1401,6 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
         </div>
 
         <div className="flex items-center gap-3">
-            {jurisdiction && setJurisdiction && (
-              <div className="hidden md:flex items-center gap-2 mr-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
-                <MapPin size={14} className="text-emerald-600" />
-                <span className="text-xs font-bold text-slate-500 hidden lg:inline">Jurisdiction:</span>
-                <select 
-                  value={jurisdiction}
-                  onChange={(e) => setJurisdiction(e.target.value)}
-                  className="bg-transparent text-sm font-black text-[#1a4731] outline-none cursor-pointer w-24"
-                >
-                  {['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'].map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
-              </div>
-            )}
-            <LanguageSelector currentLanguage="en" onLanguageChange={(code) => { 
-            const gCode = code === 'zh' ? 'zh-CN' : code;
-            if (gCode === 'en') {
-              document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-              document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + window.location.hostname;
-            } else {
-              document.cookie = `googtrans=/en/${gCode}; path=/;`;
-              document.cookie = `googtrans=/en/${gCode}; path=/; domain=` + window.location.hostname;
-            }
-            window.location.reload();
-          }} compact />
           <Button onClick={() => onNavigate('login')}>Login</Button>
         </div>
       </nav>
@@ -5357,8 +5318,8 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       setIsTyping(false);
       return;
     }
-    }
     setMessages(prev => [...prev, { role: 'bot', text: response }]);
+    }
     } finally {
       setIsTyping(false);
     }
@@ -7430,7 +7391,14 @@ export default function App() {
               data.idCode = '1234';
             }
             setUserProfile(data);
-            if ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp'))) {
+            
+            // Founders bypass Preview Mode (Shadow Mode)
+            const isFounder = lowerEmail === FOUNDER_EMAIL || (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp'));
+            if (isFounder) {
+              setIsDemoUnlocked(true);
+            }
+            
+            if (isFounder) {
                setView('pin-verification');
             } else {
                setView(prev => prev === 'larry-chatbot' ? prev : 'dashboard');
@@ -7488,17 +7456,9 @@ export default function App() {
     if (role === 'executive_founder' || role === 'executive_ceo') {
       return <FounderDashboard onLogout={handleLogout} user={profile} />;
     }
-    if (role === 'admin_internal') {
-      return <AdminDashboard onLogout={handleLogout} user={profile} />;
-    }
-    if (role === 'admin_external') {
-      return <ExternalAdminDashboard onLogout={handleLogout} user={profile} />;
-    }
-    if (role === 'admin' || role === 'regulator_state' || role?.startsWith('regulator') || role?.startsWith('backoffice')) {
-      return <StateAuthorityDashboard onLogout={handleLogout} user={profile} />;
-    }
-    if (role === 'enforcement_state' || role?.startsWith('enforcement')) {
-      return <EnforcementDashboard onLogout={handleLogout} user={profile} />;
+    // Oversight Portal Routing (Regulators, Enforcement, Admin, Operations)
+    if (role === 'admin_internal' || role === 'admin_external' || role === 'admin' || role === 'regulator_state' || role?.startsWith('regulator') || role?.startsWith('backoffice') || role === 'enforcement_state' || role?.startsWith('enforcement') || role === 'operations' || role?.startsWith('staff')) {
+      return <OversightDashboard onLogout={handleLogout} user={profile} />;
     }
 
     // Business Portal Routing
