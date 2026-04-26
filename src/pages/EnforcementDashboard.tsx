@@ -23,7 +23,7 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
   const [rapidTestStep, setRapidTestStep] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPatient, setSelectedPatient] = useState<any>(null);
-  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [isUnlocked, setIsUnlocked] = useState(true);
   const [pin, setPin] = useState('');
   
   // Breathalyzer state

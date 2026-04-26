@@ -33,7 +33,7 @@ const tabs = [
 
 export const FederalDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
   const [activeTab, setActiveTab] = useState('overview');
-  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [isUnlocked, setIsUnlocked] = useState(true);
   const [pin, setPin] = useState('');
 
   return (

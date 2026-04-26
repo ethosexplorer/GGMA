@@ -7,7 +7,7 @@ import {
   Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Globe, Zap, Database,
   FlaskConical, CreditCard, Map as MapIcon, BookOpen, UserPlus, Trash2,
   MapPin, Target, Layers, TrendingDown, Box, PieChart, GraduationCap, Lock, GripVertical,
-  Calculator, Save, ExternalLink, Printer
+  Calculator, Save, ExternalLink, Printer, ArrowLeft
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
@@ -25,6 +25,7 @@ import { db } from '../firebase';
 import { METRC_MANUAL } from '../data/metrcManual';
 import { turso } from '../lib/turso';
 import { MasterBankingInfo } from '../components/MasterBankingInfo';
+import { FounderModals } from '../components/FounderModals';
 
 const INITIAL_NAV_ITEMS = [
   { section: 'FOUNDER EXCLUSIVE' },
@@ -172,17 +173,30 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
   };
 
   const [activeTab, setActiveTab] = useState('overview');
+  const [isAddingLedgerEntry, setIsAddingLedgerEntry] = useState<'revenue' | 'payable' | null>(null);
+  const [activeModal, setActiveModal] = useState<{type: string, data?: any} | null>(null);
+  const [ledgerForm, setLedgerForm] = useState({ name: '', amount: '' });
   const [founderLedger, setFounderLedger] = useState<any[]>([]);
   const [founderPayables, setFounderPayables] = useState<any[]>([
     { n: 'Found Bank (Primary Routing)', t: 'Settlement', g: 'N/A', net: 'N/A', s: 'Active', c: 'bg-emerald-600' }
   ]);
 
   const addRevenueStream = () => {
-    setFounderLedger([{ n: 'New Custom Receivable', t: 'Manual Entry', g: '$0', net: '$0', s: 'Pending', c: 'bg-amber-500' }, ...founderLedger]);
+    setIsAddingLedgerEntry('revenue');
   };
   
   const addPayableStream = () => {
-    setFounderPayables([{ n: 'New Custom Payable', t: 'Manual Entry', g: '$0', net: '$0', s: 'Pending', c: 'bg-amber-500' }, ...founderPayables]);
+    setIsAddingLedgerEntry('payable');
+  };
+
+  const handleSaveLedgerEntry = () => {
+    if (isAddingLedgerEntry === 'revenue') {
+       setFounderLedger([{ n: ledgerForm.name || 'Custom Revenue Stream', t: 'Manual Entry', g: ledgerForm.amount || '$0', net: ledgerForm.amount || '$0', s: 'Pending', c: 'bg-amber-500' }, ...founderLedger]);
+    } else if (isAddingLedgerEntry === 'payable') {
+       setFounderPayables([{ n: ledgerForm.name || 'Custom Payable', t: 'Manual Entry', g: ledgerForm.amount || '$0', net: ledgerForm.amount || '$0', s: 'Pending', c: 'bg-amber-500' }, ...founderPayables]);
+    }
+    setIsAddingLedgerEntry(null);
+    setLedgerForm({ name: '', amount: '' });
   };
 
   useEffect(() => {
@@ -723,12 +737,12 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       <div className="space-y-4">
          {[
            {
-             t: 'Accounting Ledger (QuickBooks Core)',
-             d: 'Founder Exclusive: The financial backbone of the entire ecosystem. It breaks down revenue from Sylara Subscriptions, Metrc integrations, Care Wallet B2B transactions, Telehealth, and Jurisdictional licensing. It dynamically tracks gross revenue versus net profit, showing exactly where operational capital is distributed and what is available for founder draw.'
+             t: 'Accounting Ledger (GGP Core)',
+             d: 'Quality Assurance: The financial backbone of the entire ecosystem. It breaks down revenue from Sylara Subscriptions, Metrc integrations, Care Wallet B2B transactions, Telehealth, and Jurisdictional licensing. It dynamically tracks gross revenue versus net profit, showing exactly where operational capital is distributed and what is available for founder draw.'
            },
            {
              t: 'Universal Onboarding Engine',
-             d: 'Founder Exclusive: The identity provisioning system. Only the Founder can deploy dashboards, set administrative hierarchies, and assign specific operational clearances (like AI Negligence intercept) to executives, state regulators, and staff.'
+             d: 'Quality Assurance: The identity provisioning system. Only the Founder can deploy dashboards, set administrative hierarchies, and assign specific operational clearances (like AI Negligence intercept) to executives, state regulators, and staff.'
            },
            {
              t: 'Personnel Force Command',
@@ -778,13 +792,59 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
     </div>
   );
 
-  const renderAccountingLedger = () => (
+  const renderAccountingLedger = () => {
+    if (isAddingLedgerEntry) {
+      return (
+        <div className="max-w-2xl mx-auto mt-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+           <button onClick={() => setIsAddingLedgerEntry(null)} className="flex items-center gap-2 text-slate-500 hover:text-slate-800 font-bold mb-6 transition-colors">
+              <ArrowLeft size={18} /> Back to Ledger
+           </button>
+           <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-xl">
+              <h2 className="text-2xl font-black text-slate-800 mb-2">
+                {isAddingLedgerEntry === 'revenue' ? 'Add Revenue Stream' : 'Add Account Payable'}
+              </h2>
+              <p className="text-slate-500 mb-8 font-medium">Enter the details for this new manual ledger entry.</p>
+              
+              <div className="space-y-5">
+                 <div>
+                    <label className="block text-sm font-bold text-slate-700 mb-2">Account / Source Name</label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. Consulting Retainer"
+                      value={ledgerForm.name}
+                      onChange={(e) => setLedgerForm({...ledgerForm, name: e.target.value})}
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20 font-medium"
+                    />
+                 </div>
+                 <div>
+                    <label className="block text-sm font-bold text-slate-700 mb-2">Amount (Monthly/Gross)</label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. $5,000"
+                      value={ledgerForm.amount}
+                      onChange={(e) => setLedgerForm({...ledgerForm, amount: e.target.value})}
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20 font-medium"
+                    />
+                 </div>
+              </div>
+              
+              <div className="mt-8 flex gap-3">
+                 <button onClick={handleSaveLedgerEntry} className="px-6 py-3 bg-[#1a4731] hover:bg-emerald-800 text-white font-bold rounded-xl shadow-lg transition-colors flex-1">
+                    Save Entry
+                 </button>
+              </div>
+           </div>
+        </div>
+      );
+    }
+    
+    return (
     <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="space-y-6">
       <div className="bg-emerald-950 bg-gradient-to-br from-emerald-950 via-slate-900 to-slate-950 p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden border border-emerald-500/30">
         <div className="absolute top-0 right-0 p-10 opacity-10"><Wallet size={160} className="text-emerald-400" /></div>
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
           <div>
-            <h2 className="text-4xl font-black tracking-tighter mb-4 italic uppercase">QuickBooks Core Ledger</h2>
+            <h2 className="text-4xl font-black tracking-tighter mb-4 italic uppercase">GGP Core Ledger</h2>
             <p className="text-emerald-200 font-medium text-lg">Universal revenue breakdown, taxation vectors, and master settlement routing.</p>
           </div>
           <div className="text-center md:text-right px-8 py-4 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md">
@@ -892,6 +952,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       </div>
     </motion.div>
   );
+};
 
   const renderFinancials = () => (
     <div className="space-y-6">
@@ -2988,6 +3049,8 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
            </div>
         </div>
         )}
+
+        <FounderModals activeModal={activeModal} onClose={() => setActiveModal(null)} />
 
         {/* Proactive System Alert */}
         <SystemFreezeAlert />

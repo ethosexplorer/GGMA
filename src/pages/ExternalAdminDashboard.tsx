@@ -35,7 +35,7 @@ const QUEUE = [
 export const ExternalAdminDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const entityName = user?.entityName || 'Apex Health LLC';
-  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [isUnlocked, setIsUnlocked] = useState(true);
   const [pin, setPin] = useState('');
 
   const renderOverview = () => (
