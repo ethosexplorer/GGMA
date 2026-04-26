@@ -21,13 +21,32 @@ export interface AddOn {
 
 // ─── TRIAL & INTRODUCTORY PRICING TERMS ───
 export const TRIAL_TERMS = {
-  trialDays: 7,
-  trialPrice: 0,
+  patient: {
+    trialDays: 30,
+    trialPrice: 0,
+    discountPercent: 0,
+    label: '30 Days Free',
+    shortDisclosure: 'Free for 30 days. Credit/debit card required. Auto-renews at listed price. Cancel anytime.',
+  },
+  standard: {
+    trialDays: 7,
+    trialPrice: 0,
+    discountPercent: 30,
+    label: '7 Days Free',
+    discountLabel: '30% Off Month 1',
+    shortDisclosure: 'Free for 7 days, then 30% off your first month. Credit/debit card required. Auto-renews at full price after first month. Cancel anytime.',
+  },
+  partner: {
+    trialDays: 0,
+    trialPrice: 0,
+    discountPercent: 0,
+    label: null,
+    shortDisclosure: 'No free trial. Billed at listed price upon signup. Cancel anytime.',
+  },
   requiresCard: true,
   autoRenews: true,
-  cancellationPolicy: 'Cancel anytime before your trial ends to avoid charges. If you do not cancel, your subscription will automatically renew at the standard rate.',
-  agreementText: 'I understand that a valid credit or debit card is required to start my free trial. After the 7-day trial period, my subscription will automatically convert to the selected plan at the listed monthly rate. I may cancel at any time before the trial ends to avoid being charged. By checking this box, I authorize Global Green Enterprise Inc. to charge my payment method on file upon trial expiration and on each subsequent billing cycle until I cancel.',
-  shortDisclosure: 'Free for 7 days. Credit/debit card required. Auto-renews at listed price. Cancel anytime.',
+  cancellationPolicy: 'Cancel anytime before your billing period ends to avoid charges. If you do not cancel, your subscription will automatically renew at the standard rate.',
+  agreementText: 'I understand that a valid credit or debit card is required. After any applicable trial or introductory period, my subscription will automatically convert to the selected plan at the listed monthly rate. I may cancel at any time before the next billing cycle to avoid being charged. By checking this box, I authorize Global Green Enterprise Inc. to charge my payment method on file upon trial/introductory expiration and on each subsequent billing cycle until I cancel.',
 };
 
 export const CANNABIS_B2B_PLANS: SubscriptionPlan[] = [
@@ -73,8 +92,8 @@ export const CANNABIS_B2B_PLANS: SubscriptionPlan[] = [
   {
     id: 'b2bc_enterprise', trialDays: 7, trialPrice: 0,
     name: 'Enterprise',
-    monthlyPrice: 299,
-    annualPrice: 2990,
+    monthlyPrice: 499,
+    annualPrice: 4990,
     bestFor: 'Multi-state operators & MSOs — complete seed-to-sale + POS + AI compliance engine',
     aiLevel: 'End-to-End Automation & Real-time Action',
     features: [
@@ -307,7 +326,7 @@ export const GENERAL_ATTORNEY_PLANS: SubscriptionPlan[] = [
 ];
 
 export const B2C_PLANS: SubscriptionPlan[] = [
-  { id: 'b2c_basic', name: 'B2C Basic', monthlyPrice: 0.99, annualPrice: 499, aiLevel: 'Gemini Flash + Basic Sylara', tokensMonth: '500,000', trialDays: 30, trialPrice: 0 },
+  { id: 'b2c_basic', name: 'B2C Basic', monthlyPrice: 49.99, annualPrice: 499, aiLevel: 'Gemini Flash + Basic Sylara', tokensMonth: '500,000', trialDays: 30, trialPrice: 0 },
   { id: 'b2c_med', name: 'B2C Medium', monthlyPrice: 99, annualPrice: 1009, aiLevel: 'Gemini Flash + Enhanced Sylara', tokensMonth: '1,500,000', trialDays: 30, trialPrice: 0 },
   { id: 'b2c_full', name: 'B2C Full AI', monthlyPrice: 199, annualPrice: 2029, aiLevel: 'Full Sylara + Larry', tokensMonth: 'Unlimited', trialDays: 30, trialPrice: 0 }
 ];
@@ -626,7 +645,7 @@ export const PARTNER_PLANS: SubscriptionPlan[] = [
     ]
   },
   {
-    id: 'partner_reseller', trialDays: 7, trialPrice: 0,
+    id: 'partner_reseller',
     name: 'Authorized Reseller',
     monthlyPrice: 149,
     annualPrice: 1490,

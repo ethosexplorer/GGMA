@@ -140,12 +140,20 @@ function formatPrice(plan: SubscriptionPlan, billing: 'monthly' | 'annual', addo
 }
 
 // ─── Plan Card ───
-const PlanCard = ({ plan, index, total, billing, selectedAddons }: { key?: string; plan: SubscriptionPlan; index: number; total: number; billing: 'monthly' | 'annual'; selectedAddons: AddOn[] }) => {
+const PlanCard = ({ plan, index, total, billing, selectedAddons, tabId }: { key?: string; plan: SubscriptionPlan; index: number; total: number; billing: 'monthly' | 'annual'; selectedAddons: AddOn[]; tabId: TabId }) => {
   const isMid = total === 3 && index === 1;
   const isPopular = isMid || (total === 4 && index === 2);
   const addonTotal = selectedAddons.reduce((sum, addon) => sum + (typeof addon.price === 'number' ? addon.price : 0), 0);
   const price = formatPrice(plan, billing, addonTotal);
   const hasTrial = typeof plan.monthlyPrice === 'number' && plan.monthlyPrice > 0 && price !== 'Custom';
+  
+  // Determine trial type
+  const isPatientPlan = tabId === 'patient';
+  const isPartnerPlan = tabId === 'partners';
+  const trialDays = isPatientPlan ? 30 : isPartnerPlan ? 0 : 7;
+  const showTrial = hasTrial && trialDays > 0;
+  const discountPercent = (!isPatientPlan && !isPartnerPlan) ? 30 : 0;
+  const firstMonthPrice = typeof plan.monthlyPrice === 'number' ? plan.monthlyPrice * (1 - discountPercent / 100) : plan.monthlyPrice;
 
   return (
     <motion.div
@@ -165,12 +173,19 @@ const PlanCard = ({ plan, index, total, billing, selectedAddons }: { key?: strin
       )}
 
       {/* Free Trial Badge */}
-      {hasTrial && (
-        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-500 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl mb-4 w-fit shadow-sm">
+      {showTrial && (
+        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-500 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl mb-2 w-fit shadow-sm">
           <Gift size={12} className="text-white" />
-          <span className="text-[10px] font-black text-white uppercase tracking-widest">30 Days Free</span>
+          <span className="text-[10px] font-black text-white uppercase tracking-widest">{trialDays} Days Free</span>
         </div>
       )}
+      {showTrial && discountPercent > 0 && (
+        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl mb-4 w-fit shadow-sm">
+          <Star size={12} className="text-white fill-white" />
+          <span className="text-[10px] font-black text-white uppercase tracking-widest">{discountPercent}% Off Month 1</span>
+        </div>
+      )}
+      {showTrial && discountPercent === 0 && <div className="mb-2" />}
 
       {/* Header */}
       <h3 className="text-xl font-black text-slate-800 mb-1">{plan.name}</h3>
@@ -179,14 +194,19 @@ const PlanCard = ({ plan, index, total, billing, selectedAddons }: { key?: strin
       )}
 
       {/* Price */}
-      {hasTrial && (
+      {showTrial && (
         <div className="flex items-baseline gap-2 mb-1">
           <span className="text-4xl font-black text-emerald-600">$0</span>
-          <span className="text-sm font-bold text-slate-400">for 30 days</span>
+          <span className="text-sm font-bold text-slate-400">for {trialDays} days</span>
         </div>
       )}
-      <div className={`flex items-baseline gap-1 ${hasTrial ? 'mb-1' : 'mb-1'}`}>
-        {hasTrial ? (
+      {showTrial && discountPercent > 0 && (
+        <div className="flex items-baseline gap-1 mb-1">
+          <span className="text-lg font-bold text-amber-600">then ${typeof firstMonthPrice === 'number' ? firstMonthPrice.toFixed(2) : firstMonthPrice}<span className="text-xs">/first mo</span></span>
+        </div>
+      )}
+      <div className={`flex items-baseline gap-1 ${showTrial ? 'mb-1' : 'mb-1'}`}>
+        {showTrial ? (
           <span className="text-lg font-bold text-slate-400">then {price}<span className="text-xs">/{billing === 'monthly' ? 'mo' : 'yr'}</span></span>
         ) : (
           <>
@@ -257,7 +277,7 @@ const PlanCard = ({ plan, index, total, billing, selectedAddons }: { key?: strin
             : 'bg-slate-900 text-white hover:bg-slate-800 shadow-lg shadow-slate-900/10'
         }`}
       >
-        {price === 'Custom' ? 'Contact Sales' : price === 'Free' ? 'Get Started Free' : 'Start Free Trial'}
+        {price === 'Custom' ? 'Contact Sales' : price === 'Free' ? 'Get Started Free' : showTrial ? 'Start Free Trial' : 'Get Started'}
       </button>
     </motion.div>
   );
@@ -429,7 +449,7 @@ export const PricingTiers = ({ onNavigate }: { onNavigate?: (view: string) => vo
               'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
             }`}>
               {plans.map((plan, i) => (
-                <PlanCard key={plan.id} plan={plan} index={i} total={plans.length} billing={billing} selectedAddons={selectedAddons} />
+                <PlanCard key={plan.id} plan={plan} index={i} total={plans.length} billing={billing} selectedAddons={selectedAddons} tabId={activeTab} />
               ))}
             </div>
           </motion.div>
@@ -524,8 +544,12 @@ export const PricingTiers = ({ onNavigate }: { onNavigate?: (view: string) => vo
             <div className="flex items-start gap-3 mb-4">
               <AlertTriangle size={18} className="text-amber-600 shrink-0 mt-0.5" />
               <div>
-                <h4 className="font-black text-amber-900 text-sm">Free Trial & Auto-Renewal Notice</h4>
-                <p className="text-xs text-amber-700 leading-relaxed mt-1">{TRIAL_TERMS.shortDisclosure}</p>
+                <h4 className="font-black text-amber-900 text-sm">Trial & Introductory Pricing Notice</h4>
+                <div className="text-xs text-amber-700 leading-relaxed mt-1 space-y-1">
+                  <p>• <strong>Patients:</strong> {TRIAL_TERMS.patient.shortDisclosure}</p>
+                  <p>• <strong>Business & Government:</strong> {TRIAL_TERMS.standard.shortDisclosure}</p>
+                  <p>• <strong>Partners:</strong> {TRIAL_TERMS.partner.shortDisclosure}</p>
+                </div>
               </div>
             </div>
             <div className="bg-white rounded-xl p-4 border border-amber-100">
