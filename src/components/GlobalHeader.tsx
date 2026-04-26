@@ -72,14 +72,18 @@ export const GlobalHeader = ({
             className="appearance-none bg-indigo-900 text-white font-bold text-xs px-3 py-1 pr-8 rounded border border-indigo-500 outline-none cursor-pointer"
           >
             <option value="">Off (Original Role)</option>
-            <option value="executive_founder">Quality Assurance (Founder)</option>
+            <option value="executive_founder">CEO / Founder</option>
             <option value="patient">Registered Patient</option>
             <option value="business">Licensed Business Owner</option>
+            <option value="provider">Licensed Medical Provider (Dr.)</option>
+            <option value="attorney">Cannabis Attorney</option>
             <option value="regulator_state">State Regulatory Authority</option>
             <option value="regulator_federal">Federal Compliance Officer</option>
-            <option value="admin_external">External Administrator</option>
+            <option value="admin_external">External Administrator (Monica)</option>
             <option value="admin_internal">Internal Executive Command</option>
-            <option value="provider">Licensed Medical Provider</option>
+            <option value="compliance_service">Compliance Service Officer (Larry)</option>
+            <option value="health">Health & Laboratory Director</option>
+            <option value="enforcement_state">Law Enforcement Officer</option>
           </select>
 
           <div className="relative ml-2 flex items-center">

@@ -1,4 +1,4 @@
-﻿import React, { Component, useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import React, { Component, useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { STATE_RESOURCES } from './stateResources';
 import { getPlansForRole, getAddOnsForRole } from './lib/subscriptionPlans';
@@ -7511,6 +7511,9 @@ export default function App() {
     if (role === 'business' || role === 'compliance_service') {
       return <BusinessDashboard onLogout={handleLogout} user={profile} initialTab={initialTab} onOpenConcierge={() => setShowLarryModal(true)} />;
     }
+    if (role === 'health' || role === 'lab') {
+      return <PublicHealthDashboard onLogout={handleLogout} user={profile} />;
+    }
 
     // Patient Portal Routing
     if (role === 'user' || role === 'Patient / Caregiver') {
@@ -7732,6 +7735,8 @@ export default function App() {
               onNavigate={(v, role) => {
                 handleNavigate(v as any); setInitialRole(role);
               }}
+              jurisdiction={jurisdiction}
+              setJurisdiction={setJurisdiction}
             />
           )}
           {view === 'larry-chatbot' && (
