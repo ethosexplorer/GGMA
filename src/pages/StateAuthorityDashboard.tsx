@@ -249,6 +249,8 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
             { id: 'approvals_denials', label: 'Approvals / Denials', icon: FileCheck },
             { id: 'jurisdiction', label: 'Jurisdiction Control', icon: Activity },
             { id: 'compliance', label: 'Compliance Pulse', icon: ShieldCheck },
+            { id: 'health_labs', label: 'Health & Labs', icon: ShieldCheck },
+            { id: 'metrc_state', label: 'Metrc & State Info', icon: ShieldCheck },
           ].map((item) => (
             <button key={item.id} onClick={() => setActiveTab(item.id)} className={cn("w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-left", activeTab === item.id ? "bg-indigo-600 text-white shadow-xl shadow-indigo-600/40" : "text-slate-400 hover:bg-white/5 hover:text-slate-100")}>
               <item.icon size={18} /> {item.label}

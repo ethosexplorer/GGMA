@@ -14,8 +14,8 @@ const sidebarItems = [
   { id: 'telehealth', label: 'Telehealth Visits', icon: Video },
   { id: 'traditional', label: 'Traditional Visits', icon: MapPin },
   { id: 'certifications', label: 'Certifications', icon: FileText },
-  { id: 'referrals', label: 'Referrals (SINC / LARRY)', icon: Share2 },
-  { id: 'compliance', label: 'Compliance (Larry)', icon: Shield },
+  
+  
   { id: 'billing', label: 'Billing & Insurance', icon: CreditCard },
   { id: 'reports', label: 'Reports', icon: BarChart },
   { id: 'settings', label: 'Settings & Profile', icon: Settings },
