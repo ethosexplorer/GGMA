@@ -7290,6 +7290,7 @@ export default function App() {
   const [isDemoUnlocked, setIsDemoUnlocked] = useState(false);
   const [showLarryModal, setShowLarryModal] = useState(false);
   const [roleOverride, setRoleOverride] = useState<string | null>(null);
+  const [hasBypassedSelector, setHasBypassedSelector] = useState(false);
   const [jurisdiction, setJurisdiction] = useState('Oklahoma');
 
   const handleNavigate = (newView: string, role?: string) => {

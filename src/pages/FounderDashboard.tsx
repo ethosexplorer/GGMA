@@ -2233,7 +2233,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                     },
                     { 
                       dept: 'Medical & Clinical Intake', head: 'Dr. Sarah Jenkins', 
-                      ai: { count: 850, desc: 'Larry Patient Intake Agents, HIPAA Validators' }, 
+                      ai: { count: 850, desc: 'Larry Patient Personal Intelligence Assistants, HIPAA Validators' }, 
                       humans: { count: 24, desc: 'Licensed Physicians, RNs, Final-Reviewers' }, 
                       color: 'bg-emerald-500' 
                     },
