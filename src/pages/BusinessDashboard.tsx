@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Wallet, Users, Building2, Shield, Clock, TrendingUp, Plus, LayoutDashboard, CreditCard, PackageSearch, AlertCircle, ShoppingCart, Loader2, Trash2, Edit2, CheckCircle, XCircle, Sparkles, MapPin, BarChart2, Activity, MessageSquare, LogOut, FileText, ClipboardList, CheckSquare, UploadCloud, Calendar, Zap, AlertTriangle, Database, Gavel } from 'lucide-react';
+import { Wallet, Users, Building2, Shield, Clock, TrendingUp, Plus, LayoutDashboard, CreditCard, PackageSearch, AlertCircle, ShoppingCart, Loader2, Trash2, Edit2, CheckCircle, XCircle, Sparkles, MapPin, BarChart2, Activity, MessageSquare, LogOut, FileText, ClipboardList, CheckSquare, UploadCloud, Calendar, Zap, AlertTriangle, Database, Gavel , ArrowRight } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { StatCard } from '../components/StatCard';
 import { CareWalletTab } from '../components/shared/CareWalletTab';
@@ -387,6 +387,13 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge 
           <FileText size={18} /> Reporting
         </button>
         <button 
+          onClick={() => setActiveTab('applications')}
+          className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'applications' ? "bg-white text-[#1a4731] shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
+        >
+          <FileText size={18} /> Applications
+        </button>
+
+        <button 
           onClick={() => setActiveTab('pos')}
           className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'pos' ? "bg-white text-[#1a4731] shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
         >
@@ -595,6 +602,18 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge 
              </div>
            </div>
         </div>
+
+        
+    {activeTab === 'applications' && (
+      <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm min-h-[400px] flex flex-col items-center justify-center text-center">
+        <FileText size={48} className="text-[#1a4731] mb-4 opacity-50" />
+        <h3 className="text-2xl font-black text-slate-800 mb-2">Self-Apply Licensing Hub</h3>
+        <p className="text-slate-500 max-w-md">Direct pipeline to OMMA. Complete your business application directly or transmit your records for $25 processing fee. No subscription required for direct access.</p>
+        <button className="mt-6 bg-[#1a4731] text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-emerald-900/20 flex items-center gap-2">
+          Start Application <ArrowRight size={16} />
+        </button>
+      </div>
+    )}
 
         {/* Main Performance Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

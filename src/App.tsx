@@ -1251,16 +1251,31 @@ const STATE_RESOURCES: Record<string, any> = {
 
 const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate: (view: 'login' | 'signup' | 'patient-portal' | 'support' | 'larry-chatbot' | 'larry-business' | 'legal-advocacy', role?: string) => void, jurisdiction?: string, setJurisdiction?: (s: string) => void }) => {
   const [broadcastMsg, setBroadcastMsg] = useState('🚨 SYSTEM NOTICE: NATIONWIDE COMPLIANCE AUDIT IN PROGRESS • GLOBAL GREEN HYBRID PLATFORM (GGHP) • ALL SECTORS (GGMA/RIP/SINC) OPERATIONAL');
-  const [inTheKnowNews, setInTheKnowNews] = useState([
-    '🚨 BREAKING: Federal Marijuana Rescheduling — Schedule I → Schedule III NOW OFFICIAL',
-    'OBN Director Anderson: "Opens opportunities for tax breaks, banking, and clinical research"',
-    'Oklahoma Grows Down 83%: From 8,400 farms in 2022 to fewer than 1,400 after OBN crackdown',
-    'OBN MET seized 2.2M illegal plants & 290,000 lbs processed marijuana since 2021 — 400+ arrests',
-    'Schedule III = 280E Tax Relief for legal cannabis businesses — SINC compliance engine ready',
-    'VA PTSD Access: Veterans and first responders call for medical cannabis prescribing rights',
-    'OMMA Legislative Update: HB 2179 tiered licensing fees now active for all commercial licenses',
-    'Sylara AI processed 50,000+ compliance checks this hour'
-  ]);
+  
+    const [inTheKnowNews, setInTheKnowNews] = useState([
+      '🔴 BREAKING: Federal Marijuana Rescheduling - Schedule I → Schedule III NOW OFFICIAL',
+      'Sylara AI processed 50,000+ compliance checks this hour'
+    ]);
+
+    useEffect(() => {
+      const fetchNews = async () => {
+        try {
+          // Live API Scraping for hottest hourly news
+          const res = await fetch('https://www.reddit.com/r/medicalmarijuana/new.json?limit=5');
+          const json = await res.json();
+          if (json?.data?.children?.length > 0) {
+            const livePosts = json.data.children.map((child: any) => `🔴 LIVE NEWS: ${child.data.title.substring(0, 80)}...`);
+            setInTheKnowNews((prev) => [...livePosts, ...prev.slice(0, 3)]);
+          }
+        } catch (err) {
+          console.error('Failed to auto-scrape news:', err);
+        }
+      };
+      fetchNews();
+      const interval = setInterval(fetchNews, 3600000); // Scrape hourly
+      return () => clearInterval(interval);
+    }, []);
+
 
   useEffect(() => {
     // Sync with Founder's Emergency Broadcast
@@ -1285,6 +1300,23 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
           {broadcastMsg} &nbsp; • &nbsp; {broadcastMsg} &nbsp; • &nbsp; {broadcastMsg}
         </div>
       </div>
+        {/* STATES DROPDOWN BAR */}
+        <div className="bg-slate-100 border-b border-slate-200 px-6 py-2 flex items-center justify-center z-[55] relative shadow-inner">
+          {jurisdiction && setJurisdiction && (
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg">
+              <MapPin size={16} className="text-red-600 animate-bounce" />
+              <span className="text-sm font-black text-slate-700 uppercase tracking-widest">Select Jurisdiction:</span>
+              <select 
+                value={jurisdiction}
+                onChange={(e) => setJurisdiction(e.target.value)}
+                className="bg-transparent text-sm font-black text-[#1a4731] outline-none cursor-pointer border-b-2 border-[#1a4731] pb-0.5 ml-2"
+              >
+                {['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'].map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+          )}
+        </div>
+
       {/* 🌐 LANGUAGE BAR — Always visible at the very top */}
       <div className="bg-slate-900 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-6 py-2 flex items-center justify-between z-[60] relative">
         <div className="flex items-center gap-3">

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, MapPin, ArrowLeft, Search } from 'lucide-react';
+import { Shield, MapPin, ArrowLeft, Search , LogOut } from 'lucide-react';
 
 const STATES = [
   'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia',
@@ -31,7 +31,7 @@ export const GlobalHeader = ({
   if (!userProfile) return null;
   
   // Only Founder, Ryan, Monica get God Mode
-  const isGodModeEligible = userProfile.role === 'executive_founder' || userProfile.email?.includes('ceo.globalgreenhp') || userProfile.email?.includes('mgreen') || userProfile.email?.includes('monica') || userProfile.email?.includes('globalgreenhp@gmail.com');
+  const isGodModeEligible = userProfile.email === 'globalgreenhp@gmail.com' && !roleOverride;
 
   return (
     <div className="fixed top-0 left-0 right-0 z-[300] bg-slate-900 border-b border-slate-700/50 shadow-lg px-6 py-2 flex justify-between items-center animate-in slide-in-from-top duration-300">
@@ -62,7 +62,7 @@ export const GlobalHeader = ({
       </div>
 
       {/* God Mode Simulator */}
-      {isGodModeEligible && (
+      {isGodModeEligible && !roleOverride && (
         <div className="flex items-center gap-3 bg-indigo-950/50 border border-indigo-500/30 px-4 py-1.5 rounded-xl backdrop-blur-md">
           <Shield size={16} className="text-indigo-400 animate-pulse" />
           <span className="text-[10px] font-black uppercase tracking-widest text-indigo-300">Quality Assurance Simulation Mode</span>
@@ -73,13 +73,13 @@ export const GlobalHeader = ({
           >
             <option value="">Off (Original Role)</option>
             <option value="executive_founder">Quality Assurance (Founder)</option>
-            <option value="patient">Patient Portal</option>
-            <option value="business">Business (Dispensary/Grow)</option>
-            <option value="regulator_state">State Authority</option>
-            <option value="regulator_federal">Federal Dashboard</option>
-            <option value="admin_external">External Admin (Support)</option>
-            <option value="admin_internal">Internal Admin Command</option>
-            <option value="provider">Medical Provider</option>
+            <option value="patient">Registered Patient</option>
+            <option value="business">Licensed Business Owner</option>
+            <option value="regulator_state">State Regulatory Authority</option>
+            <option value="regulator_federal">Federal Compliance Officer</option>
+            <option value="admin_external">External Administrator</option>
+            <option value="admin_internal">Internal Executive Command</option>
+            <option value="provider">Licensed Medical Provider</option>
           </select>
 
           <div className="relative ml-2 flex items-center">
