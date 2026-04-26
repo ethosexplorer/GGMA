@@ -184,29 +184,19 @@ export const ApplicationsTab = ({ user }: { user?: any }) => {
                       <div className="p-3 bg-emerald-500/20 text-emerald-200 text-xs font-bold rounded-xl border border-emerald-500/30 text-center flex items-center justify-center gap-2">
                         <CheckCircle size={16} /> Payment Verified
                       </div>
+                      <a 
+                        href="https://oklahoma.gov/omma/apply.html" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="w-full py-3 bg-emerald-500 text-white rounded-xl text-xs font-black hover:bg-emerald-400 transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/20"
+                      >
+                        🚀 Start OMMA Application
+                      </a>
                     </div>
                   )}
-                  
-                  <div className="pt-2">
-                    <a 
-                      href="https://www.renewoklahomacard.com/" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="w-full py-3 bg-slate-900 text-white rounded-xl text-xs font-black hover:bg-slate-800 transition-all flex items-center justify-center gap-2 shadow-sm mb-2"
-                    >
-                      🚀 Start OMMA Application
-                    </a>
-                  </div>
 
                   <div className="space-y-2">
-                    <button 
-                      onClick={() => ((window as any).Calendly ? (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma' }) : window.open('https://calendly.com/shantell-ggma', '_blank'))}
-                      className="w-full py-2.5 bg-white/10 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white/20 transition-all border border-white/10"
-                    >
-                      💬 Book Consultation
-                    </button>
-                    <p className="text-[9px] text-emerald-300 text-center italic">* Leave a detailed message in notes</p>
-                    <div className="pt-2 border-t border-white/10 mt-2">
+                    <div className="pt-2 mt-2">
                       <p className="text-[10px] font-black text-emerald-400 uppercase tracking-tighter mb-1">Direct Support Lines</p>
                       <p className="text-[10px] text-white/70">Med Cards: <span className="font-bold text-white">844-333-4447</span></p>
                       <p className="text-[10px] text-white/70">Telehealth: <span className="font-bold text-white">844-333-4447</span></p>
