@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Globe, Plane, ShieldCheck, AlertTriangle, Search, MapPin, Info } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { globalDocuments, setGlobalDocuments } from './DocumentVaultTab';
 
 export const ComplianceTravelTab = () => {
   const [selectedState, setSelectedState] = useState('');
@@ -36,11 +37,26 @@ export const ComplianceTravelTab = () => {
                <p className="text-sm text-slate-500 mb-6">Upload your out-of-state permit, temporary license, or travel itinerary directly to your Vault.</p>
                
                <input type="file" id="travel-upload" className="hidden" onChange={(e) => {
-                 if (e.target.files && e.target.files.length > 0) {
+                 const file = e.target.files?.[0];
+                 if (file) {
+                   const fileName = file.name;
+                   const fileSize = (file.size / 1024 / 1024).toFixed(1) + ' MB';
+                   const fileFormat = fileName.split('.').pop()?.toUpperCase() || 'PDF';
+
                    setIsGenerating(true);
                    setTimeout(() => {
                      setIsGenerating(false);
-                     alert(`"${e.target.files[0].name}" successfully uploaded and saved to your Vault!`);
+                     setGlobalDocuments([{
+                        id: Date.now(),
+                        name: fileName,
+                        type: 'Travel',
+                        format: fileFormat,
+                        size: fileSize,
+                        uploaded: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+                        status: 'Active',
+                        category: 'medical' // Place in general/medical category for now
+                     }, ...globalDocuments]);
+                     alert(`"${fileName}" successfully uploaded and saved to your Vault!`);
                    }, 1500);
                  }
                }} />
@@ -140,6 +156,16 @@ export const ComplianceTravelTab = () => {
                      setIsGenerating(true);
                      setTimeout(() => {
                         setIsGenerating(false);
+                        setGlobalDocuments([{
+                           id: Date.now(),
+                           name: `Travel_Compliance_${selectedState || 'Document'}.pdf`,
+                           type: 'Travel',
+                           format: 'PDF',
+                           size: '450 KB',
+                           uploaded: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+                           status: 'Active',
+                           category: 'medical'
+                        }, ...globalDocuments]);
                         alert('Travel Compliance Document successfully generated and saved to your Vault!');
                      }, 2000);
                   }}

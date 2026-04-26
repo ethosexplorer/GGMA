@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Upload, FileText, Image, Shield, Trash2, Eye, Download, FolderOpen, Lock } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
-const documents = [
+export let globalDocuments = [
   { id: 1, name: 'Oklahoma State ID — Front', type: 'ID', format: 'JPG', size: '2.1 MB', uploaded: 'Jan 15, 2026', status: 'Verified', category: 'identification' },
   { id: 2, name: 'Oklahoma State ID — Back', type: 'ID', format: 'JPG', size: '1.8 MB', uploaded: 'Jan 15, 2026', status: 'Verified', category: 'identification' },
   { id: 3, name: 'Dr. Johnson Recommendation', type: 'Medical', format: 'PDF', size: '340 KB', uploaded: 'Jan 12, 2026', status: 'Verified', category: 'medical' },
@@ -10,6 +10,10 @@ const documents = [
   { id: 5, name: 'Insurance Card — SoonerCare', type: 'Insurance', format: 'JPG', size: '1.2 MB', uploaded: 'Jan 15, 2026', status: 'Verified', category: 'insurance' },
   { id: 6, name: 'OMMA Card — Digital Copy', type: 'Card', format: 'PNG', size: '560 KB', uploaded: 'Jan 20, 2026', status: 'Active', category: 'cards' },
 ];
+
+export const setGlobalDocuments = (docs: any[]) => {
+  globalDocuments = docs;
+};
 
 const baseCategories = [
   { id: 'all', label: 'All Documents' },
@@ -25,7 +29,15 @@ export const DocumentVaultTab = () => {
   const [dragOver, setDragOver] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const [localDocs, setLocalDocs] = useState(documents);
+  const [localDocs, setLocalDocsState] = useState(globalDocuments);
+  
+  const setLocalDocs = (updateFn: any) => {
+    setLocalDocsState((prev: any) => {
+      const nextDocs = typeof updateFn === 'function' ? updateFn(prev) : updateFn;
+      setGlobalDocuments(nextDocs);
+      return nextDocs;
+    });
+  };
 
   const filtered = selectedCategory === 'all' ? localDocs : localDocs.filter(d => d.category === selectedCategory);
 
