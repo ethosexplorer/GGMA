@@ -121,6 +121,8 @@ import { OversightDashboard } from './pages/OversightDashboard';
 import { PricingTiers } from './components/PricingTiers';
 import { LanguageSelector } from './components/LanguageSelector';
 import { FeaturedPoll, StickyPollWidget } from './components/CommunityPolls';
+import { GlobalHeader } from './components/GlobalHeader';
+import { RoleSelectorScreen } from './components/RoleSelectorScreen';
 
 // --- Constants ---
 
@@ -7665,6 +7667,7 @@ export default function App() {
   return (
     <ErrorBoundary>
       <div className="antialiased text-slate-900">
+        <GlobalHeader userProfile={userProfile} jurisdiction={jurisdiction} setJurisdiction={setJurisdiction} roleOverride={roleOverride} setRoleOverride={setRoleOverride} handleBack={handleBack} canGoBack={viewHistory.length > 0} />
         <AnimatePresence mode="wait">
           {view === 'landing' && (
             <LandingPage
@@ -7825,7 +7828,17 @@ export default function App() {
                   </div>
                   {/* Blurred Dashboard */}
                   <div className="pointer-events-none select-none h-screen overflow-hidden">
-                    {renderDashboardByRole(userProfile)}
+                    {userProfile && (userProfile.role === 'executive_founder' || userProfile.email?.includes('ceo.globalgreenhp') || userProfile.email?.includes('monica') || userProfile.email?.includes('mgreen') || userProfile.email?.includes('globalgreenhp@gmail.com')) && !hasBypassedSelector ? (
+                      <RoleSelectorScreen 
+                        userProfile={userProfile}
+                        onSelect={(role) => {
+                          setRoleOverride(role === 'executive_founder' ? null : role);
+                          setHasBypassedSelector(true);
+                        }}
+                      />
+                    ) : (
+                      renderDashboardByRole(userProfile)
+                    )}
                   </div>
                 </div>
               ) : (
@@ -7836,7 +7849,17 @@ export default function App() {
                   exit={{ opacity: 0, y: -10 }}
                   className="min-h-screen"
                 >
-                  {renderDashboardByRole(userProfile)}
+                  {userProfile && (userProfile.role === 'executive_founder' || userProfile.email?.includes('ceo.globalgreenhp') || userProfile.email?.includes('monica') || userProfile.email?.includes('mgreen') || userProfile.email?.includes('globalgreenhp@gmail.com')) && !hasBypassedSelector ? (
+                    <RoleSelectorScreen 
+                      userProfile={userProfile}
+                      onSelect={(role) => {
+                        setRoleOverride(role === 'executive_founder' ? null : role);
+                        setHasBypassedSelector(true);
+                      }}
+                    />
+                  ) : (
+                    renderDashboardByRole(userProfile)
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>
