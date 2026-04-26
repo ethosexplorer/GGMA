@@ -2001,19 +2001,15 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
                     Intake & Schedule Consult
                  </button>
                  <button 
-                   onClick={() => {
-                     const code = window.prompt("🔒 LEGAL MARKETPLACE IS LOCKED.\n\nPlease subscribe or enter Access Code:");
-                     if (code === '1234') {
-                       alert("✅ Access Granted: Welcome to the Legal Marketplace.");
-                       onNavigate('login');
-                     } else if (code !== null) {
-                       alert("❌ Access Denied: Invalid Code. Please subscribe to unlock.");
-                     }
-                   }}
+                    onClick={() => {
+                      const el = document.getElementById('membership-tiers');
+                      if (el) { el.scrollIntoView({ behavior: 'smooth' }); }
+                      else { onNavigate('login'); }
+                    }}
                    className="relative flex-1 px-4 py-4 bg-slate-800/80 backdrop-blur-md text-slate-500 rounded-2xl font-black border border-slate-700 hover:border-emerald-500 hover:text-emerald-400 transition-all shadow-xl text-center text-sm group"
                  >
                     <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px] rounded-2xl flex items-center justify-center group-hover:bg-slate-900/80 transition-all">
-                      <Lock size={16} className="mr-2" /> <span className="group-hover:hidden">Locked</span><span className="hidden group-hover:inline">Unlock (Code: 1234)</span>
+                      <Lock size={16} className="mr-2" /> <span className="group-hover:hidden">Locked</span><span className="hidden group-hover:inline">Subscribe to Unlock</span>
                     </div>
                     Legal Marketplace
                  </button>
