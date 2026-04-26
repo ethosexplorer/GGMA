@@ -139,6 +139,26 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
         </div>
       </div>
 
+      {isSubscribed && (
+        <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm animate-in fade-in slide-in-from-top-4 duration-500">
+          <div className="flex items-center gap-3">
+             <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center shrink-0">
+               <Clock size={20} />
+             </div>
+             <div>
+               <h3 className="font-bold text-emerald-900 text-sm">30-Day Free Trial Active</h3>
+               <p className="text-xs text-emerald-700 font-medium">You have <span className="font-black text-emerald-900">29 days left</span> to test all premium Sylara AI features.</p>
+             </div>
+          </div>
+          <button 
+             onClick={() => setActiveTab('subscription')}
+             className="px-6 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-black hover:bg-emerald-500 transition-all shadow-md shadow-emerald-900/10 shrink-0 w-full sm:w-auto"
+          >
+             Upgrade Anytime
+          </button>
+        </div>
+      )}
+
       <AnimatePresence mode="wait">
         {/* ─── OVERVIEW TAB ─── */}
         {activeTab === 'overview' && (
