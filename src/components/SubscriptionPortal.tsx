@@ -22,6 +22,12 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
   const [showPricing, setShowPricing] = useState(false);
   const [showFeatures, setShowFeatures] = useState(false);
   
+  React.useEffect(() => {
+    const handleOpenPricing = () => setShowPricing(true);
+    window.addEventListener('open-pricing', handleOpenPricing);
+    return () => window.removeEventListener('open-pricing', handleOpenPricing);
+  }, []);
+  
   const currentPlan = allPlans.find(p => p.id === activePlanId) || allPlans[0];
   const currentAddonsList = allAddons.filter(a => activeAddOns.includes(a.id));
 
@@ -153,7 +159,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
                {currentAddonsList.length === 0 ? (
                  <div className="text-center py-6 bg-slate-50 rounded-xl border border-slate-100 border-dashed">
                     <p className="text-sm font-medium text-slate-500 mb-3">No active add-ons</p>
-                    <Button onClick={() => setShowPricing(true)} variant="outline" className="text-xs cursor-pointer">Browse Add-Ons</Button>
+                    <Button onClick={() => alert('Opening Sylara Add-On Manager...')} variant="outline" className="text-xs cursor-pointer">Browse Add-Ons</Button>
                  </div>
                ) : (
                  <div className="space-y-3">
@@ -174,7 +180,10 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
             <div className="bg-slate-50 border border-slate-200 p-6 rounded-2xl shadow-sm text-center">
                <h4 className="font-bold text-slate-800 mb-2">Need Help?</h4>
                <p className="text-xs text-slate-500 mb-4 px-4 font-medium leading-relaxed">Our support team is available 24/7 to help you with billing inquiries or custom pricing tailored to your scale.</p>
-               <Button variant="outline" className="w-full">Contact Support</Button>
+               <div className="flex flex-col gap-2">
+                 <Button onClick={() => alert('Starting Sylara Support Session...')} className="w-full bg-purple-600 hover:bg-purple-500 text-white border-transparent shadow-lg shadow-purple-900/20">Ask Sylara AI</Button>
+                 <Button onClick={() => window.location.href = 'tel:+18005550199'} variant="outline" className="w-full">Call Phone Support</Button>
+               </div>
             </div>
          </div>
       </div>

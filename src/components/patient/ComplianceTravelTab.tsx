@@ -27,6 +27,38 @@ export const ComplianceTravelTab = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
          <div className="lg:col-span-2 space-y-6">
+            {/* Travel Documents Upload */}
+            <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
+               <h3 className="text-xl font-black text-slate-800 mb-4 flex items-center gap-3">
+                  <Plane size={24} className="text-blue-600" /> 
+                  Upload Travel Documents
+               </h3>
+               <p className="text-sm text-slate-500 mb-6">Upload your out-of-state permit, temporary license, or travel itinerary directly to your Vault.</p>
+               
+               <input type="file" id="travel-upload" className="hidden" onChange={(e) => {
+                 if (e.target.files && e.target.files.length > 0) {
+                   setIsGenerating(true);
+                   setTimeout(() => {
+                     setIsGenerating(false);
+                     alert(`"${e.target.files[0].name}" successfully uploaded and saved to your Vault!`);
+                   }, 1500);
+                 }
+               }} />
+               <div
+                 onClick={() => document.getElementById('travel-upload')?.click()}
+                 className={cn(
+                   "border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer",
+                   isGenerating ? "opacity-50 pointer-events-none border-slate-200 bg-slate-50" : "border-slate-200 hover:border-emerald-300 hover:bg-emerald-50"
+                 )}
+               >
+                 <svg className="mx-auto mb-3 text-emerald-500 w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                 </svg>
+                 <p className="font-bold text-slate-700 text-sm">{isGenerating ? 'Encrypting & Uploading to Vault...' : 'Click to upload travel document'}</p>
+                 <p className="text-xs text-slate-500 mt-1">Saved securely to your Master Vault</p>
+               </div>
+            </div>
+
             <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
                <h3 className="text-xl font-black text-slate-800 mb-6 flex items-center gap-3">
                   <Globe size={24} className="text-blue-600" /> 

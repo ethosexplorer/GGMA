@@ -150,7 +150,13 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
              </div>
           </div>
           <button 
-             onClick={() => setActiveTab('subscription')}
+             onClick={() => {
+               if (activeTab === 'subscription') {
+                  window.dispatchEvent(new Event('open-pricing'));
+               } else {
+                  setActiveTab('subscription');
+               }
+             }}
              className="px-6 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-black hover:bg-emerald-500 transition-all shadow-md shadow-emerald-900/10 shrink-0 w-full sm:w-auto"
           >
              Upgrade Anytime
