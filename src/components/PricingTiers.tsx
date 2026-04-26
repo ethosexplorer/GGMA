@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   CheckCircle2,
+  Check,
   Sparkles,
   Building2,
   Shield,
@@ -37,7 +38,7 @@ import {
   ENFORCEMENT_PLANS,
   PUBLIC_HEALTH_PLANS,
   CARE_WALLET_PLANS,
-  CARE_BUILDER_PLANS,
+  CARE_BUILDER_ADDONS,
   CANNABIS_BACKOFFICE_PLANS,
   NON_CANNABIS_BACKOFFICE_PLANS,
   EXTERNAL_ADMIN_PLANS,
@@ -86,7 +87,7 @@ function getPlansForTab(tabId: TabId): SubscriptionPlan[] {
     case 'provider': return PROVIDER_PLANS;
     case 'attorney': return [...CANNABIS_ATTORNEY_PLANS, ...GENERAL_ATTORNEY_PLANS];
     case 'backoffice': return [...CANNABIS_BACKOFFICE_PLANS, ...NON_CANNABIS_BACKOFFICE_PLANS];
-    case 'care_wallet': return [...CARE_WALLET_PLANS, ...CARE_BUILDER_PLANS];
+    case 'care_wallet': return CARE_WALLET_PLANS;
     case 'state': return STATE_PLANS;
     case 'federal': return FEDERAL_PLANS;
     case 'enforcement': return [...ENFORCEMENT_PLANS, ...FINANCE_AI_PLANS];
@@ -102,7 +103,7 @@ function getAddOnsForTab(tabId: TabId): AddOn[] {
     case 'traditional_b2b': return COMMON_B2B_ADDONS;
     case 'attorney': return ATTORNEY_ADDONS;
     case 'backoffice': return BACKOFFICE_ADDONS;
-    case 'care_wallet': return [];
+    case 'care_wallet': return CARE_BUILDER_ADDONS;
     case 'state': return STATE_ADDONS;
     case 'federal': return FEDERAL_ADDONS;
     case 'enforcement': return [];
@@ -129,19 +130,22 @@ function getTabDescription(tabId: TabId): string {
   }
 }
 
-function formatPrice(plan: SubscriptionPlan, billing: 'monthly' | 'annual'): string {
+function formatPrice(plan: SubscriptionPlan, billing: 'monthly' | 'annual', addonTotal: number = 0): string {
   if (billing === 'monthly') {
-    return plan.monthlyPrice === 0 ? 'Free' : `$${plan.monthlyPrice.toLocaleString()}`;
+    if (plan.monthlyPrice === 'Custom') return 'Custom';
+    return (plan.monthlyPrice === 0 && addonTotal === 0) ? 'Free' : `$${(Number(plan.monthlyPrice) + addonTotal).toLocaleString()}`;
   }
-  return typeof plan.annualPrice === 'string' ? plan.annualPrice : `$${plan.annualPrice.toLocaleString()}`;
+  if (typeof plan.annualPrice === 'string') return plan.annualPrice;
+  return `$${(Number(plan.annualPrice) + (addonTotal * 12)).toLocaleString()}`;
 }
 
 // ─── Plan Card ───
-const PlanCard = ({ plan, index, total, billing }: { key?: string; plan: SubscriptionPlan; index: number; total: number; billing: 'monthly' | 'annual' }) => {
+const PlanCard = ({ plan, index, total, billing, selectedAddons }: { key?: string; plan: SubscriptionPlan; index: number; total: number; billing: 'monthly' | 'annual'; selectedAddons: AddOn[] }) => {
   const isMid = total === 3 && index === 1;
   const isPopular = isMid || (total === 4 && index === 2);
-  const price = formatPrice(plan, billing);
-  const hasTrial = plan.monthlyPrice > 0 && price !== 'Custom';
+  const addonTotal = selectedAddons.reduce((sum, addon) => sum + (typeof addon.price === 'number' ? addon.price : 0), 0);
+  const price = formatPrice(plan, billing, addonTotal);
+  const hasTrial = typeof plan.monthlyPrice === 'number' && plan.monthlyPrice > 0 && price !== 'Custom';
 
   return (
     <motion.div
@@ -204,7 +208,7 @@ const PlanCard = ({ plan, index, total, billing }: { key?: string; plan: Subscri
         </p>
       )}
 
-      {billing === 'annual' && typeof plan.annualPrice === 'number' && plan.monthlyPrice > 0 && (
+      {billing === 'annual' && typeof plan.annualPrice === 'number' && typeof plan.monthlyPrice === 'number' && plan.monthlyPrice > 0 && (
         <p className="text-xs text-emerald-600 font-bold mb-4">
           Save {Math.round((1 - plan.annualPrice / (plan.monthlyPrice * 12)) * 100)}% vs monthly
         </p>
@@ -260,17 +264,31 @@ const PlanCard = ({ plan, index, total, billing }: { key?: string; plan: Subscri
 };
 
 // ─── Add-On Card ───
-const AddOnCard = ({ addon }: { key?: string; addon: AddOn }) => (
-  <div className="flex items-center justify-between p-4 bg-white rounded-xl border border-slate-200 hover:border-emerald-300 transition-all hover:shadow-sm">
-    <div className="flex-1">
-      <p className="font-bold text-slate-800 text-sm">{addon.name}</p>
-      {addon.per && <p className="text-[11px] text-slate-400 mt-0.5">per {addon.per}</p>}
+const AddOnCard = ({ addon, isSelected, onToggle }: { key?: string; addon: AddOn; isSelected: boolean; onToggle: (addon: AddOn) => void }) => (
+  <div 
+    onClick={() => onToggle(addon)}
+    className={`flex items-center justify-between p-4 rounded-xl border transition-all cursor-pointer ${
+      isSelected 
+        ? 'bg-emerald-50 border-emerald-500 shadow-sm' 
+        : 'bg-white border-slate-200 hover:border-emerald-300 hover:shadow-sm'
+    }`}
+  >
+    <div className="flex items-center gap-3 flex-1">
+      <div className={`w-5 h-5 rounded border flex items-center justify-center shrink-0 ${
+        isSelected ? 'bg-emerald-600 border-emerald-600' : 'border-slate-300 bg-slate-50'
+      }`}>
+        {isSelected && <Check size={14} className="text-white" />}
+      </div>
+      <div>
+        <p className={`font-bold text-sm ${isSelected ? 'text-emerald-900' : 'text-slate-800'}`}>{addon.name}</p>
+        {addon.per && <p className={`text-[11px] mt-0.5 ${isSelected ? 'text-emerald-600' : 'text-slate-400'}`}>per {addon.per}</p>}
+      </div>
     </div>
     <div className="text-right shrink-0 ml-4">
-      <span className="font-black text-emerald-700 text-sm">
+      <span className={`font-black text-sm ${isSelected ? 'text-emerald-700' : 'text-emerald-600'}`}>
         ${typeof addon.price === 'number' ? addon.price.toLocaleString(undefined, { minimumFractionDigits: addon.price % 1 !== 0 ? 2 : 0 }) : addon.price}
       </span>
-      {!addon.per && <span className="text-[10px] text-slate-400 font-bold">/mo</span>}
+      {!addon.per && <span className={`text-[10px] font-bold ${isSelected ? 'text-emerald-600' : 'text-slate-400'}`}>/mo</span>}
     </div>
   </div>
 );
@@ -280,6 +298,20 @@ export const PricingTiers = ({ onNavigate }: { onNavigate?: (view: string) => vo
   const [activeTab, setActiveTab] = useState<TabId>('patient');
   const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly');
   const [showAddOns, setShowAddOns] = useState(false);
+  const [selectedAddons, setSelectedAddons] = useState<AddOn[]>([]);
+  
+  // Clear selected addons when tab changes
+  useEffect(() => {
+    setSelectedAddons([]);
+  }, [activeTab]);
+
+  const toggleAddon = (addon: AddOn) => {
+    setSelectedAddons(prev => 
+      prev.find(a => a.id === addon.id) 
+        ? prev.filter(a => a.id !== addon.id)
+        : [...prev, addon]
+    );
+  };
 
   const plans = getPlansForTab(activeTab);
   const addons = getAddOnsForTab(activeTab);
@@ -397,7 +429,7 @@ export const PricingTiers = ({ onNavigate }: { onNavigate?: (view: string) => vo
               'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
             }`}>
               {plans.map((plan, i) => (
-                <PlanCard key={plan.id} plan={plan} index={i} total={plans.length} billing={billing} />
+                <PlanCard key={plan.id} plan={plan} index={i} total={plans.length} billing={billing} selectedAddons={selectedAddons} />
               ))}
             </div>
           </motion.div>
@@ -433,7 +465,12 @@ export const PricingTiers = ({ onNavigate }: { onNavigate?: (view: string) => vo
                 >
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4 pt-4">
                     {addons.map(addon => (
-                      <AddOnCard key={addon.id} addon={addon} />
+                      <AddOnCard 
+                        key={addon.id} 
+                        addon={addon} 
+                        isSelected={!!selectedAddons.find(a => a.id === addon.id)}
+                        onToggle={toggleAddon}
+                      />
                     ))}
                   </div>
                 </motion.div>

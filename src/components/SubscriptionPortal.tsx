@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { CreditCard, CheckCircle2, Shield, Settings, Zap, FileText, Plus } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { getAllPlansForLookup, getAllAddonsForLookup } from '../lib/subscriptionPlans';
+import { PricingTiers } from './PricingTiers';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 const Button = ({ children, className, icon: Icon, variant, ...props }: any) => (
   <button className={cn("inline-flex items-center justify-center gap-2 px-4 py-2 font-bold rounded-lg shadow-sm border transition-all", 
@@ -17,9 +19,22 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
 
   const [activePlanId, setActivePlanId] = useState(initialPlanId);
   const [activeAddOns, setActiveAddOns] = useState<string[]>(initialAddOns);
+  const [showPricing, setShowPricing] = useState(false);
+  const [showFeatures, setShowFeatures] = useState(false);
   
   const currentPlan = allPlans.find(p => p.id === activePlanId) || allPlans[0];
   const currentAddonsList = allAddons.filter(a => activeAddOns.includes(a.id));
+
+  if (showPricing) {
+    return (
+      <div className="animate-in fade-in duration-500">
+        <button onClick={() => setShowPricing(false)} className="mb-4 text-emerald-700 hover:text-emerald-900 font-bold text-sm flex items-center gap-2">
+          ← Back to Dashboard
+        </button>
+        <PricingTiers />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -42,7 +57,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
             <div className="bg-white/10 p-5 rounded-2xl border border-white/20 backdrop-blur-sm self-start md:self-center shrink-0">
                <p className="text-sm text-emerald-100 font-medium mb-1">Current Billing</p>
                <div className="flex items-baseline gap-1">
-                 <span className="text-3xl font-extrabold">${currentPlan.monthlyPrice}</span>
+                 <span className="text-3xl font-extrabold">{currentPlan.monthlyPrice === 'Custom' ? 'Custom' : `$${currentPlan.monthlyPrice}`}</span>
                  <span className="text-emerald-200">/mo</span>
                </div>
                <p className="text-xs text-emerald-100/70 mt-1">Renews on Oct 1, 2026</p>
@@ -114,7 +129,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
             </div>
 
             {/* Quick Upgrade Section */}
-            {currentPlan.monthlyPrice < 200 && (
+            {(typeof currentPlan.monthlyPrice === 'number' && currentPlan.monthlyPrice < 200) && (
                 <div className="bg-slate-900 bg-gradient-to-r from-slate-900 to-[#1a4731] p-6 rounded-2xl shadow-xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden group">
                    <div className="absolute -right-10 -top-10 text-white/5 group-hover:scale-110 transition-transform duration-700">
                      <Zap size={150} />
@@ -123,7 +138,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
                      <h3 className="text-xl font-bold text-white mb-2">Ready for Full AI?</h3>
                      <p className="text-slate-300 text-sm max-w-sm">Upgrade your plan to unlock Unlimited AI Tokens, Custom Sylara Bots, and Priority Enforcement modules.</p>
                    </div>
-                   <Button className="shrink-0 bg-white text-[#1a4731] hover:bg-slate-100 shadow-xl relative z-10 px-8 py-3">View Upgrades</Button>
+                   <Button onClick={() => setShowPricing(true)} className="shrink-0 bg-white text-[#1a4731] hover:bg-slate-100 shadow-xl relative z-10 px-8 py-3">View Upgrades</Button>
                 </div>
             )}
          </div>
@@ -138,7 +153,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
                {currentAddonsList.length === 0 ? (
                  <div className="text-center py-6 bg-slate-50 rounded-xl border border-slate-100 border-dashed">
                     <p className="text-sm font-medium text-slate-500 mb-3">No active add-ons</p>
-                    <Button variant="outline" className="text-xs">Browse Add-Ons</Button>
+                    <Button onClick={() => setShowPricing(true)} variant="outline" className="text-xs cursor-pointer">Browse Add-Ons</Button>
                  </div>
                ) : (
                  <div className="space-y-3">
@@ -151,7 +166,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
                         <button className="text-xs text-red-500 font-bold hover:underline">Remove</button>
                      </div>
                    ))}
-                   <Button variant="outline" className="w-full mt-2" icon={Plus}>Add More Features</Button>
+                   <Button onClick={() => setShowPricing(true)} variant="outline" className="w-full mt-2 cursor-pointer" icon={Plus}>Add More Features</Button>
                  </div>
                )}
             </div>

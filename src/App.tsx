@@ -3102,7 +3102,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     
     if (isGeneral) return `👋 Welcome to the **Global Green Hybrid Platform (GGHP)** Concierge. I am **Sylara**, your Intake Agent. \n\n**Integration Status:** ${metrcStatus}.\n\nI handle:\n• **Intake & Onboarding** (GGMA)\n• **Operational Support**\n• **Escalations & Alerts**\n• **L.A.R.R.Y** Authority Transfers\n\nHow can I help you navigate the ecosystem today?`;
     
-    return `👋 Hello! I am **Sylara** — your **Intake Agent**. We are a **${metrcStatus}** (v5.3). I will walk you through your **Medical License** intake and prepare your file for the **L.A.R.R.Y Authority Engine**. \n\nI'll help you with:\n• Complete Medical Intake\n• Care Wallet Setup\n• Direct Booking with Providers\n\nAre you ready to begin? Or pick a quick action below!`;
+    return `👋 Hello! I am **Sylara**, your **AI Healthcare Assistant** and **State Concierge**. Welcome to the Global Green Ecosystem! 🌿\n\nAs a member (currently enjoying your 30-Day Free Trial of the B2C Basic Plan), you have unlocked priority state processing, our encrypted Document Vault, and direct access to our Telehealth and Legal networks. My job is to make your medical card journey completely seamless and 100% compliant.\n\nEvery application step you complete with me is safely stored in your Vault. Even if you can't finish right now, we can pull it back up and continue right where you left off.\n\nAre you ready to start your medical card application today? Do you have all your necessary documents ready?\n*(Note: You can continue without them, but your application cannot be submitted to the state until all documents are uploaded.)*`;
   };
 
   const getInitialChoices = () => {
@@ -3121,7 +3121,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       '💻 IT Support',
       '❓ General Support'
     ];
-    return ['Start Patient Intake', 'Book Physician ($45)', 'Speak with a Live Agent', 'View Subscription Plans'];
+    return ['Yes, I have my documents ready', 'No, I need to upload them later', 'Reschedule / Return later'];
   };
 
   const [messages, setMessages] = useState<{role: 'user'|'bot', text: string, choices?: string[]}[]>([
@@ -3191,6 +3191,8 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         try {
           await setDoc(doc(db, 'larry_chats', sessionId), {
             messages,
+            signupStep,
+            signupData,
             isBusiness,
             userEmail: businessData?.email || signupData?.email || 'anonymous',
             lastUpdated: serverTimestamp()
@@ -3201,7 +3203,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       }
     };
     saveChat();
-  }, [messages, sessionId, isBusiness, businessData?.email, signupData?.email]);
+  }, [messages, sessionId, isBusiness, businessData?.email, signupData?.email, signupStep, signupData]);
   const BUSINESS_LICENSE_TYPES = [
     'Dispensary', 'Grower', 'Processor', 'Laboratory',
     'Transporter', 'Researcher', 'Education', 'Waste Disposal'
@@ -3839,27 +3841,101 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     }
 
     // === MAIN STATE MACHINE ===
+    if (signupStep === -1) {
+      if (lower === 'english' || lower === 'español' || lower.includes('português') || lower.includes('français') || lower.includes('kreyòl') || lower.includes('中文')) {
+        setMessages(prev => [...prev, { role: 'bot', text: getGreeting(), choices: getInitialChoices() } as any]);
+        setSignupStep(0);
+        setIsTyping(false);
+        return;
+      }
+    }
+
     if (signupStep === 0) {
-      if (lower.includes('start') || lower.includes('apply') || lower.includes('license')) {
+      if (lower.includes('start patient intake') || lower.includes('apply') || lower.includes('license')) {
         response = 'Great! Can I create an account for you to begin your application?';
-        setMessages(prev => [...prev, { 
-          role: 'bot', 
-          text: response,
-          choices: ['Yes', 'No'] 
-        } as any]);
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Yes', 'No'] } as any]);
         setSignupStep(99);
+        setIsTyping(false);
+        return;
+      } else if (lower.includes('yes, i have my documents') || lower.includes('upload them later') || lower.includes('yes, start') || lower.includes('start')) {
+        response = 'Great! Your progress is being securely saved.\n\nNext question: Do you need a **Doctor Recommendation**, or do you already have one?\n\n*(Note: If you already have one, please have the exact date ready. Recommendations expire 30 days from the visit date, and OMMA processing can take up to 14+ days. We want to ensure your recommendation does not expire during state review, which would cause a denial.)*';
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['I need a Doctor Recommendation', 'I already have a Recommendation'] } as any]);
+        setSignupStep(1001);
+        setIsTyping(false);
+        return;
+      } else if (lower.includes('reschedule') || lower.includes('return later')) {
+        response = 'No problem at all! We will securely store your session. You can return at any time to resume your application via your portal.\n\nHave a wonderful day! 👋';
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
         setIsTyping(false);
         return;
       } else {
         response = 'I\'m here to help you navigate the **Global Green Hybrid Platform (GGHP)**. \n\nYou can ask me about **GGMA Licensing**, **RIP Enforcement**, **SINC Compliance**, or general services like **Telehealth** and **IT Support**.\n\nWhat would you like to explore first?';
-        setMessages(prev => [...prev, { 
-          role: 'bot', 
-          text: response,
-          choices: getInitialChoices()
-        } as any]);
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: getInitialChoices() } as any]);
         setIsTyping(false);
         return;
       }
+    } else if (signupStep === 1000000) {
+      response = 'Great! Your progress is being securely saved.\n\nNext question: Do you need a **Doctor Recommendation**, or do you already have one?\n\n*(Note: If you already have one, please have the exact date ready. Recommendations expire 30 days from the visit date, and OMMA processing can take up to 14+ days. We want to ensure your recommendation does not expire during state review, which would cause a denial.)*';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['I need a Doctor Recommendation', 'I already have a Recommendation'] } as any]);
+      setSignupStep(1001);
+      setIsTyping(false);
+      return;
+    } else if (signupStep === 0 && (lower.includes('reschedule') || lower.includes('return later'))) {
+      response = 'No problem at all! We will securely store your session. You can return at any time to resume your application via your portal.\n\nHave a wonderful day! 👋';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+      setIsTyping(false);
+      return;
+    } else if (signupStep === 1001) {
+      if (lower.includes('already have')) {
+        response = 'Excellent! What date was your physician visit? (e.g., April 15, 2026)';
+        setSignupStep(1002);
+        setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+        setIsTyping(false);
+        return;
+      } else if (lower.includes('need a doctor') || lower.includes('need one')) {
+        response = 'No problem! We can schedule you a telehealth visit right now. The cost is **$35 for the evaluation + $10 processing (Total $45)**. Should we book that now?';
+        setSignupStep(1003);
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Book Physician ($45)', 'Not right now'] } as any]);
+        setIsTyping(false);
+        return;
+      }
+    } else if (signupStep === 1002) {
+       // User enters a date
+       response = 'Perfect! I have saved your recommendation date to your secure Vault. We will monitor the 30-day expiration window for you.\n\nLet\'s determine your license eligibility. Are you a **Patient Or Legal Guardian**? (Yes / No)';
+       setSignupStep(20);
+       setLicenseEligibility({ isPatientOrGuardian: '', isStateResident: '', isAdultLicense: '' });
+       setEligibleLicenses([]);
+       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Yes', 'No'] } as any]);
+       setIsTyping(false);
+       return;
+    } else if (signupStep === 1003) {
+       if (lower.includes('book physician')) {
+          if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma/health-wellness-consultation' }); } else { window.open('https://calendly.com/shantell-ggma/health-wellness-consultation', '_blank'); }
+          response = '📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book Medical Card / Doctor Visit via Calendly](https://calendly.com/shantell-ggma/health-wellness-consultation)\n\n*(Once you finish booking, just type "Done" here!)*';
+          setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Done'] } as any]);
+          setSignupStep(1004);
+       } else {
+          response = 'Okay, we will skip the doctor booking for now. Let\'s determine your license eligibility. Are you a **Patient Or Legal Guardian**? (Yes / No)';
+          setSignupStep(20);
+          setLicenseEligibility({ isPatientOrGuardian: '', isStateResident: '', isAdultLicense: '' });
+          setEligibleLicenses([]);
+          setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Yes', 'No'] } as any]);
+       }
+       setIsTyping(false);
+       return;
+    } else if (signupStep === 1004) {
+       if (lower.includes('done') || lower.includes('scheduled')) {
+          response = 'Excellent! I have noted your scheduled appointment in your Care Wallet. Let\'s determine your license eligibility. Are you a **Patient Or Legal Guardian**? (Yes / No)';
+          setSignupStep(20);
+          setLicenseEligibility({ isPatientOrGuardian: '', isStateResident: '', isAdultLicense: '' });
+          setEligibleLicenses([]);
+          setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Yes', 'No'] } as any]);
+       } else {
+          response = 'Please type "Done" when you have finished booking your appointment, or click "Skip" to continue without booking.';
+          setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Done', 'Skip'] } as any]);
+       }
+       setIsTyping(false);
+       return;
     } else if (signupStep === 850) {
       // Find an Attorney Options
       if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma/health-wellness-consultation' }); } else { window.open('https://calendly.com/shantell-ggma/health-wellness-consultation', '_blank'); }
@@ -7209,9 +7285,27 @@ export default function App() {
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState('landing');
+  const [viewHistory, setViewHistory] = useState<string[]>([]);
   const [initialRole, setInitialRole] = useState(undefined);
   const [isDemoUnlocked, setIsDemoUnlocked] = useState(false);
   const [showLarryModal, setShowLarryModal] = useState(false);
+  const [roleOverride, setRoleOverride] = useState<string | null>(null);
+
+  const handleNavigate = (newView: string, role?: string) => {
+    setViewHistory(prev => [...prev, view]);
+    setView(newView);
+    if (role) setInitialRole(role as any);
+  };
+
+  const handleBack = () => {
+    if (viewHistory.length > 0) {
+      const lastView = viewHistory[viewHistory.length - 1];
+      setViewHistory(prev => prev.slice(0, -1));
+      setView(lastView);
+    } else {
+      setView('landing');
+    }
+  };
 
   useEffect(() => {
     initDatabase();
@@ -7320,7 +7414,7 @@ export default function App() {
 
   const renderDashboardByRole = (profile: any) => {
     if (!profile) return null;
-    const role = profile.role;
+    const role = roleOverride || profile.role;
     const path = location.pathname;
     
     // Extract sub-tab if any (e.g., /dashboard/business/readiness -> readiness)
@@ -7573,8 +7667,7 @@ export default function App() {
           {view === 'landing' && (
             <LandingPage
               onNavigate={(v, role) => {
-                setView(v as any);
-                if (role) setInitialRole(role);
+                handleNavigate(v as any); setInitialRole(role);
               }}
             />
           )}
@@ -7595,7 +7688,7 @@ export default function App() {
           {view === 'larry-business' && (
             <LarryMedCardChatbot
               onNavigate={(v) => {
-                setView(v as any);
+                handleNavigate(v as any);
               }}
               onProfileCreated={(profile) => setUserProfile(profile)}
               variant="business"
@@ -7605,14 +7698,14 @@ export default function App() {
           {view === 'patient-signup' && (
             <PatientSignupPage
               onNavigate={(v) => {
-                setView(v as any);
+                handleNavigate(v as any);
               }}
             />
           )}
           {view === 'business-signup' && (
             <BusinessRegistrationPage
               onNavigate={(v) => {
-                setView(v as any);
+                handleNavigate(v as any);
               }}
               onComplete={handleSignup}
             />
@@ -7620,7 +7713,7 @@ export default function App() {
           {view === 'support' && (
             <SupportPage
               onNavigate={(v) => {
-                setView(v as any);
+                handleNavigate(v as any);
               }}
             />
           )}
@@ -7630,24 +7723,24 @@ export default function App() {
               onLogin={handleLogin}
               onSignUp={() => setView('signup')}
               onForgotPassword={() => setView('forgot-password')}
-              onBack={() => setView('landing')}
+              onBack={handleBack}
               initialRole={initialRole}
               key="login"
             />
           )}
           {view === 'signup' && (
             <SignupScreen
-              onBack={() => setView('landing')}
+              onBack={handleBack}
               onLogin={() => setView('login')}
               onComplete={handleSignup}
-              onNavigate={setView}
+              onNavigate={handleNavigate}
               initialRole={initialRole}
               key="signup"
             />
           )}
           {view === 'forgot-password' && (
             <ForgotPasswordScreen
-              onBack={() => setView('login')}
+              onBack={handleBack}
               onReset={handlePasswordReset}
               key="forgot-password"
             />
@@ -7662,7 +7755,7 @@ export default function App() {
           )}
           {view === 'provider-signup' && (
             <ProviderRegistrationPage
-              onNavigate={setView}
+              onNavigate={handleNavigate}
               key="provider-signup"
             />
           )}
@@ -7679,12 +7772,12 @@ export default function App() {
           )}
 
           {view === 'education' && (
-            <EducationPortal onBack={() => setView('landing')} />
+            <EducationPortal onBack={handleBack} />
           )}
 
           {view === 'legal-advocacy' && (
             <ProSeLegalIntake 
-              onBack={() => setView('landing')} 
+              onBack={handleBack} 
               onComplete={() => setView('landing')} 
             />
           )}
