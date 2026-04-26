@@ -7930,6 +7930,7 @@ export default function App() {
               onLogout={handleLogout}
               user={userProfile}
               onSignup={() => setView('patient-signup')}
+              onOpenConcierge={() => setShowLarryModal(true)}
               key="patient-portal"
             />
           )}
