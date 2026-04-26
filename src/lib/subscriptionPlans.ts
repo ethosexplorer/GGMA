@@ -32,7 +32,7 @@ export const TRIAL_TERMS = {
 
 export const CANNABIS_B2B_PLANS: SubscriptionPlan[] = [
   {
-    id: 'b2bc_starter', trialDays: 7, trialPrice: 99,
+    id: 'b2bc_starter', trialDays: 7, trialPrice: 0,
     name: 'Starter',
     monthlyPrice: 199,
     annualPrice: 1990,
@@ -51,7 +51,7 @@ export const CANNABIS_B2B_PLANS: SubscriptionPlan[] = [
     ]
   },
   {
-    id: 'b2bc_pro', trialDays: 7, trialPrice: 175,
+    id: 'b2bc_pro', trialDays: 7, trialPrice: 0,
     name: 'Professional',
     monthlyPrice: 249,
     annualPrice: 2490,
@@ -71,7 +71,7 @@ export const CANNABIS_B2B_PLANS: SubscriptionPlan[] = [
     ]
   },
   {
-    id: 'b2bc_enterprise', trialDays: 7, trialPrice: 249,
+    id: 'b2bc_enterprise', trialDays: 7, trialPrice: 0,
     name: 'Enterprise',
     monthlyPrice: 299,
     annualPrice: 2990,
@@ -94,13 +94,13 @@ export const CANNABIS_B2B_PLANS: SubscriptionPlan[] = [
 
 export const TRADITIONAL_B2B_PLANS: SubscriptionPlan[] = [
   { id: 'b2bt_basic', name: 'Basic', monthlyPrice: 99, annualPrice: 1009, bestFor: 'Small businesses & startups', aiLevel: 'Basic Sylara Guidance + Alerts', trialDays: 7, trialPrice: 0 },
-  { id: 'b2bt_medium', name: 'Medium', monthlyPrice: 299, annualPrice: 3059, bestFor: 'Growing companies', aiLevel: 'Full Sylara + Larry Enforcement', trialDays: 7, trialPrice: 49 },
-  { id: 'b2bt_full', name: 'Full AI', monthlyPrice: 599, annualPrice: 6119, bestFor: 'Established & scaling businesses', aiLevel: 'Unlimited Sylara + Larry + Custom Bots', trialDays: 7, trialPrice: 99 }
+  { id: 'b2bt_medium', name: 'Medium', monthlyPrice: 299, annualPrice: 3059, bestFor: 'Growing companies', aiLevel: 'Full Sylara + Larry Enforcement', trialDays: 7, trialPrice: 0 },
+  { id: 'b2bt_full', name: 'Full AI', monthlyPrice: 599, annualPrice: 6119, bestFor: 'Established & scaling businesses', aiLevel: 'Unlimited Sylara + Larry + Custom Bots', trialDays: 7, trialPrice: 0 }
 ];
 
 export const FEDERAL_PLANS: SubscriptionPlan[] = [
   {
-    id: 'fed_basic', trialDays: 7, trialPrice: 899.99,
+    id: 'fed_basic', trialDays: 7, trialPrice: 0,
     name: 'Federal Dashboard Basic',
     monthlyPrice: 9999,
     annualPrice: 101990,
@@ -120,7 +120,7 @@ export const FEDERAL_PLANS: SubscriptionPlan[] = [
     ]
   },
   {
-    id: 'fed_pro', trialDays: 7, trialPrice: 22999,
+    id: 'fed_pro', trialDays: 7, trialPrice: 0,
     name: 'Federal Dashboard Pro',
     monthlyPrice: 24999,
     annualPrice: 254990,
@@ -166,7 +166,7 @@ export const FEDERAL_PLANS: SubscriptionPlan[] = [
 
 export const STATE_PLANS: SubscriptionPlan[] = [
   {
-    id: 'state_basic', trialDays: 7, trialPrice: 399.99,
+    id: 'state_basic', trialDays: 7, trialPrice: 0,
     name: 'State Authority Basic',
     monthlyPrice: 4999,
     annualPrice: 50990,
@@ -187,7 +187,7 @@ export const STATE_PLANS: SubscriptionPlan[] = [
     ]
   },
   {
-    id: 'state_pro', trialDays: 7, trialPrice: 10000,
+    id: 'state_pro', trialDays: 7, trialPrice: 0,
     name: 'State Authority Pro',
     monthlyPrice: 12999,
     annualPrice: 132590,
@@ -250,15 +250,15 @@ export const ADMIN_ADDONS: AddOn[] = [
 ];
 
 export const CANNABIS_BACKOFFICE_PLANS: SubscriptionPlan[] = [
-  { id: 'cannabis_basic', name: 'Cannabis Backoffice Basic', monthlyPrice: 199, annualPrice: 2029, bestFor: 'Single-location operators', aiLevel: 'Basic Sylara Guidance + Larry Alert Mode', features: ['Core Backoffice Ops', 'Basic Larry Alerts', 'Metrc Sync', 'Virtual Attendant'], trialDays: 7, trialPrice: 99 },
-  { id: 'cannabis_pro', name: 'Cannabis Backoffice Pro', monthlyPrice: 499, annualPrice: 5090, bestFor: 'Growing operators (up to 5 locations)', aiLevel: 'Full Sylara Guidance + Larry Enforcement Mode', features: ['Full Larry Enforcement', 'Multi-location admin', 'Audit Vault', 'Advanced compliance'], trialDays: 7, trialPrice: 175 },
-  { id: 'cannabis_enterprise', name: 'Cannabis Backoffice Enterprise Full AI', monthlyPrice: 999, annualPrice: 10190, bestFor: 'Multi-state operators & MSOs', aiLevel: 'Unlimited Sylara + Larry + Custom AI Bots', features: ['Unlimited custom bots', 'Full closed-loop infrastructure', 'Fully branded Virtual Attendant'], trialDays: 7, trialPrice: 249 }
+  { id: 'cannabis_basic', name: 'Cannabis Backoffice Basic', monthlyPrice: 199, annualPrice: 2029, bestFor: 'Single-location operators', aiLevel: 'Basic Sylara Guidance + Larry Alert Mode', features: ['Core Backoffice Ops', 'Basic Larry Alerts', 'Metrc Sync', 'Virtual Attendant'], trialDays: 7, trialPrice: 0 },
+  { id: 'cannabis_pro', name: 'Cannabis Backoffice Pro', monthlyPrice: 499, annualPrice: 5090, bestFor: 'Growing operators (up to 5 locations)', aiLevel: 'Full Sylara Guidance + Larry Enforcement Mode', features: ['Full Larry Enforcement', 'Multi-location admin', 'Audit Vault', 'Advanced compliance'], trialDays: 7, trialPrice: 0 },
+  { id: 'cannabis_enterprise', name: 'Cannabis Backoffice Enterprise Full AI', monthlyPrice: 999, annualPrice: 10190, bestFor: 'Multi-state operators & MSOs', aiLevel: 'Unlimited Sylara + Larry + Custom AI Bots', features: ['Unlimited custom bots', 'Full closed-loop infrastructure', 'Fully branded Virtual Attendant'], trialDays: 7, trialPrice: 0 }
 ];
 
 export const NON_CANNABIS_BACKOFFICE_PLANS: SubscriptionPlan[] = [
-  { id: 'non_cannabis_basic', name: 'General Backoffice Basic', monthlyPrice: 149, annualPrice: 1519, bestFor: 'Small businesses / solo operators', aiLevel: 'Basic Sylara Guidance + Business Rules', features: ['Core Admin Support', 'Basic Workflow Automation', 'Virtual Attendant'], trialDays: 7, trialPrice: 99 },
-  { id: 'non_cannabis_pro', name: 'General Backoffice Pro', monthlyPrice: 399, annualPrice: 4069, bestFor: 'Growing businesses', aiLevel: 'Advanced Sylara + Larry General Enforcement', features: ['Multi-user workflows', 'Automated CRM pipelines', 'Performance tracking'], trialDays: 7, trialPrice: 175 },
-  { id: 'non_cannabis_enterprise', name: 'General Backoffice Enterprise Full AI', monthlyPrice: 799, annualPrice: 8149, bestFor: 'Scaling businesses / agencies', aiLevel: 'Unlimited Sylara + Larry + Custom AI Bots', features: ['End-to-end business ops', 'Multi-location support', 'Growth optimization'], trialDays: 7, trialPrice: 249 }
+  { id: 'non_cannabis_basic', name: 'General Backoffice Basic', monthlyPrice: 149, annualPrice: 1519, bestFor: 'Small businesses / solo operators', aiLevel: 'Basic Sylara Guidance + Business Rules', features: ['Core Admin Support', 'Basic Workflow Automation', 'Virtual Attendant'], trialDays: 7, trialPrice: 0 },
+  { id: 'non_cannabis_pro', name: 'General Backoffice Pro', monthlyPrice: 399, annualPrice: 4069, bestFor: 'Growing businesses', aiLevel: 'Advanced Sylara + Larry General Enforcement', features: ['Multi-user workflows', 'Automated CRM pipelines', 'Performance tracking'], trialDays: 7, trialPrice: 0 },
+  { id: 'non_cannabis_enterprise', name: 'General Backoffice Enterprise Full AI', monthlyPrice: 799, annualPrice: 8149, bestFor: 'Scaling businesses / agencies', aiLevel: 'Unlimited Sylara + Larry + Custom AI Bots', features: ['End-to-end business ops', 'Multi-location support', 'Growth optimization'], trialDays: 7, trialPrice: 0 }
 ];
 
 export const STATE_ADDONS: AddOn[] = [
@@ -289,27 +289,27 @@ export const BACKOFFICE_ADDONS: AddOn[] = [
 
 
 export const PROVIDER_PLANS: SubscriptionPlan[] = [
-  { id: 'prov_basic', name: 'Provider Basic', monthlyPrice: 99, annualPrice: 1009, aiLevel: 'Gemini Flash + Basic Sylara', tokensMonth: '500,000', trialDays: 7, trialPrice: 99 },
-  { id: 'prov_med', name: 'Provider Medium', monthlyPrice: 249, annualPrice: 2539, aiLevel: 'Gemini Flash + Enhanced Sylara', tokensMonth: '2,000,000', trialDays: 7, trialPrice: 175 },
-  { id: 'prov_full', name: 'Provider Full AI', monthlyPrice: 499, annualPrice: 5090, aiLevel: 'Full Sylara + Larry', tokensMonth: 'Unlimited', trialDays: 7, trialPrice: 249 }
+  { id: 'prov_basic', name: 'Provider Basic', monthlyPrice: 99, annualPrice: 1009, aiLevel: 'Gemini Flash + Basic Sylara', tokensMonth: '500,000', trialDays: 7, trialPrice: 0 },
+  { id: 'prov_med', name: 'Provider Medium', monthlyPrice: 249, annualPrice: 2539, aiLevel: 'Gemini Flash + Enhanced Sylara', tokensMonth: '2,000,000', trialDays: 7, trialPrice: 0 },
+  { id: 'prov_full', name: 'Provider Full AI', monthlyPrice: 499, annualPrice: 5090, aiLevel: 'Full Sylara + Larry', tokensMonth: 'Unlimited', trialDays: 7, trialPrice: 0 }
 ];
 
 export const CANNABIS_ATTORNEY_PLANS: SubscriptionPlan[] = [
-  { id: 'cann_att_basic', name: 'Cannabis Attorney Basic', monthlyPrice: 149, annualPrice: 1519, aiLevel: 'Gemini Flash + Basic Sylara', bestFor: 'Cannabis Legal Marketplace Access', trialDays: 7, trialPrice: 99 },
-  { id: 'cann_att_med', name: 'Cannabis Attorney Medium', monthlyPrice: 349, annualPrice: 3559, aiLevel: 'Gemini Flash + Enhanced Sylara', bestFor: 'Enhanced Lead Access & Priority', trialDays: 7, trialPrice: 175 },
-  { id: 'cann_att_full', name: 'Cannabis Attorney Full AI', monthlyPrice: 699, annualPrice: 7129, aiLevel: 'Full Sylara + Larry Enforcement', bestFor: 'Full Lead Dominance & Automation', trialDays: 7, trialPrice: 249 }
+  { id: 'cann_att_basic', name: 'Cannabis Attorney Basic', monthlyPrice: 149, annualPrice: 1519, aiLevel: 'Gemini Flash + Basic Sylara', bestFor: 'Cannabis Legal Marketplace Access', trialDays: 7, trialPrice: 0 },
+  { id: 'cann_att_med', name: 'Cannabis Attorney Medium', monthlyPrice: 349, annualPrice: 3559, aiLevel: 'Gemini Flash + Enhanced Sylara', bestFor: 'Enhanced Lead Access & Priority', trialDays: 7, trialPrice: 0 },
+  { id: 'cann_att_full', name: 'Cannabis Attorney Full AI', monthlyPrice: 699, annualPrice: 7129, aiLevel: 'Full Sylara + Larry Enforcement', bestFor: 'Full Lead Dominance & Automation', trialDays: 7, trialPrice: 0 }
 ];
 
 export const GENERAL_ATTORNEY_PLANS: SubscriptionPlan[] = [
-  { id: 'gen_att_basic', name: 'General Attorney Basic', monthlyPrice: 149, annualPrice: 1519, aiLevel: 'Gemini Flash + Basic Sylara', bestFor: 'General Legal Marketplace Access', trialDays: 7, trialPrice: 99 },
-  { id: 'gen_att_med', name: 'General Attorney Medium', monthlyPrice: 349, annualPrice: 3559, aiLevel: 'Gemini Flash + Enhanced Sylara', bestFor: 'Enhanced Case Leads & Priority', trialDays: 7, trialPrice: 175 },
-  { id: 'gen_att_full', name: 'General Attorney Full AI', monthlyPrice: 699, annualPrice: 7129, aiLevel: 'Full Sylara + Larry (General)', bestFor: 'Premium Case Flow & Automation', trialDays: 7, trialPrice: 249 }
+  { id: 'gen_att_basic', name: 'General Attorney Basic', monthlyPrice: 149, annualPrice: 1519, aiLevel: 'Gemini Flash + Basic Sylara', bestFor: 'General Legal Marketplace Access', trialDays: 7, trialPrice: 0 },
+  { id: 'gen_att_med', name: 'General Attorney Medium', monthlyPrice: 349, annualPrice: 3559, aiLevel: 'Gemini Flash + Enhanced Sylara', bestFor: 'Enhanced Case Leads & Priority', trialDays: 7, trialPrice: 0 },
+  { id: 'gen_att_full', name: 'General Attorney Full AI', monthlyPrice: 699, annualPrice: 7129, aiLevel: 'Full Sylara + Larry (General)', bestFor: 'Premium Case Flow & Automation', trialDays: 7, trialPrice: 0 }
 ];
 
 export const B2C_PLANS: SubscriptionPlan[] = [
-  { id: 'b2c_basic', name: 'B2C Basic', monthlyPrice: 0.99, annualPrice: 499, aiLevel: 'Gemini Flash + Basic Sylara', tokensMonth: '500,000', trialDays: 7 },
-  { id: 'b2c_med', name: 'B2C Medium', monthlyPrice: 99, annualPrice: 1009, aiLevel: 'Gemini Flash + Enhanced Sylara', tokensMonth: '1,500,000' },
-  { id: 'b2c_full', name: 'B2C Full AI', monthlyPrice: 199, annualPrice: 2029, aiLevel: 'Full Sylara + Larry', tokensMonth: 'Unlimited' }
+  { id: 'b2c_basic', name: 'B2C Basic', monthlyPrice: 0.99, annualPrice: 499, aiLevel: 'Gemini Flash + Basic Sylara', tokensMonth: '500,000', trialDays: 30, trialPrice: 0 },
+  { id: 'b2c_med', name: 'B2C Medium', monthlyPrice: 99, annualPrice: 1009, aiLevel: 'Gemini Flash + Enhanced Sylara', tokensMonth: '1,500,000', trialDays: 30, trialPrice: 0 },
+  { id: 'b2c_full', name: 'B2C Full AI', monthlyPrice: 199, annualPrice: 2029, aiLevel: 'Full Sylara + Larry', tokensMonth: 'Unlimited', trialDays: 30, trialPrice: 0 }
 ];
 
 export const PUBLIC_HEALTH_PLANS: SubscriptionPlan[] = [
@@ -327,20 +327,20 @@ export const PUBLIC_HEALTH_ADDONS: AddOn[] = [
 ];
 
 export const ENFORCEMENT_PLANS: SubscriptionPlan[] = [
-  { id: 'enf_basic', name: 'Enforcement Basic', monthlyPrice: 999, annualPrice: 10190, aiLevel: 'Basic Sylara + Larry Alert Mode', bestFor: 'Local/County Law Enforcement', trialDays: 7, trialPrice: 799 },
-  { id: 'enf_pro', name: 'Enforcement Pro', monthlyPrice: 2999, annualPrice: 30590, aiLevel: 'Full Sylara + Larry Enforcement Mode', bestFor: 'State-Level Enforcement Units', trialDays: 7, trialPrice: 1999 },
+  { id: 'enf_basic', name: 'Enforcement Basic', monthlyPrice: 999, annualPrice: 10190, aiLevel: 'Basic Sylara + Larry Alert Mode', bestFor: 'Local/County Law Enforcement', trialDays: 7, trialPrice: 0 },
+  { id: 'enf_pro', name: 'Enforcement Pro', monthlyPrice: 2999, annualPrice: 30590, aiLevel: 'Full Sylara + Larry Enforcement Mode', bestFor: 'State-Level Enforcement Units', trialDays: 7, trialPrice: 0 },
   { id: 'enf_enterprise', name: 'Enforcement Enterprise', monthlyPrice: 'Custom', annualPrice: 'Custom', aiLevel: 'Unlimited Custom AI', bestFor: 'Multi-Agency / National' }
 ];
 
 export const FINANCE_AI_PLANS: SubscriptionPlan[] = [
-  { id: 'fin_basic', name: 'Finance AI Basic', monthlyPrice: 1499, annualPrice: 15290, aiLevel: 'Sylara Guidance + Larry Monitor', bestFor: 'Small businesses / Providers', trialDays: 7, trialPrice: 799 },
-  { id: 'fin_pro', name: 'Finance AI Pro', monthlyPrice: 4999, annualPrice: 50990, aiLevel: 'Predictive Risk + SAM.gov Tools', bestFor: 'Mid-size operators', trialDays: 7, trialPrice: 1999 },
+  { id: 'fin_basic', name: 'Finance AI Basic', monthlyPrice: 1499, annualPrice: 15290, aiLevel: 'Sylara Guidance + Larry Monitor', bestFor: 'Small businesses / Providers', trialDays: 7, trialPrice: 0 },
+  { id: 'fin_pro', name: 'Finance AI Pro', monthlyPrice: 4999, annualPrice: 50990, aiLevel: 'Predictive Risk + SAM.gov Tools', bestFor: 'Mid-size operators', trialDays: 7, trialPrice: 0 },
   { id: 'fin_enterprise', name: 'Finance AI Enterprise', monthlyPrice: 'Custom', annualPrice: 'Custom', aiLevel: 'Full Financial Intelligence', bestFor: 'Large operators / States' }
 ];
 
 export const COMBINED_ENF_FIN_PLANS: SubscriptionPlan[] = [
-  { id: 'combo_basic', name: 'Combined Basic', monthlyPrice: 2299, annualPrice: 23450, aiLevel: 'Rapid Testing + Basic Finance AI', bestFor: 'Small operators / Local agencies', trialDays: 7, trialPrice: 999 },
-  { id: 'combo_pro', name: 'Combined Pro', monthlyPrice: 6999, annualPrice: 71390, aiLevel: 'Recency Forecasting + Predictive Finance', bestFor: 'Mid-size / State-level', trialDays: 7, trialPrice: 2999 },
+  { id: 'combo_basic', name: 'Combined Basic', monthlyPrice: 2299, annualPrice: 23450, aiLevel: 'Rapid Testing + Basic Finance AI', bestFor: 'Small operators / Local agencies', trialDays: 7, trialPrice: 0 },
+  { id: 'combo_pro', name: 'Combined Pro', monthlyPrice: 6999, annualPrice: 71390, aiLevel: 'Recency Forecasting + Predictive Finance', bestFor: 'Mid-size / State-level', trialDays: 7, trialPrice: 0 },
   { id: 'combo_enterprise', name: 'Combined Enterprise', monthlyPrice: 'Custom', annualPrice: 'Custom', aiLevel: 'National Intelligence + SAM.gov', bestFor: 'Large / Federal' }
 ];
 
@@ -626,7 +626,7 @@ export const PARTNER_PLANS: SubscriptionPlan[] = [
     ]
   },
   {
-    id: 'partner_reseller', trialDays: 7, trialPrice: 149,
+    id: 'partner_reseller', trialDays: 7, trialPrice: 0,
     name: 'Authorized Reseller',
     monthlyPrice: 149,
     annualPrice: 1490,
