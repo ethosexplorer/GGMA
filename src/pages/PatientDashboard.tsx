@@ -362,12 +362,20 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
                       <h2 className="text-4xl font-black tracking-tight leading-none">Instant Virtual Care</h2>
                       <p className="text-blue-100 text-lg font-medium">Connect with a specialist in under 15 minutes. Secure, private, and fully integrated with your Care Wallet.</p>
                       <div className="flex gap-4 pt-4">
-                         <button 
-                           onClick={() => ((window as any).Calendly ? (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/health-wellness-consultation' }) : window.open('https://calendly.com/globalgreenhpmeet/health-wellness-consultation', '_blank'))}
-                           className="bg-white text-blue-600 px-8 py-3 rounded-2xl font-black shadow-xl shadow-blue-900/20 hover:scale-105 transition-transform"
+                         <a 
+                           href="https://calendly.com/globalgreenhpmeet/health-wellness-consultation"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           onClick={(e) => {
+                             if ((window as any).Calendly) {
+                               e.preventDefault();
+                               (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/health-wellness-consultation' });
+                             }
+                           }}
+                           className="bg-white text-blue-600 px-8 py-3 rounded-2xl font-black shadow-xl shadow-blue-900/20 hover:scale-105 transition-transform text-center inline-block"
                          >
                            Book Now
-                         </button>
+                         </a>
                          <button 
                            onClick={() => document.getElementById('care-team-directory')?.scrollIntoView({ behavior: 'smooth' })}
                            className="bg-blue-500 text-white px-8 py-3 rounded-2xl font-black border border-blue-400 hover:bg-blue-400 transition-colors"

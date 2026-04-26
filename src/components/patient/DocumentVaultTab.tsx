@@ -11,13 +11,13 @@ const documents = [
   { id: 6, name: 'OMMA Card — Digital Copy', type: 'Card', format: 'PNG', size: '560 KB', uploaded: 'Jan 20, 2026', status: 'Active', category: 'cards' },
 ];
 
-const categories = [
-  { id: 'all', label: 'All Documents', count: 6 },
-  { id: 'identification', label: 'Identification', count: 2 },
-  { id: 'medical', label: 'Medical Records', count: 1 },
-  { id: 'lab', label: 'Lab Results', count: 1 },
-  { id: 'insurance', label: 'Insurance', count: 1 },
-  { id: 'cards', label: 'Cards & Licenses', count: 1 },
+const baseCategories = [
+  { id: 'all', label: 'All Documents' },
+  { id: 'identification', label: 'Identification' },
+  { id: 'medical', label: 'Medical Records' },
+  { id: 'lab', label: 'Lab Results' },
+  { id: 'insurance', label: 'Insurance' },
+  { id: 'cards', label: 'Cards & Licenses' },
 ];
 
 export const DocumentVaultTab = () => {
@@ -29,20 +29,33 @@ export const DocumentVaultTab = () => {
 
   const filtered = selectedCategory === 'all' ? localDocs : localDocs.filter(d => d.category === selectedCategory);
 
-  const handleUpload = () => {
+  const getCategoryCount = (catId: string) => catId === 'all' ? localDocs.length : localDocs.filter(d => d.category === catId).length;
+
+  const handleUpload = (e?: React.ChangeEvent<HTMLInputElement> | React.DragEvent) => {
+    let file;
+    if (e && 'dataTransfer' in e && e.dataTransfer) {
+       file = e.dataTransfer.files[0];
+    } else if (e && 'target' in e && (e.target as HTMLInputElement).files) {
+       file = (e.target as HTMLInputElement).files?.[0];
+    }
+    
+    const fileName = file ? file.name : 'New_Scanned_Document.pdf';
+    const fileSize = file ? (file.size / 1024 / 1024).toFixed(1) + ' MB' : '1.2 MB';
+    const fileFormat = file ? fileName.split('.').pop()?.toUpperCase() || 'PDF' : 'PDF';
+
     setIsUploading(true);
     setTimeout(() => {
       setIsUploading(false);
-      setLocalDocs([{
+      setLocalDocs(prev => [{
         id: Date.now(),
-        name: 'New_Scanned_Document.pdf',
+        name: fileName,
         type: 'General',
-        format: 'PDF',
-        size: '1.2 MB',
+        format: fileFormat,
+        size: fileSize,
         uploaded: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
         status: 'Active',
-        category: 'medical'
-      }, ...localDocs]);
+        category: selectedCategory === 'all' ? 'medical' : selectedCategory
+      }, ...prev]);
       alert('Document securely uploaded to your Vault and synced with the Master Administrative Vault.');
     }, 1500);
   };
@@ -73,7 +86,7 @@ export const DocumentVaultTab = () => {
               <p className="text-xs text-slate-500 leading-relaxed">Ensure your doctor is registered with OMMA before uploading your recommendation form.</p>
             </div>
           </div>
-          <button className="w-full mt-4 py-2.5 rounded-xl bg-slate-100 text-slate-800 text-xs font-black hover:bg-emerald-50 hover:text-emerald-700 transition-all border border-slate-200">
+          <button onClick={() => window.open('https://oklahoma.gov/omma/patients-caregivers/physician-list.html', '_blank')} className="w-full mt-4 py-2.5 rounded-xl bg-slate-100 text-slate-800 text-xs font-black hover:bg-emerald-50 hover:text-emerald-700 transition-all border border-slate-200">
             Verify Physician Registration Status
           </button>
         </div>
@@ -92,7 +105,7 @@ export const DocumentVaultTab = () => {
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
           <h3 className="font-bold text-slate-800 mb-3 text-sm">Categories</h3>
           <div className="space-y-1">
-            {categories.map((cat) => (
+            {baseCategories.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
@@ -102,7 +115,7 @@ export const DocumentVaultTab = () => {
                 )}
               >
                 <span>{cat.label}</span>
-                <span className="text-xs bg-slate-100 px-2 py-0.5 rounded-full text-slate-500">{cat.count}</span>
+                <span className="text-xs bg-slate-100 px-2 py-0.5 rounded-full text-slate-500">{getCategoryCount(cat.id)}</span>
               </button>
             ))}
           </div>
@@ -130,7 +143,7 @@ export const DocumentVaultTab = () => {
             )}
             onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
             onDragLeave={() => setDragOver(false)}
-            onDrop={(e) => { e.preventDefault(); setDragOver(false); handleUpload(); }}
+            onDrop={(e) => { e.preventDefault(); setDragOver(false); handleUpload(e); }}
           >
             <Upload size={32} className={cn("mx-auto mb-3", dragOver ? "text-emerald-500" : "text-slate-400")} />
             <p className="font-bold text-slate-700 text-sm">{isUploading ? 'Encrypting & Uploading...' : 'Drop files here or click to upload'}</p>
@@ -140,7 +153,7 @@ export const DocumentVaultTab = () => {
           {/* Documents List */}
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-              <h3 className="font-bold text-slate-800 text-sm">{selectedCategory === 'all' ? 'All Documents' : categories.find(c => c.id === selectedCategory)?.label} ({filtered.length})</h3>
+              <h3 className="font-bold text-slate-800 text-sm">{selectedCategory === 'all' ? 'All Documents' : baseCategories.find(c => c.id === selectedCategory)?.label} ({filtered.length})</h3>
             </div>
             <div className="divide-y divide-slate-100">
               {filtered.map((doc) => (
