@@ -8015,7 +8015,7 @@ export default function App() {
                   </div>
                   {/* Blurred Dashboard */}
                   <div className="pointer-events-none select-none h-screen overflow-hidden">
-                    {userProfile && (userProfile.role === 'executive_founder' || userProfile.email?.includes('ceo.globalgreenhp') || userProfile.email?.includes('monica') || userProfile.email?.includes('mgreen') || userProfile.email?.includes('globalgreenhp@gmail.com') || userProfile.email?.includes('ryan')) && !hasBypassedSelector ? (
+                    {userProfile && (userProfile.role === 'executive_founder' || userProfile.email?.includes('ceo.globalgreenhp') || userProfile.email?.includes('monica') || userProfile.email?.includes('mgreen') || userProfile.email?.includes('globalgreenhp@gmail.com')) && !hasBypassedSelector ? (
                       <RoleSelectorScreen 
                         userProfile={userProfile}
                         onSelect={(role) => {
@@ -8036,7 +8036,7 @@ export default function App() {
                   exit={{ opacity: 0, y: -10 }}
                   className="min-h-screen"
                 >
-                  {userProfile && (userProfile.role === 'executive_founder' || userProfile.email?.includes('ceo.globalgreenhp') || userProfile.email?.includes('monica') || userProfile.email?.includes('mgreen') || userProfile.email?.includes('globalgreenhp@gmail.com') || userProfile.email?.includes('ryan')) && !hasBypassedSelector ? (
+                  {userProfile && (userProfile.role === 'executive_founder' || userProfile.email?.includes('ceo.globalgreenhp') || userProfile.email?.includes('monica') || userProfile.email?.includes('mgreen') || userProfile.email?.includes('globalgreenhp@gmail.com')) && !hasBypassedSelector ? (
                     <RoleSelectorScreen 
                       userProfile={userProfile}
                       onSelect={(role) => {

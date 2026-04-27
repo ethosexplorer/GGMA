@@ -73,7 +73,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
   const displayNameLower = user?.displayName?.toLowerCase() || '';
   
   const isMonica = emailLower.includes('mgreen') || emailLower.includes('monica') || displayNameLower.includes('monica');
-  const isRyan = emailLower.includes('ryanj.ferrari') || emailLower.includes('ferrari') || displayNameLower.includes('ryan');
+  const isRyan = emailLower.includes('ceo.globalgreenhp');
   const isExecutive = isMonica || isRyan;
   
   const firstName = user?.displayName ? user.displayName.split(' ')[0] : 'Shantell';

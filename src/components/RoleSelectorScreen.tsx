@@ -3,7 +3,7 @@ import { Shield, Building2, User, Stethoscope, Briefcase, Lock, Database } from 
 import { motion } from 'motion/react';
 
 export const RoleSelectorScreen = ({ userProfile, onSelect }: { userProfile: any, onSelect: (role: string) => void }) => {
-  const isRyan = userProfile?.email?.toLowerCase().includes('ryan') || userProfile?.displayName?.toLowerCase().includes('ryan');
+  const isRyan = userProfile?.email?.toLowerCase().includes('ceo.globalgreenhp');
 
   const allRoles = [
     { id: 'executive_founder', label: 'Quality Assurance Command', desc: 'Full System Architecture & Analytics', icon: Shield, color: 'indigo' },
