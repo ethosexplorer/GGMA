@@ -328,7 +328,7 @@ export const AdminDashboard = ({ onLogout, user }: { onLogout?: () => void | Pro
         <div className="bg-slate-900 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden">
            <div className="absolute top-0 right-0 p-10 opacity-10"><BookOpen size={160} /></div>
            <h2 className="text-4xl font-black italic uppercase tracking-tighter mb-2">Regulatory Intelligence Hub</h2>
-           <p className="text-indigo-200 font-medium">Native METRC User Guide & State Law Repository. Consult for Internal Policy Enforcement.</p>
+           <p className="text-indigo-200 font-medium">METRC User Guide & State Law Repository. Consult for Internal Policy Enforcement.</p>
            
            <div className="mt-8 flex flex-col md:flex-row gap-4">
               <div className="relative flex-1">

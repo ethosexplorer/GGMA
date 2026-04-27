@@ -300,7 +300,7 @@ This bill creates the Washington State Public Bank, a state-owned financial inst
 provide infrastructure financing and economic development support without raising taxes or 
 increasing state debt. The bank would operate as a publicly owned depository institution, using 
 fractional reserve banking principles to leverage state funds and provide loans to local governments, 
-tribal governments, and other public entities. Key provisions include establishing a nine-member 
+municipal governments, and other public entities. Key provisions include establishing a nine-member 
 board of directors (with five members appointed by bank members and three public directors 
 appointed by the governor), allowing the state to transfer funds from its general account into the 
 bank, and prioritizing investments in public housing. The bank would have the power to issue bonds, 
@@ -495,7 +495,7 @@ This bill creates the Washington State Public Bank, a state-owned financial inst
 provide infrastructure financing and economic development support without raising taxes or 
 increasing state debt. The bank would operate as a publicly owned depository institution, using 
 fractional reserve banking principles to leverage state funds and provide loans to local governments, 
-tribal governments, and other public entities. Key provisions include establishing a nine-member 
+municipal governments, and other public entities. Key provisions include establishing a nine-member 
 board of directors (with five members appointed by bank members and three public directors 
 appointed by the governor), allowing the state to transfer funds from its general account into the 
 bank, and prioritizing investments in public housing. The bank would have the power to issue bonds, 

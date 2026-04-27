@@ -48,9 +48,7 @@ export const SUPPORTED_LANGUAGES: Language[] = [
   { code: 'uk', name: 'Ukrainian', nativeName: 'Українська', flag: '🇺🇦', direction: 'ltr', region: 'Europe' },
   { code: 'ro', name: 'Romanian', nativeName: 'Română', flag: '🇷🇴', direction: 'ltr', region: 'Europe' },
 
-  // Indigenous / Native
-  { code: 'nv', name: 'Navajo', nativeName: 'Diné Bizaad', flag: '🏜️', direction: 'ltr', region: 'Americas' },
-];
+  ];
 
 // ─── Core UI translations (expandable) ───
 export type TranslationKey =

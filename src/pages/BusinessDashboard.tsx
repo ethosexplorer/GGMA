@@ -781,16 +781,16 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge 
                    </button>
                  )}
                  <button onClick={onOpenConcierge || (() => {})} className="flex items-center gap-2 px-4 py-3 bg-white border border-slate-200/60 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:border-[#1a4731] transition-all text-[#1a4731] font-bold text-sm min-w-max sm:hidden">
-                   <MessageSquare size={16} /> Sylara Chat
+                   <MessageSquare size={16} /> L.A.R.R.Y Chat
                  </button>
               </div>
 
-              {/* Sylara Task List */}
+              {/* L.A.R.R.Y Task List */}
               <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                  <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
                    <div className="flex items-center gap-2">
                       <CheckSquare className="text-emerald-600" size={18} />
-                      <h3 className="font-bold text-slate-800">Sylara Tasks</h3>
+                      <h3 className="font-bold text-slate-800">L.A.R.R.Y Tasks</h3>
                    </div>
                    <span className="text-xs font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full">3 Pending</span>
                  </div>
@@ -885,14 +885,14 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge 
            </div>
            
            <div className="lg:col-span-1">
-              {/* Sylara AI Chat Widget */}
+              {/* L.A.R.R.Y AI Chat Widget */}
               <div className="bg-[#1a4731] bg-gradient-to-b from-[#1a4731] to-[#0f291c] rounded-2xl shadow-xl overflow-hidden flex flex-col h-full sticky top-[80px]">
                  <div className="p-5 flex items-center gap-3 border-b border-white/10 shrink-0">
                     <div className="w-10 h-10 rounded-full bg-emerald-400 bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white shadow-inner">
                        <Sparkles size={20} />
                     </div>
                     <div>
-                      <h3 className="font-bold text-white leading-tight">Sylara AI</h3>
+                      <h3 className="font-bold text-white leading-tight">L.A.R.R.Y AI</h3>
                       <p className="text-[10px] text-emerald-200/80 uppercase font-bold tracking-widest flex items-center gap-1">
                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Online
                       </p>
@@ -919,7 +919,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge 
                  
                  <div className="p-4 bg-black/20 shrink-0">
                     <div className="relative">
-                       <input type="text" placeholder="Ask Sylara to run an audit..." className="w-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm rounded-xl px-4 py-3 pr-10 focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all" />
+                       <input type="text" placeholder="Ask L.A.R.R.Y to run an audit..." className="w-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm rounded-xl px-4 py-3 pr-10 focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all" />
                        <button className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-white/50 hover:text-white transition-colors">
                          <MessageSquare size={16} />
                        </button>

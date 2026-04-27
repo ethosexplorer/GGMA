@@ -3376,7 +3376,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     'Limited Liability Partnerships',
   ];
   const BUSINESS_ID_TYPES = [
-    'OK Driver\'s License', 'OK State ID', 'Passport', 'Tribal ID'
+    'OK Driver\'s License', 'OK State ID', 'Passport'
   ];
 
   const getPatientRequiredDocuments = () => [

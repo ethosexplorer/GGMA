@@ -175,7 +175,6 @@ const POLLS: Poll[] = [
       { id: 'hispanic_latino', label: 'Hispanic / Latino', emoji: '🌎', votes: 1234 },
       { id: 'caucasian', label: 'Caucasian / White', emoji: '🤝', votes: 1456 },
       { id: 'asian', label: 'Asian / Pacific Islander', emoji: '🌏', votes: 543 },
-      { id: 'native', label: 'Native American / Indigenous', emoji: '🏜️', votes: 321 },
       { id: 'middle_eastern', label: 'Middle Eastern / North African', emoji: '🌍', votes: 234 },
       { id: 'multiracial', label: 'Multiracial / Other', emoji: '🌈', votes: 567 },
       { id: 'prefer_not', label: 'Prefer not to say', emoji: '🔒', votes: 345 },

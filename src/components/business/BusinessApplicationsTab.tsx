@@ -19,7 +19,7 @@ export const BusinessApplicationsTab = ({ user, onStartApplication }: { user?: a
   const activeApplications = [
     ...(hasIntakeData ? [{
       id: `SYNC-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
-      type: 'New Commercial License (Sylara Sync)',
+      type: 'New Commercial License (L.A.R.R.Y Sync)',
       submitted: 'Draft Auto-Generated',
       status: 'Ready for Review',
       progress: 85,
@@ -29,10 +29,10 @@ export const BusinessApplicationsTab = ({ user, onStartApplication }: { user?: a
   ];
 
   const applicationSteps = [
-    { step: 1, title: 'Entity Information', desc: 'Business name, structure, address', completed: hasIntakeData, syncSource: 'Sylara AI' },
-    { step: 2, title: 'Ownership & Officers', desc: 'Primary point of contact, owners info', completed: hasIntakeData, syncSource: 'Sylara AI' },
+    { step: 1, title: 'Entity Information', desc: 'Business name, structure, address', completed: hasIntakeData, syncSource: 'L.A.R.R.Y AI' },
+    { step: 2, title: 'Ownership & Officers', desc: 'Primary point of contact, owners info', completed: hasIntakeData, syncSource: 'L.A.R.R.Y AI' },
     { step: 3, title: 'Document Upload', desc: 'Cert of Good Standing, Lease/Deed, Bond', completed: false },
-    { step: 4, title: 'Compliance Verifications', desc: '1000ft school distance, Tribal land attest', completed: false },
+    { step: 4, title: 'Compliance Verifications', desc: '1000ft school distance, Restricted land attest', completed: false },
     { step: 5, title: 'Review & Submit', desc: 'Final review and state submission', completed: false },
   ];
 
@@ -103,7 +103,7 @@ export const BusinessApplicationsTab = ({ user, onStartApplication }: { user?: a
                         </span>
                         {(app as any).isSync && (
                           <span className="flex items-center gap-1 px-2 py-1 bg-emerald-50 text-[10px] font-black text-emerald-600 rounded-md border border-emerald-100 uppercase tracking-tighter">
-                            <Sparkles size={10} /> Sylara Sync
+                            <Sparkles size={10} /> L.A.R.R.Y Sync
                           </span>
                         )}
                       </div>
@@ -238,7 +238,7 @@ export const BusinessApplicationsTab = ({ user, onStartApplication }: { user?: a
                <div className="mb-6 p-4 bg-emerald-900 text-white rounded-2xl shadow-lg shadow-emerald-900/20 flex items-center justify-between">
                   <div>
                     <p className="text-xs font-bold uppercase tracking-widest text-emerald-400 mb-1">Elite Automation Active</p>
-                    <p className="text-sm font-medium">Your Sylara intake data has been detected. We will automatically pre-fill your application.</p>
+                    <p className="text-sm font-medium">Your L.A.R.R.Y intake data has been detected. We will automatically pre-fill your application.</p>
                   </div>
                   <CheckCircle size={24} className="text-emerald-400" />
                </div>
