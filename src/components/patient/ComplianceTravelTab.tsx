@@ -36,7 +36,7 @@ export const ComplianceTravelTab = () => {
                </h3>
                <p className="text-sm text-slate-500 mb-6">Upload your out-of-state permit, temporary license, or travel itinerary directly to your Vault.</p>
                
-               <input type="file" id="travel-upload" className="hidden" onChange={(e) => {
+               <input type="file" id="travel-upload" className="sr-only" onChange={(e) => {
                  const file = e.target.files?.[0];
                  if (file) {
                    const fileName = file.name;
@@ -60,10 +60,10 @@ export const ComplianceTravelTab = () => {
                    }, 1500);
                  }
                }} />
-               <div
-                 onClick={() => document.getElementById('travel-upload')?.click()}
+               <label
+                 htmlFor="travel-upload"
                  className={cn(
-                   "border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer",
+                   "block border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer",
                    isGenerating ? "opacity-50 pointer-events-none border-slate-200 bg-slate-50" : "border-slate-200 hover:border-emerald-300 hover:bg-emerald-50"
                  )}
                >
@@ -72,7 +72,7 @@ export const ComplianceTravelTab = () => {
                  </svg>
                  <p className="font-bold text-slate-700 text-sm">{isGenerating ? 'Encrypting & Uploading to Vault...' : 'Click to upload travel document'}</p>
                  <p className="text-xs text-slate-500 mt-1">Saved securely to your Master Vault</p>
-               </div>
+               </label>
             </div>
 
             <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">

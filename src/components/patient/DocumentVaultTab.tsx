@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Upload, FileText, Image, Shield, Trash2, Eye, Download, FolderOpen, Lock } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
-export let globalDocuments = [
+const initialDocs = [
   { id: 1, name: 'Oklahoma State ID — Front', type: 'ID', format: 'JPG', size: '2.1 MB', uploaded: 'Jan 15, 2026', status: 'Verified', category: 'identification' },
   { id: 2, name: 'Oklahoma State ID — Back', type: 'ID', format: 'JPG', size: '1.8 MB', uploaded: 'Jan 15, 2026', status: 'Verified', category: 'identification' },
   { id: 3, name: 'Dr. Johnson Recommendation', type: 'Medical', format: 'PDF', size: '340 KB', uploaded: 'Jan 12, 2026', status: 'Verified', category: 'medical' },
@@ -11,8 +11,20 @@ export let globalDocuments = [
   { id: 6, name: 'OMMA Card — Digital Copy', type: 'Card', format: 'PNG', size: '560 KB', uploaded: 'Jan 20, 2026', status: 'Active', category: 'cards' },
 ];
 
+export let globalDocuments = initialDocs;
+
+try {
+  const saved = localStorage.getItem('vault_docs');
+  if (saved) {
+    globalDocuments = JSON.parse(saved);
+  }
+} catch (e) {}
+
 export const setGlobalDocuments = (docs: any[]) => {
   globalDocuments = docs;
+  try {
+    localStorage.setItem('vault_docs', JSON.stringify(docs));
+  } catch (e) {}
 };
 
 const baseCategories = [
@@ -145,11 +157,11 @@ export const DocumentVaultTab = () => {
         {/* Main Content */}
         <div className="lg:col-span-3 space-y-4">
           {/* Upload Zone */}
-          <input type="file" ref={fileInputRef} onChange={handleUpload} className="hidden" />
-          <div
-            onClick={() => fileInputRef.current?.click()}
+          <input type="file" id="vault-upload" onChange={handleUpload} className="sr-only" />
+          <label
+            htmlFor="vault-upload"
             className={cn(
-              "border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer",
+              "block border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer",
               dragOver ? "border-emerald-400 bg-emerald-50" : "border-slate-200 hover:border-slate-300 hover:bg-slate-50",
               isUploading && "opacity-50 pointer-events-none"
             )}
@@ -160,7 +172,7 @@ export const DocumentVaultTab = () => {
             <Upload size={32} className={cn("mx-auto mb-3", dragOver ? "text-emerald-500" : "text-slate-400")} />
             <p className="font-bold text-slate-700 text-sm">{isUploading ? 'Encrypting & Uploading...' : 'Drop files here or click to upload'}</p>
             <p className="text-xs text-slate-500 mt-1">Supports PDF, JPG, PNG up to 10MB each</p>
-          </div>
+          </label>
 
           {/* Documents List */}
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
