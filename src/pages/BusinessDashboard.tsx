@@ -11,6 +11,7 @@ import { ComplianceEngineTab } from '../components/business/ComplianceEngineTab'
 import { AttorneyMarketplaceTab } from '../components/shared/AttorneyMarketplaceTab';
 import { DashboardAnalytics } from '../components/DashboardAnalytics';
 import { RegulatoryReportingTab } from '../components/business/RegulatoryReportingTab';
+import { BusinessApplicationsTab } from '../components/business/BusinessApplicationsTab';
 import { StressTestEngine, StressTestResult } from '../lib/compliance/StressTestEngine';
 
 // Simple Button mock
@@ -605,14 +606,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge 
 
         
     {activeTab === 'applications' && (
-      <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm min-h-[400px] flex flex-col items-center justify-center text-center">
-        <FileText size={48} className="text-[#1a4731] mb-4 opacity-50" />
-        <h3 className="text-2xl font-black text-slate-800 mb-2">Self-Apply Licensing Hub</h3>
-        <p className="text-slate-500 max-w-md">Direct pipeline to OMMA. Complete your business application directly or transmit your records for $25 processing fee. No subscription required for direct access.</p>
-        <button className="mt-6 bg-[#1a4731] text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-emerald-900/20 flex items-center gap-2">
-          Start Application <ArrowRight size={16} />
-        </button>
-      </div>
+      <BusinessApplicationsTab user={user} />
     )}
 
         {/* Main Performance Cards */}
