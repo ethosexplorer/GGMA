@@ -145,18 +145,18 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
           
           <div className="my-2 border-t border-slate-800"></div>
           
-          {/* Prominent Rapid Testing Tab */}
+          {/* Prominent Identify Verify Test Tab */}
           <button onClick={() => setActiveTab('rapid_testing')} className={cn("w-full flex items-center justify-between px-3 py-3 rounded-lg text-sm font-bold transition-all text-left shadow-lg border", activeTab === 'rapid_testing' ? "bg-emerald-900 bg-gradient-to-r from-emerald-900 to-slate-900 text-emerald-400 border-emerald-500/50" : "bg-slate-800 text-slate-300 border-slate-700 hover:border-emerald-500/30")}>
-            <span className="flex items-center gap-3"><Zap size={18} className="text-emerald-500" /> Rapid Testing</span>
+            <span className="flex items-center gap-3"><Zap size={18} className="text-emerald-500" /> Identify Verify Test</span>
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
           </button>
 
-          {/* New Interactive Breathalyzer Tab */}
+          {/* Probability Field Test Tab */}
           <button onClick={() => setActiveTab('breathalyzer')} className={cn("w-full flex items-center justify-between px-3 py-3 rounded-lg text-sm font-bold transition-all text-left shadow-lg border mt-2", activeTab === 'breathalyzer' ? "bg-blue-900 bg-gradient-to-r from-blue-900 to-slate-900 text-blue-400 border-blue-500/50" : "bg-slate-800 text-slate-300 border-slate-700 hover:border-blue-500/30")}>
-            <span className="flex items-center gap-3"><Wind size={18} className="text-blue-500" /> Live Breathalyzer</span>
+            <span className="flex items-center gap-3"><Wind size={18} className="text-blue-500" /> Probability Field Test</span>
           </button>
           
           <div className="my-2 border-t border-slate-800"></div>
@@ -179,7 +179,7 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
             <div className="h-20 border-b border-slate-800 flex items-center justify-between px-8 bg-slate-900/50 shrink-0">
                <div>
                  <h2 className="text-2xl font-black text-white flex items-center gap-3 tracking-tight">
-                   <Zap className="text-emerald-500" size={28} /> RIP: Real-time Intelligence & Policing
+                   <Zap className="text-emerald-500" size={28} /> Identify Verify Test
                    <span className="text-slate-500 font-normal">| Forensic Intelligence</span>
                  </h2>
                  <p className="text-[10px] text-emerald-500 font-bold tracking-widest uppercase mt-1">Real-time Patient Analysis & Responsibility Rating</p>
@@ -401,7 +401,7 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
             <div className="h-20 border-b border-slate-800 flex items-center justify-between px-8 bg-slate-900/50 shrink-0">
                <div>
                  <h2 className="text-2xl font-black text-blue-400 flex items-center gap-3 tracking-tight">
-                   <Wind className="text-blue-500" size={28} /> Breathalyzer Test Simulator
+                   <Wind className="text-blue-500" size={28} /> Probability Field Test
                    <span className="text-slate-500 font-normal">| Connected Field Device</span>
                  </h2>
                  <p className="text-[10px] text-blue-400 font-bold tracking-widest uppercase mt-1 flex items-center gap-2">
