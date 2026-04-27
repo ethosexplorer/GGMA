@@ -138,7 +138,7 @@ export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => voi
             <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 text-slate-700 text-sm font-bold border border-slate-200 hover:bg-slate-200 transition-colors">
               <Download size={16} /> Generate Report
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-bold shadow-md hover:bg-red-700 transition-colors">
+            <button onClick={() => alert('Opening Emergency Recall Broadcast Protocol...')} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-bold shadow-md hover:bg-red-700 transition-colors">
               <AlertTriangle size={16} /> Issue Recall
             </button>
           </div>
@@ -210,10 +210,10 @@ export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => voi
                           "Dr. Jenkins, a new microbial exceedance (TYM 18,400 CFU/g) was flagged in Batch #882, accompanied by a High Recency Index (8.7) field test. Exposure risk elevated to MODERATE. Would you like me to draft the Class II recall notice, alert the Patient Dashboard, and notify the 4 affected retailers?"
                         </p>
                         <div className="flex gap-3 mt-4">
-                          <button className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-bold transition-colors shadow-md text-slate-900">
+                          <button onClick={() => alert('Drafting Class II Recall Notice for Batch #882... Notifying 4 Retailers and Patient Wallets.')} className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-900 text-sm font-bold transition-colors shadow-md">
                             Draft Recall & Notify
                           </button>
-                          <button className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 hover:bg-white/20 text-white text-sm font-bold transition-colors">
+                          <button onClick={() => alert('Loading GIS Exposure Map for Batch #882...')} className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 hover:bg-white/20 text-white text-sm font-bold transition-colors">
                             View Exposed Patients
                           </button>
                         </div>
@@ -373,19 +373,110 @@ export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => voi
               </>
             )}
 
-            {activeTab !== 'dashboard' && (
-              <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center shadow-sm">
-                <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-400">
-                  <Activity size={32} />
+            {activeTab === 'standards' && (
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
+                <div className="flex items-center justify-between mb-8">
+                  <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
+                    <Settings className="text-slate-500" /> Lab Standards Engine Configuration
+                  </h2>
+                  <button className="px-4 py-2 bg-slate-900 text-white rounded-lg font-bold hover:bg-slate-800 text-sm">Add New Protocol</button>
                 </div>
-                <h2 className="text-2xl font-black text-slate-800 mb-2 uppercase tracking-tight">
-                  {sidebarItems.find(i => i.id === activeTab)?.label}
-                </h2>
-                <p className="text-slate-500 max-w-lg mx-auto">
-                  Detailed analytics and enforcement controls for {sidebarItems.find(i => i.id === activeTab)?.label} are active in the full production suite. L.A.R.R.Y is currently aggregating data from state Metrc nodes.
-                </p>
-                <button onClick={() => setActiveTab('dashboard')} className="mt-8 px-6 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-all shadow-md">
-                  Return to Dashboard
+                
+                <div className="space-y-6">
+                  {labProtocols.map((protocol, i) => (
+                    <div key={i} className="p-6 border border-slate-200 rounded-xl flex items-center justify-between hover:border-slate-300 transition-colors">
+                      <div className="flex items-center gap-4">
+                        <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center bg-slate-50", protocol.color)}>
+                          <protocol.icon size={24} />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-slate-800 text-lg">{protocol.name}</h4>
+                          <p className="text-sm text-slate-500">Thresholds automatically synced with State Legislature.</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <span className={cn(
+                          "px-3 py-1 rounded-full text-xs font-bold uppercase",
+                          protocol.status.includes('Overlay') ? "bg-blue-100 text-blue-700" : "bg-emerald-100 text-emerald-700"
+                        )}>
+                          {protocol.status}
+                        </span>
+                        <button className="px-4 py-2 border border-slate-200 text-slate-600 rounded-lg text-sm font-bold hover:bg-slate-50">Edit Limits</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'alerts' && (
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
+                <div className="flex items-center justify-between mb-8">
+                  <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
+                    <Bell className="text-red-500" /> Active Alerts & Recalls
+                  </h2>
+                  <div className="flex gap-2">
+                    <button className="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg font-bold hover:bg-slate-50 text-sm">Filter</button>
+                    <button className="px-4 py-2 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 text-sm flex items-center gap-2"><Plus size={16} /> Create Recall Alert</button>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  {timelineEvents.map((event) => (
+                    <div key={event.id} className="p-6 bg-slate-50 border border-slate-100 rounded-xl flex flex-col md:flex-row justify-between gap-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className={cn(
+                            "px-2 py-1 rounded-md text-[10px] font-bold uppercase text-white",
+                            event.urgency === 'critical' ? "bg-red-500" :
+                            event.urgency === 'error' ? "bg-orange-500" :
+                            event.urgency === 'warning' ? "bg-amber-500" : "bg-blue-500"
+                          )}>
+                            {event.urgency} Priority
+                          </span>
+                          <span className="text-xs text-slate-500 font-medium">{event.time}</span>
+                        </div>
+                        <h4 className="font-bold text-slate-900 text-lg">{event.title}</h4>
+                        <p className="text-sm text-slate-600 mt-1">{event.desc}</p>
+                      </div>
+                      <div className="flex flex-col justify-center gap-2 shrink-0 min-w-[200px]">
+                        {event.actions.map((action, i) => (
+                          <button onClick={() => alert(`Executing: ${action}... L.A.R.R.Y is logging this action.`)} key={i} className={cn(
+                            "w-full px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-sm",
+                            action.includes('Quarantine') || action.includes('Recall') ? "bg-red-600 text-white hover:bg-red-700" : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
+                          )}>
+                            {action}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'exposure' && (
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 flex flex-col items-center justify-center text-center min-h-[400px]">
+                <ShieldAlert size={48} className="text-orange-400 mb-4" />
+                <h2 className="text-2xl font-bold text-slate-800 mb-2">Exposure Mapping & Tracking</h2>
+                <p className="text-slate-500 max-w-md">Visualize patient clusters and retail locations associated with compromised batches.</p>
+                <div className="mt-8 w-full max-w-2xl bg-slate-50 rounded-xl border border-slate-200 h-64 flex items-center justify-center relative overflow-hidden">
+                   <div className="absolute inset-0 opacity-20 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-orange-400 via-transparent to-transparent"></div>
+                   <div className="z-10 text-center">
+                     <p className="font-bold text-slate-700">Map Rendering Engine Offline</p>
+                     <p className="text-xs text-slate-500 mt-1">Connect to GIS server to load patient density map.</p>
+                   </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'compliance' && (
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 flex flex-col items-center justify-center text-center min-h-[400px]">
+                <FileText size={48} className="text-emerald-400 mb-4" />
+                <h2 className="text-2xl font-bold text-slate-800 mb-2">Historical Compliance Data</h2>
+                <p className="text-slate-500 max-w-md mb-6">Review laboratory performance, pass/fail ratios, and longitudinal heavy metal tracking across all licensed facilities.</p>
+                <button className="px-6 py-3 bg-[#1a4731] text-white rounded-xl font-bold hover:bg-[#153a28] shadow-md flex items-center gap-2 mx-auto">
+                  <Download size={18} /> Export Full State Dataset (CSV)
                 </button>
               </div>
             )}
