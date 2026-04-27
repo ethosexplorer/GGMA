@@ -135,7 +135,7 @@ export const RolePermissionsPanel = ({ viewerRole }: Props) => {
                   ))}
                 </div>
               </div>
-              {role.blocked.length > 0 && (
+              {viewerRole === 'founder' && role.blocked.length > 0 && (
                 <div>
                   <h4 className="text-[10px] font-black text-red-500 uppercase tracking-widest mb-3">❌ Blocked</h4>
                   <div className="space-y-2">
