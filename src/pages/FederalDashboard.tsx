@@ -23,7 +23,7 @@ const tabs = [
   { id: 'research', label: 'Public Health & Labs', icon: Activity },
   { id: 'economic', label: 'Revenue & Taxation', icon: DollarSign },
   { id: 'policy', label: 'Policy Scenarios', icon: Scale },
-  { id: 'sylara', label: 'L.A.R.R.Y Federal AI', icon: Sparkles },
+  { id: 'sylara', label: 'Sylara & L.A.R.R.Y AI', icon: Sparkles },
   { id: 'reporting', label: 'Reporting & Coordination', icon: FileText },
   { id: 'sam', label: 'Rules & SAM.gov', icon: BookOpen },
   { id: 'audit', label: 'Lease & Audit Logs', icon: Lock },
