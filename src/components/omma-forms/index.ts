@@ -19,3 +19,14 @@ export { InterviewIntake } from './InterviewIntake';
 export { AffidavitOfLawfulPresence } from './AffidavitOfLawfulPresence';
 export { BackgroundCheckInformation } from './BackgroundCheckInformation';
 export { ResearchApplicationGuidelines } from './ResearchApplicationGuidelines';
+
+export { AffidavitOfChangeOfUseOrOccupancy } from './AffidavitOfChangeOfUseOrOccupancy';
+export { AffidavitOfContinuedOccupancyCompliance } from './AffidavitOfContinuedOccupancyCompliance';
+export { AffidavitOutdoorExclusiveGrow } from './AffidavitOutdoorExclusiveGrow';
+export { AuthorizationForDisclosureOfConfidentialBusinessInfo } from './AuthorizationForDisclosureOfConfidentialBusinessInfo';
+export { FoodLicenseFactSheet } from './FoodLicenseFactSheet';
+export { LaboratoryIntakeSampleProcess } from './LaboratoryIntakeSampleProcess';
+export { ProcessorInspectionForm } from './ProcessorInspectionForm';
+export { GrowerInspectionForm } from './GrowerInspectionForm';
+export { AttestationOfApplicationForCertificateOfOccupancy } from './AttestationOfApplicationForCertificateOfOccupancy';
+export { BackgroundCheckRequirements } from './BackgroundCheckRequirements';
