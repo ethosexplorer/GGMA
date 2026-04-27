@@ -2523,6 +2523,7 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
     invitationCode: '',
     department: '',
     ssn: '', // Added for ID Code (last 4)
+    customRoleName: '',
   });
 
   const [uploads, setUploads] = useState({
@@ -2548,6 +2549,10 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
     { id: 'enforcement_state', label: 'Law Enforcement (RIP)', category: 'Oversight', icon: Shield, desc: 'Real-time Intelligence & Policing (RIP) for authorized agencies.' },
     { id: 'regulator_state', label: 'Regulator / Authority', category: 'Oversight', icon: Activity, desc: 'State-level licensing authority and legal oversight bodies.' },
     { id: 'backoffice_staff', label: 'Operations & Support', category: 'Oversight', icon: Cpu, desc: 'Operational staff managing back-office AI systems.' },
+    { id: 'other_patient', label: 'Other', category: 'Patient', icon: Plus, desc: 'Not listed here? Define your custom role.' },
+    { id: 'other_business', label: 'Other', category: 'Business', icon: Plus, desc: 'Not listed here? Define your custom role.' },
+    { id: 'other_oversight', label: 'Other', category: 'Oversight', icon: Plus, desc: 'Not listed here? Define your custom role.' },
+    { id: 'other_operations', label: 'Other', category: 'Operations', icon: Plus, desc: 'Not listed here? Define your custom role.' }
   ];
 
   const handleInputChange = (e: any) => {
@@ -2788,6 +2793,12 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
                                     </button>
                                 ))}
                             </div>
+                            {selectedRole === 'other_' + cat.toLowerCase() && (
+                                <div className="mt-4 p-4 bg-emerald-50 rounded-xl border border-emerald-100 animate-in fade-in slide-in-from-top-2">
+                                    <label className="block text-sm font-bold text-slate-700 mb-2">Please specify your role</label>
+                                    <input type="text" name="customRoleName" value={formData.customRoleName} onChange={handleInputChange} placeholder="E.g., Logistics Coordinator, Vendor, etc." className="w-full px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:ring-2 focus:ring-[#1a4731]/20 focus:border-[#1a4731]" required />
+                                </div>
+                            )}
                         </div>
                     ))}
                 </div>
