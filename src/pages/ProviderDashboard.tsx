@@ -313,10 +313,10 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                       "You have 3 new leads and 2 pending certifications. Would you like me to pre-fill the state forms for Michael Chen's evaluation?"
                     </p>
                     <div className="flex gap-3 mt-4">
-                      <button className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold transition-colors shadow-md">
+                      <button onClick={() => alert('Sylara is pre-filling state intake forms based on Michael Chen\'s previous medical history...')} className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold transition-colors shadow-md">
                         Pre-fill Forms
                       </button>
-                      <button className="px-4 py-2 rounded-xl bg-white border border-blue-200 hover:bg-blue-50 text-blue-700 text-sm font-bold transition-colors">
+                      <button onClick={() => alert('Routing to Sylara Lead generation dashboard...')} className="px-4 py-2 rounded-xl bg-white border border-blue-200 hover:bg-blue-50 text-blue-700 text-sm font-bold transition-colors">
                         View Leads
                       </button>
                     </div>
@@ -341,8 +341,8 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                             <h4 className="font-bold text-slate-900 text-lg mb-1">{pt.name}</h4>
                             <p className="text-sm text-slate-500">{pt.type} • {pt.state} • Appt: {pt.date}</p>
                             <div className="mt-4 flex gap-3">
-                              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 flex items-center gap-2"><Video size={16}/> Join Virtual Room</button>
-                              <button className="px-4 py-2 border border-slate-200 text-slate-700 rounded-lg text-sm font-bold hover:bg-slate-50">View Intake Form</button>
+                              <button onClick={() => alert('Launching Secure Telehealth Virtual Room for ' + pt.name)} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 flex items-center gap-2"><Video size={16}/> Join Virtual Room</button>
+                              <button onClick={() => alert('Loading patient intake forms...')} className="px-4 py-2 border border-slate-200 text-slate-700 rounded-lg text-sm font-bold hover:bg-slate-50">View Intake Form</button>
                             </div>
                           </div>
                         ))
@@ -367,8 +367,8 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                             <h4 className="font-bold text-slate-900 text-lg mb-1">{pt.name}</h4>
                             <p className="text-sm text-slate-500">{pt.type} • {pt.state} • Appt: {pt.date}</p>
                             <div className="mt-4 flex gap-3">
-                              <button className="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-bold hover:bg-emerald-700">Check In to Clinic</button>
-                              <button className="px-4 py-2 border border-slate-200 text-slate-700 rounded-lg text-sm font-bold hover:bg-slate-50">View Intake Form</button>
+                              <button onClick={() => alert('Checking patient ' + pt.name + ' into the physical clinic lobby.')} className="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-bold hover:bg-emerald-700">Check In to Clinic</button>
+                              <button onClick={() => alert('Loading patient intake forms...')} className="px-4 py-2 border border-slate-200 text-slate-700 rounded-lg text-sm font-bold hover:bg-slate-50">View Intake Form</button>
                             </div>
                           </div>
                         ))
