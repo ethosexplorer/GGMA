@@ -196,10 +196,10 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                   </div>
                   <div className="flex-1 text-white">
                     <h4 className="font-bold flex items-center gap-2 text-lg">
-                      L.A.R.R.Y Legal Triage <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-500/30 text-emerald-200 border border-emerald-500/50">Active</span>
+                      Sylara & L.A.R.R.Y Legal Triage <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-500/30 text-emerald-200 border border-emerald-500/50">Active</span>
                     </h4>
                     <p className="text-sm text-emerald-100/90 mt-1">
-                      "Alex, I have pre-processed a Florida licensing dispute. We gathered all 12 documents and verified the client. It requires attorney action within 24h to maintain your A+ rating. Would you like me to draft the appeal template and unlock the client file for 1 token?"
+                      "Alex, Sylara and I have pre-processed a Florida licensing dispute. We gathered all 12 documents and verified the client. It requires attorney action within 24h to maintain your A+ rating. Would you like me to draft the appeal template and unlock the client file for 1 token?"
                     </p>
                     <div className="flex gap-3 mt-4">
                       <button className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-bold transition-colors shadow-md text-slate-900">

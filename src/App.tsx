@@ -1185,7 +1185,7 @@ const STATE_RESOURCES: Record<string, any> = {
               >
                 <div className="bg-[#0D6EFD] p-4 text-white flex items-center gap-3">
                   <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center overflow-hidden">
-                    <img src="/larry-logo.png" alt="L.A.R.R.Y" className="w-full h-full object-cover" />
+                    <img src="/larry-logo.png" alt="Sylara" className="w-full h-full object-cover" />
                   </div>
                   <div>
                     <h3 className="font-bold leading-tight">Sylara Legal AI</h3>
@@ -1238,7 +1238,7 @@ const STATE_RESOURCES: Record<string, any> = {
           onClick={() => setChatOpen(!chatOpen)}
           className="w-14 h-14 bg-[#1a4731] bg-gradient-to-tr from-[#1a4731] to-[#2c6e4d] text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all hover:scale-105 overflow-hidden p-0"
         >
-           {chatOpen ? <XCircle size={24} /> : <img src="/larry-logo.png" alt="L.A.R.R.Y" className="w-10 h-10 object-cover rounded-full" />}
+           {chatOpen ? <XCircle size={24} /> : <img src="/larry-logo.png" alt="Sylara" className="w-10 h-10 object-cover rounded-full" />}
            {!chatOpen && (
              <span className="absolute -top-1 -right-1 flex h-4 w-4">
                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#a3b18a] opacity-75"></span>
@@ -2216,18 +2216,18 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
   );
 };
 
-const LarryFloatingWidget = ({ onClick }: { onClick: () => void }) => (
+const SylaraFloatingWidget = ({ onClick }: { onClick: () => void }) => (
   <div className="fixed bottom-6 right-6 z-50">
     <button 
       onClick={onClick}
       className="bg-purple-700 text-white p-4 rounded-full shadow-2xl hover:bg-purple-800 hover:scale-105 transition-all flex items-center gap-3 group"
     >
       <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center overflow-hidden shadow-inner">
-        <img src="/larry-logo.png" alt="L.A.R.R.Y" className="w-full h-full object-cover" />
+        <img src="/larry-logo.png" alt="Sylara" className="w-full h-full object-cover" />
       </div>
       <div className="hidden md:block text-left pr-2">
-        <div className="text-sm font-bold leading-tight">L.A.R.R.Y Compliance AI</div>
-        <div className="text-[11px] text-white/80">Intake & Compliance Engine</div>
+        <div className="text-sm font-bold leading-tight">Sylara Intake Agent</div>
+        <div className="text-[11px] text-white/80">Onboarding & Support</div>
       </div>
     </button>
   </div>
@@ -3254,15 +3254,15 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
   const getGreeting = () => {
     const date = "April 21, 2026";
     const metrcStatus = "Validated Metrc Integrator (Active)";
-    if (variant === 'ggma') return `👋 Welcome to the **GGMA Sector**. I am **L.A.R.R.Y**, your **Compliance Agent**. We are an official **${metrcStatus}**. I handle all regulatory onboarding, card processing, and registry management. \n\nHow can I assist with your GGMA licensing today?`;
-    if (variant === 'rip') return `🕵️ **RIP Intelligence Portal**. I am **L.A.R.R.Y**, coordinating the **Enforcement Engine**. Due to the highly sensitive nature of intelligence and enforcement operations, I can only provide basic guidance here. For secure access to field reports or oversight actions, you must create an official account. \n\nWould you like to begin intake?`;
-    if (variant === 'sinc') return `🛡️ **SINC Compliance Infrastructure**. I am **L.A.R.R.Y**, managing your secure operational backbone. Because SINC handles encrypted audit trails and seed-to-sale architecture, deep access requires an authenticated business account. \n\nWould you like to begin business intake?`;
+    if (variant === 'ggma') return `👋 Welcome to the **GGMA Sector**. I am **Sylara**, your **Intake Agent**. We are an official **${metrcStatus}**. I handle all regulatory onboarding, card processing, and registry management. \n\nHow can I assist with your GGMA licensing today?`;
+    if (variant === 'rip') return `🕵️ **RIP Intelligence Portal**. I am **Sylara**, coordinating with the **L.A.R.R.Y Enforcement Engine**. Due to the highly sensitive nature of intelligence and enforcement operations, I can only provide basic guidance here. For secure access to field reports or oversight actions, you must create an official account. \n\nWould you like to begin intake?`;
+    if (variant === 'sinc') return `🛡️ **SINC Compliance Infrastructure**. I am **Sylara**, managing your secure operational backbone. Because SINC handles encrypted audit trails and seed-to-sale architecture, deep access requires an authenticated business account. \n\nWould you like to begin business intake?`;
     
-    if (isBusiness) return `👋 Hello! I am **L.A.R.R.Y** — your **Compliance & Intake Agent**. Global Green Enterprise Inc is now a **${metrcStatus}**. I'm here to guide you through **Cannabis Business Licensing** and resolve any operational hurdles. Once we complete this initial intake, your file will be handed off to **Monica Green (Compliance Director)** for processing. \n\nHow can I assist your business today?`;
+    if (isBusiness) return `👋 Hello! I am **Sylara** — your **Intake & Support Agent**. Global Green Enterprise Inc is now a **${metrcStatus}**. I'm here to guide you through **Cannabis Business Licensing** and handle your initial onboarding. Once we complete intake, your file routes to **L.A.R.R.Y** (Compliance Engine) for operational processing, and **Monica Green** (Compliance Director) for human review. \n\nHow can I assist your business today?`;
     
-    if (isGeneral) return `👋 Welcome to the **Global Green Hybrid Platform (GGHP)** Concierge. I am **L.A.R.R.Y**, your Compliance Agent. \n\n**Integration Status:** ${metrcStatus}.\n\nI handle:\n• **Intake & Onboarding** (GGMA)\n• **Operational Support**\n• **Escalations & Alerts**\n• **Intake Contacts:** Legal → Shantell Robinson | Business & Compliance → Monica Green\n\nHow can I help you navigate the ecosystem today?`;
+    if (isGeneral) return `👋 Welcome to the **Global Green Hybrid Platform (GGHP)** Concierge. I am **Sylara**, your Intake Agent. \n\n**Integration Status:** ${metrcStatus}.\n\nI handle all initial intake & onboarding across the ecosystem.\n\n**After intake, your file routes to:**\n• **Business & Compliance** → L.A.R.R.Y (Operations) + Monica Green (Human Review)\n• **Legal matters** → Sylara (Legal AI) + Shantell Robinson (Human Review)\n• **Authority & Enforcement** → L.A.R.R.Y Enforcement Engine\n\nHow can I help you navigate the ecosystem today?`;
     
-    return `👋 Hello! I am **L.A.R.R.Y**, your **AI Healthcare Assistant** and **State Concierge**. Welcome to the Global Green Ecosystem! 🌿\n\nAs a member (currently enjoying your 30-Day Free Trial of the B2C Basic Plan), you have unlocked priority state processing, our encrypted Document Vault, and direct access to our Telehealth and Legal networks. My job is to make your medical card journey completely seamless and 100% compliant.\n\nEvery application step you complete with me is safely stored in your Vault. Even if you can't finish right now, we can pull it back up and continue right where you left off.\n\n**After this intake session, your file will be assigned to:**\n• **Legal matters** → Shantell Robinson\n• **Business & Compliance** → Monica Green\n\nAre you ready to start your medical card application today? Do you have all your necessary documents ready?\n*(Note: You can continue without them, but your application cannot be submitted to the state until all documents are uploaded.)*`;
+    return `👋 Hello! I am **Sylara**, your **AI Healthcare Assistant** and **State Concierge**. Welcome to the Global Green Ecosystem! 🌿\n\nAs a member (currently enjoying your 30-Day Free Trial of the B2C Basic Plan), you have unlocked priority state processing, our encrypted Document Vault, and direct access to our Telehealth and Legal networks. My job is to make your medical card journey completely seamless and 100% compliant.\n\nEvery application step you complete with me is safely stored in your Vault. Even if you can't finish right now, we can pull it back up and continue right where you left off.\n\n**After this intake session, your file routes to:**\n• **Business & Compliance** → L.A.R.R.Y (Operations) + Monica Green (Review)\n• **Legal matters** → Sylara (Legal AI) + Shantell Robinson (Review)\n\nAre you ready to start your medical card application today? Do you have all your necessary documents ready?\n*(Note: You can continue without them, but your application cannot be submitted to the state until all documents are uploaded.)*`;
   };
 
   const getInitialChoices = () => {
@@ -5641,7 +5641,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
           </div>
           <div>
             <span className="font-bold text-slate-800 text-lg tracking-tight">Sylara</span>
-            <span className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider block -mt-1">L.A.R.R.Y Compliance AI</span>
+            <span className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider block -mt-1">Sylara Intake Agent</span>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -5723,7 +5723,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
                 {msg.role === 'bot' && (
                   <div className="text-[10px] font-black uppercase tracking-widest mb-1 opacity-50 flex items-center gap-1.5">
                     {currentPersona === 'sylara' ? <Headphones size={10} className="text-purple-600" /> : <Shield size={10} className="text-emerald-600" />}
-                    {currentPersona === 'sylara' ? 'L.A.R.R.Y Compliance AI' : 'L.A.R.R.Y Enforcement Engine'}
+                    {currentPersona === 'sylara' ? 'Sylara Intake Agent' : 'L.A.R.R.Y Enforcement Engine'}
                   </div>
                 )}
                 <div className="leading-relaxed whitespace-pre-line">
@@ -8070,9 +8070,9 @@ export default function App() {
           </button>
         )}
 
-        {/* Persistent L.A.R.R.Y Support — hidden from business, compliance, and attorney roles */}
-        {view !== 'larry-chatbot' && (!userProfile || !['business', 'compliance_service', 'attorney'].includes(roleOverride || userProfile.role)) && (
-          <LarryFloatingWidget onClick={() => setShowLarryModal(true)} />
+        {/* Sylara Intake Agent — visible everywhere except business/compliance/authority/enforcement (L.A.R.R.Y handles those) */}
+        {view !== 'larry-chatbot' && (!userProfile || !['business', 'compliance_service', 'regulator_state', 'regulator_federal', 'law_enforcement', 'enforcement_state'].includes(roleOverride || userProfile.role)) && (
+          <SylaraFloatingWidget onClick={() => setShowLarryModal(true)} />
         )}
 
         {/* Floating Modal for Chatbot */}
