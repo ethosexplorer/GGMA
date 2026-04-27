@@ -3,6 +3,7 @@ import { Wallet, Users, Building2, Shield, Clock, TrendingUp, Plus, LayoutDashbo
 import { cn } from '../lib/utils';
 import { StatCard } from '../components/StatCard';
 import { CareWalletTab } from '../components/shared/CareWalletTab';
+import { StateWelcomeBanner } from '../components/shared/StateWelcomeBanner';
 import { VirtualAttendantTab } from '../components/oversight/VirtualAttendantTab';
 import { SubscriptionPortal } from '../components/SubscriptionPortal';
 import { turso } from '../lib/turso';
@@ -503,6 +504,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
     {/* HOME TAB - PERFORMANCE DESIGN */}
     {activeTab === 'home' && (
       <div className="space-y-6">
+        <StateWelcomeBanner jurisdiction={jurisdiction} type="business" />
         
         {/* Subscription Upsell Banner */}
         <div className="bg-emerald-800 bg-gradient-to-r from-emerald-800 via-[#1a4731] to-emerald-900 rounded-[2rem] p-5 flex flex-col md:flex-row items-center justify-between text-white shadow-lg shadow-emerald-900/20 mb-4 border border-emerald-700/50 relative overflow-hidden">

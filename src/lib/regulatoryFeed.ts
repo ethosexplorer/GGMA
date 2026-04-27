@@ -71,31 +71,69 @@ function setCache(items: RegulatoryUpdate[]): void {
   }
 }
 
-export async function fetchRegulatoryFeed(limit: number = 5): Promise<RegulatoryUpdate[]> {
-  // Check cache first
-  const cached = getCached();
-  if (cached) return cached.slice(0, limit);
+export async function fetchRegulatoryFeed(limit: number = 5, jurisdiction?: string): Promise<RegulatoryUpdate[]> {
+  // Use a dynamic cache key if jurisdiction is provided
+  const cacheKey = jurisdiction ? `${CACHE_KEY}_${jurisdiction}` : CACHE_KEY;
+  
+  try {
+    const raw = localStorage.getItem(cacheKey);
+    if (raw) {
+      const cached = JSON.parse(raw);
+      if (Date.now() - cached.timestamp <= CACHE_TTL) {
+        return cached.items.slice(0, limit);
+      }
+    }
+  } catch {}
 
   try {
-    const res = await fetch(FEED_URL);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
+    let items: RegulatoryUpdate[] = [];
 
-    if (data.status !== 'ok' || !data.items?.length) {
-      throw new Error('Invalid RSS response');
+    if (jurisdiction) {
+      // Localized News via Reddit Search
+      const query = encodeURIComponent(`${jurisdiction} (marijuana OR cannabis OR weed OR dispensary)`);
+      const res = await fetch(`https://www.reddit.com/search.json?q=${query}&sort=new&limit=${limit * 2}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      
+      if (data?.data?.children?.length) {
+        items = data.data.children
+          .filter((child: any) => !child.data.over_18) // basic SFW filter
+          .map((child: any) => ({
+            title: child.data.title || 'Untitled Local Update',
+            pubDate: new Date(child.data.created_utc * 1000).toISOString(),
+            link: `https://www.reddit.com${child.data.permalink}`,
+            description: truncateDescription(child.data.selftext || 'Click to view local jurisdiction discussion.'),
+            source: `${jurisdiction} Local News`,
+            isBreaking: isBreakingNews(child.data.title || '', ''),
+          })).slice(0, limit);
+      }
     }
 
-    const items: RegulatoryUpdate[] = data.items.map((item: any) => ({
-      title: item.title || 'Untitled',
-      pubDate: item.pubDate || new Date().toISOString(),
-      link: item.link || '#',
-      description: truncateDescription(item.description || item.content || ''),
-      source: 'Marijuana Moment',
-      isBreaking: isBreakingNews(item.title || '', item.description || ''),
-    }));
+    // Fallback to National RSS if local news fails or no jurisdiction
+    if (items.length === 0) {
+      const res = await fetch(FEED_URL);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
 
-    setCache(items);
-    return items.slice(0, limit);
+      if (data.status !== 'ok' || !data.items?.length) {
+        throw new Error('Invalid RSS response');
+      }
+
+      items = data.items.map((item: any) => ({
+        title: item.title || 'Untitled',
+        pubDate: item.pubDate || new Date().toISOString(),
+        link: item.link || '#',
+        description: truncateDescription(item.description || item.content || ''),
+        source: 'National Cannabis Feed',
+        isBreaking: isBreakingNews(item.title || '', item.description || ''),
+      })).slice(0, limit);
+    }
+
+    try {
+      localStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), items }));
+    } catch {}
+
+    return items;
   } catch (err) {
     console.warn('⚠️ Failed to fetch regulatory feed, using fallback:', err);
     return []; // caller will use fallback content

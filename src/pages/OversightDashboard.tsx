@@ -12,6 +12,7 @@ import { AdminDashboard } from './AdminDashboard';
 import { SubscriptionPortal } from '../components/SubscriptionPortal';
 import { AuditLogsTab } from '../components/oversight/AuditLogsTab';
 import { VirtualAttendantTab } from '../components/oversight/VirtualAttendantTab';
+import { StateWelcomeBanner } from '../components/shared/StateWelcomeBanner';
 
 const NAV_ITEMS = [
   { section: 'MAIN OVERSIGHT' },
@@ -33,12 +34,7 @@ export const OversightDashboard = ({ onLogout, user, jurisdiction = 'Oklahoma' }
 
   const renderOverview = () => (
     <div className="space-y-6 p-8">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-           <h1 className="text-3xl font-black text-slate-800 tracking-tight">GGHP Oversight Command Hub</h1>
-           <p className="text-slate-500 font-medium">Unified access to Global Green Enterprise Inc sectors <span className="mx-2 text-slate-300">|</span> <span className="font-black text-emerald-700 uppercase tracking-widest">{jurisdiction} JURISDICTION</span></p>
-        </div>
-      </div>
+      <StateWelcomeBanner jurisdiction={jurisdiction} type="oversight" />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-[#0b1525] p-6 rounded-3xl border border-[#1e3a5f]/30 shadow-xl relative overflow-hidden group cursor-pointer" onClick={() => setActiveTab('federal')}>

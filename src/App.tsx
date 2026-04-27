@@ -125,6 +125,7 @@ import { FeaturedPoll, StickyPollWidget } from './components/CommunityPolls';
 import { GlobalHeader } from './components/GlobalHeader';
 import { RoleSelectorScreen } from './components/RoleSelectorScreen';
 import { fetchRegulatoryFeed, formatFeedDate, type RegulatoryUpdate } from './lib/regulatoryFeed';
+import { StateWelcomeBanner } from './components/shared/StateWelcomeBanner';
 
 // --- Constants ---
 
@@ -1256,17 +1257,18 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
   const [feedLoading, setFeedLoading] = useState(true);
   
   useEffect(() => {
-    fetchRegulatoryFeed(5).then(items => {
+    setFeedLoading(true);
+    fetchRegulatoryFeed(5, jurisdiction).then(items => {
       setLiveFeed(items);
       setFeedLoading(false);
     }).catch(() => setFeedLoading(false));
     
     // Refresh every hour
     const interval = setInterval(() => {
-      fetchRegulatoryFeed(5).then(items => setLiveFeed(items));
+      fetchRegulatoryFeed(5, jurisdiction).then(items => setLiveFeed(items));
     }, 30 * 60 * 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [jurisdiction]);
   
   const [broadcastMsg, setBroadcastMsg] = useState('🚨 SYSTEM NOTICE: NATIONWIDE COMPLIANCE AUDIT IN PROGRESS • GLOBAL GREEN HYBRID PLATFORM (GGHP) • ALL SECTORS (GGMA/RIP/SINC) OPERATIONAL');
   
@@ -1279,10 +1281,13 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
       const fetchNews = async () => {
         try {
           // Live API Scraping for hottest hourly news
-          const res = await fetch('https://www.reddit.com/r/medicalmarijuana/new.json?limit=5');
+          const query = jurisdiction ? encodeURIComponent(`${jurisdiction} (marijuana OR cannabis)`) : 'marijuana OR cannabis';
+          const res = await fetch(`https://www.reddit.com/search.json?q=${query}&sort=hot&limit=5`);
           const json = await res.json();
           if (json?.data?.children?.length > 0) {
-            const livePosts = json.data.children.map((child: any) => `🔴 LIVE NEWS: ${child.data.title.substring(0, 80)}...`);
+            const livePosts = json.data.children
+              .filter((child: any) => !child.data.over_18)
+              .map((child: any) => `🔴 LIVE NEWS: ${child.data.title.substring(0, 80)}...`);
             setInTheKnowNews((prev) => [...livePosts, ...prev.slice(0, 3)]);
           }
         } catch (err) {
@@ -1292,7 +1297,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
       fetchNews();
       const interval = setInterval(fetchNews, 3600000); // Scrape hourly
       return () => clearInterval(interval);
-    }, []);
+    }, [jurisdiction]);
 
 
   useEffect(() => {
@@ -1327,17 +1332,30 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest hidden sm:inline">Speak Your Language</span>
         </div>
         <div className="flex items-center gap-3">
+            {jurisdiction && (
+              <div className="hidden md:flex items-center mr-4 pr-4 border-r border-slate-700/50 gap-2 animate-in fade-in slide-in-from-right-4 duration-500">
+                <span className="text-emerald-400 font-black text-xl tracking-widest uppercase drop-shadow-[0_0_15px_rgba(16,185,129,0.5)]">
+                  {jurisdiction}
+                </span>
+                <span className="text-[10px] text-emerald-500/70 font-bold uppercase tracking-widest leading-none mt-1">PORTAL</span>
+              </div>
+            )}
             {jurisdiction && setJurisdiction && (
-              <div className="hidden md:flex items-center gap-2 mr-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
-                <MapPin size={14} className="text-emerald-600" />
-                <span className="text-xs font-bold text-slate-500 hidden lg:inline">Jurisdiction:</span>
-                <select 
-                  value={jurisdiction}
-                  onChange={(e) => setJurisdiction(e.target.value)}
-                  className="bg-transparent text-sm font-black text-[#1a4731] outline-none cursor-pointer w-24"
-                >
-                  {['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'].map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
+              <div className="hidden md:flex items-center gap-2 bg-slate-800/80 p-1 rounded-xl border border-slate-700/50 shadow-inner mr-2">
+                <div className="w-6 h-6 bg-emerald-500 rounded flex items-center justify-center text-white shadow-[0_0_10px_rgba(16,185,129,0.4)]">
+                  <MapPin size={12} />
+                </div>
+                <div className="relative flex items-center h-6">
+                  <span className="pl-2 pr-1 text-emerald-400 font-black tracking-widest text-[9px] uppercase hidden lg:inline">JURISDICTION:</span>
+                  <select 
+                    value={jurisdiction}
+                    onChange={(e) => setJurisdiction(e.target.value)}
+                    className="appearance-none bg-transparent text-white font-black text-xs px-1 py-1 pr-6 outline-none cursor-pointer hover:text-emerald-300 transition-colors uppercase"
+                  >
+                    {['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'].map(s => <option key={s} value={s} className="bg-slate-800 text-white normal-case">{s}</option>)}
+                  </select>
+                  <div className="absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none text-emerald-500 font-bold text-[10px]">▼</div>
+                </div>
               </div>
             )}
             <LanguageSelector currentLanguage="en" onLanguageChange={(code) => { 
@@ -1399,15 +1417,19 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
       <FeaturedPoll />
 
       {/* "IN THE KNOW" NEWS TICKER */}
-      <div className="bg-emerald-950 text-emerald-100 py-3 border-b border-emerald-900/20 overflow-hidden whitespace-nowrap relative z-40">
+      <div className="bg-emerald-950 text-emerald-100 py-3 border-b border-emerald-900/20 overflow-hidden whitespace-nowrap relative z-40 mb-8">
         <div className="inline-block animate-marquee font-bold text-xs uppercase tracking-[0.2em]">
           <span className="bg-emerald-400 text-emerald-950 px-2 py-0.5 rounded text-[9px] mr-4">IN THE KNOW</span>
           {inTheKnowNews.join(' • ')} &nbsp; • &nbsp; {inTheKnowNews.join(' • ')}
         </div>
       </div>
 
+      <div className="px-6 max-w-7xl mx-auto">
+        <StateWelcomeBanner jurisdiction={jurisdiction || 'Oklahoma'} type="business" />
+      </div>
+
       {/* Hero Section */}
-      <section className="pt-20 pb-20 px-6 relative overflow-hidden">
+      <section className="pt-10 pb-20 px-6 relative overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[120%] h-[500px] bg-emerald-50 bg-gradient-to-b from-emerald-50/50 to-transparent -z-10 blur-3xl"></div>
         <div className="max-w-4xl mx-auto text-center space-y-8">
           <p className="text-emerald-950 font-bold tracking-[0.3em] uppercase text-xs mb-[-10px] opacity-70">Global Green Enterprise Inc introducing</p>
@@ -2235,7 +2257,7 @@ const SylaraFloatingWidget = ({ onClick }: { onClick: () => void }) => (
 
 // --- Screens ---
 
-const LoginScreen = ({ onLogin, onSignUp, onForgotPassword }: { onLogin: (email: string, pass: string) => Promise<void>; onSignUp: () => void; onForgotPassword: () => void; onBack?: () => void; initialRole?: any; key?: string }) => {
+const LoginScreen = ({ onLogin, onSignUp, onForgotPassword, jurisdiction = 'Oklahoma' }: { onLogin: (email: string, pass: string) => Promise<void>; onSignUp: () => void; onForgotPassword: () => void; onBack?: () => void; initialRole?: any; key?: string; jurisdiction?: string }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -2258,11 +2280,14 @@ const LoginScreen = ({ onLogin, onSignUp, onForgotPassword }: { onLogin: (email:
   const samplePlans = getPlansForRole('business', 'cannabis', 'National').slice(0, 3); // Get 3 plans to showcase
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 pt-10 pb-10">
+      <div className="w-full max-w-[1000px]">
+        <StateWelcomeBanner jurisdiction={jurisdiction} type="business" />
+      </div>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-[1000px] bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col md:flex-row"
+        className="w-full max-w-[1000px] bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col md:flex-row mt-6"
       >
         {/* LOGIN FORM SECTION */}
         <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
@@ -7921,6 +7946,7 @@ export default function App() {
               onForgotPassword={() => setView('forgot-password')}
               onBack={handleBack}
               initialRole={initialRole}
+              jurisdiction={jurisdiction}
               key="login"
             />
           )}
