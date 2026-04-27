@@ -37,6 +37,33 @@ const alerts = [
 export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
   const [activeTab, setActiveTab] = useState('queue');
   const [showCertWizard, setShowCertWizard] = useState(false);
+  const [tokens, setTokens] = useState(15);
+  const [unlockedPatients, setUnlockedPatients] = useState<string[]>([]);
+
+  const handleUnlock = (patientId: string) => {
+    if (12 + unlockedPatients.length >= 20) {
+      alert('Active Patient Limit Reached. Complete existing consultations before taking new referrals. This ensures compliance with state telehealth volume limits.');
+      return;
+    }
+
+    if (tokens > 0) {
+      if (confirm(`Accept patient referral ${patientId}? This costs 1 Token.`)) {
+        setTokens(t => t - 1);
+        setUnlockedPatients([...unlockedPatients, patientId]);
+        alert('Patient accepted. They have been moved to your active schedule.');
+      }
+    } else {
+      alert('Not enough tokens. Please purchase a Token Pack.');
+      setActiveTab('billing');
+    }
+  };
+
+  const handleBuyTokens = () => {
+    if (confirm('Purchase 10 Token Pack for $499?')) {
+      setTokens(t => t + 10);
+      alert('Tokens successfully purchased and added to your balance.');
+    }
+  };
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] bg-slate-50">
@@ -122,7 +149,7 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
               <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500 border-2 border-white" />
             </button>
             <div className="w-px h-6 bg-slate-200" />
-            <button className="px-4 py-1.5 rounded-lg bg-amber-50 text-amber-700 text-xs font-bold border border-amber-200 hover:bg-amber-100 transition-colors">
+            <button onClick={() => alert('Upgrade options and enterprise tier pricing will be available after the pilot period.')} className="px-4 py-1.5 rounded-lg bg-amber-50 text-amber-700 text-xs font-bold border border-amber-200 hover:bg-amber-100 transition-colors">
               Upgrade to Full AI
             </button>
           </div>
@@ -179,6 +206,9 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Main Content (Patient Queue) */}
               <div className="lg:col-span-2 space-y-6">
+                
+                {activeTab === 'queue' && (
+                  <>
                 <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                   <div className="p-5 border-b border-slate-100 flex items-center justify-between">
                     <div>
@@ -204,7 +234,7 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100">
-                        {patientQueue.map((pt, i) => (
+                        {patientQueue.filter(p => !unlockedPatients.includes(p.id)).map((pt, i) => (
                           <tr key={i} className="hover:bg-slate-50/50 transition-colors">
                             <td className="px-5 py-4">
                               <div className="font-bold text-slate-800">{pt.name}</div>
@@ -231,19 +261,9 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                             </td>
                             <td className="px-5 py-4">
                               <div className="flex gap-2">
-                                {pt.type === 'Traditional' ? (
-                                  <button className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition-colors">
-                                    Check In
-                                  </button>
-                                ) : pt.status === 'Pending' && (pt.type.includes('Cannabis') || pt.type.includes('Renewal')) ? (
-                                  <button className="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold transition-colors">
-                                    Issue Cert
-                                  </button>
-                                ) : (
-                                  <button className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-colors flex items-center gap-1">
-                                    <Video size={14} /> Join
-                                  </button>
-                                )}
+                                <button onClick={() => handleUnlock(pt.id)} className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-colors flex items-center gap-1 shadow-md shadow-blue-900/10">
+                                  <Users size={14} /> Accept Referral (1 Token)
+                                </button>
                               </div>
                             </td>
                           </tr>
@@ -302,6 +322,99 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                     </div>
                   </div>
                 </div>
+                </>
+                )}
+
+                {activeTab === 'telehealth' && (
+                  <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div className="p-6 border-b border-slate-100">
+                      <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
+                        <Video className="text-blue-600" /> My Active Telehealth
+                      </h2>
+                    </div>
+                    <div className="divide-y divide-slate-100">
+                      {unlockedPatients.length === 0 ? (
+                        <div className="p-8 text-center text-slate-500">You have no active telehealth patients. Accept referrals from the Queue.</div>
+                      ) : (
+                        patientQueue.filter(p => unlockedPatients.includes(p.id) && p.type !== 'Traditional').map((pt, i) => (
+                          <div key={i} className="p-6 hover:bg-slate-50">
+                            <h4 className="font-bold text-slate-900 text-lg mb-1">{pt.name}</h4>
+                            <p className="text-sm text-slate-500">{pt.type} • {pt.state} • Appt: {pt.date}</p>
+                            <div className="mt-4 flex gap-3">
+                              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 flex items-center gap-2"><Video size={16}/> Join Virtual Room</button>
+                              <button className="px-4 py-2 border border-slate-200 text-slate-700 rounded-lg text-sm font-bold hover:bg-slate-50">View Intake Form</button>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'traditional' && (
+                  <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div className="p-6 border-b border-slate-100">
+                      <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
+                        <MapPin className="text-emerald-600" /> My Traditional Visits
+                      </h2>
+                    </div>
+                    <div className="divide-y divide-slate-100">
+                      {patientQueue.filter(p => unlockedPatients.includes(p.id) && p.type === 'Traditional').length === 0 ? (
+                        <div className="p-8 text-center text-slate-500">You have no active traditional visits. Accept referrals from the Queue.</div>
+                      ) : (
+                        patientQueue.filter(p => unlockedPatients.includes(p.id) && p.type === 'Traditional').map((pt, i) => (
+                          <div key={i} className="p-6 hover:bg-slate-50">
+                            <h4 className="font-bold text-slate-900 text-lg mb-1">{pt.name}</h4>
+                            <p className="text-sm text-slate-500">{pt.type} • {pt.state} • Appt: {pt.date}</p>
+                            <div className="mt-4 flex gap-3">
+                              <button className="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-bold hover:bg-emerald-700">Check In to Clinic</button>
+                              <button className="px-4 py-2 border border-slate-200 text-slate-700 rounded-lg text-sm font-bold hover:bg-slate-50">View Intake Form</button>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'billing' && (
+                  <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
+                    <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+                      <CreditCard className="text-blue-600" /> Billing & Referral Tokens
+                    </h2>
+                    <div className="p-6 bg-slate-50 rounded-xl border border-slate-200 mb-8 flex justify-between items-center">
+                      <div>
+                        <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-1">Available Referral Tokens</p>
+                        <h3 className="text-4xl font-black text-slate-900">{tokens}</h3>
+                      </div>
+                      <button onClick={handleBuyTokens} className="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 shadow-md">
+                        Purchase 10 Tokens ($499)
+                      </button>
+                    </div>
+                    <div className="p-6 bg-blue-50 rounded-xl border border-blue-100">
+                      <h3 className="font-bold text-blue-800 mb-2">Telehealth Reimbursement Network</h3>
+                      <p className="text-sm text-blue-700">Accept traditional Medicare/Medicaid and convert to cash-pay equivalent through the GGP Wallet system.</p>
+                    </div>
+                  </div>
+                )}
+                
+                {['overview', 'certifications', 'reports', 'settings'].includes(activeTab) && (
+                  <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center shadow-sm">
+                    <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-400">
+                      <Settings size={32} />
+                    </div>
+                    <h2 className="text-2xl font-black text-slate-800 mb-2 uppercase tracking-tight">
+                      {sidebarItems.find(i => i.id === activeTab)?.label}
+                    </h2>
+                    <p className="text-slate-500 max-w-lg mx-auto mb-8">
+                      This module is currently being configured for your practice's specific state regulations.
+                    </p>
+                    <button onClick={() => setActiveTab('queue')} className="px-6 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold transition-all shadow-md">
+                      Return to Patient Queue
+                    </button>
+                  </div>
+                )}
+
               </div>
 
               {/* Right Sidebar */}
@@ -367,7 +480,7 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                       </div>
                       <ChevronRight size={16} className="text-slate-400 group-hover:text-blue-500" />
                     </button>
-                    <button className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 text-slate-700 border border-transparent hover:border-slate-200 transition-all group">
+                    <button onClick={() => alert('Routing case to L.A.R.R.Y Enforcement for audit...')} className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 text-slate-700 border border-transparent hover:border-slate-200 transition-all group">
                       <div className="flex items-center gap-2 font-medium">
                         <Share2 size={16} className="text-blue-500" /> Route Case to LARRY C.
                       </div>
