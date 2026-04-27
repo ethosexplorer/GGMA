@@ -424,7 +424,7 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
                       onClick={simulateBreathalyzer}
                       className="bg-blue-600 w-full py-8 rounded-[2rem] font-black text-2xl hover:bg-blue-500 transition-all shadow-lg active:scale-95 shadow-blue-500/20 text-white tracking-widest"
                     >
-                      START BREATHALYZER
+                      START FIELD TEST
                     </button>
                   </motion.div>
                 )}
