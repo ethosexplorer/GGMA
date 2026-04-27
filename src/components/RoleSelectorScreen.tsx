@@ -15,7 +15,7 @@ export const RoleSelectorScreen = ({ userProfile, onSelect, onLogout }: { userPr
     { id: 'regulator_state', label: 'State Authority', desc: 'OMMA Regulatory Hub', icon: Lock, color: 'amber' },
     { id: 'regulator_federal', label: 'Federal Dashboard', desc: 'National Oversight', icon: Database, color: 'slate' },
     { id: 'law_enforcement', label: 'Law Enforcement', desc: 'Real-time Intelligence & Policing', icon: Shield, color: 'red' },
-    { id: 'admin_internal', label: 'Junior Admin (Internal)', desc: 'Managers, Supervisors & Leads', icon: Briefcase, color: 'teal' },
+    { id: 'admin_internal', label: 'Junior Admin (State Teams)', desc: 'Regional Managers, Supervisors & Leads', icon: Briefcase, color: 'teal' },
     { id: 'attorney', label: 'Attorney Dashboard', desc: 'Legal Counsel & Review', icon: Briefcase, color: 'indigo' },
     { id: 'health_lab', label: 'Health & Laboratory', desc: 'Testing Results & Input', icon: Database, color: 'rose' },
     { id: 'provider', label: 'Medical Provider', desc: 'Telehealth & Certifications', icon: Stethoscope, color: 'rose' },
