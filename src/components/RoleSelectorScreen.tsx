@@ -1,12 +1,13 @@
 import React from 'react';
-import { Shield, Building2, User, Stethoscope, Briefcase, Lock, Database } from 'lucide-react';
+import { Shield, Building2, User, Stethoscope, Briefcase, Lock, Database, LogOut } from 'lucide-react';
 import { motion } from 'motion/react';
 
-export const RoleSelectorScreen = ({ userProfile, onSelect }: { userProfile: any, onSelect: (role: string) => void }) => {
+export const RoleSelectorScreen = ({ userProfile, onSelect, onLogout }: { userProfile: any, onSelect: (role: string) => void, onLogout?: () => void }) => {
   const isRyan = userProfile?.email?.toLowerCase().includes('ceo.globalgreenhp');
 
   const allRoles = [
     { id: 'executive_founder', label: 'Quality Assurance Command', desc: 'Full System Architecture & Analytics', icon: Shield, color: 'indigo' },
+    { id: 'executive_ceo', label: 'CEO Executive Dashboard', desc: 'Enterprise Operations & Strategy', icon: Briefcase, color: 'indigo' },
     { id: 'patient', label: 'Patient Portal', desc: 'Medical Cards & Care Wallet', icon: User, color: 'emerald' },
     { id: 'business', label: 'Business Dashboard', desc: 'Dispensary & Cultivation', icon: Building2, color: 'blue' },
     { id: 'regulator_state', label: 'State Authority', desc: 'OMMA Regulatory Hub', icon: Lock, color: 'amber' },
@@ -20,7 +21,7 @@ export const RoleSelectorScreen = ({ userProfile, onSelect }: { userProfile: any
 
   const roles = isRyan 
     ? allRoles.filter(r => !['executive_founder', 'regulator_state', 'regulator_federal', 'law_enforcement'].includes(r.id))
-    : allRoles;
+    : allRoles.filter(r => r.id !== 'executive_ceo');
 
   return (
     <div className="fixed inset-0 z-[400] bg-slate-900 flex items-center justify-center p-4">
@@ -29,7 +30,12 @@ export const RoleSelectorScreen = ({ userProfile, onSelect }: { userProfile: any
         animate={{ opacity: 1, scale: 1 }}
         className="max-w-4xl w-full"
       >
-        <div className="text-center mb-10">
+        <div className="text-center mb-10 relative">
+          {onLogout && (
+            <button onClick={onLogout} className="absolute top-0 right-0 text-slate-400 hover:text-white flex items-center gap-2 text-sm font-bold transition-colors bg-slate-800 px-4 py-2 rounded-lg hover:bg-red-500/20 hover:text-red-400 border border-slate-700 hover:border-red-500/50">
+              <LogOut size={16} /> Sign Out
+            </button>
+          )}
           <Shield className="w-16 h-16 text-emerald-400 mx-auto mb-6" />
           <h1 className="text-4xl font-black text-white tracking-tight uppercase mb-2">Select Operating Role</h1>
           <p className="text-emerald-400 font-bold tracking-widest uppercase text-sm">Privileged Access Granted for {userProfile?.displayName}</p>

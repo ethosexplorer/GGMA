@@ -8022,6 +8022,7 @@ export default function App() {
                           setRoleOverride(role === 'executive_founder' ? null : role);
                           setHasBypassedSelector(true);
                         }}
+                        onLogout={handleLogout}
                       />
                     ) : (
                       renderDashboardByRole(userProfile)
