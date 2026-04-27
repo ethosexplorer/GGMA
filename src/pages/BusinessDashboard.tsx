@@ -469,7 +469,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge 
         </button>
         <div className="w-px h-8 bg-slate-200/80 mx-1 self-center" />
         <button 
-          onClick={() => { setDemoUnlocked(true); setActiveTab('home'); }}
+          onClick={() => { setDemoUnlocked(true); setActiveTab('subscription'); }}
           className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'subscription' ? "bg-amber-500 bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md shadow-amber-500/20" : "text-slate-500 hover:text-amber-600 hover:bg-slate-200/50")}
         >
           <Sparkles size={18} /> Settings
@@ -498,7 +498,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge 
                 <p className="text-sm text-emerald-100/80 font-medium hidden sm:block">Automate compliance reports and enable live Metrc inventory tracking.</p>
              </div>
           </div>
-          <Button onClick={() => setActiveTab('subscription')} className="bg-white text-[#1a4731] hover:bg-slate-100 hover:scale-105 transition-all shadow-xl shadow-black/10 whitespace-nowrap mt-4 md:mt-0 font-black rounded-xl">
+          <Button onClick={() => { setDemoUnlocked(true); setActiveTab('subscription'); }} className="bg-white text-[#1a4731] hover:bg-slate-100 hover:scale-105 transition-all shadow-xl shadow-black/10 whitespace-nowrap mt-4 md:mt-0 font-black rounded-xl">
             Upgrade Engine
           </Button>
         </div>
@@ -650,8 +650,8 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge 
             </div>
           </div>
 
-          {/* Active Locations */}
-          <div className="bg-white rounded-3xl border border-slate-200/60 p-6 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between relative overflow-hidden group">
+          {/* Active Locations — clickable to see details */}
+          <div onClick={() => setActiveTab('locations')} className="cursor-pointer bg-white rounded-3xl border border-slate-200/60 p-6 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-1.5 h-full bg-[#1a4731]"></div>
             <div className="flex justify-between items-start mb-4">
               <div>
@@ -1337,7 +1337,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge 
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
           <div className="p-6 border-b border-slate-100 flex justify-between items-center">
             <div><h3 className="font-bold text-slate-800">Staff & Employee Management</h3><p className="text-sm text-slate-500">OMMA agent cards, background checks, role assignments</p></div>
-            <Button icon={Plus}>Add Employee</Button>
+            <Button icon={Plus} onClick={() => alert('Add Employee wizard initiated. Collecting name, role, OMMA card number, and background check consent...')}>Add Employee</Button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left">
@@ -1355,7 +1355,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge 
                     <td className="px-4 py-4"><span className={cn("px-2 py-0.5 rounded-full text-[10px] font-bold", emp.card === 'Active' ? "bg-emerald-50 text-emerald-600" : emp.card === 'Expiring' ? "bg-amber-50 text-amber-600" : "bg-blue-50 text-blue-600")}>{emp.card} {emp.cardExp !== 'N/A' && `(${emp.cardExp})`}</span></td>
                     <td className="px-4 py-4"><span className={cn("px-2 py-0.5 rounded-full text-[10px] font-bold", emp.bg === 'Clear' ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600")}>{emp.bg}</span></td>
                     <td className="px-4 py-4"><span className={cn("px-2 py-0.5 rounded-full text-[10px] font-bold", emp.status === 'Active' ? "bg-emerald-50 text-emerald-600" : "bg-blue-50 text-blue-600")}>{emp.status}</span></td>
-                    <td className="px-4 py-4"><button className="text-xs font-bold text-[#1a4731] hover:underline">Manage</button></td>
+                    <td className="px-4 py-4"><button onClick={() => alert("Employee management panel opened. You can edit role, schedule, and compliance status.")} className="text-xs font-bold text-[#1a4731] hover:underline cursor-pointer">Manage</button></td>
                   </tr>
                 ))}
               </tbody>
@@ -1387,8 +1387,8 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge 
         <div className="flex justify-between items-center">
           <div><h3 className="text-xl font-bold text-slate-800">Seed-to-Sale Traceability</h3><p className="text-sm text-slate-500">Full chain-of-custody from cultivation → processing → retail sale</p></div>
           <div className="flex gap-2">
-            <Button icon={Plus}>New Harvest Batch</Button>
-            <Button variant="outline" icon={FileText}>Export Manifest</Button>
+            <Button icon={Plus} onClick={() => alert('New Harvest Batch initialized. Enter batch name, strain, plant count, and assign RFID tags.')}>New Harvest Batch</Button>
+            <Button variant="outline" icon={FileText} onClick={() => alert("Transfer manifest generated and saved to Vault.")}>Export Manifest</Button>
           </div>
         </div>
         {/* Traceability Pipeline */}
@@ -1453,7 +1453,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge 
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div><h3 className="text-xl font-bold text-slate-800">OMMA Pre-Inspection Readiness Scorecard</h3><p className="text-sm text-slate-500">Larry auto-audits against the official OMMA inspection form (v5.3)</p></div>
-          <Button icon={FileText}>Export OMMA Report</Button>
+          <Button icon={FileText} onClick={() => alert('OMMA Pre-Inspection Report exported and saved to your Vault. Ready for inspector review.')}>Export OMMA Report</Button>
         </div>
         {/* Overall Score */}
         <div className="bg-[#0f291c] bg-gradient-to-r from-[#0f291c] to-[#1a4731] rounded-2xl p-6 text-white flex items-center justify-between">
@@ -1548,42 +1548,9 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge 
       </div>
     )}
 
-    {activeTab === 'staff' && (
-      <div className="space-y-4">
-        <button onClick={() => setActiveTab('home')} className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors font-bold mb-4">
-           ← Back to Dashboard
-        </button>
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col items-center justify-center min-h-[400px] text-center">
-           <Users size={48} className="text-emerald-500 mb-4" />
-           <h3 className="text-xl font-bold text-slate-800 mb-2">Staff Directory & Compliance</h3>
-           <p className="text-slate-500 mb-6 max-w-md">Manage employee badges, access levels, and run automated background checks via Checkr integration.</p>
-           <button onClick={() => alert('Add Employee wizard initiated. Collecting background check consent...')} className="bg-[#1a4731] hover:bg-[#153a28] text-white px-6 py-3 rounded-xl font-bold shadow-md">
-             + Add New Employee
-           </button>
-        </div>
-      </div>
-    )}
 
-    {activeTab === 'traceability' && (
-      <div className="space-y-4">
-        <button onClick={() => setActiveTab('home')} className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors font-bold mb-4">
-           ← Back to Dashboard
-        </button>
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col items-center justify-center min-h-[400px] text-center">
-           <Database size={48} className="text-emerald-500 mb-4" />
-           <h3 className="text-xl font-bold text-slate-800 mb-2">Metrc Traceability Hub</h3>
-           <p className="text-slate-500 mb-6 max-w-md">Live sync with state regulatory systems. Generate manifests and track plant life cycles.</p>
-           <div className="flex gap-4">
-             <button onClick={() => alert('New Harvest Batch initialized. Assigning RFID tags...')} className="bg-[#1a4731] hover:bg-[#153a28] text-white px-6 py-3 rounded-xl font-bold shadow-md">
-               Create Harvest Batch
-             </button>
-             <button onClick={() => alert('Manifest exported and saved to Vault.')} className="bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-100 px-6 py-3 rounded-xl font-bold shadow-sm">
-               Export Manifest
-             </button>
-           </div>
-        </div>
-      </div>
-    )}
+
+
 
     {activeTab === 'insurance' && (
       <div className="space-y-4">

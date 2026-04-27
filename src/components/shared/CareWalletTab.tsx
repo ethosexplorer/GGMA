@@ -170,7 +170,8 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
       {/* Section Toggle */}
       <div className="flex bg-white rounded-xl border border-slate-200 p-1 w-max shadow-sm">
         {[
-          { id: 'overview', label: 'Transactions' },
+          { id: 'overview', label: 'Care Wallet Transactions' },
+          { id: 'general_tx', label: 'General Transactions' },
           { id: 'tiers', label: 'Wallet Tiers' },
           { id: 'locations', label: 'Reload Locations' },
           userRole === 'business' && { id: 'b2b', label: 'B2B Transactions' },
@@ -603,6 +604,65 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
               <button onClick={() => alert('B2B Settlement executed successfully.')} className="w-full bg-[#1a4731] text-white font-bold py-3 rounded-xl shadow-md hover:bg-[#153a28]">
                 Pay Vendor Invoice
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeSection === 'general_tx' && (
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h3 className="font-bold text-slate-800">General Business Transactions</h3>
+              <p className="text-xs text-slate-500">Non-wallet transactions: cash, card, bank transfers, and vendor payments</p>
+            </div>
+            <button onClick={() => alert('Full transaction history exported to CSV.')} className="text-sm text-[#1a4731] font-bold hover:underline">Export All</button>
+          </div>
+          <div className="space-y-3">
+            {[
+              { id: 101, type: 'revenue', desc: 'POS Sale — Walk-in Customer #4821', amount: 127.50, date: '1 hour ago', method: 'Cash', ref: 'POS-4821' },
+              { id: 102, type: 'revenue', desc: 'POS Sale — Online Order #1092', amount: 89.00, date: '3 hours ago', method: 'Card (Visa)', ref: 'POS-1092' },
+              { id: 103, type: 'expense', desc: 'Vendor Payment — Green Leaf Wholesale', amount: -2400.00, date: 'Yesterday', method: 'Bank Transfer', ref: 'VND-882' },
+              { id: 104, type: 'revenue', desc: 'POS Sale — Medical Patient (Care Wallet)', amount: 45.00, date: 'Yesterday', method: 'Care Wallet', ref: 'CW-9921' },
+              { id: 105, type: 'expense', desc: 'OMMA License Renewal Fee', amount: -2500.00, date: '3 days ago', method: 'Bank Transfer', ref: 'OMMA-2026' },
+              { id: 106, type: 'revenue', desc: 'Catering Order — Event Supply', amount: 1800.00, date: '5 days ago', method: 'Invoice', ref: 'INV-0042' },
+            ].map((tx) => (
+              <div key={tx.id} className="flex items-center justify-between p-4 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+                <div className="flex items-center gap-4">
+                  <div className={cn(
+                    "w-10 h-10 rounded-full flex items-center justify-center",
+                    tx.type === 'revenue' ? "bg-emerald-100 text-emerald-600" : "bg-red-50 text-red-500"
+                  )}>
+                    {tx.type === 'revenue' ? <ArrowUpCircle size={18} /> : <ArrowDownCircle size={18} />}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-slate-900 text-sm">{tx.desc}</p>
+                    <p className="text-xs text-slate-500">{tx.method} • Ref: {tx.ref} • {tx.date}</p>
+                  </div>
+                </div>
+                <span className={cn(
+                  "font-bold text-sm",
+                  tx.amount > 0 ? "text-emerald-600" : "text-slate-800"
+                )}>
+                  {tx.amount > 0 ? '+' : ''}${Math.abs(tx.amount).toFixed(2)}
+                </span>
+              </div>
+            ))}
+          </div>
+          <div className="mt-6 p-4 bg-slate-50 rounded-xl border border-slate-100">
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Revenue (30d)</p>
+                <p className="text-2xl font-black text-emerald-600">$24,891.50</p>
+              </div>
+              <div>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Expenses (30d)</p>
+                <p className="text-2xl font-black text-red-600">-$8,420.00</p>
+              </div>
+              <div>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Net</p>
+                <p className="text-2xl font-black text-slate-800">$16,471.50</p>
+              </div>
             </div>
           </div>
         </div>
