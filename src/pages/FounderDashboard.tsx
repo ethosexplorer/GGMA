@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Building2, Users, FileText, Settings, Shield, Activity, Bell,
   Briefcase, HeartPulse, Scale, Gavel, FileCheck, CheckCircle2,
@@ -26,6 +26,7 @@ import { METRC_MANUAL } from '../data/metrcManual';
 import { turso } from '../lib/turso';
 import { MasterBankingInfo } from '../components/MasterBankingInfo';
 import { FounderModals } from '../components/FounderModals';
+import { ITSupportDashboard } from '../components/it/ITSupportDashboard';
 
 const INITIAL_NAV_ITEMS = [
   { section: 'FOUNDER EXCLUSIVE' },
@@ -62,6 +63,7 @@ const INITIAL_NAV_ITEMS = [
   { section: 'SYSTEM CONTROL' },
   { id: 'reports', label: 'Master Analytics', icon: BarChart3 },
   { id: 'intel', label: 'Global Intelligence', icon: BookOpen },
+  { id: 'it_support', label: 'IT Support & Diagnostics', icon: MonitorPlay, badge: 'Ryan' },
   { id: 'logs', label: 'System Logs', icon: Database },
   { id: 'support_tickets', label: 'Support Tickets', icon: MessageSquare, badge: '12' },
   { id: 'internal_scheduler', label: 'Internal Scheduler', icon: Clock, badge: 'Priority' },
@@ -2720,6 +2722,8 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       case 'reports': return renderReports();
       case 'intel': 
         return <div className="h-full w-full -m-10 bg-[#080e1a] p-10 min-h-screen overflow-auto"><LegislativeIntelTab /></div>;
+      case 'it_support':
+        return <div className="h-full w-full -m-10 p-10 min-h-screen overflow-auto bg-slate-50"><ITSupportDashboard /></div>;
       case 'logs': return renderLogs();
       case 'support_tickets': return renderSupportTickets();
       case 'internal_scheduler': return renderInternalScheduler();
