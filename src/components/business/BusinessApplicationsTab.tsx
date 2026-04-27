@@ -32,7 +32,7 @@ export const BusinessApplicationsTab = ({ user, onStartApplication }: { user?: a
     { step: 1, title: 'Entity Information', desc: 'Business name, structure, address', completed: hasIntakeData, syncSource: 'L.A.R.R.Y AI' },
     { step: 2, title: 'Ownership & Officers', desc: 'Primary point of contact, owners info', completed: hasIntakeData, syncSource: 'L.A.R.R.Y AI' },
     { step: 3, title: 'Document Upload', desc: 'Cert of Good Standing, Lease/Deed, Bond', completed: false },
-    { step: 4, title: 'Compliance Verifications', desc: '1000ft school distance, Restricted land attest', completed: false },
+    { step: 4, title: 'Compliance Verifications', desc: '1000ft school distance, Tribal land attest', completed: false },
     { step: 5, title: 'Review & Submit', desc: 'Final review and state submission', completed: false },
   ];
 

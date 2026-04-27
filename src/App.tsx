@@ -3376,7 +3376,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     'Limited Liability Partnerships',
   ];
   const BUSINESS_ID_TYPES = [
-    'OK Driver\'s License', 'OK State ID', 'Passport'
+    'OK Driver\'s License', 'OK State ID', 'Passport', 'Tribal ID'
   ];
 
   const getPatientRequiredDocuments = () => [
@@ -7620,7 +7620,7 @@ export default function App() {
       return <FounderDashboard onLogout={handleLogout} user={profile} />;
     }
     // Oversight Portal Routing (Regulators, Enforcement, Admin, Operations)
-    if (role === 'admin_internal' || role === 'admin_external' || role === 'admin' || role === 'regulator_state' || role?.startsWith('regulator') || role?.startsWith('backoffice') || role === 'enforcement_state' || role?.startsWith('enforcement') || role === 'operations' || role?.startsWith('staff')) {
+    if (role === 'admin_internal' || role === 'admin_external' || role === 'admin' || role === 'regulator_state' || role?.startsWith('regulator') || role?.startsWith('backoffice') || role === 'enforcement_state' || role?.startsWith('enforcement') || role === 'law_enforcement' || role === 'operations' || role?.startsWith('staff')) {
       return <OversightDashboard onLogout={handleLogout} user={profile} />;
     }
 
@@ -7634,7 +7634,7 @@ export default function App() {
     if (role === 'business' || role === 'compliance_service') {
       return <BusinessDashboard onLogout={handleLogout} user={profile} initialTab={initialTab} onOpenConcierge={() => setShowLarryModal(true)} />;
     }
-    if (role === 'health' || role === 'lab') {
+    if (role === 'health' || role === 'lab' || role === 'health_lab') {
       return <PublicHealthDashboard onLogout={handleLogout} user={profile} />;
     }
 
@@ -8015,7 +8015,7 @@ export default function App() {
                   </div>
                   {/* Blurred Dashboard */}
                   <div className="pointer-events-none select-none h-screen overflow-hidden">
-                    {userProfile && (userProfile.role === 'executive_founder' || userProfile.email?.includes('ceo.globalgreenhp') || userProfile.email?.includes('monica') || userProfile.email?.includes('mgreen') || userProfile.email?.includes('globalgreenhp@gmail.com')) && !hasBypassedSelector ? (
+                    {userProfile && (userProfile.role === 'executive_founder' || userProfile.email?.includes('ceo.globalgreenhp') || userProfile.email?.includes('monica') || userProfile.email?.includes('mgreen') || userProfile.email?.includes('globalgreenhp@gmail.com') || userProfile.email?.includes('ryan')) && !hasBypassedSelector ? (
                       <RoleSelectorScreen 
                         userProfile={userProfile}
                         onSelect={(role) => {
@@ -8036,7 +8036,7 @@ export default function App() {
                   exit={{ opacity: 0, y: -10 }}
                   className="min-h-screen"
                 >
-                  {userProfile && (userProfile.role === 'executive_founder' || userProfile.email?.includes('ceo.globalgreenhp') || userProfile.email?.includes('monica') || userProfile.email?.includes('mgreen') || userProfile.email?.includes('globalgreenhp@gmail.com')) && !hasBypassedSelector ? (
+                  {userProfile && (userProfile.role === 'executive_founder' || userProfile.email?.includes('ceo.globalgreenhp') || userProfile.email?.includes('monica') || userProfile.email?.includes('mgreen') || userProfile.email?.includes('globalgreenhp@gmail.com') || userProfile.email?.includes('ryan')) && !hasBypassedSelector ? (
                     <RoleSelectorScreen 
                       userProfile={userProfile}
                       onSelect={(role) => {

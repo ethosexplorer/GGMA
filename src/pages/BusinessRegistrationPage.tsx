@@ -295,7 +295,7 @@ export default function BusinessRegistrationPage({ onNavigate, onComplete }: { o
                       <input type="email" placeholder="Email Address" value={owner.email} onChange={(e) => updateOwner(owner.id, 'email', e.target.value)} className="px-4 py-2 border rounded-lg text-sm" />
                       <div className="flex gap-2">
                         <select value={owner.idType} onChange={(e) => updateOwner(owner.id, 'idType', e.target.value)} className="w-[120px] px-3 border rounded-lg text-sm bg-white">
-                           <option>OK ID</option><option>Passport</option>
+                           <option>OK ID</option><option>Passport</option><option>Tribal ID</option>
                         </select>
                         <input type="text" placeholder="ID Number" value={owner.idNumber} onChange={(e) => updateOwner(owner.id, 'idNumber', e.target.value)} className="flex-1 px-4 py-2 border rounded-lg text-sm" />
                       </div>
@@ -405,7 +405,7 @@ export default function BusinessRegistrationPage({ onNavigate, onComplete }: { o
          );
       case 5:
          const attests = [
-            { id: 'attest1', text: "The commercial entity will not be located on restricted lands." },
+            { id: 'attest1', text: "The commercial entity will not be located on tribal lands." },
             { id: 'attest2', text: "The establishment pledges not to divert marijuana to unauthorized individuals." },
             { id: 'attest3', text: "You are authorized to make this application on behalf of the applicant." },
             { id: 'attest4', text: "All information provided is true and correct." },
