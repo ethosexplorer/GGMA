@@ -289,7 +289,7 @@ export const ComplianceWorkflowConsole = () => {
                 <h2 className="text-2xl font-black text-slate-800">Inventory Packages</h2>
                 <p className="text-sm text-slate-500 font-medium">Finished goods ready for transfer or retail sale.</p>
               </div>
-              <button className="bg-[#1a4731] text-white px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest hover:scale-105 transition-all flex items-center gap-2">
+              <button onClick={() => alert("Create New Package wizard started.\n\nSelect source batch, enter weight (grams), assign RFID tag, and confirm package for retail or transfer.")} className="bg-[#1a4731] text-white px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest hover:scale-105 transition-all flex items-center gap-2 cursor-pointer active:scale-95">
                 <Package size={16} /> Create New Package
               </button>
             </div>
@@ -380,10 +380,10 @@ export const ComplianceWorkflowConsole = () => {
                   <p className="text-emerald-400 text-xs font-black uppercase tracking-[0.2em] mb-2">Care Wallet • Facility Account</p>
                   <h2 className="text-5xl font-black tracking-tighter mb-4">${facilityWallet?.balance?.toLocaleString() || '0.00'}</h2>
                   <div className="flex gap-4">
-                     <button className="px-8 py-3 bg-white text-[#1a4731] rounded-2xl font-black text-sm hover:bg-emerald-50 transition-all shadow-xl shadow-black/20">
+                     <button onClick={() => alert("Transfer to Corporate initiated.\n\nFacility balance will be swept to the GGE Corporate Treasury account. Funds will settle within 24 hours via the Settlement Network.")} className="px-8 py-3 bg-white text-[#1a4731] rounded-2xl font-black text-sm hover:bg-emerald-50 transition-all shadow-xl shadow-black/20 cursor-pointer active:scale-95">
                         Transfer to Corporate
                      </button>
-                     <button className="px-8 py-3 bg-white/10 border border-white/20 text-white rounded-2xl font-black text-sm hover:bg-white/20 transition-all backdrop-blur-sm">
+                     <button onClick={() => setActiveModule("audit")} className="px-8 py-3 bg-white/10 border border-white/20 text-white rounded-2xl font-black text-sm hover:bg-white/20 transition-all backdrop-blur-sm cursor-pointer active:scale-95">
                         View Ledger
                      </button>
                   </div>
@@ -441,7 +441,7 @@ export const ComplianceWorkflowConsole = () => {
             </div>
             <h2 className="text-2xl font-black text-slate-800">B2B Transfer Manifests</h2>
             <p className="text-slate-500 max-w-sm mt-2 font-medium">Create and track legal movement of product between licensed facilities.</p>
-            <button className="mt-8 bg-[#1a4731] text-white px-10 py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-emerald-900/20 hover:scale-105 transition-all">
+            <button onClick={() => alert("Transfer Manifest initialized.\n\nSelect destination facility, add packages to transfer, generate RFID manifest, and submit to Metrc for compliance tracking.")} className="mt-8 bg-[#1a4731] text-white px-10 py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-emerald-900/20 hover:scale-105 transition-all cursor-pointer active:scale-95">
               Initialize Manifest
             </button>
           </div>

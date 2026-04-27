@@ -116,7 +116,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
                          <p className="text-xs text-slate-500">Visa ending in 4242</p>
                        </div>
                      </div>
-                     <button className="text-[#1a4731] text-sm font-bold">Update</button>
+                     <button onClick={() => alert("Update Payment Method\n\nRedirecting to secure payment gateway to update your card on file. Your current card (Visa ending in 4242) will be replaced.")} className="text-[#1a4731] text-sm font-bold cursor-pointer hover:underline">Update</button>
                   </div>
                   
                   <div className="flex items-center justify-between p-4 border border-slate-100 rounded-xl hover:bg-slate-50 transition-colors">
@@ -129,7 +129,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
                          <p className="text-xs text-slate-500">View past invoices and receipts</p>
                        </div>
                      </div>
-                     <button className="text-[#1a4731] text-sm font-bold">View</button>
+                     <button onClick={() => alert("Billing History\n\nInvoice #INV-2026-04 | $49.00 | Paid Apr 1, 2026\nInvoice #INV-2026-03 | $49.00 | Paid Mar 1, 2026\nInvoice #INV-2026-02 | $49.00 | Paid Feb 1, 2026\n\nAll invoices saved in your Document Vault.")} className="text-[#1a4731] text-sm font-bold cursor-pointer hover:underline">View</button>
                   </div>
                </div>
             </div>
@@ -182,7 +182,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
                <p className="text-xs text-slate-500 mb-4 px-4 font-medium leading-relaxed">Our support team is available 24/7 to help you with billing inquiries or custom pricing tailored to your scale.</p>
                <div className="flex flex-col gap-2">
                  <Button onClick={() => alert('Starting Sylara Support Session...')} className="w-full bg-purple-600 hover:bg-purple-500 text-white border-transparent shadow-lg shadow-purple-900/20">Ask Sylara AI</Button>
-                 <Button onClick={() => window.location.href = 'tel:+18443334447'} variant="outline" className="w-full">Call Phone Support</Button>
+                 <Button onClick={() => alert('Phone Support\n\nCall us at: (844) 333-4447\n\nHours: Mon-Fri 8am-8pm CST\nSat-Sun 10am-6pm CST\n\nOr use the QR code feature on the GGHP mobile app to call from your phone.')} variant="outline" className="w-full">Call Phone Support</Button>
                </div>
             </div>
          </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Wallet, Users, Building2, Shield, Clock, TrendingUp, Plus, LayoutDashboard, CreditCard, PackageSearch, AlertCircle, ShoppingCart, Loader2, Trash2, Edit2, CheckCircle, XCircle, Sparkles, MapPin, BarChart2, Activity, MessageSquare, LogOut, FileText, ClipboardList, CheckSquare, UploadCloud, Calendar, Zap, AlertTriangle, Database, Gavel , ArrowRight } from 'lucide-react';
+import { Wallet, Users, Building2, Shield, Clock, TrendingUp, Plus, LayoutDashboard, CreditCard, PackageSearch, AlertCircle, ShoppingCart, Loader2, Trash2, Edit2, CheckCircle, XCircle, Sparkles, MapPin, BarChart2, Activity, MessageSquare, LogOut, FileText, ClipboardList, CheckSquare, UploadCloud, Calendar, Zap, AlertTriangle, Database, Gavel, ArrowRight, ArrowLeft } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { StatCard } from '../components/StatCard';
 import { CareWalletTab } from '../components/shared/CareWalletTab';
@@ -483,6 +483,17 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge 
         </button>
       </div>
     </div>
+
+    {/* Universal Back to Dashboard Button — shows on all tabs except home */}
+    {activeTab !== 'home' && activeTab !== 'analytics' && (
+      <button 
+        onClick={() => setActiveTab('home')} 
+        className="flex items-center gap-2 text-slate-500 hover:text-[#1a4731] transition-colors font-bold mb-4 group"
+      >
+        <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+        <span className="text-sm">Back to Dashboard</span>
+      </button>
+    )}
 
     {/* HOME TAB - PERFORMANCE DESIGN */}
     {activeTab === 'home' && (
