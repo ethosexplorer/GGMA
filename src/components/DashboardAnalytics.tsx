@@ -179,7 +179,7 @@ export const DashboardAnalytics: React.FC<{ facilityId: string }> = ({ facilityI
             )}
           </div>
           <div className="p-4 bg-slate-50 border-t border-slate-100 text-center">
-             <button className="text-xs font-bold text-slate-600 hover:text-slate-800 transition-colors">Run Deep Forensic Audit</button>
+             <button onClick={() => alert("Deep Forensic Audit initiated. Results will be deposited into your Vault.")} className="text-xs font-bold text-slate-600 hover:text-slate-800 transition-colors">Run Deep Forensic Audit</button>
           </div>
         </div>
 
@@ -266,7 +266,7 @@ export const DashboardAnalytics: React.FC<{ facilityId: string }> = ({ facilityI
                 <span className="text-slate-800">4:20 PM</span>
              </div>
              <div className="pt-4 border-t border-slate-100">
-               <button className="w-full py-3 bg-[#1a4731] text-white rounded-xl font-bold text-sm shadow-lg shadow-emerald-900/10 hover:bg-[#153a28] transition-all flex items-center justify-center gap-2">
+               <button onClick={() => alert("Detailed Analytics Report generated and saved securely to your Vault.")} className="w-full py-3 bg-[#1a4731] text-white rounded-xl font-bold text-sm shadow-lg shadow-emerald-900/10 hover:bg-[#153a28] transition-all flex items-center justify-center gap-2">
                  <BarChart3 size={16} /> Detailed Analytics
                </button>
              </div>

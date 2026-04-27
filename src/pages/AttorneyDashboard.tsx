@@ -196,10 +196,10 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                   </div>
                   <div className="flex-1 text-white">
                     <h4 className="font-bold flex items-center gap-2 text-lg">
-                      Sylara & Larry Legal Triage <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-500/30 text-emerald-200 border border-emerald-500/50">Active</span>
+                      L.A.R.R.Y Legal Triage <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-500/30 text-emerald-200 border border-emerald-500/50">Active</span>
                     </h4>
                     <p className="text-sm text-emerald-100/90 mt-1">
-                      "Alex, Larry and I have pre-processed a Florida licensing dispute. We gathered all 12 documents and verified the client. It requires attorney action within 24h to maintain your A+ rating. Would you like me to draft the appeal template and unlock the client file for 1 token?"
+                      "Alex, I have pre-processed a Florida licensing dispute. We gathered all 12 documents and verified the client. It requires attorney action within 24h to maintain your A+ rating. Would you like me to draft the appeal template and unlock the client file for 1 token?"
                     </p>
                     <div className="flex gap-3 mt-4">
                       <button className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-bold transition-colors shadow-md text-slate-900">
@@ -448,7 +448,7 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
   );
 };
 
-// Simple SparklesIcon Component for Sylara
+// Simple SparklesIcon Component for L.A.R.R.Y
 const SparklesIcon = ({ size = 24 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>
