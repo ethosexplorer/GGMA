@@ -94,6 +94,7 @@ export const CannabisCertWizard = ({ onCancel, onComplete }: { onCancel: () => v
                   <option>Glaucoma</option>
                   <option>HIV / AIDS</option>
                   <option>Post-Traumatic Stress Disorder (PTSD)</option>
+                  <option>Anxiety / Severe Anxiety</option>
                   <option>Amyotrophic Lateral Sclerosis (ALS)</option>
                   <option>Crohn's Disease</option>
                   <option>Parkinson's Disease</option>
