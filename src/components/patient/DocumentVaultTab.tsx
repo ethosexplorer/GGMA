@@ -110,7 +110,7 @@ export const DocumentVaultTab = () => {
               <p className="text-xs text-slate-500 leading-relaxed">Ensure your doctor is registered with OMMA before uploading your recommendation form.</p>
             </div>
           </div>
-          <button onClick={() => alert("⚕️ Sylara AI Verification Workflow\n\n• SYLARA MANAGED: If you booked your doctor through Sylara, your recommendation is automatically verified and saved in your Vault.\n\n• SELF-SERVICE: If you used an outside doctor, please email your recommendation to asstsupport@gmail.com. Sylara will verify it and sync it to your Vault.\n\n(Admin Login: asstsupport@gmail.com / Password: Harlem2025!)")} className="w-full mt-4 py-2.5 rounded-xl bg-slate-100 text-slate-800 text-xs font-black hover:bg-emerald-50 hover:text-emerald-700 transition-all border border-slate-200">
+          <button onClick={() => alert("⚕️ Sylara AI Verification Workflow\n\n• SYLARA MANAGED: If you booked your doctor through Sylara, your recommendation is automatically verified and saved in your Vault.\n\n• SELF-SERVICE: If you used an outside doctor, please email your recommendation to asstsupport@gmail.com. Sylara will verify it and sync it to your Vault.")} className="w-full mt-4 py-2.5 rounded-xl bg-slate-100 text-slate-800 text-xs font-black hover:bg-emerald-50 hover:text-emerald-700 transition-all border border-slate-200">
             Verify Physician Recommendation
           </button>
         </div>
