@@ -27,6 +27,7 @@ import { turso } from '../lib/turso';
 import { MasterBankingInfo } from '../components/MasterBankingInfo';
 import { FounderModals } from '../components/FounderModals';
 import { ITSupportDashboard } from '../components/it/ITSupportDashboard';
+import { RolePermissionsPanel } from '../components/RolePermissionsPanel';
 
 const INITIAL_NAV_ITEMS = [
   { section: 'FOUNDER EXCLUSIVE' },
@@ -67,6 +68,7 @@ const INITIAL_NAV_ITEMS = [
   { id: 'logs', label: 'System Logs', icon: Database },
   { id: 'support_tickets', label: 'Support Tickets', icon: MessageSquare, badge: '12' },
   { id: 'internal_scheduler', label: 'Internal Scheduler', icon: Clock, badge: 'Priority' },
+  { id: 'roles_duties', label: 'My Role & Duties', icon: Shield },
   { id: 'settings', label: 'God Settings', icon: Settings },
 ];
 
@@ -2733,6 +2735,8 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       case 'ip_monitor': return renderIPMonitor();
       case 'judicial':
         return <div className="h-full w-full -m-10 bg-[#080e1a] p-10 min-h-screen overflow-auto"><JudicialMonitorTab /></div>;
+      case 'roles_duties':
+        return <RolePermissionsPanel viewerRole={isMonica ? 'compliance_director' : (isRyan ? 'ceo' : 'founder')} />;
       case 'settings': return renderSettings();
       default: return renderOverview();
     }
