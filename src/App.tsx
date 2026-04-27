@@ -7509,6 +7509,12 @@ export default function App() {
   };
 
   const handleBack = () => {
+    if (hasBypassedSelector) {
+      setHasBypassedSelector(false);
+      setRoleOverride(null);
+      return;
+    }
+    
     if (viewHistory.length > 0) {
       const lastView = viewHistory[viewHistory.length - 1];
       setViewHistory(prev => prev.slice(0, -1));
@@ -7886,7 +7892,7 @@ export default function App() {
   return (
     <ErrorBoundary>
       <div className="antialiased text-slate-900">
-        <GlobalHeader userProfile={userProfile} jurisdiction={jurisdiction} setJurisdiction={setJurisdiction} roleOverride={roleOverride} setRoleOverride={setRoleOverride} handleBack={handleBack} canGoBack={viewHistory.length > 0} />
+        <GlobalHeader userProfile={userProfile} jurisdiction={jurisdiction} setJurisdiction={setJurisdiction} roleOverride={roleOverride} setRoleOverride={setRoleOverride} handleBack={handleBack} canGoBack={viewHistory.length > 0 || hasBypassedSelector} />
         <AnimatePresence mode="wait">
           {view === 'landing' && (
             <LandingPage

@@ -32,18 +32,27 @@ const NAV_ITEMS = [
 export const OversightDashboard = ({ onLogout, user, jurisdiction = 'Oklahoma' }: { onLogout?: () => void, user?: any, jurisdiction?: string }) => {
   const [activeTab, setActiveTab] = useState('overview');
 
+  const isFederalOrFounder = user?.role === 'executive_founder' || user?.role === 'regulator_federal' || user?.email?.toLowerCase().includes('ceo') || user?.email?.toLowerCase().includes('monica') || user?.email?.toLowerCase().includes('globalgreenhp');
+  
+  const filteredNavItems = NAV_ITEMS.filter(item => {
+    if (item.id === 'federal') return isFederalOrFounder;
+    return true;
+  });
+
   const renderOverview = () => (
     <div className="space-y-6 p-8">
       <StateWelcomeBanner jurisdiction={jurisdiction} type="oversight" />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-[#0b1525] p-6 rounded-3xl border border-[#1e3a5f]/30 shadow-xl relative overflow-hidden group cursor-pointer" onClick={() => setActiveTab('federal')}>
-           <div className="absolute top-0 right-0 p-4 opacity-10 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform"><Globe size={120} /></div>
-           <div className="w-12 h-12 bg-blue-900/50 rounded-2xl flex items-center justify-center text-blue-400 mb-4 border border-blue-700/50"><Globe size={24} /></div>
-           <h3 className="text-xl font-bold text-white mb-2">Federal Command</h3>
-           <p className="text-sm text-blue-200/60 mb-6">Nationwide analytics, interstate monitoring, and SAM.gov integration.</p>
-           <div className="flex items-center text-blue-400 font-bold text-sm">Launch Portal <ChevronRight size={16} /></div>
-        </div>
+        {isFederalOrFounder && (
+          <div className="bg-[#0b1525] p-6 rounded-3xl border border-[#1e3a5f]/30 shadow-xl relative overflow-hidden group cursor-pointer" onClick={() => setActiveTab('federal')}>
+             <div className="absolute top-0 right-0 p-4 opacity-10 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform"><Globe size={120} /></div>
+             <div className="w-12 h-12 bg-blue-900/50 rounded-2xl flex items-center justify-center text-blue-400 mb-4 border border-blue-700/50"><Globe size={24} /></div>
+             <h3 className="text-xl font-bold text-white mb-2">Federal Command</h3>
+             <p className="text-sm text-blue-200/60 mb-6">Nationwide analytics, interstate monitoring, and SAM.gov integration.</p>
+             <div className="flex items-center text-blue-400 font-bold text-sm">Launch Portal <ChevronRight size={16} /></div>
+          </div>
+        )}
 
         <div className="bg-emerald-950 p-6 rounded-3xl border border-emerald-900/30 shadow-xl relative overflow-hidden group cursor-pointer" onClick={() => setActiveTab('public_health')}>
            <div className="absolute top-0 right-0 p-4 opacity-10 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform"><FlaskConical size={120} /></div>
@@ -173,20 +182,20 @@ export const OversightDashboard = ({ onLogout, user, jurisdiction = 'Oklahoma' }
         </div>
 
         <div className="flex-1 overflow-y-auto px-3 pb-4 space-y-0.5">
-          {NAV_ITEMS.map((item, i) => {
+          {filteredNavItems.map((item, i) => {
             if ('section' in item) return <div key={i} className="pt-6 pb-2 px-3 text-[10px] font-black text-slate-600 uppercase tracking-widest">{item.section}</div>;
             return (
               <button 
                 key={item.id} 
-                onClick={() => setActiveTab(item.id!)} 
+                onClick={() => setActiveTab(item.id as string)}
                 className={cn(
-                  "w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold transition-all text-left", 
+                  "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all text-left", 
                   activeTab === item.id 
-                    ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-inner" 
-                    : "text-slate-400 hover:bg-slate-900 hover:text-slate-200 border border-transparent"
+                    ? "bg-slate-800 text-white shadow-md border border-slate-700" 
+                    : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 border border-transparent"
                 )}
               >
-                <span className="flex items-center gap-3">{item.icon && <item.icon size={18} />} {item.label}</span>
+                {item.icon && <item.icon size={16} />} {item.label}
               </button>
             );
           })}
