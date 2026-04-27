@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { turso } from '../lib/turso';
 import { 
   ShieldAlert, Map, Search, FileText, Activity, MapPin, CheckCircle2, 
-  XCircle, AlertTriangle, AlertCircle, Fingerprint, Zap, Crosshair, HelpCircle, Download, Bot, CreditCard, Shield, Clock, Wind, Car, User, Wifi, Lock
+  XCircle, AlertTriangle, AlertCircle, Fingerprint, Zap, Crosshair, HelpCircle, Download, Bot, CreditCard, Shield, Clock, Wind, Car, User, Wifi, Lock, Globe
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
+import { EnforcementIntelTab } from '../components/federal/EnforcementIntelTab';
 
 const flags = [
   { id: 1, type: 'volume', title: 'Suspicious Volume Anomaly', entity: 'Apex Health LLC', time: 'Just now', severity: 'high', desc: 'Exceeding daily sales limits.' },
@@ -157,6 +158,11 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
           {/* Probability Field Test Tab */}
           <button onClick={() => setActiveTab('breathalyzer')} className={cn("w-full flex items-center justify-between px-3 py-3 rounded-lg text-sm font-bold transition-all text-left shadow-lg border mt-2", activeTab === 'breathalyzer' ? "bg-blue-900 bg-gradient-to-r from-blue-900 to-slate-900 text-blue-400 border-blue-500/50" : "bg-slate-800 text-slate-300 border-slate-700 hover:border-blue-500/30")}>
             <span className="flex items-center gap-3"><Wind size={18} className="text-blue-500" /> Probability Field Test</span>
+          </button>
+
+          {/* New Enforcement Intel Tab */}
+          <button onClick={() => setActiveTab('intel')} className={cn("w-full flex items-center justify-between px-3 py-3 rounded-lg text-sm font-bold transition-all text-left shadow-lg border mt-2", activeTab === 'intel' ? "bg-purple-900 bg-gradient-to-r from-purple-900 to-slate-900 text-purple-400 border-purple-500/50" : "bg-slate-800 text-slate-300 border-slate-700 hover:border-purple-500/30")}>
+            <span className="flex items-center gap-3"><Globe size={18} className="text-purple-500" /> National Intel</span>
           </button>
           
           <div className="my-2 border-t border-slate-800"></div>
@@ -391,6 +397,26 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
                    </motion.div>
                 )}
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* National Intel Screen */}
+        {activeTab === 'intel' && (
+          <div className="flex-1 flex flex-col bg-[#0a0f18] text-white overflow-y-auto relative">
+            <div className="h-20 border-b border-slate-800 flex items-center justify-between px-8 bg-slate-900/50 shrink-0">
+               <div>
+                 <h2 className="text-2xl font-black text-purple-400 flex items-center gap-3 tracking-tight">
+                   <Globe className="text-purple-500" size={28} /> National Intel
+                   <span className="text-slate-500 font-normal">| Connected to Federal L.A.R.R.Y</span>
+                 </h2>
+                 <p className="text-[10px] text-purple-400 font-bold tracking-widest uppercase mt-1 flex items-center gap-2">
+                   <Wifi size={12} className="animate-pulse" /> Live Backend Sync Active
+                 </p>
+               </div>
+            </div>
+            <div className="p-8">
+              <EnforcementIntelTab />
             </div>
           </div>
         )}

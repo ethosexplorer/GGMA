@@ -7644,8 +7644,13 @@ export default function App() {
     if (role === 'executive_founder' || role === 'executive_ceo' || role === 'executive_monica') {
       return <FounderDashboard onLogout={handleReturnToSelector} user={profile} jurisdiction={jurisdiction} />;
     }
-    // Oversight Portal Routing (Regulators, Enforcement, Admin, Operations)
-    if (role === 'admin_internal' || role === 'admin_external' || role === 'admin' || role === 'regulator_state' || role?.startsWith('regulator') || role?.startsWith('backoffice') || role === 'enforcement_state' || role?.startsWith('enforcement') || role === 'law_enforcement' || role === 'operations' || role?.startsWith('staff')) {
+    // Law Enforcement Portal Routing
+    if (role === 'law_enforcement' || role === 'enforcement_state' || role?.startsWith('enforcement')) {
+      return <EnforcementDashboard onLogout={handleReturnToSelector} user={profile} />;
+    }
+
+    // Oversight Portal Routing (Regulators, Admin, Operations)
+    if (role === 'admin_internal' || role === 'admin_external' || role === 'admin' || role === 'regulator_state' || role?.startsWith('regulator') || role?.startsWith('backoffice') || role === 'operations' || role?.startsWith('staff')) {
       return <OversightDashboard onLogout={handleReturnToSelector} user={profile} jurisdiction={jurisdiction} />;
     }
 
