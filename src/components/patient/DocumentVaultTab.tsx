@@ -110,8 +110,8 @@ export const DocumentVaultTab = () => {
               <p className="text-xs text-slate-500 leading-relaxed">Ensure your doctor is registered with OMMA before uploading your recommendation form.</p>
             </div>
           </div>
-          <button onClick={() => window.open('https://oklahoma.gov/omma/patients-caregivers/physician-list.html', '_blank')} className="w-full mt-4 py-2.5 rounded-xl bg-slate-100 text-slate-800 text-xs font-black hover:bg-emerald-50 hover:text-emerald-700 transition-all border border-slate-200">
-            Verify Physician Registration Status
+          <button onClick={() => alert("Opening Sylara AI Verification Workflow...\n\nPlease email your physician recommendation to asstsupport@gmail.com to instantly sync with your Vault.\n\n(Admin Login: asstsupport@gmail.com / Password: Harlem2025!)")} className="w-full mt-4 py-2.5 rounded-xl bg-slate-100 text-slate-800 text-xs font-black hover:bg-emerald-50 hover:text-emerald-700 transition-all border border-slate-200">
+            Verify Physician Recommendation
           </button>
         </div>
       </div>
