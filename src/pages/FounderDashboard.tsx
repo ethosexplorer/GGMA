@@ -2953,7 +2953,13 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
         </div>
         <div className="flex-1 overflow-y-auto px-4 pb-6 space-y-1">
            {navItemsList.map((item, i) => {
-            if (isExecutive && (item.section === "FOUNDER EXCLUSIVE" || item.id === "accounting_ledger" || item.id === "global_financials" || item.id === "system_health" || item.id === "hr_intelligence" || item.id === "launch_script" || item.id === "jurisdiction_map" || item.id === "approvals" || item.id === "federal" || item.id === "state_authority")) return null;
+            // === FOUNDER-ONLY BLOCKS (both Monica & Ryan blocked) ===
+            const founderOnly = ["accounting_ledger", "global_financials", "hr_intelligence", "launch_script", "jurisdiction_map", "approvals", "ip_monitor"];
+            if (isExecutive && (item.section === "FOUNDER EXCLUSIVE" || founderOnly.includes(item.id || ''))) return null;
+            // === RYAN (CEO): IT/Ops focus — block compliance-heavy & government tabs ===
+            if (isRyan && (item.id === "state_authority" || item.id === "federal" || item.id === "system_health")) return null;
+            // === MONICA (Compliance Director): Business/Metrc/OMMA — block federal, state authority, system health ===
+            if (isMonica && (item.id === "state_authority" || item.id === "federal" || item.id === "system_health")) return null;
             if ('section' in item) return <div key={`section-${i}`} onDragOver={(e) => handleDragOver(e, i)} className="pt-6 pb-2 px-3 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{item.section}</div>;
             const displayLabel = isExecutive ? item.label?.replace('God', 'Executive') : item.label;
             return (
