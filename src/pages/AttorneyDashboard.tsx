@@ -32,15 +32,32 @@ const alerts = [
 export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [tokens, setTokens] = useState(12);
+  const [unlockedCases, setUnlockedCases] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleUnlock = (caseId: string) => {
+    if (9 + unlockedCases.length >= 15) {
+      alert('Active Case Limit Reached. You cannot unlock more cases until you close existing ones. This ensures fair case distribution across the network.');
+      return;
+    }
+
     if (tokens > 0) {
       if (confirm(`Unlock client contact for case ${caseId}? This costs 1 Token.`)) {
         setTokens(t => t - 1);
+        setUnlockedCases([...unlockedCases, caseId]);
         alert('Client contact unlocked. Case added to My Active Cases.');
+        setActiveTab('active');
       }
     } else {
       alert('Not enough tokens. Please purchase a Token Pack.');
+      setActiveTab('billing');
+    }
+  };
+
+  const handleBuyTokens = () => {
+    if (confirm('Purchase 10 Token Pack for $1,999?')) {
+      setTokens(t => t + 10);
+      alert('Tokens successfully purchased and added to your balance.');
     }
   };
 
@@ -76,6 +93,7 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
           </div>
 
           <button 
+            onClick={() => alert('Opening Secure File Portal for external case intake. Client data will be scanned by L.A.R.R.Y.')}
             className="w-full py-2.5 rounded-xl bg-[#1a4731] hover:bg-[#153a28] text-white font-bold text-sm transition-all flex items-center justify-center gap-2 mb-6 shadow-lg shadow-black/20 border border-[#2a6b4a]"
           >
             <PlusCircle size={16} /> New Case Intake
@@ -130,7 +148,7 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
               <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500 border-2 border-white" />
             </button>
             <div className="w-px h-6 bg-slate-200" />
-            <button className="flex items-center gap-2 px-4 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-sm font-bold border border-slate-200 hover:bg-slate-200 transition-colors">
+            <button onClick={() => alert('Syncing with national compliance network...')} className="flex items-center gap-2 px-4 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-sm font-bold border border-slate-200 hover:bg-slate-200 transition-colors">
               <div className="w-4 h-4 rounded-full bg-emerald-500 animate-pulse"></div>
               Live Network Sync
             </button>
@@ -141,7 +159,9 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
         <div className="flex-1 overflow-y-auto p-6">
           <div className="max-w-7xl mx-auto space-y-6">
             
-            {/* KPI Row */}
+            {activeTab === 'dashboard' && (
+              <>
+              {/* KPI Row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
                 <div className="flex items-center gap-3 mb-2">
@@ -149,7 +169,7 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                   <p className="text-sm font-semibold text-slate-600">Active Cases</p>
                 </div>
                 <div className="flex items-end gap-3">
-                  <h3 className="text-3xl font-black text-slate-900">9</h3>
+                  <h3 className="text-3xl font-black text-slate-900">{9 + unlockedCases.length}</h3>
                   <span className="text-sm font-bold text-slate-400 mb-1">/ 15 Cap</span>
                 </div>
               </div>
@@ -202,7 +222,7 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                       "Alex, Sylara and I have pre-processed a Florida licensing dispute. We gathered all 12 documents and verified the client. It requires attorney action within 24h to maintain your A+ rating. Would you like me to draft the appeal template and unlock the client file for 1 token?"
                     </p>
                     <div className="flex gap-3 mt-4">
-                      <button className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-white text-sm font-bold transition-colors shadow-md text-slate-900">
+                      <button onClick={() => handleUnlock('FL-9942')} className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-900 text-sm font-bold transition-colors shadow-md">
                         Draft Appeal & Unlock
                       </button>
                       <button className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 hover:bg-white/20 text-white text-sm font-bold transition-colors">
@@ -226,7 +246,7 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                   </div>
                   
                   <div className="divide-y divide-slate-100">
-                    {availableCases.map((c, i) => (
+                    {availableCases.filter(c => !unlockedCases.includes(c.id)).map((c, i) => (
                       <div key={i} className="p-5 hover:bg-slate-50/50 transition-colors">
                         <div className="flex flex-col sm:flex-row justify-between gap-4">
                           <div className="flex-1">
@@ -358,14 +378,14 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                     <div>
                       <div className="flex justify-between text-sm mb-1">
                         <span className="font-medium text-slate-600">Active Cases</span>
-                        <span className="font-bold text-slate-900">9 / 15</span>
+                        <span className="font-bold text-slate-900">{9 + unlockedCases.length} / 15</span>
                       </div>
                       <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                        <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${(9 / 15) * 100}%` }}></div>
+                        <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${((9 + unlockedCases.length) / 15) * 100}%` }}></div>
                       </div>
                     </div>
                     
-                    <button className="w-full mt-2 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-bold hover:bg-slate-800 transition-colors shadow-md">
+                    <button onClick={handleBuyTokens} className="w-full mt-2 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-bold hover:bg-slate-800 transition-colors shadow-md">
                       Buy Token Pack
                     </button>
                   </div>
@@ -441,6 +461,85 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                 </div>
               </div>
             </div>
+            </>
+            )}
+
+            {activeTab === 'browse' && (
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 flex flex-col items-center justify-center text-center min-h-[400px]">
+                <Search size={48} className="text-slate-300 mb-4" />
+                <h2 className="text-2xl font-bold text-slate-800 mb-2">Browse All Open Cases</h2>
+                <p className="text-slate-500 max-w-md">Search the national database for compliance disputes, licensing requests, and patient appeals.</p>
+                <div className="mt-8 w-full max-w-lg relative">
+                  <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input type="text" placeholder="Search by jurisdiction, issue type, or keyword..." className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-[#1a4731] outline-none" />
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'active' && (
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div className="p-6 border-b border-slate-100">
+                  <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
+                    <Briefcase className="text-[#1a4731]" /> My Active Cases
+                  </h2>
+                </div>
+                <div className="divide-y divide-slate-100">
+                  {unlockedCases.length === 0 ? (
+                    <div className="p-8 text-center text-slate-500">You have no active cases. Unlock cases from the Dashboard.</div>
+                  ) : (
+                    availableCases.filter(c => unlockedCases.includes(c.id)).map((c, i) => (
+                      <div key={i} className="p-6 hover:bg-slate-50">
+                        <h4 className="font-bold text-slate-900 text-lg mb-1">{c.title}</h4>
+                        <p className="text-sm text-slate-500">{c.state} • {c.clientType} • Case ID: {c.id}</p>
+                        <div className="mt-4 flex gap-3">
+                          <button className="px-4 py-2 bg-[#1a4731] text-white rounded-lg text-sm font-bold hover:bg-[#153a28]">Message Client</button>
+                          <button className="px-4 py-2 border border-slate-200 text-slate-700 rounded-lg text-sm font-bold hover:bg-slate-50">Submit Document</button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'library' && (
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 flex flex-col items-center justify-center text-center min-h-[400px]">
+                <BookOpen size={48} className="text-emerald-300 mb-4" />
+                <h2 className="text-2xl font-bold text-slate-800 mb-2">GGP Law Library</h2>
+                <p className="text-slate-500 max-w-md">Access state-by-state regulations, federal compliance standards, and L.A.R.R.Y's legal analysis models.</p>
+                <button className="mt-6 px-6 py-3 bg-[#1a4731] text-white rounded-xl font-bold hover:bg-[#153a28] shadow-md">Browse Library</button>
+              </div>
+            )}
+
+            {activeTab === 'reports' && (
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 flex flex-col items-center justify-center text-center min-h-[400px]">
+                <BarChart2 size={48} className="text-blue-300 mb-4" />
+                <h2 className="text-2xl font-bold text-slate-800 mb-2">Performance Reports</h2>
+                <p className="text-slate-500 max-w-md">View your SLA completion rates, client ratings, and compliance success metrics.</p>
+              </div>
+            )}
+
+            {activeTab === 'billing' && (
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 max-w-2xl mx-auto">
+                <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+                  <CreditCard className="text-[#1a4731]" /> Billing & Token Balance
+                </h2>
+                <div className="p-6 bg-slate-50 rounded-xl border border-slate-200 mb-8 flex justify-between items-center">
+                  <div>
+                    <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-1">Available Unlock Tokens</p>
+                    <h3 className="text-4xl font-black text-slate-900">{tokens}</h3>
+                  </div>
+                  <button onClick={handleBuyTokens} className="px-6 py-3 bg-[#1a4731] text-white rounded-xl font-bold hover:bg-[#153a28] shadow-md shadow-black/10">
+                    Purchase 10 Tokens
+                  </button>
+                </div>
+                <div className="p-6 bg-emerald-50 rounded-xl border border-emerald-100">
+                  <h3 className="font-bold text-emerald-800 mb-2">Compassion Balance Network</h3>
+                  <p className="text-sm text-emerald-700">Contribute unused tokens to the pro-bono network for patients in need to maintain your Tier 1 platform status.</p>
+                </div>
+              </div>
+            )}
+
           </div>
         </div>
       </div>
