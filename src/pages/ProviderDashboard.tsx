@@ -398,7 +398,7 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                   </div>
                 )}
                 
-                {['overview', 'certifications', 'reports', 'settings'].includes(activeTab) && (
+                {['overview', 'schedule', 'certifications', 'reports', 'settings'].includes(activeTab) && (
                   <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center shadow-sm">
                     <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-400">
                       <Settings size={32} />
@@ -438,7 +438,7 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                         <AlertTriangle size={16} className="text-amber-500 shrink-0 mt-0.5" /> Review Prior Records
                       </li>
                     </ul>
-                    <button className="w-full mt-2 py-2 rounded-xl bg-blue-50 text-blue-700 text-sm font-bold hover:bg-blue-100 transition-colors">
+                    <button onClick={() => alert('Launching Secure Telehealth Waiting Room...')} className="w-full mt-2 py-2 rounded-xl bg-blue-50 text-blue-700 text-sm font-bold hover:bg-blue-100 transition-colors">
                       Enter Waiting Room
                     </button>
                   </div>
