@@ -167,6 +167,19 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
         </div>
       </div>
 
+      {/* Quick Action: B2B & B2C Charge/Pay */}
+      {userRole === 'business' && (
+        <div className="flex gap-4 mb-4">
+          <button 
+            onClick={() => setActiveSection('b2b')}
+            className="flex-1 bg-[#1a4731] hover:bg-[#153a28] text-white py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-3 shadow-lg shadow-emerald-900/20 transition-all hover:scale-[1.02] active:scale-95"
+          >
+            <Briefcase size={20} />
+            B2B & B2C Charge / Pay
+          </button>
+        </div>
+      )}
+
       {/* Section Toggle */}
       <div className="flex bg-white rounded-xl border border-slate-200 p-1 w-max shadow-sm">
         {[
@@ -582,7 +595,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
             <p className="text-sm text-slate-500 mb-4">Initiate bulk transfers or settle wholesale invoices via GGE Settlement Network.</p>
             <div className="space-y-4">
               <div className="flex gap-4">
-                <button onClick={() => alert('Add New Vendor wizard started.')} className="flex-1 bg-slate-100 text-slate-700 font-bold py-3 rounded-xl hover:bg-slate-200 transition-colors">
+                <button onClick={() => alert('Add New Vendor\n\nEnter vendor details:\n1. Business Name & License #\n2. Metrc Facility Tag\n3. Payment Terms (Net-15, Net-30, COD)\n4. Settlement Method (Care Wallet, ACH, Wire)\n\nOnce approved, vendor will appear in your B2B directory.')} className="flex-1 bg-slate-100 text-slate-700 font-bold py-3 rounded-xl hover:bg-slate-200 transition-colors">
                   + Add New Vendor
                 </button>
                 <button onClick={() => alert('Bulk Transaction initiated via Settlement Network.')} className="flex-1 bg-emerald-50 text-emerald-700 font-bold py-3 rounded-xl hover:bg-emerald-100 transition-colors border border-emerald-200">

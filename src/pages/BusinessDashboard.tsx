@@ -50,7 +50,12 @@ const MiniBarChart = ({ data }: { data: number[] }) => (
 
 export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge }: { onLogout?: () => void | Promise<void>, user?: any, initialTab?: any, onOpenConcierge?: () => void }) => {
   const [demoUnlocked, setDemoUnlocked] = useState(false);
+  const [previousTab, setPreviousTab] = useState<string>('home');
   const [activeTab, setActiveTab] = useState<'home' | 'analytics' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'insurance' | 'documents' | 'subscription' | 'integrations' | 'staff' | 'traceability' | 'readiness' | 'wallet' | 'attorneys' | 'reporting' | 'applications'>(initialTab || 'analytics');
+  const navigateTab = (tab: typeof activeTab) => {
+    setPreviousTab(activeTab);
+    setActiveTab(tab);
+  };
   const [isInitializing, setIsInitializing] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [processingId, setProcessingId] = useState<string | null>(null);
@@ -370,106 +375,106 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge 
       
       <div className="flex overflow-x-auto hide-scrollbar gap-2 p-1.5 bg-slate-100/60 rounded-3xl w-full xl:w-auto border border-slate-200/50">
         <button 
-          onClick={() => setActiveTab('analytics')}
+          onClick={() => navigateTab('analytics')}
           className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'analytics' ? "bg-white text-[#1a4731] shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
         >
           <BarChart2 size={18} /> Analytics
         </button>
         <button 
-          onClick={() => setActiveTab('home')}
+          onClick={() => navigateTab('home')}
           className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'home' ? "bg-white text-[#1a4731] shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
         >
           <LayoutDashboard size={18} /> Dashboard
         </button>
         <button 
-          onClick={() => setActiveTab('reporting')}
+          onClick={() => navigateTab('reporting')}
           className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'reporting' ? "bg-white text-[#1a4731] shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
         >
           <FileText size={18} /> Reporting
         </button>
         <button 
-          onClick={() => setActiveTab('applications')}
+          onClick={() => navigateTab('applications')}
           className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'applications' ? "bg-white text-[#1a4731] shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
         >
           <FileText size={18} /> Applications
         </button>
 
         <button 
-          onClick={() => setActiveTab('pos')}
+          onClick={() => navigateTab('pos')}
           className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'pos' ? "bg-white text-[#1a4731] shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
         >
           <ShoppingCart size={18} /> POS & Sales
         </button>
         <button 
-          onClick={() => setActiveTab('inventory')}
+          onClick={() => navigateTab('inventory')}
           className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'inventory' ? "bg-white text-[#1a4731] shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
         >
           <PackageSearch size={18} /> Inventory (SINC)
         </button>
         <button 
-          onClick={() => setActiveTab('locations')}
+          onClick={() => navigateTab('locations')}
           className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'locations' ? "bg-white text-[#1a4731] shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
         >
           {user?.role === 'compliance_service' ? <Users size={18} /> : <MapPin size={18} />} {user?.role === 'compliance_service' ? 'Managed Clients' : 'Locations'}
         </button>
         <button 
-          onClick={() => setActiveTab('compliance')}
+          onClick={() => navigateTab('compliance')}
           className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap relative group", activeTab === 'compliance' ? "bg-white text-amber-600 shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
         >
           <Shield size={18} className={activeTab === 'compliance' ? "" : "group-hover:text-amber-500 transition-colors"} /> Compliance
           {alerts.filter(a => a.is_resolved === 0).length > 0 && <span className="absolute top-2 right-3 w-2 h-2 rounded-full bg-red-500"></span>}
         </button>
         <button 
-          onClick={() => setActiveTab('staff')}
+          onClick={() => navigateTab('staff')}
           className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'staff' ? "bg-white text-[#1a4731] shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
         >
           <ClipboardList size={18} /> Staff
         </button>
         <button 
-          onClick={() => setActiveTab('traceability')}
+          onClick={() => navigateTab('traceability')}
           className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'traceability' ? "bg-white text-[#1a4731] shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
         >
           <Database size={18} /> Traceability
         </button>
         <button 
-          onClick={() => setActiveTab('readiness')}
+          onClick={() => navigateTab('readiness')}
           className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'readiness' ? "bg-white text-amber-600 shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-amber-600 hover:bg-slate-200/50")}
         >
           <CheckSquare size={18} /> OMMA Ready
         </button>
         <button 
-          onClick={() => setActiveTab('integrations')}
+          onClick={() => navigateTab('integrations')}
           className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'integrations' ? "bg-white text-indigo-600 shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-indigo-600 hover:bg-slate-200/50")}
         >
           <BarChart2 size={18} /> Integrations
         </button>
         <button 
-          onClick={() => setActiveTab('insurance')}
+          onClick={() => navigateTab('insurance')}
           className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'insurance' ? "bg-white text-[#1a4731] shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
         >
           <ClipboardList size={18} /> Insurance & Bonding
         </button>
         <button 
-          onClick={() => setActiveTab('documents')}
+          onClick={() => navigateTab('documents')}
           className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'documents' ? "bg-white text-[#1a4731] shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
         >
           <FileText size={18} /> Vault
         </button>
         <button 
-          onClick={() => setActiveTab('wallet')}
+          onClick={() => navigateTab('wallet')}
           className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'wallet' ? "bg-white text-[#1a4731] shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
         >
           <Wallet size={18} /> Care Wallet
         </button>
         <button 
-          onClick={() => setActiveTab('attorneys')}
+          onClick={() => navigateTab('attorneys')}
           className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap relative group", activeTab === 'attorneys' ? "bg-white text-emerald-600 shadow-sm shadow-slate-200/50" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/50")}
         >
           <Gavel size={18} className={activeTab === 'attorneys' ? "" : "group-hover:text-emerald-500 transition-colors"} /> Attorney Marketplace
         </button>
         <div className="w-px h-8 bg-slate-200/80 mx-1 self-center" />
         <button 
-          onClick={() => { setDemoUnlocked(true); setActiveTab('subscription'); }}
+          onClick={() => { setDemoUnlocked(true); navigateTab('subscription'); }}
           className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'subscription' ? "bg-amber-500 bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md shadow-amber-500/20" : "text-slate-500 hover:text-amber-600 hover:bg-slate-200/50")}
         >
           <Sparkles size={18} /> Settings
@@ -484,14 +489,14 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge 
       </div>
     </div>
 
-    {/* Universal Back to Dashboard Button — shows on all tabs except home */}
+    {/* Universal Back Button — returns to previous tab or home */}
     {activeTab !== 'home' && activeTab !== 'analytics' && (
       <button 
-        onClick={() => setActiveTab('home')} 
+        onClick={() => { const goTo = previousTab || 'home'; setPreviousTab('home'); setActiveTab(goTo as any); }} 
         className="flex items-center gap-2 text-slate-500 hover:text-[#1a4731] transition-colors font-bold mb-4 group"
       >
         <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-        <span className="text-sm">Back to Dashboard</span>
+        <span className="text-sm">{previousTab && previousTab !== 'home' ? `Back to ${previousTab.charAt(0).toUpperCase() + previousTab.slice(1)}` : 'Back to Dashboard'}</span>
       </button>
     )}
 
@@ -509,7 +514,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge 
                 <p className="text-sm text-emerald-100/80 font-medium hidden sm:block">Automate compliance reports and enable live Metrc inventory tracking.</p>
              </div>
           </div>
-          <Button onClick={() => { setDemoUnlocked(true); setActiveTab('subscription'); }} className="bg-white text-[#1a4731] hover:bg-slate-100 hover:scale-105 transition-all shadow-xl shadow-black/10 whitespace-nowrap mt-4 md:mt-0 font-black rounded-xl">
+          <Button onClick={() => { setDemoUnlocked(true); navigateTab('subscription'); }} className="bg-white text-[#1a4731] hover:bg-slate-100 hover:scale-105 transition-all shadow-xl shadow-black/10 whitespace-nowrap mt-4 md:mt-0 font-black rounded-xl">
             Upgrade Engine
           </Button>
         </div>
@@ -607,7 +612,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge 
                     <AlertCircle size={16} className="text-amber-600 shrink-0 mt-0.5" />
                     <div>
                       <p className="text-xs font-bold text-amber-800">No Policies Listed</p>
-                      <p className="text-[10px] text-amber-600 mt-1 cursor-pointer hover:underline" onClick={() => setActiveTab('insurance')}>Upload certificate to resolve.</p>
+                      <p className="text-[10px] text-amber-600 mt-1 cursor-pointer hover:underline" onClick={() => navigateTab('insurance')}>Upload certificate to resolve.</p>
                     </div>
                  </div>
                )}
@@ -615,10 +620,6 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge 
            </div>
         </div>
 
-        
-    {activeTab === 'applications' && (
-      <BusinessApplicationsTab user={user} />
-    )}
 
         {/* Main Performance Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -662,7 +663,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge 
           </div>
 
           {/* Active Locations — clickable to see details */}
-          <div onClick={() => setActiveTab('locations')} className="cursor-pointer bg-white rounded-3xl border border-slate-200/60 p-6 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between relative overflow-hidden group">
+          <div onClick={() => navigateTab('locations')} className="cursor-pointer bg-white rounded-3xl border border-slate-200/60 p-6 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-1.5 h-full bg-[#1a4731]"></div>
             <div className="flex justify-between items-start mb-4">
               <div>
@@ -836,7 +837,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge 
                               <p className="text-xs text-slate-500 mt-0.5">Due: Immediately • Entity: {alert.entity_name}</p>
                            </div>
                         </div>
-                        <button onClick={() => setActiveTab('compliance')} className="text-xs font-bold text-[#1a4731] bg-emerald-50 px-3 py-1.5 rounded-lg hover:bg-emerald-100 whitespace-nowrap">Resolve</button>
+                        <button onClick={() => navigateTab('compliance')} className="text-xs font-bold text-[#1a4731] bg-emerald-50 px-3 py-1.5 rounded-lg hover:bg-emerald-100 whitespace-nowrap">Resolve</button>
                      </div>
                    ))}
                    <div className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
@@ -847,7 +848,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge 
                               <p className="text-xs text-slate-500 mt-0.5">Due in 45 days • Provider: ProSure Group</p>
                            </div>
                         </div>
-                        <button onClick={() => setActiveTab('insurance')} className="text-xs font-bold text-[#1a4731] bg-emerald-50 px-3 py-1.5 rounded-lg hover:bg-emerald-100 whitespace-nowrap">View</button>
+                        <button onClick={() => navigateTab('insurance')} className="text-xs font-bold text-[#1a4731] bg-emerald-50 px-3 py-1.5 rounded-lg hover:bg-emerald-100 whitespace-nowrap">View</button>
                    </div>
                 </div>
               </div>
@@ -856,7 +857,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge 
               <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                 <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                   <h3 className="font-bold text-slate-800">Multi-Location Overview</h3>
-                  <button onClick={() => setActiveTab('locations')} className="text-xs font-bold text-[#1a4731] hover:underline">View All</button>
+                  <button onClick={() => navigateTab('locations')} className="text-xs font-bold text-[#1a4731] hover:underline">View All</button>
                 </div>
                 <div className="divide-y divide-slate-100">
                   {entities.map((en, i) => {
@@ -880,7 +881,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge 
                                <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">SKUs</p>
                             </div>
                             <div className="w-[120px] flex justify-end">
-                              <button onClick={() => !isCompliant && setActiveTab('compliance')} className={cn(
+                              <button onClick={() => !isCompliant && navigateTab('compliance')} className={cn(
                                 "px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider whitespace-nowrap flex items-center gap-1 transition-all",
                                 isCompliant ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600 hover:bg-red-100 cursor-pointer"
                               )}>
@@ -1550,52 +1551,15 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge 
     
     
     
-    {activeTab === 'applications' && (
-      <div className="space-y-4">
-        <button onClick={() => setActiveTab('home')} className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors font-bold mb-4">
-           ← Back to Dashboard
-        </button>
-        <BusinessApplicationsTab user={user} onStartApplication={() => window.open('https://oklahoma.gov/omma/apply.html', '_blank')} />
-      </div>
-    )}
 
 
 
 
 
-    {activeTab === 'insurance' && (
-      <div className="space-y-4">
-        <button onClick={() => setActiveTab('home')} className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors font-bold mb-4">
-           ← Back to Dashboard
-        </button>
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col items-center justify-center min-h-[400px] text-center">
-           <Shield size={48} className="text-violet-500 mb-4" />
-           <h3 className="text-xl font-bold text-slate-800 mb-2">Insurance & Surety Bonds</h3>
-           <p className="text-slate-500 mb-6 max-w-md">Maintain OMMA required coverage to keep your licenses in good standing.</p>
-           <label className="bg-[#1a4731] hover:bg-[#153a28] text-white px-6 py-3 rounded-xl font-bold shadow-md cursor-pointer">
-             Upload Certificate
-             <input type="file" className="hidden" onChange={async (e) => { if(e.target.files?.length) { const file = e.target.files[0]; try { await turso.execute({ sql: "INSERT INTO documents (id, entity_id, name, type, uploaded_at) VALUES (?, ?, ?, ?, ?)", args: [`doc-${Date.now()}`, entities[0]?.id || "ent-1", file.name, "Insurance Certificate", new Date().toISOString()] }); alert(`"${file.name}" uploaded and saved to Vault. L.A.R.R.Y is validating limits.`); } catch(err) { console.error(err); alert("Upload saved locally. Vault sync pending."); } e.target.value = ""; } }} />
-           </label>
-        </div>
-      </div>
-    )}
 
-    {activeTab === 'documents' && (
-      <div className="space-y-4">
-        <button onClick={() => setActiveTab('home')} className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors font-bold mb-4">
-           ← Back to Dashboard
-        </button>
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col items-center justify-center min-h-[400px] text-center">
-           <FileText size={48} className="text-emerald-500 mb-4" />
-           <h3 className="text-xl font-bold text-slate-800 mb-2">Document Vault</h3>
-           <p className="text-slate-500 mb-6 max-w-md">Secure, immutable storage for all business records, applications, and tax documents.</p>
-           <label className="bg-[#1a4731] hover:bg-[#153a28] text-white px-6 py-3 rounded-xl font-bold shadow-md cursor-pointer">
-             Upload to Vault
-             <input type="file" className="hidden" onChange={async (e) => { if(e.target.files?.length) { const file = e.target.files[0]; try { await turso.execute({ sql: "INSERT INTO documents (id, entity_id, name, type, uploaded_at) VALUES (?, ?, ?, ?, ?)", args: [`doc-${Date.now()}`, entities[0]?.id || "ent-1", file.name, "Compliance", new Date().toISOString()] }); alert(`"${file.name}" encrypted and stored in Vault.`); } catch(err) { console.error(err); alert("Upload saved locally. Vault sync pending."); } e.target.value = ""; } }} />
-           </label>
-        </div>
-      </div>
-    )}
+
+
+
 
     {activeTab === 'wallet' && (
       <div className="space-y-6">
