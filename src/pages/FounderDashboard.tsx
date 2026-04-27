@@ -28,6 +28,7 @@ import { MasterBankingInfo } from '../components/MasterBankingInfo';
 import { FounderModals } from '../components/FounderModals';
 import { ITSupportDashboard } from '../components/it/ITSupportDashboard';
 import { RolePermissionsPanel } from '../components/RolePermissionsPanel';
+import { InternalMessenger } from '../components/messaging/InternalMessenger';
 
 const INITIAL_NAV_ITEMS = [
   { section: 'FOUNDER EXCLUSIVE' },
@@ -38,6 +39,7 @@ const INITIAL_NAV_ITEMS = [
   { id: 'launch_script', label: 'Master Launch Script', icon: FileText },
   { id: 'jurisdiction_map', label: 'Nationwide Oversight', icon: Globe },
   { section: 'MAIN' },
+  { id: 'messages', label: 'Messages', icon: MessageSquare, badge: 'Live' },
   { id: 'overview', label: 'God Overview', icon: Activity },
   { section: 'SUPREME COMMAND' },
   { id: 'users', label: 'Personnel Force (Total)', icon: Users },
@@ -2737,6 +2739,8 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
         return <div className="h-full w-full -m-10 bg-[#080e1a] p-10 min-h-screen overflow-auto"><JudicialMonitorTab /></div>;
       case 'roles_duties':
         return <RolePermissionsPanel viewerRole={isMonica ? 'compliance_director' : (isRyan ? 'ceo' : 'founder')} />;
+      case 'messages':
+        return <InternalMessenger currentUser={{ name: fullName, role: userTitle, roleId: isMonica ? 'compliance_director' : (isRyan ? 'ceo' : 'founder') }} />;
       case 'settings': return renderSettings();
       default: return renderOverview();
     }
