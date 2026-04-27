@@ -48,7 +48,7 @@ const MiniBarChart = ({ data }: { data: number[] }) => (
   </div>
 );
 
-export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge }: { onLogout?: () => void | Promise<void>, user?: any, initialTab?: any, onOpenConcierge?: () => void }) => {
+export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge, jurisdiction = 'Oklahoma' }: { onLogout?: () => void | Promise<void>, user?: any, initialTab?: any, onOpenConcierge?: () => void, jurisdiction?: string }) => {
   const [demoUnlocked, setDemoUnlocked] = useState(false);
   const [previousTab, setPreviousTab] = useState<string>('home');
   const [activeTab, setActiveTab] = useState<'home' | 'analytics' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'insurance' | 'documents' | 'subscription' | 'integrations' | 'staff' | 'traceability' | 'readiness' | 'wallet' | 'attorneys' | 'reporting' | 'applications'>(initialTab || 'analytics');
@@ -369,7 +369,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge 
         </div>
         <div>
           <h2 className="text-2xl font-black text-slate-800 tracking-tight leading-none">{user?.role === 'compliance_service' ? 'Compliance Service Portal' : 'Business Portal'}</h2>
-          <p className="text-sm text-slate-500 font-medium mt-1">Global Green Enterprise</p>
+          <p className="text-sm text-slate-500 font-medium mt-1">Global Green Enterprise <span className="mx-2 text-slate-300">|</span> <span className="font-black text-[#1a4731] uppercase tracking-widest">{jurisdiction}</span></p>
         </div>
       </div>
       

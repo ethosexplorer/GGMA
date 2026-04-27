@@ -44,19 +44,20 @@ export const GlobalHeader = ({
           </button>
         )}
 
-      <div className="flex items-center gap-3">
-        <div className="w-8 h-8 bg-[#1a4731] rounded-full flex items-center justify-center text-emerald-400">
+      <div className="flex items-center gap-2 bg-slate-800/80 p-1.5 rounded-xl border border-slate-700/50 shadow-inner">
+        <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center text-white shadow-[0_0_15px_rgba(16,185,129,0.4)]">
           <MapPin size={16} />
         </div>
-        <div className="relative">
+        <div className="relative flex items-center h-8">
+          <span className="pl-2 pr-1 text-emerald-400 font-black tracking-widest text-[10px] uppercase">JURISDICTION:</span>
           <select 
             value={jurisdiction}
             onChange={(e) => setJurisdiction(e.target.value)}
-            className="appearance-none bg-slate-800 text-white font-bold text-sm px-4 py-1.5 pr-8 rounded-lg outline-none cursor-pointer border border-slate-600 hover:border-emerald-500 transition-colors"
+            className="appearance-none bg-transparent text-white font-black text-sm px-1 py-1 pr-6 outline-none cursor-pointer hover:text-emerald-300 transition-colors uppercase"
           >
-            {STATES.map(s => <option key={s} value={s}>{s}</option>)}
+            {STATES.map(s => <option key={s} value={s} className="bg-slate-800 text-white normal-case">{s}</option>)}
           </select>
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">▼</div>
+          <div className="absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none text-emerald-500 font-bold text-xs">▼</div>
         </div>
       </div>
       </div>

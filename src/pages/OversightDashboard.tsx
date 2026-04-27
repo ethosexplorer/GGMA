@@ -28,7 +28,7 @@ const NAV_ITEMS = [
   { id: 'subscription', label: 'Billing & Tiers', icon: CreditCard },
 ];
 
-export const OversightDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
+export const OversightDashboard = ({ onLogout, user, jurisdiction = 'Oklahoma' }: { onLogout?: () => void, user?: any, jurisdiction?: string }) => {
   const [activeTab, setActiveTab] = useState('overview');
 
   const renderOverview = () => (
@@ -36,7 +36,7 @@ export const OversightDashboard = ({ onLogout, user }: { onLogout?: () => void, 
       <div className="flex justify-between items-center mb-8">
         <div>
            <h1 className="text-3xl font-black text-slate-800 tracking-tight">GGHP Oversight Command Hub</h1>
-           <p className="text-slate-500 font-medium">Unified access to Global Green Enterprise Inc sectors: GGMA, RIP, and SINC.</p>
+           <p className="text-slate-500 font-medium">Unified access to Global Green Enterprise Inc sectors <span className="mx-2 text-slate-300">|</span> <span className="font-black text-emerald-700 uppercase tracking-widest">{jurisdiction} JURISDICTION</span></p>
         </div>
       </div>
 

@@ -7617,32 +7617,32 @@ export default function App() {
 
     // Oversight Portal Routing
     if (role === 'executive_founder' || role === 'executive_ceo' || role === 'executive_monica') {
-      return <FounderDashboard onLogout={handleReturnToSelector} user={profile} />;
+      return <FounderDashboard onLogout={handleReturnToSelector} user={profile} jurisdiction={jurisdiction} />;
     }
     // Oversight Portal Routing (Regulators, Enforcement, Admin, Operations)
     if (role === 'admin_internal' || role === 'admin_external' || role === 'admin' || role === 'regulator_state' || role?.startsWith('regulator') || role?.startsWith('backoffice') || role === 'enforcement_state' || role?.startsWith('enforcement') || role === 'law_enforcement' || role === 'operations' || role?.startsWith('staff')) {
-      return <OversightDashboard onLogout={handleReturnToSelector} user={profile} />;
+      return <OversightDashboard onLogout={handleReturnToSelector} user={profile} jurisdiction={jurisdiction} />;
     }
 
     // Business Portal Routing
     if (role === 'provider') {
-      return <ProviderDashboard onLogout={handleReturnToSelector} user={profile} />;
+      return <ProviderDashboard onLogout={handleReturnToSelector} user={profile} jurisdiction={jurisdiction} />;
     }
     if (role === 'attorney') {
-      return <AttorneyDashboard onLogout={handleReturnToSelector} user={profile} />;
+      return <AttorneyDashboard onLogout={handleReturnToSelector} user={profile} jurisdiction={jurisdiction} />;
     }
     if (role === 'business' || role === 'compliance_service') {
-      return <BusinessDashboard onLogout={handleReturnToSelector} user={profile} initialTab={initialTab} onOpenConcierge={() => setShowLarryModal(true)} />;
+      return <BusinessDashboard onLogout={handleReturnToSelector} user={profile} initialTab={initialTab} onOpenConcierge={() => setShowLarryModal(true)} jurisdiction={jurisdiction} />;
     }
     if (role === 'health' || role === 'lab' || role === 'health_lab') {
-      return <PublicHealthDashboard onLogout={handleReturnToSelector} user={profile} />;
+      return <PublicHealthDashboard onLogout={handleReturnToSelector} user={profile} jurisdiction={jurisdiction} />;
     }
 
     // Patient Portal Routing
     if (role === 'user' || role === 'Patient / Caregiver') {
       return (
         <DashboardLayout role={role} onLogout={handleReturnToSelector} userProfile={profile} onOpenConcierge={() => setShowLarryModal(true)}>
-          <PatientDashboard user={profile} onOpenConcierge={() => setShowLarryModal(true)} />
+          <PatientDashboard user={profile} onOpenConcierge={() => setShowLarryModal(true)} jurisdiction={jurisdiction} />
         </DashboardLayout>
       );
     }

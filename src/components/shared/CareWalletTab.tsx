@@ -30,7 +30,7 @@ interface CareWalletTabProps {
 }
 
 export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
-  const [activeSection, setActiveSection] = useState<'overview' | 'tiers' | 'locations'>('overview');
+  const [activeSection, setActiveSection] = useState<'overview' | 'tiers' | 'locations' | 'b2b' | 'general_tx'>('overview');
   const [showReloadModal, setShowReloadModal] = useState(false);
   const [showCreditModal, setShowCreditModal] = useState(false);
   const [showDisposableCard, setShowDisposableCard] = useState(false);
