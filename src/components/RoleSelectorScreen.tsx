@@ -4,10 +4,12 @@ import { motion } from 'motion/react';
 
 export const RoleSelectorScreen = ({ userProfile, onSelect, onLogout }: { userProfile: any, onSelect: (role: string) => void, onLogout?: () => void }) => {
   const isRyan = userProfile?.email?.toLowerCase().includes('ceo.globalgreenhp');
+  const isMonica = userProfile?.email?.toLowerCase().includes('monica') || userProfile?.email?.toLowerCase().includes('mgreen');
 
   const allRoles = [
-    { id: 'executive_founder', label: 'Quality Assurance Command', desc: 'Full System Architecture & Analytics', icon: Shield, color: 'indigo' },
-    { id: 'executive_ceo', label: 'CEO Executive Dashboard', desc: 'Enterprise Operations & Strategy', icon: Briefcase, color: 'indigo' },
+    { id: 'executive_founder', label: 'Quality Assurance Command (Founder)', desc: 'Full System Architecture & Analytics', icon: Shield, color: 'indigo' },
+    { id: 'executive_ceo', label: 'CEO Executive Dashboard (Ryan)', desc: 'Enterprise Operations & Strategy', icon: Briefcase, color: 'indigo' },
+    { id: 'executive_monica', label: 'Compliance Director (Monica)', desc: 'Regulatory & Compliance Command', icon: Shield, color: 'indigo' },
     { id: 'patient', label: 'Patient Portal', desc: 'Medical Cards & Care Wallet', icon: User, color: 'emerald' },
     { id: 'business', label: 'Business Dashboard', desc: 'Dispensary & Cultivation', icon: Building2, color: 'blue' },
     { id: 'regulator_state', label: 'State Authority', desc: 'OMMA Regulatory Hub', icon: Lock, color: 'amber' },
@@ -19,9 +21,15 @@ export const RoleSelectorScreen = ({ userProfile, onSelect, onLogout }: { userPr
     { id: 'provider', label: 'Medical Provider', desc: 'Telehealth & Certifications', icon: Stethoscope, color: 'rose' },
   ];
 
-  const roles = isRyan 
-    ? allRoles.filter(r => !['executive_founder', 'regulator_state', 'regulator_federal', 'law_enforcement'].includes(r.id))
-    : allRoles.filter(r => r.id !== 'executive_ceo');
+  let roles = allRoles;
+  if (isRyan) {
+    roles = allRoles.filter(r => !['executive_founder', 'executive_monica', 'regulator_state', 'regulator_federal', 'law_enforcement'].includes(r.id));
+  } else if (isMonica) {
+    roles = allRoles.filter(r => !['executive_founder', 'executive_ceo', 'regulator_state', 'regulator_federal', 'law_enforcement'].includes(r.id));
+  } else {
+    // Founder sees all executive tiles
+    roles = allRoles;
+  }
 
   return (
     <div className="fixed inset-0 z-[400] bg-slate-900 flex items-center justify-center p-4">

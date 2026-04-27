@@ -7616,7 +7616,7 @@ export default function App() {
     const initialTab = validTabs.includes(subTab || '') ? subTab : undefined;
 
     // Oversight Portal Routing
-    if (role === 'executive_founder' || role === 'executive_ceo') {
+    if (role === 'executive_founder' || role === 'executive_ceo' || role === 'executive_monica') {
       return <FounderDashboard onLogout={handleLogout} user={profile} />;
     }
     // Oversight Portal Routing (Regulators, Enforcement, Admin, Operations)
