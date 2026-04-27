@@ -7657,7 +7657,7 @@ export default function App() {
 
     // Oversight Portal Routing (Regulators, Admin, Operations)
     if (role === 'admin_internal' || role === 'admin_external' || role === 'admin' || role === 'regulator_state' || role?.startsWith('regulator') || role?.startsWith('backoffice') || role === 'operations' || role?.startsWith('staff')) {
-      return <OversightDashboard onLogout={handleReturnToSelector} user={profile} jurisdiction={jurisdiction} />;
+      return <OversightDashboard onLogout={handleReturnToSelector} user={profile} role={role} jurisdiction={jurisdiction} />;
     }
 
     // Business Portal Routing

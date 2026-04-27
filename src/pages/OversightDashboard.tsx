@@ -29,11 +29,11 @@ const NAV_ITEMS = [
   { id: 'subscription', label: 'Billing & Tiers', icon: CreditCard },
 ];
 
-export const OversightDashboard = ({ onLogout, user, jurisdiction = 'Oklahoma' }: { onLogout?: () => void, user?: any, jurisdiction?: string }) => {
+export const OversightDashboard = ({ onLogout, user, role, jurisdiction = 'Oklahoma' }: { onLogout?: () => void, user?: any, role?: string, jurisdiction?: string }) => {
   const [activeTab, setActiveTab] = useState('overview');
 
-  const isFederalOrFounder = user?.role === 'executive_founder' || user?.role === 'regulator_federal' || user?.email?.toLowerCase().includes('ceo') || user?.email?.toLowerCase().includes('monica') || user?.email?.toLowerCase().includes('globalgreenhp');
-  const isFounderOrInternal = user?.role === 'executive_founder' || user?.email?.toLowerCase().includes('ceo') || user?.email?.toLowerCase().includes('monica') || user?.email?.toLowerCase().includes('globalgreenhp');
+  const isFederalOrFounder = role === 'executive_founder' || role === 'regulator_federal';
+  const isFounderOrInternal = role === 'executive_founder' || role === 'admin_internal' || role === 'operations';
   
   const filteredNavItems = NAV_ITEMS.filter(item => {
     if (item.id === 'federal') return isFederalOrFounder;
