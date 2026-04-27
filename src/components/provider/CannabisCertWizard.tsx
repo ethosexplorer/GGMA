@@ -85,11 +85,25 @@ export const CannabisCertWizard = ({ onCancel, onComplete }: { onCancel: () => v
               <div className="space-y-1.5">
                 <label className="text-sm font-bold text-slate-700">Qualifying Condition</label>
                 <select className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                  <option>Chronic Pain</option>
+                  <option>Chronic, Severe, or Intractable Pain</option>
                   <option>Severe Nausea</option>
                   <option>Muscle Spasms</option>
-                  <option>Epilepsy</option>
+                  <option>Epilepsy / Seizures</option>
                   <option>Terminal Illness</option>
+                  <option>Cancer</option>
+                  <option>Glaucoma</option>
+                  <option>HIV / AIDS</option>
+                  <option>Post-Traumatic Stress Disorder (PTSD)</option>
+                  <option>Amyotrophic Lateral Sclerosis (ALS)</option>
+                  <option>Crohn's Disease</option>
+                  <option>Parkinson's Disease</option>
+                  <option>Multiple Sclerosis (MS)</option>
+                  <option>Intractable Migraines</option>
+                  <option>Cachexia / Wasting Syndrome</option>
+                  <option>Anorexia</option>
+                  <option>Autism (with severe behaviors)</option>
+                  <option>Neuropathy</option>
+                  <option>Other / Physician Discretion (Subject to OMMA review)</option>
                 </select>
               </div>
               <div className="space-y-1.5">
