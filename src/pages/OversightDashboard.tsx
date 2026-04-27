@@ -33,9 +33,11 @@ export const OversightDashboard = ({ onLogout, user, jurisdiction = 'Oklahoma' }
   const [activeTab, setActiveTab] = useState('overview');
 
   const isFederalOrFounder = user?.role === 'executive_founder' || user?.role === 'regulator_federal' || user?.email?.toLowerCase().includes('ceo') || user?.email?.toLowerCase().includes('monica') || user?.email?.toLowerCase().includes('globalgreenhp');
+  const isFounderOrInternal = user?.role === 'executive_founder' || user?.email?.toLowerCase().includes('ceo') || user?.email?.toLowerCase().includes('monica') || user?.email?.toLowerCase().includes('globalgreenhp');
   
   const filteredNavItems = NAV_ITEMS.filter(item => {
     if (item.id === 'federal') return isFederalOrFounder;
+    if (item.id === 'operations' || item.id === 'virtual_attendant' || item.id === 'processor') return isFounderOrInternal;
     return true;
   });
 
@@ -62,13 +64,15 @@ export const OversightDashboard = ({ onLogout, user, jurisdiction = 'Oklahoma' }
            <div className="flex items-center text-emerald-400 font-bold text-sm">Launch Portal <ChevronRight size={16} /></div>
         </div>
 
-        <div className="bg-indigo-950 p-6 rounded-3xl border border-indigo-900/30 shadow-xl relative overflow-hidden group cursor-pointer" onClick={() => setActiveTab('operations')}>
-           <div className="absolute top-0 right-0 p-4 opacity-10 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform"><Cpu size={120} /></div>
-           <div className="w-12 h-12 bg-indigo-900/50 rounded-2xl flex items-center justify-center text-indigo-400 mb-4 border border-indigo-700/50"><Cpu size={24} /></div>
-           <h3 className="text-xl font-bold text-white mb-2">Ops Center</h3>
-           <p className="text-sm text-indigo-200/60 mb-6">System support, ticket escalation, and back-office live queue.</p>
-           <div className="flex items-center text-indigo-400 font-bold text-sm">Launch Portal <ChevronRight size={16} /></div>
-        </div>
+        {isFounderOrInternal && (
+          <div className="bg-indigo-950 p-6 rounded-3xl border border-indigo-900/30 shadow-xl relative overflow-hidden group cursor-pointer" onClick={() => setActiveTab('operations')}>
+             <div className="absolute top-0 right-0 p-4 opacity-10 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform"><Cpu size={120} /></div>
+             <div className="w-12 h-12 bg-indigo-900/50 rounded-2xl flex items-center justify-center text-indigo-400 mb-4 border border-indigo-700/50"><Cpu size={24} /></div>
+             <h3 className="text-xl font-bold text-white mb-2">Ops Center</h3>
+             <p className="text-sm text-indigo-200/60 mb-6">System support, ticket escalation, and back-office live queue.</p>
+             <div className="flex items-center text-indigo-400 font-bold text-sm">Launch Portal <ChevronRight size={16} /></div>
+          </div>
+        )}
 
         <div className="bg-slate-900 p-6 rounded-3xl border border-slate-800 shadow-xl relative overflow-hidden group cursor-pointer" onClick={() => setActiveTab('state_admin')}>
            <div className="absolute top-0 right-0 p-4 opacity-10 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform"><Shield size={120} /></div>
