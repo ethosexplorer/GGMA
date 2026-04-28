@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Phone, Users, MessageSquare, Shield, Activity, TrendingUp, 
   ChevronRight, Mic, Play, Pause, RefreshCw, Star, Search,
@@ -6,6 +6,7 @@ import {
   DollarSign, Globe, Zap, Clock
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { voip800, CallCenterStats } from '../../lib/voip800';
 
 interface Department {
   id: string;
@@ -32,6 +33,17 @@ const departments: Department[] = [
 
 export const VirtualAttendantTab = () => {
   const [selectedDept, setSelectedDept] = useState<Department | null>(null);
+  const [stats, setStats] = useState<CallCenterStats | null>(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      const data = await voip800.getCallCenterStats();
+      setStats(data);
+    };
+    fetchStats();
+    const interval = setInterval(fetchStats, 10000); // refresh every 10s
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -47,7 +59,7 @@ export const VirtualAttendantTab = () => {
                 </div>
                 <div>
                   <h1 className="text-3xl font-black text-white tracking-tight">GGE World Call Center</h1>
-                  <p className="text-[#D4AF77] font-bold text-sm tracking-widest uppercase">@THEBACKOFFICE.COM</p>
+                  <p className="text-[#D4AF77] font-bold text-sm tracking-widest uppercase">800.com Live Integration</p>
                 </div>
               </div>
               <p className="text-emerald-100/60 max-w-lg mt-2">
@@ -60,23 +72,27 @@ export const VirtualAttendantTab = () => {
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">System Status</span>
               </div>
-              <p className="text-xl font-black text-white">99.9% Uptime</p>
-              <p className="text-[10px] text-emerald-100/50">Current Capacity: 852 Concurrent Calls</p>
+              <p className="text-xl font-black text-white">{voip800.isConfigured() ? '800.com Linked' : 'Offline'}</p>
+              <p className="text-[10px] text-emerald-100/50">Current Capacity: {stats?.activeAgents || 0} Agent(s) Ready</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
               <p className="text-[10px] font-bold text-[#D4AF77] uppercase tracking-widest mb-1">Avg Resolution Time</p>
-              <p className="text-2xl font-black text-white">42s</p>
+              <p className="text-2xl font-black text-white">{stats?.averageCallDuration || 0}s</p>
             </div>
             <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
-              <p className="text-[10px] font-bold text-[#D4AF77] uppercase tracking-widest mb-1">AI Utilization</p>
-              <p className="text-2xl font-black text-white">85.4%</p>
+              <p className="text-[10px] font-bold text-[#D4AF77] uppercase tracking-widest mb-1">Total Live Volume</p>
+              <p className="text-2xl font-black text-white">{stats?.totalCalls || 0}</p>
             </div>
             <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
-              <p className="text-[10px] font-bold text-[#D4AF77] uppercase tracking-widest mb-1">Larry Compliance Escals</p>
-              <p className="text-2xl font-black text-white">12.2%</p>
+              <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-1">Answered Calls</p>
+              <p className="text-2xl font-black text-white">{stats?.answeredCalls || 0}</p>
+            </div>
+            <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
+              <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest mb-1">Missed Calls</p>
+              <p className="text-2xl font-black text-white">{stats?.missedCalls || 0}</p>
             </div>
           </div>
         </div>
