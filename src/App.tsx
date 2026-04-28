@@ -2,6 +2,7 @@ import React, { Component, useState, useEffect, useMemo, useRef, useCallback } f
 import { useLocation, useNavigate } from 'react-router-dom';
 import { STATE_RESOURCES } from './stateResources';
 import { getPlansForRole, getAddOnsForRole } from './lib/subscriptionPlans';
+import { SettingsPreferencesMockup } from './pages/SettingsPreferencesMockup';
 import {
   Shield,
   User,
@@ -1159,11 +1160,26 @@ const STATE_RESOURCES: Record<string, any> = {
                   <label className="text-xs font-semibold text-white/90">Message</label>
                   <textarea rows={4} placeholder="Describe your issue here..." className="w-full px-4 py-2.5 bg-white/20 border border-white/10 rounded-lg text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 resize-none"></textarea>
                 </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-white/90">Phone Number (Optional)</label>
+                  <input type="tel" placeholder="(555) 123-4567" className="w-full px-4 py-2.5 bg-white/20 border border-white/10 rounded-lg text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30" />
+                </div>
                 <div className="space-y-1.5 pt-2">
                   <label className="text-xs font-semibold text-white/90 mb-1 block">Attachments (Optional)</label>
                   <button type="button" className="w-full py-3 border-2 border-dashed border-white/20 rounded-lg text-white/80 text-sm font-medium hover:bg-white/10 transition-colors">
                     Click to upload screenshots
                   </button>
+                </div>
+                <div className="space-y-1.5 pt-2">
+                  <label className="flex items-start gap-3 cursor-pointer p-3 bg-white/10 rounded-xl border border-white/20 hover:bg-white/20 transition-colors">
+                    <input type="checkbox" className="mt-0.5 w-4 h-4 rounded text-white focus:ring-white border-white/30 bg-transparent" />
+                    <div className="flex-1">
+                      <span className="text-xs font-bold text-white block mb-1">Receive ticket updates via SMS</span>
+                      <p className="text-[10px] text-white/70 leading-relaxed">
+                        By checking this box, you consent to receive customer care text messages from Global Green Hybrid Platform (GGHP) regarding your support inquiry. <strong className="text-white/90">Message and data rates may apply. Reply STOP to opt out.</strong> Information is not shared or sold to third parties for marketing purposes.
+                      </p>
+                    </div>
+                  </label>
                 </div>
                 <button type="button" className="w-full mt-4 py-3 bg-white text-[#0D6EFD] font-bold rounded-lg hover:bg-white/90 transition-colors shadow-sm">
                   Submit Request
@@ -2507,6 +2523,7 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
   const [selectedRole, setSelectedRole] = useState<string>(initialRole);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [smsOptIn, setSmsOptIn] = useState(false);
 
   // Common + Role Specific Fields
   const [formData, setFormData] = useState({
@@ -3207,19 +3224,38 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
                         </div>
                     </div>
 
-                    <label className="flex items-start gap-3 cursor-pointer group bg-emerald-50/50 p-4 rounded-xl border border-emerald-100">
-                        <input type="checkbox" className="mt-0.5 w-5 h-5 rounded text-[#1a4731] focus:ring-[#1a4731]" required />
-                        <span className="text-sm text-slate-800 font-medium leading-relaxed flex items-center flex-wrap">
-                            <span>I confirm all information is accurate and agree to platform terms of service. I understand this establishes an immutable digital footprint tracked by the GGP-OS compliance engine.</span>
-                            <div className="inline-flex items-center group relative ml-1.5 align-middle">
-                               <Info size={16} className="text-[#1a4731] hover:text-emerald-600 transition-colors cursor-help" />
-                               <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 text-white text-xs font-normal rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all shadow-xl z-50">
-                                 By agreeing, you consent to our HIPAA-compliant data practices, Metrc reporting requirements, state open records policies, and the Care Wallet financial terms.
-                                 <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
-                               </div>
+                    <div className="space-y-4">
+                        <label className="flex items-start gap-3 cursor-pointer group bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <input 
+                                type="checkbox" 
+                                className="mt-0.5 w-5 h-5 rounded text-[#1a4731] focus:ring-[#1a4731]" 
+                                checked={smsOptIn}
+                                onChange={(e) => setSmsOptIn(e.target.checked)}
+                            />
+                            <div className="flex-1">
+                                <p className="text-sm font-bold text-slate-700">
+                                    I wish to receive account updates via SMS.
+                                </p>
+                                <p className="text-[11px] leading-relaxed text-slate-500 mt-1.5 border-l-2 border-slate-200 pl-2">
+                                    By checking this box, you consent to receive 2FA codes and account notifications via SMS from Global Green Hybrid Platform (GGHP) to the provided mobile number. <strong className="text-slate-700">Message and data rates may apply. Reply STOP to opt out.</strong> Information is not shared or sold to third parties for marketing purposes. Read our <a href="#" className="text-emerald-600 font-bold hover:underline">Privacy Policy</a>.
+                                </p>
                             </div>
-                        </span>
-                    </label>
+                        </label>
+
+                        <label className="flex items-start gap-3 cursor-pointer group bg-emerald-50/50 p-4 rounded-xl border border-emerald-100">
+                            <input type="checkbox" className="mt-0.5 w-5 h-5 rounded text-[#1a4731] focus:ring-[#1a4731]" required />
+                            <span className="text-sm text-slate-800 font-medium leading-relaxed flex items-center flex-wrap">
+                                <span>I confirm all information is accurate and agree to platform terms of service. I understand this establishes an immutable digital footprint tracked by the GGP-OS compliance engine.</span>
+                                <div className="inline-flex items-center group relative ml-1.5 align-middle">
+                                   <Info size={16} className="text-[#1a4731] hover:text-emerald-600 transition-colors cursor-help" />
+                                   <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 text-white text-xs font-normal rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all shadow-xl z-50">
+                                     By agreeing, you consent to our HIPAA-compliant data practices, Metrc reporting requirements, state open records policies, and the Care Wallet financial terms.
+                                     <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+                                   </div>
+                                </div>
+                            </span>
+                        </label>
+                    </div>
                 </div>
             )}
             
@@ -7501,7 +7537,29 @@ export default function App() {
   const [showLarryModal, setShowLarryModal] = useState(false);
   const [roleOverride, setRoleOverride] = useState<string | null>(null);
   const [hasBypassedSelector, setHasBypassedSelector] = useState(false);
-  const [jurisdiction, setJurisdiction] = useState('Oklahoma');
+  const [jurisdiction, setJurisdiction] = useState(() => sessionStorage.getItem('gghp_jurisdiction') || 'Oklahoma');
+  const [jurisdictionLocked, setJurisdictionLocked] = useState(() => sessionStorage.getItem('gghp_jurisdiction_locked') === 'true');
+  const [showJurisdictionGate, setShowJurisdictionGate] = useState(false);
+  const [pendingJurisdiction, setPendingJurisdiction] = useState<string | null>(null);
+
+  const confirmJurisdiction = (state: string) => {
+    setJurisdiction(state);
+    setJurisdictionLocked(true);
+    sessionStorage.setItem('gghp_jurisdiction', state);
+    sessionStorage.setItem('gghp_jurisdiction_locked', 'true');
+    setShowJurisdictionGate(false);
+    setPendingJurisdiction(null);
+  };
+
+  const setJurisdictionWithGate = (newState: string) => {
+    if (jurisdictionLocked && newState !== jurisdiction) {
+      setPendingJurisdiction(newState);
+      setShowJurisdictionGate(true);
+    } else {
+      setJurisdiction(newState);
+      sessionStorage.setItem('gghp_jurisdiction', newState);
+    }
+  };
 
   const handleNavigate = (newView: string, role?: string) => {
     setViewHistory(prev => [...prev, view]);
@@ -7540,6 +7598,7 @@ export default function App() {
     else if (path.startsWith('/dashboard')) setView('dashboard');
     else if (path === '/larry-chatbot') setView('larry-chatbot');
     else if (path === '/support') setView('support');
+    else if (path === '/settings-mockup') setView('settings-mockup');
     else if (path === '/business-signup') setView('business-signup');
     else if (path === '/patient-signup') setView('patient-signup');
   }, [location.pathname]);
@@ -7639,6 +7698,13 @@ export default function App() {
 
   const renderDashboardByRole = (profile: any) => {
     if (!profile) return null;
+
+    // Jurisdiction Gate: if not yet confirmed for this session, show the modal
+    if (!jurisdictionLocked && !showJurisdictionGate) {
+      // Trigger the gate on next render
+      setTimeout(() => setShowJurisdictionGate(true), 0);
+    }
+
     const role = roleOverride || profile.role;
     const path = location.pathname;
     
@@ -7871,6 +7937,8 @@ export default function App() {
   };
 
   const handleLogout = async () => {
+    sessionStorage.removeItem('gghp_jurisdiction');
+    sessionStorage.removeItem('gghp_jurisdiction_locked');
     await signOut(auth);
     window.location.href = '/';
   };
@@ -7893,7 +7961,64 @@ export default function App() {
   return (
     <ErrorBoundary>
       <div className="antialiased text-slate-900">
-        <GlobalHeader userProfile={userProfile} jurisdiction={jurisdiction} setJurisdiction={setJurisdiction} roleOverride={roleOverride} setRoleOverride={setRoleOverride} handleBack={handleBack} canGoBack={viewHistory.length > 0 || hasBypassedSelector} />
+        <GlobalHeader userProfile={userProfile} jurisdiction={jurisdiction} setJurisdiction={setJurisdictionWithGate} roleOverride={roleOverride} setRoleOverride={setRoleOverride} handleBack={handleBack} canGoBack={viewHistory.length > 0 || hasBypassedSelector} />
+
+        {/* JURISDICTION GATE MODAL */}
+        {showJurisdictionGate && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={() => { if (jurisdictionLocked) { setShowJurisdictionGate(false); setPendingJurisdiction(null); } }} />
+            <div className="relative bg-white rounded-3xl shadow-2xl max-w-lg w-full mx-4 overflow-hidden animate-in zoom-in-95 fade-in duration-300">
+              <div className="bg-gradient-to-r from-[#1a4731] to-emerald-800 p-8 text-white text-center">
+                <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 backdrop-blur-sm border border-white/20">
+                  <MapPin size={32} className="text-white" />
+                </div>
+                <h2 className="text-2xl font-black tracking-tight">
+                  {jurisdictionLocked ? 'Change Jurisdiction?' : 'Confirm Your Jurisdiction'}
+                </h2>
+                <p className="text-emerald-100 text-sm mt-2 max-w-sm mx-auto">
+                  {jurisdictionLocked 
+                    ? `You are currently operating under ${jurisdiction} state regulations. Changing jurisdiction will update all compliance rules, applications, and regulatory data.`
+                    : 'All compliance rules, applications, forms, and regulatory data will be specific to the state you select. Please confirm your operating jurisdiction before proceeding.'
+                  }
+                </p>
+              </div>
+              <div className="p-8 space-y-6">
+                <div>
+                  <label className="text-xs font-black uppercase tracking-widest text-slate-500 mb-2 block">Operating State</label>
+                  <select
+                    value={pendingJurisdiction || jurisdiction}
+                    onChange={(e) => setPendingJurisdiction(e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl text-lg font-bold text-slate-800 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 outline-none transition-all cursor-pointer appearance-none"
+                  >
+                    {['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming'].map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                  <p className="text-xs text-amber-800 font-bold flex items-start gap-2">
+                    <Shield size={16} className="text-amber-600 shrink-0 mt-0.5" />
+                    <span>Once confirmed, your session will be locked to <strong>{pendingJurisdiction || jurisdiction}</strong> state regulations. All forms, compliance rules, and application data will reflect this jurisdiction. You can change it later from the header bar.</span>
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  {jurisdictionLocked && (
+                    <button
+                      onClick={() => { setShowJurisdictionGate(false); setPendingJurisdiction(null); }}
+                      className="flex-1 py-3 px-6 rounded-xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                  <button
+                    onClick={() => confirmJurisdiction(pendingJurisdiction || jurisdiction)}
+                    className="flex-1 py-3 px-6 rounded-xl font-black text-white bg-[#1a4731] hover:bg-[#153a28] transition-colors shadow-lg shadow-emerald-900/20 uppercase tracking-wider text-sm"
+                  >
+                    {jurisdictionLocked ? `Switch to ${pendingJurisdiction || jurisdiction}` : `Confirm ${pendingJurisdiction || jurisdiction}`}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         <AnimatePresence mode="wait">
           {view === 'landing' && (
             <LandingPage
@@ -7927,6 +8052,7 @@ export default function App() {
               variant="business"
             />
           )}
+          {view === 'settings-mockup' && <SettingsPreferencesMockup />}
 
           {view === 'patient-signup' && (
             <PatientSignupPage

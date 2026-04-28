@@ -7,7 +7,7 @@ import {
   Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Globe, Zap, Database,
   FlaskConical, CreditCard, Map as MapIcon, BookOpen, UserPlus, Trash2,
   MapPin, Target, Layers, TrendingDown, Box, PieChart, GraduationCap, Lock, GripVertical,
-  Calculator, Save, ExternalLink, Printer, ArrowLeft
+  Calculator, Save, ExternalLink, Printer, ArrowLeft, Phone, PhoneCall, PhoneOff, PhoneIncoming, PhoneOutgoing
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
@@ -30,8 +30,13 @@ import { ITSupportDashboard } from '../components/it/ITSupportDashboard';
 import { RolePermissionsPanel } from '../components/RolePermissionsPanel';
 import { InternalMessenger } from '../components/messaging/InternalMessenger';
 import { UserCalendar } from '../components/UserCalendar';
+import { voip800 } from '../lib/voip800';
 
-const INITIAL_NAV_ITEMS = [
+type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
+
+const NAV_VERSION = 10; // Force clean reset - bumped past all intermediate HMR cache versions
+
+const INITIAL_NAV_ITEMS: NavItem[] = [
   { section: 'FOUNDER EXCLUSIVE' },
   { id: 'accounting_ledger', label: 'Accounting Ledger (QuickBooks)', icon: TrendingUp },
   { id: 'global_financials', label: 'Global Financials', icon: TrendingUp },
@@ -57,7 +62,7 @@ const INITIAL_NAV_ITEMS = [
   { id: 'external_admin', label: 'External Administrator', icon: Activity },
   { id: 'law_enforcement', label: 'Law Enforcement (RIP)', icon: Shield },
   { id: 'state_authority', label: 'Regulator / Authority', icon: Gavel },
-  { id: 'operations', label: 'Operations & Support', icon: Cpu },
+  { id: 'operations', label: 'Ops Center', icon: Cpu, badge: 'Live' },
   { section: 'FEDERAL & IP MONITORS' },
   { id: 'federal', label: 'Federal Command', icon: Globe },
   { id: 'public_health', label: 'Public Health & Labs', icon: FlaskConical },
@@ -163,7 +168,21 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
 
   const [navItemsList, setNavItemsList] = useState(() => {
     try {
+      // Version check: if nav structure changed, reset saved order
+      const savedVersion = localStorage.getItem('gghp_nav_version');
+      if (savedVersion !== String(NAV_VERSION)) {
+        localStorage.removeItem('gghp_nav_order');
+        localStorage.removeItem('gghp_section_names');
+        localStorage.removeItem('gghp_custom_sections');
+        localStorage.setItem('gghp_nav_version', String(NAV_VERSION));
+        return [...INITIAL_NAV_ITEMS];
+      }
+
       const saved = localStorage.getItem('gghp_nav_order');
+      const savedSectionNames = localStorage.getItem('gghp_section_names');
+      const sectionNameMap: Record<string, string> = savedSectionNames ? JSON.parse(savedSectionNames) : {};
+      
+      let items: NavItem[] = [...INITIAL_NAV_ITEMS];
       if (saved) {
         const savedIds = JSON.parse(saved) as string[];
         // Rebuild nav from saved order, preserving any new items not in saved order
@@ -176,12 +195,37 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
           const key = item.id || `section-${i}`;
           if (!savedIds.includes(key)) ordered.push(item);
         });
-        return ordered;
+        items = ordered;
       }
+      
+      // Also check for any user-created sections stored separately
+      const customSections = localStorage.getItem('gghp_custom_sections');
+      if (customSections) {
+        const extras = JSON.parse(customSections) as NavItem[];
+        extras.forEach(sec => {
+          if (!items.some(it => 'section' in it && it.section === sec.section)) {
+            items = [...items, sec];
+          }
+        });
+      }
+      
+      // Apply any renamed section labels
+      if (Object.keys(sectionNameMap).length > 0) {
+        items = items.map((it, idx) => {
+          const key = `section-${idx}`;
+          if ('section' in it && sectionNameMap[key]) {
+            return { ...it, section: sectionNameMap[key] };
+          }
+          return it;
+        });
+      }
+      
+      return items;
     } catch {}
     return INITIAL_NAV_ITEMS;
   });
   const [draggedIdx, setDraggedIdx] = useState<number | null>(null);
+  const [editingSectionIdx, setEditingSectionIdx] = useState<number | null>(null);
 
   const handleDragStart = (e: any, index: number) => {
     setDraggedIdx(index);
@@ -1971,6 +2015,216 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
     </div>
   );
 
+  const renderCallCenter = () => {
+    const isConnected = voip800.isConfigured();
+    
+    return (
+      <div className="space-y-6 animate-in fade-in duration-500">
+        {/* HEADER BANNER */}
+        <div className="bg-gradient-to-r from-indigo-950 via-slate-900 to-emerald-950 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-8 opacity-5"><PhoneCall size={180} /></div>
+          <div className="relative z-10">
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <h2 className="text-3xl font-black tracking-tight uppercase flex items-center gap-3">
+                  <Phone className="text-emerald-400" size={28} />
+                  Call Center Command
+                </h2>
+                <p className="text-emerald-300 font-bold tracking-widest uppercase text-[10px] mt-1">
+                  800.com VoIP Integration • {voip800.getCompanyNumber()}
+                </p>
+              </div>
+              <div className={cn("flex items-center gap-2 px-4 py-2 rounded-full font-black text-xs uppercase tracking-widest border", isConnected ? "bg-emerald-500/20 border-emerald-400/30 text-emerald-300" : "bg-red-500/20 border-red-400/30 text-red-300")}>
+                <div className={cn("w-2.5 h-2.5 rounded-full", isConnected ? "bg-emerald-400 animate-pulse" : "bg-red-400")} />
+                {isConnected ? 'API Connected' : 'Not Configured'}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { label: 'Company Number', value: '1-844-333-4447', icon: Phone, color: 'text-emerald-400' },
+                { label: 'Account ID', value: voip800.ACCOUNT_ID || '—', icon: Shield, color: 'text-indigo-400' },
+                { label: 'Provider', value: '800.com', icon: Globe, color: 'text-cyan-400' },
+                { label: 'Status', value: isConnected ? 'Active' : 'Setup Required', icon: Activity, color: isConnected ? 'text-emerald-400' : 'text-amber-400' },
+              ].map((s, i) => (
+                <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-sm">
+                  <s.icon size={16} className={cn(s.color, "mb-2")} />
+                  <p className="text-[10px] font-bold text-white/50 uppercase tracking-widest">{s.label}</p>
+                  <p className="text-lg font-black text-white mt-1">{s.value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* CALL ROUTING CONFIG */}
+          <div className="lg:col-span-2 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+              <h3 className="font-black text-slate-800 uppercase tracking-wide text-sm flex items-center gap-2">
+                <PhoneCall size={18} className="text-indigo-600" />
+                Call Routing & Forwarding
+              </h3>
+              <button 
+                onClick={async () => {
+                  const dest = prompt('Enter forwarding number (e.g. 4055551234):');
+                  if (dest) {
+                    const ok = await voip800.updateForwarding(dest);
+                    alert(ok ? '✅ Forwarding updated!' : '❌ Failed — check 800.com dashboard');
+                  }
+                }}
+                className="px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-xl hover:bg-indigo-700 transition-colors"
+              >
+                + Add Forwarding
+              </button>
+            </div>
+            <div className="p-6 space-y-3">
+              {[
+                { name: 'Main Line → Founder', dest: 'Shantell Robinson', type: 'Standard', status: 'Active', icon: PhoneIncoming },
+                { name: 'Overflow → Support Desk', dest: 'asstsupport@gmail.com', type: 'Sequential', status: 'Active', icon: PhoneOutgoing },
+                { name: 'After Hours → Voicemail', dest: 'VM Box #1', type: 'Scheduled', status: 'Active', icon: PhoneOff },
+              ].map((rule, i) => (
+                <div key={i} className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100 hover:border-indigo-200 transition-colors">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
+                      <rule.icon size={18} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-slate-800">{rule.name}</p>
+                      <p className="text-[11px] text-slate-500">→ {rule.dest} • {rule.type}</p>
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">{rule.status}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* QUICK SMS COMPOSER */}
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-slate-100">
+              <h3 className="font-black text-slate-800 uppercase tracking-wide text-sm flex items-center gap-2">
+                <MessageSquare size={18} className="text-emerald-600" />
+                Quick SMS
+              </h3>
+              <p className="text-[11px] text-slate-500 mt-1">Send from {voip800.getCompanyNumber()}</p>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1 block">Recipient Phone</label>
+                <input type="tel" placeholder="(555) 123-4567" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 outline-none" id="sms-recipient" />
+              </div>
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1 block">Message</label>
+                <textarea rows={3} placeholder="Type your SMS message..." className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 outline-none resize-none" id="sms-body" />
+              </div>
+              <button 
+                onClick={async () => {
+                  const to = (document.getElementById('sms-recipient') as HTMLInputElement)?.value;
+                  const body = (document.getElementById('sms-body') as HTMLTextAreaElement)?.value;
+                  if (to && body) {
+                    const result = await voip800.sendSMS(to, body);
+                    alert(result ? '✅ SMS sent!' : '❌ Failed — verify number is text-enabled');
+                  } else {
+                    alert('Please enter a recipient and message.');
+                  }
+                }}
+                className="w-full py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2"
+              >
+                <MessageSquare size={16} /> Send SMS
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* CALL LOG TABLE */}
+        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+          <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+            <h3 className="font-black text-slate-800 uppercase tracking-wide text-sm flex items-center gap-2">
+              <Clock size={18} className="text-slate-600" />
+              Recent Call Log
+            </h3>
+            <button 
+              onClick={async () => {
+                const calls = await voip800.getCallHistory(10);
+                if (calls.length > 0) {
+                  alert(`Fetched ${calls.length} call records from 800.com`);
+                } else {
+                  alert('No call records returned — this may be a new number or API requires dashboard configuration first.');
+                }
+              }}
+              className="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl hover:bg-slate-200 transition-colors flex items-center gap-2"
+            >
+              <Download size={14} /> Refresh
+            </button>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-slate-50 text-left">
+                  {['Direction', 'From', 'To', 'Status', 'Duration', 'Time'].map(h => (
+                    <th key={h} className="px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {[
+                  { dir: 'Inbound', from: '(405) 555-0142', to: '1-844-333-4447', status: 'Completed', dur: '3:24', time: 'Today, 10:15 AM' },
+                  { dir: 'Inbound', from: '(918) 555-0198', to: '1-844-333-4447', status: 'Voicemail', dur: '0:45', time: 'Today, 9:42 AM' },
+                  { dir: 'Outbound', from: '1-844-333-4447', to: '(405) 555-0267', status: 'Completed', dur: '12:08', time: 'Yesterday, 4:30 PM' },
+                  { dir: 'Inbound', from: '(214) 555-0331', to: '1-844-333-4447', status: 'Missed', dur: '—', time: 'Yesterday, 2:15 PM' },
+                  { dir: 'Outbound', from: '1-844-333-4447', to: '(405) 555-0142', status: 'Completed', dur: '5:55', time: 'Yesterday, 11:00 AM' },
+                ].map((call, i) => (
+                  <tr key={i} className="hover:bg-slate-50 transition-colors">
+                    <td className="px-6 py-4">
+                      <span className={cn("text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-full", call.dir === 'Inbound' ? 'bg-blue-50 text-blue-600' : 'bg-purple-50 text-purple-600')}>
+                        {call.dir === 'Inbound' ? '📞 IN' : '📤 OUT'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm font-bold text-slate-800">{call.from}</td>
+                    <td className="px-6 py-4 text-sm text-slate-600">{call.to}</td>
+                    <td className="px-6 py-4">
+                      <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-full", 
+                        call.status === 'Completed' ? 'bg-emerald-50 text-emerald-600' : 
+                        call.status === 'Voicemail' ? 'bg-amber-50 text-amber-600' : 
+                        'bg-red-50 text-red-600'
+                      )}>{call.status}</span>
+                    </td>
+                    <td className="px-6 py-4 text-sm font-medium text-slate-600">{call.dur}</td>
+                    <td className="px-6 py-4 text-xs text-slate-500">{call.time}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* CONNECTION VERIFICATION */}
+        <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="text-sm font-black text-slate-800 uppercase tracking-wide">API Connection Test</h4>
+              <p className="text-xs text-slate-500 mt-1">Verify the 800.com API integration is operational</p>
+            </div>
+            <button 
+              onClick={async () => {
+                const result = await voip800.verifyConnection();
+                if (result.connected) {
+                  alert(`✅ CONNECTED\nAccount: ${result.accountId}\nNumber: ${result.number}`);
+                } else {
+                  alert(`❌ CONNECTION FAILED\nAccount: ${result.accountId}\nError: ${result.error}\n\nPlease verify credentials in the .env file or configure via 800.com dashboard.`);
+                }
+              }}
+              className="px-6 py-3 bg-indigo-600 text-white font-bold text-sm rounded-xl hover:bg-indigo-700 transition-colors flex items-center gap-2 shadow-lg shadow-indigo-600/20"
+            >
+              <Zap size={16} /> Test Connection
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const SystemFreezeAlert = () => {
     if (hideSystemFreeze) return null;
     
@@ -2042,9 +2296,77 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
     );
   };
 
-  const renderOpsCenter = () => (
-    <div className="h-full w-full -m-10"><OperationsDashboard user={user} onLogout={onLogout} /></div>
-  );
+  const [opsTab, setOpsTab] = useState('call_center');
+
+  const renderOpsCenter = () => {
+    const opsTabs = [
+      { id: 'call_center', label: 'Call Center', icon: Phone, badge: 'Live' },
+      { id: 'ops_support', label: 'Support Tickets', icon: MessageSquare, badge: '12' },
+      { id: 'ops_it', label: 'IT Support', icon: MonitorPlay },
+      { id: 'ops_hr', label: 'HR Intelligence', icon: UserPlus },
+      { id: 'ops_apps', label: 'Applications', icon: FileText, badge: '502' },
+      { id: 'ops_personnel', label: 'Personnel Force', icon: Users },
+    ];
+    return (
+      <div className="space-y-6 animate-in fade-in duration-500">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-indigo-900 rounded-xl flex items-center justify-center text-white"><Cpu size={20}/></div>
+          <div><h2 className="text-2xl font-black text-slate-800 tracking-tight">Ops Center</h2><p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Internal Operations Hub • 800.com Connected</p></div>
+        </div>
+        <div className="flex flex-wrap gap-2 p-1 bg-slate-100 rounded-2xl border border-slate-200">
+          {opsTabs.map(t => (
+            <button key={t.id} onClick={() => setOpsTab(t.id)} className={cn("flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all", opsTab === t.id ? "bg-white text-slate-800 shadow-sm border border-slate-200" : "text-slate-500 hover:text-slate-700 hover:bg-white/50")}>
+              <t.icon size={15} /> <span className="hidden lg:inline">{t.label}</span>
+              {t.badge && <span className={cn("text-[9px] font-black px-1.5 py-0.5 rounded-full", t.badge === 'Live' ? 'bg-emerald-100 text-emerald-600' : 'bg-indigo-100 text-indigo-600')}>{t.badge}</span>}
+            </button>
+          ))}
+        </div>
+        {opsTab === 'call_center' && (
+          <div className="space-y-4">
+            <div className="bg-gradient-to-r from-indigo-950 via-slate-900 to-emerald-950 rounded-2xl p-6 text-white">
+              <h3 className="text-xl font-black flex items-center gap-2"><Phone className="text-emerald-400" size={20}/> Call Center Command</h3>
+              <p className="text-emerald-300 text-[10px] font-bold uppercase tracking-widest mt-1">800.com VoIP • {voip800.getCompanyNumber()} • Account: {voip800.ACCOUNT_ID || '—'}</p>
+              <div className="grid grid-cols-4 gap-3 mt-4">
+                {[{l:'Number',v:'1-844-333-4447'},{l:'Provider',v:'800.com'},{l:'Account',v:voip800.ACCOUNT_ID||'—'},{l:'Status',v:voip800.isConfigured()?'Active':'Setup'}].map((s,i)=>(<div key={i} className="bg-white/5 border border-white/10 rounded-xl p-3"><p className="text-[9px] font-bold text-white/40 uppercase">{s.l}</p><p className="text-sm font-black text-white mt-0.5">{s.v}</p></div>))}
+              </div>
+            </div>
+            <div className="grid grid-cols-3 gap-4">
+              {[{n:'Main → Founder',d:'Shantell Robinson',t:'Standard',ic:PhoneIncoming},{n:'Overflow → Support',d:'Support Desk',t:'Sequential',ic:PhoneOutgoing},{n:'After Hours → VM',d:'VM Box #1',t:'Scheduled',ic:PhoneOff}].map((r,i)=>(<div key={i} className="flex items-center gap-3 p-4 bg-white border border-slate-200 rounded-xl"><div className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center"><r.ic size={14}/></div><div><p className="text-sm font-bold text-slate-800">{r.n}</p><p className="text-[10px] text-slate-500">→ {r.d} • {r.t}</p></div></div>))}
+            </div>
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center justify-between">
+              <div><h4 className="text-sm font-bold text-slate-800">Test 800.com Connection</h4></div>
+              <button onClick={async()=>{const r=await voip800.verifyConnection();alert(r.connected?`✅ Connected\nAccount: ${r.accountId}`:`❌ Failed: ${r.error}`);}} className="px-4 py-2 bg-indigo-600 text-white font-bold text-sm rounded-lg flex items-center gap-2"><Zap size={14}/> Test</button>
+            </div>
+          </div>
+        )}
+        {opsTab === 'ops_support' && (
+          <div className="space-y-4">
+            <div className="grid grid-cols-3 gap-4">{[{l:'Avg Wait',v:'1m 42s'},{l:'Agents',v:'42'},{l:'Resolution',v:'94%'}].map((s,i)=>(<div key={i} className="bg-white border border-slate-200 p-5 rounded-2xl text-center"><p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{s.l}</p><p className="text-2xl font-black text-slate-800">{s.v}</p></div>))}</div>
+            <div className="bg-white border border-slate-200 rounded-2xl p-5"><h4 className="font-bold text-slate-800 mb-4">Active Conversations</h4><div className="space-y-2">{[1,2,3,4].map(i=>(<div key={i} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100"><div className="flex items-center gap-3"><div className="w-8 h-8 rounded-full bg-white border flex items-center justify-center text-slate-400"><Users size={14}/></div><div><p className="text-sm font-bold text-slate-800">User_{4820+i}</p><p className="text-xs text-slate-500">License Status Inquiry</p></div></div><span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-lg">Wait: 4m</span></div>))}</div></div>
+          </div>
+        )}
+        {opsTab === 'ops_it' && <ITSupportDashboard />}
+        {opsTab === 'ops_hr' && (
+          <div className="space-y-4">
+            <div className="grid grid-cols-4 gap-4">{[{l:'Staff',v:'42'},{l:'Open',v:'8'},{l:'Apps',v:'156'},{l:'Retention',v:'94%'}].map((s,i)=>(<div key={i} className="bg-white border border-slate-200 p-5 rounded-2xl text-center"><p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{s.l}</p><p className="text-2xl font-black text-slate-800">{s.v}</p></div>))}</div>
+            <div className="bg-white border border-slate-200 rounded-2xl p-5"><h4 className="font-bold text-slate-800 mb-4">Hires & Pipeline</h4><div className="space-y-2">{['IT Admin — Ryan Ferrari (Onboarded)','Compliance Analyst — Background Check','Support Lead — Interview Scheduled','Ops Coordinator — Application Received'].map((h,i)=>(<div key={i} className="p-3 bg-slate-50 rounded-xl border border-slate-100 text-sm text-slate-700">{h}</div>))}</div></div>
+          </div>
+        )}
+        {opsTab === 'ops_apps' && (
+          <div className="space-y-4">
+            <div className="grid grid-cols-3 gap-4">{[{l:'Pending',v:'502',c:'text-amber-600'},{l:'Approved',v:'38',c:'text-emerald-600'},{l:'Flagged',v:'12',c:'text-red-600'}].map((s,i)=>(<div key={i} className="bg-white border border-slate-200 p-5 rounded-2xl text-center"><p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{s.l}</p><p className={`text-2xl font-black ${s.c}`}>{s.v}</p></div>))}</div>
+            <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden"><div className="p-4 border-b"><h4 className="font-bold text-slate-800">Applications Queue</h4></div><div className="divide-y">{[{n:'Green Leaf Dispensary',t:'Business License',s:'Pending'},{n:'John D. Carter',t:'Patient Renewal',s:'Review'},{n:'MedCanna Corp',t:'Grower License',s:'Flagged'},{n:'Sarah Williams',t:'Caregiver',s:'Pending'}].map((a,i)=>(<div key={i} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50"><div><p className="text-sm font-bold text-slate-800">{a.n}</p><p className="text-xs text-slate-500">{a.t}</p></div><span className={cn("text-[9px] font-black uppercase px-2 py-0.5 rounded-full",a.s==='Pending'?'bg-amber-50 text-amber-600':a.s==='Flagged'?'bg-red-50 text-red-600':'bg-blue-50 text-blue-600')}>{a.s}</span></div>))}</div></div>
+          </div>
+        )}
+        {opsTab === 'ops_personnel' && (
+          <div className="space-y-4">
+            <div className="grid grid-cols-4 gap-4">{[{l:'Total',v:'1,247'},{l:'Active',v:'892'},{l:'Leave',v:'45'},{l:'New',v:'28'}].map((s,i)=>(<div key={i} className="bg-white border border-slate-200 p-5 rounded-2xl text-center"><p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{s.l}</p><p className="text-2xl font-black text-slate-800">{s.v}</p></div>))}</div>
+            <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden"><div className="p-4 border-b"><h4 className="font-bold text-slate-800">Personnel Directory</h4></div><div className="divide-y">{[{n:'Shantell Robinson',r:'Founder & CEO'},{n:'Monica Green',r:'Compliance Director'},{n:'Ryan Ferrari',r:'CEO / IT Lead'},{n:'Larry AI',r:'Compliance Officer'},{n:'Sylara AI',r:'Intake Agent'}].map((p,i)=>(<div key={i} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50"><div className="flex items-center gap-3"><div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500"><Users size={14}/></div><div><p className="text-sm font-bold text-slate-800">{p.n}</p><p className="text-xs text-slate-500">{p.r}</p></div></div><span className="text-[9px] font-black uppercase text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Active</span></div>))}</div></div>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   const renderSupportTickets = () => (
     <div className="space-y-6">
@@ -2766,6 +3088,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       case 'messages':
         return <InternalMessenger currentUser={{ name: fullName, role: userTitle, roleId: isMonica ? 'compliance_director' : (isRyan ? 'ceo' : 'founder') }} />;
       case 'settings': return renderSettings();
+      case 'call_center': return renderCallCenter();
       default: return renderOverview();
     }
   };
@@ -2992,7 +3315,55 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
             if (isRyan && (item.id === "state_authority" || item.id === "federal" || item.id === "system_health")) return null;
             // === MONICA (Compliance Director): Business/Metrc/OMMA — block federal, state authority, system health ===
             if (isMonica && (item.id === "state_authority" || item.id === "federal" || item.id === "system_health")) return null;
-            if ('section' in item) return <div key={`section-${i}`} onDragOver={(e) => handleDragOver(e, i)} className="pt-6 pb-2 px-3 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{item.section}</div>;
+            if ('section' in item) return (
+              <div 
+                key={`section-${i}`} 
+                draggable
+                onDragStart={(e) => handleDragStart(e, i)}
+                onDragOver={(e) => handleDragOver(e, i)}
+                onDragEnd={() => setDraggedIdx(null)}
+                className={cn(
+                  "pt-6 pb-2 px-3 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] cursor-grab active:cursor-grabbing group flex items-center justify-between",
+                  draggedIdx === i ? "opacity-30 border border-dashed border-indigo-400 rounded-lg" : ""
+                )}
+              >
+                {editingSectionIdx === i ? (
+                  <input
+                    autoFocus
+                    className="bg-transparent border-b border-emerald-400 text-emerald-300 text-[10px] font-black uppercase tracking-[0.2em] outline-none w-full"
+                    defaultValue={item.section}
+                    onBlur={(e) => {
+                      const val = e.target.value.trim();
+                      if (val) {
+                        const newItems = [...navItemsList];
+                        newItems[i] = { ...newItems[i], section: val };
+                        setNavItemsList(newItems);
+                        const ids = newItems.map((it, idx) => it.id || `section-${idx}`);
+                        localStorage.setItem('gghp_nav_order', JSON.stringify(ids));
+                        // Also persist custom section names
+                        const sectionMap: Record<string, string> = {};
+                        newItems.forEach((it, idx) => { if ('section' in it) sectionMap[`section-${idx}`] = it.section!; });
+                        localStorage.setItem('gghp_section_names', JSON.stringify(sectionMap));
+                      }
+                      setEditingSectionIdx(null);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+                      if (e.key === 'Escape') setEditingSectionIdx(null);
+                    }}
+                  />
+                ) : (
+                  <span 
+                    onDoubleClick={() => setEditingSectionIdx(i)}
+                    title="Double-click to rename"
+                    className="cursor-text hover:text-emerald-400 transition-colors"
+                  >
+                    {item.section}
+                  </span>
+                )}
+                <GripVertical size={12} className="text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+            );
             const displayLabel = isExecutive ? item.label?.replace('God', 'Executive') : item.label;
             return (
               <button 
@@ -3013,6 +3384,23 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
               </button>
             );
           })}
+          <button
+            onClick={() => {
+              const name = prompt('Enter new group label:');
+              if (name && name.trim()) {
+                const newItems = [...navItemsList, { section: name.trim().toUpperCase() }];
+                setNavItemsList(newItems);
+                const ids = newItems.map((it, idx) => it.id || `section-${idx}`);
+                localStorage.setItem('gghp_nav_order', JSON.stringify(ids));
+                const sectionMap: Record<string, string> = {};
+                newItems.forEach((it, idx) => { if ('section' in it) sectionMap[`section-${idx}`] = it.section!; });
+                localStorage.setItem('gghp_section_names', JSON.stringify(sectionMap));
+              }
+            }}
+            className="w-full mt-4 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-emerald-400 hover:bg-white/5 border border-dashed border-white/10 hover:border-emerald-400/30 transition-all"
+          >
+            <Plus size={14} /> New Group
+          </button>
         </div>
         <button onClick={onLogout} className="p-6 border-t border-white/5 flex items-center gap-3 text-slate-500 hover:text-white transition-colors">
           <LogOut size={18} /> <span className="text-sm font-black uppercase tracking-widest">Master Sign Out</span>
