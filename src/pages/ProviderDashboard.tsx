@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useDraggableSidebar } from '../hooks/useDraggableSidebar';
 import { 
   Users, Calendar, Video, MapPin, FileText, Share2, Shield, CreditCard, 
   BarChart, Settings, Bell, Search, Zap, Plus, PhoneCall, AlertTriangle, ChevronRight, CheckCircle2, FlaskConical, X, UserCheck
@@ -7,7 +8,7 @@ import { cn } from '../lib/utils';
 import { StatCard } from '../components/StatCard';
 import { CannabisCertWizard } from '../components/provider/CannabisCertWizard';
 
-const sidebarItems = [
+const DEFAULT_SIDEBAR_ITEMS = [
   { id: 'overview', label: 'Overview', icon: BarChart },
   { id: 'queue', label: 'Patient Queue', icon: Users },
   { id: 'schedule', label: 'Schedule & Appts', icon: Calendar },
@@ -39,6 +40,9 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
   const [showCertWizard, setShowCertWizard] = useState(false);
   const [tokens, setTokens] = useState(15);
   const [unlockedPatients, setUnlockedPatients] = useState<string[]>([]);
+
+  // Drag-and-drop sidebar reordering
+  const { items: sidebarItems, handleDragStart, handleDragEnter, handleDragEnd, handleDragOver } = useDraggableSidebar(DEFAULT_SIDEBAR_ITEMS, 'ggp_provider_sidebar_order');
 
   const handleUnlock = (patientId: string) => {
     if (12 + unlockedPatients.length >= 20) {
@@ -102,12 +106,17 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
         </div>
 
         <div className="flex-1 overflow-y-auto px-4 space-y-1">
-          {sidebarItems.map((item) => (
+          {sidebarItems.map((item, index) => (
             <button
               key={item.id}
+              draggable
+              onDragStart={() => handleDragStart(index)}
+              onDragEnter={() => handleDragEnter(index)}
+              onDragEnd={handleDragEnd}
+              onDragOver={handleDragOver}
               onClick={() => setActiveTab(item.id)}
               className={cn(
-                "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left",
+                "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left cursor-grab active:cursor-grabbing",
                 activeTab === item.id 
                   ? "bg-blue-600 text-white shadow-md shadow-blue-900/20" 
                   : "text-slate-400 hover:bg-[#1e3a5f]/50 hover:text-slate-200"

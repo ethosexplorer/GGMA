@@ -159,7 +159,26 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
     };
   }, [fullName]);
 
-  const [navItemsList, setNavItemsList] = useState(INITIAL_NAV_ITEMS);
+  const [navItemsList, setNavItemsList] = useState(() => {
+    try {
+      const saved = localStorage.getItem('gghp_nav_order');
+      if (saved) {
+        const savedIds = JSON.parse(saved) as string[];
+        // Rebuild nav from saved order, preserving any new items not in saved order
+        const idToItem = new Map(INITIAL_NAV_ITEMS.map((item, i) => [item.id || `section-${i}`, item]));
+        const ordered = savedIds
+          .map(id => idToItem.get(id))
+          .filter(Boolean) as typeof INITIAL_NAV_ITEMS;
+        // Add any new items that weren't in saved order
+        INITIAL_NAV_ITEMS.forEach((item, i) => {
+          const key = item.id || `section-${i}`;
+          if (!savedIds.includes(key)) ordered.push(item);
+        });
+        return ordered;
+      }
+    } catch {}
+    return INITIAL_NAV_ITEMS;
+  });
   const [draggedIdx, setDraggedIdx] = useState<number | null>(null);
 
   const handleDragStart = (e: any, index: number) => {
@@ -176,6 +195,9 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
     newItems.splice(index, 0, item);
     setDraggedIdx(index);
     setNavItemsList(newItems);
+    // Persist order to localStorage
+    const ids = newItems.map((it, i) => it.id || `section-${i}`);
+    localStorage.setItem('gghp_nav_order', JSON.stringify(ids));
   };
 
   const [activeTab, setActiveTab] = useState('overview');

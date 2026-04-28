@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useDraggableSidebar } from '../hooks/useDraggableSidebar';
 import {
   Activity, Calendar, Stethoscope, Shield, FileText, Clock, Plus, LayoutDashboard, CreditCard,
   Wallet, Award, Search, FolderOpen, Heart, Bell, Sparkles, TrendingUp, Users, Briefcase, Lock, 
@@ -30,7 +31,7 @@ const Button = ({ children, className, disabled, ...props }: any) => (
   </button>
 );
 
-const tabs = [
+const DEFAULT_TABS = [
   { id: 'overview', label: 'Health Hub', icon: LayoutDashboard },
   { id: 'applications', label: 'Applications', icon: FileText },
   { id: 'travel', label: 'Travel & Reciprocity', icon: Globe },
@@ -48,6 +49,9 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
   const [demoUnlocked, setDemoUnlocked] = useState(true);
   const isSubscribed = user?.subscriptionStatus === 'Active' || user?.planId || demoUnlocked;
   const hasBasic = isSubscribed || user?.planId === 'b2c_basic';
+
+  // Drag-and-drop tab reordering
+  const { items: tabs, handleDragStart, handleDragEnter, handleDragEnd, handleDragOver } = useDraggableSidebar(DEFAULT_TABS, 'ggp_patient_tab_order');
 
   const ShadowOverlay = ({ title, description, moduleName }: { title: string, description: string, moduleName: string }) => (
     <div className="absolute inset-0 z-50 flex items-center justify-center p-6 bg-white/40 backdrop-blur-md rounded-3xl overflow-hidden">
@@ -93,12 +97,17 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
       {/* Tab Navigation */}
       <div className="flex items-center justify-between gap-4">
         <div className="flex flex-wrap bg-white rounded-2xl border border-slate-200 p-1 shadow-sm gap-1 overflow-x-auto hide-scrollbar">
-          {tabs.map((tab) => (
+          {tabs.map((tab, index) => (
             <button
               key={tab.id}
+              draggable
+              onDragStart={() => handleDragStart(index)}
+              onDragEnter={() => handleDragEnter(index)}
+              onDragEnd={handleDragEnd}
+              onDragOver={handleDragOver}
               onClick={() => setActiveTab(tab.id)}
               className={cn(
-                "px-4 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 relative whitespace-nowrap",
+                "px-4 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 relative whitespace-nowrap cursor-grab active:cursor-grabbing",
                 activeTab === tab.id
                   ? tab.id === 'subscription' ? "bg-amber-500 bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md" : "bg-slate-100 text-[#1a4731]"
                   : "text-slate-500 hover:bg-slate-50 hover:text-slate-700",

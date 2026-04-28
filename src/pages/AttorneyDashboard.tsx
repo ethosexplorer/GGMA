@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useDraggableSidebar } from '../hooks/useDraggableSidebar';
 import { 
   Shield, Scale, Briefcase, FileText, Search, BookOpen, Clock, AlertTriangle, 
   ChevronRight, Lock, Unlock, Zap, BarChart2, Bell, MessageSquare, CreditCard,
@@ -7,7 +8,7 @@ import {
 import { cn } from '../lib/utils';
 import { StatCard } from '../components/StatCard';
 
-const sidebarItems = [
+const DEFAULT_SIDEBAR_ITEMS = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'browse', label: 'Browse Cases', icon: Search },
   { id: 'active', label: 'My Active Cases', icon: Briefcase },
@@ -34,6 +35,9 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
   const [tokens, setTokens] = useState(12);
   const [unlockedCases, setUnlockedCases] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Drag-and-drop sidebar reordering
+  const { items: sidebarItems, handleDragStart, handleDragEnter, handleDragEnd, handleDragOver } = useDraggableSidebar(DEFAULT_SIDEBAR_ITEMS, 'ggp_attorney_sidebar_order');
 
   const handleUnlock = (caseId: string) => {
     if (9 + unlockedCases.length >= 15) {
@@ -101,12 +105,17 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
         </div>
 
         <div className="flex-1 overflow-y-auto px-4 space-y-1">
-          {sidebarItems.map((item) => (
+          {sidebarItems.map((item, index) => (
             <button
               key={item.id}
+              draggable
+              onDragStart={() => handleDragStart(index)}
+              onDragEnter={() => handleDragEnter(index)}
+              onDragEnd={handleDragEnd}
+              onDragOver={handleDragOver}
               onClick={() => setActiveTab(item.id)}
               className={cn(
-                "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left",
+                "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left cursor-grab active:cursor-grabbing",
                 activeTab === item.id 
                   ? "bg-[#1a4731] text-white shadow-md shadow-black/20 border border-[#2a6b4a]" 
                   : "text-slate-400 hover:bg-[#153a28]/50 hover:text-slate-200"
