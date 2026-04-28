@@ -81,13 +81,18 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
   const renderCallCenter = () => {
     const isConnected = voip800.isConfigured();
     const [liveQueue, setLiveQueue] = useState(0);
+    const [recentCalls, setRecentCalls] = useState<any[]>([]);
 
     useEffect(() => {
-      const qInterval = setInterval(async () => {
-        const c = await voip800.getQueueCount();
-        setLiveQueue(c);
-      }, 5000);
-      return () => clearInterval(qInterval);
+      const fetchData = async () => {
+        const qCount = await voip800.getQueueCount();
+        setLiveQueue(qCount);
+        const calls = await voip800.getCallHistory(10);
+        setRecentCalls(calls);
+      };
+      fetchData();
+      const intervalId = setInterval(fetchData, 5000);
+      return () => clearInterval(intervalId);
     }, []);
 
     return (
@@ -188,26 +193,24 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
         <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
           <div className="p-4 border-b border-slate-100 flex justify-between items-center">
             <h3 className="font-bold text-slate-800 text-sm flex items-center gap-2"><Clock size={16} /> Recent Calls</h3>
-            <button onClick={async () => { const c = await voip800.getCallHistory(10); alert(c.length > 0 ? `${c.length} records` : 'No records yet'); }} className="px-3 py-1.5 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-lg flex items-center gap-1"><Download size={12} /> Refresh</button>
+            <button onClick={async () => { const c = await voip800.getCallHistory(10); setRecentCalls(c); alert('Refreshed'); }} className="px-3 py-1.5 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-lg flex items-center gap-1"><Download size={12} /> Refresh</button>
           </div>
           <table className="w-full">
             <thead><tr className="bg-slate-50 text-left">{['Dir','From','To','Status','Dur','Time'].map(h => <th key={h} className="px-4 py-2 text-[9px] font-black uppercase tracking-widest text-slate-500">{h}</th>)}</tr></thead>
             <tbody className="divide-y divide-slate-100">
-              {[
-                { dir:'IN', from:'(405) 555-0142', to:'844-333-4447', st:'Completed', dur:'3:24', time:'Today 10:15 AM' },
-                { dir:'IN', from:'(918) 555-0198', to:'844-333-4447', st:'Voicemail', dur:'0:45', time:'Today 9:42 AM' },
-                { dir:'OUT', from:'844-333-4447', to:'(405) 555-0267', st:'Completed', dur:'12:08', time:'Yesterday 4:30 PM' },
-                { dir:'IN', from:'(214) 555-0331', to:'844-333-4447', st:'Missed', dur:'—', time:'Yesterday 2:15 PM' },
-              ].map((c, i) => (
+              {recentCalls.map((c: any, i: number) => (
                 <tr key={i} className="hover:bg-slate-50">
-                  <td className="px-4 py-3"><span className={cn("text-[9px] font-black px-1.5 py-0.5 rounded-full", c.dir==='IN' ? 'bg-blue-50 text-blue-600' : 'bg-purple-50 text-purple-600')}>{c.dir}</span></td>
+                  <td className="px-4 py-3"><span className={cn("text-[9px] font-black px-1.5 py-0.5 rounded-full", c.direction==='inbound' ? 'bg-blue-50 text-blue-600' : 'bg-purple-50 text-purple-600')}>{c.direction === 'inbound' ? 'IN' : 'OUT'}</span></td>
                   <td className="px-4 py-3 text-sm font-bold text-slate-800">{c.from}</td>
                   <td className="px-4 py-3 text-sm text-slate-600">{c.to}</td>
-                  <td className="px-4 py-3"><span className={cn("text-[9px] font-bold px-1.5 py-0.5 rounded-full", c.st==='Completed'?'bg-emerald-50 text-emerald-600':c.st==='Voicemail'?'bg-amber-50 text-amber-600':'bg-red-50 text-red-600')}>{c.st}</span></td>
-                  <td className="px-4 py-3 text-sm text-slate-600">{c.dur}</td>
-                  <td className="px-4 py-3 text-xs text-slate-500">{c.time}</td>
+                  <td className="px-4 py-3"><span className={cn("text-[9px] font-bold px-1.5 py-0.5 rounded-full capitalize", c.status==='completed'?'bg-emerald-50 text-emerald-600':c.status==='voicemail'?'bg-amber-50 text-amber-600':'bg-red-50 text-red-600')}>{c.status}</span></td>
+                  <td className="px-4 py-3 text-sm text-slate-600">{c.duration > 0 ? `${Math.floor(c.duration/60)}:${(c.duration%60).toString().padStart(2,'0')}` : '—'}</td>
+                  <td className="px-4 py-3 text-xs text-slate-500">{new Date(c.timestamp).toLocaleString()}</td>
                 </tr>
               ))}
+              {recentCalls.length === 0 && (
+                <tr><td colSpan={6} className="px-4 py-8 text-center text-slate-500 text-sm font-bold">No calls found in history</td></tr>
+              )}
             </tbody>
           </table>
         </div>
