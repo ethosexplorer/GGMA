@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { 
-  Activity, ShieldAlert, FlaskConical, AlertTriangle, FileText, UploadCloud, 
+import { Calendar, Activity, ShieldAlert, FlaskConical, AlertTriangle, FileText, UploadCloud, 
   Settings, Download, Search, CheckCircle2, XCircle, Bell, User, Clock, 
   Thermometer, Plus, Smartphone, ChevronRight
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { StatCard } from '../components/StatCard';
+import { UserCalendar } from '../components/UserCalendar';
 
 const sidebarItems = [
   { id: 'dashboard', label: 'Health Dashboard', icon: Activity },

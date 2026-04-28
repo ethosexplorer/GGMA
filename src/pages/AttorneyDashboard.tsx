@@ -3,12 +3,14 @@ import { useDraggableSidebar } from '../hooks/useDraggableSidebar';
 import { 
   Shield, Scale, Briefcase, FileText, Search, BookOpen, Clock, AlertTriangle, 
   ChevronRight, Lock, Unlock, Zap, BarChart2, Bell, MessageSquare, CreditCard,
-  CheckCircle, PlusCircle, LayoutDashboard, UserCheck, CheckCircle2, ShieldAlert
+  CheckCircle, PlusCircle, LayoutDashboard, UserCheck, CheckCircle2, ShieldAlert, Calendar
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { StatCard } from '../components/StatCard';
+import { UserCalendar } from '../components/UserCalendar';
 
 const DEFAULT_SIDEBAR_ITEMS = [
+  { id: 'calendar', label: 'My Calendar', icon: Calendar },
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'browse', label: 'Browse Cases', icon: Search },
   { id: 'active', label: 'My Active Cases', icon: Briefcase },

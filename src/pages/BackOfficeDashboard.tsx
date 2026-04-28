@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { 
-  Building2, PhoneCall, Calendar as CalendarIcon, Server, Users,
+import { Calendar, Building2, PhoneCall, Calendar as CalendarIcon, Server, Users,
   Map as MapIcon, Bot, Activity, HelpCircle, FileText, CheckCircle2,
   TrendingUp, Search, Bell, Shield, Plus, Clock, Globe
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { MasterAddOnsList } from '../components/shared/MasterAddOnsList';
+import { UserCalendar } from '../components/UserCalendar';
 
 export const BackOfficeDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
   const [activeTab, setActiveTab] = useState('core');

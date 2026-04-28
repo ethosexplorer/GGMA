@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LayoutDashboard, Globe, Activity, Shield, DollarSign, Scale, Sparkles, FileText, BookOpen, Lock, CreditCard, Gavel } from 'lucide-react';
+import { Calendar, LayoutDashboard, Globe, Activity, Shield, DollarSign, Scale, Sparkles, FileText, BookOpen, Lock, CreditCard, Gavel } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { FederalOverviewTab } from '../components/federal/FederalOverviewTab';
 import { InterstateMonitoringTab } from '../components/federal/InterstateMonitoringTab';
@@ -14,6 +14,7 @@ import { LeaseAuditTab } from '../components/federal/LeaseAuditTab';
 import { SubscriptionPortal } from '../components/SubscriptionPortal';
 import { LegislativeIntelTab } from '../components/federal/LegislativeIntelTab';
 import { JudicialMonitorTab } from '../components/federal/JudicialMonitorTab';
+import { UserCalendar } from '../components/UserCalendar';
 
 const tabs = [
   { id: 'overview', label: 'Nationwide Overview', icon: LayoutDashboard },
@@ -108,7 +109,10 @@ export const FederalDashboard = ({ onLogout, user }: { onLogout?: () => void, us
 
         {/* Main Content */}
         <main className="flex-1 p-6 overflow-auto">
-          {activeTab === 'overview' && <FederalOverviewTab />}
+          {activeTab === 'calendar' && (
+                  <UserCalendar user={user} title="src\pages\Federal Calendar" subtitle="Appointments & Scheduling" />
+                )}
+                {activeTab === 'overview' && <FederalOverviewTab />}
           {activeTab === 'intel' && <LegislativeIntelTab />}
           {activeTab === 'interstate' && <InterstateMonitoringTab />}
           {activeTab === 'enforcement' && <EnforcementIntelTab />}

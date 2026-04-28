@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  Building2, Users, FileText, Settings, Shield, Activity, Bell,
+import { Calendar, Building2, Users, FileText, Settings, Shield, Activity, Bell,
   Briefcase, HeartPulse, Scale, Gavel, FileCheck, CheckCircle2,
   Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
@@ -8,6 +7,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
+import { UserCalendar } from '../components/UserCalendar';
 
 const NAV_ITEMS = [
   { section: 'STATE OVERSIGHT' },
@@ -77,6 +77,7 @@ export const RegulatorDashboard = ({ onLogout, user }: { onLogout?: () => void |
 
   const getContent = () => {
     switch (activeTab) {
+      case 'calendar': return <div className="h-full w-full -m-10"><UserCalendar user={user} title="src\pages\Regulator Calendar" subtitle="Appointments & Scheduling" /></div>;
       case 'overview': return renderOverview();
       default: return (
         <div className="flex items-center justify-center h-[60vh]">

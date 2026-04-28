@@ -29,7 +29,7 @@ import { FounderModals } from '../components/FounderModals';
 import { ITSupportDashboard } from '../components/it/ITSupportDashboard';
 import { RolePermissionsPanel } from '../components/RolePermissionsPanel';
 import { InternalMessenger } from '../components/messaging/InternalMessenger';
-import { ExecutiveCalendar } from '../components/ExecutiveCalendar';
+import { UserCalendar } from '../components/UserCalendar';
 
 const INITIAL_NAV_ITEMS = [
   { section: 'FOUNDER EXCLUSIVE' },
@@ -2754,7 +2754,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
         return <div className="h-full w-full -m-10 p-10 min-h-screen overflow-auto bg-slate-50"><ITSupportDashboard /></div>;
       case 'logs': return renderLogs();
       case 'support_tickets': return renderSupportTickets();
-      case 'internal_scheduler': return <ExecutiveCalendar />;
+      case 'internal_scheduler': return <UserCalendar user={user} title="Executive Calendar" />;
       case 'hr_intelligence': return renderHRIntelligence();
       case 'rapid_testing': return renderRapidTestingHub();
       case 'law_enforcement': return renderLawEnforcement();

@@ -36,7 +36,7 @@ const fmt = (d: Date) => d.toISOString().split('T')[0];
 const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-export const ExecutiveCalendar = () => {
+export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: string, subtitle?: string }) => {
   const [view, setView] = useState<ViewMode>('month');
   const [current, setCurrent] = useState(new Date(2026, 3, 28)); // April 28, 2026
   const [events, setEvents] = useState<CalEvent[]>(SEED_EVENTS);
@@ -90,7 +90,7 @@ export const ExecutiveCalendar = () => {
     setForm(f => ({ ...f, meetLink: `https://meet.google.com/${code}` }));
   };
 
-  const GOOGLE_EMAIL = 'globalgreenhp@gmail.com';
+  const GOOGLE_EMAIL = user?.email || 'globalgreenhp@gmail.com';
 
   // Opens Google Calendar in a new tab for the connected account
   const openGoogleCalendar = () => window.open(`https://calendar.google.com/calendar/u/0/r?authuser=${GOOGLE_EMAIL}`, '_blank');
@@ -182,8 +182,8 @@ export const ExecutiveCalendar = () => {
       {/* HEADER */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
         <div>
-          <h2 className="text-3xl font-black text-slate-900 tracking-tight italic">Executive Calendar</h2>
-          <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Schedule • Meetings • Google Meet Integration</p>
+          <h2 className="text-3xl font-black text-slate-900 tracking-tight italic">{title || 'My Calendar'}</h2>
+          <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">{subtitle || 'Schedule • Meetings • Google Meet Integration'}</p>
         </div>
         <div className="flex items-center gap-3 flex-wrap">
           {/* View toggle */}

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { 
-  Wallet, CreditCard, TrendingUp, ShieldCheck, History, ArrowUpRight, 
+import { Calendar, Wallet, CreditCard, TrendingUp, ShieldCheck, History, ArrowUpRight, 
   ArrowDownLeft, PlusCircle, Award, Target, Activity, Zap, Lock
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { turso } from '../lib/turso';
 import { StatCard } from '../components/StatCard';
+import { UserCalendar } from '../components/UserCalendar';
 
 const transactions = [
   { id: 1, type: 'reload', amount: 200, date: 'Today, 10:30 AM', merchant: 'GGP Kiosk - Tulsa', status: 'Completed' },

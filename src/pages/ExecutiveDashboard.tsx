@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  Activity, Users, Building2, Briefcase, Scale,
+import { Calendar, Activity, Users, Building2, Briefcase, Scale,
   FileText, FileCheck, Gavel, MonitorPlay, MessageSquare,
   BarChart3, FolderLock, Settings, Shield, Cpu,
   HeartPulse, ArrowUpRight, Wallet, Map, Globe,
@@ -9,6 +8,7 @@ import {
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { EXECUTIVE_KNOWLEDGE } from '../executiveKnowledge';
+import { UserCalendar } from '../components/UserCalendar';
 
 // Common Button Component
 const Button = ({ children, className, icon: Icon, variant, disabled, ...props }: any) => (
@@ -462,7 +462,10 @@ export const ExecutiveDashboard = ({ onLogout, user }: any) => {
         {/* Content Area */}
         <main className="flex-1 overflow-y-auto p-8 relative z-0">
           <AnimatePresence mode="wait">
-            {activeTab === 'overview' && renderOverview()}
+            {activeTab === 'calendar' && (
+                  <UserCalendar user={user} title="src\pages\Executive Calendar" subtitle="Appointments & Scheduling" />
+                )}
+                {activeTab === 'overview' && renderOverview()}
             {activeTab === 'financial_command' && renderModulePlaceholder('Financial Command', 'Total Wallet Balances, Revenue Streams, Processing volume (Kurv), Network reserves, and Cash flow tracking.', BarChart3)}
             {activeTab === 'allocation_engine' && renderModulePlaceholder('Provision Engine (Core)', 'Patient/Business balances, Network reserve, Virtual card activity, and Allocation activation pipeline.', Wallet)}
             {activeTab === 'ecosystem' && renderModulePlaceholder('Ecosystem Activity', 'Global view of Patients, Businesses, Providers, Attorneys, and Backoffice clients.', Users)}

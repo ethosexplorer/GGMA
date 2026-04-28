@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  Building2, Users, FileText, Settings, Shield, Activity, Bell,
+import { Calendar, Building2, Users, FileText, Settings, Shield, Activity, Bell,
   Globe, HeartPulse, Cpu, LayoutDashboard, LogOut, ArrowLeft, 
   FlaskConical, CreditCard, ChevronRight, Clock, Phone
 } from 'lucide-react';
@@ -13,6 +12,7 @@ import { SubscriptionPortal } from '../components/SubscriptionPortal';
 import { AuditLogsTab } from '../components/oversight/AuditLogsTab';
 import { VirtualAttendantTab } from '../components/oversight/VirtualAttendantTab';
 import { StateWelcomeBanner } from '../components/shared/StateWelcomeBanner';
+import { UserCalendar } from '../components/UserCalendar';
 
 const NAV_ITEMS = [
   { section: 'MAIN OVERSIGHT' },
@@ -211,7 +211,10 @@ export const OversightDashboard = ({ onLogout, user, role, jurisdiction = 'Oklah
 
       {/* Main Content Area */}
       <div className="flex-1 h-screen overflow-hidden flex flex-col bg-slate-50">
-        {activeTab === 'overview' && (
+        {activeTab === 'calendar' && (
+                  <UserCalendar user={user} title="src\pages\Oversight Calendar" subtitle="Appointments & Scheduling" />
+                )}
+                {activeTab === 'overview' && (
           <header className="h-16 border-b border-slate-200 flex items-center justify-between px-8 bg-white shrink-0 shadow-sm z-10">
             <h1 className="text-lg font-black text-slate-800 tracking-tight">Oversight Command</h1>
             <div className="flex items-center gap-4">

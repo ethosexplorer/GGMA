@@ -17,6 +17,7 @@ import { ProviderDirectoryTab } from '../components/patient/ProviderDirectoryTab
 import { AttorneyMarketplaceTab } from '../components/shared/AttorneyMarketplaceTab';
 import { DocumentVaultTab } from '../components/patient/DocumentVaultTab';
 import { ComplianceTravelTab } from '../components/patient/ComplianceTravelTab';
+import { UserCalendar } from '../components/UserCalendar';
 
 const Button = ({ children, className, disabled, ...props }: any) => (
   <button
@@ -32,6 +33,7 @@ const Button = ({ children, className, disabled, ...props }: any) => (
 );
 
 const DEFAULT_TABS = [
+  { id: 'calendar', label: 'My Calendar', icon: Calendar },
   { id: 'overview', label: 'Health Hub', icon: LayoutDashboard },
   { id: 'applications', label: 'Applications', icon: FileText },
   { id: 'travel', label: 'Travel & Reciprocity', icon: Globe },
@@ -175,7 +177,10 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
 
       <AnimatePresence mode="wait">
         {/* ─── OVERVIEW TAB ─── */}
-        {activeTab === 'overview' && (
+        {activeTab === 'calendar' && (
+                  <UserCalendar user={user} title="src\pages\Patient Calendar" subtitle="Appointments & Scheduling" />
+                )}
+                {activeTab === 'overview' && (
           <motion.div 
             initial={{ opacity: 0, y: 10 }} 
             animate={{ opacity: 1, y: 0 }} 

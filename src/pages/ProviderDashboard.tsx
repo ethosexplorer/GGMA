@@ -7,6 +7,7 @@ import {
 import { cn } from '../lib/utils';
 import { StatCard } from '../components/StatCard';
 import { CannabisCertWizard } from '../components/provider/CannabisCertWizard';
+import { UserCalendar } from '../components/UserCalendar';
 
 const DEFAULT_SIDEBAR_ITEMS = [
   { id: 'overview', label: 'Overview', icon: BarChart },
@@ -406,8 +407,11 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                     </div>
                   </div>
                 )}
+                {activeTab === 'schedule' && (
+                  <UserCalendar user={user} title="Provider Schedule" subtitle="Appointments • Telehealth • Clinics" />
+                )}
                 
-                {['overview', 'schedule', 'certifications', 'reports', 'settings'].includes(activeTab) && (
+                {['overview', 'certifications', 'reports', 'settings'].includes(activeTab) && (
                   <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center shadow-sm">
                     <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-400">
                       <Settings size={32} />

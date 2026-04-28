@@ -15,6 +15,7 @@ import { DashboardAnalytics } from '../components/DashboardAnalytics';
 import { RegulatoryReportingTab } from '../components/business/RegulatoryReportingTab';
 import { BusinessApplicationsTab } from '../components/business/BusinessApplicationsTab';
 import { StressTestEngine, StressTestResult } from '../lib/compliance/StressTestEngine';
+import { UserCalendar } from '../components/UserCalendar';
 
 // Simple Button mock
 const Button = ({ children, className, icon: Icon, variant, disabled, ...props }: any) => (

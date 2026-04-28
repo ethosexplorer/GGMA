@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { 
-  Building2, Users, FileText, Settings, Shield, Activity, Bell,
+import { Calendar, Building2, Users, FileText, Settings, Shield, Activity, Bell,
   BarChart3, Folder, TrendingUp, CheckCircle2, ChevronRight, Bot,
   CreditCard, MessageSquare, AlertTriangle, Upload, Clock, Eye, Lock
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
+import { UserCalendar } from '../components/UserCalendar';
 
 const EXT_NAV = [
   { id: 'overview', label: 'Dashboard Overview', icon: Activity },
@@ -150,6 +150,7 @@ export const ExternalAdminDashboard = ({ onLogout, user }: { onLogout?: () => vo
 
   const getContent = () => {
     switch (activeTab) {
+      case 'calendar': return <div className="h-full w-full -m-10"><UserCalendar user={user} title="src\pages\ExternalAdmin Calendar" subtitle="Appointments & Scheduling" /></div>;
       case 'overview': return renderOverview();
       case 'account': return renderModulePlaceholder('My Account / Organization', 'View and manage your organization profile, locations, staff, and licensing details.', Building2);
       case 'compliance': return renderModulePlaceholder('Compliance Status', 'Pass / Fail / Flagged status for all your locations. View required actions and deadlines.', Shield);

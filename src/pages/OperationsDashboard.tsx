@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  Building2, Users, FileText, Settings, Shield, Activity, Bell,
+import { Calendar, Building2, Users, FileText, Settings, Shield, Activity, Bell,
   Briefcase, HeartPulse, Scale, Gavel, FileCheck, CheckCircle2,
   Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
@@ -8,6 +7,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
+import { UserCalendar } from '../components/UserCalendar';
 
 const NAV_ITEMS = [
   { section: 'SUPPORT OPERATIONS' },
