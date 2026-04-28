@@ -7718,8 +7718,12 @@ export default function App() {
     const initialTab = validTabs.includes(subTab || '') ? subTab : undefined;
 
     // Oversight Portal Routing
-    if (role === 'executive_founder' || role === 'executive_ceo' || role === 'executive_monica') {
+    if (role === 'executive_founder' || role === 'executive_ceo' || role === 'executive_monica' || role === 'executive_advisor') {
       return <FounderDashboard onLogout={handleReturnToSelector} user={profile} jurisdiction={jurisdiction} />;
+    }
+    // Federal Dashboard Routing
+    if (role === 'regulator_federal') {
+      return <FederalDashboard onLogout={handleReturnToSelector} user={profile} />;
     }
     // Law Enforcement Portal Routing
     if (role === 'law_enforcement' || role === 'enforcement_state' || role?.startsWith('enforcement')) {
@@ -7746,7 +7750,7 @@ export default function App() {
     }
 
     // Patient Portal Routing
-    if (role === 'user' || role === 'Patient / Caregiver') {
+    if (role === 'user' || role === 'patient' || role === 'Patient / Caregiver') {
       return (
         <DashboardLayout role={role} onLogout={handleReturnToSelector} userProfile={profile} onOpenConcierge={() => setShowLarryModal(true)}>
           <PatientDashboard user={profile} onOpenConcierge={() => setShowLarryModal(true)} jurisdiction={jurisdiction} />
