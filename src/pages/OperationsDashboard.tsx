@@ -80,6 +80,16 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
 
   const renderCallCenter = () => {
     const isConnected = voip800.isConfigured();
+    const [liveQueue, setLiveQueue] = useState(0);
+
+    useEffect(() => {
+      const qInterval = setInterval(async () => {
+        const c = await voip800.getQueueCount();
+        setLiveQueue(c);
+      }, 5000);
+      return () => clearInterval(qInterval);
+    }, []);
+
     return (
       <div className="space-y-6">
         {/* Header */}
@@ -96,6 +106,10 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
                 </p>
               </div>
               <div className="flex items-center gap-3">
+                <div className="bg-rose-500/20 border border-rose-500/30 px-3 py-1.5 rounded-lg flex items-center gap-2">
+                  <span className="text-[10px] font-bold text-rose-300 uppercase tracking-widest">Active Queue:</span>
+                  <span className="text-sm font-black text-rose-400">{liveQueue}</span>
+                </div>
                 <select 
                   value={agentStatus} 
                   onChange={(e) => setAgentStatus(e.target.value)}

@@ -34,14 +34,17 @@ const departments: Department[] = [
 export const VirtualAttendantTab = () => {
   const [selectedDept, setSelectedDept] = useState<Department | null>(null);
   const [stats, setStats] = useState<CallCenterStats | null>(null);
+  const [liveQueue, setLiveQueue] = useState(0);
 
   useEffect(() => {
     const fetchStats = async () => {
       const data = await voip800.getCallCenterStats();
+      const qCount = await voip800.getQueueCount();
       setStats(data);
+      setLiveQueue(qCount);
     };
     fetchStats();
-    const interval = setInterval(fetchStats, 10000); // refresh every 10s
+    const interval = setInterval(fetchStats, 5000); // refresh every 5s for queue accuracy
     return () => clearInterval(interval);
   }, []);
 
@@ -72,8 +75,16 @@ export const VirtualAttendantTab = () => {
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">System Status</span>
               </div>
-              <p className="text-xl font-black text-white">{voip800.isConfigured() ? '800.com Linked' : 'Offline'}</p>
-              <p className="text-[10px] text-emerald-100/50">Current Capacity: {stats?.activeAgents || 0} Agent(s) Ready</p>
+              <div className="flex items-end justify-between">
+                <div>
+                  <p className="text-xl font-black text-white">{voip800.isConfigured() ? '800.com Linked' : 'Offline'}</p>
+                  <p className="text-[10px] text-emerald-100/50">Current Capacity: {stats?.activeAgents || 0} Agent(s) Ready</p>
+                </div>
+                <div className="text-center ml-4 px-3 py-1.5 bg-rose-500/20 border border-rose-500/30 rounded-xl">
+                  <p className="text-[9px] font-bold text-rose-300 uppercase tracking-widest">Active Queue</p>
+                  <p className="text-lg font-black text-rose-400">{liveQueue}</p>
+                </div>
+              </div>
             </div>
           </div>
 

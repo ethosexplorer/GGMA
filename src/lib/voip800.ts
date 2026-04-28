@@ -236,6 +236,40 @@ export function getCompanyNumber(): string {
   return '1-844-333-4447';
 }
 
+/**
+ * Get real-time queue count from Turso state
+ */
+export async function getQueueCount(): Promise<number> {
+  try {
+    const TURSO_URL = 'https://ggma-ggma.aws-us-east-2.turso.io/v2/pipeline';
+    const TURSO_TOKEN = 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3NzcxNDQ4OTAsImlkIjoiMDE5ZGM2MTYtY2UwMS03MGMwLWFhOWQtN2IxMTJjNGFkNGYzIiwicmlkIjoiNDA4MWUwODktMDE3OS00ZWRmLTlkOTQtYjRiNDY0YmJjOGE2In0.A-EvoD8xf7Xs0E3Rciq7BQUSe9aDNF8ck60z953z8ffSJJ0NuJ7pFLbOW9BZfAv0eGTruwOqpTsWxE2_wp57CQ';
+    
+    const res = await fetch(TURSO_URL, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${TURSO_TOKEN}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        requests: [
+          { type: "execute", stmt: { sql: "SELECT value FROM system_state WHERE key = 'queue_count';" } }
+        ]
+      })
+    });
+    
+    if (!res.ok) return 0;
+    const data = await res.json();
+    const rows = data.results?.[0]?.response?.result?.rows;
+    if (rows && rows.length > 0) {
+      return parseInt(rows[0][0].value, 10) || 0;
+    }
+    return 0;
+  } catch (err) {
+    console.error('[800.com] Failed to fetch queue count:', err);
+    return 0;
+  }
+}
+
 export const voip800 = {
   getCallHistory,
   sendSMS,
@@ -246,6 +280,7 @@ export const voip800 = {
   verifyConnection,
   isConfigured,
   getCompanyNumber,
+  getQueueCount,
   ACCOUNT_ID,
   COMPANY_NUMBER,
 };
