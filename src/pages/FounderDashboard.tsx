@@ -29,6 +29,7 @@ import { FounderModals } from '../components/FounderModals';
 import { ITSupportDashboard } from '../components/it/ITSupportDashboard';
 import { RolePermissionsPanel } from '../components/RolePermissionsPanel';
 import { InternalMessenger } from '../components/messaging/InternalMessenger';
+import { ExecutiveCalendar } from '../components/ExecutiveCalendar';
 
 const INITIAL_NAV_ITEMS = [
   { section: 'FOUNDER EXCLUSIVE' },
@@ -40,6 +41,7 @@ const INITIAL_NAV_ITEMS = [
   { id: 'jurisdiction_map', label: 'Nationwide Oversight', icon: Globe },
   { section: 'MAIN' },
   { id: 'messages', label: 'Messages', icon: MessageSquare, badge: 'Live' },
+  { id: 'internal_scheduler', label: 'Calendar & Scheduler', icon: Clock, badge: 'New' },
   { id: 'overview', label: 'God Overview', icon: Activity },
   { section: 'SUPREME COMMAND' },
   { id: 'users', label: 'Personnel Force (Total)', icon: Users },
@@ -69,7 +71,7 @@ const INITIAL_NAV_ITEMS = [
   { id: 'it_support', label: 'IT Support & Diagnostics', icon: MonitorPlay, badge: 'Ryan' },
   { id: 'logs', label: 'System Logs', icon: Database },
   { id: 'support_tickets', label: 'Support Tickets', icon: MessageSquare, badge: '12' },
-  { id: 'internal_scheduler', label: 'Internal Scheduler', icon: Clock, badge: 'Priority' },
+
   { id: 'roles_duties', label: 'My Role & Duties', icon: Shield },
   { id: 'settings', label: 'God Settings', icon: Settings },
 ];
@@ -2752,7 +2754,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
         return <div className="h-full w-full -m-10 p-10 min-h-screen overflow-auto bg-slate-50"><ITSupportDashboard /></div>;
       case 'logs': return renderLogs();
       case 'support_tickets': return renderSupportTickets();
-      case 'internal_scheduler': return renderInternalScheduler();
+      case 'internal_scheduler': return <ExecutiveCalendar />;
       case 'hr_intelligence': return renderHRIntelligence();
       case 'rapid_testing': return renderRapidTestingHub();
       case 'law_enforcement': return renderLawEnforcement();
