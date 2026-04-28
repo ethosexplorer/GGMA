@@ -2255,17 +2255,17 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
 };
 
 const SylaraFloatingWidget = ({ onClick }: { onClick: () => void }) => (
-  <div className="fixed bottom-6 right-6 z-50">
+  <div className="fixed bottom-24 right-6 z-50">
     <button 
       onClick={onClick}
-      className="bg-purple-700 text-white p-4 rounded-full shadow-2xl hover:bg-purple-800 hover:scale-105 transition-all flex items-center gap-3 group"
+      className="bg-purple-700 text-white p-4 rounded-full shadow-2xl hover:bg-purple-800 hover:scale-105 transition-all flex items-center gap-3 group border border-purple-500/30"
     >
       <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center overflow-hidden shadow-inner">
         <img src="/larry-logo.png" alt="Sylara" className="w-full h-full object-cover" />
       </div>
       <div className="hidden md:block text-left pr-2">
         <div className="text-sm font-bold leading-tight">Sylara Intake Agent</div>
-        <div className="text-[11px] text-white/80">Onboarding & Support</div>
+        <div className="text-[11px] text-white/80">Personal Assistant</div>
       </div>
     </button>
   </div>

@@ -88,7 +88,9 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
         const qCount = await voip800.getQueueCount();
         setLiveQueue(qCount);
         const calls = await voip800.getCallHistory(10);
-        setRecentCalls(calls);
+        // Sort newest first
+        const sortedCalls = calls.sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+        setRecentCalls(sortedCalls);
       };
       fetchData();
       const intervalId = setInterval(fetchData, 5000);
@@ -111,10 +113,16 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
                 </p>
               </div>
               <div className="flex items-center gap-3">
-                <div className="bg-rose-500/20 border border-rose-500/30 px-3 py-1.5 rounded-lg flex items-center gap-2">
+                <a 
+                  href="https://app.800.com/login"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-rose-500/20 border border-rose-500/30 px-3 py-1.5 rounded-lg flex items-center gap-2 hover:bg-rose-500/40 hover:scale-105 transition-all cursor-pointer"
+                  title="Click to open 800.com Web Dialer"
+                >
                   <span className="text-[10px] font-bold text-rose-300 uppercase tracking-widest">Active Queue:</span>
                   <span className="text-sm font-black text-rose-400">{liveQueue}</span>
-                </div>
+                </a>
                 <select 
                   value={agentStatus} 
                   onChange={(e) => setAgentStatus(e.target.value)}

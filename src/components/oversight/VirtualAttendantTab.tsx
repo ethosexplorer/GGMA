@@ -80,10 +80,16 @@ export const VirtualAttendantTab = () => {
                   <p className="text-xl font-black text-white">{voip800.isConfigured() ? '800.com Linked' : 'Offline'}</p>
                   <p className="text-[10px] text-emerald-100/50">Current Capacity: {stats?.activeAgents || 0} Agent(s) Ready</p>
                 </div>
-                <div className="text-center ml-4 px-3 py-1.5 bg-rose-500/20 border border-rose-500/30 rounded-xl">
+                <a 
+                  href="https://app.800.com/login"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-center ml-4 px-3 py-1.5 bg-rose-500/20 border border-rose-500/30 rounded-xl hover:bg-rose-500/40 hover:scale-105 transition-all cursor-pointer block"
+                  title="Click to open 800.com Web Dialer"
+                >
                   <p className="text-[9px] font-bold text-rose-300 uppercase tracking-widest">Active Queue</p>
                   <p className="text-lg font-black text-rose-400">{liveQueue}</p>
-                </div>
+                </a>
               </div>
             </div>
           </div>
