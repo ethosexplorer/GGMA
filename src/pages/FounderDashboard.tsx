@@ -85,13 +85,14 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
   const emailLower = user?.email?.toLowerCase() || '';
   const displayNameLower = user?.displayName?.toLowerCase() || '';
   
-  const isMonica = emailLower.includes('mgreen') || emailLower.includes('monica') || displayNameLower.includes('monica');
+  const isMonica = emailLower.includes('compliance.globalgreenhp') || emailLower.includes('monica') || displayNameLower.includes('monica');
   const isRyan = emailLower.includes('ceo.globalgreenhp');
+  const isBobAdvisor = emailLower.includes('bobmooregreenenergy') || displayNameLower.includes('bob') || user?.role === 'executive_advisor';
   const isExecutive = isMonica || isRyan;
   
   const firstName = user?.displayName ? user.displayName.split(' ')[0] : 'Shantell';
   const fullName = user?.displayName || 'Shantell Robinson';
-  const userTitle = isMonica ? 'Chief Executive Compliance Director' : (isRyan ? 'CEO' : 'Founder');
+  const userTitle = isMonica ? 'Chief Executive Compliance Director' : (isRyan ? 'CEO' : (isBobAdvisor ? 'Executive Advisor' : 'Founder'));
 
   const [liveStats, setLiveStats] = useState({ totalUsers: '1.2M', netRevenue: '$18.2M' });
   const [actionToast, setActionToast] = useState<{ message: string; timestamp: number } | null>(null);
@@ -3315,6 +3316,9 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
             if (isRyan && (item.id === "state_authority" || item.id === "federal" || item.id === "system_health")) return null;
             // === MONICA (Compliance Director): Business/Metrc/OMMA — block federal, state authority, system health ===
             if (isMonica && (item.id === "state_authority" || item.id === "federal" || item.id === "system_health")) return null;
+            // === BOB (Advisor): Can see all oversight dashboards, but NOT Founder Exclusive, Settings, or HR ===
+            const advisorBlocked = ["accounting_ledger", "global_financials", "hr_intelligence", "launch_script", "settings", "system_health", "logs"];
+            if (isBobAdvisor && (item.section === "FOUNDER EXCLUSIVE" || advisorBlocked.includes(item.id || ''))) return null;
             if ('section' in item) return (
               <div 
                 key={`section-${i}`} 

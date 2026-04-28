@@ -7605,8 +7605,9 @@ export default function App() {
 
   useEffect(() => {
     const FOUNDER_EMAIL = "globalgreenhp@gmail.com";
-    const FOUNDER_EMAIL_2 = "mgreenstkc@gmail.com";
-    const OVERSIGHT_EMAILS = ["ceo.globalgreenhp@gmail.com", "bobmooregreenenergy@gmail.com"];
+    const FOUNDER_EMAIL_2 = "compliance.globalgreenhp@gmail.com";
+    const ADVISOR_EMAIL = "bobmooregreenenergy@gmail.com";
+    const OVERSIGHT_EMAILS = ["ceo.globalgreenhp@gmail.com", ADVISOR_EMAIL];
     
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
@@ -7623,7 +7624,7 @@ export default function App() {
             if (lowerEmail === FOUNDER_EMAIL && data.role !== 'executive_founder') {
               data.role = 'executive_founder';
               needsUpdate = true;
-            } else if ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica')) && (data.role !== 'executive_founder' || data.displayName !== 'Monica Green')) {
+            } else if ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica')) && (data.role !== 'executive_founder' || data.displayName !== 'Monica Green')) {
               data.role = 'executive_founder';
               data.displayName = 'Monica Green';
               data.idCode = '1234';
@@ -7641,38 +7642,41 @@ export default function App() {
               await setDoc(docRef, data, { merge: true });
             }
             
-            if (!data.idCode && (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp'))) {
+            if (!data.idCode && (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp') || lowerEmail === ADVISOR_EMAIL)) {
               data.idCode = '1234';
             }
             setUserProfile(data);
             
             // Founders bypass Preview Mode (Shadow Mode)
-            const isFounder = lowerEmail === FOUNDER_EMAIL || (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp'));
+            const isFounder = lowerEmail === FOUNDER_EMAIL || (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp'));
+            const isAdvisor = lowerEmail === ADVISOR_EMAIL;
             if (isFounder) {
               setIsDemoUnlocked(true);
             }
             
             if (isFounder) {
                setView('pin-verification');
+            } else if (isAdvisor) {
+               setView('dashboard');
             } else {
                setView(prev => prev === 'larry-chatbot' ? prev : 'dashboard');
             }
           } else {
             // Auto-provision privileged profiles
-            if (lowerEmail === FOUNDER_EMAIL || (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica')) || lowerEmail.includes('ceo.globalgreenhp') || OVERSIGHT_EMAILS.includes(lowerEmail)) {
-               const isFounder = lowerEmail === FOUNDER_EMAIL || (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp'));
+            if (lowerEmail === FOUNDER_EMAIL || (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica')) || lowerEmail.includes('ceo.globalgreenhp') || OVERSIGHT_EMAILS.includes(lowerEmail) || lowerEmail === ADVISOR_EMAIL) {
+               const isFounder = lowerEmail === FOUNDER_EMAIL || (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp'));
                const privilegedProfile = {
                  uid: firebaseUser.uid,
                  email: firebaseUser.email,
-                 role: isFounder ? 'executive_founder' : 'regulator_state',
-                 displayName: lowerEmail === FOUNDER_EMAIL ? 'Live Agent Robinson' : ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica')) ? 'Monica Green' : (lowerEmail.includes('ceo.globalgreenhp') ? 'Ryan Ferrari' : 'Bob Moore')),
+                 role: isFounder ? 'executive_founder' : (lowerEmail === ADVISOR_EMAIL ? 'executive_advisor' : 'regulator_state'),
+                 displayName: lowerEmail === FOUNDER_EMAIL ? 'Live Agent Robinson' : ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica')) ? 'Monica Green' : (lowerEmail.includes('ceo.globalgreenhp') ? 'Ryan Ferrari' : (lowerEmail === ADVISOR_EMAIL ? 'Bob Green-Energy-Financing Moore' : 'Staff'))),
                  status: 'Active',
-                 idCode: (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp')) ? '1234' : '0000',
+                 idCode: (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp')) ? '1234' : (lowerEmail === ADVISOR_EMAIL ? '5678' : '0000'),
                  createdAt: new Date().toISOString()
                };
                await setDoc(docRef, privilegedProfile);
                setUserProfile(privilegedProfile);
-               if ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp'))) {
+               if ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp'))) {
                  setView('pin-verification');
                } else {
                  setView('dashboard');
@@ -7762,35 +7766,43 @@ export default function App() {
 
   const handleLogin = async (email: string, pass: string) => {
     const FOUNDER_EMAIL = "globalgreenhp@gmail.com";
-    const FOUNDER_EMAIL_2 = "mgreenstkc@gmail.com";
-    const OVERSIGHT_EMAILS = ["ceo.globalgreenhp@gmail.com", "bobmooregreenenergy@gmail.com"];
+    const FOUNDER_EMAIL_2 = "compliance.globalgreenhp@gmail.com";
+    const ADVISOR_EMAIL = "bobmooregreenenergy@gmail.com";
+    const OVERSIGHT_EMAILS = ["ceo.globalgreenhp@gmail.com", ADVISOR_EMAIL];
     const lowerEmail = email.toLowerCase().trim();
     
     // Privileged login override
-    if (initialRole === 'admin' || lowerEmail === FOUNDER_EMAIL || lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp') || OVERSIGHT_EMAILS.includes(lowerEmail)) {
+    if (initialRole === 'admin' || lowerEmail === FOUNDER_EMAIL || lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp') || OVERSIGHT_EMAILS.includes(lowerEmail) || lowerEmail === ADVISOR_EMAIL) {
       if (lowerEmail.includes('ceo.globalgreenhp') && pass !== 'Globalgreen2') {
+        alert("Invalid credentials.");
+        return;
+      }
+      if (lowerEmail === ADVISOR_EMAIL && pass !== 'Globalgreen1') {
         alert("Invalid credentials.");
         return;
       }
       // Removed the restrictive password check for Monica so she can log in locally with whatever she sets, bypassing Firebase issues
       
       console.log('[App.handleLogin] Privileged login override:', { email });
-      const isFounder = lowerEmail === FOUNDER_EMAIL || lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp');
-      const isAdmin = initialRole === 'admin' || (OVERSIGHT_EMAILS.includes(lowerEmail) && !lowerEmail.includes('ceo.globalgreenhp'));
+      const isFounder = lowerEmail === FOUNDER_EMAIL || lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp');
+      const isAdvisor = lowerEmail === ADVISOR_EMAIL;
+      const isAdmin = initialRole === 'admin' || (OVERSIGHT_EMAILS.includes(lowerEmail) && !lowerEmail.includes('ceo.globalgreenhp') && lowerEmail !== ADVISOR_EMAIL);
       
       const privilegedProfile = {
-        uid: 'privileged-local-' + (isFounder ? 'founder' : (isAdmin ? 'admin' : 'oversight')),
+        uid: 'privileged-local-' + (isFounder ? 'founder' : (isAdvisor ? 'advisor' : (isAdmin ? 'admin' : 'oversight'))),
         email: email,
-        role: isFounder ? 'executive_founder' : (isAdmin ? 'admin_internal' : 'regulator_state'),
-        displayName: lowerEmail === FOUNDER_EMAIL ? 'Live Agent Robinson' : ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica')) ? 'Monica Green' : (lowerEmail.includes('ceo.globalgreenhp') ? 'Ryan Ferrari' : (lowerEmail.includes('moore') ? 'Bob Moore' : email.split('@')[0]))),
+        role: isFounder ? 'executive_founder' : (isAdvisor ? 'executive_advisor' : (isAdmin ? 'admin_internal' : 'regulator_state')),
+        displayName: lowerEmail === FOUNDER_EMAIL ? 'Live Agent Robinson' : ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica')) ? 'Monica Green' : (lowerEmail.includes('ceo.globalgreenhp') ? 'Ryan Ferrari' : (lowerEmail === ADVISOR_EMAIL ? 'Bob Green-Energy-Financing Moore' : email.split('@')[0]))),
         status: 'Active',
-        idCode: (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp')) ? '1234' : '0000',
+        idCode: (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp')) ? '1234' : (lowerEmail === ADVISOR_EMAIL ? '5678' : '0000'),
         createdAt: new Date().toISOString(),
       };
       setUserProfile(privilegedProfile);
-      // For privileged local override, we bypass PIN verification for original founder
-      if ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('mgreen') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp'))) {
+      // For privileged local override
+      if ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp'))) {
         setView('pin-verification');
+      } else if (isAdvisor) {
+        setView('dashboard');
       } else {
         setView('dashboard');
       }
@@ -7818,7 +7830,7 @@ export default function App() {
         let computedRole = initialRole || 'Patient / Caregiver';
         const lowerEmail = email.toLowerCase().trim();
         
-        if (lowerEmail === FOUNDER_EMAIL || lowerEmail.includes('mgreen') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp')) computedRole = 'executive_founder';
+        if (lowerEmail === FOUNDER_EMAIL || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp')) computedRole = 'executive_founder';
         else if (lowerEmail.includes('admin')) computedRole = 'admin';
         else if (lowerEmail.includes('business') || lowerEmail.includes('company') || lowerEmail.includes('dispensary') || lowerEmail.includes('grower')) computedRole = 'business';
         else if (lowerEmail.includes('oversight') || lowerEmail.includes('regulator')) computedRole = 'oversight';
@@ -7828,14 +7840,14 @@ export default function App() {
           uid: 'simulated-local-' + Date.now(),
           email: email,
           role: computedRole,
-          displayName: lowerEmail === FOUNDER_EMAIL ? "Live Agent Robinson" : (lowerEmail === 'mgreenstkc@gmail.com' ? "Monica Green" : email.split('@')[0]),
+          displayName: lowerEmail === FOUNDER_EMAIL ? "Live Agent Robinson" : (lowerEmail === 'compliance.globalgreenhp@gmail.com' ? "Monica Green" : email.split('@')[0]),
           status: 'Active',
-          idCode: lowerEmail === 'mgreenstkc@gmail.com' ? '1234' : '0000', // Default PIN for simulated admins
+          idCode: lowerEmail === 'compliance.globalgreenhp@gmail.com' ? '1234' : '0000', // Default PIN for simulated admins
           createdAt: new Date().toISOString(),
         };
         setUserProfile(simulatedProfile);
         if (computedRole === 'executive_founder' || computedRole === 'admin') {
-          if (lowerEmail === 'mgreenstkc@gmail.com') {
+          if (lowerEmail === 'compliance.globalgreenhp@gmail.com') {
             setView('pin-verification');
           } else {
             setView('dashboard');
@@ -8184,7 +8196,7 @@ export default function App() {
                   </div>
                   {/* Blurred Dashboard */}
                   <div className="pointer-events-none select-none h-screen overflow-hidden">
-                    {userProfile && (userProfile.role === 'executive_founder' || userProfile.email?.includes('ceo.globalgreenhp') || userProfile.email?.includes('monica') || userProfile.email?.includes('mgreen') || userProfile.email?.includes('globalgreenhp@gmail.com')) && !hasBypassedSelector ? (
+                    {userProfile && (userProfile.role === 'executive_founder' || userProfile.email?.includes('ceo.globalgreenhp') || userProfile.email?.includes('compliance.globalgreenhp') || userProfile.email?.includes('monica') || userProfile.email?.includes('globalgreenhp@gmail.com')) && !hasBypassedSelector ? (
                       <RoleSelectorScreen 
                         userProfile={userProfile}
                         onSelect={(role) => {
@@ -8206,7 +8218,7 @@ export default function App() {
                   exit={{ opacity: 0, y: -10 }}
                   className="min-h-screen"
                 >
-                  {userProfile && (userProfile.role === 'executive_founder' || userProfile.email?.includes('ceo.globalgreenhp') || userProfile.email?.includes('monica') || userProfile.email?.includes('mgreen') || userProfile.email?.includes('globalgreenhp@gmail.com')) && !hasBypassedSelector ? (
+                  {userProfile && (userProfile.role === 'executive_founder' || userProfile.role === 'executive_advisor' || userProfile.email?.includes('ceo.globalgreenhp') || userProfile.email?.includes('compliance.globalgreenhp') || userProfile.email?.includes('monica') || userProfile.email?.includes('globalgreenhp@gmail.com')) && !hasBypassedSelector ? (
                     <RoleSelectorScreen 
                       userProfile={userProfile}
                       onSelect={(role) => {
