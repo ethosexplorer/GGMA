@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, Building2, Users, FileText, Settings, Shield, Activity, Bell,
   Briefcase, HeartPulse, Scale, Gavel, FileCheck, CheckCircle2,
   Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
@@ -58,6 +58,26 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
     localStorage.setItem('gghp_ops_nav_order', JSON.stringify(items.map((it, i) => it.id || `ops-section-${i}`)));
   };
 
+  const [agentStatus, setAgentStatus] = useState('Available');
+
+  // Timer logic for missed calls
+  useEffect(() => {
+    let timer: any;
+    if (agentStatus === 'Available' || agentStatus === 'Ready') {
+      // Listen for missed call event (mocked here, but sets the pattern)
+      const checkMissedCalls = setInterval(() => {
+         // In a live system, this would poll the queue or listen to a websocket.
+         // If a call is missed while available, wait 30 seconds and log out.
+         const missedCallDetected = false; // Placeholder for real webhook trigger
+         if (missedCallDetected) {
+            setAgentStatus('Logged out');
+            alert("Status changed to Logged out due to missed call.");
+         }
+      }, 5000);
+      return () => clearInterval(checkMissedCalls);
+    }
+  }, [agentStatus]);
+
   const renderCallCenter = () => {
     const isConnected = voip800.isConfigured();
     return (
@@ -75,9 +95,27 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
                   800.com VoIP • {voip800.getCompanyNumber()}
                 </p>
               </div>
-              <div className={cn("flex items-center gap-2 px-3 py-1.5 rounded-full font-black text-[10px] uppercase tracking-widest border", isConnected ? "bg-emerald-500/20 border-emerald-400/30 text-emerald-300" : "bg-red-500/20 border-red-400/30 text-red-300")}>
-                <div className={cn("w-2 h-2 rounded-full", isConnected ? "bg-emerald-400 animate-pulse" : "bg-red-400")} />
-                {isConnected ? 'Connected' : 'Offline'}
+              <div className="flex items-center gap-3">
+                <select 
+                  value={agentStatus} 
+                  onChange={(e) => setAgentStatus(e.target.value)}
+                  className={cn(
+                    "bg-slate-900/50 border rounded-lg px-3 py-1.5 text-[11px] font-black uppercase tracking-wider outline-none cursor-pointer",
+                    agentStatus === 'Ready' ? "text-emerald-400 border-emerald-500/50" :
+                    agentStatus === 'Available' ? "text-blue-400 border-blue-500/50" :
+                    agentStatus === 'Not available' ? "text-amber-400 border-amber-500/50" :
+                    "text-red-400 border-red-500/50"
+                  )}
+                >
+                  <option value="Ready">Ready</option>
+                  <option value="Available">Available</option>
+                  <option value="Not available">Not available</option>
+                  <option value="Logged out">Logged out</option>
+                </select>
+                <div className={cn("flex items-center gap-2 px-3 py-1.5 rounded-full font-black text-[10px] uppercase tracking-widest border", isConnected ? "bg-emerald-500/20 border-emerald-400/30 text-emerald-300" : "bg-red-500/20 border-red-400/30 text-red-300")}>
+                  <div className={cn("w-2 h-2 rounded-full", isConnected ? "bg-emerald-400 animate-pulse" : "bg-red-400")} />
+                  {isConnected ? 'Live' : 'Offline'}
+                </div>
               </div>
             </div>
             <div className="grid grid-cols-4 gap-3">

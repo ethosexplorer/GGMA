@@ -7,7 +7,7 @@
  * API Token Format: accountId|apiKey
  */
 
-const VOIP_TOKEN = import.meta.env.VITE_VOIP_800_TOKEN || '';
+const VOIP_TOKEN = import.meta.env.VITE_VOIP_800_TOKEN || '372214|lVvahKoz5PH5uCZmfmCxhdSDFi0qqobzKhABsx73e2d198d2';
 const [ACCOUNT_ID, API_KEY] = VOIP_TOKEN.split('|');
 const BASE_URL = 'https://api.800.com/v1';
 const COMPANY_NUMBER = '18443334447';
