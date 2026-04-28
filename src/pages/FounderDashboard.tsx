@@ -3048,7 +3048,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       case 'public_health': 
         return <div className="h-full w-full -m-10"><PublicHealthDashboard user={user} onLogout={onLogout} /></div>;
       case 'operations': 
-        return renderOpsCenter();
+        return <div className="h-full w-full -m-10"><OperationsDashboard user={user} onLogout={onLogout} /></div>;
       case 'internal_admin': 
         return <div className="h-full w-full -m-10"><AdminDashboard user={user} onLogout={onLogout} /></div>;
       case 'external_admin': 
