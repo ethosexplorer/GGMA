@@ -3,7 +3,11 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="color-scheme" content="light" />
   <title>Global Green Hybrid Platform (GGHP) | Global Green Enterprise Inc</title>
   <link rel="icon" type="image/png" href="/logo.png" />
   <script>
@@ -30,6 +34,28 @@
     .skiptranslate iframe { display: none !important; }
     #google_translate_element { display: none !important; }
     .goog-te-banner-frame { display: none !important; }
+    /* iOS Safari fixes */
+    html, body {
+      background-color: #f8fafc !important;
+      -webkit-text-size-adjust: 100%;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    /* Fix for iOS Safari white flash on page load */
+    #root {
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+      background-color: #f8fafc;
+    }
+    /* iOS safe area padding */
+    @supports (padding: env(safe-area-inset-top)) {
+      body {
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+      }
+    }
   </style>
   <script type="text/javascript">
     function googleTranslateElementInit() {
