@@ -1517,7 +1517,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
             <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
               <Shield size={22} className="text-blue-600" /> DEA Schedule III — Federal Registration Readiness
             </h3>
-            <p className="text-sm text-slate-500 mt-1">Self-service checklist mapped to the DEA's 7-section application • Deadline: June 22, 2026</p>
+            <p className="text-sm text-slate-500 mt-1">Self-service checklist mapped to the DEA's 5 primary application sections • Deadline: June 22, 2026</p>
           </div>
           <div className="flex items-center gap-3">
             <span className="text-[10px] font-black text-amber-600 bg-amber-50 px-3 py-1.5 rounded-full border border-amber-200 animate-pulse">60-DAY WINDOW</span>
@@ -1532,11 +1532,13 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
           <div className="relative z-10">
             <p className="text-blue-200 text-xs font-bold uppercase tracking-widest mb-1">Federal Registration Progress</p>
             <h2 className="text-4xl font-black">Ready to Apply</h2>
-            <p className="text-blue-100/80 text-sm mt-1">Your state compliance data maps directly to all 7 DEA sections</p>
+            <p className="text-blue-100/80 text-sm mt-1">Your state compliance data maps directly to all 5 primary DEA sections</p>
           </div>
           <div className="relative z-10 text-right mt-4 sm:mt-0">
-            <p className="text-blue-200 text-xs font-bold">Application Fee</p>
-            <p className="text-white font-black text-2xl">$794/yr</p>
+            <p className="text-blue-200 text-xs font-bold">DEA Fee Schedule (per Federal Register)</p>
+            <p className="text-white font-black text-lg">Dispensers: $888 / 3yr</p>
+            <p className="text-blue-200 text-[10px]">Manufacturers: $3,699/yr • Distributors: $1,850/yr</p>
+            <p className="text-amber-300 text-[10px] mt-1 font-bold">⚠️ DEA portal currently lists $794 — discrepancy noted</p>
             <p className="text-blue-200 text-xs mt-2">Review Period</p>
             <p className="text-white font-bold">≤ 6 months</p>
           </div>

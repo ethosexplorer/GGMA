@@ -56,8 +56,8 @@ const DEA_SECTIONS = [
     { key: 'hasOnsiteSecurity', label: 'Security: Onsite Security Personnel', type: 'select', options: ['Yes','No'] },
   ]},
   { id: 6, title: 'Payment', icon: CreditCard, fields: [
-    { key: 'paypalReady', label: 'PayPal account ready for $794 fee?', type: 'select', options: ['Yes','No — need to set up'] },
-    { key: 'feeAcknowledged', label: 'Acknowledge: $794 annual fee is non-refundable', type: 'checkbox' },
+    { key: 'paypalReady', label: 'PayPal account ready for DEA fee?', type: 'select', options: ['Yes','No — need to set up'] },
+    { key: 'feeAcknowledged', label: 'Acknowledge: DEA application fee is non-refundable (⚠️ Portal lists $794; Federal Register lists $888/3yr for dispensers)', type: 'checkbox' },
   ]},
   { id: 7, title: 'Review & Submit', icon: Send, fields: [] },
 ];
@@ -101,7 +101,7 @@ export const DEAApplicationWizard: React.FC<DEAWizardProps> = ({ mode = 'larry',
     2: `Your OMMA license is your gateway to DEA registration. Per OMMA Executive Director Adria Berry: "These requirements are an important step toward a more mature and standardized regulatory environment." Note: If your state license is revoked, suspended, or expires — the same action applies to your DEA license.`,
     3: `These liability questions are required by the DEA. Answer honestly — most OMMA-licensed dispensaries will answer "No." If any apply, consult legal counsel before submitting. Your answers here directly affect approval.`,
     4: `This is the most detailed section — the DEA requires documented SOPs for every operational category. Good news: if you've been OMMA-compliant and using GGP-OS, most of these are already covered by your Metrc integration and compliance data. I'll flag any gaps.`,
-    5: `Almost there! The DEA requires a $794 annual fee (non-refundable) paid via PayPal. You can continue operating under your state license during the DEA review period (up to 6 months). Make sure your PayPal account is ready before submitting.`,
+    5: `Almost there! The DEA requires a registration fee (non-refundable) paid via PayPal.\n\n⚠️ FEE DISCREPANCY NOTICE: The DEA application portal currently lists $794, however the Federal Register (21 CFR §1301.13) lists $888 for a 3-year dispensary registration. Gies Law Firm PLLC and others have flagged this discrepancy. The portal fee ($794) is what you will be charged at time of submission. We recommend confirming the exact amount on the portal before paying.\n\nYou can continue operating under your state license during the DEA review period (up to 6 months). Make sure your PayPal account is ready before submitting.`,
     6: `Here's your complete application summary. Review everything carefully, then:\n1. Save to Vault for your records\n2. Download the data package\n3. Open the DEA Medical Marijuana Application Portal to submit\n\nYou can operate lawfully under your OMMA license during the entire review period.\n\n📞 DEA Registration Support: 1-800-882-9539 (8:30 AM–5:50 PM ET)\n📧 DEA.Registration.Help@dea.gov 💪`,
   };
 
@@ -120,7 +120,7 @@ export const DEAApplicationWizard: React.FC<DEAWizardProps> = ({ mode = 'larry',
       '',
       'IMPORTANT CONTEXT:',
       '- Application window: April 23 – June 22, 2026 (60 days)',
-      '- Fee: $794/year (non-refundable, PayPal only)',
+      '- Fee: $794 per DEA portal (⚠️ Federal Register lists $888/3yr for dispensers — discrepancy noted)',
       '- Review period: Up to 6 months',
       '- Operate lawfully under state license during review',
       '- NOT participating = lose tax breaks, banking, interstate commerce',

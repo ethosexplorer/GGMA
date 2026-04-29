@@ -915,7 +915,7 @@ const STATE_RESOURCES: Record<string, any> = {
             
             botResponse = `Based on my legal resources database:\n\n${contentToReturn.trim()}`;
          } else if (lowerQuery.includes('dea') || lowerQuery.includes('schedule iii') || lowerQuery.includes('schedule 3') || lowerQuery.includes('federal registration') || lowerQuery.includes('drug enforcement')) {
-             botResponse = '🏛️ DEA Schedule III — Federal Registration Guide\n\nAs of April 23, 2026, the DEA began accepting medical marijuana dispensary registrations. Key facts:\n\n📋 7 Required Sections: Business Info, Activity/Drug Codes, State Licenses, Liability, Compliance/SOPs, Payment ($794/yr via PayPal), Submission.\n\n⏰ Deadline: June 22, 2026 (60-day window from April 23)\n💰 Fee: $794 annual, non-refundable\n\n⚠️ IMPORTANT: Licensees NOT participating lose eligibility for tax breaks (280E relief), banking services, and interstate commerce.\n\n✅ You CAN operate lawfully under your state license during the DEA review period (up to 6 months).\n\n🔗 DEA Portal: deadiversion.usdoj.gov/drugreg/registration.html\n\nLog into the Business Portal → DEA Sch. III tab for a full step-by-step guided wizard.';
+             botResponse = '🏛️ DEA Schedule III — Federal Registration Guide\n\nAs of April 23, 2026, the DEA began accepting medical marijuana dispensary registrations. Key facts:\n\n📋 5 Primary Application Sections: Business & Personal Info, Activity/Drug Codes, State Licenses, Liability, Compliance/SOPs.\n\n⏰ Deadline: June 22, 2026 (60-day window from April 23)\n💰 Fee: $794 per DEA portal (non-refundable, PayPal only)\n⚠️ NOTE: Federal Register (21 CFR §1301.13) lists $888 for a 3-year dispensary registration — there is a known discrepancy between the portal fee and CFR fee schedule.\n\n⚠️ IMPORTANT: Licensees NOT participating lose eligibility for tax breaks (280E relief), banking services, and interstate commerce.\n\n✅ You CAN operate lawfully under your state license during the DEA review period (up to 6 months).\n\n🔗 DEA Portal: mmapplication.diversion.dea.gov\n\nLog into the Business Portal → DEA Sch. III tab for a full step-by-step guided wizard.';
           } else if (lowerQuery.includes('sop') || lowerQuery.includes('standard operating procedure')) {
              botResponse = '📑 SOPs Required for DEA Registration (§5 Compliance):\n\n1. Ordering controlled substances\n2. Receiving shipments\n3. Inventory management\n4. Storage of marijuana products\n5. Security measures\n6. Dispensing (including delivery)\n7. Destruction/disposal\n8. Theft/loss reporting to DEA\n9. Due diligence for suspicious orders\n10. Records maintenance & retention\n\nGGP-OS auto-generates most of these from your OMMA compliance data and Metrc integration. Go to Business Portal → DEA Sch. III to review.';
           } else if (lowerQuery.includes('supplier') || lowerQuery.includes('dea number')) {
@@ -1757,7 +1757,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
                 <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">Registration Ready</span>
               </h2>
               <p className="text-blue-100/70 text-lg leading-relaxed max-w-xl">
-                GGP-OS maps directly to all 7 sections of the DEA's federal registration application. State-licensed dispensaries can prepare, verify, and export their compliance data — all from one platform.
+                GGP-OS maps directly to all 5 primary sections of the DEA's federal registration application. State-licensed dispensaries can prepare, verify, and export their compliance data — all from one platform.
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
@@ -3501,8 +3501,8 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     { section: 5, title: 'Compliance & SOPs', key: 'hasVault', q: 'Does your facility have a **vault or safe** for controlled substances?', hint: 'Required by DEA for Schedule III storage.', choices: ['Yes', 'No'] },
     { section: 5, title: 'Compliance & SOPs', key: 'hasAlarm', q: 'Does your facility have an **alarm system**?', hint: 'DEA requires security systems for registered facilities.', choices: ['Yes', 'No'] },
     // §6 Payment
-    { section: 6, title: 'Payment', key: 'paypalReady', q: 'Do you have a **PayPal account** ready to pay the $794 annual fee?', hint: 'The DEA only accepts PayPal for online applications.', choices: ['Yes', 'No — need to set up'] },
-    { section: 6, title: 'Payment', key: 'feeAcknowledged', q: 'Do you **acknowledge** that the $794 annual fee is **non-refundable**?', hint: 'This is required before submission.', choices: ['Yes, I acknowledge', 'I need more information'] },
+    { section: 6, title: 'Payment', key: 'paypalReady', q: 'Do you have a **PayPal account** ready to pay the DEA registration fee?', hint: '⚠️ The DEA portal currently lists $794, but the Federal Register (21 CFR §1301.13) lists $888 for a 3-year dispensary registration. Confirm the exact fee on the portal before paying. PayPal is the only accepted payment method.', choices: ['Yes', 'No — need to set up'] },
+    { section: 6, title: 'Payment', key: 'feeAcknowledged', q: 'Do you **acknowledge** that the DEA application fee is **non-refundable**?', hint: 'This is required before submission.', choices: ['Yes, I acknowledge', 'I need more information'] },
   ];
 
   // ── Business License flow state (steps 100+) ─────────────────────────────
@@ -3948,7 +3948,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         const finalData = { ...deaData, [currentQ.key]: text };
         setDeaData(finalData);
         const summaryLines = DEA_QUESTIONS.map(q => `• **${q.q.replace(/\*\*/g, '')}**: ${finalData[q.key] || '—'}`);
-        response = `🎉 **DEA Schedule III Application — COMPLETE!**\n\n**Your collected data:**\n\n${summaryLines.join('\n')}\n\n---\n\n📞 **DEA Support:** 1-800-882-9539 (8:30 AM–5:50 PM ET)\n📧 DEA.Registration.Help@dea.gov\n\n**Next Steps:**\n1. Save this to your Vault\n2. Log into the Business Portal → DEA Sch. III tab to review\n3. Submit at mmapplication.diversion.dea.gov\n\n⏰ **Deadline: June 22, 2026** • $794 fee via PayPal`;
+        response = `🎉 **DEA Schedule III Application — COMPLETE!**\n\n**Your collected data:**\n\n${summaryLines.join('\n')}\n\n---\n\n💰 **DEA Fee Schedule (per Federal Register 21 CFR §1301.13):**\n• Dispensers (incl. pharmacies): **$888 / 3-year registration**\n• Distributors: **$1,850 / annually**\n• Manufacturers: **$3,699 / annually**\n⚠️ _Note: DEA portal currently lists $794 for dispensaries — discrepancy flagged by Gies Law Firm PLLC. Confirm exact fee on portal before paying._\n\n📞 **DEA Support:** 1-800-882-9539 (8:30 AM–5:50 PM ET)\n📧 DEA.Registration.Help@dea.gov\n\n**Next Steps:**\n1. Save this to your Vault\n2. Log into the Business Portal → DEA Sch. III tab to review\n3. Submit at mmapplication.diversion.dea.gov\n\n⏰ **Deadline: June 22, 2026**`;
         setDeaFlowActive(false);
         setDeaStep(0);
         setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['📥 Save to Vault', '🔗 Open DEA Portal', '🏠 Main Menu'] } as any]);
@@ -3963,7 +3963,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       setDeaStep(0);
       setDeaData({});
       const firstQ = DEA_QUESTIONS[0];
-      response = `🏛️ **DEA Schedule III — Guided Registration**\n\nI'm going to walk you through **all ${DEA_QUESTIONS.length} questions** across the 7 DEA sections, step by step. Your answers are saved automatically.\n\n**Key Facts:**\n• ⏰ Deadline: June 22, 2026 (60-day window)\n• 💰 Fee: $794/year (non-refundable, PayPal)\n• ✅ You can operate under your OMMA license during review\n\n---\n🏛️ **§1: ${firstQ.title}**\n\n${firstQ.q}${firstQ.hint ? `\n\n_${firstQ.hint}_` : ''}`;
+      response = `🏛️ **DEA Schedule III — Guided Registration**\n\nI'm going to walk you through **all ${DEA_QUESTIONS.length} questions** across the 5 primary DEA application sections (plus payment prep), step by step. Your answers are saved automatically.\n\n**Key Facts:**\n• ⏰ Deadline: June 22, 2026 (60-day window)\n• 💰 Fee: $794 per DEA portal (⚠️ Federal Register lists $888/3yr for dispensers)\n• ✅ You can operate under your OMMA license during review\n\n---\n🏛️ **§1: ${firstQ.title}**\n\n${firstQ.q}${firstQ.hint ? `\n\n_${firstQ.hint}_` : ''}`;
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: firstQ.choices } as any]);
       setIsTyping(false);
       return;
