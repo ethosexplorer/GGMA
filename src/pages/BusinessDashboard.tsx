@@ -54,7 +54,7 @@ const MiniBarChart = ({ data }: { data: number[] }) => (
 export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge, jurisdiction = 'Oklahoma' }: { onLogout?: () => void | Promise<void>, user?: any, initialTab?: any, onOpenConcierge?: () => void, jurisdiction?: string }) => {
   const [demoUnlocked, setDemoUnlocked] = useState(false);
   const [previousTab, setPreviousTab] = useState<string>('home');
-  const [activeTab, setActiveTab] = useState<'home' | 'analytics' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'insurance' | 'documents' | 'subscription' | 'integrations' | 'staff' | 'traceability' | 'readiness' | 'wallet' | 'attorneys' | 'reporting' | 'applications'>(initialTab || 'analytics');
+  const [activeTab, setActiveTab] = useState<'home' | 'analytics' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'insurance' | 'documents' | 'subscription' | 'integrations' | 'staff' | 'traceability' | 'readiness' | 'dea' | 'wallet' | 'attorneys' | 'reporting' | 'applications'>(initialTab || 'analytics');
   const navigateTab = (tab: typeof activeTab) => {
     setPreviousTab(activeTab);
     setActiveTab(tab);
@@ -73,6 +73,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
     { id: 'staff', label: 'Staff', icon: ClipboardList },
     { id: 'traceability', label: 'Traceability', icon: Database },
     { id: 'readiness', label: 'OMMA Ready', icon: CheckSquare },
+    { id: 'dea', label: 'DEA Sch. III', icon: Shield },
     { id: 'integrations', label: 'Integrations', icon: BarChart2 },
     { id: 'insurance', label: 'Insurance & Bonding', icon: ClipboardList },
     { id: 'documents', label: 'Vault', icon: FileText },
@@ -1507,14 +1508,159 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
       </div>
     )}
 
-     
-    
-    
-    
-    
-    
+    {/* DEA SCHEDULE III SELF-SERVICE TAB */}
+    {activeTab === 'dea' && (
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+              <Shield size={22} className="text-blue-600" /> DEA Schedule III — Federal Registration Readiness
+            </h3>
+            <p className="text-sm text-slate-500 mt-1">Self-service checklist mapped to the DEA's 7-section application • Deadline: June 22, 2026</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-[10px] font-black text-amber-600 bg-amber-50 px-3 py-1.5 rounded-full border border-amber-200 animate-pulse">60-DAY WINDOW</span>
+            <button onClick={() => window.open('https://www.deadiversion.usdoj.gov/drugreg/reg_apps/onlineforms_new.htm', '_blank')} className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-black hover:bg-blue-700 transition-all shadow-lg">Open DEA Portal ↗</button>
+          </div>
+        </div>
 
+        {/* Progress Banner */}
+        <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 rounded-2xl p-6 text-white flex flex-col sm:flex-row items-center justify-between relative overflow-hidden">
+          <div className="absolute inset-0 opacity-10"><div className="absolute -top-20 -right-20 w-60 h-60 bg-blue-400 rounded-full blur-3xl" /></div>
+          <div className="relative z-10">
+            <p className="text-blue-200 text-xs font-bold uppercase tracking-widest mb-1">Federal Registration Progress</p>
+            <h2 className="text-4xl font-black">Ready to Apply</h2>
+            <p className="text-blue-100/80 text-sm mt-1">Your state compliance data maps directly to all 7 DEA sections</p>
+          </div>
+          <div className="relative z-10 text-right mt-4 sm:mt-0">
+            <p className="text-blue-200 text-xs font-bold">Application Fee</p>
+            <p className="text-white font-black text-2xl">$794/yr</p>
+            <p className="text-blue-200 text-xs mt-2">Review Period</p>
+            <p className="text-white font-bold">≤ 6 months</p>
+          </div>
+        </div>
 
+        {/* L.A.R.R.Y DEA Compliance Assistant */}
+        <div className="bg-[#1a4731] rounded-2xl p-5 flex items-center gap-4 border border-emerald-800/50">
+          <div className="w-12 h-12 rounded-full bg-emerald-400 bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center text-white shadow-lg shrink-0">
+            <Sparkles size={22} />
+          </div>
+          <div className="flex-1">
+            <h4 className="text-white font-black text-sm">L.A.R.R.Y — DEA Compliance Mode</h4>
+            <p className="text-emerald-200/80 text-xs">Ask me anything about DEA Schedule III requirements, SOPs, or application preparation.</p>
+          </div>
+          <button onClick={onOpenConcierge || (() => alert('L.A.R.R.Y: Based on your current compliance data, you meet 6 of 7 DEA sections. Section 5 (Supplier DEA Numbers) needs attention — your current suppliers may not yet have DEA registration numbers. I recommend contacting them this week.'))} className="px-4 py-2.5 bg-white text-[#1a4731] rounded-xl text-xs font-black hover:bg-slate-100 transition-all shadow-md whitespace-nowrap">
+            Ask L.A.R.R.Y
+          </button>
+        </div>
+
+        {/* 7 DEA Sections */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[
+            { section: 1, title: 'Personal / Business Information', icon: '🏢', items: [
+              { name: 'Business Name & Address', done: true, source: 'GGP-OS Profile' },
+              { name: 'Phone & Email', done: true, source: 'GGP-OS Profile' },
+              { name: 'Contact Name & Cell', done: true, source: 'Personnel Directory' },
+              { name: 'SSN or Tax ID (EIN)', done: true, source: 'Secure Vault' },
+              { name: 'Organization Type (LLC/Corp)', done: true, source: 'GGP-OS Profile' },
+              { name: 'Ownership Change History', done: true, source: 'HR Intelligence' },
+              { name: 'Existing DEA Registrations', done: false, source: 'Manual Entry' },
+            ]},
+            { section: 2, title: 'Activity & Drug Codes', icon: '🧪', items: [
+              { name: 'Marijuana (Drug Code 7362)', done: true, source: 'Metrc Integration' },
+              { name: 'Marijuana Extract (Code 7353)', done: true, source: 'Metrc Integration' },
+              { name: 'Delta-9 THC (Code 7386)', done: true, source: 'Metrc Integration' },
+              { name: 'Dispensing Confirmation', done: true, source: 'OMMA License' },
+              { name: 'National Provider ID', done: false, source: 'If Applicable' },
+            ]},
+            { section: 3, title: 'State License(s)', icon: '📋', items: [
+              { name: 'OMMA License Number', done: true, source: 'OMMA Verified' },
+              { name: 'License State (Oklahoma)', done: true, source: 'Jurisdiction Config' },
+              { name: 'License Expiration Date', done: true, source: 'Auto-tracked' },
+            ]},
+            { section: 4, title: 'Liability Questions', icon: '⚖️', items: [
+              { name: 'Criminal History Disclosure', done: true, source: 'Personnel HR Files' },
+              { name: 'Prior DEA Actions', done: true, source: 'Self-Attestation' },
+              { name: 'State License History', done: true, source: 'OMMA Records' },
+              { name: 'Officer/Partner Disclosures', done: true, source: 'Personnel Directory' },
+              { name: 'Prior Unauthorized Activity', done: true, source: 'Self-Attestation' },
+            ]},
+            { section: 5, title: 'Compliance / SOPs', icon: '📑', items: [
+              { name: 'Supplier Names & DEA #s', done: false, source: 'Pending Supplier Reg.' },
+              { name: 'SOP: Ordering & Receiving', done: true, source: 'Regulatory Library' },
+              { name: 'SOP: Inventory & Storage', done: true, source: 'Metrc/SINC' },
+              { name: 'SOP: Security Measures', done: true, source: 'OMMA Compliance' },
+              { name: 'SOP: Dispensing & Delivery', done: true, source: 'Regulatory Library' },
+              { name: 'SOP: Destruction/Disposal', done: true, source: 'Metrc Waste Logs' },
+              { name: 'SOP: Theft/Loss Reporting', done: true, source: 'Compliance Engine' },
+              { name: 'SOP: Due Diligence', done: true, source: 'Regulatory Library' },
+              { name: 'SOP: Records Maintenance', done: true, source: 'Document Vault' },
+              { name: 'Personnel w/ SSN, DOB, DEA#', done: true, source: 'Personnel Directory' },
+              { name: 'Security: Vault/Safe/Alarm', done: true, source: 'OMMA Checklist' },
+              { name: 'Access Controls (Key/Fob)', done: true, source: 'OMMA Checklist' },
+            ]},
+            { section: 6, title: 'Payment', icon: '💳', items: [
+              { name: 'PayPal Account Ready', done: false, source: 'PayPal Required ($794)' },
+              { name: 'Fee: $794 Annual', done: false, source: 'On Submission' },
+            ]},
+            { section: 7, title: 'Submission', icon: '✅', items: [
+              { name: 'Review All Sections', done: false, source: 'Final Review' },
+              { name: 'Electronic Submission', done: false, source: 'DEA Portal' },
+              { name: 'Confirmation Email', done: false, source: 'Auto-generated' },
+            ]},
+          ].map((sec) => {
+            const completed = sec.items.filter(i => i.done).length;
+            const total = sec.items.length;
+            const pct = Math.round((completed / total) * 100);
+            return (
+              <div key={sec.section} className={`bg-white rounded-2xl border p-5 shadow-sm hover:shadow-md transition-all ${
+                pct === 100 ? 'border-emerald-200' : pct > 50 ? 'border-slate-200' : 'border-amber-200'
+              }`}>
+                <div className="flex justify-between items-center mb-3">
+                  <h4 className="font-bold text-slate-800 text-sm flex items-center gap-2">
+                    <span className="text-lg">{sec.icon}</span>
+                    §{sec.section}: {sec.title}
+                  </h4>
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                    pct === 100 ? 'bg-emerald-50 text-emerald-600' : pct > 50 ? 'bg-blue-50 text-blue-600' : 'bg-amber-50 text-amber-600'
+                  }`}>{completed}/{total}</span>
+                </div>
+                <div className="w-full bg-slate-100 rounded-full h-1.5 mb-3">
+                  <div className={`h-full rounded-full transition-all ${pct === 100 ? 'bg-emerald-500' : pct > 50 ? 'bg-blue-500' : 'bg-amber-500'}`} style={{ width: `${pct}%` }} />
+                </div>
+                <div className="space-y-1.5">
+                  {sec.items.map((item, j) => (
+                    <div key={j} className="flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-2">
+                        {item.done ? <CheckCircle size={13} className="text-emerald-500 shrink-0" /> : <AlertTriangle size={13} className="text-amber-500 shrink-0" />}
+                        <span className={item.done ? 'text-slate-600' : 'text-amber-700 font-bold'}>{item.name}</span>
+                      </div>
+                      <span className="text-[9px] font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded truncate max-w-[140px]">{item.source}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Bottom CTA */}
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between text-white gap-4">
+          <div>
+            <h4 className="font-black text-lg">Ready to Submit?</h4>
+            <p className="text-blue-100 text-sm">Export your GGP-OS data package, then complete your application on the DEA portal.</p>
+          </div>
+          <div className="flex gap-3">
+            <button onClick={() => alert('DEA Application Data Package exported to your Vault. All 7 sections compiled.')} className="px-5 py-2.5 bg-white text-blue-700 rounded-xl text-xs font-black hover:bg-slate-100 transition-all shadow-lg">
+              Export Data Package
+            </button>
+            <button onClick={() => window.open('https://www.deadiversion.usdoj.gov/drugreg/reg_apps/onlineforms_new.htm', '_blank')} className="px-5 py-2.5 bg-white/20 text-white border border-white/30 rounded-xl text-xs font-black hover:bg-white/30 transition-all">
+              Open DEA Portal ↗
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
 
 
 
