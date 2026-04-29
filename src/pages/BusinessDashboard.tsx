@@ -1520,7 +1520,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
           </div>
           <div className="flex items-center gap-3">
             <span className="text-[10px] font-black text-amber-600 bg-amber-50 px-3 py-1.5 rounded-full border border-amber-200 animate-pulse">60-DAY WINDOW</span>
-            <button onClick={() => window.open('https://www.deadiversion.usdoj.gov/drugreg/reg_apps/onlineforms_new.htm', '_blank')} className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-black hover:bg-blue-700 transition-all shadow-lg">Open DEA Portal ↗</button>
+            <button onClick={() => window.open('https://www.deadiversion.usdoj.gov/drugreg/registration.html', '_blank')} className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-black hover:bg-blue-700 transition-all shadow-lg">Open DEA Portal ↗</button>
           </div>
         </div>
 
@@ -1654,7 +1654,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
             <button onClick={() => alert('DEA Application Data Package exported to your Vault. All 7 sections compiled.')} className="px-5 py-2.5 bg-white text-blue-700 rounded-xl text-xs font-black hover:bg-slate-100 transition-all shadow-lg">
               Export Data Package
             </button>
-            <button onClick={() => window.open('https://www.deadiversion.usdoj.gov/drugreg/reg_apps/onlineforms_new.htm', '_blank')} className="px-5 py-2.5 bg-white/20 text-white border border-white/30 rounded-xl text-xs font-black hover:bg-white/30 transition-all">
+            <button onClick={() => window.open('https://www.deadiversion.usdoj.gov/drugreg/registration.html', '_blank')} className="px-5 py-2.5 bg-white/20 text-white border border-white/30 rounded-xl text-xs font-black hover:bg-white/30 transition-all">
               Open DEA Portal ↗
             </button>
           </div>
@@ -1716,6 +1716,9 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
 
     {activeTab === 'subscription' && (
       <SubscriptionPortal userRole="business" initialPlanId="b2bc_basic" />
+    )}
+    {activeTab === 'applications' && (
+      <BusinessApplicationsTab />
     )}
     {activeTab === 'support' && (
       <div className="space-y-6">
