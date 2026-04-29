@@ -269,6 +269,60 @@ const POLLS: Poll[] = [
     { id: 'interested', label: 'Interested but barriers are too high', emoji: '🚧', votes: 1876 },
     { id: 'not_interested', label: 'Not interested in cannabis business', emoji: '🤷', votes: 987 },
   ]},
+  // ─── 🔒 EXPANDED LEGAL ───
+  { id: 'legal_tribal_sovereignty', category: 'legal', question: 'Should tribal nations have independent authority to regulate cannabis on sovereign land?', subtitle: 'Multiple tribes across the US are establishing their own cannabis regulatory frameworks, separate from state law.', icon: <Shield size={20} />, color: 'indigo', bgGradient: 'from-indigo-600 to-purple-800', didYouKnow: 'The Oglala Sioux Tribe and others are asserting sovereignty rights to establish independent cannabis programs — potentially creating a new legal framework nationwide.', actionItem: 'Research your local tribal nation\'s stance on cannabis sovereignty and participate in public comment periods.', options: [
+    { id: 'full_sovereignty', label: 'Yes — full tribal authority, no state interference', emoji: '🦅', votes: 1876 },
+    { id: 'cooperative', label: 'Cooperative framework with states', emoji: '🤝', votes: 2134 },
+    { id: 'federal_oversight', label: 'Federal oversight for consistency', emoji: '🏛️', votes: 987 },
+    { id: 'state_law_applies', label: 'State law should apply everywhere', emoji: '📋', votes: 543 },
+    { id: 'unsure', label: 'Need more information', emoji: '🤔', votes: 765 },
+  ]},
+  { id: 'legal_banking_safe', category: 'legal', question: 'Should cannabis businesses have full access to banking and financial services?', subtitle: 'Most cannabis businesses are forced to operate in cash due to federal banking restrictions — creating safety and tax issues.', icon: <TrendingUp size={20} />, color: 'blue', bgGradient: 'from-blue-500 to-cyan-700', didYouKnow: 'Cannabis businesses paid $1.8B in CASH taxes in 2025. Armored trucks, armed guards, and cash-counting rooms are standard operating costs — adding 5-10% to overhead.', actionItem: 'Contact your senator to support the SAFER Banking Act (S.2860) — currently in committee.', deadline: 'Senate Banking Committee vote: June 2026', options: [
+    { id: 'full_banking', label: 'Yes — full banking access immediately', emoji: '🏦', votes: 3456 },
+    { id: 'limited', label: 'Limited banking until fully legal', emoji: '🔓', votes: 987 },
+    { id: 'credit_unions_only', label: 'Allow credit unions, not big banks', emoji: '🏪', votes: 1234 },
+    { id: 'no_banking', label: 'No — not until federally legal', emoji: '🚫', votes: 321 },
+  ]},
+  { id: 'legal_attorney_access', category: 'legal', question: 'Is it too difficult to find affordable cannabis legal counsel?', subtitle: 'Navigating cannabis law requires specialized attorneys — but many charge $400-800/hour.', icon: <Sparkles size={20} />, color: 'amber', bgGradient: 'from-amber-500 to-red-600', didYouKnow: 'Only 2% of licensed attorneys in the US specialize in cannabis law. In Oklahoma, fewer than 50 attorneys actively practice cannabis regulatory law.', actionItem: 'Use GGHP\'s Legal Advocacy Hub to connect with verified, affordable cannabis attorneys.', options: [
+    { id: 'very_difficult', label: 'Very difficult — too expensive', emoji: '💸', votes: 2345 },
+    { id: 'somewhat', label: 'Somewhat — options are limited', emoji: '😐', votes: 1876 },
+    { id: 'ok', label: 'Manageable if you know where to look', emoji: '🔍', votes: 876 },
+    { id: 'not_needed', label: 'Haven\'t needed legal counsel yet', emoji: '✌️', votes: 654 },
+    { id: 'platform_helps', label: 'Platforms like GGHP make it easier', emoji: '🌿', votes: 1123 },
+  ]},
+  { id: 'legal_ip_protection', category: 'legal', question: 'Should cannabis strains and products be eligible for federal patent and trademark protection?', subtitle: 'Currently, cannabis businesses cannot register federal trademarks — leaving brands vulnerable to copying.', icon: <Shield size={20} />, color: 'violet', bgGradient: 'from-violet-600 to-purple-800', didYouKnow: 'Without federal trademark protection, anyone can copy a cannabis brand name, logo, or strain name in a different state with no legal recourse.', options: [
+    { id: 'full_ip', label: 'Yes — full federal IP protection', emoji: '🛡️', votes: 2134 },
+    { id: 'trademarks_only', label: 'Trademarks yes, patents no', emoji: '™️', votes: 1567 },
+    { id: 'state_level', label: 'State-level protection is enough', emoji: '🏛️', votes: 876 },
+    { id: 'open_source', label: 'Cannabis genetics should be open source', emoji: '🌱', votes: 1234 },
+    { id: 'unsure', label: 'Not sure / need more info', emoji: '🤔', votes: 432 },
+  ]},
+  { id: 'legal_social_equity', category: 'legal', question: 'Should states prioritize cannabis licenses for communities most harmed by the War on Drugs?', subtitle: 'Social equity programs aim to repair decades of disproportionate enforcement in Black and Brown communities.', icon: <Heart size={20} />, color: 'rose', bgGradient: 'from-rose-600 to-pink-800', didYouKnow: 'Despite equal usage rates, Black Americans are 3.7x more likely to be arrested for cannabis. In some counties, the disparity is 10x.', actionItem: 'Check if your state has a Social Equity program and advocate for reduced licensing fees for qualifying applicants.', options: [
+    { id: 'absolutely', label: 'Absolutely — it\'s a moral obligation', emoji: '✊', votes: 2876 },
+    { id: 'yes_with_limits', label: 'Yes, but with reasonable criteria', emoji: '📋', votes: 1654 },
+    { id: 'merit_based', label: 'No — licenses should be merit-based', emoji: '🎯', votes: 987 },
+    { id: 'everyone_equal', label: 'Everyone should have equal access', emoji: '⚖️', votes: 1432 },
+    { id: 'unsure', label: 'Need more information', emoji: '🤔', votes: 543 },
+  ]},
+  { id: 'legal_patient_rights', category: 'legal', question: 'Should medical cannabis patients be protected from employment discrimination?', subtitle: 'Many patients lose jobs or face discipline for legal, off-duty cannabis use prescribed by a doctor.', icon: <Shield size={20} />, color: 'emerald', bgGradient: 'from-emerald-600 to-green-800', didYouKnow: 'Only 21 states have employment protections for medical cannabis patients. In Oklahoma, employers can still fire you for a positive drug test — even with a valid OMMA card.', actionItem: 'Support the Oklahoma Patient Employment Protection Act — contact your state representative.', deadline: 'Legislative session: Feb 2027', options: [
+    { id: 'full_protection', label: 'Yes — same as any other prescription', emoji: '💚', votes: 3234 },
+    { id: 'safety_exceptions', label: 'Yes, except safety-sensitive jobs', emoji: '🦺', votes: 1987 },
+    { id: 'employer_choice', label: 'Employers should decide their policy', emoji: '🏢', votes: 876 },
+    { id: 'no_protection', label: 'No — employers have the right', emoji: '🚫', votes: 432 },
+  ]},
+  { id: 'legal_interstate', category: 'legal', question: 'Should legal cannabis be allowed to cross state lines between legal states?', subtitle: 'Currently, transporting cannabis across ANY state line is a federal crime — even between two legal states.', icon: <Globe size={20} />, color: 'blue', bgGradient: 'from-blue-700 to-slate-800', didYouKnow: 'Oregon and Colorado have passed conditional interstate commerce laws that activate once federal law changes. This could create a national cannabis supply chain.', actionItem: 'Support the Cannabis Interstate Commerce Act to enable legal trade between states.', options: [
+    { id: 'yes_legal_states', label: 'Yes — between legal states only', emoji: '🚛', votes: 2345 },
+    { id: 'yes_all', label: 'Yes — nationwide free commerce', emoji: '🌎', votes: 1876 },
+    { id: 'not_yet', label: 'Not until federal legalization', emoji: '⏳', votes: 1234 },
+    { id: 'never', label: 'No — keep it state by state', emoji: '🏠', votes: 654 },
+  ]},
+  { id: 'legal_civil_rights', category: 'legal', question: 'Do you believe cannabis prohibition has been used as a tool for racial and social control?', subtitle: 'The history of cannabis criminalization is deeply tied to racial politics in America.', icon: <Zap size={20} />, color: 'red', bgGradient: 'from-red-700 to-rose-900', didYouKnow: 'Harry Anslinger, the first head of the Federal Bureau of Narcotics, explicitly used racist language to push for cannabis prohibition in the 1930s. Nixon\'s advisor John Ehrlichman later admitted the War on Drugs targeted Black communities and antiwar activists.', options: [
+    { id: 'absolutely', label: 'Absolutely — the evidence is clear', emoji: '📜', votes: 2567 },
+    { id: 'partially', label: 'Partially — but it\'s evolving', emoji: '🔄', votes: 1876 },
+    { id: 'not_anymore', label: 'Maybe historically, but not today', emoji: '🤔', votes: 987 },
+    { id: 'disagree', label: 'Disagree — it was about public safety', emoji: '🛡️', votes: 432 },
+    { id: 'complex', label: 'Too complex to simplify', emoji: '🧩', votes: 876 },
+  ]},
 ];
 
 // ─── Featured Poll (top banner) ───
@@ -513,6 +567,31 @@ export const RevolvingSurveyBanner = ({ compact = false }: { compact?: boolean }
   const poll = POLLS[currentPollIndex];
   const totalVotes = poll.options.reduce((sum, o) => sum + o.votes, 0);
 
+  // Load live results from API on mount
+  const [liveResults, setLiveResults] = useState<Record<string, Record<string, number>>>({});
+  
+  useEffect(() => {
+    fetch('/api/polls/vote')
+      .then(r => r.json())
+      .then(data => {
+        // Build a map of poll_id -> { option_id: vote_count }
+        if (data.results && Array.isArray(data.results)) {
+          const map: Record<string, Record<string, number>> = {};
+          data.results.forEach((r: any) => {
+            if (!map[r.poll_id]) map[r.poll_id] = {};
+            map[r.poll_id][r.option_id] = parseInt(r.total_votes || r.vote_count || '0');
+          });
+          setLiveResults(map);
+        }
+      })
+      .catch(() => {}); // Graceful fallback to seed data
+  }, []);
+
+  // Helper: Get vote count (live + seed)
+  const getVoteCount = (pollId: string, optionId: string, seedVotes: number) => {
+    return seedVotes + (liveResults[pollId]?.[optionId] || 0);
+  };
+
   // Auto-rotate every 15 seconds if user hasn't voted on current poll
   useEffect(() => {
     if (hasVoted[poll.id]) return;
@@ -521,6 +600,28 @@ export const RevolvingSurveyBanner = ({ compact = false }: { compact?: boolean }
     }, 15000);
     return () => clearInterval(timer);
   }, [currentPollIndex, hasVoted, poll.id]);
+
+  // Persist vote to API
+  const persistVote = async (pollId: string, optionIds: string[]) => {
+    try {
+      const sessionId = sessionStorage.getItem('gghp_session') || 
+        (() => { const id = 'sess_' + Math.random().toString(36).slice(2); sessionStorage.setItem('gghp_session', id); return id; })();
+      
+      await fetch('/api/polls/vote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          poll_id: pollId,
+          option_ids: optionIds,
+          session_id: sessionId,
+          category: poll.category,
+          state: sessionStorage.getItem('gghp_jurisdiction') || 'Unknown'
+        })
+      });
+    } catch (e) {
+      // Silent fail — vote is still recorded locally
+    }
+  };
 
   const handleVote = (optionId: string) => {
     if (hasVoted[poll.id]) return;
@@ -535,14 +636,17 @@ export const RevolvingSurveyBanner = ({ compact = false }: { compact?: boolean }
       setSelectedOptions({ ...selectedOptions, [poll.id]: [optionId] });
       setTimeout(() => {
         setHasVoted({ ...hasVoted, [poll.id]: true });
+        persistVote(poll.id, [optionId]);
         setTimeout(() => setCurrentPollIndex(prev => (prev + 1) % POLLS.length), 3000);
       }, 300);
     }
   };
 
   const submitMultiVote = () => {
-    if ((selectedOptions[poll.id] || []).length > 0) {
+    const selections = selectedOptions[poll.id] || [];
+    if (selections.length > 0) {
       setHasVoted({ ...hasVoted, [poll.id]: true });
+      persistVote(poll.id, selections);
       setTimeout(() => setCurrentPollIndex(prev => (prev + 1) % POLLS.length), 3000);
     }
   };
