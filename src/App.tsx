@@ -127,6 +127,7 @@ import { GlobalHeader } from './components/GlobalHeader';
 import { RoleSelectorScreen } from './components/RoleSelectorScreen';
 import { fetchRegulatoryFeed, formatFeedDate, type RegulatoryUpdate } from './lib/regulatoryFeed';
 import { StateWelcomeBanner } from './components/shared/StateWelcomeBanner';
+import { WebDialer } from './components/twilio/WebDialer';
 
 // --- Constants ---
 
@@ -8252,6 +8253,7 @@ export default function App() {
 
         {/* Sylara Intake Agent — visible everywhere except business/compliance/authority/enforcement (L.A.R.R.Y handles those) */}
         {view !== 'larry-chatbot' && (!userProfile || !['business', 'compliance_service', 'regulator_state', 'regulator_federal', 'law_enforcement', 'enforcement_state'].includes(roleOverride || userProfile.role)) && (
+          <WebDialer />
           <SylaraFloatingWidget onClick={() => setShowLarryModal(true)} />
         )}
 
