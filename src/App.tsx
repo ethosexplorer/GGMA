@@ -2121,7 +2121,10 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
                  <h1 className="text-3xl font-black text-slate-800 tracking-tight">GGHP Oversight Command Hub</h1>
             <p className="text-slate-500 font-medium">Unified access to Global Green Enterprise Inc sectors: GGMA, RIP, and SINC.</p>
               </div>
-              <button className="px-6 py-3 bg-emerald-50 text-emerald-700 rounded-xl font-bold border border-emerald-100 hover:bg-emerald-100 transition-all flex items-center gap-2">
+              <button 
+                onClick={() => onNavigate('login')}
+                className="px-6 py-3 bg-emerald-50 text-emerald-700 rounded-xl font-bold border border-emerald-100 hover:bg-emerald-100 transition-all flex items-center gap-2"
+              >
                  Explore Full Database <ArrowRight size={18} />
               </button>
            </div>
