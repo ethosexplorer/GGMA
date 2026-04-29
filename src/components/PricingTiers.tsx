@@ -271,6 +271,13 @@ const PlanCard = ({ plan, index, total, billing, selectedAddons, tabId }: { key?
 
       {/* CTA */}
       <button
+        onClick={() => {
+          if (price === 'Custom') {
+            alert(`Contacting Sales for the ${plan.name} plan...`);
+          } else {
+            alert(`Redirecting to secure checkout...\n\nProcessing subscription for:\n• ${plan.name}\n• Billing: ${billing}\n• Selected Add-ons: ${selectedAddons.length}\n\nTotal Due Today: ${price === 'Free' || showTrial ? '$0.00' : price}`);
+          }
+        }}
         className={`w-full py-3.5 rounded-2xl font-black text-sm transition-all ${
           isPopular
             ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-xl shadow-emerald-600/20'
