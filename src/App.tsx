@@ -1859,15 +1859,13 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
           </div>
 
           <div className="mt-12 text-center">
-             <a 
-               href="https://vocalvideo.com/c/ccardzmedcard-com-as6sui63" 
-               target="_blank" 
-               rel="noopener noreferrer"
-               className="inline-flex items-center gap-2 text-[#1a4731] font-bold hover:underline"
+             <button 
+               onClick={() => window.open('https://vocalvideo.com/c/ccardzmedcard-com-as6sui63', '_blank')}
+               className="inline-flex items-center gap-2 text-[#1a4731] font-bold hover:underline cursor-pointer bg-transparent border-none"
              >
                View All Verified Testimonials
                <ArrowRight size={16} />
-             </a>
+             </button>
           </div>
         </div>
       </section>
