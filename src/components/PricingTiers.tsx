@@ -317,7 +317,7 @@ const AddOnCard = ({ addon, isSelected, onToggle }: { key?: string; addon: AddOn
 export const PricingTiers = ({ onNavigate }: { onNavigate?: (view: string) => void }) => {
   const [activeTab, setActiveTab] = useState<TabId>('patient');
   const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly');
-  const [showAddOns, setShowAddOns] = useState(false);
+
   const [selectedAddons, setSelectedAddons] = useState<AddOn[]>([]);
   
   // Clear selected addons when tab changes
@@ -362,7 +362,7 @@ export const PricingTiers = ({ onNavigate }: { onNavigate?: (view: string) => vo
             {TIER_TABS.map(tab => (
               <button
                 key={tab.id}
-                onClick={() => { setActiveTab(tab.id); setShowAddOns(false); }}
+                onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all border ${
                   activeTab === tab.id
                     ? 'bg-slate-900 text-white border-slate-900 shadow-lg shadow-slate-900/20'
@@ -432,6 +432,46 @@ export const PricingTiers = ({ onNavigate }: { onNavigate?: (view: string) => vo
           </div>
         )}
 
+        {/* Available Single/Add-on Section — ABOVE Plans */}
+        {addons.length > 0 && (
+          <div className="max-w-5xl mx-auto mb-10">
+            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+              {/* Header */}
+              <div className="flex items-center justify-between p-5 border-b border-slate-100">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
+                    <Sparkles size={18} className="text-emerald-600" />
+                  </div>
+                  <div className="text-left">
+                    <h4 className="font-black text-slate-800 text-sm">Available Single/Add-on</h4>
+                    <p className="text-xs text-slate-500">{addons.length} modular enhancements — select to bundle with any plan below</p>
+                  </div>
+                </div>
+                {selectedAddons.length > 0 && (
+                  <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-2">
+                    <span className="text-xs font-bold text-emerald-700">{selectedAddons.length} selected</span>
+                    <span className="text-sm font-black text-emerald-700">
+                      +${selectedAddons.reduce((sum, a) => sum + (typeof a.price === 'number' ? a.price : 0), 0).toFixed(2)}/mo
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Add-on Grid — always visible */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-5">
+                {addons.map(addon => (
+                  <AddOnCard 
+                    key={addon.id} 
+                    addon={addon} 
+                    isSelected={!!selectedAddons.find(a => a.id === addon.id)}
+                    onToggle={toggleAddon}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Plans Grid */}
         <AnimatePresence mode="wait">
           <motion.div
@@ -454,50 +494,6 @@ export const PricingTiers = ({ onNavigate }: { onNavigate?: (view: string) => vo
             </div>
           </motion.div>
         </AnimatePresence>
-
-        {/* Add-Ons Section */}
-        {addons.length > 0 && (
-          <div className="max-w-5xl mx-auto mt-12">
-            <button
-              onClick={() => setShowAddOns(!showAddOns)}
-              className="w-full flex items-center justify-between p-5 bg-white border border-slate-200 rounded-2xl hover:border-emerald-300 transition-all shadow-sm"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
-                  <Sparkles size={18} className="text-emerald-600" />
-                </div>
-                <div className="text-left">
-                  <h4 className="font-black text-slate-800 text-sm">Available Add-Ons</h4>
-                  <p className="text-xs text-slate-500">{addons.length} modular enhancements available for this tier</p>
-                </div>
-              </div>
-              {showAddOns ? <ChevronUp size={20} className="text-slate-400" /> : <ChevronDown size={20} className="text-slate-400" />}
-            </button>
-
-            <AnimatePresence>
-              {showAddOns && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="overflow-hidden"
-                >
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4 pt-4">
-                    {addons.map(addon => (
-                      <AddOnCard 
-                        key={addon.id} 
-                        addon={addon} 
-                        isSelected={!!selectedAddons.find(a => a.id === addon.id)}
-                        onToggle={toggleAddon}
-                      />
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        )}
 
         {/* Volume Incentives (Partners tab only) */}
         {activeTab === 'partners' && (
