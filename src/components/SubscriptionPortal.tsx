@@ -182,7 +182,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
                <p className="text-xs text-slate-500 mb-4 px-4 font-medium leading-relaxed">Our support team is available 24/7 to help you with billing inquiries or custom pricing tailored to your scale.</p>
                <div className="flex flex-col gap-2">
                  <Button onClick={() => alert('Starting Sylara Support Session...')} className="w-full bg-purple-600 hover:bg-purple-500 text-white border-transparent shadow-lg shadow-purple-900/20">Ask Sylara AI</Button>
-                 <Button onClick={() => alert('Phone Support\n\nCall us at: (844) 333-4447\n\nHours: Mon-Fri 8am-8pm CST\nSat-Sun 10am-6pm CST\n\nOr use the QR code feature on the GGHP mobile app to call from your phone.')} variant="outline" className="w-full">Call Phone Support</Button>
+                 <Button onClick={() => alert('Phone Support\n\nCall us at: (888) 963-4447\n\nHours: Mon-Fri 8am-8pm CST\nSat-Sun 10am-6pm CST\n\nOr use the QR code feature on the GGHP mobile app to call from your phone.')} variant="outline" className="w-full">Call Phone Support</Button>
                </div>
             </div>
          </div>

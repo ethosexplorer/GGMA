@@ -2046,7 +2046,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
-                { label: 'Company Number', value: '1-844-333-4447', icon: Phone, color: 'text-emerald-400' },
+                { label: 'Company Number', value: '1-888-963-4447', icon: Phone, color: 'text-emerald-400' },
                 { label: 'Account ID', value: voip800.ACCOUNT_ID || '—', icon: Shield, color: 'text-indigo-400' },
                 { label: 'Provider', value: '800.com', icon: Globe, color: 'text-cyan-400' },
                 { label: 'Status', value: isConnected ? 'Active' : 'Setup Required', icon: Activity, color: isConnected ? 'text-emerald-400' : 'text-amber-400' },
@@ -2173,11 +2173,11 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {[
-                  { dir: 'Inbound', from: '(405) 555-0142', to: '1-844-333-4447', status: 'Completed', dur: '3:24', time: 'Today, 10:15 AM' },
-                  { dir: 'Inbound', from: '(918) 555-0198', to: '1-844-333-4447', status: 'Voicemail', dur: '0:45', time: 'Today, 9:42 AM' },
-                  { dir: 'Outbound', from: '1-844-333-4447', to: '(405) 555-0267', status: 'Completed', dur: '12:08', time: 'Yesterday, 4:30 PM' },
-                  { dir: 'Inbound', from: '(214) 555-0331', to: '1-844-333-4447', status: 'Missed', dur: '—', time: 'Yesterday, 2:15 PM' },
-                  { dir: 'Outbound', from: '1-844-333-4447', to: '(405) 555-0142', status: 'Completed', dur: '5:55', time: 'Yesterday, 11:00 AM' },
+                  { dir: 'Inbound', from: '(405) 555-0142', to: '1-888-963-4447', status: 'Completed', dur: '3:24', time: 'Today, 10:15 AM' },
+                  { dir: 'Inbound', from: '(918) 555-0198', to: '1-888-963-4447', status: 'Voicemail', dur: '0:45', time: 'Today, 9:42 AM' },
+                  { dir: 'Outbound', from: '1-888-963-4447', to: '(405) 555-0267', status: 'Completed', dur: '12:08', time: 'Yesterday, 4:30 PM' },
+                  { dir: 'Inbound', from: '(214) 555-0331', to: '1-888-963-4447', status: 'Missed', dur: '—', time: 'Yesterday, 2:15 PM' },
+                  { dir: 'Outbound', from: '1-888-963-4447', to: '(405) 555-0142', status: 'Completed', dur: '5:55', time: 'Yesterday, 11:00 AM' },
                 ].map((call, i) => (
                   <tr key={i} className="hover:bg-slate-50 transition-colors">
                     <td className="px-6 py-4">
@@ -2331,7 +2331,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
               <h3 className="text-xl font-black flex items-center gap-2"><Phone className="text-emerald-400" size={20}/> Call Center Command</h3>
               <p className="text-emerald-300 text-[10px] font-bold uppercase tracking-widest mt-1">800.com VoIP • {voip800.getCompanyNumber()} • Account: {voip800.ACCOUNT_ID || '—'}</p>
               <div className="grid grid-cols-4 gap-3 mt-4">
-                {[{l:'Number',v:'1-844-333-4447'},{l:'Provider',v:'800.com'},{l:'Account',v:voip800.ACCOUNT_ID||'—'},{l:'Status',v:voip800.isConfigured()?'Active':'Setup'}].map((s,i)=>(<div key={i} className="bg-white/5 border border-white/10 rounded-xl p-3"><p className="text-[9px] font-bold text-white/40 uppercase">{s.l}</p><p className="text-sm font-black text-white mt-0.5">{s.v}</p></div>))}
+                {[{l:'Number',v:'1-888-963-4447'},{l:'Provider',v:'800.com'},{l:'Account',v:voip800.ACCOUNT_ID||'—'},{l:'Status',v:voip800.isConfigured()?'Active':'Setup'}].map((s,i)=>(<div key={i} className="bg-white/5 border border-white/10 rounded-xl p-3"><p className="text-[9px] font-bold text-white/40 uppercase">{s.l}</p><p className="text-sm font-black text-white mt-0.5">{s.v}</p></div>))}
               </div>
             </div>
             <div className="grid grid-cols-3 gap-4">

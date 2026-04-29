@@ -1,7 +1,7 @@
 /**
  * 800.com VoIP Integration Service
  * 
- * Connects GGP-OS platform to the company toll-free number (844-333-4447)
+ * Connects GGP-OS platform to the company toll-free number (888-963-4447)
  * via the 800.com REST API for call routing, SMS, and call center operations.
  * 
  * API Token Format: accountId|apiKey
@@ -10,7 +10,7 @@
 const VOIP_TOKEN = import.meta.env.VITE_VOIP_800_TOKEN || '372214|lVvahKoz5PH5uCZmfmCxhdSDFi0qqobzKhABsx73e2d198d2';
 const [ACCOUNT_ID, API_KEY] = VOIP_TOKEN.split('|');
 const BASE_URL = 'https://api.800.com';
-const COMPANY_NUMBER = '18443334447';
+const COMPANY_NUMBER = '18889634447';
 
 // ──── Auth Headers ────
 const getHeaders = () => ({
@@ -233,7 +233,7 @@ export function isConfigured(): boolean {
  * Get the formatted company number for display
  */
 export function getCompanyNumber(): string {
-  return '1-844-333-4447';
+  return '1-888-963-4447';
 }
 
 /**

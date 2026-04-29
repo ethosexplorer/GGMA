@@ -147,7 +147,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
             </div>
             <div className="grid grid-cols-4 gap-3">
               {[
-                { label: 'Number', value: '1-844-333-4447', icon: Phone },
+                { label: 'Number', value: '1-888-963-4447', icon: Phone },
                 { label: 'Account', value: voip800.ACCOUNT_ID || '—', icon: Shield },
                 { label: 'Provider', value: '800.com', icon: Globe },
                 { label: 'Status', value: isConnected ? 'Active' : 'Setup', icon: Activity },

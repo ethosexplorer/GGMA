@@ -187,7 +187,7 @@ export const BusinessApplicationsTab = ({ user, onStartApplication }: { user?: a
                   <div className="space-y-2">
                     <div className="pt-2 mt-2">
                       <p className="text-[10px] font-black text-emerald-400 uppercase tracking-tighter mb-1">Direct Support Lines</p>
-                      <p className="text-[10px] text-white/70">Compliance Desk: <span className="font-bold text-white">1-844-333-4447</span></p>
+                      <p className="text-[10px] text-white/70">Compliance Desk: <span className="font-bold text-white">1-888-963-4447</span></p>
                     </div>
                   </div>
                </div>

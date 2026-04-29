@@ -199,8 +199,8 @@ export const ApplicationsTab = ({ user, onStartApplication }: { user?: any, onSt
                   <div className="space-y-2">
                     <div className="pt-2 mt-2">
                       <p className="text-[10px] font-black text-emerald-400 uppercase tracking-tighter mb-1">Direct Support Lines</p>
-                      <p className="text-[10px] text-white/70">Med Cards: <span className="font-bold text-white">844-333-4447</span></p>
-                      <p className="text-[10px] text-white/70">Telehealth: <span className="font-bold text-white">844-333-4447</span></p>
+                      <p className="text-[10px] text-white/70">Med Cards: <span className="font-bold text-white">888-963-4447</span></p>
+                      <p className="text-[10px] text-white/70">Telehealth: <span className="font-bold text-white">888-963-4447</span></p>
                     </div>
                   </div>
                </div>
