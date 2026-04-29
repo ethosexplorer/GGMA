@@ -1,9 +1,37 @@
 import React, { useState } from 'react';
-import { CreditCard, CheckCircle2, Shield, Settings, Zap, FileText, Plus } from 'lucide-react';
+import { CreditCard, CheckCircle2, Shield, Settings, Zap, FileText, Plus, Sparkles, ArrowRight, Check, ChevronDown, ChevronUp } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { getAllPlansForLookup, getAllAddonsForLookup } from '../lib/subscriptionPlans';
+import { getAllPlansForLookup, getAllAddonsForLookup, AddOn, getAddOnsForRole } from '../lib/subscriptionPlans';
 import { PricingTiers } from './PricingTiers';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+
+const AddOnCard = ({ addon, isSelected, onToggle }: { key?: string; addon: AddOn; isSelected: boolean; onToggle: (addon: AddOn) => void }) => (
+  <div 
+    onClick={() => onToggle(addon)}
+    className={`flex items-center justify-between p-4 rounded-xl border transition-all cursor-pointer ${
+      isSelected 
+        ? 'bg-emerald-50 border-emerald-500 shadow-sm' 
+        : 'bg-white border-slate-200 hover:border-emerald-300 hover:shadow-sm'
+    }`}
+  >
+    <div className="flex items-center gap-3 flex-1">
+      <div className={`w-5 h-5 rounded border flex items-center justify-center shrink-0 ${
+        isSelected ? 'bg-emerald-600 border-emerald-600' : 'border-slate-300 bg-slate-50'
+      }`}>
+        {isSelected && <Check size={14} className="text-white" />}
+      </div>
+      <div>
+        <p className={`font-bold text-sm ${isSelected ? 'text-emerald-900' : 'text-slate-800'}`}>{addon.name}</p>
+        {addon.per && <p className={`text-[11px] mt-0.5 ${isSelected ? 'text-emerald-600' : 'text-slate-400'}`}>per {addon.per}</p>}
+      </div>
+    </div>
+    <div className="text-right shrink-0 ml-4">
+      <span className={`font-black text-sm ${isSelected ? 'text-emerald-700' : 'text-emerald-600'}`}>
+        ${typeof addon.price === 'number' ? addon.price.toLocaleString(undefined, { minimumFractionDigits: addon.price % 1 !== 0 ? 2 : 0 }) : addon.price}
+      </span>
+      {!addon.per && <span className={`text-[10px] font-bold ${isSelected ? 'text-emerald-600' : 'text-slate-400'}`}>/mo</span>}
+    </div>
+  </div>
+);
 
 const Button = ({ children, className, icon: Icon, variant, ...props }: any) => (
   <button className={cn("inline-flex items-center justify-center gap-2 px-4 py-2 font-bold rounded-lg shadow-sm border transition-all", 
@@ -29,6 +57,8 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
   }, []);
   
   const currentPlan = allPlans.find(p => p.id === activePlanId) || allPlans[0];
+  const roleAddons = getAddOnsForRole(userRole === 'user' ? 'patient' : userRole as any, 'cannabis', 'State');
+  const displayAddons = roleAddons.length > 0 ? roleAddons : allAddons.slice(0, 8);
   const currentAddonsList = allAddons.filter(a => activeAddOns.includes(a.id));
 
   if (showPricing) {
@@ -177,7 +207,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
                )}
             </div>
 
-            <div className="bg-slate-50 border border-slate-200 p-6 rounded-2xl shadow-sm text-center">
+             <div className="bg-slate-50 border border-slate-200 p-6 rounded-2xl shadow-sm text-center">
                <h4 className="font-bold text-slate-800 mb-2">Need Help?</h4>
                <p className="text-xs text-slate-500 mb-4 px-4 font-medium leading-relaxed">Our support team is available 24/7 to help you with billing inquiries or custom pricing tailored to your scale.</p>
                <div className="flex flex-col gap-2">
@@ -186,6 +216,44 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
                </div>
             </div>
          </div>
+      </div>
+
+      {/* Available Single/Add-on Section */}
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden mt-6">
+        <div className="flex items-center justify-between p-5 border-b border-slate-100">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
+              <Sparkles size={18} className="text-emerald-600" />
+            </div>
+            <div className="text-left">
+              <h4 className="font-black text-slate-800 text-sm">Available Single/Add-on</h4>
+              <p className="text-xs text-slate-500">Modular enhancements — select to bundle with your plan or use as single-use</p>
+            </div>
+          </div>
+          {activeAddOns.length > 0 && (
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-2 hidden sm:flex">
+                <span className="text-xs font-bold text-emerald-700">{activeAddOns.length} selected</span>
+                <span className="text-sm font-black text-emerald-700">
+                  +${currentAddonsList.reduce((sum, a) => sum + (typeof a.price === 'number' ? a.price : 0), 0).toFixed(2)}/mo
+                </span>
+              </div>
+              <button className="flex items-center gap-2 px-6 py-2 bg-emerald-600 text-white rounded-xl text-sm font-black hover:bg-emerald-700 transition-all shadow-md">
+                Checkout <ArrowRight size={16} />
+              </button>
+            </div>
+          )}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-5">
+          {displayAddons.map(addon => (
+            <AddOnCard 
+              key={addon.id} 
+              addon={addon} 
+              isSelected={activeAddOns.includes(addon.id)}
+              onToggle={(addon) => setActiveAddOns(prev => prev.includes(addon.id) ? prev.filter(id => id !== addon.id) : [...prev, addon.id])}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

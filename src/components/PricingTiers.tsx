@@ -448,11 +448,16 @@ export const PricingTiers = ({ onNavigate }: { onNavigate?: (view: string) => vo
                   </div>
                 </div>
                 {selectedAddons.length > 0 && (
-                  <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-2">
-                    <span className="text-xs font-bold text-emerald-700">{selectedAddons.length} selected</span>
-                    <span className="text-sm font-black text-emerald-700">
-                      +${selectedAddons.reduce((sum, a) => sum + (typeof a.price === 'number' ? a.price : 0), 0).toFixed(2)}/mo
-                    </span>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-2">
+                      <span className="text-xs font-bold text-emerald-700">{selectedAddons.length} selected</span>
+                      <span className="text-sm font-black text-emerald-700">
+                        +${selectedAddons.reduce((sum, a) => sum + (typeof a.price === 'number' ? a.price : 0), 0).toFixed(2)}/mo
+                      </span>
+                    </div>
+                    <button className="flex items-center gap-2 px-6 py-2 bg-emerald-600 text-white rounded-xl text-sm font-black hover:bg-emerald-700 transition-all shadow-md">
+                      Checkout <ArrowRight size={16} />
+                    </button>
                   </div>
                 )}
               </div>
