@@ -1768,7 +1768,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
               </div>
               <div className="flex items-center gap-4 pt-2">
                 <button
-                  onClick={() => onNavigate('business-portal')}
+                  onClick={() => onNavigate('login')}
                   className="px-6 py-3 bg-blue-500 text-white rounded-xl font-black text-sm hover:bg-blue-400 transition-all shadow-lg shadow-blue-500/25"
                 >
                   Explore Business Portal
