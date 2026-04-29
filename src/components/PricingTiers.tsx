@@ -172,6 +172,31 @@ const PlanCard = ({ plan, index, total, billing, selectedAddons, tabId }: { key?
         </div>
       )}
 
+      {/* Dynamic Pricing Calculator (Top Right) */}
+      {selectedAddons.length > 0 && price !== 'Custom' && (
+        <div className="absolute top-4 right-4 bg-white border border-emerald-200 rounded-xl p-3 shadow-lg z-20 text-right min-w-[140px]">
+          <p className="text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-wider text-left">Your Total</p>
+          <div className="flex justify-between items-center text-[11px] mb-0.5">
+            <span className="text-slate-600 text-left">Base Plan:</span>
+            <span className="font-medium text-slate-800">${typeof plan.monthlyPrice === 'number' ? (billing === 'monthly' ? plan.monthlyPrice : plan.annualPrice) : plan.monthlyPrice}</span>
+          </div>
+          <div className="flex justify-between items-center text-[11px] mb-1.5 pb-1.5 border-b border-slate-100">
+            <span className="text-emerald-600 text-left">{selectedAddons.length} Add-on{selectedAddons.length > 1 ? 's' : ''}:</span>
+            <span className="font-bold text-emerald-600">+{billing === 'monthly' ? `$${addonTotal}` : `$${addonTotal * 12}`}</span>
+          </div>
+          <div className="flex justify-between items-center text-sm font-black text-slate-900 mb-2">
+            <span className="text-left">Total:</span>
+            <span>{price}</span>
+          </div>
+          <button
+            onClick={() => alert(`Redirecting to secure checkout...\n\nProcessing subscription for:\n• ${plan.name}\n• Billing: ${billing}\n• Selected Add-ons: ${selectedAddons.length}\n\nTotal Due Today: ${price === 'Free' || showTrial ? '$0.00' : price}`)}
+            className="w-full py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1 shadow-md"
+          >
+            Checkout <ArrowRight size={10} />
+          </button>
+        </div>
+      )}
+
       {/* Free Trial Badge */}
       {showTrial && (
         <div className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-500 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl mb-2 w-fit shadow-sm">
