@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDraggableSidebar } from '../hooks/useDraggableSidebar';
-import { Wallet, Users, Building2, Shield, Clock, TrendingUp, Plus, LayoutDashboard, CreditCard, PackageSearch, AlertCircle, ShoppingCart, Loader2, Trash2, Edit2, CheckCircle, XCircle, Sparkles, MapPin, BarChart2, Activity, MessageSquare, LogOut, FileText, ClipboardList, CheckSquare, UploadCloud, Calendar, Zap, AlertTriangle, Database, Gavel, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Wallet, Users, Building2, Shield, Clock, TrendingUp, Plus, LayoutDashboard, CreditCard, PackageSearch, AlertCircle, ShoppingCart, Loader2, Trash2, Edit2, CheckCircle, XCircle, Sparkles, MapPin, BarChart2, Activity, MessageSquare, LogOut, FileText, ClipboardList, CheckSquare, UploadCloud, Calendar, Zap, AlertTriangle, Database, Gavel, ArrowRight, ArrowLeft, Send } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { StatCard } from '../components/StatCard';
 import { CareWalletTab } from '../components/shared/CareWalletTab';
@@ -1541,6 +1541,76 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
             <p className="text-amber-300 text-[10px] mt-1 font-bold">⚠️ DEA portal currently lists $794 — discrepancy noted</p>
             <p className="text-blue-200 text-xs mt-2">Review Period</p>
             <p className="text-white font-bold">≤ 6 months</p>
+          </div>
+        </div>
+
+        {/* DEA Fee Schedule — Direct Checkout */}
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-lg overflow-hidden">
+          <div className="bg-gradient-to-r from-emerald-50 to-teal-50 px-6 py-4 border-b border-emerald-100 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
+                <CreditCard size={20} className="text-emerald-600" />
+              </div>
+              <div>
+                <h4 className="font-black text-slate-800 text-sm">DEA Registration Fee Schedule</h4>
+                <p className="text-[11px] text-slate-500">Per Federal Register (21 CFR §1301.13) • Source: Gies Law Firm PLLC</p>
+              </div>
+            </div>
+            <span className="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">⚠️ FEE DISCREPANCY ACTIVE</span>
+          </div>
+          <div className="p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
+              {/* Dispenser */}
+              <div className="border-2 border-emerald-200 rounded-xl p-5 bg-emerald-50/50 relative">
+                <div className="absolute top-3 right-3"><span className="text-[9px] font-black bg-emerald-600 text-white px-2 py-0.5 rounded-full">MOST COMMON</span></div>
+                <p className="text-xs font-bold text-emerald-700 uppercase tracking-wider">Dispensers</p>
+                <p className="text-[10px] text-slate-500 mt-0.5">Including pharmacies</p>
+                <p className="text-3xl font-black text-slate-900 mt-2">$888</p>
+                <p className="text-xs text-slate-500">/ 3-year registration</p>
+                <p className="text-amber-600 text-[10px] font-bold mt-2">⚠️ Portal shows $794</p>
+                <button
+                  onClick={() => window.open('https://mmapplication.diversion.dea.gov/', '_blank')}
+                  className="w-full mt-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+                >
+                  <Send size={14} /> Apply Now — DEA Portal ↗
+                </button>
+              </div>
+              {/* Manufacturer */}
+              <div className="border border-slate-200 rounded-xl p-5 bg-white">
+                <p className="text-xs font-bold text-indigo-700 uppercase tracking-wider">Manufacturers</p>
+                <p className="text-[10px] text-slate-500 mt-0.5">Growers & processors</p>
+                <p className="text-3xl font-black text-slate-900 mt-2">$3,699</p>
+                <p className="text-xs text-slate-500">/ annually</p>
+                <div className="mt-2" />
+                <button
+                  onClick={() => window.open('https://apps.deadiversion.usdoj.gov/webforms2/spring/newLogin', '_blank')}
+                  className="w-full mt-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+                >
+                  <Send size={14} /> Apply — DEA Form 225 ↗
+                </button>
+              </div>
+              {/* Distributor */}
+              <div className="border border-slate-200 rounded-xl p-5 bg-white">
+                <p className="text-xs font-bold text-purple-700 uppercase tracking-wider">Distributors</p>
+                <p className="text-[10px] text-slate-500 mt-0.5">Wholesale & transport</p>
+                <p className="text-3xl font-black text-slate-900 mt-2">$1,850</p>
+                <p className="text-xs text-slate-500">/ annually</p>
+                <div className="mt-2" />
+                <button
+                  onClick={() => window.open('https://apps.deadiversion.usdoj.gov/webforms2/spring/newLogin', '_blank')}
+                  className="w-full mt-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-black transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+                >
+                  <Send size={14} /> Apply — DEA Form 225 ↗
+                </button>
+              </div>
+            </div>
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+              <AlertTriangle size={18} className="text-amber-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs font-bold text-amber-800">Fee Discrepancy Notice</p>
+                <p className="text-[11px] text-amber-700 mt-1">The DEA Medical Marijuana Application Portal currently lists <strong>$794</strong> for dispensary registration. However, the Federal Register (21 CFR §1301.13) lists <strong>$888 for a 3-year dispensary registration</strong>. This discrepancy has been flagged by Gies Law Firm PLLC and others. Confirm the exact amount displayed on the portal at time of payment. All fees are <strong>non-refundable</strong> and payable via <strong>PayPal only</strong>.</p>
+              </div>
+            </div>
           </div>
         </div>
 
