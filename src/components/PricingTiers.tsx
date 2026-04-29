@@ -455,7 +455,10 @@ export const PricingTiers = ({ onNavigate }: { onNavigate?: (view: string) => vo
                         +${selectedAddons.reduce((sum, a) => sum + (typeof a.price === 'number' ? a.price : 0), 0).toFixed(2)}/mo
                       </span>
                     </div>
-                    <button className="flex items-center gap-2 px-6 py-2 bg-emerald-600 text-white rounded-xl text-sm font-black hover:bg-emerald-700 transition-all shadow-md">
+                    <button 
+                      onClick={() => alert(`Redirecting to secure checkout...\n\nProcessing payment for ${selectedAddons.length} item(s):\n${selectedAddons.map(a => `• ${a.name} ($${a.price})`).join('\n')}\n\nTotal: $${selectedAddons.reduce((sum, a) => sum + (typeof a.price === 'number' ? a.price : 0), 0).toFixed(2)}`)}
+                      className="flex items-center gap-2 px-6 py-2 bg-emerald-600 text-white rounded-xl text-sm font-black hover:bg-emerald-700 transition-all shadow-md"
+                    >
                       Checkout <ArrowRight size={16} />
                     </button>
                   </div>
