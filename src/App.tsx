@@ -914,8 +914,14 @@ const STATE_RESOURCES: Record<string, any> = {
             const contentToReturn = fullBlockMatch ? LARRY_LEGAL_KNOWLEDGE.substring(fullBlockMatch.index || 0).split(/\n\n(?:WA|WI)/)[0] : bestMatch;
             
             botResponse = `Based on my legal resources database:\n\n${contentToReturn.trim()}`;
-         } else if (lowerQuery.includes('application')) {
-            botResponse = 'For application issues, you can navigate to the "Patient Portal" or contact our support team using the form.';
+         } else if (lowerQuery.includes('dea') || lowerQuery.includes('schedule iii') || lowerQuery.includes('schedule 3') || lowerQuery.includes('federal registration') || lowerQuery.includes('drug enforcement')) {
+             botResponse = '🏛️ DEA Schedule III — Federal Registration Guide\n\nAs of April 23, 2026, the DEA began accepting medical marijuana dispensary registrations. Key facts:\n\n📋 7 Required Sections: Business Info, Activity/Drug Codes, State Licenses, Liability, Compliance/SOPs, Payment ($794/yr via PayPal), Submission.\n\n⏰ Deadline: June 22, 2026 (60-day window from April 23)\n💰 Fee: $794 annual, non-refundable\n\n⚠️ IMPORTANT: Licensees NOT participating lose eligibility for tax breaks (280E relief), banking services, and interstate commerce.\n\n✅ You CAN operate lawfully under your state license during the DEA review period (up to 6 months).\n\n🔗 DEA Portal: deadiversion.usdoj.gov/drugreg/registration.html\n\nLog into the Business Portal → DEA Sch. III tab for a full step-by-step guided wizard.';
+          } else if (lowerQuery.includes('sop') || lowerQuery.includes('standard operating procedure')) {
+             botResponse = '📑 SOPs Required for DEA Registration (§5 Compliance):\n\n1. Ordering controlled substances\n2. Receiving shipments\n3. Inventory management\n4. Storage of marijuana products\n5. Security measures\n6. Dispensing (including delivery)\n7. Destruction/disposal\n8. Theft/loss reporting to DEA\n9. Due diligence for suspicious orders\n10. Records maintenance & retention\n\nGGP-OS auto-generates most of these from your OMMA compliance data and Metrc integration. Go to Business Portal → DEA Sch. III to review.';
+          } else if (lowerQuery.includes('supplier') || lowerQuery.includes('dea number')) {
+             botResponse = '⚠️ Supplier DEA Numbers\n\nThe DEA application (§5) requires supplier names and DEA registration numbers. Since this is new, most suppliers will NOT have DEA numbers yet.\n\nWhat to do:\n1. Contact your suppliers and ask if they have applied\n2. Enter "Pending" for now — the DEA understands this is a new process\n3. Update your application once supplier DEA #s are issued\n\nGGP-OS tracks this in the DEA Sch. III → §5 Compliance section.';
+          } else if (lowerQuery.includes('application')) {
+            botResponse = 'For patient applications, navigate to the Patient Portal. For DEA Schedule III registration, visit the Business Portal → DEA Sch. III tab for a full guided wizard with L.A.R.R.Y. compliance assistance.';
          } else {
             // Using LIVE Gemini Integration
             try {
