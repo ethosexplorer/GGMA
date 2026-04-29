@@ -3406,11 +3406,11 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
   };
 
   const getInitialChoices = () => {
-    if (variant === 'ggma') return ['Start Patient Intake', 'Start Business Intake', 'View Patient Fee Schedule', 'View Business Fee Schedule', 'Speak with a Live Agent', 'View Subscription Plans'];
+    if (variant === 'ggma') return ['Start Patient Intake', 'Start Business Intake', '🏛️ DEA Schedule III Registration', 'View Patient Fee Schedule', 'View Business Fee Schedule', 'View Subscription Plans'];
     if (variant === 'rip') return ['Field Intelligence Report', 'Background Verification Check', 'Enforcement Status Inquiry', 'Compliance Audit Request', 'Contact Oversight Division', 'View State Authority Plans'];
-    if (variant === 'sinc') return ['Start Business Intake', 'Audit Shield Setup', 'Seed-to-Sale Compliance', 'Network Integrity Check', 'View Business Fee Schedule', 'View Subscription Plans'];
+    if (variant === 'sinc') return ['Start Business Intake', '🏛️ DEA Schedule III Registration', 'Audit Shield Setup', 'Seed-to-Sale Compliance', 'Network Integrity Check', 'View Business Fee Schedule'];
     
-    if (isBusiness) return ['Start Business Intake', 'View Business Fee Schedule', 'Speak with Business Expert', 'View Subscription Plans'];
+    if (isBusiness) return ['Start Business Intake', '🏛️ DEA Schedule III Registration', 'View Business Fee Schedule', 'Speak with Business Expert', 'View Subscription Plans'];
     if (isGeneral) return [
       '🏢 GGMA Licensing',
       '🕵️ RIP Intelligence',
@@ -3462,6 +3462,48 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     isAdultLicense: '',
   });
   const [eligibleLicenses, setEligibleLicenses] = useState<string[]>([]);
+
+  // ── DEA Schedule III Registration Flow State ─────────────────────────────
+  const [deaFlowActive, setDeaFlowActive] = useState(false);
+  const [deaStep, setDeaStep] = useState(0);
+  const [deaData, setDeaData] = useState<Record<string, string>>({});
+
+  const DEA_QUESTIONS = [
+    // §1 Business Info
+    { section: 1, title: 'Business Information', key: 'businessName', q: 'What is the **Legal Business Name** of your entity?', hint: 'Enter the exact name on your state registration.' },
+    { section: 1, title: 'Business Information', key: 'businessAddress', q: 'What is your **Business Address**?', hint: 'Full street address including city, state, and ZIP.' },
+    { section: 1, title: 'Business Information', key: 'businessPhone', q: 'What is your **Business Phone Number**?', hint: 'Include area code.' },
+    { section: 1, title: 'Business Information', key: 'businessEmail', q: 'What is your **Business Email**?', hint: 'This email will receive DEA correspondence.' },
+    { section: 1, title: 'Business Information', key: 'contactName', q: 'Who is the **Primary Contact** for this application?', hint: 'Full name of the responsible individual.' },
+    { section: 1, title: 'Business Information', key: 'taxId', q: 'What is your **Tax ID / EIN**?', hint: 'Format: XX-XXXXXXX' },
+    { section: 1, title: 'Business Information', key: 'orgType', q: 'What is your **Organization Type**?', hint: 'Corporation, LLC, Partnership, Sole Proprietorship, etc.', choices: ['Corporation', 'LLC', 'Partnership', 'LLP', 'Sole Proprietorship', 'Other'] },
+    // §2 Activity & Drug Codes
+    { section: 2, title: 'Activity & Drug Codes', key: 'marijuana7362', q: 'Will your firm handle **Marijuana** (Drug Code 7362)?', hint: 'Most dispensaries select Yes.', choices: ['Yes', 'No'] },
+    { section: 2, title: 'Activity & Drug Codes', key: 'extract7353', q: 'Will your firm handle **Marijuana Extract** (Drug Code 7353)?', hint: 'Includes oils, concentrates, vape cartridges.', choices: ['Yes', 'No'] },
+    { section: 2, title: 'Activity & Drug Codes', key: 'thc7386', q: 'Will your firm handle **Delta-9 THC** (Drug Code 7386)?', hint: 'Includes edibles, tinctures.', choices: ['Yes', 'No'] },
+    { section: 2, title: 'Activity & Drug Codes', key: 'dispensing', q: 'Will your firm **dispense** medical marijuana to patients?', hint: 'Select Yes if you are a dispensary.', choices: ['Yes', 'No'] },
+    // §3 State License
+    { section: 3, title: 'State Licenses', key: 'licenseNumber', q: 'What is your **OMMA License Number**?', hint: 'Format: GAAA-XXXX-XXXX' },
+    { section: 3, title: 'State Licenses', key: 'licenseExpiry', q: 'When does your OMMA license **expire**?', hint: 'MM/DD/YYYY format.' },
+    // §4 Liability
+    { section: 4, title: 'Liability Questions', key: 'criminalHistory', q: 'Has any person associated with the firm been **convicted of a crime related to controlled substances**?', hint: 'Answer honestly — most OMMA licensees answer No.', choices: ['No', 'Yes'] },
+    { section: 4, title: 'Liability Questions', key: 'deaSurrendered', q: 'Has anyone ever **surrendered or had a DEA registration revoked**?', hint: '', choices: ['No', 'Yes'] },
+    { section: 4, title: 'Liability Questions', key: 'stateSurrendered', q: 'Has anyone had a **state professional license revoked, suspended, or placed on probation**?', hint: '', choices: ['No', 'Yes'] },
+    // §5 SOPs
+    { section: 5, title: 'Compliance & SOPs', key: 'sopOrdering', q: 'Do you have a documented **SOP for Ordering** controlled substances?', hint: 'Standard operating procedure for how you order inventory.', choices: ['Yes — documented', 'No — needs creation'] },
+    { section: 5, title: 'Compliance & SOPs', key: 'sopReceiving', q: 'Do you have a documented **SOP for Receiving** shipments?', hint: 'How do you verify and log incoming inventory?', choices: ['Yes — documented', 'No — needs creation'] },
+    { section: 5, title: 'Compliance & SOPs', key: 'sopInventory', q: 'Do you have a documented **SOP for Inventories**?', hint: 'How do you conduct and record inventory counts?', choices: ['Yes — documented', 'No — needs creation'] },
+    { section: 5, title: 'Compliance & SOPs', key: 'sopStorage', q: 'Do you have a documented **SOP for Storage** of marijuana?', hint: 'Vault/safe requirements, temperature, access control.', choices: ['Yes — documented', 'No — needs creation'] },
+    { section: 5, title: 'Compliance & SOPs', key: 'sopSecurity', q: 'Do you have a documented **SOP for Security**?', hint: 'Alarm systems, cameras, access control, safe/vault.', choices: ['Yes — documented', 'No — needs creation'] },
+    { section: 5, title: 'Compliance & SOPs', key: 'sopDispensing', q: 'Do you have a documented **SOP for Dispensing** (including delivery)?', hint: 'Patient verification, logging, delivery protocols.', choices: ['Yes — documented', 'No — needs creation'] },
+    { section: 5, title: 'Compliance & SOPs', key: 'sopDestruction', q: 'Do you have a documented **SOP for Destruction/Disposal**?', hint: 'How do you destroy expired/damaged product?', choices: ['Yes — documented', 'No — needs creation'] },
+    { section: 5, title: 'Compliance & SOPs', key: 'sopTheftLoss', q: 'Do you have a documented **SOP for Theft/Loss Reporting**?', hint: 'DEA requires prompt reporting of any theft or loss.', choices: ['Yes — documented', 'No — needs creation'] },
+    { section: 5, title: 'Compliance & SOPs', key: 'hasVault', q: 'Does your facility have a **vault or safe** for controlled substances?', hint: 'Required by DEA for Schedule III storage.', choices: ['Yes', 'No'] },
+    { section: 5, title: 'Compliance & SOPs', key: 'hasAlarm', q: 'Does your facility have an **alarm system**?', hint: 'DEA requires security systems for registered facilities.', choices: ['Yes', 'No'] },
+    // §6 Payment
+    { section: 6, title: 'Payment', key: 'paypalReady', q: 'Do you have a **PayPal account** ready to pay the $794 annual fee?', hint: 'The DEA only accepts PayPal for online applications.', choices: ['Yes', 'No — need to set up'] },
+    { section: 6, title: 'Payment', key: 'feeAcknowledged', q: 'Do you **acknowledge** that the $794 annual fee is **non-refundable**?', hint: 'This is required before submission.', choices: ['Yes, I acknowledge', 'I need more information'] },
+  ];
 
   // ── Business License flow state (steps 100+) ─────────────────────────────
   const [businessData, setBusinessData] = useState({
@@ -3825,7 +3867,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         setMessages(prev => [...prev, { 
           role: 'bot', 
           text: response,
-          choices: ['🏢 GGMA Licensing', '🕵️ RIP Intelligence', '🛡️ SINC Compliance', '📈 Subscription Benefits', '💰 Care Wallet Info', '👋 No thanks, Goodbye']
+          choices: ['🏢 GGMA Licensing', '🕵️ RIP Intelligence', '🛡️ SINC Compliance', '🏛️ DEA Schedule III Registration', '📈 Subscription Benefits', '💰 Care Wallet Info']
         } as any]);
       } else {
         response = 'Excellent! I have noted that your consultation is now scheduled. We look forward to speaking with you! 🎉\n\n' +
@@ -3878,6 +3920,66 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         choices: ['Individual Representation', 'Business/Commercial Counsel', 'Provider/Malpractice Defense', 'Speak with Admin/Paralegal', 'Main Menu'] 
       } as any]);
       setSignupStep(850);
+      setIsTyping(false);
+      return;
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // DEA SCHEDULE III — CONVERSATIONAL GUIDED REGISTRATION FLOW
+    // ═══════════════════════════════════════════════════════════════════
+    if (deaFlowActive) {
+      const currentQ = DEA_QUESTIONS[deaStep];
+      if (currentQ) {
+        setDeaData(prev => ({ ...prev, [currentQ.key]: text }));
+      }
+      const nextStep = deaStep + 1;
+      if (nextStep < DEA_QUESTIONS.length) {
+        const nextQ = DEA_QUESTIONS[nextStep];
+        const sectionChanged = currentQ && nextQ.section !== currentQ.section;
+        const sectionHeader = sectionChanged ? `\n\n---\n🏛️ **§${nextQ.section}: ${nextQ.title}**\n\n` : '';
+        const progress = Math.round((nextStep / DEA_QUESTIONS.length) * 100);
+        response = `✅ Got it!${sectionHeader}\n\n📊 Progress: **${progress}%** (Question ${nextStep + 1} of ${DEA_QUESTIONS.length})\n\n${nextQ.q}${nextQ.hint ? `\n\n_${nextQ.hint}_` : ''}`;
+        setDeaStep(nextStep);
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: nextQ.choices } as any]);
+        setIsTyping(false);
+        return;
+      } else {
+        // All questions completed — show summary
+        const finalData = { ...deaData, [currentQ.key]: text };
+        setDeaData(finalData);
+        const summaryLines = DEA_QUESTIONS.map(q => `• **${q.q.replace(/\*\*/g, '')}**: ${finalData[q.key] || '—'}`);
+        response = `🎉 **DEA Schedule III Application — COMPLETE!**\n\n**Your collected data:**\n\n${summaryLines.join('\n')}\n\n---\n\n📞 **DEA Support:** 1-800-882-9539 (8:30 AM–5:50 PM ET)\n📧 DEA.Registration.Help@dea.gov\n\n**Next Steps:**\n1. Save this to your Vault\n2. Log into the Business Portal → DEA Sch. III tab to review\n3. Submit at mmapplication.diversion.dea.gov\n\n⏰ **Deadline: June 22, 2026** • $794 fee via PayPal`;
+        setDeaFlowActive(false);
+        setDeaStep(0);
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['📥 Save to Vault', '🔗 Open DEA Portal', '🏠 Main Menu'] } as any]);
+        setIsTyping(false);
+        return;
+      }
+    }
+
+    // Handle DEA flow trigger button
+    if (lower.includes('dea schedule iii registration') || lower.includes('dea schedule 3 registration') || lower === 'federal compliance' || lower.includes('dea registration')) {
+      setDeaFlowActive(true);
+      setDeaStep(0);
+      setDeaData({});
+      const firstQ = DEA_QUESTIONS[0];
+      response = `🏛️ **DEA Schedule III — Guided Registration**\n\nI'm going to walk you through **all ${DEA_QUESTIONS.length} questions** across the 7 DEA sections, step by step. Your answers are saved automatically.\n\n**Key Facts:**\n• ⏰ Deadline: June 22, 2026 (60-day window)\n• 💰 Fee: $794/year (non-refundable, PayPal)\n• ✅ You can operate under your OMMA license during review\n\n---\n🏛️ **§1: ${firstQ.title}**\n\n${firstQ.q}${firstQ.hint ? `\n\n_${firstQ.hint}_` : ''}`;
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: firstQ.choices } as any]);
+      setIsTyping(false);
+      return;
+    }
+
+    // Handle DEA completion actions
+    if (lower.includes('save to vault') && Object.keys(deaData).length > 0) {
+      response = '📥 **Saved to Vault!** Your DEA application data has been securely stored. You can access it anytime from the Business Portal → Vault tab.\n\nWould you like to open the DEA portal to submit, or return to the main menu?';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['🔗 Open DEA Portal', '🏠 Main Menu'] } as any]);
+      setIsTyping(false);
+      return;
+    }
+    if (lower.includes('open dea portal')) {
+      window.open('https://mmapplication.diversion.dea.gov/', '_blank');
+      response = '🔗 Opening the DEA Medical Marijuana Application Portal...\n\nThe portal has been opened in a new tab. Use your saved data to complete the official submission.\n\n📞 DEA Support: 1-800-882-9539';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['🏠 Main Menu'] } as any]);
       setIsTyping(false);
       return;
     }
