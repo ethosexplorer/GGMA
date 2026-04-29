@@ -504,79 +504,120 @@ export const FeaturedPoll = () => {
   );
 };
 
-// ─── Sticky Side Poll Widget ───
-export const StickyPollWidget = () => {
-  const [isOpen, setIsOpen] = useState(false);
+// ─── Revolving Survey Banner (Prominent, inline) ───
+export const RevolvingSurveyBanner = ({ compact = false }: { compact?: boolean }) => {
   const [currentPollIndex, setCurrentPollIndex] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string[]>>({});
   const [hasVoted, setHasVoted] = useState<Record<string, boolean>>({});
-  const [showAfterScroll, setShowAfterScroll] = useState(false);
-
-  // Show after scrolling past the hero
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowAfterScroll(window.scrollY > 600);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const poll = POLLS[currentPollIndex];
   const totalVotes = poll.options.reduce((sum, o) => sum + o.votes, 0);
 
+  // Auto-rotate every 15 seconds if user hasn't voted on current poll
+  useEffect(() => {
+    if (hasVoted[poll.id]) return;
+    const timer = setInterval(() => {
+      setCurrentPollIndex(prev => (prev + 1) % POLLS.length);
+    }, 15000);
+    return () => clearInterval(timer);
+  }, [currentPollIndex, hasVoted, poll.id]);
+
   const handleVote = (optionId: string) => {
     if (hasVoted[poll.id]) return;
-    setSelectedOptions({ ...selectedOptions, [poll.id]: [optionId] });
-    setTimeout(() => setHasVoted({ ...hasVoted, [poll.id]: true }), 300);
+    const currentSelections = selectedOptions[poll.id] || [];
+    if (poll.allowMultiple) {
+      if (currentSelections.includes(optionId)) {
+        setSelectedOptions({ ...selectedOptions, [poll.id]: currentSelections.filter(id => id !== optionId) });
+      } else {
+        setSelectedOptions({ ...selectedOptions, [poll.id]: [...currentSelections, optionId] });
+      }
+    } else {
+      setSelectedOptions({ ...selectedOptions, [poll.id]: [optionId] });
+      setTimeout(() => {
+        setHasVoted({ ...hasVoted, [poll.id]: true });
+        setTimeout(() => setCurrentPollIndex(prev => (prev + 1) % POLLS.length), 3000);
+      }, 300);
+    }
+  };
+
+  const submitMultiVote = () => {
+    if ((selectedOptions[poll.id] || []).length > 0) {
+      setHasVoted({ ...hasVoted, [poll.id]: true });
+      setTimeout(() => setCurrentPollIndex(prev => (prev + 1) % POLLS.length), 3000);
+    }
   };
 
   const nextPoll = () => setCurrentPollIndex((currentPollIndex + 1) % POLLS.length);
+  const prevPoll = () => setCurrentPollIndex((currentPollIndex - 1 + POLLS.length) % POLLS.length);
 
-  if (!showAfterScroll) return null;
+  // Progress dots
+  const dotCount = Math.min(POLLS.length, 10);
+  const startDot = Math.max(0, currentPollIndex - Math.floor(dotCount / 2));
 
   return (
-    <div className="fixed bottom-20 right-4 sm:bottom-8 sm:right-8 z-50 flex flex-col items-end">
-      <AnimatePresence>
-        {!isOpen ? (
-          <motion.button
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            onClick={() => setIsOpen(true)}
-            className="w-14 h-14 bg-emerald-500 bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl shadow-2xl shadow-emerald-500/30 flex items-center justify-center text-white hover:scale-110 transition-transform group relative"
-          >
-            <Vote size={22} />
-            <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-[9px] font-black text-white animate-pulse">
-              {POLLS.length}
-            </div>
-            <div className="absolute left-full ml-3 bg-slate-900 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity shadow-xl pointer-events-none">
-              🗳️ Vote Now!
-            </div>
-          </motion.button>
-        ) : (
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0, y: 20 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.8, opacity: 0, y: 20 }}
-            className="w-[calc(100vw-2rem)] sm:w-80 max-w-sm bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[70vh]"
-          >
-            {/* Widget Header */}
-            <div className={`bg-gradient-to-r ${poll.bgGradient} p-4`}>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <Vote size={16} className="text-white" />
-                  <span className="text-[10px] font-black text-white/80 uppercase tracking-widest">Community Voice</span>
-                </div>
-                <button onClick={() => setIsOpen(false)} className="text-white/60 hover:text-white">
-                  <X size={16} />
-                </button>
-              </div>
-              <p className="text-white font-bold text-sm leading-snug">{poll.question}</p>
-              <p className="text-white/60 text-[10px] mt-1">Poll {currentPollIndex + 1} of {POLLS.length}</p>
-            </div>
+    <div className={`w-full ${compact ? '' : 'max-w-[1000px] mx-auto'}`}>
+      <div className="bg-gradient-to-br from-emerald-950 via-emerald-900 to-green-900 rounded-2xl border border-emerald-700/30 overflow-hidden shadow-xl shadow-emerald-900/20 relative">
+        {/* Glow effects */}
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
+          <div className="absolute -top-20 -left-20 w-60 h-60 bg-emerald-400 rounded-full blur-3xl" />
+          <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-green-400 rounded-full blur-3xl" />
+        </div>
 
-            {/* Options */}
-            <div className="p-3 space-y-2 max-h-[300px] overflow-y-auto">
+        {/* Header */}
+        <div className="relative z-10 px-6 pt-5 pb-3 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className={`w-10 h-10 bg-gradient-to-br ${poll.bgGradient} rounded-xl flex items-center justify-center shadow-lg`}>
+              <Vote size={18} className="text-white" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-black text-amber-400 uppercase tracking-widest">🗳️ We Want Your Opinion</span>
+              </div>
+              <p className="text-emerald-400/60 text-[10px] font-bold mt-0.5">
+                Poll {currentPollIndex + 1} of {POLLS.length} • {totalVotes.toLocaleString()} votes
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <button onClick={prevPoll} className="w-7 h-7 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center text-white transition-colors">
+              <ChevronLeft size={14} />
+            </button>
+            <button onClick={nextPoll} className="w-7 h-7 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center text-white transition-colors">
+              <ChevronRight size={14} />
+            </button>
+          </div>
+        </div>
+
+        {/* Question */}
+        <div className="relative z-10 px-6 pb-3">
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={poll.id + '-q'}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+              className="text-white font-black text-sm leading-snug"
+            >
+              {poll.question}
+            </motion.p>
+          </AnimatePresence>
+          {poll.subtitle && (
+            <p className="text-emerald-300/60 text-[10px] mt-1 leading-relaxed max-w-lg">{poll.subtitle}</p>
+          )}
+        </div>
+
+        {/* Options */}
+        <div className="relative z-10 px-6 pb-4">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={poll.id}
+              initial={{ opacity: 0, x: 15 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -15 }}
+              transition={{ duration: 0.2 }}
+              className="grid grid-cols-1 sm:grid-cols-2 gap-2"
+            >
               {poll.options.map((option) => {
                 const percentage = Math.round((option.votes / totalVotes) * 100);
                 const isSelected = (selectedOptions[poll.id] || []).includes(option.id);
@@ -586,50 +627,76 @@ export const StickyPollWidget = () => {
                   <button
                     key={option.id}
                     onClick={() => handleVote(option.id)}
-                    disabled={voted}
-                    className={`relative w-full overflow-hidden rounded-xl p-3 text-left transition-all ${
+                    disabled={voted && !poll.allowMultiple}
+                    className={`relative overflow-hidden rounded-xl p-2.5 text-left transition-all ${
                       isSelected
-                        ? 'bg-emerald-50 border-2 border-emerald-400'
-                        : 'bg-slate-50 border border-slate-200 hover:bg-slate-100 hover:border-slate-300'
-                    }`}
+                        ? 'bg-emerald-500/30 border-2 border-emerald-400 shadow-lg shadow-emerald-500/10'
+                        : 'bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20'
+                    } ${voted ? 'cursor-default' : 'cursor-pointer'}`}
                   >
                     {voted && (
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${percentage}%` }}
-                        transition={{ duration: 0.5 }}
-                        className="absolute inset-y-0 left-0 bg-emerald-100 rounded-xl"
+                        transition={{ duration: 0.6, delay: 0.1 }}
+                        className="absolute inset-y-0 left-0 bg-emerald-500/15 rounded-xl"
                       />
                     )}
                     <div className="relative z-10 flex items-center gap-2">
-                      <span className="text-base">{option.emoji}</span>
-                      <span className="text-slate-800 text-xs font-bold flex-1">{option.label}</span>
-                      {voted && <span className="text-emerald-600 text-xs font-black">{percentage}%</span>}
+                      <span className="text-sm">{option.emoji}</span>
+                      <span className="text-white text-[11px] font-bold flex-1 leading-tight">{option.label}</span>
+                      {voted && <span className="text-emerald-400 text-[11px] font-black">{percentage}%</span>}
+                      {isSelected && !voted && <CheckCircle2 size={13} className="text-emerald-400" />}
                     </div>
                   </button>
                 );
               })}
-            </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
-            {/* Footer */}
-            <div className="p-3 border-t border-slate-100 flex items-center justify-between">
-              {hasVoted[poll.id] ? (
-                <span className="text-emerald-600 text-[10px] font-bold flex items-center gap-1">
-                  <CheckCircle2 size={12} /> Thanks!
-                </span>
-              ) : (
-                <span className="text-slate-400 text-[10px] font-bold">{totalVotes.toLocaleString()} votes</span>
-              )}
-              <button onClick={nextPoll} className="text-xs font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
-                Next Poll <ArrowRight size={12} />
+        {/* Footer */}
+        <div className="relative z-10 px-6 pb-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {poll.allowMultiple && !hasVoted[poll.id] && (selectedOptions[poll.id] || []).length > 0 && (
+              <button
+                onClick={submitMultiVote}
+                className="px-4 py-1.5 bg-emerald-500 text-white rounded-lg text-[10px] font-black hover:bg-emerald-400 transition-all shadow-lg"
+              >
+                Submit ({(selectedOptions[poll.id] || []).length} selected)
               </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            )}
+            {hasVoted[poll.id] && (
+              <span className="text-emerald-400 text-[10px] font-bold flex items-center gap-1">
+                <CheckCircle2 size={12} /> Thank you for voting!
+              </span>
+            )}
+          </div>
+          {/* Progress dots */}
+          <div className="flex items-center gap-1">
+            {Array.from({ length: dotCount }).map((_, i) => {
+              const dotIndex = startDot + i;
+              if (dotIndex >= POLLS.length) return null;
+              return (
+                <button
+                  key={dotIndex}
+                  onClick={() => setCurrentPollIndex(dotIndex)}
+                  className={`w-1.5 h-1.5 rounded-full transition-all ${
+                    dotIndex === currentPollIndex
+                      ? 'bg-emerald-400 w-4'
+                      : hasVoted[POLLS[dotIndex]?.id] ? 'bg-emerald-600' : 'bg-white/20 hover:bg-white/40'
+                  }`}
+                />
+              );
+            })}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default FeaturedPoll;
+// Keep StickyPollWidget for backward compatibility but make it use the new banner
+export const StickyPollWidget = () => null; // Deprecated — replaced by RevolvingSurveyBanner
 
+export default FeaturedPoll;

@@ -122,7 +122,7 @@ import { PatientDashboard } from './pages/PatientDashboard';
 import { OversightDashboard } from './pages/OversightDashboard';
 import { PricingTiers } from './components/PricingTiers';
 import { LanguageSelector } from './components/LanguageSelector';
-import { FeaturedPoll, StickyPollWidget } from './components/CommunityPolls';
+import { FeaturedPoll, StickyPollWidget, RevolvingSurveyBanner } from './components/CommunityPolls';
 import { GlobalHeader } from './components/GlobalHeader';
 import { RoleSelectorScreen } from './components/RoleSelectorScreen';
 import { fetchRegulatoryFeed, formatFeedDate, type RegulatoryUpdate } from './lib/regulatoryFeed';
@@ -2301,6 +2301,10 @@ const LoginScreen = ({ onLogin, onSignUp, onForgotPassword, jurisdiction = 'Okla
     <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 pt-10 pb-10">
       <div className="w-full max-w-[1000px]">
         <StateWelcomeBanner jurisdiction={jurisdiction} type="business" />
+      </div>
+      {/* 🗳️ Revolving Survey — prominent above login */}
+      <div className="w-full max-w-[1000px] mt-6">
+        <RevolvingSurveyBanner />
       </div>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
