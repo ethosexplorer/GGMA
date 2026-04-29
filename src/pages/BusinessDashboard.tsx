@@ -401,7 +401,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
         </div>
       </div>
       
-      <div className="flex overflow-x-auto hide-scrollbar gap-2 p-1.5 bg-slate-100/60 rounded-3xl w-full xl:w-auto border border-slate-200/50">
+      <div className="flex overflow-x-auto gap-2 p-1.5 bg-slate-100/60 rounded-3xl w-full xl:w-auto border border-slate-200/50" style={{ scrollbarWidth: 'thin', scrollbarColor: '#94a3b8 transparent' }}>
         {bizTabs.map((tab, index) => {
           // Special color styling for certain tabs
           const isActive = activeTab === tab.id;
