@@ -1,0 +1,14 @@
+const fs = require('fs');
+let t = fs.readFileSync('src/pages/FounderDashboard.tsx', 'utf8');
+t = t.replace(/800\.com VoIP Integration/g, 'Twilio VoIP Integration');
+t = t.replace(/800\.com VoIP/g, 'Twilio VoIP');
+t = t.replace(/800\.com dashboard/g, 'Twilio dashboard');
+t = t.replace(/800\.com API/g, 'Twilio API');
+t = t.replace(/800\.com Connected/g, 'Twilio Connected');
+t = t.replace(/Test 800\.com Connection/g, 'Test Twilio Connection');
+t = t.replace(/from 800\.com/g, 'from Twilio');
+t = t.replace(/check 800\.com/g, 'check Twilio');
+t = t.replace(/'800\.com'/g, "'Twilio'");
+t = t.replace(/800\.com Linked/g, 'Twilio Linked');
+fs.writeFileSync('src/pages/FounderDashboard.tsx', t);
+console.log('Done - FounderDashboard updated');

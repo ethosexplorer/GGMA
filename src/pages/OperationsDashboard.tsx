@@ -114,7 +114,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
               </div>
               <div className="flex items-center gap-3">
                 <a 
-                  href="https://app.800.com/login"
+                  href="https://console.twilio.com/us1/monitor/logs/calls"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-rose-500/20 border border-rose-500/30 px-3 py-1.5 rounded-lg flex items-center gap-2 hover:bg-rose-500/40 hover:scale-105 transition-all cursor-pointer"

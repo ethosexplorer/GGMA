@@ -2035,7 +2035,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                   Call Center Command
                 </h2>
                 <p className="text-emerald-300 font-bold tracking-widest uppercase text-[10px] mt-1">
-                  800.com VoIP Integration • {voip800.getCompanyNumber()}
+                  Twilio VoIP Integration • {voip800.getCompanyNumber()}
                 </p>
               </div>
               <div className={cn("flex items-center gap-2 px-4 py-2 rounded-full font-black text-xs uppercase tracking-widest border", isConnected ? "bg-emerald-500/20 border-emerald-400/30 text-emerald-300" : "bg-red-500/20 border-red-400/30 text-red-300")}>
@@ -2048,7 +2048,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
               {[
                 { label: 'Company Number', value: '1-888-963-4447', icon: Phone, color: 'text-emerald-400' },
                 { label: 'Account ID', value: voip800.ACCOUNT_ID || '—', icon: Shield, color: 'text-indigo-400' },
-                { label: 'Provider', value: '800.com', icon: Globe, color: 'text-cyan-400' },
+                { label: 'Provider', value: 'Twilio', icon: Globe, color: 'text-cyan-400' },
                 { label: 'Status', value: isConnected ? 'Active' : 'Setup Required', icon: Activity, color: isConnected ? 'text-emerald-400' : 'text-amber-400' },
               ].map((s, i) => (
                 <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-sm">
@@ -2074,7 +2074,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                   const dest = prompt('Enter forwarding number (e.g. 4055551234):');
                   if (dest) {
                     const ok = await voip800.updateForwarding(dest);
-                    alert(ok ? '✅ Forwarding updated!' : '❌ Failed — check 800.com dashboard');
+                    alert(ok ? '✅ Forwarding updated!' : '❌ Failed — check Twilio dashboard');
                   }
                 }}
                 className="px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-xl hover:bg-indigo-700 transition-colors"
@@ -2152,7 +2152,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
               onClick={async () => {
                 const calls = await voip800.getCallHistory(10);
                 if (calls.length > 0) {
-                  alert(`Fetched ${calls.length} call records from 800.com`);
+                  alert(`Fetched ${calls.length} call records from Twilio`);
                 } else {
                   alert('No call records returned — this may be a new number or API requires dashboard configuration first.');
                 }
@@ -2208,7 +2208,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
           <div className="flex items-center justify-between">
             <div>
               <h4 className="text-sm font-black text-slate-800 uppercase tracking-wide">API Connection Test</h4>
-              <p className="text-xs text-slate-500 mt-1">Verify the 800.com API integration is operational</p>
+              <p className="text-xs text-slate-500 mt-1">Verify the Twilio API integration is operational</p>
             </div>
             <button 
               onClick={async () => {
@@ -2216,7 +2216,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                 if (result.connected) {
                   alert(`✅ CONNECTED\nAccount: ${result.accountId}\nNumber: ${result.number}`);
                 } else {
-                  alert(`❌ CONNECTION FAILED\nAccount: ${result.accountId}\nError: ${result.error}\n\nPlease verify credentials in the .env file or configure via 800.com dashboard.`);
+                  alert(`❌ CONNECTION FAILED\nAccount: ${result.accountId}\nError: ${result.error}\n\nPlease verify credentials in the .env file or configure via Twilio dashboard.`);
                 }
               }}
               className="px-6 py-3 bg-indigo-600 text-white font-bold text-sm rounded-xl hover:bg-indigo-700 transition-colors flex items-center gap-2 shadow-lg shadow-indigo-600/20"
@@ -2315,7 +2315,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       <div className="space-y-6 animate-in fade-in duration-500">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-indigo-900 rounded-xl flex items-center justify-center text-white"><Cpu size={20}/></div>
-          <div><h2 className="text-2xl font-black text-slate-800 tracking-tight">Ops Center</h2><p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Internal Operations Hub • 800.com Connected</p></div>
+          <div><h2 className="text-2xl font-black text-slate-800 tracking-tight">Ops Center</h2><p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Internal Operations Hub • Twilio Connected</p></div>
         </div>
         <div className="flex flex-wrap gap-2 p-1 bg-slate-100 rounded-2xl border border-slate-200">
           {opsTabs.map(t => (
@@ -2329,16 +2329,16 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
           <div className="space-y-4">
             <div className="bg-gradient-to-r from-indigo-950 via-slate-900 to-emerald-950 rounded-2xl p-6 text-white">
               <h3 className="text-xl font-black flex items-center gap-2"><Phone className="text-emerald-400" size={20}/> Call Center Command</h3>
-              <p className="text-emerald-300 text-[10px] font-bold uppercase tracking-widest mt-1">800.com VoIP • {voip800.getCompanyNumber()} • Account: {voip800.ACCOUNT_ID || '—'}</p>
+              <p className="text-emerald-300 text-[10px] font-bold uppercase tracking-widest mt-1">Twilio VoIP • {voip800.getCompanyNumber()} • Account: {voip800.ACCOUNT_ID || '—'}</p>
               <div className="grid grid-cols-4 gap-3 mt-4">
-                {[{l:'Number',v:'1-888-963-4447'},{l:'Provider',v:'800.com'},{l:'Account',v:voip800.ACCOUNT_ID||'—'},{l:'Status',v:voip800.isConfigured()?'Active':'Setup'}].map((s,i)=>(<div key={i} className="bg-white/5 border border-white/10 rounded-xl p-3"><p className="text-[9px] font-bold text-white/40 uppercase">{s.l}</p><p className="text-sm font-black text-white mt-0.5">{s.v}</p></div>))}
+                {[{l:'Number',v:'1-888-963-4447'},{l:'Provider',v:'Twilio'},{l:'Account',v:voip800.ACCOUNT_ID||'—'},{l:'Status',v:voip800.isConfigured()?'Active':'Setup'}].map((s,i)=>(<div key={i} className="bg-white/5 border border-white/10 rounded-xl p-3"><p className="text-[9px] font-bold text-white/40 uppercase">{s.l}</p><p className="text-sm font-black text-white mt-0.5">{s.v}</p></div>))}
               </div>
             </div>
             <div className="grid grid-cols-3 gap-4">
               {[{n:'Main → Founder',d:'Shantell Robinson',t:'Standard',ic:PhoneIncoming},{n:'Overflow → Support',d:'Support Desk',t:'Sequential',ic:PhoneOutgoing},{n:'After Hours → VM',d:'VM Box #1',t:'Scheduled',ic:PhoneOff}].map((r,i)=>(<div key={i} className="flex items-center gap-3 p-4 bg-white border border-slate-200 rounded-xl"><div className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center"><r.ic size={14}/></div><div><p className="text-sm font-bold text-slate-800">{r.n}</p><p className="text-[10px] text-slate-500">→ {r.d} • {r.t}</p></div></div>))}
             </div>
             <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center justify-between">
-              <div><h4 className="text-sm font-bold text-slate-800">Test 800.com Connection</h4></div>
+              <div><h4 className="text-sm font-bold text-slate-800">Test Twilio Connection</h4></div>
               <button onClick={async()=>{const r=await voip800.verifyConnection();alert(r.connected?`✅ Connected\nAccount: ${r.accountId}`:`❌ Failed: ${r.error}`);}} className="px-4 py-2 bg-indigo-600 text-white font-bold text-sm rounded-lg flex items-center gap-2"><Zap size={14}/> Test</button>
             </div>
           </div>

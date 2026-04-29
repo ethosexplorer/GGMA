@@ -62,7 +62,7 @@ export const VirtualAttendantTab = () => {
                 </div>
                 <div>
                   <h1 className="text-3xl font-black text-white tracking-tight">GGE World Call Center</h1>
-                  <p className="text-[#D4AF77] font-bold text-sm tracking-widest uppercase">800.com Live Integration</p>
+                  <p className="text-[#D4AF77] font-bold text-sm tracking-widest uppercase">Twilio Live Integration</p>
                 </div>
               </div>
               <p className="text-emerald-100/60 max-w-lg mt-2">
@@ -77,15 +77,15 @@ export const VirtualAttendantTab = () => {
               </div>
               <div className="flex items-end justify-between">
                 <div>
-                  <p className="text-xl font-black text-white">{voip800.isConfigured() ? '800.com Linked' : 'Offline'}</p>
+                  <p className="text-xl font-black text-white">{voip800.isConfigured() ? 'Twilio Linked' : 'Offline'}</p>
                   <p className="text-[10px] text-emerald-100/50">Current Capacity: {stats?.activeAgents || 0} Agent(s) Ready</p>
                 </div>
                 <a 
-                  href="https://app.800.com/login"
+                  href="https://console.twilio.com/us1/monitor/logs/calls"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-center ml-4 px-3 py-1.5 bg-rose-500/20 border border-rose-500/30 rounded-xl hover:bg-rose-500/40 hover:scale-105 transition-all cursor-pointer block"
-                  title="Click to open 800.com Web Dialer"
+                  title="Click to open Twilio Call Monitor"
                 >
                   <p className="text-[9px] font-bold text-rose-300 uppercase tracking-widest">Active Queue</p>
                   <p className="text-lg font-black text-rose-400">{liveQueue}</p>
