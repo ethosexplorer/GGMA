@@ -8253,8 +8253,10 @@ export default function App() {
 
         {/* Sylara Intake Agent — visible everywhere except business/compliance/authority/enforcement (L.A.R.R.Y handles those) */}
         {view !== 'larry-chatbot' && (!userProfile || !['business', 'compliance_service', 'regulator_state', 'regulator_federal', 'law_enforcement', 'enforcement_state'].includes(roleOverride || userProfile.role)) && (
-          <WebDialer />
-          <SylaraFloatingWidget onClick={() => setShowLarryModal(true)} />
+          <>
+            <WebDialer />
+            <SylaraFloatingWidget onClick={() => setShowLarryModal(true)} />
+          </>
         )}
 
         {/* Floating Modal for Chatbot */}

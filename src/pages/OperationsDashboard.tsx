@@ -14,7 +14,7 @@ import { voip800 } from '../lib/voip800';
 
 const NAV_ITEMS = [
   { section: 'CALL CENTER' },
-  { id: 'call_center', label: 'Call Center (800.com)', icon: Phone, badge: 'Live' },
+  { id: 'call_center', label: 'Call Center Command', icon: Phone, badge: 'Live' },
   { section: 'SUPPORT OPERATIONS' },
   { id: 'support', label: 'Active Support Tickets', icon: MessageSquare, badge: '12' },
   { id: 'calls', label: 'Call Queue', icon: Headphones, badge: '3' },
@@ -109,7 +109,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
                   <Phone className="text-emerald-400" size={22} /> Call Center Command
                 </h2>
                 <p className="text-emerald-300 font-bold tracking-widest uppercase text-[10px] mt-1">
-                  800.com VoIP • {voip800.getCompanyNumber()}
+                  Twilio VOIP • 1-888-963-4447
                 </p>
               </div>
               <div className="flex items-center gap-3">
@@ -118,7 +118,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-rose-500/20 border border-rose-500/30 px-3 py-1.5 rounded-lg flex items-center gap-2 hover:bg-rose-500/40 hover:scale-105 transition-all cursor-pointer"
-                  title="Click to open 800.com Web Dialer"
+                  title="Click to open Twilio Web Dialer"
                 >
                   <span className="text-[10px] font-bold text-rose-300 uppercase tracking-widest">Active Queue:</span>
                   <span className="text-sm font-black text-rose-400">{liveQueue}</span>
@@ -149,7 +149,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
               {[
                 { label: 'Number', value: '1-888-963-4447', icon: Phone },
                 { label: 'Account', value: voip800.ACCOUNT_ID || '—', icon: Shield },
-                { label: 'Provider', value: '800.com', icon: Globe },
+                { label: 'Provider', value: 'Twilio', icon: Globe },
                 { label: 'Status', value: isConnected ? 'Active' : 'Setup', icon: Activity },
               ].map((s, i) => (
                 <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-3">
@@ -225,7 +225,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
 
         {/* Test Connection */}
         <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center justify-between">
-          <div><h4 className="text-sm font-bold text-slate-800">API Connection Test</h4><p className="text-xs text-slate-500">Verify 800.com integration</p></div>
+          <div><h4 className="text-sm font-bold text-slate-800">API Connection Test</h4><p className="text-xs text-slate-500">Verify Twilio WebRTC integration</p></div>
           <button onClick={async () => { const r = await voip800.verifyConnection(); alert(r.connected ? `✅ Connected\nAccount: ${r.accountId}` : `❌ Failed: ${r.error}`); }} className="px-4 py-2 bg-indigo-600 text-white font-bold text-sm rounded-lg flex items-center gap-2"><Zap size={14} /> Test</button>
         </div>
       </div>
