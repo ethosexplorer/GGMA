@@ -56,6 +56,92 @@
         padding-right: env(safe-area-inset-right);
       }
     }
+
+    /* ===== Tailwind v4 oklch() Safari Fallback =====
+       If the browser doesn't support oklch(), force ALL color properties
+       to use standard hex via attribute selectors on class names. */
+    @supports not (color: oklch(0 0 0)) {
+      /* Brand greens */
+      [class*="bg-[#1a4731]"] { background-color: #1a4731 !important; }
+      [class*="bg-[#0f291c]"] { background-color: #0f291c !important; }
+      [class*="bg-[#2c6e4d]"] { background-color: #2c6e4d !important; }
+      [class*="bg-[#0f2d1e]"] { background-color: #0f2d1e !important; }
+      [class*="bg-[#153a28]"] { background-color: #153a28 !important; }
+      [class*="bg-[#A3B18A]"], [class*="bg-[#a3b18a]"] { background-color: #A3B18A !important; }
+      [class*="bg-[#080e1a]"] { background-color: #080e1a !important; }
+      [class*="bg-[#0D6EFD]"] { background-color: #0D6EFD !important; }
+      [class*="text-[#1a4731]"] { color: #1a4731 !important; }
+      [class*="text-[#A3B18A]"], [class*="text-[#a3b18a]"] { color: #A3B18A !important; }
+      [class*="text-[#3E2723]"] { color: #3E2723 !important; }
+      [class*="border-[#1a4731]"] { border-color: #1a4731 !important; }
+
+      /* Emerald */
+      [class*="bg-emerald-50"] { background-color: #ecfdf5 !important; }
+      [class*="bg-emerald-100"] { background-color: #d1fae5 !important; }
+      [class*="bg-emerald-200"] { background-color: #a7f3d0 !important; }
+      [class*="bg-emerald-400"] { background-color: #34d399 !important; }
+      [class*="bg-emerald-500"] { background-color: #10b981 !important; }
+      [class*="bg-emerald-600"] { background-color: #059669 !important; }
+      [class*="bg-emerald-800"] { background-color: #065f46 !important; }
+      [class*="text-emerald-"] { color: #059669 !important; }
+
+      /* Green */
+      [class*="bg-green-50"] { background-color: #f0fdf4 !important; }
+      [class*="bg-green-500"] { background-color: #22c55e !important; }
+      [class*="bg-green-600"] { background-color: #16a34a !important; }
+      [class*="text-green-"] { color: #16a34a !important; }
+
+      /* Slate */
+      [class*="bg-slate-50"] { background-color: #f8fafc !important; }
+      [class*="bg-slate-100"] { background-color: #f1f5f9 !important; }
+      [class*="bg-slate-200"] { background-color: #e2e8f0 !important; }
+      [class*="bg-slate-800"] { background-color: #1e293b !important; }
+      [class*="bg-slate-900"] { background-color: #0f172a !important; }
+      [class*="bg-slate-950"] { background-color: #020617 !important; }
+      [class*="text-slate-900"] { color: #0f172a !important; }
+      [class*="text-slate-800"] { color: #1e293b !important; }
+      [class*="text-slate-700"] { color: #334155 !important; }
+      [class*="text-slate-600"] { color: #475569 !important; }
+      [class*="text-slate-500"] { color: #64748b !important; }
+      [class*="text-slate-400"] { color: #94a3b8 !important; }
+      [class*="border-slate-200"] { border-color: #e2e8f0 !important; }
+      [class*="border-slate-300"] { border-color: #cbd5e1 !important; }
+
+      /* Blue */
+      [class*="bg-blue-500"] { background-color: #3b82f6 !important; }
+      [class*="bg-blue-600"] { background-color: #2563eb !important; }
+      [class*="bg-blue-900"] { background-color: #1e3a8a !important; }
+      [class*="bg-blue-950"] { background-color: #172554 !important; }
+      [class*="text-blue-"] { color: #3b82f6 !important; }
+
+      /* Indigo */
+      [class*="bg-indigo-600"] { background-color: #4f46e5 !important; }
+      [class*="bg-indigo-700"] { background-color: #4338ca !important; }
+      [class*="bg-indigo-950"] { background-color: #1e1b4b !important; }
+
+      /* Amber */
+      [class*="bg-amber-50"] { background-color: #fffbeb !important; }
+      [class*="bg-amber-500"] { background-color: #f59e0b !important; }
+      [class*="text-amber-"] { color: #d97706 !important; }
+      [class*="border-amber-"] { border-color: #fde68a !important; }
+
+      /* Red */
+      [class*="bg-red-50"] { background-color: #fef2f2 !important; }
+      [class*="bg-red-500"] { background-color: #ef4444 !important; }
+
+      /* White bg fallbacks */
+      [class*="bg-white"] { background-color: #ffffff !important; }
+
+      /* Gradient fallbacks - just use the from color as solid bg */
+      [class*="bg-gradient-to-r"][class*="from-[#1a4731]"] { background: linear-gradient(to right, #1a4731, #2c6e4d) !important; }
+      [class*="bg-gradient-to-r"][class*="from-[#0f291c]"] { background: linear-gradient(to right, #0f291c, #1a4731) !important; }
+      [class*="bg-gradient-to-br"][class*="from-[#1a4731]"] { background: linear-gradient(to bottom right, #1a4731, #2c6e4d) !important; }
+      [class*="bg-gradient-to-tr"][class*="from-[#1a4731]"] { background: linear-gradient(to top right, #1a4731, #2c6e4d) !important; }
+      [class*="bg-gradient-to-r"][class*="from-blue-600"] { background: linear-gradient(to right, #2563eb, #4338ca) !important; }
+      [class*="bg-gradient-to-r"][class*="from-blue-950"] { background: linear-gradient(to right, #172554, #1e1b4b, #020617) !important; }
+      [class*="bg-gradient-to-r"][class*="from-blue-900"] { background: linear-gradient(to right, #1e3a8a, #312e81, #0f172a) !important; }
+      [class*="bg-gradient-to-br"][class*="from-emerald-400"] { background: linear-gradient(to bottom right, #34d399, #059669) !important; }
+    }
   </style>
   <script type="text/javascript">
     function googleTranslateElementInit() {

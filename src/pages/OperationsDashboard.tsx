@@ -332,32 +332,126 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
     </div>
   );
 
+  const [personnelList, setPersonnelList] = useState([
+    { name: 'Shantell Robinson', role: 'Founder & CEO', dept: 'Executive', status: 'Active' },
+    { name: 'Monica Green', role: 'Compliance Director', dept: 'Compliance', status: 'Active' },
+    { name: 'Ryan Ferrari', role: 'CEO / IT Lead', dept: 'Operations', status: 'Active' },
+    { name: 'Larry AI', role: 'Compliance Service Officer', dept: 'AI Systems', status: 'Online' },
+    { name: 'Sylara AI', role: 'Intake & HR Agent', dept: 'AI Systems', status: 'Online' },
+  ]);
+  const [showAddStaff, setShowAddStaff] = useState(false);
+  const [newStaff, setNewStaff] = useState({ name: '', role: '', dept: 'Operations' });
+  const [onboardingStep, setOnboardingStep] = useState(0);
+
+  const DEPTS = ['Executive', 'Operations', 'Compliance', 'Sales', 'Support', 'AI Systems', 'Finance', 'Legal', 'IT', 'HR'];
+
+  const handleCompleteOnboarding = () => {
+    if (!newStaff.name || !newStaff.role) return alert('Name and role are required');
+    setPersonnelList(prev => [...prev, { ...newStaff, status: 'Active' }]);
+    setNewStaff({ name: '', role: '', dept: 'Operations' });
+    setShowAddStaff(false);
+    setOnboardingStep(0);
+  };
+
   const renderPersonnel = () => (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {[{ l: 'Total Personnel', v: '1,247' }, { l: 'Active Today', v: '892' }, { l: 'On Leave', v: '45' }, { l: 'New This Month', v: '28' }].map((s, i) => (
+        {[{ l: 'Total Personnel', v: String(personnelList.length) }, { l: 'Active Today', v: String(personnelList.filter(p => p.status === 'Active' || p.status === 'Online').length) }, { l: 'On Leave', v: String(personnelList.filter(p => p.status === 'On Leave').length) }, { l: 'New This Month', v: '3' }].map((s, i) => (
           <div key={i} className="bg-white border border-slate-200 rounded-2xl p-5 text-center shadow-sm">
             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{s.l}</p>
             <p className="text-2xl font-black text-slate-800">{s.v}</p>
           </div>
         ))}
       </div>
+
+      {/* Add Staff Onboarding Modal */}
+      {showAddStaff && (
+        <div className="bg-white border-2 border-indigo-200 rounded-2xl shadow-xl overflow-hidden">
+          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-4 text-white flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <UserPlus size={18} />
+              <h4 className="font-black text-sm">Staff Onboarding — New Entry</h4>
+            </div>
+            <button onClick={() => { setShowAddStaff(false); setOnboardingStep(0); }} className="text-white/60 hover:text-white">✕</button>
+          </div>
+          <div className="p-5 space-y-4">
+            {/* Progress Steps */}
+            <div className="flex items-center gap-2 mb-2">
+              {['Info', 'Role', 'Review'].map((step, i) => (
+                <div key={i} className="flex items-center gap-2 flex-1">
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${i <= onboardingStep ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-400'}`}>{i + 1}</div>
+                  <span className={`text-xs font-bold ${i <= onboardingStep ? 'text-indigo-600' : 'text-slate-400'}`}>{step}</span>
+                  {i < 2 && <div className={`flex-1 h-0.5 ${i < onboardingStep ? 'bg-indigo-600' : 'bg-slate-200'}`} />}
+                </div>
+              ))}
+            </div>
+
+            {onboardingStep === 0 && (
+              <div className="space-y-3">
+                <div>
+                  <label className="text-xs font-bold text-slate-600 mb-1 block">Full Name *</label>
+                  <input value={newStaff.name} onChange={(e) => setNewStaff(p => ({ ...p, name: e.target.value }))} placeholder="Enter full name" className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-indigo-400" />
+                </div>
+                <button onClick={() => newStaff.name ? setOnboardingStep(1) : alert('Enter a name')} className="w-full py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold">Next →</button>
+              </div>
+            )}
+
+            {onboardingStep === 1 && (
+              <div className="space-y-3">
+                <div>
+                  <label className="text-xs font-bold text-slate-600 mb-1 block">Job Title / Role *</label>
+                  <input value={newStaff.role} onChange={(e) => setNewStaff(p => ({ ...p, role: e.target.value }))} placeholder="e.g. Dispensary Manager" className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-indigo-400" />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-600 mb-1 block">Department</label>
+                  <select value={newStaff.dept} onChange={(e) => setNewStaff(p => ({ ...p, dept: e.target.value }))} className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-indigo-400">
+                    {DEPTS.map(d => <option key={d} value={d}>{d}</option>)}
+                  </select>
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={() => setOnboardingStep(0)} className="flex-1 py-2.5 bg-slate-100 text-slate-600 rounded-xl text-sm font-bold">← Back</button>
+                  <button onClick={() => newStaff.role ? setOnboardingStep(2) : alert('Enter a role')} className="flex-1 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold">Next →</button>
+                </div>
+              </div>
+            )}
+
+            {onboardingStep === 2 && (
+              <div className="space-y-3">
+                <div className="bg-slate-50 rounded-xl p-4 border border-slate-200 space-y-2">
+                  <p className="text-xs font-black text-slate-500 uppercase tracking-widest">Onboarding Summary</p>
+                  <div className="flex justify-between text-sm"><span className="text-slate-500">Name:</span><span className="font-bold text-slate-800">{newStaff.name}</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-slate-500">Role:</span><span className="font-bold text-slate-800">{newStaff.role}</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-slate-500">Department:</span><span className="font-bold text-slate-800">{newStaff.dept}</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-slate-500">Status:</span><span className="font-bold text-emerald-600">Active</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-slate-500">Auto-generated:</span><span className="font-bold text-indigo-600">Employee ID, Access Card, Credentials</span></div>
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={() => setOnboardingStep(1)} className="flex-1 py-2.5 bg-slate-100 text-slate-600 rounded-xl text-sm font-bold">← Back</button>
+                  <button onClick={handleCompleteOnboarding} className="flex-1 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-black flex items-center justify-center gap-2">
+                    <CheckCircle2 size={16} /> Complete Onboarding & Add to Directory
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-slate-100"><h3 className="font-bold text-slate-800 flex items-center gap-2"><Users size={16} /> Personnel Directory</h3></div>
+        <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+          <h3 className="font-bold text-slate-800 flex items-center gap-2"><Users size={16} /> Personnel Directory</h3>
+          <button onClick={() => setShowAddStaff(true)} className="px-4 py-2 bg-indigo-600 text-white text-xs font-black rounded-xl flex items-center gap-2 hover:bg-indigo-700 transition-all shadow-md">
+            <Plus size={14} /> Add Staff
+          </button>
+        </div>
         <div className="divide-y divide-slate-100">
-          {[
-            { name: 'Shantell Robinson', role: 'Founder & CEO', dept: 'Executive', status: 'Active' },
-            { name: 'Monica Green', role: 'Compliance Director', dept: 'Compliance', status: 'Active' },
-            { name: 'Ryan Ferrari', role: 'CEO / IT Lead', dept: 'Operations', status: 'Active' },
-            { name: 'Larry AI', role: 'Compliance Service Officer', dept: 'AI Systems', status: 'Online' },
-            { name: 'Sylara AI', role: 'Intake & HR Agent', dept: 'AI Systems', status: 'Online' },
-          ].map((p, i) => (
+          {personnelList.map((p, i) => (
             <div key={i} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500"><Users size={14} /></div>
                 <div><p className="text-sm font-bold text-slate-800">{p.name}</p><p className="text-xs text-slate-500">{p.role} • {p.dept}</p></div>
               </div>
-              <span className="text-[9px] font-black uppercase text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">{p.status}</span>
+              <span className={cn("text-[9px] font-black uppercase px-2 py-0.5 rounded-full", p.status === 'Active' || p.status === 'Online' ? 'text-emerald-600 bg-emerald-50' : p.status === 'On Leave' ? 'text-amber-600 bg-amber-50' : 'text-slate-500 bg-slate-100')}>{p.status}</span>
             </div>
           ))}
         </div>
