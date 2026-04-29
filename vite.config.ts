@@ -21,8 +21,8 @@ export default defineConfig(({mode}) => {
       hmr: process.env.DISABLE_HMR !== 'true',
     },
     build: {
-      target: ['es2020', 'safari14'],
-      cssTarget: ['safari14'],
+      target: ['es2015', 'safari11'],
+      cssTarget: ['safari11'],
     },
   };
 });
