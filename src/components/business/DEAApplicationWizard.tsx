@@ -102,7 +102,7 @@ export const DEAApplicationWizard: React.FC<DEAWizardProps> = ({ mode = 'larry',
     3: `These liability questions are required by the DEA. Answer honestly — most OMMA-licensed dispensaries will answer "No." If any apply, consult legal counsel before submitting. Your answers here directly affect approval.`,
     4: `This is the most detailed section — the DEA requires documented SOPs for every operational category. Good news: if you've been OMMA-compliant and using GGP-OS, most of these are already covered by your Metrc integration and compliance data. I'll flag any gaps.`,
     5: `Almost there! The DEA requires a $794 annual fee (non-refundable) paid via PayPal. You can continue operating under your state license during the DEA review period (up to 6 months). Make sure your PayPal account is ready before submitting.`,
-    6: `Here's your complete application summary. Review everything carefully, then:\n1. Save to Vault for your records\n2. Download the data package\n3. Open the DEA portal to submit\n\nYou can operate lawfully under your OMMA license during the entire review period. 💪`,
+    6: `Here's your complete application summary. Review everything carefully, then:\n1. Save to Vault for your records\n2. Download the data package\n3. Open the DEA Medical Marijuana Application Portal to submit\n\nYou can operate lawfully under your OMMA license during the entire review period.\n\n📞 DEA Registration Support: 1-800-882-9539 (8:30 AM–5:50 PM ET)\n📧 DEA.Registration.Help@dea.gov 💪`,
   };
 
   const handleSaveToVault = () => {
@@ -237,8 +237,11 @@ export const DEAApplicationWizard: React.FC<DEAWizardProps> = ({ mode = 'larry',
               <button onClick={handleExport} className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-xl text-sm font-black hover:bg-blue-700 transition-all shadow-lg">
                 <Download size={16} /> Download Package
               </button>
-              <button onClick={() => window.open('https://www.deadiversion.usdoj.gov/drugreg/registration.html', '_blank')} className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-indigo-600 text-white rounded-xl text-sm font-black hover:bg-indigo-700 transition-all shadow-lg">
-                <Send size={16} /> Open DEA Portal
+              <button onClick={() => window.open('https://mmapplication.diversion.dea.gov/', '_blank')} className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-indigo-600 text-white rounded-xl text-sm font-black hover:bg-indigo-700 transition-all shadow-lg">
+                <Send size={16} /> Submit to DEA Portal
+              </button>
+              <button onClick={() => window.open('https://www.deadiversion.usdoj.gov/drugreg/registration.html', '_blank')} className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-slate-600 text-white rounded-xl text-sm font-black hover:bg-slate-700 transition-all shadow-lg">
+                <FileText size={16} /> DEA Registration Info
               </button>
             </div>
           </div>

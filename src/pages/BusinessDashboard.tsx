@@ -1521,7 +1521,8 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
           </div>
           <div className="flex items-center gap-3">
             <span className="text-[10px] font-black text-amber-600 bg-amber-50 px-3 py-1.5 rounded-full border border-amber-200 animate-pulse">60-DAY WINDOW</span>
-            <button onClick={() => window.open('https://www.deadiversion.usdoj.gov/drugreg/registration.html', '_blank')} className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-black hover:bg-blue-700 transition-all shadow-lg">Open DEA Portal ↗</button>
+            <button onClick={() => window.open('https://mmapplication.diversion.dea.gov/', '_blank')} className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-black hover:bg-indigo-700 transition-all shadow-lg">Submit Application ↗</button>
+            <button onClick={() => window.open('https://www.deadiversion.usdoj.gov/drugreg/registration.html', '_blank')} className="px-4 py-2 bg-slate-600 text-white rounded-xl text-xs font-black hover:bg-slate-700 transition-all shadow-lg">DEA Info ↗</button>
           </div>
         </div>
 
