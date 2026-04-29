@@ -8246,7 +8246,7 @@ export default function App() {
         {/* Floating Home Button - returns to Role Selector */}
         {view !== 'landing' && (
           <button
-            onClick={() => { setHasBypassedSelector(false); setRoleOverride(null); }}
+            onClick={() => { setHasBypassedSelector(false); setRoleOverride(null); setView('landing'); window.history.pushState({}, '', '/'); }}
             className="fixed bottom-6 left-6 z-[90] w-12 h-12 bg-[#1a4731] hover:bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-2xl shadow-emerald-900/40 transition-all hover:scale-110 border-2 border-emerald-400/30"
             title="Return to Role Selector"
           >
