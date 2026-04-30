@@ -90,6 +90,12 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
     { name: 'After Hours → VM', dest: 'VM Box #1', type: 'Scheduled', icon: PhoneOff, active: true },
   ]);
   const [voicemails, setVoicemails] = useState<any[]>([]);
+  
+  // Inline UI states for Transfer/Forward to avoid prompt()
+  const [showTransfer, setShowTransfer] = useState(false);
+  const [showForward, setShowForward] = useState(false);
+  const [transferTarget, setTransferTarget] = useState('');
+  const [forwardTarget, setForwardTarget] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -143,22 +149,42 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
                   <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="5.5" cy="11.5" r="4.5"/><circle cx="18.5" cy="11.5" r="4.5"/><line x1="5.5" y1="16" x2="18.5" y2="16"/></svg>
                   Voicemail
                 </button>
-                <button onClick={() => {
-                  const num = prompt('Enter a new number to forward calls to:');
-                  if (num) {
-                    setRoutingRules(prev => [...prev, { name: 'Forwarded Line', dest: num, type: 'Standard', icon: PhoneOutgoing, active: true }]);
-                  }
-                }} className="bg-indigo-500/20 border border-indigo-500/30 px-3 py-1.5 rounded-lg flex items-center gap-1.5 hover:bg-indigo-500/40 transition-all text-indigo-300 font-bold text-[10px] uppercase tracking-widest">
-                  <PhoneOutgoing size={14} /> Forward
-                </button>
-                <button onClick={() => {
-                  const num = prompt('Enter a number to transfer the active call to:');
-                  if (num) {
-                    window.dispatchEvent(new CustomEvent('twilio-dial-out', { detail: { number: num } }));
-                  }
-                }} className="bg-sky-500/20 border border-sky-500/30 px-3 py-1.5 rounded-lg flex items-center gap-1.5 hover:bg-sky-500/40 transition-all text-sky-300 font-bold text-[10px] uppercase tracking-widest">
-                  <UserPlus size={14} /> Transfer
-                </button>
+                <div className="relative">
+                  <button onClick={() => { setShowForward(!showForward); setShowTransfer(false); }} className="bg-indigo-500/20 border border-indigo-500/30 px-3 py-1.5 rounded-lg flex items-center gap-1.5 hover:bg-indigo-500/40 transition-all text-indigo-300 font-bold text-[10px] uppercase tracking-widest">
+                    <PhoneOutgoing size={14} /> Forward
+                  </button>
+                  {showForward && (
+                    <div className="absolute top-full right-0 mt-2 bg-slate-800 border border-slate-700 p-3 rounded-xl shadow-2xl z-50 w-64">
+                      <p className="text-xs font-bold text-slate-300 mb-2 uppercase tracking-widest">Forward Calls To:</p>
+                      <input type="text" value={forwardTarget} onChange={(e) => setForwardTarget(e.target.value)} placeholder="e.g., +15551234567" className="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white mb-2 outline-none focus:border-indigo-500" />
+                      <button onClick={() => {
+                        if (forwardTarget) {
+                          setRoutingRules(prev => [...prev, { name: 'Forwarded Line', dest: forwardTarget, type: 'Standard', icon: PhoneOutgoing, active: true }]);
+                          setForwardTarget('');
+                          setShowForward(false);
+                        }
+                      }} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs py-2 rounded-lg">Activate Forwarding</button>
+                    </div>
+                  )}
+                </div>
+                <div className="relative">
+                  <button onClick={() => { setShowTransfer(!showTransfer); setShowForward(false); }} className="bg-sky-500/20 border border-sky-500/30 px-3 py-1.5 rounded-lg flex items-center gap-1.5 hover:bg-sky-500/40 transition-all text-sky-300 font-bold text-[10px] uppercase tracking-widest">
+                    <UserPlus size={14} /> Transfer
+                  </button>
+                  {showTransfer && (
+                    <div className="absolute top-full right-0 mt-2 bg-slate-800 border border-slate-700 p-3 rounded-xl shadow-2xl z-50 w-64">
+                      <p className="text-xs font-bold text-slate-300 mb-2 uppercase tracking-widest">Transfer Active Call:</p>
+                      <input type="text" value={transferTarget} onChange={(e) => setTransferTarget(e.target.value)} placeholder="Extension or Number" className="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white mb-2 outline-none focus:border-sky-500" />
+                      <button onClick={() => {
+                        if (transferTarget) {
+                          window.dispatchEvent(new CustomEvent('twilio-dial-out', { detail: { number: transferTarget } }));
+                          setTransferTarget('');
+                          setShowTransfer(false);
+                        }
+                      }} className="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs py-2 rounded-lg">Execute Transfer</button>
+                    </div>
+                  )}
+                </div>
 
                 <select 
                   value={agentStatus} 
