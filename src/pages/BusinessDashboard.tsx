@@ -147,7 +147,8 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
   const fetchData = async () => {
     try {
       const entRes = await turso.execute('SELECT * FROM entities ORDER BY created_at DESC');
-      setEntities(entRes.rows);
+      const filteredEntities = isExecutive ? entRes.rows : entRes.rows.filter(e => !e.id.toString().startsWith('ent-'));
+      setEntities(filteredEntities);
 
       const invRes = await turso.execute(`
         SELECT inventory.*, entities.name as entity_name 
@@ -155,7 +156,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
         LEFT JOIN entities ON inventory.entity_id = entities.id
         ORDER BY inventory.id DESC
       `);
-      setInventory(invRes.rows);
+      setInventory(isExecutive ? invRes.rows : invRes.rows.filter(r => !r.entity_id.toString().startsWith('ent-')));
 
       const txRes = await turso.execute(`
         SELECT transactions.*, entities.name as entity_name 
@@ -163,7 +164,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
         LEFT JOIN entities ON transactions.entity_id = entities.id
         ORDER BY transactions.date DESC
       `);
-      setTransactions(txRes.rows);
+      setTransactions(isExecutive ? txRes.rows : txRes.rows.filter(r => !r.entity_id.toString().startsWith('ent-')));
 
       const altRes = await turso.execute(`
         SELECT compliance_alerts.*, entities.name as entity_name 
@@ -171,14 +172,14 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
         LEFT JOIN entities ON compliance_alerts.entity_id = entities.id
         ORDER BY compliance_alerts.is_resolved ASC, compliance_alerts.date DESC
       `);
-      setAlerts(altRes.rows);
+      setAlerts(isExecutive ? altRes.rows : altRes.rows.filter(r => !r.entity_id.toString().startsWith('ent-')));
 
       const polRes = await turso.execute(`
         SELECT insurance_policies.*, entities.name as entity_name 
         FROM insurance_policies 
         LEFT JOIN entities ON insurance_policies.entity_id = entities.id
       `);
-      if(polRes.rows) setPolicies(polRes.rows);
+      if(polRes.rows) setPolicies(isExecutive ? polRes.rows : polRes.rows.filter(r => !r.entity_id.toString().startsWith('ent-')));
 
       const docRes = await turso.execute(`
         SELECT documents.*, entities.name as entity_name 
@@ -186,7 +187,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
         LEFT JOIN entities ON documents.entity_id = entities.id
         ORDER BY documents.uploaded_at DESC
       `);
-      if(docRes.rows) setDocuments(docRes.rows);
+      if(docRes.rows) setDocuments(isExecutive ? docRes.rows : docRes.rows.filter(r => !r.entity_id.toString().startsWith('ent-')));
     } catch (err) {
       console.error('Error fetching data:', err);
     }

@@ -1848,10 +1848,10 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
                 Adult, Minor, Caregiver, Short-Term, Out-of-State
               </p>
               <button
-                onClick={() => onNavigate('patient-portal')}
+                onClick={() => onNavigate('login')}
                 className="px-8 py-2.5 bg-[#1a4731] text-white rounded-lg font-semibold hover:bg-[#153a28] transition-all shadow-sm hover:shadow-md"
               >
-                Patient Portal
+                Patient Portal Login
               </button>
             </div>
 
@@ -1868,10 +1868,10 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
                 Providers, Attorneys, Dispensaries, Cultivation, Manufacturing, Medcard Services
               </p>
               <button
-                onClick={() => { onNavigate('signup', 'Business');  }}
+                onClick={() => { onNavigate('login', 'Business');  }}
                 className="px-8 py-2.5 bg-[#1a4731] text-white rounded-lg font-semibold hover:bg-[#153a28] transition-all shadow-sm hover:shadow-md"
               >
-                Business Onboarding
+                Business Login / Signup
               </button>
             </div>
 
@@ -1888,10 +1888,10 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
                 Law Enforcement (RIP), Regulators, Executives, Operations
               </p>
               <button
-                onClick={() => { onNavigate('signup', 'Oversight');  }}
+                onClick={() => { onNavigate('login', 'Oversight');  }}
                 className="px-8 py-2.5 bg-[#1a4731] text-white rounded-lg font-semibold hover:bg-[#153a28] transition-all shadow-sm hover:shadow-md"
               >
-                Oversight Access
+                Secure Login
               </button>
             </div>
           </div>

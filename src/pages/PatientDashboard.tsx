@@ -218,10 +218,10 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
             <div className={cn("space-y-6 transition-all duration-500", !isSubscribed && "blur-sm pointer-events-none select-none grayscale-[0.5]")}>
               {/* KPI Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <StatCard label="Medical Card" value="Active" icon={Shield} color="bg-emerald-600" />
-                <StatCard label="C³ Score" value="662" trend={12} icon={Award} color="bg-yellow-600" />
-                <StatCard label="Appointments" value="3 Upcoming" icon={Calendar} color="bg-blue-600" />
-                <StatCard label="Prescriptions" value="2 Active" icon={Stethoscope} color="bg-indigo-600" />
+                <StatCard label="Medical Card" value={demoUnlocked ? "Active" : "Pending"} icon={Shield} color={demoUnlocked ? "bg-emerald-600" : "bg-slate-400"} />
+                <StatCard label="C³ Score" value={demoUnlocked ? "662" : "0"} trend={demoUnlocked ? 12 : undefined} icon={Award} color={demoUnlocked ? "bg-yellow-600" : "bg-slate-400"} />
+                <StatCard label="Appointments" value={demoUnlocked ? "3 Upcoming" : "0"} icon={Calendar} color={demoUnlocked ? "bg-blue-600" : "bg-slate-400"} />
+                <StatCard label="Prescriptions" value={demoUnlocked ? "2 Active" : "0"} icon={Stethoscope} color={demoUnlocked ? "bg-indigo-600" : "bg-slate-400"} />
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -235,7 +235,7 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
                     <button className="text-sm text-[#1a4731] font-bold hover:underline">View Full History</button>
                   </div>
                   <div className="space-y-3">
-                    {[
+                    {demoUnlocked ? [
                       { title: 'Annual Physical — Dr. Sarah Johnson', date: 'Tomorrow 9:30 AM', type: 'Appointment', status: 'Upcoming', statusColor: 'text-blue-600', icon: Calendar },
                       { title: 'Medical Card Renewal Approved', date: '1 week ago', type: 'Compliance', status: 'Approved', statusColor: 'text-emerald-600', icon: Shield },
                       { title: 'Blood Panel Results Received', date: '2 weeks ago', type: 'Lab Report', status: 'Ready', statusColor: 'text-blue-600', icon: FileText },
@@ -256,7 +256,11 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
                           {item.status}
                         </span>
                       </div>
-                    ))}
+                    )) : (
+                      <div className="p-8 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                        <p className="text-sm text-slate-500 font-medium">No recent health history. Book an appointment or link a provider to begin.</p>
+                      </div>
+                    )}
                   </div>
                 </div>
 
