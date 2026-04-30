@@ -4570,7 +4570,23 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     }
 
     if (signupStep === 902) {
-      const stateName = lower === 'other state' ? 'your jurisdiction' : text;
+      if (lower === 'other state') {
+        response = 'Please type the name of the state you are inquiring about:';
+        setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+        setSignupStep(903);
+        setIsTyping(false);
+        return;
+      }
+      const stateName = text;
+      response = `Thank you. I have securely set your jurisdiction to **${stateName}**.\n\n${getGreeting()}`;
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: getInitialChoices() } as any]);
+      setSignupStep(0);
+      setIsTyping(false);
+      return;
+    }
+
+    if (signupStep === 903) {
+      const stateName = text;
       response = `Thank you. I have securely set your jurisdiction to **${stateName}**.\n\n${getGreeting()}`;
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: getInitialChoices() } as any]);
       setSignupStep(0);
