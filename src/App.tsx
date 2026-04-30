@@ -3823,7 +3823,10 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
   }, []);
 
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // Only auto-scroll to bottom if there's more than the welcome message or if bot is typing
+    if (messages.length > 1 || isTyping) {
+      chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [messages, isTyping, availableSlots]);
 
   // STATE_RESOURCES — imported from ./stateResources.ts (all 50 states + DC)
@@ -6180,7 +6183,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
 
       {/* Chat Area */}
       <div className="flex-1 flex flex-col max-w-3xl w-full mx-auto px-4 py-6 relative z-10">
-        <div className="flex-1 space-y-5 overflow-auto pb-4 min-h-0 relative">
+        <div className="flex-1 space-y-5 overflow-y-scroll custom-scrollbar pb-4 min-h-0 relative pr-2">
 
           {messages.map((msg, i) => (
             <motion.div
