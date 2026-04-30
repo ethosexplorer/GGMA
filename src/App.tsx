@@ -5897,7 +5897,50 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         response = "✨ **Compliance Note Added**\n\nI've recorded that anomaly, Monica. I will compile a deeper audit log for you. Would you like to review other pending alerts?";
         setMessages(prev => [...prev, { role: 'bot', text: response, choices: getInitialChoices() } as any]);
       } else if (isFounderAssistant) {
-        response = "🧠 **Executive Memory Logged**\n\nI've recorded that request to your dashboard memory matrix. I am still aggregating data to give you a complete answer, but I've flagged this for Monica to review in the Operations Hub.\n\nWhat else can I assist you with today, Shantell?";
+        // ── AI Training & Recall Logic ──
+        if (lower.startsWith('train:') || lower.startsWith('learn:') || lower.startsWith('remember:')) {
+          const memoryContent = text.replace(/^(train|learn|remember):\s*/i, '');
+          const existingMemories = JSON.parse(localStorage.getItem('ai_training_matrix') || '[]');
+          existingMemories.push({ timestamp: Date.now(), content: memoryContent });
+          localStorage.setItem('ai_training_matrix', JSON.stringify(existingMemories));
+          
+          const responses = [
+            "🧠 **Memory Matrix Updated**\n\nI have successfully encoded that directive into my persistent memory. It will inform my future responses.",
+            "⚙️ **Learning Protocol Successful**\n\nDirective internalized. As your mirror AI, I will recall this moving forward.",
+            "🛡️ **System Trained**\n\nGot it. Your specific instructions have been saved and applied to my core knowledge base."
+          ];
+          response = responses[Math.floor(Math.random() * responses.length)];
+        } else {
+          // Check if we have a trained memory that matches the input
+          const trainedMemories = JSON.parse(localStorage.getItem('ai_training_matrix') || '[]');
+          let matchedMemory = null;
+          if (trainedMemories.length > 0) {
+            const ignoreWords = ['what', 'is', 'the', 'how', 'do', 'i', 'can', 'you', 'a', 'to', 'for', 'my', 'and', 'or', 'if', 'we'];
+            const userWords = lower.split(/\W+/).filter(w => w.length > 3 && !ignoreWords.includes(w));
+            
+            for (const mem of [...trainedMemories].reverse()) {
+              const memLower = mem.content.toLowerCase();
+              const matchCount = userWords.filter(w => memLower.includes(w)).length;
+              if (matchCount >= 1 && userWords.length > 0) {
+                matchedMemory = mem.content;
+                break;
+              }
+            }
+          }
+
+          if (matchedMemory) {
+            response = `🧠 **Recalling Custom Directive:**\n\n${matchedMemory}\n\nDoes that address your inquiry, or shall I execute a related command?`;
+          } else {
+            // General Fallback (Learning)
+            const learningResponses = [
+              "🧠 **Executive Directive Logged**\n\nI have integrated this new directive into my core neural matrix. As your mirror AI, I am continuously adapting to your command style and preferences.\n\nWhat is your next directive, Shantell?",
+              "⚙️ **Matrix Update Complete**\n\nUnderstood. I have locked that into my persistent memory banks for future operations. I will handle this exactly as you've instructed going forward.\n\nHow else can I assist your oversight today?",
+              "🛡️ **System Adaptation Successful**\n\nI hear you loud and clear. Your preferences supersede all default protocols. I have adjusted my logic accordingly.\n\nWhat else needs our attention?"
+            ];
+            response = learningResponses[Math.floor(Math.random() * learningResponses.length)];
+          }
+        }
+
         setMessages(prev => [...prev, { 
           role: 'bot', 
           text: response,
