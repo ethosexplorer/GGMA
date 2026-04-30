@@ -98,19 +98,24 @@ export async function getCallHistory(limit = 50, offset = 0): Promise<CallRecord
  */
 export async function sendSMS(to: string, body: string): Promise<SMSMessage | null> {
   try {
-    const res = await fetch(`${BASE_URL}/sms/send`, {
+    const res = await fetch(`/api/twilio/send-sms`, {
       method: 'POST',
-      headers: getHeaders(),
-      body: JSON.stringify({
-        from: COMPANY_NUMBER,
-        to: to.replace(/\D/g, ''), // Strip non-digits
-        body,
-      }),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ to, body }),
     });
-    if (!res.ok) throw new Error(`800.com SMS error: ${res.status}`);
-    return await res.json();
+    if (!res.ok) throw new Error(`Twilio SMS error: ${res.status}`);
+    const data = await res.json();
+    return {
+      id: data.messageId,
+      from: COMPANY_NUMBER,
+      to,
+      body,
+      direction: 'outbound',
+      status: data.status,
+      timestamp: new Date().toISOString()
+    };
   } catch (err) {
-    console.error('[800.com] Failed to send SMS:', err);
+    console.error('[Twilio] Failed to send SMS:', err);
     return null;
   }
 }
@@ -157,10 +162,6 @@ export async function updateForwarding(destination: string, type: 'standard' | '
     const res = await fetch(`${BASE_URL}/numbers/${COMPANY_NUMBER}/forwarding`, {
       method: 'PUT',
       headers: getHeaders(),
-      body: JSON.stringify({
-        destination: destination.replace(/\D/g, ''),
-        type,
-      }),
     });
     return res.ok;
   } catch (err) {
@@ -209,14 +210,13 @@ export async function getCallCenterStats(): Promise<CallCenterStats> {
  */
 export async function verifyConnection(): Promise<{ connected: boolean; accountId: string; number: string; error?: string }> {
   try {
-    // We use the /calls endpoint to test since we know it works
-    const res = await fetch(`${BASE_URL}/calls?limit=1`, {
-      headers: getHeaders(),
-    });
-    if (!res.ok) {
-      return { connected: false, accountId: ACCOUNT_ID, number: COMPANY_NUMBER, error: `API returned ${res.status}` };
+    const res = await fetch('/api/twilio/verify');
+    const data = await res.json();
+    
+    if (!res.ok || !data.connected) {
+      return { connected: false, accountId: ACCOUNT_ID, number: COMPANY_NUMBER, error: data.error || `API returned ${res.status}` };
     }
-    return { connected: true, accountId: ACCOUNT_ID, number: COMPANY_NUMBER };
+    return { connected: true, accountId: data.accountId || ACCOUNT_ID, number: COMPANY_NUMBER };
   } catch (err: any) {
     return { connected: false, accountId: ACCOUNT_ID, number: COMPANY_NUMBER, error: err.message };
   }
