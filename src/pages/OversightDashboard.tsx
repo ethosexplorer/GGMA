@@ -30,12 +30,17 @@ const NAV_ITEMS = [
 ];
 
 export const OversightDashboard = ({ onLogout, user, role, jurisdiction = 'Oklahoma' }: { onLogout?: () => void, user?: any, role?: string, jurisdiction?: string }) => {
-  const [activeTab, setActiveTab] = useState('overview');
+  const isExecutive = user?.role === 'executive_founder' || user?.email?.toLowerCase().includes('globalgreenhp') || user?.email?.toLowerCase().includes('monica') || user?.email?.toLowerCase().includes('bob');
+  const [demoUnlocked, setDemoUnlocked] = useState(isExecutive);
+  const isSubscribed = user?.subscriptionStatus === 'Active' || user?.planId || demoUnlocked;
+  
+  const [activeTab, setActiveTab] = useState(isExecutive || isSubscribed ? 'overview' : 'subscription');
 
   const isFederalOrFounder = role === 'executive_founder' || role === 'regulator_federal';
   const isFounderOrInternal = role === 'executive_founder' || role === 'admin_internal' || role === 'operations';
   
   const filteredNavItems = NAV_ITEMS.filter(item => {
+    if (!isSubscribed && item.id !== 'subscription') return false;
     if (item.id === 'federal') return isFederalOrFounder;
     if (item.id === 'operations' || item.id === 'virtual_attendant' || item.id === 'processor') return isFounderOrInternal;
     return true;

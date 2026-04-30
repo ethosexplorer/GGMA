@@ -53,9 +53,11 @@ const MiniBarChart = ({ data }: { data: number[] }) => (
 );
 
 export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge, jurisdiction = 'Oklahoma' }: { onLogout?: () => void | Promise<void>, user?: any, initialTab?: any, onOpenConcierge?: () => void, jurisdiction?: string }) => {
-  const [demoUnlocked, setDemoUnlocked] = useState(false);
+  const isExecutive = user?.role === 'executive_founder' || user?.email?.toLowerCase().includes('globalgreenhp') || user?.email?.toLowerCase().includes('monica') || user?.email?.toLowerCase().includes('bob');
+  const [demoUnlocked, setDemoUnlocked] = useState(isExecutive);
+  const isSubscribed = user?.subscriptionStatus === 'Active' || user?.planId || demoUnlocked;
   const [previousTab, setPreviousTab] = useState<string>('home');
-  const [activeTab, setActiveTab] = useState<'home' | 'analytics' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'insurance' | 'documents' | 'subscription' | 'integrations' | 'staff' | 'traceability' | 'readiness' | 'dea' | 'wallet' | 'attorneys' | 'reporting' | 'applications'>(initialTab || 'analytics');
+  const [activeTab, setActiveTab] = useState<'home' | 'analytics' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'insurance' | 'documents' | 'subscription' | 'integrations' | 'staff' | 'traceability' | 'readiness' | 'dea' | 'wallet' | 'attorneys' | 'reporting' | 'applications'>(isSubscribed ? (initialTab || 'analytics') : 'applications');
   const navigateTab = (tab: typeof activeTab) => {
     setPreviousTab(activeTab);
     setActiveTab(tab);
@@ -402,7 +404,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
       </div>
       
       <div className="flex overflow-x-auto gap-2 p-1.5 bg-slate-100/60 rounded-3xl w-full xl:w-auto border border-slate-200/50" style={{ scrollbarWidth: 'thin', scrollbarColor: '#94a3b8 transparent' }}>
-        {bizTabs.map((tab, index) => {
+        {bizTabs.filter(tab => isSubscribed || tab.id === 'applications').map((tab, index) => {
           // Special color styling for certain tabs
           const isActive = activeTab === tab.id;
           const specialActive = tab.id === 'compliance' && isActive ? 'bg-white text-amber-600 shadow-sm shadow-slate-200/50'

@@ -47,8 +47,9 @@ const DEFAULT_TABS = [
 ];
 
 export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, key }: { user?: any; onLogout?: () => void; onSignup?: () => void; onOpenConcierge?: () => void; key?: string }) => {
-  const [activeTab, setActiveTab] = useState('overview');
-  const [demoUnlocked, setDemoUnlocked] = useState(true);
+  const isExecutive = user?.role === 'executive_founder' || user?.email?.toLowerCase().includes('globalgreenhp') || user?.email?.toLowerCase().includes('monica') || user?.email?.toLowerCase().includes('bob');
+  const [activeTab, setActiveTab] = useState(isExecutive ? 'overview' : 'applications');
+  const [demoUnlocked, setDemoUnlocked] = useState(isExecutive);
   const isSubscribed = user?.subscriptionStatus === 'Active' || user?.planId || demoUnlocked;
   const hasBasic = isSubscribed || user?.planId === 'b2c_basic';
 
