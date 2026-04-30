@@ -8692,9 +8692,15 @@ export default function App() {
           return (isFounder || isRyan || isMonica || isOpsView) ? <WebDialer /> : null;
         })()}
 
-        {view !== 'larry-chatbot' && !isFounder && !isRyan && !isMonica && (
-          <SylaraFloatingWidget userProfile={userProfile} persona={currentPersona} onClick={() => setShowLarryModal(true)} />
-        )}
+        {(() => {
+          const email = (userProfile?.email || '').toLowerCase();
+          const isFndr = userProfile?.role === 'executive_founder' || email.includes('globalgreenhp@gmail.com');
+          const isRyn = email.includes('ceo.globalgreenhp');
+          const isMon = email.includes('compliance.globalgreenhp') || email.includes('monica');
+          
+          if (view === 'larry-chatbot' || isFndr || isRyn || isMon) return null;
+          return <SylaraFloatingWidget userProfile={userProfile} persona={currentPersona} onClick={() => setShowLarryModal(true)} />;
+        })()}
 
         {/* Floating Modal for Chatbot */}
         {showLarryModal && (
