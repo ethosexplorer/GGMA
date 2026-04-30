@@ -3449,11 +3449,15 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
 const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card', userProfile }: any) => {
   const [isBusiness, setIsBusiness] = useState(variant === 'business');
   const isGeneral = variant === 'general' || variant === 'ggma' || variant === 'rip' || variant === 'sinc';
-  const isFounderAssistant = userProfile && userProfile.role === 'executive_founder';
+  const isRyan = userProfile && userProfile.email?.toLowerCase().includes('ceo.globalgreenhp');
+  const isMonica = userProfile && (userProfile.email?.toLowerCase().includes('compliance.globalgreenhp') || userProfile.email?.toLowerCase().includes('monica'));
+  const isFounderAssistant = userProfile && userProfile.role === 'executive_founder' && !isRyan && !isMonica;
   
   const getGreeting = () => {
     const date = "April 21, 2026";
     const metrcStatus = "Validated Metrc Integrator (Active)";
+    if (isRyan) return `🛡️ **CEO Access Authenticated.** Good Morning, Ryan. I am **L.A.R.R.Y.** (Legal Authority & Regulatory Rules Yield).\n\nI am synced with your Supreme Command Dashboard. All operational pipelines, regulatory enforcement sectors, and jurisdictional metrics are fully operational.\n\nHow can I assist with your executive oversight today?`;
+    if (isMonica) return `✨ **Good Morning, Monica!** I am **Sylara**, your **Compliance Assistant**.\n\nI am synced with your Compliance Dashboard. I have loaded the latest Metrc anomalies, pending license approvals, and state regulatory updates.\n\nHow can I support your compliance sweeps today?`;
     if (isFounderAssistant) return `✨ **Good Morning, Shantell!** I am **Sylara**, your **Executive Personal Assistant**.\n\nAs your mirror AI, I am fully synced with your Founder Dashboard. I have prepared your daily summaries, state news, and upcoming appointments.\n\nHow can I support your schedule and oversight duties today?`;
     if (variant === 'ggma') return `👋 Welcome to the **GGMA Sector**. I am **Sylara**, your **Intake Agent**. We are an official **${metrcStatus}**. I handle all regulatory onboarding, card processing, and registry management. \n\nHow can I assist with your GGMA licensing today?`;
     if (variant === 'rip') return `🕵️ **RIP Intelligence Portal**. I am **Sylara**, coordinating with the **L.A.R.R.Y Enforcement Engine**. Due to the highly sensitive nature of intelligence and enforcement operations, I can only provide basic guidance here. For secure access to field reports or oversight actions, you must create an official account. \n\nWould you like to begin intake?`;
@@ -3467,6 +3471,8 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
   };
 
   const getInitialChoices = () => {
+    if (isRyan) return ['View Global Operations', 'Enforcement Status', 'Metrc API Health', 'Jurisdiction Overrides'];
+    if (isMonica) return ['Run Compliance Sweep', 'Metrc Anomalies', 'Pending Applications', 'Audit Logs'];
     if (variant === 'ggma') return ['Start Patient Intake', 'Start Business Intake', '🏛️ DEA Schedule III Registration', 'View Patient Fee Schedule', 'View Business Fee Schedule', 'View Subscription Plans'];
     if (variant === 'rip') return ['Field Intelligence Report', 'Background Verification Check', 'Enforcement Status Inquiry', 'Compliance Audit Request', 'Contact Oversight Division', 'View State Authority Plans'];
     if (variant === 'sinc') return ['Start Business Intake', '🏛️ DEA Schedule III Registration', 'Audit Shield Setup', 'Seed-to-Sale Compliance', 'Network Integrity Check', 'View Business Fee Schedule'];
@@ -3508,12 +3514,16 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
   const [currentPersona, setCurrentPersona] = useState<'sylara' | 'larry'>('sylara');
 
   useEffect(() => {
-    if (isFounderAssistant) {
+    if (isRyan) {
+      setMessages([{ role: 'bot', text: getGreeting(), choices: getInitialChoices() }]);
+    } else if (isMonica) {
+      setMessages([{ role: 'bot', text: getGreeting(), choices: getInitialChoices() }]);
+    } else if (isFounderAssistant) {
       setMessages([
         { role: 'bot', text: getGreeting(), choices: ['View Daily Summary', 'State News Briefing', 'My Appointments', 'Pending Approvals', 'Send Broadcast'] }
       ]);
     }
-  }, [isFounderAssistant]);
+  }, [isFounderAssistant, isRyan, isMonica]);
 
   // Chat Session ID for storing to database
   const [sessionId] = useState(() => `session_${Math.random().toString(36).substr(2, 9)}_${Date.now()}`);
@@ -3816,6 +3826,36 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
 
     let response = '';
     const lower = text.toLowerCase();
+
+    if (isRyan) {
+      if (lower.includes('global operations') || lower.includes('operations')) {
+        response = "🌐 **Global Operations Summary**\n\n• **Total Active Facilities:** 4,192\n• **Daily Transactions:** 842,109\n• **Revenue (24h):** $4.2M\n\nAll primary Metrc API bridges are stable.";
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: getInitialChoices() } as any]);
+        setIsTyping(false);
+        return;
+      }
+      if (lower.includes('enforcement')) {
+        response = "🚨 **Enforcement Status**\n\n• **Active Investigations:** 14\n• **Recent Suspensions:** 2 (Oklahoma)\n• **DEA Referrals:** 0\n\nThe RIP Intelligence Portal is monitoring all high-risk nodes.";
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: getInitialChoices() } as any]);
+        setIsTyping(false);
+        return;
+      }
+    }
+
+    if (isMonica) {
+      if (lower.includes('sweep') || lower.includes('compliance')) {
+        response = "✅ **Compliance Sweep Complete**\n\nI have scanned all recent transactions against State regulations.\n\n• **Anomalies Detected:** 3\n• **Audit Logs Flagged:** 12\n• **High-Risk Actions:** 0\n\nWould you like to review the anomalies?";
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: getInitialChoices() } as any]);
+        setIsTyping(false);
+        return;
+      }
+      if (lower.includes('anomalies')) {
+        response = "⚠️ **Metrc Anomalies**\n\n1. Dispensary #OK-1294: Negative inventory balance on Package #99283.\n2. Cultivation #OK-8812: Missing lab test results for Harvest Batch #A-99.\n3. Transport #OK-4411: Deviation from approved route.\n\nI have prepared the warning notices for your signature.";
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: getInitialChoices() } as any]);
+        setIsTyping(false);
+        return;
+      }
+    }
 
     if (isFounderAssistant) {
       if (lower.includes('daily summary')) {
@@ -5824,7 +5864,13 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     } else if (lower.includes('talk') || lower.includes('speak') || lower.includes('human') || lower.includes('agent') || lower.includes('support') || lower.includes('call') || lower.includes('phone')) {
       response = 'I can route you to a live department representative. \n\nWould you like me to open a support ticket for you instead?';
     } else {
-      if (isFounderAssistant) {
+      if (isRyan) {
+        response = "🛡️ **Operational Command Logged**\n\nI have logged your directive into the Supreme Command matrix, Ryan. While I process the exact regulatory bounds, is there another enforcement sector you wish to review?";
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: getInitialChoices() } as any]);
+      } else if (isMonica) {
+        response = "✨ **Compliance Note Added**\n\nI've recorded that anomaly, Monica. I will compile a deeper audit log for you. Would you like to review other pending alerts?";
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: getInitialChoices() } as any]);
+      } else if (isFounderAssistant) {
         response = "🧠 **Executive Memory Logged**\n\nI've recorded that request to your dashboard memory matrix. I am still aggregating data to give you a complete answer, but I've flagged this for Monica to review in the Operations Hub.\n\nWhat else can I assist you with today, Shantell?";
         setMessages(prev => [...prev, { 
           role: 'bot', 
