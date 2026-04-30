@@ -3527,10 +3527,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
   const [showUploadMenu, setShowUploadMenu] = useState(false);
   const [isEditingReview, setIsEditingReview] = useState(false);
 
-  const [signupStep, setSignupStep] = useState<number>(() => {
-    if (variant === 'ggma' || variant === 'rip' || variant === 'sinc' || variant === 'business') return 0;
-    return -1;
-  });
+  const [signupStep, setSignupStep] = useState<number>(-1);
   const [currentPersona, setCurrentPersona] = useState<'sylara' | 'larry'>('sylara');
 
   useEffect(() => {
