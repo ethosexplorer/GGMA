@@ -3847,6 +3847,49 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     let response = '';
     const lower = text.toLowerCase();
 
+    // ── AI Training & Recall Priority for Founder ──
+    if (isFounderAssistant) {
+      if (lower.startsWith('train:') || lower.startsWith('learn:') || lower.startsWith('remember:')) {
+        const memoryContent = text.replace(/^(train|learn|remember):\s*/i, '');
+        const existingMemories = JSON.parse(localStorage.getItem('ai_training_matrix') || '[]');
+        existingMemories.push({ timestamp: Date.now(), content: memoryContent });
+        localStorage.setItem('ai_training_matrix', JSON.stringify(existingMemories));
+        
+        const responses = [
+          "🧠 **Memory Matrix Updated**\n\nI have successfully encoded that directive into my persistent memory. It will inform my future responses.",
+          "⚙️ **Learning Protocol Successful**\n\nDirective internalized. As your mirror AI, I will recall this moving forward.",
+          "🛡️ **System Trained**\n\nGot it. Your specific instructions have been saved and applied to my core knowledge base."
+        ];
+        response = responses[Math.floor(Math.random() * responses.length)];
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: getInitialChoices() } as any]);
+        setIsTyping(false);
+        return;
+      }
+
+      const trainedMemories = JSON.parse(localStorage.getItem('ai_training_matrix') || '[]');
+      let matchedMemory = null;
+      if (trainedMemories.length > 0) {
+        const ignoreWords = ['what', 'is', 'the', 'how', 'do', 'i', 'can', 'you', 'a', 'to', 'for', 'my', 'and', 'or', 'if', 'we'];
+        const userWords = lower.split(/\W+/).filter(w => w.length > 3 && !ignoreWords.includes(w));
+        
+        for (const mem of [...trainedMemories].reverse()) {
+          const memLower = mem.content.toLowerCase();
+          const matchCount = userWords.filter(w => memLower.includes(w)).length;
+          if (matchCount >= 1 && userWords.length > 0) {
+            matchedMemory = mem.content;
+            break;
+          }
+        }
+      }
+
+      if (matchedMemory) {
+        response = `🧠 **Recalling Custom Directive:**\n\n${matchedMemory}\n\nDoes that address your inquiry, or shall I execute a related command?`;
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: getInitialChoices() } as any]);
+        setIsTyping(false);
+        return;
+      }
+    }
+
     if (isRyan) {
       if (lower.includes('global operations') || lower.includes('operations')) {
         response = "🌐 **Global Operations Summary**\n\n• **Total Active Facilities:** 4,192\n• **Daily Transactions:** 842,109\n• **Revenue (24h):** $4.2M\n\nAll primary Metrc API bridges are stable.";
@@ -3860,11 +3903,17 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         setIsTyping(false);
         return;
       }
+      
+      // Fallback for Ryan
+      response = "🛡️ **Operational Command Logged**\n\nI have logged your directive into the Supreme Command matrix, Ryan. While I process the exact regulatory bounds, is there another enforcement sector you wish to review?";
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: getInitialChoices() } as any]);
+      setIsTyping(false);
+      return;
     }
 
     if (isMonica) {
       if (lower.includes('sweep') || lower.includes('compliance')) {
-        response = "✅ **Compliance Sweep Complete**\n\nI have scanned all recent transactions against State regulations.\n\n• **Anomalies Detected:** 3\n• **Audit Logs Flagged:** 12\n• **High-Risk Actions:** 0\n\nWould you like to review the anomalies?";
+        response = "📊 **Compliance Sweep Complete**\n\nI have scanned all recent transactions against State regulations.\n\n• **Anomalies Detected:** 3\n• **Audit Logs Flagged:** 12\n• **High-Risk Actions:** 0\n\nWould you like to review the anomalies?";
         setMessages(prev => [...prev, { role: 'bot', text: response, choices: getInitialChoices() } as any]);
         setIsTyping(false);
         return;
@@ -3875,6 +3924,12 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         setIsTyping(false);
         return;
       }
+
+      // Fallback for Monica
+      response = "✨ **Compliance Note Added**\n\nI've recorded that query, Monica. I will compile a deeper audit log for you. Would you like to review other pending alerts?";
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: getInitialChoices() } as any]);
+      setIsTyping(false);
+      return;
     }
 
     if (isFounderAssistant) {
@@ -5882,7 +5937,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       response = '👤 **Human Care Coordination**\n\nI am routing you to a **Live Agent**, our lead Human Care Coordinator.\n\n\n\n📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book a 15-Min Session via Calendly](https://calendly.com/shantell-ggma/health-wellness-consultation)';
     } else if (lower === 'yes' || lower === 'yeah' || lower === 'yep') {
       response = 'Great! I am ready to assist. Would you like to begin your **Licensing Intake**, or do you have questions about our other sectors like **RIP Intelligence** or **SINC Compliance**?';
-    } else if (['cancer', 'pain', 'ptsd', 'glaucoma', 'seizure', 'anxiety', 'epilepsy', 'crohn', 'sclerosis', 'als', 'alzheimer', 'anorexia', 'migraine', 'arthritis', 'nausea', 'autism', 'hiv', 'aids', 'parkinson', 'tourette'].some(condition => lower.includes(condition))) {
+    } else if (['cancer', 'pain', 'ptsd', 'glaucoma', 'seizure', 'anxiety', 'epilepsy', 'crohn', 'sclerosis', 'als', 'alzheimer', 'anorexia', 'migraine', 'arthritis', 'nausea', 'autism', 'hiv', 'aids', 'parkinson', 'tourette'].some(condition => new RegExp(`\\b${condition}\\b`, 'i').test(lower))) {
       response = 'That sounds like a qualifying medical condition. To ensure you receive the correct state certification, I can begin your intake process now. \n\nCan I create an account for you to begin? (Yes / No)';
       setSignupStep(99);
     } else if (lower === 'no' || lower === 'nope' || lower === 'none' || lower.includes('don\'t') || lower.includes('do not') || lower.includes('none of')) {
@@ -5897,49 +5952,13 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         response = "✨ **Compliance Note Added**\n\nI've recorded that anomaly, Monica. I will compile a deeper audit log for you. Would you like to review other pending alerts?";
         setMessages(prev => [...prev, { role: 'bot', text: response, choices: getInitialChoices() } as any]);
       } else if (isFounderAssistant) {
-        // ── AI Training & Recall Logic ──
-        if (lower.startsWith('train:') || lower.startsWith('learn:') || lower.startsWith('remember:')) {
-          const memoryContent = text.replace(/^(train|learn|remember):\s*/i, '');
-          const existingMemories = JSON.parse(localStorage.getItem('ai_training_matrix') || '[]');
-          existingMemories.push({ timestamp: Date.now(), content: memoryContent });
-          localStorage.setItem('ai_training_matrix', JSON.stringify(existingMemories));
-          
-          const responses = [
-            "🧠 **Memory Matrix Updated**\n\nI have successfully encoded that directive into my persistent memory. It will inform my future responses.",
-            "⚙️ **Learning Protocol Successful**\n\nDirective internalized. As your mirror AI, I will recall this moving forward.",
-            "🛡️ **System Trained**\n\nGot it. Your specific instructions have been saved and applied to my core knowledge base."
-          ];
-          response = responses[Math.floor(Math.random() * responses.length)];
-        } else {
-          // Check if we have a trained memory that matches the input
-          const trainedMemories = JSON.parse(localStorage.getItem('ai_training_matrix') || '[]');
-          let matchedMemory = null;
-          if (trainedMemories.length > 0) {
-            const ignoreWords = ['what', 'is', 'the', 'how', 'do', 'i', 'can', 'you', 'a', 'to', 'for', 'my', 'and', 'or', 'if', 'we'];
-            const userWords = lower.split(/\W+/).filter(w => w.length > 3 && !ignoreWords.includes(w));
-            
-            for (const mem of [...trainedMemories].reverse()) {
-              const memLower = mem.content.toLowerCase();
-              const matchCount = userWords.filter(w => memLower.includes(w)).length;
-              if (matchCount >= 1 && userWords.length > 0) {
-                matchedMemory = mem.content;
-                break;
-              }
-            }
-          }
-
-          if (matchedMemory) {
-            response = `🧠 **Recalling Custom Directive:**\n\n${matchedMemory}\n\nDoes that address your inquiry, or shall I execute a related command?`;
-          } else {
-            // General Fallback (Learning)
-            const learningResponses = [
-              "🧠 **Executive Directive Logged**\n\nI have integrated this new directive into my core neural matrix. As your mirror AI, I am continuously adapting to your command style and preferences.\n\nWhat is your next directive, Shantell?",
-              "⚙️ **Matrix Update Complete**\n\nUnderstood. I have locked that into my persistent memory banks for future operations. I will handle this exactly as you've instructed going forward.\n\nHow else can I assist your oversight today?",
-              "🛡️ **System Adaptation Successful**\n\nI hear you loud and clear. Your preferences supersede all default protocols. I have adjusted my logic accordingly.\n\nWhat else needs our attention?"
-            ];
-            response = learningResponses[Math.floor(Math.random() * learningResponses.length)];
-          }
-        }
+        // General Fallback (Learning)
+        const learningResponses = [
+          "🧠 **Executive Directive Logged**\n\nI have integrated this new directive into my core neural matrix. As your mirror AI, I am continuously adapting to your command style and preferences.\n\nWhat is your next directive, Shantell?",
+          "⚙️ **Matrix Update Complete**\n\nUnderstood. I have locked that into my persistent memory banks for future operations. I will handle this exactly as you've instructed going forward.\n\nHow else can I assist your oversight today?",
+          "🛡️ **System Adaptation Successful**\n\nI hear you loud and clear. Your preferences supersede all default protocols. I have adjusted my logic accordingly.\n\nWhat else needs our attention?"
+        ];
+        response = learningResponses[Math.floor(Math.random() * learningResponses.length)];
 
         setMessages(prev => [...prev, { 
           role: 'bot', 
@@ -6113,16 +6132,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       return <span key={i}>{part}</span>;
     });
   };
-  const reviewBubbles = [
-    { text: "Best service in OKC!", author: "Sarah L.", x: "10%", y: "15%", delay: 0 },
-    { text: "Sylara made it so easy.", author: "Mike R.", x: "75%", y: "18%", delay: 2 },
-    { text: "GGMA is the gold standard.", author: "Dr. J.", x: "15%", y: "72%", delay: 4 },
-    { text: "Got my card in 8 days!", author: "Anita P.", x: "82%", y: "58%", delay: 1 },
-    { text: "Metrc integration is seamless.", author: "GGE Business", x: "68%", y: "82%", delay: 3 },
-    { text: "Top notch support.", author: "Brian K.", x: "42%", y: "12%", delay: 5 },
-    { text: "Highly recommended!", author: "Jessica M.", x: "12%", y: "35%", delay: 2.5 },
-    { text: "Professional & Fast.", author: "Robert T.", x: "88%", y: "42%", delay: 3.5 },
-  ];
+
 
   let headerTitle = currentPersona === 'sylara' ? 'Sylara' : 'L.A.R.R.Y';
   let headerSubtitle = currentPersona === 'sylara' ? 'Sylara Intake Agent' : 'L.A.R.R.Y Enforcement Engine';
@@ -6171,36 +6181,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       {/* Chat Area */}
       <div className="flex-1 flex flex-col max-w-3xl w-full mx-auto px-4 py-6 relative z-10">
         <div className="flex-1 space-y-5 overflow-auto pb-4 min-h-0 relative">
-          {/* ── Background Floating Reviews (Only on startup) ── */}
-          {messages.length <= 1 && (
-            <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-              {reviewBubbles.map((rev, idx) => (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{ 
-                    opacity: [0, 0.7, 0.7, 0], 
-                    scale: [0.8, 1, 1, 0.8],
-                    y: [0, -20, -40, -60]
-                  }}
-                  transition={{ 
-                    duration: 12, 
-                    repeat: Infinity, 
-                    delay: rev.delay,
-                    ease: "linear"
-                  }}
-                  className="absolute p-3 bg-white/60 backdrop-blur-md border border-white/40 rounded-2xl shadow-xl shadow-emerald-900/5 max-w-[160px]"
-                  style={{ left: rev.x, top: rev.y }}
-                >
-                  <div className="flex gap-1 mb-1">
-                    {[1, 2, 3, 4, 5].map(s => <Star key={s} size={8} className="fill-amber-400 text-amber-400" />)}
-                  </div>
-                  <p className="text-[9px] font-bold text-slate-800 leading-tight mb-1 italic">"{rev.text}"</p>
-                  <p className="text-[7px] font-black text-emerald-700 uppercase tracking-widest text-right">— {rev.author}</p>
-                </motion.div>
-              ))}
-            </div>
-          )}
+
           {messages.map((msg, i) => (
             <motion.div
               key={i}
