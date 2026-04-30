@@ -3466,7 +3466,7 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
 };
 
 // --- L.A.R.R.Y AI Chatbot for Med Card / Business License Assistance ---
-const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card', userProfile }: any) => {
+export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card', userProfile }: any) => {
   const [isBusiness, setIsBusiness] = useState(variant === 'business');
   const isGeneral = variant === 'general' || variant === 'ggma' || variant === 'rip' || variant === 'sinc';
   const isRyan = userProfile && userProfile.email?.toLowerCase().includes('ceo.globalgreenhp');

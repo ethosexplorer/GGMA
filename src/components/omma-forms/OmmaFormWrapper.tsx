@@ -10,6 +10,7 @@ interface Props {
   formType: OmmaFormType;
   children: (props: any) => React.ReactNode;
   defaultValues?: any;
+  schema?: any;
 }
 
 export default function OmmaFormWrapper({ formType, children, defaultValues }: Props) {

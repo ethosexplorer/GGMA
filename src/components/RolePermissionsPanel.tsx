@@ -233,7 +233,7 @@ const StatusBadge = ({ status }: { status: string }) => {
 };
 
 // ─── Staff Card (Collapsed Icon) ───
-const StaffIcon = ({ member, isSelected, onClick }: { member: StaffMember; isSelected: boolean; onClick: () => void }) => (
+const StaffIcon = ({ member, isSelected, onClick, key }: { member: StaffMember; isSelected: boolean; onClick: () => void; key?: string | number }) => (
   <button
     onClick={onClick}
     className={`flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all hover:scale-105 ${
@@ -257,7 +257,7 @@ const StaffIcon = ({ member, isSelected, onClick }: { member: StaffMember; isSel
 );
 
 // ─── Expanded Staff Detail ───
-const StaffDetail = ({ member, isFounder }: { member: StaffMember; isFounder: boolean }) => {
+const StaffDetail = ({ member, isFounder, key }: { member: StaffMember; isFounder: boolean; key?: string | number }) => {
   const [activeTab, setActiveTab] = useState<'role' | 'hr'>('role');
 
   return (

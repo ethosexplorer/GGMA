@@ -36,7 +36,7 @@ import { voip800 } from '../lib/voip800';
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
-const NAV_VERSION = 13; // Bumped to reset sidebar and show AI Training tab
+const NAV_VERSION = 14; // Bumped to reset sidebar and move AI Training tab under MAIN
 
 const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: '_sec_founder', section: 'FOUNDER EXCLUSIVE' },
@@ -46,8 +46,8 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'hr_intelligence', label: 'HR Intelligence (Sylara)', icon: UserPlus },
   { id: 'launch_script', label: 'Master Launch Script', icon: FileText },
   { id: 'jurisdiction_map', label: 'Nationwide Oversight', icon: Globe },
-  { id: 'ai_training', label: 'My Assistant & Training', icon: Bot, badge: 'AI' },
   { id: '_sec_main', section: 'MAIN' },
+  { id: 'ai_training', label: 'My Assistant & Training', icon: Bot, badge: 'AI' },
   { id: 'messages', label: 'Messages', icon: MessageSquare, badge: 'Live' },
   { id: 'internal_scheduler', label: 'Calendar & Scheduler', icon: Clock, badge: 'New' },
   { id: 'overview', label: 'God Overview', icon: Activity },
@@ -228,16 +228,16 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
   const [navItemsList, setNavItemsList] = useState(() => {
     try {
       // Version check: if nav structure changed, reset saved order
-      const savedVersion = localStorage.getItem('gghp_nav_version_v2');
+      const savedVersion = localStorage.getItem('gghp_nav_version_v3');
       if (savedVersion !== String(NAV_VERSION)) {
-        localStorage.removeItem('gghp_nav_order_v2');
+        localStorage.removeItem('gghp_nav_order_v3');
         localStorage.removeItem('gghp_section_names');
         localStorage.removeItem('gghp_custom_sections');
-        localStorage.setItem('gghp_nav_version_v2', String(NAV_VERSION));
+        localStorage.setItem('gghp_nav_version_v3', String(NAV_VERSION));
         return [...INITIAL_NAV_ITEMS];
       }
 
-      const saved = localStorage.getItem('gghp_nav_order_v2');
+      const saved = localStorage.getItem('gghp_nav_order_v3');
       const savedSectionNames = localStorage.getItem('gghp_section_names');
       const sectionNameMap: Record<string, string> = savedSectionNames ? JSON.parse(savedSectionNames) : {};
       
@@ -300,7 +300,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
     setNavItemsList(newItems);
     // Persist order to localStorage — all items have stable ids now
     const ids = newItems.map(it => it.id!);
-    localStorage.setItem('gghp_nav_order_v2', JSON.stringify(ids));
+    localStorage.setItem('gghp_nav_order_v3', JSON.stringify(ids));
   };
 
   const [activeTab, setActiveTab] = useState('overview');
