@@ -97,6 +97,9 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
       return () => clearInterval(intervalId);
     }, []);
 
+    const [routingTab, setRoutingTab] = useState<'routing' | 'dialpad'>('routing');
+    const [dialNumber, setDialNumber] = useState('');
+
     return (
       <div className="space-y-6">
         {/* Header */}
@@ -112,7 +115,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
                   Twilio VOIP • 1-888-963-4447
                 </p>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center justify-end gap-2">
                 <a 
                   href="https://console.twilio.com/us1/monitor/logs/calls"
                   target="_blank"
@@ -123,6 +126,19 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
                   <span className="text-[10px] font-bold text-rose-300 uppercase tracking-widest">Active Queue:</span>
                   <span className="text-sm font-black text-rose-400">{liveQueue}</span>
                 </a>
+
+                {/* Quick Actions */}
+                <button onClick={() => alert('Opening Voicemail Inbox...')} className="bg-purple-500/20 border border-purple-500/30 px-3 py-1.5 rounded-lg flex items-center gap-1.5 hover:bg-purple-500/40 transition-all text-purple-300 font-bold text-[10px] uppercase tracking-widest">
+                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="5.5" cy="11.5" r="4.5"/><circle cx="18.5" cy="11.5" r="4.5"/><line x1="5.5" y1="16" x2="18.5" y2="16"/></svg>
+                  Voicemail
+                </button>
+                <button onClick={() => alert('Call Forwarding Settings...')} className="bg-indigo-500/20 border border-indigo-500/30 px-3 py-1.5 rounded-lg flex items-center gap-1.5 hover:bg-indigo-500/40 transition-all text-indigo-300 font-bold text-[10px] uppercase tracking-widest">
+                  <PhoneOutgoing size={14} /> Forward
+                </button>
+                <button onClick={() => alert('Initiating Call Transfer...')} className="bg-sky-500/20 border border-sky-500/30 px-3 py-1.5 rounded-lg flex items-center gap-1.5 hover:bg-sky-500/40 transition-all text-sky-300 font-bold text-[10px] uppercase tracking-widest">
+                  <UserPlus size={14} /> Transfer
+                </button>
+
                 <select 
                   value={agentStatus} 
                   onChange={(e) => setAgentStatus(e.target.value)}
@@ -139,7 +155,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
                   <option value="Not available">Not available</option>
                   <option value="Logged out">Logged out</option>
                 </select>
-                <div className={cn("flex items-center gap-2 px-3 py-1.5 rounded-full font-black text-[10px] uppercase tracking-widest border", isConnected ? "bg-emerald-500/20 border-emerald-400/30 text-emerald-300" : "bg-red-500/20 border-red-400/30 text-red-300")}>
+                <div className={cn("flex items-center gap-2 px-3 py-1.5 rounded-lg font-black text-[10px] uppercase tracking-widest border", isConnected ? "bg-emerald-500/20 border-emerald-400/30 text-emerald-300" : "bg-red-500/20 border-red-400/30 text-red-300")}>
                   <div className={cn("w-2 h-2 rounded-full", isConnected ? "bg-emerald-400 animate-pulse" : "bg-red-400")} />
                   {isConnected ? 'Live' : 'Offline'}
                 </div>
@@ -162,26 +178,90 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {/* Call Routing */}
-          <div className="lg:col-span-2 bg-white border border-slate-200 rounded-2xl shadow-sm">
-            <div className="p-4 border-b border-slate-100 flex justify-between items-center">
-              <h3 className="font-bold text-slate-800 text-sm flex items-center gap-2"><PhoneCall size={16} className="text-indigo-600" /> Call Routing</h3>
-              <button onClick={async () => { const d = prompt('Enter forwarding number:'); if (d) { const ok = await voip800.updateForwarding(d); alert(ok ? '✅ Updated!' : '❌ Failed'); }}} className="px-3 py-1.5 bg-indigo-600 text-white text-[10px] font-bold rounded-lg">+ Add</button>
+          {/* Call Routing / Dial Pad Tabbed Area */}
+          <div className="lg:col-span-2 bg-white border border-slate-200 rounded-2xl shadow-sm flex flex-col">
+            <div className="border-b border-slate-100 flex items-center justify-between px-4 pt-4">
+              <div className="flex gap-6">
+                <button 
+                  onClick={() => setRoutingTab('routing')}
+                  className={cn("pb-3 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors", routingTab === 'routing' ? "border-indigo-600 text-indigo-600" : "border-transparent text-slate-500 hover:text-slate-800")}
+                >
+                  <PhoneCall size={16} /> Call Routing
+                </button>
+                <button 
+                  onClick={() => setRoutingTab('dialpad')}
+                  className={cn("pb-3 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors", routingTab === 'dialpad' ? "border-emerald-600 text-emerald-600" : "border-transparent text-slate-500 hover:text-slate-800")}
+                >
+                  <PhoneOutgoing size={16} /> Dial Pad
+                </button>
+              </div>
+              {routingTab === 'routing' && (
+                <button onClick={async () => { const d = prompt('Enter forwarding number:'); if (d) { const ok = await voip800.updateForwarding(d); alert(ok ? '✅ Updated!' : '❌ Failed'); }}} className="px-3 py-1.5 bg-indigo-600 text-white text-[10px] font-bold rounded-lg mb-2">
+                  + Add
+                </button>
+              )}
             </div>
-            <div className="p-4 space-y-2">
-              {[
-                { name: 'Main → Founder', dest: 'Shantell Robinson', type: 'Standard', icon: PhoneIncoming },
-                { name: 'Overflow → Support', dest: 'Support Desk', type: 'Sequential', icon: PhoneOutgoing },
-                { name: 'After Hours → VM', dest: 'VM Box #1', type: 'Scheduled', icon: PhoneOff },
-              ].map((r, i) => (
-                <div key={i} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center"><r.icon size={14} /></div>
-                    <div><p className="text-sm font-bold text-slate-800">{r.name}</p><p className="text-[10px] text-slate-500">→ {r.dest} • {r.type}</p></div>
-                  </div>
-                  <span className="text-[9px] font-black uppercase text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Active</span>
+            
+            <div className="p-4 flex-1">
+              {routingTab === 'routing' ? (
+                <div className="space-y-2">
+                  {[
+                    { name: 'Main → Founder', dest: 'Shantell Robinson', type: 'Standard', icon: PhoneIncoming },
+                    { name: 'Overflow → Support', dest: 'Support Desk', type: 'Sequential', icon: PhoneOutgoing },
+                    { name: 'After Hours → VM', dest: 'VM Box #1', type: 'Scheduled', icon: PhoneOff },
+                  ].map((r, i) => (
+                    <div key={i} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center"><r.icon size={14} /></div>
+                        <div><p className="text-sm font-bold text-slate-800">{r.name}</p><p className="text-[10px] text-slate-500">→ {r.dest} • {r.type}</p></div>
+                      </div>
+                      <span className="text-[9px] font-black uppercase text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Active</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              ) : (
+                <div className="max-w-xs mx-auto">
+                  <input 
+                    type="text" 
+                    value={dialNumber}
+                    onChange={(e) => setDialNumber(e.target.value)}
+                    placeholder="+1 (555) 555-5555" 
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 text-xl text-center font-mono tracking-widest mb-4 focus:outline-none focus:border-emerald-500 transition-colors shadow-inner"
+                  />
+                  <div className="grid grid-cols-3 gap-3 mb-6">
+                    {['1','2','3','4','5','6','7','8','9','*','0','#'].map((key) => (
+                      <button 
+                        key={key}
+                        onClick={() => setDialNumber(prev => prev + key)}
+                        className="bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 text-xl font-bold p-3 rounded-xl transition-all shadow-sm"
+                      >
+                        {key}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex gap-3">
+                    <button 
+                      onClick={() => setDialNumber(prev => prev.slice(0, -1))}
+                      disabled={!dialNumber}
+                      className="w-16 bg-white border border-slate-200 disabled:opacity-50 text-slate-400 p-3 rounded-xl transition-colors flex items-center justify-center shadow-sm hover:bg-slate-50"
+                    >
+                      ⌫
+                    </button>
+                    <button 
+                      onClick={() => {
+                        // The actual WebRTC Dial logic is handled by the WebDialer component overlay.
+                        // We can communicate with it via custom events, or just alert the user to use the bottom dialer.
+                        // We will trigger a custom event that WebDialer.tsx listens to!
+                        window.dispatchEvent(new CustomEvent('twilio-dial-out', { detail: { number: dialNumber } }));
+                      }}
+                      disabled={!dialNumber || !isConnected}
+                      className="flex-1 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 text-white font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
+                    >
+                      <Phone size={20} /> Dial Out
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
           {/* Quick SMS */}

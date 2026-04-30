@@ -122,6 +122,7 @@ export function WebDialer() {
   const [dialNumber, setDialNumber] = useState('');
   const [showDialer, setShowDialer] = useState(false);
 
+
   const handleAccept = () => {
     if (incomingCall) {
       incomingCall.accept();
@@ -147,44 +148,7 @@ export function WebDialer() {
     }
   };
 
-  const handleDial = async () => {
-    if (!device || status !== 'ready' || !dialNumber) return;
-    try {
-      setStatus('connecting');
-      const params = { To: dialNumber };
-      const call = await device.connect({ params });
-      
-      call.on('accept', () => {
-        console.log('[WebDialer] Outbound call accepted');
-        setActiveCall(call);
-        setStatus('busy');
-        setShowDialer(false);
-        setCallDuration(0);
-        timerRef.current = setInterval(() => {
-          setCallDuration(prev => prev + 1);
-        }, 1000);
-      });
-
-      call.on('disconnect', () => {
-        console.log('[WebDialer] Outbound call disconnected');
-        setActiveCall(null);
-        setCallDuration(0);
-        if (timerRef.current) clearInterval(timerRef.current);
-        setStatus('ready');
-      });
-
-      call.on('error', (err: any) => {
-        console.error('[WebDialer] Outbound call error:', err);
-        setError('Dial Failed: Check TWILIO_TWIML_APP_SID');
-        setStatus('ready');
-      });
-      
-    } catch (err: any) {
-      console.error('[WebDialer] Dial error:', err);
-      setError(err.message || 'Dial failed');
-      setStatus('ready');
-    }
-  };
+  const handleDial = () => triggerDial(dialNumber);
 
   const toggleMute = () => {
     if (activeCall) {
