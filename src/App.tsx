@@ -8818,14 +8818,16 @@ export default function App() {
         {/* Twilio WebDialer — only visible for Founder, CEO, Compliance Director, and Ops/Call Center */}
         {userProfile && (() => {
           const email = (userProfile.email || '').toLowerCase();
+          const roleStr = String(roleOverride || userProfile.role).toLowerCase();
           const isFounder = userProfile.role === 'executive_founder' || email.includes('globalgreenhp@gmail.com');
           const isRyan = email.includes('ceo.globalgreenhp');
           const isMonica = email.includes('compliance.globalgreenhp') || email.includes('monica');
-          const isOpsView = roleOverride === 'operations' || roleOverride === 'internal_admin';
+          const isBob = email.includes('bobmoore');
+          const isOpsView = roleStr.includes('operations') || roleStr.includes('admin') || roleStr.includes('staff') || roleStr.includes('support') || roleStr.includes('it');
           // Hide when previewing patient/business/external dashboards
-          const isPreviewingExternal = roleOverride && ['patient', 'business', 'regulator_state', 'regulator_federal', 'law_enforcement', 'enforcement_state', 'compliance_service', 'executive_advisor'].includes(roleOverride);
+          const isPreviewingExternal = roleOverride && ['patient', 'business', 'regulator_state', 'law_enforcement', 'enforcement_state', 'compliance_service'].includes(roleOverride);
           if (isPreviewingExternal) return null;
-          return (isFounder || isRyan || isMonica || isOpsView) ? <WebDialer /> : null;
+          return (isFounder || isRyan || isMonica || isBob || isOpsView) ? <WebDialer /> : null;
         })()}
 
         {(() => {

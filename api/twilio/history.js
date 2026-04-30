@@ -16,31 +16,44 @@ export default async function handler(req, res) {
 
     const client = twilio(accountSid, authToken);
     
-    // Fetch last 20 calls
-    const calls = await client.calls.list({ limit: 20 });
-    
-    // Fetch last 20 messages
-    const messages = await client.messages.list({ limit: 20 });
+    // Fetch Call History
+    const calls = await client.calls.list({ limit: 50 });
+    const formattedCalls = calls.map(c => ({
+      dir: c.direction === 'outbound-api' || c.direction === 'outbound-dial' ? 'OUT' : 'IN',
+      from: c.from,
+      to: c.to,
+      status: c.status,
+      duration: c.duration ? parseInt(c.duration) : 0,
+      time: new Date(c.dateCreated).toLocaleString(),
+      sid: c.sid
+    }));
 
-    res.status(200).json({
-      calls: calls.map(c => ({
-        id: c.sid,
-        from: c.from,
-        to: c.to,
-        direction: c.direction.includes('inbound') ? 'inbound' : 'outbound',
-        status: c.status,
-        duration: parseInt(c.duration || '0', 10),
-        timestamp: c.dateCreated
-      })),
-      messages: messages.map(m => ({
-        id: m.sid,
-        from: m.from,
-        to: m.to,
-        body: m.body,
-        direction: m.direction.includes('inbound') ? 'inbound' : 'outbound',
-        status: m.status,
-        timestamp: m.dateCreated
-      }))
+    // Fetch SMS History
+    const messages = await client.messages.list({ limit: 50 });
+    const formattedMessages = messages.map(m => ({
+      dir: m.direction === 'outbound-api' ? 'OUT' : 'IN',
+      from: m.from,
+      to: m.to,
+      body: m.body,
+      status: m.status,
+      time: new Date(m.dateCreated).toLocaleString(),
+      sid: m.sid
+    }));
+
+    // Fetch Voicemail Recordings
+    const recordings = await client.recordings.list({ limit: 20 });
+    const formattedVoicemails = recordings.map(r => ({
+      sid: r.sid,
+      callSid: r.callSid,
+      duration: r.duration,
+      url: r.mediaUrl + '.mp3', // Direct MP3 link
+      time: new Date(r.dateCreated).toLocaleString()
+    }));
+
+    res.status(200).json({ 
+      calls: formattedCalls,
+      messages: formattedMessages,
+      voicemails: formattedVoicemails
     });
   } catch (error) {
     console.error('[Twilio History] Error:', error);

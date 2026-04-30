@@ -37,7 +37,8 @@ export const OversightDashboard = ({ onLogout, user, role, jurisdiction = 'Oklah
   const [activeTab, setActiveTab] = useState(isExecutive || isSubscribed ? 'overview' : 'subscription');
 
   const isFederalOrFounder = role === 'executive_founder' || role === 'regulator_federal';
-  const isFounderOrInternal = role === 'executive_founder' || role === 'admin_internal' || role === 'operations';
+  const roleStr = String(role).toLowerCase();
+  const isFounderOrInternal = role === 'executive_founder' || roleStr.includes('admin') || roleStr.includes('operations') || roleStr.includes('staff') || roleStr.includes('support') || roleStr.includes('it');
   
   const filteredNavItems = NAV_ITEMS.filter(item => {
     if (!isSubscribed && item.id !== 'subscription') return false;

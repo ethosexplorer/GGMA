@@ -240,6 +240,19 @@ export async function getQueueCount(): Promise<number> {
   }
 }
 
+/**
+ * Get Voicemails from Twilio recordings
+ */
+export async function getVoicemails(): Promise<any[]> {
+  try {
+    const data = await fetchHistory();
+    return data.voicemails || [];
+  } catch (err) {
+    console.error('[Twilio] Failed to fetch voicemails:', err);
+    return [];
+  }
+}
+
 export const voip800 = {
   getCallHistory,
   sendSMS,
@@ -251,6 +264,7 @@ export const voip800 = {
   isConfigured,
   getCompanyNumber,
   getQueueCount,
+  getVoicemails,
   ACCOUNT_ID,
   COMPANY_NUMBER,
 };

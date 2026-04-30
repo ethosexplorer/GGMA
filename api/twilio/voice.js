@@ -25,9 +25,9 @@ export default function handler(req, res) {
         statusCallbackMethod: 'POST'
       }, targetNumber);
     } else {
-      // Incoming call logic: Ring the WebDialer
+      // Incoming call logic: Ring the WebDialer for 20 seconds
       const dial = twiml.dial({
-        timeout: 60,
+        timeout: 20, // 20 seconds to answer before voicemail
         answerOnBridge: true
       });
       
@@ -37,6 +37,14 @@ export default function handler(req, res) {
         statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status',
         statusCallbackMethod: 'POST'
       }, 'GGMA_User');
+
+      // If the Dial timeout is reached (no answer), Twilio continues to the next verb: Voicemail
+      twiml.say("Thank you for calling Global Green Enterprise. We are currently assisting other callers. Please leave a message after the tone, and we will return your call shortly.");
+      twiml.record({
+        action: 'https://ggma-five.vercel.app/api/twilio/call-status', // Sent here to email the recording
+        maxLength: 120,
+        playBeep: true
+      });
     }
 
     res.status(200).send(twiml.toString());

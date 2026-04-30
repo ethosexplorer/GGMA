@@ -111,11 +111,34 @@ export function WebDialer() {
 
     initializeTwilio();
 
+    const handleDialOut = (e: any) => {
+      if (e.detail && e.detail.number) {
+        setDialNumber(e.detail.number);
+        setShowDialer(true);
+        // We set the number, the user can then click the dial button
+      }
+    };
+    window.addEventListener('twilio-dial-out', handleDialOut);
+
+    const handleStatusChange = (e: any) => {
+      if (e.detail && e.detail.status) {
+        const s = e.detail.status;
+        if (s === 'Not available' || s === 'Logged out') {
+           setStatus('offline');
+        } else if (status === 'offline' && (s === 'Ready' || s === 'Available')) {
+           setStatus('ready');
+        }
+      }
+    };
+    window.addEventListener('twilio-status-change', handleStatusChange);
+
     return () => {
       if (deviceRef.current) {
         deviceRef.current.destroy();
       }
       if (timerRef.current) clearInterval(timerRef.current);
+      window.removeEventListener('twilio-dial-out', handleDialOut);
+      window.removeEventListener('twilio-status-change', handleStatusChange);
     };
   }, []);
 
