@@ -36,7 +36,7 @@ import { voip800 } from '../lib/voip800';
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
-const NAV_VERSION = 12; // Stable section IDs — labels no longer drop on drag
+const NAV_VERSION = 13; // Bumped to reset sidebar and show AI Training tab
 
 const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: '_sec_founder', section: 'FOUNDER EXCLUSIVE' },
