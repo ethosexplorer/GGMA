@@ -8692,7 +8692,7 @@ export default function App() {
           return (isFounder || isRyan || isMonica || isOpsView) ? <WebDialer /> : null;
         })()}
 
-        {view !== 'larry-chatbot' && (
+        {view !== 'larry-chatbot' && !isFounder && !isRyan && !isMonica && (
           <SylaraFloatingWidget userProfile={userProfile} persona={currentPersona} onClick={() => setShowLarryModal(true)} />
         )}
 
