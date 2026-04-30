@@ -66,31 +66,31 @@ export interface CallCenterStats {
 
 // ──── API Methods ────
 
+let cachedHistory: any = null;
+let lastFetchTime = 0;
+
+async function fetchHistory() {
+  const now = Date.now();
+  if (cachedHistory && now - lastFetchTime < 10000) return cachedHistory; // Cache for 10 seconds
+
+  try {
+    const res = await fetch('/api/twilio/history');
+    if (!res.ok) throw new Error('Failed to fetch Twilio history');
+    cachedHistory = await res.json();
+    lastFetchTime = now;
+    return cachedHistory;
+  } catch (err) {
+    console.error('[Twilio] Failed to fetch history:', err);
+    return { calls: [], messages: [] };
+  }
+}
+
 /**
  * Fetch recent call history
  */
 export async function getCallHistory(limit = 50, offset = 0): Promise<CallRecord[]> {
-  try {
-    const res = await fetch(`${BASE_URL}/calls?limit=${limit}`, {
-      headers: getHeaders(),
-    });
-    if (!res.ok) throw new Error(`800.com API error: ${res.status}`);
-    const resData = await res.json();
-    const records = resData.data || [];
-    return records.map((call: any) => ({
-      id: String(call.id),
-      from: call.from || call.caller,
-      to: call.to || call.dialed,
-      direction: call.outbound ? 'outbound' : 'inbound',
-      status: call.state || 'completed',
-      duration: call.duration_in_seconds || 0,
-      timestamp: call.date || call.started_at,
-      recording_url: call.recording_url,
-    }));
-  } catch (err) {
-    console.error('[800.com] Failed to fetch call history:', err);
-    return [];
-  }
+  const data = await fetchHistory();
+  return data.calls.slice(0, limit);
 }
 
 /**
@@ -124,17 +124,8 @@ export async function sendSMS(to: string, body: string): Promise<SMSMessage | nu
  * Fetch SMS conversation history
  */
 export async function getSMSHistory(limit = 50): Promise<SMSMessage[]> {
-  try {
-    const res = await fetch(`${BASE_URL}/sms?number=${COMPANY_NUMBER}&limit=${limit}`, {
-      headers: getHeaders(),
-    });
-    if (!res.ok) throw new Error(`800.com API error: ${res.status}`);
-    const data = await res.json();
-    return data.messages || data.data || [];
-  } catch (err) {
-    console.error('[800.com] Failed to fetch SMS history:', err);
-    return [];
-  }
+  const data = await fetchHistory();
+  return data.messages.slice(0, limit);
 }
 
 /**
@@ -175,30 +166,29 @@ export async function updateForwarding(destination: string, type: 'standard' | '
  */
 export async function getCallCenterStats(): Promise<CallCenterStats> {
   try {
-    const res = await fetch(`${BASE_URL}/calls?limit=100`, {
-      headers: getHeaders(),
-    });
-    if (!res.ok) throw new Error(`800.com API error: ${res.status}`);
-    const resData = await res.json();
-    const records = resData.data || [];
+    const data = await fetchHistory();
+    const calls = data.calls;
     
-    // Calculate simple stats from recent calls
-    const totalCalls = records.length;
-    const answeredCalls = records.filter((r: any) => r.duration_in_seconds > 0).length;
+    // Calculate stats from real Twilio recent calls
+    const totalCalls = calls.length;
+    const answeredCalls = calls.filter((r: any) => r.status === 'completed' || r.status === 'in-progress').length;
     const missedCalls = totalCalls - answeredCalls;
-    const avgDuration = totalCalls > 0 ? Math.round(records.reduce((acc: number, r: any) => acc + (r.duration_in_seconds || 0), 0) / totalCalls) : 0;
+    const avgDuration = totalCalls > 0 ? Math.round(calls.reduce((acc: number, r: any) => acc + (r.duration || 0), 0) / totalCalls) : 0;
+    
+    // Calculate active queue based on in-progress calls
+    const activeQueue = calls.filter((r: any) => r.status === 'in-progress' || r.status === 'ringing').length;
     
     return {
       totalCalls,
       answeredCalls,
       missedCalls,
-      averageWaitTime: 12, // Placeholder
+      averageWaitTime: missedCalls * 3, // Basic simulated wait time metric based on dropped calls
       averageCallDuration: avgDuration,
-      totalSMS: 0,
-      activeAgents: 1,
+      totalSMS: data.messages.length,
+      activeAgents: activeQueue > 0 ? activeQueue + 1 : 1, // Assume at least 1 agent is online (Web Dialer)
     };
   } catch (err) {
-    console.error('[800.com] Failed to fetch stats:', err);
+    console.error('[Twilio] Failed to fetch stats:', err);
     return {
       totalCalls: 0, answeredCalls: 0, missedCalls: 0, averageWaitTime: 0, averageCallDuration: 0, totalSMS: 0, activeAgents: 0,
     };
@@ -237,35 +227,15 @@ export function getCompanyNumber(): string {
 }
 
 /**
- * Get real-time queue count from Turso state
+ * Get real-time queue count
  */
 export async function getQueueCount(): Promise<number> {
   try {
-    const TURSO_URL = 'https://ggma-ggma.aws-us-east-2.turso.io/v2/pipeline';
-    const TURSO_TOKEN = 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3NzcxNDQ4OTAsImlkIjoiMDE5ZGM2MTYtY2UwMS03MGMwLWFhOWQtN2IxMTJjNGFkNGYzIiwicmlkIjoiNDA4MWUwODktMDE3OS00ZWRmLTlkOTQtYjRiNDY0YmJjOGE2In0.A-EvoD8xf7Xs0E3Rciq7BQUSe9aDNF8ck60z953z8ffSJJ0NuJ7pFLbOW9BZfAv0eGTruwOqpTsWxE2_wp57CQ';
-    
-    const res = await fetch(TURSO_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${TURSO_TOKEN}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        requests: [
-          { type: "execute", stmt: { sql: "SELECT value FROM system_state WHERE key = 'queue_count';" } }
-        ]
-      })
-    });
-    
-    if (!res.ok) return 0;
-    const data = await res.json();
-    const rows = data.results?.[0]?.response?.result?.rows;
-    if (rows && rows.length > 0) {
-      return parseInt(rows[0][0].value, 10) || 0;
-    }
-    return 0;
+    const data = await fetchHistory();
+    const activeQueue = data.calls.filter((r: any) => r.status === 'in-progress' || r.status === 'ringing').length;
+    return activeQueue;
   } catch (err) {
-    console.error('[800.com] Failed to fetch queue count:', err);
+    console.error('[Twilio] Failed to fetch queue count:', err);
     return 0;
   }
 }
