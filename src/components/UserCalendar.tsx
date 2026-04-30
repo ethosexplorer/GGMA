@@ -37,9 +37,9 @@ const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: string, subtitle?: string }) => {
-  const isExecutive = user?.role === 'executive_founder' || user?.email?.toLowerCase().includes('globalgreenhp') || user?.email?.toLowerCase().includes('monica');
-  const availableCategories = isExecutive ? ALL_CATEGORIES : [{ id: 'personal', label: 'Personal', color: 'bg-slate-500' }];
-  const initialEvents = isExecutive ? SEED_EVENTS : [];
+  const isFounder = user?.role === 'executive_founder' || user?.email?.toLowerCase() === 'globalgreenhp@gmail.com';
+  const availableCategories = isFounder ? ALL_CATEGORIES : [{ id: 'personal', label: 'Personal', color: 'bg-slate-500' }];
+  const initialEvents = isFounder ? SEED_EVENTS : [];
 
   const [view, setView] = useState<ViewMode>('month');
   const [current, setCurrent] = useState(new Date(2026, 3, 28)); // April 28, 2026
@@ -84,7 +84,7 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
     const cat = availableCategories.find(c => c.id === form.category);
     setEvents(prev => [...prev, { ...form, id: Date.now().toString(), color: cat?.color || 'bg-slate-500' }]);
     setShowForm(false);
-    setForm({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: isExecutive ? 'executive' : 'personal', description: '', attendees: '', location: '', meetLink: '' });
+    setForm({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: isFounder ? 'executive' : 'personal', description: '', attendees: '', location: '', meetLink: '' });
   };
 
   const deleteEvent = (id: string) => setEvents(prev => prev.filter(e => e.id !== id));
