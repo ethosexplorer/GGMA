@@ -62,7 +62,7 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
       'Telehealth': 'telehealth',
       'Appointments': 'calendar',
       'Health Records': 'documents',
-      'Prescriptions': 'telehealth',
+      'Prescriptions': 'overview',
       'Settings': 'subscription',
     };
     const handler = (e: Event) => {
@@ -217,10 +217,10 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
             <div className={cn("space-y-6 transition-all duration-500", !isSubscribed && "blur-sm pointer-events-none select-none grayscale-[0.5]")}>
               {/* KPI Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <StatCard label="Care Wallet" value="$198.50" trend={12} icon={Wallet} color="bg-[#1a4731]" />
-                <StatCard label="Card Status" value="Active" icon={Shield} color="bg-emerald-600" />
+                <StatCard label="Medical Card" value="Active" icon={Shield} color="bg-emerald-600" />
                 <StatCard label="C³ Score" value="662" trend={12} icon={Award} color="bg-yellow-600" />
-                <StatCard label="Next Renewal" value="Jan 2028" icon={Calendar} color="bg-blue-600" />
+                <StatCard label="Appointments" value="3 Upcoming" icon={Calendar} color="bg-blue-600" />
+                <StatCard label="Prescriptions" value="2 Active" icon={Stethoscope} color="bg-indigo-600" />
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

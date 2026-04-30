@@ -8488,6 +8488,9 @@ export default function App() {
           const isRyan = email.includes('ceo.globalgreenhp');
           const isMonica = email.includes('compliance.globalgreenhp') || email.includes('monica');
           const isOpsView = roleOverride === 'operations' || roleOverride === 'internal_admin';
+          // Hide when previewing patient/business/external dashboards
+          const isPreviewingExternal = roleOverride && ['patient', 'business', 'regulator_state', 'regulator_federal', 'law_enforcement', 'enforcement_state', 'compliance_service', 'executive_advisor'].includes(roleOverride);
+          if (isPreviewingExternal) return null;
           return (isFounder || isRyan || isMonica || isOpsView) ? <WebDialer /> : null;
         })()}
 
