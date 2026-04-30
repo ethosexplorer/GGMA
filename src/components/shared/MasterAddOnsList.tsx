@@ -178,8 +178,8 @@ export const MasterAddOnsList = () => {
           </div>
           <button 
              onClick={() => {
-                 const selectedItems = addons.filter(a => activeAddOns.includes(a.id));
-                 alert(`Redirecting to secure checkout...\n\nProcessing payment for ${selectedItems.length} item(s):\n${selectedItems.map(a => \`• \${a.name} ($\${a.price})\`).join('\\n')}\n\nTotal: $\${selectedTotal.toFixed(2)}`);
+                 const count = activeAddOns.length;
+                 alert('Redirecting to secure checkout... Processing ' + count + ' item(s). Total: $' + selectedTotal.toFixed(2));
              }}
              className="flex items-center gap-2 px-8 py-3 bg-emerald-600 text-white rounded-xl text-sm font-black hover:bg-emerald-700 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
           >
