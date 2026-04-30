@@ -4365,14 +4365,10 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
 
     // === GLOBAL TOP-LEVEL CATEGORY NAVIGATION ===
     // These intercept at any step to reset the flow to the requested sector
-    if (lower.includes('ggma') || lower.includes('oklahoma') || lower.includes('omma')) {
-      response = '🏢 **GGMA Licensing & Assistance**\n\nI can assist you with your regulatory requirements. To provide the correct guidance, is your inquiry regarding a **Patient License** or a **Commercial Business License**?';
-      setMessages(prev => [...prev, { 
-        role: 'bot', 
-        text: response,
-        choices: ['Patient Licensing', 'Business Licensing'] 
-      } as any]);
-      setSignupStep(999);
+    if (lower.includes('ggma') || lower.includes('omma')) {
+      response = 'Welcome to the **GGMA Sector**.\n\nTo ensure we provide the correct licensing and medical card information, please select which **State Jurisdiction** you are inquiring about:';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Oklahoma', 'Kentucky', 'Missouri', 'Texas', 'Other State'] } as any]);
+      setSignupStep(902);
       setIsTyping(false);
       return;
     } else if (lower.includes('rip intelligence') || lower === 'rip enforcement' || lower.includes('rip enforcement') || lower === 'tell me about rip enforcement.') {
@@ -4537,6 +4533,14 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
           return;
         }
 
+        if (variant === 'ggma') {
+          response = 'Welcome to the **GGMA Sector**.\n\nTo ensure we provide the correct licensing and medical card information, please select which **State Jurisdiction** you are inquiring about:';
+          setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Oklahoma', 'Kentucky', 'Missouri', 'Texas', 'Other State'] } as any]);
+          setSignupStep(902);
+          setIsTyping(false);
+          return;
+        }
+
         setMessages(prev => [...prev, { role: 'bot', text: getGreeting(), choices: getInitialChoices() } as any]);
         setSignupStep(0);
         setIsTyping(false);
@@ -4560,6 +4564,15 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         response = `Are you ready to begin your business intake application, or would you like to view the fee schedules first?`;
         setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Business Intake', 'View Business Fee Schedule', 'Main Menu'] } as any]);
       }
+      setSignupStep(0);
+      setIsTyping(false);
+      return;
+    }
+
+    if (signupStep === 902) {
+      const stateName = lower === 'other state' ? 'your jurisdiction' : text;
+      response = `Thank you. I have securely set your jurisdiction to **${stateName}**.\n\n${getGreeting()}`;
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: getInitialChoices() } as any]);
       setSignupStep(0);
       setIsTyping(false);
       return;
