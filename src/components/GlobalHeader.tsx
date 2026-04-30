@@ -73,7 +73,6 @@ export const GlobalHeader = ({
             className="appearance-none bg-indigo-900 text-white font-bold text-xs px-3 py-1 pr-8 rounded border border-indigo-500 outline-none cursor-pointer"
           >
             <option value="">Off (Original Role)</option>
-            <option value="executive_founder">CEO / Founder</option>
             <option value="patient">Registered Patient</option>
             <option value="business">Licensed Business Owner</option>
             <option value="provider">Licensed Medical Provider (Dr.)</option>
