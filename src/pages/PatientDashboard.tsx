@@ -224,28 +224,27 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Recent Activity */}
+                {/* Health Timeline */}
                 <div className="lg:col-span-2 bg-white rounded-[2rem] border border-slate-200 shadow-sm p-8">
                   <div className="flex justify-between items-center mb-8">
                     <h3 className="text-xl font-black text-slate-800 tracking-tight flex items-center gap-3">
                        <Activity size={24} className="text-[#1a4731]" />
-                       Recent Activity
+                       Health Timeline
                     </h3>
-                    <button className="text-sm text-[#1a4731] font-bold hover:underline">View History</button>
+                    <button className="text-sm text-[#1a4731] font-bold hover:underline">View Full History</button>
                   </div>
                   <div className="space-y-3">
                     {[
-                      { title: 'Care Wallet Reload', date: '2 hours ago', type: 'Wallet', status: '+$200.00', statusColor: 'text-emerald-600' },
-                      { title: 'Dispensary Purchase — Green Leaf', date: 'Yesterday', type: 'Care Wallet', status: '-$45.00', statusColor: 'text-slate-700' },
-                      { title: 'Telehealth Visit — Dr. Johnson', date: '3 days ago', type: 'Telehealth', status: 'Completed', statusColor: 'text-emerald-600' },
-                      { title: 'Blood Test Results', date: '1 week ago', type: 'Lab Report', status: 'Ready', statusColor: 'text-blue-600' },
+                      { title: 'Annual Physical — Dr. Sarah Johnson', date: 'Tomorrow 9:30 AM', type: 'Appointment', status: 'Upcoming', statusColor: 'text-blue-600', icon: Calendar },
+                      { title: 'Medical Card Renewal Approved', date: '1 week ago', type: 'Compliance', status: 'Approved', statusColor: 'text-emerald-600', icon: Shield },
+                      { title: 'Blood Panel Results Received', date: '2 weeks ago', type: 'Lab Report', status: 'Ready', statusColor: 'text-blue-600', icon: FileText },
+                      { title: 'Prescription Updated — Dr. Martinez', date: '3 weeks ago', type: 'Prescription', status: 'Active', statusColor: 'text-emerald-600', icon: Stethoscope },
+                      { title: 'Telehealth Follow-Up Completed', date: '1 month ago', type: 'Telehealth', status: 'Completed', statusColor: 'text-slate-500', icon: Video },
                     ].map((item, i) => (
                       <div key={i} className="flex items-center justify-between p-5 rounded-2xl bg-slate-50/50 border border-transparent hover:border-slate-200 hover:bg-white transition-all group">
                         <div className="flex items-center gap-4">
                           <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-slate-500 group-hover:text-[#1a4731] transition-colors">
-                            {item.type === 'Wallet' || item.type === 'Care Wallet' ? <Wallet size={20} /> :
-                             item.type === 'Telehealth' ? <Stethoscope size={20} /> :
-                             <FileText size={20} />}
+                            <item.icon size={20} />
                           </div>
                           <div>
                             <p className="font-bold text-slate-900">{item.title}</p>
