@@ -86,7 +86,7 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'settings', label: 'God Settings', icon: Settings },
 ];
 
-export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | Promise<void>, user?: any }) => {
+export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, setMarqueeNews, marqueeSpeed, setMarqueeSpeed }: { onLogout?: () => void | Promise<void>, user?: any, jurisdiction?: any, marqueeNews?: string[], setMarqueeNews?: any, marqueeSpeed?: string, setMarqueeSpeed?: any }) => {
   const emailLower = user?.email?.toLowerCase() || '';
   const displayNameLower = user?.displayName?.toLowerCase() || '';
   
@@ -307,12 +307,12 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
 
   useEffect(() => {
     const larryTabs = ['state_authority', 'federal', 'jurisdiction_map', 'compliance', 'operations', 'internal_admin', 'external_admin'];
-    if (larryTabs.includes(activeTab)) {
+    if (larryTabs.includes(activeTab) || isRyan || isMonica) {
       window.dispatchEvent(new CustomEvent('persona-change', { detail: 'larry' }));
     } else {
       window.dispatchEvent(new CustomEvent('persona-change', { detail: 'sylara' }));
     }
-  }, [activeTab]);
+  }, [activeTab, isRyan, isMonica]);
 
   const [isAddingLedgerEntry, setIsAddingLedgerEntry] = useState<'revenue' | 'payable' | null>(null);
   const [activeModal, setActiveModal] = useState<{type: string, data?: any} | null>(null);
@@ -347,6 +347,15 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
   const [regCat, setRegCat] = useState<string | null>(null);
   const [broadcastMsg, setBroadcastMsg] = useState('🚨 SYSTEM NOTICE: NATIONWIDE COMPLIANCE AUDIT IN PROGRESS • GLOBAL GREEN HYBRID PLATFORM (GGHP) • ALL SECTORS (GGMA/RIP/SINC) OPERATIONAL');
   const [broadcastType, setBroadcastType] = useState('Urgent Alert (Red)');
+  const [marqueeNewsText, setMarqueeNewsText] = useState(() => {
+    try {
+      const savedNews = localStorage.getItem('gghp_marquee_news');
+      return savedNews ? JSON.parse(savedNews).join(' | ') : '🔴 BREAKING: Federal Marijuana Rescheduling - Schedule I → Schedule III NOW OFFICIAL | 📉 OMMA DATA REVEALS STARK REDUCTION IN OKLAHOMA MEDICAL MARIJUANA LICENSING (APRIL 2026) | Sylara AI processed 50,000+ compliance checks this hour';
+    } catch (e) {
+      return '🔴 BREAKING: Federal Marijuana Rescheduling - Schedule I → Schedule III NOW OFFICIAL | 📉 OMMA DATA REVEALS STARK REDUCTION IN OKLAHOMA MEDICAL MARIJUANA LICENSING (APRIL 2026) | Sylara AI processed 50,000+ compliance checks this hour';
+    }
+  });
+  const [marqueeSpeed, setMarqueeSpeed] = useState(() => localStorage.getItem('gghp_marquee_speed') || 'medium');
   const [isUnlocked, setIsUnlocked] = useState(true);
   const [pin, setPin] = useState('');
   
@@ -571,6 +580,54 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                   SYSTEM BROADCAST ACTIVE
                </div>
                <div className="text-[10px] font-black text-slate-400">LAST UPDATED: 2M AGO BY FOUNDER</div>
+            </div>
+         </div>
+
+         {/* Green Scroll / Marquee Editor */}
+         <div className="bg-emerald-50 border-2 border-emerald-100 rounded-[2rem] p-8 shadow-inner mt-6 w-full">
+            <div className="flex items-center gap-3 mb-4">
+               <div className="w-10 h-10 bg-emerald-600 text-white rounded-xl flex items-center justify-center shadow-lg shadow-emerald-600/30">
+                  <Activity size={20} />
+               </div>
+               <h3 className="text-xl font-black text-emerald-900 tracking-tight">"In The Know" News Ticker</h3>
+            </div>
+            
+            <div className="flex flex-col md:flex-row gap-6 items-end">
+               <div className="flex-1 space-y-2 w-full">
+                  <label className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Active Scrolling Message (Use | to separate)</label>
+                  <input 
+                    type="text" 
+                    value={marqueeNewsText}
+                    onChange={(e) => setMarqueeNewsText(e.target.value)}
+                    placeholder="E.g., BREAKING NEWS | SYLARA AI SCANNED..." 
+                    className="w-full px-6 py-4 bg-white border-2 border-emerald-200 rounded-2xl outline-none focus:border-emerald-500 font-bold text-emerald-900 shadow-sm"
+                  />
+               </div>
+               <div className="flex gap-3">
+                  <div className="flex flex-col space-y-1">
+                    <label className="text-[10px] font-black text-emerald-700 uppercase tracking-widest px-2">Scroll Speed</label>
+                    <select 
+                      value={marqueeSpeed}
+                      onChange={(e) => setMarqueeSpeed(e.target.value)}
+                      className="px-6 py-3.5 bg-white border-2 border-emerald-200 rounded-2xl font-bold text-slate-700 outline-none h-14"
+                    >
+                       <option value="slow">Slow</option>
+                       <option value="medium">Medium</option>
+                       <option value="fast">Fast</option>
+                    </select>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      localStorage.setItem('gghp_marquee_news', JSON.stringify(marqueeNewsText.split('|').map(s => s.trim())));
+                      localStorage.setItem('gghp_marquee_speed', marqueeSpeed);
+                      window.dispatchEvent(new Event('storage'));
+                      alert('Green Scroll Ticker Updated Globally!');
+                    }}
+                    className="px-8 py-4 bg-emerald-600 text-white rounded-2xl font-black hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-600/20 active:scale-95 h-14 self-end"
+                  >
+                     UPDATE SCROLL
+                  </button>
+               </div>
             </div>
          </div>
       </div>
@@ -835,12 +892,13 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
            <h3 className="text-lg font-bold text-slate-800 flex items-center gap-3"><BookOpen size={22} className="text-amber-500" /> Global Intelligence Command</h3>
            <button onClick={() => setActiveTab('intel')} className="text-xs font-black text-indigo-600 uppercase tracking-widest hover:underline">View All Sources</button>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
            {[
              { t: 'CRS: Cannabis State of Play', c: 'Federal', u: 'https://www.congress.gov/crs-product/IF12270' },
              { t: 'NCSL Legislation Database', c: 'State', u: 'https://www.ncsl.org/health/state-cannabis-legislation-database' },
              { t: 'FDA Regulation Guide', c: 'Federal', u: 'https://www.fda.gov/news-events/public-health-focus/fda-regulation-cannabis-and-cannabis-derived-products-including-cannabidiol-cbd' },
-             { t: 'Marijuana Moment', c: 'News', u: 'https://www.marijuanamoment.net/' }
+             { t: 'Marijuana Moment', c: 'News', u: 'https://www.marijuanamoment.net/' },
+             { t: 'OMMA Licensing & Tax Data', c: 'State (OK)', u: 'https://oklahoma.gov/omma/about/licensing-and-tax-data.html' }
            ].map((source, i) => (
              <a key={i} href={source.u} target="_blank" rel="noopener noreferrer" className="p-5 bg-slate-100 rounded-2xl border border-slate-200 hover:bg-indigo-50 hover:border-indigo-200 transition-all group">
                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 group-hover:text-indigo-400">{source.c}</p>
