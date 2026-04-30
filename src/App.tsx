@@ -533,6 +533,7 @@ const DashboardLayout = ({ children, role, onLogout, userProfile, onOpenConcierg
               <span className="font-black text-sm">$0.00</span>
               <button className="ml-2 px-2 py-0.5 bg-[#1a4731] text-white rounded text-[10px] font-bold hover:bg-[#153a28] transition-colors">Reload</button>
             </div>
+            <div className="flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-800 rounded-full border border-emerald-200 shadow-sm mr-2"><span className="font-bold text-xs uppercase tracking-wider">Care Wallet:</span><span className="font-black text-sm">0 Tokens</span><button className="ml-2 px-2 py-0.5 bg-[#1a4731] text-white rounded text-xs font-bold hover:bg-[#153a28] transition-colors">Buy</button></div>
             <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
               <div className="text-right hidden sm:block">
                 <p className="text-sm font-medium text-slate-900">Jane Doe</p>
@@ -922,6 +923,12 @@ const STATE_RESOURCES: Record<string, any> = {
              botResponse = '⚠️ Supplier DEA Numbers\n\nThe DEA application (§5) requires supplier names and DEA registration numbers. Since this is new, most suppliers will NOT have DEA numbers yet.\n\nWhat to do:\n1. Contact your suppliers and ask if they have applied\n2. Enter "Pending" for now — the DEA understands this is a new process\n3. Update your application once supplier DEA #s are issued\n\nGGP-OS tracks this in the DEA Sch. III → §5 Compliance section.';
           } else if (lowerQuery.includes('application')) {
             botResponse = 'For patient applications, navigate to the Patient Portal. For DEA Schedule III registration, visit the Business Portal → DEA Sch. III tab for a full guided wizard with L.A.R.R.Y. compliance assistance.';
+         } else if (lowerQuery.includes('upgrade') || lowerQuery.includes('subscription') || lowerQuery.includes('plan')) {
+            botResponse = 'You can upgrade your subscription directly from the Pricing portal. Tap "Subscription/Add-ons" in your dashboard menu or ask your admin. We offer scalable plans for any size operation. Let me know if you need help selecting a tier!';
+         } else if (lowerQuery.includes('add-on') || lowerQuery.includes('addons') || lowerQuery.includes('purchase') || lowerQuery.includes('single')) {
+            botResponse = 'We offer modular enhancements like Premium AI Guidance, Provider Connections, and Disposable Cards that you can purchase as single-use without a full subscription. Navigate to the "Available Single/Add-on" section below the pricing tiers to checkout securely.';
+         } else if (lowerQuery.includes('vendor') || lowerQuery.includes('contracting') || lowerQuery.includes('procurement')) {
+            botResponse = '🏢 DEA Contracting Opportunities & Vendors\n\nThe Office of Acquisition Management at DEA headquarters in northern Virginia is the central procurement activity for purchasing the products and services that support DEA’s mission. Annually, the DEA awards over $600M in contracts to vendors.\n\nTop Acquisitions:\n- Translation and Interpreting\n- IT and Telecommunications\n- Maintenance and Repair of Aircraft\n- Professional, Administrative and Managerial Support\n\nHow to do business with DEA:\n1. Register your company in the System for Acquisition Management (SAM) database\n2. Email capability statements to DEA Small Business Coordinator at deasmallbusinessprogram@usdoj.gov\n3. Establish a federal supply schedule for your products/services.\n\nContact the DEA Contact Center at (202) 307-1000 for more info.';
          } else {
             // Using LIVE Gemini Integration
             try {
@@ -1240,7 +1247,11 @@ const STATE_RESOURCES: Record<string, any> = {
                   )}
                 </div>
 
-                <div className="p-3 bg-white border-t border-slate-100">
+                <div className="p-3 bg-white border-t border-slate-100 flex flex-col gap-2">
+                  <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1">
+                    <button onClick={(e) => { e.preventDefault(); setInputValue("Upgrade Subscription"); handleSendMessage(undefined, "Upgrade Subscription"); }} className="shrink-0 px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-[11px] font-bold hover:bg-emerald-100 transition-colors uppercase tracking-widest">Upgrade Plan</button>
+                    <button onClick={(e) => { e.preventDefault(); setInputValue("Purchase Add-ons"); handleSendMessage(undefined, "Purchase Add-ons"); }} className="shrink-0 px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-[11px] font-bold hover:bg-emerald-100 transition-colors uppercase tracking-widest">Purchase Add-ons</button>
+                  </div>
                   <form onSubmit={handleSendMessage} className="flex gap-2">
                     <input
                       type="text"
@@ -2959,6 +2970,45 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
                         {/* ROLE SPECIFIC FIELDS */}
                         <div className="bg-emerald-50/30 p-6 rounded-xl border border-emerald-100/50 space-y-5">
                              <h3 className="text-sm font-bold text-emerald-800 uppercase tracking-wider mb-2">Role Specific Details Configuration</h3>
+                             
+                             <div className="mb-6 space-y-1.5 bg-white p-4 rounded-lg border border-emerald-100 shadow-sm">
+                                <label className="text-sm font-bold text-emerald-900">Entity Title or Position (For Approval Routing) <span className="text-red-500">*</span></label>
+                                <select name="entityTitleOrPosition" value={formData.entityTitleOrPosition} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:ring-2 focus:ring-[#1a4731]/20 font-medium" required>
+                                    <option value="">-- Select Your Exact Title/Position --</option>
+                                    
+                                    <optgroup label="Patient Portal Roles">
+                                        <option value="Primary Adult Patient">Primary Adult Patient</option>
+                                        <option value="Registered Caregiver">Registered Caregiver</option>
+                                        <option value="Minor Patient Guardian">Minor Patient Guardian</option>
+                                        <option value="Out-of-State Reciprocity Patient">Out-of-State Reciprocity Patient</option>
+                                    </optgroup>
+                                    
+                                    <optgroup label="Business & Provider Roles">
+                                        <option value="Business Owner / CEO">Business Owner / CEO</option>
+                                        <option value="General Manager">General Manager</option>
+                                        <option value="Chief Compliance Officer">Chief Compliance Officer</option>
+                                        <option value="Medical Director / Supervising Physician">Medical Director / Supervising Physician</option>
+                                        <option value="Recommending Practitioner (MD/DO)">Recommending Practitioner (MD/DO)</option>
+                                        <option value="Medcard Service Administrator">Medcard Service Administrator</option>
+                                        <option value="General Counsel / Attorney">General Counsel / Attorney</option>
+                                        <option value="Dispensary Agent / Budtender">Dispensary Agent / Budtender</option>
+                                        <option value="Cultivation / Processing Director">Cultivation / Processing Director</option>
+                                        <option value="Lab Technician / Scientist">Lab Technician / Scientist</option>
+                                    </optgroup>
+                                    
+                                    <optgroup label="Government & Admin Roles">
+                                        <option value="State Authority Director">State Authority Director</option>
+                                        <option value="Compliance Auditor">Compliance Auditor</option>
+                                        <option value="Field Inspector">Field Inspector</option>
+                                        <option value="Chief of Police / Sheriff">Chief of Police / Sheriff</option>
+                                        <option value="Narcotics Investigator">Narcotics Investigator</option>
+                                        <option value="City Council / Mayor">City Council / Mayor</option>
+                                        <option value="State Attorney / Prosecutor">State Attorney / Prosecutor</option>
+                                        <option value="Federal DEA / Agent">Federal DEA / Agent</option>
+                                    </optgroup>
+                                </select>
+                                <p className="text-xs text-slate-500 mt-2">This determines your dashboard features and goes to our paralegal queue for verification.</p>
+                             </div>
                              <div className="mb-6 space-y-1.5 bg-white p-4 rounded-lg border border-emerald-100 shadow-sm">
                                 <label className="text-sm font-bold text-emerald-900">Entity Title or Position (For Approval Routing) <span className="text-red-500">*</span></label>
                                 <select name="entityTitleOrPosition" value={formData.entityTitleOrPosition} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:ring-2 focus:ring-[#1a4731]/20 font-medium" required>

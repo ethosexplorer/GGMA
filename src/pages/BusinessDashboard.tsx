@@ -887,16 +887,19 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
                        </p>
                     </div>
                     
-                    <div className="flex flex-col gap-2 mt-2">
-                       <button onClick={() => { if(lowStockAlerts.length > 0) setActiveTab("inventory"); else if (unresolvedAlerts.length > 0) setActiveTab("compliance"); else setActiveTab("reporting"); }} className="text-xs font-bold bg-white text-[#1a4731] px-4 py-2.5 rounded-xl text-left hover:bg-slate-100 transition-colors shadow-sm w-max self-end hidden sm:block">
+                    <div className="flex flex-row justify-end gap-2 mt-2">
+                       <button onClick={() => { if(lowStockAlerts.length > 0) setActiveTab("inventory"); else if (unresolvedAlerts.length > 0) setActiveTab("compliance"); else setActiveTab("reporting"); }} className="text-xs font-bold bg-white text-[#1a4731] px-4 py-2.5 rounded-xl text-left hover:bg-slate-100 transition-colors shadow-sm hidden sm:block">
                          {lowStockAlerts.length > 0 ? "Review Procurement" : unresolvedAlerts.length > 0 ? "Review Alerts" : "Generate Report"}
+                       </button>
+                       <button onClick={() => { setDemoUnlocked(true); navigateTab('subscription'); }} className="text-xs font-bold bg-amber-500 text-white px-4 py-2.5 rounded-xl text-left hover:bg-amber-600 transition-colors shadow-sm hidden sm:block">
+                         Activate Subscriptions / Add-ons
                        </button>
                     </div>
                  </div>
                  
                  <div className="p-4 bg-black/20 shrink-0">
                     <div className="relative">
-                       <input type="text" placeholder="Ask L.A.R.R.Y to run an audit..." className="w-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm rounded-xl px-4 py-3 pr-10 focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all" onKeyDown={(e) => { if(e.key === "Enter") { alert("L.A.R.R.Y is analyzing your request. Standby."); e.currentTarget.value = ""; } }} />
+                       <input type="text" placeholder="Ask L.A.R.R.Y to run an audit or manage subscriptions..." className="w-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm rounded-xl px-4 py-3 pr-10 focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all" onKeyDown={(e) => { if(e.key === "Enter") { const val = e.currentTarget.value.toLowerCase(); if(val.includes('subscription') || val.includes('add-on') || val.includes('purchase') || val.includes('upgrade')) { setDemoUnlocked(true); navigateTab('subscription'); } else { alert("L.A.R.R.Y is analyzing your request. Standby."); } e.currentTarget.value = ""; } }} />
                        <button onClick={(e) => { const input = e.currentTarget.previousElementSibling as HTMLInputElement; if(input) { alert("L.A.R.R.Y is analyzing your request. Standby."); input.value = ""; } }} className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-white/50 hover:text-white transition-colors">
                          <MessageSquare size={16} />
                        </button>
