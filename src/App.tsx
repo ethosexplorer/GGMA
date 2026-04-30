@@ -2340,31 +2340,51 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
   );
 };
 
-const SylaraFloatingWidget = ({ onClick, persona = 'sylara' }: { onClick: () => void, persona?: 'sylara' | 'larry' }) => (
-  <div className="fixed bottom-24 right-6 z-50">
-    <button 
-      onClick={onClick}
-      className={cn(
-        "text-white p-4 rounded-full shadow-2xl hover:scale-105 transition-all flex items-center gap-3 group border",
-        persona === 'sylara' 
-          ? "bg-purple-700 hover:bg-purple-800 border-purple-500/30" 
-          : "bg-[#1a4731] hover:bg-[#133625] border-emerald-500/30"
-      )}
-    >
-      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center overflow-hidden shadow-inner border border-white/20">
-        <img src={persona === 'sylara' ? "/sylara-logo.svg" : "/larry-logo.png"} alt={persona} className="w-full h-full object-cover" />
-      </div>
-      <div className="hidden md:block text-left pr-2">
-        <div className="text-sm font-bold leading-tight">
-          {persona === 'sylara' ? 'Sylara Intake Agent' : 'L.A.R.R.Y Enforcement Engine'}
+const SylaraFloatingWidget = ({ onClick, persona = 'sylara', userProfile }: { onClick: () => void, persona?: 'sylara' | 'larry', userProfile?: any }) => {
+  const isRyan = userProfile && userProfile.email?.toLowerCase().includes('ceo.globalgreenhp');
+  const isMonica = userProfile && (userProfile.email?.toLowerCase().includes('compliance.globalgreenhp') || userProfile.email?.toLowerCase().includes('monica'));
+  const isFounderAssistant = userProfile && userProfile.role === 'executive_founder' && !isRyan && !isMonica;
+
+  let title = persona === 'sylara' ? 'Sylara Intake Agent' : 'L.A.R.R.Y Enforcement Engine';
+  let subtitle = persona === 'sylara' ? 'Personal Assistant' : 'Legal & Compliance AI';
+
+  if (isRyan) {
+    title = 'L.A.R.R.Y Chief of Operations';
+    subtitle = 'Supreme Command AI';
+  } else if (isMonica) {
+    title = 'Sylara Compliance Director';
+    subtitle = 'Compliance Assistant';
+  } else if (isFounderAssistant) {
+    title = 'Sylara Executive Assistant';
+    subtitle = 'Founder Mirror AI';
+  }
+
+  return (
+    <div className="fixed bottom-24 right-6 z-50">
+      <button 
+        onClick={onClick}
+        className={cn(
+          "text-white p-4 rounded-full shadow-2xl hover:scale-105 transition-all flex items-center gap-3 group border",
+          persona === 'sylara' 
+            ? "bg-purple-700 hover:bg-purple-800 border-purple-500/30" 
+            : "bg-[#1a4731] hover:bg-[#133625] border-emerald-500/30"
+        )}
+      >
+        <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center overflow-hidden shadow-inner border border-white/20">
+          <img src={persona === 'sylara' ? "/sylara-logo.svg" : "/larry-logo.png"} alt={persona} className="w-full h-full object-cover" />
         </div>
-        <div className="text-[11px] text-white/80">
-          {persona === 'sylara' ? 'Personal Assistant' : 'Legal & Compliance AI'}
+        <div className="hidden md:block text-left pr-2">
+          <div className="text-sm font-bold leading-tight">
+            {title}
+          </div>
+          <div className="text-[11px] text-white/80">
+            {subtitle}
+          </div>
         </div>
-      </div>
-    </button>
-  </div>
-);
+      </button>
+    </div>
+  );
+};
 
 // --- Screens ---
 
@@ -3520,7 +3540,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       setMessages([{ role: 'bot', text: getGreeting(), choices: getInitialChoices() }]);
     } else if (isFounderAssistant) {
       setMessages([
-        { role: 'bot', text: getGreeting(), choices: ['View Daily Summary', 'State News Briefing', 'My Appointments', 'Pending Approvals', 'Send Broadcast'] }
+        { role: 'bot', text: getGreeting(), choices: ['View Daily Summary', 'System Report', 'State News Briefing', 'My Appointments', 'Pending Approvals', 'Send Broadcast'] }
       ]);
     }
   }, [isFounderAssistant, isRyan, isMonica]);
@@ -3873,6 +3893,12 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
       if (lower.includes('appointments')) {
         response = "📅 **Your Appointments (April 21, 2026)**\n\n• 10:00 AM - Legal Strategy Sync with Attorney James\n• 1:30 PM - Federal Expansion Call\n• 3:00 PM - Monica Green (Compliance Review)\n\nWould you like me to push any of these back?";
         setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+        setIsTyping(false);
+        return;
+      }
+      if (lower.includes('system report') || lower.includes('larry report') || lower.includes('chain of command')) {
+        response = "📡 **Chain of Command System Report**\n\nI have pinged the executive network for you, Shantell:\n\n• **L.A.R.R.Y (via Ryan / CEO):** Global operations are nominal. Ryan has overridden 2 suspension flags today and finalized the API integration for Oklahoma.\n• **Sylara (via Monica / Compliance):** Monica is currently running a compliance sweep. 3 Metrc anomalies were intercepted and warning letters have been drafted.\n\nShall I connect you to either of their dashboards for oversight?";
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['View Supreme Command', 'View Compliance Hub', 'Main Menu'] } as any]);
         setIsTyping(false);
         return;
       }
@@ -5877,6 +5903,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
           text: response,
           choices: [
             'View Daily Summary',
+            'System Report',
             'State News Briefing',
             'My Appointments',
             'Pending Approvals',
@@ -6054,6 +6081,20 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     { text: "Professional & Fast.", author: "Robert T.", x: "88%", y: "42%", delay: 3.5 },
   ];
 
+  let headerTitle = currentPersona === 'sylara' ? 'Sylara' : 'L.A.R.R.Y';
+  let headerSubtitle = currentPersona === 'sylara' ? 'Sylara Intake Agent' : 'L.A.R.R.Y Enforcement Engine';
+  
+  if (isRyan) {
+    headerTitle = 'L.A.R.R.Y';
+    headerSubtitle = 'Chief of Operations';
+  } else if (isMonica) {
+    headerTitle = 'Sylara';
+    headerSubtitle = 'Compliance Director';
+  } else if (isFounderAssistant) {
+    headerTitle = 'Sylara';
+    headerSubtitle = 'Executive Assistant';
+  }
+
   return (
     <div className="min-h-screen bg-[#f0fdf4] bg-gradient-to-br from-[#f0fdf4] via-[#FDFBF7] to-[#ecfdf5] flex flex-col relative overflow-hidden">
       {/* Header */}
@@ -6063,8 +6104,8 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
             {currentPersona === 'sylara' ? <Headphones className="text-white" size={22} /> : <Bot className="text-white" size={22} />}
           </div>
           <div>
-            <span className="font-bold text-slate-800 text-lg tracking-tight">Sylara</span>
-            <span className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider block -mt-1">Sylara Intake Agent</span>
+            <span className="font-bold text-slate-800 text-lg tracking-tight">{headerTitle}</span>
+            <span className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider block -mt-1">{headerSubtitle}</span>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -7023,7 +7064,7 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
               }`}
               title="Upload Options"
             >
-              <Plus size={20} />
+              {(isFounderAssistant || isRyan || isMonica) && !showUploadMenu ? <Paperclip size={20} /> : <Plus size={20} />}
             </button>
             <form onSubmit={(e) => handleSend(e)} className="flex-1 flex gap-2 items-center">
               <input
