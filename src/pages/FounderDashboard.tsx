@@ -357,104 +357,6 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
 
   const renderOverview = () => (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-2">
-        <div className="col-span-4 bg-gradient-to-r from-emerald-950 to-teal-950 border border-emerald-400 rounded-3xl p-8 shadow-xl relative overflow-hidden">
-           <div className="absolute top-0 right-0 p-8 opacity-5 text-white"><Calculator size={160} /></div>
-           <div className="relative z-10 space-y-8">
-              <div className="flex justify-between items-start">
-                 <div>
-                    <h3 className="flex items-center gap-3 text-white font-black text-2xl uppercase tracking-tight mb-2">
-                      <Calculator className="h-6 w-6 text-emerald-400" />
-                      Advanced IP Valuation + Licensing Projections
-                    </h3>
-                    <p className="text-emerald-300 font-bold tracking-widest uppercase text-[10px]">Live estimate • Grounded in 2024–2026 real deals</p>
-                 </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div className="space-y-4">
-                  <label className="text-white text-[10px] font-black uppercase tracking-widest block">Market Size ($M)</label>
-                  <input type="range" min={50} max={1000} value={marketSize} onChange={(e) => setMarketSize(Number(e.target.value))} className="w-full accent-emerald-400" />
-                  <div className="text-center text-emerald-300 text-sm font-black">${marketSize}M</div>
-                </div>
-                <div className="space-y-4">
-                  <label className="text-white text-[10px] font-black uppercase tracking-widest block">Stage Multiplier</label>
-                  <input type="range" min={1.0} max={3.0} step={0.1} value={stageMultiplier} onChange={(e) => setStageMultiplier(Number(e.target.value))} className="w-full accent-emerald-400" />
-                  <div className="text-center text-emerald-300 text-sm font-black">{stageMultiplier.toFixed(1)}x</div>
-                </div>
-                <div className="space-y-4">
-                  <label className="text-white text-[10px] font-black uppercase tracking-widest block">Claims Strength</label>
-                  <input type="range" min={50} max={100} value={claimsStrength} onChange={(e) => setClaimsStrength(Number(e.target.value))} className="w-full accent-emerald-400" />
-                  <div className="text-center text-emerald-300 text-sm font-black">{claimsStrength}/100</div>
-                </div>
-                <div className="space-y-4">
-                  <label className="text-white text-[10px] font-black uppercase tracking-widest block">Royalty Rate</label>
-                  <input type="range" min={5} max={20} step={1} value={royaltyRate} onChange={(e) => setRoyaltyRate(Number(e.target.value))} className="w-full accent-emerald-400" />
-                  <div className="text-center text-emerald-300 text-sm font-black">{royaltyRate}%</div>
-                </div>
-              </div>
-
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
-                <div className="grid grid-cols-3 text-center divide-x divide-white/10">
-                   <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-emerald-300 mb-2">Low Estimate</p>
-                      <p className="text-2xl font-black text-white/70">${currentValuation.low.toLocaleString()}</p>
-                   </div>
-                   <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-2">Mid Valuation</p>
-                      <p className="text-4xl font-black text-white">${currentValuation.mid.toLocaleString()}</p>
-                   </div>
-                   <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-emerald-300 mb-2">High Estimate</p>
-                      <p className="text-2xl font-black text-white/70">${currentValuation.high.toLocaleString()}</p>
-                   </div>
-                </div>
-              </div>
-
-              <div className="bg-white/5 rounded-2xl p-6 border border-emerald-400/30">
-                <h4 className="text-white text-[10px] uppercase tracking-widest font-black mb-4">Licensing Revenue Projections (5-Year)</h4>
-                <div className="grid grid-cols-3 gap-4 text-center">
-                  <div className="bg-white/10 p-4 rounded-xl">
-                    <div className="text-emerald-300 text-[10px] font-black uppercase tracking-widest mb-2">Year 1</div>
-                    <div className="text-3xl font-black text-white">${currentRevenue.year1.toLocaleString()}</div>
-                  </div>
-                  <div className="bg-emerald-400/20 p-4 rounded-xl border border-emerald-400">
-                    <div className="text-emerald-300 text-[10px] font-black uppercase tracking-widest mb-2">5-Year Cumulative</div>
-                    <div className="text-4xl font-black text-white">${currentRevenue.fiveYearTotal.toLocaleString()}</div>
-                  </div>
-                  <div className="bg-white/10 p-4 rounded-xl">
-                    <div className="text-emerald-300 text-[10px] font-black uppercase tracking-widest mb-2">Avg Annual Growth</div>
-                    <div className="text-3xl font-black text-white">15%</div>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <h4 className="text-white text-[10px] font-black uppercase tracking-widest mb-4 flex items-center gap-2">
-                  <ExternalLink className="h-4 w-4" /> Recent Comparable IP Deals (2024–2026)
-                </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {comparables.map((comp, i) => (
-                    <div key={i} className="bg-white/5 p-4 rounded-xl border border-white/10 hover:border-emerald-500/50 transition-colors">
-                      <div className="flex justify-between items-center mb-2">
-                        <div className="text-emerald-300 text-xs font-bold leading-snug">{comp.deal}</div>
-                        <span className="bg-white/10 px-2 py-0.5 rounded text-[9px] font-black uppercase text-white shrink-0">{comp.date}</span>
-                      </div>
-                      <div className="text-xl font-black text-white mb-2">{comp.value}</div>
-                      <p className="text-[10px] text-emerald-200 font-medium mb-1">Relevance: <span className="font-black text-white">{comp.relevance}</span></p>
-                      <p className="text-[10px] text-white/50">{comp.multiplier}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <button onClick={handleSaveSnapshot} className="w-full bg-emerald-600 hover:bg-emerald-500 transition-colors text-white py-4 rounded-xl flex items-center justify-center gap-3 font-black uppercase tracking-widest text-xs shadow-xl shadow-emerald-900/50">
-                <Save size={18} /> Save Valuation Snapshot to IP Monitor
-              </button>
-              <p className="text-center text-[10px] font-bold text-emerald-400/50 uppercase tracking-widest">Your portfolio aligns directly with these fintech, cannabinoid, and compliance tech transactions</p>
-           </div>
-        </div>
-      </div>
 
       <div className="bg-slate-900 bg-gradient-to-r from-slate-900 to-indigo-900 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-full bg-indigo-500/10 blur-3xl"></div>
@@ -3128,6 +3030,106 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
               ))}
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* 📊 ADVANCED IP VALUATION — Bottom of Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-2">
+        <div className="col-span-4 bg-gradient-to-r from-emerald-950 to-teal-950 border border-emerald-400 rounded-3xl p-8 shadow-xl relative overflow-hidden">
+           <div className="absolute top-0 right-0 p-8 opacity-5 text-white"><Calculator size={160} /></div>
+           <div className="relative z-10 space-y-8">
+              <div className="flex justify-between items-start">
+                 <div>
+                    <h3 className="flex items-center gap-3 text-white font-black text-2xl uppercase tracking-tight mb-2">
+                      <Calculator className="h-6 w-6 text-emerald-400" />
+                      Advanced IP Valuation + Licensing Projections
+                    </h3>
+                    <p className="text-emerald-300 font-bold tracking-widest uppercase text-[10px]">Live estimate • Grounded in 2024–2026 real deals</p>
+                 </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div className="space-y-4">
+                  <label className="text-white text-[10px] font-black uppercase tracking-widest block">Market Size ($M)</label>
+                  <input type="range" min={50} max={1000} value={marketSize} onChange={(e) => setMarketSize(Number(e.target.value))} className="w-full accent-emerald-400" />
+                  <div className="text-center text-emerald-300 text-sm font-black">${marketSize}M</div>
+                </div>
+                <div className="space-y-4">
+                  <label className="text-white text-[10px] font-black uppercase tracking-widest block">Stage Multiplier</label>
+                  <input type="range" min={1.0} max={3.0} step={0.1} value={stageMultiplier} onChange={(e) => setStageMultiplier(Number(e.target.value))} className="w-full accent-emerald-400" />
+                  <div className="text-center text-emerald-300 text-sm font-black">{stageMultiplier.toFixed(1)}x</div>
+                </div>
+                <div className="space-y-4">
+                  <label className="text-white text-[10px] font-black uppercase tracking-widest block">Claims Strength</label>
+                  <input type="range" min={50} max={100} value={claimsStrength} onChange={(e) => setClaimsStrength(Number(e.target.value))} className="w-full accent-emerald-400" />
+                  <div className="text-center text-emerald-300 text-sm font-black">{claimsStrength}/100</div>
+                </div>
+                <div className="space-y-4">
+                  <label className="text-white text-[10px] font-black uppercase tracking-widest block">Royalty Rate</label>
+                  <input type="range" min={5} max={20} step={1} value={royaltyRate} onChange={(e) => setRoyaltyRate(Number(e.target.value))} className="w-full accent-emerald-400" />
+                  <div className="text-center text-emerald-300 text-sm font-black">{royaltyRate}%</div>
+                </div>
+              </div>
+
+              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
+                <div className="grid grid-cols-3 text-center divide-x divide-white/10">
+                   <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-emerald-300 mb-2">Low Estimate</p>
+                      <p className="text-2xl font-black text-white/70">${currentValuation.low.toLocaleString()}</p>
+                   </div>
+                   <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-2">Mid Valuation</p>
+                      <p className="text-4xl font-black text-white">${currentValuation.mid.toLocaleString()}</p>
+                   </div>
+                   <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-emerald-300 mb-2">High Estimate</p>
+                      <p className="text-2xl font-black text-white/70">${currentValuation.high.toLocaleString()}</p>
+                   </div>
+                </div>
+              </div>
+
+              <div className="bg-white/5 rounded-2xl p-6 border border-emerald-400/30">
+                <h4 className="text-white text-[10px] uppercase tracking-widest font-black mb-4">Licensing Revenue Projections (5-Year)</h4>
+                <div className="grid grid-cols-3 gap-4 text-center">
+                  <div className="bg-white/10 p-4 rounded-xl">
+                    <div className="text-emerald-300 text-[10px] font-black uppercase tracking-widest mb-2">Year 1</div>
+                    <div className="text-3xl font-black text-white">${currentRevenue.year1.toLocaleString()}</div>
+                  </div>
+                  <div className="bg-emerald-400/20 p-4 rounded-xl border border-emerald-400">
+                    <div className="text-emerald-300 text-[10px] font-black uppercase tracking-widest mb-2">5-Year Cumulative</div>
+                    <div className="text-4xl font-black text-white">${currentRevenue.fiveYearTotal.toLocaleString()}</div>
+                  </div>
+                  <div className="bg-white/10 p-4 rounded-xl">
+                    <div className="text-emerald-300 text-[10px] font-black uppercase tracking-widest mb-2">Avg Annual Growth</div>
+                    <div className="text-3xl font-black text-white">15%</div>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-white text-[10px] font-black uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <ExternalLink className="h-4 w-4" /> Recent Comparable IP Deals (2024–2026)
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {comparables.map((comp, i) => (
+                    <div key={i} className="bg-white/5 p-4 rounded-xl border border-white/10 hover:border-emerald-500/50 transition-colors">
+                      <div className="flex justify-between items-center mb-2">
+                        <div className="text-emerald-300 text-xs font-bold leading-snug">{comp.deal}</div>
+                        <span className="bg-white/10 px-2 py-0.5 rounded text-[9px] font-black uppercase text-white shrink-0">{comp.date}</span>
+                      </div>
+                      <div className="text-xl font-black text-white mb-2">{comp.value}</div>
+                      <p className="text-[10px] text-emerald-200 font-medium mb-1">Relevance: <span className="font-black text-white">{comp.relevance}</span></p>
+                      <p className="text-[10px] text-white/50">{comp.multiplier}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <button onClick={handleSaveSnapshot} className="w-full bg-emerald-600 hover:bg-emerald-500 transition-colors text-white py-4 rounded-xl flex items-center justify-center gap-3 font-black uppercase tracking-widest text-xs shadow-xl shadow-emerald-900/50">
+                <Save size={18} /> Save Valuation Snapshot to IP Monitor
+              </button>
+              <p className="text-center text-[10px] font-bold text-emerald-400/50 uppercase tracking-widest">Your portfolio aligns directly with these fintech, cannabinoid, and compliance tech transactions</p>
+           </div>
         </div>
       </div>
     </div>
