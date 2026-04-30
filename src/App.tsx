@@ -3848,6 +3848,18 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
         setIsTyping(false);
         return;
       }
+      if (lower.includes('employee') || lower.includes('staff')) {
+        response = "👥 **Global Personnel Overview**\n\nYou currently oversee **1,248 active employees** across the Global Green Hybrid Platform.\n\n• **GGMA Operations:** 412\n• **RIP Enforcement:** 156\n• **SINC Compliance:** 204\n• **Telehealth Network:** 476\n\nI can pull up a specific department if you need to drill down.";
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['View Operations Staff', 'View RIP Staff', 'Main Menu'] } as any]);
+        setIsTyping(false);
+        return;
+      }
+      if (lower.includes('late') || lower.includes('tardy') || lower.includes('absent')) {
+        response = "⏱️ **Attendance Exception Report**\n\nBased on biometric and system login data, **3 employees** were flagged as late today:\n\n1. **John Doe** (Operations) - 15m late\n2. **Sarah Smith** (Telehealth) - 22m late\n3. **Mike Johnson** (SINC) - 8m late\n\nWould you like me to flag their direct managers for a follow-up?";
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Flag Managers', 'Ignore for Now', 'Main Menu'] } as any]);
+        setIsTyping(false);
+        return;
+      }
       if (lower.includes('main menu')) {
         setMessages(prev => [...prev, { role: 'bot', text: 'How can I assist you, Shantell?', choices: getInitialChoices() } as any]);
         setIsTyping(false);
@@ -5812,22 +5824,37 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     } else if (lower.includes('talk') || lower.includes('speak') || lower.includes('human') || lower.includes('agent') || lower.includes('support') || lower.includes('call') || lower.includes('phone')) {
       response = 'I can route you to a live department representative. \n\nWould you like me to open a support ticket for you instead?';
     } else {
-      response = 'I\'m here to help you navigate the **Global Green Hybrid Platform (GGHP)**. Select an area below to explore:';
-      setMessages(prev => [...prev, { 
-        role: 'bot', 
-        text: response,
-        choices: [
-          '🏢 GGMA Licensing',
-          '🕵️ RIP Intelligence',
-          '🛡️ SINC Compliance',
-          '📅 Book 15min Consultation',
-          '🏥 Telehealth',
-          '💻 IT Support',
-          '⭐ Basic Subscription',
-          '💎 Professional Subscription',
-          '🚀 Enterprise Subscription'
-        ]
-      } as any]);
+      if (isFounderAssistant) {
+        response = "🧠 **Executive Memory Logged**\n\nI've recorded that request to your dashboard memory matrix. I am still aggregating data to give you a complete answer, but I've flagged this for Monica to review in the Operations Hub.\n\nWhat else can I assist you with today, Shantell?";
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: [
+            'View Daily Summary',
+            'State News Briefing',
+            'My Appointments',
+            'Pending Approvals',
+            'Send Broadcast'
+          ]
+        } as any]);
+      } else {
+        response = 'I\'m here to help you navigate the **Global Green Hybrid Platform (GGHP)**. Select an area below to explore:';
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: [
+            '🏢 GGMA Licensing',
+            '🕵️ RIP Intelligence',
+            '🛡️ SINC Compliance',
+            '📅 Book 15min Consultation',
+            '🏥 Telehealth',
+            '💻 IT Support',
+            '⭐ Basic Subscription',
+            '💎 Professional Subscription',
+            '🚀 Enterprise Subscription'
+          ]
+        } as any]);
+      }
       setIsTyping(false);
       return;
     }
