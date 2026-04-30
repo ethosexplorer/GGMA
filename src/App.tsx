@@ -3981,11 +3981,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         setIsTyping(false);
         return;
       }
-      if (lower.includes('main menu')) {
-        setMessages(prev => [...prev, { role: 'bot', text: 'How can I assist you, Shantell?', choices: getInitialChoices() } as any]);
-        setIsTyping(false);
-        return;
-      }
+
     }
     
     // Handle "More Languages" expansion
@@ -4087,6 +4083,18 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     // response variable already declared above
 
     // ── Global Keywords (Always active) ──────────────────────────────────────
+    if (lower === 'main menu' || lower.includes('main menu')) {
+      if (isFounderAssistant) {
+        setMessages(prev => [...prev, { role: 'bot', text: 'How can I assist you, Shantell?', choices: getInitialChoices() } as any]);
+      } else {
+        response = 'Returning to the Main Menu... What would you like to explore?';
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: getInitialChoices() } as any]);
+      }
+      setSignupStep(0);
+      setIsTyping(false);
+      return;
+    }
+
     if (lower.includes('secure login') || lower.includes('sign up')) {
       if (onNavigate) {
          onNavigate('login', 'Oversight');
