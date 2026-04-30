@@ -473,6 +473,97 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
         </div>
       </div>
 
+      {/* 🌐 GLOBAL REAL-TIME APP TRAFFIC — Founder Only (TOP PRIORITY) */}
+      <div className="bg-slate-900 border border-slate-700 rounded-3xl shadow-xl overflow-hidden text-white relative">
+        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
+        <div className="p-8">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h3 className="font-black text-lg flex items-center gap-2"><Globe size={20} className="text-blue-400" /> Global Real-Time Traffic Monitor</h3>
+              <p className="text-xs text-slate-400 mt-1">Live tracking of all visitors, active sessions, and outbound link clicks across GGP-OS</p>
+            </div>
+            <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-full">
+              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+              <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Live Sync Active</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Current Active Users</p>
+              <div className="flex items-end gap-2">
+                <span className="text-3xl font-black text-white">4,892</span>
+                <span className="text-[10px] text-emerald-400 font-bold mb-1.5">Right now</span>
+              </div>
+            </div>
+            <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Total App Clicks (24h)</p>
+              <div className="flex items-end gap-2">
+                <span className="text-3xl font-black text-indigo-400">142,501</span>
+                <span className="text-[10px] text-emerald-400 font-bold mb-1.5">+18%</span>
+              </div>
+            </div>
+            <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Link Conversions</p>
+              <div className="flex items-end gap-2">
+                <span className="text-3xl font-black text-blue-400">12.4%</span>
+                <span className="text-[10px] text-emerald-400 font-bold mb-1.5">Avg CR</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Traffic Sources */}
+            <div>
+              <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-1.5"><Activity size={12} /> Live Traffic Sources</h4>
+              <div className="space-y-4">
+                {[
+                  { source: 'Direct / Bookmarks', traffic: '45%', color: 'bg-indigo-500' },
+                  { source: 'Google Organic Search', traffic: '30%', color: 'bg-blue-500' },
+                  { source: 'Federal / SAM.gov Referrals', traffic: '15%', color: 'bg-amber-500' },
+                  { source: 'Social Media (LinkedIn, X)', traffic: '10%', color: 'bg-purple-500' },
+                ].map((item, i) => (
+                  <div key={i}>
+                    <div className="flex justify-between text-xs font-bold mb-1.5">
+                      <span className="text-slate-300">{item.source}</span>
+                      <span className="text-white">{item.traffic}</span>
+                    </div>
+                    <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                      <div className={cn("h-full rounded-full", item.color)} style={{ width: item.traffic }}></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Live Action Stream */}
+            <div>
+              <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-1.5"><Search size={12} /> Live Click Stream</h4>
+              <div className="bg-slate-800/30 rounded-xl border border-slate-700/50 p-3 h-40 overflow-hidden relative">
+                <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-slate-900 to-transparent z-10 pointer-events-none"></div>
+                <div className="space-y-3 animate-pulse">
+                  {[
+                    { time: 'Just now', user: 'Visitor from Washington D.C.', action: 'Clicked "Federal Pricing Tier"' },
+                    { time: '2s ago', user: 'Verified Business (OK)', action: 'Completed Metrc Sync' },
+                    { time: '5s ago', user: 'Anonymous Visitor', action: 'Clicked "DEA Capability Statement"' },
+                    { time: '12s ago', user: 'Patient (FL)', action: 'Opened Sylara Chatbot' },
+                    { time: '18s ago', user: 'Google Bot Crawler', action: 'Indexed "SINC Regulatory Hub"' },
+                  ].map((log, i) => (
+                    <div key={i} className="flex gap-3 items-start">
+                      <span className="text-[9px] text-slate-500 font-bold shrink-0 mt-0.5">{log.time}</span>
+                      <div>
+                        <p className="text-[10px] font-bold text-blue-300">{log.user}</p>
+                        <p className="text-xs text-slate-300">{log.action}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* EMERGENCY BROADCAST COMMAND */}
       <div className="bg-red-50 border-2 border-red-200 rounded-3xl p-8 shadow-xl relative overflow-hidden group">
          <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 transition-transform duration-700 text-red-600"><Shield size={120} /></div>
@@ -615,97 +706,6 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                 <span className="font-black text-indigo-500">10%</span>
               </div>
               <div className="w-full bg-slate-100 rounded-full h-2"><div className="bg-indigo-500 h-2 rounded-full" style={{ width: '10%' }}></div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 🌐 GLOBAL REAL-TIME APP TRAFFIC — Founder Only */}
-      <div className="bg-slate-900 border border-slate-700 rounded-3xl shadow-xl overflow-hidden text-white relative">
-        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
-        <div className="p-8">
-          <div className="flex justify-between items-center mb-6">
-            <div>
-              <h3 className="font-black text-lg flex items-center gap-2"><Globe size={20} className="text-blue-400" /> Global Real-Time Traffic Monitor</h3>
-              <p className="text-xs text-slate-400 mt-1">Live tracking of all visitors, active sessions, and outbound link clicks across GGP-OS</p>
-            </div>
-            <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-full">
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-              <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Live Sync Active</span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Current Active Users</p>
-              <div className="flex items-end gap-2">
-                <span className="text-3xl font-black text-white">4,892</span>
-                <span className="text-[10px] text-emerald-400 font-bold mb-1.5">Right now</span>
-              </div>
-            </div>
-            <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Total App Clicks (24h)</p>
-              <div className="flex items-end gap-2">
-                <span className="text-3xl font-black text-indigo-400">142,501</span>
-                <span className="text-[10px] text-emerald-400 font-bold mb-1.5">+18%</span>
-              </div>
-            </div>
-            <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Link Conversions</p>
-              <div className="flex items-end gap-2">
-                <span className="text-3xl font-black text-blue-400">12.4%</span>
-                <span className="text-[10px] text-emerald-400 font-bold mb-1.5">Avg CR</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Traffic Sources */}
-            <div>
-              <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-1.5"><Activity size={12} /> Live Traffic Sources</h4>
-              <div className="space-y-4">
-                {[
-                  { source: 'Direct / Bookmarks', traffic: '45%', color: 'bg-indigo-500' },
-                  { source: 'Google Organic Search', traffic: '30%', color: 'bg-blue-500' },
-                  { source: 'Federal / SAM.gov Referrals', traffic: '15%', color: 'bg-amber-500' },
-                  { source: 'Social Media (LinkedIn, X)', traffic: '10%', color: 'bg-purple-500' },
-                ].map((item, i) => (
-                  <div key={i}>
-                    <div className="flex justify-between text-xs font-bold mb-1.5">
-                      <span className="text-slate-300">{item.source}</span>
-                      <span className="text-white">{item.traffic}</span>
-                    </div>
-                    <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
-                      <div className={cn("h-full rounded-full", item.color)} style={{ width: item.traffic }}></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Live Action Stream */}
-            <div>
-              <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-1.5"><Search size={12} /> Live Click Stream</h4>
-              <div className="bg-slate-800/30 rounded-xl border border-slate-700/50 p-3 h-40 overflow-hidden relative">
-                <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-slate-900 to-transparent z-10 pointer-events-none"></div>
-                <div className="space-y-3 animate-pulse">
-                  {[
-                    { time: 'Just now', user: 'Visitor from Washington D.C.', action: 'Clicked "Federal Pricing Tier"' },
-                    { time: '2s ago', user: 'Verified Business (OK)', action: 'Completed Metrc Sync' },
-                    { time: '5s ago', user: 'Anonymous Visitor', action: 'Clicked "DEA Capability Statement"' },
-                    { time: '12s ago', user: 'Patient (FL)', action: 'Opened Sylara Chatbot' },
-                    { time: '18s ago', user: 'Google Bot Crawler', action: 'Indexed "SINC Regulatory Hub"' },
-                  ].map((log, i) => (
-                    <div key={i} className="flex gap-3 items-start">
-                      <span className="text-[9px] text-slate-500 font-bold shrink-0 mt-0.5">{log.time}</span>
-                      <div>
-                        <p className="text-[10px] font-bold text-blue-300">{log.user}</p>
-                        <p className="text-xs text-slate-300">{log.action}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </div>
           </div>
         </div>
