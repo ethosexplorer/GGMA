@@ -4090,6 +4090,13 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     // response variable already declared above
 
     // ── Global Keywords (Always active) ──────────────────────────────────────
+    if (lower.includes('secure login') || lower.includes('sign up')) {
+      if (onNavigate) {
+         onNavigate('login', 'Oversight');
+      }
+      return;
+    }
+
     if (lower.includes('c3') || lower.includes('compassion score') || lower.includes('community score')) {
       response = '✨ **Introducing C³ (Compassion, Compliance & Community)**\n\nThe C³ Score is the heartbeat of the Global Green ecosystem. It is a real-time trust metric that measures your positive impact on the industry.\n\n• **Compassion**: Rewarding patient care and accessibility.\n• **Compliance**: Real-time adherence to state (Metrc) and federal standards.\n• **Community**: Engagement with GGE educational and support hubs.\n\n**Benefits**: High C³ Scores unlock lower subscription fees, priority processing, and exclusive access to the L.A.R.R.Y Premium Insights.';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['View My C3 Score', 'How to Improve C3', 'Main Menu'] } as any]);
@@ -4364,13 +4371,9 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       setIsTyping(false);
       return;
     } else if (lower.includes('rip intelligence') || lower === 'rip enforcement' || lower.includes('rip enforcement') || lower === 'tell me about rip enforcement.') {
-      response = '🕵️ **RIP (Regulatory Intelligence Policing)**\n\nDue to the highly sensitive nature of intelligence and enforcement operations, I can only provide basic guidance here. For secure access to field reports or oversight actions, you must create an official account.\n\nWould you like to begin intake?';
-      setMessages(prev => [...prev, { 
-        role: 'bot', 
-        text: response,
-        choices: ['Start Official Intake', 'Basic Overview', 'Main Menu'] 
-      } as any]);
-      setSignupStep(400);
+      response = '🕵️ **RIP Intelligence Portal**\n\nBefore we can proceed with intelligence retrieval, please specify which **Law Enforcement** or **Oversight Agency** you are representing:';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['State Police (OSBI)', 'Federal Enforcement (DEA/FBI)', 'State Regulator (OMMA)', 'Local Law Enforcement'] } as any]);
+      setSignupStep(900);
       setIsTyping(false);
       return;
     } else if (lower.includes('sinc') || lower.includes('secure infrastructure')) {
@@ -4513,11 +4516,27 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     // === MAIN STATE MACHINE ===
     if (signupStep === -1) {
       if (lower === 'english' || lower === 'español' || lower.includes('português') || lower.includes('français') || lower.includes('kreyòl') || lower.includes('中文')) {
+        if (variant === 'rip') {
+          response = '🕵️ **RIP Intelligence Portal**\n\nBefore we can proceed with intelligence retrieval, please specify which **Law Enforcement** or **Oversight Agency** you are representing:';
+          setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['State Police (OSBI)', 'Federal Enforcement (DEA/FBI)', 'State Regulator (OMMA)', 'Local Law Enforcement'] } as any]);
+          setSignupStep(900);
+          setIsTyping(false);
+          return;
+        }
+
         setMessages(prev => [...prev, { role: 'bot', text: getGreeting(), choices: getInitialChoices() } as any]);
         setSignupStep(0);
         setIsTyping(false);
         return;
       }
+    }
+
+    if (signupStep === 900) {
+      response = `Due to the highly sensitive nature of intelligence and enforcement operations, I cannot release field data without verification.\n\nFor secure access to restricted intelligence and field reports, you must **sign up and authenticate your official credentials** through the Oversight Portal.`;
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Secure Login / Sign Up', 'Main Menu'] } as any]);
+      setSignupStep(0);
+      setIsTyping(false);
+      return;
     }
 
     if (signupStep === 0) {
