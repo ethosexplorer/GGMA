@@ -1467,6 +1467,16 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
       <section className="pt-10 pb-20 px-6 relative overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[120%] h-[500px] bg-emerald-50 bg-gradient-to-b from-emerald-50/50 to-transparent -z-10 blur-3xl"></div>
         <div className="max-w-4xl mx-auto text-center space-y-8">
+          
+          <div className="inline-block bg-white border-2 border-emerald-500 rounded-2xl p-4 shadow-xl mb-4 transform hover:scale-105 transition-transform">
+            <p className="text-emerald-950 font-black tracking-widest uppercase text-sm mb-1 flex items-center justify-center gap-2">
+              <Headphones className="text-emerald-500" size={18} /> Call Center Operations
+            </p>
+            <h2 className="text-4xl md:text-5xl font-extrabold text-[#1a4731] tracking-tight">
+              1-888-964-GGHP
+            </h2>
+          </div>
+
           <p className="text-emerald-950 font-bold tracking-[0.3em] uppercase text-xs mb-[-10px] opacity-70">Global Green Enterprise Inc introducing</p>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>

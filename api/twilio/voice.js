@@ -19,7 +19,11 @@ export default function handler(req, res) {
       if (!targetNumber.startsWith('+1')) {
         targetNumber = '+1' + targetNumber.replace(/\D/g, '');
       }
-      dial.number(targetNumber);
+      dial.number({
+        statusCallbackEvent: 'initiated ringing answered completed',
+        statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status',
+        statusCallbackMethod: 'POST'
+      }, targetNumber);
     } else {
       // Incoming call logic: Ring the WebDialer
       const dial = twiml.dial({
@@ -28,7 +32,11 @@ export default function handler(req, res) {
       });
       
       // Connect to the web browser client
-      dial.client('GGMA_User');
+      dial.client({
+        statusCallbackEvent: 'initiated ringing answered completed',
+        statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status',
+        statusCallbackMethod: 'POST'
+      }, 'GGMA_User');
     }
 
     res.status(200).send(twiml.toString());

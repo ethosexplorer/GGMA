@@ -1,4 +1,5 @@
 import twilio from 'twilio';
+import nodemailer from 'nodemailer';
 
 const { MessagingResponse } = twilio.twiml;
 
@@ -15,6 +16,26 @@ export default async function handler(req, res) {
     const fromNumber = req.body.From || '';
 
     console.log(`[Twilio SMS] Received message from ${fromNumber}: ${incomingMsg}`);
+
+    // Send email notification to Call Center Operations
+    try {
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.CAREPATRON_EMAIL,
+          pass: process.env.CAREPATRON_PASS
+        }
+      });
+      await transporter.sendMail({
+        from: `"GGP-OS Call Center" <${process.env.CAREPATRON_EMAIL}>`,
+        to: 'asstsupport@gmail.com',
+        subject: `New SMS Received from ${fromNumber}`,
+        text: `You have received a new text message.\n\nFrom: ${fromNumber}\nMessage: ${incomingMsg}\n\nPlease respond via the platform or call center dashboard.`
+      });
+      console.log(`[Twilio SMS] Notification email sent to asstsupport@gmail.com`);
+    } catch (emailErr) {
+      console.error(`[Twilio SMS] Failed to send email notification:`, emailErr);
+    }
 
     // Create a new TwiML response
     const twiml = new MessagingResponse();
