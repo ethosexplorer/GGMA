@@ -100,6 +100,19 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
   const [liveStats, setLiveStats] = useState({ totalUsers: '1.2M', netRevenue: '$18.2M' });
   const [actionToast, setActionToast] = useState<{ message: string; timestamp: number } | null>(null);
 
+  const [liveAnalytics, setLiveAnalytics] = useState({
+    users: 4892,
+    clicks: 142501,
+    conversions: 17670,
+    events: [
+      { time: 'Just now', user: 'Visitor from Washington D.C.', action: 'Clicked "Federal Pricing Tier"' },
+      { time: '2s ago', user: 'Verified Business (OK)', action: 'Completed Metrc Sync' },
+      { time: '5s ago', user: 'Anonymous Visitor', action: 'Clicked "DEA Capability Statement"' },
+      { time: '12s ago', user: 'Patient (FL)', action: 'Opened Sylara Chatbot' },
+      { time: '18s ago', user: 'Google Bot Crawler', action: 'Indexed "SINC Regulatory Hub"' },
+    ]
+  });
+
   useEffect(() => {
     // 1. Fetch live metrics from Turso
     const fetchMetrics = async () => {
@@ -122,6 +135,45 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
     
     fetchMetrics();
     const interval = setInterval(fetchMetrics, 5000);
+
+    // 1b. Fetch live tracking analytics
+    const fetchAnalytics = async () => {
+      try {
+        const aggRes = await turso.execute('SELECT * FROM analytics_aggregates LIMIT 1');
+        const evRes = await turso.execute('SELECT * FROM analytics_events ORDER BY created_at DESC LIMIT 5');
+
+        if (aggRes.rows.length > 0) {
+          const row = aggRes.rows[0];
+          
+          const mappedEvents = evRes.rows.map((r, i) => {
+            // Turso SQLite dates are UTC if appended with Z or parsed properly
+            const dateStr = r.created_at + (String(r.created_at).endsWith('Z') ? '' : 'Z');
+            const date = new Date(dateStr);
+            const diffSecs = Math.max(0, Math.floor((Date.now() - date.getTime()) / 1000));
+            let timeStr = diffSecs < 60 ? `${diffSecs}s ago` : `${Math.floor(diffSecs/60)}m ago`;
+            if (i === 0 && diffSecs < 10) timeStr = 'Just now';
+            return {
+              time: timeStr,
+              user: String(r.user_type),
+              action: String(r.details)
+            };
+          });
+
+          setLiveAnalytics(prev => ({
+            ...prev,
+            users: Number(row.total_users),
+            clicks: Number(row.total_clicks),
+            conversions: Number(row.total_conversions),
+            events: mappedEvents.length > 0 ? mappedEvents : prev.events
+          }));
+        }
+      } catch (err) {
+        console.error('Error fetching real analytics', err);
+      }
+    };
+
+    fetchAnalytics();
+    const analyticsInterval = setInterval(fetchAnalytics, 15000);
 
     // 2. Universal Button Interceptor for "Live" Demo actions
     const handleClick = async (e: MouseEvent) => {
@@ -166,6 +218,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
     document.addEventListener('click', handleClick);
     return () => {
       clearInterval(interval);
+      clearInterval(analyticsInterval);
       document.removeEventListener('click', handleClick);
     };
   }, [fullName]);
@@ -394,21 +447,21 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
             <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
               <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Current Active Users</p>
               <div className="flex items-end gap-2">
-                <span className="text-3xl font-black text-white">4,892</span>
+                <span className="text-3xl font-black text-white">{liveAnalytics.users.toLocaleString()}</span>
                 <span className="text-[10px] text-emerald-400 font-bold mb-1.5">Right now</span>
               </div>
             </div>
             <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
               <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Total App Clicks (24h)</p>
               <div className="flex items-end gap-2">
-                <span className="text-3xl font-black text-indigo-400">142,501</span>
+                <span className="text-3xl font-black text-indigo-400">{liveAnalytics.clicks.toLocaleString()}</span>
                 <span className="text-[10px] text-emerald-400 font-bold mb-1.5">+18%</span>
               </div>
             </div>
             <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
               <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Link Conversions</p>
               <div className="flex items-end gap-2">
-                <span className="text-3xl font-black text-blue-400">12.4%</span>
+                <span className="text-3xl font-black text-blue-400">{((liveAnalytics.conversions / liveAnalytics.clicks) * 100).toFixed(1)}%</span>
                 <span className="text-[10px] text-emerald-400 font-bold mb-1.5">Avg CR</span>
               </div>
             </div>
@@ -444,13 +497,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
               <div className="bg-slate-800/30 rounded-xl border border-slate-700/50 p-3 h-40 overflow-hidden relative">
                 <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-slate-900 to-transparent z-10 pointer-events-none"></div>
                 <div className="space-y-3 animate-pulse">
-                  {[
-                    { time: 'Just now', user: 'Visitor from Washington D.C.', action: 'Clicked "Federal Pricing Tier"' },
-                    { time: '2s ago', user: 'Verified Business (OK)', action: 'Completed Metrc Sync' },
-                    { time: '5s ago', user: 'Anonymous Visitor', action: 'Clicked "DEA Capability Statement"' },
-                    { time: '12s ago', user: 'Patient (FL)', action: 'Opened Sylara Chatbot' },
-                    { time: '18s ago', user: 'Google Bot Crawler', action: 'Indexed "SINC Regulatory Hub"' },
-                  ].map((log, i) => (
+                  {liveAnalytics.events.map((log, i) => (
                     <div key={i} className="flex gap-3 items-start">
                       <span className="text-[9px] text-slate-500 font-bold shrink-0 mt-0.5">{log.time}</span>
                       <div>
