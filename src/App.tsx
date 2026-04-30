@@ -8481,8 +8481,15 @@ export default function App() {
           </button>
         )}
 
-        {/* Twilio WebDialer — only visible when logged in */}
-        {userProfile && <WebDialer />}
+        {/* Twilio WebDialer — only visible for Founder, CEO, Compliance Director, and Ops/Call Center */}
+        {userProfile && (() => {
+          const email = (userProfile.email || '').toLowerCase();
+          const isFounder = userProfile.role === 'executive_founder' || email.includes('globalgreenhp@gmail.com');
+          const isRyan = email.includes('ceo.globalgreenhp');
+          const isMonica = email.includes('compliance.globalgreenhp') || email.includes('monica');
+          const isOpsView = roleOverride === 'operations' || roleOverride === 'internal_admin';
+          return (isFounder || isRyan || isMonica || isOpsView) ? <WebDialer /> : null;
+        })()}
 
         {/* Sylara Intake Agent — visible everywhere except business/compliance/authority/enforcement (L.A.R.R.Y handles those) */}
         {view !== 'larry-chatbot' && (!userProfile || !['business', 'compliance_service', 'regulator_state', 'regulator_federal', 'law_enforcement', 'enforcement_state'].includes(roleOverride || userProfile.role)) && (
