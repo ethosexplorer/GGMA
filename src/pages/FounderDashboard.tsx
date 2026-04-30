@@ -35,30 +35,30 @@ import { voip800 } from '../lib/voip800';
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
-const NAV_VERSION = 11; // Force clean reset - bumped past all intermediate HMR cache versions
+const NAV_VERSION = 12; // Stable section IDs — labels no longer drop on drag
 
 const INITIAL_NAV_ITEMS: NavItem[] = [
-  { section: 'FOUNDER EXCLUSIVE' },
+  { id: '_sec_founder', section: 'FOUNDER EXCLUSIVE' },
   { id: 'accounting_ledger', label: 'Accounting Ledger (QuickBooks)', icon: TrendingUp },
   { id: 'global_financials', label: 'Global Financials', icon: TrendingUp },
   { id: 'system_health', label: 'System Health / AI', icon: Zap },
   { id: 'hr_intelligence', label: 'HR Intelligence (Sylara)', icon: UserPlus },
   { id: 'launch_script', label: 'Master Launch Script', icon: FileText },
   { id: 'jurisdiction_map', label: 'Nationwide Oversight', icon: Globe },
-  { section: 'MAIN' },
+  { id: '_sec_main', section: 'MAIN' },
   { id: 'messages', label: 'Messages', icon: MessageSquare, badge: 'Live' },
   { id: 'internal_scheduler', label: 'Calendar & Scheduler', icon: Clock, badge: 'New' },
   { id: 'overview', label: 'God Overview', icon: Activity },
-  { section: 'SUPREME COMMAND' },
+  { id: '_sec_supreme', section: 'SUPREME COMMAND' },
   { id: 'users', label: 'Personnel Force (Total)', icon: Users },
   { id: 'patients', label: 'Registry Sovereignty', icon: HeartPulse },
   { id: 'business', label: 'Economic Infrastructure', icon: Building2 },
-  { section: 'OPS & COMPLIANCE' },
+  { id: '_sec_ops', section: 'OPS & COMPLIANCE' },
   { id: 'approvals', label: 'Agency Approvals', icon: UserCheck, badge: '12' },
   { id: 'applications', label: 'Applications Queue', icon: FileText, badge: '502' },
   { id: 'compliance', label: 'Compliance Monitor', icon: FileCheck },
   { id: 'regulatory_library', label: 'Regulatory Library', icon: BookOpen },
-  { section: 'OVERSIGHT HUB' },
+  { id: '_sec_oversight', section: 'OVERSIGHT HUB' },
   { id: 'internal_admin', label: 'Internal Team (GGE Call Center)', icon: Shield, badge: '!' },
   { id: 'external_admin', label: 'External Administrator', icon: Activity },
   { id: 'law_enforcement', label: 'Law Enforcement (RIP)', icon: Shield },
@@ -66,14 +66,14 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'operations', label: 'Ops Center', icon: Cpu, badge: 'Live' },
   { id: 'virtual_attendant', label: 'GGE World Call Center', icon: Phone },
   { id: 'processor', label: 'GGE Processor', icon: Activity },
-  { section: 'FEDERAL & IP MONITORS' },
+  { id: '_sec_federal', section: 'FEDERAL & IP MONITORS' },
   { id: 'federal', label: 'Federal Command', icon: Globe },
   { id: 'public_health', label: 'Public Health & Labs', icon: FlaskConical },
   { id: 'judicial', label: 'Judicial Monitor', icon: Scale },
   { id: 'ip_monitor', label: 'IP / Patent Monitor', icon: Shield },
   { id: 'rapid_testing', label: 'Rapid Testing Hub', icon: FlaskConical },
   { id: 'subscription', label: 'Platform Billing', icon: CreditCard },
-  { section: 'SYSTEM CONTROL' },
+  { id: '_sec_system', section: 'SYSTEM CONTROL' },
   { id: 'reports', label: 'Master Analytics', icon: BarChart3 },
   { id: 'intel', label: 'Global Intelligence', icon: BookOpen },
   { id: 'it_support', label: 'IT Support & Diagnostics', icon: MonitorPlay, badge: 'Ryan' },
@@ -189,15 +189,14 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
       let items: NavItem[] = [...INITIAL_NAV_ITEMS];
       if (saved) {
         const savedIds = JSON.parse(saved) as string[];
-        // Rebuild nav from saved order, preserving any new items not in saved order
-        const idToItem = new Map(INITIAL_NAV_ITEMS.map((item, i) => [item.id || `section-${i}`, item]));
+        // Rebuild nav from saved order — every item now has a stable id
+        const idToItem = new Map(INITIAL_NAV_ITEMS.map(item => [item.id!, item]));
         const ordered = savedIds
           .map(id => idToItem.get(id))
           .filter(Boolean) as typeof INITIAL_NAV_ITEMS;
         // Add any new items that weren't in saved order
-        INITIAL_NAV_ITEMS.forEach((item, i) => {
-          const key = item.id || `section-${i}`;
-          if (!savedIds.includes(key)) ordered.push(item);
+        INITIAL_NAV_ITEMS.forEach(item => {
+          if (!savedIds.includes(item.id!)) ordered.push(item);
         });
         items = ordered;
       }
@@ -213,12 +212,11 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
         });
       }
       
-      // Apply any renamed section labels
+      // Apply any renamed section labels — keyed by stable id
       if (Object.keys(sectionNameMap).length > 0) {
-        items = items.map((it, idx) => {
-          const key = `section-${idx}`;
-          if ('section' in it && sectionNameMap[key]) {
-            return { ...it, section: sectionNameMap[key] };
+        items = items.map(it => {
+          if (it.section && it.id && sectionNameMap[it.id]) {
+            return { ...it, section: sectionNameMap[it.id] };
           }
           return it;
         });
@@ -245,8 +243,8 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
     newItems.splice(index, 0, item);
     setDraggedIdx(index);
     setNavItemsList(newItems);
-    // Persist order to localStorage
-    const ids = newItems.map((it, i) => it.id || `section-${i}`);
+    // Persist order to localStorage — all items have stable ids now
+    const ids = newItems.map(it => it.id!);
     localStorage.setItem('gghp_nav_order', JSON.stringify(ids));
   };
 
@@ -3494,11 +3492,11 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
                         const newItems = [...navItemsList];
                         newItems[i] = { ...newItems[i], section: val };
                         setNavItemsList(newItems);
-                        const ids = newItems.map((it, idx) => it.id || `section-${idx}`);
+                        const ids = newItems.map(it => it.id!);
                         localStorage.setItem('gghp_nav_order', JSON.stringify(ids));
-                        // Also persist custom section names
+                        // Also persist custom section names keyed by stable id
                         const sectionMap: Record<string, string> = {};
-                        newItems.forEach((it, idx) => { if ('section' in it) sectionMap[`section-${idx}`] = it.section!; });
+                        newItems.forEach(it => { if (it.section && it.id) sectionMap[it.id] = it.section; });
                         localStorage.setItem('gghp_section_names', JSON.stringify(sectionMap));
                       }
                       setEditingSectionIdx(null);
@@ -3544,12 +3542,13 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
             onClick={() => {
               const name = prompt('Enter new group label:');
               if (name && name.trim()) {
-                const newItems = [...navItemsList, { section: name.trim().toUpperCase() }];
+                const newSec = { id: `_sec_custom_${Date.now()}`, section: name.trim().toUpperCase() };
+                const newItems = [...navItemsList, newSec];
                 setNavItemsList(newItems);
-                const ids = newItems.map((it, idx) => it.id || `section-${idx}`);
+                const ids = newItems.map(it => it.id!);
                 localStorage.setItem('gghp_nav_order', JSON.stringify(ids));
                 const sectionMap: Record<string, string> = {};
-                newItems.forEach((it, idx) => { if ('section' in it) sectionMap[`section-${idx}`] = it.section!; });
+                newItems.forEach(it => { if (it.section && it.id) sectionMap[it.id] = it.section; });
                 localStorage.setItem('gghp_section_names', JSON.stringify(sectionMap));
               }
             }}
