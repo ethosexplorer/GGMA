@@ -355,7 +355,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       return '🔴 BREAKING: Federal Marijuana Rescheduling - Schedule I → Schedule III NOW OFFICIAL | 📉 OMMA DATA REVEALS STARK REDUCTION IN OKLAHOMA MEDICAL MARIJUANA LICENSING (APRIL 2026) | Sylara AI processed 50,000+ compliance checks this hour';
     }
   });
-  const [marqueeSpeed, setMarqueeSpeed] = useState(() => localStorage.getItem('gghp_marquee_speed') || 'medium');
+  const [localMarqueeSpeed, setLocalMarqueeSpeed] = useState(() => localStorage.getItem('gghp_marquee_speed') || marqueeSpeed || 'medium');
   const [isUnlocked, setIsUnlocked] = useState(true);
   const [pin, setPin] = useState('');
   
@@ -607,8 +607,8 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                   <div className="flex flex-col space-y-1">
                     <label className="text-[10px] font-black text-emerald-700 uppercase tracking-widest px-2">Scroll Speed</label>
                     <select 
-                      value={marqueeSpeed}
-                      onChange={(e) => setMarqueeSpeed(e.target.value)}
+                      value={localMarqueeSpeed}
+                      onChange={(e) => setLocalMarqueeSpeed(e.target.value)}
                       className="px-6 py-3.5 bg-white border-2 border-emerald-200 rounded-2xl font-bold text-slate-700 outline-none h-14"
                     >
                        <option value="slow">Slow</option>
@@ -619,7 +619,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                   <button 
                     onClick={() => {
                       localStorage.setItem('gghp_marquee_news', JSON.stringify(marqueeNewsText.split('|').map(s => s.trim())));
-                      localStorage.setItem('gghp_marquee_speed', marqueeSpeed);
+                      localStorage.setItem('gghp_marquee_speed', localMarqueeSpeed);
                       window.dispatchEvent(new Event('storage'));
                       alert('Green Scroll Ticker Updated Globally!');
                     }}
