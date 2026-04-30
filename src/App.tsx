@@ -1,6 +1,7 @@
 import React, { Component, useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { STATE_RESOURCES } from './stateResources';
+import { getDetailedStateKnowledge } from './stateDetailedKnowledge';
 import { getPlansForRole, getAddOnsForRole } from './lib/subscriptionPlans';
 import { SettingsPreferencesMockup } from './pages/SettingsPreferencesMockup';
 import {
@@ -4048,7 +4049,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
           `🔗 **[Click here to view ${jurisdiction} specific state fees](${portalLink})**\n\n` +
           '_This is for Patient Medical Card applications only. Business fees are separate._';
       }
-      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Patient Intake', 'View Business Fee Schedule', 'Book Physician ($45)', 'Main Menu'] } as any]);
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Patient Intake', 'View Application Forms', 'Book Physician ($45)', 'Main Menu'] } as any]);
       setIsTyping(false);
       return;
     }
@@ -4073,19 +4074,41 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
           '| Tier 7 | 100,000+ sq ft | $50,000 + $0.25/sq ft | Varies |\n\n' +
           '_These are OMMA state licensing fees, separate from our platform subscription._\n\n' +
           'Which license type do you need details on?';
-        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Grower Outdoor Fees', 'Processor Fees', 'Dispensary Fees', 'Start Business Intake', 'Main Menu'] } as any]);
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Grower Outdoor Fees', 'Processor Fees', 'Dispensary Fees', 'View Application Forms', 'Main Menu'] } as any]);
       } else {
         response = `💰 **${jurisdiction} Commercial License Fee Schedule (2026)**\n\n` +
           `Commercial cannabis licensing fees in **${jurisdiction}** vary based on license type (Cultivator, Processor, Dispensary, etc.) and tier.\n\n` +
           `🔗 **[Click here to view ${jurisdiction} specific business fees and regulations](${portalLink})**\n\n` +
           `_These are state authority licensing fees, separate from our platform subscription._`;
-        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Business Intake', 'Main Menu'] } as any]);
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Business Intake', 'View Application Forms', 'Main Menu'] } as any]);
       }
       setIsTyping(false);
       return;
     }
 
-    
+    if (lower.includes('application forms') || lower.includes('view forms') || lower.includes('state forms') || lower.includes('view guides') || lower.includes('detailed forms')) {
+      const detailedInfo = getDetailedStateKnowledge(jurisdiction);
+      if (!detailedInfo || (detailedInfo.patientData.links.length === 0 && detailedInfo.businessData.links.length === 0)) {
+         response = `I don't have detailed application forms on file for **${jurisdiction}** right now, but you can check your state portal directly for more information!`;
+         setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+      } else {
+         const isBusinessMode = isBusiness || lower.includes('business');
+         const links = isBusinessMode ? detailedInfo.businessData.links : detailedInfo.patientData.links;
+         
+         if (links.length === 0) {
+           response = `I don't have specific ${isBusinessMode ? 'business' : 'patient'} forms on file for **${jurisdiction}**, but I do have other forms for this state.`;
+           setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+         } else {
+           response = `📄 **${jurisdiction} ${isBusinessMode ? 'Business' : 'Patient'} Application Forms & Guides**\n\n` +
+             `Here are the direct links to the official forms, guides, and resources for your jurisdiction:\n\n` +
+             links.map(l => `• **[${l.title}](${l.url})**`).join('\n') +
+             `\n\n_Links are provided directly from your state authority's official portal._`;
+           setMessages(prev => [...prev, { role: 'bot', text: response, choices: [isBusinessMode ? 'Start Business Intake' : 'Start Patient Intake', isBusinessMode ? 'View Business Fee Schedule' : 'View Patient Fee Schedule', 'Main Menu'] } as any]);
+         }
+      }
+      setIsTyping(false);
+      return;
+    }
 
     if (lower === 'view all tiers') {
        setMessages(prev => [...prev, { 
