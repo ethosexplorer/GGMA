@@ -4028,13 +4028,26 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
 
     // Handle split fee schedule buttons
     if (lower.includes('patient fee schedule') || lower === 'view patient fee schedule') {
-      response = '💰 **GGMA Patient Fee Schedule (2026)**\n\n' +
-        '• **Patient Recommendation**: $35.00 (Via GoHealthUSA)\n' +
-        '• **GGE Intake Processing**: $10.00\n' +
-        '• **Total Portal Cost**: **$45.00**\n\n' +
-        '• **State Authority Fee (Standard)**: $104.30\n' +
-        '• **State Authority Fee (Reduced)**: $22.50 (Medicare/Medicaid/Veteran)\n\n' +
-        '_This is for Patient Medical Card applications only. Business fees are separate._';
+      const stateInfo = STATE_RESOURCES[jurisdiction] || null;
+      const portalLink = stateInfo?.patientPortal?.startsWith('http') ? stateInfo.patientPortal : stateInfo?.program || 'https://www.mpp.org/states/';
+      
+      if (jurisdiction.toLowerCase() === 'oklahoma') {
+        response = '💰 **GGMA Patient Fee Schedule (2026) - Oklahoma**\n\n' +
+          '• **Patient Recommendation**: $35.00 (Via GoHealthUSA)\n' +
+          '• **GGE Intake Processing**: $10.00\n' +
+          '• **Total Portal Cost**: **$45.00**\n\n' +
+          '• **State Authority Fee (Standard)**: $104.30\n' +
+          '• **State Authority Fee (Reduced)**: $22.50 (Medicare/Medicaid/Veteran)\n\n' +
+          '_This is for Patient Medical Card applications only. Business fees are separate._';
+      } else {
+        response = `💰 **GGMA Patient Fee Schedule (2026) - ${jurisdiction}**\n\n` +
+          '• **Patient Recommendation**: $35.00 (Via GoHealthUSA)\n' +
+          '• **GGE Intake Processing**: $10.00\n' +
+          '• **Total Portal Cost**: **$45.00**\n\n' +
+          `• **${jurisdiction} State Authority Fee**: _Varies by state. Please check your state portal._\n\n` +
+          `🔗 **[Click here to view ${jurisdiction} specific state fees](${portalLink})**\n\n` +
+          '_This is for Patient Medical Card applications only. Business fees are separate._';
+      }
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Patient Intake', 'View Business Fee Schedule', 'Book Physician ($45)', 'Main Menu'] } as any]);
       setIsTyping(false);
       return;
@@ -4042,21 +4055,32 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
 
     if (lower.includes('business fee schedule') || lower === 'view business fee schedule') {
       setIsBusiness(true);
-      response = '💰 **OMMA Commercial License Fee Schedule (2026)**\n' +
-        '_Per HB 2179 (2022) amended by SB 813 (2023) — 63 O.S. § 427.14_\n\n' +
-        '🌿 **GROWER — Indoor / Greenhouse / Light Deprivation**\n' +
-        '| Tier | Canopy Size | Fee | Total w/ CC |\n' +
-        '|------|------------|-----|-------------|\n' +
-        '| Tier 1 | Up to 10,000 sq ft | $2,500 | $2,558.30 |\n' +
-        '| Tier 2 | 10,001–20,000 sq ft | $5,000 | $5,114.55 |\n' +
-        '| Tier 3 | 20,001–40,000 sq ft | $10,000 | $10,227.05 |\n' +
-        '| Tier 4 | 40,001–60,000 sq ft | $20,000 | $20,452.04 |\n' +
-        '| Tier 5 | 60,001–80,000 sq ft | $30,000 | $30,677.05 |\n' +
-        '| Tier 6 | 80,001–99,999 sq ft | $40,000 | $40,902.05 |\n' +
-        '| Tier 7 | 100,000+ sq ft | $50,000 + $0.25/sq ft | Varies |\n\n' +
-        '_These are OMMA state licensing fees, separate from our platform subscription._\n\n' +
-        'Which license type do you need details on?';
-      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Grower Outdoor Fees', 'Processor Fees', 'Dispensary Fees', 'Start Business Intake', 'Main Menu'] } as any]);
+      const stateInfo = STATE_RESOURCES[jurisdiction] || null;
+      const portalLink = stateInfo?.businessPortal?.startsWith('http') ? stateInfo.businessPortal : stateInfo?.program || 'https://www.mpp.org/states/';
+      
+      if (jurisdiction.toLowerCase() === 'oklahoma') {
+        response = '💰 **OMMA Commercial License Fee Schedule (2026)**\n' +
+          '_Per HB 2179 (2022) amended by SB 813 (2023) — 63 O.S. § 427.14_\n\n' +
+          '🌿 **GROWER — Indoor / Greenhouse / Light Deprivation**\n' +
+          '| Tier | Canopy Size | Fee | Total w/ CC |\n' +
+          '|------|------------|-----|-------------|\n' +
+          '| Tier 1 | Up to 10,000 sq ft | $2,500 | $2,558.30 |\n' +
+          '| Tier 2 | 10,001–20,000 sq ft | $5,000 | $5,114.55 |\n' +
+          '| Tier 3 | 20,001–40,000 sq ft | $10,000 | $10,227.05 |\n' +
+          '| Tier 4 | 40,001–60,000 sq ft | $20,000 | $20,452.04 |\n' +
+          '| Tier 5 | 60,001–80,000 sq ft | $30,000 | $30,677.05 |\n' +
+          '| Tier 6 | 80,001–99,999 sq ft | $40,000 | $40,902.05 |\n' +
+          '| Tier 7 | 100,000+ sq ft | $50,000 + $0.25/sq ft | Varies |\n\n' +
+          '_These are OMMA state licensing fees, separate from our platform subscription._\n\n' +
+          'Which license type do you need details on?';
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Grower Outdoor Fees', 'Processor Fees', 'Dispensary Fees', 'Start Business Intake', 'Main Menu'] } as any]);
+      } else {
+        response = `💰 **${jurisdiction} Commercial License Fee Schedule (2026)**\n\n` +
+          `Commercial cannabis licensing fees in **${jurisdiction}** vary based on license type (Cultivator, Processor, Dispensary, etc.) and tier.\n\n` +
+          `🔗 **[Click here to view ${jurisdiction} specific business fees and regulations](${portalLink})**\n\n` +
+          `_These are state authority licensing fees, separate from our platform subscription._`;
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Business Intake', 'Main Menu'] } as any]);
+      }
       setIsTyping(false);
       return;
     }
