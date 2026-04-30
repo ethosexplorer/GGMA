@@ -3446,13 +3446,15 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
 };
 
 // --- L.A.R.R.Y AI Chatbot for Med Card / Business License Assistance ---
-const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card' }: any) => {
+const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card', userProfile }: any) => {
   const [isBusiness, setIsBusiness] = useState(variant === 'business');
   const isGeneral = variant === 'general' || variant === 'ggma' || variant === 'rip' || variant === 'sinc';
+  const isFounderAssistant = userProfile && userProfile.role === 'executive_founder';
   
   const getGreeting = () => {
     const date = "April 21, 2026";
     const metrcStatus = "Validated Metrc Integrator (Active)";
+    if (isFounderAssistant) return `✨ **Good Morning, Shantell!** I am **Sylara**, your **Executive Personal Assistant**.\n\nAs your mirror AI, I am fully synced with your Founder Dashboard. I have prepared your daily summaries, state news, and upcoming appointments.\n\nHow can I support your schedule and oversight duties today?`;
     if (variant === 'ggma') return `👋 Welcome to the **GGMA Sector**. I am **Sylara**, your **Intake Agent**. We are an official **${metrcStatus}**. I handle all regulatory onboarding, card processing, and registry management. \n\nHow can I assist with your GGMA licensing today?`;
     if (variant === 'rip') return `🕵️ **RIP Intelligence Portal**. I am **Sylara**, coordinating with the **L.A.R.R.Y Enforcement Engine**. Due to the highly sensitive nature of intelligence and enforcement operations, I can only provide basic guidance here. For secure access to field reports or oversight actions, you must create an official account. \n\nWould you like to begin intake?`;
     if (variant === 'sinc') return `🛡️ **SINC Compliance Infrastructure**. I am **Sylara**, managing your secure operational backbone. Because SINC handles encrypted audit trails and seed-to-sale architecture, deep access requires an authenticated business account. \n\nWould you like to begin business intake?`;
@@ -3504,6 +3506,14 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     return -1;
   });
   const [currentPersona, setCurrentPersona] = useState<'sylara' | 'larry'>('sylara');
+
+  useEffect(() => {
+    if (isFounderAssistant) {
+      setMessages([
+        { role: 'bot', text: getGreeting(), choices: ['View Daily Summary', 'State News Briefing', 'My Appointments', 'Pending Approvals', 'Send Broadcast'] }
+      ]);
+    }
+  }, [isFounderAssistant]);
 
   // Chat Session ID for storing to database
   const [sessionId] = useState(() => `session_${Math.random().toString(36).substr(2, 9)}_${Date.now()}`);
@@ -3806,6 +3816,44 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
 
     let response = '';
     const lower = text.toLowerCase();
+
+    if (isFounderAssistant) {
+      if (lower.includes('daily summary')) {
+        response = "📊 **Executive Daily Summary**\n\n• **Revenue (24h):** $1.2M\n• **New Registrations:** 4,829\n• **Pending Approvals:** 14\n• **System Health:** 100% Operational\n\nI've also sent the detailed metrics to your Secure Dashboard.";
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+        setIsTyping(false);
+        return;
+      }
+      if (lower.includes('state news') || lower.includes('briefing')) {
+        response = "📰 **State News Briefing**\n\n• **Oklahoma:** OMMA extended compliance deadlines by 15 days.\n• **Federal:** DEA Schedule III comment period closing soon.\n• **Internal:** Operations Hub deployed successfully.";
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+        setIsTyping(false);
+        return;
+      }
+      if (lower.includes('appointments')) {
+        response = "📅 **Your Appointments (April 21, 2026)**\n\n• 10:00 AM - Legal Strategy Sync with Attorney James\n• 1:30 PM - Federal Expansion Call\n• 3:00 PM - Monica Green (Compliance Review)\n\nWould you like me to push any of these back?";
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+        setIsTyping(false);
+        return;
+      }
+      if (lower.includes('pending approvals')) {
+        response = "✅ **Pending Approvals**\n\nYou currently have **14** high-level authority sign-offs waiting in the Jurisdiction Map. Would you like me to batch approve the low-risk items?";
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+        setIsTyping(false);
+        return;
+      }
+      if (lower.includes('send broadcast')) {
+        response = "📢 **Send Broadcast**\n\nI can draft a message to all Operations staff or Regulators. What would you like the broadcast to say?";
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+        setIsTyping(false);
+        return;
+      }
+      if (lower.includes('main menu')) {
+        setMessages(prev => [...prev, { role: 'bot', text: 'How can I assist you, Shantell?', choices: getInitialChoices() } as any]);
+        setIsTyping(false);
+        return;
+      }
+    }
     
     // Handle "More Languages" expansion
     if (lower === '+ more languages...' || lower.includes('more languages')) {
@@ -7781,6 +7829,7 @@ export default function App() {
   const [jurisdictionLocked, setJurisdictionLocked] = useState(() => sessionStorage.getItem('gghp_jurisdiction_locked') === 'true');
   const [showJurisdictionGate, setShowJurisdictionGate] = useState(false);
   const [pendingJurisdiction, setPendingJurisdiction] = useState<string | null>(null);
+  const [currentPersona, setCurrentPersona] = useState<'sylara' | 'larry'>('sylara');
 
   const confirmJurisdiction = (state: string) => {
     setJurisdiction(state);
