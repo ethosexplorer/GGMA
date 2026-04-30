@@ -9,7 +9,7 @@ interface CalEvent {
   location?: string; meetLink?: string;
 }
 
-const CATEGORIES = [
+const ALL_CATEGORIES = [
   { id: 'executive', label: 'Executive', color: 'bg-purple-500' },
   { id: 'compliance', label: 'Compliance', color: 'bg-amber-500' },
   { id: 'telehealth', label: 'Telehealth', color: 'bg-emerald-500' },
@@ -37,12 +37,16 @@ const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: string, subtitle?: string }) => {
+  const isExecutive = user?.role === 'executive_founder' || user?.email?.toLowerCase().includes('globalgreenhp') || user?.email?.toLowerCase().includes('monica');
+  const availableCategories = isExecutive ? ALL_CATEGORIES : [{ id: 'personal', label: 'Personal', color: 'bg-slate-500' }];
+  const initialEvents = isExecutive ? SEED_EVENTS : [];
+
   const [view, setView] = useState<ViewMode>('month');
   const [current, setCurrent] = useState(new Date(2026, 3, 28)); // April 28, 2026
-  const [events, setEvents] = useState<CalEvent[]>(SEED_EVENTS);
+  const [events, setEvents] = useState<CalEvent[]>(initialEvents);
   const [selectedDate, setSelectedDate] = useState<string>(fmt(new Date(2026, 3, 28)));
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: 'executive', description: '', attendees: '', location: '', meetLink: '' });
+  const [form, setForm] = useState({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: isExecutive ? 'executive' : 'personal', description: '', attendees: '', location: '', meetLink: '' });
   const [filterCat, setFilterCat] = useState<string | null>(null);
 
   const filtered = filterCat ? events.filter(e => e.category === filterCat) : events;
@@ -77,10 +81,10 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
 
   const addEvent = () => {
     if (!form.title || !form.date) return;
-    const cat = CATEGORIES.find(c => c.id === form.category);
+    const cat = availableCategories.find(c => c.id === form.category);
     setEvents(prev => [...prev, { ...form, id: Date.now().toString(), color: cat?.color || 'bg-slate-500' }]);
     setShowForm(false);
-    setForm({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: 'executive', description: '', attendees: '', location: '', meetLink: '' });
+    setForm({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: isExecutive ? 'executive' : 'personal', description: '', attendees: '', location: '', meetLink: '' });
   };
 
   const deleteEvent = (id: string) => setEvents(prev => prev.filter(e => e.id !== id));
@@ -161,7 +165,7 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
           <div><label className="text-[10px] font-black text-slate-500 uppercase">End</label><input type="time" className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm" value={form.endTime} onChange={e => setForm(f => ({ ...f, endTime: e.target.value }))} /></div>
         </div>
         <select className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium" value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>
-          {CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
+          {availableCategories.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
         </select>
         <input className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm" placeholder="Attendees (comma-separated)" value={form.attendees} onChange={e => setForm(f => ({ ...f, attendees: e.target.value }))} />
         <input className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm" placeholder="Location" value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} />
@@ -210,14 +214,16 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
       </div>
 
       {/* CATEGORY FILTERS */}
-      <div className="flex flex-wrap gap-2">
-        <button onClick={() => setFilterCat(null)} className={cn("px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider border transition-all", !filterCat ? "bg-slate-800 text-white border-slate-800" : "bg-white text-slate-500 border-slate-200 hover:border-slate-400")}>All</button>
-        {CATEGORIES.map(c => (
-          <button key={c.id} onClick={() => setFilterCat(filterCat === c.id ? null : c.id)} className={cn("px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider border transition-all flex items-center gap-1.5", filterCat === c.id ? "bg-slate-800 text-white border-slate-800" : "bg-white text-slate-500 border-slate-200 hover:border-slate-400")}>
-            <div className={cn("w-2 h-2 rounded-full", c.color)} />{c.label}
-          </button>
-        ))}
-      </div>
+      {availableCategories.length > 1 && (
+        <div className="flex flex-wrap gap-2">
+          <button onClick={() => setFilterCat(null)} className={cn("px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider border transition-all", !filterCat ? "bg-slate-800 text-white border-slate-800" : "bg-white text-slate-500 border-slate-200 hover:border-slate-400")}>All</button>
+          {availableCategories.map(c => (
+            <button key={c.id} onClick={() => setFilterCat(filterCat === c.id ? null : c.id)} className={cn("px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider border transition-all flex items-center gap-1.5", filterCat === c.id ? "bg-slate-800 text-white border-slate-800" : "bg-white text-slate-500 border-slate-200 hover:border-slate-400")}>
+              <div className={cn("w-2 h-2 rounded-full", c.color)} />{c.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* === MONTH VIEW === */}
       {view === 'month' && (

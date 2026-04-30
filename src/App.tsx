@@ -8554,13 +8554,15 @@ export default function App() {
             />
           )}
           {view === 'patient-portal' && (
-            <PatientDashboard
-              onLogout={handleLogout}
-              user={userProfile}
-              onSignup={() => setView('patient-signup')}
-              onOpenConcierge={() => setShowLarryModal(true)}
-              key="patient-portal"
-            />
+            <div className="w-full h-full max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12 py-8 overflow-x-hidden">
+              <PatientDashboard
+                onLogout={handleLogout}
+                user={userProfile}
+                onSignup={() => setView('patient-signup')}
+                onOpenConcierge={() => setShowLarryModal(true)}
+                key="patient-portal"
+              />
+            </div>
           )}
           {view === 'provider-signup' && (
             <ProviderRegistrationPage
