@@ -8336,6 +8336,7 @@ export default function App() {
           )}
           {view === 'larry-chatbot' && (
             <LarryMedCardChatbot
+              userProfile={userProfile}
               onNavigate={(v: any, variant: any) => {
                 if (variant) {
                    setView('larry-chatbot');
@@ -8350,6 +8351,7 @@ export default function App() {
           )}
           {view === 'larry-business' && (
             <LarryMedCardChatbot
+              userProfile={userProfile}
               onNavigate={(v) => {
                 handleNavigate(v as any);
               }}
@@ -8568,6 +8570,7 @@ export default function App() {
               </button>
               <div className="flex-1 overflow-y-auto relative z-10">
                 <LarryMedCardChatbot 
+                  userProfile={userProfile}
                   onNavigate={(view: any, role: any) => { 
                     setShowLarryModal(false); 
                     setView(view); 
