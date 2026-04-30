@@ -440,7 +440,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
         })}
         <div className="w-px h-8 bg-slate-200/80 mx-1 self-center" />
         <button 
-          onClick={() => { setDemoUnlocked(true); navigateTab('subscription'); }}
+          onClick={() => navigateTab('subscription')}
           className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'subscription' ? "bg-amber-500 bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md shadow-amber-500/20" : "text-slate-500 hover:text-amber-600 hover:bg-slate-200/50")}
         >
           <Sparkles size={18} /> Settings
@@ -481,7 +481,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
                 <p className="text-sm text-emerald-100/80 font-medium hidden sm:block">Automate compliance reports and enable live Metrc inventory tracking.</p>
              </div>
           </div>
-          <Button onClick={() => { setDemoUnlocked(true); navigateTab('subscription'); }} className="bg-white text-[#1a4731] hover:bg-slate-100 hover:scale-105 transition-all shadow-xl shadow-black/10 whitespace-nowrap mt-4 md:mt-0 font-black rounded-xl">
+          <Button onClick={() => { navigateTab('subscription'); }} className="bg-white text-[#1a4731] hover:bg-slate-100 hover:scale-105 transition-all shadow-xl shadow-black/10 whitespace-nowrap mt-4 md:mt-0 font-black rounded-xl">
             Upgrade Engine
           </Button>
         </div>
@@ -894,7 +894,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
                        <button onClick={() => { if(lowStockAlerts.length > 0) setActiveTab("inventory"); else if (unresolvedAlerts.length > 0) setActiveTab("compliance"); else setActiveTab("reporting"); }} className="text-xs font-bold bg-white text-[#1a4731] px-4 py-2.5 rounded-xl text-left hover:bg-slate-100 transition-colors shadow-sm hidden sm:block">
                          {lowStockAlerts.length > 0 ? "Review Procurement" : unresolvedAlerts.length > 0 ? "Review Alerts" : "Generate Report"}
                        </button>
-                       <button onClick={() => { setDemoUnlocked(true); navigateTab('subscription'); }} className="text-xs font-bold bg-amber-500 text-white px-4 py-2.5 rounded-xl text-left hover:bg-amber-600 transition-colors shadow-sm hidden sm:block">
+                       <button onClick={() => { navigateTab('subscription'); }} className="text-xs font-bold bg-amber-500 text-white px-4 py-2.5 rounded-xl text-left hover:bg-amber-600 transition-colors shadow-sm hidden sm:block">
                          Activate Subscriptions / Add-ons
                        </button>
                     </div>
@@ -902,7 +902,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
                  
                  <div className="p-4 bg-black/20 shrink-0">
                     <div className="relative">
-                       <input type="text" placeholder="Ask L.A.R.R.Y to run an audit or manage subscriptions..." className="w-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm rounded-xl px-4 py-3 pr-10 focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all" onKeyDown={(e) => { if(e.key === "Enter") { const val = e.currentTarget.value.toLowerCase(); if(val.includes('subscription') || val.includes('add-on') || val.includes('purchase') || val.includes('upgrade')) { setDemoUnlocked(true); navigateTab('subscription'); } else { alert("L.A.R.R.Y is analyzing your request. Standby."); } e.currentTarget.value = ""; } }} />
+                       <input type="text" placeholder="Ask L.A.R.R.Y to run an audit or manage subscriptions..." className="w-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm rounded-xl px-4 py-3 pr-10 focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all" onKeyDown={(e) => { if(e.key === "Enter") { const val = e.currentTarget.value.toLowerCase(); if(val.includes('subscription') || val.includes('add-on') || val.includes('purchase') || val.includes('upgrade')) { navigateTab('subscription'); } else { alert("L.A.R.R.Y is analyzing your request. Standby."); } e.currentTarget.value = ""; } }} />
                        <button onClick={(e) => { const input = e.currentTarget.previousElementSibling as HTMLInputElement; if(input) { alert("L.A.R.R.Y is analyzing your request. Standby."); input.value = ""; } }} className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-white/50 hover:text-white transition-colors">
                          <MessageSquare size={16} />
                        </button>
