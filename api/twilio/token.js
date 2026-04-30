@@ -23,7 +23,7 @@ export default function handler(req, res) {
 
     const voiceGrant = new VoiceGrant({
       incomingAllow: true, 
-      // outgoingApplicationSid: process.env.TWILIO_TWIML_APP_SID // For outbound calling later
+      outgoingApplicationSid: process.env.TWILIO_TWIML_APP_SID
     });
 
     const token = new AccessToken(

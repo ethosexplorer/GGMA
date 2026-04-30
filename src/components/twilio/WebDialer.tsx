@@ -119,6 +119,9 @@ export function WebDialer() {
     };
   }, []);
 
+  const [dialNumber, setDialNumber] = useState('');
+  const [showDialer, setShowDialer] = useState(false);
+
   const handleAccept = () => {
     if (incomingCall) {
       incomingCall.accept();
@@ -144,6 +147,45 @@ export function WebDialer() {
     }
   };
 
+  const handleDial = async () => {
+    if (!device || status !== 'ready' || !dialNumber) return;
+    try {
+      setStatus('connecting');
+      const params = { To: dialNumber };
+      const call = await device.connect({ params });
+      
+      call.on('accept', () => {
+        console.log('[WebDialer] Outbound call accepted');
+        setActiveCall(call);
+        setStatus('busy');
+        setShowDialer(false);
+        setCallDuration(0);
+        timerRef.current = setInterval(() => {
+          setCallDuration(prev => prev + 1);
+        }, 1000);
+      });
+
+      call.on('disconnect', () => {
+        console.log('[WebDialer] Outbound call disconnected');
+        setActiveCall(null);
+        setCallDuration(0);
+        if (timerRef.current) clearInterval(timerRef.current);
+        setStatus('ready');
+      });
+
+      call.on('error', (err: any) => {
+        console.error('[WebDialer] Outbound call error:', err);
+        setError('Dial Failed: Check TWILIO_TWIML_APP_SID');
+        setStatus('ready');
+      });
+      
+    } catch (err: any) {
+      console.error('[WebDialer] Dial error:', err);
+      setError(err.message || 'Dial failed');
+      setStatus('ready');
+    }
+  };
+
   const toggleMute = () => {
     if (activeCall) {
       const newMuted = !isMuted;
@@ -161,7 +203,10 @@ export function WebDialer() {
   return (
     <>
       {/* Persistent Status Indicator — always visible */}
-      <div className="fixed bottom-6 left-6 z-[100] flex items-center gap-2 bg-slate-900 border border-slate-700 p-2 pr-4 rounded-full shadow-2xl">
+      <div 
+        onClick={() => { if (status === 'ready' && !activeCall && !incomingCall) setShowDialer(!showDialer); }}
+        className="fixed bottom-6 left-6 z-[100] flex items-center gap-2 bg-slate-900 border border-slate-700 p-2 pr-4 rounded-full shadow-2xl cursor-pointer hover:bg-slate-800 transition-colors"
+      >
         <div className={cn(
           "w-8 h-8 rounded-full flex items-center justify-center text-white",
           status === 'ready' ? "bg-emerald-500" :
@@ -180,13 +225,60 @@ export function WebDialer() {
             status === 'busy' ? "text-rose-400" :
             "text-slate-500"
           )}>
-            {status === 'ready' ? '● Ready for Calls' :
+            {status === 'ready' ? '● Ready (Click to Dial)' :
              status === 'connecting' ? '◌ Connecting...' :
              status === 'busy' ? '● On Call' :
              error ? `✕ ${error.substring(0, 20)}` : '○ Offline'}
           </span>
         </div>
       </div>
+
+      {/* Outbound Dial Pad Overlay */}
+      {showDialer && !activeCall && !incomingCall && (
+        <div className="fixed bottom-24 left-6 z-[150] bg-slate-900 border border-slate-700 p-5 rounded-3xl shadow-2xl w-72">
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-sm font-bold text-white">Make a Call</span>
+            <button onClick={() => setShowDialer(false)} className="text-slate-500 hover:text-white bg-slate-800 p-1 rounded-lg">✕</button>
+          </div>
+          
+          <input 
+            type="text" 
+            value={dialNumber}
+            onChange={(e) => setDialNumber(e.target.value)}
+            placeholder="+1 (555) 555-5555" 
+            className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white text-xl text-center font-mono tracking-widest mb-4 focus:outline-none focus:border-emerald-500 transition-colors"
+          />
+
+          <div className="grid grid-cols-3 gap-3 mb-6">
+            {['1','2','3','4','5','6','7','8','9','*','0','#'].map((key) => (
+              <button 
+                key={key}
+                onClick={() => setDialNumber(prev => prev + key)}
+                className="bg-slate-800 hover:bg-slate-700 text-white text-xl font-bold p-3 rounded-xl transition-colors shadow-sm"
+              >
+                {key}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex gap-3">
+            <button 
+              onClick={() => setDialNumber(prev => prev.slice(0, -1))}
+              disabled={!dialNumber}
+              className="w-16 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 text-slate-400 p-3 rounded-xl transition-colors flex items-center justify-center"
+            >
+              ⌫
+            </button>
+            <button 
+              onClick={handleDial}
+              disabled={!dialNumber || status !== 'ready'}
+              className="flex-1 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 text-white font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
+            >
+              <Phone size={20} /> Dial
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Incoming Call Overlay */}
       {incomingCall && !activeCall && (
@@ -226,7 +318,7 @@ export function WebDialer() {
             </div>
             <span className="text-xs text-white font-mono">{formatTime(callDuration)}</span>
           </div>
-          <p className="text-xs text-slate-400 mb-3 truncate">{activeCall.parameters?.From || 'Unknown'}</p>
+          <p className="text-xs text-slate-400 mb-3 truncate">{activeCall.parameters?.To || activeCall.parameters?.From || 'Unknown'}</p>
           
           <div className="flex justify-between items-center bg-slate-800/50 rounded-xl p-2 border border-slate-700/50">
             <button 

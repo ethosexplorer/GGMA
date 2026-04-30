@@ -8,14 +8,28 @@ export default function handler(req, res) {
   try {
     const twiml = new VoiceResponse();
     
-    // Create a dial block
-    const dial = twiml.dial({
-      timeout: 60,
-      answerOnBridge: true
-    });
-    
-    // Connect to the web browser client
-    dial.client('GGMA_User');
+    // Check if this is an outbound call request from the WebDialer
+    if (req.body.To && req.body.To.trim() !== '') {
+      const dial = twiml.dial({
+        callerId: '+18889634447', // Company number
+        answerOnBridge: true
+      });
+      // Ensure the number is formatted correctly (e.g., starts with +1)
+      let targetNumber = req.body.To;
+      if (!targetNumber.startsWith('+1')) {
+        targetNumber = '+1' + targetNumber.replace(/\D/g, '');
+      }
+      dial.number(targetNumber);
+    } else {
+      // Incoming call logic: Ring the WebDialer
+      const dial = twiml.dial({
+        timeout: 60,
+        answerOnBridge: true
+      });
+      
+      // Connect to the web browser client
+      dial.client('GGMA_User');
+    }
 
     res.status(200).send(twiml.toString());
   } catch (error) {
