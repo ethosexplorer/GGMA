@@ -475,7 +475,11 @@ const DashboardLayout = ({ children, role, onLogout, userProfile, onOpenConcierg
           {currentMenu.map((item, idx) => (
             <button
               key={idx}
-              onClick={() => setActiveSection(item.label)}
+              onClick={() => {
+                setActiveSection(item.label);
+                // Dispatch event so child dashboards can sync their internal tabs
+                window.dispatchEvent(new CustomEvent('sidebar-nav', { detail: { section: item.label } }));
+              }}
               className={cn(
                 "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors group",
                 activeSection === item.label ? "bg-slate-100 text-slate-900" : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
@@ -547,11 +551,7 @@ const DashboardLayout = ({ children, role, onLogout, userProfile, onOpenConcierg
         </header>
 
         <main className="flex-1 p-0 overflow-auto">
-          {activeSection.includes('Telehealth') ? (
-            <TeleHealthDashboard user={userProfile} />
-          ) : (
-            <div className="p-8">{children}</div>
-          )}
+          <div className="p-8">{children}</div>
         </main>
       </div>
     </div>

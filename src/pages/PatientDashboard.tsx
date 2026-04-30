@@ -55,6 +55,26 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
   // Drag-and-drop tab reordering
   const { items: tabs, handleDragStart, handleDragEnter, handleDragEnd, handleDragOver } = useDraggableSidebar(DEFAULT_TABS, 'ggp_patient_tab_order');
 
+  // Listen for sidebar navigation from DashboardLayout
+  React.useEffect(() => {
+    const sidebarMap: Record<string, string> = {
+      'Overview': 'overview',
+      'Telehealth': 'telehealth',
+      'Appointments': 'calendar',
+      'Health Records': 'documents',
+      'Prescriptions': 'telehealth',
+      'Settings': 'subscription',
+    };
+    const handler = (e: Event) => {
+      const section = (e as CustomEvent).detail?.section;
+      if (section && sidebarMap[section]) {
+        setActiveTab(sidebarMap[section]);
+      }
+    };
+    window.addEventListener('sidebar-nav', handler);
+    return () => window.removeEventListener('sidebar-nav', handler);
+  }, []);
+
   const ShadowOverlay = ({ title, description, moduleName }: { title: string, description: string, moduleName: string }) => (
     <div className="absolute inset-0 z-50 flex items-center justify-center p-6 bg-white/40 backdrop-blur-md rounded-3xl overflow-hidden">
       <motion.div 
