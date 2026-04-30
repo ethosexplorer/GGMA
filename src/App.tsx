@@ -2355,8 +2355,8 @@ const SylaraFloatingWidget = ({ onClick, persona = 'sylara', userProfile }: { on
     title = 'Sylara Compliance Director';
     subtitle = 'Compliance Assistant';
   } else if (isFounderAssistant) {
-    title = 'Sylara Executive Assistant';
-    subtitle = 'Founder Mirror AI';
+    title = 'Sylara Executive';
+    subtitle = 'Personal Assistant';
   }
 
   return (
@@ -6091,8 +6091,8 @@ const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card
     headerTitle = 'Sylara';
     headerSubtitle = 'Compliance Director';
   } else if (isFounderAssistant) {
-    headerTitle = 'Sylara';
-    headerSubtitle = 'Executive Assistant';
+    headerTitle = 'Sylara Executive';
+    headerSubtitle = 'Personal Assistant';
   }
 
   return (
@@ -8669,7 +8669,7 @@ export default function App() {
         })()}
 
         {view !== 'larry-chatbot' && (
-          <SylaraFloatingWidget persona={currentPersona} onClick={() => setShowLarryModal(true)} />
+          <SylaraFloatingWidget userProfile={userProfile} persona={currentPersona} onClick={() => setShowLarryModal(true)} />
         )}
 
         {/* Floating Modal for Chatbot */}

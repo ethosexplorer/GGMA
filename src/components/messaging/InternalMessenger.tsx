@@ -25,6 +25,7 @@ const TEAM_MEMBERS = [
   { id: 'founder', name: 'Shantell Robinson', role: 'Founder & Chairman', color: 'bg-amber-500', status: 'online' },
   { id: 'ceo', name: 'Ryan Ferrari', role: 'CEO', color: 'bg-blue-500', status: 'online' },
   { id: 'compliance_director', name: 'Monica Green', role: 'Compliance Director', color: 'bg-emerald-500', status: 'away' },
+  { id: 'larry_ai', name: 'L.A.R.R.Y', role: 'Chief of Operations AI', color: 'bg-[#1a4731]', status: 'online' },
 ];
 
 interface Props {
@@ -101,8 +102,33 @@ export const InternalMessenger = ({ currentUser }: Props) => {
 
   const handleSend = async () => {
     await sendMessage(messageText, currentView);
+    const sentText = messageText;
     setMessageText('');
     inputRef.current?.focus();
+
+    if (currentView?.includes('larry_ai')) {
+      setTimeout(() => {
+        const response = `📡 **L.A.R.R.Y Acknowledged:** I have received your directive: "${sentText}". Processing via Supreme Command matrix now.`;
+        addDoc(collection(db, 'internal_messages'), {
+          sender: 'L.A.R.R.Y',
+          senderRole: 'Chief of Operations AI',
+          channel: currentView,
+          text: response,
+          timestamp: serverTimestamp(),
+          isBroadcast: false,
+        }).catch(() => {
+          setMessages(prev => [...prev, {
+            id: `local-larry-${Date.now()}`,
+            sender: 'L.A.R.R.Y',
+            senderRole: 'Chief of Operations AI',
+            channel: currentView,
+            text: response,
+            timestamp: Timestamp.now(),
+            isBroadcast: false,
+          }]);
+        });
+      }, 1500);
+    }
   };
 
   const handleBroadcast = async () => {
