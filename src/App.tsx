@@ -4374,13 +4374,13 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       setIsTyping(false);
       return;
     } else if (lower.includes('sinc') || lower.includes('secure infrastructure')) {
-      response = '🛡️ **SINC (Secure Infrastructure & Network Compliance)**\n\nSINC is the operational backbone for **Cannabis Businesses** — seed-to-sale tracking, Metrc integration, audit shielding, and encrypted compliance records.\n\nHow can we help your business?';
+      response = '🛡️ **SINC Compliance Infrastructure**\n\nSINC handles encrypted audit trails and seed-to-sale architecture for commercial entities. Are you representing an active **Cannabis Business**, or are you looking for general information on becoming a licensed business?';
       setMessages(prev => [...prev, { 
         role: 'bot', 
         text: response,
-        choices: ['Start Business Intake', 'Audit Shield Setup', 'Seed-to-Sale Compliance', 'Network Integrity Check', 'View Business Fee Schedule', 'Main Menu'] 
+        choices: ['Active Cannabis Business', 'Learn About Licensing', 'Main Menu'] 
       } as any]);
-      setSignupStep(500);
+      setSignupStep(901);
       setIsTyping(false);
       return;
     } else if (lower.includes('telehealth') && !lower.includes('wellness')) {
@@ -4521,6 +4521,14 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
           return;
         }
 
+        if (variant === 'sinc') {
+          response = '🛡️ **SINC Compliance Infrastructure**\n\nSINC handles encrypted audit trails and seed-to-sale architecture for commercial entities. Are you representing an active **Cannabis Business**, or are you looking for general information on becoming a licensed business?';
+          setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Active Cannabis Business', 'Learn About Licensing', 'Main Menu'] } as any]);
+          setSignupStep(901);
+          setIsTyping(false);
+          return;
+        }
+
         setMessages(prev => [...prev, { role: 'bot', text: getGreeting(), choices: getInitialChoices() } as any]);
         setSignupStep(0);
         setIsTyping(false);
@@ -4531,6 +4539,19 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     if (signupStep === 900) {
       response = `Due to the highly sensitive nature of intelligence and enforcement operations, I cannot release field data without verification.\n\nFor secure access to restricted intelligence and field reports, you must **sign up and authenticate your official credentials** through the Oversight Portal.`;
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Secure Login / Sign Up', 'Main Menu'] } as any]);
+      setSignupStep(0);
+      setIsTyping(false);
+      return;
+    }
+
+    if (signupStep === 901) {
+      if (lower.includes('active') || lower.includes('business')) {
+        response = `To access SINC infrastructure tools, audit shields, and seed-to-sale data, you must **sign up and authenticate your business credentials**.\n\nPlease log in or create your Business Portal account to proceed.`;
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Secure Login / Sign Up', 'Main Menu'] } as any]);
+      } else {
+        response = `Are you ready to begin your business intake application, or would you like to view the fee schedules first?`;
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Business Intake', 'View Business Fee Schedule', 'Main Menu'] } as any]);
+      }
       setSignupStep(0);
       setIsTyping(false);
       return;
