@@ -30,6 +30,7 @@ import { FounderModals } from '../components/FounderModals';
 import { ITSupportDashboard } from '../components/it/ITSupportDashboard';
 import { RolePermissionsPanel } from '../components/RolePermissionsPanel';
 import { InternalMessenger } from '../components/messaging/InternalMessenger';
+import { AITrainingTab } from '../components/AITrainingTab';
 import { UserCalendar } from '../components/UserCalendar';
 import { voip800 } from '../lib/voip800';
 
@@ -45,6 +46,7 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'hr_intelligence', label: 'HR Intelligence (Sylara)', icon: UserPlus },
   { id: 'launch_script', label: 'Master Launch Script', icon: FileText },
   { id: 'jurisdiction_map', label: 'Nationwide Oversight', icon: Globe },
+  { id: 'ai_training', label: 'My Assistant & Training', icon: Bot, badge: 'AI' },
   { id: '_sec_main', section: 'MAIN' },
   { id: 'messages', label: 'Messages', icon: MessageSquare, badge: 'Live' },
   { id: 'internal_scheduler', label: 'Calendar & Scheduler', icon: Clock, badge: 'New' },
@@ -3297,6 +3299,7 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
         return <RolePermissionsPanel viewerRole={isMonica ? 'compliance_director' : (isRyan ? 'ceo' : 'founder')} />;
       case 'messages':
         return <InternalMessenger currentUser={{ name: fullName, role: userTitle, roleId: isMonica ? 'compliance_director' : (isRyan ? 'ceo' : 'founder') }} />;
+      case 'ai_training': return <div className="h-full w-full -m-10 p-10 bg-slate-50"><AITrainingTab userProfile={user} /></div>;
       case 'settings': return renderSettings();
       case 'call_center': return renderCallCenter();
       default: return renderOverview();
