@@ -302,6 +302,16 @@ export const FounderDashboard = ({ onLogout, user }: { onLogout?: () => void | P
   };
 
   const [activeTab, setActiveTab] = useState('overview');
+
+  useEffect(() => {
+    const larryTabs = ['state_authority', 'federal', 'jurisdiction_map', 'compliance', 'operations', 'internal_admin', 'external_admin'];
+    if (larryTabs.includes(activeTab)) {
+      window.dispatchEvent(new CustomEvent('persona-change', { detail: 'larry' }));
+    } else {
+      window.dispatchEvent(new CustomEvent('persona-change', { detail: 'sylara' }));
+    }
+  }, [activeTab]);
+
   const [isAddingLedgerEntry, setIsAddingLedgerEntry] = useState<'revenue' | 'payable' | null>(null);
   const [activeModal, setActiveModal] = useState<{type: string, data?: any} | null>(null);
   const [ledgerForm, setLedgerForm] = useState({ name: '', amount: '' });

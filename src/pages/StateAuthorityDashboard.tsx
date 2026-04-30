@@ -6,6 +6,7 @@ import { Calendar, Building2, ShieldCheck, Landmark, FileCheck, DollarSign, Acti
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { UserCalendar } from '../components/UserCalendar';
+import { PublicHealthDashboard } from './PublicHealthDashboard';
 
 export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
   const [activeTab, setActiveTab] = useState('legal_oversight');
@@ -28,7 +29,7 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
                 <ShieldCheck size={12} />
                 OMMA / DOJ ALERT
               </span>
-              <span className="text-teal-200 text-[10px] font-bold uppercase tracking-wider">{new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })} • Federal Reclassification</span>
+              <span className="text-teal-200 text-[10px] font-bold uppercase tracking-wider">{new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })} ï¿½ Federal Reclassification</span>
             </div>
             <h2 className="text-xl font-extrabold text-white leading-tight mb-2">DOJ Reclassifies Marijuana to Schedule III</h2>
             <p className="text-sm text-teal-100/90 leading-relaxed max-w-4xl">
@@ -127,7 +128,7 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
       <div className="bg-white border-b border-slate-200 p-8 flex justify-between items-end rounded-[2rem] shadow-sm">
          <div>
             <h2 className="text-3xl font-black text-slate-900 tracking-tight italic uppercase">Authorization Hub</h2>
-            <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Processing Pipeline • State-Level Final Authority</p>
+            <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Processing Pipeline ï¿½ State-Level Final Authority</p>
          </div>
          <div className="flex gap-4">
             <div className="px-6 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-center">
@@ -221,7 +222,7 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
                  if (e.target.value === '1234') setIsUnlocked(true);
               }} 
               className="w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 rounded-xl p-4 text-center text-3xl font-black text-slate-800 tracking-[1em] mb-4 outline-none transition-all" 
-              placeholder="••••"
+              placeholder="ï¿½ï¿½ï¿½ï¿½"
             />
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-4">Authorized Personnel Only</p>
           </div>
@@ -289,6 +290,8 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
            {activeTab === 'approvals_denials' && renderApprovalsDenials()}
            {activeTab === 'jurisdiction' && renderJurisdictionDashboard()}
            {activeTab === 'compliance' && <div className="text-center py-40 text-slate-400 font-bold uppercase tracking-widest italic">Live Compliance Shield Active...</div>}
+           {activeTab === 'health_labs' && <div className="h-full w-full -m-10"><PublicHealthDashboard /></div>}
+           {activeTab === 'metrc_state' && <div className="text-center py-40 text-slate-400 font-bold uppercase tracking-widest italic">Live Metrc Sandbox Sync Active...</div>}
         </div>
       </div>
 
@@ -298,7 +301,7 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
             <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50">
               <div>
                 <h3 className="text-2xl font-black text-slate-900 tracking-tight">{selectedApplicant.n}</h3>
-                <p className="text-sm font-bold text-slate-500">{selectedApplicant.t} • {selectedApplicant.r}</p>
+                <p className="text-sm font-bold text-slate-500">{selectedApplicant.t} ï¿½ {selectedApplicant.r}</p>
               </div>
               <button onClick={() => setSelectedApplicant(null)} className="text-slate-400 hover:text-slate-600">
                  <XCircle size={28} />
