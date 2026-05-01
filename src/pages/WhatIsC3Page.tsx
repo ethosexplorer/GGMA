@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { ArrowLeft, CheckCircle2, Star, Check, User, Building2 } from 'lucide-react';
+import { ArrowLeft, CircleCheck, Star, Check, User, Building2 } from 'lucide-react';
 
 export const WhatIsC3Page = ({ onNavigate }: { onNavigate: (view: string) => void }) => {
   useEffect(() => {
@@ -136,7 +136,7 @@ export const WhatIsC3Page = ({ onNavigate }: { onNavigate: (view: string) => voi
                 <ul className="space-y-2.5">
                   {pillar.items.map((item, j) => (
                     <li key={j} className="flex items-start gap-2.5 text-sm text-slate-600">
-                      <CheckCircle2 size={16} className="text-emerald-500 shrink-0 mt-0.5" />
+                      <CircleCheck size={16} className="text-emerald-500 shrink-0 mt-0.5" />
                       <span className="leading-snug">{item}</span>
                     </li>
                   ))}
@@ -179,19 +179,19 @@ export const WhatIsC3Page = ({ onNavigate }: { onNavigate: (view: string) => voi
             <div className="bg-emerald-50 rounded-[2rem] border border-emerald-200 p-8">
               <h3 className="text-xl font-black text-emerald-900 mb-4 flex items-center gap-2"><User size={20} /> For Patients</h3>
               <ul className="space-y-3 text-sm text-emerald-800">
-                <li className="flex items-start gap-2"><CheckCircle2 size={16} className="text-emerald-600 shrink-0 mt-0.5" /> Track your compliance journey — card renewals, physician visits, and care milestones</li>
-                <li className="flex items-start gap-2"><CheckCircle2 size={16} className="text-emerald-600 shrink-0 mt-0.5" /> Earn rewards for staying compliant and engaging with educational resources</li>
-                <li className="flex items-start gap-2"><CheckCircle2 size={16} className="text-emerald-600 shrink-0 mt-0.5" /> Higher scores unlock discounts at participating dispensaries</li>
-                <li className="flex items-start gap-2"><CheckCircle2 size={16} className="text-emerald-600 shrink-0 mt-0.5" /> Build a verified patient trust profile visible to your care team</li>
+                <li className="flex items-start gap-2"><CircleCheck size={16} className="text-emerald-600 shrink-0 mt-0.5" /> Track your compliance journey — card renewals, physician visits, and care milestones</li>
+                <li className="flex items-start gap-2"><CircleCheck size={16} className="text-emerald-600 shrink-0 mt-0.5" /> Earn rewards for staying compliant and engaging with educational resources</li>
+                <li className="flex items-start gap-2"><CircleCheck size={16} className="text-emerald-600 shrink-0 mt-0.5" /> Higher scores unlock discounts at participating dispensaries</li>
+                <li className="flex items-start gap-2"><CircleCheck size={16} className="text-emerald-600 shrink-0 mt-0.5" /> Build a verified patient trust profile visible to your care team</li>
               </ul>
             </div>
             <div className="bg-slate-900 rounded-[2rem] border border-slate-700 p-8 text-white">
               <h3 className="text-xl font-black mb-4 flex items-center gap-2"><Building2 size={20} /> For Businesses</h3>
               <ul className="space-y-3 text-sm text-slate-300">
-                <li className="flex items-start gap-2"><CheckCircle2 size={16} className="text-emerald-400 shrink-0 mt-0.5" /> Demonstrate audit readiness to OMMA and state regulators in real-time</li>
-                <li className="flex items-start gap-2"><CheckCircle2 size={16} className="text-emerald-400 shrink-0 mt-0.5" /> Reduce compliance violations and avoid costly fines with AI-driven monitoring</li>
-                <li className="flex items-start gap-2"><CheckCircle2 size={16} className="text-emerald-400 shrink-0 mt-0.5" /> Attract investors and partners with a verified, transparent trust score</li>
-                <li className="flex items-start gap-2"><CheckCircle2 size={16} className="text-emerald-400 shrink-0 mt-0.5" /> Qualify for reduced insurance premiums and preferred vendor listings</li>
+                <li className="flex items-start gap-2"><CircleCheck size={16} className="text-emerald-400 shrink-0 mt-0.5" /> Demonstrate audit readiness to OMMA and state regulators in real-time</li>
+                <li className="flex items-start gap-2"><CircleCheck size={16} className="text-emerald-400 shrink-0 mt-0.5" /> Reduce compliance violations and avoid costly fines with AI-driven monitoring</li>
+                <li className="flex items-start gap-2"><CircleCheck size={16} className="text-emerald-400 shrink-0 mt-0.5" /> Attract investors and partners with a verified, transparent trust score</li>
+                <li className="flex items-start gap-2"><CircleCheck size={16} className="text-emerald-400 shrink-0 mt-0.5" /> Qualify for reduced insurance premiums and preferred vendor listings</li>
               </ul>
             </div>
           </div>
