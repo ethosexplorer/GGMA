@@ -69,27 +69,27 @@ export const RolePricingPage = ({
               <p className="text-lg text-white/70 font-medium max-w-2xl">{config.subtitle}</p>
             </div>
             
-            {/* Embedded Portal Login Card for this role */}
+            {/* Embedded Portal Card for this role */}
             <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20 text-center max-w-sm w-full shrink-0">
               {role === 'patient' && (
                 <>
                   <h3 className="text-xl font-bold text-white mb-2">Patient Portal (GGMA)</h3>
                   <p className="text-white/70 text-xs mb-4">Adult, Minor, Caregiver, Short-Term, Out-of-State</p>
-                  <button onClick={() => onNavigate && onNavigate('login')} className="w-full py-3 bg-white text-blue-900 rounded-lg font-bold hover:bg-blue-50 transition-colors shadow-lg">Patient Portal Login</button>
+                  <button onClick={() => onNavigate && onNavigate('signup')} className="w-full py-3 bg-white text-blue-900 rounded-lg font-bold hover:bg-blue-50 transition-colors shadow-lg">Create an Account</button>
                 </>
               )}
               {['business', 'provider', 'attorney'].includes(role) && (
                 <>
                   <h3 className="text-xl font-bold text-white mb-2">Business Portal (GGE)</h3>
                   <p className="text-white/70 text-xs mb-4">Providers, Attorneys, Dispensaries, Cultivation</p>
-                  <button onClick={() => onNavigate && onNavigate('login')} className="w-full py-3 bg-white text-emerald-900 rounded-lg font-bold hover:bg-emerald-50 transition-colors shadow-lg">Business Login / Signup</button>
+                  <button onClick={() => onNavigate && onNavigate('signup', 'Business')} className="w-full py-3 bg-white text-emerald-900 rounded-lg font-bold hover:bg-emerald-50 transition-colors shadow-lg">Create an Account</button>
                 </>
               )}
               {role === 'agency' && (
                 <>
                   <h3 className="text-xl font-bold text-white mb-2">Oversight Portal (RIP/SINC)</h3>
                   <p className="text-white/70 text-xs mb-4">Law Enforcement, Regulators, Executives</p>
-                  <button onClick={() => onNavigate && onNavigate('login')} className="w-full py-3 bg-white text-red-900 rounded-lg font-bold hover:bg-red-50 transition-colors shadow-lg">Secure Login</button>
+                  <button onClick={() => onNavigate && onNavigate('signup', 'Oversight')} className="w-full py-3 bg-white text-red-900 rounded-lg font-bold hover:bg-red-50 transition-colors shadow-lg">Create an Account</button>
                 </>
               )}
             </div>
