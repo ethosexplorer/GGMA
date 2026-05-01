@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AlertCircle } from 'lucide-react';
-import { fetchRegulatoryFeed, formatFeedDate, type RegulatoryUpdate } from '../lib/regulatoryFeed';
+import { fetchRegulatoryFeed, formatFeedDate, type RegulatoryUpdate } from '../../lib/regulatoryFeed';
 
 export const RegulatoryFeedWidget = ({ jurisdiction, compact = false }: { jurisdiction?: string, compact?: boolean }) => {
   const [feed, setFeed] = useState<RegulatoryUpdate[]>([]);
