@@ -123,6 +123,7 @@ import { PatientDashboard } from './pages/PatientDashboard';
 import { OversightDashboard } from './pages/OversightDashboard';
 import { PricingTiers } from './components/PricingTiers';
 import { RolePricingPage } from './pages/RolePricingPage';
+import { StateFactsPage } from './pages/StateFactsPage';
 import { LanguageSelector } from './components/LanguageSelector';
 import { FeaturedPoll, StickyPollWidget, RevolvingSurveyBanner } from './components/CommunityPolls';
 import { GlobalHeader } from './components/GlobalHeader';
@@ -1416,9 +1417,8 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
         </div>
 
         <div className="hidden md:flex items-center gap-5 text-sm font-medium text-slate-600">
-          <a href="#state-facts" className="hover:text-[#1a4731] transition-colors">State Facts</a>
-          <a href="#credentials-section" className="hover:text-[#1a4731] transition-colors">Credentials</a>
-          <a href="#membership-tiers" className="hover:text-[#1a4731] transition-colors">Pricing</a>
+          <button onClick={() => onNavigate('state-facts' as any)} className="hover:text-[#1a4731] transition-colors">State Facts</button>
+          <button onClick={() => onNavigate('education' as any)} className="hover:text-[#1a4731] transition-colors">Education Academy</button>
           <button onClick={() => onNavigate('legal-advocacy' as any)} className="hover:text-amber-600 transition-colors font-bold text-amber-700 flex items-center gap-1">
             <Scale size={14} /> Legal Support
           </button>
@@ -1429,7 +1429,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
         </div>
 
         <div className="flex items-center gap-3">
-          <Button onClick={() => onNavigate('login')}>Login</Button>
+          <Button onClick={() => onNavigate('login')}>Portal Login</Button>
         </div>
       </nav>
 
@@ -1926,78 +1926,6 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
           </div>
         </div>
       </section>
-
-      {/* Maps & Stats Section */}
-      <section id="jurisdiction-intelligence" className="py-24 px-6 bg-slate-50 border-t border-slate-200">
-        <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-16 items-center">
-          <div className="lg:w-1/2 space-y-8">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase tracking-widest border border-emerald-200">
-               Live Data Feed
-            </div>
-            <h2 className="text-5xl font-black text-slate-900 tracking-tight leading-[1.1]">
-              Real-time <br /> <span className="text-emerald-600">State Jurisdiction</span> Intelligence
-            </h2>
-            <p className="text-lg text-slate-500 leading-relaxed font-medium">
-              We've uploaded regulatory facts and compliance standards for all 50 states. Our nationwide aggregator Establishment monitors 400+ data points hourly to ensure you are never out of compliance.
-            </p>
-            <div className="grid grid-cols-2 gap-6">
-               <div className="p-6 bg-white rounded-3xl border border-slate-200 shadow-sm">
-                  <p className="text-3xl font-black text-slate-900">100%</p>
-                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">US Territory Coverage</p>
-               </div>
-               <div className="p-6 bg-white rounded-3xl border border-slate-200 shadow-sm">
-                  <p className="text-3xl font-black text-emerald-600">2.4M</p>
-                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Active Patient Records</p>
-               </div>
-            </div>
-          </div>
-
-          <div className="lg:w-1/2 w-full h-[500px] bg-white rounded-[3rem] border border-slate-200 shadow-2xl overflow-hidden relative group">
-            <div className="absolute inset-0 bg-emerald-500 bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none"></div>
-            <MapChart />
-          </div>
-        </div>
-      </section>
-
-      {/* State Facts & Compliance Standards Grid */}
-      <section id="state-facts" className="py-24 px-6 bg-white">
-        <div className="max-w-6xl mx-auto">
-           <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-16">
-              <div className="space-y-4">
-                 <h1 className="text-3xl font-black text-slate-800 tracking-tight">GGHP Oversight Command Hub</h1>
-            <p className="text-slate-500 font-medium">Unified access to Global Green Enterprise Inc sectors: GGMA, RIP, and SINC.</p>
-              </div>
-              <button 
-                onClick={() => onNavigate('login')}
-                className="px-6 py-3 bg-emerald-50 text-emerald-700 rounded-xl font-bold border border-emerald-100 hover:bg-emerald-100 transition-all flex items-center gap-2"
-              >
-                 Explore Full Database <ArrowRight size={18} />
-              </button>
-           </div>
-           
-           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[
-                { s: 'Oklahoma', t: '7% Excise Tax', c: 'Open Medical', d: '2,400 Dispensaries' },
-                { s: 'Florida', t: '0% Excise Tax', c: 'Strict Medical', d: '630 Dispensaries' },
-                { s: 'California', t: '15% Excise Tax', c: 'Full Recreational', d: '1,100 Dispensaries' },
-                { s: 'Texas', t: 'Low THC Only', c: 'Restrictive', d: '3 Active Hubs' }
-              ].map((st, i) => (
-                <div key={i} className="p-8 bg-slate-50 rounded-[2rem] border border-slate-100 hover:bg-white hover:shadow-xl hover:scale-[1.02] transition-all cursor-pointer group">
-                   <h4 className="text-xl font-black text-slate-900 mb-4">{st.s}</h4>
-                   <div className="space-y-3">
-                      <div className="flex items-center gap-2 text-xs font-bold text-slate-500"><Activity size={14} className="text-emerald-500" /> {st.t}</div>
-                      <div className="flex items-center gap-2 text-xs font-bold text-slate-500"><Shield size={14} className="text-blue-500" /> {st.c}</div>
-                      <div className="flex items-center gap-2 text-xs font-bold text-slate-500"><Building2 size={14} className="text-amber-500" /> {st.d}</div>
-                   </div>
-                   <div className="mt-8 pt-6 border-t border-slate-200 flex items-center justify-between text-emerald-600 font-bold text-xs uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
-                      Read Statutes <ChevronRight size={14} />
-                   </div>
-                </div>
-              ))}
-           </div>
-        </div>
-      </section>
-
 
 
       {/* Patient Success Stories (GGMA Sector Reviews) */}
@@ -8339,6 +8267,11 @@ export default function App() {
           </div>
         )}
         <AnimatePresence mode="wait">
+          {view === 'state-facts' && (
+            <motion.div key="state-facts" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+              <StateFactsPage onBack={() => handleNavigate('landing')} onNavigate={handleNavigate} />
+            </motion.div>
+          )}
           {view === 'landing' && (
             <LandingPage
               onNavigate={(v, role) => {
