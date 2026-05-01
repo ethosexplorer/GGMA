@@ -8492,7 +8492,7 @@ export default function App() {
           {view === 'landing' && (
             <LandingPage
               onNavigate={(v, role) => {
-                handleNavigate(v as any); setInitialRole(role);
+                handleNavigate(v as any, role); setInitialRole(role);
               }}
               jurisdiction={jurisdiction}
               setJurisdiction={setJurisdiction}
