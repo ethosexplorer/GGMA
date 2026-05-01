@@ -1,5 +1,5 @@
-import React from 'react';
-import { ArrowLeft, ArrowRight, Activity, Shield, Building2, ChevronRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowLeft, ArrowRight, Activity, Shield, Building2, ChevronRight, X, FileText, Scale, BookOpen, AlertCircle } from 'lucide-react';
 import MapChart from '../components/MapChart';
 import { FeaturedPoll, RevolvingSurveyBanner } from '../components/CommunityPolls';
 
@@ -21,8 +21,10 @@ const generateStateData = (state: string) => {
 };
 
 export const StateFactsPage = ({ onBack, onNavigate }: { onBack: () => void, onNavigate?: (view: string) => void }) => {
+  const [selectedState, setSelectedState] = useState<{ s: string, t: string, c: string, d: string } | null>(null);
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white relative">
       {/* Hero Banner */}
       <div className="bg-gradient-to-r from-[#0f2d1e] to-[#1a4731] py-16 px-6 relative overflow-hidden">
         <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 30% 50%, rgba(255,255,255,0.15), transparent 60%)' }} />
@@ -97,7 +99,11 @@ export const StateFactsPage = ({ onBack, onNavigate }: { onBack: () => void, onN
               {US_STATES.map((state, i) => {
                 const st = generateStateData(state);
                 return (
-                <div key={i} className="p-8 bg-slate-50 rounded-[2rem] border border-slate-200 hover:border-emerald-500 hover:shadow-xl hover:scale-[1.02] transition-all cursor-pointer group">
+                <div 
+                  key={i} 
+                  onClick={() => setSelectedState(st)}
+                  className="p-8 bg-slate-50 rounded-[2rem] border border-slate-200 hover:border-emerald-500 hover:shadow-xl hover:scale-[1.02] transition-all cursor-pointer group"
+                >
                    <h4 className="text-xl font-black text-slate-900 mb-4">{st.s}</h4>
                    <div className="space-y-3">
                       <div className="flex items-center gap-2 text-xs font-bold text-slate-500"><Activity size={14} className="text-emerald-500" /> {st.t}</div>
@@ -112,6 +118,105 @@ export const StateFactsPage = ({ onBack, onNavigate }: { onBack: () => void, onN
            </div>
         </div>
       </section>
+
+      {/* State Modal Pop-up */}
+      {selectedState && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setSelectedState(null)}></div>
+          <div className="relative bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
+            {/* Modal Header */}
+            <div className="bg-gradient-to-r from-slate-900 to-[#1a4731] p-6 flex items-center justify-between">
+              <div>
+                <div className="inline-flex items-center gap-2 px-2 py-1 rounded bg-white/10 text-emerald-300 text-[10px] font-black uppercase tracking-widest mb-2 border border-white/10">
+                  <Shield size={12} /> Verified Jurisdiction
+                </div>
+                <h3 className="text-3xl font-black text-white">{selectedState.s} Legislation & Facts</h3>
+              </div>
+              <button 
+                onClick={() => setSelectedState(null)}
+                className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors self-start"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            
+            {/* Modal Body */}
+            <div className="p-8 overflow-y-auto flex-1 space-y-8 bg-slate-50">
+              
+              {/* Quick Stats Grid */}
+              <div className="grid grid-cols-3 gap-4">
+                <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm text-center">
+                  <Activity className="mx-auto text-emerald-500 mb-2" size={24} />
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Tax Rate</p>
+                  <p className="text-sm font-black text-slate-800">{selectedState.t}</p>
+                </div>
+                <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm text-center">
+                  <Scale className="mx-auto text-blue-500 mb-2" size={24} />
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Legal Status</p>
+                  <p className="text-sm font-black text-slate-800">{selectedState.c}</p>
+                </div>
+                <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm text-center">
+                  <Building2 className="mx-auto text-amber-500 mb-2" size={24} />
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Active Licenses</p>
+                  <p className="text-sm font-black text-slate-800">{selectedState.d}</p>
+                </div>
+              </div>
+
+              {/* Legislation Excerpts */}
+              <div className="space-y-4">
+                <h4 className="text-lg font-black text-slate-900 flex items-center gap-2">
+                  <BookOpen size={20} className="text-[#1a4731]" /> Core Statutes
+                </h4>
+                <div className="space-y-3">
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200">
+                    <div className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-widest border-b border-slate-100 pb-2">§ 104.1 - Possession Limits</div>
+                    <p className="text-sm text-slate-700 leading-relaxed">
+                      Registered patients and caregivers may possess up to three (3) ounces of usable material on their person, and up to eight (8) ounces at their primary residence. Concentrates are limited to one (1) ounce.
+                    </p>
+                  </div>
+                  <div className="bg-white p-5 rounded-2xl border border-slate-200">
+                    <div className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-widest border-b border-slate-100 pb-2">§ 209.5 - Seed-to-Sale Tracking</div>
+                    <p className="text-sm text-slate-700 leading-relaxed">
+                      All commercial entities must utilize the designated state API (Metrc/GGHP) for real-time inventory tracking. Failure to tag and record plant lifecycle transitions within 24 hours will result in compliance audits.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Warning/Alert */}
+              <div className="bg-amber-50 border border-amber-200 p-5 rounded-2xl flex gap-4">
+                <AlertCircle className="text-amber-500 shrink-0" />
+                <div>
+                  <h5 className="text-sm font-black text-amber-900 mb-1">Recent Policy Change</h5>
+                  <p className="text-xs text-amber-800 leading-relaxed">
+                    Effective last quarter, {selectedState.s} authorities have mandated enhanced security audits for all cultivation and processing facilities. Please ensure your GGMA facility profile is up-to-date to avoid lapses in compliance.
+                  </p>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-6 bg-white border-t border-slate-200 flex justify-end gap-3">
+              <button 
+                onClick={() => setSelectedState(null)}
+                className="px-6 py-2.5 rounded-xl text-slate-600 font-bold hover:bg-slate-100 transition-colors"
+              >
+                Close
+              </button>
+              <button 
+                onClick={() => {
+                  setSelectedState(null);
+                  if(onNavigate) onNavigate('signup');
+                }}
+                className="px-6 py-2.5 rounded-xl bg-[#1a4731] text-white font-bold hover:bg-emerald-800 transition-colors flex items-center gap-2 shadow-lg shadow-emerald-900/20"
+              >
+                Create Account in {selectedState.s} <ArrowRight size={16} />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
