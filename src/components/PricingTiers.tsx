@@ -346,9 +346,14 @@ const AddOnCard = ({ addon, isSelected, onToggle }: { key?: string; addon: AddOn
 );
 
 // ─── Main Component ───
-export const PricingTiers = ({ onNavigate }: { onNavigate?: (view: string) => void }) => {
-  const [activeTab, setActiveTab] = useState<TabId>('patient');
+export const PricingTiers = ({ onNavigate, defaultTab, onChatRole }: { onNavigate?: (view: string) => void, defaultTab?: TabId, onChatRole?: (role: string) => void }) => {
+  const [activeTab, setActiveTab] = useState<TabId>(defaultTab || 'patient');
   const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly');
+
+  // Sync with external defaultTab changes
+  useEffect(() => {
+    if (defaultTab) setActiveTab(defaultTab);
+  }, [defaultTab]);
 
   const [selectedAddons, setSelectedAddons] = useState<AddOn[]>([]);
   
@@ -600,17 +605,27 @@ export const PricingTiers = ({ onNavigate }: { onNavigate?: (view: string) => vo
         </div>
 
         {/* Bottom CTA */}
-        <div className="text-center mt-12">
+        <div className="text-center mt-12 space-y-4">
           <p className="text-sm text-slate-500 mb-4 font-medium">
             Need a custom plan? Our team can build a tailored package for your organization.
           </p>
-          <button
-            onClick={() => onNavigate?.('login')}
-            className="inline-flex items-center gap-2 px-8 py-4 bg-slate-900 text-white rounded-2xl font-black hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/20"
-          >
-            Start Free Today
-            <ArrowRight size={18} />
-          </button>
+          <div className="flex flex-wrap justify-center gap-4">
+            <button
+              onClick={() => onNavigate?.('login')}
+              className="inline-flex items-center gap-2 px-8 py-4 bg-slate-900 text-white rounded-2xl font-black hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/20"
+            >
+              Start Free Today
+              <ArrowRight size={18} />
+            </button>
+            {onChatRole && (
+              <button
+                onClick={() => onChatRole(activeTab)}
+                className="inline-flex items-center gap-2 px-8 py-4 bg-purple-600 text-white rounded-2xl font-black hover:bg-purple-500 transition-all shadow-xl shadow-purple-600/20"
+              >
+                💬 Ask Sylara About This Plan
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </section>

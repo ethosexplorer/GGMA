@@ -1290,6 +1290,7 @@ const STATE_RESOURCES: Record<string, any> = {
 const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate: (view: 'login' | 'signup' | 'patient-portal' | 'support' | 'larry-chatbot' | 'larry-business' | 'legal-advocacy', role?: string) => void, jurisdiction?: string, setJurisdiction?: (s: string) => void }) => {
   const [liveFeed, setLiveFeed] = useState<RegulatoryUpdate[]>([]);
   const [feedLoading, setFeedLoading] = useState(true);
+  const [selectedTier, setSelectedTier] = useState<string | undefined>(undefined);
   
   useEffect(() => {
     setFeedLoading(true);
@@ -1471,14 +1472,15 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
           {/* ROLE SELECTOR BUTTONS */}
           <div className="pt-4">
             <p className="text-emerald-300/60 text-xs font-black uppercase tracking-[0.3em] mb-6">I am a...</p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-4xl mx-auto">
               {[
-                { label: 'Business', icon: '🏢', desc: 'Compliance & Licensing', action: () => onNavigate('larry-chatbot', 'ggma') },
-                { label: 'Patient', icon: '🏥', desc: 'Telehealth & Cards', action: () => onNavigate('patient-portal') },
-                { label: 'Attorney', icon: '⚖️', desc: 'Cases & Regulatory', action: () => onNavigate('legal-advocacy' as any) },
-                { label: 'Agency', icon: '🛡️', desc: 'Oversight & Enforcement', action: () => onNavigate('larry-chatbot', 'rip') },
+                { label: 'Business', icon: '🏢', desc: 'Compliance & Licensing', tier: 'cannabis_b2b' },
+                { label: 'Patient', icon: '🏥', desc: 'Telehealth & Cards', tier: 'patient' },
+                { label: 'Provider', icon: '🩺', desc: 'Consultations & Care', tier: 'provider' },
+                { label: 'Attorney', icon: '⚖️', desc: 'Cases & Regulatory', tier: 'attorney' },
+                { label: 'Agency', icon: '🛡️', desc: 'Oversight & Enforcement', tier: 'state' },
               ].map(role => (
-                <button key={role.label} onClick={role.action} className="group bg-white/5 backdrop-blur-md border border-white/15 rounded-2xl p-6 text-center hover:bg-white/15 hover:border-emerald-400/50 hover:scale-[1.03] transition-all duration-300">
+                <button key={role.label} onClick={() => { setSelectedTier(role.tier); setTimeout(() => document.getElementById('membership-tiers')?.scrollIntoView({ behavior: 'smooth' }), 100); }} className={`group backdrop-blur-md border rounded-2xl p-6 text-center hover:scale-[1.03] transition-all duration-300 ${selectedTier === role.tier ? 'bg-emerald-500/20 border-emerald-400/60' : 'bg-white/5 border-white/15 hover:bg-white/15 hover:border-emerald-400/50'}`}>
                   <div className="text-3xl mb-3">{role.icon}</div>
                   <div className="text-white font-black text-sm">{role.label}</div>
                   <div className="text-emerald-300/60 text-[10px] font-bold mt-1 uppercase tracking-wider">{role.desc}</div>
@@ -1488,11 +1490,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
           </div>
 
           <div className="flex flex-wrap justify-center gap-4 pt-6">
-            <button onClick={() => onNavigate('login')} className="px-8 py-4 bg-emerald-500 text-[#0a1f14] rounded-2xl font-black hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-900/30 flex items-center gap-2">
-              Login to Dashboard
-              <ArrowRight size={18} />
-            </button>
-            <button onClick={() => onNavigate('larry-chatbot')} className="px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-2xl font-bold hover:bg-white/20 transition-all flex items-center gap-2">
+            <button onClick={() => onNavigate('larry-chatbot')} className="px-8 py-4 bg-emerald-500 text-[#0a1f14] rounded-2xl font-black hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-900/30 flex items-center gap-2">
               💬 Chat with Sylara AI
             </button>
           </div>
@@ -1860,7 +1858,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
       </section>
 
       {/* Subscription Tiers Section */}
-      <PricingTiers onNavigate={(view) => onNavigate(view as any)} />
+      <PricingTiers onNavigate={(view) => onNavigate(view as any)} defaultTab={selectedTier as any} onChatRole={(role) => onNavigate('larry-chatbot')} />
 
       {/* Partners & Paid Advertisements */}
       <section className="py-20 border-t border-slate-100 bg-slate-50/30">
@@ -8728,7 +8726,7 @@ export default function App() {
           const isRyn = email.includes('ceo.globalgreenhp');
           const isMon = email.includes('compliance.globalgreenhp') || email.includes('monica');
           
-          if (view === 'larry-chatbot' || isFndr || isRyn || isMon) return null;
+          if (view === 'landing' || view === 'larry-chatbot' || isFndr || isRyn || isMon) return null;
           return <SylaraFloatingWidget userProfile={userProfile} persona={currentPersona} onClick={() => setShowLarryModal(true)} />;
         })()}
 
