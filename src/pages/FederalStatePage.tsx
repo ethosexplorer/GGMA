@@ -181,6 +181,50 @@ export const FederalStatePage = ({ onBack, onNavigate }: { onBack: () => void, o
         </div>
       </section>
 
+      {/* Clearing the Confusion: Fact vs Fiction */}
+      <section className="py-20 px-6 bg-slate-100 border-t border-slate-200">
+        <div className="max-w-4xl mx-auto space-y-12">
+          <div className="text-center space-y-4">
+            <h2 className="text-3xl font-black text-slate-900 tracking-tight">Clearing the Confusion</h2>
+            <p className="text-slate-500 font-medium">There is a lot of hearsay surrounding the Schedule III transition. Let's break down exactly how the law works and what actually changes.</p>
+          </div>
+
+          <div className="space-y-6">
+            <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex gap-6">
+              <div className="w-12 h-12 bg-red-50 text-red-600 rounded-xl flex items-center justify-center font-black flex-shrink-0">MYTH</div>
+              <div>
+                <h4 className="text-lg font-black text-slate-800 mb-2">"Schedule III makes cannabis federally legal for recreational use."</h4>
+                <p className="text-slate-600 text-sm leading-relaxed"><strong className="text-slate-800">FACT:</strong> No, it does not. Schedule III means the federal government officially recognizes medical value. It remains federally illegal for adult/recreational use. You must still adhere strictly to state medical programs and obtain federal DEA registration to be compliant.</p>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex gap-6">
+              <div className="w-12 h-12 bg-red-50 text-red-600 rounded-xl flex items-center justify-center font-black flex-shrink-0">MYTH</div>
+              <div>
+                <h4 className="text-lg font-black text-slate-800 mb-2">"I don't need a DEA registration if my state already licensed me."</h4>
+                <p className="text-slate-600 text-sm leading-relaxed"><strong className="text-slate-800">FACT:</strong> If you touch the plant, you need federal registration. Your state license allows you to operate locally, but without a DEA Schedule III registration, you are still technically trafficking a controlled substance in the eyes of federal law, which blocks your access to banking and 280E tax relief.</p>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex gap-6">
+              <div className="w-12 h-12 bg-red-50 text-red-600 rounded-xl flex items-center justify-center font-black flex-shrink-0">MYTH</div>
+              <div>
+                <h4 className="text-lg font-black text-slate-800 mb-2">"I can now transport products across state lines."</h4>
+                <p className="text-slate-600 text-sm leading-relaxed"><strong className="text-slate-800">FACT:</strong> Absolutely not. Interstate commerce of a Schedule III substance without explicit FDA/DEA authorization is a severe federal crime. Until Congress passes legislation authorizing interstate compacts, your operations and supply chain must remain strictly locked within your state borders.</p>
+              </div>
+            </div>
+            
+            <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex gap-6">
+              <div className="w-12 h-12 bg-red-50 text-red-600 rounded-xl flex items-center justify-center font-black flex-shrink-0">MYTH</div>
+              <div>
+                <h4 className="text-lg font-black text-slate-800 mb-2">"The state and federal systems will talk to each other automatically."</h4>
+                <p className="text-slate-600 text-sm leading-relaxed"><strong className="text-slate-800">FACT:</strong> They do not. State APIs like Metrc do not format data correctly for DEA audits. If you rely solely on your state's POS system, you will fail a federal audit due to data discrepancy. This is exactly why you need a bridge like GGP-OS.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* The Solution */}
       <section className="py-24 px-6 bg-[#0f2d1e] text-center border-t border-emerald-900">
         <div className="max-w-4xl mx-auto space-y-8">
