@@ -20,7 +20,7 @@ const generateStateData = (state: string) => {
   return { s: state, t: tax, c: status, d: dispensaries };
 };
 
-export const StateFactsPage = ({ onBack, onNavigate }: { onBack: () => void, onNavigate?: (view: string) => void }) => {
+export const StateFactsPage = ({ onBack, onNavigate, setJurisdiction }: { onBack: () => void, onNavigate?: (view: string) => void, setJurisdiction?: (state: string) => void }) => {
   const [selectedState, setSelectedState] = useState<{ s: string, t: string, c: string, d: string } | null>(null);
 
   return (

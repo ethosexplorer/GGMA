@@ -7771,6 +7771,7 @@ export default function App() {
   const [showJurisdictionGate, setShowJurisdictionGate] = useState(false);
   const [pendingJurisdiction, setPendingJurisdiction] = useState<string | null>(null);
   const [currentPersona, setCurrentPersona] = useState<'sylara' | 'larry'>('sylara');
+  const [is21Verified, setIs21Verified] = useState(false);
 
   const confirmJurisdiction = (state: string) => {
     setJurisdiction(state);
@@ -7818,8 +7819,14 @@ export default function App() {
     initDatabase();
     const handleOpenLarry = () => setShowLarryModal(true);
     window.addEventListener('open-larry-modal', handleOpenLarry);
+    
+    // Global Jurisdiction Gate trigger
+    if (!jurisdictionLocked) {
+      setTimeout(() => setShowJurisdictionGate(true), 0);
+    }
+    
     return () => window.removeEventListener('open-larry-modal', handleOpenLarry);
-  }, []);
+  }, [jurisdictionLocked]);
 
   // Sync view state with URL path for deep linking
   useEffect(() => {
@@ -7933,12 +7940,6 @@ export default function App() {
 
   const renderDashboardByRole = (profile: any) => {
     if (!profile) return null;
-
-    // Jurisdiction Gate: if not yet confirmed for this session, show the modal
-    if (!jurisdictionLocked && !showJurisdictionGate) {
-      // Trigger the gate on next render
-      setTimeout(() => setShowJurisdictionGate(true), 0);
-    }
 
     const role = roleOverride || profile.role;
     const path = location.pathname;
@@ -8240,6 +8241,22 @@ export default function App() {
                     {['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming'].map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
+                
+                {!jurisdictionLocked && (
+                  <div className="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    <input 
+                      type="checkbox" 
+                      id="age-verify"
+                      checked={is21Verified}
+                      onChange={(e) => setIs21Verified(e.target.checked)}
+                      className="w-5 h-5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+                    />
+                    <label htmlFor="age-verify" className="text-sm font-bold text-slate-700 cursor-pointer">
+                      I confirm that I am 21 years of age or older, or a registered medical patient.
+                    </label>
+                  </div>
+                )}
+
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
                   <p className="text-xs text-amber-800 font-bold flex items-start gap-2">
                     <Shield size={16} className="text-amber-600 shrink-0 mt-0.5" />
@@ -8256,8 +8273,9 @@ export default function App() {
                     </button>
                   )}
                   <button
+                    disabled={!jurisdictionLocked && !is21Verified}
                     onClick={() => confirmJurisdiction(pendingJurisdiction || jurisdiction)}
-                    className="flex-1 py-3 px-6 rounded-xl font-black text-white bg-[#1a4731] hover:bg-[#153a28] transition-colors shadow-lg shadow-emerald-900/20 uppercase tracking-wider text-sm"
+                    className="flex-1 py-3 px-6 rounded-xl font-black text-white bg-[#1a4731] hover:bg-[#153a28] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg shadow-emerald-900/20 uppercase tracking-wider text-sm"
                   >
                     {jurisdictionLocked ? `Switch to ${pendingJurisdiction || jurisdiction}` : `Confirm ${pendingJurisdiction || jurisdiction}`}
                   </button>
@@ -8269,7 +8287,7 @@ export default function App() {
         <AnimatePresence mode="wait">
           {view === 'state-facts' && (
             <motion.div key="state-facts" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
-              <StateFactsPage onBack={() => handleNavigate('landing')} onNavigate={handleNavigate} />
+              <StateFactsPage onBack={() => handleNavigate('landing')} onNavigate={handleNavigate} setJurisdiction={confirmJurisdiction} />
             </motion.div>
           )}
           {view === 'landing' && (
