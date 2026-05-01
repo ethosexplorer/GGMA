@@ -6,6 +6,7 @@ import { getPlansForRole, getAddOnsForRole } from './lib/subscriptionPlans';
 import { SettingsPreferencesMockup } from './pages/SettingsPreferencesMockup';
 import { FederalStatePage } from './pages/FederalStatePage';
 import { WhatIsC3Page } from './pages/WhatIsC3Page';
+import { WhatIsCareWalletPage } from './pages/WhatIsCareWalletPage';
 import { 
   Shield,
   User,
@@ -77,7 +78,9 @@ import {
   Star,
   ArrowUpCircle,
   Home,
-  Check
+  Check,
+  Wallet,
+  HeartHandshake
  } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from './lib/utils';
@@ -1290,7 +1293,7 @@ const STATE_RESOURCES: Record<string, any> = {
   );
 };
 
-const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate: (view: 'what-is-c3' | 'login' | 'signup' | 'patient-portal' | 'support' | 'larry-chatbot' | 'larry-business' | 'legal-advocacy', role?: string) => void, jurisdiction?: string, setJurisdiction?: (s: string) => void }) => {
+const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate: (view: 'what-is-care-wallet' | 'what-is-c3' | 'login' | 'signup' | 'patient-portal' | 'support' | 'larry-chatbot' | 'larry-business' | 'legal-advocacy', role?: string) => void, jurisdiction?: string, setJurisdiction?: (s: string) => void }) => {
   const [liveFeed, setLiveFeed] = useState<RegulatoryUpdate[]>([]);
   const [feedLoading, setFeedLoading] = useState(true);
   
@@ -1550,6 +1553,37 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
             <div className="w-full aspect-square bg-white/5 rounded-full border border-white/10 backdrop-blur-3xl flex items-center justify-center p-8 text-center relative group">
               <div className="absolute inset-0 bg-emerald-400/20 blur-[60px] rounded-full scale-50 group-hover:scale-75 transition-transform duration-1000 opacity-50"></div>
               <div className="text-7xl font-black text-emerald-400 tracking-tighter relative">C³</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Care Wallet Teaser Section */}
+      <section className="py-20 px-6 bg-slate-900 bg-gradient-to-br from-blue-950 to-slate-900 text-white relative overflow-hidden border-t border-white/10">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row-reverse items-center gap-12 relative z-10">
+          <div className="md:w-2/3 space-y-6">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-500/20 rounded-full border border-blue-400/30 text-blue-300 text-xs font-black uppercase tracking-widest">
+              <HeartHandshake size={14} /> Introduced by Compassion Network
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-tight">
+              The <span className="text-blue-400">Care Wallet</span> Ecosystem
+            </h2>
+            <p className="text-lg text-blue-50/80 leading-relaxed font-medium">
+              Every dollar you load and spend securely tracks your compliance and earns you Care Points. Use it to pay for state fees, telehealth visits, and more, all while boosting your C³ Score.
+            </p>
+            <div className="flex gap-4">
+              <button 
+                onClick={() => onNavigate('what-is-care-wallet')}
+                className="px-8 py-3 bg-blue-500 hover:bg-blue-400 text-white rounded-xl font-black transition-all shadow-lg shadow-blue-500/20"
+              >
+                Explore the Care Wallet
+              </button>
+            </div>
+          </div>
+          <div className="md:w-1/3 flex justify-center">
+            <div className="w-full aspect-square bg-white/5 rounded-full border border-white/10 backdrop-blur-3xl flex items-center justify-center p-8 text-center relative group">
+              <div className="absolute inset-0 bg-blue-500/20 blur-[60px] rounded-full scale-50 group-hover:scale-75 transition-transform duration-1000 opacity-50"></div>
+              <Wallet size={80} className="text-blue-400 relative" />
             </div>
           </div>
         </div>
@@ -7779,23 +7813,23 @@ export default function App() {
 
     // Business Portal Routing
     if (role === 'provider') {
-      return <ProviderDashboard onLogout={handleReturnToSelector} user={profile} jurisdiction={jurisdiction} />;
+      return <ProviderDashboard onLogout={handleReturnToSelector} user={profile} {...{jurisdiction} as any} />;
     }
     if (role === 'attorney') {
-      return <AttorneyDashboard onLogout={handleReturnToSelector} user={profile} jurisdiction={jurisdiction} />;
+      return <AttorneyDashboard onLogout={handleReturnToSelector} user={profile} {...{jurisdiction} as any} />;
     }
     if (role === 'business' || role === 'compliance_service') {
-      return <BusinessDashboard onLogout={handleReturnToSelector} user={profile} initialTab={initialTab} onOpenConcierge={() => setShowLarryModal(true)} jurisdiction={jurisdiction} />;
+      return <BusinessDashboard onLogout={handleReturnToSelector} user={profile} initialTab={initialTab} onOpenConcierge={() => setShowLarryModal(true)} {...{jurisdiction} as any} />;
     }
     if (role === 'health' || role === 'lab' || role === 'health_lab') {
-      return <PublicHealthDashboard onLogout={handleReturnToSelector} user={profile} jurisdiction={jurisdiction} />;
+      return <PublicHealthDashboard onLogout={handleReturnToSelector} user={profile} {...{jurisdiction} as any} />;
     }
 
     // Patient Portal Routing
     if (role === 'user' || role === 'patient' || role === 'Patient / Caregiver') {
       return (
         <DashboardLayout role={role} onLogout={handleReturnToSelector} userProfile={profile} onOpenConcierge={() => setShowLarryModal(true)}>
-          <PatientDashboard user={profile} onOpenConcierge={() => setShowLarryModal(true)} jurisdiction={jurisdiction} />
+          <PatientDashboard user={profile} onOpenConcierge={() => setShowLarryModal(true)} {...{jurisdiction} as any} />
         </DashboardLayout>
       );
     }
@@ -8121,6 +8155,11 @@ export default function App() {
           {view === 'what-is-c3' && (
               <motion.div key="what-is-c3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
                 <WhatIsC3Page onNavigate={handleNavigate} />
+              </motion.div>
+            )}
+          {view === 'what-is-care-wallet' && (
+              <motion.div key="what-is-care-wallet" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+                <WhatIsCareWalletPage onNavigate={handleNavigate} />
               </motion.div>
             )}
             {view === 'landing' && (

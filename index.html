@@ -52,16 +52,15 @@
     .goog-te-banner-frame { display: none !important; }
     /* iOS Safari fixes */
     html, body {
-      background-color: #f8fafc !important;
       -webkit-text-size-adjust: 100%;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      background-color: #0f172a; /* Default to dark theme background to prevent white flash */
     }
     /* Fix for iOS Safari white flash on page load */
     #root {
       min-height: 100vh;
       min-height: -webkit-fill-available;
-      background-color: #f8fafc;
     }
     /* iOS safe area padding */
     @supports (padding: env(safe-area-inset-top)) {
