@@ -7771,7 +7771,7 @@ export default function App() {
   const [showJurisdictionGate, setShowJurisdictionGate] = useState(false);
   const [pendingJurisdiction, setPendingJurisdiction] = useState<string | null>(null);
   const [currentPersona, setCurrentPersona] = useState<'sylara' | 'larry'>('sylara');
-  const [is21Verified, setIs21Verified] = useState(false);
+  const [is21Verified, setIs21Verified] = useState<boolean | null>(null);
 
   const confirmJurisdiction = (state: string) => {
     setJurisdiction(state);
@@ -8243,17 +8243,28 @@ export default function App() {
                 </div>
                 
                 {!jurisdictionLocked && (
-                  <div className="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl p-4">
-                    <input 
-                      type="checkbox" 
-                      id="age-verify"
-                      checked={is21Verified}
-                      onChange={(e) => setIs21Verified(e.target.checked)}
-                      className="w-5 h-5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
-                    />
-                    <label htmlFor="age-verify" className="text-sm font-bold text-slate-700 cursor-pointer">
-                      I confirm that I am 21 years of age or older, or a registered medical patient.
-                    </label>
+                  <div className="space-y-3">
+                    <label className="text-xs font-black uppercase tracking-widest text-slate-500 mb-2 block">Age Verification</label>
+                    <p className="text-sm font-bold text-slate-700">Are you 21 years of age or older, or a registered medical patient?</p>
+                    <div className="flex gap-3">
+                      <button 
+                        onClick={() => setIs21Verified(true)}
+                        className={`flex-1 py-3 px-4 rounded-xl font-black text-sm transition-all border-2 ${is21Verified === true ? 'bg-emerald-50 border-emerald-500 text-emerald-700 shadow-sm' : 'bg-white border-slate-200 text-slate-500 hover:border-emerald-200'}`}
+                      >
+                        Yes, I am
+                      </button>
+                      <button 
+                        onClick={() => setIs21Verified(false)}
+                        className={`flex-1 py-3 px-4 rounded-xl font-black text-sm transition-all border-2 ${is21Verified === false ? 'bg-red-50 border-red-500 text-red-700 shadow-sm' : 'bg-white border-slate-200 text-slate-500 hover:border-red-200'}`}
+                      >
+                        No
+                      </button>
+                    </div>
+                    {is21Verified === false && (
+                      <div className="p-3 bg-red-50 text-red-700 text-xs font-bold rounded-xl border border-red-200 flex items-center gap-2 mt-2">
+                        <AlertCircle size={14} /> Access Forbidden. You must be 21+ or a registered patient.
+                      </div>
+                    )}
                   </div>
                 )}
 
