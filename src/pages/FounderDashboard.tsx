@@ -36,7 +36,7 @@ import { voip800 } from '../lib/voip800';
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
-const NAV_VERSION = 14; // Bumped to reset sidebar and move AI Training tab under MAIN
+const NAV_VERSION = 18; // Bumped: add Negligence Intercept + Subscriptions, move IP Valuation
 
 const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: '_sec_founder', section: 'FOUNDER EXCLUSIVE' },
@@ -50,6 +50,7 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'ai_training', label: 'My Assistant & Training', icon: Bot, badge: 'AI' },
   { id: 'messages', label: 'Messages', icon: MessageSquare, badge: 'Live' },
   { id: 'internal_scheduler', label: 'Calendar & Scheduler', icon: Clock, badge: 'New' },
+  { id: 'subscriptions', label: 'Subscriptions & Revenue', icon: CreditCard, badge: 'Live' },
   { id: 'overview', label: 'God Overview', icon: Activity },
   { id: '_sec_supreme', section: 'SUPREME COMMAND' },
   { id: 'users', label: 'Personnel Force (Total)', icon: Users },
@@ -62,6 +63,7 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'regulatory_library', label: 'Regulatory Library', icon: BookOpen },
   { id: '_sec_oversight', section: 'OVERSIGHT HUB' },
   { id: 'internal_admin', label: 'Internal Team (GGE Call Center)', icon: Shield, badge: '!' },
+  { id: 'negligence_intercept', label: 'Negligence Intercept', icon: AlertTriangle, badge: '1' },
   { id: 'external_admin', label: 'External Administrator', icon: Activity },
   { id: 'law_enforcement', label: 'Law Enforcement (RIP)', icon: Shield },
   { id: 'state_authority', label: 'Regulator / Authority', icon: Gavel },
@@ -3150,103 +3152,115 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         </div>
       </div>
 
-      {/* 📊 ADVANCED IP VALUATION — Bottom of Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-2">
-        <div className="col-span-4 bg-gradient-to-r from-emerald-950 to-teal-950 border border-emerald-400 rounded-3xl p-8 shadow-xl relative overflow-hidden">
-           <div className="absolute top-0 right-0 p-8 opacity-5 text-white"><Calculator size={160} /></div>
-           <div className="relative z-10 space-y-8">
-              <div className="flex justify-between items-start">
-                 <div>
-                    <h3 className="flex items-center gap-3 text-white font-black text-2xl uppercase tracking-tight mb-2">
-                      <Calculator className="h-6 w-6 text-emerald-400" />
-                      Advanced IP Valuation + Licensing Projections
-                    </h3>
-                    <p className="text-emerald-300 font-bold tracking-widest uppercase text-[10px]">Live estimate • Grounded in 2024–2026 real deals</p>
-                 </div>
-              </div>
+    </div>
+  );
 
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div className="space-y-4">
-                  <label className="text-white text-[10px] font-black uppercase tracking-widest block">Market Size ($M)</label>
-                  <input type="range" min={50} max={1000} value={marketSize} onChange={(e) => setMarketSize(Number(e.target.value))} className="w-full accent-emerald-400" />
-                  <div className="text-center text-emerald-300 text-sm font-black">${marketSize}M</div>
-                </div>
-                <div className="space-y-4">
-                  <label className="text-white text-[10px] font-black uppercase tracking-widest block">Stage Multiplier</label>
-                  <input type="range" min={1.0} max={3.0} step={0.1} value={stageMultiplier} onChange={(e) => setStageMultiplier(Number(e.target.value))} className="w-full accent-emerald-400" />
-                  <div className="text-center text-emerald-300 text-sm font-black">{stageMultiplier.toFixed(1)}x</div>
-                </div>
-                <div className="space-y-4">
-                  <label className="text-white text-[10px] font-black uppercase tracking-widest block">Claims Strength</label>
-                  <input type="range" min={50} max={100} value={claimsStrength} onChange={(e) => setClaimsStrength(Number(e.target.value))} className="w-full accent-emerald-400" />
-                  <div className="text-center text-emerald-300 text-sm font-black">{claimsStrength}/100</div>
-                </div>
-                <div className="space-y-4">
-                  <label className="text-white text-[10px] font-black uppercase tracking-widest block">Royalty Rate</label>
-                  <input type="range" min={5} max={20} step={1} value={royaltyRate} onChange={(e) => setRoyaltyRate(Number(e.target.value))} className="w-full accent-emerald-400" />
-                  <div className="text-center text-emerald-300 text-sm font-black">{royaltyRate}%</div>
-                </div>
-              </div>
-
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
-                <div className="grid grid-cols-3 text-center divide-x divide-white/10">
-                   <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-emerald-300 mb-2">Low Estimate</p>
-                      <p className="text-2xl font-black text-white/70">${currentValuation.low.toLocaleString()}</p>
-                   </div>
-                   <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-2">Mid Valuation</p>
-                      <p className="text-4xl font-black text-white">${currentValuation.mid.toLocaleString()}</p>
-                   </div>
-                   <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-emerald-300 mb-2">High Estimate</p>
-                      <p className="text-2xl font-black text-white/70">${currentValuation.high.toLocaleString()}</p>
-                   </div>
-                </div>
-              </div>
-
-              <div className="bg-white/5 rounded-2xl p-6 border border-emerald-400/30">
-                <h4 className="text-white text-[10px] uppercase tracking-widest font-black mb-4">Licensing Revenue Projections (5-Year)</h4>
-                <div className="grid grid-cols-3 gap-4 text-center">
-                  <div className="bg-white/10 p-4 rounded-xl">
-                    <div className="text-emerald-300 text-[10px] font-black uppercase tracking-widest mb-2">Year 1</div>
-                    <div className="text-3xl font-black text-white">${currentRevenue.year1.toLocaleString()}</div>
-                  </div>
-                  <div className="bg-emerald-400/20 p-4 rounded-xl border border-emerald-400">
-                    <div className="text-emerald-300 text-[10px] font-black uppercase tracking-widest mb-2">5-Year Cumulative</div>
-                    <div className="text-4xl font-black text-white">${currentRevenue.fiveYearTotal.toLocaleString()}</div>
-                  </div>
-                  <div className="bg-white/10 p-4 rounded-xl">
-                    <div className="text-emerald-300 text-[10px] font-black uppercase tracking-widest mb-2">Avg Annual Growth</div>
-                    <div className="text-3xl font-black text-white">15%</div>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <h4 className="text-white text-[10px] font-black uppercase tracking-widest mb-4 flex items-center gap-2">
-                  <ExternalLink className="h-4 w-4" /> Recent Comparable IP Deals (2024–2026)
-                </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {comparables.map((comp, i) => (
-                    <div key={i} className="bg-white/5 p-4 rounded-xl border border-white/10 hover:border-emerald-500/50 transition-colors">
-                      <div className="flex justify-between items-center mb-2">
-                        <div className="text-emerald-300 text-xs font-bold leading-snug">{comp.deal}</div>
-                        <span className="bg-white/10 px-2 py-0.5 rounded text-[9px] font-black uppercase text-white shrink-0">{comp.date}</span>
-                      </div>
-                      <div className="text-xl font-black text-white mb-2">{comp.value}</div>
-                      <p className="text-[10px] text-emerald-200 font-medium mb-1">Relevance: <span className="font-black text-white">{comp.relevance}</span></p>
-                      <p className="text-[10px] text-white/50">{comp.multiplier}</p>
-                    </div>
-                  ))}
+  const renderSubscriptionsTab = () => (
+    <div className="space-y-6 animate-in fade-in duration-500">
+      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl border border-white/10">
+        <div className="absolute top-0 right-0 p-8 opacity-10"><CreditCard size={120} /></div>
+        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div>
+            <h2 className="text-3xl font-black text-white flex items-center gap-3">
+              <CreditCard className="text-indigo-400" size={28} />
+              Platform Subscription Analytics
+            </h2>
+            <p className="text-indigo-300 font-bold uppercase tracking-widest text-xs mt-2">Monthly Recurring Revenue • Active Plans • Add-on Utilization</p>
+          </div>
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 flex gap-8">
+            <div>
+               <p className="text-[10px] text-white/60 font-black uppercase tracking-widest">Total MRR</p>
+               <p className="text-2xl font-black text-emerald-400">$342,850</p>
+            </div>
+            <div>
+               <p className="text-[10px] text-white/60 font-black uppercase tracking-widest">Active Subs</p>
+               <p className="text-2xl font-black text-white">2,847</p>
+            </div>
+            <div>
+               <p className="text-[10px] text-white/60 font-black uppercase tracking-widest">Churn Rate</p>
+               <p className="text-2xl font-black text-amber-400">1.2%</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {[
+          { tier: 'Basic', price: '$49/mo', subs: 1420, mrr: '$69,580', color: 'bg-slate-500', pct: 50 },
+          { tier: 'Professional', price: '$149/mo', subs: 980, mrr: '$145,920', color: 'bg-indigo-500', pct: 34 },
+          { tier: 'Enterprise', price: '$299/mo', subs: 447, mrr: '$133,653', color: 'bg-emerald-500', pct: 16 },
+        ].map(t => (
+          <div key={t.tier} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-black text-slate-800">{t.tier}</h3>
+              <span className="text-xs font-bold text-slate-400">{t.price}</span>
+            </div>
+            <div className="text-3xl font-black text-slate-900 mb-1">{t.subs.toLocaleString()}</div>
+            <p className="text-xs text-slate-400 font-bold mb-3">Active Subscribers</p>
+            <div className="h-2 bg-slate-100 rounded-full overflow-hidden mb-2">
+              <div className={`h-full ${t.color} rounded-full`} style={{ width: `${t.pct}%` }} />
+            </div>
+            <div className="flex justify-between text-xs font-bold">
+              <span className="text-slate-400">{t.pct}% of total</span>
+              <span className="text-emerald-600">{t.mrr} MRR</span>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+          <h3 className="text-lg font-black text-slate-800 mb-4 flex items-center gap-2"><TrendingUp size={18} className="text-emerald-500" /> Monthly Signups</h3>
+          <div className="space-y-3">
+            {[
+              { month: 'April 2026', signups: 312, revenue: '$46,788' },
+              { month: 'March 2026', signups: 287, revenue: '$42,213' },
+              { month: 'February 2026', signups: 254, revenue: '$38,846' },
+              { month: 'January 2026', signups: 198, revenue: '$28,702' },
+            ].map(m => (
+              <div key={m.month} className="flex justify-between items-center p-3 bg-slate-50 rounded-xl">
+                <span className="text-sm font-bold text-slate-700">{m.month}</span>
+                <div className="flex gap-6 text-xs font-bold">
+                  <span className="text-indigo-600">{m.signups} signups</span>
+                  <span className="text-emerald-600">{m.revenue}</span>
                 </div>
               </div>
-
-              <button onClick={handleSaveSnapshot} className="w-full bg-emerald-600 hover:bg-emerald-500 transition-colors text-white py-4 rounded-xl flex items-center justify-center gap-3 font-black uppercase tracking-widest text-xs shadow-xl shadow-emerald-900/50">
-                <Save size={18} /> Save Valuation Snapshot to IP Monitor
-              </button>
-              <p className="text-center text-[10px] font-bold text-emerald-400/50 uppercase tracking-widest">Your portfolio aligns directly with these fintech, cannabinoid, and compliance tech transactions</p>
-           </div>
+            ))}
+          </div>
+        </div>
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+          <h3 className="text-lg font-black text-slate-800 mb-4 flex items-center gap-2"><Box size={18} className="text-indigo-500" /> Add-on Revenue</h3>
+          <div className="space-y-3">
+            {[
+              { addon: 'Metrc Integration', users: 892, revenue: '$44,600/mo' },
+              { addon: 'AI Compliance Engine', users: 634, revenue: '$31,700/mo' },
+              { addon: 'Telehealth Module', users: 445, revenue: '$22,250/mo' },
+              { addon: 'Advanced Analytics', users: 312, revenue: '$15,600/mo' },
+            ].map(a => (
+              <div key={a.addon} className="flex justify-between items-center p-3 bg-slate-50 rounded-xl">
+                <div>
+                  <span className="text-sm font-bold text-slate-700">{a.addon}</span>
+                  <span className="text-xs text-slate-400 ml-2">{a.users} users</span>
+                </div>
+                <span className="text-xs font-black text-emerald-600">{a.revenue}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6">
+        <h3 className="text-lg font-black text-slate-800 mb-4 flex items-center gap-2"><BarChart3 size={18} className="text-indigo-500" /> By Category</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+            { cat: 'Dispensary', count: 1248, pct: '+12%' },
+            { cat: 'Cultivator', count: 682, pct: '+8%' },
+            { cat: 'Lab / Testing', count: 394, pct: '+15%' },
+            { cat: 'Healthcare', count: 523, pct: '+22%' },
+          ].map(c => (
+            <div key={c.cat} className="bg-white p-4 rounded-xl border border-slate-200 text-center">
+              <div className="text-2xl font-black text-slate-800">{c.count.toLocaleString()}</div>
+              <div className="text-xs font-bold text-slate-500 mt-1">{c.cat}</div>
+              <div className="text-xs font-black text-emerald-500 mt-1">{c.pct}</div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -3347,6 +3361,8 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       case 'logs': return renderLogs();
       case 'support_tickets': return renderSupportTickets();
       case 'internal_scheduler': return <UserCalendar user={user} title="Executive Calendar" />;
+      case 'subscriptions': return renderSubscriptionsTab();
+      case 'negligence_intercept': return <div className="h-full w-full -m-10"><AdminDashboard user={user} initialTab="negligence" onLogout={() => {}} /></div>;
       case 'hr_intelligence': return renderHRIntelligence();
       case 'rapid_testing': return renderRapidTestingHub();
       case 'law_enforcement': return renderLawEnforcement();
@@ -3480,6 +3496,101 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
              </div>
            </div>
          </div>
+      </div>
+
+      {/* 📊 ADVANCED IP VALUATION — Moved from Law Enforcement */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="col-span-4 bg-gradient-to-r from-emerald-950 to-teal-950 border border-emerald-400 rounded-3xl p-8 shadow-xl relative overflow-hidden">
+           <div className="absolute top-0 right-0 p-8 opacity-5 text-white"><Calculator size={160} /></div>
+           <div className="relative z-10 space-y-8">
+              <div className="flex justify-between items-start">
+                 <div>
+                    <h3 className="flex items-center gap-3 text-white font-black text-2xl uppercase tracking-tight mb-2">
+                      <Calculator className="h-6 w-6 text-emerald-400" />
+                      Advanced IP Valuation + Licensing Projections
+                    </h3>
+                    <p className="text-emerald-300 font-bold tracking-widest uppercase text-[10px]">Live estimate • Grounded in 2024–2026 real deals</p>
+                 </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div className="space-y-4">
+                  <label className="text-white text-[10px] font-black uppercase tracking-widest block">Market Size ($M)</label>
+                  <input type="range" min={50} max={1000} value={marketSize} onChange={(e) => setMarketSize(Number(e.target.value))} className="w-full accent-emerald-400" />
+                  <div className="text-center text-emerald-300 text-sm font-black">${marketSize}M</div>
+                </div>
+                <div className="space-y-4">
+                  <label className="text-white text-[10px] font-black uppercase tracking-widest block">Stage Multiplier</label>
+                  <input type="range" min={1.0} max={3.0} step={0.1} value={stageMultiplier} onChange={(e) => setStageMultiplier(Number(e.target.value))} className="w-full accent-emerald-400" />
+                  <div className="text-center text-emerald-300 text-sm font-black">{stageMultiplier.toFixed(1)}x</div>
+                </div>
+                <div className="space-y-4">
+                  <label className="text-white text-[10px] font-black uppercase tracking-widest block">Claims Strength</label>
+                  <input type="range" min={50} max={100} value={claimsStrength} onChange={(e) => setClaimsStrength(Number(e.target.value))} className="w-full accent-emerald-400" />
+                  <div className="text-center text-emerald-300 text-sm font-black">{claimsStrength}/100</div>
+                </div>
+                <div className="space-y-4">
+                  <label className="text-white text-[10px] font-black uppercase tracking-widest block">Royalty Rate</label>
+                  <input type="range" min={5} max={20} step={1} value={royaltyRate} onChange={(e) => setRoyaltyRate(Number(e.target.value))} className="w-full accent-emerald-400" />
+                  <div className="text-center text-emerald-300 text-sm font-black">{royaltyRate}%</div>
+                </div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
+                <div className="grid grid-cols-3 text-center divide-x divide-white/10">
+                   <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-emerald-300 mb-2">Low Estimate</p>
+                      <p className="text-2xl font-black text-white/70">${currentValuation.low.toLocaleString()}</p>
+                   </div>
+                   <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-2">Mid Valuation</p>
+                      <p className="text-4xl font-black text-white">${currentValuation.mid.toLocaleString()}</p>
+                   </div>
+                   <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-emerald-300 mb-2">High Estimate</p>
+                      <p className="text-2xl font-black text-white/70">${currentValuation.high.toLocaleString()}</p>
+                   </div>
+                </div>
+              </div>
+              <div className="bg-white/5 rounded-2xl p-6 border border-emerald-400/30">
+                <h4 className="text-white text-[10px] uppercase tracking-widest font-black mb-4">Licensing Revenue Projections (5-Year)</h4>
+                <div className="grid grid-cols-3 gap-4 text-center">
+                  <div className="bg-white/10 p-4 rounded-xl">
+                    <div className="text-emerald-300 text-[10px] font-black uppercase tracking-widest mb-2">Year 1</div>
+                    <div className="text-3xl font-black text-white">${currentRevenue.year1.toLocaleString()}</div>
+                  </div>
+                  <div className="bg-emerald-400/20 p-4 rounded-xl border border-emerald-400">
+                    <div className="text-emerald-300 text-[10px] font-black uppercase tracking-widest mb-2">5-Year Cumulative</div>
+                    <div className="text-4xl font-black text-white">${currentRevenue.fiveYearTotal.toLocaleString()}</div>
+                  </div>
+                  <div className="bg-white/10 p-4 rounded-xl">
+                    <div className="text-emerald-300 text-[10px] font-black uppercase tracking-widest mb-2">Avg Annual Growth</div>
+                    <div className="text-3xl font-black text-white">15%</div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <h4 className="text-white text-[10px] font-black uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <ExternalLink className="h-4 w-4" /> Recent Comparable IP Deals (2024–2026)
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {comparables.map((comp, i) => (
+                    <div key={i} className="bg-white/5 p-4 rounded-xl border border-white/10 hover:border-emerald-500/50 transition-colors">
+                      <div className="flex justify-between items-center mb-2">
+                        <div className="text-emerald-300 text-xs font-bold leading-snug">{comp.deal}</div>
+                        <span className="bg-white/10 px-2 py-0.5 rounded text-[9px] font-black uppercase text-white shrink-0">{comp.date}</span>
+                      </div>
+                      <div className="text-xl font-black text-white mb-2">{comp.value}</div>
+                      <p className="text-[10px] text-emerald-200 font-medium mb-1">Relevance: <span className="font-black text-white">{comp.relevance}</span></p>
+                      <p className="text-[10px] text-white/50">{comp.multiplier}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <button onClick={handleSaveSnapshot} className="w-full bg-emerald-600 hover:bg-emerald-500 transition-colors text-white py-4 rounded-xl flex items-center justify-center gap-3 font-black uppercase tracking-widest text-xs shadow-xl shadow-emerald-900/50">
+                <Save size={18} /> Save Valuation Snapshot to IP Monitor
+              </button>
+              <p className="text-center text-[10px] font-bold text-emerald-400/50 uppercase tracking-widest">Your portfolio aligns directly with these fintech, cannabinoid, and compliance tech transactions</p>
+           </div>
+        </div>
       </div>
 
       <div className="mt-12">

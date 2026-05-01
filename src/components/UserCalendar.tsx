@@ -46,7 +46,7 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
   const [events, setEvents] = useState<CalEvent[]>(initialEvents);
   const [selectedDate, setSelectedDate] = useState<string>(fmt(new Date(2026, 3, 28)));
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: isExecutive ? 'executive' : 'personal', description: '', attendees: '', location: '', meetLink: '' });
+  const [form, setForm] = useState({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: isFounder ? 'executive' : 'personal', description: '', attendees: '', location: '', meetLink: '' });
   const [filterCat, setFilterCat] = useState<string | null>(null);
 
   const filtered = filterCat ? events.filter(e => e.category === filterCat) : events;

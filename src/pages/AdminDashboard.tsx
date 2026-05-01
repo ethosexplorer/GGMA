@@ -33,8 +33,8 @@ const NAV_ITEMS = [
   { id: 'settings', label: 'Admin Settings', icon: Settings },
 ];
 
-export const AdminDashboard = ({ onLogout, user }: { onLogout?: () => void | Promise<void>, user?: any }) => {
-  const [activeTab, setActiveTab] = useState('overview');
+export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () => void | Promise<void>, user?: any, initialTab?: string }) => {
+  const [activeTab, setActiveTab] = useState(initialTab || 'overview');
   const [dbPatients, setDbPatients] = useState<any[]>([]);
   const [dbBusinesses, setDbBusinesses] = useState<any[]>([]);
 

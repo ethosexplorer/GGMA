@@ -171,7 +171,26 @@ export function WebDialer() {
     }
   };
 
-  const handleDial = () => triggerDial(dialNumber);
+  const handleDial = async () => {
+    if (!device || status !== 'ready' || !dialNumber) return;
+    try {
+      setStatus('busy');
+      setShowDialer(false);
+      const call = await device.connect({ params: { To: dialNumber } });
+      setActiveCall(call);
+      const startCallTimer = () => {
+        setCallDuration(0);
+        timerRef.current = setInterval(() => setCallDuration(prev => prev + 1), 1000);
+      };
+      call.on('accept', () => { console.log('[WebDialer] Outbound call connected'); startCallTimer(); });
+      call.on('disconnect', () => { console.log('[WebDialer] Outbound call ended'); setActiveCall(null); setIsMuted(false); setCallDuration(0); if (timerRef.current) clearInterval(timerRef.current); setStatus('ready'); });
+      call.on('error', (err: any) => { console.error('[WebDialer] Call error:', err); setError(err.message || 'Call failed'); setActiveCall(null); setStatus('ready'); });
+    } catch (err: any) {
+      console.error('[WebDialer] Failed to dial:', err);
+      setError(err.message || 'Dial failed');
+      setStatus('ready');
+    }
+  };
 
   const toggleMute = () => {
     if (activeCall) {
@@ -192,7 +211,7 @@ export function WebDialer() {
       {/* Persistent Status Indicator — always visible */}
       <div 
         onClick={() => { if (status === 'ready' && !activeCall && !incomingCall) setShowDialer(!showDialer); }}
-        className="fixed bottom-6 left-6 z-[100] flex items-center gap-2 bg-slate-900 border border-slate-700 p-2 pr-4 rounded-full shadow-2xl cursor-pointer hover:bg-slate-800 transition-colors"
+        className="fixed bottom-6 right-6 z-[100] flex items-center gap-2 bg-slate-900 border border-slate-700 p-2 pr-4 rounded-full shadow-2xl cursor-pointer hover:bg-slate-800 transition-colors"
       >
         <div className={cn(
           "w-8 h-8 rounded-full flex items-center justify-center text-white",
