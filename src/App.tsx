@@ -2080,74 +2080,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
         </div>
       </section>
 
-      {/* Attorney Marketplace Preview Section */}
-      <section className="py-24 px-6 bg-slate-900 text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-[800px] h-full bg-emerald-500/10 blur-[120px] rounded-full translate-x-1/2"></div>
-        <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-16 relative z-10">
-           <div className="lg:w-1/2 space-y-8">
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/20 rounded-full border border-emerald-400/30 text-emerald-300 text-[10px] font-black uppercase tracking-widest">
-                 <Gavel size={12} />
-                 Legal Advocacy Hub
-              </div>
-              <h2 className="text-5xl font-black tracking-tight leading-[1.1]">
-                 Find Verified <br /> <span className="text-emerald-400">Cannabis Legal Counsel</span>
-              </h2>
-              <p className="text-slate-400 text-lg font-medium leading-relaxed">
-                 Navigating multi-state regulations requires elite legal expertise. Our Attorney Marketplace connects you with bar-verified counsel specializing in OMMA licensing, METRC compliance, and patient rights.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                 <button 
-                   onClick={() => onNavigate('legal-advocacy')}
-                   className="flex-1 px-4 py-4 bg-emerald-500 text-slate-900 rounded-2xl font-black hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/20 text-center text-sm"
-                 >
-                    Intake & Schedule Consult
-                 </button>
-                 <button 
-                    onClick={() => {
-                      const el = document.getElementById('membership-tiers');
-                      if (el) { el.scrollIntoView({ behavior: 'smooth' }); }
-                      else { onNavigate('login'); }
-                    }}
-                   className="relative flex-1 px-4 py-4 bg-slate-800/80 backdrop-blur-md text-slate-500 rounded-2xl font-black border border-slate-700 hover:border-emerald-500 hover:text-emerald-400 transition-all shadow-xl text-center text-sm group"
-                 >
-                    <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px] rounded-2xl flex items-center justify-center group-hover:bg-slate-900/80 transition-all">
-                      <Lock size={16} className="mr-2" /> <span className="group-hover:hidden">Locked</span><span className="hidden group-hover:inline">Subscribe to Unlock</span>
-                    </div>
-                    Legal Marketplace
-                 </button>
-              </div>
-              <div className="mt-4 flex items-center gap-4 px-6 py-4 bg-white/5 border border-white/10 rounded-2xl w-max">
-                 <div className="flex -space-x-3">
-                    {[1,2,3].map(i => (
-                      <div key={i} className="w-8 h-8 rounded-full border-2 border-slate-900 bg-slate-800 flex items-center justify-center text-[10px] font-bold">ATY</div>
-                    ))}
-                 </div>
-                 <span className="text-xs font-bold text-slate-300">120+ Verified Attorneys Active</span>
-              </div>
-           </div>
-           
-           <div className="lg:w-1/2 w-full">
-              <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-[3rem] p-8 space-y-6">
-                 {[
-                   { name: 'Sarah J. Richardson', exp: 'OMMA Licensing Expert', tag: 'Oklahoma' },
-                   { name: 'Marcus Thorne', exp: 'M&A / Corporate', tag: 'Multi-State' },
-                   { name: 'Elena Vance', exp: 'Patient Rights & Criminal', tag: 'Texas/FL' }
-                 ].map((atty, i) => (
-                   <div key={i} className="flex items-center justify-between p-6 bg-white/5 rounded-3xl border border-white/5 hover:border-emerald-500/30 transition-all group">
-                      <div className="flex items-center gap-4">
-                         <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-black">AT</div>
-                         <div>
-                            <p className="font-bold text-white">{atty.name}</p>
-                            <p className="text-xs text-slate-400">{atty.exp}</p>
-                         </div>
-                      </div>
-                      <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest bg-emerald-400/10 px-3 py-1 rounded-full">{atty.tag}</span>
-                   </div>
-                 ))}
-              </div>
-           </div>
-        </div>
-      </section>
+
 
       {/* Patient Success Stories (GGMA Sector Reviews) */}
       <section className="py-24 px-6 bg-white overflow-hidden border-t border-slate-200">
