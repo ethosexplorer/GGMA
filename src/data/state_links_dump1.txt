@@ -1,0 +1,252 @@
+STATE	STATE CANNABIS PROGRAM	PATIENT/CAREGIVER/PHYSICIAN PORTAL	https://knowthefactsmmj.com/wp-content/uploads/_documents/form-dh8013-ommu-042018-application-for-medical-marijuana-treatment-center-registration.pdf	GUIDE	STATE CANNABIS RESOURCES 	S
+ALABAMA	Alabama Medical Cannabis Commission	https://amcc.alabama.gov/patients/	https://amcc.alabama.gov/cannabis-business-applicants-2/	t	https://256today.com/north-alabama-physicians-among-first-certified-to-qualify-medical-cannabis-patients/	a
+ALASKA	https://www.commerce.alaska.gov/web/amco/home.aspx	Marijuana Registry Application	https://accis.elicense365.com/#	https://www.commerce.alaska.gov/web/Portals/9/pub/ABC/AlcoholFAQ/Accessing%20the%20Public%20Search%20on%20AK-ACCIS.pdf	https://www.mpp.org/states/alaska/?state=AK	https://www.commerce.alaska.gov/web/Portals/9/pub/MCB/StatutesAndRegulations/Reduced%20License%20Renewal%20Fees%20eff%205.29.2025.pdf
+ARIZONA 	AZDHS | Public Health Licensing - Medical Marijuana	https://individual-licensing.azdhs.gov/s/login/?ec=302&startURL=%2Fs%2F	https://www.azdhs.gov/licensing/medical-marijuana/	t	https://www.mpp.org/states/arizona/?state=AZ	e
+ARKANSAS 	Medical Marijuana Program	https://mmj.adh.arkansas.gov/	https://www.dfa.arkansas.gov/office/medical-marijuana-commission/applications-and-forms/	https://www.dfa.arkansas.gov/wp-content/uploads/00101_-_00118_Redacted.pdf	https://www.mpp.org/states/arkansas/?state=AR	
+CALIFORNIA 	https://www.cannabis.ca.gov/	https://www.cdph.ca.gov/Programs/CHSI/Pages/MMICP.aspx	https://www.cannabis.ca.gov/applicants/		https://www.mpp.org/states/california/?state=CA	
+COLORADO	https://cdphe.colorado.gov/	https://cdphe.colorado.gov/medical-marijuana-registry-patients	https://med.colorado.gov/marijuana-business-owner-license-application	https://med.colorado.gov/regulated-marijuana-business-license-application	https://www.mpp.org/states/colorado/?state=CO	
+CONNECTICUT 	https://portal.ct.gov/cannabis/medical-marijuana-program?language=en_US	https://biznet.ct.gov/AccountMaint/Login.aspx	https://portal.ct.gov/cannabis/knowledge-base/articles/licensing/licensing-home-page?language=en_US	https://portal.ct.gov/cannabis/knowledge-base/articles/mmp/register-for-a-medical-marijuana-card?language=en_US	https://www.mpp.org/states/connecticut/?state=CT	
+DELAWARE	https://omc.delaware.gov/medical/index.shtml?dc=appProc	https://patients.de.biotr.ac/registration	https://omc.delaware.gov/adult/licensing/contentFolder/pdfs/matrix.pdf?cache=1773361497392	https://omc.delaware.gov/adult/licensing/contentFolder/pdfs/matrix.pdf?cache=1773361497392	https://www.mpp.org/states/delaware/?state=DE	
+DISTRICT OF COLUMBIA DC	https://abca.dc.gov/page/patients%E2%80%94dc-residents	https://octo.quickbase.com/db/bscn22va8?a=dbpage&pageid=23	https://abca.dc.gov/page/medical-cannabis-program#gsc.tab=0		https://www.mpp.org/states/district-of-columbia/?state=DC	
+FLORIDA 	https://mmuregistry.flhealth.gov/spa/	https://mmuregistry.flhealth.gov/spa/login			https://www.mpp.org/states/florida/?state=FL	
+GEORGIA 	https://www.gmcc.ga.gov/home	https://dph.georgia.gov/low-thc-oil-registry/patients-and-caregivers	https://www.gmcc.ga.gov/licensing/dispensing-license	https://drive.google.com/file/d/1fE7ssVack5s48xVXcI_yLKZyPoqoIunm/view	https://www.mpp.org/states/georgia/?state=GA	
+HAWAII	https://medmj.ehawaii.gov/medmj/welcome	https://id.hawaii.gov/am/XUI/?realm=/alpha&authIndexType=service&authIndexValue=myHawaii%20Secure%20Login&goto=https%3A%2F%2Fid.hawaii.gov%3A443%2Fam%2Foauth2%2Fauthorize%3Facr_values%3Dstepup%26client_id%3Dlala-oidc%26code_challenge%3D02b0G0Tm1gNRSWEQIIhTsKgn7l2D-8SvogC8nPewK0M%26code_challenge_method%3DS256%26lala_app_name%3DDOH%2520-%2520OMCCR%2520-%2520Medical%2520Cannabis%2520Registry%26nonce%3DX_ONOVAG07oMkMS7n-EMi9Ko9UZ0LJ2Ac0OVdB2vD6c%26redirect_uri%3Dhttps%3A%2F%2Fsso.ehawaii.gov%2Fsso%2Flogin%2FforgerockClient_MFA%26response_type%3Dcode%26scope%3Dopenid%2520profile%2520email%26state%3Ddd6e2bc8c6%26acr%3Dstepup%26acr_sig%3DBXmnDb3sem39KTg0TcdNUPVzSJr6uXgH9XwcuGAMOGY#/	https://health.hawaii.gov/medicalcannabis/		https://www.mpp.org/states/hawaii/?state=HI	
+IDAHO	https://idahocannabis.org/medical	https://idahocannabis.org/medical	https://agri.idaho.gov/	https://agri.idaho.gov/	https://www.mpp.org/states/idaho/?state=ID	
+ILLINOIS 	https://dph.illinois.gov/topics-services/prevention-wellness/medical-cannabis.html	https://ilogin.illinois.gov/oauth2/v1/authorize?client_id=okta.2b1959c8-bcc0-56eb-a589-cfcfb7422f26&code_challenge=Ui5yjv1qbLO8GxysRqtjSnR7486sBKPsLfnotbqsZxI&code_challenge_method=S256&nonce=XlkQEaEWdJDc9LLzI7bGCxU3wvSoQN6xNwwDVRu0Lr8yb4zHdaRltvZTPNbGpShV&redirect_uri=https%3A%2F%2Filogin.illinois.gov%2Fenduser%2Fcallback&response_type=code&state=USaWZ26Je90yldYei9qZnVIZMl62pn3DVb8tyrD74rOB7bJoqu3aG55EGBN7jjVl&scope=openid%20profile%20email%20okta.users.read.self%20okta.users.manage.self%20okta.internal.enduser.read%20okta.internal.enduser.manage%20okta.enduser.dashboard.read%20okta.enduser.dashboard.manage%20okta.myAccount.sessions.manage			https://www.mpp.org/states/illinois/?state=IL	
+INDIANA 	https://indianacannabis.org/medical				https://www.mpp.org/states/indiana/?state=IN	
+IOWA	https://hhs.iowa.gov/health-prevention/medical-cannabis/patients-caregivers	https://idph.my.salesforce-sites.com/IowaReg			https://www.mpp.org/states/iowa/?state=IA	
+KANSAS	https://kansasstatecannabis.org/medical				https://www.mpp.org/states/kansas/?state=KS	
+KENTUCKY	https://kymedcan.ky.gov/Pages/index.aspx	https://kymedcan.ky.gov/patients-and-caregivers/Pages/default.aspx		https://kymedcan.ky.gov/businesses/Pages/default.aspx	https://www.mpp.org/states/kentucky/?state=KY	
+LOUISIANA 	https://ldh.la.gov/page/medical-marijuana	JUST NEED A SCRIPT FROM THEIR REGULAR DOCTOR	https://ldh.la.gov/assets/oph/Center-EH/sanitarian/fooddrug/marijuana/Marijuana-Retailer-Plans-Review-Questionnaire---1-26.Fillable.pdf		https://www.mpp.org/states/louisiana/?state=LA	
+MAINE	https://www.maine.gov/dafs/ocp/medical-use/applications-forms/registryidentificationcard-instructions	https://licensing.web.maine.gov/cgi-bin/online/licensing/begin.pl?board_number=421	https://licensing.web.maine.gov/cgi-bin/online/licensing/begin.pl?board_number=421	https://www.maine.gov/dafs/ocp/medical-use/applications-forms/registryidentificationcard-instructions	https://www.mpp.org/states/maine/?state=ME	
+MARYLAND 	https://cannabis.maryland.gov/Pages/Medical_Cannabis.aspx	https://cannabis.maryland.gov/Pages/patients.aspx	https://cannabis.maryland.gov/Pages/Industry_Licensees_and_Registrants.aspx	https://cannabis.maryland.gov/Documents/Infographics/DesignateCaregiver_Patient_Process.pdf	https://www.mpp.org/states/maryland/?state=MD	
+MASSACHUSETTS 	https://masscannabiscontrol.com/new-patients/register-as-a-new-patient/	https://patient.massciportal.com/mmj-patient/login	https://masscannabiscontrol.com/license-types/		https://www.mpp.org/states/massachusetts/?state=MA	
+MICHIGAN 	https://www.michigan.gov/cra/sections/mmp	https://aca-prod.accela.com/MIMM/Default.aspx	https://www.michigan.gov/cra/sections/mmp		https://www.mpp.org/states/michigan/?state=MI	
+MINNESOTA 	https://mn.gov/ocm/businesses/licensing/license-types/	https://cannabis.web.health.state.mn.us/	https://mn.gov/ocm/businesses/licensing/license-types/	https://www.mda.state.mn.us/plants/hemp/firsttimeapplicants	https://www.mpp.org/states/minnesota/?state=MN	
+MISSISSIPPI 	https://ms-doh-public.nls.egov.com/login	https://www.mmcp.ms.gov/patients-caregivers	https://www.mmcp.ms.gov/businesses	https://msdh.ms.gov/page/30,0,425.html	https://www.mpp.org/states/mississippi/?state=MS	
+MISSOURI 	https://mo-public.mycomplia.com/login	https://mo-public.mycomplia.com/register	https://mo-public.mycomplia.com/register		https://www.mpp.org/states/missouri/?state=MO	
+MONTANA 	https://revenue.mt.gov/	https://tap.dor.mt.gov/_/	https://tap.dor.mt.gov/		https://www.mpp.org/states/montana/?state=MT	
+NEBRASKA	https://lcc.nebraska.gov/medical-cannabis/medical-cannabis-commission-how-apply	https://lcc.nebraska.gov/medical-cannabis/medical-cannabis-commission-how-apply	https://lcc.nebraska.gov/medical-cannabis/medical-cannabis-commission-how-apply		https://www.mpp.org/states/nebraska/?state=NE	
+NEVADA 	https://mmportal.nv.gov/PatientRegistryOnline/PatientRegistryOLCreateLogin	https://mmportal.nv.gov/PatientRegistryOnline/PatientRegistryOLCreateLogin			https://www.mpp.org/states/nevada/?state=NV	
+NEW HAMPSHIRE	https://www.dhhs.nh.gov/programs-services/population-health/therapeutic-cannabis/therapeutic-cannabis-applications-and	https://www.dhhs.nh.gov/sites/g/files/ehbemt476/files/documents/2021-11/tcp-applicationpatient.pdf			https://www.mpp.org/states/new-hampshire/?state=NH	
+NEW JERSEY	https://www.nj.gov/cannabis/medicinalcannabis/patient-registration/	https://njmcp.crc.nj.gov/web/#/home/createAdultPatientUser	https://www.nj.gov/cannabis/businesses/recreational/license-application-process/		https://www.mpp.org/states/new-jersey/?state=NJ	
+NEW MEXICO	https://www.rld.nm.gov/cannabis/licensing/new-applications/apply-for-license/	https://www.rld.nm.gov/cannabis/licensing/new-applications/	https://www.rld.nm.gov/cannabis/licensing/apply-renew-a-cannabis-license/		https://www.mpp.org/states/new-mexico/?state=NM	
+NEW YORK	https://cannabis.ny.gov/medical-cannabis-program-applications	https://cannabis.ny.gov/patients	https://cannabis.ny.gov/licensing		https://www.mpp.org/states/new-york/?state=NY	
+NORTH CAROLINA	https://northcarolinastatecannabis.org/medical				https://www.mpp.org/states/north-carolina/?state=NC	
+NORTH DAKOTA	https://mmregistration.health.nd.gov/	https://mmregistration.health.nd.gov/			https://www.mpp.org/states/north-dakota/?state=ND	
+OHIO	https://com.ohio.gov/divisions-and-programs/cannabis-control/patients-caregivers/obtain-medical-marijuana	https://com.ohio.gov/divisions-and-programs/cannabis-control/patients-caregivers/patient-and-caregiver-registry	https://com.ohio.gov/divisions-and-programs/cannabis-control		https://www.mpp.org/states/ohio/?state=OH	
+OKLAHOMA 	https://oklahoma.gov/omma/apply.html				https://www.mpp.org/states/oklahoma/?state=OK	
+OREGON	https://www.oregon.gov/oha/ph/diseasesconditions/chronicdisease/medicalmarijuanaprogram/pages/forms.aspx	https://www.oregon.gov/oha/ph/diseasesconditions/chronicdisease/medicalmarijuanaprogram/pages/forms.aspx#online	https://ommpsystem.oregon.gov/		https://www.mpp.org/states/oregon/?state=OR	
+PENNSYLVANIA 	https://www.pa.gov/services/health/register-for-the-medical-marijuana-program	https://padohmmp.custhelp.com/app/login			https://www.mpp.org/states/pennsylvania/?state=PA	
+RHODE ISLAND	https://health.ri.gov/medical-marijuana/information/patients-caregivers	https://cannabislicensing.ri.gov/ricannabis/s/login/?ec=302&startURL=%2Fricannabis%2Fs%2F			https://www.mpp.org/states/rhode-island/?state=RI	
+SOUTH CAROLINA	https://southcarolinastatecannabis.org/medical				https://www.mpp.org/states/south-carolina/?state=SC	
+SOUTH DAKOTA	https://medcannabisapplication.sd.gov/	https://medcannabis.sd.gov/	https://medcannabis.sd.gov/Establishments/Forms.aspx		https://www.mpp.org/states/south-dakota/?state=SD	
+TENNESSEE 	https://www.tn.gov/agriculture/businesses/hemp/hemp-derived-cannabinoids/hemp-derived-cannabinoids-licensing.html		https://www.tn.gov/abc.html		https://www.mpp.org/states/tennessee/?state=TN	
+TEXAS	https://www.texas.gov/health-services/texas-medical-marijuana/				https://www.mpp.org/states/texas/?state=TX	
+UTAH	https://medicalcannabis.utah.gov/patients/apply-for-patient-card/	https://id.utah.gov/login?goto=https:%2F%2Flogin.dts.utah.gov:443%2Fsso%2Foauth2%2Fauthorize%3Fresponse_type%3Dcode%26client_id%3Dfrp-end-user-ui%26state%3DSDAuU3BSQU55TEQtcUNXVm1OZzZKLkNNMnlnMzlURXlfOEMzQUd4MG53RE0z;%25252Fprofile%25252Faccount%26redirect_uri%3Dhttps:%2F%2Fid.utah.gov%26scope%3Dopenid%2520fr:idm:*%26code_challenge%3DsxcorOtWWG-qEYiHKwwM5AF0H0Y3cYt2WlMbpkKRLdU%26code_challenge_method%3DS256%26nonce%3DSDAuU3BSQU55TEQtcUNXVm1OZzZKLkNNMnlnMzlURXlfOEMzQUd4MG53RE0z&realm=%2F		https://medicalcannabis.utah.gov/patients/apply-for-patient-card/	https://www.mpp.org/states/utah/?state=UT	
+VERMONT	https://ccb.vermont.gov/med-forms	https://ccb.vermont.gov/forms	https://ccb.vermont.gov/applications		https://www.mpp.org/states/vermont/?state=VT	
+VIRGINIA	https://cca.virginia.gov/medicalcannabis	https://cca.virginia.gov/medicalcannabis/patients		https://cca.virginia.gov/medicalcannabis/patients	https://www.mpp.org/states/virginia/?state=VA	
+WASHINGTON	https://doh.wa.gov/you-and-your-family/cannabis/medical-cannabis/patient-information				https://www.mpp.org/states/washington/?state=WA	
+WEST VIRGINIA	https://omc.wv.gov/patient-application/Pages/default.aspx	https://omc.wv.gov/patients/Pages/default.aspx	https://omc.wv.gov/industry/application/Pages/default.aspx		https://www.mpp.org/states/west-virginia/?state=WV	
+WISCONSIN	https://docs.legis.wisconsin.gov/2025/related/proposals/sb534				https://www.mpp.org/states/wisconsin/?state=WI	
+WYOMING	https://wyomingcannabis.org/medical				https://www.mpp.org/states/wyoming/?state=WY	
+						
+						
+					https://www.mpp.org/		Adult-use status	Medical status	Regulator	Official compliance page	Key checklist items	Source	
+Alabama	No/limited	Yes	Alabama Medical Cannabis Commission	State regulator page	Licensing; seed-to-sale; testing; packaging; advertising	https://www.ncsl.org/health/state-medical-cannabis-laws	
+Alaska	Yes	Yes	Alaska Alcohol & Marijuana Control Office	State marijuana control page	License; inventory tracking; testing; labeling; taxes	https://www.nsc.org/cannabis-regulations	
+Arizona	Yes	Yes	Arizona Department of Health Services	State cannabis page	Licensing; testing; product rules; security; records	https://www.nsc.org/cannabis-regulations	
+Arkansas	No	Yes	Arkansas Medical Marijuana Commission	State medical marijuana page	Licensing; labeling; testing; track-and-trace; inspections	https://www.ncsl.org/health/state-medical-cannabis-laws	
+California	Yes	Yes	California Department of Cannabis Control	DCC compliance pages	Cultivator self-inspection; testing; packaging; labor; track-and-trace	https://www.cannabis.ca.gov/posts/cannabis-cultivator-self-inspection-checklist/	
+Colorado	Yes	Yes	Colorado Marijuana Enforcement Division	State marijuana licensing page	License; inventory; testing; advertising; transport	https://www.nsc.org/cannabis-regulations	
+Connecticut	Yes	Yes	Connecticut Department of Consumer Protection	Cannabis compliance page	Licensing; track-and-trace; testing; labeling; taxes	https://www.nsc.org/cannabis-regulations	
+Delaware	Yes	Yes	Delaware Cannabis Control Office	State cannabis page	Licensing; testing; packaging; records; security	https://www.nsc.org/cannabis-regulations	
+Florida	No	Yes	Florida Department of Health OMMU	OMMU page	Medical authorization; product rules; testing; dispensing; records	https://www.ncsl.org/health/state-medical-cannabis-laws	
+Georgia	No/limited	Limited	Georgia Access to Medical Cannabis Commission	State medical cannabis page	License; low-THC limits; dispensing rules; records	https://www.nsc.org/cannabis-regulations	
+Hawaii	No	Yes	Hawaii Department of Health	Medical cannabis page	Medical licensing; lab testing; packaging; dispensary rules	https://www.ncsl.org/health/state-medical-cannabis-laws	
+Idaho	No	No comprehensive program	State law only	N/A	No operational cannabis business framework	https://en.wikipedia.org/wiki/Legality_of_cannabis_by_U.S._jurisdiction	
+Illinois	Yes	Yes	Illinois cannabis regulator	State cannabis page	Adult-use licensing; testing; labeling; equity; taxes	https://www.nsc.org/cannabis-regulations	
+Indiana	No	No comprehensive program	State law only	N/A	No operational cannabis business framework	https://en.wikipedia.org/wiki/Legality_of_cannabis_by_U.S._jurisdiction	
+Iowa	No/limited	Yes	Iowa DHHS	Medical cannabidiol page	Medical product limits; testing; labeling; records	https://www.ncsl.org/health/state-medical-cannabis-laws	
+Kansas	Just legalized Feb/Mar 2026	No comprehensive program	State law only	N/A	No operational cannabis business framework	https://en.wikipedia.org/wiki/Legality_of_cannabis_by_U.S._jurisdiction	
+Kentucky	No/limited	Yes	Kentucky Cabinet for Health and Family Services	Medical cannabis page	Licensing; testing; packaging; seed-to-sale; dispensing	https://www.ncsl.org/health/state-medical-cannabis-laws	
+Louisiana	No	Yes	Louisiana Board of Pharmacy	State medical cannabis page	Medical cultivation/processing; testing; product rules	https://www.ncsl.org/health/state-medical-cannabis-laws	
+Maine	Yes	Yes	Maine Office of Cannabis Policy	OCP compliance page	License; testing; packaging; labeling; labor; tax	https://www.nsc.org/cannabis-regulations	
+Maryland	Yes	Yes	Maryland Cannabis Administration	MCA compliance page	Licensing; testing; advertising; track-and-trace; taxes	https://www.nsc.org/cannabis-regulations	
+Massachusetts	Yes	Yes	Massachusetts Cannabis Control Commission	CCC compliance page	License; testing; security; recalls; taxes	https://www.nsc.org/cannabis-regulations	
+Michigan	Yes	Yes	Michigan Cannabis Regulatory Agency	CRA compliance page	License; testing; METRC; packaging; advertising	https://www.nsc.org/cannabis-regulations	
+Minnesota	Yes	Yes	Minnesota Office of Cannabis Management	OCM compliance page	Licensing; testing; packaging; local approvals	https://www.nsc.org/cannabis-regulations	
+Mississippi	No/limited	Yes	Mississippi Medical Cannabis Program	State medical cannabis page	Medical licensing; testing; labeling; records	https://www.ncsl.org/health/state-medical-cannabis-laws	
+Missouri	Yes	Yes	Missouri Division of Cannabis Regulation	DCR compliance page	License; testing; packaging; track-and-trace; taxes	https://www.nsc.org/cannabis-regulations	
+Montana	Yes	Yes	Montana Cannabis Control Division	CCD compliance page	License; testing; labeling; inventory; taxes	https://www.nsc.org/cannabis-regulations	
+Nebraska	Just Legalized Mar/Apr 2026	No comprehensive program	State law only	N/A	No operational cannabis business framework	https://en.wikipedia.org/wiki/Legality_of_cannabis_by_U.S._jurisdiction	
+Nevada	Yes	Yes	Nevada Cannabis Compliance Board	CCB compliance page	License; testing; packaging; security; taxes	https://www.nsc.org/cannabis-regulations	
+New Hampshire	No/limited	Yes	New Hampshire DHHS	Medical cannabis page	Medical cultivation/dispensary rules; testing; records	https://www.ncsl.org/health/state-medical-cannabis-laws	
+New Jersey	Yes	Yes	New Jersey Cannabis Regulatory Commission	CRC compliance page	License; testing; labeling; labor; taxes	https://www.nsc.org/cannabis-regulations	
+New Mexico	Yes	Yes	New Mexico Cannabis Control Division	CCD compliance page	License; testing; packaging; track-and-trace	https://www.nsc.org/cannabis-regulations	
+New York	Yes	Yes	New York Office of Cannabis Management	OCM compliance page	License; testing; labeling; marketing; taxes	https://www.nsc.org/cannabis-regulations	
+North Carolina	No	No comprehensive program	State law only	N/A	No operational cannabis business framework	https://en.wikipedia.org/wiki/Legality_of_cannabis_by_U.S._jurisdiction	
+North Dakota	No/limited	Yes	North Dakota DHHS	Medical cannabis page	Medical licensing; testing; dispensing; records	https://www.ncsl.org/health/state-medical-cannabis-laws	
+Ohio	Yes	Yes	Ohio Division of Cannabis Control	DCC compliance page	License; testing; packaging; track-and-trace; taxes	https://www.nsc.org/cannabis-regulations	
+Oklahoma	No	Yes	Oklahoma Medical Marijuana Authority	OMMA compliance page	Post-approval checklist; OBNDD; METRC; tax; fire/safety; water	https://oklahoma.gov/omma/businesses/inspections-and-compliance.html	
+Oregon	Yes	Yes	Oregon Liquor and Cannabis Commission	OLCC compliance page	License; testing; packaging; labeling; taxes	https://www.nsc.org/cannabis-regulations	
+Pennsylvania	No	Yes	Pennsylvania Department of Health	Medical marijuana page	Medical licensing; testing; dispensing; records	https://www.ncsl.org/health/state-medical-cannabis-laws	
+Rhode Island	Yes	Yes	Rhode Island Cannabis Control Commission	CCC compliance page	License; testing; labeling; tax; inspections	https://www.nsc.org/cannabis-regulations	
+South Carolina	No	No comprehensive program	State law only	N/A	No operational cannabis business framework	https://en.wikipedia.org/wiki/Legality_of_cannabis_by_U.S._jurisdiction	
+South Dakota	No/limited	Yes	South Dakota Department of Health	Medical cannabis page	Medical licensing; testing; dispensing; records	https://www.ncsl.org/health/state-medical-cannabis-laws	
+Tennessee	No	No comprehensive program	State law only	N/A	No operational cannabis business framework	https://en.wikipedia.org/wiki/Legality_of_cannabis_by_U.S._jurisdiction	
+Texas	No/limited	Limited	Texas Department of Public Safety	Compassionate use page	Low-THC product rules; licensing; testing; records	https://www.ncsl.org/health/state-medical-cannabis-laws	
+Utah	No/limited	Yes	Utah Department of Health and Human Services	Medical cannabis page	Medical licensing; testing; labeling; dispensing	https://www.ncsl.org/health/state-medical-cannabis-laws	
+Vermont	Yes	Yes	Vermont Cannabis Control Board	CCB compliance page	License; testing; packaging; labeling; taxes	https://www.nsc.org/cannabis-regulations	
+Virginia	Yes/limited retail	Yes	Virginia Cannabis Control Authority	State cannabis page	License framework; retail status; labeling; records	https://www.nsc.org/cannabis-regulations	
+Washington	Yes	Yes	Washington State Liquor and Cannabis Board	LCB cannabis page	License; testing; packaging; traceability; taxes	https://www.nsc.org/cannabis-regulations	
+West Virginia	No/limited	Yes	West Virginia Office of Medical Cannabis	Medical cannabis page	Medical licensing; testing; dispensing; records	https://www.ncsl.org/health/state-medical-cannabis-laws	
+Wisconsin	Just Legalized March 2026	No comprehensive program	State law only	N/A	No operational cannabis business framework	https://en.wikipedia.org/wiki/Legality_of_cannabis_by_U.S._jurisdiction	
+Wyoming	No	No comprehensive program	State law only	N/A	No operational cannabis business framework	https://en.wikipedia.org/wiki/Legality_of_cannabis_by_U.S._jurisdiction,   GGP-OS State Medical Marijuana Licensing Resources	 	 				
+						
+Comprehensive quick-reference guide — Patient portals, applications, forms, business licensing, and compliance documents for all U.S. states.						
+						
+Use Ctrl+F (or Cmd+F) to search by state or keyword.						
+						
+Alabama						
+Patient Resources						
+Amcc Portal Instructions Creating An Account Pdf — https://amcc.alabama.gov/wp-content/uploads/2026/01/AMCC-Portal-Instructions-Creating-an-Account.pdf						
+Patients — https://amcc.alabama.gov/patients/						
+Amcc Portal Instructions Patients Pdf — https://amcc.alabama.gov/wp-content/uploads/2026/01/AMCC-Portal-Instructions-Patients.pdf						
+Amcc Portal Instructions Caregivers Pdf — https://amcc.alabama.gov/wp-content/uploads/2026/01/AMCC-Portal-Instructions-Caregivers.pdf						
+Amcc Portal Instructions Physicians Pdf — https://amcc.alabama.gov/wp-content/uploads/2026/01/AMCC-Portal-Instructions-Physicians.pdf						
+Business / Licensee Resources						
+Applicant Licensee Info Integrated Facility Pdf — https://amcc.alabama.gov/wp-content/uploads/2026/01/Applicant-Licensee-Info-INTEGRATED-FACILITY.pdf						
+Applicant Licensee Info Cultivator Pdf — https://amcc.alabama.gov/wp-content/uploads/2026/01/Applicant-Licensee-Info-CULTIVATOR.pdf						
+Applicant Licensee Info Processor Pdf — https://amcc.alabama.gov/wp-content/uploads/2026/01/Applicant-Licensee-Info-PROCESSOR.pdf						
+Applicant Licensee Info Dispensary 1 Pdf — https://amcc.alabama.gov/wp-content/uploads/2026/01/Applicant-Licensee-Info-DISPENSARY-1.pdf						
+Applicant Licensee Info Secure Transporter Pdf — https://amcc.alabama.gov/wp-content/uploads/2026/01/Applicant-Licensee-Info-SECURE-TRANSPORTER.pdf						
+Applicant Licensee Info State Testing Laboratory Pdf — https://amcc.alabama.gov/wp-content/uploads/2026/01/Applicant-Licensee-Info-STATE-TESTING-LABORATORY.pdf						
+Alaska						
+Patient Resources						
+Medicalmarijuana Pdf — https://health.alaska.gov/media/ocjibnfh/medicalmarijuana.pdf						
+Arizona						
+Patient Resources						
+Medical Marijuana — https://www.azdhs.gov/licensing/medical-marijuana/						
+Portal Instructions Pdf — https://www.azdhs.gov/documents/licensing/medical-marijuana/portal-instructions.pdf						
+Business / Licensee Resources						
+Dispensary Agent — https://www.azdhs.gov/licensing/medical-marijuana/#dispensary-agent						
+Labs — https://www.azdhs.gov/licensing/medical-marijuana/#labs						
+Physician — https://www.azdhs.gov/licensing/medical-marijuana/#physician						
+Arkansas						
+Patient Resources						
+Mmj.Adh.Arkansas.Gov — https://mmj.adh.arkansas.gov/						
+Patient Application Pdf — https://mmj.adh.arkansas.gov/static/web/media/Patient_Application.pdf						
+Caregiver Application Pdf — https://mmj.adh.arkansas.gov/static/web/media/Caregiver_Application.pdf						
+Mmj Information Change Request Pdf — https://mmj.adh.arkansas.gov/static/web/media/MMJ_Information_Change_Request.pdf						
+Licensing And Renewal Faq — https://www.dfa.arkansas.gov/office/medical-marijuana-commission/licensing-and-renewal-faq/						
+Business / Licensee Resources						
+Signin/Register — https://ar-dfa-public.nls.egov.com/login						
+California						
+Patient Resources						
+Mmicp — https://www.cdph.ca.gov/Programs/CHSI/Pages/MMICP.aspx						
+Mmicp Faqs — https://www.cdph.ca.gov/Programs/CHSI/Pages/MMICP-FAQs.aspx						
+Mmicp Forms And Appeals — https://www.cdph.ca.gov/Programs/CHSI/Pages/MMICP-Forms-and-Appeals.aspx						
+Business / Licensee Resources						
+Applicants — https://www.cannabis.ca.gov/applicants/						
+How To Apply — https://www.cannabis.ca.gov/applicants/how-to-apply/						
+Application Resources — https://www.cannabis.ca.gov/applicants/application-resources/						
+Colorado						
+Patient Resources						
+Medical Marijuana Registry Patients — https://cdphe.colorado.gov/medical-marijuana-registry-patients						
+Medical Marijuana Registry Faq — https://cdphe.colorado.gov/medical-marijuana-registry-faq						
+Forms — https://med.colorado.gov/forms						
+Business / Licensee Resources						
+Marijuana Business Owner License Application — https://med.colorado.gov/marijuana-business-owner-license-application						
+Connecticut						
+Patient Resources						
+Register For A Medical Marijuana Card — https://portal.ct.gov/cannabis/knowledge-base/articles/mmp/register-for-a-medical-marijuana-card?language=en_US						
+Qualifying Conditions — https://portal.ct.gov/cannabis/knowledge-base/articles/mmp/qualifying-conditions						
+Mmppatientfaq — https://portal.ct.gov/cannabis/mmppatientfaq						
+Certification Process For Prescribers — https://portal.ct.gov/cannabis/knowledge-base/articles/mmp/certification-process-for-prescribers						
+Physician Requirements And Eligibility — https://portal.ct.gov/cannabis/knowledge-base/articles/mmp/physician-requirements-and-eligibility						
+Prescriber Faqs — https://portal.ct.gov/cannabis/prescriber-faqs						
+Business / Licensee Resources						
+Licensing Home Page — https://portal.ct.gov/cannabis/knowledge-base/articles/licensing/licensing-home-page?language=en_US						
+Delaware						
+Patient Resources						
+Patientapplication Pdf — https://omc.delaware.gov/medical/contentFolder/pdf/patientApplication.pdf						
+Caregiverapplication Pdf — https://omc.delaware.gov/medical/contentFolder/pdf/caregiverApplication.pdf						
+Pediatricapplication Pdf — https://omc.delaware.gov/medical/contentFolder/pdf/pediatricApplication.pdf						
+Business / Licensee Resources						
+Licensing — https://omc.delaware.gov/adult/licensing/						
+District Of Columbia						
+Patient Resources						
+Minor — https://abca.dc.gov/node/1531231						
+Caregiver — https://abca.dc.gov/node/1531276						
+Patients Dc Residents — https://abca.dc.gov/page/patients%E2%80%94dc-residents#gsc.tab=0						
+Florida						
+Patient Resources						
+Registry Login — https://mmuregistry.flhealth.gov/spa/login						
+Instructional Guides — https://knowthefactsmmj.com/registry/#instructional-guides						
+Identification Cards — https://knowthefactsmmj.com/registry/#identification-cards						
+Business / Licensee Resources						
+Application For Medical Marijuana Treatment Center Registration — https://knowthefactsmmj.com/wp-content/uploads/_documents/form-dh8013-ommu-042018-application-for-medical-marijuana-treatment-center-registration.pdf						
+Georgia						
+Patient Resources						
+Georgia Qc And Qa Thc Oil Registry — https://www.gmcc.ga.gov/home						
+Hawaii						
+Patient Resources						
+Welcome — https://medmj.ehawaii.gov/medmj/welcome						
+Idaho						
+Patient Resources						
+Medical — https://idahocannabis.org/medical						
+Illinois						
+Patient Resources						
+New Patient Resources — https://dph.illinois.gov/topics-services/prevention-wellness/medical-cannabis/new-patient-resources.html						
+Existing Patient Resources — https://dph.illinois.gov/topics-services/prevention-wellness/medical-cannabis/existing-patient-resources.html						
+Hcp Resources — https://dph.illinois.gov/topics-services/prevention-wellness/medical-cannabis/hcp-resources.html						
+Iowa						
+Business / Licensee Resources						
+Iowa Hhs Production Dispensary Api Guide — https://hhs.iowa.gov/media/9175/download?inline						
+Iowa Hhs Production Manufacturing Api Guide — https://hhs.iowa.gov/media/9179/download?inline						
+Kentucky						
+Business / Licensee Resources						
+Licensees — https://kymedcan.ky.gov/businesses/Pages/licensees.aspx						
+Maine						
+Patient Resources						
+Patient Massciportal Login — https://patient.massciportal.com/mmj-patient/login						
+Business / Licensee Resources						
+Patient Cultivation — https://health.mo.gov/safety/cannabis/patient-cultivation.php						
+Maryland						
+						
+(Some links were too fragmented in the source data — let me know if you want me to expand any section.)						
+						
+Missouri						
+Patient Resources						
+Login/Register — https://mo-public.mycomplia.com/register						
+Nebraska						
+Patient Resources						
+Patientregistryolcreatelogin — https://mmportal.nv.gov/PatientRegistryOnline/PatientRegistryOLCreateLogin						
+Nevada						
+Business / Licensee Resources						
+Licensing — https://www.dpbh.nv.gov/resources/licensing/						
+New Mexico						
+Patient Resources						
+Apply For License — https://www.rld.nm.gov/cannabis/licensing/new-applications/apply-for-license/						
+New York						
+Patient Resources						
+Caregiver Registration Instructions — https://cannabis.ny.gov/caregiver-registration-instructions						
+Patient And Caregiver Registry Id Guide — https://cannabis.ny.gov/patient-and-caregiver-registry-id-guide						
+Many additional patient & practitioner forms (see full raw data for complete list)						
+Business / Licensee Resources						
+How Read Lab Certificate — https://cannabis.ny.gov/how-read-lab-certificate-analysis-your-cannabis-product						
+North Carolina						
+Patient Resources						
+Medical — https://northcarolinastatecannabis.org/medical						
+Ohio						
+Patient Resources						
+Activating Your Medical Marijuana Card — https://com.ohio.gov/wps/portal/gov/com/divisions-and-programs/cannabis-control/patients-caregivers/obtain-medical-marijuana/activating-your-medical-marijuana-card						
+Business / Licensee Resources						
+Oklahoma Apply — https://oklahoma.gov/omma/apply.html#apply						
+Oklahoma						
+Patient Resources						
+Medportal — https://medportal.omma.ok.gov/						
+Application Fees — https://oklahoma.gov/omma/apply.html#application-fees						
+Business / Licensee Resources						
+Apply — https://oklahoma.gov/omma/apply.html#apply

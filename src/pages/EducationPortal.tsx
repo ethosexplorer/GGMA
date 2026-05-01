@@ -46,7 +46,7 @@ export const EducationPortal = ({ onBack }: { onBack: () => void }) => {
             </p>
             <div className="flex flex-wrap gap-4">
               <button 
-                onClick={() => ((window as any).Calendly ? (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma/health-wellness-consultation' }) : window.open('https://calendly.com/shantell-ggma/health-wellness-consultation', '_blank'))}
+                onClick={() => ((window as any).Calendly ? (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/health-wellness-consultation' }) : window.open('https://calendly.com/globalgreenhpmeet/health-wellness-consultation', '_blank'))}
                 className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold rounded-xl shadow-lg shadow-emerald-900/20 transition-all flex items-center gap-2"
               >
                 <PlayCircle size={20} /> Start Training
@@ -87,9 +87,9 @@ export const EducationPortal = ({ onBack }: { onBack: () => void }) => {
         {activeTab === 'programs' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {[
-              { title: 'Metrc Integration Mastery', link: 'https://calendly.com/shantell-ggma/health-wellness-consultation', desc: 'Master the API and compliance rules of the Metrc state systems. Grant-funded.', hrs: '40 Hrs', tag: 'Core Program', price: '$2,495' },
-              { title: 'SINC Oversight Directives', link: 'https://calendly.com/shantell-ggma/health-wellness-consultation', desc: 'Training for law enforcement and regulators on identifying compliance issues.', hrs: '24 Hrs', tag: 'Gov / Law Enforcement', price: '$1,850' },
-              { title: 'Retail Compliance Pro', link: 'https://calendly.com/shantell-ggma/health-wellness-consultation', desc: 'Frontline budtender and manager training for point-of-sale compliance.', hrs: '16 Hrs', tag: 'Business', price: '$750' },
+              { title: 'Metrc Integration Mastery', link: 'https://calendly.com/globalgreenhpmeet/metrc-integration-mastery', desc: 'Master the API and compliance rules of the Metrc state systems. Grant-funded.', hrs: '40 Hrs', tag: 'Core Program', price: '$2,495' },
+              { title: 'SINC Oversight Directives', link: 'https://calendly.com/globalgreenhpmeet/sinc-oversight-directives', desc: 'Training for law enforcement and regulators on identifying compliance issues.', hrs: '24 Hrs', tag: 'Gov / Law Enforcement', price: '$1,850' },
+              { title: 'Retail Compliance Pro', link: 'https://calendly.com/globalgreenhpmeet/retail-compliance-pro', desc: 'Frontline budtender and manager training for point-of-sale compliance.', hrs: '16 Hrs', tag: 'Business', price: '$750' },
             ].map((prog, i) => (
               <div key={i} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all group flex flex-col">
                 <div className="flex justify-between items-start mb-4">

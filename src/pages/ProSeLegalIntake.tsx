@@ -28,9 +28,9 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
   const openCalendly = (e: React.MouseEvent) => {
     e.preventDefault();
     if ((window as any).Calendly) {
-      (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma/health-wellness-consultation' });
+      (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/health-wellness-consultation' });
     } else {
-      window.open('https://calendly.com/shantell-ggma/health-wellness-consultation', '_blank');
+      window.open('https://calendly.com/globalgreenhpmeet/health-wellness-consultation', '_blank');
     }
   };
 

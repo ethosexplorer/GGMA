@@ -131,7 +131,7 @@ export const ProviderDirectoryTab = () => {
 
             {selectedProvider === provider.id && (
               <div className="mt-4 pt-4 border-t border-slate-100 space-y-2">
-                <button onClick={() => ((window as any).Calendly ? (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/shantell-ggma' }) : window.open('https://calendly.com/shantell-ggma', '_blank'))} className="w-full py-2.5 rounded-xl bg-emerald-500 text-white text-sm font-bold hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2">
+                <button onClick={() => ((window as any).Calendly ? (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/health-wellness-consultation' }) : window.open('https://calendly.com/globalgreenhpmeet/health-wellness-consultation', '_blank'))} className="w-full py-2.5 rounded-xl bg-emerald-500 text-white text-sm font-bold hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2">
                   <Video size={16} /> Book Telehealth
                 </button>
                 <button className="w-full py-2 rounded-xl border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors">
