@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { CheckoutModal } from './CheckoutModal';
 import {
   CheckCircle2,
   Check,
@@ -140,7 +141,7 @@ function formatPrice(plan: SubscriptionPlan, billing: 'monthly' | 'annual', addo
 }
 
 // ─── Plan Card ───
-const PlanCard = ({ plan, index, total, billing, selectedAddons, tabId }: { key?: string; plan: SubscriptionPlan; index: number; total: number; billing: 'monthly' | 'annual'; selectedAddons: AddOn[]; tabId: TabId }) => {
+const PlanCard = ({ plan, index, total, billing, selectedAddons, tabId, onCheckout }: { key?: string; plan: SubscriptionPlan; index: number; total: number; billing: 'monthly' | 'annual'; selectedAddons: AddOn[]; tabId: TabId; onCheckout: (items: any[], trialDays: number) => void }) => {
   const isMid = total === 3 && index === 1;
   const isPopular = isMid || (total === 4 && index === 2);
   const addonTotal = selectedAddons.reduce((sum, addon) => sum + (typeof addon.price === 'number' ? addon.price : 0), 0);
@@ -189,7 +190,7 @@ const PlanCard = ({ plan, index, total, billing, selectedAddons, tabId }: { key?
             <span>{price}</span>
           </div>
           <button
-            onClick={() => alert(`Redirecting to secure checkout...\n\nProcessing subscription for:\n• ${plan.name}\n• Billing: ${billing}\n• Selected Add-ons: ${selectedAddons.length}\n\nTotal Due Today: ${price === 'Free' || showTrial ? '$0.00' : price}`)}
+            onClick={() => onCheckout([{ name: plan.name, price: billing === 'monthly' ? plan.monthlyPrice : plan.annualPrice, type: 'plan', billing }, ...selectedAddons.map(a => ({ name: a.name, price: a.price, type: 'addon' as const, per: a.per }))], trialDays)}
             className="w-full py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1 shadow-md"
           >
             Checkout <ArrowRight size={10} />
@@ -249,7 +250,7 @@ const PlanCard = ({ plan, index, total, billing, selectedAddons, tabId }: { key?
       {hasTrial && (
         <p className="text-[10px] text-amber-700 font-bold mb-4 flex items-start gap-1">
           <CreditCard size={11} className="shrink-0 mt-0.5" />
-          Card required. Auto-renews after trial.
+          Invoice sent after trial. No card required.
         </p>
       )}
 
@@ -298,9 +299,12 @@ const PlanCard = ({ plan, index, total, billing, selectedAddons, tabId }: { key?
       <button
         onClick={() => {
           if (price === 'Custom') {
-            alert(`Contacting Sales for the ${plan.name} plan...`);
+            window.open('mailto:globalgreenhp@gmail.com?subject=Enterprise Plan Inquiry - ' + plan.name, '_blank');
           } else {
-            alert(`Redirecting to secure checkout...\n\nProcessing subscription for:\n• ${plan.name}\n• Billing: ${billing}\n• Selected Add-ons: ${selectedAddons.length}\n\nTotal Due Today: ${price === 'Free' || showTrial ? '$0.00' : price}`);
+            onCheckout(
+              [{ name: plan.name, price: billing === 'monthly' ? plan.monthlyPrice : plan.annualPrice, type: 'plan' as const, billing }, ...selectedAddons.map(a => ({ name: a.name, price: a.price, type: 'addon' as const, per: a.per }))],
+              trialDays
+            );
           }
         }}
         className={`w-full py-3.5 rounded-2xl font-black text-sm transition-all ${
@@ -369,6 +373,17 @@ export const PricingTiers = ({ onNavigate, defaultTab, onChatRole, allowedTabs }
         ? prev.filter(a => a.id !== addon.id)
         : [...prev, addon]
     );
+  };
+
+  // Checkout modal state
+  const [checkoutItems, setCheckoutItems] = useState<any[]>([]);
+  const [checkoutTrialDays, setCheckoutTrialDays] = useState(0);
+  const [showCheckout, setShowCheckout] = useState(false);
+
+  const openCheckout = (items: any[], trialDays: number) => {
+    setCheckoutItems(items);
+    setCheckoutTrialDays(trialDays);
+    setShowCheckout(true);
   };
 
   const plans = getPlansForTab(activeTab);
@@ -496,7 +511,7 @@ export const PricingTiers = ({ onNavigate, defaultTab, onChatRole, allowedTabs }
                       </span>
                     </div>
                     <button 
-                      onClick={() => alert(`Redirecting to secure checkout...\n\nProcessing payment for ${selectedAddons.length} item(s):\n${selectedAddons.map(a => `• ${a.name} ($${a.price})`).join('\n')}\n\nTotal: $${selectedAddons.reduce((sum, a) => sum + (typeof a.price === 'number' ? a.price : 0), 0).toFixed(2)}`)}
+                      onClick={() => openCheckout(selectedAddons.map(a => ({ name: a.name, price: a.price, type: 'addon' as const, per: a.per })), 0)}
                       className="flex items-center gap-2 px-6 py-2 bg-emerald-600 text-white rounded-xl text-sm font-black hover:bg-emerald-700 transition-all shadow-md"
                     >
                       Checkout <ArrowRight size={16} />
@@ -537,7 +552,7 @@ export const PricingTiers = ({ onNavigate, defaultTab, onChatRole, allowedTabs }
               'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
             }`}>
               {plans.map((plan, i) => (
-                <PlanCard key={plan.id} plan={plan} index={i} total={plans.length} billing={billing} selectedAddons={selectedAddons} tabId={activeTab} />
+                <PlanCard key={plan.id} plan={plan} index={i} total={plans.length} billing={billing} selectedAddons={selectedAddons} tabId={activeTab} onCheckout={openCheckout} />
               ))}
             </div>
           </motion.div>
@@ -631,6 +646,16 @@ export const PricingTiers = ({ onNavigate, defaultTab, onChatRole, allowedTabs }
           </div>
         </div>
       </div>
+
+      {/* Live Checkout Modal */}
+      <CheckoutModal
+        isOpen={showCheckout}
+        onClose={() => setShowCheckout(false)}
+        items={checkoutItems}
+        billing={billing}
+        trialDays={checkoutTrialDays}
+        planCategory={activeTab}
+      />
     </section>
   );
 };
