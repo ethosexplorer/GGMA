@@ -18,6 +18,8 @@ import { AttorneyMarketplaceTab } from '../components/shared/AttorneyMarketplace
 import { DocumentVaultTab } from '../components/patient/DocumentVaultTab';
 import { ComplianceTravelTab } from '../components/patient/ComplianceTravelTab';
 import { UserCalendar } from '../components/UserCalendar';
+import { RegulatoryFeedWidget } from '../components/shared/RegulatoryFeedWidget';
+import { FeaturedPoll, RevolvingSurveyBanner } from '../components/CommunityPolls';
 
 const Button = ({ children, className, disabled, ...props }: any) => (
   <button
@@ -43,6 +45,8 @@ const DEFAULT_TABS = [
   { id: 'c3score', label: 'C³ Score', icon: Award },
   { id: 'attorneys', label: 'Legal Counsel', icon: Briefcase },
   { id: 'documents', label: 'Vault', icon: FolderOpen },
+  { id: 'community', label: 'Community Voice', icon: Users },
+  { id: 'regulatory', label: 'Law Updates', icon: Bell },
   { id: 'subscription', label: 'Membership', icon: Sparkles },
 ];
 
@@ -500,6 +504,32 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
 
         {/* ─── DOCUMENTS TAB ─── */}
         {activeTab === 'documents' && isSubscribed && <DocumentVaultTab />}
+
+        {/* ─── COMMUNITY VOICE TAB ─── */}
+        {activeTab === 'community' && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+            <div className="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-3xl p-8 text-white">
+              <h2 className="text-3xl font-black tracking-tight mb-2">Community Voice</h2>
+              <p className="text-purple-100/80 font-medium">Your voice shapes the future of cannabis regulation. Vote, share, and participate.</p>
+            </div>
+            <FeaturedPoll />
+            <RevolvingSurveyBanner />
+          </motion.div>
+        )}
+
+        {/* ─── REGULATORY INTELLIGENCE TAB ─── */}
+        {activeTab === 'regulatory' && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+            <div className="bg-gradient-to-r from-emerald-700 to-teal-800 rounded-3xl p-8 text-white">
+              <h2 className="text-3xl font-black tracking-tight mb-2">Cannabis Law Updates</h2>
+              <p className="text-emerald-100/80 font-medium">Live legislative intelligence for your state. Stay informed on laws that affect your care.</p>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <RegulatoryFeedWidget jurisdiction={undefined} />
+              <RegulatoryFeedWidget jurisdiction="Oklahoma" compact />
+            </div>
+          </motion.div>
+        )}
 
         {/* ─── SUBSCRIPTION TAB ─── */}
         {activeTab === 'subscription' && (

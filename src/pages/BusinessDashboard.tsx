@@ -17,6 +17,7 @@ import { BusinessApplicationsTab } from '../components/business/BusinessApplicat
 import { StressTestEngine, StressTestResult } from '../lib/compliance/StressTestEngine';
 import { UserCalendar } from '../components/UserCalendar';
 import { DEAApplicationWizard } from '../components/business/DEAApplicationWizard';
+import { RegulatoryFeedWidget } from '../components/shared/RegulatoryFeedWidget';
 
 // Simple Button mock
 const Button = ({ children, className, icon: Icon, variant, disabled, ...props }: any) => (
@@ -57,7 +58,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
   const [demoUnlocked, setDemoUnlocked] = useState(isExecutive);
   const isSubscribed = user?.subscriptionStatus === 'Active' || user?.planId || demoUnlocked;
   const [previousTab, setPreviousTab] = useState<string>('home');
-  const [activeTab, setActiveTab] = useState<'home' | 'analytics' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'insurance' | 'documents' | 'subscription' | 'integrations' | 'staff' | 'traceability' | 'readiness' | 'dea' | 'wallet' | 'attorneys' | 'reporting' | 'applications'>(isSubscribed ? (initialTab || 'analytics') : 'applications');
+  const [activeTab, setActiveTab] = useState<'home' | 'analytics' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'insurance' | 'documents' | 'subscription' | 'integrations' | 'staff' | 'traceability' | 'readiness' | 'dea' | 'wallet' | 'attorneys' | 'reporting' | 'applications' | 'regulatory'>(isSubscribed ? (initialTab || 'analytics') : 'applications');
   const navigateTab = (tab: typeof activeTab) => {
     setPreviousTab(activeTab);
     setActiveTab(tab);
@@ -82,6 +83,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
     { id: 'documents', label: 'Vault', icon: FileText },
     { id: 'wallet', label: 'Care Wallet', icon: Wallet },
     { id: 'attorneys', label: 'Attorney Marketplace', icon: Gavel },
+    { id: 'regulatory', label: 'Law Updates', icon: AlertCircle },
   ];
 
   // Drag-and-drop tab reordering
@@ -1686,6 +1688,18 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
     {activeTab === 'support' && (
       <div className="space-y-6">
         <VirtualAttendantTab />
+      </div>
+    )}
+    {activeTab === 'regulatory' && (
+      <div className="space-y-6">
+        <div className="bg-gradient-to-r from-emerald-700 to-teal-800 rounded-3xl p-8 text-white">
+          <h2 className="text-3xl font-black tracking-tight mb-2">Cannabis Law & Legislative Updates</h2>
+          <p className="text-emerald-100/80 font-medium">Live regulatory intelligence for {jurisdiction}. Stay ahead of compliance changes.</p>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <RegulatoryFeedWidget jurisdiction={jurisdiction} />
+          <RegulatoryFeedWidget jurisdiction={undefined} compact />
+        </div>
       </div>
     )}
   </div>

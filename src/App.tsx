@@ -1422,25 +1422,17 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
           </div>
         </div>
 
-        <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
+        <div className="hidden md:flex items-center gap-5 text-sm font-medium text-slate-600">
           <a href="#state-facts" className="hover:text-[#1a4731] transition-colors">State Facts</a>
-          <button onClick={() => onNavigate('education' as any)} className="hover:text-[#1a4731] transition-colors font-medium flex items-center gap-2">
-            <GraduationCap size={16} className="text-emerald-600" /> Education Academy
-          </button>
-          <button onClick={() => onNavigate('larry-chatbot', 'ggma')} className="hover:text-[#1a4731] transition-colors font-medium">GGMA Sector</button>
-          <button onClick={() => onNavigate('larry-chatbot', 'rip')} className="hover:text-[#1a4731] transition-colors font-medium">RIP Intelligence</button>
-          <button onClick={() => onNavigate('larry-chatbot', 'sinc')} className="hover:text-[#1a4731] transition-colors font-medium">SINC Compliance</button>
+          <a href="#credentials-section" className="hover:text-[#1a4731] transition-colors">Credentials</a>
+          <a href="#membership-tiers" className="hover:text-[#1a4731] transition-colors">Pricing</a>
           <button onClick={() => onNavigate('legal-advocacy' as any)} className="hover:text-amber-600 transition-colors font-bold text-amber-700 flex items-center gap-1">
             <Scale size={14} /> Legal Support
           </button>
           <div className="h-6 w-px bg-slate-200 mx-2" />
-          <button 
-            onClick={() => onNavigate('larry-chatbot')} 
-            className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-950 rounded-xl border border-emerald-100 font-bold hover:bg-emerald-100 transition-all shadow-sm group"
-          >
-            <Calendar size={16} className="text-emerald-600 group-hover:scale-110 transition-transform" />
-            Chat with SYLARA OUR AI Cannabis Concierge
-          </button>
+          <a href="tel:18889634447" className="flex items-center gap-2 text-[#1a4731] font-black">
+            <Phone size={14} /> 1-888-963-4447
+          </a>
         </div>
 
         <div className="flex items-center gap-3">
@@ -1448,166 +1440,68 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
         </div>
       </nav>
 
-      {/* 🗳️ COMMUNITY POLLS — Featured Banner */}
-      <FeaturedPoll />
-
       {/* "IN THE KNOW" NEWS TICKER */}
-      <div className="bg-emerald-950 text-emerald-100 py-3 border-b border-emerald-900/20 overflow-hidden whitespace-nowrap relative z-40 mb-8">
+      <div className="bg-emerald-950 text-emerald-100 py-3 border-b border-emerald-900/20 overflow-hidden whitespace-nowrap relative z-40">
         <div className="inline-block animate-marquee font-bold text-xs uppercase tracking-[0.2em]">
           <span className="bg-emerald-400 text-emerald-950 px-2 py-0.5 rounded text-[9px] mr-4">IN THE KNOW</span>
           {inTheKnowNews.join(' • ')} &nbsp; • &nbsp; {inTheKnowNews.join(' • ')}
         </div>
       </div>
 
-      <div className="px-6 max-w-7xl mx-auto">
-        <StateWelcomeBanner jurisdiction={jurisdiction || 'Oklahoma'} type="business" />
-      </div>
-
-      {/* Hero Section */}
-      <section className="pt-10 pb-20 px-6 relative overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[120%] h-[500px] bg-emerald-50 bg-gradient-to-b from-emerald-50/50 to-transparent -z-10 blur-3xl"></div>
-        <div className="max-w-4xl mx-auto text-center space-y-8">
-          
-          <div className="inline-block bg-white border-2 border-emerald-500 rounded-2xl p-4 shadow-xl mb-4 transform hover:scale-105 transition-transform">
-            <p className="text-emerald-950 font-black tracking-widest uppercase text-sm mb-1 flex items-center justify-center gap-2">
-              <Headphones className="text-emerald-500" size={18} /> Call Center Operations
-            </p>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-[#1a4731] tracking-tight">
-              1-888-964-GGHP
-            </h2>
+      {/* ═══ SIMPLIFIED HERO ═══ */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0a1f14] via-[#0f2d1e] to-[#1a4731]" />
+        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 50% 120%, rgba(16,185,129,0.3), transparent 70%)' }} />
+        <div className="relative z-10 max-w-5xl mx-auto text-center px-6 pt-20 pb-24 space-y-8">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-[11px] font-bold text-emerald-300 uppercase tracking-widest backdrop-blur-sm">
+            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            Infrastructure Active: 50 States + DC
           </div>
 
-          <p className="text-emerald-950 font-bold tracking-[0.3em] uppercase text-xs mb-[-10px] opacity-70">Global Green Enterprise Inc introducing</p>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-            Infrastructure Active: 50 States + DC Secure
-          </div>
-
-          <h1 className="text-5xl md:text-7xl font-extrabold text-[#1a4731] leading-[1.05] tracking-tight">
-            The Gold Standard in <br /> <span className="text-emerald-600">Compliance Infrastructure</span>
+          <h1 className="text-5xl md:text-7xl font-extrabold text-white leading-[1.05] tracking-tight">
+            The Compliance Operating System<br />
+            <span className="text-emerald-400">for Legal Cannabis</span>
           </h1>
 
-          <p className="text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed font-medium">
-            Global Green Enterprise Inc introduces the Global Green Hybrid Platform (GGHP) — a unified compliance ecosystem for GGMA, RIP, and SINC.
+          <p className="text-xl text-emerald-100/70 max-w-2xl mx-auto leading-relaxed font-medium">
+            One platform. Every stakeholder. Full compliance.<br />
+            Businesses, patients, attorneys, regulators, and law enforcement — all connected.
           </p>
 
-          <div className="max-w-2xl mx-auto relative group">
-            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-              <Search className="text-slate-400" size={20} />
+          {/* ROLE SELECTOR BUTTONS */}
+          <div className="pt-4">
+            <p className="text-emerald-300/60 text-xs font-black uppercase tracking-[0.3em] mb-6">I am a...</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
+              {[
+                { label: 'Business', icon: '🏢', desc: 'Compliance & Licensing', action: () => onNavigate('larry-chatbot', 'ggma') },
+                { label: 'Patient', icon: '🏥', desc: 'Telehealth & Cards', action: () => onNavigate('patient-portal') },
+                { label: 'Attorney', icon: '⚖️', desc: 'Cases & Regulatory', action: () => onNavigate('legal-advocacy' as any) },
+                { label: 'Agency', icon: '🛡️', desc: 'Oversight & Enforcement', action: () => onNavigate('larry-chatbot', 'rip') },
+              ].map(role => (
+                <button key={role.label} onClick={role.action} className="group bg-white/5 backdrop-blur-md border border-white/15 rounded-2xl p-6 text-center hover:bg-white/15 hover:border-emerald-400/50 hover:scale-[1.03] transition-all duration-300">
+                  <div className="text-3xl mb-3">{role.icon}</div>
+                  <div className="text-white font-black text-sm">{role.label}</div>
+                  <div className="text-emerald-300/60 text-[10px] font-bold mt-1 uppercase tracking-wider">{role.desc}</div>
+                </button>
+              ))}
             </div>
-            <input
-              type="text"
-              placeholder="Search state laws, statutes, or business regulations..."
-              className="w-full pl-12 pr-32 py-5 bg-white border border-slate-200 rounded-3xl shadow-xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 transition-all text-lg"
-            />
-            <button className="absolute right-2.5 top-2.5 bottom-2.5 px-8 bg-[#1a4731] hover:bg-[#153a28] text-white rounded-2xl text-sm font-bold transition-all shadow-lg shadow-emerald-900/20">
-              Quick Search
-            </button>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-4 pt-4">
-            <button onClick={() => onNavigate('login')} className="px-8 py-4 bg-[#1a4731] text-white rounded-2xl font-bold hover:bg-[#153a28] transition-all shadow-xl shadow-emerald-900/20 flex items-center gap-2">
-              Access Enterprise Hub
+          <div className="flex flex-wrap justify-center gap-4 pt-6">
+            <button onClick={() => onNavigate('login')} className="px-8 py-4 bg-emerald-500 text-[#0a1f14] rounded-2xl font-black hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-900/30 flex items-center gap-2">
+              Login to Dashboard
               <ArrowRight size={18} />
             </button>
-            <a href="#membership-tiers" className="px-8 py-4 bg-white border border-slate-200 text-slate-700 rounded-2xl font-bold hover:bg-slate-50 transition-all">
-              View Compliance Tiers
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* GGHP Infrastructure Banner & News Column */}
-      <section className="px-6 py-10">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 bg-[#1a4731] rounded-[3rem] overflow-hidden shadow-2xl relative border border-white/10 group flex flex-col h-full min-h-[400px]">
-             <img src="/gghp-branding.png" alt="GGHP Platform" className="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-700" onError={(e) => { (e.target as HTMLImageElement).style.display='none'; }} />
-             <div className="absolute inset-0 bg-gradient-to-t from-[#0f2d1e] via-[#0f2d1e]/40 to-transparent"></div>
-             <div className="absolute bottom-12 left-12 right-12 flex flex-col md:flex-row justify-between items-end gap-6">
-                <div>
-                  <h2 className="text-3xl font-black text-white mb-2 uppercase tracking-tighter">GGHP</h2>
-                  <p className="text-indigo-200 font-medium">Platform state: <span className="text-emerald-400 font-bold">Operational</span> • Umbrella: <span className="text-white font-bold">GGHP (Global Green Enterprise Inc)</span></p>
-                  <p className="text-emerald-400 font-bold uppercase tracking-widest text-xs">Global Green Hybrid Platform (GGHP) • GGMA • RIP • SINC</p>
-                </div>
-                <div className="px-6 py-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 text-white text-sm font-bold">
-                   50 States Live • 24/7 Monitoring
-                </div>
-             </div>
-          </div>
-
-          {/* Strategic News & Updates Sidebar — LIVE FEED */}
-          <div className="bg-white rounded-[2rem] border border-slate-200 shadow-xl p-6 flex flex-col h-full relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-            
-            <div className="flex items-center justify-between mb-6 relative z-10">
-               <h3 className="text-xl font-black text-slate-800 tracking-tight">Regulatory Intelligence</h3>
-               <span className="bg-red-100 text-red-600 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest flex items-center gap-1 animate-pulse">
-                 <AlertCircle size={12} /> Live Updates
-               </span>
-            </div>
-
-            <div className="flex-1 overflow-y-auto pr-2 space-y-5 custom-scrollbar relative z-10">
-               {liveFeed.length > 0 ? (
-                 <>
-                   {liveFeed.map((item, idx) => (
-                     <div key={idx}>
-                       {idx > 0 && <div className="w-full h-px bg-slate-100 mb-5"></div>}
-                       <div className="group cursor-pointer" onClick={() => window.open(item.link, '_blank')}>
-                         <div className="flex items-center gap-2 mb-1">
-                           {item.isBreaking && (
-                             <span className="bg-red-600 text-white px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-widest animate-pulse">Breaking</span>
-                           )}
-                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{formatFeedDate(item.pubDate)}</p>
-                         </div>
-                         <h4 className="text-sm font-bold text-slate-800 mb-2 group-hover:text-[#1a4731] transition-colors leading-snug">{item.title}</h4>
-                         <p className="text-xs text-slate-500 leading-relaxed">{item.description}</p>
-                         <p className="text-[10px] text-emerald-600 font-bold mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity">Read full article →</p>
-                       </div>
-                     </div>
-                   ))}
-                   <div className="pt-4 border-t border-slate-100">
-                     <p className="text-[10px] text-slate-400 text-center">
-                       Source: <a href="https://www.marijuanamoment.net" target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:underline">Marijuana Moment</a> • Updates every 30 min
-                     </p>
-                   </div>
-                 </>
-               ) : feedLoading ? (
-                 <div className="flex flex-col items-center justify-center py-8 gap-3">
-                   <div className="w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-                   <p className="text-xs text-slate-400 font-bold">Loading live regulatory feed...</p>
-                 </div>
-               ) : (
-                 <>
-                   {/* Fallback to hardcoded content */}
-                   <div className="group">
-                     <div className="flex items-center gap-2 mb-1">
-                       <span className="bg-red-600 text-white px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-widest animate-pulse">Breaking</span>
-                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</p>
-                     </div>
-                     <h4 className="text-sm font-bold text-slate-800 mb-2 group-hover:text-[#1a4731] transition-colors">Cannabis Officially Rescheduled: Schedule I → Schedule III</h4>
-                     <ul className="text-xs text-slate-600 space-y-1.5 ml-4 list-disc marker:text-emerald-500">
-                        <li><strong className="text-slate-800">Acting Attorney General</strong> signed order moving state-licensed medical marijuana from Schedule I to Schedule III of the CSA.</li>
-                        <li><strong className="text-slate-800">GGHP Impact:</strong> DEA registration tracking, 280E tax deductions, and banking access modules now active across all portals.</li>
-                     </ul>
-                   </div>
-                   <div className="w-full h-px bg-slate-100"></div>
-                   <div className="group">
-                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Industry Trend</p>
-                     <h4 className="text-sm font-bold text-slate-800 mb-2 group-hover:text-[#1a4731] transition-colors">OMMA: 7-Day Routine Inspection Windows</h4>
-                     <ul className="text-xs text-slate-600 space-y-1.5 ml-4 list-disc marker:text-emerald-500">
-                        <li><strong className="text-slate-800">SINC Solution:</strong> 24/7 AI-driven mock audits. Your business is audit-ready before OMMA even issues the 7-day notice.</li>
-                     </ul>
-                   </div>
-                 </>
-               )}
-            </div>
-            
-            <button onClick={() => document.getElementById('membership-tiers')?.scrollIntoView({ behavior: 'smooth' })} className="w-full mt-6 py-3 bg-[#1a4731] text-white rounded-xl text-sm font-bold hover:bg-[#153a28] transition-colors shadow-lg shadow-emerald-900/20 relative z-10">
-               Secure Your Infrastructure
+            <button onClick={() => onNavigate('larry-chatbot')} className="px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-2xl font-bold hover:bg-white/20 transition-all flex items-center gap-2">
+              💬 Chat with Sylara AI
             </button>
           </div>
         </div>
       </section>
+
+      <div className="px-6 max-w-7xl mx-auto py-8">
+        <StateWelcomeBanner jurisdiction={jurisdiction || 'Oklahoma'} type="business" />
+      </div>
 
       {/* ═══ CREDENTIALS, CERTIFICATIONS & TRUST ═══ */}
       <section id="credentials-section" className="py-20 px-6 bg-slate-50 bg-gradient-to-b from-slate-50 to-white border-y border-slate-200/50">
@@ -2344,8 +2238,6 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
         </div>
       </footer>
 
-      {/* 🗳️ Sticky Poll Widget — appears on scroll */}
-      <StickyPollWidget />
 
     </div>
   );
