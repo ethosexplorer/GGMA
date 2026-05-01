@@ -301,6 +301,11 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
                     <p className="text-xs text-amber-700 mt-0.5">An invoice or payment request will be sent to your email within 24 hours. Payment is completed via secure ACH bank transfer — no credit card required at this time.</p>
                   </div>
                 </div>
+                <div className="flex items-center justify-center gap-2 py-1.5 px-4 bg-gradient-to-r from-slate-50 to-indigo-50 border border-indigo-100 rounded-xl">
+                  <CreditCard size={14} className="text-indigo-400" />
+                  <span className="text-[11px] font-bold text-indigo-500 tracking-wide">Card Processing Coming Soon</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
+                </div>
 
                 {/* Submit Button */}
                 <button
