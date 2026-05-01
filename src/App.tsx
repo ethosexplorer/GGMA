@@ -8119,7 +8119,8 @@ export default function App() {
               <StateFactsPage onBack={() => handleNavigate('landing')} onNavigate={handleNavigate} setJurisdiction={confirmJurisdiction} />
             </motion.div>
           )}
-          {view === 'landing' && (
+          {view === 'what-is-c3' && (<WhatIsC3Page onNavigate={handleNavigate} />)}
+            {view === 'landing' && (
             <LandingPage
               onNavigate={(v, role) => {
                 handleNavigate(v as any, role); setInitialRole(role);
