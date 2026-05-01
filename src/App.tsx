@@ -4,7 +4,6 @@ import { STATE_RESOURCES } from './stateResources';
 import { getDetailedStateKnowledge } from './stateDetailedKnowledge';
 import { getPlansForRole, getAddOnsForRole } from './lib/subscriptionPlans';
 import { SettingsPreferencesMockup } from './pages/SettingsPreferencesMockup';
-import { SupportPage } from './pages/SupportPage';
 import { FederalStatePage } from './pages/FederalStatePage';
 import {
   Shield,
@@ -8119,7 +8118,11 @@ export default function App() {
               <StateFactsPage onBack={() => handleNavigate('landing')} onNavigate={handleNavigate} setJurisdiction={confirmJurisdiction} />
             </motion.div>
           )}
-          {view === 'what-is-c3' && (<WhatIsC3Page onNavigate={handleNavigate} />)}
+          {view === 'what-is-c3' && (
+              <motion.div key="what-is-c3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+                <WhatIsC3Page onNavigate={handleNavigate} />
+              </motion.div>
+            )}
             {view === 'landing' && (
             <LandingPage
               onNavigate={(v, role) => {
