@@ -4,6 +4,8 @@ import { STATE_RESOURCES } from './stateResources';
 import { getDetailedStateKnowledge } from './stateDetailedKnowledge';
 import { getPlansForRole, getAddOnsForRole } from './lib/subscriptionPlans';
 import { SettingsPreferencesMockup } from './pages/SettingsPreferencesMockup';
+import { SupportPage } from './pages/SupportPage';
+import { FederalStatePage } from './pages/FederalStatePage';
 import {
   Shield,
   User,
@@ -1417,6 +1419,9 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
         </div>
 
         <div className="hidden md:flex items-center gap-5 text-sm font-medium text-slate-600">
+          <button onClick={() => onNavigate('federal-state' as any)} className="hover:text-blue-600 transition-colors font-bold text-blue-800 flex items-center gap-1">
+            <Scale size={14} /> Federal vs State
+          </button>
           <button onClick={() => onNavigate('state-facts' as any)} className="hover:text-[#1a4731] transition-colors">State Facts</button>
           <button onClick={() => onNavigate('education' as any)} className="hover:text-[#1a4731] transition-colors">Education Academy</button>
           <button onClick={() => onNavigate('legal-advocacy' as any)} className="hover:text-amber-600 transition-colors font-bold text-amber-700 flex items-center gap-1">
@@ -1657,72 +1662,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
         </div>
       </section>
 
-      {/* 🏛️ DEA Schedule III Ready Banner */}
-      <section className="py-16 px-6 bg-gradient-to-r from-blue-950 via-indigo-950 to-slate-950 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute -top-32 -left-32 w-96 h-96 bg-blue-500 rounded-full blur-3xl" />
-          <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-indigo-500 rounded-full blur-3xl" />
-        </div>
-        <div className="max-w-6xl mx-auto relative z-10">
-          <div className="flex flex-col lg:flex-row items-center gap-12">
-            <div className="flex-1 space-y-6">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/20 border border-blue-400/30 rounded-full">
-                <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-                <span className="text-[11px] font-black text-blue-300 uppercase tracking-widest">Federal Compliance Ready</span>
-              </div>
-              <h2 className="text-4xl font-black text-white leading-tight">
-                DEA Schedule III<br />
-                <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">Registration Ready</span>
-              </h2>
-              <p className="text-blue-100/70 text-lg leading-relaxed max-w-xl">
-                GGP-OS maps directly to all 5 primary sections of the DEA's federal registration application. State-licensed dispensaries can prepare, verify, and export their compliance data — all from one platform.
-              </p>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {[
-                  { label: 'Metrc Integrated', icon: '🔗' },
-                  { label: 'OMMA Certified', icon: '✅' },
-                  { label: 'SOP Library', icon: '📋' },
-                  { label: 'Personnel Tracking', icon: '👥' },
-                ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-2.5">
-                    <span className="text-lg">{item.icon}</span>
-                    <span className="text-[11px] font-bold text-blue-200">{item.label}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="flex items-center gap-4 pt-2">
-                <button
-                  onClick={() => onNavigate('login')}
-                  className="px-6 py-3 bg-blue-500 text-white rounded-xl font-black text-sm hover:bg-blue-400 transition-all shadow-lg shadow-blue-500/25"
-                >
-                  Explore Business Portal
-                </button>
-                <span className="text-blue-400/60 text-xs font-bold">60-day application window • Deadline: June 22, 2026</span>
-              </div>
-            </div>
-            <div className="flex-shrink-0 grid grid-cols-1 gap-3 w-full lg:w-auto lg:min-w-[280px]">
-              {[
-                { sec: '§1', title: 'Business Info', pct: 100 },
-                { sec: '§2', title: 'Drug Codes', pct: 100 },
-                { sec: '§3', title: 'State Licenses', pct: 100 },
-                { sec: '§4', title: 'Liability', pct: 100 },
-                { sec: '§5', title: 'SOPs & Compliance', pct: 92 },
-                { sec: '§6', title: 'Payment', pct: 0 },
-                { sec: '§7', title: 'Submission', pct: 0 },
-              ].map((s, i) => (
-                <div key={i} className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5">
-                  <span className="text-[10px] font-black text-blue-400 bg-blue-500/20 px-2 py-0.5 rounded">{s.sec}</span>
-                  <span className="text-xs font-bold text-white flex-1">{s.title}</span>
-                  <div className="w-16 bg-white/10 rounded-full h-1.5">
-                    <div className={`h-full rounded-full ${s.pct === 100 ? 'bg-emerald-400' : s.pct > 0 ? 'bg-blue-400' : 'bg-white/20'}`} style={{ width: `${Math.max(s.pct, 8)}%` }} />
-                  </div>
-                  <span className={`text-[10px] font-black ${s.pct === 100 ? 'text-emerald-400' : s.pct > 0 ? 'text-blue-400' : 'text-white/30'}`}>{s.pct}%</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+
 
 
 
@@ -8305,6 +8245,11 @@ export default function App() {
           </div>
         )}
         <AnimatePresence mode="wait">
+          {view === 'federal-state' && (
+            <motion.div key="federal-state" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+              <FederalStatePage onBack={() => handleNavigate('landing')} onNavigate={handleNavigate} />
+            </motion.div>
+          )}
           {view === 'state-facts' && (
             <motion.div key="state-facts" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
               <StateFactsPage onBack={() => handleNavigate('landing')} onNavigate={handleNavigate} setJurisdiction={confirmJurisdiction} />
