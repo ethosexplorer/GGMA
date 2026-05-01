@@ -1290,7 +1290,7 @@ const STATE_RESOURCES: Record<string, any> = {
   );
 };
 
-const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate: (view: 'login' | 'signup' | 'patient-portal' | 'support' | 'larry-chatbot' | 'larry-business' | 'legal-advocacy', role?: string) => void, jurisdiction?: string, setJurisdiction?: (s: string) => void }) => {
+const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate: (view: 'what-is-c3' | 'login' | 'signup' | 'patient-portal' | 'support' | 'larry-chatbot' | 'larry-business' | 'legal-advocacy', role?: string) => void, jurisdiction?: string, setJurisdiction?: (s: string) => void }) => {
   const [liveFeed, setLiveFeed] = useState<RegulatoryUpdate[]>([]);
   const [feedLoading, setFeedLoading] = useState(true);
   
@@ -2936,7 +2936,7 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
 };
 
 // --- L.A.R.R.Y AI Chatbot for Med Card / Business License Assistance ---
-export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card', userProfile }: any) => {
+export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card', userProfile, jurisdiction = 'Oklahoma' }: any) => {
   const [isBusiness, setIsBusiness] = useState(variant === 'business');
   const isGeneral = variant === 'general' || variant === 'ggma' || variant === 'rip' || variant === 'sinc';
   const isRyan = userProfile && userProfile.email?.toLowerCase().includes('ceo.globalgreenhp');

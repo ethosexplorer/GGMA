@@ -1,0 +1,27 @@
+src/App.tsx(1542,43): error TS2345: Argument of type '"what-is-c3"' is not assignable to parameter of type '"support" | "larry-chatbot" | "larry-business" | "login" | "signup" | "patient-portal" | "legal-advocacy"'.
+src/App.tsx(3501,41): error TS2304: Cannot find name 'jurisdiction'.
+src/App.tsx(3504,11): error TS2304: Cannot find name 'jurisdiction'.
+src/App.tsx(3513,63): error TS2304: Cannot find name 'jurisdiction'.
+src/App.tsx(3517,18): error TS2304: Cannot find name 'jurisdiction'.
+src/App.tsx(3518,39): error TS2304: Cannot find name 'jurisdiction'.
+src/App.tsx(3528,41): error TS2304: Cannot find name 'jurisdiction'.
+src/App.tsx(3531,11): error TS2304: Cannot find name 'jurisdiction'.
+src/App.tsx(3548,28): error TS2304: Cannot find name 'jurisdiction'.
+src/App.tsx(3549,54): error TS2304: Cannot find name 'jurisdiction'.
+src/App.tsx(3550,39): error TS2304: Cannot find name 'jurisdiction'.
+src/App.tsx(3559,54): error TS2304: Cannot find name 'jurisdiction'.
+src/App.tsx(3561,78): error TS2304: Cannot find name 'jurisdiction'.
+src/App.tsx(3568,111): error TS2304: Cannot find name 'jurisdiction'.
+src/App.tsx(3571,31): error TS2304: Cannot find name 'jurisdiction'.
+src/App.tsx(7782,82): error TS2322: Type '{ onLogout: () => void; user: any; jurisdiction: any; }' is not assignable to type '{ onLogout?: () => void; user?: any; }'.
+  Property 'jurisdiction' does not exist on type '{ onLogout?: () => void; user?: any; }'.
+src/App.tsx(7785,82): error TS2322: Type '{ onLogout: () => void; user: any; jurisdiction: any; }' is not assignable to type '{ onLogout?: () => void; user?: any; }'.
+  Property 'jurisdiction' does not exist on type '{ onLogout?: () => void; user?: any; }'.
+src/App.tsx(7791,86): error TS2322: Type '{ onLogout: () => void; user: any; jurisdiction: any; }' is not assignable to type '{ onLogout?: () => void; user?: any; }'.
+  Property 'jurisdiction' does not exist on type '{ onLogout?: () => void; user?: any; }'.
+src/App.tsx(7798,92): error TS2322: Type '{ user: any; onOpenConcierge: () => any; jurisdiction: any; }' is not assignable to type '{ user?: any; onLogout?: () => void; onSignup?: () => void; onOpenConcierge?: () => void; key?: string; }'.
+  Property 'jurisdiction' does not exist on type '{ user?: any; onLogout?: () => void; onSignup?: () => void; onOpenConcierge?: () => void; key?: string; }'.
+src/pages/RolePricingPage.tsx(85,77): error TS2554: Expected 1 arguments, but got 2.
+src/pages/RolePricingPage.tsx(92,77): error TS2554: Expected 1 arguments, but got 2.
+src/pages/RolePricingPage.tsx(99,77): error TS2554: Expected 1 arguments, but got 2.
+src/pages/RolePricingPage.tsx(106,77): error TS2554: Expected 1 arguments, but got 2.

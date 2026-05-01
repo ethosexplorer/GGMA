@@ -43,7 +43,7 @@ export const RolePricingPage = ({
 }: {
   role: string;
   onBack: () => void;
-  onNavigate?: (view: string) => void;
+  onNavigate?: (view: string, role?: string) => void;
   onChatSylara?: () => void;
 }) => {
   const config = ROLE_CONFIG[role] || ROLE_CONFIG.patient;
