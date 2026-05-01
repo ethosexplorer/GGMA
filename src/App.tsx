@@ -1496,9 +1496,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
         </div>
       </section>
 
-      <div className="px-6 max-w-7xl mx-auto py-8">
-        <StateWelcomeBanner jurisdiction={jurisdiction || 'Oklahoma'} type="business" />
-      </div>
+
 
       {/* ═══ CREDENTIALS, CERTIFICATIONS & TRUST ═══ */}
       <section id="credentials-section" className="py-20 px-6 bg-slate-50 bg-gradient-to-b from-slate-50 to-white border-y border-slate-200/50">
