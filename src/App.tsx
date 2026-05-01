@@ -1742,7 +1742,6 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
               </div>
             </div>
           </div>
-        </div>
       </section>
 
 
@@ -1861,8 +1860,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
                 <span className="px-3 py-1 bg-white/10 rounded-full text-[10px] font-bold text-emerald-300 border border-white/10 hover:bg-emerald-500/20 transition-colors cursor-default">Diversity Health & Wellness LLC</span>
               </div>
             </div>
-
-
+          </div>
           {/* Trust Partners Bar */}
           <div className="text-center">
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4">Integrated With &amp; Registered On</p>
