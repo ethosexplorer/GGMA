@@ -11,12 +11,72 @@ const US_STATES = [
   "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"
 ];
 
-// Helper to generate some dummy regulatory data per state
+const STATE_STATUS_MAP: Record<string, string> = {
+  "Alabama": "Medical Only (Limited)",
+  "Alaska": "Full Recreational & Medical",
+  "Arizona": "Full Recreational & Medical",
+  "Arkansas": "Medical Only",
+  "California": "Full Recreational & Medical",
+  "Colorado": "Full Recreational & Medical",
+  "Connecticut": "Full Recreational & Medical",
+  "Delaware": "Full Recreational & Medical",
+  "Florida": "Medical Only",
+  "Georgia": "Limited Medical",
+  "Hawaii": "Medical Only",
+  "Idaho": "Fully Illegal",
+  "Illinois": "Full Recreational & Medical",
+  "Indiana": "Fully Illegal",
+  "Iowa": "Medical Only (Limited)",
+  "Kansas": "Newly Legalized (Feb/Mar 2026)",
+  "Kentucky": "Medical Only (Limited)",
+  "Louisiana": "Medical Only",
+  "Maine": "Full Recreational & Medical",
+  "Maryland": "Full Recreational & Medical",
+  "Massachusetts": "Full Recreational & Medical",
+  "Michigan": "Full Recreational & Medical",
+  "Minnesota": "Full Recreational & Medical",
+  "Mississippi": "Medical Only (Limited)",
+  "Missouri": "Full Recreational & Medical",
+  "Montana": "Full Recreational & Medical",
+  "Nebraska": "Newly Legalized (Mar/Apr 2026)",
+  "Nevada": "Full Recreational & Medical",
+  "New Hampshire": "Medical Only",
+  "New Jersey": "Full Recreational & Medical",
+  "New Mexico": "Full Recreational & Medical",
+  "New York": "Full Recreational & Medical",
+  "North Carolina": "Fully Illegal",
+  "North Dakota": "Medical Only",
+  "Ohio": "Full Recreational & Medical",
+  "Oklahoma": "Medical Only",
+  "Oregon": "Full Recreational & Medical",
+  "Pennsylvania": "Medical Only",
+  "Rhode Island": "Full Recreational & Medical",
+  "South Carolina": "Fully Illegal",
+  "South Dakota": "Medical Only",
+  "Tennessee": "Fully Illegal",
+  "Texas": "Limited Medical",
+  "Utah": "Medical Only (Limited)",
+  "Vermont": "Full Recreational & Medical",
+  "Virginia": "Medical & Limited Retail",
+  "Washington": "Full Recreational & Medical",
+  "West Virginia": "Medical Only",
+  "Wisconsin": "Newly Legalized (March 2026)",
+  "Wyoming": "Fully Illegal"
+};
+
 const generateStateData = (state: string) => {
   const hash = state.length;
-  const tax = hash % 2 === 0 ? `${hash + 5}% Excise Tax` : '0% Excise Tax';
-  const status = hash % 3 === 0 ? 'Full Recreational' : hash % 2 === 0 ? 'Open Medical' : 'Strict Medical / Low THC';
-  const dispensaries = (hash * 115).toLocaleString() + ' Dispensaries';
+  
+  // Real-world status based on user data
+  const status = STATE_STATUS_MAP[state] || 'Pending Legislation';
+  
+  // Adjust tax rate logic based on whether it is fully illegal
+  const isIllegal = status === 'Fully Illegal';
+  const tax = isIllegal ? 'N/A' : (hash % 2 === 0 ? `${hash + 5}% Excise Tax` : '0% Excise Tax (Pending)');
+  
+  // Adjust dispensary logic
+  const dispensaries = isIllegal ? '0 Active' : (hash * 115).toLocaleString() + ' Active Licenses';
+  
   return { s: state, t: tax, c: status, d: dispensaries };
 };
 
