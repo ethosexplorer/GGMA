@@ -1715,6 +1715,36 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
           </div>
         </div>
       </section>
+      {/* Platform Highlights Section */}
+      <section className="py-20 px-6 bg-slate-50 border-t border-slate-200">
+        <div className="max-w-6xl mx-auto">
+            {/* Company Highlights */}
+            <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
+              <div className="flex items-center gap-2 mb-6">
+                <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
+                <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Platform Highlights</span>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { value: '50', label: 'States + DC', sub: 'Infrastructure Active' },
+                  { value: '26', label: 'Languages', sub: 'Global Accessibility' },
+                  { value: '22+', label: 'Polls Active', sub: 'Community Engagement' },
+                  { value: '99.9%', label: 'Uptime SLA', sub: 'Enterprise Reliability' },
+                  { value: '3', label: 'AI Engines', sub: 'Sylara • L.A.R.R.Y • SINC' },
+                  { value: '5', label: 'Gov Levels', sub: 'Federal → City Registered' },
+                ].map((stat, i) => (
+                  <div key={i} className="text-center p-3 rounded-xl bg-slate-50 hover:bg-emerald-50 transition-colors">
+                    <p className="text-2xl font-black text-emerald-950">{stat.value}</p>
+                    <p className="text-xs font-bold text-slate-700">{stat.label}</p>
+                    <p className="text-[10px] text-slate-400">{stat.sub}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
 
 
       {/* ═══ CREDENTIALS, CERTIFICATIONS & TRUST ═══ */}
@@ -1787,7 +1817,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
           </div>
 
           {/* Founder Credentials + Company Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+          <div className="grid grid-cols-1 max-w-4xl mx-auto gap-6 mb-12">
             {/* Accreditations Card */}
             <div className="bg-[#0f2d1e] rounded-2xl p-8 text-white relative overflow-hidden group border border-emerald-900/50 shadow-xl flex flex-col justify-center">
               {/* Neon Shield Map Badge */}
@@ -1832,30 +1862,6 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
               </div>
             </div>
 
-            {/* Company Highlights */}
-            <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
-              <div className="flex items-center gap-2 mb-6">
-                <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
-                <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Platform Highlights</span>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                  { value: '50', label: 'States + DC', sub: 'Infrastructure Active' },
-                  { value: '26', label: 'Languages', sub: 'Global Accessibility' },
-                  { value: '22+', label: 'Polls Active', sub: 'Community Engagement' },
-                  { value: '99.9%', label: 'Uptime SLA', sub: 'Enterprise Reliability' },
-                  { value: '3', label: 'AI Engines', sub: 'Sylara • L.A.R.R.Y • SINC' },
-                  { value: '5', label: 'Gov Levels', sub: 'Federal → City Registered' },
-                ].map((stat, i) => (
-                  <div key={i} className="text-center p-3 rounded-xl bg-slate-50 hover:bg-emerald-50 transition-colors">
-                    <p className="text-2xl font-black text-emerald-950">{stat.value}</p>
-                    <p className="text-xs font-bold text-slate-700">{stat.label}</p>
-                    <p className="text-[10px] text-slate-400">{stat.sub}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
 
           {/* Trust Partners Bar */}
           <div className="text-center">
