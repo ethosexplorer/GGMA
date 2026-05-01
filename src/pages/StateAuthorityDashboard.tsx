@@ -290,7 +290,7 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
            {activeTab === 'jurisdiction' && renderJurisdictionDashboard()}
            {activeTab === 'compliance' && <div className="text-center py-40 text-slate-400 font-bold uppercase tracking-widest italic">Live Compliance Shield Active...</div>}
            {activeTab === 'health_labs' && <div className="h-full w-full -m-10"><PublicHealthDashboard /></div>}
-           {activeTab === 'metrc_state' && <div className="text-center py-40 text-slate-400 font-bold uppercase tracking-widest italic">Live Metrc Sandbox Sync Active...</div>}
+           {activeTab === 'metrc_state' && <div className="text-center py-40 text-slate-400 font-bold uppercase tracking-widest italic">Live Metrc Production Sync Active...</div>}
         </div>
       </div>
 

@@ -1724,7 +1724,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
                     <span className="text-emerald-400 text-xl drop-shadow-[0_0_10px_rgba(52,211,153,0.5)]">🔗</span>
                     <div>
                       <p className="text-white font-black text-sm">Validated Metrc Integrator</p>
-                      <p className="text-emerald-100/80 text-[11px] font-medium leading-relaxed">Oklahoma sandbox certified — production API access</p>
+                      <p className="text-emerald-100/80 text-[11px] font-medium leading-relaxed">Oklahoma certified — full production API access</p>
                     </div>
                   </div>
                 </div>

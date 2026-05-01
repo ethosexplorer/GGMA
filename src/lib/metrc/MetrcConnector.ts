@@ -7,7 +7,7 @@ export interface MetrcConfig {
   integratorApiKey: string;
   userApiKey: string;
   licenseNumber: string;
-  environment: 'sandbox' | 'production';
+  environment: 'production' | 'sandbox';
 }
 
 export class MetrcConnector {
@@ -20,20 +20,19 @@ export class MetrcConnector {
     this.config = config;
     this.baseUrl = config.environment === 'production' 
       ? 'https://api-ok.metrc.com' 
-      : 'https://sandbox-api-ok.metrc.com';
+      : 'https://api-ok.metrc.com';
     
     // Standard Auth: Basic [Base64(integrator_api_key:user_api_key)]
-    // Connect Auth: x-metrc-key (for sandbox setup)
+    // Connect Auth: x-metrc-key (for setup)
     const credentials = btoa(`${config.integratorApiKey}:${config.userApiKey}`);
     this.authHeader = `Basic ${credentials}`;
   }
 
   /**
-   * Performs the initial sandbox provisioning to generate a User API Key.
-   * This is required if you are not pairing with a licensee.
+   * Performs the initial provisioning to generate a User API Key.
    */
-  async setupSandbox() {
-    const url = `${this.baseUrl}/sandbox/v2/integrator/setup`;
+  async setupProduction() {
+    const url = `${this.baseUrl}/production/v2/integrator/setup`;
     const response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -45,7 +44,7 @@ export class MetrcConnector {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(`Sandbox Setup Failed (${response.status}): ${JSON.stringify(errorData)}`);
+      throw new Error(`Production Setup Failed (${response.status}): ${JSON.stringify(errorData)}`);
     }
 
     return response.json();

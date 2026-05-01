@@ -125,7 +125,7 @@ export const ITSupportDashboard = () => {
           {[
             { id: 1, name: 'Stripe Payments Processing', active: true, desc: 'Controls whether users can buy tokens or subscribe.' },
             { id: 2, name: 'Native Browser PDF Generation', active: true, desc: 'If false, disables form submissions globally.' },
-            { id: 3, name: 'Metrc Sandbox Syncing', active: true, desc: 'Controls automatic syncing of inventory logs to Metrc.' },
+            { id: 3, name: 'Metrc Production Syncing', active: true, desc: 'Controls automatic syncing of inventory logs to Metrc.' },
             { id: 4, name: 'L.A.R.R.Y AI Overrides', active: false, desc: 'Experimental: allows AI to automatically resolve compliance flags.' },
           ].map((flag) => (
             <div key={flag.id} className="p-5 border border-slate-200 rounded-xl flex items-start gap-4">

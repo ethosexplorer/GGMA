@@ -27,7 +27,7 @@ export const ComplianceWorkflowConsole = () => {
     integratorApiKey: '',
     userApiKey: '',
     licenseNumber: '',
-    environment: 'sandbox' as const
+    environment: 'production' as const
   });
 
   useEffect(() => {
@@ -88,7 +88,7 @@ export const ComplianceWorkflowConsole = () => {
       setMetrcStatus('connected');
       setShowMetrcConfig(false);
       // Persist config for demo
-      localStorage.setItem('metrc_sandbox_config', JSON.stringify(metrcConfig));
+      localStorage.setItem('metrc_production_config', JSON.stringify(metrcConfig));
     } catch (err) {
       console.error('Metrc Sync Error:', err);
       setMetrcStatus('error');
@@ -98,7 +98,7 @@ export const ComplianceWorkflowConsole = () => {
   };
 
   useEffect(() => {
-    const saved = localStorage.getItem('metrc_sandbox_config');
+    const saved = localStorage.getItem('metrc_production_config');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -159,7 +159,7 @@ export const ComplianceWorkflowConsole = () => {
               onClick={handleMetrcSync}
               className="w-full py-2 bg-white border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
             >
-              <Database size={12} /> {metrcStatus === 'connected' ? 'Re-Sync V2' : 'Connect Sandbox'}
+              <Database size={12} /> {metrcStatus === 'connected' ? 'Re-Sync V2' : 'Connect Production'}
             </button>
           </div>
 
@@ -454,8 +454,8 @@ export const ComplianceWorkflowConsole = () => {
           <div className="bg-white rounded-[2.5rem] w-full max-w-md p-8 shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-300">
             <div className="flex justify-between items-start mb-6">
               <div>
-                <h3 className="text-2xl font-black text-slate-800 tracking-tight">Metrc Sandbox Setup</h3>
-                <p className="text-sm text-slate-500 font-medium">Enter your sandbox credentials to enable live V2 synchronization.</p>
+                <h3 className="text-2xl font-black text-slate-800 tracking-tight">Metrc API Setup</h3>
+                <p className="text-sm text-slate-500 font-medium">Enter your production credentials to enable live V2 synchronization.</p>
               </div>
               <button onClick={() => setShowMetrcConfig(false)} className="p-2 hover:bg-slate-100 rounded-xl transition-colors">
                 <AlertCircle className="text-slate-400" size={24} />
@@ -487,7 +487,7 @@ export const ComplianceWorkflowConsole = () => {
                 <div className="flex items-start gap-3">
                   <Database className="text-blue-500 shrink-0 mt-0.5" size={18} />
                   <p className="text-xs text-blue-700 font-medium leading-relaxed">
-                    This will use the <strong>GET /facilities/v2</strong> endpoint to retrieve all available licenses in your OK sandbox.
+                    This will use the <strong>GET /facilities/v2</strong> endpoint to retrieve all available licenses in your OK production environment.
                   </p>
                 </div>
               </div>

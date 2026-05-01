@@ -100,7 +100,7 @@ export class ReportingEngine {
       integratorApiKey: entity.metrc_integrator_key as string,
       userApiKey: entity.metrc_user_key as string,
       licenseNumber: entity.metrc_license_number as string,
-      environment: 'sandbox' as const // Defaulting to sandbox for safety
+      environment: 'production' as const // Defaulting to production now that we are live
     };
 
     const connector = new MetrcConnector(credentials);
