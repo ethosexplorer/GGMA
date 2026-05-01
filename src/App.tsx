@@ -1801,63 +1801,6 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
         </div>
       </section>
 
-      {/* Patient Success Stories (GGMA Sector Reviews) */}
-      <section className="py-24 px-6 bg-white overflow-hidden">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row items-end justify-between mb-12 gap-6">
-            <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase tracking-widest border border-emerald-200">
-                ⭐ Community Trust
-              </div>
-              <h2 className="text-4xl font-black text-slate-900 tracking-tight">Verified Patient Success</h2>
-              <p className="text-slate-500 max-w-md font-medium">Hear from our community members about their journey with the GGMA Sector.</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="flex -space-x-3">
-                {[1, 2, 3, 4, 5].map(i => (
-                  <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-slate-200 overflow-hidden shadow-sm">
-                    <img src={`https://i.pravatar.cc/100?img=${i+10}`} alt="User" />
-                  </div>
-                ))}
-              </div>
-              <div className="text-sm font-bold text-slate-700">4.9/5 Average Rating</div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-             {[
-               { name: 'Marcus T.', date: 'Oct 2024', text: 'The intake process with Sylara was so fast. Had my recommendation in 15 minutes!', rating: 5 },
-               { name: 'Sarah J.', date: 'Nov 2023', text: 'Global Green makes compliance feel like common sense. The Care Wallet is a game changer.', rating: 5 },
-               { name: 'David L.', date: 'Feb 2024', text: 'Finally a platform that understands Oklahoma regulations from the inside out.', rating: 5 }
-             ].map((review, i) => (
-               <div key={i} className="bg-slate-50 p-8 rounded-3xl border border-slate-100 hover:border-emerald-200 transition-all group">
-                 <div className="flex gap-1 mb-4">
-                   {Array.from({ length: review.rating }).map((_, j) => (
-                     <Star key={j} size={16} className="fill-amber-400 text-amber-400" />
-                   ))}
-                 </div>
-                 <p className="text-slate-700 font-medium mb-6 leading-relaxed italic">"{review.text}"</p>
-                 <div className="flex items-center justify-between">
-                   <div className="font-bold text-slate-900 text-sm">{review.name}</div>
-                   <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{review.date}</div>
-                 </div>
-               </div>
-             ))}
-          </div>
-
-          <div className="mt-12 text-center">
-             <button 
-               onClick={() => window.open('https://vocalvideo.com/c/ccardzmedcard-com-as6sui63', '_blank')}
-               className="inline-flex items-center gap-2 text-[#1a4731] font-bold hover:underline cursor-pointer bg-transparent border-none"
-             >
-               View All Verified Testimonials
-               <ArrowRight size={16} />
-             </button>
-          </div>
-        </div>
-      </section>
-
-
       {/* Pricing removed from landing — now on dedicated role pages */}
 
       {/* Partners & Paid Advertisements */}
@@ -2203,6 +2146,62 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
                  ))}
               </div>
            </div>
+        </div>
+      </section>
+
+      {/* Patient Success Stories (GGMA Sector Reviews) */}
+      <section className="py-24 px-6 bg-white overflow-hidden border-t border-slate-200">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col md:flex-row items-end justify-between mb-12 gap-6">
+            <div className="space-y-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase tracking-widest border border-emerald-200">
+                ⭐ Community Trust
+              </div>
+              <h2 className="text-4xl font-black text-slate-900 tracking-tight">Verified Patient Success</h2>
+              <p className="text-slate-500 max-w-md font-medium">Hear from our community members about their journey with the GGMA Sector.</p>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="flex -space-x-3">
+                {[1, 2, 3, 4, 5].map(i => (
+                  <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-slate-200 overflow-hidden shadow-sm">
+                    <img src={`https://i.pravatar.cc/100?img=${i+10}`} alt="User" />
+                  </div>
+                ))}
+              </div>
+              <div className="text-sm font-bold text-slate-700">4.9/5 Average Rating</div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+             {[
+               { name: 'Marcus T.', date: 'Oct 2024', text: 'The intake process with Sylara was so fast. Had my recommendation in 15 minutes!', rating: 5 },
+               { name: 'Sarah J.', date: 'Nov 2023', text: 'Global Green makes compliance feel like common sense. The Care Wallet is a game changer.', rating: 5 },
+               { name: 'David L.', date: 'Feb 2024', text: 'Finally a platform that understands Oklahoma regulations from the inside out.', rating: 5 }
+             ].map((review, i) => (
+               <div key={i} className="bg-slate-50 p-8 rounded-3xl border border-slate-100 hover:border-emerald-200 transition-all group">
+                 <div className="flex gap-1 mb-4">
+                   {Array.from({ length: review.rating }).map((_, j) => (
+                     <Star key={j} size={16} className="fill-amber-400 text-amber-400" />
+                   ))}
+                 </div>
+                 <p className="text-slate-700 font-medium mb-6 leading-relaxed italic">"{review.text}"</p>
+                 <div className="flex items-center justify-between">
+                   <div className="font-bold text-slate-900 text-sm">{review.name}</div>
+                   <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{review.date}</div>
+                 </div>
+               </div>
+             ))}
+          </div>
+
+          <div className="mt-12 text-center">
+             <button 
+               onClick={() => window.open('https://vocalvideo.com/c/ccardzmedcard-com-as6sui63', '_blank')}
+               className="inline-flex items-center gap-2 text-[#1a4731] font-bold hover:underline cursor-pointer bg-transparent border-none"
+             >
+               View All Verified Testimonials
+               <ArrowRight size={16} />
+             </button>
+          </div>
         </div>
       </section>
 
