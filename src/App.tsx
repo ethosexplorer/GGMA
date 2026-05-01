@@ -1480,7 +1480,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
                 { label: 'Attorney', icon: '⚖️', desc: 'Cases & Regulatory', tier: 'attorney' },
                 { label: 'Agency', icon: '🛡️', desc: 'Oversight & Enforcement', tier: 'agency' },
               ].map(role => (
-                <button key={role.label} onClick={() => { setSelectedPricingRole(role.tier); onNavigate('role-pricing' as any); }} className="group bg-white/5 backdrop-blur-md border border-white/15 rounded-2xl p-6 text-center hover:bg-white/15 hover:border-emerald-400/50 hover:scale-[1.03] transition-all duration-300">
+                <button key={role.label} onClick={() => onNavigate('role-pricing' as any, role.tier)} className="group bg-white/5 backdrop-blur-md border border-white/15 rounded-2xl p-6 text-center hover:bg-white/15 hover:border-emerald-400/50 hover:scale-[1.03] transition-all duration-300">
                   <div className="text-3xl mb-3">{role.icon}</div>
                   <div className="text-white font-black text-sm">{role.label}</div>
                   <div className="text-emerald-300/60 text-[10px] font-bold mt-1 uppercase tracking-wider">{role.desc}</div>
@@ -8016,6 +8016,7 @@ export default function App() {
   const handleNavigate = (newView: string, role?: string) => {
     setViewHistory(prev => [...prev, view]);
     setView(newView);
+    if (role && newView === 'role-pricing') setSelectedPricingRole(role);
     if (role) setInitialRole(role as any);
   };
 
