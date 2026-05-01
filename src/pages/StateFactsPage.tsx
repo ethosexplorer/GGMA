@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowLeft, ArrowRight, Activity, Shield, Building2, ChevronRight } from 'lucide-react';
-import { MapChart } from '../components/MapChart';
+import MapChart from '../components/MapChart';
 import { FeaturedPoll, RevolvingSurveyBanner } from '../components/CommunityPolls';
 
 const US_STATES = [
