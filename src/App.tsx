@@ -1368,14 +1368,6 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest hidden sm:inline">Speak Your Language</span>
         </div>
         <div className="flex items-center gap-3">
-            {jurisdiction && (
-              <div className="hidden md:flex items-center mr-4 pr-4 border-r border-slate-700/50 gap-2 animate-in fade-in slide-in-from-right-4 duration-500">
-                <span className="text-emerald-400 font-black text-xl tracking-widest uppercase drop-shadow-[0_0_15px_rgba(16,185,129,0.5)]">
-                  {jurisdiction}
-                </span>
-                <span className="text-[10px] text-emerald-500/70 font-bold uppercase tracking-widest leading-none mt-1">PORTAL</span>
-              </div>
-            )}
             {jurisdiction && setJurisdiction && (
               <div className="hidden md:flex items-center gap-2 bg-slate-800/80 p-1 rounded-xl border border-slate-700/50 shadow-inner mr-2">
                 <div className="w-6 h-6 bg-emerald-500 rounded flex items-center justify-center text-white shadow-[0_0_10px_rgba(16,185,129,0.4)]">
@@ -1446,6 +1438,13 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
         <div className="inline-block animate-marquee font-bold text-xs uppercase tracking-[0.2em]">
           <span className="bg-emerald-400 text-emerald-950 px-2 py-0.5 rounded text-[9px] mr-4">IN THE KNOW</span>
           {inTheKnowNews.join(' • ')} &nbsp; • &nbsp; {inTheKnowNews.join(' • ')}
+        </div>
+      </div>
+
+      {/* Global State Jurisdiction Banner */}
+      <div className="bg-slate-50 border-b border-slate-200 shadow-sm relative z-40">
+        <div className="max-w-6xl mx-auto px-6 py-4">
+          <StateWelcomeBanner jurisdiction={jurisdiction || 'Oklahoma'} type="business" />
         </div>
       </div>
 
