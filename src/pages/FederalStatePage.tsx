@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, Shield, Scale, AlertTriangle, CheckCircle2, Lock, XCircle, Database } from 'lucide-react';
+import { ArrowLeft, Shield, Scale, AlertTriangle, CheckCircle2, Lock, XCircle, Database, MapPin } from 'lucide-react';
 
 export const FederalStatePage = ({ onBack, onNavigate }: { onBack: () => void, onNavigate?: (view: string) => void }) => {
   return (
