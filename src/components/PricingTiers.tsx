@@ -346,8 +346,9 @@ const AddOnCard = ({ addon, isSelected, onToggle }: { key?: string; addon: AddOn
 );
 
 // ─── Main Component ───
-export const PricingTiers = ({ onNavigate, defaultTab, onChatRole }: { onNavigate?: (view: string) => void, defaultTab?: TabId, onChatRole?: (role: string) => void }) => {
-  const [activeTab, setActiveTab] = useState<TabId>(defaultTab || 'patient');
+export const PricingTiers = ({ onNavigate, defaultTab, onChatRole, allowedTabs }: { onNavigate?: (view: string) => void, defaultTab?: TabId, onChatRole?: (role: string) => void, allowedTabs?: string[] }) => {
+  const visibleTabs = allowedTabs ? TIER_TABS.filter(t => allowedTabs.includes(t.id)) : TIER_TABS;
+  const [activeTab, setActiveTab] = useState<TabId>(defaultTab || (visibleTabs[0]?.id as TabId) || 'patient');
   const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly');
 
   // Sync with external defaultTab changes
@@ -379,7 +380,8 @@ export const PricingTiers = ({ onNavigate, defaultTab, onChatRole }: { onNavigat
     <section id="membership-tiers" className="py-24 px-6 bg-gradient-to-b from-white via-slate-50/50 to-white">
       <div className="max-w-7xl mx-auto">
 
-        {/* Header */}
+        {/* Header — hidden when used inside RolePricingPage */}
+        {!allowedTabs && (
         <div className="text-center mb-12 space-y-4">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-100 rounded-full border border-emerald-200 text-emerald-700 text-[10px] font-black uppercase tracking-widest">
             <Star size={12} className="fill-emerald-500 text-emerald-500" />
@@ -392,11 +394,12 @@ export const PricingTiers = ({ onNavigate, defaultTab, onChatRole }: { onNavigat
             Scalable infrastructure for patients, commercial entities, and regulatory bodies. Choose your role to see tailored plans.
           </p>
         </div>
+        )}
 
         {/* Tab Navigation */}
         <div className="mb-8">
           <div className="flex flex-wrap justify-center gap-2 max-w-5xl mx-auto">
-            {TIER_TABS.map(tab => (
+            {visibleTabs.map(tab => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}

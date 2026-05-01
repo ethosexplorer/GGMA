@@ -122,6 +122,7 @@ import { ProSeLegalIntake } from './pages/ProSeLegalIntake';
 import { PatientDashboard } from './pages/PatientDashboard';
 import { OversightDashboard } from './pages/OversightDashboard';
 import { PricingTiers } from './components/PricingTiers';
+import { RolePricingPage } from './pages/RolePricingPage';
 import { LanguageSelector } from './components/LanguageSelector';
 import { FeaturedPoll, StickyPollWidget, RevolvingSurveyBanner } from './components/CommunityPolls';
 import { GlobalHeader } from './components/GlobalHeader';
@@ -1290,7 +1291,6 @@ const STATE_RESOURCES: Record<string, any> = {
 const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate: (view: 'login' | 'signup' | 'patient-portal' | 'support' | 'larry-chatbot' | 'larry-business' | 'legal-advocacy', role?: string) => void, jurisdiction?: string, setJurisdiction?: (s: string) => void }) => {
   const [liveFeed, setLiveFeed] = useState<RegulatoryUpdate[]>([]);
   const [feedLoading, setFeedLoading] = useState(true);
-  const [selectedTier, setSelectedTier] = useState<string | undefined>(undefined);
   
   useEffect(() => {
     setFeedLoading(true);
@@ -1474,13 +1474,13 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
             <p className="text-emerald-300/60 text-xs font-black uppercase tracking-[0.3em] mb-6">I am a...</p>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-4xl mx-auto">
               {[
-                { label: 'Business', icon: '🏢', desc: 'Compliance & Licensing', tier: 'cannabis_b2b' },
+                { label: 'Business', icon: '🏢', desc: 'Compliance & Licensing', tier: 'business' },
                 { label: 'Patient', icon: '🏥', desc: 'Telehealth & Cards', tier: 'patient' },
                 { label: 'Provider', icon: '🩺', desc: 'Consultations & Care', tier: 'provider' },
                 { label: 'Attorney', icon: '⚖️', desc: 'Cases & Regulatory', tier: 'attorney' },
-                { label: 'Agency', icon: '🛡️', desc: 'Oversight & Enforcement', tier: 'state' },
+                { label: 'Agency', icon: '🛡️', desc: 'Oversight & Enforcement', tier: 'agency' },
               ].map(role => (
-                <button key={role.label} onClick={() => { setSelectedTier(role.tier); setTimeout(() => document.getElementById('membership-tiers')?.scrollIntoView({ behavior: 'smooth' }), 100); }} className={`group backdrop-blur-md border rounded-2xl p-6 text-center hover:scale-[1.03] transition-all duration-300 ${selectedTier === role.tier ? 'bg-emerald-500/20 border-emerald-400/60' : 'bg-white/5 border-white/15 hover:bg-white/15 hover:border-emerald-400/50'}`}>
+                <button key={role.label} onClick={() => { setSelectedPricingRole(role.tier); onNavigate('role-pricing' as any); }} className="group bg-white/5 backdrop-blur-md border border-white/15 rounded-2xl p-6 text-center hover:bg-white/15 hover:border-emerald-400/50 hover:scale-[1.03] transition-all duration-300">
                   <div className="text-3xl mb-3">{role.icon}</div>
                   <div className="text-white font-black text-sm">{role.label}</div>
                   <div className="text-emerald-300/60 text-[10px] font-bold mt-1 uppercase tracking-wider">{role.desc}</div>
@@ -1857,8 +1857,8 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
         </div>
       </section>
 
-      {/* Subscription Tiers Section */}
-      <PricingTiers onNavigate={(view) => onNavigate(view as any)} defaultTab={selectedTier as any} onChatRole={(role) => onNavigate('larry-chatbot')} />
+
+      {/* Pricing removed from landing — now on dedicated role pages */}
 
       {/* Partners & Paid Advertisements */}
       <section className="py-20 border-t border-slate-100 bg-slate-50/30">
@@ -7987,6 +7987,7 @@ export default function App() {
   const [showLarryModal, setShowLarryModal] = useState(false);
   const [roleOverride, setRoleOverride] = useState<string | null>(null);
   const [hasBypassedSelector, setHasBypassedSelector] = useState(false);
+  const [selectedPricingRole, setSelectedPricingRole] = useState<string>('patient');
   const [jurisdiction, setJurisdiction] = useState(() => sessionStorage.getItem('gghp_jurisdiction') || 'Oklahoma');
   const [jurisdictionLocked, setJurisdictionLocked] = useState(() => sessionStorage.getItem('gghp_jurisdiction_locked') === 'true');
   const [showJurisdictionGate, setShowJurisdictionGate] = useState(false);
@@ -8496,6 +8497,14 @@ export default function App() {
               setJurisdiction={setJurisdiction}
             />
           )}
+          {view === 'role-pricing' && (
+            <RolePricingPage
+              role={selectedPricingRole}
+              onBack={handleBack}
+              onNavigate={(v) => handleNavigate(v)}
+              onChatSylara={() => { handleNavigate('larry-chatbot'); }}
+            />
+          )}
           {view === 'larry-chatbot' && (
             <LarryMedCardChatbot
               userProfile={userProfile}
@@ -8726,7 +8735,7 @@ export default function App() {
           const isRyn = email.includes('ceo.globalgreenhp');
           const isMon = email.includes('compliance.globalgreenhp') || email.includes('monica');
           
-          if (view === 'landing' || view === 'larry-chatbot' || isFndr || isRyn || isMon) return null;
+          if (view === 'landing' || view === 'role-pricing' || view === 'larry-chatbot' || isFndr || isRyn || isMon) return null;
           return <SylaraFloatingWidget userProfile={userProfile} persona={currentPersona} onClick={() => setShowLarryModal(true)} />;
         })()}
 
