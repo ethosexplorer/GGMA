@@ -26,7 +26,7 @@ export const TRIAL_TERMS = {
     trialPrice: 0,
     discountPercent: 0,
     label: '30 Days Free',
-    shortDisclosure: 'Free for 30 days. Credit/debit card required. Auto-renews at listed price. Cancel anytime.',
+    shortDisclosure: 'Free for 30 days. Invoice sent after trial via ACH. Auto-renews at listed price. Cancel anytime.',
   },
   standard: {
     trialDays: 7,
@@ -34,19 +34,19 @@ export const TRIAL_TERMS = {
     discountPercent: 30,
     label: '7 Days Free',
     discountLabel: '30% Off Month 1',
-    shortDisclosure: 'Free for 7 days, then 30% off your first month. Credit/debit card required. Auto-renews at full price after first month. Cancel anytime.',
+    shortDisclosure: 'Free for 7 days, then 30% off your first month. Invoice sent via ACH. Auto-renews at full price after first month. Cancel anytime.',
   },
   partner: {
     trialDays: 0,
     trialPrice: 0,
     discountPercent: 0,
     label: null,
-    shortDisclosure: 'No free trial. Billed at listed price upon signup. Cancel anytime.',
+    shortDisclosure: 'No free trial. Billed at listed price upon signup via ACH invoice. Cancel anytime.',
   },
-  requiresCard: true,
+  requiresCard: false,
   autoRenews: true,
   cancellationPolicy: 'Cancel anytime before your billing period ends to avoid charges. If you do not cancel, your subscription will automatically renew at the standard rate.',
-  agreementText: 'I understand that a valid credit or debit card is required. After any applicable trial or introductory period, my subscription will automatically convert to the selected plan at the listed monthly rate. I may cancel at any time before the next billing cycle to avoid being charged. By checking this box, I authorize Global Green Enterprise Inc. to charge my payment method on file upon trial/introductory expiration and on each subsequent billing cycle until I cancel.',
+  agreementText: 'I understand that after any applicable trial or introductory period, my subscription will automatically convert to the selected plan at the listed rate. An invoice or payment request will be sent via ACH bank transfer. I may cancel at any time before the next billing cycle to avoid being charged. By submitting this order, I authorize Global Green Enterprise Inc. to invoice my account upon trial/introductory expiration and on each subsequent billing cycle until I cancel. Card processing coming soon.',
 };
 
 export const CANNABIS_B2B_PLANS: SubscriptionPlan[] = [
