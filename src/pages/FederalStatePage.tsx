@@ -162,6 +162,7 @@ export const FederalStatePage = ({ onBack, onNavigate }: { onBack: () => void, o
                 <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">The Pros</h4>
                 <ul className="space-y-2">
                   <li className="flex items-start gap-2 text-sm text-slate-700 font-medium"><CheckCircle2 size={16} className="text-emerald-500 mt-0.5 shrink-0" /> Established local markets with existing customer bases.</li>
+                  <li className="flex items-start gap-2 text-sm text-slate-700 font-medium"><CheckCircle2 size={16} className="text-emerald-500 mt-0.5 shrink-0" /> State tax eliminations and relief initiatives rolling out to boost legal operators.</li>
                   <li className="flex items-start gap-2 text-sm text-slate-700 font-medium"><CheckCircle2 size={16} className="text-emerald-500 mt-0.5 shrink-0" /> Recreational sales permitted in participating jurisdictions.</li>
                   <li className="flex items-start gap-2 text-sm text-slate-700 font-medium"><CheckCircle2 size={16} className="text-emerald-500 mt-0.5 shrink-0" /> Diverse product types allowed beyond strict medical definitions.</li>
                 </ul>
