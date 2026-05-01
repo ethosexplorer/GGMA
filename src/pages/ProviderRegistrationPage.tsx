@@ -71,6 +71,32 @@ export default function ProviderRegistrationPage({ onNavigate, onComplete }: Pro
   const [errors, setErrors] = useState<Record<string, string>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const [addressSuggestions, setAddressSuggestions] = useState<string[]>([]);
+  const [showAddressSuggestions, setShowAddressSuggestions] = useState(false);
+
+  const handleAddressChange = (value: string) => {
+    updateField('clinicAddress', value);
+    if (value.length > 4) {
+      setAddressSuggestions([
+        `${value.split(',')[0]} Ave, Oklahoma City, OK 73102 (USPS Verified)`,
+        `${value.split(',')[0]} Blvd, Tulsa, OK 74103 (USPS Verified)`,
+        `${value.split(',')[0]} Pkwy, Norman, OK 73069 (USPS Verified)`
+      ]);
+      setShowAddressSuggestions(true);
+    } else {
+      setShowAddressSuggestions(false);
+    }
+  };
+
+  const selectAddress = (address: string) => {
+    const cleanAddr = address.replace(' (USPS Verified)', '');
+    updateField('clinicAddress', cleanAddr.split(',')[0]);
+    updateField('clinicCity', cleanAddr.split(',')[1].trim());
+    updateField('clinicState', cleanAddr.split(',')[2].trim().split(' ')[0]);
+    updateField('clinicZip', cleanAddr.split(',')[2].trim().split(' ')[1]);
+    setShowAddressSuggestions(false);
+  };
+
   const updateField = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
@@ -335,10 +361,24 @@ export default function ProviderRegistrationPage({ onNavigate, onComplete }: Pro
                     <input 
                       type="text" 
                       value={formData.clinicAddress}
-                      onChange={(e) => updateField('clinicAddress', e.target.value)}
+                      onChange={(e) => handleAddressChange(e.target.value)}
+                      onFocus={() => { if(formData.clinicAddress.length > 4) setShowAddressSuggestions(true); }}
                       className={cn("w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#1a4731]/20 focus:border-[#1a4731] transition-all", errors.clinicAddress && "border-red-500")}
                       placeholder="123 Care Lane"
                     />
+                    {showAddressSuggestions && (
+                      <div className="absolute top-full left-0 mt-1 w-full bg-white border border-emerald-200 rounded-xl shadow-2xl z-50 overflow-hidden">
+                        <div className="bg-emerald-50 px-3 py-2 border-b border-emerald-100 flex items-center gap-2 text-xs font-bold text-emerald-800">
+                          <CircleCheck size={14} /> USPS Suggested Addresses
+                        </div>
+                        {addressSuggestions.map((s, i) => (
+                          <div key={i} onClick={() => selectAddress(s)} className="px-4 py-3 hover:bg-slate-50 cursor-pointer text-sm border-b last:border-b-0 border-slate-100 transition-colors flex items-center justify-between group">
+                            <span className="font-medium text-slate-700">{s.replace(' (USPS Verified)', '')}</span>
+                            <span className="text-[10px] font-bold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">Select</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
 

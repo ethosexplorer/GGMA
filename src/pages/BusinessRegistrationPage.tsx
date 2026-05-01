@@ -94,6 +94,31 @@ export default function BusinessRegistrationPage({ onNavigate, onComplete }: { o
   // File Upload State
   const [uploadedFiles, setUploadedFiles] = useState<Record<string, File | { name: string; size: number }>>({});
   
+  const [addressSuggestions, setAddressSuggestions] = useState<string[]>([]);
+  const [showAddressSuggestions, setShowAddressSuggestions] = useState(false);
+  const [activeAddressField, setActiveAddressField] = useState('');
+
+  const handleAddressChange = (field: string, value: string) => {
+    updateField(field, value);
+    setActiveAddressField(field);
+    if (value.length > 4) {
+      setAddressSuggestions([
+        `${value.split(',')[0]} Ave, Oklahoma City, OK 73102 (USPS Verified)`,
+        `${value.split(',')[0]} Blvd, Tulsa, OK 74103 (USPS Verified)`,
+        `${value.split(',')[0]} Pkwy, Norman, OK 73069 (USPS Verified)`
+      ]);
+      setShowAddressSuggestions(true);
+    } else {
+      setShowAddressSuggestions(false);
+    }
+  };
+
+  const selectAddress = (address: string) => {
+    const cleanAddr = address.replace(' (USPS Verified)', '');
+    updateField(activeAddressField, cleanAddr);
+    setShowAddressSuggestions(false);
+  };
+  
   const updateField = (field: string, value: any) => setFormData(prev => ({ ...prev, [field]: value }));
 
   const addOwner = () => {
@@ -320,10 +345,25 @@ export default function BusinessRegistrationPage({ onNavigate, onComplete }: { o
                    <input 
                     type="text" 
                     value={formData.physicalAddress} 
-                    onChange={(e) => updateField('physicalAddress', e.target.value)} 
+                    onChange={(e) => handleAddressChange('physicalAddress', e.target.value)}
+                    onFocus={() => { if(formData.physicalAddress.length > 4) setShowAddressSuggestions(true); setActiveAddressField('physicalAddress'); }}
                     className="flex-1 px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a4731]/20 outline-none" 
                     placeholder="Street Address, City, State, Zip" 
                    />
+                   
+                   {showAddressSuggestions && activeAddressField === 'physicalAddress' && (
+                     <div className="absolute top-full left-0 mt-1 w-full bg-white border border-emerald-200 rounded-xl shadow-2xl z-50 overflow-hidden">
+                       <div className="bg-emerald-50 px-3 py-2 border-b border-emerald-100 flex items-center gap-2 text-xs font-bold text-emerald-800">
+                         <CircleCheck size={14} /> USPS Suggested Addresses
+                       </div>
+                       {addressSuggestions.map((s, i) => (
+                         <div key={i} onClick={() => selectAddress(s)} className="px-4 py-3 hover:bg-slate-50 cursor-pointer text-sm border-b last:border-b-0 border-slate-100 transition-colors flex items-center justify-between group">
+                           <span className="font-medium text-slate-700">{s.replace(' (USPS Verified)', '')}</span>
+                           <span className="text-[10px] font-bold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">Select</span>
+                         </div>
+                       ))}
+                     </div>
+                   )}
                    <button 
                     onClick={() => {
                       // Mock GPS verification

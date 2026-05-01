@@ -62,10 +62,12 @@ input:focus {
 }
 
 /* ===================================================================
-   Safari / iOS Compatibility — Brand Color Fallbacks
-   These ensure all custom arbitrary hex branded greens display correctly.
+   Safari / iOS Compatibility — oklch() Color Fallbacks
+   Tailwind v4 outputs colors in oklch() which Safari < 16.4 can't render.
+   These fallbacks ensure all branded green areas display on Apple devices.
    =================================================================== */
 
+/* Primary brand greens (arbitrary values used throughout the app) */
 .bg-\[\#1a4731\] { background-color: #1a4731 !important; }
 .bg-\[\#0f291c\] { background-color: #0f291c !important; }
 .bg-\[\#153a28\] { background-color: #153a28 !important; }
@@ -79,6 +81,74 @@ input:focus {
 .text-\[\#3E2723\] { color: #3E2723 !important; }
 .text-\[\#A3B18A\] { color: #A3B18A !important; }
 .border-\[\#1a4731\] { border-color: #1a4731 !important; }
+
+/* Gradient from/to for brand greens */
+.from-\[\#1a4731\] { --tw-gradient-from: #1a4731; }
+.to-\[\#2c6e4d\] { --tw-gradient-to: #2c6e4d; }
+.from-\[\#0f291c\] { --tw-gradient-from: #0f291c; }
+.to-\[\#1a4731\] { --tw-gradient-to: #1a4731; }
+.from-\[\#0f2d1e\] { --tw-gradient-from: #0f2d1e; }
+
+/* Emerald palette */
+.bg-emerald-50 { background-color: #ecfdf5 !important; }
+.bg-emerald-100 { background-color: #d1fae5 !important; }
+.bg-emerald-200 { background-color: #a7f3d0 !important; }
+.bg-emerald-400 { background-color: #34d399 !important; }
+.bg-emerald-500 { background-color: #10b981 !important; }
+.bg-emerald-600 { background-color: #059669 !important; }
+.text-emerald-200 { color: #a7f3d0 !important; }
+.text-emerald-300 { color: #6ee7b7 !important; }
+.text-emerald-400 { color: #34d399 !important; }
+.text-emerald-500 { color: #10b981 !important; }
+.text-emerald-600 { color: #059669 !important; }
+.border-emerald-200 { border-color: #a7f3d0 !important; }
+.border-emerald-500 { border-color: #10b981 !important; }
+.from-emerald-400 { --tw-gradient-from: #34d399; }
+.to-emerald-600 { --tw-gradient-to: #059669; }
+
+/* Green palette */
+.bg-green-50 { background-color: #f0fdf4 !important; }
+.bg-green-500 { background-color: #22c55e !important; }
+.bg-green-600 { background-color: #16a34a !important; }
+.text-green-600 { color: #16a34a !important; }
+
+/* Slate palette */
+.bg-slate-50 { background-color: #f8fafc !important; }
+.bg-slate-100 { background-color: #f1f5f9 !important; }
+.bg-slate-200 { background-color: #e2e8f0 !important; }
+.bg-slate-800 { background-color: #1e293b !important; }
+.bg-slate-900 { background-color: #0f172a !important; }
+.bg-slate-950 { background-color: #020617 !important; }
+.text-slate-500 { color: #64748b !important; }
+.text-slate-800 { color: #1e293b !important; }
+.text-slate-900 { color: #0f172a !important; }
+
+/* Blue palette (DEA banner) */
+.bg-blue-500 { background-color: #3b82f6 !important; }
+.bg-blue-600 { background-color: #2563eb !important; }
+.bg-blue-900 { background-color: #1e3a5f !important; }
+.bg-blue-950 { background-color: #172554 !important; }
+.text-blue-400 { color: #60a5fa !important; }
+.from-blue-950 { --tw-gradient-from: #172554; }
+.via-indigo-950 { --tw-gradient-via: #1e1b4b; }
+.to-slate-950 { --tw-gradient-to: #020617; }
+.from-blue-900 { --tw-gradient-from: #1e3a8a; }
+.via-indigo-900 { --tw-gradient-via: #312e81; }
+.to-slate-900 { --tw-gradient-to: #0f172a; }
+.from-blue-600 { --tw-gradient-from: #2563eb; }
+.to-indigo-700 { --tw-gradient-to: #4338ca; }
+
+/* Amber/Red fallbacks */
+.bg-amber-50 { background-color: #fffbeb !important; }
+.bg-amber-500 { background-color: #f59e0b !important; }
+.text-amber-600 { color: #d97706 !important; }
+.bg-red-50 { background-color: #fef2f2 !important; }
+.bg-red-500 { background-color: #ef4444 !important; }
+.text-red-600 { color: #dc2626 !important; }
+
+/* Indigo fallbacks */
+.bg-indigo-600 { background-color: #4f46e5 !important; }
+.bg-indigo-950 { background-color: #1e1b4b !important; }
 
 /* ========= Other iOS / Safari Compatibility ========= */
 
