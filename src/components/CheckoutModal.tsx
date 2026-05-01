@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, CheckCircle2, Shield, CreditCard, ArrowRight, Loader2, Building2, Mail, Phone, User, FileText } from 'lucide-react';
+import { X, Shield, CreditCard, ArrowRight, Loader2, Building2, Mail, Phone, User, FileText, CircleCheck } from 'lucide-react';
 import { turso } from '../lib/turso';
 
 interface CheckoutItem {
@@ -144,7 +144,7 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
             {step === 'success' && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-8 space-y-6">
                 <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto">
-                  <CheckCircle2 size={40} className="text-emerald-600" />
+                  <CircleCheck size={40} className="text-emerald-600" />
                 </div>
                 <div className="space-y-2">
                   <h3 className="text-2xl font-black text-slate-800">Thank You, {form.fullName.split(' ')[0]}!</h3>

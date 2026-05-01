@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckCircle2, XCircle, Shield, Briefcase, ChevronDown, ChevronUp, User, Star, DollarSign, Calendar, TrendingUp, FileText, Award, Clock, Building2, Cpu, Scale, Headphones, BarChart3 } from 'lucide-react';
+import { XCircle, Shield, Briefcase, ChevronDown, ChevronUp, User, Star, DollarSign, Calendar, TrendingUp, FileText, Award, Clock, Building2, Cpu, Scale, Headphones, BarChart3, CircleCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 // ─── Department Definitions ───
@@ -327,7 +327,7 @@ const StaffDetail = ({ member, isFounder, key }: { member: StaffMember; isFounde
                   <div className="space-y-2">
                     {member.granted.map((item, i) => (
                       <div key={i} className="flex items-center gap-2 text-sm">
-                        <CheckCircle2 size={15} className="text-emerald-500 shrink-0" />
+                        <CircleCheck size={15} className="text-emerald-500 shrink-0" />
                         <span className="font-bold text-slate-700">{item}</span>
                       </div>
                     ))}

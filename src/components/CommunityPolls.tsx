@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import {
-  Vote,
+import { Vote,
   ChevronRight,
   ChevronLeft,
   Heart,
@@ -10,14 +9,12 @@ import {
   Users,
   Globe,
   Sparkles,
-  CheckCircle2,
   ArrowRight,
   X,
   MessageCircle,
   TrendingUp,
   Zap,
-  Shield,
-} from 'lucide-react';
+  Shield, CircleCheck } from 'lucide-react';
 
 // ─── Poll Types ───
 interface PollOption {
@@ -472,7 +469,7 @@ export const FeaturedPoll = () => {
                       <span className="text-emerald-400 text-xs font-black">{percentage}%</span>
                     )}
                     {isSelected && !voted && (
-                      <CheckCircle2 size={14} className="text-emerald-400" />
+                      <CircleCheck size={14} className="text-emerald-400" />
                     )}
                   </div>
 
@@ -513,7 +510,7 @@ export const FeaturedPoll = () => {
             )}
             {hasVoted[poll.id] && (
               <span className="text-emerald-400 text-xs font-bold flex items-center gap-1">
-                <CheckCircle2 size={14} /> Thank you for voting!
+                <CircleCheck size={14} /> Thank you for voting!
               </span>
             )}
           </div>
@@ -750,7 +747,7 @@ export const RevolvingSurveyBanner = ({ compact = false }: { compact?: boolean }
                       <span className="text-sm">{option.emoji}</span>
                       <span className="text-white text-[11px] font-bold flex-1 leading-tight">{option.label}</span>
                       {voted && <span className="text-emerald-400 text-[11px] font-black">{percentage}%</span>}
-                      {isSelected && !voted && <CheckCircle2 size={13} className="text-emerald-400" />}
+                      {isSelected && !voted && <CircleCheck size={13} className="text-emerald-400" />}
                     </div>
                   </button>
                 );
@@ -772,7 +769,7 @@ export const RevolvingSurveyBanner = ({ compact = false }: { compact?: boolean }
             )}
             {hasVoted[poll.id] && (
               <span className="text-emerald-400 text-[10px] font-bold flex items-center gap-1">
-                <CheckCircle2 size={12} /> Thank you for voting!
+                <CircleCheck size={12} /> Thank you for voting!
               </span>
             )}
           </div>

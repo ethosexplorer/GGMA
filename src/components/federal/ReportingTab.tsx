@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileText, Download, Globe, Shield, CheckCircle2, Clock } from 'lucide-react';
+import { FileText, Download, Globe, Shield, Clock, CircleCheck } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 const reports = [
@@ -14,7 +14,7 @@ const templates = [
   { name: 'Congressional Oversight Report', desc: 'Full national summary for committee review', icon: FileText },
   { name: 'Interagency Coordination Package', desc: 'Multi-agency data sharing export', icon: Globe },
   { name: 'Public Transparency Report', desc: 'Anonymized national statistics for public release', icon: Shield },
-  { name: 'Executive Intelligence Briefing', desc: 'High-level risk and trend summary', icon: CheckCircle2 },
+  { name: 'Executive Intelligence Briefing', desc: 'High-level risk and trend summary', icon: CircleCheck },
 ];
 
 export const ReportingTab = () => (
@@ -54,7 +54,7 @@ export const ReportingTab = () => (
               <td className="px-6 py-4">
                 <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded uppercase flex items-center gap-1 w-fit",
                   r.status === 'Ready' ? "bg-emerald-900/60 text-emerald-300" : "bg-amber-900/60 text-amber-300"
-                )}>{r.status === 'Ready' ? <CheckCircle2 size={10} /> : <Clock size={10} />} {r.status}</span>
+                )}>{r.status === 'Ready' ? <CircleCheck size={10} /> : <Clock size={10} />} {r.status}</span>
               </td>
               <td className="px-6 py-4">
                 {r.status === 'Ready' && <button className="text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1"><Download size={12} /> Download</button>}

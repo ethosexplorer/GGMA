@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'motion/react';
-import { ArrowLeft, CheckCircle2, AlertCircle, Upload, Plus, Trash2, CheckCircle, FileText, X, Info } from 'lucide-react';
+import { ArrowLeft, AlertCircle, Upload, Plus, Trash2, CheckCircle, FileText, X, Info, CircleCheck } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
@@ -475,7 +475,7 @@ export default function BusinessRegistrationPage({ onNavigate, onComplete }: { o
             </div>
             
             <div className="mt-8 bg-blue-50 p-4 rounded-xl flex items-start gap-3">
-              <CheckCircle2 className="text-blue-500 shrink-0" size={20} />
+              <CircleCheck className="text-blue-500 shrink-0" size={20} />
               <p className="text-sm text-blue-800">Files are immediately scanned for viruses. By uploading, you acknowledge these documents fall under state open records policies where applicable.</p>
             </div>
           </div>
@@ -487,7 +487,7 @@ export default function BusinessRegistrationPage({ onNavigate, onComplete }: { o
             <h3 className="text-xl font-semibold text-slate-800 border-b border-slate-100 pb-2">Bond Requirement (Growers Only)</h3>
             {formData.licenseType !== 'Grower' ? (
               <div className="bg-emerald-50 border border-emerald-200 p-6 rounded-xl text-center">
-                 <CheckCircle2 size={32} className="text-emerald-500 mx-auto mb-3" />
+                 <CircleCheck size={32} className="text-emerald-500 mx-auto mb-3" />
                  <h4 className="font-bold text-emerald-800 text-lg">Not Required</h4>
                  <p className="text-emerald-700 text-sm mt-1">Since you selected {formData.licenseType}, you are exempt from this specific state Bond Requirement.</p>
               </div>
@@ -519,7 +519,7 @@ export default function BusinessRegistrationPage({ onNavigate, onComplete }: { o
           <div className="space-y-6">
             <div className="bg-white border rounded-xl overflow-hidden shadow-sm">
                <div className="bg-slate-50 p-4 border-b">
-                  <h3 className="font-bold text-slate-800 flex items-center gap-2"><CheckCircle2 className="text-[#1a4731]" size={20}/> Application Review</h3>
+                  <h3 className="font-bold text-slate-800 flex items-center gap-2"><CircleCheck className="text-[#1a4731]" size={20}/> Application Review</h3>
                   <p className="text-xs text-slate-500 mt-1">Please review your setup before submitting. State processing fees will be evaluated upon submission.</p>
                </div>
                

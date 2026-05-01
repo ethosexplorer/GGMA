@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { turso } from '../lib/turso';
-import { 
-  ShieldAlert, Map, Search, FileText, Activity, MapPin, CheckCircle2, 
-  XCircle, AlertTriangle, AlertCircle, Fingerprint, Zap, Crosshair, HelpCircle, Download, Bot, CreditCard, Shield, Clock, Wind, Car, User, Wifi, Lock, Globe
-} from 'lucide-react';
+import { ShieldAlert, Map, Search, FileText, Activity, MapPin, XCircle, AlertTriangle, AlertCircle, Fingerprint, Zap, Crosshair, HelpCircle, Download, Bot, CreditCard, Shield, Clock, Wind, Car, User, Wifi, Lock, Globe, CircleCheck } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { EnforcementIntelTab } from '../components/federal/EnforcementIntelTab';
@@ -343,7 +340,7 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
                   <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="space-y-8 text-center max-w-xl mx-auto py-12">
                     <div className="p-10 bg-slate-900/60 border-4 border-emerald-500/30 rounded-[4rem] shadow-2xl backdrop-blur-xl">
                        <div className="w-24 h-24 bg-emerald-500/20 rounded-[2rem] flex items-center justify-center mx-auto mb-8 border border-emerald-500/30">
-                          <CheckCircle2 className="text-emerald-500" size={48} />
+                          <CircleCheck className="text-emerald-500" size={48} />
                        </div>
                        <h3 className="text-4xl font-black mb-3">TEST COMPLETE</h3>
                        <p className="text-slate-400 mb-10 text-lg">Visual markers and sensor arrays have stabilized. Confirm final disposition below.</p>
@@ -508,7 +505,7 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
                     </div>
                     
                     <div className="bg-slate-800/50 p-6 rounded-3xl mb-8 flex items-center justify-center gap-4 text-slate-400">
-                       <CheckCircle2 className="text-emerald-500" size={24} /> Backend Oversight received result.
+                       <CircleCheck className="text-emerald-500" size={24} /> Backend Oversight received result.
                     </div>
 
                     <button 
@@ -624,7 +621,7 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
                      { step: 'Cultivated', entity: 'Green Valley Farms', date: 'Oct 12, 2025', icon: <Wind size={16} /> },
                      { step: 'Tested', entity: 'Apex Labs', date: 'Jan 05, 2026', badge: 'PASSED', icon: <Activity size={16} /> },
                      { step: 'Transported', entity: 'SecureMovers LLC', date: 'Jan 10, 2026', icon: <Car size={16} /> },
-                     { step: 'Retail Inventory', entity: 'OKC Wellness Center', date: 'Jan 12, 2026', icon: <CheckCircle2 size={16} /> },
+                     { step: 'Retail Inventory', entity: 'OKC Wellness Center', date: 'Jan 12, 2026', icon: <CircleCheck size={16} /> },
                    ].map((s, i) => (
                      <div key={i} className="relative">
                        <div className="absolute -left-[49px] w-10 h-10 rounded-full bg-blue-900/50 border-4 border-[#0a0f18] flex items-center justify-center text-blue-400">

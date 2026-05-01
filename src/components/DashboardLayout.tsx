@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import {
-  Shield, LayoutDashboard, Video, Calendar, FileText, Stethoscope, Settings, 
-  Building2, Users, CheckCircle2, Activity, BarChart3, TrendingUp, LogOut, Search, Bell
-} from 'lucide-react';
+import { Shield, LayoutDashboard, Video, Calendar, FileText, Stethoscope, Settings, 
+  Building2, Users, Activity, BarChart3, TrendingUp, LogOut, Search, Bell, CircleCheck } from 'lucide-react';
 import { cn } from '../lib/utils';
 import TeleHealthDashboard from './TeleHealthDashboard';
 
@@ -31,7 +29,7 @@ export const DashboardLayout = ({ role, onLogout, userProfile, children }: { rol
     admin: [
       { icon: LayoutDashboard, label: 'System', path: '/admin' },
       { icon: Users, label: 'User Management', path: '#' },
-      { icon: CheckCircle2, label: 'Approvals', path: '#' },
+      { icon: CircleCheck, label: 'Approvals', path: '#' },
       { icon: Activity, label: 'Logs', path: '#' },
       { icon: Settings, label: 'Settings', path: '#' },
     ],

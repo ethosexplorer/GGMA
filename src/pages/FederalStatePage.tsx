@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, Shield, Scale, AlertTriangle, CheckCircle2, Lock, XCircle, Database, MapPin } from 'lucide-react';
+import { ArrowLeft, Shield, Scale, AlertTriangle, Lock, XCircle, Database, MapPin, CircleCheck } from 'lucide-react';
 
 export const FederalStatePage = ({ onBack, onNavigate, jurisdiction = 'State' }: { onBack: () => void, onNavigate?: (view: string) => void, jurisdiction?: string }) => {
   return (
@@ -40,7 +40,7 @@ export const FederalStatePage = ({ onBack, onNavigate, jurisdiction = 'State' }:
                     <span className="text-white font-bold text-xs">Metrc Integrated</span>
                  </div>
                  <div className="flex items-center gap-3 bg-white/5 border border-white/10 px-4 py-2.5 rounded-xl">
-                    <CheckCircle2 size={16} className="text-emerald-400" />
+                    <CircleCheck size={16} className="text-emerald-400" />
                     <span className="text-white font-bold text-xs">State Certified</span>
                  </div>
                  <div className="flex items-center gap-3 bg-white/5 border border-white/10 px-4 py-2.5 rounded-xl">
@@ -125,9 +125,9 @@ export const FederalStatePage = ({ onBack, onNavigate, jurisdiction = 'State' }:
               <div className="space-y-3">
                 <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">The Pros</h4>
                 <ul className="space-y-2">
-                  <li className="flex items-start gap-2 text-sm text-slate-700 font-medium"><CheckCircle2 size={16} className="text-emerald-500 mt-0.5 shrink-0" /> IRC 280E Tax Relief unlocked for businesses.</li>
-                  <li className="flex items-start gap-2 text-sm text-slate-700 font-medium"><CheckCircle2 size={16} className="text-emerald-500 mt-0.5 shrink-0" /> Expanded banking, credit, and financial services.</li>
-                  <li className="flex items-start gap-2 text-sm text-slate-700 font-medium"><CheckCircle2 size={16} className="text-emerald-500 mt-0.5 shrink-0" /> Reduced federal criminal penalties for authorized entities.</li>
+                  <li className="flex items-start gap-2 text-sm text-slate-700 font-medium"><CircleCheck size={16} className="text-emerald-500 mt-0.5 shrink-0" /> IRC 280E Tax Relief unlocked for businesses.</li>
+                  <li className="flex items-start gap-2 text-sm text-slate-700 font-medium"><CircleCheck size={16} className="text-emerald-500 mt-0.5 shrink-0" /> Expanded banking, credit, and financial services.</li>
+                  <li className="flex items-start gap-2 text-sm text-slate-700 font-medium"><CircleCheck size={16} className="text-emerald-500 mt-0.5 shrink-0" /> Reduced federal criminal penalties for authorized entities.</li>
                 </ul>
               </div>
 
@@ -161,10 +161,10 @@ export const FederalStatePage = ({ onBack, onNavigate, jurisdiction = 'State' }:
               <div className="space-y-3">
                 <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">The {jurisdiction} Reality</h4>
                 <ul className="space-y-2">
-                  <li className="flex items-start gap-2 text-sm text-slate-700 font-medium"><CheckCircle2 size={16} className="text-emerald-500 mt-0.5 shrink-0" /> Local market participation requires adherence to {jurisdiction} specific frameworks.</li>
-                  <li className="flex items-start gap-2 text-sm text-slate-700 font-medium"><CheckCircle2 size={16} className="text-emerald-500 mt-0.5 shrink-0" /> State tax eliminations and relief initiatives rolling out to boost legal operators.</li>
-                  <li className="flex items-start gap-2 text-sm text-slate-700 font-medium"><CheckCircle2 size={16} className="text-emerald-500 mt-0.5 shrink-0" /> Market access is strictly tailored to {jurisdiction} statutes (Medical-only, Adult-use, or Illegal).</li>
-                  <li className="flex items-start gap-2 text-sm text-slate-700 font-medium"><CheckCircle2 size={16} className="text-emerald-500 mt-0.5 shrink-0" /> Diverse product types allowed beyond strict medical definitions where legal.</li>
+                  <li className="flex items-start gap-2 text-sm text-slate-700 font-medium"><CircleCheck size={16} className="text-emerald-500 mt-0.5 shrink-0" /> Local market participation requires adherence to {jurisdiction} specific frameworks.</li>
+                  <li className="flex items-start gap-2 text-sm text-slate-700 font-medium"><CircleCheck size={16} className="text-emerald-500 mt-0.5 shrink-0" /> State tax eliminations and relief initiatives rolling out to boost legal operators.</li>
+                  <li className="flex items-start gap-2 text-sm text-slate-700 font-medium"><CircleCheck size={16} className="text-emerald-500 mt-0.5 shrink-0" /> Market access is strictly tailored to {jurisdiction} statutes (Medical-only, Adult-use, or Illegal).</li>
+                  <li className="flex items-start gap-2 text-sm text-slate-700 font-medium"><CircleCheck size={16} className="text-emerald-500 mt-0.5 shrink-0" /> Diverse product types allowed beyond strict medical definitions where legal.</li>
                 </ul>
               </div>
 

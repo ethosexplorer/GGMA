@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
 import { turso } from '../lib/turso';
-import { 
-  Building2, Users, FileText, Settings, Shield, Activity, Bell,
-  Briefcase, HeartPulse, Scale, Gavel, FileCheck, CheckCircle2,
-  Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
+import { Building2, Users, FileText, Settings, Shield, Activity, Bell,
+  Briefcase, HeartPulse, Scale, Gavel, FileCheck, Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
   Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Headphones,
-  Zap, UserPlus, GraduationCap, FlaskConical, BookOpen, Phone, ShieldAlert, Lock
-} from 'lucide-react';
+  Zap, UserPlus, GraduationCap, FlaskConical, BookOpen, Phone, ShieldAlert, Lock, CircleCheck } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { METRC_MANUAL } from '../data/metrcManual';
@@ -525,7 +522,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
                    <td className="px-6 py-4 font-bold text-slate-600 text-xs uppercase">{b.t}</td>
                    <td className="px-6 py-4">
                       <span className={cn("px-2 py-0.5 rounded text-[9px] font-black uppercase flex items-center w-fit gap-1", b.s === 'Synced' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600')}>
-                        {b.s === 'Warning' ? <AlertTriangle size={10} /> : <CheckCircle2 size={10} />} {b.s}
+                        {b.s === 'Warning' ? <AlertTriangle size={10} /> : <CircleCheck size={10} />} {b.s}
                       </span>
                    </td>
                    <td className="px-6 py-4 text-right">
@@ -547,7 +544,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
        </div>
        <div className="bg-white border border-slate-200 p-8 rounded-[2.5rem] shadow-sm">
           <div className="p-10 border-2 border-dashed border-slate-200 rounded-2xl text-center">
-             <CheckCircle2 size={40} className="mx-auto text-emerald-500 mb-4" />
+             <CircleCheck size={40} className="mx-auto text-emerald-500 mb-4" />
              <h3 className="text-xl font-black text-slate-800 mb-2">Queue is Empty</h3>
              <p className="text-slate-500 font-medium">Sylara AI has auto-screened and forwarded all pending applications to the State Authority.</p>
           </div>

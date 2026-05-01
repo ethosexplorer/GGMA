@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Calendar, Activity, ShieldAlert, FlaskConical, AlertTriangle, FileText, UploadCloud, 
-  Settings, Download, Search, CheckCircle2, XCircle, Bell, User, Clock, 
-  Thermometer, Plus, Smartphone, ChevronRight
-} from 'lucide-react';
+  Settings, Download, Search, XCircle, Bell, User, Clock, 
+  Thermometer, Plus, Smartphone, ChevronRight, CircleCheck } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { StatCard } from '../components/StatCard';
 import { UserCalendar } from '../components/UserCalendar';

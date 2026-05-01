@@ -5,7 +5,8 @@ import { getDetailedStateKnowledge } from './stateDetailedKnowledge';
 import { getPlansForRole, getAddOnsForRole } from './lib/subscriptionPlans';
 import { SettingsPreferencesMockup } from './pages/SettingsPreferencesMockup';
 import { FederalStatePage } from './pages/FederalStatePage';
-import {
+import { WhatIsC3Page } from './pages/WhatIsC3Page';
+import { 
   Shield,
   User,
   AlertCircle,
@@ -18,7 +19,6 @@ import {
   ArrowLeft,
   Lock,
   Upload,
-  CheckCircle2,
   Save,
   Leaf,
   Mail,
@@ -78,7 +78,7 @@ import {
   ArrowUpCircle,
   Home,
   Check
-} from 'lucide-react';
+ } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from './lib/utils';
 import {
@@ -204,7 +204,7 @@ const PinVerificationScreen = ({ userProfile, onVerify, onBack }: { userProfile:
             className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white shadow-xl shadow-indigo-900/40"
             onClick={handleVerify}
             disabled={pin.length < 4 || loading}
-            icon={loading ? Loader2 : CheckCircle2}
+            icon={loading ? Loader2 : CircleCheck}
           >
             {loading ? 'Verifying...' : 'Authorize Supreme Command'}
           </Button>
@@ -402,7 +402,7 @@ const DashboardLayout = ({ children, role, onLogout, userProfile, onOpenConcierg
     admin: [
       { icon: LayoutDashboard, label: 'System' },
       { icon: Users, label: 'User Management' },
-      { icon: CheckCircle2, label: 'Approvals' },
+      { icon: CircleCheck, label: 'Approvals' },
       { icon: Activity, label: 'Logs' },
       { icon: Settings, label: 'Settings' },
     ],
@@ -589,7 +589,7 @@ const _LegacyAdminDashboard = () => (
   <div className="space-y-8">
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <StatCard label="Total Users" value="1,284" trend={8} icon={Users} color="bg-slate-800" />
-      <StatCard label="Pending Approvals" value="24" icon={CheckCircle2} color="bg-amber-500" />
+      <StatCard label="Pending Approvals" value="24" icon={CircleCheck} color="bg-amber-500" />
       <StatCard label="System Health" value="99.9%" icon={Activity} color="bg-emerald-500" />
       <StatCard label="Active Sessions" value="142" icon={Clock} color="bg-[#1a4731]" />
     </div>
@@ -1987,13 +1987,13 @@ const LoginScreen = ({ onLogin, onSignUp, onForgotPassword, jurisdiction = 'Okla
                 <ul className="space-y-2 mt-3">
                   {plan.features?.slice(0, 3).map((feature: string, fIdx: number) => (
                     <li key={fIdx} className="flex items-start gap-2 text-xs text-slate-600">
-                      <CheckCircle2 size={14} className="text-[#1a4731] shrink-0 mt-0.5" />
+                      <CircleCheck size={14} className="text-[#1a4731] shrink-0 mt-0.5" />
                       <span>{feature}</span>
                     </li>
                   ))}
                   {(!plan.features || plan.features.length === 0) && plan.aiLevel && (
                     <li className="flex items-start gap-2 text-xs text-slate-600">
-                      <CheckCircle2 size={14} className="text-[#1a4731] shrink-0 mt-0.5" />
+                      <CircleCheck size={14} className="text-[#1a4731] shrink-0 mt-0.5" />
                       <span>{plan.aiLevel} AI Support</span>
                     </li>
                   )}
@@ -2053,7 +2053,7 @@ const ForgotPasswordScreen = ({ onBack, onReset }: { onBack: () => void; onReset
         {success ? (
           <div className="text-center space-y-6">
             <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-lg flex items-start gap-3 text-left">
-              <CheckCircle2 size={20} className="text-emerald-500 shrink-0 mt-0.5" />
+              <CircleCheck size={20} className="text-emerald-500 shrink-0 mt-0.5" />
               <p className="text-sm text-emerald-700">
                 Password reset email sent! Please check your inbox.
               </p>
@@ -2363,7 +2363,7 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
                   step === s.num ? "bg-white border-[#1a4731] text-[#1a4731] shadow-md ring-4 ring-emerald-50" : 
                   "bg-white border-slate-300 text-slate-400"
                 )}>
-                  {step > s.num ? <CheckCircle2 size={20} /> : s.num}
+                  {step > s.num ? <CircleCheck size={20} /> : s.num}
                 </div>
                 <span className={cn(
                   "text-xs font-semibold whitespace-nowrap transition-colors",
@@ -2418,7 +2418,7 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
                                         
                                         {selectedRole === role.id && (
                                             <div className="absolute top-4 right-4 text-[#1a4731]">
-                                                <CheckCircle2 size={20} className="fill-[#1a4731] text-white" />
+                                                <CircleCheck size={20} className="fill-[#1a4731] text-white" />
                                             </div>
                                         )}
                                     </button>
@@ -2605,12 +2605,12 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
                                             <label className={cn("flex-1 p-3 rounded-lg border-2 cursor-pointer flex justify-between items-center", formData.businessType === 'cannabis' ? "border-[#1a4731] bg-emerald-50 text-[#1a4731]" : "border-slate-200")}>
                                               <span className="font-bold text-sm">Cannabis Industry</span>
                                               <input type="radio" name="businessType" value="cannabis" checked={formData.businessType === 'cannabis'} onChange={handleInputChange} className="hidden" />
-                                              {formData.businessType === 'cannabis' && <CheckCircle2 size={18} />}
+                                              {formData.businessType === 'cannabis' && <CircleCheck size={18} />}
                                             </label>
                                             <label className={cn("flex-1 p-3 rounded-lg border-2 cursor-pointer flex justify-between items-center", formData.businessType === 'traditional' ? "border-[#1a4731] bg-emerald-50 text-[#1a4731]" : "border-slate-200")}>
                                               <span className="font-bold text-sm">Traditional Business</span>
                                               <input type="radio" name="businessType" value="traditional" checked={formData.businessType === 'traditional'} onChange={handleInputChange} className="hidden" />
-                                              {formData.businessType === 'traditional' && <CheckCircle2 size={18} />}
+                                              {formData.businessType === 'traditional' && <CircleCheck size={18} />}
                                             </label>
                                         </div>
                                     </div>
@@ -2714,16 +2714,16 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
                                     </p>
                                     <div className="grid grid-cols-2 gap-3 w-full max-w-sm mb-4">
                                        <div className="bg-white p-2.5 rounded-lg border border-slate-100 text-xs font-bold text-slate-700 flex items-center gap-2">
-                                          <CheckCircle2 size={12} className="text-emerald-500" /> Advanced AI
+                                          <CircleCheck size={12} className="text-emerald-500" /> Advanced AI
                                        </div>
                                        <div className="bg-white p-2.5 rounded-lg border border-slate-100 text-xs font-bold text-slate-700 flex items-center gap-2">
-                                          <CheckCircle2 size={12} className="text-emerald-500" /> Multi-State
+                                          <CircleCheck size={12} className="text-emerald-500" /> Multi-State
                                        </div>
                                        <div className="bg-white p-2.5 rounded-lg border border-slate-100 text-xs font-bold text-slate-700 flex items-center gap-2">
-                                          <CheckCircle2 size={12} className="text-emerald-500" /> Priority Support
+                                          <CircleCheck size={12} className="text-emerald-500" /> Priority Support
                                        </div>
                                        <div className="bg-white p-2.5 rounded-lg border border-slate-100 text-xs font-bold text-slate-700 flex items-center gap-2">
-                                          <CheckCircle2 size={12} className="text-emerald-500" /> Custom API
+                                          <CircleCheck size={12} className="text-emerald-500" /> Custom API
                                        </div>
                                     </div>
                                     <p className="text-[10px] text-slate-400 font-medium">Pricing and tier selection available post-login for registered free accounts.</p>
@@ -2760,7 +2760,7 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
                                     onClick={() => setUploads(p => ({...p, dlFront: true}))}
                                     className={cn("border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center gap-3 transition-colors", uploads.dlFront ? "border-[#1a4731] bg-emerald-50/50" : "border-slate-300 hover:border-slate-400 bg-slate-50")}
                                 >
-                                    {uploads.dlFront ? <CheckCircle2 size={32} className="text-[#1a4731]"/> : <FileText size={32} className="text-slate-400" />}
+                                    {uploads.dlFront ? <CircleCheck size={32} className="text-[#1a4731]"/> : <FileText size={32} className="text-slate-400" />}
                                     <div className="text-center">
                                         <span className="block font-bold text-slate-700">{uploads.dlFront ? "Front ID Uploaded" : "Upload ID Front"}</span>
                                         <span className="text-xs text-slate-500">PNG, JPG, PDF (Max 5MB)</span>
@@ -2770,7 +2770,7 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
                                     onClick={() => setUploads(p => ({...p, dlBack: true}))}
                                     className={cn("border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center gap-3 transition-colors", uploads.dlBack ? "border-[#1a4731] bg-emerald-50/50" : "border-slate-300 hover:border-slate-400 bg-slate-50")}
                                 >
-                                    {uploads.dlBack ? <CheckCircle2 size={32} className="text-[#1a4731]"/> : <FileText size={32} className="text-slate-400" />}
+                                    {uploads.dlBack ? <CircleCheck size={32} className="text-[#1a4731]"/> : <FileText size={32} className="text-slate-400" />}
                                     <div className="text-center">
                                         <span className="block font-bold text-slate-700">{uploads.dlBack ? "Back ID Uploaded" : "Upload ID Back"}</span>
                                         <span className="text-xs text-slate-500">PNG, JPG, PDF (Max 5MB)</span>
@@ -2843,7 +2843,7 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
                                     <tr className="border-b border-slate-100"><td className="py-3 px-4 font-semibold text-slate-500">Email Address</td><td className="py-3 px-4 font-bold text-slate-900">{formData.email || 'Not provided'}</td></tr>
                                     <tr className="border-b border-slate-100"><td className="py-3 px-4 font-semibold text-slate-500">State / Region</td><td className="py-3 px-4 font-bold text-slate-900">{formData.state}</td></tr>
                                     <tr className="border-b border-slate-100"><td className="py-3 px-4 font-semibold text-slate-500">Subscription Plan</td><td className="py-3 px-4 font-bold text-slate-900">Selected After Login</td></tr>
-                                    <tr className="border-b border-slate-100"><td className="py-3 px-4 font-semibold text-slate-500 mt-2">Verified Documents</td><td className="py-3 px-4 font-bold text-emerald-600 flex items-center gap-1.5"><CheckCircle2 size={16}/> {uploads.dlFront && uploads.dlBack ? 'ID Scanned and Verified' : 'Pending Upload'}</td></tr>
+                                    <tr className="border-b border-slate-100"><td className="py-3 px-4 font-semibold text-slate-500 mt-2">Verified Documents</td><td className="py-3 px-4 font-bold text-emerald-600 flex items-center gap-1.5"><CircleCheck size={16}/> {uploads.dlFront && uploads.dlBack ? 'ID Scanned and Verified' : 'Pending Upload'}</td></tr>
                                     {selectedRole === 'admin_internal' && (
                                         <tr className="border-b border-slate-100"><td className="py-3 px-4 font-semibold text-slate-500">Internal Login ID Code</td><td className="py-3 px-4 font-black text-amber-600">{formData.ssn?.slice(-4) || 'Pending'}</td></tr>
                                     )}
@@ -2919,7 +2919,7 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
                     {step === 4 && (
                         <Button 
                             className="w-full sm:w-auto bg-[#2e7d32] hover:bg-[#1b5e20] text-white px-8 font-bold shadow-lg flex-row-reverse" 
-                            icon={loading ? Loader2 : CheckCircle2}
+                            icon={loading ? Loader2 : CircleCheck}
                             onClick={handleSignup}
                             disabled={loading || !privacyConsent}
                         >

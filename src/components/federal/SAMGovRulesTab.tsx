@@ -1,5 +1,5 @@
 import React from 'react';
-import { Globe, Shield, AlertCircle, CheckCircle2, FileText, Search } from 'lucide-react';
+import { Globe, Shield, AlertCircle, FileText, Search, CircleCheck } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 const entities = [
@@ -55,7 +55,7 @@ export const SAMGovRulesTab = () => (
     <div className="bg-[#0f1b2d] rounded-2xl border border-[#1e3a5f]/60 p-6">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-bold text-white flex items-center gap-2"><Globe size={18} className="text-blue-400" /> SAM.gov Entity Cross-Reference</h3>
-        <span className="text-[10px] font-bold text-emerald-400 bg-emerald-900/40 px-2 py-0.5 rounded flex items-center gap-1"><CheckCircle2 size={10} /> Daily Sync Active</span>
+        <span className="text-[10px] font-bold text-emerald-400 bg-emerald-900/40 px-2 py-0.5 rounded flex items-center gap-1"><CircleCheck size={10} /> Daily Sync Active</span>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-left">

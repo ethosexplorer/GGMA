@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Calendar, Building2, Users, FileText, Settings, Shield, Activity, Bell,
-  BarChart3, Folder, TrendingUp, CheckCircle2, ChevronRight, Bot,
-  CreditCard, MessageSquare, AlertTriangle, Upload, Clock, Eye, Lock
-} from 'lucide-react';
+  BarChart3, Folder, TrendingUp, ChevronRight, Bot,
+  CreditCard, MessageSquare, AlertTriangle, Upload, Clock, Eye, Lock, CircleCheck } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { UserCalendar } from '../components/UserCalendar';
@@ -92,7 +91,7 @@ export const ExternalAdminDashboard = ({ onLogout, user }: { onLogout?: () => vo
 
         {/* Queue */}
         <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-          <h3 className="font-bold text-slate-800 flex items-center gap-2 mb-4"><CheckCircle2 size={18} className="text-blue-500"/> Licensing Queue</h3>
+          <h3 className="font-bold text-slate-800 flex items-center gap-2 mb-4"><CircleCheck size={18} className="text-blue-500"/> Licensing Queue</h3>
           <div className="space-y-3">
             {QUEUE.map((item, i) => (
               <div key={i} className="p-3 border border-slate-100 rounded-xl hover:bg-slate-50 transition-colors">

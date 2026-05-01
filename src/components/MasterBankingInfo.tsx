@@ -1,5 +1,5 @@
 import React from 'react';
-import { Copy, Building, ExternalLink, CheckCircle2 } from 'lucide-react';
+import { Copy, Building, ExternalLink, CircleCheck } from 'lucide-react';
 
 export const MasterBankingInfo = () => {
   const [copied, setCopied] = React.useState<string | null>(null);
@@ -41,7 +41,7 @@ export const MasterBankingInfo = () => {
                   <p className="font-mono font-bold text-slate-200">211370150</p>
                 </div>
                 <button onClick={() => handleCopy('211370150', 'r1')} className="text-slate-500 hover:text-emerald-400 p-2">
-                  {copied === 'r1' ? <CheckCircle2 size={16} className="text-emerald-400" /> : <Copy size={16} />}
+                  {copied === 'r1' ? <CircleCheck size={16} className="text-emerald-400" /> : <Copy size={16} />}
                 </button>
               </div>
               <div className="bg-slate-900 rounded-lg p-3 flex justify-between items-center group">
@@ -50,7 +50,7 @@ export const MasterBankingInfo = () => {
                   <p className="font-mono font-bold text-slate-200">103561545</p>
                 </div>
                 <button onClick={() => handleCopy('103561545', 'a1')} className="text-slate-500 hover:text-emerald-400 p-2">
-                  {copied === 'a1' ? <CheckCircle2 size={16} className="text-emerald-400" /> : <Copy size={16} />}
+                  {copied === 'a1' ? <CircleCheck size={16} className="text-emerald-400" /> : <Copy size={16} />}
                 </button>
               </div>
             </div>
@@ -72,7 +72,7 @@ export const MasterBankingInfo = () => {
                   <p className="font-mono font-bold text-slate-200">211370150</p>
                 </div>
                 <button onClick={() => handleCopy('211370150', 'r2')} className="text-slate-500 hover:text-blue-400 p-2">
-                  {copied === 'r2' ? <CheckCircle2 size={16} className="text-blue-400" /> : <Copy size={16} />}
+                  {copied === 'r2' ? <CircleCheck size={16} className="text-blue-400" /> : <Copy size={16} />}
                 </button>
               </div>
               <div className="bg-slate-900 rounded-lg p-3 flex justify-between items-center group">
@@ -81,7 +81,7 @@ export const MasterBankingInfo = () => {
                   <p className="font-mono font-bold text-slate-200">103566743</p>
                 </div>
                 <button onClick={() => handleCopy('103566743', 'a2')} className="text-slate-500 hover:text-blue-400 p-2">
-                  {copied === 'a2' ? <CheckCircle2 size={16} className="text-blue-400" /> : <Copy size={16} />}
+                  {copied === 'a2' ? <CircleCheck size={16} className="text-blue-400" /> : <Copy size={16} />}
                 </button>
               </div>
             </div>

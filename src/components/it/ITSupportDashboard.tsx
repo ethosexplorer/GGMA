@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Activity, Users, ShieldAlert, ToggleLeft, ToggleRight, Server, Terminal, Search, CheckCircle2, AlertTriangle, KeySquare, Slash, Clock } from 'lucide-react';
+import { Activity, Users, ShieldAlert, ToggleLeft, ToggleRight, Server, Terminal, Search, AlertTriangle, KeySquare, Slash, Clock, CircleCheck } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 export const ITSupportDashboard = () => {

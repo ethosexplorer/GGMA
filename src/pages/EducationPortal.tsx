@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  GraduationCap, BookOpen, Award, FileCheck, CheckCircle2, 
-  ChevronRight, ArrowLeft, PlayCircle, BookMarked, Download, Search, Shield, Briefcase, Clock
-} from 'lucide-react';
+import { GraduationCap, BookOpen, Award, FileCheck, ChevronRight, ArrowLeft, PlayCircle, BookMarked, Download, Search, Shield, Briefcase, Clock, CircleCheck } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 export const EducationPortal = ({ onBack }: { onBack: () => void }) => {

@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { Calendar, Building2, Users, FileText, Settings, Shield, Activity, Bell,
-  Briefcase, HeartPulse, Scale, Gavel, FileCheck, CheckCircle2,
-  Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
+  Briefcase, HeartPulse, Scale, Gavel, FileCheck, Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
-  Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut
-} from 'lucide-react';
+  Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, CircleCheck } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { UserCalendar } from '../components/UserCalendar';

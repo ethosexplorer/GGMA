@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { useDraggableSidebar } from '../hooks/useDraggableSidebar';
-import { 
-  Shield, Scale, Briefcase, FileText, Search, BookOpen, Clock, AlertTriangle, 
+import { Shield, Scale, Briefcase, FileText, Search, BookOpen, Clock, AlertTriangle, 
   ChevronRight, Lock, Unlock, Zap, BarChart2, Bell, MessageSquare, CreditCard,
-  CheckCircle, PlusCircle, LayoutDashboard, UserCheck, CheckCircle2, ShieldAlert, Calendar
-} from 'lucide-react';
+  CheckCircle, PlusCircle, LayoutDashboard, UserCheck, ShieldAlert, Calendar, CircleCheck } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { StatCard } from '../components/StatCard';
 import { UserCalendar } from '../components/UserCalendar';
@@ -206,7 +204,7 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
               </div>
               <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600"><CheckCircle2 size={20} /></div>
+                  <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600"><CircleCheck size={20} /></div>
                   <p className="text-sm font-semibold text-slate-600">SLA Performance</p>
                 </div>
                 <div className="flex items-end gap-3">
@@ -270,7 +268,7 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                               </span>
                               {c.triaged && (
                                 <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-100 text-emerald-700 border border-emerald-200 flex items-center gap-1">
-                                  <CheckCircle2 size={10} /> Pre-Triaged
+                                  <CircleCheck size={10} /> Pre-Triaged
                                 </span>
                               )}
                               <span className={cn("px-2 py-0.5 rounded text-[10px] font-bold uppercase border",

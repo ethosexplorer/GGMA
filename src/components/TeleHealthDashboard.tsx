@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Video, 
+import { Video, 
   Calendar, 
   Clock, 
   User, 
@@ -14,9 +13,7 @@ import {
   ChevronRight,
   Plus,
   Search,
-  CheckCircle2,
-  AlertCircle
-} from 'lucide-react';
+  AlertCircle, CircleCheck } from 'lucide-react';
 
 interface Appointment {
   id: string;
@@ -82,7 +79,7 @@ export default function TeleHealthDashboard({ user }: { user: any }) {
         </div>
         <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
           <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center text-green-600">
-            <CheckCircle2 size={24} />
+            <CircleCheck size={24} />
           </div>
           <div>
             <div className="text-sm font-medium text-slate-500">Completed</div>
@@ -144,7 +141,7 @@ export default function TeleHealthDashboard({ user }: { user: any }) {
               <div key={apt.id} className="bg-white/60 p-5 rounded-2xl border border-dashed border-slate-200 opacity-80">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <CheckCircle2 className="text-green-500" size={24} />
+                    <CircleCheck className="text-green-500" size={24} />
                     <div>
                       <h4 className="font-bold text-slate-700">{apt.doctorName}</h4>
                       <p className="text-sm text-slate-400">{apt.date} • {apt.type}</p>

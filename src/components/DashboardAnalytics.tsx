@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  DollarSign, Package, Truck, Wallet, AlertTriangle, 
-  TrendingUp, Activity, ShieldAlert, BarChart3, CheckCircle2, Sparkles
-} from 'lucide-react';
+import { DollarSign, Package, Truck, Wallet, AlertTriangle, 
+  TrendingUp, Activity, ShieldAlert, BarChart3, Sparkles, CircleCheck } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { turso } from '../lib/turso';
 import { AIComplianceService, ComplianceAlert } from '../lib/compliance/AIComplianceService';
@@ -87,7 +85,7 @@ export const DashboardAnalytics: React.FC<{ facilityId: string }> = ({ facilityI
         </div>
         <div className="flex gap-3">
           <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl border border-emerald-100">
-             <CheckCircle2 size={16} />
+             <CircleCheck size={16} />
              <span className="text-xs font-bold uppercase tracking-wider">Metrc Sync Active</span>
           </div>
           <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-xl border border-blue-100">
@@ -140,7 +138,7 @@ export const DashboardAnalytics: React.FC<{ facilityId: string }> = ({ facilityI
             {alerts.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center py-12">
                 <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-500 mb-4">
-                  <CheckCircle2 size={32} />
+                  <CircleCheck size={32} />
                 </div>
                 <h4 className="font-bold text-slate-800">Clean Compliance Score</h4>
                 <p className="text-sm text-slate-500 max-w-xs mx-auto">No fraud patterns or inventory mismatches detected by the AI engine.</p>

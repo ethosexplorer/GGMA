@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Scale, Search, ExternalLink, Shield, TrendingUp, AlertTriangle, CheckCircle2, Clock, MapPin, Gavel, Users, BookOpen, Database, Activity, Printer } from 'lucide-react';
+import { Scale, Search, ExternalLink, Shield, TrendingUp, AlertTriangle, Clock, MapPin, Gavel, Users, BookOpen, Database, Activity, Printer, CircleCheck } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 const LANDMARK_CASES = [

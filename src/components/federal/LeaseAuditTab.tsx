@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, CheckCircle2, Clock, Eye, Lock, FileText } from 'lucide-react';
+import { Shield, Clock, Eye, Lock, FileText, CircleCheck } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 const auditLog = [
@@ -20,7 +20,7 @@ export const LeaseAuditTab = () => (
       <div className="relative z-10">
         <div className="flex items-center gap-2 mb-4">
           <span className="px-3 py-1 bg-blue-500/20 rounded-full text-xs font-bold uppercase tracking-wider text-blue-200 border border-blue-500/20">Active Lease</span>
-          <span className="flex items-center gap-1 text-xs font-bold text-emerald-400 bg-emerald-900/40 px-3 py-1 rounded-full"><CheckCircle2 size={12} /> Verified</span>
+          <span className="flex items-center gap-1 text-xs font-bold text-emerald-400 bg-emerald-900/40 px-3 py-1 rounded-full"><CircleCheck size={12} /> Verified</span>
         </div>
         <h2 className="text-3xl font-extrabold text-white mb-1">Federal Pro (Lease)</h2>
         <p className="text-blue-200/60 mb-4">Multi-Agency Coordination — DEA + FDA + DOJ</p>

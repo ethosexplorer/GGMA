@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CreditCard, CheckCircle2, Shield, Settings, Zap, FileText, Plus, Sparkles, ArrowRight, Check, ChevronDown, ChevronUp } from 'lucide-react';
+import { CreditCard, Shield, Settings, Zap, FileText, Plus, Sparkles, ArrowRight, Check, ChevronDown, ChevronUp, CircleCheck } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { getAllPlansForLookup, getAllAddonsForLookup, AddOn, getAddOnsForRole } from '../lib/subscriptionPlans';
 import { PricingTiers } from './PricingTiers';
@@ -82,7 +82,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
             <div>
                <div className="flex items-center gap-2 mb-2">
                  <span className="px-3 py-1 bg-white/20 rounded-full text-xs font-bold uppercase tracking-wider backdrop-blur-md text-emerald-50 border border-white/10">Active Plan</span>
-                 <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-300 bg-emerald-950/40 px-3 py-1 rounded-full"><CheckCircle2 size={12}/> Verified</span>
+                 <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-300 bg-emerald-950/40 px-3 py-1 rounded-full"><CircleCheck size={12}/> Verified</span>
                </div>
                <h2 className="text-3xl md:text-4xl font-extrabold mb-1">{currentPlan.name}</h2>
                <p className="text-emerald-100 font-medium opacity-90 max-w-lg leading-relaxed">
@@ -126,7 +126,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
                      {currentPlan.features.map((feature, idx) => (
                        <li key={idx} className="flex items-start gap-2 text-sm text-slate-600">
                          <div className="mt-0.5 text-[#1a4731]">
-                           <CheckCircle2 size={16} />
+                           <CircleCheck size={16} />
                          </div>
                          <span>{feature}</span>
                        </li>

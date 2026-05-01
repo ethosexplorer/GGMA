@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import { 
-  Scale, FileText, AlertTriangle, ShieldAlert, CalendarClock, 
-  ChevronRight, CheckCircle2, UserCheck, Lock, Gavel, FileSignature, Upload, X
-} from 'lucide-react';
+import { Scale, FileText, AlertTriangle, ShieldAlert, CalendarClock, 
+  ChevronRight, UserCheck, Lock, Gavel, FileSignature, Upload, X, CircleCheck } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -77,7 +75,7 @@ export const ProSeLegalIntake = ({ onBack, onComplete }: { onBack: () => void, o
                 step === s.num ? "bg-amber-500 text-white shadow-lg shadow-amber-500/30" : 
                 step > s.num ? "bg-slate-900 text-white" : "bg-slate-200 text-slate-400"
               )}>
-                {step > s.num ? <CheckCircle2 size={18} /> : s.num}
+                {step > s.num ? <CircleCheck size={18} /> : s.num}
               </div>
               <span className={cn(
                 "text-[10px] font-bold uppercase tracking-widest",

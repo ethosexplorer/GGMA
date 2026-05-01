@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shield, Bell, Truck, AlertTriangle, CheckCircle2, ChevronLeft, Save } from 'lucide-react';
+import { Shield, Bell, Truck, AlertTriangle, ChevronLeft, Save, CircleCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export const SettingsPreferencesMockup = () => {

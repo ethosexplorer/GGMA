@@ -1,9 +1,7 @@
 import React, { useState, useRef } from 'react';
-import { 
-  Shield, 
+import { Shield, 
   Stethoscope, 
   Upload, 
-  CheckCircle2, 
   AlertCircle, 
   ArrowLeft, 
   ArrowRight,
@@ -17,8 +15,7 @@ import {
   Plus,
   Trash2,
   CheckCircle,
-  Info
-} from 'lucide-react';
+  Info, CircleCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
 
@@ -142,7 +139,7 @@ export default function ProviderRegistrationPage({ onNavigate, onComplete }: Pro
             "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all",
             step === s ? "bg-[#1a4731] text-white" : step > s ? "bg-emerald-500 text-white" : "bg-slate-100 text-slate-400"
           )}>
-            {step > s ? <CheckCircle2 size={16} /> : s}
+            {step > s ? <CircleCheck size={16} /> : s}
           </div>
           {s < 4 && <div className={cn("w-12 h-0.5 rounded", step > s ? "bg-emerald-500" : "bg-slate-100")} />}
         </div>
@@ -397,7 +394,7 @@ export default function ProviderRegistrationPage({ onNavigate, onComplete }: Pro
                     {formData.documents.map((doc, i) => (
                       <div key={i} className="flex items-center justify-between p-3 bg-emerald-50 border border-emerald-100 rounded-xl">
                         <div className="flex items-center gap-2 overflow-hidden">
-                          <CheckCircle2 className="text-emerald-500 shrink-0" size={16} />
+                          <CircleCheck className="text-emerald-500 shrink-0" size={16} />
                           <span className="text-sm text-emerald-800 truncate">{doc}</span>
                         </div>
                         <button onClick={() => removeDoc(i)} className="text-red-400 hover:text-red-600 p-1">
@@ -536,7 +533,7 @@ export default function ProviderRegistrationPage({ onNavigate, onComplete }: Pro
           <span className="text-xs font-bold uppercase tracking-widest">HIPAA Compliant</span>
         </div>
         <div className="flex items-center gap-2">
-          <CheckCircle2 size={16} />
+          <CircleCheck size={16} />
           <span className="text-xs font-bold uppercase tracking-widest">Board Verified</span>
         </div>
         <div className="flex items-center gap-2">

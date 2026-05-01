@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { useDraggableSidebar } from '../hooks/useDraggableSidebar';
-import { 
-  Users, Calendar, Video, MapPin, FileText, Share2, Shield, CreditCard, 
-  BarChart, Settings, Bell, Search, Zap, Plus, PhoneCall, AlertTriangle, ChevronRight, CheckCircle2, FlaskConical, X, UserCheck
-} from 'lucide-react';
+import { Users, Calendar, Video, MapPin, FileText, Share2, Shield, CreditCard, 
+  BarChart, Settings, Bell, Search, Zap, Plus, PhoneCall, AlertTriangle, ChevronRight, FlaskConical, X, UserCheck, CircleCheck } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { StatCard } from '../components/StatCard';
 import { CannabisCertWizard } from '../components/provider/CannabisCertWizard';
@@ -442,10 +440,10 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                     <p className="font-bold text-slate-900">Michael Chen (2:00 PM)</p>
                     <ul className="space-y-2">
                       <li className="flex items-start gap-2 text-sm text-slate-600">
-                        <CheckCircle2 size={16} className="text-emerald-500 shrink-0 mt-0.5" /> ID Verified & Valid
+                        <CircleCheck size={16} className="text-emerald-500 shrink-0 mt-0.5" /> ID Verified & Valid
                       </li>
                       <li className="flex items-start gap-2 text-sm text-slate-600">
-                        <CheckCircle2 size={16} className="text-emerald-500 shrink-0 mt-0.5" /> Intake Forms Complete
+                        <CircleCheck size={16} className="text-emerald-500 shrink-0 mt-0.5" /> Intake Forms Complete
                       </li>
                       <li className="flex items-start gap-2 text-sm text-slate-600">
                         <AlertTriangle size={16} className="text-amber-500 shrink-0 mt-0.5" /> Review Prior Records

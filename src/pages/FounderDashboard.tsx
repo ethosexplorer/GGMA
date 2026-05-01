@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Building2, Users, FileText, Settings, Shield, Activity, Bell,
-  Briefcase, HeartPulse, Scale, Gavel, FileCheck, CheckCircle2,
-  Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
+import { Building2, Users, FileText, Settings, Shield, Activity, Bell,
+  Briefcase, HeartPulse, Scale, Gavel, FileCheck, Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
   Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Globe, Zap, Database,
   FlaskConical, CreditCard, Map as MapIcon, BookOpen, UserPlus, Trash2,
   MapPin, Target, Layers, TrendingDown, Box, PieChart, GraduationCap, Lock, GripVertical,
-  Calculator, Save, ExternalLink, Printer, ArrowLeft, Phone, PhoneCall, PhoneOff, PhoneIncoming, PhoneOutgoing
-} from 'lucide-react';
+  Calculator, Save, ExternalLink, Printer, ArrowLeft, Phone, PhoneCall, PhoneOff, PhoneIncoming, PhoneOutgoing, CircleCheck } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { FederalDashboard } from './FederalDashboard';
@@ -1956,7 +1953,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                  </div>
               </div>
               <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-4">
-                 <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center"><CheckCircle2 size={24}/></div>
+                 <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center"><CircleCheck size={24}/></div>
                  <div>
                     <p className="text-[10px] font-black text-slate-400 uppercase">Auto-Resolved</p>
                     <p className="text-xl font-black text-slate-800">1.2k today</p>
@@ -3830,7 +3827,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                 
                 {queueAlerts.length === 0 && (
                   <div className="p-4 border-2 border-dashed border-slate-200 rounded-xl text-center text-slate-400 flex flex-col items-center justify-center">
-                     <CheckCircle2 size={24} className="mb-2 text-emerald-500 opacity-80" />
+                     <CircleCheck size={24} className="mb-2 text-emerald-500 opacity-80" />
                      <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">All Alerts Routed Successfully</p>
                   </div>
                 )}

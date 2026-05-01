@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { Calendar, Building2, PhoneCall, Calendar as CalendarIcon, Server, Users,
-  Map as MapIcon, Bot, Activity, HelpCircle, FileText, CheckCircle2,
-  TrendingUp, Search, Bell, Shield, Plus, Clock, Globe
-} from 'lucide-react';
+  Map as MapIcon, Bot, Activity, HelpCircle, FileText, TrendingUp, Search, Bell, Shield, Plus, Clock, Globe, CircleCheck } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { MasterAddOnsList } from '../components/shared/MasterAddOnsList';
@@ -140,7 +138,7 @@ export const BackOfficeDashboard = ({ onLogout, user }: { onLogout?: () => void,
                 {/* Task Stream */}
                 <div className="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
                   <div className="flex justify-between items-center mb-4">
-                    <h3 className="font-bold text-slate-800 flex items-center gap-2"><CheckCircle2 size={18} className="text-blue-500"/> Priority Task Stream</h3>
+                    <h3 className="font-bold text-slate-800 flex items-center gap-2"><CircleCheck size={18} className="text-blue-500"/> Priority Task Stream</h3>
                     <button className="text-sm font-bold text-blue-600 hover:underline">View All Tasks</button>
                   </div>
                   

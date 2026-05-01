@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import { 
-  FileDown, Send, CheckCircle2, AlertCircle, Clock, 
-  History, ShieldCheck, Download, ExternalLink, RefreshCw 
-} from 'lucide-react';
+import { FileDown, Send, AlertCircle, Clock, 
+  History, ShieldCheck, Download, ExternalLink, RefreshCw, CircleCheck } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { ReportingEngine } from '../../lib/compliance/ReportingEngine';
 
@@ -202,7 +200,7 @@ export const RegulatoryReportingTab: React.FC<{ facilityId: string }> = ({ facil
               <div className="p-6 bg-emerald-50 border-t border-emerald-100 animate-in slide-in-from-bottom duration-300">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
-                    <CheckCircle2 size={24} />
+                    <CircleCheck size={24} />
                   </div>
                   <div>
                     <h4 className="font-bold text-emerald-900">Submission Successful</h4>

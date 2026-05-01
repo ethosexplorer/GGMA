@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shield, FileText, CheckCircle2, AlertTriangle, ChevronRight, Check, X } from 'lucide-react';
+import { Shield, FileText, AlertTriangle, ChevronRight, Check, X, CircleCheck } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 export const CannabisCertWizard = ({ onCancel, onComplete }: { onCancel: () => void, onComplete: () => void }) => {
@@ -55,15 +55,15 @@ export const CannabisCertWizard = ({ onCancel, onComplete }: { onCancel: () => v
             <div className="p-4 border border-slate-200 rounded-xl space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-slate-700">Patient Identity (State ID)</span>
-                {isVerifying ? <span className="text-sm text-blue-500 font-bold animate-pulse">Verifying...</span> : verificationDone ? <CheckCircle2 className="text-emerald-500" size={18} /> : <span className="text-sm text-slate-400">Pending</span>}
+                {isVerifying ? <span className="text-sm text-blue-500 font-bold animate-pulse">Verifying...</span> : verificationDone ? <CircleCheck className="text-emerald-500" size={18} /> : <span className="text-sm text-slate-400">Pending</span>}
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-slate-700">Provider CME Compliance</span>
-                {isVerifying ? <span className="text-sm text-blue-500 font-bold animate-pulse">Verifying...</span> : verificationDone ? <CheckCircle2 className="text-emerald-500" size={18} /> : <span className="text-sm text-slate-400">Pending</span>}
+                {isVerifying ? <span className="text-sm text-blue-500 font-bold animate-pulse">Verifying...</span> : verificationDone ? <CircleCheck className="text-emerald-500" size={18} /> : <span className="text-sm text-slate-400">Pending</span>}
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-slate-700">Patient Active Limits Check</span>
-                {isVerifying ? <span className="text-sm text-blue-500 font-bold animate-pulse">Verifying...</span> : verificationDone ? <CheckCircle2 className="text-emerald-500" size={18} /> : <span className="text-sm text-slate-400">Pending</span>}
+                {isVerifying ? <span className="text-sm text-blue-500 font-bold animate-pulse">Verifying...</span> : verificationDone ? <CircleCheck className="text-emerald-500" size={18} /> : <span className="text-sm text-slate-400">Pending</span>}
               </div>
             </div>
             

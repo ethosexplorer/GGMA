@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { CheckoutModal } from './CheckoutModal';
-import {
-  CheckCircle2,
-  Check,
+import { Check,
   Sparkles,
   Building2,
   Shield,
@@ -25,8 +23,7 @@ import {
   Handshake,
   TrendingUp,
   AlertTriangle,
-  Gift,
-} from 'lucide-react';
+  Gift, CircleCheck } from 'lucide-react';
 import {
   CANNABIS_B2B_PLANS,
   TRADITIONAL_B2B_PLANS,
@@ -287,7 +284,7 @@ const PlanCard = ({ plan, index, total, billing, selectedAddons, tabId, onChecko
         <div className="space-y-3 mb-8 flex-1">
           {plan.features.map((f, j) => (
             <div key={j} className="flex items-start gap-2.5 text-[13px] text-slate-600">
-              <CheckCircle2 size={16} className="text-emerald-500 shrink-0 mt-0.5" />
+              <CircleCheck size={16} className="text-emerald-500 shrink-0 mt-0.5" />
               <span className="leading-snug">{f}</span>
             </div>
           ))}

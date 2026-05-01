@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Building2, Users, FileText, Settings, Shield, Activity, Bell,
-  Briefcase, HeartPulse, Scale, Gavel, FileCheck, CheckCircle2,
-  Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
+  Briefcase, HeartPulse, Scale, Gavel, FileCheck, Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
   Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Headphones,
-  Phone, PhoneCall, PhoneOff, PhoneIncoming, PhoneOutgoing, UserPlus, Globe, Zap, Database
-} from 'lucide-react';
+  Phone, PhoneCall, PhoneOff, PhoneIncoming, PhoneOutgoing, UserPlus, Globe, Zap, Database, CircleCheck } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { UserCalendar } from '../components/UserCalendar';
@@ -596,7 +594,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
                     setShowAddStaff(false);
                     setOnboardingStep(0);
                   }} className="flex-1 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-black flex items-center justify-center gap-2">
-                    <CheckCircle2 size={16} /> Complete Onboarding & Add to Directory
+                    <CircleCheck size={16} /> Complete Onboarding & Add to Directory
                   </button>
                 </div>
               </div>

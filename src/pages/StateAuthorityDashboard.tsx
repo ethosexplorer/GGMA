@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Calendar, Building2, ShieldCheck, Landmark, FileCheck, DollarSign, Activity, 
-  Map as MapIcon, Settings, Download, Search, AlertCircle, FileText, CheckCircle2, XCircle,
-  TrendingUp, Users, ShieldAlert, Bot, HelpCircle, Gavel, Scale, Clock, LogOut, Lock
-} from 'lucide-react';
+  Map as MapIcon, Settings, Download, Search, AlertCircle, FileText, XCircle,
+  TrendingUp, Users, ShieldAlert, Bot, HelpCircle, Gavel, Scale, Clock, LogOut, Lock, CircleCheck } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { UserCalendar } from '../components/UserCalendar';
@@ -340,7 +339,7 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
                      <div>
                        <p className="text-[10px] font-bold text-slate-400 uppercase">Background Check</p>
                        <div className="flex items-center gap-1 text-emerald-600 text-sm font-bold mt-1">
-                         <CheckCircle2 size={16} /> Passed (OSBI)
+                         <CircleCheck size={16} /> Passed (OSBI)
                        </div>
                      </div>
                    </div>
