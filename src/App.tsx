@@ -1458,6 +1458,13 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
             Infrastructure Active: 50 States + DC
           </div>
 
+          <div className="flex flex-col items-center gap-3">
+            <div className="text-emerald-400 font-black uppercase tracking-[0.2em] text-xs md:text-sm">Global Green Enterprise Inc <span className="text-white/60 mx-1">INTRODUCING</span></div>
+            <div className="text-white font-black uppercase tracking-widest text-sm md:text-base border-y border-white/20 py-3 px-8 inline-block bg-white/5 backdrop-blur-sm shadow-xl rounded-2xl">
+              The Gold Standard In Compliance Infrastructure
+            </div>
+          </div>
+
           <h1 className="text-5xl md:text-7xl font-extrabold text-white leading-[1.05] tracking-tight">
             The Compliance Operating System<br />
             <span className="text-emerald-400">for Legal Cannabis</span>
