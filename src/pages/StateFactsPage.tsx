@@ -243,6 +243,32 @@ export const StateFactsPage = ({ onBack, onNavigate, setJurisdiction }: { onBack
                 </div>
               </div>
 
+              {/* Take Action / Upcoming Legislation */}
+              <div className="bg-emerald-50 border border-emerald-200 p-6 rounded-2xl">
+                <h4 className="text-lg font-black text-emerald-900 flex items-center gap-2 mb-3">
+                  <Activity size={20} className="text-emerald-600" /> Take Action: Shape {selectedState.s}'s Future
+                </h4>
+                <p className="text-sm text-emerald-800 leading-relaxed mb-4">
+                  Legislation regarding DEA Schedule III reclassification and local regulatory frameworks is rapidly evolving. As {selectedState.s} prepares for upcoming legislative sessions, community feedback is critical to ensure patients and businesses are protected.
+                </p>
+                <div className="flex flex-col gap-2">
+                  <button className="w-full text-left bg-white px-4 py-3 rounded-xl border border-emerald-200 hover:border-emerald-500 hover:shadow-md transition-all group flex items-center justify-between">
+                    <div>
+                      <div className="font-bold text-emerald-950 text-sm">Sign the Petition: Safeguard Care</div>
+                      <div className="text-xs text-emerald-700/70">Support fair licensing and patient access in upcoming {selectedState.s} ballots.</div>
+                    </div>
+                    <ArrowRight size={16} className="text-emerald-500 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                  <button className="w-full text-left bg-white px-4 py-3 rounded-xl border border-emerald-200 hover:border-emerald-500 hover:shadow-md transition-all group flex items-center justify-between">
+                    <div>
+                      <div className="font-bold text-emerald-950 text-sm">Contact Local Representatives</div>
+                      <div className="text-xs text-emerald-700/70">Use our automated tool to message your district's lawmakers.</div>
+                    </div>
+                    <ArrowRight size={16} className="text-emerald-500 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </div>
+              </div>
+
               {/* Warning/Alert */}
               <div className="bg-amber-50 border border-amber-200 p-5 rounded-2xl flex gap-4">
                 <AlertCircle className="text-amber-500 shrink-0" />
