@@ -8232,7 +8232,9 @@ export default function App() {
               </div>
               <div className="p-8 space-y-6">
                 <div>
-                  <label className="text-xs font-black uppercase tracking-widest text-slate-500 mb-2 block">Operating State</label>
+                  <label className="text-xs font-black uppercase tracking-widest text-slate-500 mb-2 block">
+                    Operating State <span className="text-[10px] text-emerald-600 tracking-normal normal-case font-bold ml-1 bg-emerald-50 px-1.5 py-0.5 rounded">(click the state for dropdown box)</span>
+                  </label>
                   <select
                     value={pendingJurisdiction || jurisdiction}
                     onChange={(e) => setPendingJurisdiction(e.target.value)}
