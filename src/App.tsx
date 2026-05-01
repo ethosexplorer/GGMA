@@ -8247,7 +8247,7 @@ export default function App() {
         <AnimatePresence mode="wait">
           {view === 'federal-state' && (
             <motion.div key="federal-state" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
-              <FederalStatePage onBack={() => handleNavigate('landing')} onNavigate={handleNavigate} />
+              <FederalStatePage onBack={() => handleNavigate('landing')} onNavigate={handleNavigate} jurisdiction={jurisdiction} />
             </motion.div>
           )}
           {view === 'state-facts' && (

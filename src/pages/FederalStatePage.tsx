@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowLeft, Shield, Scale, AlertTriangle, CheckCircle2, Lock, XCircle, Database, MapPin } from 'lucide-react';
 
-export const FederalStatePage = ({ onBack, onNavigate }: { onBack: () => void, onNavigate?: (view: string) => void }) => {
+export const FederalStatePage = ({ onBack, onNavigate, jurisdiction = 'State' }: { onBack: () => void, onNavigate?: (view: string) => void, jurisdiction?: string }) => {
   return (
     <div className="min-h-screen bg-slate-50 relative">
       {/* 🏛️ DEA Schedule III Ready Banner (Repurposed as Hero) */}
@@ -152,19 +152,19 @@ export const FederalStatePage = ({ onBack, onNavigate }: { onBack: () => void, o
                 <Database className="text-emerald-600" size={24} />
               </div>
               <div>
-                <h3 className="text-2xl font-black text-slate-900">State Sovereignty</h3>
+                <h3 className="text-2xl font-black text-slate-900">{jurisdiction} Sovereignty</h3>
                 <p className="text-emerald-600 font-bold text-sm">Local Regulatory Compliance</p>
               </div>
             </div>
 
             <div className="space-y-6">
               <div className="space-y-3">
-                <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">The Pros</h4>
+                <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">The {jurisdiction} Reality</h4>
                 <ul className="space-y-2">
-                  <li className="flex items-start gap-2 text-sm text-slate-700 font-medium"><CheckCircle2 size={16} className="text-emerald-500 mt-0.5 shrink-0" /> Established local markets with existing customer bases.</li>
+                  <li className="flex items-start gap-2 text-sm text-slate-700 font-medium"><CheckCircle2 size={16} className="text-emerald-500 mt-0.5 shrink-0" /> Local market participation requires adherence to {jurisdiction} specific frameworks.</li>
                   <li className="flex items-start gap-2 text-sm text-slate-700 font-medium"><CheckCircle2 size={16} className="text-emerald-500 mt-0.5 shrink-0" /> State tax eliminations and relief initiatives rolling out to boost legal operators.</li>
-                  <li className="flex items-start gap-2 text-sm text-slate-700 font-medium"><CheckCircle2 size={16} className="text-emerald-500 mt-0.5 shrink-0" /> Market access tailored to the state (e.g., Medical-only programs like Oklahoma, or full adult-use in others).</li>
-                  <li className="flex items-start gap-2 text-sm text-slate-700 font-medium"><CheckCircle2 size={16} className="text-emerald-500 mt-0.5 shrink-0" /> Diverse product types allowed beyond strict medical definitions.</li>
+                  <li className="flex items-start gap-2 text-sm text-slate-700 font-medium"><CheckCircle2 size={16} className="text-emerald-500 mt-0.5 shrink-0" /> Market access is strictly tailored to {jurisdiction} statutes (Medical-only, Adult-use, or Illegal).</li>
+                  <li className="flex items-start gap-2 text-sm text-slate-700 font-medium"><CheckCircle2 size={16} className="text-emerald-500 mt-0.5 shrink-0" /> Diverse product types allowed beyond strict medical definitions where legal.</li>
                 </ul>
               </div>
 
