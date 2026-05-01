@@ -1528,10 +1528,10 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
 
       
       {/* C3 Teaser Section */}
-      <section className="py-20 px-6 bg-slate-900 bg-gradient-to-br from-slate-900 to-emerald-950 text-white relative overflow-hidden">
+      <section style={{ background: 'linear-gradient(to bottom right, #0f172a, #064e3b)' }} className="py-20 px-6 text-white relative overflow-hidden">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12 relative z-10">
           <div className="md:w-2/3 space-y-6">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-500/20 rounded-full border border-emerald-400/30 text-emerald-300 text-xs font-black uppercase tracking-widest">
+            <div style={{ backgroundColor: 'rgba(16, 185, 129, 0.2)' }} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-emerald-400/30 text-emerald-300 text-xs font-black uppercase tracking-widest">
               ✨ The Industry's First Cannabis Credit Bureau
             </div>
             <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-tight">
@@ -1551,7 +1551,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
           </div>
           <div className="md:w-1/3 flex justify-center">
             <div className="w-full aspect-square bg-white/5 rounded-full border border-white/10 backdrop-blur-3xl flex items-center justify-center p-8 text-center relative group">
-              <div className="absolute inset-0 bg-emerald-400/20 blur-[60px] rounded-full scale-50 group-hover:scale-75 transition-transform duration-1000 opacity-50"></div>
+              <div style={{ backgroundColor: 'rgba(52, 211, 153, 0.2)' }} className="absolute inset-0 blur-[60px] rounded-full scale-50 group-hover:scale-75 transition-transform duration-1000 opacity-50"></div>
               <div className="text-7xl font-black text-emerald-400 tracking-tighter relative">C³</div>
             </div>
           </div>
@@ -1559,10 +1559,10 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
       </section>
 
       {/* Care Wallet Teaser Section */}
-      <section className="py-20 px-6 bg-slate-900 bg-gradient-to-br from-blue-950 to-slate-900 text-white relative overflow-hidden border-t border-white/10">
+      <section style={{ background: 'linear-gradient(to bottom right, #172554, #0f172a)' }} className="py-20 px-6 text-white relative overflow-hidden border-t border-white/10">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row-reverse items-center gap-12 relative z-10">
           <div className="md:w-2/3 space-y-6">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-500/20 rounded-full border border-blue-400/30 text-blue-300 text-xs font-black uppercase tracking-widest">
+            <div style={{ backgroundColor: 'rgba(59, 130, 246, 0.2)' }} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-400/30 text-blue-300 text-xs font-black uppercase tracking-widest">
               <HeartHandshake size={14} /> Introduced by Compassion Network
             </div>
             <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-tight">
@@ -1582,7 +1582,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
           </div>
           <div className="md:w-1/3 flex justify-center">
             <div className="w-full aspect-square bg-white/5 rounded-full border border-white/10 backdrop-blur-3xl flex items-center justify-center p-8 text-center relative group">
-              <div className="absolute inset-0 bg-blue-500/20 blur-[60px] rounded-full scale-50 group-hover:scale-75 transition-transform duration-1000 opacity-50"></div>
+              <div style={{ backgroundColor: 'rgba(59, 130, 246, 0.2)' }} className="absolute inset-0 blur-[60px] rounded-full scale-50 group-hover:scale-75 transition-transform duration-1000 opacity-50"></div>
               <Wallet size={80} className="text-blue-400 relative" />
             </div>
           </div>

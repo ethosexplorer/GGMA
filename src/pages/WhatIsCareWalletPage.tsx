@@ -26,18 +26,18 @@ export const WhatIsCareWalletPage = ({ onNavigate }: { onNavigate: (view: string
       </nav>
 
       {/* Hero Section */}
-      <section className="py-24 px-6 relative overflow-hidden bg-gradient-to-br from-blue-950 via-slate-900 to-indigo-950 text-white">
+      <section style={{ background: 'linear-gradient(to bottom right, #172554, #0f172a, #1e1b4b)' }} className="py-24 px-6 relative overflow-hidden text-white">
         {/* Abstract Background Elements */}
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-blue-500/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/4 pointer-events-none"></div>
+        <div style={{ backgroundColor: 'rgba(59, 130, 246, 0.1)' }} className="absolute top-0 right-0 w-[800px] h-[800px] rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+        <div style={{ backgroundColor: 'rgba(99, 102, 241, 0.1)' }} className="absolute bottom-0 left-0 w-[600px] h-[600px] rounded-full blur-[100px] translate-y-1/3 -translate-x-1/4 pointer-events-none"></div>
         
         <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-16 relative z-10">
           <div className="lg:w-1/2 space-y-8">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-500/20 rounded-full border border-blue-400/30 text-blue-300 text-xs font-black uppercase tracking-widest backdrop-blur-md">
+            <div style={{ backgroundColor: 'rgba(59, 130, 246, 0.2)' }} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-400/30 text-blue-300 text-xs font-black uppercase tracking-widest backdrop-blur-md">
               <HeartHandshake size={14} /> Introduced by the Compassion Network
             </div>
             <h1 className="text-5xl lg:text-7xl font-black tracking-tight leading-tight">
-              The <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">Care Wallet</span>
+              The <span style={{ WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', background: 'linear-gradient(to right, #60a5fa, #818cf8)' }}>Care Wallet</span>
             </h1>
             <p className="text-xl text-blue-50/80 leading-relaxed font-medium">
               More than just a payment method. The Care Wallet is your unified health currency—seamlessly connecting your medical cannabis journey, rewarding your compliance, and directly boosting your C³ Score.
@@ -54,21 +54,21 @@ export const WhatIsCareWalletPage = ({ onNavigate }: { onNavigate: (view: string
           </div>
 
           <div className="lg:w-1/2 w-full">
-            <div className="relative w-full max-w-md mx-auto aspect-[4/3] bg-gradient-to-br from-white/10 to-white/5 rounded-[2.5rem] border border-white/20 backdrop-blur-2xl p-8 shadow-2xl flex flex-col justify-between overflow-hidden group">
+            <div style={{ background: 'linear-gradient(to bottom right, rgba(255,255,255,0.1), rgba(255,255,255,0.05))' }} className="relative w-full max-w-md mx-auto aspect-[4/3] rounded-[2.5rem] border border-white/20 backdrop-blur-2xl p-8 shadow-2xl flex flex-col justify-between overflow-hidden group">
               {/* Card Shine Effect */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-[shimmer_2s_infinite]"></div>
+              <div style={{ background: 'linear-gradient(to top right, transparent, rgba(255,255,255,0.05), transparent)' }} className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_2s_infinite]"></div>
               
               <div className="flex justify-between items-start relative z-10">
                 <Wallet size={32} className="text-blue-400" />
-                <div className="px-3 py-1 bg-white/10 rounded-full border border-white/10 text-xs font-bold tracking-wide">
+                <div style={{ backgroundColor: 'rgba(255,255,255,0.1)' }} className="px-3 py-1 rounded-full border border-white/10 text-xs font-bold tracking-wide">
                   Virtual Card
                 </div>
               </div>
               
               <div className="relative z-10 mt-12">
-                <p className="text-sm text-blue-200/70 font-medium mb-1">Total Care Balance</p>
-                <div className="text-5xl font-black tracking-tighter">$420.50</div>
-                <div className="flex items-center gap-2 mt-4 text-sm font-bold text-emerald-400 bg-emerald-400/10 w-fit px-3 py-1.5 rounded-lg border border-emerald-400/20">
+                <p style={{ color: 'rgba(191,219,254,0.7)' }} className="text-sm font-medium mb-1">Total Care Balance</p>
+                <div className="text-5xl font-black tracking-tighter text-white">$420.50</div>
+                <div style={{ backgroundColor: 'rgba(52,211,153,0.1)' }} className="flex items-center gap-2 mt-4 text-sm font-bold text-emerald-400 w-fit px-3 py-1.5 rounded-lg border border-emerald-400/20">
                   <Coins size={14} /> +1,250 Care Points Earned
                 </div>
               </div>
