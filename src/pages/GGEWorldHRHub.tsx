@@ -21,7 +21,7 @@ const NAV_ITEMS = [
   
   { section: 'HR & PERSONNEL' },
   { id: 'hr_intelligence', label: 'HR Intelligence Hub', icon: Users },
-  { id: 'applications_queue', label: 'Applications Queue', icon: FileText, badge: '502' },
+  { id: 'hr_recruitment', label: 'Job Recruitment Queue', icon: Briefcase, badge: 'Hiring' },
 
   { section: 'SUPPORT & DIAGNOSTICS' },
   { id: 'admin_support', label: 'Admin Support Calendar', icon: Clock },
@@ -199,7 +199,7 @@ export const GGEWorldHRHub = ({ user }: { user?: any }) => {
               {activeTab === 'ops_livecenter' && <div className="h-full"><CallCenterCommandTab /></div>}
               
               {activeTab === 'hr_intelligence' && renderPlaceholder('HR Intelligence Hub', 'Manage onboarding, personnel records, and department assignments.', Users, 'text-blue-500')}
-              {activeTab === 'applications_queue' && renderPlaceholder('Applications Queue', 'Review patient, business, and licensing applications.', FileText, 'text-amber-500')}
+              {activeTab === 'hr_recruitment' && renderPlaceholder('Job Recruitment Queue', 'Track job applicants, interview stages, and new hire paperwork.', Briefcase, 'text-emerald-500')}
               
               {activeTab === 'internal_admin' && renderPlaceholder('Internal Admin Ops', 'Manage internal permissions, roles, and system access.', Shield, 'text-indigo-500')}
               {activeTab === 'gge_processor' && renderPlaceholder('GGE Processor', 'Real-time oversight of the standalone private settlement rail.', Cpu, 'text-purple-500')}
