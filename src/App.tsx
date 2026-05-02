@@ -7746,7 +7746,7 @@ export default function App() {
 
     // Internal Leadership Portal Routing
     if (role === 'president' || role === 'chief_compliance_director' || role === 'advisor') {
-      return <FounderDashboard onLogout={handleReturnToSelector} user={profile} jurisdiction={jurisdiction} />;
+      return <FounderDashboard onLogout={handleReturnToSelector} user={{ ...profile, role }} jurisdiction={jurisdiction} />;
     }
 
     // Oversight Portal Routing

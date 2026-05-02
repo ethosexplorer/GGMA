@@ -315,8 +315,8 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     localStorage.setItem('gghp_nav_order_v3', JSON.stringify(ids));
   };
 
-  const [activeTab, setActiveTab] = useState('overview');
-  const [activePopoutSection, setActivePopoutSection] = useState<string | null>('_sec_founder');
+  const [activeTab, setActiveTab] = useState(isExecutive ? 'ai_training' : 'overview');
+  const [activePopoutSection, setActivePopoutSection] = useState<string | null>(isExecutive ? null : '_sec_founder');
 
   useEffect(() => {
     const larryTabs = ['state_authority', 'federal', 'jurisdiction_map', 'compliance', 'operations', 'internal_admin', 'external_admin'];
