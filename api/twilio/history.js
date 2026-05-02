@@ -19,25 +19,25 @@ export default async function handler(req, res) {
     // Fetch Call History
     const calls = await client.calls.list({ limit: 50 });
     const formattedCalls = calls.map(c => ({
-      dir: c.direction === 'outbound-api' || c.direction === 'outbound-dial' ? 'OUT' : 'IN',
+      direction: c.direction === 'outbound-api' || c.direction === 'outbound-dial' ? 'outbound' : 'inbound',
       from: c.from,
       to: c.to,
       status: c.status,
       duration: c.duration ? parseInt(c.duration) : 0,
-      time: new Date(c.dateCreated).toLocaleString(),
-      sid: c.sid
+      timestamp: c.dateCreated,
+      id: c.sid
     }));
 
     // Fetch SMS History
     const messages = await client.messages.list({ limit: 50 });
     const formattedMessages = messages.map(m => ({
-      dir: m.direction === 'outbound-api' ? 'OUT' : 'IN',
+      direction: m.direction === 'outbound-api' ? 'outbound' : 'inbound',
       from: m.from,
       to: m.to,
       body: m.body,
       status: m.status,
-      time: new Date(m.dateCreated).toLocaleString(),
-      sid: m.sid
+      timestamp: m.dateCreated,
+      id: m.sid
     }));
 
     // Fetch Voicemail Recordings

@@ -14,6 +14,7 @@ import { ExternalAdminDashboard } from './ExternalAdminDashboard';
 import { StateAuthorityDashboard } from './StateAuthorityDashboard';
 import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
 import { EscalationSupportCalendar } from '../components/EscalationSupportCalendar';
+import { CallCenterCommandTab } from '../components/telephony/CallCenterCommandTab';
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
@@ -24,6 +25,7 @@ const INTERNAL_NAV_ITEMS: NavItem[] = [
   { id: 'jurisdiction_map', label: 'Nationwide Oversight', icon: Globe },
   { id: '_sec_main', section: 'MAIN' },
   { id: 'ai_training', label: 'My Assistant & Training', icon: Bot, badge: 'AI' },
+  { id: 'call_center', label: 'Call Center Command', icon: Zap, badge: 'Live' },
   { id: 'messages', label: 'Messages', icon: MessageSquare, badge: 'Live' },
   { id: 'internal_scheduler', label: 'Calendar & Scheduler', icon: Clock, badge: 'New' },
   { id: 'admin_support_calendar', label: 'Admin Support', icon: Clock, badge: 'Help' },
@@ -257,6 +259,7 @@ const PresidentDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => v
                 
                 {activeTab === 'jurisdiction_map' && <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50"><Globe size={40} className="mx-auto text-indigo-500 mb-4" /><h2 className="text-2xl font-bold text-white mb-2">Nationwide Jurisdiction Oversight</h2><p className="text-slate-400">Live deployment status and compliance health across the United States.</p></div>}
                 
+                {activeTab === 'call_center' && <div className="bg-slate-50 p-6 rounded-3xl overflow-auto h-full"><CallCenterCommandTab /></div>}
                 {activeTab === 'ai_training' && <AITrainingTab />}
                 {activeTab === 'messages' && <InternalMessenger currentUser={{ id: user?.uid || '1', name: fullName, role: title, avatar: null }} />}
                 {activeTab === 'internal_scheduler' && <div className="bg-white rounded-3xl overflow-hidden h-full"><UserCalendar user={user} isGodView={false} /></div>}

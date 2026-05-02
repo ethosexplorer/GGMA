@@ -29,6 +29,7 @@ import { FounderModals } from '../components/FounderModals';
 import { ITSupportDashboard } from '../components/it/ITSupportDashboard';
 import { RolePermissionsPanel } from '../components/RolePermissionsPanel';
 import { InternalMessenger } from '../components/messaging/InternalMessenger';
+import { CallCenterCommandTab } from '../components/telephony/CallCenterCommandTab';
 import { AITrainingTab } from '../components/AITrainingTab';
 import { UserCalendar } from '../components/UserCalendar';
 import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
@@ -3425,7 +3426,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         return <InternalMessenger currentUser={{ name: fullName, role: userTitle, roleId: isMonica ? 'compliance_director' : (isRyan ? 'ceo' : 'founder') }} />;
       case 'ai_training': return <div className="h-full w-full -m-10 p-10 bg-slate-50"><AITrainingTab userProfile={user} /></div>;
       case 'settings': return renderSettings();
-      case 'call_center': return renderCallCenter();
+      case 'call_center': return <CallCenterCommandTab />;
       default: return isExecutive ? <div className="h-full w-full -m-10 p-10 bg-slate-50"><AITrainingTab userProfile={user} /></div> : renderOverview();
     }
   };
