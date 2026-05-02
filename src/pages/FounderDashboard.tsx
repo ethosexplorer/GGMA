@@ -103,7 +103,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   
   const fullName = isMonica ? 'Monica Green' : (isRyan ? 'Ryan Ferrari' : (isBobAdvisor ? 'Bob Moore' : (user?.displayName || 'Shantell Robinson')));
   const firstName = fullName.split(' ')[0];
-  const userTitle = isMonica ? 'Chief Executive Compliance Director' : (isRyan ? 'President' : (isBobAdvisor ? 'Executive Advisor' : 'Founder'));
+  const userTitle = isMonica ? 'Chief Compliance Director' : (isRyan ? 'President' : (isBobAdvisor ? 'Executive Advisor' : 'Founder'));
 
   const [liveStats, setLiveStats] = useState({ totalUsers: '1.2M', netRevenue: '$18.2M' });
   const [actionToast, setActionToast] = useState<{ message: string; timestamp: number } | null>(null);
@@ -3404,7 +3404,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         return <div className="h-full w-full -m-10 p-10 min-h-screen overflow-auto bg-slate-50"><ITSupportDashboard /></div>;
       case 'logs': return renderLogs();
       case 'support_tickets': return renderSupportTickets();
-      case 'internal_scheduler': return <UserCalendar key={user?.role} user={user} title={isRyan ? "President's Calendar" : "Executive Calendar"} />;
+      case 'internal_scheduler': return <UserCalendar key={user?.role} user={user} title={isRyan ? "President's Calendar" : (isMonica ? "Compliance Director's Calendar" : "Executive Calendar")} />;
       case 'subscriptions': return renderSubscriptionsTab();
       case 'negligence_intercept': return <div className="h-full w-full -m-10"><AdminDashboard user={user} initialTab="negligence" onLogout={() => setActiveTab(isExecutive ? 'ai_training' : 'overview')} /></div>;
       case 'hr_intelligence': return renderHRIntelligence();
