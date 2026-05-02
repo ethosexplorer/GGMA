@@ -14,16 +14,13 @@ export const InvestorSandboxTab = () => {
 
   if (activeMock === 'patient') {
     return (
-      <div className="relative w-full h-full bg-slate-100 flex flex-col">
-        <div className="bg-indigo-600 text-white p-2 text-center text-xs font-black uppercase tracking-widest flex justify-between items-center px-6 shadow-md z-50 shrink-0">
+      <div className="fixed inset-0 z-[9999] flex flex-col bg-slate-100">
+        <div className="bg-indigo-600 text-white p-2 text-center text-xs font-black uppercase tracking-widest flex justify-between items-center px-6 shadow-md shrink-0 relative z-[10000]">
           <span className="flex items-center gap-2"><MonitorPlay size={14} /> INVESTOR DEMO ENVIRONMENT: PATIENT PORTAL</span>
           <button onClick={() => setActiveMock('none')} className="hover:text-indigo-200 transition-colors bg-black/20 px-3 py-1 rounded">Exit Sandbox</button>
         </div>
         <div className="flex-1 overflow-hidden relative">
-          {/* We wrap it in a container that acts like the full screen */}
-          <div className="absolute inset-0">
-            <PatientDashboard onLogout={() => setActiveMock('none')} />
-          </div>
+          <PatientDashboard onLogout={() => setActiveMock('none')} />
         </div>
       </div>
     );
@@ -31,15 +28,13 @@ export const InvestorSandboxTab = () => {
 
   if (activeMock === 'business') {
     return (
-      <div className="relative w-full h-full bg-slate-100 flex flex-col">
-        <div className="bg-emerald-600 text-white p-2 text-center text-xs font-black uppercase tracking-widest flex justify-between items-center px-6 shadow-md z-50 shrink-0">
+      <div className="fixed inset-0 z-[9999] flex flex-col bg-slate-100">
+        <div className="bg-emerald-600 text-white p-2 text-center text-xs font-black uppercase tracking-widest flex justify-between items-center px-6 shadow-md shrink-0 relative z-[10000]">
           <span className="flex items-center gap-2"><MonitorPlay size={14} /> INVESTOR DEMO ENVIRONMENT: BUSINESS PORTAL</span>
           <button onClick={() => setActiveMock('none')} className="hover:text-emerald-200 transition-colors bg-black/20 px-3 py-1 rounded">Exit Sandbox</button>
         </div>
         <div className="flex-1 overflow-hidden relative">
-          <div className="absolute inset-0">
-            <BusinessDashboard onLogout={() => setActiveMock('none')} />
-          </div>
+          <BusinessDashboard onLogout={() => setActiveMock('none')} />
         </div>
       </div>
     );
@@ -47,15 +42,13 @@ export const InvestorSandboxTab = () => {
 
   if (activeMock === 'provider') {
     return (
-      <div className="relative w-full h-full bg-slate-100 flex flex-col">
-        <div className="bg-blue-600 text-white p-2 text-center text-xs font-black uppercase tracking-widest flex justify-between items-center px-6 shadow-md z-50 shrink-0">
+      <div className="fixed inset-0 z-[9999] flex flex-col bg-slate-100">
+        <div className="bg-blue-600 text-white p-2 text-center text-xs font-black uppercase tracking-widest flex justify-between items-center px-6 shadow-md shrink-0 relative z-[10000]">
           <span className="flex items-center gap-2"><MonitorPlay size={14} /> INVESTOR DEMO ENVIRONMENT: HEALTHCARE PROVIDER</span>
           <button onClick={() => setActiveMock('none')} className="hover:text-blue-200 transition-colors bg-black/20 px-3 py-1 rounded">Exit Sandbox</button>
         </div>
         <div className="flex-1 overflow-hidden relative">
-          <div className="absolute inset-0">
-            <ProviderDashboard onLogout={() => setActiveMock('none')} />
-          </div>
+          <ProviderDashboard onLogout={() => setActiveMock('none')} />
         </div>
       </div>
     );
@@ -63,15 +56,13 @@ export const InvestorSandboxTab = () => {
 
   if (activeMock === 'attorney') {
     return (
-      <div className="relative w-full h-full bg-slate-100 flex flex-col">
-        <div className="bg-amber-600 text-white p-2 text-center text-xs font-black uppercase tracking-widest flex justify-between items-center px-6 shadow-md z-50 shrink-0">
+      <div className="fixed inset-0 z-[9999] flex flex-col bg-slate-100">
+        <div className="bg-amber-600 text-white p-2 text-center text-xs font-black uppercase tracking-widest flex justify-between items-center px-6 shadow-md shrink-0 relative z-[10000]">
           <span className="flex items-center gap-2"><MonitorPlay size={14} /> INVESTOR DEMO ENVIRONMENT: ATTORNEY PORTAL</span>
           <button onClick={() => setActiveMock('none')} className="hover:text-amber-200 transition-colors bg-black/20 px-3 py-1 rounded">Exit Sandbox</button>
         </div>
         <div className="flex-1 overflow-hidden relative">
-          <div className="absolute inset-0">
-            <AttorneyDashboard onLogout={() => setActiveMock('none')} />
-          </div>
+          <AttorneyDashboard onLogout={() => setActiveMock('none')} />
         </div>
       </div>
     );
@@ -79,15 +70,13 @@ export const InvestorSandboxTab = () => {
 
   if (activeMock === 'oversight') {
     return (
-      <div className="relative w-full h-full bg-slate-100 flex flex-col">
-        <div className="bg-slate-900 text-white p-2 text-center text-xs font-black uppercase tracking-widest flex justify-between items-center px-6 shadow-md z-50 shrink-0">
+      <div className="fixed inset-0 z-[9999] flex flex-col bg-slate-100">
+        <div className="bg-slate-900 text-white p-2 text-center text-xs font-black uppercase tracking-widest flex justify-between items-center px-6 shadow-md shrink-0 relative z-[10000]">
           <span className="flex items-center gap-2"><MonitorPlay size={14} /> INVESTOR DEMO ENVIRONMENT: REGULATORY OVERSIGHT</span>
           <button onClick={() => setActiveMock('none')} className="hover:text-slate-300 transition-colors bg-white/20 px-3 py-1 rounded">Exit Sandbox</button>
         </div>
         <div className="flex-1 overflow-hidden relative">
-          <div className="absolute inset-0">
-            <StateAuthorityDashboard onLogout={() => setActiveMock('none')} />
-          </div>
+          <StateAuthorityDashboard onLogout={() => setActiveMock('none')} />
         </div>
       </div>
     );
@@ -95,15 +84,13 @@ export const InvestorSandboxTab = () => {
 
   if (activeMock === 'federal') {
     return (
-      <div className="relative w-full h-full bg-slate-100 flex flex-col">
-        <div className="bg-slate-800 text-white p-2 text-center text-xs font-black uppercase tracking-widest flex justify-between items-center px-6 shadow-md z-50 shrink-0">
+      <div className="fixed inset-0 z-[9999] flex flex-col bg-slate-100">
+        <div className="bg-slate-800 text-white p-2 text-center text-xs font-black uppercase tracking-widest flex justify-between items-center px-6 shadow-md shrink-0 relative z-[10000]">
           <span className="flex items-center gap-2"><MonitorPlay size={14} /> INVESTOR DEMO ENVIRONMENT: FEDERAL COMMAND</span>
           <button onClick={() => setActiveMock('none')} className="hover:text-slate-300 transition-colors bg-white/20 px-3 py-1 rounded">Exit Sandbox</button>
         </div>
         <div className="flex-1 overflow-hidden relative">
-          <div className="absolute inset-0">
-            <FederalDashboard onLogout={() => setActiveMock('none')} />
-          </div>
+          <FederalDashboard onLogout={() => setActiveMock('none')} />
         </div>
       </div>
     );
@@ -111,15 +98,13 @@ export const InvestorSandboxTab = () => {
 
   if (activeMock === 'enforcement') {
     return (
-      <div className="relative w-full h-full bg-slate-100 flex flex-col">
-        <div className="bg-slate-950 text-white p-2 text-center text-xs font-black uppercase tracking-widest flex justify-between items-center px-6 shadow-md z-50 shrink-0">
+      <div className="fixed inset-0 z-[9999] flex flex-col bg-slate-100">
+        <div className="bg-slate-950 text-white p-2 text-center text-xs font-black uppercase tracking-widest flex justify-between items-center px-6 shadow-md shrink-0 relative z-[10000]">
           <span className="flex items-center gap-2"><MonitorPlay size={14} /> INVESTOR DEMO ENVIRONMENT: LAW ENFORCEMENT</span>
           <button onClick={() => setActiveMock('none')} className="hover:text-slate-300 transition-colors bg-white/20 px-3 py-1 rounded">Exit Sandbox</button>
         </div>
         <div className="flex-1 overflow-hidden relative">
-          <div className="absolute inset-0">
-            <EnforcementDashboard onLogout={() => setActiveMock('none')} />
-          </div>
+          <EnforcementDashboard onLogout={() => setActiveMock('none')} />
         </div>
       </div>
     );
