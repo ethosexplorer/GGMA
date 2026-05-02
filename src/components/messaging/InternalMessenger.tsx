@@ -3,6 +3,7 @@ import { Send, Hash, MessageSquare, Users, Circle, Megaphone, Plus, X, Check } f
 import { cn } from '../../lib/utils';
 import { db } from '../../firebase';
 import { collection, addDoc, query, orderBy, limit, onSnapshot, serverTimestamp, where, Timestamp } from 'firebase/firestore';
+import { voip800 } from '../../lib/voip800';
 
 interface Message {
   id: string;
@@ -19,6 +20,7 @@ const CHANNELS = [
   { id: 'compliance', label: 'Compliance & OMMA', description: 'Metrc, OMMA, regulatory' },
   { id: 'it-ops', label: 'IT & Operations', description: 'System issues, deployments' },
   { id: 'founder-directives', label: 'Founder Directives', description: 'Direct orders from leadership' },
+  { id: 'external-sms', label: 'External SMS', description: 'Text patients & partners via Dialer' },
 ];
 
 const TEAM_MEMBERS = [
@@ -43,6 +45,7 @@ export const InternalMessenger = ({ currentUser }: Props) => {
   const [groupName, setGroupName] = useState('');
   const [groupMembers, setGroupMembers] = useState<string[]>([]);
   const [customGroups, setCustomGroups] = useState<{ id: string; label: string; members: string[]; description: string }[]>([]);
+  const [externalPhone, setExternalPhone] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -101,7 +104,27 @@ export const InternalMessenger = ({ currentUser }: Props) => {
   };
 
   const handleSend = async () => {
-    await sendMessage(messageText, currentView);
+    if (!messageText.trim()) return;
+
+    if (activeChannel === 'external-sms' && !activeDM) {
+      if (!externalPhone.trim()) { alert('Enter a valid phone number'); return; }
+      try {
+        const sent = await voip800.sendSMS(externalPhone, messageText);
+        if (sent) {
+          await sendMessage(`[SMS sent to ${externalPhone} via Dialer]: ${messageText}`, currentView!);
+          setMessageText('');
+          inputRef.current?.focus();
+        } else {
+          alert('Failed to send SMS via Dialer');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Failed to send SMS via Dialer');
+      }
+      return;
+    }
+
+    await sendMessage(messageText, currentView!);
     const sentText = messageText;
     setMessageText('');
     inputRef.current?.focus();
@@ -371,6 +394,18 @@ export const InternalMessenger = ({ currentUser }: Props) => {
 
         {/* Input */}
         <div className="p-4 border-t border-slate-100 bg-white">
+          {!activeDM && activeChannel === 'external-sms' && (
+            <div className="mb-3">
+              <label className="text-[10px] font-black text-emerald-600 uppercase tracking-widest block mb-1">External Phone Number (Dialer)</label>
+              <input
+                type="tel"
+                value={externalPhone}
+                onChange={(e) => setExternalPhone(e.target.value)}
+                placeholder="+1 (555) 555-5555"
+                className="w-full px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-lg outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 font-mono text-emerald-900 transition-all text-sm font-bold"
+              />
+            </div>
+          )}
           <div className="flex items-center gap-3">
             <input
               ref={inputRef}
@@ -378,7 +413,7 @@ export const InternalMessenger = ({ currentUser }: Props) => {
               value={messageText}
               onChange={(e) => setMessageText(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={`Message ${activeDM ? 'privately' : '#' + activeChannel}...`}
+              placeholder={activeChannel === 'external-sms' ? "Type SMS message..." : `Message ${activeDM ? 'privately' : '#' + activeChannel}...`}
               className="flex-1 px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 font-medium text-slate-700 transition-all"
             />
             <button
