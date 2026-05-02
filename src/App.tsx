@@ -1919,17 +1919,14 @@ const LoginScreen = ({ onLogin, onSignUp, onForgotPassword, jurisdiction = 'Okla
       <div className="w-full max-w-[1000px]">
         <StateWelcomeBanner jurisdiction={jurisdiction} type="business" />
       </div>
-      {/* 🗳️ Revolving Survey — prominent above login */}
-      <div className="w-full max-w-[1000px] mt-6">
-        <RevolvingSurveyBanner />
-      </div>
+      {/* 🗳️ Revolving Survey removed as per request */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-[1000px] bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col md:flex-row mt-6"
+        className="w-full max-w-[500px] bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col mt-6"
       >
         {/* LOGIN FORM SECTION */}
-        <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
+        <div className="w-full p-8 md:p-12 flex flex-col justify-center">
           <div className="flex flex-col items-center text-center mb-6">
             <img src="/gghp-branding.png" alt="GGHP Logo" className="w-40 h-40 sm:w-48 sm:h-48 object-contain mb-4" onError={(e) => {
               (e.target as HTMLImageElement).style.display = 'none';
@@ -1998,51 +1995,7 @@ const LoginScreen = ({ onLogin, onSignUp, onForgotPassword, jurisdiction = 'Okla
           </form>
         </div>
 
-        {/* SUBSCRIPTIONS SECTION */}
-        <div className="w-full md:w-1/2 bg-[#f8fbf9] p-8 md:p-12 border-t md:border-t-0 md:border-l border-slate-200 flex flex-col justify-center">
-          <h3 className="text-2xl font-bold text-[#1a4731] mb-2 text-center md:text-left">Platform Subscriptions</h3>
-          <p className="text-slate-600 mb-8 text-sm text-center md:text-left">
-            Log in to manage your plan and secure your digital footprint.
-          </p>
-          
-          <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
-            {samplePlans.map((plan, idx) => (
-              <div key={idx} className={cn("bg-white p-5 rounded-xl border shadow-sm transition-all relative", plan.id === 'pro' ? 'border-[#1a4731]/50 shadow-md' : 'border-slate-200')}>
-                {plan.id === 'pro' && (
-                  <div className="absolute top-0 right-0 bg-[#1a4731] text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg rounded-tr-xl uppercase tracking-wider">
-                    Recommended
-                  </div>
-                )}
-                <div className="flex justify-between items-start mb-2">
-                  <h4 className={cn("font-bold text-lg", plan.id === 'pro' ? 'text-[#1a4731]' : 'text-slate-800')}>{plan.name}</h4>
-                  <span className="font-extrabold text-[#1a4731] text-[10px] uppercase tracking-wider bg-[#1a4731]/5 px-2 py-1 rounded">View Post-Login</span>
-                </div>
-                {plan.bestFor && <p className="text-xs text-slate-600 mb-3 bg-slate-50 p-1.5 rounded-md border border-slate-100 italic">{plan.bestFor}</p>}
-                <ul className="space-y-2 mt-3">
-                  {plan.features?.slice(0, 3).map((feature: string, fIdx: number) => (
-                    <li key={fIdx} className="flex items-start gap-2 text-xs text-slate-600">
-                      <CircleCheck size={14} className="text-[#1a4731] shrink-0 mt-0.5" />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                  {(!plan.features || plan.features.length === 0) && plan.aiLevel && (
-                    <li className="flex items-start gap-2 text-xs text-slate-600">
-                      <CircleCheck size={14} className="text-[#1a4731] shrink-0 mt-0.5" />
-                      <span>{plan.aiLevel} AI Support</span>
-                    </li>
-                  )}
-                </ul>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-8 pt-6 border-t border-slate-200 text-center">
-            <p className="text-xs text-slate-500 leading-relaxed">
-              Subscriptions, API add-ons, and payment methods are fully integrated within your secure Dashboard. <br/>
-              <span className="font-semibold text-slate-700">Login required to view tailored plans.</span>
-            </p>
-          </div>
-        </div>
+        {/* SUBSCRIPTIONS SECTION REMOVED */}
 
       </motion.div>
     </div>
