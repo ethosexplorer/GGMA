@@ -310,7 +310,7 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
                     <p className="text-sm text-emerald-100/80 mb-8 font-medium leading-relaxed relative z-10">
                       "I've analyzed your C³ score. Consistent reloading and health checkups could boost you to Platinum status by June."
                     </p>
-                    <button className="w-full py-4 rounded-2xl bg-emerald-500 text-white text-sm font-black hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-950/20 flex items-center justify-center gap-2">
+                    <button onClick={() => onOpenConcierge?.()} className="w-full py-4 rounded-2xl bg-emerald-500 text-white text-sm font-black hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-950/20 flex items-center justify-center gap-2">
                       Instant Consultation
                     </button>
                   </div>
