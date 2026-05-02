@@ -35,7 +35,7 @@ import { voip800 } from '../lib/voip800';
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
-const NAV_VERSION = 19; // Bumped: Reorganized into specific popouts
+const NAV_VERSION = 21; // Bumped: Move Ops Center and Internal Admin to single tabs
 
 const INITIAL_NAV_ITEMS: NavItem[] = [
   // Single tabs
@@ -43,6 +43,8 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'overview', label: 'God Overview', icon: Activity },
   { id: 'internal_scheduler', label: 'Calendar / Scheduler', icon: Clock, badge: 'New' },
   { id: 'messages', label: 'Messages', icon: MessageSquare, badge: 'Live' },
+  { id: 'operations', label: 'Ops Center (Live)', icon: Cpu, badge: 'Live' },
+  { id: 'internal_admin', label: 'Internal Team', icon: Shield, badge: '!' },
 
   // Founder/CEO Popout
   { id: '_sec_founder', section: 'FOUNDER/CEO' },
@@ -54,9 +56,7 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
 
   // COO/Sr Live Agent Popout
   { id: '_sec_ops', section: 'COO/SR LIVE AGENT' },
-  { id: 'operations', label: 'Ops Center (Live)', icon: Cpu, badge: 'Live' },
   { id: 'virtual_attendant', label: 'GGE World Call Center', icon: Phone },
-  { id: 'internal_admin', label: 'Internal Team', icon: Shield, badge: '!' },
   { id: 'hr_intelligence', label: 'HR Intelligence (Sylara)', icon: UserPlus },
   { id: 'users', label: 'Personnel Force (Total)', icon: Users },
   { id: 'support_tickets', label: 'Support Tickets', icon: MessageSquare, badge: '12' },
@@ -87,7 +87,6 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'accounting_ledger', label: 'Accounting Ledger (QuickBooks)', icon: TrendingUp },
   { id: 'global_financials', label: 'Global Financials', icon: TrendingUp },
   { id: 'subscriptions', label: 'Subscriptions & Revenue', icon: CreditCard, badge: 'Live' },
-  { id: 'subscription', label: 'Platform Billing', icon: CreditCard },
   { id: 'reports', label: 'Master Analytics', icon: BarChart3 },
   { id: 'intel', label: 'Global Intelligence', icon: BookOpen },
   { id: 'logs', label: 'System Logs', icon: Database },
@@ -317,6 +316,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   };
 
   const [activeTab, setActiveTab] = useState('overview');
+  const [activePopoutSection, setActivePopoutSection] = useState<string | null>('_sec_founder');
 
   useEffect(() => {
     const larryTabs = ['state_authority', 'federal', 'jurisdiction_map', 'compliance', 'operations', 'internal_admin', 'external_admin'];
@@ -3645,6 +3645,39 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     </div>
   );
 
+  const handleDeleteItem = (e: React.MouseEvent, index: number) => {
+    e.stopPropagation();
+    if (!window.confirm('Remove this label/section permanently?')) return;
+    const newItems = [...navItemsList];
+    newItems.splice(index, 1);
+    setNavItemsList(newItems);
+    const ids = newItems.map(it => it.id!);
+    localStorage.setItem('gghp_nav_order', JSON.stringify(ids));
+  };
+
+  const navGroups: any[] = [];
+  let currentGroup: any = null;
+
+  navItemsList.forEach((item, i) => {
+    // === FOUNDER-ONLY BLOCKS ===
+    const founderOnly = ["accounting_ledger", "global_financials", "hr_intelligence", "launch_script", "jurisdiction_map", "approvals", "ip_monitor"];
+    if (isExecutive && (item.section === "FOUNDER/CEO" || founderOnly.includes(item.id || ''))) return;
+    if (isRyan && (item.id === "state_authority" || item.id === "federal" || item.id === "system_health")) return;
+    if (isMonica && (item.id === "state_authority" || item.id === "federal" || item.id === "system_health")) return;
+    const advisorBlocked = ["accounting_ledger", "global_financials", "hr_intelligence", "launch_script", "settings", "system_health", "logs"];
+    if (isBobAdvisor && (item.section === "FOUNDER/CEO" || advisorBlocked.includes(item.id || ''))) return;
+
+    if ('section' in item) {
+      currentGroup = { item, index: i, children: [] };
+      navGroups.push(currentGroup);
+    } else {
+      if (currentGroup) currentGroup.children.push({ item, index: i });
+      else navGroups.push({ item, index: i });
+    }
+  });
+
+  const activeGroup = navGroups.find(g => g.children && g.item.id === activePopoutSection);
+
   return (
     <div className="flex h-screen overflow-hidden bg-slate-100 text-slate-800 font-sans relative">
       
@@ -3678,7 +3711,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         </div>
       )}
 
-      <div className={cn("w-64 bg-slate-950 border-r border-slate-900 flex flex-col hidden md:flex shrink-0 transition-all duration-500 print:hidden", !isUnlocked && "blur-md opacity-50 pointer-events-none")}>
+      <div className={cn("w-64 bg-slate-950 border-r border-slate-900 flex flex-col hidden md:flex shrink-0 transition-all duration-500 print:hidden z-20 relative", !isUnlocked && "blur-md opacity-50 pointer-events-none")}>
         <div className="p-6 pb-2">
           <div className="flex items-center gap-3 mb-6">
             <img src="/gghp-branding.png" alt="GGHP Logo" className="w-12 h-12 object-contain" />
@@ -3701,128 +3734,120 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
             </div>
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto px-4 pb-6 space-y-1">
-           {(() => {
-             let currentSectionId = '';
-             let isCurrentSectionCollapsed = false;
-
-             return navItemsList.map((item, i) => {
-              // === FOUNDER-ONLY BLOCKS (both Monica & Ryan blocked) ===
-              const founderOnly = ["accounting_ledger", "global_financials", "hr_intelligence", "launch_script", "jurisdiction_map", "approvals", "ip_monitor"];
-              if (isExecutive && (item.section === "FOUNDER/CEO" || founderOnly.includes(item.id || ''))) return null;
-              // === RYAN (CEO): IT/Ops focus — block compliance-heavy & government tabs ===
-              if (isRyan && (item.id === "state_authority" || item.id === "federal" || item.id === "system_health")) return null;
-              // === MONICA (Compliance Director): Business/Metrc/OMMA — block federal, state authority, system health ===
-              if (isMonica && (item.id === "state_authority" || item.id === "federal" || item.id === "system_health")) return null;
-              // === BOB (Advisor): Can see all oversight dashboards, but NOT Founder Exclusive, Settings, or HR ===
-              const advisorBlocked = ["accounting_ledger", "global_financials", "hr_intelligence", "launch_script", "settings", "system_health", "logs"];
-              if (isBobAdvisor && (item.section === "FOUNDER/CEO" || advisorBlocked.includes(item.id || ''))) return null;
-              
-              if ('section' in item) {
-                currentSectionId = item.id!;
-                isCurrentSectionCollapsed = !!collapsedSections[currentSectionId];
-                return (
-                  <div 
-                    key={`section-${i}`} 
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, i)}
-                    onDragOver={(e) => handleDragOver(e, i)}
-                    onDragEnd={() => setDraggedIdx(null)}
-                    onClick={(e) => toggleSection(e, currentSectionId)}
-                    className={cn(
-                      "pt-6 pb-2 px-3 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] cursor-pointer group flex items-center justify-between",
-                      draggedIdx === i ? "opacity-30 border border-dashed border-indigo-400 rounded-lg" : ""
-                    )}
-                  >
-                    {editingSectionIdx === i ? (
-                      <input
-                        autoFocus
-                        className="bg-transparent border-b border-emerald-400 text-emerald-300 text-[10px] font-black uppercase tracking-[0.2em] outline-none w-full"
-                        defaultValue={item.section}
-                        onBlur={(e) => {
-                          const val = e.target.value.trim();
-                          if (val) {
-                            const newItems = [...navItemsList];
-                            newItems[i] = { ...newItems[i], section: val };
-                            setNavItemsList(newItems);
-                            const ids = newItems.map(it => it.id!);
-                            localStorage.setItem('gghp_nav_order', JSON.stringify(ids));
-                            const sectionMap: Record<string, string> = {};
-                            newItems.forEach(it => { if (it.section && it.id) sectionMap[it.id] = it.section; });
-                            localStorage.setItem('gghp_section_names', JSON.stringify(sectionMap));
-                          }
-                          setEditingSectionIdx(null);
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
-                          if (e.key === 'Escape') setEditingSectionIdx(null);
-                        }}
-                      />
-                    ) : (
-                      <span 
-                        onDoubleClick={(e) => { e.stopPropagation(); setEditingSectionIdx(i); }}
-                        title="Double-click to rename"
-                        className="hover:text-emerald-400 transition-colors flex-1"
-                      >
-                        {item.section}
-                      </span>
-                    )}
+        <div className="flex-1 overflow-y-auto px-4 pb-6 space-y-2">
+           {navGroups.map((g, gi) => {
+             if (g.children) {
+               const isPopoutActive = activePopoutSection === g.item.id;
+               return (
+                 <div key={gi} className="group relative" draggable onDragStart={(e) => handleDragStart(e, g.index)} onDragOver={(e) => handleDragOver(e, g.index)} onDragEnd={() => setDraggedIdx(null)}>
+                   <button 
+                     onClick={() => setActivePopoutSection(isPopoutActive ? null : g.item.id)}
+                     className={cn("w-full flex items-center justify-between px-3 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all", isPopoutActive ? "bg-indigo-600 text-white shadow-xl shadow-indigo-900/40" : "text-slate-400 hover:bg-white/5 hover:text-slate-100", draggedIdx === g.index ? "opacity-30 border border-dashed border-indigo-400" : "")}
+                   >
+                     <div className="flex items-center gap-3">
+                        <GripVertical size={14} className="text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        {g.item.section}
+                     </div>
+                     <div className="flex items-center gap-2">
+                       <button onClick={(e) => handleDeleteItem(e, g.index)} className="text-slate-500 opacity-0 group-hover:opacity-100 hover:text-red-400 transition-all p-1" title="Delete Section"><Trash2 size={12} /></button>
+                       <span className="opacity-50 text-[14px]">{isPopoutActive ? '-' : '+'}</span>
+                     </div>
+                   </button>
+                 </div>
+               );
+             } else {
+               const item = g.item;
+               const displayLabel = isExecutive ? item.label?.replace('God', 'Executive') : item.label;
+               return (
+                  <div key={gi} draggable onDragStart={(e) => handleDragStart(e, g.index)} onDragOver={(e) => handleDragOver(e, g.index)} onDragEnd={() => setDraggedIdx(null)} className={cn("group w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold transition-all", activeTab === item.id ? "bg-white/10 text-white" : "text-slate-400 hover:bg-white/5 hover:text-slate-100", draggedIdx === g.index ? "opacity-30 border border-dashed border-indigo-400" : "")}>
+                    <button onClick={() => { setActiveTab(item.id!); setActivePopoutSection(null); }} className="flex items-center gap-3 flex-1 text-left">
+                      <GripVertical size={14} className="text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      {item.icon && <item.icon size={16} className={activeTab === item.id ? "text-white" : "text-slate-500"} />} 
+                      {displayLabel}
+                    </button>
                     <div className="flex items-center gap-1">
-                      <span className="text-[14px] text-slate-600 opacity-50 group-hover:opacity-100 transition-opacity">
-                        {isCurrentSectionCollapsed ? '+' : '-'}
-                      </span>
-                      <GripVertical size={12} className="text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      {item.badge && <span className="text-[9px] bg-white/10 text-white px-2 py-0.5 rounded-full font-black mr-1">{item.badge}</span>}
+                      <button onClick={(e) => handleDeleteItem(e, g.index)} className="text-slate-500 opacity-0 group-hover:opacity-100 hover:text-red-400 transition-all p-1" title="Delete Item"><Trash2 size={12} /></button>
                     </div>
                   </div>
-                );
-              }
-              
-              if (isCurrentSectionCollapsed && currentSectionId) return null;
-
-              const displayLabel = isExecutive ? item.label?.replace('God', 'Executive') : item.label;
-              return (
-                <button 
-                  key={item.id || i} 
-                  draggable
-                  onDragStart={(e) => handleDragStart(e, i)}
-                  onDragOver={(e) => handleDragOver(e, i)}
-                  onDragEnd={() => setDraggedIdx(null)}
-                  onClick={() => setActiveTab(item.id!)} 
-                  className={cn("group cursor-grab active:cursor-grabbing w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold transition-all text-left", activeTab === item.id ? "bg-indigo-600 text-white shadow-xl shadow-indigo-900/40" : "text-slate-400 hover:bg-white/5 hover:text-slate-100", draggedIdx === i ? "opacity-30 border border-dashed border-indigo-400" : "", currentSectionId ? "pl-5" : "")}
-                >
-                  <span className="flex items-center gap-3">
-                    <GripVertical size={14} className={cn("transition-opacity", activeTab === item.id ? "text-white opacity-50" : "text-slate-500 opacity-0 group-hover:opacity-100")} />
-                    {item.icon && <item.icon size={18} className={activeTab === item.id ? "text-white" : "text-slate-500"} />} 
-                    {displayLabel}
-                  </span>
-                  {item.badge && <span className="text-[10px] bg-white/10 text-white px-2 py-0.5 rounded-full font-black">{item.badge}</span>}
-                </button>
-              );
-            });
-           })()}
-          <button
-            onClick={() => {
-              const name = prompt('Enter new group label:');
-              if (name && name.trim()) {
-                const newSec = { id: `_sec_custom_${Date.now()}`, section: name.trim().toUpperCase() };
-                const newItems = [...navItemsList, newSec];
-                setNavItemsList(newItems);
-                const ids = newItems.map(it => it.id!);
-                localStorage.setItem('gghp_nav_order', JSON.stringify(ids));
-                const sectionMap: Record<string, string> = {};
-                newItems.forEach(it => { if (it.section && it.id) sectionMap[it.id] = it.section; });
-                localStorage.setItem('gghp_section_names', JSON.stringify(sectionMap));
-              }
-            }}
-            className="w-full mt-4 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-emerald-400 hover:bg-white/5 border border-dashed border-white/10 hover:border-emerald-400/30 transition-all"
-          >
-            <Plus size={14} /> New Group
-          </button>
+               );
+             }
+           })}
+           <button
+             onClick={() => {
+               const name = prompt('Enter new group label:');
+               if (name && name.trim()) {
+                 const newSec = { id: `_sec_custom_${Date.now()}`, section: name.trim().toUpperCase() };
+                 const newItems = [...navItemsList, newSec];
+                 setNavItemsList(newItems);
+                 localStorage.setItem('gghp_nav_order', JSON.stringify(newItems.map(it => it.id!)));
+               }
+             }}
+             className="w-full mt-4 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-emerald-400 hover:bg-white/5 border border-dashed border-white/10 hover:border-emerald-400/30 transition-all"
+           >
+             <Plus size={14} /> New Group
+           </button>
         </div>
         <button onClick={onLogout} className="p-6 border-t border-white/5 flex items-center gap-3 text-slate-500 hover:text-white transition-colors">
           <LogOut size={18} /> <span className="text-sm font-black uppercase tracking-widest">Master Sign Out</span>
         </button>
       </div>
+
+      {activeGroup && (
+        <div className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col hidden md:flex shrink-0 shadow-2xl z-10 animate-in slide-in-from-left-8 duration-300 relative print:hidden">
+           <div className="p-6 border-b border-white/5 flex items-center justify-between">
+              <div>
+                 <h3 className="text-xs font-black text-white uppercase tracking-widest">{activeGroup.item.section}</h3>
+                 <p className="text-[10px] font-bold text-slate-500 mt-1">Operational Module</p>
+              </div>
+           </div>
+           <div className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+             {activeGroup.children.map((child: any) => {
+                const item = child.item;
+                const i = child.index;
+                const displayLabel = isExecutive ? item.label?.replace('God', 'Executive') : item.label;
+                return (
+                  <div 
+                    key={item.id || i} 
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, i)}
+                    onDragOver={(e) => handleDragOver(e, i)}
+                    onDragEnd={() => setDraggedIdx(null)}
+                    className={cn("group cursor-grab active:cursor-grabbing w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold transition-all", activeTab === item.id ? "bg-indigo-600 text-white shadow-xl shadow-indigo-900/40" : "text-slate-400 hover:bg-white/5 hover:text-slate-100", draggedIdx === i ? "opacity-30 border border-dashed border-indigo-400" : "")}
+                  >
+                    <button onClick={() => setActiveTab(item.id!)} className="flex items-center gap-3 flex-1 text-left">
+                      <GripVertical size={14} className={cn("transition-opacity", activeTab === item.id ? "text-white opacity-50" : "text-slate-500 opacity-0 group-hover:opacity-100")} />
+                      {item.icon && <item.icon size={18} className={activeTab === item.id ? "text-white" : "text-slate-500"} />} 
+                      {displayLabel}
+                    </button>
+                    <div className="flex items-center gap-1">
+                      {item.badge && <span className="text-[10px] bg-white/10 text-white px-2 py-0.5 rounded-full font-black mr-1">{item.badge}</span>}
+                      <button onClick={(e) => handleDeleteItem(e, i)} className="text-slate-500 opacity-0 group-hover:opacity-100 hover:text-red-400 transition-all p-1" title="Delete Item">
+                        <Trash2 size={12} />
+                      </button>
+                    </div>
+                  </div>
+                );
+             })}
+           </div>
+           <button onClick={() => {
+              const name = prompt('Enter new item label:');
+              if (name && name.trim()) {
+                 const newId = `_item_custom_${Date.now()}`;
+                 const newItem = { id: newId, label: name.trim(), icon: FileText };
+                 const insertIndex = activeGroup.children.length > 0 
+                     ? activeGroup.children[activeGroup.children.length - 1].index + 1 
+                     : activeGroup.index + 1;
+                 const newItemsList = [...navItemsList];
+                 newItemsList.splice(insertIndex, 0, newItem);
+                 setNavItemsList(newItemsList);
+                 localStorage.setItem('gghp_nav_order', JSON.stringify(newItemsList.map(it => it.id!)));
+              }
+           }} className="p-4 border-t border-white/5 text-center text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-emerald-400 hover:bg-white/5 transition-colors flex items-center justify-center gap-2">
+              <Plus size={12} /> Add Tool
+           </button>
+        </div>
+      )}
 
       <div className={cn("flex-1 flex flex-col h-[calc(100vh)] overflow-hidden transition-all duration-500", !isUnlocked && "blur-xl scale-[0.98] opacity-50 pointer-events-none")}>
         <div className="h-20 border-b border-slate-200 flex items-center justify-between px-10 bg-white shrink-0 print:hidden">
