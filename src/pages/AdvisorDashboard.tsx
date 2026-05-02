@@ -12,6 +12,8 @@ import { UserCalendar } from '../components/UserCalendar';
 import { PublicHealthDashboard } from './PublicHealthDashboard';
 import { ExternalAdminDashboard } from './ExternalAdminDashboard';
 import { StateAuthorityDashboard } from './StateAuthorityDashboard';
+import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
+import { EscalationSupportCalendar } from '../components/EscalationSupportCalendar';
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
@@ -24,6 +26,8 @@ const INTERNAL_NAV_ITEMS: NavItem[] = [
   { id: 'ai_training', label: 'My Assistant & Training', icon: Bot, badge: 'AI' },
   { id: 'messages', label: 'Messages', icon: MessageSquare, badge: 'Live' },
   { id: 'internal_scheduler', label: 'Calendar & Scheduler', icon: Clock, badge: 'New' },
+  { id: 'admin_support_calendar', label: 'Admin Support', icon: Clock, badge: 'Help' },
+  { id: 'escalation_support_calendar', label: 'Escalation Support', icon: Clock, badge: 'High Priority' },
   { id: '_sec_supreme', section: 'SUPREME COMMAND' },
   { id: 'patients', label: 'Registry Sovereignty', icon: HeartPulse },
   { id: 'business', label: 'Economic Infrastructure', icon: Building2 },
@@ -45,6 +49,35 @@ const INTERNAL_NAV_ITEMS: NavItem[] = [
 const AdvisorDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => void }) => {
   const [activeTab, setActiveTab] = useState('system_health');
 
+  // Draggable nav state with localStorage persistence
+  const [navItems, setNavItems] = useState(() => {
+    try {
+      const saved = localStorage.getItem('gghp_advisor_nav_order');
+      if (saved) {
+        const savedIds = JSON.parse(saved) as string[];
+        const idToItem = new Map(INTERNAL_NAV_ITEMS.map((item, i) => [item.id || `sec_${i}`, item]));
+        const ordered = savedIds.map(id => idToItem.get(id)).filter(Boolean) as typeof INTERNAL_NAV_ITEMS;
+        INTERNAL_NAV_ITEMS.forEach((item, i) => { const key = item.id || `sec_${i}`; if (!savedIds.includes(key)) ordered.push(item); });
+        return ordered;
+      }
+    } catch {}
+    return [...INTERNAL_NAV_ITEMS];
+  });
+  const [dragIdx, setDragIdx] = useState<number | null>(null);
+
+  const handleDragStart = (e: any, idx: number) => { setDragIdx(idx); e.dataTransfer.effectAllowed = 'move'; };
+  const handleDragOver = (e: any, idx: number) => {
+    e.preventDefault();
+    if (dragIdx === null || dragIdx === idx) return;
+    const items = [...navItems];
+    const item = items[dragIdx];
+    items.splice(dragIdx, 1);
+    items.splice(idx, 0, item);
+    setDragIdx(idx);
+    setNavItems(items);
+    localStorage.setItem('gghp_advisor_nav_order', JSON.stringify(items.map((it, i) => it.id || `sec_${i}`)));
+  };
+
   const fullName = user?.displayName || user?.email?.split('@')[0] || 'Advisor';
   const title = "Advisor";
 
@@ -65,11 +98,19 @@ const AdvisorDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => voi
         </div>
 
         <div className="flex-1 overflow-y-auto scrollbar-hide py-4 px-3 space-y-1">
-          {INTERNAL_NAV_ITEMS.map((item, idx) => {
+          {navItems.map((item, idx) => {
             if (item.section) {
               return (
-                <div key={`sec_${idx}`} className="pt-6 pb-2 px-3">
-                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{item.section}</p>
+                <div 
+                  key={`sec_${idx}`} 
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, idx)}
+                  onDragOver={(e) => handleDragOver(e, idx)}
+                  onDragEnd={() => setDragIdx(null)}
+                  className="pt-6 pb-2 px-3 cursor-grab active:cursor-grabbing hover:bg-white/5 transition-colors group relative"
+                >
+                  <span className="opacity-0 group-hover:opacity-50 transition-opacity absolute left-1 top-6 text-slate-500">⠿</span>
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-2">{item.section}</p>
                 </div>
               );
             }
@@ -78,9 +119,13 @@ const AdvisorDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => voi
             return (
               <button
                 key={item.id}
+                draggable
+                onDragStart={(e) => handleDragStart(e, idx)}
+                onDragOver={(e) => handleDragOver(e, idx)}
+                onDragEnd={() => setDragIdx(null)}
                 onClick={() => setActiveTab(item.id!)}
                 className={cn(
-                  "w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all text-sm font-medium",
+                  "w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all text-sm font-medium cursor-grab active:cursor-grabbing",
                   isActive 
                     ? "bg-emerald-600/10 text-emerald-400 shadow-lg shadow-emerald-900/20 border border-emerald-500/20" 
                     : "text-slate-400 hover:text-white hover:bg-white/5"
@@ -157,6 +202,8 @@ const AdvisorDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => voi
                 {activeTab === 'ai_training' && <AITrainingTab />}
                 {activeTab === 'messages' && <InternalMessenger currentUser={{ id: user?.uid || '1', name: fullName, role: title, avatar: null }} />}
                 {activeTab === 'internal_scheduler' && <div className="bg-white rounded-3xl overflow-hidden h-full"><UserCalendar user={user} isGodView={false} /></div>}
+                {activeTab === 'admin_support_calendar' && <div className="bg-white rounded-3xl overflow-hidden h-full"><AdminSupportCalendar /></div>}
+                {activeTab === 'escalation_support_calendar' && <div className="bg-white rounded-3xl overflow-hidden h-full"><EscalationSupportCalendar /></div>}
                 
                 {activeTab === 'patients' && <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50"><HeartPulse size={40} className="mx-auto text-pink-500 mb-4" /><h2 className="text-2xl font-bold text-white mb-2">Registry Sovereignty</h2><p className="text-slate-400">Unified citizen oversight and state-level registration reciprocities.</p></div>}
                 {activeTab === 'business' && <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50"><Building2 size={40} className="mx-auto text-emerald-500 mb-4" /><h2 className="text-2xl font-bold text-white mb-2">Economic Infrastructure</h2><p className="text-slate-400">Commercial force monitoring across all sectors.</p></div>}

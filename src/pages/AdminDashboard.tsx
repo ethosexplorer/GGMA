@@ -10,6 +10,7 @@ import { motion } from 'motion/react';
 import { METRC_MANUAL } from '../data/metrcManual';
 import { UserCalendar } from '../components/UserCalendar';
 import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
+import { EscalationSupportCalendar } from '../components/EscalationSupportCalendar';
 
 const NAV_ITEMS = [
   { section: 'INTERNAL COMMAND' },
@@ -29,11 +30,42 @@ const NAV_ITEMS = [
   { id: 'regulatory_library', label: 'Regulatory Library', icon: BookOpen },
   { id: 'support', label: 'Support Hub', icon: MessageSquare },
   { id: 'admin_support_calendar', label: 'Admin Support', icon: Clock, badge: 'Help' },
+  { id: 'escalation_support_calendar', label: 'Escalation Support', icon: Clock, badge: 'High Priority' },
   { id: 'settings', label: 'Admin Settings', icon: Settings },
 ];
 
 export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () => void | Promise<void>, user?: any, initialTab?: string }) => {
   const [activeTab, setActiveTab] = useState(initialTab || 'overview');
+  
+  // Draggable nav state with localStorage persistence
+  const [navItems, setNavItems] = useState(() => {
+    try {
+      const saved = localStorage.getItem('gghp_admin_dashboard_nav_order');
+      if (saved) {
+        const savedIds = JSON.parse(saved) as string[];
+        const idToItem = new Map(NAV_ITEMS.map((item, i) => [item.id || `sec_${i}`, item]));
+        const ordered = savedIds.map(id => idToItem.get(id)).filter(Boolean) as typeof NAV_ITEMS;
+        NAV_ITEMS.forEach((item, i) => { const key = item.id || `sec_${i}`; if (!savedIds.includes(key)) ordered.push(item); });
+        return ordered;
+      }
+    } catch {}
+    return [...NAV_ITEMS];
+  });
+  const [dragIdx, setDragIdx] = useState<number | null>(null);
+
+  const handleDragStart = (e: any, idx: number) => { setDragIdx(idx); e.dataTransfer.effectAllowed = 'move'; };
+  const handleDragOver = (e: any, idx: number) => {
+    e.preventDefault();
+    if (dragIdx === null || dragIdx === idx) return;
+    const items = [...navItems];
+    const item = items[dragIdx];
+    items.splice(dragIdx, 1);
+    items.splice(idx, 0, item);
+    setDragIdx(idx);
+    setNavItems(items);
+    localStorage.setItem('gghp_admin_dashboard_nav_order', JSON.stringify(items.map((it, i) => it.id || `sec_${i}`)));
+  };
+
   const [dbPatients, setDbPatients] = useState<any[]>([]);
   const [dbBusinesses, setDbBusinesses] = useState<any[]>([]);
 
@@ -660,6 +692,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
     switch (activeTab) {
       case 'calendar': return <div className="h-full w-full -m-10"><UserCalendar user={user} title="src\pages\Admin Calendar" subtitle="Appointments & Scheduling" /></div>;
       case 'admin_support_calendar': return <div className="h-full w-full -m-10"><AdminSupportCalendar /></div>;
+      case 'escalation_support_calendar': return <div className="h-full w-full -m-10"><EscalationSupportCalendar /></div>;
       case 'overview': return renderOverview();
       case 'staffing': return renderStaffing();
       case 'negligence': return renderNegligence();
@@ -712,10 +745,30 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
           </div>
         </div>
         <div className="flex-1 overflow-y-auto px-4 pb-6 space-y-1">
-          {NAV_ITEMS.map((item, i) => {
-            if ('section' in item) return <div key={i} className="pt-6 pb-2 px-3 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{item.section}</div>;
+          {navItems.map((item, i) => {
+            if ('section' in item) return (
+              <div 
+                key={i} 
+                draggable
+                onDragStart={(e) => handleDragStart(e, i)}
+                onDragOver={(e) => handleDragOver(e, i)}
+                onDragEnd={() => setDragIdx(null)}
+                className="pt-6 pb-2 px-3 cursor-grab active:cursor-grabbing hover:bg-white/5 transition-colors group relative"
+              >
+                <span className="opacity-0 group-hover:opacity-50 transition-opacity absolute left-1 top-6 text-slate-500">⠿</span>
+                <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] pl-2">{item.section}</div>
+              </div>
+            );
             return (
-              <button key={item.id} onClick={() => setActiveTab(item.id!)} className={cn("w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold transition-all text-left", activeTab === item.id ? "bg-indigo-600 text-white shadow-xl shadow-indigo-900/40" : "text-slate-400 hover:bg-white/5 hover:text-slate-100")}>
+              <button 
+                key={item.id} 
+                draggable
+                onDragStart={(e) => handleDragStart(e, i)}
+                onDragOver={(e) => handleDragOver(e, i)}
+                onDragEnd={() => setDragIdx(null)}
+                onClick={() => setActiveTab(item.id!)} 
+                className={cn("w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold transition-all text-left cursor-grab active:cursor-grabbing", activeTab === item.id ? "bg-indigo-600 text-white shadow-xl shadow-indigo-900/40" : "text-slate-400 hover:bg-white/5 hover:text-slate-100")}
+              >
                 <span className="flex items-center gap-3">{item.icon && <item.icon size={18} className={activeTab === item.id ? "text-white" : "text-slate-500"} />} {item.label}</span>
                 {item.badge && <span className="text-[10px] bg-red-500 text-white px-2 py-0.5 rounded-full font-black">{item.badge}</span>}
               </button>
