@@ -15,7 +15,7 @@ export interface SubscriptionPlan {
 export interface AddOn {
   id: string;
   name: string;
-  price: number;
+  price: number | 'Custom';
   per?: string; // e.g. "integration", "additional state"
 }
 
@@ -401,6 +401,7 @@ export const FEDERAL_ADDONS: AddOn[] = [
 
 
 export const ORGANIZATION_ADMIN_ADDON: AddOn = { id: 'addon_admin_backend', name: 'Admin Back End Dashboard (Organization Oversight)', price: 79, per: 'month' };
+export const CUSTOM_EXTERNAL_BACKEND_ADDON: AddOn = { id: 'addon_custom_backend', name: 'Custom External Backend Build (White-Label)', price: 'Custom', per: 'build + SLA' };
 
 export const getPlansForRole = (role: string, businessType: 'cannabis' | 'traditional', jurisdiction: string): SubscriptionPlan[] => {
   switch (role) {
@@ -430,6 +431,7 @@ export const getAddOnsForRole = (role: string, businessType: 'cannabis' | 'tradi
   
   if (role !== 'user' && role !== 'admin' && role !== 'external_admin') {
     addons.push(ORGANIZATION_ADMIN_ADDON);
+    addons.push(CUSTOM_EXTERNAL_BACKEND_ADDON);
   }
 
   if (role === 'business') {
@@ -494,6 +496,7 @@ export const getAllAddonsForLookup = (): AddOn[] => {
     ...BACKOFFICE_ADDONS,
     ...ADMIN_ADDONS,
     ORGANIZATION_ADMIN_ADDON,
+    CUSTOM_EXTERNAL_BACKEND_ADDON,
     ...CROSS_DASHBOARD_ADDONS,
     ...CARE_BUILDER_ADDONS,
   ];

@@ -26,9 +26,9 @@ const AddOnCard = ({ addon, isSelected, onToggle }: { key?: string; addon: AddOn
     </div>
     <div className="text-right shrink-0 ml-4">
       <span className={`font-black text-sm ${isSelected ? 'text-emerald-700' : 'text-emerald-600'}`}>
-        ${typeof addon.price === 'number' ? addon.price.toLocaleString(undefined, { minimumFractionDigits: addon.price % 1 !== 0 ? 2 : 0 }) : addon.price}
+        {typeof addon.price === 'number' ? `$${addon.price.toLocaleString(undefined, { minimumFractionDigits: addon.price % 1 !== 0 ? 2 : 0 })}` : addon.price}
       </span>
-      {!addon.per && <span className={`text-[10px] font-bold ${isSelected ? 'text-emerald-600' : 'text-slate-400'}`}>/mo</span>}
+      {!addon.per && typeof addon.price === 'number' && <span className={`text-[10px] font-bold ${isSelected ? 'text-emerald-600' : 'text-slate-400'}`}>/mo</span>}
     </div>
   </div>
 );
@@ -197,7 +197,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
                      <div key={addon.id} className="p-4 bg-slate-50 rounded-xl border border-slate-100">
                         <div className="flex justify-between items-start mb-2">
                            <p className="font-bold text-sm text-slate-800 leading-tight pr-4">{addon.name}</p>
-                           <p className="text-sm font-bold text-[#1a4731]">${addon.price}/mo</p>
+                           <p className="text-sm font-bold text-[#1a4731]">{typeof addon.price === 'number' ? `$${addon.price}/mo` : addon.price}</p>
                         </div>
                         <button className="text-xs text-red-500 font-bold hover:underline">Remove</button>
                      </div>
