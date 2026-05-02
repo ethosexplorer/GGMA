@@ -25,6 +25,7 @@ interface CheckoutModalProps {
 
 export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, planCategory }: CheckoutModalProps) => {
   const [step, setStep] = useState<'info' | 'review' | 'success'>('info');
+  const [accountCreated, setAccountCreated] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState({
     fullName: '',
@@ -96,8 +97,10 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
         companyName: form.company,
         createdAt: new Date().toISOString()
       });
+      setAccountCreated(true);
     } catch (err: any) {
       console.error('Firebase account creation error:', err);
+      setAccountCreated(false);
       if (err.code === 'auth/email-already-in-use') {
         alert('An account with this email already exists. We will still process your subscription request.');
       }
@@ -201,9 +204,9 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
 
                 <button onClick={() => {
                   handleClose();
-                  window.location.href = '/dashboard';
+                  window.location.href = accountCreated ? '/dashboard' : '/login';
                 }} className="px-8 py-3 bg-emerald-600 text-white rounded-2xl font-black hover:bg-emerald-500 transition-all shadow-lg">
-                  Done - Go to Dashboard
+                  {accountCreated ? 'Done - Go to Dashboard' : 'Done - Continue to Sign In'}
                 </button>
               </motion.div>
             )}
