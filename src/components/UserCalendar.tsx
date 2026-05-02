@@ -37,7 +37,7 @@ const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: string, subtitle?: string }) => {
-  const isFounder = user?.role === 'executive_founder' || user?.email?.toLowerCase() === 'globalgreenhp@gmail.com';
+  const isFounder = user?.role === 'executive_founder' || user?.email?.toLowerCase() === 'globalgreenhp@gmail.com' || user?.role === 'president' || user?.role === 'chief_compliance_director' || user?.role === 'executive_advisor' || user?.role === 'advisor';
   const availableCategories = isFounder ? ALL_CATEGORIES : [{ id: 'personal', label: 'Personal', color: 'bg-slate-500' }];
   const initialEvents = isFounder ? SEED_EVENTS : [];
 

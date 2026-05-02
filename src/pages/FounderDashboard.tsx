@@ -101,8 +101,8 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   const isBobAdvisor = emailLower.includes('bobmooregreenenergy') || displayNameLower.includes('bob') || user?.role === 'executive_advisor' || user?.role === 'advisor';
   const isExecutive = isMonica || isRyan || isBobAdvisor;
   
-  const firstName = user?.displayName ? user.displayName.split(' ')[0] : 'Shantell';
-  const fullName = user?.displayName || 'Shantell Robinson';
+  const fullName = isMonica ? 'Monica Green' : (isRyan ? 'Ryan Ferrari' : (isBobAdvisor ? 'Bob Moore' : (user?.displayName || 'Shantell Robinson')));
+  const firstName = fullName.split(' ')[0];
   const userTitle = isMonica ? 'Chief Executive Compliance Director' : (isRyan ? 'CEO' : (isBobAdvisor ? 'Executive Advisor' : 'Founder'));
 
   const [liveStats, setLiveStats] = useState({ totalUsers: '1.2M', netRevenue: '$18.2M' });
@@ -3404,7 +3404,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         return <div className="h-full w-full -m-10 p-10 min-h-screen overflow-auto bg-slate-50"><ITSupportDashboard /></div>;
       case 'logs': return renderLogs();
       case 'support_tickets': return renderSupportTickets();
-      case 'internal_scheduler': return <UserCalendar user={user} title="Executive Calendar" />;
+      case 'internal_scheduler': return <UserCalendar key={user?.role} user={user} title={isRyan ? "President's Calendar" : "Executive Calendar"} />;
       case 'subscriptions': return renderSubscriptionsTab();
       case 'negligence_intercept': return <div className="h-full w-full -m-10"><AdminDashboard user={user} initialTab="negligence" onLogout={() => {}} /></div>;
       case 'hr_intelligence': return renderHRIntelligence();
@@ -3763,10 +3763,10 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           </div>
           <div className="p-3 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-3 mb-4 backdrop-blur-md">
             <div className="w-10 h-10 rounded-xl overflow-hidden border border-white/20">
-              <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.displayName || "Founder")}&background=0F172A&color=fff&size=48`} alt="" className="w-full h-full" />
+              <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=0F172A&color=fff&size=48`} alt="" className="w-full h-full" />
             </div>
             <div>
-              <p className="text-xs font-black text-white">{user?.displayName || "Executive Founder"}</p>
+              <p className="text-xs font-black text-white">{fullName}</p>
               <p className="text-[10px] text-slate-400 font-bold">{userTitle}</p>
             </div>
           </div>

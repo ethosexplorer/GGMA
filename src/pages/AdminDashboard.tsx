@@ -42,7 +42,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
   const [regSearch, setRegSearch] = useState('');
   const [regCat, setRegCat] = useState<string | null>(null);
   
-  const isExecutive = user?.role === 'executive_founder' || user?.role === 'executive_ceo';
+  const isExecutive = user?.role === 'executive_founder' || user?.role === 'executive_ceo' || user?.role === 'president' || user?.role === 'chief_compliance_director' || user?.role === 'executive_advisor' || user?.role === 'advisor';
   const [isUnlocked, setIsUnlocked] = useState(isExecutive);
   const [pin, setPin] = useState('');
 
