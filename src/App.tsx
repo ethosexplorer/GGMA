@@ -5550,7 +5550,11 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       response = 'That sounds like a qualifying medical condition. To ensure you receive the correct state certification, I can begin your intake process now. \n\nCan I create an account for you to begin? (Yes / No)';
       setSignupStep(99);
     } else if (lower === 'no' || lower === 'nope' || lower === 'none' || lower.includes('don\'t') || lower.includes('do not') || lower.includes('none of')) {
-      response = 'No problem. If you\'re not ready for an application, you can explore our **IT Support**, **Legal Compliance**, or **Telehealth** nodes. \n\nHow can I help you navigate the ecosystem today?';
+      response = 'Goodbye! Returning you to the platform... 👋';
+      setMessages(prev => [...prev, { role: 'bot', text: response }]);
+      setTimeout(() => onNavigate('landing'), 1500);
+      setIsTyping(false);
+      return;
     } else if (lower.includes('talk') || lower.includes('speak') || lower.includes('human') || lower.includes('agent') || lower.includes('support') || lower.includes('call') || lower.includes('phone')) {
       response = 'I can route you to a live department representative. \n\nWould you like me to open a support ticket for you instead?';
     } else {
