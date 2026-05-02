@@ -3150,6 +3150,14 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         // Find the "scheduled" logic in handleSend and trigger it manually
         const scheduledText = "I have scheduled my consultation";
         handleSend(undefined, scheduledText);
+
+        // Send SMS confirmation alongside email
+        const phoneToText = userProfile?.phone || userProfile?.phoneNumber;
+        if (phoneToText) {
+          import('./lib/voip800').then(({ voip800 }) => {
+            voip800.sendSMS(phoneToText, "Global Green: Your consultation has been successfully scheduled! You will receive an email with the meeting link.");
+          }).catch(console.error);
+        }
       }
     };
     window.addEventListener('message', handleCalendlyMessage);
@@ -8370,6 +8378,10 @@ export default function App() {
           // Hide when previewing patient/business/external dashboards
           const isPreviewingExternal = roleOverride && ['patient', 'business', 'regulator_state', 'law_enforcement', 'enforcement_state', 'compliance_service'].includes(roleOverride);
           if (isPreviewingExternal) return null;
+          
+          // Take dialer off frontend totally
+          if (view === 'landing' || view === 'role-pricing' || view === 'login' || view === 'signup') return null;
+
           return (isFounder || isRyan || isMonica || isBob || isOpsView) ? <WebDialer /> : null;
         })()}
 
