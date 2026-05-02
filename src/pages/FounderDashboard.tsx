@@ -96,10 +96,10 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   const emailLower = user?.email?.toLowerCase() || '';
   const displayNameLower = user?.displayName?.toLowerCase() || '';
   
-  const isMonica = emailLower.includes('compliance.globalgreenhp') || emailLower.includes('monica') || displayNameLower.includes('monica');
-  const isRyan = emailLower.includes('ceo.globalgreenhp');
-  const isBobAdvisor = emailLower.includes('bobmooregreenenergy') || displayNameLower.includes('bob') || user?.role === 'executive_advisor';
-  const isExecutive = isMonica || isRyan;
+  const isMonica = emailLower.includes('compliance.globalgreenhp') || emailLower.includes('monica') || displayNameLower.includes('monica') || user?.role === 'chief_compliance_director';
+  const isRyan = emailLower.includes('ceo.globalgreenhp') || user?.role === 'president';
+  const isBobAdvisor = emailLower.includes('bobmooregreenenergy') || displayNameLower.includes('bob') || user?.role === 'executive_advisor' || user?.role === 'advisor';
+  const isExecutive = isMonica || isRyan || isBobAdvisor;
   
   const firstName = user?.displayName ? user.displayName.split(' ')[0] : 'Shantell';
   const fullName = user?.displayName || 'Shantell Robinson';
