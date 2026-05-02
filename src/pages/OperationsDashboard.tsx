@@ -7,6 +7,7 @@ import { Calendar, Building2, Users, FileText, Settings, Shield, Activity, Bell,
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { UserCalendar } from '../components/UserCalendar';
+import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
 import { ITSupportDashboard } from '../components/it/ITSupportDashboard';
 import { voip800 } from '../lib/voip800';
 
@@ -14,6 +15,7 @@ const NAV_ITEMS = [
   { section: 'CALL CENTER' },
   { id: 'call_center', label: 'Call Center Command', icon: Phone, badge: 'Live' },
   { section: 'SUPPORT OPERATIONS' },
+  { id: 'admin_support_calendar', label: 'Admin Support', icon: Clock, badge: 'Help' },
   { id: 'support', label: 'Active Support Tickets', icon: MessageSquare, badge: '12' },
   { id: 'calls', label: 'Call Queue', icon: Headphones, badge: '3' },
   { id: 'backoffice', label: 'Escalations Queue', icon: Cpu, dot: true },
@@ -643,6 +645,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
   const getContent = () => {
     switch (activeTab) {
       case 'call_center': return renderCallCenter();
+      case 'admin_support_calendar': return <div className="h-full w-full"><AdminSupportCalendar /></div>;
       case 'support': return renderSupport();
       case 'it_support': return renderITSupport();
       case 'hr_intelligence': return renderHRIntelligence();

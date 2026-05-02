@@ -12,6 +12,7 @@ import { UserCalendar } from '../components/UserCalendar';
 import { PublicHealthDashboard } from './PublicHealthDashboard';
 import { ExternalAdminDashboard } from './ExternalAdminDashboard';
 import { StateAuthorityDashboard } from './StateAuthorityDashboard';
+import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
@@ -24,6 +25,7 @@ const INTERNAL_NAV_ITEMS: NavItem[] = [
   { id: 'ai_training', label: 'My Assistant & Training', icon: Bot, badge: 'AI' },
   { id: 'messages', label: 'Messages', icon: MessageSquare, badge: 'Live' },
   { id: 'internal_scheduler', label: 'Calendar & Scheduler', icon: Clock, badge: 'New' },
+  { id: 'admin_support_calendar', label: 'Admin Support', icon: Clock, badge: 'Help' },
   { id: '_sec_supreme', section: 'SUPREME COMMAND' },
   { id: 'patients', label: 'Registry Sovereignty', icon: HeartPulse },
   { id: 'business', label: 'Economic Infrastructure', icon: Building2 },
@@ -157,6 +159,7 @@ const PresidentDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => v
                 {activeTab === 'ai_training' && <AITrainingTab />}
                 {activeTab === 'messages' && <InternalMessenger currentUser={{ id: user?.uid || '1', name: fullName, role: title, avatar: null }} />}
                 {activeTab === 'internal_scheduler' && <div className="bg-white rounded-3xl overflow-hidden h-full"><UserCalendar user={user} isGodView={false} /></div>}
+                {activeTab === 'admin_support_calendar' && <div className="bg-white rounded-3xl overflow-hidden h-full"><AdminSupportCalendar /></div>}
                 
                 {activeTab === 'patients' && <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50"><HeartPulse size={40} className="mx-auto text-pink-500 mb-4" /><h2 className="text-2xl font-bold text-white mb-2">Registry Sovereignty</h2><p className="text-slate-400">Unified citizen oversight and state-level registration reciprocities.</p></div>}
                 {activeTab === 'business' && <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50"><Building2 size={40} className="mx-auto text-emerald-500 mb-4" /><h2 className="text-2xl font-bold text-white mb-2">Economic Infrastructure</h2><p className="text-slate-400">Commercial force monitoring across all sectors.</p></div>}

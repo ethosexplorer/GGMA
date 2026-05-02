@@ -9,6 +9,7 @@ import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { METRC_MANUAL } from '../data/metrcManual';
 import { UserCalendar } from '../components/UserCalendar';
+import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
 
 const NAV_ITEMS = [
   { section: 'INTERNAL COMMAND' },
@@ -27,6 +28,7 @@ const NAV_ITEMS = [
   { id: 'ai_monitor', label: 'AI Monitoring', icon: Bot },
   { id: 'regulatory_library', label: 'Regulatory Library', icon: BookOpen },
   { id: 'support', label: 'Support Hub', icon: MessageSquare },
+  { id: 'admin_support_calendar', label: 'Admin Support', icon: Clock, badge: 'Help' },
   { id: 'settings', label: 'Admin Settings', icon: Settings },
 ];
 
@@ -657,6 +659,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
   const getContent = () => {
     switch (activeTab) {
       case 'calendar': return <div className="h-full w-full -m-10"><UserCalendar user={user} title="src\pages\Admin Calendar" subtitle="Appointments & Scheduling" /></div>;
+      case 'admin_support_calendar': return <div className="h-full w-full -m-10"><AdminSupportCalendar /></div>;
       case 'overview': return renderOverview();
       case 'staffing': return renderStaffing();
       case 'negligence': return renderNegligence();

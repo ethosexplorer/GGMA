@@ -31,6 +31,7 @@ import { RolePermissionsPanel } from '../components/RolePermissionsPanel';
 import { InternalMessenger } from '../components/messaging/InternalMessenger';
 import { AITrainingTab } from '../components/AITrainingTab';
 import { UserCalendar } from '../components/UserCalendar';
+import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
 import { voip800 } from '../lib/voip800';
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
@@ -45,6 +46,7 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'messages', label: 'Messages', icon: MessageSquare, badge: 'Live' },
   { id: 'operations', label: 'Ops Center (Live)', icon: Cpu, badge: 'Live' },
   { id: 'internal_admin', label: 'Internal Team', icon: Shield, badge: '!' },
+  { id: 'admin_support_calendar', label: 'Admin Support', icon: Clock, badge: 'Help' },
 
   // Founder/CEO Popout
   { id: '_sec_founder', section: 'FOUNDER/CEO' },
@@ -3405,6 +3407,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       case 'logs': return renderLogs();
       case 'support_tickets': return renderSupportTickets();
       case 'internal_scheduler': return <UserCalendar key={user?.role} user={user} title={isRyan ? "President's Calendar" : (isMonica ? "Compliance Director's Calendar" : (isBobAdvisor ? "Advisory Calendar" : "Executive Calendar"))} />;
+      case 'admin_support_calendar': return <div className="h-full w-full -m-10"><AdminSupportCalendar /></div>;
       case 'subscriptions': return renderSubscriptionsTab();
       case 'negligence_intercept': return <div className="h-full w-full -m-10"><AdminDashboard user={user} initialTab="negligence" onLogout={() => setActiveTab(isExecutive ? 'ai_training' : 'overview')} /></div>;
       case 'hr_intelligence': return renderHRIntelligence();
