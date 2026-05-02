@@ -38,9 +38,9 @@ const monthNames = ['January','February','March','April','May','June','July','Au
 
 export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: string, subtitle?: string }) => {
   const isExecutive = user?.role === 'president' || user?.role === 'chief_compliance_director' || user?.role === 'executive_advisor' || user?.role === 'advisor';
-  const isFounder = user?.role === 'executive_founder' || user?.email?.toLowerCase() === 'globalgreenhp@gmail.com' || isExecutive;
+  const isFounder = user?.role === 'executive_founder' || user?.email?.toLowerCase() === 'globalgreenhp@gmail.com';
   const availableCategories = isFounder ? ALL_CATEGORIES : [{ id: 'personal', label: 'Personal', color: 'bg-slate-500' }];
-  const initialEvents = (isFounder && !isExecutive) ? SEED_EVENTS : [];
+  const initialEvents = isFounder ? SEED_EVENTS : [];
 
   const storageKey = `gghp_calendar_v1_${user?.uid || user?.role || 'default'}`;
   const [events, setEvents] = useState<CalEvent[]>(() => {
