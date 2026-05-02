@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Shield, CreditCard, ArrowRight, Loader2, Building2, Mail, Phone, User, FileText, CircleCheck } from 'lucide-react';
 import { turso } from '../lib/turso';
+import { auth, db } from '../firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 
 interface CheckoutItem {
   name: string;
@@ -28,6 +31,7 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
     email: '',
     phone: '',
     company: '',
+    password: '',
     notes: '',
   });
 
@@ -40,7 +44,7 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
   const totalDisplay = total === 0 ? 'Free' : `$${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   const billingLabel = billing === 'monthly' ? '/mo' : '/yr';
 
-  const isValid = form.fullName.trim() && form.email.trim() && form.email.includes('@');
+  const isValid = form.fullName.trim() && form.email.trim() && form.email.includes('@') && form.password.trim().length >= 6;
 
   const handleSubmit = async () => {
     if (!isValid) return;
@@ -78,6 +82,25 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
       });
     } catch (err) {
       console.warn('DB save skipped (table may not exist yet):', err);
+    }
+
+    // Create Firebase Auth User Account
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
+      await setDoc(doc(db, 'users', userCredential.user.uid), {
+        uid: userCredential.user.uid,
+        email: form.email,
+        role: 'user', // Default basic role, upgraded upon payment processing
+        status: 'Pending',
+        displayName: form.fullName,
+        companyName: form.company,
+        createdAt: new Date().toISOString()
+      });
+    } catch (err: any) {
+      console.error('Firebase account creation error:', err);
+      if (err.code === 'auth/email-already-in-use') {
+        alert('An account with this email already exists. We will still process your subscription request.');
+      }
     }
 
     // Send email notification to the team
@@ -176,8 +199,11 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
                   Payment via ACH Bank Transfer • Secure & Encrypted
                 </div>
 
-                <button onClick={handleClose} className="px-8 py-3 bg-emerald-600 text-white rounded-2xl font-black hover:bg-emerald-500 transition-all shadow-lg">
-                  Done
+                <button onClick={() => {
+                  handleClose();
+                  window.location.href = '/dashboard';
+                }} className="px-8 py-3 bg-emerald-600 text-white rounded-2xl font-black hover:bg-emerald-500 transition-all shadow-lg">
+                  Done - Go to Dashboard
                 </button>
               </motion.div>
             )}
@@ -250,6 +276,18 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
                         value={form.email}
                         onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
                         placeholder="you@company.com"
+                        className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-slate-600 mb-1.5 flex items-center gap-1.5">
+                        <Shield size={12} /> Secure Password <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="password"
+                        value={form.password}
+                        onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
+                        placeholder="Create a password (min 6 chars)"
                         className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
                       />
                     </div>
