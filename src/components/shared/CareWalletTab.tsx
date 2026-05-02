@@ -97,6 +97,26 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
         </div>
       </div>
 
+      {/* Compassion Network Points Summary */}
+      {userRole === 'patient' && (
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+          <h3 className="font-bold text-slate-800 mb-4">Compassion Network</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { label: 'Wallet Balance', value: `$${compassionBalance.toFixed(2)}`, color: 'text-emerald-600' },
+              { label: 'Points Earned', value: carePoints.toString(), color: 'text-blue-600' },
+              { label: 'Points Redeemed', value: '318', color: 'text-purple-600' },
+              { label: 'Pending Points', value: '45', color: 'text-amber-600' },
+            ].map((stat, i) => (
+              <div key={i} className="p-4 rounded-xl bg-slate-50 border border-slate-100 text-center">
+                <p className="text-xs text-slate-500 font-medium">{stat.label}</p>
+                <p className={cn("text-2xl font-black mt-1", stat.color)}>{stat.value}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* GGE Compassion Allocation */}
         <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm relative overflow-hidden group">
