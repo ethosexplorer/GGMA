@@ -31,6 +31,7 @@ import { RolePermissionsPanel } from '../components/RolePermissionsPanel';
 import { InternalMessenger } from '../components/messaging/InternalMessenger';
 import { CallCenterCommandTab } from '../components/telephony/CallCenterCommandTab';
 import { AITrainingTab } from '../components/AITrainingTab';
+import { GGEWorldHRHub } from './GGEWorldHRHub';
 import { UserCalendar } from '../components/UserCalendar';
 import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
 import { EscalationSupportCalendar } from '../components/EscalationSupportCalendar';
@@ -42,6 +43,7 @@ const NAV_VERSION = 21; // Bumped: Move Ops Center and Internal Admin to single 
 
 const INITIAL_NAV_ITEMS: NavItem[] = [
   // Single tabs
+  { id: 'gge_world_hr', label: 'GGE World Master Account', icon: Globe, badge: 'New' },
   { id: 'ai_training', label: 'My Asst AI', icon: Bot, badge: 'AI' },
   { id: 'overview', label: 'God Overview', icon: Activity },
   { id: 'internal_scheduler', label: 'Calendar / Scheduler', icon: Clock, badge: 'New' },
@@ -3389,6 +3391,8 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         return <SubscriptionPortal userRole="executive_founder" initialPlanId="fed_pro" />;
       case 'investor_sandbox': 
         return <div className="h-full w-full -m-10"><InvestorSandboxTab /></div>;
+      case 'gge_world_hr': 
+        return <div className="h-full w-full"><GGEWorldHRHub user={user} /></div>;
       case 'overview': return renderOverview();
       case 'accounting_ledger': return renderAccountingLedger();
       case 'launch_script': return renderLaunchScript();
