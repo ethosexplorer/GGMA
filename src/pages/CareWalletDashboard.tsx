@@ -28,7 +28,7 @@ const loyaltyTiers = [
   { name: 'Platinum', threshold: 10000, multiplier: '5x', color: 'text-purple-600', bg: 'bg-purple-50' },
 ];
 
-export const CareWalletDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
+export const CareWalletDashboard = ({ onLogout, onNavigate, user }: { onLogout?: () => void, onNavigate?: (view: string) => void, user?: any }) => {
   const [activeTab, setActiveTab] = useState('wallet');
   const [dbTransactions, setDbTransactions] = useState<any[]>([]);
 
@@ -90,7 +90,13 @@ export const CareWalletDashboard = ({ onLogout, user }: { onLogout?: () => void,
           </button>
         </div>
         
-        <div className="p-4 border-t border-slate-800">
+        <div className="p-4 border-t border-slate-800 space-y-2">
+          {onNavigate && (
+            <button onClick={() => onNavigate('landing')} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-colors">
+              <ArrowDownLeft size={16} />
+              <span className="text-sm font-medium">Back to Home</span>
+            </button>
+          )}
           <button onClick={onLogout} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-400 hover:bg-red-500/10 transition-colors">
             <span className="text-sm font-medium">Logout</span>
           </button>

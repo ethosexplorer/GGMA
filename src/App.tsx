@@ -8144,6 +8144,11 @@ export default function App() {
                 <WhatIsCareWalletPage onNavigate={handleNavigate} />
               </motion.div>
             )}
+          {view === 'care-wallet-dashboard' && (
+            <motion.div key="care-wallet-dashboard" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+              <CareWalletDashboard onLogout={handleLogout} onNavigate={handleNavigate} user={userProfile} />
+            </motion.div>
+          )}
             {view === 'landing' && (
             <LandingPage
               onNavigate={(v, role) => {

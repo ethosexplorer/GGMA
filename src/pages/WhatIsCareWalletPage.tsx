@@ -26,7 +26,7 @@ export const WhatIsCareWalletPage = ({ onNavigate }: { onNavigate: (view: string
       </nav>
 
       {/* Hero Section */}
-      <section style={{ background: 'linear-gradient(to bottom right, #172554, #0f172a, #1e1b4b)' }} className="py-24 px-6 relative overflow-hidden text-white">
+      <section className="bg-slate-900 bg-gradient-to-br from-blue-950 via-slate-900 to-indigo-950 py-24 px-6 relative overflow-hidden text-white">
         {/* Abstract Background Elements */}
         <div style={{ backgroundColor: 'rgba(59, 130, 246, 0.1)' }} className="absolute top-0 right-0 w-[800px] h-[800px] rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
         <div style={{ backgroundColor: 'rgba(99, 102, 241, 0.1)' }} className="absolute bottom-0 left-0 w-[600px] h-[600px] rounded-full blur-[100px] translate-y-1/3 -translate-x-1/4 pointer-events-none"></div>
@@ -45,7 +45,7 @@ export const WhatIsCareWalletPage = ({ onNavigate }: { onNavigate: (view: string
             
             <div className="flex flex-wrap gap-4 pt-4">
               <button 
-                onClick={() => onNavigate('signup')}
+                onClick={() => onNavigate('care-wallet-dashboard')}
                 className="px-8 py-4 bg-blue-500 hover:bg-blue-400 text-white rounded-2xl font-black transition-all shadow-xl shadow-blue-500/20 flex items-center gap-2"
               >
                 Open Your Wallet <ArrowRight size={18} />
@@ -187,7 +187,7 @@ export const WhatIsCareWalletPage = ({ onNavigate }: { onNavigate: (view: string
           <p className="text-xl text-blue-100 font-medium">
             Join the Compassion Network today and start building your Care Points instantly upon signup.
           </p>
-          <button onClick={() => onNavigate('signup')} className="px-10 py-5 bg-white text-blue-700 rounded-2xl font-black text-lg hover:bg-blue-50 transition-all shadow-2xl flex items-center gap-2 mx-auto">
+          <button onClick={() => onNavigate('role-pricing')} className="px-10 py-5 bg-white text-blue-700 rounded-2xl font-black text-lg hover:bg-blue-50 transition-all shadow-2xl flex items-center gap-2 mx-auto">
             Create Your Account <ArrowRight size={20} />
           </button>
         </div>
