@@ -16,6 +16,7 @@ const NAV_ITEMS = [
   
   { section: 'LIVE OPERATIONS' },
   { id: 'ops_livecenter', label: 'Ops LiveCenter', icon: Headphones, badge: 'Live' },
+  { id: 'applications_queue', label: 'Applications Queue', icon: FileText, badge: '502' },
   { id: 'internal_admin', label: 'Internal Admin Ops', icon: Shield },
   { id: 'gge_processor', label: 'GGE Processor', icon: Cpu },
   
@@ -197,6 +198,7 @@ export const GGEWorldHRHub = ({ user }: { user?: any }) => {
               {activeTab === 'academy_ai' && renderAIAcademy()}
               
               {activeTab === 'ops_livecenter' && <div className="h-full"><CallCenterCommandTab /></div>}
+              {activeTab === 'applications_queue' && renderPlaceholder('Applications Queue', 'Review patient, business, and licensing applications.', FileText, 'text-amber-500')}
               
               {activeTab === 'hr_intelligence' && renderPlaceholder('HR Intelligence Hub', 'Manage onboarding, personnel records, and department assignments.', Users, 'text-blue-500')}
               {activeTab === 'hr_recruitment' && renderPlaceholder('Job Recruitment Queue', 'Track job applicants, interview stages, and new hire paperwork.', Briefcase, 'text-emerald-500')}
