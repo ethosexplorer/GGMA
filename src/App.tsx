@@ -499,15 +499,7 @@ const DashboardLayout = ({ children, role, onLogout, userProfile, onOpenConcierg
         </nav>
 
         <div className="p-4 border-t border-slate-100 space-y-2">
-          {onOpenConcierge && (
-            <button
-              onClick={onOpenConcierge}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-white bg-[#1a4731] hover:bg-[#153a28] shadow-sm transition-colors"
-            >
-              <Sparkles size={20} />
-              {isSidebarOpen && <span className="text-sm font-black">Concierge Action</span>}
-            </button>
-          )}
+
           <button
             onClick={onLogout}
             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-red-500 hover:bg-red-50 transition-colors"
