@@ -8010,7 +8010,7 @@ export default function App() {
     sessionStorage.removeItem('gghp_jurisdiction');
     sessionStorage.removeItem('gghp_jurisdiction_locked');
     await signOut(auth);
-    window.location.href = '/';
+    window.location.href = '/login';
   };
 
   const handlePasswordReset = async (email: string) => {
