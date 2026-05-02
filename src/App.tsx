@@ -1844,10 +1844,11 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
   );
 };
 
-const SylaraFloatingWidget = ({ onClick, persona = 'sylara', userProfile }: { onClick: () => void, persona?: 'sylara' | 'larry', userProfile?: any }) => {
-  const isRyan = userProfile && userProfile.email?.toLowerCase().includes('ceo.globalgreenhp');
-  const isMonica = userProfile && (userProfile.email?.toLowerCase().includes('compliance.globalgreenhp') || userProfile.email?.toLowerCase().includes('monica'));
-  const isFounderAssistant = userProfile && userProfile.role === 'executive_founder' && !isRyan && !isMonica;
+const SylaraFloatingWidget = ({ onClick, persona = 'sylara', userProfile, activeRole }: { onClick: () => void, persona?: 'sylara' | 'larry', userProfile?: any, activeRole?: string }) => {
+  const currentRole = activeRole || userProfile?.role;
+  const isRyan = currentRole === 'executive_founder' && userProfile && userProfile.email?.toLowerCase().includes('ceo.globalgreenhp');
+  const isMonica = currentRole === 'executive_founder' && userProfile && (userProfile.email?.toLowerCase().includes('compliance.globalgreenhp') || userProfile.email?.toLowerCase().includes('monica'));
+  const isFounderAssistant = currentRole === 'executive_founder' && userProfile && userProfile.role === 'executive_founder' && !isRyan && !isMonica;
 
   let title = persona === 'sylara' ? 'Sylara Intake Agent' : 'L.A.R.R.Y Enforcement Engine';
   let subtitle = persona === 'sylara' ? 'Personal Assistant' : 'Legal & Compliance AI';
@@ -2923,12 +2924,14 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
 };
 
 // --- L.A.R.R.Y AI Chatbot for Med Card / Business License Assistance ---
-export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card', userProfile, jurisdiction = 'Oklahoma' }: any) => {
+export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card', userProfile, jurisdiction = 'Oklahoma', activeRole }: any) => {
   const [isBusiness, setIsBusiness] = useState(variant === 'business');
   const isGeneral = variant === 'general' || variant === 'ggma' || variant === 'rip' || variant === 'sinc';
-  const isRyan = userProfile && userProfile.email?.toLowerCase().includes('ceo.globalgreenhp');
-  const isMonica = userProfile && (userProfile.email?.toLowerCase().includes('compliance.globalgreenhp') || userProfile.email?.toLowerCase().includes('monica'));
-  const isFounderAssistant = userProfile && userProfile.role === 'executive_founder' && !isRyan && !isMonica;
+  
+  const currentRole = activeRole || userProfile?.role;
+  const isRyan = currentRole === 'executive_founder' && userProfile && userProfile.email?.toLowerCase().includes('ceo.globalgreenhp');
+  const isMonica = currentRole === 'executive_founder' && userProfile && (userProfile.email?.toLowerCase().includes('compliance.globalgreenhp') || userProfile.email?.toLowerCase().includes('monica'));
+  const isFounderAssistant = currentRole === 'executive_founder' && userProfile && userProfile.role === 'executive_founder' && !isRyan && !isMonica;
   
   const getGreeting = () => {
     const date = "April 21, 2026";
@@ -8363,7 +8366,7 @@ export default function App() {
           const isMon = email.includes('compliance.globalgreenhp') || email.includes('monica');
           
           if (view === 'landing' || view === 'role-pricing' || view === 'larry-chatbot' || isFndr || isRyn || isMon) return null;
-          return <SylaraFloatingWidget userProfile={userProfile} persona={currentPersona} onClick={() => setShowLarryModal(true)} />;
+          return <SylaraFloatingWidget userProfile={userProfile} activeRole={role} persona={currentPersona} onClick={() => setShowLarryModal(true)} />;
         })()}
 
         {/* Floating Modal for Chatbot */}
@@ -8379,6 +8382,7 @@ export default function App() {
               <div className="flex-1 overflow-y-auto relative z-10">
                 <LarryMedCardChatbot 
                   userProfile={userProfile}
+                  activeRole={role}
                   onNavigate={(view: any, role: any) => { 
                     setShowLarryModal(false); 
                     setView(view); 
