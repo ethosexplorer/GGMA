@@ -400,6 +400,8 @@ export const FEDERAL_ADDONS: AddOn[] = [
 
 
 
+export const ORGANIZATION_ADMIN_ADDON: AddOn = { id: 'addon_admin_backend', name: 'Admin Back End Dashboard (Organization Oversight)', price: 79, per: 'month' };
+
 export const getPlansForRole = (role: string, businessType: 'cannabis' | 'traditional', jurisdiction: string): SubscriptionPlan[] => {
   switch (role) {
     case 'user': return B2C_PLANS;
@@ -425,6 +427,11 @@ export const getPlansForRole = (role: string, businessType: 'cannabis' | 'tradit
 
 export const getAddOnsForRole = (role: string, businessType: 'cannabis' | 'traditional', jurisdiction?: string): AddOn[] => {
   const addons: AddOn[] = [];
+  
+  if (role !== 'user' && role !== 'admin' && role !== 'external_admin') {
+    addons.push(ORGANIZATION_ADMIN_ADDON);
+  }
+
   if (role === 'business') {
     addons.push(...COMMON_B2B_ADDONS);
     if (businessType === 'cannabis') {
@@ -486,6 +493,7 @@ export const getAllAddonsForLookup = (): AddOn[] => {
     ...STATE_ADDONS,
     ...BACKOFFICE_ADDONS,
     ...ADMIN_ADDONS,
+    ORGANIZATION_ADMIN_ADDON,
     ...CROSS_DASHBOARD_ADDONS,
     ...CARE_BUILDER_ADDONS,
   ];

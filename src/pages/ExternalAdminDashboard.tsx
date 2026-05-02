@@ -34,8 +34,6 @@ const QUEUE = [
 export const ExternalAdminDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const entityName = user?.entityName || 'Apex Health LLC';
-  const [isUnlocked, setIsUnlocked] = useState(true);
-  const [pin, setPin] = useState('');
 
   const renderOverview = () => (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
@@ -165,30 +163,8 @@ export const ExternalAdminDashboard = ({ onLogout, user }: { onLogout?: () => vo
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 text-slate-800 font-sans relative">
-      {!isUnlocked && (
-        <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-slate-900/60 backdrop-blur-2xl animate-in fade-in duration-300">
-          <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-2xl text-center max-w-sm w-full animate-in zoom-in-95 duration-500">
-            <Lock size={48} className="text-indigo-500 mx-auto mb-6" />
-            <h2 className="text-2xl font-black text-slate-900 mb-2">Restricted Access</h2>
-            <p className="text-slate-500 text-sm mb-6">Enter 4-digit Oversight PIN</p>
-            <input 
-              type="password" 
-              maxLength={4} 
-              value={pin} 
-              onChange={(e) => {
-                 setPin(e.target.value);
-                 if (e.target.value === '1234') setIsUnlocked(true);
-              }} 
-              className="w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 rounded-xl p-4 text-center text-3xl font-black text-slate-800 tracking-[1em] mb-4 outline-none transition-all" 
-              placeholder="••••"
-            />
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-4">Authorized Personnel Only</p>
-          </div>
-        </div>
-      )}
-
       {/* SIDEBAR */}
-      <div className={cn("w-64 bg-slate-900 border-r border-slate-800 flex flex-col hidden md:flex shrink-0 transition-all duration-500", !isUnlocked && "blur-md opacity-50 pointer-events-none")}>
+      <div className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col hidden md:flex shrink-0 transition-all duration-500">
         <div className="p-5 pb-2">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300">
@@ -223,7 +199,7 @@ export const ExternalAdminDashboard = ({ onLogout, user }: { onLogout?: () => vo
       </div>
 
       {/* MAIN */}
-      <div className={cn("flex-1 flex flex-col h-[calc(100vh)] overflow-hidden bg-slate-50 transition-all duration-500", !isUnlocked && "blur-xl scale-[0.98] opacity-50 pointer-events-none")}>
+      <div className="flex-1 flex flex-col h-[calc(100vh)] overflow-hidden bg-slate-50 transition-all duration-500">
         <div className="h-14 border-b border-slate-200 flex items-center justify-between px-6 bg-white shrink-0">
           <div className="flex items-center gap-3">
             <h1 className="text-lg font-bold text-slate-800 tracking-tight">Admin Dashboard – {entityName}</h1>
