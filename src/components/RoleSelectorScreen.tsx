@@ -9,9 +9,9 @@ export const RoleSelectorScreen = ({ userProfile, onSelect, onLogout }: { userPr
 
   const allRoles = [
     { id: 'executive_founder', label: 'Quality Assurance Command (Founder)', desc: 'Full System Architecture & Analytics', icon: Shield, color: 'indigo' },
-    { id: 'executive_ceo', label: 'CEO Executive Dashboard (Ryan)', desc: 'Enterprise Operations & Strategy', icon: Briefcase, color: 'indigo' },
-    { id: 'executive_monica', label: 'Compliance Director (Monica)', desc: 'Regulatory & Compliance Command', icon: Shield, color: 'indigo' },
-    { id: 'executive_advisor', label: 'Executive Advisor (Bob)', desc: 'Oversight & Advisory Access', icon: Briefcase, color: 'emerald' },
+    { id: 'president', label: 'President Dashboard (Ryan)', desc: 'Enterprise Operations & Strategy', icon: Briefcase, color: 'indigo' },
+    { id: 'chief_compliance_director', label: 'Chief Compliance Director (Monica)', desc: 'Regulatory & Compliance Command', icon: Shield, color: 'indigo' },
+    { id: 'advisor', label: 'Advisor Dashboard (Bob)', desc: 'Oversight & Advisory Access', icon: Briefcase, color: 'emerald' },
     { id: 'patient', label: 'Patient Portal', desc: 'Medical Cards & Care Wallet', icon: User, color: 'emerald' },
     { id: 'business', label: 'Business Dashboard', desc: 'Dispensary & Cultivation', icon: Building2, color: 'blue' },
     { id: 'regulator_state', label: 'State Authority', desc: 'OMMA Regulatory Hub', icon: Lock, color: 'amber' },
@@ -26,11 +26,11 @@ export const RoleSelectorScreen = ({ userProfile, onSelect, onLogout }: { userPr
   let roles = allRoles;
   if (isBobAdvisor) {
     // Bob sees everything EXCEPT Founder, Ryan, and Monica's exclusive dashboards
-    roles = allRoles.filter(r => !['executive_founder', 'executive_ceo', 'executive_monica'].includes(r.id));
+    roles = allRoles.filter(r => !['executive_founder', 'president', 'chief_compliance_director'].includes(r.id));
   } else if (isRyan) {
-    roles = allRoles.filter(r => !['executive_founder', 'executive_monica', 'executive_advisor', 'regulator_state', 'regulator_federal', 'law_enforcement'].includes(r.id));
+    roles = allRoles.filter(r => !['executive_founder', 'chief_compliance_director', 'advisor', 'regulator_state', 'regulator_federal', 'law_enforcement'].includes(r.id));
   } else if (isMonica) {
-    roles = allRoles.filter(r => !['executive_founder', 'executive_ceo', 'executive_advisor', 'regulator_state', 'regulator_federal', 'law_enforcement'].includes(r.id));
+    roles = allRoles.filter(r => !['executive_founder', 'president', 'advisor', 'regulator_state', 'regulator_federal', 'law_enforcement'].includes(r.id));
   } else {
     // Founder sees all executive tiles
     roles = allRoles;
