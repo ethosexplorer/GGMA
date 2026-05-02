@@ -16,7 +16,7 @@ const ADMIN_CATEGORIES = [
 const HOURS = Array.from({ length: 16 }, (_, i) => i + 6); // 6AM-9PM
 
 const SEED_EVENTS: CalEvent[] = [
-  { id: '1', title: 'New Registration Assistance', date: '2026-05-03', startTime: '10:00', endTime: '10:30', category: 'admin_support', color: 'bg-pink-500', attendees: 'asstsupport@gmail.com', meetLink: 'https://calendly.com/asstsupport' },
+  { id: '1', title: 'New Registration Assistance', date: '2026-05-03', startTime: '10:00', endTime: '10:30', category: 'admin_support', color: 'bg-pink-500', attendees: 'support@ggp-os.com', meetLink: 'https://calendly.com/' },
 ];
 
 const fmt = (d: Date) => d.toISOString().split('T')[0];
@@ -43,7 +43,7 @@ export const AdminSupportCalendar = () => {
   const [current, setCurrent] = useState(new Date(2026, 3, 28)); // April 28, 2026
   const [selectedDate, setSelectedDate] = useState<string>(fmt(new Date(2026, 3, 28)));
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: 'admin_support', description: '', attendees: 'asstsupport@gmail.com', location: '', meetLink: 'https://calendly.com/asstsupport' });
+  const [form, setForm] = useState({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: 'admin_support', description: '', attendees: 'support@ggp-os.com', location: '', meetLink: 'https://calendly.com/' });
   const [filterCat, setFilterCat] = useState<string | null>(null);
 
   const filtered = filterCat ? events.filter(e => e.category === filterCat) : events;
@@ -81,7 +81,7 @@ export const AdminSupportCalendar = () => {
     const cat = availableCategories.find(c => c.id === form.category);
     setEvents(prev => [...prev, { ...form, id: Date.now().toString(), color: cat?.color || 'bg-pink-500' }]);
     setShowForm(false);
-    setForm({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: 'admin_support', description: '', attendees: 'asstsupport@gmail.com', location: '', meetLink: 'https://calendly.com/asstsupport' });
+    setForm({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: 'admin_support', description: '', attendees: 'support@ggp-os.com', location: '', meetLink: 'https://calendly.com/' });
   };
 
   const deleteEvent = (id: string) => setEvents(prev => prev.filter(e => e.id !== id));
@@ -91,7 +91,7 @@ export const AdminSupportCalendar = () => {
     setForm(f => ({ ...f, meetLink: `https://meet.google.com/${code}` }));
   };
 
-  const GOOGLE_EMAIL = 'asstsupport@gmail.com';
+  const GOOGLE_EMAIL = 'support@ggp-os.com';
 
   const openGoogleCalendar = () => window.open(`https://calendar.google.com/calendar/u/0/r?authuser=${GOOGLE_EMAIL}`, '_blank');
 
