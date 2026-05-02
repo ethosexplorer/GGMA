@@ -43,7 +43,7 @@ export const EducationPortal = ({ onBack }: { onBack: () => void }) => {
             </p>
             <div className="flex flex-wrap gap-4">
               <button 
-                onClick={() => ((window as any).Calendly ? (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/health-wellness-consultation' }) : window.open('https://calendly.com/globalgreenhpmeet/health-wellness-consultation', '_blank'))}
+                onClick={() => ((window as any).Calendly ? (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet' }) : window.open('https://calendly.com/globalgreenhpmeet', '_blank'))}
                 className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold rounded-xl shadow-lg shadow-emerald-900/20 transition-all flex items-center gap-2"
               >
                 <PlayCircle size={20} /> Start Training

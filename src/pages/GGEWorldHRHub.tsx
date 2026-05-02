@@ -13,6 +13,7 @@ import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
 const NAV_ITEMS = [
   { section: 'THE ACADEMY' },
   { id: 'academy_ai', label: 'AI Teacher & Training', icon: GraduationCap, badge: 'New' },
+  { id: 'education_queue', label: 'Education Academy Queue', icon: BookOpen, badge: 'Live' },
   
   { section: 'LIVE OPERATIONS' },
   { id: 'ops_livecenter', label: 'Ops LiveCenter', icon: Headphones, badge: 'Live' },
@@ -107,6 +108,71 @@ export const GGEWorldHRHub = ({ user }: { user?: any }) => {
     </div>
   );
 
+  const renderEducationQueue = () => (
+    <div className="space-y-6">
+      <div className="bg-white border border-slate-200 p-6 rounded-3xl shadow-sm flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-black text-slate-800 tracking-tight flex items-center gap-2">
+            <BookOpen className="text-emerald-500" /> Education Academy Roster
+          </h2>
+          <p className="text-slate-500 font-medium text-sm mt-1">Track enrollment, course progress, and graduation status.</p>
+        </div>
+        <div className="flex gap-4">
+          <div className="bg-emerald-50 px-4 py-2 rounded-xl text-center">
+            <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Active Enrolled</p>
+            <p className="text-2xl font-black text-emerald-700">124</p>
+          </div>
+          <div className="bg-indigo-50 px-4 py-2 rounded-xl text-center">
+            <p className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">Graduated (YTD)</p>
+            <p className="text-2xl font-black text-indigo-700">892</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+        <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+          <h3 className="font-bold text-slate-800">Student Pipeline</h3>
+          <div className="flex gap-2">
+            <input type="text" placeholder="Search students..." className="px-3 py-1.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:border-emerald-500" />
+            <button className="px-3 py-1.5 bg-slate-200 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-300">Filter</button>
+          </div>
+        </div>
+        <div className="divide-y divide-slate-100">
+          {[
+            { n: 'Marcus Vance', c: 'Metrc Integration Mastery', s: 'Active', p: 65, t: '3 weeks left' },
+            { n: 'Sarah Jenkins', c: 'Retail Compliance Pro', s: 'Active', p: 30, t: '1 week left' },
+            { n: 'Robert Chen', c: 'SINC Oversight Directives', s: 'Graduated', p: 100, t: 'Completed 04/12' },
+            { n: 'Amanda Torres', c: 'Metrc Integration Mastery', s: 'Enrolled', p: 0, t: 'Starts next week' },
+            { n: 'David Palmer', c: 'Level 1: Core Traceability', s: 'Active', p: 85, t: '2 days left' },
+          ].map((s, i) => (
+            <div key={i} className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+              <div className="flex-1">
+                <p className="font-bold text-slate-800">{s.n}</p>
+                <p className="text-xs text-slate-500 font-medium">{s.c}</p>
+              </div>
+              <div className="flex-1 px-4">
+                <div className="flex justify-between text-[10px] font-bold text-slate-500 mb-1">
+                  <span>Progress</span>
+                  <span>{s.p}%</span>
+                </div>
+                <div className="w-full bg-slate-200 rounded-full h-1.5">
+                  <div className={cn("h-1.5 rounded-full", s.s === 'Graduated' ? 'bg-indigo-500' : s.p === 0 ? 'bg-slate-300' : 'bg-emerald-500')} style={{ width: `${s.p}%` }}></div>
+                </div>
+              </div>
+              <div className="flex-1 flex justify-end items-center gap-4">
+                <span className="text-xs text-slate-400 font-medium w-24 text-right">{s.t}</span>
+                <span className={cn(
+                  "px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-full w-24 text-center",
+                  s.s === 'Graduated' ? 'bg-indigo-100 text-indigo-700' : s.s === 'Active' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
+                )}>{s.s}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
   const renderPlaceholder = (title: string, desc: string, Icon: any, color: string = 'text-slate-400') => (
     <div className="flex items-center justify-center h-full min-h-[500px]">
       <div className="text-center space-y-4 max-w-md bg-white p-10 rounded-3xl border border-slate-100 shadow-sm">
@@ -196,6 +262,7 @@ export const GGEWorldHRHub = ({ user }: { user?: any }) => {
               className="max-w-[1600px] mx-auto h-full"
             >
               {activeTab === 'academy_ai' && renderAIAcademy()}
+              {activeTab === 'education_queue' && renderEducationQueue()}
               
               {activeTab === 'ops_livecenter' && <div className="h-full"><CallCenterCommandTab /></div>}
               {activeTab === 'applications_queue' && renderPlaceholder('Applications Queue', 'Review patient, business, and licensing applications.', FileText, 'text-amber-500')}
