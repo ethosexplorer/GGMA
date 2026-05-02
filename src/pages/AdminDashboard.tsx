@@ -4,7 +4,7 @@ import { Building2, Users, FileText, Settings, Shield, Activity, Bell,
   Briefcase, HeartPulse, Scale, Gavel, FileCheck, Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
   Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Headphones,
-  Zap, UserPlus, GraduationCap, FlaskConical, BookOpen, Phone, ShieldAlert, Lock, CircleCheck } from 'lucide-react';
+  Zap, UserPlus, GraduationCap, FlaskConical, BookOpen, Phone, ShieldAlert, Lock, CircleCheck, Edit2, Trash2 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { METRC_MANUAL } from '../data/metrcManual';
@@ -62,6 +62,35 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
     items.splice(dragIdx, 1);
     items.splice(idx, 0, item);
     setDragIdx(idx);
+    setNavItems(items);
+    localStorage.setItem('gghp_admin_dashboard_nav_order', JSON.stringify(items.map((it, i) => it.id || `sec_${i}`)));
+  };
+
+  const [isEditingNav, setIsEditingNav] = useState(false);
+  
+  const handleAddSection = () => {
+    const name = prompt('Enter new section name:');
+    if (!name) return;
+    const items = [...navItems, { id: `sec_custom_${Date.now()}`, section: name.toUpperCase() }];
+    setNavItems(items);
+    localStorage.setItem('gghp_admin_dashboard_nav_order', JSON.stringify(items.map((it, i) => it.id || `sec_${i}`)));
+  };
+
+  const handleEditSection = (e: any, idx: number) => {
+    e.stopPropagation();
+    const name = prompt('Edit section name:', navItems[idx].section);
+    if (!name) return;
+    const items = [...navItems];
+    items[idx] = { ...items[idx], section: name.toUpperCase() };
+    setNavItems(items);
+    localStorage.setItem('gghp_admin_dashboard_nav_order', JSON.stringify(items.map((it, i) => it.id || `sec_${i}`)));
+  };
+
+  const handleDeleteItem = (e: any, idx: number) => {
+    e.stopPropagation();
+    if (!confirm('Remove this item?')) return;
+    const items = [...navItems];
+    items.splice(idx, 1);
     setNavItems(items);
     localStorage.setItem('gghp_admin_dashboard_nav_order', JSON.stringify(items.map((it, i) => it.id || `sec_${i}`)));
   };
@@ -744,40 +773,76 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
             </div>
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto px-4 pb-6 space-y-1">
+        <div className="flex-1 overflow-y-auto px-4 pb-6 space-y-1 custom-scrollbar">
           {navItems.map((item, i) => {
             if ('section' in item) return (
               <div 
-                key={i} 
-                draggable
+                key={item.id || `sec_${i}`} 
+                draggable={isEditingNav}
                 onDragStart={(e) => handleDragStart(e, i)}
                 onDragOver={(e) => handleDragOver(e, i)}
                 onDragEnd={() => setDragIdx(null)}
-                className="pt-6 pb-2 px-3 cursor-grab active:cursor-grabbing hover:bg-white/5 transition-colors group relative"
+                className={cn("pt-6 pb-2 px-3 group relative flex items-center justify-between transition-colors", isEditingNav && "cursor-grab active:cursor-grabbing hover:bg-white/5 border border-dashed border-slate-700 rounded-lg mt-2")}
               >
-                <span className="opacity-0 group-hover:opacity-50 transition-opacity absolute left-1 top-6 text-slate-500">⠿</span>
-                <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] pl-2">{item.section}</div>
+                <div className="flex items-center">
+                  {isEditingNav && <span className="text-slate-600 mr-2">⠿</span>}
+                  <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{item.section}</div>
+                </div>
+                {isEditingNav && (
+                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button onClick={(e) => handleEditSection(e, i)} className="p-1 hover:text-white text-slate-400"><Edit2 size={12} /></button>
+                    <button onClick={(e) => handleDeleteItem(e, i)} className="p-1 hover:text-red-400 text-slate-400"><Trash2 size={12} /></button>
+                  </div>
+                )}
               </div>
             );
             return (
-              <button 
-                key={item.id} 
-                draggable
-                onDragStart={(e) => handleDragStart(e, i)}
-                onDragOver={(e) => handleDragOver(e, i)}
-                onDragEnd={() => setDragIdx(null)}
-                onClick={() => setActiveTab(item.id!)} 
-                className={cn("w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold transition-all text-left cursor-grab active:cursor-grabbing", activeTab === item.id ? "bg-indigo-600 text-white shadow-xl shadow-indigo-900/40" : "text-slate-400 hover:bg-white/5 hover:text-slate-100")}
-              >
-                <span className="flex items-center gap-3">{item.icon && <item.icon size={18} className={activeTab === item.id ? "text-white" : "text-slate-500"} />} {item.label}</span>
-                {item.badge && <span className="text-[10px] bg-red-500 text-white px-2 py-0.5 rounded-full font-black">{item.badge}</span>}
-              </button>
+              <div key={item.id} className={cn("relative group flex items-center", isEditingNav && "border border-dashed border-slate-800 rounded-xl mb-1")}>
+                <button 
+                  draggable={isEditingNav}
+                  onDragStart={(e) => handleDragStart(e, i)}
+                  onDragOver={(e) => handleDragOver(e, i)}
+                  onDragEnd={() => setDragIdx(null)}
+                  onClick={() => !isEditingNav && setActiveTab(item.id!)} 
+                  className={cn(
+                    "w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold transition-all text-left",
+                    isEditingNav && "cursor-grab active:cursor-grabbing opacity-80",
+                    activeTab === item.id && !isEditingNav ? "bg-indigo-600 text-white shadow-xl shadow-indigo-900/40" : "text-slate-400 hover:bg-white/5 hover:text-slate-100"
+                  )}
+                >
+                  <span className="flex items-center gap-3">
+                    {isEditingNav && <span className="text-slate-600">⠿</span>}
+                    {item.icon && <item.icon size={18} className={activeTab === item.id && !isEditingNav ? "text-white" : "text-slate-500"} />} 
+                    {item.label}
+                  </span>
+                  {item.badge && !isEditingNav && <span className="text-[10px] bg-red-500 text-white px-2 py-0.5 rounded-full font-black">{item.badge}</span>}
+                </button>
+                {isEditingNav && (
+                  <button onClick={(e) => handleDeleteItem(e, i)} className="absolute right-2 p-1.5 bg-slate-800 hover:bg-red-900/50 hover:text-red-400 text-slate-400 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity z-10"><Trash2 size={12} /></button>
+                )}
+              </div>
             );
           })}
         </div>
-        <button onClick={onLogout} className="p-6 border-t border-white/5 flex items-center gap-3 text-slate-500 hover:text-white transition-colors">
-          <LogOut size={18} /> <span className="text-sm font-black uppercase tracking-widest">Admin Exit</span>
-        </button>
+        <div className="p-4 border-t border-slate-800 bg-[#0A0F1C] sticky bottom-0 shrink-0 space-y-2">
+          <button 
+            onClick={() => {
+              if (isEditingNav) { setIsEditingNav(false); }
+              else { setIsEditingNav(true); }
+            }}
+            className={cn("w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all border", isEditingNav ? "bg-indigo-600 text-white border-indigo-500 hover:bg-indigo-500" : "bg-slate-900/50 text-slate-400 border-slate-800 hover:bg-slate-800 hover:text-white")}
+          >
+            {isEditingNav ? <CircleCheck size={14} /> : <Edit2 size={14} />} {isEditingNav ? 'Done Editing' : 'Edit Layout'}
+          </button>
+          {isEditingNav && (
+            <button onClick={handleAddSection} className="w-full flex items-center justify-center gap-2 py-2.5 bg-slate-800 text-slate-300 rounded-xl text-xs font-bold hover:bg-slate-700 transition-all border border-slate-700">
+              <Plus size={14} /> Add Section
+            </button>
+          )}
+          <button onClick={onLogout} className="w-full py-3 border border-white/5 flex items-center justify-center gap-3 text-slate-500 hover:text-white transition-colors rounded-xl hover:bg-slate-800">
+            <LogOut size={18} /> <span className="text-sm font-black uppercase tracking-widest">Admin Exit</span>
+          </button>
+        </div>
       </div>
 
       <div className={cn("flex-1 flex flex-col h-[calc(100vh)] overflow-hidden transition-all duration-500", !isUnlocked && "blur-xl scale-[0.98] opacity-50 pointer-events-none")}>
