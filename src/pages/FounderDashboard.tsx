@@ -39,11 +39,10 @@ import { voip800 } from '../lib/voip800';
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
-const NAV_VERSION = 21; // Bumped: Move Ops Center and Internal Admin to single tabs
+const NAV_VERSION = 22; // Bumped: Move GGE World Master Account tab
 
 const INITIAL_NAV_ITEMS: NavItem[] = [
   // Single tabs
-  { id: 'gge_world_hr', label: 'GGE World Master Account', icon: Globe, badge: 'New' },
   { id: 'ai_training', label: 'My Asst AI', icon: Bot, badge: 'AI' },
   { id: 'overview', label: 'God Overview', icon: Activity },
   { id: 'internal_scheduler', label: 'Calendar / Scheduler', icon: Clock, badge: 'New' },
@@ -60,6 +59,7 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'launch_script', label: 'Master Launch Script', icon: FileText },
   { id: 'system_health', label: 'System Health / AI', icon: Zap },
   { id: 'investor_sandbox', label: 'Investor Sandbox', icon: MonitorPlay, badge: 'Demo' },
+  { id: 'gge_world_hr', label: 'GGE World Master Account', icon: Globe, badge: 'Master' },
 
   // COO/Sr Live Agent Popout
   { id: '_sec_ops', section: 'COO/SR LIVE AGENT' },
