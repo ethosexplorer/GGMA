@@ -2609,13 +2609,43 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         </div>
 
         <div className="space-y-4">
-           {[
-             { time: 'Today, 10:00 AM', t: 'Direct Escalation (Human Coord)', e: 'Apex Health CEO', c: isMonica ? 'bg-fuchsia-100 border-fuchsia-200 text-fuchsia-900' : (isRyan ? 'bg-blue-100 border-blue-200 text-blue-900' : 'bg-purple-100 border-purple-200 text-purple-900'), dot: isMonica ? 'bg-fuchsia-600' : (isRyan ? 'bg-blue-600' : 'bg-purple-600'), type: 'Call' },
-             { time: 'Today, 1:30 PM', t: 'OMMA State Regulator Review', e: 'Emily Davis (OK)', c: 'bg-cyan-50 border-cyan-200 text-cyan-900', dot: 'bg-cyan-500', type: 'Call' },
-             { time: 'Today, 3:00 PM', t: 'Metrc Integration Sync', e: 'SINC Tech Team', c: 'bg-amber-50 border-amber-200 text-amber-900', dot: 'bg-amber-500', type: 'Ticket' },
-             { time: 'Tomorrow, 9:00 AM', t: 'DOJ Intel Review', e: 'Federal Oversight Office', c: 'bg-red-50 border-red-200 text-red-900', dot: 'bg-red-600', type: 'Appointment' },
-             { time: 'Tomorrow, 11:15 AM', t: 'Telehealth Escalation', e: 'Dr. Smith', c: 'bg-emerald-50 border-emerald-200 text-emerald-900', dot: 'bg-emerald-500', type: 'Call' },
-           ].map((item, i) => (
+           {(() => {
+             let events = [];
+             if (isMonica) {
+               events = [
+                 { time: 'Today, 10:00 AM', t: 'Compliance Direct Escalation', e: 'Apex Health Legal Team', c: 'bg-fuchsia-100 border-fuchsia-200 text-fuchsia-900', dot: 'bg-fuchsia-600', type: 'Call' },
+                 { time: 'Today, 1:30 PM', t: 'OMMA State Regulator Sync', e: 'Emily Davis (OK)', c: 'bg-cyan-50 border-cyan-200 text-cyan-900', dot: 'bg-cyan-500', type: 'Call' },
+                 { time: 'Today, 3:00 PM', t: 'HIPAA Violation Review', e: 'SINC Tech Team', c: 'bg-amber-50 border-amber-200 text-amber-900', dot: 'bg-amber-500', type: 'Ticket' },
+                 { time: 'Tomorrow, 9:00 AM', t: 'Federal FDA Audit Prep', e: 'Federal Oversight Office', c: 'bg-red-50 border-red-200 text-red-900', dot: 'bg-red-600', type: 'Appointment' },
+                 { time: 'Tomorrow, 11:15 AM', t: 'New Facility License Approval', e: 'GreenLeaf Farms', c: 'bg-emerald-50 border-emerald-200 text-emerald-900', dot: 'bg-emerald-500', type: 'Review' },
+               ];
+             } else if (isRyan) {
+               events = [
+                 { time: 'Today, 10:00 AM', t: 'Engineering Direct Escalation', e: 'SysOps Team', c: 'bg-blue-100 border-blue-200 text-blue-900', dot: 'bg-blue-600', type: 'Call' },
+                 { time: 'Today, 1:30 PM', t: 'AWS Infrastructure Scaling', e: 'DevOps Lead', c: 'bg-cyan-50 border-cyan-200 text-cyan-900', dot: 'bg-cyan-500', type: 'Meeting' },
+                 { time: 'Today, 3:00 PM', t: 'Metrc API Auth Hotfix', e: 'SINC Tech Team', c: 'bg-amber-50 border-amber-200 text-amber-900', dot: 'bg-amber-500', type: 'Ticket' },
+                 { time: 'Tomorrow, 9:00 AM', t: 'Database Performance Review', e: 'Turso DB Admins', c: 'bg-red-50 border-red-200 text-red-900', dot: 'bg-red-600', type: 'Appointment' },
+                 { time: 'Tomorrow, 11:15 AM', t: 'Twilio SIP Trunk Integration', e: 'Voice API Vendor', c: 'bg-emerald-50 border-emerald-200 text-emerald-900', dot: 'bg-emerald-500', type: 'Call' },
+               ];
+             } else if (isBobAdvisor) {
+               events = [
+                 { time: 'Today, 10:00 AM', t: 'Investor Relations Briefing', e: 'Venture Partners', c: 'bg-purple-100 border-purple-200 text-purple-900', dot: 'bg-purple-600', type: 'Call' },
+                 { time: 'Today, 1:30 PM', t: 'Market Expansion Strategy', e: 'Executive Team', c: 'bg-cyan-50 border-cyan-200 text-cyan-900', dot: 'bg-cyan-500', type: 'Meeting' },
+                 { time: 'Today, 3:00 PM', t: 'Financial Risk Assessment', e: 'CFO Office', c: 'bg-amber-50 border-amber-200 text-amber-900', dot: 'bg-amber-500', type: 'Review' },
+                 { time: 'Tomorrow, 9:00 AM', t: 'Advisory Board Sync', e: 'External Stakeholders', c: 'bg-red-50 border-red-200 text-red-900', dot: 'bg-red-600', type: 'Appointment' },
+                 { time: 'Tomorrow, 11:15 AM', t: 'Telehealth Partner Negotiations', e: 'Dr. Smith', c: 'bg-emerald-50 border-emerald-200 text-emerald-900', dot: 'bg-emerald-500', type: 'Call' },
+               ];
+             } else {
+               // Founder
+               events = [
+                 { time: 'Today, 10:00 AM', t: 'Direct Escalation (Human Coord)', e: 'Apex Health CEO', c: 'bg-purple-100 border-purple-200 text-purple-900', dot: 'bg-purple-600', type: 'Call' },
+                 { time: 'Today, 1:30 PM', t: 'OMMA State Regulator Review', e: 'Emily Davis (OK)', c: 'bg-cyan-50 border-cyan-200 text-cyan-900', dot: 'bg-cyan-500', type: 'Call' },
+                 { time: 'Today, 3:00 PM', t: 'Metrc Integration Sync', e: 'SINC Tech Team', c: 'bg-amber-50 border-amber-200 text-amber-900', dot: 'bg-amber-500', type: 'Ticket' },
+                 { time: 'Tomorrow, 9:00 AM', t: 'DOJ Intel Review', e: 'Federal Oversight Office', c: 'bg-red-50 border-red-200 text-red-900', dot: 'bg-red-600', type: 'Appointment' },
+                 { time: 'Tomorrow, 11:15 AM', t: 'Telehealth Escalation', e: 'Dr. Smith', c: 'bg-emerald-50 border-emerald-200 text-emerald-900', dot: 'bg-emerald-500', type: 'Call' },
+               ];
+             }
+             return events.map((item, i) => (
              <div key={i} className={`p-5 rounded-2xl border flex items-center justify-between ${item.c}`}>
                <div className="flex items-center gap-4">
                  <div className={`w-3 h-3 rounded-full ${item.dot} shadow-sm`}></div>
@@ -2629,7 +2659,8 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                  <div className="font-mono text-xs font-bold">{item.time}</div>
                </div>
              </div>
-           ))}
+           ));
+           })()}
         </div>
       </div>
       
