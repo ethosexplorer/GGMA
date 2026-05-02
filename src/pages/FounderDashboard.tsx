@@ -103,7 +103,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   
   const fullName = isMonica ? 'Monica Green' : (isRyan ? 'Ryan Ferrari' : (isBobAdvisor ? 'Bob Moore' : (user?.displayName || 'Shantell Robinson')));
   const firstName = fullName.split(' ')[0];
-  const userTitle = isMonica ? 'Chief Executive Compliance Director' : (isRyan ? 'CEO' : (isBobAdvisor ? 'Executive Advisor' : 'Founder'));
+  const userTitle = isMonica ? 'Chief Executive Compliance Director' : (isRyan ? 'President' : (isBobAdvisor ? 'Executive Advisor' : 'Founder'));
 
   const [liveStats, setLiveStats] = useState({ totalUsers: '1.2M', netRevenue: '$18.2M' });
   const [actionToast, setActionToast] = useState<{ message: string; timestamp: number } | null>(null);
