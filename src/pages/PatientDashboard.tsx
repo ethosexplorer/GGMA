@@ -201,8 +201,25 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
       <AnimatePresence mode="wait">
         {/* ─── OVERVIEW TAB ─── */}
         {activeTab === 'calendar' && (
-                  <UserCalendar user={user} title="src\pages\Patient Calendar" subtitle="Appointments & Scheduling" />
-                )}
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden min-h-[700px] flex flex-col">
+            <div className="p-8 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+               <div>
+                 <h2 className="text-3xl font-black text-slate-800 tracking-tight">Schedule an Appointment</h2>
+                 <p className="text-slate-500 font-medium mt-1">Book your telehealth or in-person visit below.</p>
+               </div>
+            </div>
+            <div className="flex-1 w-full bg-white relative">
+               <iframe 
+                  src="https://calendly.com/globalgreenhpmeet/health-wellness-consultation?embed_domain=globalgreen.com&embed_type=Inline" 
+                  width="100%" 
+                  height="100%" 
+                  frameBorder="0" 
+                  className="absolute inset-0"
+                  title="Calendly Scheduling Page"
+               ></iframe>
+            </div>
+          </motion.div>
+        )}
                 {activeTab === 'overview' && (
           <motion.div 
             initial={{ opacity: 0, y: 10 }} 
