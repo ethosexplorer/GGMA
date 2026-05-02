@@ -42,9 +42,21 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
   const availableCategories = isFounder ? ALL_CATEGORIES : [{ id: 'personal', label: 'Personal', color: 'bg-slate-500' }];
   const initialEvents = (isFounder && !isExecutive) ? SEED_EVENTS : [];
 
+  const storageKey = `gghp_calendar_v1_${user?.uid || user?.role || 'default'}`;
+  const [events, setEvents] = useState<CalEvent[]>(() => {
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) return JSON.parse(saved);
+    } catch (e) { console.error('Failed to parse calendar from local storage'); }
+    return initialEvents;
+  });
+
+  React.useEffect(() => {
+    localStorage.setItem(storageKey, JSON.stringify(events));
+  }, [events, storageKey]);
+
   const [view, setView] = useState<ViewMode>('month');
   const [current, setCurrent] = useState(new Date(2026, 3, 28)); // April 28, 2026
-  const [events, setEvents] = useState<CalEvent[]>(initialEvents);
   const [selectedDate, setSelectedDate] = useState<string>(fmt(new Date(2026, 3, 28)));
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: isFounder ? 'executive' : 'personal', description: '', attendees: '', location: '', meetLink: '' });
