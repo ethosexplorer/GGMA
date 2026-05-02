@@ -15,6 +15,7 @@ import { AdminDashboard } from './AdminDashboard';
 import { StateAuthorityDashboard } from './StateAuthorityDashboard';
 import { ExternalAdminDashboard } from './ExternalAdminDashboard';
 import { SubscriptionPortal } from '../components/SubscriptionPortal';
+import { InvestorSandboxTab } from '../components/founder/InvestorSandboxTab';
 import { LegislativeIntelTab } from '../components/federal/LegislativeIntelTab';
 import { JudicialMonitorTab } from '../components/federal/JudicialMonitorTab';
 import { VirtualAttendantTab } from '../components/oversight/VirtualAttendantTab';
@@ -49,6 +50,7 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'internal_scheduler', label: 'Calendar & Scheduler', icon: Clock, badge: 'New' },
   { id: 'subscriptions', label: 'Subscriptions & Revenue', icon: CreditCard, badge: 'Live' },
   { id: 'overview', label: 'God Overview', icon: Activity },
+  { id: 'investor_sandbox', label: 'Investor Sandbox', icon: MonitorPlay, badge: 'Demo' },
   { id: '_sec_supreme', section: 'SUPREME COMMAND' },
   { id: 'users', label: 'Personnel Force (Total)', icon: Users },
   { id: 'patients', label: 'Registry Sovereignty', icon: HeartPulse },
@@ -3337,6 +3339,8 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         );
       case 'subscription': 
         return <SubscriptionPortal userRole="executive_founder" initialPlanId="fed_pro" />;
+      case 'investor_sandbox': 
+        return <div className="h-full w-full -m-10"><InvestorSandboxTab /></div>;
       case 'overview': return renderOverview();
       case 'accounting_ledger': return renderAccountingLedger();
       case 'launch_script': return renderLaunchScript();
