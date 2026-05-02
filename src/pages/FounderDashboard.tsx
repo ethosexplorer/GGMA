@@ -67,7 +67,6 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'external_admin', label: 'External Administrator', icon: Activity },
   { id: 'law_enforcement', label: 'Law Enforcement (RIP)', icon: Shield },
   { id: 'state_authority', label: 'Regulator / Authority', icon: Gavel },
-  { id: 'back_office', label: 'Back Office (Support & Ops)', icon: PhoneCall, badge: 'New' },
   { id: 'operations', label: 'Ops Center', icon: Cpu, badge: 'Live' },
   { id: 'virtual_attendant', label: 'GGE World Call Center', icon: Phone },
   { id: 'processor', label: 'GGE Processor', icon: Activity },
@@ -3281,8 +3280,6 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         return <div className="h-full w-full -m-10"><ExternalAdminDashboard user={user} onLogout={onLogout} /></div>;
       case 'state_authority':
         return <div className="h-full w-full -m-10"><StateAuthorityDashboard user={user} onLogout={onLogout} /></div>;
-      case 'back_office':
-        return <div className="h-full w-full -m-10"><BackOfficeDashboard user={user} onLogout={onLogout} /></div>;
       case 'virtual_attendant':
         return <div className="p-8 h-full overflow-y-auto"><VirtualAttendantTab /></div>;
       case 'processor':

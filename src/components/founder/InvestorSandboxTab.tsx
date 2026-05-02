@@ -6,11 +6,12 @@ import { AttorneyDashboard } from '../../pages/AttorneyDashboard';
 import { StateAuthorityDashboard } from '../../pages/StateAuthorityDashboard';
 import { FederalDashboard } from '../../pages/FederalDashboard';
 import { EnforcementDashboard } from '../../pages/EnforcementDashboard';
-import { MonitorPlay, Building2, HeartPulse, ShieldAlert, Stethoscope, Scale, Gavel, Globe, Shield } from 'lucide-react';
+import { BackOfficeDashboard } from '../../pages/BackOfficeDashboard';
+import { MonitorPlay, Building2, HeartPulse, ShieldAlert, Stethoscope, Scale, Gavel, Globe, Shield, PhoneCall } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 export const InvestorSandboxTab = () => {
-  const [activeMock, setActiveMock] = useState<'patient' | 'business' | 'provider' | 'attorney' | 'oversight' | 'federal' | 'enforcement' | 'none'>('none');
+  const [activeMock, setActiveMock] = useState<'patient' | 'business' | 'provider' | 'attorney' | 'oversight' | 'federal' | 'enforcement' | 'back_office' | 'none'>('none');
 
   if (activeMock === 'patient') {
     return (
@@ -99,6 +100,19 @@ export const InvestorSandboxTab = () => {
           <button onClick={() => setActiveMock('none')} className="hover:text-slate-300 transition-colors">Exit Sandbox ✕</button>
         </div>
         <EnforcementDashboard user={{ role: 'executive_founder', subscriptionStatus: 'Active', email: 'investor@globalgreenhp.com', planId: 'pro' }} onLogout={() => setActiveMock('none')} />
+      </div>
+    );
+  }
+
+  if (activeMock === 'back_office') {
+    return (
+      <div className="fixed inset-0 z-[9999] bg-slate-100 overflow-y-auto">
+        <div className="fixed top-2 left-1/2 -translate-x-1/2 bg-cyan-900/90 backdrop-blur-md text-white py-1.5 px-4 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-4 shadow-xl z-[10000] border border-cyan-500/30">
+          <span className="flex items-center gap-2"><MonitorPlay size={14} className="text-cyan-400" /> INVESTOR DEMO: BACK OFFICE</span>
+          <div className="w-px h-3 bg-white/20"></div>
+          <button onClick={() => setActiveMock('none')} className="hover:text-cyan-300 transition-colors">Exit Sandbox ✕</button>
+        </div>
+        <BackOfficeDashboard user={{ role: 'executive_founder', subscriptionStatus: 'Active', email: 'investor@globalgreenhp.com', planId: 'pro' }} onLogout={() => setActiveMock('none')} />
       </div>
     );
   }
@@ -215,6 +229,21 @@ export const InvestorSandboxTab = () => {
           <h3 className="text-xl font-black text-slate-800 mb-2">Law Enforcement</h3>
           <p className="text-slate-500 font-medium text-sm flex-1">Present the RIP Command dashboard with mock breathalyzer tests and field screening logs.</p>
           <div className="mt-8 flex items-center gap-2 text-slate-800 font-black text-xs uppercase tracking-widest">
+            Launch Sandbox &rarr;
+          </div>
+        </button>
+
+        <button 
+          onClick={() => setActiveMock('back_office')}
+          className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-cyan-400 transition-all group text-left relative overflow-hidden flex flex-col lg:col-span-3"
+        >
+          <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-bl-full -mr-16 -mt-16 transition-transform group-hover:scale-150"></div>
+          <div className="w-16 h-16 bg-cyan-100 text-cyan-600 rounded-2xl flex items-center justify-center mb-6 shadow-inner shrink-0">
+            <PhoneCall size={32} />
+          </div>
+          <h3 className="text-xl font-black text-slate-800 mb-2">Back Office Operations</h3>
+          <p className="text-slate-500 font-medium text-sm flex-1">Demo the internal backend operations, showing AI-driven support routing, ticketing, and scheduling.</p>
+          <div className="mt-8 flex items-center gap-2 text-cyan-600 font-black text-xs uppercase tracking-widest">
             Launch Sandbox &rarr;
           </div>
         </button>
