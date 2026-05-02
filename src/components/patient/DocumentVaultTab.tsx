@@ -203,10 +203,10 @@ export const DocumentVaultTab = () => {
                     )}>
                       {doc.status}
                     </span>
-                    <button className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors">
+                    <button onClick={() => window.open('https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', '_blank')} title="View Document" className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors">
                       <Eye size={14} />
                     </button>
-                    <button className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors">
+                    <button onClick={() => alert(`Securely downloading ${doc.name}...`)} title="Download Document" className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors">
                       <Download size={14} />
                     </button>
                   </div>
