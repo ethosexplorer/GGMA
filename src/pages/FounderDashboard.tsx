@@ -3701,6 +3701,13 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       if (!allowedExecutiveTabs.includes(item.id || '')) return;
     }
 
+    if ((isMonica || isRyan || isBobAdvisor) && 'section' in item) {
+      if (item.id === '_sec_founder' || item.id === '_sec_ops') {
+        currentGroup = null;
+        return;
+      }
+    }
+
     if ('section' in item) {
       currentGroup = { item, index: i, children: [] };
       navGroups.push(currentGroup);
