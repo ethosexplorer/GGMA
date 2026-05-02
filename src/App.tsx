@@ -8366,7 +8366,7 @@ export default function App() {
           const isMon = email.includes('compliance.globalgreenhp') || email.includes('monica');
           
           if (view === 'landing' || view === 'role-pricing' || view === 'larry-chatbot' || isFndr || isRyn || isMon) return null;
-          return <SylaraFloatingWidget userProfile={userProfile} activeRole={role} persona={currentPersona} onClick={() => setShowLarryModal(true)} />;
+          return <SylaraFloatingWidget userProfile={userProfile} activeRole={roleOverride || userProfile?.role} persona={currentPersona} onClick={() => setShowLarryModal(true)} />;
         })()}
 
         {/* Floating Modal for Chatbot */}
@@ -8382,7 +8382,7 @@ export default function App() {
               <div className="flex-1 overflow-y-auto relative z-10">
                 <LarryMedCardChatbot 
                   userProfile={userProfile}
-                  activeRole={role}
+                  activeRole={roleOverride || userProfile?.role}
                   onNavigate={(view: any, role: any) => { 
                     setShowLarryModal(false); 
                     setView(view); 
