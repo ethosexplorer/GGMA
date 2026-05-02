@@ -3317,7 +3317,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       case 'operations': 
         return <div className="h-full w-full -m-10"><OperationsDashboard user={user} onLogout={onLogout} /></div>;
       case 'internal_admin': 
-        return <div className="h-full w-full -m-10"><AdminDashboard user={user} onLogout={() => setActiveTab('overview')} /></div>;
+        return <div className="h-full w-full -m-10"><AdminDashboard user={user} onLogout={() => setActiveTab(isExecutive ? 'ai_training' : 'overview')} /></div>;
       case 'external_admin': 
         return <div className="h-full w-full -m-10"><ExternalAdminDashboard user={user} onLogout={onLogout} /></div>;
       case 'state_authority':
@@ -3406,7 +3406,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       case 'support_tickets': return renderSupportTickets();
       case 'internal_scheduler': return <UserCalendar key={user?.role} user={user} title={isRyan ? "President's Calendar" : "Executive Calendar"} />;
       case 'subscriptions': return renderSubscriptionsTab();
-      case 'negligence_intercept': return <div className="h-full w-full -m-10"><AdminDashboard user={user} initialTab="negligence" onLogout={() => setActiveTab('overview')} /></div>;
+      case 'negligence_intercept': return <div className="h-full w-full -m-10"><AdminDashboard user={user} initialTab="negligence" onLogout={() => setActiveTab(isExecutive ? 'ai_training' : 'overview')} /></div>;
       case 'hr_intelligence': return renderHRIntelligence();
       case 'rapid_testing': return renderRapidTestingHub();
       case 'law_enforcement': return renderLawEnforcement();
@@ -3420,7 +3420,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       case 'ai_training': return <div className="h-full w-full -m-10 p-10 bg-slate-50"><AITrainingTab userProfile={user} /></div>;
       case 'settings': return renderSettings();
       case 'call_center': return renderCallCenter();
-      default: return renderOverview();
+      default: return isExecutive ? <div className="h-full w-full -m-10 p-10 bg-slate-50"><AITrainingTab userProfile={user} /></div> : renderOverview();
     }
   };
 
