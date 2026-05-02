@@ -16,7 +16,7 @@ const ESCALATION_CATEGORIES = [
 const HOURS = Array.from({ length: 16 }, (_, i) => i + 6); // 6AM-9PM
 
 const SEED_EVENTS: CalEvent[] = [
-  { id: '1', title: 'High Priority Escalation Review', date: '2026-05-03', startTime: '11:00', endTime: '11:30', category: 'escalation_support', color: 'bg-red-600', attendees: 'Escalation@ggp-os.com', meetLink: 'https://calendly.com/' },
+  { id: '1', title: 'High Priority Escalation Review', date: '2026-05-03', startTime: '11:00', endTime: '11:30', category: 'escalation_support', color: 'bg-red-600', attendees: 'Escalation@ggp-os.com', meetLink: 'https://calendly.com/globalgreenhpmeet/calendly-com-ggp-os' },
 ];
 
 const fmt = (d: Date) => d.toISOString().split('T')[0];
@@ -43,7 +43,7 @@ export const EscalationSupportCalendar = () => {
   const [current, setCurrent] = useState(new Date(2026, 3, 28)); // April 28, 2026
   const [selectedDate, setSelectedDate] = useState<string>(fmt(new Date(2026, 3, 28)));
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: 'escalation_support', description: '', attendees: 'Escalation@ggp-os.com', location: '', meetLink: 'https://calendly.com/' });
+  const [form, setForm] = useState({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: 'escalation_support', description: '', attendees: 'Escalation@ggp-os.com', location: '', meetLink: 'https://calendly.com/globalgreenhpmeet/calendly-com-ggp-os' });
   const [filterCat, setFilterCat] = useState<string | null>(null);
 
   const filtered = filterCat ? events.filter(e => e.category === filterCat) : events;
@@ -81,7 +81,7 @@ export const EscalationSupportCalendar = () => {
     const cat = availableCategories.find(c => c.id === form.category);
     setEvents(prev => [...prev, { ...form, id: Date.now().toString(), color: cat?.color || 'bg-red-600' }]);
     setShowForm(false);
-    setForm({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: 'escalation_support', description: '', attendees: 'Escalation@ggp-os.com', location: '', meetLink: 'https://calendly.com/' });
+    setForm({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: 'escalation_support', description: '', attendees: 'Escalation@ggp-os.com', location: '', meetLink: 'https://calendly.com/globalgreenhpmeet/calendly-com-ggp-os' });
   };
 
   const deleteEvent = (id: string) => setEvents(prev => prev.filter(e => e.id !== id));
@@ -188,7 +188,7 @@ export const EscalationSupportCalendar = () => {
             ))}
           </div>
           <button onClick={goToday} className="px-4 py-2 border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:bg-slate-50">Today</button>
-          <button onClick={() => window.open('https://calendly.com/asstsupport', '_blank')} className="px-4 py-2 border border-red-200 bg-red-50 rounded-xl text-xs font-black text-red-700 hover:bg-red-100 flex items-center gap-1.5 transition-colors"><CalIcon size={14} /> Calendly Page</button>
+          <button onClick={() => window.open('https://calendly.com/globalgreenhpmeet/calendly-com-ggp-os', '_blank')} className="px-4 py-2 border border-red-200 bg-red-50 rounded-xl text-xs font-black text-red-700 hover:bg-red-100 flex items-center gap-1.5 transition-colors"><CalIcon size={14} /> Calendly Page</button>
           <button onClick={() => { setForm(f => ({ ...f, date: selectedDate })); setShowForm(true); }} className="px-4 py-2.5 bg-red-600 text-white rounded-xl text-xs font-black flex items-center gap-2 hover:bg-red-700 transition-colors shadow-md"><Plus size={14} /> New Event</button>
         </div>
       </div>
