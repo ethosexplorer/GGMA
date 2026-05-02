@@ -8310,7 +8310,7 @@ export default function App() {
                   </div>
                   {/* Blurred Dashboard */}
                   <div className="pointer-events-none select-none h-screen overflow-hidden">
-                    {userProfile && (userProfile.role === 'executive_founder' || userProfile.email?.includes('ceo.globalgreenhp') || userProfile.email?.includes('compliance.globalgreenhp') || userProfile.email?.includes('monica') || userProfile.email?.includes('globalgreenhp@gmail.com')) && !hasBypassedSelector ? (
+                    {userProfile && userProfile.role === 'executive_founder' && !hasBypassedSelector ? (
                       <RoleSelectorScreen 
                         userProfile={userProfile}
                         onSelect={(role) => {
@@ -8332,7 +8332,7 @@ export default function App() {
                   exit={{ opacity: 0, y: -10 }}
                   className="min-h-screen"
                 >
-                  {userProfile && (userProfile.role === 'executive_founder' || userProfile.role === 'executive_advisor' || userProfile.email?.includes('ceo.globalgreenhp') || userProfile.email?.includes('compliance.globalgreenhp') || userProfile.email?.includes('monica') || userProfile.email?.includes('globalgreenhp@gmail.com')) && !hasBypassedSelector ? (
+                  {userProfile && userProfile.role === 'executive_founder' && !hasBypassedSelector ? (
                     <RoleSelectorScreen 
                       userProfile={userProfile}
                       onSelect={(role) => {
@@ -8350,7 +8350,7 @@ export default function App() {
         </AnimatePresence>
         
         {/* Floating Home Button - returns to Role Selector */}
-        {view !== 'landing' && (
+        {view !== 'landing' && userProfile?.role === 'executive_founder' && (
           <button
             onClick={() => { setHasBypassedSelector(false); setRoleOverride(null); setView('landing'); window.history.pushState({}, '', '/'); }}
             className="fixed bottom-6 left-6 z-[90] w-12 h-12 bg-[#1a4731] hover:bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-2xl shadow-emerald-900/40 transition-all hover:scale-110 border-2 border-emerald-400/30"
