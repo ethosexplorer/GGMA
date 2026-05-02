@@ -97,7 +97,7 @@ export const DocumentVaultTab = () => {
               <li className="flex items-center gap-2">✅ Signed Recommendation (dated within 30 days)</li>
               <li className="flex items-center gap-2">✅ Passport Photo (white background, {'<'} 6 mo)</li>
               <li className="flex items-center gap-2">✅ OK Driver's License or Proof of Residency</li>
-              <li className="flex items-center gap-2">✅ OK-Registered Physician (SB 1066)</li>
+              <li className="flex items-center gap-2">✅ Selfie Photo (White Background)</li>
             </ul>
           </div>
         </div>
