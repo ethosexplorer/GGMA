@@ -83,7 +83,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
   const [routingTab, setRoutingTab] = useState<'routing' | 'dialpad' | 'voicemails'>('routing');
   const [dialNumber, setDialNumber] = useState('');
   const [routingRules, setRoutingRules] = useState([
-    { name: 'Main → Founder', dest: 'Shantell Robinson', type: 'Standard', icon: PhoneIncoming, active: true },
+    { name: 'Main → Live Agent', dest: 'Live Sr Agent', type: 'Standard', icon: PhoneIncoming, active: true },
     { name: 'Overflow → Support', dest: 'Support Desk', type: 'Sequential', icon: PhoneOutgoing, active: true },
     { name: 'After Hours → VM', dest: 'VM Box #1', type: 'Scheduled', icon: PhoneOff, active: true },
   ]);
@@ -491,7 +491,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
   );
 
   const [personnelList, setPersonnelList] = useState([
-    { name: 'Shantell Robinson', role: 'Founder & CEO', dept: 'Executive', status: 'Active', empId: 'GGE-001', ext: '101' },
+    { name: 'Live Sr Agent', role: 'Founder/CEO', dept: 'Executive', status: 'Active', empId: 'GGE-001', ext: '101' },
     { name: 'Monica Green', role: 'Compliance Director', dept: 'Compliance', status: 'Active', empId: 'GGE-002', ext: '102' },
     { name: 'Ryan Ferrari', role: 'CEO / IT Lead', dept: 'Operations', status: 'Active', empId: 'GGE-003', ext: '103' },
     { name: 'Bob Moore', role: 'Executive Advisor', dept: 'Executive', status: 'Active', empId: 'GGE-004', ext: '104' },

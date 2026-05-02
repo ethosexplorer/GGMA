@@ -7702,7 +7702,7 @@ export default function App() {
                  uid: firebaseUser.uid,
                  email: firebaseUser.email,
                  role: isFounder ? 'executive_founder' : (lowerEmail === ADVISOR_EMAIL ? 'executive_advisor' : 'regulator_state'),
-                 displayName: lowerEmail === FOUNDER_EMAIL ? 'Live Agent Robinson' : ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica')) ? 'Monica Green' : (lowerEmail.includes('ceo.globalgreenhp') ? 'Ryan Ferrari' : (lowerEmail === ADVISOR_EMAIL ? 'Bob Green-Energy-Financing Moore' : 'Staff'))),
+                 displayName: lowerEmail === FOUNDER_EMAIL ? 'Founder/CEO' : ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica')) ? 'Monica Green' : (lowerEmail.includes('ceo.globalgreenhp') ? 'Ryan Ferrari' : (lowerEmail === ADVISOR_EMAIL ? 'Bob Green-Energy-Financing Moore' : 'Staff'))),
                  status: 'Active',
                  idCode: (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp')) ? '1234' : (lowerEmail === ADVISOR_EMAIL ? '5678' : '0000'),
                  createdAt: new Date().toISOString()
@@ -7843,7 +7843,7 @@ export default function App() {
         uid: 'privileged-local-' + computedRole,
         email: email,
         role: computedRole,
-        displayName: isFounder ? 'Live Agent Robinson' : (isComplianceDirector ? 'Monica Green' : (isPresident ? 'Ryan Ferrari' : (isAdvisor ? 'Bob Green-Energy-Financing Moore' : email.split('@')[0]))),
+        displayName: isFounder ? 'Founder/CEO' : (isComplianceDirector ? 'Monica Green' : (isPresident ? 'Ryan Ferrari' : (isAdvisor ? 'Bob Green-Energy-Financing Moore' : email.split('@')[0]))),
         status: 'Active',
         idCode: (isComplianceDirector || lowerEmail === FOUNDER_EMAIL_2) ? '1234' : (isAdvisor ? '5678' : '0000'),
         createdAt: new Date().toISOString(),
@@ -7892,7 +7892,7 @@ export default function App() {
           uid: 'simulated-local-' + Date.now(),
           email: email,
           role: computedRole,
-          displayName: computedRole === 'executive_founder' ? "Live Agent Robinson" : (computedRole === 'chief_compliance_director' ? "Monica Green" : email.split('@')[0]),
+          displayName: computedRole === 'executive_founder' ? "Founder/CEO" : (computedRole === 'chief_compliance_director' ? "Monica Green" : email.split('@')[0]),
           status: 'Active',
           idCode: computedRole === 'chief_compliance_director' ? '1234' : '0000', // Default PIN for simulated admins
           createdAt: new Date().toISOString(),

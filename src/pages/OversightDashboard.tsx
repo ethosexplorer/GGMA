@@ -182,11 +182,11 @@ export const OversightDashboard = ({ onLogout, user, role, jurisdiction = 'Oklah
           </div>
           <div className="p-2.5 rounded-xl bg-slate-900/50 border border-slate-800 flex items-center gap-3 mb-2">
             <div className="w-8 h-8 rounded-lg overflow-hidden border border-slate-700 bg-slate-800 flex items-center justify-center text-slate-300 font-bold text-xs">
-              {user?.displayName?.[0] || "A"}
+              {isExecutive ? "L" : (user?.displayName?.[0] || "A")}
             </div>
             <div>
-              <p className="text-xs font-bold text-white">{user?.displayName || "Administrator"}</p>
-              <p className="text-[10px] text-slate-500">Executive Access</p>
+              <p className="text-xs font-bold text-white">{isExecutive && user?.role === 'executive_founder' ? 'Live Sr Agent' : (user?.displayName || "Administrator")}</p>
+              <p className="text-[10px] text-slate-500">{isExecutive && user?.role === 'executive_founder' ? 'Support Lead' : 'Executive Access'}</p>
             </div>
           </div>
         </div>
