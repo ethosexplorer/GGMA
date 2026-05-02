@@ -16,6 +16,7 @@ const ALL_CATEGORIES = [
   { id: 'federal', label: 'Federal', color: 'bg-red-500' },
   { id: 'state', label: 'State Authority', color: 'bg-cyan-500' },
   { id: 'ops', label: 'Operations', color: 'bg-indigo-500' },
+  { id: 'admin_support', label: 'Admin Support', color: 'bg-pink-500' },
   { id: 'personal', label: 'Personal', color: 'bg-slate-500' },
 ];
 
@@ -30,6 +31,7 @@ const SEED_EVENTS: CalEvent[] = [
   { id: '6', title: 'Compliance Audit Prep', date: '2026-05-01', startTime: '10:00', endTime: '12:00', category: 'compliance', color: 'bg-amber-500', attendees: 'Monica Green', location: 'HQ' },
   { id: '7', title: 'Patent Portfolio Review', date: '2026-05-02', startTime: '15:00', endTime: '16:00', category: 'executive', color: 'bg-purple-500', attendees: 'Legal Team', meetLink: 'https://meet.google.com/pat-rvw-002' },
   { id: '8', title: 'Weekly Ops Standup', date: '2026-05-05', startTime: '09:00', endTime: '09:30', category: 'ops', color: 'bg-indigo-500', attendees: 'All Departments', meetLink: 'https://meet.google.com/ops-stdup-wk' },
+  { id: '9', title: 'New Registration Assistance', date: '2026-05-03', startTime: '10:00', endTime: '10:30', category: 'admin_support', color: 'bg-pink-500', attendees: 'asstsupport@gmail.com', meetLink: 'https://calendly.com/asstsupport' },
 ];
 
 const fmt = (d: Date) => d.toISOString().split('T')[0];
