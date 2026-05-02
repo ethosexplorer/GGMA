@@ -3686,17 +3686,20 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     localStorage.setItem('gghp_nav_order', JSON.stringify(ids));
   };
 
-  const navGroups: any[] = [];
+  let navGroups: any[] = [];
   let currentGroup: any = null;
 
   navItemsList.forEach((item, i) => {
-    // === FOUNDER-ONLY BLOCKS ===
-    const founderOnly = ["accounting_ledger", "global_financials", "hr_intelligence", "launch_script", "jurisdiction_map", "approvals", "ip_monitor"];
-    if (isExecutive && (item.section === "FOUNDER/CEO" || founderOnly.includes(item.id || ''))) return;
-    if (isRyan && (item.id === "state_authority" || item.id === "federal" || item.id === "system_health")) return;
-    if (isMonica && (item.id === "state_authority" || item.id === "federal" || item.id === "system_health")) return;
-    const advisorBlocked = ["accounting_ledger", "global_financials", "hr_intelligence", "launch_script", "settings", "system_health", "logs"];
-    if (isBobAdvisor && (item.section === "FOUNDER/CEO" || advisorBlocked.includes(item.id || ''))) return;
+    // If not Founder, strictly limit to the 17 requested tabs (plus any custom sections)
+    if ((isMonica || isRyan || isBobAdvisor) && !('section' in item)) {
+      const allowedExecutiveTabs = [
+        "system_health", "hr_intelligence", "jurisdiction_map", "ai_training", "messages",
+        "internal_scheduler", "patients", "business", "compliance", "regulatory_library",
+        "internal_admin", "law_enforcement", "processor", "public_health", "rapid_testing",
+        "reports", "intel"
+      ];
+      if (!allowedExecutiveTabs.includes(item.id || '')) return;
+    }
 
     if ('section' in item) {
       currentGroup = { item, index: i, children: [] };
@@ -3706,6 +3709,9 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       else navGroups.push({ item, index: i });
     }
   });
+
+  // Remove empty sections
+  navGroups = navGroups.filter(g => !g.children || g.children.length > 0);
 
   const activeGroup = navGroups.find(g => g.children && g.item.id === activePopoutSection);
 
