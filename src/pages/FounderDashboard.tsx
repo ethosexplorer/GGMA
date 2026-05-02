@@ -35,57 +35,62 @@ import { voip800 } from '../lib/voip800';
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
-const NAV_VERSION = 18; // Bumped: add Negligence Intercept + Subscriptions, move IP Valuation
+const NAV_VERSION = 19; // Bumped: Reorganized into specific popouts
 
 const INITIAL_NAV_ITEMS: NavItem[] = [
-  { id: '_sec_founder', section: 'FOUNDER EXCLUSIVE' },
-  { id: 'accounting_ledger', label: 'Accounting Ledger (QuickBooks)', icon: TrendingUp },
-  { id: 'global_financials', label: 'Global Financials', icon: TrendingUp },
-  { id: 'system_health', label: 'System Health / AI', icon: Zap },
-  { id: 'hr_intelligence', label: 'HR Intelligence (Sylara)', icon: UserPlus },
-  { id: 'launch_script', label: 'Master Launch Script', icon: FileText },
-  { id: 'jurisdiction_map', label: 'Nationwide Oversight', icon: Globe },
-  { id: '_sec_main', section: 'MAIN' },
-  { id: 'ai_training', label: 'My Assistant & Training', icon: Bot, badge: 'AI' },
-  { id: 'messages', label: 'Messages', icon: MessageSquare, badge: 'Live' },
-  { id: 'internal_scheduler', label: 'Calendar & Scheduler', icon: Clock, badge: 'New' },
-  { id: 'subscriptions', label: 'Subscriptions & Revenue', icon: CreditCard, badge: 'Live' },
+  // Single tabs
+  { id: 'ai_training', label: 'My Asst AI', icon: Bot, badge: 'AI' },
   { id: 'overview', label: 'God Overview', icon: Activity },
+  { id: 'internal_scheduler', label: 'Calendar / Scheduler', icon: Clock, badge: 'New' },
+  { id: 'messages', label: 'Messages', icon: MessageSquare, badge: 'Live' },
+
+  // Founder/CEO Popout
+  { id: '_sec_founder', section: 'FOUNDER/CEO' },
+  { id: 'roles_duties', label: 'My Role & Duties', icon: Shield },
+  { id: 'settings', label: 'God Settings', icon: Settings },
+  { id: 'launch_script', label: 'Master Launch Script', icon: FileText },
+  { id: 'system_health', label: 'System Health / AI', icon: Zap },
   { id: 'investor_sandbox', label: 'Investor Sandbox', icon: MonitorPlay, badge: 'Demo' },
-  { id: '_sec_supreme', section: 'SUPREME COMMAND' },
+
+  // COO/Sr Live Agent Popout
+  { id: '_sec_ops', section: 'COO/SR LIVE AGENT' },
+  { id: 'operations', label: 'Ops Center (Live)', icon: Cpu, badge: 'Live' },
+  { id: 'virtual_attendant', label: 'GGE World Call Center', icon: Phone },
+  { id: 'internal_admin', label: 'Internal Team', icon: Shield, badge: '!' },
+  { id: 'hr_intelligence', label: 'HR Intelligence (Sylara)', icon: UserPlus },
   { id: 'users', label: 'Personnel Force (Total)', icon: Users },
-  { id: 'patients', label: 'Registry Sovereignty', icon: HeartPulse },
-  { id: 'business', label: 'Economic Infrastructure', icon: Building2 },
-  { id: '_sec_ops', section: 'OPS & COMPLIANCE' },
-  { id: 'approvals', label: 'Agency Approvals', icon: UserCheck, badge: '12' },
-  { id: 'applications', label: 'Applications Queue', icon: FileText, badge: '502' },
+  { id: 'support_tickets', label: 'Support Tickets', icon: MessageSquare, badge: '12' },
+  { id: 'it_support', label: 'IT Support & Diagnostics', icon: MonitorPlay, badge: 'Ryan' },
+
+  // Oversight Popout
+  { id: '_sec_oversight', section: 'OVERSIGHT' },
+  { id: 'jurisdiction_map', label: 'Nationwide Oversight', icon: Globe },
   { id: 'compliance', label: 'Compliance Monitor', icon: FileCheck },
   { id: 'regulatory_library', label: 'Regulatory Library', icon: BookOpen },
-  { id: '_sec_oversight', section: 'OVERSIGHT HUB' },
-  { id: 'internal_admin', label: 'Internal Team (GGE Call Center)', icon: Shield, badge: '!' },
-  { id: 'negligence_intercept', label: 'Negligence Intercept', icon: AlertTriangle, badge: '1' },
-  { id: 'external_admin', label: 'External Administrator', icon: Activity },
-  { id: 'law_enforcement', label: 'Law Enforcement (RIP)', icon: Shield },
-  { id: 'state_authority', label: 'Regulator / Authority', icon: Gavel },
-  { id: 'operations', label: 'Ops Center', icon: Cpu, badge: 'Live' },
-  { id: 'virtual_attendant', label: 'GGE World Call Center', icon: Phone },
-  { id: 'processor', label: 'GGE Processor', icon: Activity },
-  { id: '_sec_federal', section: 'FEDERAL & IP MONITORS' },
   { id: 'federal', label: 'Federal Command', icon: Globe },
   { id: 'public_health', label: 'Public Health & Labs', icon: FlaskConical },
   { id: 'judicial', label: 'Judicial Monitor', icon: Scale },
   { id: 'ip_monitor', label: 'IP / Patent Monitor', icon: Shield },
   { id: 'rapid_testing', label: 'Rapid Testing Hub', icon: FlaskConical },
+  { id: 'law_enforcement', label: 'Law Enforcement (RIP)', icon: Shield },
+  { id: 'state_authority', label: 'Regulator / Authority', icon: Gavel },
+  { id: 'external_admin', label: 'External Administrator', icon: Activity },
+  { id: 'negligence_intercept', label: 'Negligence Intercept', icon: AlertTriangle, badge: '1' },
+  { id: 'patients', label: 'Registry Sovereignty', icon: HeartPulse },
+  { id: 'business', label: 'Economic Infrastructure', icon: Building2 },
+  { id: 'approvals', label: 'Agency Approvals', icon: UserCheck, badge: '12' },
+  { id: 'applications', label: 'Applications Queue', icon: FileText, badge: '502' },
+  { id: 'processor', label: 'GGE Processor', icon: Activity },
+
+  // Analytics Popout
+  { id: '_sec_analytics', section: 'ANALYTICS' },
+  { id: 'accounting_ledger', label: 'Accounting Ledger (QuickBooks)', icon: TrendingUp },
+  { id: 'global_financials', label: 'Global Financials', icon: TrendingUp },
+  { id: 'subscriptions', label: 'Subscriptions & Revenue', icon: CreditCard, badge: 'Live' },
   { id: 'subscription', label: 'Platform Billing', icon: CreditCard },
-  { id: '_sec_system', section: 'SYSTEM CONTROL' },
   { id: 'reports', label: 'Master Analytics', icon: BarChart3 },
   { id: 'intel', label: 'Global Intelligence', icon: BookOpen },
-  { id: 'it_support', label: 'IT Support & Diagnostics', icon: MonitorPlay, badge: 'Ryan' },
   { id: 'logs', label: 'System Logs', icon: Database },
-  { id: 'support_tickets', label: 'Support Tickets', icon: MessageSquare, badge: '12' },
-
-  { id: 'roles_duties', label: 'My Role & Duties', icon: Shield },
-  { id: 'settings', label: 'God Settings', icon: Settings },
 ];
 
 export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, setMarqueeNews, marqueeSpeed, setMarqueeSpeed }: { onLogout?: () => void | Promise<void>, user?: any, jurisdiction?: any, marqueeNews?: string[], setMarqueeNews?: any, marqueeSpeed?: string, setMarqueeSpeed?: any }) => {
@@ -283,6 +288,12 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     } catch {}
     return INITIAL_NAV_ITEMS;
   });
+  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
+  const toggleSection = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    setCollapsedSections(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
   const [draggedIdx, setDraggedIdx] = useState<number | null>(null);
   const [editingSectionIdx, setEditingSectionIdx] = useState<number | null>(null);
 
@@ -3691,86 +3702,104 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           </div>
         </div>
         <div className="flex-1 overflow-y-auto px-4 pb-6 space-y-1">
-           {navItemsList.map((item, i) => {
-            // === FOUNDER-ONLY BLOCKS (both Monica & Ryan blocked) ===
-            const founderOnly = ["accounting_ledger", "global_financials", "hr_intelligence", "launch_script", "jurisdiction_map", "approvals", "ip_monitor"];
-            if (isExecutive && (item.section === "FOUNDER EXCLUSIVE" || founderOnly.includes(item.id || ''))) return null;
-            // === RYAN (CEO): IT/Ops focus — block compliance-heavy & government tabs ===
-            if (isRyan && (item.id === "state_authority" || item.id === "federal" || item.id === "system_health")) return null;
-            // === MONICA (Compliance Director): Business/Metrc/OMMA — block federal, state authority, system health ===
-            if (isMonica && (item.id === "state_authority" || item.id === "federal" || item.id === "system_health")) return null;
-            // === BOB (Advisor): Can see all oversight dashboards, but NOT Founder Exclusive, Settings, or HR ===
-            const advisorBlocked = ["accounting_ledger", "global_financials", "hr_intelligence", "launch_script", "settings", "system_health", "logs"];
-            if (isBobAdvisor && (item.section === "FOUNDER EXCLUSIVE" || advisorBlocked.includes(item.id || ''))) return null;
-            if ('section' in item) return (
-              <div 
-                key={`section-${i}`} 
-                draggable
-                onDragStart={(e) => handleDragStart(e, i)}
-                onDragOver={(e) => handleDragOver(e, i)}
-                onDragEnd={() => setDraggedIdx(null)}
-                className={cn(
-                  "pt-6 pb-2 px-3 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] cursor-grab active:cursor-grabbing group flex items-center justify-between",
-                  draggedIdx === i ? "opacity-30 border border-dashed border-indigo-400 rounded-lg" : ""
-                )}
-              >
-                {editingSectionIdx === i ? (
-                  <input
-                    autoFocus
-                    className="bg-transparent border-b border-emerald-400 text-emerald-300 text-[10px] font-black uppercase tracking-[0.2em] outline-none w-full"
-                    defaultValue={item.section}
-                    onBlur={(e) => {
-                      const val = e.target.value.trim();
-                      if (val) {
-                        const newItems = [...navItemsList];
-                        newItems[i] = { ...newItems[i], section: val };
-                        setNavItemsList(newItems);
-                        const ids = newItems.map(it => it.id!);
-                        localStorage.setItem('gghp_nav_order', JSON.stringify(ids));
-                        // Also persist custom section names keyed by stable id
-                        const sectionMap: Record<string, string> = {};
-                        newItems.forEach(it => { if (it.section && it.id) sectionMap[it.id] = it.section; });
-                        localStorage.setItem('gghp_section_names', JSON.stringify(sectionMap));
-                      }
-                      setEditingSectionIdx(null);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
-                      if (e.key === 'Escape') setEditingSectionIdx(null);
-                    }}
-                  />
-                ) : (
-                  <span 
-                    onDoubleClick={() => setEditingSectionIdx(i)}
-                    title="Double-click to rename"
-                    className="cursor-text hover:text-emerald-400 transition-colors"
+           {(() => {
+             let currentSectionId = '';
+             let isCurrentSectionCollapsed = false;
+
+             return navItemsList.map((item, i) => {
+              // === FOUNDER-ONLY BLOCKS (both Monica & Ryan blocked) ===
+              const founderOnly = ["accounting_ledger", "global_financials", "hr_intelligence", "launch_script", "jurisdiction_map", "approvals", "ip_monitor"];
+              if (isExecutive && (item.section === "FOUNDER/CEO" || founderOnly.includes(item.id || ''))) return null;
+              // === RYAN (CEO): IT/Ops focus — block compliance-heavy & government tabs ===
+              if (isRyan && (item.id === "state_authority" || item.id === "federal" || item.id === "system_health")) return null;
+              // === MONICA (Compliance Director): Business/Metrc/OMMA — block federal, state authority, system health ===
+              if (isMonica && (item.id === "state_authority" || item.id === "federal" || item.id === "system_health")) return null;
+              // === BOB (Advisor): Can see all oversight dashboards, but NOT Founder Exclusive, Settings, or HR ===
+              const advisorBlocked = ["accounting_ledger", "global_financials", "hr_intelligence", "launch_script", "settings", "system_health", "logs"];
+              if (isBobAdvisor && (item.section === "FOUNDER/CEO" || advisorBlocked.includes(item.id || ''))) return null;
+              
+              if ('section' in item) {
+                currentSectionId = item.id!;
+                isCurrentSectionCollapsed = !!collapsedSections[currentSectionId];
+                return (
+                  <div 
+                    key={`section-${i}`} 
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, i)}
+                    onDragOver={(e) => handleDragOver(e, i)}
+                    onDragEnd={() => setDraggedIdx(null)}
+                    onClick={(e) => toggleSection(e, currentSectionId)}
+                    className={cn(
+                      "pt-6 pb-2 px-3 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] cursor-pointer group flex items-center justify-between",
+                      draggedIdx === i ? "opacity-30 border border-dashed border-indigo-400 rounded-lg" : ""
+                    )}
                   >
-                    {item.section}
+                    {editingSectionIdx === i ? (
+                      <input
+                        autoFocus
+                        className="bg-transparent border-b border-emerald-400 text-emerald-300 text-[10px] font-black uppercase tracking-[0.2em] outline-none w-full"
+                        defaultValue={item.section}
+                        onBlur={(e) => {
+                          const val = e.target.value.trim();
+                          if (val) {
+                            const newItems = [...navItemsList];
+                            newItems[i] = { ...newItems[i], section: val };
+                            setNavItemsList(newItems);
+                            const ids = newItems.map(it => it.id!);
+                            localStorage.setItem('gghp_nav_order', JSON.stringify(ids));
+                            const sectionMap: Record<string, string> = {};
+                            newItems.forEach(it => { if (it.section && it.id) sectionMap[it.id] = it.section; });
+                            localStorage.setItem('gghp_section_names', JSON.stringify(sectionMap));
+                          }
+                          setEditingSectionIdx(null);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+                          if (e.key === 'Escape') setEditingSectionIdx(null);
+                        }}
+                      />
+                    ) : (
+                      <span 
+                        onDoubleClick={(e) => { e.stopPropagation(); setEditingSectionIdx(i); }}
+                        title="Double-click to rename"
+                        className="hover:text-emerald-400 transition-colors flex-1"
+                      >
+                        {item.section}
+                      </span>
+                    )}
+                    <div className="flex items-center gap-1">
+                      <span className="text-[14px] text-slate-600 opacity-50 group-hover:opacity-100 transition-opacity">
+                        {isCurrentSectionCollapsed ? '+' : '-'}
+                      </span>
+                      <GripVertical size={12} className="text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
+                  </div>
+                );
+              }
+              
+              if (isCurrentSectionCollapsed && currentSectionId) return null;
+
+              const displayLabel = isExecutive ? item.label?.replace('God', 'Executive') : item.label;
+              return (
+                <button 
+                  key={item.id || i} 
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, i)}
+                  onDragOver={(e) => handleDragOver(e, i)}
+                  onDragEnd={() => setDraggedIdx(null)}
+                  onClick={() => setActiveTab(item.id!)} 
+                  className={cn("group cursor-grab active:cursor-grabbing w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold transition-all text-left", activeTab === item.id ? "bg-indigo-600 text-white shadow-xl shadow-indigo-900/40" : "text-slate-400 hover:bg-white/5 hover:text-slate-100", draggedIdx === i ? "opacity-30 border border-dashed border-indigo-400" : "", currentSectionId ? "pl-5" : "")}
+                >
+                  <span className="flex items-center gap-3">
+                    <GripVertical size={14} className={cn("transition-opacity", activeTab === item.id ? "text-white opacity-50" : "text-slate-500 opacity-0 group-hover:opacity-100")} />
+                    {item.icon && <item.icon size={18} className={activeTab === item.id ? "text-white" : "text-slate-500"} />} 
+                    {displayLabel}
                   </span>
-                )}
-                <GripVertical size={12} className="text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity" />
-              </div>
-            );
-            const displayLabel = isExecutive ? item.label?.replace('God', 'Executive') : item.label;
-            return (
-              <button 
-                key={item.id || i} 
-                draggable
-                onDragStart={(e) => handleDragStart(e, i)}
-                onDragOver={(e) => handleDragOver(e, i)}
-                onDragEnd={() => setDraggedIdx(null)}
-                onClick={() => setActiveTab(item.id!)} 
-                className={cn("group cursor-grab active:cursor-grabbing w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold transition-all text-left", activeTab === item.id ? "bg-indigo-600 text-white shadow-xl shadow-indigo-900/40" : "text-slate-400 hover:bg-white/5 hover:text-slate-100", draggedIdx === i ? "opacity-30 border border-dashed border-indigo-400" : "")}
-              >
-                <span className="flex items-center gap-3">
-                  <GripVertical size={14} className={cn("transition-opacity", activeTab === item.id ? "text-white opacity-50" : "text-slate-500 opacity-0 group-hover:opacity-100")} />
-                  {item.icon && <item.icon size={18} className={activeTab === item.id ? "text-white" : "text-slate-500"} />} 
-                  {displayLabel}
-                </span>
-                {item.badge && <span className="text-[10px] bg-white/10 text-white px-2 py-0.5 rounded-full font-black">{item.badge}</span>}
-              </button>
-            );
-          })}
+                  {item.badge && <span className="text-[10px] bg-white/10 text-white px-2 py-0.5 rounded-full font-black">{item.badge}</span>}
+                </button>
+              );
+            });
+           })()}
           <button
             onClick={() => {
               const name = prompt('Enter new group label:');
