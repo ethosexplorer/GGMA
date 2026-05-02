@@ -181,4 +181,5 @@ const AdvisorDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => voi
       </main>
     </div>
   );
+};
 export { AdvisorDashboard };

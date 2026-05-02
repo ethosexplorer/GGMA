@@ -181,4 +181,5 @@ const ChiefComplianceDirectorDashboard = ({ user, onLogout }: { user?: any, onLo
       </main>
     </div>
   );
+};
 export { ChiefComplianceDirectorDashboard };

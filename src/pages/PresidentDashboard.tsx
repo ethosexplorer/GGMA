@@ -181,4 +181,5 @@ const PresidentDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => v
       </main>
     </div>
   );
+};
 export { PresidentDashboard };
