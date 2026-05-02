@@ -313,6 +313,12 @@ export const PROVIDER_PLANS: SubscriptionPlan[] = [
   { id: 'prov_full', name: 'Provider Full AI', monthlyPrice: 499, annualPrice: 5090, aiLevel: 'Full Sylara + Larry', tokensMonth: 'Unlimited', trialDays: 7, trialPrice: 0 }
 ];
 
+export const PROVIDER_ADDONS: AddOn[] = [
+  { id: 'addon_prov_bo_basic', name: 'Provider Backoffice Basic', price: 199 },
+  { id: 'addon_prov_bo_pro', name: 'Provider Backoffice Pro', price: 399 },
+  { id: 'addon_prov_bo_ent', name: 'Provider Backoffice Enterprise', price: 699 }
+];
+
 export const CANNABIS_ATTORNEY_PLANS: SubscriptionPlan[] = [
   { id: 'cann_att_basic', name: 'Cannabis Attorney Basic', monthlyPrice: 149, annualPrice: 1519, aiLevel: 'Gemini Flash + Basic Sylara', bestFor: 'Cannabis Legal Marketplace Access', trialDays: 7, trialPrice: 0 },
   { id: 'cann_att_med', name: 'Cannabis Attorney Medium', monthlyPrice: 349, annualPrice: 3559, aiLevel: 'Gemini Flash + Enhanced Sylara', bestFor: 'Enhanced Lead Access & Priority', trialDays: 7, trialPrice: 0 },
@@ -400,9 +406,6 @@ export const FEDERAL_ADDONS: AddOn[] = [
 
 
 
-export const ORGANIZATION_ADMIN_ADDON: AddOn = { id: 'addon_admin_backend', name: 'Admin Back End Dashboard (Organization Oversight)', price: 79, per: 'month' };
-export const CUSTOM_EXTERNAL_BACKEND_ADDON: AddOn = { id: 'addon_custom_backend', name: 'Custom External Backend Build (White-Label)', price: 'Custom', per: 'build + SLA' };
-
 export const getPlansForRole = (role: string, businessType: 'cannabis' | 'traditional', jurisdiction: string): SubscriptionPlan[] => {
   switch (role) {
     case 'user': return B2C_PLANS;
@@ -428,10 +431,9 @@ export const getPlansForRole = (role: string, businessType: 'cannabis' | 'tradit
 
 export const getAddOnsForRole = (role: string, businessType: 'cannabis' | 'traditional', jurisdiction?: string): AddOn[] => {
   const addons: AddOn[] = [];
-  
-  if (role !== 'user' && role !== 'admin' && role !== 'external_admin') {
-    addons.push(ORGANIZATION_ADMIN_ADDON);
-    addons.push(CUSTOM_EXTERNAL_BACKEND_ADDON);
+
+  if (role === 'provider') {
+    addons.push(...PROVIDER_ADDONS);
   }
 
   if (role === 'business') {
@@ -489,14 +491,13 @@ export const getAllAddonsForLookup = (): AddOn[] => {
     ...COMMON_B2B_ADDONS,
     ...CANNABIS_ADDONS,
     ...ATTORNEY_ADDONS,
+    ...PROVIDER_ADDONS,
     ...FEDERAL_ADDONS,
     ...PATIENT_ADDONS,
     ...PUBLIC_HEALTH_ADDONS,
     ...STATE_ADDONS,
     ...BACKOFFICE_ADDONS,
     ...ADMIN_ADDONS,
-    ORGANIZATION_ADMIN_ADDON,
-    CUSTOM_EXTERNAL_BACKEND_ADDON,
     ...CROSS_DASHBOARD_ADDONS,
     ...CARE_BUILDER_ADDONS,
   ];
