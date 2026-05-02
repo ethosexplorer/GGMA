@@ -125,6 +125,9 @@ import { EducationPortal } from './pages/EducationPortal';
 import { ProSeLegalIntake } from './pages/ProSeLegalIntake';
 import { PatientDashboard } from './pages/PatientDashboard';
 import { OversightDashboard } from './pages/OversightDashboard';
+import { PresidentDashboard } from './pages/PresidentDashboard';
+import { ChiefComplianceDirectorDashboard } from './pages/ChiefComplianceDirectorDashboard';
+import { AdvisorDashboard } from './pages/AdvisorDashboard';
 import { PricingTiers } from './components/PricingTiers';
 import { RolePricingPage } from './pages/RolePricingPage';
 import { StateFactsPage } from './pages/StateFactsPage';
@@ -7741,8 +7744,19 @@ export default function App() {
     const validTabs = ['home', 'analytics', 'pos', 'inventory', 'locations', 'compliance', 'insurance', 'documents', 'subscription', 'integrations', 'staff', 'traceability', 'readiness', 'wallet', 'attorneys', 'reporting'];
     const initialTab = validTabs.includes(subTab || '') ? subTab : undefined;
 
+    // Internal Leadership Portal Routing
+    if (role === 'president') {
+      return <PresidentDashboard onLogout={handleReturnToSelector} user={profile} />;
+    }
+    if (role === 'chief_compliance_director') {
+      return <ChiefComplianceDirectorDashboard onLogout={handleReturnToSelector} user={profile} />;
+    }
+    if (role === 'advisor') {
+      return <AdvisorDashboard onLogout={handleReturnToSelector} user={profile} />;
+    }
+
     // Oversight Portal Routing
-    if (role === 'executive_founder' || role === 'executive_ceo' || role === 'executive_monica' || role === 'executive_advisor') {
+    if (role === 'executive_founder') {
       return <FounderDashboard onLogout={handleReturnToSelector} user={profile} jurisdiction={jurisdiction} />;
     }
     // Federal Dashboard Routing
@@ -7812,25 +7826,32 @@ export default function App() {
       // Removed the restrictive password check for Monica so she can log in locally with whatever she sets, bypassing Firebase issues
       
       console.log('[App.handleLogin] Privileged login override:', { email });
-      const isFounder = lowerEmail === FOUNDER_EMAIL || lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp');
+      const isFounder = lowerEmail === FOUNDER_EMAIL || lowerEmail === FOUNDER_EMAIL_2;
+      const isPresident = lowerEmail.includes('ceo.globalgreenhp');
+      const isComplianceDirector = lowerEmail.includes('monica') || lowerEmail.includes('compliance.globalgreenhp') && lowerEmail !== FOUNDER_EMAIL_2;
       const isAdvisor = lowerEmail === ADVISOR_EMAIL;
-      const isAdmin = initialRole === 'admin' || (OVERSIGHT_EMAILS.includes(lowerEmail) && !lowerEmail.includes('ceo.globalgreenhp') && lowerEmail !== ADVISOR_EMAIL);
+      const isAdmin = initialRole === 'admin' || (OVERSIGHT_EMAILS.includes(lowerEmail) && !isPresident && !isAdvisor);
       
+      let computedRole = 'regulator_state';
+      if (isFounder) computedRole = 'executive_founder';
+      else if (isPresident) computedRole = 'president';
+      else if (isComplianceDirector) computedRole = 'chief_compliance_director';
+      else if (isAdvisor) computedRole = 'advisor';
+      else if (isAdmin) computedRole = 'admin_internal';
+
       const privilegedProfile = {
-        uid: 'privileged-local-' + (isFounder ? 'founder' : (isAdvisor ? 'advisor' : (isAdmin ? 'admin' : 'oversight'))),
+        uid: 'privileged-local-' + computedRole,
         email: email,
-        role: isFounder ? 'executive_founder' : (isAdvisor ? 'executive_advisor' : (isAdmin ? 'admin_internal' : 'regulator_state')),
-        displayName: lowerEmail === FOUNDER_EMAIL ? 'Live Agent Robinson' : ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica')) ? 'Monica Green' : (lowerEmail.includes('ceo.globalgreenhp') ? 'Ryan Ferrari' : (lowerEmail === ADVISOR_EMAIL ? 'Bob Green-Energy-Financing Moore' : email.split('@')[0]))),
+        role: computedRole,
+        displayName: isFounder ? 'Live Agent Robinson' : (isComplianceDirector ? 'Monica Green' : (isPresident ? 'Ryan Ferrari' : (isAdvisor ? 'Bob Green-Energy-Financing Moore' : email.split('@')[0]))),
         status: 'Active',
-        idCode: (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp')) ? '1234' : (lowerEmail === ADVISOR_EMAIL ? '5678' : '0000'),
+        idCode: (isComplianceDirector || lowerEmail === FOUNDER_EMAIL_2) ? '1234' : (isAdvisor ? '5678' : '0000'),
         createdAt: new Date().toISOString(),
       };
       setUserProfile(privilegedProfile);
       // For privileged local override
-      if ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp'))) {
+      if (isComplianceDirector || lowerEmail === FOUNDER_EMAIL_2) {
         setView('pin-verification');
-      } else if (isAdvisor) {
-        setView('dashboard');
       } else {
         setView('dashboard');
       }
@@ -7858,7 +7879,10 @@ export default function App() {
         let computedRole = initialRole || 'Patient / Caregiver';
         const lowerEmail = email.toLowerCase().trim();
         
-        if (lowerEmail === FOUNDER_EMAIL || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp')) computedRole = 'executive_founder';
+        if (lowerEmail === FOUNDER_EMAIL || lowerEmail === FOUNDER_EMAIL_2) computedRole = 'executive_founder';
+        else if (lowerEmail.includes('ceo.globalgreenhp')) computedRole = 'president';
+        else if (lowerEmail.includes('monica') || lowerEmail.includes('compliance.globalgreenhp')) computedRole = 'chief_compliance_director';
+        else if (lowerEmail === ADVISOR_EMAIL) computedRole = 'advisor';
         else if (lowerEmail.includes('admin')) computedRole = 'admin';
         else if (lowerEmail.includes('business') || lowerEmail.includes('company') || lowerEmail.includes('dispensary') || lowerEmail.includes('grower')) computedRole = 'business';
         else if (lowerEmail.includes('oversight') || lowerEmail.includes('regulator')) computedRole = 'oversight';
@@ -7868,14 +7892,14 @@ export default function App() {
           uid: 'simulated-local-' + Date.now(),
           email: email,
           role: computedRole,
-          displayName: lowerEmail === FOUNDER_EMAIL ? "Live Agent Robinson" : (lowerEmail === 'compliance.globalgreenhp@gmail.com' ? "Monica Green" : email.split('@')[0]),
+          displayName: computedRole === 'executive_founder' ? "Live Agent Robinson" : (computedRole === 'chief_compliance_director' ? "Monica Green" : email.split('@')[0]),
           status: 'Active',
-          idCode: lowerEmail === 'compliance.globalgreenhp@gmail.com' ? '1234' : '0000', // Default PIN for simulated admins
+          idCode: computedRole === 'chief_compliance_director' ? '1234' : '0000', // Default PIN for simulated admins
           createdAt: new Date().toISOString(),
         };
         setUserProfile(simulatedProfile);
-        if (computedRole === 'executive_founder' || computedRole === 'admin') {
-          if (lowerEmail === 'compliance.globalgreenhp@gmail.com') {
+        if (computedRole === 'executive_founder' || computedRole === 'admin' || computedRole === 'chief_compliance_director') {
+          if (computedRole === 'chief_compliance_director' || lowerEmail === FOUNDER_EMAIL_2) {
             setView('pin-verification');
           } else {
             setView('dashboard');
