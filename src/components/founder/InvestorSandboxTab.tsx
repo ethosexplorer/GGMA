@@ -20,7 +20,7 @@ export const InvestorSandboxTab = () => {
           <div className="w-px h-3 bg-white/20"></div>
           <button onClick={() => setActiveMock('none')} className="hover:text-indigo-300 transition-colors">Exit Sandbox ✕</button>
         </div>
-        <PatientDashboard onLogout={() => setActiveMock('none')} />
+        <PatientDashboard user={{ role: 'executive_founder', subscriptionStatus: 'Active', email: 'investor@globalgreenhp.com', planId: 'pro' }} onLogout={() => setActiveMock('none')} />
       </div>
     );
   }
@@ -33,7 +33,7 @@ export const InvestorSandboxTab = () => {
           <div className="w-px h-3 bg-white/20"></div>
           <button onClick={() => setActiveMock('none')} className="hover:text-emerald-300 transition-colors">Exit Sandbox ✕</button>
         </div>
-        <BusinessDashboard onLogout={() => setActiveMock('none')} />
+        <BusinessDashboard user={{ role: 'executive_founder', subscriptionStatus: 'Active', email: 'investor@globalgreenhp.com', planId: 'pro' }} onLogout={() => setActiveMock('none')} />
       </div>
     );
   }
@@ -46,7 +46,7 @@ export const InvestorSandboxTab = () => {
           <div className="w-px h-3 bg-white/20"></div>
           <button onClick={() => setActiveMock('none')} className="hover:text-blue-300 transition-colors">Exit Sandbox ✕</button>
         </div>
-        <ProviderDashboard onLogout={() => setActiveMock('none')} />
+        <ProviderDashboard user={{ role: 'executive_founder', subscriptionStatus: 'Active', email: 'investor@globalgreenhp.com', planId: 'pro' }} onLogout={() => setActiveMock('none')} />
       </div>
     );
   }
@@ -59,7 +59,7 @@ export const InvestorSandboxTab = () => {
           <div className="w-px h-3 bg-white/20"></div>
           <button onClick={() => setActiveMock('none')} className="hover:text-amber-300 transition-colors">Exit Sandbox ✕</button>
         </div>
-        <AttorneyDashboard onLogout={() => setActiveMock('none')} />
+        <AttorneyDashboard user={{ role: 'executive_founder', subscriptionStatus: 'Active', email: 'investor@globalgreenhp.com', planId: 'pro' }} onLogout={() => setActiveMock('none')} />
       </div>
     );
   }
@@ -72,7 +72,7 @@ export const InvestorSandboxTab = () => {
           <div className="w-px h-3 bg-white/20"></div>
           <button onClick={() => setActiveMock('none')} className="hover:text-slate-300 transition-colors">Exit Sandbox ✕</button>
         </div>
-        <StateAuthorityDashboard onLogout={() => setActiveMock('none')} />
+        <StateAuthorityDashboard user={{ role: 'executive_founder', subscriptionStatus: 'Active', email: 'investor@globalgreenhp.com', planId: 'pro' }} onLogout={() => setActiveMock('none')} />
       </div>
     );
   }
@@ -85,7 +85,7 @@ export const InvestorSandboxTab = () => {
           <div className="w-px h-3 bg-white/20"></div>
           <button onClick={() => setActiveMock('none')} className="hover:text-slate-300 transition-colors">Exit Sandbox ✕</button>
         </div>
-        <FederalDashboard onLogout={() => setActiveMock('none')} />
+        <FederalDashboard user={{ role: 'executive_founder', subscriptionStatus: 'Active', email: 'investor@globalgreenhp.com', planId: 'pro' }} onLogout={() => setActiveMock('none')} />
       </div>
     );
   }
@@ -98,7 +98,7 @@ export const InvestorSandboxTab = () => {
           <div className="w-px h-3 bg-white/20"></div>
           <button onClick={() => setActiveMock('none')} className="hover:text-slate-300 transition-colors">Exit Sandbox ✕</button>
         </div>
-        <EnforcementDashboard onLogout={() => setActiveMock('none')} />
+        <EnforcementDashboard user={{ role: 'executive_founder', subscriptionStatus: 'Active', email: 'investor@globalgreenhp.com', planId: 'pro' }} onLogout={() => setActiveMock('none')} />
       </div>
     );
   }
