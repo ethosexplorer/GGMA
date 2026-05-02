@@ -184,7 +184,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
       <div className="flex bg-white rounded-xl border border-slate-200 p-1 w-max shadow-sm">
         {[
           { id: 'overview', label: 'Care Wallet Transactions' },
-          { id: 'general_tx', label: 'General Transactions' },
+          userRole === 'business' && { id: 'general_tx', label: 'General Transactions' },
           { id: 'tiers', label: 'Wallet Tiers' },
           { id: 'locations', label: 'Reload Locations' },
           userRole === 'business' && { id: 'b2b', label: 'B2B Transactions' },
@@ -622,7 +622,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
         </div>
       )}
 
-      {activeSection === 'general_tx' && (
+      {activeSection === 'general_tx' && userRole === 'business' && (
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
           <div className="flex justify-between items-center mb-6">
             <div>

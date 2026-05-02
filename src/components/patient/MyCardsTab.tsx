@@ -112,24 +112,8 @@ export const MyCardsTab = () => (
       ))}
     </div>
 
-    {/* Compassion Network */}
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-        <h3 className="font-bold text-slate-800 mb-4">Compassion Network</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            { label: 'Wallet Balance', value: `$${compassionNetwork.balance.toFixed(2)}`, color: 'text-emerald-600' },
-            { label: 'Points Earned', value: compassionNetwork.earned.toString(), color: 'text-blue-600' },
-            { label: 'Points Redeemed', value: compassionNetwork.redeemed.toString(), color: 'text-purple-600' },
-            { label: 'Pending Points', value: compassionNetwork.pending.toString(), color: 'text-amber-600' },
-          ].map((stat, i) => (
-            <div key={i} className="p-4 rounded-xl bg-slate-50 border border-slate-100 text-center">
-              <p className="text-xs text-slate-500 font-medium">{stat.label}</p>
-              <p className={cn("text-2xl font-black mt-1", stat.color)}>{stat.value}</p>
-            </div>
-          ))}
-        </div>
-      </div>
+    {/* Card Compliance Section */}
+    <div className="grid grid-cols-1 gap-6">
 
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
         <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
