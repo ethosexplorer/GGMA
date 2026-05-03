@@ -3,7 +3,12 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import firebaseConfig from '../firebase-applet-config.json';
 
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+let app;
+try {
+  app = getApp();
+} catch {
+  app = initializeApp(firebaseConfig);
+}
 export const auth = getAuth(app);
 export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
 
