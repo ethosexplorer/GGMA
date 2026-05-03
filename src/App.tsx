@@ -7,6 +7,7 @@ import { SettingsPreferencesMockup } from './pages/SettingsPreferencesMockup';
 import { FederalStatePage } from './pages/FederalStatePage';
 import { WhatIsC3Page } from './pages/WhatIsC3Page';
 import { WhatIsCareWalletPage } from './pages/WhatIsCareWalletPage';
+import LoginPage from './pages/LoginPage';
 import { 
   Shield,
   User,
@@ -8273,13 +8274,8 @@ export default function App() {
           )}
 
           {view === 'login' && (
-            <LoginScreen
-              onLogin={handleLogin}
-              onSignUp={() => setView('signup')}
-              onForgotPassword={() => setView('forgot-password')}
-              onBack={handleBack}
-              initialRole={initialRole}
-              jurisdiction={jurisdiction}
+            <LoginPage
+              onNavigate={(v) => handleNavigate(v as any)}
               key="login"
             />
           )}
