@@ -11,6 +11,7 @@ export const InvoiceManager = () => {
   const [requests, setRequests] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [processingId, setProcessingId] = useState<string | null>(null);
+  const [previewEmail, setPreviewEmail] = useState<{type: 'invoice' | 'welcome', request: any, subject: string, body: string} | null>(null);
 
   const fetchRequests = async () => {
     try {
@@ -28,19 +29,9 @@ export const InvoiceManager = () => {
     fetchRequests();
   }, []);
 
-  const handleGenerateInvoice = async (request: any) => {
-    if (!window.confirm(`Generate and send ACH invoice for $${Number(request.total_amount).toLocaleString()} to ${request.customer_email}?`)) return;
-    
-    setProcessingId(request.id as string);
-    try {
-      await turso.execute({
-        sql: "UPDATE subscription_requests SET status = 'invoiced' WHERE id = ?",
-        args: [request.id]
-      });
-      
-      // Generate Pre-filled Email for Invoice
-      const subject = encodeURIComponent(`Invoice for GGP-OS Subscription: ${request.plan_name}`);
-      const body = encodeURIComponent(`Hello ${request.customer_name},
+  const handleGenerateInvoiceClick = (request: any) => {
+    const subject = `Invoice for GGP-OS Subscription: ${request.plan_name}`;
+    const body = `Hello ${request.customer_name},
 
 Thank you for choosing GGP-OS. Your registration for the ${request.plan_name} has been received.
 
@@ -60,62 +51,14 @@ Once your transfer has cleared, your dashboard access will be immediately activa
 
 Thank you,
 GGP-OS Executive Command
-globalgreenhp@gmail.com`);
+globalgreenhp@gmail.com`;
 
-      // Open email client
-      window.open(`mailto:${request.customer_email}?subject=${subject}&body=${body}`, '_blank');
-      
-      await fetchRequests();
-    } catch (err) {
-      console.error(err);
-      alert('Failed to send invoice');
-    } finally {
-      setProcessingId(null);
-    }
+    setPreviewEmail({ type: 'invoice', request, subject, body });
   };
 
-  const handleMarkPaid = async (request: any) => {
-    if (!window.confirm(`Mark ${request.id} as Paid and provision account for ${request.customer_email}?`)) return;
-    
-    setProcessingId(request.id as string);
-    try {
-      // 1. Update Turso
-      await turso.execute({
-        sql: "UPDATE subscription_requests SET status = 'active' WHERE id = ?",
-        args: [request.id]
-      });
-
-      // 2. Find User in Firebase by Email
-      const usersRef = collection(db, 'users');
-      const q = query(usersRef, where('email', '==', request.customer_email));
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        const userDoc = querySnapshot.docs[0];
-        // Determine role based on category or plan
-        let newRole = 'user';
-        const cat = String(request.category).toLowerCase();
-        const plan = String(request.plan_name).toLowerCase();
-        
-        if (cat.includes('business') || plan.includes('business') || plan.includes('dispensary') || plan.includes('cultivator')) newRole = 'business';
-        else if (cat.includes('provider') || plan.includes('provider') || plan.includes('clinic')) newRole = 'provider';
-        else if (cat.includes('attorney') || plan.includes('attorney')) newRole = 'attorney';
-        else if (cat.includes('patient')) newRole = 'Patient / Caregiver';
-        else newRole = 'business'; // default upgrade
-
-        await updateDoc(doc(db, 'users', userDoc.id), {
-          role: newRole,
-          status: 'Active',
-          plan: request.plan_name
-        });
-      } else {
-        console.warn('User not found in Firebase to upgrade role. Email:', request.customer_email);
-        alert(`Warning: Account marked paid, but Firebase user ${request.customer_email} was not found to auto-upgrade.`);
-      }
-
-      // Generate Pre-filled Welcome Email
-      const subject = encodeURIComponent(`Welcome to GGP-OS: Your Account is Active!`);
-      const body = encodeURIComponent(`Hello ${request.customer_name},
+  const handleMarkPaidClick = (request: any) => {
+    const subject = `Welcome to GGP-OS: Your Account is Active!`;
+    const body = `Hello ${request.customer_name},
 
 We have successfully received your payment. Your GGP-OS account has been fully provisioned and unlocked!
 
@@ -128,15 +71,64 @@ If you have any questions or need onboarding assistance, please reach out.
 
 Welcome aboard,
 GGP-OS Executive Command
-globalgreenhp@gmail.com`);
+globalgreenhp@gmail.com`;
+
+    setPreviewEmail({ type: 'welcome', request, subject, body });
+  };
+
+  const confirmAndDispatchEmail = async () => {
+    if (!previewEmail) return;
+    
+    const { type, request, subject, body } = previewEmail;
+    setProcessingId(request.id as string);
+    
+    try {
+      if (type === 'invoice') {
+        await turso.execute({
+          sql: "UPDATE subscription_requests SET status = 'invoiced' WHERE id = ?",
+          args: [request.id]
+        });
+      } else if (type === 'welcome') {
+        await turso.execute({
+          sql: "UPDATE subscription_requests SET status = 'active' WHERE id = ?",
+          args: [request.id]
+        });
+
+        // 2. Find User in Firebase by Email
+        const usersRef = collection(db, 'users');
+        const q = query(usersRef, where('email', '==', request.customer_email));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+          const userDoc = querySnapshot.docs[0];
+          let newRole = 'user';
+          const cat = String(request.category).toLowerCase();
+          const plan = String(request.plan_name).toLowerCase();
+          
+          if (cat.includes('business') || plan.includes('business') || plan.includes('dispensary') || plan.includes('cultivator')) newRole = 'business';
+          else if (cat.includes('provider') || plan.includes('provider') || plan.includes('clinic')) newRole = 'provider';
+          else if (cat.includes('attorney') || plan.includes('attorney')) newRole = 'attorney';
+          else if (cat.includes('patient')) newRole = 'Patient / Caregiver';
+          else newRole = 'business';
+
+          await updateDoc(doc(db, 'users', userDoc.id), {
+            role: newRole,
+            status: 'Active',
+            plan: request.plan_name
+          });
+        } else {
+          console.warn('User not found in Firebase to upgrade role. Email:', request.customer_email);
+        }
+      }
 
       // Open email client
-      window.open(`mailto:${request.customer_email}?subject=${subject}&body=${body}`, '_blank');
-
+      window.open(`mailto:${request.customer_email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
+      
+      setPreviewEmail(null);
       await fetchRequests();
     } catch (err) {
       console.error(err);
-      alert('Failed to process payment & provisioning');
+      alert('Failed to process and dispatch.');
     } finally {
       setProcessingId(null);
     }
@@ -158,6 +150,40 @@ globalgreenhp@gmail.com`);
           <p className="text-sm text-slate-500 font-medium mt-1">Manage ACH invoices and manual account activations</p>
         </div>
       </div>
+
+      {previewEmail && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+              <div>
+                <h3 className="font-black text-slate-800 text-lg">Email Preview: {previewEmail.type === 'invoice' ? 'Payment Invoice' : 'Welcome Dispatch'}</h3>
+                <p className="text-sm text-slate-500">Review the dispatch contents before sending.</p>
+              </div>
+              <button onClick={() => setPreviewEmail(null)} className="text-slate-400 hover:text-slate-600 font-bold p-2 text-xl">&times;</button>
+            </div>
+            <div className="p-6">
+              <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 mb-6">
+                <div className="mb-2"><span className="text-xs font-bold text-slate-400 w-16 inline-block">TO:</span> <span className="font-medium text-slate-700">{previewEmail.request.customer_email}</span></div>
+                <div><span className="text-xs font-bold text-slate-400 w-16 inline-block">SUBJECT:</span> <span className="font-bold text-slate-800">{previewEmail.subject}</span></div>
+              </div>
+              <div className="bg-white border border-slate-200 rounded-xl p-6 h-[40vh] overflow-y-auto font-mono text-sm text-slate-700 whitespace-pre-wrap leading-relaxed shadow-inner">
+                {previewEmail.body}
+              </div>
+            </div>
+            <div className="p-6 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
+              <button onClick={() => setPreviewEmail(null)} className="px-5 py-2.5 text-slate-500 hover:text-slate-700 font-bold transition-colors">Cancel</button>
+              <button 
+                onClick={confirmAndDispatchEmail} 
+                disabled={processingId === previewEmail.request.id}
+                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg transition-all flex items-center gap-2 disabled:opacity-50"
+              >
+                {processingId === previewEmail.request.id ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
+                Approve & Dispatch via Gmail
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <MasterBankingInfo />
 
@@ -231,7 +257,7 @@ globalgreenhp@gmail.com`);
                       <div className="flex justify-end gap-2">
                         {req.status === 'pending' && (
                           <button
-                            onClick={() => handleGenerateInvoice(req)}
+                            onClick={() => handleGenerateInvoiceClick(req)}
                             disabled={processingId === req.id}
                             className="px-3 py-1.5 bg-white border border-slate-200 hover:border-blue-300 hover:bg-blue-50 text-blue-600 text-xs font-bold rounded-lg shadow-sm transition-all flex items-center gap-1.5 disabled:opacity-50"
                           >
@@ -241,7 +267,7 @@ globalgreenhp@gmail.com`);
                         )}
                         {(req.status === 'pending' || req.status === 'invoiced') && (
                           <button
-                            onClick={() => handleMarkPaid(req)}
+                            onClick={() => handleMarkPaidClick(req)}
                             disabled={processingId === req.id}
                             className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg shadow-sm transition-all flex items-center gap-1.5 disabled:opacity-50"
                           >
