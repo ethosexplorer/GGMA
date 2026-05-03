@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { Shield, Mail, Lock, Loader2, ArrowRight } from 'lucide-react';
-import { useAuth } from '../components/AuthContext';
 
 interface LoginPageProps {
   onNavigate: (view: string) => void;
+  onLogin?: (email: string, password: string) => Promise<void>;
 }
 
-export default function LoginPage({ onNavigate }: LoginPageProps) {
-  const { login } = useAuth();
+export default function LoginPage({ onNavigate, onLogin }: LoginPageProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -18,13 +17,22 @@ export default function LoginPage({ onNavigate }: LoginPageProps) {
     try {
       setError('');
       setLoading(true);
-      await login(email, password);
-      // Depending on the user's role, we can route them properly.
-      // For now, if login succeeds, we just route to founder (or whatever default)
-      onNavigate('founder'); 
+      if (onLogin) {
+        await onLogin(email, password);
+      } else {
+        // Fallback: just navigate to dashboard
+        onNavigate('dashboard');
+      }
     } catch (err: any) {
-      setError('Failed to sign in. Please check your credentials.');
-      console.error(err);
+      const code = err?.code || '';
+      if (code === 'auth/user-not-found' || code === 'auth/wrong-password' || code === 'auth/invalid-credential') {
+        setError('Invalid email or password.');
+      } else if (code === 'auth/too-many-requests') {
+        setError('Too many attempts. Please try again later.');
+      } else {
+        setError('Failed to sign in. Please check your credentials.');
+      }
+      console.error('[LoginPage] Auth error:', err);
     } finally {
       setLoading(false);
     }

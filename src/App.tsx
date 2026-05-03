@@ -8276,6 +8276,7 @@ export default function App() {
           {view === 'login' && (
             <LoginPage
               onNavigate={(v) => handleNavigate(v as any)}
+              onLogin={handleLogin}
               key="login"
             />
           )}
