@@ -17,7 +17,10 @@ import { BusinessApplicationsTab } from '../components/business/BusinessApplicat
 import { StressTestEngine, StressTestResult } from '../lib/compliance/StressTestEngine';
 import { UserCalendar } from '../components/UserCalendar';
 import { DEAApplicationWizard } from '../components/business/DEAApplicationWizard';
+import { DEAApplicationWizard } from '../components/business/DEAApplicationWizard';
 import { RegulatoryFeedWidget } from '../components/shared/RegulatoryFeedWidget';
+import { SystemDictionary } from '../components/shared/SystemDictionary';
+import { BookOpen } from 'lucide-react';
 
 // Simple Button mock
 const Button = ({ children, className, icon: Icon, variant, disabled, ...props }: any) => (
@@ -58,7 +61,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
   const [demoUnlocked, setDemoUnlocked] = useState(isExecutive);
   const isSubscribed = user?.subscriptionStatus === 'Active' || user?.planId || demoUnlocked;
   const [previousTab, setPreviousTab] = useState<string>('home');
-  const [activeTab, setActiveTab] = useState<'home' | 'analytics' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'insurance' | 'documents' | 'subscription' | 'integrations' | 'staff' | 'traceability' | 'readiness' | 'dea' | 'wallet' | 'attorneys' | 'reporting' | 'applications' | 'regulatory'>(isSubscribed ? (initialTab || 'analytics') : 'applications');
+  const [activeTab, setActiveTab] = useState<'home' | 'analytics' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'insurance' | 'documents' | 'subscription' | 'integrations' | 'staff' | 'traceability' | 'readiness' | 'dea' | 'wallet' | 'attorneys' | 'reporting' | 'applications' | 'regulatory' | 'dictionary'>(isSubscribed ? (initialTab || 'analytics') : 'applications');
   const navigateTab = (tab: typeof activeTab) => {
     setPreviousTab(activeTab);
     setActiveTab(tab);
@@ -84,6 +87,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
     { id: 'wallet', label: 'Care Wallet', icon: Wallet },
     { id: 'attorneys', label: 'Attorney Marketplace', icon: Gavel },
     { id: 'regulatory', label: 'Law Updates', icon: AlertCircle },
+    { id: 'dictionary', label: 'System Dictionary', icon: BookOpen },
   ];
 
   // Drag-and-drop tab reordering
@@ -1700,8 +1704,14 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
           <RegulatoryFeedWidget jurisdiction={jurisdiction} />
           <RegulatoryFeedWidget jurisdiction={undefined} compact />
         </div>
+
+        {activeTab === 'dictionary' && (
+          <div className="space-y-6">
+            <SystemDictionary role="business" />
+          </div>
+        )}
+
       </div>
     )}
   </div>
 )};
-

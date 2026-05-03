@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { TrainingAndDictionary } from '../components/shared/TrainingAndDictionary';
 import { 
   Building2, Users, Bot, FileText, Settings, Shield, Activity, 
   Clock, HeartPulse, Gavel, FileCheck, Zap, MonitorPlay, MessageSquare, 
@@ -14,6 +15,9 @@ const NAV_ITEMS = [
   { section: 'THE ACADEMY' },
   { id: 'academy_ai', label: 'AI Teacher & Training', icon: GraduationCap, badge: 'New' },
   { id: 'education_queue', label: 'Education Academy Queue', icon: BookOpen, badge: 'Live' },
+  { id: 'business_training', label: 'Business Ops Training', icon: Building2 },
+  { id: 'provider_training', label: 'Provider/Aura Training', icon: HeartPulse },
+  { id: 'attorney_training', label: 'Attorney/Legal Training', icon: Gavel },
   
   { section: 'LIVE OPERATIONS' },
   { id: 'ops_livecenter', label: 'Ops LiveCenter', icon: Headphones, badge: 'Live' },
@@ -263,6 +267,9 @@ export const GGEWorldHRHub = ({ user }: { user?: any }) => {
             >
               {activeTab === 'academy_ai' && renderAIAcademy()}
               {activeTab === 'education_queue' && renderEducationQueue()}
+              {activeTab === 'business_training' && <TrainingAndDictionary role="business" onScheduleConsult={() => setActiveTab('education_queue')} />}
+              {activeTab === 'provider_training' && <TrainingAndDictionary role="provider" onScheduleConsult={() => setActiveTab('education_queue')} />}
+              {activeTab === 'attorney_training' && <TrainingAndDictionary role="attorney" onScheduleConsult={() => setActiveTab('education_queue')} />}
               
               {activeTab === 'ops_livecenter' && <div className="h-full"><CallCenterCommandTab /></div>}
               {activeTab === 'applications_queue' && renderPlaceholder('Applications Queue', 'Review patient, business, and licensing applications.', FileText, 'text-amber-500')}

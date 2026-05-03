@@ -6,6 +6,7 @@ import { Shield, Scale, Briefcase, FileText, Search, BookOpen, Clock, AlertTrian
 import { cn } from '../lib/utils';
 import { StatCard } from '../components/StatCard';
 import { UserCalendar } from '../components/UserCalendar';
+import { SystemDictionary } from '../components/shared/SystemDictionary';
 
 const DEFAULT_SIDEBAR_ITEMS = [
   { id: 'calendar', label: 'My Calendar', icon: Calendar },
@@ -15,6 +16,7 @@ const DEFAULT_SIDEBAR_ITEMS = [
   { id: 'library', label: 'Law Library', icon: BookOpen },
   { id: 'reports', label: 'Reports', icon: BarChart2 },
   { id: 'billing', label: 'Billing & Compassion Balance', icon: CreditCard },
+  { id: 'dictionary', label: 'System Dictionary', icon: BookOpen },
 ];
 
 const availableCases = [
@@ -546,6 +548,12 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                   <h3 className="font-bold text-emerald-800 mb-2">Compassion Balance Network</h3>
                   <p className="text-sm text-emerald-700">Contribute unused tokens to the pro-bono network for patients in need to maintain your Tier 1 platform status.</p>
                 </div>
+              </div>
+            )}
+
+            {activeTab === 'dictionary' && (
+              <div className="space-y-6">
+                <SystemDictionary role="attorney" />
               </div>
             )}
 
