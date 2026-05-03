@@ -8,10 +8,13 @@ export default function handler(req, res) {
   try {
     const twiml = new VoiceResponse();
     
+    const TWILIO_NUMBER = '+18889634447';
+    
     // Check if this is an outbound call request from the WebDialer
-    if (req.body.To && req.body.To.trim() !== '') {
+    // If the destination is NOT our Twilio number, it's an outbound call.
+    if (req.body.To && req.body.To !== TWILIO_NUMBER && req.body.To.trim() !== '') {
       const dial = twiml.dial({
-        callerId: '+18889634447', // Company number
+        callerId: TWILIO_NUMBER, // Company number
         answerOnBridge: true
       });
       // Ensure the number is formatted correctly (e.g., starts with +1)
