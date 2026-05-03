@@ -29,7 +29,7 @@ export const InvoiceManager = () => {
   }, []);
 
   const handleGenerateInvoice = async (request: any) => {
-    if (!window.confirm(`Generate and send ACH invoice for ${request.total_amount} to ${request.customer_email}?`)) return;
+    if (!window.confirm(`Generate and send ACH invoice for $${Number(request.total_amount).toLocaleString()} to ${request.customer_email}?`)) return;
     
     setProcessingId(request.id as string);
     try {
@@ -37,7 +37,34 @@ export const InvoiceManager = () => {
         sql: "UPDATE subscription_requests SET status = 'invoiced' WHERE id = ?",
         args: [request.id]
       });
-      alert(`Invoice successfully sent to ${request.customer_email}!`);
+      
+      // Generate Pre-filled Email for Invoice
+      const subject = encodeURIComponent(`Invoice for GGP-OS Subscription: ${request.plan_name}`);
+      const body = encodeURIComponent(`Hello ${request.customer_name},
+
+Thank you for choosing GGP-OS. Your registration for the ${request.plan_name} has been received.
+
+INVOICE DETAILS:
+- Plan: ${request.plan_name}
+- Total Amount Due: $${Number(request.total_amount).toLocaleString()}
+
+PAYMENT INSTRUCTIONS (ACH / Wire Transfer):
+Please remit payment to our official corporate payables account below:
+
+Bank Name: Found Bank (Lead Bank)
+Account Name: Global Green Enterprise Inc
+Routing Number: 101019644
+Account Number: 216135695772
+
+Once your transfer has cleared, your dashboard access will be immediately activated.
+
+Thank you,
+GGP-OS Executive Command
+globalgreenhp@gmail.com`);
+
+      // Open email client
+      window.open(`mailto:${request.customer_email}?subject=${subject}&body=${body}`, '_blank');
+      
       await fetchRequests();
     } catch (err) {
       console.error(err);
@@ -86,7 +113,26 @@ export const InvoiceManager = () => {
         alert(`Warning: Account marked paid, but Firebase user ${request.customer_email} was not found to auto-upgrade.`);
       }
 
-      alert('Account successfully marked as Paid and provisioned!');
+      // Generate Pre-filled Welcome Email
+      const subject = encodeURIComponent(`Welcome to GGP-OS: Your Account is Active!`);
+      const body = encodeURIComponent(`Hello ${request.customer_name},
+
+We have successfully received your payment. Your GGP-OS account has been fully provisioned and unlocked!
+
+You can now log in securely using your email address and the password you created during registration.
+
+Access the Portal Here:
+https://ggp-os.com/
+
+If you have any questions or need onboarding assistance, please reach out.
+
+Welcome aboard,
+GGP-OS Executive Command
+globalgreenhp@gmail.com`);
+
+      // Open email client
+      window.open(`mailto:${request.customer_email}?subject=${subject}&body=${body}`, '_blank');
+
       await fetchRequests();
     } catch (err) {
       console.error(err);
