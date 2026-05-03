@@ -5,6 +5,7 @@ import { collection, query, where, getDocs, updateDoc, doc } from 'firebase/fire
 import { FileText, CheckCircle, AlertCircle, Loader2, Send, CreditCard, ExternalLink, Mail } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { motion } from 'motion/react';
+import { MasterBankingInfo } from '../MasterBankingInfo';
 
 export const InvoiceManager = () => {
   const [requests, setRequests] = useState<any[]>([]);
@@ -111,6 +112,8 @@ export const InvoiceManager = () => {
           <p className="text-sm text-slate-500 font-medium mt-1">Manage ACH invoices and manual account activations</p>
         </div>
       </div>
+
+      <MasterBankingInfo />
 
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
