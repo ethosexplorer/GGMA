@@ -59,7 +59,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
   const [demoUnlocked, setDemoUnlocked] = useState(isExecutive);
   const isSubscribed = user?.subscriptionStatus === 'Active' || user?.planId || demoUnlocked;
   const [previousTab, setPreviousTab] = useState<string>('home');
-  const [activeTab, setActiveTab] = useState<'home' | 'analytics' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'insurance' | 'documents' | 'subscription' | 'integrations' | 'staff' | 'traceability' | 'readiness' | 'dea' | 'wallet' | 'attorneys' | 'reporting' | 'applications' | 'regulatory'>(isSubscribed ? (initialTab || 'analytics') : 'applications');
+  const [activeTab, setActiveTab] = useState<'home' | 'analytics' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'insurance' | 'documents' | 'subscription' | 'integrations' | 'staff' | 'traceability' | 'readiness' | 'dea' | 'wallet' | 'attorneys' | 'reporting' | 'applications' | 'regulatory'>(isSubscribed ? (initialTab || 'analytics') : 'subscription');
   const navigateTab = (tab: typeof activeTab) => {
     setPreviousTab(activeTab);
     setActiveTab(tab);
@@ -408,7 +408,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
       </div>
       
       <div className="flex overflow-x-auto gap-2 p-1.5 bg-slate-100/60 rounded-3xl w-full xl:w-auto border border-slate-200/50" style={{ scrollbarWidth: 'thin', scrollbarColor: '#94a3b8 transparent' }}>
-        {bizTabs.filter(tab => isSubscribed || tab.id === 'applications').map((tab, index) => {
+        {bizTabs.filter(tab => isSubscribed).map((tab, index) => {
           // Special color styling for certain tabs
           const isActive = activeTab === tab.id;
           const specialActive = tab.id === 'compliance' && isActive ? 'bg-white text-amber-600 shadow-sm shadow-slate-200/50'
@@ -1677,7 +1677,9 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
       <SubscriptionPortal userRole="business" initialPlanId="b2bc_basic" />
     )}
     {activeTab === 'applications' && (
-      <BusinessApplicationsTab />
+      <div className="space-y-6 pt-4">
+        <BusinessApplicationsTab />
+      </div>
     )}
     {activeTab === 'regulatory' && (
       <div className="space-y-6">

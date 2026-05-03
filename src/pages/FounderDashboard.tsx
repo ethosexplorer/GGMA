@@ -36,10 +36,11 @@ import { UserCalendar } from '../components/UserCalendar';
 import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
 import { EscalationSupportCalendar } from '../components/EscalationSupportCalendar';
 import { voip800 } from '../lib/voip800';
+import { InvoiceManager } from '../components/founder/InvoiceManager';
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
-const NAV_VERSION = 22; // Bumped: Move GGE World Master Account tab
+const NAV_VERSION = 23; // Bumped: Add Invoice Manager
 
 const INITIAL_NAV_ITEMS: NavItem[] = [
   // Single tabs
@@ -94,6 +95,7 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'accounting_ledger', label: 'Accounting Ledger (QuickBooks)', icon: TrendingUp },
   { id: 'global_financials', label: 'Global Financials', icon: TrendingUp },
   { id: 'subscriptions', label: 'Subscriptions & Revenue', icon: CreditCard, badge: 'Live' },
+  { id: 'invoices', label: 'Invoice Manager', icon: FileText, badge: 'Action Req' },
   { id: 'reports', label: 'Master Analytics', icon: BarChart3 },
   { id: 'intel', label: 'Global Intelligence', icon: BookOpen },
   { id: 'logs', label: 'System Logs', icon: Database },
@@ -3433,10 +3435,11 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         return <div className="h-full w-full -m-10 p-10 min-h-screen overflow-auto bg-slate-50"><ITSupportDashboard /></div>;
       case 'logs': return renderLogs();
       case 'support_tickets': return renderSupportTickets();
-      case 'internal_scheduler': return <UserCalendar key={user?.role} user={user} title={isRyan ? "President's Calendar" : (isMonica ? "Compliance Director's Calendar" : (isBobAdvisor ? "Advisory Calendar" : "Executive Calendar"))} />;
+      case 'internal_scheduler': return <UserCalendar user={user} title={isRyan ? "President's Calendar" : (isMonica ? "Compliance Director's Calendar" : (isBobAdvisor ? "Advisory Calendar" : "Executive Calendar"))} />;
       case 'admin_support_calendar': return <div className="h-full w-full -m-10"><AdminSupportCalendar /></div>;
       case 'escalation_support_calendar': return <div className="h-full w-full -m-10"><EscalationSupportCalendar /></div>;
       case 'subscriptions': return renderSubscriptionsTab();
+      case 'invoices': return <div className="h-full w-full -m-10 p-10"><InvoiceManager /></div>;
       case 'negligence_intercept': return <div className="h-full w-full -m-10"><AdminDashboard user={user} initialTab="negligence" onLogout={() => setActiveTab(isExecutive ? 'ai_training' : 'overview')} /></div>;
       case 'hr_intelligence': return renderHRIntelligence();
       case 'rapid_testing': return renderRapidTestingHub();

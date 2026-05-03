@@ -8092,7 +8092,7 @@ export default function App() {
   return (
     <ErrorBoundary>
       <div className="antialiased text-slate-900">
-        <GlobalHeader userProfile={userProfile} jurisdiction={jurisdiction} setJurisdiction={setJurisdictionWithGate} roleOverride={roleOverride} setRoleOverride={setRoleOverride} handleBack={handleBack} canGoBack={viewHistory.length > 0 || hasBypassedSelector} />
+        <GlobalHeader userProfile={userProfile} jurisdiction={jurisdiction} setJurisdiction={setJurisdictionWithGate} roleOverride={roleOverride} setRoleOverride={setRoleOverride} handleBack={handleBack} canGoBack={viewHistory.length > 0 || hasBypassedSelector} onLogout={handleLogout} />
 
         {/* JURISDICTION GATE MODAL */}
         {showJurisdictionGate && (
@@ -8277,7 +8277,6 @@ export default function App() {
             <LoginPage
               onNavigate={(v) => handleNavigate(v as any)}
               onLogin={handleLogin}
-              key="login"
             />
           )}
           {view === 'signup' && (
@@ -8287,7 +8286,6 @@ export default function App() {
               onComplete={handleSignup}
               onNavigate={handleNavigate}
               initialRole={initialRole}
-              key="signup"
             />
           )}
           {view === 'forgot-password' && (

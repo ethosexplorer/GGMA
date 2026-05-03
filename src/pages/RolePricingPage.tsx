@@ -87,49 +87,42 @@ export const RolePricingPage = ({
                 <>
                   <h3 className="text-xl font-bold text-white mb-2">Patient Portal (GGMA)</h3>
                   <p className="text-white/70 text-xs mb-4">Adult, Minor, Caregiver, Short-Term, Out-of-State</p>
-                  <button onClick={() => onNavigate && onNavigate('signup')} className="w-full py-3 bg-white text-blue-900 rounded-lg font-bold hover:bg-blue-50 transition-colors shadow-lg">Create an Account</button>
                 </>
               )}
               {role === 'business' && (
                 <>
                   <h3 className="text-xl font-bold text-white mb-2">Business Portal (GGE)</h3>
                   <p className="text-white/70 text-xs mb-4">Dispensaries, Cultivation, Manufacturing</p>
-                  <button onClick={() => onNavigate && onNavigate('signup', 'Business')} className="w-full py-3 bg-white text-emerald-900 rounded-lg font-bold hover:bg-emerald-50 transition-colors shadow-lg">Create an Account</button>
                 </>
               )}
               {role === 'provider' && (
                 <>
                   <h3 className="text-xl font-bold text-white mb-2">Provider Portal (GGE)</h3>
                   <p className="text-white/70 text-xs mb-4">Physicians, Clinics, Telehealth</p>
-                  <button onClick={() => onNavigate && onNavigate('signup', 'Business')} className="w-full py-3 bg-white text-teal-900 rounded-lg font-bold hover:bg-teal-50 transition-colors shadow-lg">Create an Account</button>
                 </>
               )}
               {role === 'attorney' && (
                 <>
                   <h3 className="text-xl font-bold text-white mb-2">Attorney Portal (GGE)</h3>
                   <p className="text-white/70 text-xs mb-4">Legal Counsel, Compliance, Cases</p>
-                  <button onClick={() => onNavigate && onNavigate('signup', 'Business')} className="w-full py-3 bg-white text-amber-900 rounded-lg font-bold hover:bg-amber-50 transition-colors shadow-lg">Create an Account</button>
                 </>
               )}
               {role === 'agency' && (
                 <>
                   <h3 className="text-xl font-bold text-white mb-2">Oversight Portal (RIP/SINC)</h3>
                   <p className="text-white/70 text-xs mb-4">Law Enforcement, Regulators, Executives</p>
-                  <button onClick={() => onNavigate && onNavigate('signup', 'Oversight')} className="w-full py-3 bg-white text-red-900 rounded-lg font-bold hover:bg-red-50 transition-colors shadow-lg">Create an Account</button>
                 </>
               )}
               {role === 'political_executive' && (
                 <>
                   <h3 className="text-xl font-bold text-white mb-2">Executive Portal (RIP)</h3>
                   <p className="text-white/70 text-xs mb-4">Legislators, Congress, Governors</p>
-                  <button onClick={() => onNavigate && onNavigate('signup', 'political_executive')} className="w-full py-3 bg-white text-blue-900 rounded-lg font-bold hover:bg-blue-50 transition-colors shadow-lg">Create an Account</button>
                 </>
               )}
               {role === 'advocacy_research' && (
                 <>
                   <h3 className="text-xl font-bold text-white mb-2">Advocate Portal (GGMA)</h3>
                   <p className="text-white/70 text-xs mb-4">Public Health, Researchers, Advocates</p>
-                  <button onClick={() => onNavigate && onNavigate('signup', 'advocacy_research')} className="w-full py-3 bg-white text-emerald-900 rounded-lg font-bold hover:bg-emerald-50 transition-colors shadow-lg">Create an Account</button>
                 </>
               )}
             </div>

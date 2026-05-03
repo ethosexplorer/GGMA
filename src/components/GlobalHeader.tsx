@@ -16,7 +16,8 @@ export const GlobalHeader = ({
   roleOverride,
   setRoleOverride,
   handleBack,
-  canGoBack
+  canGoBack,
+  onLogout
 }: {
   userProfile: any,
   jurisdiction: string,
@@ -24,7 +25,8 @@ export const GlobalHeader = ({
   roleOverride: string | null,
   setRoleOverride: (r: string | null) => void,
   handleBack?: () => void,
-  canGoBack?: boolean
+  canGoBack?: boolean,
+  onLogout?: () => void
 }) => {
   const [searchQuery, setSearchQuery] = React.useState("");
   // Only show if logged in
@@ -100,7 +102,21 @@ export const GlobalHeader = ({
       )}
 
       {/* Spacer for right side icons */}
-      <div className="w-8" />
+      <div className="flex items-center gap-4 ml-auto pl-4">
+        {onLogout && (
+          <button
+            onClick={() => {
+              if (window.confirm('Are you sure you want to log out?')) {
+                onLogout();
+              }
+            }}
+            className="flex items-center gap-2 text-slate-400 hover:text-red-400 transition-colors bg-slate-800/50 hover:bg-red-500/10 px-3 py-1.5 rounded-lg border border-transparent hover:border-red-500/30"
+            title="Secure Logout"
+          >
+            <LogOut size={16} /> <span className="text-xs font-bold uppercase tracking-widest hidden sm:inline">Logout</span>
+          </button>
+        )}
+      </div>
     </div>
   );
 };

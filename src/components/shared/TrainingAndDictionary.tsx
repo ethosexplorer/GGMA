@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, HelpCircle, CheckCircle, AlertCircle, Video, FileText, ArrowRight, ShieldAlert, GraduationCap, Dictionary } from 'lucide-react';
+import { BookOpen, HelpCircle, CheckCircle, AlertCircle, Video, FileText, ArrowRight, ShieldAlert, GraduationCap } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 interface Module {

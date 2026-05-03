@@ -23,6 +23,23 @@ interface CheckoutModalProps {
   planCategory?: string;
 }
 
+const getRoleFromCategory = (category?: string) => {
+  switch (category) {
+    case 'cannabis_b2b':
+    case 'traditional_b2b':
+    case 'backoffice':
+    case 'partners':
+      return 'business';
+    case 'provider': return 'provider';
+    case 'attorney': return 'attorney';
+    case 'state': return 'regulator_state';
+    case 'federal': return 'regulator_federal';
+    case 'enforcement': return 'law_enforcement';
+    case 'public_health': return 'health';
+    default: return 'user';
+  }
+};
+
 export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, planCategory }: CheckoutModalProps) => {
   const [step, setStep] = useState<'info' | 'review' | 'success'>('info');
   const [accountCreated, setAccountCreated] = useState(false);
@@ -91,7 +108,7 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
       await setDoc(doc(db, 'users', userCredential.user.uid), {
         uid: userCredential.user.uid,
         email: form.email,
-        role: 'user', // Default basic role, upgraded upon payment processing
+        role: getRoleFromCategory(planCategory), // Map category to correct system role
         status: 'Pending',
         displayName: form.fullName,
         companyName: form.company,
