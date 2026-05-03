@@ -29,9 +29,9 @@ export const MasterBankingInfo = () => {
           <div className="bg-slate-800 border border-slate-600 rounded-2xl p-5 hover:border-emerald-500/50 transition-colors">
             <div className="flex justify-between items-start mb-4">
               <div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-md">Medical Receivables</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-md">Gov Contracts & Grants</span>
                 <h4 className="font-bold text-white mt-2">Diversity Health & Wellness LLC</h4>
-                <p className="text-xs text-slate-400 mt-1">Novo Bank (Middlesex Federal Savings)</p>
+                <p className="text-xs text-slate-400 mt-1">Novo Bank (Holding Account)</p>
               </div>
             </div>
             <div className="space-y-3">
@@ -60,9 +60,9 @@ export const MasterBankingInfo = () => {
           <div className="bg-slate-800 border border-slate-600 rounded-2xl p-5 hover:border-emerald-500/50 transition-colors">
             <div className="flex justify-between items-start mb-4">
               <div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-blue-400 bg-blue-400/10 px-2 py-1 rounded-md">All Other Receivables</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-blue-400 bg-blue-400/10 px-2 py-1 rounded-md">Gov Contracts & Grants</span>
                 <h4 className="font-bold text-white mt-2">Global Green Enterprise Inc</h4>
-                <p className="text-xs text-slate-400 mt-1">Novo Bank (Middlesex Federal Savings)</p>
+                <p className="text-xs text-slate-400 mt-1">Novo Bank (Holding Account)</p>
               </div>
             </div>
             <div className="space-y-3">
@@ -91,7 +91,7 @@ export const MasterBankingInfo = () => {
           <div className="bg-slate-800 border border-slate-600 rounded-2xl p-5 hover:border-amber-500/50 transition-colors">
             <div className="flex justify-between items-start mb-4">
               <div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-amber-400 bg-amber-400/10 px-2 py-1 rounded-md">Payables & Operations</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-amber-400 bg-amber-400/10 px-2 py-1 rounded-md">Subscriptions & Operations</span>
                 <h4 className="font-bold text-white mt-2">Global Green Enterprise Inc</h4>
                 <p className="text-xs text-slate-400 mt-1">Found Bank (Lead Bank)</p>
               </div>
