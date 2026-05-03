@@ -252,7 +252,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         return [...INITIAL_NAV_ITEMS];
       }
 
-      const saved = localStorage.getItem('gghp_nav_order_v3');
+      const saved = localStorage.getItem('gghp_nav_order_v4');
       const savedSectionNames = localStorage.getItem('gghp_section_names');
       const sectionNameMap: Record<string, string> = savedSectionNames ? JSON.parse(savedSectionNames) : {};
       
@@ -321,7 +321,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     setNavItemsList(newItems);
     // Persist order to localStorage — all items have stable ids now
     const ids = newItems.map(it => it.id!);
-    localStorage.setItem('gghp_nav_order_v3', JSON.stringify(ids));
+    localStorage.setItem('gghp_nav_order_v4', JSON.stringify(ids));
   };
 
   const [activeTab, setActiveTab] = useState(isExecutive ? 'ai_training' : 'overview');
