@@ -92,25 +92,29 @@ export const MasterBankingInfo = () => {
             <div className="flex justify-between items-start mb-4">
               <div>
                 <span className="text-[10px] font-black uppercase tracking-widest text-amber-400 bg-amber-400/10 px-2 py-1 rounded-md">Payables & Operations</span>
-                <h4 className="font-bold text-white mt-2">Found Bank</h4>
-                <p className="text-xs text-slate-400 mt-1">Primary corporate payables routing</p>
+                <h4 className="font-bold text-white mt-2">Global Green Enterprise Inc</h4>
+                <p className="text-xs text-slate-400 mt-1">Found Bank (Lead Bank)</p>
               </div>
             </div>
-            <div className="space-y-3 mt-8">
-              <a href="https://payments.found.com/preview-account-info/PUxf1rA86xpw" target="_blank" rel="noreferrer" className="bg-slate-900 rounded-lg p-3 flex justify-between items-center group hover:bg-slate-950 transition-colors border border-transparent hover:border-slate-700">
+            <div className="space-y-3">
+              <div className="bg-slate-900 rounded-lg p-3 flex justify-between items-center group">
                 <div>
-                  <p className="font-bold text-slate-200 text-sm">Account Link 1</p>
-                  <p className="text-[10px] text-slate-500">payments.found.com/...86xpw</p>
+                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Routing Number</p>
+                  <p className="font-mono font-bold text-slate-200">101019644</p>
                 </div>
-                <ExternalLink size={16} className="text-slate-500 group-hover:text-amber-400" />
-              </a>
-              <a href="https://payments.found.com/preview-account-info/UUGYB9uYbhA1" target="_blank" rel="noreferrer" className="bg-slate-900 rounded-lg p-3 flex justify-between items-center group hover:bg-slate-950 transition-colors border border-transparent hover:border-slate-700">
+                <button onClick={() => handleCopy('101019644', 'r3')} className="text-slate-500 hover:text-amber-400 p-2">
+                  {copied === 'r3' ? <CircleCheck size={16} className="text-amber-400" /> : <Copy size={16} />}
+                </button>
+              </div>
+              <div className="bg-slate-900 rounded-lg p-3 flex justify-between items-center group">
                 <div>
-                  <p className="font-bold text-slate-200 text-sm">Account Link 2</p>
-                  <p className="text-[10px] text-slate-500">payments.found.com/...bhA1</p>
+                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Account Number</p>
+                  <p className="font-mono font-bold text-slate-200">216135695772</p>
                 </div>
-                <ExternalLink size={16} className="text-slate-500 group-hover:text-amber-400" />
-              </a>
+                <button onClick={() => handleCopy('216135695772', 'a3')} className="text-slate-500 hover:text-amber-400 p-2">
+                  {copied === 'a3' ? <CircleCheck size={16} className="text-amber-400" /> : <Copy size={16} />}
+                </button>
+              </div>
             </div>
           </div>
 
