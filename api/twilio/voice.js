@@ -28,26 +28,45 @@ export default function handler(req, res) {
         statusCallbackMethod: 'POST'
       }, targetNumber);
     } else {
-      // Incoming call logic: Ring the WebDialer for 20 seconds
-      const dial = twiml.dial({
-        timeout: 20, // 20 seconds to answer before voicemail
-        answerOnBridge: true
-      });
-      
-      // Connect to the web browser client
-      dial.client({
-        statusCallbackEvent: 'initiated ringing answered completed',
-        statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status',
-        statusCallbackMethod: 'POST'
-      }, 'GGMA_User');
+      // Check business hours (Mon-Fri, 9am - 5pm CST)
+      const now = new Date();
+      // CST calculation (simplistic UTC-5/6 depending on DST, but using standard -5 for now)
+      const utcHours = now.getUTCHours();
+      const cstHours = (utcHours - 5 + 24) % 24;
+      const dayOfWeek = now.getUTCDay(); // 0 is Sunday, 1 is Monday
 
-      // If the Dial timeout is reached (no answer), Twilio continues to the next verb: Voicemail
-      twiml.say("Thank you for calling Global Green Enterprise. We are currently assisting other callers. Please leave a message after the tone, and we will return your call shortly.");
-      twiml.record({
-        action: 'https://ggma-five.vercel.app/api/twilio/call-status', // Sent here to email the recording
-        maxLength: 120,
-        playBeep: true
-      });
+      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+      const isBusinessHours = !isWeekend && cstHours >= 9 && cstHours < 17;
+
+      if (!isBusinessHours) {
+        twiml.say("Thank you for calling Global Green Enterprise. You have reached us outside of our normal business hours, which are Monday through Friday, 9 A.M. to 5 P.M. Central Time. Please leave a message and we will return your call on the next business day.");
+        twiml.record({
+          action: 'https://ggma-five.vercel.app/api/twilio/call-status',
+          maxLength: 120,
+          playBeep: true
+        });
+      } else {
+        // Incoming call logic: Ring the WebDialer for 60 seconds
+        const dial = twiml.dial({
+          timeout: 60, // 60 seconds to answer before voicemail
+          answerOnBridge: true
+        });
+        
+        // Connect to the web browser client
+        dial.client({
+          statusCallbackEvent: 'initiated ringing answered completed',
+          statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status',
+          statusCallbackMethod: 'POST'
+        }, 'GGMA_User');
+
+        // If the Dial timeout is reached (no answer), Twilio continues to the next verb: Voicemail
+        twiml.say("Thank you for calling Global Green Enterprise. We are currently assisting other callers. Please leave a message after the tone, and we will return your call shortly.");
+        twiml.record({
+          action: 'https://ggma-five.vercel.app/api/twilio/call-status',
+          maxLength: 120,
+          playBeep: true
+        });
+      }
     }
 
     res.status(200).send(twiml.toString());

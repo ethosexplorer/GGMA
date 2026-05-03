@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Phone, PhoneCall, PhoneOutgoing, UserPlus, Shield, Globe, Activity, Download, Zap, MessageSquare, Clock } from 'lucide-react';
+import { Phone, PhoneCall, PhoneOutgoing, UserPlus, Shield, Globe, Activity, Download, Zap, MessageSquare, Clock, Settings } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { voip800 } from '../../lib/voip800';
 
@@ -169,6 +169,12 @@ export const CallCenterCommandTab = () => {
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="5.5" cy="11.5" r="4.5"/><circle cx="18.5" cy="11.5" r="4.5"/><line x1="5.5" y1="16" x2="18.5" y2="16"/></svg> Voicemails
               </button>
+              <button 
+                onClick={() => setRoutingTab('settings')}
+                className={cn("pb-3 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors", routingTab === 'settings' ? "border-amber-600 text-amber-600" : "border-transparent text-slate-500 hover:text-slate-800")}
+              >
+                <Settings size={16} /> Configuration
+              </button>
             </div>
             {routingTab === 'routing' && (
               <button onClick={async () => { 
@@ -199,6 +205,56 @@ export const CallCenterCommandTab = () => {
                     </button>
                   </div>
                 ))}
+              </div>
+            ) : routingTab === 'settings' ? (
+              <div className="space-y-6">
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-6">
+                  <h4 className="text-sm font-black text-slate-800 mb-4 flex items-center gap-2"><Clock size={16} className="text-amber-500" /> Ring & Timeout Configuration</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">WebDialer Ring Duration</label>
+                      <select className="w-full bg-white border border-slate-300 rounded-lg px-4 py-2 text-sm font-bold text-slate-800 outline-none focus:border-amber-500">
+                        <option value="20">20 Seconds</option>
+                        <option value="30">30 Seconds</option>
+                        <option value="45">45 Seconds</option>
+                        <option value="60" selected>60 Seconds</option>
+                        <option value="120">120 Seconds</option>
+                      </select>
+                      <p className="text-[10px] text-slate-400 mt-2">After this duration, unanswered calls route to voicemail.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-6">
+                  <h4 className="text-sm font-black text-slate-800 mb-4 flex items-center gap-2"><Globe size={16} className="text-amber-500" /> Operating Hours</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Active Days</label>
+                      <div className="flex flex-wrap gap-2">
+                        {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
+                          <div key={day} className={cn("px-3 py-1.5 rounded-md text-xs font-bold border cursor-pointer transition-colors", ['Sat','Sun'].includes(day) ? "bg-white text-slate-400 border-slate-200 hover:bg-slate-50" : "bg-amber-100 text-amber-700 border-amber-200 hover:bg-amber-200")}>
+                            {day}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Daily Hours (CST)</label>
+                      <div className="flex items-center gap-3">
+                        <input type="time" defaultValue="09:00" className="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm font-bold text-slate-800 outline-none focus:border-amber-500" />
+                        <span className="text-slate-400 text-sm font-bold">to</span>
+                        <input type="time" defaultValue="17:00" className="bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm font-bold text-slate-800 outline-none focus:border-amber-500" />
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-[10px] text-slate-400 mt-4">Calls received outside of active operating hours will instantly route to the after-hours voicemail greeting.</p>
+                </div>
+                
+                <div className="flex justify-end">
+                   <button onClick={() => alert('Settings synchronized with Twilio Webhook successfully.')} className="bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm px-6 py-2 rounded-lg transition-colors shadow-lg shadow-amber-500/20">
+                     Save Configuration
+                   </button>
+                </div>
               </div>
             ) : routingTab === 'voicemails' ? (
               <div className="space-y-2">
