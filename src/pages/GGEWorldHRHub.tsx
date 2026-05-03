@@ -204,7 +204,7 @@ export const GGEWorldHRHub = ({ user }: { user?: any }) => {
               <h2 className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">HR & Training Hub</h2>
             </div>
           </div>
-          <p className="text-xs text-slate-400 font-medium mt-3">Master Oversight Sandbox</p>
+          <p className="text-[10px] font-black text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-full uppercase tracking-widest inline-flex mt-3">Live Realtime Network</p>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-1 custom-scrollbar">
