@@ -72,6 +72,7 @@ const TIER_TABS = [
   { id: 'state', label: 'State Authority', icon: Shield, color: 'from-orange-500 to-red-600', accent: 'orange' },
   { id: 'federal', label: 'Federal', icon: Globe, color: 'from-blue-800 to-slate-900', accent: 'blue' },
   { id: 'enforcement', label: 'Enforcement', icon: Activity, color: 'from-red-600 to-red-900', accent: 'red' },
+  { id: 'public_health', label: 'Public Health', icon: Shield, color: 'from-emerald-500 to-teal-700', accent: 'emerald' },
   { id: 'partners', label: 'Partners', icon: Handshake, color: 'from-cyan-500 to-teal-700', accent: 'cyan' },
 ] as const;
 
@@ -89,6 +90,7 @@ function getPlansForTab(tabId: TabId): SubscriptionPlan[] {
     case 'state': return STATE_PLANS;
     case 'federal': return FEDERAL_PLANS;
     case 'enforcement': return [...ENFORCEMENT_PLANS, ...FINANCE_AI_PLANS];
+    case 'public_health': return PUBLIC_HEALTH_PLANS;
     case 'partners': return PARTNER_PLANS;
     default: return [];
   }
@@ -105,6 +107,7 @@ function getAddOnsForTab(tabId: TabId): AddOn[] {
     case 'state': return STATE_ADDONS;
     case 'federal': return FEDERAL_ADDONS;
     case 'enforcement': return [];
+    case 'public_health': return PUBLIC_HEALTH_ADDONS;
     case 'provider': return [];
     case 'partners': return PARTNER_ADDONS;
     default: return [];
@@ -123,6 +126,7 @@ function getTabDescription(tabId: TabId): string {
     case 'state': return 'State regulatory agencies overseeing licensing, compliance monitoring, and public health data.';
     case 'federal': return 'Federal interagency coordination — DEA, FDA, HHS — with nationwide intelligence and enforcement.';
     case 'enforcement': return 'Law enforcement, rapid testing intelligence, and financial crime analytics.';
+    case 'public_health': return 'Advocates, researchers, and public health officials monitoring demographic trends and safety data.';
     case 'partners': return 'Earn recurring revenue by referring or reselling SINC to dispensaries, operators, and state agencies.';
     default: return '';
   }

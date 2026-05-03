@@ -33,6 +33,18 @@ const ROLE_CONFIG: Record<string, { title: string; subtitle: string; tabs: strin
     tabs: ['state', 'federal', 'enforcement'],
     gradient: 'from-red-700 to-slate-900',
   },
+  political_executive: {
+    title: 'Government Executive',
+    subtitle: 'Policy simulation, tax revenue forecasting, and constituent sentiment for elected officials.',
+    tabs: ['state', 'federal'],
+    gradient: 'from-blue-700 to-indigo-900',
+  },
+  advocacy_research: {
+    title: 'Advocacy & Research',
+    subtitle: 'Health demographic trends, safety reporting, and anonymized research data for public health.',
+    tabs: ['public_health'],
+    gradient: 'from-emerald-600 to-teal-800',
+  },
 };
 
 export const RolePricingPage = ({
@@ -104,6 +116,20 @@ export const RolePricingPage = ({
                   <h3 className="text-xl font-bold text-white mb-2">Oversight Portal (RIP/SINC)</h3>
                   <p className="text-white/70 text-xs mb-4">Law Enforcement, Regulators, Executives</p>
                   <button onClick={() => onNavigate && onNavigate('signup', 'Oversight')} className="w-full py-3 bg-white text-red-900 rounded-lg font-bold hover:bg-red-50 transition-colors shadow-lg">Create an Account</button>
+                </>
+              )}
+              {role === 'political_executive' && (
+                <>
+                  <h3 className="text-xl font-bold text-white mb-2">Executive Portal (RIP)</h3>
+                  <p className="text-white/70 text-xs mb-4">Legislators, Congress, Governors</p>
+                  <button onClick={() => onNavigate && onNavigate('signup', 'political_executive')} className="w-full py-3 bg-white text-blue-900 rounded-lg font-bold hover:bg-blue-50 transition-colors shadow-lg">Create an Account</button>
+                </>
+              )}
+              {role === 'advocacy_research' && (
+                <>
+                  <h3 className="text-xl font-bold text-white mb-2">Advocate Portal (GGMA)</h3>
+                  <p className="text-white/70 text-xs mb-4">Public Health, Researchers, Advocates</p>
+                  <button onClick={() => onNavigate && onNavigate('signup', 'advocacy_research')} className="w-full py-3 bg-white text-emerald-900 rounded-lg font-bold hover:bg-emerald-50 transition-colors shadow-lg">Create an Account</button>
                 </>
               )}
             </div>
