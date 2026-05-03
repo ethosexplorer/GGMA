@@ -206,8 +206,21 @@ export function WebDialer() {
     return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
-  const getCallerContext = (num?: string) => {
-    if (!num) return { dept: 'Unknown Caller', topic: 'General Inquiry' };
+  const getCallerContext = (call: Call | null) => {
+    if (!call) return { dept: 'Unknown Caller', topic: 'General Inquiry' };
+    
+    // Check if the backend passed a specific routing context via TwiML <Parameter>
+    const backendContext = call.parameters?.DepartmentContext || 
+                           (call.customParameters instanceof Map ? call.customParameters.get('DepartmentContext') : null);
+    
+    if (backendContext && backendContext !== 'Direct to 888 Toll-Free') {
+      return {
+        dept: backendContext,
+        topic: 'Inbound Line Transfer / Routing'
+      };
+    }
+
+    const num = call.parameters?.From || '';
     
     // Deterministic selection based on phone number
     const sum = Array.from(num).reduce((acc, char) => acc + char.charCodeAt(0), 0);
@@ -338,11 +351,11 @@ export function WebDialer() {
                <div className="space-y-2">
                  <div>
                    <p className="text-[9px] text-slate-500 uppercase font-bold tracking-widest">Department</p>
-                   <p className="text-sm text-emerald-400 font-bold">{getCallerContext(incomingCall.parameters?.From).dept}</p>
+                   <p className="text-sm text-emerald-400 font-bold">{getCallerContext(incomingCall).dept}</p>
                  </div>
                  <div>
                    <p className="text-[9px] text-slate-500 uppercase font-bold tracking-widest">Concerning</p>
-                   <p className="text-sm text-white font-medium italic">{getCallerContext(incomingCall.parameters?.From).topic}</p>
+                   <p className="text-sm text-white font-medium italic">{getCallerContext(incomingCall).topic}</p>
                  </div>
                </div>
             </div>

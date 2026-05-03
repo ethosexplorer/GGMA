@@ -53,12 +53,27 @@ export default function handler(req, res) {
           answerOnBridge: true
         });
         
+        // Detect Google Voice forwarding context
+        const gvNumbers = {
+          '+14054927487': 'Chronic Cardz (Patient Medical Cards)',
+          '+14054927297': 'Global Green Corp (Corporate / Founder)',
+          '+14052521178': 'Telehealth Services'
+        };
+        
+        const fwd = req.body.ForwardedFrom || '';
+        const frm = req.body.From || '';
+        let matchedContext = 'Direct to 888 Toll-Free';
+        if (gvNumbers[fwd]) matchedContext = gvNumbers[fwd];
+        else if (gvNumbers[frm]) matchedContext = gvNumbers[frm];
+
         // Connect to the web browser client
-        dial.client({
+        const client = dial.client({
           statusCallbackEvent: 'initiated ringing answered completed',
           statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status',
           statusCallbackMethod: 'POST'
         }, 'GGMA_User');
+        
+        client.parameter({ name: 'DepartmentContext', value: matchedContext });
 
         // If the Dial timeout is reached (no answer), Twilio continues to the next verb: Voicemail
         twiml.say("Thank you for calling Global Green Enterprise. We are currently assisting other callers. Please leave a message after the tone, and we will return your call shortly.");
