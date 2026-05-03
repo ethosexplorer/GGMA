@@ -289,6 +289,7 @@ export const STATE_ADDONS: AddOn[] = [
   { id: 'state_add_ai', name: 'Premium Sylara State AI (Unlimited Tokens + Custom Training)', price: 24000, per: 'year' },
   { id: 'state_add_reports', name: 'Advanced Reporting, Public Transparency & FOIA Tools', price: 10000, per: 'year' },
   { id: 'state_add_interstate', name: 'Interstate Commerce & Reciprocity Module', price: 15000, per: 'year' },
+  { id: 'state_add_fed_sync', name: 'Federal Agency Coordination & Sync Dashboard', price: 25000, per: 'year' },
   { id: 'state_add_lab', name: 'Lab Testing & Public Health Integration', price: 12000, per: 'year' },
   { id: 'state_add_training', name: 'On-Site Staff Training & Annual Compliance Audit', price: 8000, per: 'engagement' }
 ];
@@ -401,6 +402,7 @@ export const FEDERAL_ADDONS: AddOn[] = [
   { id: 'addon_fed_policy', name: 'Policy & Scheduling Scenario Tools', price: 4499 },
   { id: 'addon_fed_sylara', name: 'Premium Sylara Federal AI (Unlimited)', price: 4999 },
   { id: 'addon_fed_reporting', name: 'Advanced National Reporting & Coordination', price: 2499 },
+  { id: 'addon_fed_state_sync', name: 'State-Level Jurisdiction Sub-Dashboard (Per State)', price: 2999 },
   { id: 'addon_fed_samgov', name: 'Full SAM.gov Compliance Automation', price: 1999 },
 ];
 
