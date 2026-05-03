@@ -25,12 +25,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    let isMounted = true;
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-      setLoading(false);
+      if (isMounted) {
+        setCurrentUser(user);
+        setLoading(false);
+      }
+    }, (err) => {
+      console.error("Firebase auth error:", err);
+      if (isMounted) setLoading(false);
     });
 
-    return unsubscribe;
+    // Failsafe: if Firebase hangs, load the app anyway
+    const timeout = setTimeout(() => {
+      if (isMounted) setLoading(false);
+    }, 2000);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timeout);
+      unsubscribe();
+    };
   }, []);
 
   const login = async (email: string, pass: string) => {
