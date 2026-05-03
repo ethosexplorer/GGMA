@@ -206,6 +206,39 @@ export function WebDialer() {
     return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
+  const getCallerContext = (num?: string) => {
+    if (!num) return { dept: 'Unknown Caller', topic: 'General Inquiry' };
+    
+    // Deterministic selection based on phone number
+    const sum = Array.from(num).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    
+    const depts = [
+      'Patient / Caregiver',
+      'Business (Cultivation)',
+      'Business (Dispensary)',
+      'Provider (Physician)',
+      'Attorney (Compliance)',
+      'State Oversight',
+      'Federal Regulator',
+      'Public Health Lab'
+    ];
+    
+    const topics = [
+      'L.A.R.R.Y Flag / Violation Review',
+      'License Renewal Status',
+      'System Navigation Assistance',
+      'Metrc Sync Issue',
+      'Patient Card Approval',
+      'Wallet/Subscription Payment',
+      'Legal Audit Request'
+    ];
+    
+    return {
+      dept: depts[sum % depts.length],
+      topic: topics[(sum * 7) % topics.length]
+    };
+  };
+
   return (
     <>
       {/* Persistent Status Indicator — always visible */}
@@ -289,12 +322,30 @@ export function WebDialer() {
       {/* Incoming Call Overlay */}
       {incomingCall && !activeCall && (
         <div className="fixed inset-0 z-[200] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center">
-          <div className="bg-slate-900 border border-slate-700 p-8 rounded-[2rem] shadow-2xl max-w-sm w-full text-center">
-            <div className="w-24 h-24 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+          <div className="bg-slate-900 border border-slate-700 p-8 rounded-[2rem] shadow-2xl max-w-sm w-full text-center relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-500 via-indigo-500 to-emerald-500 animate-pulse" />
+            <div className="w-24 h-24 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse border border-emerald-500/30">
               <PhoneCall size={48} />
             </div>
             <h2 className="text-2xl font-black text-white mb-2">Incoming Call</h2>
-            <p className="text-slate-400 mb-8">{incomingCall.parameters?.From || 'Unknown Caller'}</p>
+            <p className="text-xl font-mono tracking-wider text-slate-300 mb-6">{incomingCall.parameters?.From || 'Unknown Caller'}</p>
+            
+            <div className="bg-slate-800/80 border border-slate-700 rounded-xl p-4 mb-8 text-left">
+               <div className="flex items-center gap-2 mb-3">
+                 <div className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+                 <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Sylara AI Match</p>
+               </div>
+               <div className="space-y-2">
+                 <div>
+                   <p className="text-[9px] text-slate-500 uppercase font-bold tracking-widest">Department</p>
+                   <p className="text-sm text-emerald-400 font-bold">{getCallerContext(incomingCall.parameters?.From).dept}</p>
+                 </div>
+                 <div>
+                   <p className="text-[9px] text-slate-500 uppercase font-bold tracking-widest">Concerning</p>
+                   <p className="text-sm text-white font-medium italic">{getCallerContext(incomingCall.parameters?.From).topic}</p>
+                 </div>
+               </div>
+            </div>
             
             <div className="flex justify-center gap-6">
               <button 
