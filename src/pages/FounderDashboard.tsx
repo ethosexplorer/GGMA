@@ -40,7 +40,7 @@ import { InvoiceManager } from '../components/founder/InvoiceManager';
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
-const NAV_VERSION = 23; // Bumped: Add Invoice Manager
+const NAV_VERSION = 24; // Bumped: Force update for Invoice Manager
 
 const INITIAL_NAV_ITEMS: NavItem[] = [
   // Single tabs
