@@ -3486,7 +3486,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         '• **Starter**: $199/mo (POS + Metrc Sync + Basic Compliance)\n' +
         '• **Professional**: $249/mo (Multi-Location + Full Larry Enforcement)\n' +
         '• **Enterprise**: $499/mo (Unlimited Locations + White-Label POS)\n\n' +
-        '_All tiers include a free trial period (30 days for patients, 7 days for business)._\n\n' +
+        '_All tiers include a free trial period (30 days for patients, 14 days for business)._\n\n' +
         'To upgrade or start a trial, please select **Start Intake** below, or visit the main dashboard after logging in.';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Patient Intake', 'Start Business Intake', 'Main Menu'] } as any]);
       setIsTyping(false);

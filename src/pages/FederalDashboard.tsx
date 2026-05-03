@@ -15,6 +15,7 @@ import { SubscriptionPortal } from '../components/SubscriptionPortal';
 import { LegislativeIntelTab } from '../components/federal/LegislativeIntelTab';
 import { JudicialMonitorTab } from '../components/federal/JudicialMonitorTab';
 import { UserCalendar } from '../components/UserCalendar';
+import { SystemDictionary } from '../components/shared/SystemDictionary';
 
 const tabs = [
   { id: 'overview', label: 'Nationwide Overview', icon: LayoutDashboard },
@@ -27,6 +28,7 @@ const tabs = [
   { id: 'sylara', label: 'Sylara & L.A.R.R.Y AI', icon: Sparkles },
   { id: 'reporting', label: 'Reporting & Coordination', icon: FileText },
   { id: 'sam', label: 'Rules & SAM.gov', icon: BookOpen },
+  { id: 'dictionary', label: 'System Guides', icon: BookOpen },
   { id: 'audit', label: 'Lease & Audit Logs', icon: Lock },
   { id: 'judicial', label: 'Judicial Monitor', icon: Gavel },
   { id: 'subscription', label: 'Subscription', icon: CreditCard },
@@ -122,6 +124,7 @@ export const FederalDashboard = ({ onLogout, user }: { onLogout?: () => void, us
           {activeTab === 'sylara' && <SylaraFederalTab />}
           {activeTab === 'reporting' && <ReportingTab />}
           {activeTab === 'sam' && <SAMGovRulesTab />}
+          {activeTab === 'dictionary' && <div className="animate-in fade-in duration-500 bg-white rounded-[2rem] p-4 shadow-xl"><SystemDictionary role="federal" /></div>}
           {activeTab === 'audit' && <LeaseAuditTab />}
           {activeTab === 'judicial' && <JudicialMonitorTab />}
           {activeTab === 'subscription' && <SubscriptionPortal userRole="regulator" initialPlanId="fed_pro" />}

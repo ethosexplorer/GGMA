@@ -6,6 +6,8 @@ import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { UserCalendar } from '../components/UserCalendar';
 import { PublicHealthDashboard } from './PublicHealthDashboard';
+import { SystemDictionary } from '../components/shared/SystemDictionary';
+import { BookOpen } from 'lucide-react';
 
 export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
   const [activeTab, setActiveTab] = useState('legal_oversight');
@@ -261,6 +263,9 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
           <button onClick={() => window.dispatchEvent(new Event('open-larry-modal'))} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-500 hover:bg-white/5 hover:text-slate-100 transition-all">
              <Bot size={18} /> Ask Larry (Legal AI)
           </button>
+          <button onClick={() => setActiveTab('dictionary')} className={cn("w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-left", activeTab === 'dictionary' ? "bg-indigo-600 text-white shadow-xl shadow-indigo-600/40" : "text-slate-400 hover:bg-white/5 hover:text-slate-100")}>
+             <BookOpen size={18} /> System Guides
+          </button>
         </div>
 
         <div className="p-4 mx-4 mb-4 bg-white/5 border border-white/10 rounded-2xl">
@@ -291,6 +296,7 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
            {activeTab === 'compliance' && <div className="text-center py-40 text-slate-400 font-bold uppercase tracking-widest italic">Live Compliance Shield Active...</div>}
            {activeTab === 'health_labs' && <div className="h-full w-full -m-10"><PublicHealthDashboard /></div>}
            {activeTab === 'metrc_state' && <div className="text-center py-40 text-slate-400 font-bold uppercase tracking-widest italic">Live Metrc Production Sync Active...</div>}
+           {activeTab === 'dictionary' && <div className="animate-in fade-in duration-500"><SystemDictionary role="state" /></div>}
         </div>
       </div>
 

@@ -30,6 +30,14 @@ export const SystemDictionary = ({ role = 'patient' }: { role?: string }) => {
         { t: "Care Wallet Escrow", d: "Trust accounting integration for retainer fees processed via the Care Wallet." }
       ];
     }
+    if (role === 'state' || role === 'federal' || role === 'regulator' || role === 'enforcement') {
+      return [...common,
+        { t: "Unified MedPortal", d: "The centralized hub replacing fragmented systems (like Thentia) for managing all active medical, business, and provider licenses." },
+        { t: "Bi-Directional Metrc Sync", d: "Direct API link that pulls real-time inventory and pushes enforcement holds or audit flags back into the Metrc system." },
+        { t: "Enforcement Mode", d: "L.A.R.R.Y.'s proactive state where predictive risk scoring automatically flags high-risk entities for review." },
+        { t: "Cross-Jurisdiction Corridors", d: "Interstate tracking pathways mapped for reciprocity and multi-state compliance." }
+      ];
+    }
     
     // Patient
     return [...common,
@@ -56,6 +64,14 @@ export const SystemDictionary = ({ role = 'patient' }: { role?: string }) => {
       return [
         { q: "How do I accept a new case?", a: "Review the intake in your 'Case Pipeline'. Clicking 'Accept' automatically deducts the retainer from the patient's Care Wallet into your escrow." },
         { q: "Are the documents HIPAA compliant?", a: "Yes, all files stored in the Legal Vault are encrypted at rest and meet state/federal HIPAA compliance standards." }
+      ];
+    }
+    if (role === 'state' || role === 'federal' || role === 'regulator' || role === 'enforcement') {
+      return [
+        { q: "How do I initiate a facility audit?", a: "Navigate to the 'Compliance & Violations' tab, select a flagged business, and click 'Deploy Audit Agent'. This locks their inventory in Metrc automatically." },
+        { q: "How does L.A.R.R.Y predict violations?", a: "L.A.R.R.Y analyzes historical Metrc data, tax reporting delays, and patient volume anomalies to generate a real-time risk score for each licensee." },
+        { q: "Where do I review new business license applications?", a: "Under the 'Licensing Portal', all new applications pre-screened by Sylara AI are queued for final human-in-the-loop approval." },
+        { q: "How do I handle interstate patient reciprocity?", a: "The 'Travel & Reciprocity' module tracks active patients visiting from approved border states, updating their purchase limits in real-time." }
       ];
     }
     
