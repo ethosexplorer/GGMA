@@ -5,19 +5,12 @@ import App from './App.tsx';
 import './index.css';
 import { AuthProvider } from './components/AuthContext';
 
-console.error("====== MAIN.TSX IS EXECUTING ======");
-
-try {
-  createRoot(document.getElementById('root')!).render(
-    <StrictMode>
-      <BrowserRouter>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
-      </BrowserRouter>
-    </StrictMode>
-  );
-  console.error("====== MAIN.TSX RENDER CALLED ======");
-} catch (e) {
-  console.error("====== FATAL RENDER ERROR ======", e);
-}
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <BrowserRouter>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </BrowserRouter>
+  </StrictMode>
+);
