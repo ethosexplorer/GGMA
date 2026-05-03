@@ -276,7 +276,7 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
           })}
           
           <div className="pt-8 pb-2 px-3 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Oversight</div>
-          <button onClick={() => window.dispatchEvent(new Event('open-larry-modal'))} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-500 hover:bg-white/5 hover:text-slate-100 transition-all">
+          <button onClick={() => window.dispatchEvent(new CustomEvent('open-larry-modal', { detail: { variant: 'legal' } }))} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-500 hover:bg-white/5 hover:text-slate-100 transition-all">
              <Bot size={18} /> Ask Larry (Legal AI)
           </button>
         </div>

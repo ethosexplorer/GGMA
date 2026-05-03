@@ -2937,10 +2937,13 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
   const getGreeting = () => {
     const date = "April 21, 2026";
     const metrcStatus = "Validated Metrc Integrator (Active)";
-    if (isRyan) return `🛡️ **CEO Access Authenticated.** Good Morning, Ryan. I am **L.A.R.R.Y.** (Legal Authority & Regulatory Rules Yield).\n\nI am synced with your Supreme Command Dashboard. All operational pipelines, regulatory enforcement sectors, and jurisdictional metrics are fully operational.\n\nHow can I assist with your executive oversight today?`;
-    if (isMonica) return `🛡️ **Compliance Access Authenticated.** Good Morning, Monica! I am **L.A.R.R.Y.** (Legal Authority & Regulatory Rules Yield).\n\nI am synced with your Compliance Dashboard. I have loaded the latest Metrc anomalies, pending license approvals, and state regulatory updates.\n\nHow can I support your compliance sweeps today?`;
-    if (isBob) return `🛡️ **Advisory Access Authenticated.** Good Morning, Bob. I am **L.A.R.R.Y.** (Legal Authority & Regulatory Rules Yield).\n\nI am synced with your Executive Advisory Dashboard. All regulatory analytics and compliance models are updated for your review.\n\nHow can I assist your analysis today?`;
-    if (isFounderAssistant) return `✨ **Good Morning, Shantell!** I am **Sylara**, your **Executive Personal Assistant**.\n\nAs your mirror AI, I am fully synced with your Founder Dashboard. I have prepared your daily summaries, state news, and upcoming appointments.\n\nHow can I support your schedule and oversight duties today?`;
+    
+    if (variant === 'legal') return `⚖️ **Legal & Regulatory Compliance Mode.** I am **L.A.R.R.Y.** (Legal Authority & Regulatory Rules Yield).\n\nI can analyze state statutes, provide interpretation on compliance policies, and assist with legal oversight tasks.\n\nHow can I assist your jurisdiction today?`;
+    
+    if (isRyan && variant !== 'legal') return `🛡️ **CEO Access Authenticated.** Good Morning, Ryan. I am **L.A.R.R.Y.** (Legal Authority & Regulatory Rules Yield).\n\nI am synced with your Supreme Command Dashboard. All operational pipelines, regulatory enforcement sectors, and jurisdictional metrics are fully operational.\n\nHow can I assist with your executive oversight today?`;
+    if (isMonica && variant !== 'legal') return `🛡️ **Compliance Access Authenticated.** Good Morning, Monica! I am **L.A.R.R.Y.** (Legal Authority & Regulatory Rules Yield).\n\nI am synced with your Compliance Dashboard. I have loaded the latest Metrc anomalies, pending license approvals, and state regulatory updates.\n\nHow can I support your compliance sweeps today?`;
+    if (isBob && variant !== 'legal') return `🛡️ **Advisory Access Authenticated.** Good Morning, Bob. I am **L.A.R.R.Y.** (Legal Authority & Regulatory Rules Yield).\n\nI am synced with your Executive Advisory Dashboard. All regulatory analytics and compliance models are updated for your review.\n\nHow can I assist your analysis today?`;
+    if (isFounderAssistant && variant !== 'legal' && variant !== 'business') return `✨ **Good Morning, Shantell!** I am **Sylara**, your **Executive Personal Assistant**.\n\nAs your mirror AI, I am fully synced with your Founder Dashboard. I have prepared your daily summaries, state news, and upcoming appointments.\n\nHow can I support your schedule and oversight duties today?`;
     if (variant === 'ggma') return `👋 Welcome to the **GGMA Sector**. I am **Sylara**, your **Intake Agent**. We are an official **${metrcStatus}**. I handle all regulatory onboarding, card processing, and registry management. \n\nHow can I assist with your GGMA licensing today?`;
     if (variant === 'rip') return `🕵️ **RIP Intelligence Portal**. I am **Sylara**, coordinating with the **L.A.R.R.Y Enforcement Engine**. Due to the highly sensitive nature of intelligence and enforcement operations, I can only provide basic guidance here. For secure access to field reports or oversight actions, you must create an official account. \n\nWould you like to begin intake?`;
     if (variant === 'sinc') return `🛡️ **SINC Compliance Infrastructure**. I am **Sylara**, managing your secure operational backbone. Because SINC handles encrypted audit trails and seed-to-sale architecture, deep access requires an authenticated business account. \n\nWould you like to begin business intake?`;
@@ -2953,9 +2956,10 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
   };
 
   const getInitialChoices = () => {
-    if (isRyan) return ['View Global Operations', 'Enforcement Status', 'Metrc API Health', 'Jurisdiction Overrides'];
-    if (isMonica) return ['Run Compliance Sweep', 'Metrc Anomalies', 'Pending Applications', 'Audit Logs'];
-    if (isBob) return ['Review Financial Anomalies', 'Compliance Impact Report', 'Regulatory Forecasting'];
+    if (variant === 'legal') return ['Analyze Jurisdictional Statute', 'Review Compliance Violation', 'Generate Cease & Desist', 'View State Guidelines'];
+    if (isRyan && variant !== 'legal') return ['View Global Operations', 'Enforcement Status', 'Metrc API Health', 'Jurisdiction Overrides'];
+    if (isMonica && variant !== 'legal') return ['Run Compliance Sweep', 'Metrc Anomalies', 'Pending Applications', 'Audit Logs'];
+    if (isBob && variant !== 'legal') return ['Review Financial Anomalies', 'Compliance Impact Report', 'Regulatory Forecasting'];
     if (variant === 'ggma') return ['Start Patient Intake', 'Start Business Intake', '🏛️ DEA Schedule III Registration', 'View Patient Fee Schedule', 'View Business Fee Schedule', 'View Subscription Plans'];
     if (variant === 'rip') return ['Field Intelligence Report', 'Background Verification Check', 'Enforcement Status Inquiry', 'Compliance Audit Request', 'Contact Oversight Division', 'View State Authority Plans'];
     if (variant === 'sinc') return ['Start Business Intake', '🏛️ DEA Schedule III Registration', 'Audit Shield Setup', 'Seed-to-Sale Compliance', 'Network Integrity Check', 'View Business Fee Schedule'];
@@ -2994,7 +2998,9 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
   const [currentPersona, setCurrentPersona] = useState<'sylara' | 'larry'>('sylara');
 
   useEffect(() => {
-    if (isRyan) {
+    if (variant === 'legal') {
+      setMessages([{ role: 'bot', text: getGreeting(), choices: getInitialChoices() }]);
+    } else if (isRyan) {
       setMessages([{ role: 'bot', text: getGreeting(), choices: getInitialChoices() }]);
     } else if (isMonica) {
       setMessages([{ role: 'bot', text: getGreeting(), choices: getInitialChoices() }]);
@@ -7578,6 +7584,7 @@ export default function App() {
   const [initialRole, setInitialRole] = useState(undefined);
   const [isDemoUnlocked, setIsDemoUnlocked] = useState(false);
   const [showLarryModal, setShowLarryModal] = useState(false);
+  const [larryVariant, setLarryVariant] = useState<string | undefined>(undefined);
   const [roleOverride, setRoleOverride] = useState<string | null>(null);
   const [hasBypassedSelector, setHasBypassedSelector] = useState(false);
   const [selectedPricingRole, setSelectedPricingRole] = useState<string>('patient');
@@ -7632,7 +7639,14 @@ export default function App() {
 
   useEffect(() => {
     initDatabase();
-    const handleOpenLarry = () => setShowLarryModal(true);
+    const handleOpenLarry = (e: any) => {
+      if (e.detail?.variant) {
+        setLarryVariant(e.detail.variant);
+      } else {
+        setLarryVariant(undefined);
+      }
+      setShowLarryModal(true);
+    };
     window.addEventListener('open-larry-modal', handleOpenLarry);
     
     // Global Jurisdiction Gate trigger
@@ -8430,6 +8444,7 @@ export default function App() {
                 <LarryMedCardChatbot 
                   userProfile={userProfile}
                   activeRole={roleOverride || userProfile?.role}
+                  variant={larryVariant}
                   onNavigate={(view: any, role: any) => { 
                     setShowLarryModal(false); 
                     setView(view); 
