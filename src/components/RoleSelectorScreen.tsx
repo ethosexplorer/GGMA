@@ -21,6 +21,8 @@ export const RoleSelectorScreen = ({ userProfile, onSelect, onLogout }: { userPr
     { id: 'attorney', label: 'Attorney Dashboard', desc: 'Legal Counsel & Review', icon: Briefcase, color: 'indigo' },
     { id: 'health_lab', label: 'Health & Laboratory', desc: 'Testing Results & Input', icon: Database, color: 'rose' },
     { id: 'provider', label: 'Medical Provider', desc: 'Telehealth & Certifications', icon: Stethoscope, color: 'rose' },
+    { id: 'political_executive', label: 'Legislators & Governors', desc: 'Economic & Policy Insight', icon: Building2, color: 'indigo' },
+    { id: 'advocacy_research', label: 'Advocates & Researchers', desc: 'Public Health & Demographics', icon: User, color: 'teal' },
   ];
 
   let roles = allRoles;

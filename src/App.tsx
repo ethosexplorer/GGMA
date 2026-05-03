@@ -128,6 +128,8 @@ import { OversightDashboard } from './pages/OversightDashboard';
 import { PresidentDashboard } from './pages/PresidentDashboard';
 import { ChiefComplianceDirectorDashboard } from './pages/ChiefComplianceDirectorDashboard';
 import { AdvisorDashboard } from './pages/AdvisorDashboard';
+import { PoliticalExecutiveDashboard } from './pages/PoliticalExecutiveDashboard';
+import { AdvocacyResearchDashboard } from './pages/AdvocacyResearchDashboard';
 import { PricingTiers } from './components/PricingTiers';
 import { RolePricingPage } from './pages/RolePricingPage';
 import { StateFactsPage } from './pages/StateFactsPage';
@@ -1480,15 +1482,17 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
           {/* ROLE SELECTOR BUTTONS */}
           <div className="pt-4">
             <p className="text-emerald-300/60 text-xs font-black uppercase tracking-[0.3em] mb-6">I am a...</p>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-4xl mx-auto">
+            <div className="flex flex-wrap justify-center gap-4 max-w-5xl mx-auto">
               {[
                 { label: 'Business', icon: '🏢', desc: 'Compliance & Licensing', tier: 'business' },
                 { label: 'Patient', icon: '🏥', desc: 'Telehealth & Cards', tier: 'patient' },
                 { label: 'Provider', icon: '🩺', desc: 'Consultations & Care', tier: 'provider' },
                 { label: 'Attorney', icon: '⚖️', desc: 'Cases & Regulatory', tier: 'attorney' },
                 { label: 'Agency', icon: '🛡️', desc: 'Oversight & Enforcement', tier: 'agency' },
+                { label: 'Gov Office', icon: '🏛️', desc: 'Policy & Economy', tier: 'political_executive' },
+                { label: 'Advocate', icon: '🤝', desc: 'Health & Impact', tier: 'advocacy_research' },
               ].map(role => (
-                <button key={role.label} onClick={() => onNavigate('role-pricing' as any, role.tier)} className="group bg-white/5 backdrop-blur-md border border-white/15 rounded-2xl p-6 text-center hover:bg-white/15 hover:border-emerald-400/50 hover:scale-[1.03] transition-all duration-300">
+                <button key={role.label} onClick={() => onNavigate('role-pricing' as any, role.tier)} className="group bg-white/5 backdrop-blur-md border border-white/15 rounded-2xl p-6 text-center hover:bg-white/15 hover:border-emerald-400/50 hover:scale-[1.03] transition-all duration-300 w-36 sm:w-40 md:w-44 flex-shrink-0">
                   <div className="text-3xl mb-3">{role.icon}</div>
                   <div className="text-white font-black text-sm">{role.label}</div>
                   <div className="text-emerald-300/60 text-[10px] font-bold mt-1 uppercase tracking-wider">{role.desc}</div>
@@ -7776,6 +7780,14 @@ export default function App() {
     // Law Enforcement Portal Routing
     if (role === 'law_enforcement' || role === 'enforcement_state' || role?.startsWith('enforcement')) {
       return <EnforcementDashboard onLogout={handleReturnToSelector} user={profile} />;
+    }
+
+    // Political & Advocacy Portals
+    if (role === 'political_executive') {
+      return <PoliticalExecutiveDashboard onLogout={handleReturnToSelector} user={profile} />;
+    }
+    if (role === 'advocacy_research') {
+      return <AdvocacyResearchDashboard onLogout={handleReturnToSelector} user={profile} />;
     }
 
     // Oversight Portal Routing (Regulators, Admin, Operations)

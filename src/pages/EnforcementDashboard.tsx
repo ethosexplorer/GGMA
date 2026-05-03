@@ -5,6 +5,7 @@ import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { EnforcementIntelTab } from '../components/federal/EnforcementIntelTab';
 import { UserCalendar } from '../components/UserCalendar';
+import { SubscriptionPortal } from '../components/SubscriptionPortal';
 
 const flags = [
   { id: 1, type: 'volume', title: 'Suspicious Volume Anomaly', entity: 'Apex Health LLC', time: 'Just now', severity: 'high', desc: 'Exceeding daily sales limits.' },
@@ -24,6 +25,10 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
   const [selectedPatient, setSelectedPatient] = useState<any>(null);
   const [isUnlocked, setIsUnlocked] = useState(true);
   const [pin, setPin] = useState('');
+  const [tier, setTier] = useState<'basic' | 'pro' | 'custom'>('pro');
+
+  const tierLevels = { basic: 1, pro: 2, custom: 3 };
+  const hasAccess = (requiredTier: string) => tierLevels[tier] >= tierLevels[requiredTier as keyof typeof tierLevels];
   
   // Breathalyzer state
   const [breathTestState, setBreathTestState] = useState<'idle' | 'blowing' | 'analyzing' | 'complete'>('idle');
@@ -126,57 +131,113 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
               <p className="text-[10px] text-slate-400">Oklahoma City PD</p>
             </div>
           </div>
+          <select value={tier} onChange={(e) => setTier(e.target.value as any)} className="w-full bg-slate-950 border border-slate-700 text-slate-300 text-xs px-2 py-2 rounded-xl outline-none mb-2">
+            <option value="basic">Basic Tier</option>
+            <option value="pro">Pro Tier</option>
+            <option value="custom">Custom Tier</option>
+          </select>
         </div>
 
         <div className="flex-1 overflow-y-auto px-3 space-y-1">
-          <button onClick={() => setActiveTab('dashboard')} className={cn("w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left", activeTab === 'dashboard' ? "bg-slate-800 text-white shadow-md border border-slate-700" : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200")}>
-            <Map size={16} className={cn(activeTab === 'dashboard' ? "text-blue-400" : "")} /> Dashboard
-          </button>
-          <button onClick={() => setActiveTab('lookup')} className={cn("w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left", activeTab === 'lookup' ? "bg-slate-800 text-white shadow-md border border-slate-700" : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200")}>
-            <Search size={16} className={cn(activeTab === 'lookup' ? "text-blue-400" : "")} /> License Lookup
-          </button>
-          <button onClick={() => setActiveTab('traceability')} className={cn("w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left", activeTab === 'traceability' ? "bg-slate-800 text-white shadow-md border border-slate-700" : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200")}>
-            <Fingerprint size={16} className={cn(activeTab === 'traceability' ? "text-blue-400" : "")} /> Traceability
-          </button>
-          <button onClick={() => setActiveTab('alerts')} className={cn("w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left", activeTab === 'alerts' ? "bg-slate-800 text-white shadow-md border border-slate-700" : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200")}>
-            <AlertCircle size={16} className={cn(activeTab === 'alerts' ? "text-blue-400" : "")} /> Compliance Alerts
-          </button>
+          {[
+            { id: 'dashboard', label: 'Dashboard', icon: Map, tier: 'basic' },
+            { id: 'lookup', label: 'License Lookup', icon: Search, tier: 'basic' },
+            { id: 'traceability', label: 'Traceability', icon: Fingerprint, tier: 'pro' },
+            { id: 'alerts', label: 'Compliance Alerts', icon: AlertCircle, tier: 'pro' }
+          ].map(t => {
+            const allowed = hasAccess(t.tier);
+            return (
+              <button key={t.id} onClick={() => setActiveTab(t.id)} className={cn("w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left", activeTab === t.id ? "bg-slate-800 text-white shadow-md border border-slate-700" : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200", !allowed && "opacity-60")}>
+                <div className="flex items-center gap-3">
+                  <t.icon size={16} className={cn(activeTab === t.id ? "text-blue-400" : "")} /> {t.label}
+                </div>
+                {!allowed && <Lock size={12} className="text-slate-600" />}
+              </button>
+            );
+          })}
           
           <div className="my-2 border-t border-slate-800"></div>
           
           {/* Prominent Identify Verify Test Tab */}
-          <button onClick={() => setActiveTab('rapid_testing')} className={cn("w-full flex items-center justify-between px-3 py-3 rounded-lg text-sm font-bold transition-all text-left shadow-lg border", activeTab === 'rapid_testing' ? "bg-emerald-900 bg-gradient-to-r from-emerald-900 to-slate-900 text-emerald-400 border-emerald-500/50" : "bg-slate-800 text-slate-300 border-slate-700 hover:border-emerald-500/30")}>
+          <button onClick={() => setActiveTab('rapid_testing')} className={cn("w-full flex items-center justify-between px-3 py-3 rounded-lg text-sm font-bold transition-all text-left shadow-lg border", activeTab === 'rapid_testing' ? "bg-emerald-900 bg-gradient-to-r from-emerald-900 to-slate-900 text-emerald-400 border-emerald-500/50" : "bg-slate-800 text-slate-300 border-slate-700 hover:border-emerald-500/30", !hasAccess('pro') && "opacity-60")}>
             <span className="flex items-center gap-3"><Zap size={18} className="text-emerald-500" /> Identify Verify Test</span>
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
+            {hasAccess('pro') ? (
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+            ) : <Lock size={12} className="text-slate-500" />}
           </button>
 
           {/* Probability Field Test Tab */}
-          <button onClick={() => setActiveTab('breathalyzer')} className={cn("w-full flex items-center justify-between px-3 py-3 rounded-lg text-sm font-bold transition-all text-left shadow-lg border mt-2", activeTab === 'breathalyzer' ? "bg-blue-900 bg-gradient-to-r from-blue-900 to-slate-900 text-blue-400 border-blue-500/50" : "bg-slate-800 text-slate-300 border-slate-700 hover:border-blue-500/30")}>
+          <button onClick={() => setActiveTab('breathalyzer')} className={cn("w-full flex items-center justify-between px-3 py-3 rounded-lg text-sm font-bold transition-all text-left shadow-lg border mt-2", activeTab === 'breathalyzer' ? "bg-blue-900 bg-gradient-to-r from-blue-900 to-slate-900 text-blue-400 border-blue-500/50" : "bg-slate-800 text-slate-300 border-slate-700 hover:border-blue-500/30", !hasAccess('pro') && "opacity-60")}>
             <span className="flex items-center gap-3"><Wind size={18} className="text-blue-500" /> Probability Field Test</span>
+            {!hasAccess('pro') && <Lock size={12} className="text-slate-500" />}
           </button>
 
           {/* New Enforcement Intel Tab */}
-          <button onClick={() => setActiveTab('intel')} className={cn("w-full flex items-center justify-between px-3 py-3 rounded-lg text-sm font-bold transition-all text-left shadow-lg border mt-2", activeTab === 'intel' ? "bg-purple-900 bg-gradient-to-r from-purple-900 to-slate-900 text-purple-400 border-purple-500/50" : "bg-slate-800 text-slate-300 border-slate-700 hover:border-purple-500/30")}>
+          <button onClick={() => setActiveTab('intel')} className={cn("w-full flex items-center justify-between px-3 py-3 rounded-lg text-sm font-bold transition-all text-left shadow-lg border mt-2", activeTab === 'intel' ? "bg-purple-900 bg-gradient-to-r from-purple-900 to-slate-900 text-purple-400 border-purple-500/50" : "bg-slate-800 text-slate-300 border-slate-700 hover:border-purple-500/30", !hasAccess('custom') && "opacity-60")}>
             <span className="flex items-center gap-3"><Globe size={18} className="text-purple-500" /> National Intel</span>
+            {!hasAccess('custom') && <Lock size={12} className="text-slate-500" />}
           </button>
           
           <div className="my-2 border-t border-slate-800"></div>
 
-          <button onClick={() => setActiveTab('reports')} className={cn("w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left", activeTab === 'reports' ? "bg-slate-800 text-white shadow-md border border-slate-700" : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200")}>
-            <FileText size={16} className={cn(activeTab === 'reports' ? "text-blue-400" : "")} /> Field Reports
-          </button>
-          <button onClick={() => setActiveTab('audit')} className={cn("w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left", activeTab === 'audit' ? "bg-slate-800 text-white shadow-md border border-slate-700" : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200")}>
-            <Activity size={16} className={cn(activeTab === 'audit' ? "text-blue-400" : "")} /> Audit Log
-          </button>
+          {[
+            { id: 'reports', label: 'Field Reports', icon: FileText, tier: 'basic' },
+            { id: 'audit', label: 'Audit Log', icon: Activity, tier: 'pro' },
+            { id: 'subscription', label: 'Subscription', icon: CreditCard, tier: 'basic' }
+          ].map(t => {
+            const allowed = hasAccess(t.tier);
+            return (
+              <button key={t.id} onClick={() => setActiveTab(t.id)} className={cn("w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left", activeTab === t.id ? "bg-slate-800 text-white shadow-md border border-slate-700" : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200", !allowed && "opacity-60")}>
+                <div className="flex items-center gap-3">
+                  <t.icon size={16} className={cn(activeTab === t.id ? "text-blue-400" : "")} /> {t.label}
+                </div>
+                {!allowed && <Lock size={12} className="text-slate-600" />}
+              </button>
+            );
+          })}
         </div>
       </div>
 
       {/* MAIN CONTENT AREA */}
       <div className={cn("flex-1 flex flex-col h-[calc(100vh)] overflow-hidden transition-all duration-500", !isUnlocked && "blur-xl scale-[0.98] opacity-50 pointer-events-none")}>
         
+        {(() => {
+          const allTabs = [
+            { id: 'dashboard', label: 'Dashboard', tier: 'basic' },
+            { id: 'lookup', label: 'License Lookup', tier: 'basic' },
+            { id: 'traceability', label: 'Traceability', tier: 'pro' },
+            { id: 'alerts', label: 'Compliance Alerts', tier: 'pro' },
+            { id: 'rapid_testing', label: 'Identify Verify Test', tier: 'pro' },
+            { id: 'breathalyzer', label: 'Probability Field Test', tier: 'pro' },
+            { id: 'intel', label: 'National Intel', tier: 'custom' },
+            { id: 'reports', label: 'Field Reports', tier: 'basic' },
+            { id: 'audit', label: 'Audit Log', tier: 'pro' },
+            { id: 'subscription', label: 'Subscription', tier: 'basic' }
+          ];
+          const currentTab = allTabs.find(t => t.id === activeTab);
+          
+          if (currentTab && !hasAccess(currentTab.tier)) {
+            return (
+              <div className="h-full flex flex-col items-center justify-center text-center bg-[#0a0f18] text-white">
+                <div className="w-20 h-20 bg-emerald-900/10 rounded-full flex items-center justify-center mb-6 border border-emerald-800/20">
+                  <Lock size={32} className="text-emerald-500" />
+                </div>
+                <h2 className="text-2xl font-black text-white mb-3">Upgrade to {currentTab.tier}</h2>
+                <p className="text-slate-400 max-w-md mb-8">
+                  The <strong>{currentTab.label}</strong> module requires the <span className="capitalize text-emerald-500 font-bold">{currentTab.tier}</span> tier. Upgrade your department's subscription to access live interception and deep forensic analysis.
+                </p>
+                <button onClick={() => setActiveTab('subscription')} className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg shadow-emerald-600/20 transition-all">
+                  View Upgrade Options
+                </button>
+              </div>
+            );
+          }
+
+          return (
+            <>
         {/* Original Rapid Testing Screen */}
         {activeTab === 'rapid_testing' && (
           <div className="flex-1 flex flex-col bg-[#0a0f18] text-white overflow-hidden relative">
@@ -736,6 +797,15 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
           </div>
         )}
 
+        {/* Subscription Tab */}
+        {activeTab === 'subscription' && (
+           <div className="flex-1 p-8 overflow-y-auto bg-[#0a0f18]">
+              <SubscriptionPortal userRole="enforcement" initialPlanId={`police_${tier}`} />
+           </div>
+        )}
+        </>
+          );
+        })()}
       </div>
     </div>
   );

@@ -16,24 +16,29 @@ import { LegislativeIntelTab } from '../components/federal/LegislativeIntelTab';
 import { JudicialMonitorTab } from '../components/federal/JudicialMonitorTab';
 import { UserCalendar } from '../components/UserCalendar';
 const tabs = [
-  { id: 'overview', label: 'Nationwide Overview', icon: LayoutDashboard },
-  { id: 'intel', label: 'Legislative Intel', icon: BookOpen },
-  { id: 'interstate', label: 'Interstate Monitoring', icon: Globe },
-  { id: 'enforcement', label: 'Enforcement & Intel', icon: Shield },
-  { id: 'research', label: 'Public Health & Labs', icon: Activity },
-  { id: 'economic', label: 'Revenue & Taxation', icon: DollarSign },
-  { id: 'policy', label: 'Policy Scenarios', icon: Scale },
-  { id: 'reporting', label: 'Reporting & Coordination', icon: FileText },
-  { id: 'sam', label: 'Rules & SAM.gov', icon: BookOpen },
-  { id: 'audit', label: 'Lease & Audit Logs', icon: Lock },
-  { id: 'judicial', label: 'Judicial Monitor', icon: Gavel },
-  { id: 'subscription', label: 'Subscription', icon: CreditCard },
+  { id: 'overview', label: 'Nationwide Overview', icon: LayoutDashboard, tier: 'basic' },
+  { id: 'intel', label: 'Legislative Intel', icon: BookOpen, tier: 'basic' },
+  { id: 'interstate', label: 'Interstate Monitoring', icon: Globe, tier: 'pro' },
+  { id: 'enforcement', label: 'Enforcement & Intel', icon: Shield, tier: 'custom' },
+  { id: 'research', label: 'Public Health & Labs', icon: Activity, tier: 'basic' },
+  { id: 'economic', label: 'Revenue & Taxation', icon: DollarSign, tier: 'pro' },
+  { id: 'policy', label: 'Policy Scenarios', icon: Scale, tier: 'custom' },
+  { id: 'sylara', label: 'Sylara & L.A.R.R.Y AI', icon: Sparkles, tier: 'custom' },
+  { id: 'reporting', label: 'Reporting & Coordination', icon: FileText, tier: 'pro' },
+  { id: 'sam', label: 'Rules & SAM.gov', icon: BookOpen, tier: 'basic' },
+  { id: 'audit', label: 'Lease & Audit Logs', icon: Lock, tier: 'custom' },
+  { id: 'judicial', label: 'Judicial Monitor', icon: Gavel, tier: 'custom' },
+  { id: 'subscription', label: 'Subscription', icon: CreditCard, tier: 'basic' },
 ];
 
 export const FederalDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [isUnlocked, setIsUnlocked] = useState(true);
   const [pin, setPin] = useState('');
+  const [tier, setTier] = useState<'basic' | 'pro' | 'custom'>('pro');
+
+  const tierLevels = { basic: 1, pro: 2, custom: 3 };
+  const hasAccess = (requiredTier: string) => tierLevels[tier] >= tierLevels[requiredTier as keyof typeof tierLevels];
 
   return (
     <div className="h-screen bg-[#080e1a] overflow-hidden relative">
@@ -70,6 +75,11 @@ export const FederalDashboard = ({ onLogout, user }: { onLogout?: () => void, us
           </div>
         </div>
         <div className="flex items-center gap-4">
+          <select value={tier} onChange={(e) => setTier(e.target.value as any)} className="bg-[#111f36] border border-[#1e3a5f] text-blue-300 text-xs px-2 py-1 rounded outline-none">
+            <option value="basic">Basic Tier</option>
+            <option value="pro">Pro Tier</option>
+            <option value="custom">Custom Tier</option>
+          </select>
           <button onClick={onLogout} className="text-xs text-blue-300 hover:text-white transition-colors border border-blue-800/50 px-3 py-1 rounded">Logout</button>
           <div className="flex items-center gap-3">
           <span className="text-[10px] font-bold text-emerald-400 bg-emerald-900/30 px-2.5 py-1 rounded-full border border-emerald-800/30 flex items-center gap-1">
@@ -84,44 +94,76 @@ export const FederalDashboard = ({ onLogout, user }: { onLogout?: () => void, us
         {/* Sidebar */}
         <aside className="w-56 bg-[#0b1525] border-r border-[#1e3a5f]/30 min-h-[calc(100vh-52px)] flex flex-col shrink-0">
           <nav className="flex-1 py-3 px-2 space-y-0.5">
-            {tabs.map(t => (
-              <button key={t.id} onClick={() => setActiveTab(t.id)}
-                className={cn("w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all",
-                  activeTab === t.id
-                    ? "bg-blue-900/50 text-blue-200 border border-blue-700/40"
-                    : "text-blue-300/50 hover:bg-[#111f36] hover:text-blue-200 border border-transparent"
-                )}>
-                <t.icon size={15} className={activeTab === t.id ? "text-blue-400" : "text-blue-400/30"} />
-                {t.label}
-              </button>
-            ))}
+            {tabs.map(t => {
+              const allowed = hasAccess(t.tier);
+              return (
+                <button key={t.id} onClick={() => setActiveTab(t.id)}
+                  className={cn("w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold transition-all",
+                    activeTab === t.id
+                      ? "bg-blue-900/50 text-blue-200 border border-blue-700/40"
+                      : "text-blue-300/50 hover:bg-[#111f36] hover:text-blue-200 border border-transparent",
+                    !allowed && "opacity-60"
+                  )}>
+                  <div className="flex items-center gap-2.5">
+                    <t.icon size={15} className={activeTab === t.id ? "text-blue-400" : "text-blue-400/30"} />
+                    {t.label}
+                  </div>
+                  {!allowed && <Lock size={12} className="text-blue-500/50" />}
+                </button>
+              );
+            })}
           </nav>
           <div className="p-3 border-t border-[#1e3a5f]/20">
             <div className="bg-[#0a1628] rounded-lg p-3 border border-[#1e3a5f]/30">
               <p className="text-[9px] text-blue-400/40 uppercase font-bold tracking-wider mb-1">Lease Tier</p>
-              <p className="text-xs font-bold text-blue-200">Federal Pro</p>
-              <p className="text-[10px] text-blue-300/40 mt-0.5">$24,999/mo</p>
+              <p className="text-xs font-bold text-blue-200 capitalize">Federal {tier}</p>
+              <p className="text-[10px] text-blue-300/40 mt-0.5">{tier === 'custom' ? '$85,000/mo' : tier === 'pro' ? '$24,999/mo' : '$5,999/mo'}</p>
             </div>
           </div>
         </aside>
 
         {/* Main Content */}
         <main className="flex-1 p-6 overflow-auto">
-          {activeTab === 'calendar' && (
+          {(() => {
+            const currentTab = tabs.find(t => t.id === activeTab);
+            if (currentTab && !hasAccess(currentTab.tier)) {
+              return (
+                <div className="h-full flex flex-col items-center justify-center text-center">
+                  <div className="w-20 h-20 bg-blue-900/20 rounded-full flex items-center justify-center mb-6 border border-blue-800/30">
+                    <Lock size={32} className="text-blue-400" />
+                  </div>
+                  <h2 className="text-2xl font-black text-white mb-3">Tier Upgrade Required</h2>
+                  <p className="text-blue-300/70 max-w-md mb-8">
+                    The <strong>{currentTab.label}</strong> module is restricted to the <span className="capitalize text-blue-300 font-bold">{currentTab.tier}</span> tier. Upgrade your jurisdiction's subscription to unlock real-time active integrations and deep predictive insights.
+                  </p>
+                  <button onClick={() => setActiveTab('subscription')} className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg shadow-blue-900/20 transition-all">
+                    View Upgrade Options
+                  </button>
+                </div>
+              );
+            }
+
+            return (
+              <>
+                {activeTab === 'calendar' && (
                   <UserCalendar user={user} title="src\pages\Federal Calendar" subtitle="Appointments & Scheduling" />
                 )}
                 {activeTab === 'overview' && <FederalOverviewTab />}
-          {activeTab === 'intel' && <LegislativeIntelTab />}
-          {activeTab === 'interstate' && <InterstateMonitoringTab />}
-          {activeTab === 'enforcement' && <EnforcementIntelTab />}
-          {activeTab === 'research' && <ResearchHealthTab />}
-          {activeTab === 'economic' && <EconomicAnalyticsTab />}
-          {activeTab === 'sylara' && <SylaraFederalTab />}
-          {activeTab === 'reporting' && <ReportingTab />}
-          {activeTab === 'sam' && <SAMGovRulesTab />}
-          {activeTab === 'audit' && <LeaseAuditTab />}
-          {activeTab === 'judicial' && <JudicialMonitorTab />}
-          {activeTab === 'subscription' && <SubscriptionPortal userRole="regulator" initialPlanId="fed_pro" />}
+                {activeTab === 'intel' && <LegislativeIntelTab />}
+                {activeTab === 'interstate' && <InterstateMonitoringTab />}
+                {activeTab === 'enforcement' && <EnforcementIntelTab />}
+                {activeTab === 'research' && <ResearchHealthTab />}
+                {activeTab === 'economic' && <EconomicAnalyticsTab />}
+                {activeTab === 'policy' && <PolicyScenariosTab />}
+                {activeTab === 'sylara' && <SylaraFederalTab />}
+                {activeTab === 'reporting' && <ReportingTab />}
+                {activeTab === 'sam' && <SAMGovRulesTab />}
+                {activeTab === 'audit' && <LeaseAuditTab />}
+                {activeTab === 'judicial' && <JudicialMonitorTab />}
+                {activeTab === 'subscription' && <SubscriptionPortal userRole="regulator" initialPlanId={`fed_${tier}`} />}
+              </>
+            );
+          })()}
         </main>
       </div>
       </div>

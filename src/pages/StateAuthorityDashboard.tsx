@@ -1,17 +1,22 @@
 import React, { useState } from 'react';
 import { Calendar, Building2, ShieldCheck, Landmark, FileCheck, DollarSign, Activity, 
   Map as MapIcon, Settings, Download, Search, AlertCircle, FileText, XCircle,
-  TrendingUp, Users, ShieldAlert, Bot, HelpCircle, Gavel, Scale, Clock, LogOut, Lock, CircleCheck } from 'lucide-react';
+  TrendingUp, Users, ShieldAlert, Bot, HelpCircle, Gavel, Scale, Clock, LogOut, Lock, CircleCheck, Sparkles, CreditCard } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { UserCalendar } from '../components/UserCalendar';
 import { PublicHealthDashboard } from './PublicHealthDashboard';
+import { SubscriptionPortal } from '../components/SubscriptionPortal';
 
 export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
   const [activeTab, setActiveTab] = useState('legal_oversight');
   const [selectedApplicant, setSelectedApplicant] = useState<any>(null);
   const [isUnlocked, setIsUnlocked] = useState(true);
   const [pin, setPin] = useState('');
+  const [tier, setTier] = useState<'basic' | 'pro' | 'custom'>('pro');
+
+  const tierLevels = { basic: 1, pro: 2, custom: 3 };
+  const hasAccess = (requiredTier: string) => tierLevels[tier] >= tierLevels[requiredTier as keyof typeof tierLevels];
   
   const getRoleTitle = () => user?.role === 'regulator_state' ? 'Marijuana Authority' : 'Regulator Authority';
   const getJurisdiction = () => 'STATE JURISDICTION';
@@ -240,22 +245,35 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
               <p className="text-[10px] text-indigo-400 font-black uppercase tracking-widest">{getJurisdiction()}</p>
             </div>
           </div>
+          <select value={tier} onChange={(e) => setTier(e.target.value as any)} className="w-full mt-4 bg-slate-900 border border-slate-700 text-slate-300 text-xs px-3 py-2 rounded-xl outline-none">
+            <option value="basic">Basic Tier</option>
+            <option value="pro">Pro Tier</option>
+            <option value="custom">Custom Tier</option>
+          </select>
         </div>
 
         <div className="flex-1 overflow-y-auto px-4 space-y-1">
           <div className="pb-2 px-3 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Authority Modules</div>
           {[
-            { id: 'legal_oversight', label: 'Legalization Monitor', icon: Scale },
-            { id: 'approvals_denials', label: 'Approvals / Denials', icon: FileCheck },
-            { id: 'jurisdiction', label: 'Jurisdiction Control', icon: Activity },
-            { id: 'compliance', label: 'Compliance Pulse', icon: ShieldCheck },
-            { id: 'health_labs', label: 'Health & Labs', icon: ShieldCheck },
-            { id: 'metrc_state', label: 'Metrc & State Info', icon: ShieldCheck },
-          ].map((item) => (
-            <button key={item.id} onClick={() => setActiveTab(item.id)} className={cn("w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-left", activeTab === item.id ? "bg-indigo-600 text-white shadow-xl shadow-indigo-600/40" : "text-slate-400 hover:bg-white/5 hover:text-slate-100")}>
-              <item.icon size={18} /> {item.label}
-            </button>
-          ))}
+            { id: 'legal_oversight', label: 'Statewide Overview', icon: Scale, tier: 'basic' },
+            { id: 'approvals_denials', label: 'License Command', icon: FileCheck, tier: 'basic' },
+            { id: 'jurisdiction', label: 'Intrastate Monitoring', icon: Activity, tier: 'pro' },
+            { id: 'compliance', label: 'Compliance Pulse', icon: ShieldCheck, tier: 'pro' },
+            { id: 'health_labs', label: 'Health & Labs', icon: ShieldCheck, tier: 'basic' },
+            { id: 'metrc_state', label: 'State Revenue & Tax', icon: DollarSign, tier: 'pro' },
+            { id: 'jurisdiction_trend', label: 'Jurisdictional Trend Engine', icon: Sparkles, tier: 'custom' },
+            { id: 'subscription', label: 'Subscription', icon: CreditCard, tier: 'basic' },
+          ].map((item) => {
+            const allowed = hasAccess(item.tier);
+            return (
+              <button key={item.id} onClick={() => setActiveTab(item.id)} className={cn("w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold transition-all text-left", activeTab === item.id ? "bg-indigo-600 text-white shadow-xl shadow-indigo-600/40" : "text-slate-400 hover:bg-white/5 hover:text-slate-100", !allowed && "opacity-60")}>
+                <div className="flex items-center gap-3">
+                  <item.icon size={18} /> {item.label}
+                </div>
+                {!allowed && <Lock size={14} className="text-slate-500/50" />}
+              </button>
+            );
+          })}
           
           <div className="pt-8 pb-2 px-3 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Oversight</div>
           <button onClick={() => window.dispatchEvent(new Event('open-larry-modal'))} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-500 hover:bg-white/5 hover:text-slate-100 transition-all">
@@ -285,12 +303,48 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
           </div>
         </div>
         <div className="flex-1 overflow-y-auto p-10">
-           {activeTab === 'legal_oversight' && renderLegalOversight()}
-           {activeTab === 'approvals_denials' && renderApprovalsDenials()}
-           {activeTab === 'jurisdiction' && renderJurisdictionDashboard()}
-           {activeTab === 'compliance' && <div className="text-center py-40 text-slate-400 font-bold uppercase tracking-widest italic">Live Compliance Shield Active...</div>}
-           {activeTab === 'health_labs' && <div className="h-full w-full -m-10"><PublicHealthDashboard /></div>}
-           {activeTab === 'metrc_state' && <div className="text-center py-40 text-slate-400 font-bold uppercase tracking-widest italic">Live Metrc Production Sync Active...</div>}
+           {(() => {
+             const allTabs = [
+                { id: 'legal_oversight', label: 'Statewide Overview', icon: Scale, tier: 'basic' },
+                { id: 'approvals_denials', label: 'License Command', icon: FileCheck, tier: 'basic' },
+                { id: 'jurisdiction', label: 'Intrastate Monitoring', icon: Activity, tier: 'pro' },
+                { id: 'compliance', label: 'Compliance Pulse', icon: ShieldCheck, tier: 'pro' },
+                { id: 'health_labs', label: 'Health & Labs', icon: ShieldCheck, tier: 'basic' },
+                { id: 'metrc_state', label: 'State Revenue & Tax', icon: DollarSign, tier: 'pro' },
+                { id: 'jurisdiction_trend', label: 'Jurisdictional Trend Engine', icon: Sparkles, tier: 'custom' },
+                { id: 'subscription', label: 'Subscription', icon: CreditCard, tier: 'basic' },
+             ];
+             const currentTab = allTabs.find(t => t.id === activeTab);
+             if (currentTab && !hasAccess(currentTab.tier)) {
+               return (
+                 <div className="h-full flex flex-col items-center justify-center text-center">
+                   <div className="w-20 h-20 bg-indigo-900/10 rounded-full flex items-center justify-center mb-6 border border-indigo-800/20">
+                     <Lock size={32} className="text-indigo-600" />
+                   </div>
+                   <h2 className="text-2xl font-black text-slate-800 mb-3">Tier Upgrade Required</h2>
+                   <p className="text-slate-500 max-w-md mb-8">
+                     The <strong>{currentTab.label}</strong> module is restricted to the <span className="capitalize text-indigo-600 font-bold">{currentTab.tier}</span> tier. Upgrade your state's authority subscription to unlock deep jurisdictional trend insights and real-time intrastate monitoring.
+                   </p>
+                   <button onClick={() => setActiveTab('subscription')} className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/20 transition-all">
+                     View Upgrade Options
+                   </button>
+                 </div>
+               );
+             }
+
+             return (
+               <>
+                 {activeTab === 'legal_oversight' && renderLegalOversight()}
+                 {activeTab === 'approvals_denials' && renderApprovalsDenials()}
+                 {activeTab === 'jurisdiction' && renderJurisdictionDashboard()}
+                 {activeTab === 'compliance' && <div className="text-center py-40 text-slate-400 font-bold uppercase tracking-widest italic">Live Compliance Pulse Active...</div>}
+                 {activeTab === 'health_labs' && <div className="h-full w-full -m-10"><PublicHealthDashboard /></div>}
+                 {activeTab === 'metrc_state' && <div className="text-center py-40 text-slate-400 font-bold uppercase tracking-widest italic">Live Tax & Revenue Sync Active...</div>}
+                 {activeTab === 'jurisdiction_trend' && <div className="text-center py-40 text-slate-400 font-bold uppercase tracking-widest italic">AI Trend Engine Generating Forecasts...</div>}
+                 {activeTab === 'subscription' && <SubscriptionPortal userRole="regulator" initialPlanId={`state_${tier}`} />}
+               </>
+             );
+           })()}
         </div>
       </div>
 
