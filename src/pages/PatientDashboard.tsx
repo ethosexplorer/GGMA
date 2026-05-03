@@ -18,9 +18,6 @@ import { ComplianceTravelTab } from '../components/patient/ComplianceTravelTab';
 import { UserCalendar } from '../components/UserCalendar';
 import { RegulatoryFeedWidget } from '../components/shared/RegulatoryFeedWidget';
 import { FeaturedPoll, RevolvingSurveyBanner } from '../components/CommunityPolls';
-import { SystemDictionary } from '../components/shared/SystemDictionary';
-import { BookOpen } from 'lucide-react';
-
 const Button = ({ children, className, disabled, ...props }: any) => (
   <button
     disabled={disabled}
@@ -47,7 +44,6 @@ const DEFAULT_TABS = [
   { id: 'documents', label: 'Vault', icon: FolderOpen },
   { id: 'community', label: 'Community Voice', icon: Users },
   { id: 'regulatory', label: 'Law Updates', icon: Bell },
-  { id: 'dictionary', label: 'System Dictionary', icon: BookOpen },
   { id: 'subscription', label: 'Membership', icon: Sparkles },
 ];
 
@@ -546,13 +542,6 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
               <RegulatoryFeedWidget jurisdiction={undefined} />
               <RegulatoryFeedWidget jurisdiction="Oklahoma" compact />
             </div>
-          </motion.div>
-        )}
-
-        {/* ─── SYSTEM DICTIONARY & GUIDES TAB ─── */}
-        {activeTab === 'dictionary' && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-            <SystemDictionary role="patient" />
           </motion.div>
         )}
 

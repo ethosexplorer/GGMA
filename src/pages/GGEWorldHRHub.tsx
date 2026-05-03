@@ -20,7 +20,7 @@ const NAV_ITEMS = [
   { id: 'attorney_training', label: 'Attorney/Legal Training', icon: Gavel },
   
   { section: 'LIVE OPERATIONS' },
-  { id: 'ops_livecenter', label: 'Ops LiveCenter', icon: Headphones, badge: 'Live' },
+  { id: 'ops_livecenter', label: 'GGE World Call Center', icon: Headphones, badge: 'Live' },
   { id: 'applications_queue', label: 'Applications Queue', icon: FileText, badge: '502' },
   { id: 'internal_admin', label: 'Internal Admin Ops', icon: Shield },
   { id: 'gge_processor', label: 'GGE Processor', icon: Cpu },

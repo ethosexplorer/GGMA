@@ -133,15 +133,36 @@ export const TrainingAndDictionary = ({ role = 'business', onScheduleConsult }: 
               <BookOpen className="text-indigo-600" /> Platform Dictionary
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {[
-                { t: "L.A.R.R.Y", d: "Logical Analysis & Regulatory Reporting Yield. The core compliance AI monitoring engine." },
-                { t: "C³ Score", d: "Compassion Compliance Currency. A behavioral score reflecting system adherence." },
-                { t: "Care Wallet", d: "Closed-loop stored-value infrastructure for patient loyalty and purchases." },
-                { t: "Metrc Sandbox", d: "Regulatory environment for testing plant/package tracking without state reporting." },
-                { t: "SINC", d: "Secure Inventory Node Control. Internal synchronization with Metrc." },
-                { t: "GGE World HR", d: "The Master Oversight Hub for training, recruitment, and personnel command." },
-                { t: "Aura Provider Network", d: "The proprietary telehealth and physician certification sub-network." }
-              ].map((term, i) => (
+              {(() => {
+                const common = [
+                  { t: "L.A.R.R.Y", d: "Logical Analysis & Regulatory Reporting Yield. The core compliance AI monitoring engine." },
+                  { t: "C³ Score", d: "Compassion Compliance Currency. A behavioral score reflecting system adherence." },
+                  { t: "Care Wallet", d: "Closed-loop stored-value infrastructure for patient loyalty and purchases." }
+                ];
+                let terms = common;
+                if (role === 'business') {
+                  terms = [...common,
+                    { t: "Metrc Sandbox", d: "Regulatory environment for testing plant/package tracking without state reporting." },
+                    { t: "SINC", d: "Secure Inventory Node Control. Internal synchronization with Metrc." }
+                  ];
+                } else if (role === 'provider') {
+                  terms = [...common,
+                    { t: "Aura Provider Network", d: "The proprietary telehealth and physician certification sub-network." }
+                  ];
+                } else if (role === 'attorney') {
+                  terms = [...common,
+                    { t: "Legal Vault", d: "Encrypted storage for patient intake forms, HIPAA releases, and compliance documentation." }
+                  ];
+                } else if (role === 'internal_admin') {
+                  terms = [...common,
+                    { t: "Metrc Sandbox", d: "Regulatory environment for testing plant/package tracking without state reporting." },
+                    { t: "SINC", d: "Secure Inventory Node Control. Internal synchronization with Metrc." },
+                    { t: "GGE World HR", d: "The Master Oversight Hub for training, recruitment, and personnel command." },
+                    { t: "Aura Provider Network", d: "The proprietary telehealth and physician certification sub-network." }
+                  ];
+                }
+                return terms;
+              })().map((term, i) => (
                 <div key={i} className="p-5 bg-slate-50 border border-slate-200 rounded-2xl">
                   <h4 className="font-black text-slate-800 text-lg">{term.t}</h4>
                   <p className="text-slate-600 mt-2 font-medium leading-relaxed">{term.d}</p>
@@ -157,13 +178,29 @@ export const TrainingAndDictionary = ({ role = 'business', onScheduleConsult }: 
               <HelpCircle className="text-blue-600" /> Essential Navigation Q&A
             </h2>
             <div className="space-y-4">
-              {[
-                { q: "How do I sync my local inventory with Metrc?", a: "Navigate to your Dashboard > SINC Inventory Tab > Click 'Sync Engine' to perform an automatic reconciliation with your Metrc API key." },
-                { q: "What happens if I fail the implementation exam?", a: "Your account will be temporarily flagged. You must schedule a 1-on-1 consultation which is logged in GGE World HR Hub before retaking the exam." },
-                { q: "How do I process a Care Wallet payment?", a: "In the POS tab, select 'Care Wallet' as the tender type. The patient will present their digital QR or NFC ID for instant deduction." },
-                { q: "Where can I view active compliance alerts?", a: "L.A.R.R.Y alerts appear on your main dashboard under the 'Readiness' or 'Action Req.' modules. Click to resolve." },
-                { q: "When is the Go-Live deadline?", a: "All required documentation and modules must be completed 14 days before your jurisdiction's scheduled go-live date." }
-              ].map((faq, i) => (
+              {(() => {
+                const common = [
+                  { q: "What happens if I fail the implementation exam?", a: "Your account will be temporarily flagged. You must schedule a 1-on-1 consultation which is logged in GGE World HR Hub before retaking the exam." },
+                  { q: "Where can I view active compliance alerts?", a: "L.A.R.R.Y alerts appear on your main dashboard under the 'Readiness' or 'Action Req.' modules. Click to resolve." },
+                  { q: "When is the Go-Live deadline?", a: "All required documentation and modules must be completed 14 days before your jurisdiction's scheduled go-live date." }
+                ];
+                let faqs = common;
+                if (role === 'business') {
+                  faqs = [...common,
+                    { q: "How do I sync my local inventory with Metrc?", a: "Navigate to your Dashboard > SINC Inventory Tab > Click 'Sync Engine' to perform an automatic reconciliation with your Metrc API key." },
+                    { q: "How do I process a Care Wallet payment?", a: "In the POS tab, select 'Care Wallet' as the tender type. The patient will present their digital QR or NFC ID for instant deduction." }
+                  ];
+                } else if (role === 'provider') {
+                  faqs = [...common,
+                    { q: "How do I certify a patient?", a: "Open the patient's chart from the Queue, verify their medical history, and click 'Submit to State API' to automatically file the certification." }
+                  ];
+                } else if (role === 'attorney') {
+                  faqs = [...common,
+                    { q: "How do I accept a new case?", a: "Review the intake in your 'Case Pipeline'. Clicking 'Accept' automatically deducts the retainer from the patient's Care Wallet into your escrow." }
+                  ];
+                }
+                return faqs;
+              })().map((faq, i) => (
                 <div key={i} className="p-5 bg-white border border-slate-200 shadow-sm rounded-2xl">
                   <h4 className="font-bold text-slate-800 mb-2 flex items-start gap-2">
                     <span className="text-blue-500 mt-0.5">Q:</span> {faq.q}

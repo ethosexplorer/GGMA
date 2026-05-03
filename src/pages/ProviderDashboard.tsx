@@ -6,8 +6,6 @@ import { cn } from '../lib/utils';
 import { StatCard } from '../components/StatCard';
 import { CannabisCertWizard } from '../components/provider/CannabisCertWizard';
 import { UserCalendar } from '../components/UserCalendar';
-import { SystemDictionary } from '../components/shared/SystemDictionary';
-import { BookOpen } from 'lucide-react';
 
 const DEFAULT_SIDEBAR_ITEMS = [
   { id: 'overview', label: 'Overview', icon: BarChart },
@@ -21,7 +19,6 @@ const DEFAULT_SIDEBAR_ITEMS = [
   { id: 'billing', label: 'Billing & Insurance', icon: CreditCard },
   { id: 'reports', label: 'Reports', icon: BarChart },
   { id: 'settings', label: 'Settings & Profile', icon: Settings },
-  { id: 'dictionary', label: 'System Dictionary', icon: BookOpen },
 ];
 
 const patientQueue = [
@@ -429,11 +426,7 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                   </div>
                 )}
 
-                {activeTab === 'dictionary' && (
-                  <div className="space-y-6">
-                    <SystemDictionary role="provider" />
-                  </div>
-                )}
+
 
               </div>
 

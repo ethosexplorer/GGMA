@@ -12,15 +12,26 @@ import { initializeDatabase } from '../lib/tursoMigrations';
 import { ComplianceEngineTab } from '../components/business/ComplianceEngineTab';
 import { AttorneyMarketplaceTab } from '../components/shared/AttorneyMarketplaceTab';
 import { DashboardAnalytics } from '../components/DashboardAnalytics';
+import React, { useState, useEffect } from 'react';
+import { useDraggableSidebar } from '../hooks/useDraggableSidebar';
+import { Wallet, Users, Building2, Shield, Clock, TrendingUp, Plus, LayoutDashboard, CreditCard, PackageSearch, AlertCircle, ShoppingCart, Loader2, Trash2, Edit2, CheckCircle, XCircle, Sparkles, MapPin, BarChart2, Activity, MessageSquare, LogOut, FileText, ClipboardList, CheckSquare, UploadCloud, Calendar, Zap, AlertTriangle, Database, Gavel, ArrowRight, ArrowLeft, Send } from 'lucide-react';
+import { cn } from '../lib/utils';
+import { StatCard } from '../components/StatCard';
+import { CareWalletTab } from '../components/shared/CareWalletTab';
+import { StateWelcomeBanner } from '../components/shared/StateWelcomeBanner';
+import { VirtualAttendantTab } from '../components/oversight/VirtualAttendantTab';
+import { SubscriptionPortal } from '../components/SubscriptionPortal';
+import { turso } from '../lib/turso';
+import { initializeDatabase } from '../lib/tursoMigrations';
+import { ComplianceEngineTab } from '../components/business/ComplianceEngineTab';
+import { AttorneyMarketplaceTab } from '../components/shared/AttorneyMarketplaceTab';
+import { DashboardAnalytics } from '../components/DashboardAnalytics';
 import { RegulatoryReportingTab } from '../components/business/RegulatoryReportingTab';
 import { BusinessApplicationsTab } from '../components/business/BusinessApplicationsTab';
 import { StressTestEngine, StressTestResult } from '../lib/compliance/StressTestEngine';
 import { UserCalendar } from '../components/UserCalendar';
 import { DEAApplicationWizard } from '../components/business/DEAApplicationWizard';
-import { DEAApplicationWizard } from '../components/business/DEAApplicationWizard';
 import { RegulatoryFeedWidget } from '../components/shared/RegulatoryFeedWidget';
-import { SystemDictionary } from '../components/shared/SystemDictionary';
-import { BookOpen } from 'lucide-react';
 
 // Simple Button mock
 const Button = ({ children, className, icon: Icon, variant, disabled, ...props }: any) => (
@@ -61,7 +72,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
   const [demoUnlocked, setDemoUnlocked] = useState(isExecutive);
   const isSubscribed = user?.subscriptionStatus === 'Active' || user?.planId || demoUnlocked;
   const [previousTab, setPreviousTab] = useState<string>('home');
-  const [activeTab, setActiveTab] = useState<'home' | 'analytics' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'insurance' | 'documents' | 'subscription' | 'integrations' | 'staff' | 'traceability' | 'readiness' | 'dea' | 'wallet' | 'attorneys' | 'reporting' | 'applications' | 'regulatory' | 'dictionary'>(isSubscribed ? (initialTab || 'analytics') : 'applications');
+  const [activeTab, setActiveTab] = useState<'home' | 'analytics' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'insurance' | 'documents' | 'subscription' | 'integrations' | 'staff' | 'traceability' | 'readiness' | 'dea' | 'wallet' | 'attorneys' | 'reporting' | 'applications' | 'regulatory'>(isSubscribed ? (initialTab || 'analytics') : 'applications');
   const navigateTab = (tab: typeof activeTab) => {
     setPreviousTab(activeTab);
     setActiveTab(tab);
@@ -87,7 +98,6 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
     { id: 'wallet', label: 'Care Wallet', icon: Wallet },
     { id: 'attorneys', label: 'Attorney Marketplace', icon: Gavel },
     { id: 'regulatory', label: 'Law Updates', icon: AlertCircle },
-    { id: 'dictionary', label: 'System Dictionary', icon: BookOpen },
   ];
 
   // Drag-and-drop tab reordering
@@ -771,7 +781,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
                  </button>
               </div>
 
-              {/* L.A.R.R.Y Task List */}
+              {/* L.A.R.RY Task List */}
               <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                  <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
                    <div className="flex items-center gap-2">
@@ -908,8 +918,8 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
                  
                  <div className="p-4 bg-black/20 shrink-0">
                     <div className="relative">
-                       <input type="text" placeholder="Ask L.A.R.R.Y to run an audit or manage subscriptions..." className="w-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm rounded-xl px-4 py-3 pr-10 focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all" onKeyDown={(e) => { if(e.key === "Enter") { const val = e.currentTarget.value.toLowerCase(); if(val.includes('subscription') || val.includes('add-on') || val.includes('purchase') || val.includes('upgrade')) { navigateTab('subscription'); } else { alert("L.A.R.R.Y is analyzing your request. Standby."); } e.currentTarget.value = ""; } }} />
-                       <button onClick={(e) => { const input = e.currentTarget.previousElementSibling as HTMLInputElement; if(input) { alert("L.A.R.R.Y is analyzing your request. Standby."); input.value = ""; } }} className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-white/50 hover:text-white transition-colors">
+                       <input type="text" placeholder="Ask L.A.R.R.Y to run an audit or manage subscriptions..." className="w-full bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm rounded-xl px-4 py-3 pr-10 focus:outline-none focus:border-emerald-400 focus:bg-white/15 transition-all" onKeyDown={(e) => { if(e.key === "Enter") { const val = e.currentTarget.value.toLowerCase(); if(val.includes('subscription') || val.includes('add-on') || val.includes('purchase') || val.includes('upgrade')) { navigateTab('subscription'); } else { alert("L.A.R.RY is analyzing your request. Standby."); } e.currentTarget.value = ""; } }} />
+                       <button onClick={(e) => { const input = e.currentTarget.previousElementSibling as HTMLInputElement; if(input) { alert("L.A.R.RY is analyzing your request. Standby."); input.value = ""; } }} className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-white/50 hover:text-white transition-colors">
                          <MessageSquare size={16} />
                        </button>
                     </div>
@@ -1631,13 +1641,6 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
       </div>
     )}
 
-
-
-
-
-
-
-
     {activeTab === 'wallet' && (
       <div className="space-y-6">
         <CareWalletTab userRole="business" />
@@ -1689,11 +1692,6 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
     {activeTab === 'applications' && (
       <BusinessApplicationsTab />
     )}
-    {activeTab === 'support' && (
-      <div className="space-y-6">
-        <VirtualAttendantTab />
-      </div>
-    )}
     {activeTab === 'regulatory' && (
       <div className="space-y-6">
         <div className="bg-gradient-to-r from-emerald-700 to-teal-800 rounded-3xl p-8 text-white">
@@ -1704,13 +1702,6 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
           <RegulatoryFeedWidget jurisdiction={jurisdiction} />
           <RegulatoryFeedWidget jurisdiction={undefined} compact />
         </div>
-
-        {activeTab === 'dictionary' && (
-          <div className="space-y-6">
-            <SystemDictionary role="business" />
-          </div>
-        )}
-
       </div>
     )}
   </div>

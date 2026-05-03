@@ -6,8 +6,6 @@ import { Calendar, Building2, Users, FileText, Settings, Shield, Activity, Bell,
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { UserCalendar } from '../components/UserCalendar';
-import { SystemDictionary } from '../components/shared/SystemDictionary';
-import { BookOpen } from 'lucide-react';
 
 const NAV_ITEMS = [
   { section: 'STATE OVERSIGHT' },
@@ -18,7 +16,6 @@ const NAV_ITEMS = [
   { id: 'compliance', label: 'Compliance Monitor', icon: FileCheck },
   { id: 'enforcement', label: 'RIP Enforcement Queue', icon: Gavel, dot: true },
   { id: 'reports', label: 'Regulatory Reports', icon: BarChart3 },
-  { id: 'dictionary', label: 'System Guides', icon: BookOpen },
 ];
 
 export const RegulatorDashboard = ({ onLogout, user }: { onLogout?: () => void | Promise<void>, user?: any }) => {
@@ -80,7 +77,6 @@ export const RegulatorDashboard = ({ onLogout, user }: { onLogout?: () => void |
     switch (activeTab) {
       case 'calendar': return <div className="h-full w-full -m-10"><UserCalendar user={user} title="src\pages\Regulator Calendar" subtitle="Appointments & Scheduling" /></div>;
       case 'overview': return renderOverview();
-      case 'dictionary': return <div className="animate-in fade-in duration-500 bg-white rounded-3xl shadow-sm p-4"><SystemDictionary role="regulator" /></div>;
       default: return (
         <div className="flex items-center justify-center h-[60vh]">
           <div className="text-center space-y-4 max-w-sm">
