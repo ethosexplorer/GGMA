@@ -36,7 +36,8 @@ export default function handler(req, res) {
       const dayOfWeek = now.getUTCDay(); // 0 is Sunday, 1 is Monday
 
       const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-      const isBusinessHours = !isWeekend && cstHours >= 9 && cstHours < 17;
+      // Temporary override: set to true to allow 24/7 testing this weekend
+      const isBusinessHours = true; // !isWeekend && cstHours >= 9 && cstHours < 17;
 
       if (!isBusinessHours) {
         twiml.say("Thank you for calling Global Green Enterprise. You have reached us outside of our normal business hours, which are Monday through Friday, 9 A.M. to 5 P.M. Central Time. Please leave a message and we will return your call on the next business day.");
