@@ -17,7 +17,7 @@ let app;
 let auth: any;
 
 try {
-  app = initializeApp(firebaseConfig);
+  app = initializeApp(firebaseConfig, "ggp-auth");
   auth = getAuth(app);
 } catch (e) {
   console.error("Firebase Initialization Error (Keys likely missing from Vercel):", e);
