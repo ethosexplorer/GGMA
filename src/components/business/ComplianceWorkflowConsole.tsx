@@ -24,7 +24,7 @@ export const ComplianceWorkflowConsole = () => {
   const [selectedFacility, setSelectedFacility] = useState<string>('');
   const [showMetrcConfig, setShowMetrcConfig] = useState(false);
   const [metrcConfig, setMetrcConfig] = useState({
-    integratorApiKey: '',
+    integratorApiKey: import.meta.env.VITE_METRC_INTEGRATOR_KEY || '',
     userApiKey: '',
     licenseNumber: '',
     environment: 'production' as const
@@ -464,30 +464,41 @@ export const ComplianceWorkflowConsole = () => {
 
             <div className="space-y-4">
               <div>
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">Integrator API Key</label>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">Integrator API Key (GGP-OS)</label>
                 <input 
                   type="password"
                   value={metrcConfig.integratorApiKey}
                   onChange={e => setMetrcConfig({...metrcConfig, integratorApiKey: e.target.value})}
-                  className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm font-mono focus:ring-2 ring-blue-500/20 outline-none"
-                  placeholder="Paste Integrator Key..."
+                  className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm font-mono focus:ring-2 ring-blue-500/20 outline-none bg-emerald-50"
+                  placeholder="Pre-filled from platform config..."
                 />
+                {metrcConfig.integratorApiKey && <p className="text-[10px] text-emerald-600 font-bold mt-1">✓ Production integrator key loaded</p>}
               </div>
               <div>
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">User API Key (Optional)</label>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">Facility User API Key</label>
                 <input 
                   type="password"
                   value={metrcConfig.userApiKey}
                   onChange={e => setMetrcConfig({...metrcConfig, userApiKey: e.target.value})}
                   className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm font-mono focus:ring-2 ring-blue-500/20 outline-none"
-                  placeholder="Paste User Key..."
+                  placeholder="Facility operator's Metrc user key..."
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">Oklahoma License Number</label>
+                <input 
+                  type="text"
+                  value={metrcConfig.licenseNumber}
+                  onChange={e => setMetrcConfig({...metrcConfig, licenseNumber: e.target.value})}
+                  className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm font-mono focus:ring-2 ring-blue-500/20 outline-none"
+                  placeholder="e.g. DAAA-XXXX-XXXX"
                 />
               </div>
               <div className="p-4 bg-blue-50 border border-blue-100 rounded-2xl">
                 <div className="flex items-start gap-3">
                   <Database className="text-blue-500 shrink-0 mt-0.5" size={18} />
                   <p className="text-xs text-blue-700 font-medium leading-relaxed">
-                    This will use the <strong>GET /facilities/v2</strong> endpoint to retrieve all available licenses in your OK production environment.
+                    <strong>Production Mode:</strong> This will authenticate against the live Oklahoma Metrc API using <strong>GET /facilities/v2</strong> to retrieve all licensed facilities.
                   </p>
                 </div>
               </div>
@@ -497,7 +508,7 @@ export const ComplianceWorkflowConsole = () => {
                 className="w-full py-4 bg-[#1a4731] text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-emerald-900/20 flex items-center justify-center gap-2"
               >
                 {isLoading ? <Loader2 className="animate-spin" size={18} /> : <Database size={18} />}
-                Authenticate & Sync V2
+                Authenticate & Sync Production
               </button>
             </div>
           </div>
