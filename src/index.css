@@ -49,7 +49,11 @@ input:focus {
   100% { transform: translateX(-50%); }
 }
 
-.animate-marquee {
+.animate-marquee-slow {
+  animation: marquee 60s linear infinite;
+}
+
+.animate-marquee-medium {
   animation: marquee 40s linear infinite;
 }
 
@@ -57,7 +61,20 @@ input:focus {
   animation: marquee 20s linear infinite;
 }
 
-.animate-marquee:hover, .animate-marquee-fast:hover {
+.animate-marquee-pause {
+  animation: marquee 40s linear infinite;
+  animation-play-state: paused;
+}
+
+/* Backward compatibility */
+.animate-marquee {
+  animation: marquee 40s linear infinite;
+}
+
+.animate-marquee-slow:hover,
+.animate-marquee-medium:hover,
+.animate-marquee:hover, 
+.animate-marquee-fast:hover {
   animation-play-state: paused;
 }
 

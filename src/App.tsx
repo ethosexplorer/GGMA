@@ -1309,6 +1309,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
   }, [jurisdiction]);
   
   const [broadcastMsg, setBroadcastMsg] = useState('🚨 SYSTEM NOTICE: NATIONWIDE COMPLIANCE AUDIT IN PROGRESS • GLOBAL GREEN HYBRID PLATFORM (GGHP) • ALL SECTORS (GGMA/RIP/SINC) OPERATIONAL');
+  const [broadcastSpeed, setBroadcastSpeed] = useState('fast');
   
     const [inTheKnowNews, setInTheKnowNews] = useState([
       '🔴 BREAKING: Federal Marijuana Rescheduling - Schedule I → Schedule III NOW OFFICIAL',
@@ -1343,6 +1344,9 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
     const syncAlert = () => {
       const savedAlert = localStorage.getItem('gghp_platform_alert');
       if (savedAlert) setBroadcastMsg(savedAlert);
+      
+      const savedAlertSpeed = localStorage.getItem('gghp_platform_alert_speed');
+      if (savedAlertSpeed) setBroadcastSpeed(savedAlertSpeed);
     };
     syncAlert();
     window.addEventListener('storage', syncAlert);
@@ -1353,11 +1357,37 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
     };
   }, []);
 
+  const [marqueeSpeed, setMarqueeSpeed] = useState('medium');
+
+  useEffect(() => {
+    // Sync with "In The Know" ticker from founder dashboard
+    const syncMarquee = () => {
+      const savedNews = localStorage.getItem('gghp_marquee_news');
+      if (savedNews) {
+        try {
+          const parsed = JSON.parse(savedNews);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+             setInTheKnowNews(parsed);
+          }
+        } catch(e) {}
+      }
+      const savedSpeed = localStorage.getItem('gghp_marquee_speed');
+      if (savedSpeed) setMarqueeSpeed(savedSpeed);
+    };
+    syncMarquee();
+    window.addEventListener('storage', syncMarquee);
+    const interval = setInterval(syncMarquee, 1000);
+    return () => {
+      window.removeEventListener('storage', syncMarquee);
+      clearInterval(interval);
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-slate-50 overflow-x-hidden">
       {/* URGENT PLATFORM ALERT TICKER */}
       <div className="bg-red-600 text-white py-2 overflow-hidden whitespace-nowrap border-b border-red-700 relative z-[60]">
-        <div className="inline-block animate-marquee-fast font-black text-sm uppercase tracking-widest">
+        <div className={`inline-block animate-marquee-${broadcastSpeed} font-black text-sm uppercase tracking-widest`}>
           {broadcastMsg} &nbsp; • &nbsp; {broadcastMsg} &nbsp; • &nbsp; {broadcastMsg}
         </div>
       </div>
@@ -1439,7 +1469,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
 
       {/* "IN THE KNOW" NEWS TICKER */}
       <div className="bg-emerald-950 text-emerald-100 py-3 border-b border-emerald-900/20 overflow-hidden whitespace-nowrap relative z-40">
-        <div className="inline-block animate-marquee font-bold text-xs uppercase tracking-[0.2em]">
+        <div className={`inline-block animate-marquee-${marqueeSpeed} font-bold text-xs uppercase tracking-[0.2em]`}>
           <span className="bg-emerald-400 text-emerald-950 px-2 py-0.5 rounded text-[9px] mr-4">IN THE KNOW</span>
           {inTheKnowNews.join(' • ')} &nbsp; • &nbsp; {inTheKnowNews.join(' • ')}
         </div>

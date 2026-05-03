@@ -376,6 +376,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     }
   });
   const [localMarqueeSpeed, setLocalMarqueeSpeed] = useState(() => localStorage.getItem('gghp_marquee_speed') || marqueeSpeed || 'medium');
+  const [localBroadcastSpeed, setLocalBroadcastSpeed] = useState(() => localStorage.getItem('gghp_platform_alert_speed') || 'fast');
   const [isUnlocked, setIsUnlocked] = useState(true);
   const [pin, setPin] = useState('');
   
@@ -446,6 +447,8 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
 
   const handleBroadcast = () => {
     localStorage.setItem('gghp_platform_alert', broadcastMsg);
+    localStorage.setItem('gghp_platform_alert_speed', localBroadcastSpeed);
+    window.dispatchEvent(new Event('storage'));
     alert('Broadcast Pushed Globally');
   };
 
@@ -577,18 +580,34 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                   />
                </div>
                <div className="flex gap-3">
-                  <select 
-                    value={broadcastType}
-                    onChange={(e) => setBroadcastType(e.target.value)}
-                    className="px-6 py-4 bg-white border-2 border-red-100 rounded-2xl font-bold text-slate-700 outline-none"
-                  >
-                     <option>Urgent Alert (Red)</option>
-                     <option>Info Ticker (Green)</option>
-                     <option>Success Blast (Emerald)</option>
-                  </select>
+                  <div className="flex flex-col space-y-1">
+                    <label className="text-[10px] font-black text-red-700 uppercase tracking-widest px-2">Scroll Speed</label>
+                    <select 
+                      value={localBroadcastSpeed}
+                      onChange={(e) => setLocalBroadcastSpeed(e.target.value)}
+                      className="px-6 py-3.5 bg-white border-2 border-red-100 rounded-2xl font-bold text-slate-700 outline-none h-14"
+                    >
+                       <option value="pause">Pause</option>
+                       <option value="slow">Slow</option>
+                       <option value="medium">Medium</option>
+                       <option value="fast">Fast</option>
+                    </select>
+                  </div>
+                  <div className="flex flex-col space-y-1">
+                    <label className="text-[10px] font-black text-red-700 uppercase tracking-widest px-2">Alert Type</label>
+                    <select 
+                      value={broadcastType}
+                      onChange={(e) => setBroadcastType(e.target.value)}
+                      className="px-6 py-3.5 bg-white border-2 border-red-100 rounded-2xl font-bold text-slate-700 outline-none h-14"
+                    >
+                       <option>Urgent Alert (Red)</option>
+                       <option>Info Ticker (Green)</option>
+                       <option>Success Blast (Emerald)</option>
+                    </select>
+                  </div>
                   <button 
                     onClick={handleBroadcast}
-                    className="px-10 py-4 bg-red-600 text-white rounded-2xl font-black hover:bg-red-700 transition-all shadow-xl shadow-red-600/20 active:scale-95"
+                    className="px-10 py-4 bg-red-600 text-white rounded-2xl font-black hover:bg-red-700 transition-all shadow-xl shadow-red-600/20 active:scale-95 h-14 self-end"
                   >
                      BROADCAST LIVE
                   </button>
@@ -631,6 +650,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                       onChange={(e) => setLocalMarqueeSpeed(e.target.value)}
                       className="px-6 py-3.5 bg-white border-2 border-emerald-200 rounded-2xl font-bold text-slate-700 outline-none h-14"
                     >
+                       <option value="pause">Pause</option>
                        <option value="slow">Slow</option>
                        <option value="medium">Medium</option>
                        <option value="fast">Fast</option>
