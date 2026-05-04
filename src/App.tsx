@@ -7943,7 +7943,7 @@ export default function App() {
     } catch (error: any) {
       console.warn('[App.handleLogin] Firebase Auth Error (Gracefully handled):', error.message || error);
       if (error.code === 'auth/operation-not-allowed' || error.code === 'auth/network-request-failed' || (error.message && error.message.includes('400')) || (error.message && error.message.includes('404'))) {
-        let computedRole = localStorage.getItem('gghp_pending_role') || initialRole || 'Patient / Caregiver';
+        let computedRole = localStorage.getItem('gghp_pending_role') || initialRole || 'business';
         const lowerEmail = email.toLowerCase().trim();
         
         if (lowerEmail === FOUNDER_EMAIL || lowerEmail === FOUNDER_EMAIL_2) computedRole = 'executive_founder';
