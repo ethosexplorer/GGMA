@@ -108,11 +108,14 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
 
     // Create Firebase Auth User Account
     try {
+      const computedRole = getRoleFromCategory(planCategory);
+      localStorage.setItem('gghp_pending_role', computedRole);
+      
       const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
       await setDoc(doc(db, 'users', userCredential.user.uid), {
         uid: userCredential.user.uid,
         email: form.email,
-        role: getRoleFromCategory(planCategory), // Map category to correct system role
+        role: computedRole, // Map category to correct system role
         status: 'Pending',
         displayName: form.fullName,
         companyName: form.company,
