@@ -337,7 +337,12 @@ export const FeaturedPoll = () => {
   const [liveResults, setLiveResults] = useState<Record<string, Record<string, number>>>({});
   
   useEffect(() => {
-    turso.execute('SELECT poll_id, vote_choice as option_id, COUNT(*) as total_votes FROM poll_votes GROUP BY poll_id, vote_choice')
+    const j = sessionStorage.getItem('gghp_jurisdiction');
+    const query = j 
+      ? { sql: 'SELECT poll_id, vote_choice as option_id, COUNT(*) as total_votes FROM poll_votes WHERE jurisdiction = ? GROUP BY poll_id, vote_choice', args: [j] }
+      : { sql: 'SELECT poll_id, vote_choice as option_id, COUNT(*) as total_votes FROM poll_votes GROUP BY poll_id, vote_choice', args: [] };
+      
+    turso.execute(query)
       .then(res => {
         const map: Record<string, Record<string, number>> = {};
         res.rows.forEach(r => {
@@ -609,7 +614,12 @@ export const RevolvingSurveyBanner = ({ compact = false }: { compact?: boolean }
   const [liveResults, setLiveResults] = useState<Record<string, Record<string, number>>>({});
   
   useEffect(() => {
-    turso.execute('SELECT poll_id, vote_choice as option_id, COUNT(*) as total_votes FROM poll_votes GROUP BY poll_id, vote_choice')
+    const j = sessionStorage.getItem('gghp_jurisdiction');
+    const query = j 
+      ? { sql: 'SELECT poll_id, vote_choice as option_id, COUNT(*) as total_votes FROM poll_votes WHERE jurisdiction = ? GROUP BY poll_id, vote_choice', args: [j] }
+      : { sql: 'SELECT poll_id, vote_choice as option_id, COUNT(*) as total_votes FROM poll_votes GROUP BY poll_id, vote_choice', args: [] };
+
+    turso.execute(query)
       .then(res => {
         const map: Record<string, Record<string, number>> = {};
         res.rows.forEach(r => {
