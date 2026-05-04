@@ -839,9 +839,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
               <Plus size={14} /> Add Section
             </button>
           )}
-          <button onClick={onLogout} className="w-full py-3 border border-white/5 flex items-center justify-center gap-3 text-slate-500 hover:text-white transition-colors rounded-xl hover:bg-slate-800">
-            <LogOut size={18} /> <span className="text-sm font-black uppercase tracking-widest">Admin Exit</span>
-          </button>
+          
         </div>
       </div>
 

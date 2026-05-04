@@ -212,12 +212,7 @@ const PresidentDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => v
               <Plus size={14} /> Add Section
             </button>
           )}
-          <button 
-            onClick={onLogout}
-            className="w-full flex items-center justify-center gap-2 py-3 bg-slate-900 text-slate-400 rounded-xl font-bold hover:bg-slate-800 hover:text-white transition-all border border-slate-800"
-          >
-            <LogOut size={16} /> Sign Out
-          </button>
+          
         </div>
       </aside>
 

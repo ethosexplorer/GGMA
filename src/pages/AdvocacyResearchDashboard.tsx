@@ -62,7 +62,7 @@ export const AdvocacyResearchDashboard = ({ onLogout, user }: { onLogout?: () =>
             <option value="pro">Pro Tier</option>
             <option value="custom">Custom Tier</option>
           </select>
-          <button onClick={onLogout} className="text-xs text-slate-500 hover:text-slate-800 transition-colors border border-slate-200 px-3 py-1.5 rounded-lg font-medium">Logout</button>
+          
           <div className="flex items-center gap-3">
           <span className="text-[10px] font-bold text-teal-600 bg-teal-50 px-2.5 py-1 rounded-full border border-teal-100 flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse"></span> SYNCED

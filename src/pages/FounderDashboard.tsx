@@ -3866,9 +3866,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
              <Plus size={14} /> New Group
            </button>
         </div>
-        <button onClick={onLogout} className="p-6 border-t border-white/5 flex items-center gap-3 text-slate-500 hover:text-white transition-colors">
-          <LogOut size={18} /> <span className="text-sm font-black uppercase tracking-widest">Master Sign Out</span>
-        </button>
+        
       </div>
 
       {activeGroup && (

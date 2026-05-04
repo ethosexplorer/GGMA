@@ -448,13 +448,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
         >
           <Sparkles size={18} /> Settings
         </button>
-        <button 
-          onClick={onLogout}
-          className="px-4 py-2.5 rounded-2xl text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors flex items-center justify-center shrink-0"
-          title="Sign Out"
-        >
-          <LogOut size={18} />
-        </button>
+        
       </div>
     </div>
 

@@ -210,9 +210,7 @@ export const OversightDashboard = ({ onLogout, user, role, jurisdiction = 'Oklah
             );
           })}
         </div>
-        <button onClick={onLogout} className="p-5 border-t border-slate-900 flex items-center gap-3 text-slate-500 hover:text-white transition-colors bg-slate-950">
-          <LogOut size={18} /> <span className="text-sm font-bold">Secure Logout</span>
-        </button>
+        
       </div>
 
       {/* Main Content Area */}

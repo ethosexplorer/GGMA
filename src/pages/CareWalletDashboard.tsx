@@ -97,9 +97,7 @@ export const CareWalletDashboard = ({ onLogout, onNavigate, user }: { onLogout?:
               <span className="text-sm font-medium">Back to Home</span>
             </button>
           )}
-          <button onClick={onLogout} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-400 hover:bg-red-500/10 transition-colors">
-            <span className="text-sm font-medium">Logout</span>
-          </button>
+          
         </div>
       </div>
 

@@ -63,7 +63,7 @@ export const PoliticalExecutiveDashboard = ({ onLogout, user }: { onLogout?: () 
             <option value="pro">Pro Tier</option>
             <option value="custom">Custom Tier</option>
           </select>
-          <button onClick={onLogout} className="text-xs text-blue-300 hover:text-white transition-colors border border-blue-800/50 px-3 py-1 rounded">Logout</button>
+          
           <div className="flex items-center gap-3">
           <span className="text-[10px] font-bold text-emerald-400 bg-emerald-900/30 px-2.5 py-1 rounded-full border border-emerald-800/30 flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> LIVE

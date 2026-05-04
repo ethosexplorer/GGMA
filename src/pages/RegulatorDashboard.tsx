@@ -114,9 +114,7 @@ export const RegulatorDashboard = ({ onLogout, user }: { onLogout?: () => void |
             );
           })}
         </div>
-        <button onClick={onLogout} className="p-4 border-t border-slate-800 flex items-center gap-3 text-slate-500 hover:text-white transition-colors">
-          <LogOut size={16} /> <span className="text-sm font-bold">Sign Out</span>
-        </button>
+        
       </div>
       <div className="flex-1 flex flex-col h-[calc(100vh-4rem)] overflow-hidden">
         <div className="h-16 border-b border-slate-200 flex items-center justify-between px-8 bg-white shrink-0">

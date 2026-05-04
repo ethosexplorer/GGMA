@@ -570,9 +570,7 @@ export const ExecutiveDashboard = ({ onLogout, user }: any) => {
         </div>
 
         <div className="p-4 border-t border-slate-800">
-          <button onClick={onLogout} className="flex items-center gap-3 text-slate-400 hover:text-white transition-colors w-full px-3 py-2 rounded-xl hover:bg-slate-800 text-sm font-medium">
-            <LogOut size={18} /> Sign Out
-          </button>
+          
         </div>
       </div>
 
