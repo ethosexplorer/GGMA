@@ -8356,6 +8356,7 @@ export default function App() {
                           setHasBypassedSelector(true);
                         }}
                         onLogout={handleLogout}
+                        onHome={() => { setView('landing'); setUserProfile(null); navigate('/'); }}
                       />
                     ) : (
                       renderDashboardByRole(userProfile)
@@ -8377,6 +8378,7 @@ export default function App() {
                         setRoleOverride(role === 'executive_founder' ? null : role);
                         setHasBypassedSelector(true);
                       }}
+                      onHome={() => { setView('landing'); setUserProfile(null); navigate('/'); }}
                     />
                   ) : (
                     renderDashboardByRole(userProfile)

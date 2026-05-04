@@ -1,8 +1,8 @@
 import React from 'react';
-import { Shield, Building2, User, Stethoscope, Briefcase, Lock, Database, LogOut } from 'lucide-react';
+import { Shield, Building2, User, Stethoscope, Briefcase, Lock, Database, LogOut, Home } from 'lucide-react';
 import { motion } from 'motion/react';
 
-export const RoleSelectorScreen = ({ userProfile, onSelect, onLogout }: { userProfile: any, onSelect: (role: string) => void, onLogout?: () => void }) => {
+export const RoleSelectorScreen = ({ userProfile, onSelect, onLogout, onHome }: { userProfile: any, onSelect: (role: string) => void, onLogout?: () => void, onHome?: () => void }) => {
   const isRyan = userProfile?.email?.toLowerCase().includes('ceo.globalgreenhp');
   const isMonica = userProfile?.email?.toLowerCase().includes('monica') || userProfile?.email?.toLowerCase().includes('compliance.globalgreenhp');
   const isBobAdvisor = userProfile?.email?.toLowerCase().includes('bobmooregreenenergy') || userProfile?.role === 'executive_advisor';
@@ -39,18 +39,25 @@ export const RoleSelectorScreen = ({ userProfile, onSelect, onLogout }: { userPr
   }
 
   return (
-    <div className="fixed inset-0 z-[400] bg-slate-900 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[400] bg-slate-900 flex items-center justify-center p-4 overflow-y-auto">
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="max-w-4xl w-full"
+        className="max-w-4xl w-full my-8"
       >
         <div className="text-center mb-10 relative">
-          {onLogout && (
-            <button onClick={onLogout} className="absolute top-0 right-0 text-slate-400 hover:text-white flex items-center gap-2 text-sm font-bold transition-colors bg-slate-800 px-4 py-2 rounded-lg hover:bg-red-500/20 hover:text-red-400 border border-slate-700 hover:border-red-500/50">
-              <LogOut size={16} /> Sign Out
-            </button>
-          )}
+          <div className="absolute top-0 right-0 flex items-center gap-2">
+            {onHome && (
+              <button onClick={onHome} className="text-slate-400 hover:text-white flex items-center gap-2 text-sm font-bold transition-colors bg-slate-800 px-4 py-2 rounded-lg hover:bg-emerald-500/20 hover:text-emerald-400 border border-slate-700 hover:border-emerald-500/50">
+                <Home size={16} /> Home
+              </button>
+            )}
+            {onLogout && (
+              <button onClick={onLogout} className="text-slate-400 hover:text-white flex items-center gap-2 text-sm font-bold transition-colors bg-slate-800 px-4 py-2 rounded-lg hover:bg-red-500/20 hover:text-red-400 border border-slate-700 hover:border-red-500/50">
+                <LogOut size={16} /> Sign Out
+              </button>
+            )}
+          </div>
           <Shield className="w-16 h-16 text-emerald-400 mx-auto mb-6" />
           <h1 className="text-4xl font-black text-white tracking-tight uppercase mb-2">Select Operating Role</h1>
           <p className="text-emerald-400 font-bold tracking-widest uppercase text-sm">Privileged Access Granted for {userProfile?.displayName}</p>
