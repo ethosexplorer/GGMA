@@ -4013,7 +4013,39 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
                SYSTEM ONLINE
             </div>
-            <button className="relative p-2.5 bg-slate-100 rounded-xl text-slate-400 hover:text-indigo-600 transition-all"><Bell size={22} /><span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white" /></button>
+            <div className="relative">
+              <button onClick={() => { const p = document.getElementById('founder-notif'); if (p) p.classList.toggle('hidden'); }} className="relative p-2.5 bg-slate-100 rounded-xl text-slate-400 hover:text-indigo-600 transition-all"><Bell size={22} /><span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white" /></button>
+              <div id="founder-notif" className="hidden absolute right-0 top-12 w-80 bg-white border border-slate-200 rounded-2xl shadow-2xl z-[9999] overflow-hidden">
+                <div className="px-4 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                  <span className="text-xs font-black text-slate-700 uppercase tracking-widest">Notifications</span>
+                  <span className="px-2 py-0.5 bg-red-100 text-red-600 text-[10px] font-bold rounded-full">6 New</span>
+                </div>
+                <div className="max-h-80 overflow-y-auto divide-y divide-slate-100">
+                  {[
+                    { icon: '🔴', title: 'DEA Schedule III Final Order', desc: 'Medical cannabis & FDA products reclassified — effective April 23, 2026', time: 'Today' },
+                    { icon: '⚖️', title: 'DEA Hearing Scheduled', desc: 'Broader rescheduling hearing begins June 29, 2026', time: 'Today' },
+                    { icon: '📋', title: 'Quarterly Compliance Report Due', desc: 'OMMA filing deadline: May 15, 2026', time: '1h ago' },
+                    { icon: '💚', title: 'New Poll Votes Received', desc: 'Community polls receiving engagement in Oklahoma', time: '2h ago' },
+                    { icon: '📈', title: 'Investor Meeting Confirmed', desc: 'Monica + 4 investors — Tuesday May 5, 12pm CST', time: '3h ago' },
+                    { icon: '🔒', title: 'Turso DB Connected', desc: 'Production database environment variables active', time: '5h ago' },
+                  ].map((n, i) => (
+                    <div key={i} className="px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors">
+                      <div className="flex items-start gap-3">
+                        <span className="text-lg">{n.icon}</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-bold text-slate-800">{n.title}</p>
+                          <p className="text-[10px] text-slate-500 mt-0.5">{n.desc}</p>
+                        </div>
+                        <span className="text-[9px] text-slate-400 font-bold shrink-0">{n.time}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="px-4 py-2 bg-slate-50 border-t border-slate-200">
+                  <button onClick={() => { const p = document.getElementById('founder-notif'); if (p) p.classList.add('hidden'); }} className="w-full text-center text-[10px] font-bold text-emerald-600 hover:text-emerald-700 py-1">Dismiss All</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div className="flex-1 overflow-y-auto p-10">{getContent()}</div>
