@@ -15,6 +15,7 @@ import { Vote,
   TrendingUp,
   Zap,
   Shield, CircleCheck } from 'lucide-react';
+import { turso } from '../lib/turso';
 
 // ─── Poll Types ───
 interface PollOption {
@@ -331,7 +332,43 @@ export const FeaturedPoll = () => {
   const [commentText, setCommentText] = useState<Record<string, string>>({});
 
   const poll = POLLS[currentPollIndex];
-  const totalVotes = poll.options.reduce((sum, o) => sum + o.votes, 0);
+  
+  // Load live results from API on mount
+  const [liveResults, setLiveResults] = useState<Record<string, Record<string, number>>>({});
+  
+  useEffect(() => {
+    turso.execute('SELECT poll_id, vote_choice as option_id, COUNT(*) as total_votes FROM poll_votes GROUP BY poll_id, vote_choice')
+      .then(res => {
+        const map: Record<string, Record<string, number>> = {};
+        res.rows.forEach(r => {
+          const pollId = r.poll_id as string;
+          const optionId = r.option_id as string;
+          const votes = Number(r.total_votes);
+          if (!map[pollId]) map[pollId] = {};
+          map[pollId][optionId] = votes;
+        });
+        setLiveResults(map);
+      })
+      .catch(() => {});
+  }, []);
+
+  const totalVotes = poll.options.reduce((sum, o) => sum + o.votes + (liveResults[poll.id]?.[o.id] || 0), 0);
+  
+  const persistVote = async (pollId: string, optionIds: string[]) => {
+    try {
+      const sessionId = sessionStorage.getItem('gghp_session') || 
+        (() => { const id = 'sess_' + Math.random().toString(36).slice(2); sessionStorage.setItem('gghp_session', id); return id; })();
+      const jurisdiction = sessionStorage.getItem('gghp_jurisdiction') || 'Unknown';
+      
+      const stmts = optionIds.map(opt => ({
+        sql: 'INSERT INTO poll_votes (id, poll_id, voter_id, jurisdiction, vote_choice) VALUES (?, ?, ?, ?, ?)',
+        args: [`vote_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`, pollId, sessionId, jurisdiction, opt]
+      }));
+      await turso.batch(stmts, 'write');
+    } catch (e) {
+      console.error('Failed to save vote', e);
+    }
+  };
 
   // Auto-rotate every 12 seconds (pauses when user has voted on current poll)
   useEffect(() => {
@@ -355,6 +392,7 @@ export const FeaturedPoll = () => {
       setSelectedOptions({ ...selectedOptions, [poll.id]: [optionId] });
       setTimeout(() => {
         setHasVoted({ ...hasVoted, [poll.id]: true });
+        persistVote(poll.id, [optionId]);
         // Auto-advance 3s after voting
         setTimeout(() => setCurrentPollIndex(prev => (prev + 1) % POLLS.length), 3000);
       }, 300);
@@ -362,8 +400,10 @@ export const FeaturedPoll = () => {
   };
 
   const submitMultiVote = () => {
-    if ((selectedOptions[poll.id] || []).length > 0) {
+    const selections = selectedOptions[poll.id] || [];
+    if (selections.length > 0) {
       setHasVoted({ ...hasVoted, [poll.id]: true });
+      persistVote(poll.id, selections);
       setTimeout(() => setCurrentPollIndex(prev => (prev + 1) % POLLS.length), 3000);
     }
   };
@@ -437,7 +477,8 @@ export const FeaturedPoll = () => {
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2"
           >
             {poll.options.map((option) => {
-              const percentage = Math.round((option.votes / totalVotes) * 100);
+              const liveVoteCount = option.votes + (liveResults[poll.id]?.[option.id] || 0);
+              const percentage = Math.round((liveVoteCount / totalVotes) * 100) || 0;
               const isSelected = (selectedOptions[poll.id] || []).includes(option.id);
               const voted = hasVoted[poll.id];
 
@@ -475,7 +516,7 @@ export const FeaturedPoll = () => {
 
                   {voted && (
                     <p className="text-[10px] text-emerald-500/60 font-bold mt-1 relative z-10 ml-7">
-                      {(option.votes + (isSelected ? 1 : 0)).toLocaleString()} votes
+                      {(liveVoteCount + (isSelected && !voted && !poll.allowMultiple ? 1 : 0)).toLocaleString()} votes
                     </p>
                   )}
                 </button>
@@ -568,18 +609,17 @@ export const RevolvingSurveyBanner = ({ compact = false }: { compact?: boolean }
   const [liveResults, setLiveResults] = useState<Record<string, Record<string, number>>>({});
   
   useEffect(() => {
-    fetch('/api/polls/vote')
-      .then(r => r.json())
-      .then(data => {
-        // Build a map of poll_id -> { option_id: vote_count }
-        if (data.results && Array.isArray(data.results)) {
-          const map: Record<string, Record<string, number>> = {};
-          data.results.forEach((r: any) => {
-            if (!map[r.poll_id]) map[r.poll_id] = {};
-            map[r.poll_id][r.option_id] = parseInt(r.total_votes || r.vote_count || '0');
-          });
-          setLiveResults(map);
-        }
+    turso.execute('SELECT poll_id, vote_choice as option_id, COUNT(*) as total_votes FROM poll_votes GROUP BY poll_id, vote_choice')
+      .then(res => {
+        const map: Record<string, Record<string, number>> = {};
+        res.rows.forEach(r => {
+          const pollId = r.poll_id as string;
+          const optionId = r.option_id as string;
+          const votes = Number(r.total_votes);
+          if (!map[pollId]) map[pollId] = {};
+          map[pollId][optionId] = votes;
+        });
+        setLiveResults(map);
       })
       .catch(() => {}); // Graceful fallback to seed data
   }, []);
@@ -603,20 +643,15 @@ export const RevolvingSurveyBanner = ({ compact = false }: { compact?: boolean }
     try {
       const sessionId = sessionStorage.getItem('gghp_session') || 
         (() => { const id = 'sess_' + Math.random().toString(36).slice(2); sessionStorage.setItem('gghp_session', id); return id; })();
+      const jurisdiction = sessionStorage.getItem('gghp_jurisdiction') || 'Unknown';
       
-      await fetch('/api/polls/vote', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          poll_id: pollId,
-          option_ids: optionIds,
-          session_id: sessionId,
-          category: poll.category,
-          state: sessionStorage.getItem('gghp_jurisdiction') || 'Unknown'
-        })
-      });
+      const stmts = optionIds.map(opt => ({
+        sql: 'INSERT INTO poll_votes (id, poll_id, voter_id, jurisdiction, vote_choice) VALUES (?, ?, ?, ?, ?)',
+        args: [`vote_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`, pollId, sessionId, jurisdiction, opt]
+      }));
+      await turso.batch(stmts, 'write');
     } catch (e) {
-      // Silent fail — vote is still recorded locally
+      console.error('Failed to save vote', e);
     }
   };
 

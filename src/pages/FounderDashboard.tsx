@@ -124,6 +124,17 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     events: [] as { time: string; user: string; action: string }[]
   });
 
+  const [pollStats, setPollStats] = useState({
+    totalVotes: 0,
+    activePolls: 0,
+    engagementRate: '0%',
+    commentsSubmitted: 0,
+    topPolls: [] as any[],
+    votesByCategory: [] as any[]
+  });
+
+  const [jurisdictionStats, setJurisdictionStats] = useState<any[]>([]);
+
   useEffect(() => {
     // 1. Fetch live metrics from Turso
     const fetchMetrics = async () => {
@@ -178,6 +189,46 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
             events: mappedEvents.length > 0 ? mappedEvents : prev.events
           }));
         }
+
+        // Fetch Poll Stats
+        const pTotal = await turso.execute('SELECT COUNT(*) as c FROM poll_votes');
+        const pActive = await turso.execute('SELECT COUNT(*) as c FROM community_polls WHERE status="active"');
+        const pTop = await turso.execute('SELECT cp.question as q, cp.category as cat, COUNT(pv.id) as v FROM community_polls cp JOIN poll_votes pv ON cp.id = pv.poll_id GROUP BY cp.id ORDER BY v DESC LIMIT 5');
+        const pCat = await turso.execute('SELECT cp.category as cat, COUNT(pv.id) as votes FROM poll_votes pv JOIN community_polls cp ON pv.poll_id = cp.id GROUP BY cp.category ORDER BY votes DESC');
+
+        const totalPollVotes = Number(pTotal.rows[0]?.c || 0);
+        
+        setPollStats({
+          totalVotes: totalPollVotes,
+          activePolls: Number(pActive.rows[0]?.c || 0),
+          engagementRate: totalPollVotes > 0 ? ((totalPollVotes / Math.max(Number(liveStats.totalUsers.replace(/[^0-9.]/g, '') || 1) * 1000, 1)) * 100).toFixed(1) + '%' : '0%',
+          commentsSubmitted: 0, // Not implemented yet
+          topPolls: pTop.rows.map(r => ({
+            q: r.q,
+            v: Number(r.v),
+            cat: r.cat,
+            pct: totalPollVotes > 0 ? Math.round((Number(r.v) / totalPollVotes) * 100) : 0
+          })),
+          votesByCategory: pCat.rows.map(r => ({
+            cat: r.cat,
+            votes: Number(r.votes),
+            pct: totalPollVotes > 0 ? Math.round((Number(r.votes) / totalPollVotes) * 100) : 0
+          }))
+        });
+
+        // Fetch Jurisdiction Stats (mocking compliance and revenue based on real user counts for now until those tables exist)
+        const jPatients = await turso.execute('SELECT state, COUNT(*) as c FROM patients GROUP BY state');
+        const jBiz = await turso.execute('SELECT state, COUNT(*) as c FROM businesses GROUP BY state');
+        
+        const stateMap: Record<string, any> = {};
+        jPatients.rows.forEach(r => stateMap[String(r.state)] = { s: String(r.state), p: Number(r.c), d: 0, c: 98, r: '+5.4%', up: true });
+        jBiz.rows.forEach(r => {
+          if (!stateMap[String(r.state)]) stateMap[String(r.state)] = { s: String(r.state), p: 0, d: 0, c: 95, r: '+2.1%', up: true };
+          stateMap[String(r.state)].d = Number(r.c);
+        });
+        
+        setJurisdictionStats(Object.values(stateMap).sort((a,b) => (b.p + b.d) - (a.p + a.d)));
+
       } catch (err) {
         console.error('Error fetching real analytics', err);
       }
@@ -776,10 +827,10 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           {[
-            { label: 'Total Votes', value: '87,420', trend: '+2.4k today', color: 'text-emerald-600' },
-            { label: 'Active Polls', value: '20', trend: '8 categories', color: 'text-indigo-600' },
-            { label: 'Engagement Rate', value: '34.2%', trend: '+8.1% vs last week', color: 'text-amber-600' },
-            { label: 'Comments Submitted', value: '1,247', trend: '+89 today', color: 'text-blue-600' },
+            { label: 'Total Votes', value: pollStats.totalVotes.toLocaleString(), trend: 'Live updates', color: 'text-emerald-600' },
+            { label: 'Active Polls', value: pollStats.activePolls.toString(), trend: 'Global database', color: 'text-indigo-600' },
+            { label: 'Engagement Rate', value: pollStats.engagementRate, trend: 'vs total users', color: 'text-amber-600' },
+            { label: 'Comments Submitted', value: pollStats.commentsSubmitted.toLocaleString(), trend: 'Disabled pending AI filter', color: 'text-blue-600' },
           ].map((s, i) => (
             <div key={i} className="p-4 bg-slate-100 rounded-2xl border border-slate-200">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{s.label}</p>
@@ -793,19 +844,13 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           <div className="border border-slate-200 rounded-2xl p-4">
             <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">🔥 Top Polls by Engagement</h4>
             <div className="space-y-3">
-              {[
-                { q: 'Should cannabis be rescheduled from Schedule I?', v: '5,911', cat: 'Legal', pct: 92 },
-                { q: 'Do you believe cannabis is a natural source of healing?', v: '3,880', cat: 'Healing', pct: 87 },
-                { q: 'Should past cannabis convictions be expunged?', v: '5,751', cat: 'Legal', pct: 85 },
-                { q: 'Where should cannabis tax revenue go?', v: '7,096', cat: 'Economic', pct: 82 },
-                { q: 'Has the stigma around cannabis changed?', v: '5,663', cat: 'Culture', pct: 78 },
-              ].map((p, i) => (
+              {pollStats.topPolls.length > 0 ? pollStats.topPolls.map((p, i) => (
                 <div key={i} className="flex items-center gap-3">
                   <span className="text-xs font-black text-slate-300 w-5">{i+1}</span>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-bold text-slate-700 truncate">{p.q}</p>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="text-[9px] font-black text-slate-400 uppercase">{p.v} votes</span>
+                      <span className="text-[9px] font-black text-slate-400 uppercase">{p.v.toLocaleString()} votes</span>
                       <span className="text-[9px] font-black px-1.5 py-0.5 bg-indigo-50 text-indigo-600 rounded">{p.cat}</span>
                     </div>
                   </div>
@@ -816,35 +861,34 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                     <span className="text-[9px] font-black text-slate-400">{p.pct}%</span>
                   </div>
                 </div>
-              ))}
+              )) : (
+                <div className="text-sm text-slate-400 py-4 text-center">No votes recorded yet</div>
+              )}
             </div>
           </div>
           {/* Category Breakdown */}
           <div className="border border-slate-200 rounded-2xl p-4">
             <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">📊 Votes by Category</h4>
             <div className="space-y-3">
-              {[
-                { cat: 'Healing & Medical', votes: 15420, pct: 18, color: 'bg-emerald-500' },
-                { cat: 'Legal & Expungement', votes: 14200, pct: 16, color: 'bg-blue-600' },
-                { cat: 'Economic & Business', votes: 12890, pct: 15, color: 'bg-amber-500' },
-                { cat: 'Political & Policy', votes: 11340, pct: 13, color: 'bg-red-500' },
-                { cat: 'Culture & Lifestyle', votes: 10560, pct: 12, color: 'bg-pink-500' },
-                { cat: 'Demographics', votes: 9800, pct: 11, color: 'bg-indigo-500' },
-                { cat: 'Education', votes: 7450, pct: 9, color: 'bg-purple-500' },
-                { cat: 'Growth & Priorities', votes: 5760, pct: 6, color: 'bg-teal-500' },
-              ].map((c, i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <div className={`w-2 h-2 rounded-full ${c.color} shrink-0`} />
-                  <span className="text-xs font-bold text-slate-700 flex-1">{c.cat}</span>
-                  <span className="text-[10px] font-black text-slate-400">{c.votes.toLocaleString()}</span>
-                  <div className="w-20">
-                    <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                      <div className={`h-full rounded-full ${c.color}`} style={{ width: `${c.pct}%` }} />
+              {pollStats.votesByCategory.length > 0 ? pollStats.votesByCategory.map((c, i) => {
+                const colors = ['bg-emerald-500', 'bg-blue-600', 'bg-amber-500', 'bg-red-500', 'bg-purple-500', 'bg-pink-500', 'bg-cyan-500', 'bg-indigo-500'];
+                const color = colors[i % colors.length];
+                return (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className={`w-2 h-2 rounded-full ${color} shrink-0`} />
+                    <span className="text-xs font-bold text-slate-700 flex-1">{c.cat}</span>
+                    <span className="text-[10px] font-black text-slate-400">{c.votes.toLocaleString()}</span>
+                    <div className="w-20">
+                      <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                        <div className={`h-full rounded-full ${color}`} style={{ width: `${c.pct}%` }} />
+                      </div>
                     </div>
+                    <span className="text-[10px] font-black text-slate-400 w-8 text-right">{c.pct}%</span>
                   </div>
-                  <span className="text-[10px] font-black text-slate-400 w-8 text-right">{c.pct}%</span>
-                </div>
-              ))}
+                );
+              }) : (
+                <div className="text-sm text-slate-400 py-4 text-center">No votes recorded yet</div>
+              )}
             </div>
           </div>
         </div>
@@ -870,17 +914,11 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                      </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
-                     {[
-                        { s: 'Oklahoma', p: '242,102', d: '2,400', c: 98, r: '+12.4%', up: true },
-                        { s: 'California', p: '892,401', d: '1,102', c: 94, r: '+4.2%', up: true },
-                        { s: 'Florida', p: '631,092', d: '680', c: 99, r: '+22.1%', up: true },
-                        { s: 'Colorado', p: '142,881', d: '542', c: 96, r: '-2.1%', up: false },
-                        { s: 'Missouri', p: '88,401', d: '210', c: 92, r: '+8.4%', up: true },
-                     ].map((row, i) => (
+                     {jurisdictionStats.length > 0 ? jurisdictionStats.map((row, i) => (
                         <tr key={i} className="group hover:bg-slate-100 transition-colors">
                            <td className="py-4 font-black text-slate-800">{row.s}</td>
-                           <td className="py-4 text-slate-600 font-bold">{row.p}</td>
-                           <td className="py-4 text-slate-600 font-bold">{row.d}</td>
+                           <td className="py-4 text-slate-600 font-bold">{row.p.toLocaleString()}</td>
+                           <td className="py-4 text-slate-600 font-bold">{row.d.toLocaleString()}</td>
                            <td className="py-4">
                               <div className="flex items-center gap-2">
                                  <div className="flex-1 h-1.5 bg-slate-100 rounded-full max-w-[60px]">
@@ -893,7 +931,9 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                               <span className={cn("font-black", row.up ? "text-emerald-500" : "text-red-500")}>{row.r}</span>
                            </td>
                         </tr>
-                     ))}
+                     )) : (
+                        <tr><td colSpan={5} className="py-6 text-center text-xs font-bold text-slate-400">Waiting for live jurisdiction data...</td></tr>
+                     )}
                   </tbody>
                </table>
             </div>
