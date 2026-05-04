@@ -139,6 +139,7 @@ import { FeaturedPoll, StickyPollWidget, RevolvingSurveyBanner } from './compone
 import { GlobalHeader } from './components/GlobalHeader';
 import { RoleSelectorScreen } from './components/RoleSelectorScreen';
 import { fetchRegulatoryFeed, formatFeedDate, type RegulatoryUpdate } from './lib/regulatoryFeed';
+import { RegulatoryFeedWidget } from './components/shared/RegulatoryFeedWidget';
 import { StateWelcomeBanner } from './components/shared/StateWelcomeBanner';
 import { WebDialer } from './components/twilio/WebDialer';
 
