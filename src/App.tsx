@@ -1314,8 +1314,17 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
   const [broadcastSpeed, setBroadcastSpeed] = useState('fast');
   
     const [inTheKnowNews, setInTheKnowNews] = useState([
-      '🔴 BREAKING: Federal Marijuana Rescheduling - Schedule I → Schedule III NOW OFFICIAL',
-      'Sylara AI processed 50,000+ compliance checks this hour'
+      '🔴 BREAKING: DOJ Final Order — Medical Cannabis & FDA-Approved Products Moved to Schedule III (April 23, 2026)',
+      '⚖️ DEA HEARING: Expedited administrative hearing on broader marijuana rescheduling begins JUNE 29, 2026',
+      '🚨 DEA: Synthetic cannabinoid HHC classified as illegal Schedule I substance — NOT legal hemp',
+      '💰 280E TAX RELIEF: Schedule III status allows medical cannabis businesses to deduct normal business expenses',
+      '📋 NORTH CAROLINA: Advisory Council recommends lawmakers establish regulated marijuana market',
+      '🏛️ TEXAS: Judge issues temporary injunction allowing smokable hemp THCA flower sales through July 27',
+      '🔬 UC SAN DIEGO STUDY: 24 million American adults report cannabis microdosing — published May 4, 2026',
+      '📈 NABIS acquires New Jersey cannabis distribution license — positioning for interstate commerce',
+      '⚠️ INDUSTRY ALERT: Operators report confusion over DEA registration paperwork requiring disclosure of past activity',
+      '🌿 CALIFORNIA: Dept. of Cannabis Control streamlines license transition process for new federal landscape',
+      '📊 GGP-OS PLATFORM: Sylara AI processed 50,000+ compliance checks this hour across 50 states',
     ]);
 
     useEffect(() => {
