@@ -114,20 +114,14 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   const firstName = fullName.split(' ')[0];
   const userTitle = isMonica ? 'Chief Compliance Director' : (isRyan ? 'President' : (isBobAdvisor ? 'Advisor' : 'Founder'));
 
-  const [liveStats, setLiveStats] = useState({ totalUsers: '1.2M', netRevenue: '$18.2M' });
+  const [liveStats, setLiveStats] = useState({ totalUsers: '0', netRevenue: '$0' });
   const [actionToast, setActionToast] = useState<{ message: string; timestamp: number } | null>(null);
 
   const [liveAnalytics, setLiveAnalytics] = useState({
-    users: 4892,
-    clicks: 142501,
-    conversions: 17670,
-    events: [
-      { time: 'Just now', user: 'Visitor from Washington D.C.', action: 'Clicked "Federal Pricing Tier"' },
-      { time: '2s ago', user: 'Verified Business (OK)', action: 'Completed Metrc Sync' },
-      { time: '5s ago', user: 'Anonymous Visitor', action: 'Clicked "DEA Capability Statement"' },
-      { time: '12s ago', user: 'Patient (FL)', action: 'Opened Sylara Chatbot' },
-      { time: '18s ago', user: 'Google Bot Crawler', action: 'Indexed "SINC Regulatory Hub"' },
-    ]
+    users: 0,
+    clicks: 0,
+    conversions: 0,
+    events: [] as { time: string; user: string; action: string }[]
   });
 
   useEffect(() => {
@@ -142,8 +136,8 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         const rev = Number(wRes.rows[0].total) || 0;
 
         setLiveStats({
-          totalUsers: users > 1000 ? (users / 1000).toFixed(1) + 'K' : (users > 0 ? users.toString() : '1.2M'),
-          netRevenue: rev > 0 ? '$' + (rev > 1000000 ? (rev / 1000000).toFixed(1) + 'M' : rev.toLocaleString()) : '$18.2M'
+          totalUsers: users > 1000 ? (users / 1000).toFixed(1) + 'K' : users.toString(),
+          netRevenue: '$' + (rev > 1000000 ? (rev / 1000000).toFixed(1) + 'M' : rev.toLocaleString())
         });
       } catch (err) {
         console.error('Error fetching live metrics:', err);
@@ -2010,14 +2004,14 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                  <div className="w-12 h-12 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center animate-pulse"><AlertTriangle size={24}/></div>
                  <div>
                     <p className="text-[10px] font-black text-slate-400 uppercase">Critical Vectors</p>
-                    <p className="text-xl font-black text-slate-800">12 Pending</p>
+                    <p className="text-xl font-black text-slate-800">{counts.joinedToday > 0 ? counts.joinedToday + ' Pending' : 'None'}</p>
                  </div>
               </div>
               <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-4">
                  <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center"><CircleCheck size={24}/></div>
                  <div>
                     <p className="text-[10px] font-black text-slate-400 uppercase">Auto-Resolved</p>
-                    <p className="text-xl font-black text-slate-800">1.2k today</p>
+                    <p className="text-xl font-black text-slate-800">{counts.users > 0 ? counts.users + ' today' : '0 today'}</p>
                  </div>
               </div>
            </div>
@@ -2026,11 +2020,10 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm flex flex-col">
            <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-6">Recent Violations</h3>
            <div className="flex-1 space-y-4">
-              {[
-                { e: 'Apex Health', f: 'Sales Cap Violation', s: 'High', t: '2h ago', c: 'bg-red-50 text-red-600' },
-                { e: 'GreenLeaf Farms', f: 'Inventory Lag', s: 'Medium', t: '4h ago', c: 'bg-amber-50 text-amber-600' },
-                { e: 'Metro Transport', f: 'GPS Drift Anomaly', s: 'Low', t: '1d ago', c: 'bg-blue-50 text-blue-600' },
-              ].map((c, i) => (
+              {liveAnalytics.events.length > 0 ? liveAnalytics.events.slice(0, 3).map((ev, i) => ({
+                e: ev.user || 'System', f: ev.action || 'Activity', s: i === 0 ? 'New' : 'Info', t: ev.time,
+                c: i === 0 ? 'bg-blue-50 text-blue-600' : 'bg-slate-50 text-slate-600'
+              })).map((c, i) => (
                 <div key={i} className="p-4 rounded-2xl border border-slate-200 hover:bg-slate-100 transition-colors cursor-pointer group">
                    <div className="flex justify-between items-start mb-1">
                       <p className="font-bold text-slate-800 group-hover:text-indigo-600 transition-colors">{c.e}</p>
@@ -2039,7 +2032,13 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                    <p className="text-xs text-slate-500 font-medium">{c.f}</p>
                    <p className="text-[10px] text-slate-400 mt-2 font-bold">{c.t}</p>
                 </div>
-              ))}
+              )) : (
+                <div className="text-center py-8 text-slate-400">
+                  <CircleCheck size={32} className="mx-auto mb-2 text-emerald-400" />
+                  <p className="font-bold text-sm text-slate-600">No violations recorded</p>
+                  <p className="text-xs mt-1">Clean compliance status</p>
+                </div>
+              )}
            </div>
            <button className="mt-6 w-full py-3 bg-slate-900 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-all">View All Audit Logs</button>
         </div>
@@ -2104,11 +2103,34 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     </div>
   );
 
+  const [systemLogs, setSystemLogs] = useState<string[]>([]);
+  useEffect(() => {
+    const fetchLogs = async () => {
+      try {
+        const res = await turso.execute('SELECT id, action, data, created_at FROM audit_logs ORDER BY created_at DESC LIMIT 25');
+        const logs = res.rows.map((r: any) => {
+          const ts = r.created_at ? new Date(r.created_at).toISOString().replace('T', ' ').substring(0, 19) : 'N/A';
+          const action = String(r.action || 'SYSTEM');
+          const severity = action.includes('ERROR') ? 'ERROR' : (action.includes('WARN') || action.includes('ANOMALY') ? 'WARN' : 'INFO');
+          let detail = '';
+          try { const d = JSON.parse(r.data); detail = Object.values(d).join(' | '); } catch { detail = String(r.data || ''); }
+          return `[${ts}] ${severity}  ${action} — ${detail}`;
+        });
+        setSystemLogs(logs.length > 0 ? logs : ['[System] No audit logs recorded yet. Activity will appear here in real-time.']);
+      } catch (err) {
+        setSystemLogs(['[System] Unable to fetch audit logs from database.']);
+      }
+    };
+    fetchLogs();
+    const interval = setInterval(fetchLogs, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
   const renderLogs = () => (
     <div className="space-y-6">
       <h2 className="text-2xl font-black text-slate-800">System Logs</h2>
       <div className="bg-slate-900 rounded-2xl p-6 text-green-400 font-mono text-xs space-y-1 max-h-[60vh] overflow-y-auto">
-        {['[2026-04-20 12:01:04] INFO  auth.service — User login: marcus@apex.com (OK)','[2026-04-20 12:01:02] INFO  sync.omma — Batch sync completed: 402 records','[2026-04-20 12:00:58] WARN  compliance — Anomaly flagged: Entity UID-8922 volume spike','[2026-04-20 12:00:45] INFO  wallet.ledger — Token purchase: $250.00 by Patient #4821','[2026-04-20 12:00:30] INFO  rip.command — Unit TX-DPS-42 check-in: coordinates updated','[2026-04-20 12:00:12] INFO  sylara.ai — Session #1204 started: med-card assistance','[2026-04-20 11:59:55] ERROR api.gateway — Rate limit exceeded for IP 192.168.1.42','[2026-04-20 11:59:40] INFO  auth.service — New registration: business_owner (Pending)'].map((log,i)=>(<div key={i} className={cn(log.includes('ERROR')?'text-red-400':log.includes('WARN')?'text-amber-400':'text-green-400')}>{log}</div>))}
+        {systemLogs.map((log, i) => (<div key={i} className={cn(log.includes('ERROR') ? 'text-red-400' : log.includes('WARN') ? 'text-amber-400' : 'text-green-400')}>{log}</div>))}
       </div>
     </div>
   );
