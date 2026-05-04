@@ -534,10 +534,39 @@ const DashboardLayout = ({ children, role, onLogout, userProfile, onOpenConcierg
                 className="pl-10 pr-4 py-1.5 bg-slate-100 border-transparent rounded-full text-sm focus:bg-white focus:ring-2 focus:ring-[#1a4731]/20 transition-all"
               />
             </div>
-            <button className="p-2 text-slate-400 hover:text-slate-600 relative">
+            <button className="p-2 text-slate-400 hover:text-slate-600 relative" onClick={(e) => { e.stopPropagation(); const panel = document.getElementById('notif-panel'); if (panel) panel.classList.toggle('hidden'); }}>
               <Bell size={20} />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
             </button>
+            <div id="notif-panel" className="hidden absolute right-48 top-14 w-80 bg-white border border-slate-200 rounded-2xl shadow-2xl z-[9999] overflow-hidden">
+              <div className="px-4 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                <span className="text-xs font-black text-slate-700 uppercase tracking-widest">Notifications</span>
+                <span className="px-2 py-0.5 bg-red-100 text-red-600 text-[10px] font-bold rounded-full">5 New</span>
+              </div>
+              <div className="max-h-72 overflow-y-auto divide-y divide-slate-100">
+                {[
+                  { icon: '🔴', title: 'Federal Rescheduling Alert', desc: 'Schedule III status active for medical cannabis', time: '2m ago' },
+                  { icon: '📋', title: 'Compliance Audit Due', desc: 'Quarterly compliance report due May 15', time: '1h ago' },
+                  { icon: '💚', title: 'New Patient Registration', desc: 'Oklahoma intake queue updated', time: '3h ago' },
+                  { icon: '📈', title: 'Revenue Milestone', desc: 'Platform subscription target reached', time: '5h ago' },
+                  { icon: '🔒', title: 'Security Update', desc: 'Firebase auth rules updated successfully', time: '1d ago' },
+                ].map((n, i) => (
+                  <div key={i} className="px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors">
+                    <div className="flex items-start gap-3">
+                      <span className="text-lg">{n.icon}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-bold text-slate-800">{n.title}</p>
+                        <p className="text-[10px] text-slate-500 mt-0.5">{n.desc}</p>
+                      </div>
+                      <span className="text-[9px] text-slate-400 font-bold shrink-0">{n.time}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="px-4 py-2 bg-slate-50 border-t border-slate-200">
+                <button className="w-full text-center text-[10px] font-bold text-emerald-600 hover:text-emerald-700 py-1">View All Notifications</button>
+              </div>
+            </div>
             <div className="flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-800 rounded-full border border-emerald-200 shadow-sm mr-2">
               <span className="font-bold text-[10px] uppercase tracking-wider">Compassion Balance:</span>
               <span className="font-black text-sm">$0.00</span>

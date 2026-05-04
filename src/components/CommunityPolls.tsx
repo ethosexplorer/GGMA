@@ -375,12 +375,12 @@ export const FeaturedPoll = () => {
     }
   };
 
-  // Auto-rotate every 12 seconds (pauses when user has voted on current poll)
+  // Auto-rotate every 30 seconds (pauses when user has voted on current poll)
   useEffect(() => {
     if (hasVoted[poll.id]) return;
     const timer = setInterval(() => {
       setCurrentPollIndex(prev => (prev + 1) % POLLS.length);
-    }, 12000);
+    }, 30000);
     return () => clearInterval(timer);
   }, [currentPollIndex, hasVoted, poll.id]);
 
@@ -639,12 +639,12 @@ export const RevolvingSurveyBanner = ({ compact = false }: { compact?: boolean }
     return seedVotes + (liveResults[pollId]?.[optionId] || 0);
   };
 
-  // Auto-rotate every 15 seconds if user hasn't voted on current poll
+  // Auto-rotate every 30 seconds if user hasn't voted on current poll
   useEffect(() => {
     if (hasVoted[poll.id]) return;
     const timer = setInterval(() => {
       setCurrentPollIndex(prev => (prev + 1) % POLLS.length);
-    }, 15000);
+    }, 30000);
     return () => clearInterval(timer);
   }, [currentPollIndex, hasVoted, poll.id]);
 
