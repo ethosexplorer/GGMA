@@ -1420,14 +1420,32 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   );
 
   // LIVE PLATFORM PULSE (Real-time listeners)
-  const [counts, setCounts] = useState({ users: 1204891, patients: 891022, businesses: 42891, tickets: 12 });
+  const [counts, setCounts] = useState({ users: 0, patients: 0, businesses: 0, admins: 0, joinedToday: 0 });
   
   useEffect(() => {
-    // Real-time listener for total force
+    // Real-time listener for all users — count by role
     const unsub = onSnapshot(collection(db, 'users'), (snap) => {
-      const total = snap.size;
-      // We'll simulate a base number since it's a demo, but in real life snap.size is the truth
-      setCounts(prev => ({ ...prev, users: 1204891 + total }));
+      let patients = 0;
+      let businesses = 0;
+      let admins = 0;
+      let joinedToday = 0;
+      const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+      
+      snap.docs.forEach(d => {
+        const data = d.data();
+        const role = (data.role || '').toLowerCase();
+        
+        if (role === 'user' || role === 'patient' || role === 'patient / caregiver') patients++;
+        else if (role === 'business' || role === 'provider' || role === 'attorney' || role === 'compliance_service') businesses++;
+        
+        if (role.includes('admin') || role.includes('founder') || role.includes('executive') || role.includes('compliance_director')) admins++;
+        
+        // Count users who joined today
+        const created = data.createdAt?.toDate?.() ? data.createdAt.toDate().toISOString().split('T')[0] : (typeof data.createdAt === 'string' ? data.createdAt.split('T')[0] : '');
+        if (created === today) joinedToday++;
+      });
+      
+      setCounts({ users: snap.size, patients, businesses, admins, joinedToday });
     });
     return () => unsub();
   }, []);
@@ -1460,12 +1478,12 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
               <div className="p-6 bg-white/5 border border-white/10 rounded-[2rem] backdrop-blur-md">
                  <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Total Force</p>
                  <p className="text-3xl font-black">{counts.users.toLocaleString()}</p>
-                 <div className="mt-2 text-[10px] font-bold text-emerald-400">+12 Joined Today</div>
+                 <div className="mt-2 text-[10px] font-bold text-emerald-400">+{counts.joinedToday} Joined Today</div>
               </div>
               <div className="p-6 bg-white/5 border border-white/10 rounded-[2rem] backdrop-blur-md">
                  <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Admin Clearances</p>
-                 <p className="text-3xl font-black">1.2k</p>
-                 <div className="mt-2 text-[10px] font-bold text-amber-400">4 Flagged Sessions</div>
+                 <p className="text-3xl font-black">{counts.admins.toLocaleString()}</p>
+                 <div className="mt-2 text-[10px] font-bold text-slate-400">{counts.patients} Patients · {counts.businesses} Business</div>
               </div>
            </div>
         </div>

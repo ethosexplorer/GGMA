@@ -19,6 +19,9 @@ export const DashboardAnalytics: React.FC<{ facilityId: string }> = ({ facilityI
   const [predictions, setPredictions] = useState<YieldPrediction[]>([]);
   const [alerts, setAlerts] = useState<ComplianceAlert[]>([]);
   const [loading, setLoading] = useState(true);
+  const [hourlyData, setHourlyData] = useState<number[]>([0,0,0,0,0,0,0,0]);
+  const [avgTransaction, setAvgTransaction] = useState(0);
+  const [busiestHour, setBusiestHour] = useState('--');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,12 +58,58 @@ export const DashboardAnalytics: React.FC<{ facilityId: string }> = ({ facilityI
         // 6. Fetch Yield Predictions
         const yieldPredictions = await AdvancedAIIntelligence.predictYield(facilityId);
 
+        // 7. Fetch hourly sales velocity (last 8 hours)
+        const hourlyResult = await turso.execute({
+          sql: `SELECT strftime('%H', created_at) as hour, COUNT(*) as cnt, SUM(amount) as total
+                FROM transactions WHERE entity_id = ? AND created_at > datetime('now', '-8 hours')
+                GROUP BY hour ORDER BY hour`,
+          args: [facilityId]
+        });
+        
+        // Build hourly bars (normalize to percentages)
+        const hourMap: Record<string, number> = {};
+        let maxHourly = 1;
+        hourlyResult.rows.forEach((r: any) => {
+          const cnt = Number(r.cnt || 0);
+          hourMap[r.hour] = cnt;
+          if (cnt > maxHourly) maxHourly = cnt;
+        });
+        // Get last 8 hours as labels
+        const now = new Date();
+        const bars: number[] = [];
+        let peakHour = '';
+        let peakCount = 0;
+        for (let i = 7; i >= 0; i--) {
+          const h = new Date(now.getTime() - i * 3600000);
+          const hKey = h.getHours().toString().padStart(2, '0');
+          const count = hourMap[hKey] || 0;
+          bars.push(Math.max(5, Math.round((count / maxHourly) * 100))); // min 5% for visibility
+          if (count > peakCount) { peakCount = count; peakHour = hKey; }
+        }
+        setHourlyData(bars);
+        setBusiestHour(peakCount > 0 ? `${Number(peakHour) > 12 ? Number(peakHour) - 12 : Number(peakHour)}:00 ${Number(peakHour) >= 12 ? 'PM' : 'AM'}` : 'No sales yet');
+        
+        // 8. Fetch average transaction amount
+        const avgResult = await turso.execute({
+          sql: "SELECT AVG(amount) as avg_amt FROM transactions WHERE entity_id = ? AND type = 'B2C Sales'",
+          args: [facilityId]
+        });
+        const avgAmt = Number(avgResult.rows[0]?.avg_amt || 0);
+        setAvgTransaction(avgAmt);
+
+        // Calculate real sales velocity (transactions per hour today)
+        const velocityResult = await turso.execute({
+          sql: `SELECT COUNT(*) as cnt FROM transactions WHERE entity_id = ? AND created_at > datetime('now', '-1 hour')`,
+          args: [facilityId]
+        });
+        const velocity = Number(velocityResult.rows[0]?.cnt || 0);
+
         setStats({
           revenue: Number(revResult.rows[0]?.total || 0),
           inventoryValue: Number(invResult.rows[0]?.total || 0),
           activeTransfers: Number(transResult.rows[0]?.count || 0),
           walletBalance: Number(walResult.rows[0]?.balance || 0),
-          salesVelocity: 12.5 // Mock for now
+          salesVelocity: velocity
         });
         setPredictions(yieldPredictions);
         setAlerts(complianceAlerts);
@@ -234,13 +283,13 @@ export const DashboardAnalytics: React.FC<{ facilityId: string }> = ({ facilityI
           </div>
         </div>
 
-        {/* Sales Velocity / Chart Mock */}
+        {/* Sales Velocity — LIVE DATA */}
         <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 flex flex-col">
           <h3 className="font-bold text-slate-800 mb-6 flex items-center gap-2">
-            <TrendingUp className="text-emerald-500" size={18} /> Sales Velocity (Hourly)
+            <TrendingUp className="text-emerald-500" size={18} /> Sales Velocity (Last 8 Hours)
           </h3>
           <div className="flex-1 flex items-end gap-2 h-48 mb-6">
-            {[35, 65, 45, 80, 55, 90, 70, 85].map((h, i) => (
+            {hourlyData.map((h, i) => (
               <div key={i} className="flex-1 group relative">
                 <div 
                   className="w-full bg-slate-100 group-hover:bg-blue-100 rounded-t-lg transition-all duration-500 ease-out flex items-end justify-center"
@@ -257,11 +306,11 @@ export const DashboardAnalytics: React.FC<{ facilityId: string }> = ({ facilityI
           <div className="space-y-4">
              <div className="flex justify-between items-center text-xs font-bold">
                 <span className="text-slate-500 uppercase tracking-wider">Avg Transaction</span>
-                <span className="text-slate-800">$142.50</span>
+                <span className="text-slate-800">{avgTransaction > 0 ? `$${avgTransaction.toFixed(2)}` : 'No data yet'}</span>
              </div>
              <div className="flex justify-between items-center text-xs font-bold">
                 <span className="text-slate-500 uppercase tracking-wider">Busiest Hour</span>
-                <span className="text-slate-800">4:20 PM</span>
+                <span className="text-slate-800">{busiestHour}</span>
              </div>
              <div className="pt-4 border-t border-slate-100">
                <button onClick={() => alert("Detailed Analytics Report generated and saved securely to your Vault.")} className="w-full py-3 bg-[#1a4731] text-white rounded-xl font-bold text-sm shadow-lg shadow-emerald-900/10 hover:bg-[#153a28] transition-all flex items-center justify-center gap-2">

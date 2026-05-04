@@ -25,18 +25,32 @@ export class AdvancedAIIntelligence {
       args: [facilityId]
     });
 
+    // Fetch actual harvest data for this facility to compare against predictions
+    const harvestData = await turso.execute({
+      sql: `SELECT source_id, SUM(weight) as actual_weight FROM packages 
+            WHERE facility_id = ? AND source_type = 'harvest' 
+            GROUP BY source_id`,
+      args: [facilityId]
+    });
+    const actualWeights: Record<string, number> = {};
+    harvestData.rows.forEach((r: any) => {
+      actualWeights[r.source_id] = Number(r.actual_weight || 0);
+    });
+
     return rows.map((r: any) => {
       // Historical average: 450g per plant for OG Kush, 550g for Sour Diesel
       const avgYield = r.strain.includes('Kush') ? 450 : 550;
       const predicted = r.count * avgYield;
       
-      // Mocking variance for demonstration
-      const variance = Math.random() * 20 - 10; // -10% to +10%
+      // Calculate real variance from actual harvest data if available
+      const actual = actualWeights[r.id] || 0;
+      const variance = actual > 0 ? ((actual - predicted) / predicted) * 100 : 0;
       
       return {
         batchId: r.id,
         strain: r.strain,
         predictedWeight: predicted,
+        actualWeight: actual > 0 ? actual : undefined,
         variance,
         status: variance > 15 ? 'SUSPICIOUS_HIGH' : variance < -15 ? 'UNDERPERFORMING' : 'OPTIMAL'
       };
@@ -71,12 +85,26 @@ export class AdvancedAIIntelligence {
     }
 
     // Pattern 2: Inventory Inconsistency (High sales value with low inventory decrement)
-    // This is a more complex multi-table check
-    alerts.push({
-      type: 'TRACEABILITY_GAP',
-      message: 'Detected $5,000 in sales with zero corresponding Metrc package adjustments.',
-      severity: 'high'
+    // This will be a real multi-table check once Metrc package adjustments are tracked
+    const traceabilityQuery = await turso.execute({
+      sql: `
+        SELECT SUM(t.amount) as sales_total
+        FROM transactions t
+        WHERE t.entity_id = ? AND t.type = 'B2C Sales'
+        AND t.created_at > datetime('now', '-1 day')
+      `,
+      args: [facilityId]
     });
+
+    const dailySales = Number(traceabilityQuery.rows[0]?.sales_total || 0);
+    if (dailySales > 5000) {
+      // Only alert if there are actual high-value sales to investigate
+      alerts.push({
+        type: 'TRACEABILITY_GAP',
+        message: `$${dailySales.toLocaleString()} in daily sales detected — verify corresponding Metrc package adjustments.`,
+        severity: 'high'
+      });
+    }
 
     return alerts;
   }
