@@ -7983,6 +7983,9 @@ export default function App() {
   const handleSignup = async (email: string, pass: string, role: string, details: any) => {
     console.log('[App.handleSignup] Attempting registration:', { email, role, timestamp: new Date().toISOString() });
     
+    // Globally save the role they requested to perfectly route them on future emergency fallbacks
+    localStorage.setItem('gghp_pending_role', role);
+
     // Roles that require manual approval (all except patient and business)
     const requiresApproval = role !== 'user' && role !== 'Patient / Caregiver' && role !== 'business';
     const status = requiresApproval ? 'Pending' : 'Active';
