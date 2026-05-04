@@ -7941,41 +7941,23 @@ export default function App() {
         setView('dashboard');
       }
     } catch (error: any) {
-      console.warn('[App.handleLogin] Firebase Auth Error (Gracefully handled):', error.message || error);
-      if (error.code === 'auth/operation-not-allowed' || error.code === 'auth/network-request-failed' || (error.message && error.message.includes('400')) || (error.message && error.message.includes('404'))) {
-        let computedRole = localStorage.getItem('gghp_pending_role') || initialRole || 'business';
-        const lowerEmail = email.toLowerCase().trim();
-        
-        if (lowerEmail === FOUNDER_EMAIL || lowerEmail === FOUNDER_EMAIL_2) computedRole = 'executive_founder';
-        else if (lowerEmail.includes('ceo.globalgreenhp')) computedRole = 'president';
-        else if (lowerEmail.includes('monica') || lowerEmail.includes('compliance.globalgreenhp')) computedRole = 'chief_compliance_director';
-        else if (lowerEmail === ADVISOR_EMAIL) computedRole = 'advisor';
-        else if (lowerEmail.includes('admin')) computedRole = 'admin';
-        else if (lowerEmail.includes('business') || lowerEmail.includes('company') || lowerEmail.includes('dispensary') || lowerEmail.includes('grower')) computedRole = 'business';
-        else if (lowerEmail.includes('oversight') || lowerEmail.includes('regulator')) computedRole = 'oversight';
-        else if (lowerEmail.includes('exec')) computedRole = 'executive';
-        
-        const simulatedProfile = {
-          uid: 'simulated-local-' + Date.now(),
-          email: email,
-          role: computedRole,
-          displayName: computedRole === 'executive_founder' ? "Founder/CEO" : (computedRole === 'chief_compliance_director' ? "Monica Green" : email.split('@')[0]),
-          status: 'Active',
-          idCode: computedRole === 'chief_compliance_director' ? '1234' : '0000', // Default PIN for simulated admins
-          createdAt: new Date().toISOString(),
-        };
-        setUserProfile(simulatedProfile);
-        if (computedRole === 'executive_founder' || computedRole === 'admin' || computedRole === 'chief_compliance_director') {
-          if (computedRole === 'chief_compliance_director' || lowerEmail === FOUNDER_EMAIL_2) {
-            setView('pin-verification');
-          } else {
-            setView('dashboard');
-          }
-        } else {
-          setView('dashboard');
-        }
+      console.error('[App.handleLogin] Firebase Auth Error:', error.code, error.message);
+      
+      // PRODUCTION AUTH: Show real errors to real users
+      const code = error.code || '';
+      if (code === 'auth/wrong-password' || code === 'auth/invalid-credential') {
+        alert('Incorrect password. Please try again.');
+      } else if (code === 'auth/user-not-found') {
+        alert('No account found with this email. Please sign up first.');
+      } else if (code === 'auth/too-many-requests') {
+        alert('Too many failed attempts. Please wait a moment and try again.');
+      } else if (code === 'auth/invalid-email') {
+        alert('Invalid email address format.');
+      } else if (code === 'auth/network-request-failed') {
+        alert('Network error. Please check your internet connection and try again.');
       } else {
-        throw error;
+        // Unexpected error — show it honestly
+        alert(`Login failed: ${error.message || 'Unknown error. Please try again.'}`);
       }
     }
   };
@@ -8013,35 +7995,22 @@ export default function App() {
       firebaseUser = userCredential.user;
       console.log('[App.handleSignup] Firebase user created:', { uid: firebaseUser.uid, email: firebaseUser.email });
     } catch (authError: any) {
-      console.warn('[App.handleSignup] Firebase Auth Error (Gracefully handled):', {
-        code: authError?.code,
-        message: authError?.message,
-        email,
-        role,
-        timestamp: new Date().toISOString(),
-      });
-      // Fallback for Firebase 400 operation-not-allowed and 404
-      if (authError.code === 'auth/operation-not-allowed' || authError.code === 'auth/network-request-failed' || (authError.message && authError.message.includes('400')) || (authError.message && authError.message.includes('404')) || (authError.message && authError.message.includes('operation-not-allowed'))) {
-        console.warn('Simulating signup due to missing Firebase Auth constraints or network error.');
-        const simulatedProfile = {
-          uid: 'simulated-local-' + Date.now(),
-          email: email,
-          role: role,
-          status: status,
-          displayName: role === 'business' ? details.companyName : `${details.firstName} ${details.lastName}`,
-          idCode: '0000', // Default PIN for simulated admins
-          createdAt: new Date().toISOString(),
-          ...details
-        };
-        setUserProfile(simulatedProfile);
-        if (role === 'admin' || role === 'executive_founder' || role === 'admin_internal') {
-          setView('dashboard');
-        } else {
-          setView('dashboard');
-        }
-        return;
+      console.error('[App.handleSignup] Firebase Auth Error:', authError.code, authError.message);
+      
+      // PRODUCTION AUTH: Show real errors to real users
+      const code = authError.code || '';
+      if (code === 'auth/email-already-in-use') {
+        alert('An account with this email already exists. Please log in instead, or use a different email.');
+      } else if (code === 'auth/weak-password') {
+        alert('Password is too weak. Please use at least 6 characters.');
+      } else if (code === 'auth/invalid-email') {
+        alert('Invalid email address format. Please check and try again.');
+      } else if (code === 'auth/network-request-failed') {
+        alert('Network error. Please check your internet connection and try again.');
+      } else {
+        alert(`Registration failed: ${authError.message || 'Unknown error. Please try again.'}`);
       }
-      throw authError;
+      return;
     }
 
     const profile = {
@@ -8399,7 +8368,7 @@ export default function App() {
                   initial={{ opacity: 0, y: 10 }} 
                   animate={{ opacity: 1, y: 0 }} 
                   exit={{ opacity: 0, y: -10 }}
-                  className="pt-[52px] h-screen w-full overflow-hidden [&>div]:!h-full [&>div]:!min-h-0"
+                  className="pt-[52px] min-h-screen w-full"
                 >
                   {userProfile && userProfile.role === 'executive_founder' && !hasBypassedSelector ? (
                     <RoleSelectorScreen 
