@@ -60,7 +60,7 @@ export const RegulatoryFeedWidget = ({ jurisdiction, compact = false }: { jurisd
         )}
       </div>
       <p className="text-[9px] text-slate-400 text-center mt-4 pt-3 border-t border-slate-100">
-        Source: <a href="https://www.marijuanamoment.net" target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:underline">Marijuana Moment</a> • Auto-updates
+        Source: <span className="text-emerald-600 font-bold">{jurisdiction ? 'Google News Local' : 'Marijuana Moment'}</span> • Auto-updates
       </p>
     </div>
   );

@@ -89,23 +89,24 @@ export async function fetchRegulatoryFeed(limit: number = 5, jurisdiction?: stri
     let items: RegulatoryUpdate[] = [];
 
     if (jurisdiction) {
-      // Localized News via Reddit Search
-      const query = encodeURIComponent(`${jurisdiction} (marijuana OR cannabis OR weed OR dispensary)`);
-      const res = await fetch(`https://www.reddit.com/search.json?q=${query}&sort=new&limit=${limit * 2}`);
+      // Localized News via Google News RSS
+      const query = encodeURIComponent(`${jurisdiction} cannabis OR marijuana OR dispensary news`);
+      // We use rss2json to bypass CORS issues when fetching Google News in the browser
+      const googleNewsUrl = `https://news.google.com/rss/search?q=${query}&hl=en-US&gl=US&ceid=US:en`;
+      const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(googleNewsUrl)}`);
+      
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       
-      if (data?.data?.children?.length) {
-        items = data.data.children
-          .filter((child: any) => !child.data.over_18) // basic SFW filter
-          .map((child: any) => ({
-            title: child.data.title || 'Untitled Local Update',
-            pubDate: new Date(child.data.created_utc * 1000).toISOString(),
-            link: `https://www.reddit.com${child.data.permalink}`,
-            description: truncateDescription(child.data.selftext || 'Click to view local jurisdiction discussion.'),
-            source: `${jurisdiction} Local News`,
-            isBreaking: isBreakingNews(child.data.title || '', ''),
-          })).slice(0, limit);
+      if (data.status === 'ok' && data.items?.length) {
+        items = data.items.map((item: any) => ({
+          title: item.title ? item.title.replace(/ - [^-]+$/, '') : 'Untitled Local Update', // Remove source name from end
+          pubDate: item.pubDate || new Date().toISOString(),
+          link: item.link || '#',
+          description: truncateDescription(item.description || item.content || 'Click to view full news article.'),
+          source: item.source || `${jurisdiction} Local News`,
+          isBreaking: isBreakingNews(item.title || '', item.description || ''),
+        })).slice(0, limit);
       }
     }
 
