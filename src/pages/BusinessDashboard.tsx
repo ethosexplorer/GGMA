@@ -394,8 +394,9 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
   const complianceScore = Math.max(0, 100 - (unresolvedAlerts.length * 5));
 
   return (
-  <div className="max-w-[1200px] mx-auto space-y-8 pb-12">
-    {/* DASHBOARD HEADER & NAV */}
+  <div className="h-full w-full overflow-y-auto overflow-x-hidden pt-4 md:pt-8 px-2 md:px-6 scroll-smooth">
+    <div className="max-w-[1200px] mx-auto space-y-8 pb-12">
+      {/* DASHBOARD HEADER & NAV */}
     <div className="sticky top-4 z-40 flex flex-col xl:flex-row xl:items-center justify-between gap-4 p-2 rounded-[2rem] bg-white/70 backdrop-blur-2xl border border-white/80 shadow-xl shadow-slate-200/40">
       <div className="flex items-center gap-4 pl-4 py-2">
         <div className="w-12 h-12 bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-[#0f291c] rounded-2xl flex items-center justify-center text-white shadow-inner border border-emerald-900/50">
@@ -1687,5 +1688,6 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
         </div>
       </div>
     )}
+    </div>
   </div>
 )};
