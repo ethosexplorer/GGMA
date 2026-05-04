@@ -1489,68 +1489,63 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
         <div className="absolute inset-0 bg-gradient-to-b from-[#0a1f14] via-[#0f2d1e] to-[#1a4731]" />
         <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 50% 120%, rgba(16,185,129,0.3), transparent 70%)' }} />
         
-        <div className="relative z-10 max-w-7xl mx-auto px-6 pt-20 pb-24">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-            
-            {/* Left Column: Main Hero Content */}
-            <div className="lg:col-span-7 space-y-8 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-[11px] font-bold text-emerald-300 uppercase tracking-widest backdrop-blur-sm">
-                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                Infrastructure Active: 50 States + DC
-              </div>
-
-              <div className="flex flex-col items-center lg:items-start gap-3">
-                <div className="text-emerald-400 font-black uppercase tracking-[0.2em] text-xs md:text-sm">Global Green Enterprise Inc <span className="text-white/60 mx-1">INTRODUCING</span></div>
-                <div className="text-white font-black uppercase tracking-widest text-sm md:text-base border border-white/20 py-3 px-8 inline-block bg-white/5 backdrop-blur-sm shadow-xl rounded-2xl">
-                  The Gold Standard In Compliance Infrastructure
-                </div>
-              </div>
-
-              <h1 className="text-5xl md:text-7xl font-extrabold text-white leading-[1.05] tracking-tight">
-                The Compliance Operating System<br />
-                <span className="text-emerald-400">for Legal Cannabis</span>
-              </h1>
-
-              <p className="text-xl text-emerald-100/70 max-w-2xl leading-relaxed font-medium">
-                One platform. Every stakeholder. Full compliance.<br />
-                Businesses, patients, attorneys, regulators, and law enforcement — all connected.
-              </p>
-
-              {/* ROLE SELECTOR BUTTONS */}
-              <div className="pt-4">
-                <p className="text-emerald-300/60 text-xs font-black uppercase tracking-[0.3em] mb-6">I am a...</p>
-                <div className="flex flex-wrap justify-center lg:justify-start gap-4">
-                  {[
-                    { label: 'Business', icon: '🏢', desc: 'Compliance & Licensing', tier: 'business' },
-                    { label: 'Patient', icon: '🏥', desc: 'Telehealth & Cards', tier: 'patient' },
-                    { label: 'Provider', icon: '🩺', desc: 'Consultations & Care', tier: 'provider' },
-                    { label: 'Attorney', icon: '⚖️', desc: 'Cases & Regulatory', tier: 'attorney' },
-                    { label: 'Agency', icon: '🛡️', desc: 'Oversight & Enforcement', tier: 'agency' },
-                    { label: 'Gov Office', icon: '🏛️', desc: 'Policy & Economy', tier: 'political_executive' },
-                    { label: 'Advocate', icon: '🤝', desc: 'Health & Impact', tier: 'advocacy_research' },
-                  ].map(role => (
-                    <button key={role.label} onClick={() => onNavigate('role-pricing' as any, role.tier)} className="group bg-white/5 backdrop-blur-md border border-white/15 rounded-2xl p-6 text-center hover:bg-white/15 hover:border-emerald-400/50 hover:scale-[1.03] transition-all duration-300 w-36 sm:w-40 flex-shrink-0">
-                      <div className="text-3xl mb-3">{role.icon}</div>
-                      <div className="text-white font-black text-sm">{role.label}</div>
-                      <div className="text-emerald-300/60 text-[10px] font-bold mt-1 uppercase tracking-wider">{role.desc}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex flex-wrap justify-center lg:justify-start gap-4 pt-6">
-                <button onClick={() => onNavigate('larry-chatbot')} className="px-8 py-4 bg-emerald-500 text-[#0a1f14] rounded-2xl font-black hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-900/30 flex items-center gap-2">
-                  💬 Chat with Sylara AI
-                </button>
-              </div>
-            </div>
-
-            {/* Right Column: Regulatory Feed */}
-            <div className="lg:col-span-5 w-full mt-12 lg:mt-0 max-h-[800px] overflow-y-auto pr-2 custom-scrollbar">
-              <RegulatoryFeedWidget jurisdiction={jurisdiction} />
-            </div>
-
+        <div className="relative z-10 max-w-5xl mx-auto text-center px-6 pt-20 pb-24 space-y-8">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-[11px] font-bold text-emerald-300 uppercase tracking-widest backdrop-blur-sm">
+            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            Infrastructure Active: 50 States + DC
           </div>
+
+          <div className="flex flex-col items-center gap-3">
+            <div className="text-emerald-400 font-black uppercase tracking-[0.2em] text-xs md:text-sm">Global Green Enterprise Inc <span className="text-white/60 mx-1">INTRODUCING</span></div>
+            <div className="text-white font-black uppercase tracking-widest text-sm md:text-base border-y border-white/20 py-3 px-8 inline-block bg-white/5 backdrop-blur-sm shadow-xl rounded-2xl">
+              The Gold Standard In Compliance Infrastructure
+            </div>
+          </div>
+
+          <h1 className="text-5xl md:text-7xl font-extrabold text-white leading-[1.05] tracking-tight">
+            The Compliance Operating System<br />
+            <span className="text-emerald-400">for Legal Cannabis</span>
+          </h1>
+
+          <p className="text-xl text-emerald-100/70 max-w-2xl mx-auto leading-relaxed font-medium">
+            One platform. Every stakeholder. Full compliance.<br />
+            Businesses, patients, attorneys, regulators, and law enforcement — all connected.
+          </p>
+
+          {/* ROLE SELECTOR BUTTONS */}
+          <div className="pt-4">
+            <p className="text-emerald-300/60 text-xs font-black uppercase tracking-[0.3em] mb-6">I am a...</p>
+            <div className="flex flex-wrap justify-center gap-4 max-w-5xl mx-auto">
+              {[
+                { label: 'Business', icon: '🏢', desc: 'Compliance & Licensing', tier: 'business' },
+                { label: 'Patient', icon: '🏥', desc: 'Telehealth & Cards', tier: 'patient' },
+                { label: 'Provider', icon: '🩺', desc: 'Consultations & Care', tier: 'provider' },
+                { label: 'Attorney', icon: '⚖️', desc: 'Cases & Regulatory', tier: 'attorney' },
+                { label: 'Agency', icon: '🛡️', desc: 'Oversight & Enforcement', tier: 'agency' },
+                { label: 'Gov Office', icon: '🏛️', desc: 'Policy & Economy', tier: 'political_executive' },
+                { label: 'Advocate', icon: '🤝', desc: 'Health & Impact', tier: 'advocacy_research' },
+              ].map(role => (
+                <button key={role.label} onClick={() => onNavigate('role-pricing' as any, role.tier)} className="group bg-white/5 backdrop-blur-md border border-white/15 rounded-2xl p-6 text-center hover:bg-white/15 hover:border-emerald-400/50 hover:scale-[1.03] transition-all duration-300 w-36 sm:w-40 md:w-44 flex-shrink-0">
+                  <div className="text-3xl mb-3">{role.icon}</div>
+                  <div className="text-white font-black text-sm">{role.label}</div>
+                  <div className="text-emerald-300/60 text-[10px] font-bold mt-1 uppercase tracking-wider">{role.desc}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-4 pt-6">
+            <button onClick={() => onNavigate('larry-chatbot')} className="px-8 py-4 bg-emerald-500 text-[#0a1f14] rounded-2xl font-black hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-900/30 flex items-center gap-2">
+              💬 Chat with Sylara AI
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Regulatory Intelligence Feed Section */}
+      <section className="py-12 bg-slate-50 border-b border-slate-200">
+        <div className="max-w-4xl mx-auto px-6">
+          <RegulatoryFeedWidget jurisdiction={jurisdiction} />
         </div>
       </section>
 
