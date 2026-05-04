@@ -4022,18 +4022,18 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                 </div>
                 <div className="max-h-80 overflow-y-auto divide-y divide-slate-100">
                   {[
-                    { icon: '🔴', title: 'DEA Schedule III Final Order', desc: 'Medical cannabis & FDA products reclassified — effective April 23, 2026', time: 'Today' },
-                    { icon: '⚖️', title: 'DEA Hearing Scheduled', desc: 'Broader rescheduling hearing begins June 29, 2026', time: 'Today' },
-                    { icon: '📋', title: 'Quarterly Compliance Report Due', desc: 'OMMA filing deadline: May 15, 2026', time: '1h ago' },
-                    { icon: '💚', title: 'New Poll Votes Received', desc: 'Community polls receiving engagement in Oklahoma', time: '2h ago' },
-                    { icon: '📈', title: 'Investor Meeting Confirmed', desc: 'Monica + 4 investors — Tuesday May 5, 12pm CST', time: '3h ago' },
-                    { icon: '🔒', title: 'Turso DB Connected', desc: 'Production database environment variables active', time: '5h ago' },
+                    { icon: '🔴', title: 'DEA Schedule III Final Order', desc: 'Medical cannabis & FDA products reclassified — effective April 23, 2026', time: 'Today', tab: 'federal' },
+                    { icon: '⚖️', title: 'DEA Hearing Scheduled', desc: 'Broader rescheduling hearing begins June 29, 2026', time: 'Today', tab: 'judicial' },
+                    { icon: '📋', title: 'Quarterly Compliance Report Due', desc: 'OMMA filing deadline: May 15, 2026', time: '1h ago', tab: 'compliance' },
+                    { icon: '💚', title: 'New Poll Votes Received', desc: 'Community polls receiving engagement in Oklahoma', time: '2h ago', tab: 'overview' },
+                    { icon: '📈', title: 'Investor Meeting Confirmed', desc: 'Monica + 4 investors — Tuesday May 5, 12pm CST', time: '3h ago', tab: 'investor_sandbox' },
+                    { icon: '🔒', title: 'Turso DB Connected', desc: 'Production database environment variables active', time: '5h ago', tab: 'system_health' },
                   ].map((n, i) => (
-                    <div key={i} className="px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors">
+                    <div key={i} onClick={() => { setActiveTab(n.tab); const p = document.getElementById('founder-notif'); if (p) p.classList.add('hidden'); }} className="px-4 py-3 hover:bg-indigo-50 cursor-pointer transition-colors group">
                       <div className="flex items-start gap-3">
                         <span className="text-lg">{n.icon}</span>
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs font-bold text-slate-800">{n.title}</p>
+                          <p className="text-xs font-bold text-slate-800 group-hover:text-indigo-700">{n.title}</p>
                           <p className="text-[10px] text-slate-500 mt-0.5">{n.desc}</p>
                         </div>
                         <span className="text-[9px] text-slate-400 font-bold shrink-0">{n.time}</span>
