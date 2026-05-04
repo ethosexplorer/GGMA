@@ -61,8 +61,12 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
   const total = planPrice + addonTotal;
   const totalDisplay = total === 0 ? 'Free' : `$${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   const billingLabel = billing === 'monthly' ? '/mo' : '/yr';
-
-  const isValid = form.fullName.trim() && form.email.trim() && form.email.includes('@') && form.password.trim().length >= 6;
+  const isValid = Boolean(
+    form.fullName?.trim() && 
+    form.email?.trim() && 
+    form.email?.includes('@') && 
+    (form.password || '').trim().length >= 6
+  );
 
   const handleSubmit = async () => {
     if (!isValid) return;
@@ -151,7 +155,7 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
 
   const handleClose = () => {
     setStep('info');
-    setForm({ fullName: '', email: '', phone: '', company: '', notes: '' });
+    setForm({ fullName: '', email: '', phone: '', company: '', password: '', notes: '' });
     onClose();
   };
 
