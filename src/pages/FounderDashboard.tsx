@@ -4014,7 +4014,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                SYSTEM ONLINE
             </div>
             <div className="relative">
-              <button onClick={() => { const p = document.getElementById('founder-notif'); if (p) p.classList.toggle('hidden'); }} className="relative p-2.5 bg-slate-100 rounded-xl text-slate-400 hover:text-indigo-600 transition-all"><Bell size={22} /><span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white" /></button>
+              <button data-action-bound="true" onClick={(e) => { e.stopPropagation(); const p = document.getElementById('founder-notif'); if (p) p.classList.toggle('hidden'); }} className="relative p-2.5 bg-slate-100 rounded-xl text-slate-400 hover:text-indigo-600 transition-all"><Bell size={22} /><span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white" /></button>
               <div id="founder-notif" className="hidden absolute right-0 top-12 w-80 bg-white border border-slate-200 rounded-2xl shadow-2xl z-[9999] overflow-hidden">
                 <div className="px-4 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
                   <span className="text-xs font-black text-slate-700 uppercase tracking-widest">Notifications</span>
@@ -4022,27 +4022,36 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                 </div>
                 <div className="max-h-80 overflow-y-auto divide-y divide-slate-100">
                   {[
-                    { icon: '🔴', title: 'DEA Schedule III Final Order', desc: 'Medical cannabis & FDA products reclassified — effective April 23, 2026', time: 'Today', tab: 'federal' },
-                    { icon: '⚖️', title: 'DEA Hearing Scheduled', desc: 'Broader rescheduling hearing begins June 29, 2026', time: 'Today', tab: 'judicial' },
-                    { icon: '📋', title: 'Quarterly Compliance Report Due', desc: 'OMMA filing deadline: May 15, 2026', time: '1h ago', tab: 'compliance' },
-                    { icon: '💚', title: 'New Poll Votes Received', desc: 'Community polls receiving engagement in Oklahoma', time: '2h ago', tab: 'overview' },
-                    { icon: '📈', title: 'Investor Meeting Confirmed', desc: 'Monica + 4 investors — Tuesday May 5, 12pm CST', time: '3h ago', tab: 'investor_sandbox' },
-                    { icon: '🔒', title: 'Turso DB Connected', desc: 'Production database environment variables active', time: '5h ago', tab: 'system_health' },
+                    { icon: '🔴', title: 'DEA Schedule III Final Order', desc: 'Medical cannabis & FDA products reclassified — effective April 23, 2026', time: 'Today', tab: 'federal', section: '_sec_oversight' },
+                    { icon: '⚖️', title: 'DEA Hearing Scheduled', desc: 'Broader rescheduling hearing begins June 29, 2026', time: 'Today', tab: 'judicial', section: '_sec_oversight' },
+                    { icon: '📋', title: 'Quarterly Compliance Report Due', desc: 'OMMA filing deadline: May 15, 2026', time: '1h ago', tab: 'compliance', section: '_sec_oversight' },
+                    { icon: '💚', title: 'New Poll Votes Received', desc: 'Community polls receiving engagement in Oklahoma', time: '2h ago', tab: 'overview', section: null },
+                    { icon: '📈', title: 'Investor Meeting Confirmed', desc: 'Monica + 4 investors — Tuesday May 5, 12pm CST', time: '3h ago', tab: 'investor_sandbox', section: '_sec_founder' },
+                    { icon: '🔒', title: 'Turso DB Connected', desc: 'Production database environment variables active', time: '5h ago', tab: 'system_health', section: '_sec_founder' },
                   ].map((n, i) => (
-                    <div key={i} onClick={() => { setActiveTab(n.tab); const p = document.getElementById('founder-notif'); if (p) p.classList.add('hidden'); }} className="px-4 py-3 hover:bg-indigo-50 cursor-pointer transition-colors group">
+                    <button key={i} data-action-bound="true" onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      setActiveTab(n.tab);
+                      setActivePopoutSection(n.section);
+                      const panel = document.getElementById('founder-notif');
+                      if (panel) panel.classList.add('hidden');
+                      const contentArea = document.querySelector('.flex-1.overflow-y-auto');
+                      if (contentArea) contentArea.scrollTo(0, 0);
+                    }} className="w-full px-4 py-3 hover:bg-indigo-50 cursor-pointer transition-colors group text-left">
                       <div className="flex items-start gap-3">
                         <span className="text-lg">{n.icon}</span>
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-bold text-slate-800 group-hover:text-indigo-700">{n.title}</p>
                           <p className="text-[10px] text-slate-500 mt-0.5">{n.desc}</p>
                         </div>
-                        <span className="text-[9px] text-slate-400 font-bold shrink-0">{n.time}</span>
+                        <span className="text-[9px] text-slate-400 font-bold shrink-0 mt-0.5">{n.time}</span>
                       </div>
-                    </div>
+                    </button>
                   ))}
                 </div>
                 <div className="px-4 py-2 bg-slate-50 border-t border-slate-200">
-                  <button onClick={() => { const p = document.getElementById('founder-notif'); if (p) p.classList.add('hidden'); }} className="w-full text-center text-[10px] font-bold text-emerald-600 hover:text-emerald-700 py-1">Dismiss All</button>
+                  <button data-action-bound="true" onClick={(e) => { e.stopPropagation(); const p = document.getElementById('founder-notif'); if (p) p.classList.add('hidden'); }} className="w-full text-center text-[10px] font-bold text-emerald-600 hover:text-emerald-700 py-1">Dismiss All</button>
                 </div>
               </div>
             </div>
