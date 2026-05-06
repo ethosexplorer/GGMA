@@ -152,7 +152,7 @@ const PlanCard = ({ plan, index, total, billing, selectedAddons, tabId, onChecko
   // Determine trial type
   const isPatientPlan = tabId === 'patient';
   const isPartnerPlan = tabId === 'partners';
-  const trialDays = isPatientPlan ? 30 : isPartnerPlan ? 0 : 7;
+  const trialDays = isPartnerPlan ? 0 : 30;
   const showTrial = hasTrial && trialDays > 0;
   const discountPercent = (!isPatientPlan && !isPartnerPlan) ? 30 : 0;
   const firstMonthPrice = typeof plan.monthlyPrice === 'number' ? plan.monthlyPrice * (1 - discountPercent / 100) : plan.monthlyPrice;
@@ -605,6 +605,9 @@ export const PricingTiers = ({ onNavigate, defaultTab, onChatRole, allowedTabs }
               <AlertTriangle size={18} className="text-amber-600 shrink-0 mt-0.5" />
               <div>
                 <h4 className="font-black text-amber-900 text-sm">Trial & Introductory Pricing Notice</h4>
+                <p className="text-xs text-amber-800 font-bold mt-2 mb-2 leading-relaxed bg-amber-100/60 px-3 py-2 rounded-lg">
+                  {TRIAL_TERMS.trialSummary}
+                </p>
                 <div className="text-xs text-amber-700 leading-relaxed mt-1 space-y-1">
                   <p>• <strong>Patients:</strong> {TRIAL_TERMS.patient.shortDisclosure}</p>
                   <p>• <strong>Business & Government:</strong> {TRIAL_TERMS.standard.shortDisclosure}</p>

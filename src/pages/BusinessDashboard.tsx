@@ -468,14 +468,14 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
       <div className="space-y-6">
         <StateWelcomeBanner jurisdiction={jurisdiction} type="business" />
         
-        {/* 14-Day Trial Banner */}
+        {/* 30-Day Trial Banner */}
         <div className="bg-amber-50 border border-amber-200 rounded-[2rem] p-5 flex flex-col md:flex-row items-center justify-between text-amber-900 shadow-sm mb-4 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-full bg-amber-500/5 blur-2xl"></div>
           <div className="flex items-center gap-4 relative z-10">
              <div className="p-3 bg-amber-100 rounded-2xl border border-amber-200"><Clock className="text-amber-600" size={24} /></div>
              <div>
-                <h4 className="font-black text-lg tracking-tight text-amber-800">14-Day Free Implementation Trial Active</h4>
-                <p className="text-sm text-amber-700/80 font-medium hidden sm:block">You have 14 days to complete your mandatory GGE World AI Training before your subscription billing begins.</p>
+                <h4 className="font-black text-lg tracking-tight text-amber-800">30-Day Free Trial Active</h4>
+                <p className="text-sm text-amber-700/80 font-medium hidden sm:block">Complete your GGE World AI Training during your trial. After 30 days, enjoy 30% off your first month — then standard billing begins.</p>
              </div>
           </div>
           <Button onClick={() => { navigateTab('subscription'); }} className="bg-amber-600 hover:bg-amber-700 text-white shadow-md whitespace-nowrap mt-4 md:mt-0 font-black rounded-xl border-transparent">
