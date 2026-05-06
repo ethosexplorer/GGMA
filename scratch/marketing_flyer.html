@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GGP-OS | The Compliance Operating System for Legal Cannabis</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: #0a1f14; color: #fff; }
+
+  .flyer {
+    max-width: 680px;
+    margin: 0 auto;
+    background: linear-gradient(180deg, #0a1f14 0%, #0d2a1a 30%, #112e1f 60%, #0a1f14 100%);
+    overflow: hidden;
+  }
+
+  /* Top Banner */
+  .top-bar {
+    background: linear-gradient(90deg, #d4a843, #c4922e, #d4a843);
+    text-align: center;
+    padding: 10px 20px;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #1a1a1a;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 40px 30px 20px;
+    position: relative;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(34,197,94,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .brand-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 100px;
+    padding: 8px 20px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #d4a843;
+    margin-bottom: 24px;
+  }
+  .brand-badge .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #22c55e; animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .headline {
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+  }
+  .headline .accent { color: #22c55e; }
+  .subheadline {
+    font-size: 16px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 12px;
+  }
+  .tagline {
+    font-size: 13px;
+    color: rgba(255,255,255,0.4);
+    max-width: 420px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* Trial Banner */
+  .trial-banner {
+    margin: 30px 24px;
+    background: linear-gradient(135deg, #d4a843 0%, #b8891e 50%, #d4a843 100%);
+    border-radius: 20px;
+    padding: 28px 32px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .trial-banner::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: repeating-linear-gradient(
+      45deg, transparent, transparent 10px,
+      rgba(255,255,255,0.03) 10px, rgba(255,255,255,0.03) 20px
+    );
+  }
+  .trial-badge {
+    display: inline-block;
+    background: rgba(0,0,0,0.2);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #fff;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .trial-title {
+    font-size: 32px;
+    font-weight: 900;
+    color: #1a1a1a;
+    letter-spacing: -0.5px;
+    position: relative;
+  }
+  .trial-sub {
+    font-size: 14px;
+    font-weight: 700;
+    color: rgba(0,0,0,0.6);
+    margin-top: 6px;
+    position: relative;
+  }
+
+  /* Roles Grid */
+  .roles-section {
+    padding: 0 24px;
+    margin-bottom: 30px;
+  }
+  .roles-label {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 16px;
+  }
+  .roles-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .role-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 16px 12px;
+    text-align: center;
+    transition: all 0.3s;
+  }
+  .role-card:hover {
+    background: rgba(34,197,94,0.08);
+    border-color: rgba(34,197,94,0.2);
+    transform: translateY(-2px);
+  }
+  .role-icon { font-size: 24px; margin-bottom: 8px; }
+  .role-name { font-size: 11px; font-weight: 800; color: #fff; }
+  .role-desc { font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.4); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* Features */
+  .features-section {
+    padding: 0 24px;
+    margin-bottom: 30px;
+  }
+  .features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .feature-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .feature-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .fi-green { background: rgba(34,197,94,0.15); }
+  .fi-blue { background: rgba(59,130,246,0.15); }
+  .fi-purple { background: rgba(168,85,247,0.15); }
+  .fi-amber { background: rgba(245,158,11,0.15); }
+  .fi-rose { background: rgba(244,63,94,0.15); }
+  .fi-cyan { background: rgba(6,182,212,0.15); }
+  .feature-name { font-size: 13px; font-weight: 800; color: #fff; margin-bottom: 3px; }
+  .feature-desc { font-size: 11px; color: rgba(255,255,255,0.4); line-height: 1.4; }
+
+  /* Pricing */
+  .pricing-section {
+    padding: 0 24px;
+    margin-bottom: 30px;
+  }
+  .pricing-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .price-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 24px;
+    text-align: center;
+    position: relative;
+  }
+  .price-card.featured {
+    background: rgba(34,197,94,0.08);
+    border-color: rgba(34,197,94,0.3);
+  }
+  .price-card.featured::before {
+    content: '⭐ MOST POPULAR';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, #22c55e, #16a34a);
+    color: #fff;
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    padding: 4px 14px;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+  .price-label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 8px;
+  }
+  .price-amount {
+    font-size: 36px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: -1px;
+  }
+  .price-amount .currency { font-size: 20px; vertical-align: top; color: #22c55e; }
+  .price-amount .period { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.3); }
+  .price-for { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); margin-top: 4px; }
+  .price-trial {
+    display: inline-block;
+    margin-top: 12px;
+    background: rgba(212,168,67,0.15);
+    border: 1px solid rgba(212,168,67,0.3);
+    border-radius: 100px;
+    padding: 4px 14px;
+    font-size: 10px;
+    font-weight: 800;
+    color: #d4a843;
+    letter-spacing: 1px;
+  }
+
+  /* CTA */
+  .cta-section {
+    padding: 0 24px;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  .cta-button {
+    display: inline-block;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    padding: 18px 48px;
+    border-radius: 16px;
+    text-decoration: none;
+    text-transform: uppercase;
+    box-shadow: 0 8px 32px rgba(34,197,94,0.3);
+    transition: all 0.3s;
+  }
+  .cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(34,197,94,0.4);
+  }
+  .cta-url {
+    display: block;
+    margin-top: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 1px;
+  }
+  .cta-phone {
+    display: block;
+    margin-top: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.3);
+  }
+
+  /* Trust */
+  .trust-section {
+    padding: 20px 24px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    text-align: center;
+  }
+  .trust-badges {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .trust-badge {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    padding: 6px 12px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+  }
+  .press-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+    opacity: 0.3;
+  }
+  .press-logo {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #fff;
+  }
+
+  /* Footer */
+  .footer {
+    padding: 24px;
+    text-align: center;
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+  .footer-brand {
+    font-size: 12px;
+    font-weight: 800;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .footer-legal {
+    font-size: 10px;
+    color: rgba(255,255,255,0.2);
+    line-height: 1.6;
+  }
+  .footer-addr {
+    font-size: 10px;
+    color: rgba(255,255,255,0.15);
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+<div class="flyer">
+
+  <!-- Gold Top Bar -->
+  <div class="top-bar">🏛️ Infrastructure Active: 38 States + DC</div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="brand-badge">
+      <span class="dot"></span>
+      Global Green Enterprise Inc
+    </div>
+    <h1 class="headline">
+      The Compliance<br>Operating System<br><span class="accent">for Legal Cannabis</span>
+    </h1>
+    <p class="subheadline">One Platform. Every Stakeholder. Full Compliance.</p>
+    <p class="tagline">Businesses, patients, attorneys, regulators, and law enforcement — all connected on one intelligent infrastructure.</p>
+  </div>
+
+  <!-- 30-Day Trial Banner -->
+  <div class="trial-banner">
+    <div class="trial-badge">✨ Limited Time Offer</div>
+    <div class="trial-title">30-DAY FREE TRIAL</div>
+    <div class="trial-sub">No credit card required • Cancel anytime • Full platform access</div>
+  </div>
+
+  <!-- Who It's For -->
+  <div class="roles-section">
+    <div class="roles-label">Built For Everyone In Cannabis</div>
+    <div class="roles-grid">
+      <div class="role-card">
+        <div class="role-icon">🏢</div>
+        <div class="role-name">Business</div>
+        <div class="role-desc">Compliance & POS</div>
+      </div>
+      <div class="role-card">
+        <div class="role-icon">🏥</div>
+        <div class="role-name">Patient</div>
+        <div class="role-desc">Telehealth & Cards</div>
+      </div>
+      <div class="role-card">
+        <div class="role-icon">🩺</div>
+        <div class="role-name">Provider</div>
+        <div class="role-desc">Consult & Certify</div>
+      </div>
+      <div class="role-card">
+        <div class="role-icon">⚖️</div>
+        <div class="role-name">Attorney</div>
+        <div class="role-desc">Cases & Regulatory</div>
+      </div>
+      <div class="role-card">
+        <div class="role-icon">🛡️</div>
+        <div class="role-name">Agency</div>
+        <div class="role-desc">Oversight</div>
+      </div>
+      <div class="role-card">
+        <div class="role-icon">🏛️</div>
+        <div class="role-name">Gov Office</div>
+        <div class="role-desc">Policy & Economy</div>
+      </div>
+      <div class="role-card">
+        <div class="role-icon">🤝</div>
+        <div class="role-name">Advocate</div>
+        <div class="role-desc">Health & Impact</div>
+      </div>
+      <div class="role-card">
+        <div class="role-icon">🔬</div>
+        <div class="role-name">Lab / QA</div>
+        <div class="role-desc">Testing & Safety</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Key Features -->
+  <div class="features-section">
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon fi-green">🔗</div>
+        <div>
+          <div class="feature-name">Metrc Integration</div>
+          <div class="feature-desc">Real-time seed-to-sale sync across all locations</div>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon fi-purple">🤖</div>
+        <div>
+          <div class="feature-name">Sylara & Larry AI</div>
+          <div class="feature-desc">AI compliance engine + 24/7 intelligent assistant</div>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon fi-blue">🏪</div>
+        <div>
+          <div class="feature-name">Built-In POS</div>
+          <div class="feature-desc">SINC point-of-sale with Visa/MC/Debit ready</div>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon fi-amber">🏛️</div>
+        <div>
+          <div class="feature-name">DEA Sch. III Ready</div>
+          <div class="feature-desc">Federal registration wizard + compliance tools</div>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon fi-cyan">📱</div>
+        <div>
+          <div class="feature-name">Telehealth</div>
+          <div class="feature-desc">Patient cards, consults & provider network</div>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon fi-rose">📊</div>
+        <div>
+          <div class="feature-name">Smart Analytics</div>
+          <div class="feature-desc">Revenue, tax, and compliance intelligence</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pricing -->
+  <div class="pricing-section">
+    <div class="pricing-cards">
+      <div class="price-card">
+        <div class="price-label">Patients</div>
+        <div class="price-amount">
+          <span class="currency">$</span>49.99<span class="period">/mo</span>
+        </div>
+        <div class="price-for">Care Wallet + Telehealth + AI</div>
+        <div class="price-trial">30 DAYS FREE</div>
+      </div>
+      <div class="price-card featured">
+        <div class="price-label">Businesses</div>
+        <div class="price-amount">
+          <span class="currency">$</span>199<span class="period">/mo</span>
+        </div>
+        <div class="price-for">POS + Metrc + Compliance</div>
+        <div class="price-trial">30 DAYS FREE + 30% OFF</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <a href="https://ggp-os.com" class="cta-button">Start Your Free Trial →</a>
+    <span class="cta-url">www.ggp-os.com</span>
+    <span class="cta-phone">📞 1-888-963-4447 &nbsp;|&nbsp; ✉️ support@ggp-os.com</span>
+  </div>
+
+  <!-- Trust Badges -->
+  <div class="trust-section">
+    <div class="trust-badges">
+      <span class="trust-badge">✅ SAM.gov Active</span>
+      <span class="trust-badge">🏆 WOSB Certified</span>
+      <span class="trust-badge">🏛️ OK Secretary of State</span>
+      <span class="trust-badge">🔒 HIPAA Compliant</span>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-brand">Global Green Enterprise, LLC</div>
+    <div class="footer-legal">
+      Global Green Hybrid Platform Operating System (GGP-OS)<br>
+      All subscription revenue is 100% SaaS — non-plant-touching.
+    </div>
+    <div class="footer-addr">
+      2601 NE 23rd St, Ste B, Oklahoma City, OK 73121<br>
+      UEI: SC6XFBFXTDFN1 &nbsp;|&nbsp; © 2026 Global Green Enterprise Inc.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
