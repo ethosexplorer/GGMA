@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invoice — Global Green Enterprise, LLC</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #fff; color: #1e293b; padding: 40px; max-width: 800px; margin: 0 auto; }
+  
+  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; padding-bottom: 24px; border-bottom: 3px solid #059669; }
+  .logo-area h1 { font-size: 22px; font-weight: 900; color: #059669; letter-spacing: -0.5px; }
+  .logo-area p { font-size: 11px; color: #64748b; margin-top: 2px; }
+  .invoice-title { text-align: right; }
+  .invoice-title h2 { font-size: 32px; font-weight: 900; color: #1e293b; letter-spacing: -1px; }
+  .invoice-title .inv-number { font-size: 13px; font-weight: 700; color: #059669; margin-top: 4px; }
+  
+  .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 36px; }
+  .meta-block h4 { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: #94a3b8; margin-bottom: 8px; }
+  .meta-block p { font-size: 13px; color: #334155; line-height: 1.6; }
+  .meta-block strong { font-weight: 700; color: #1e293b; }
+  
+  table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+  thead th { background: #f1f5f9; padding: 12px 16px; text-align: left; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #64748b; border-bottom: 2px solid #e2e8f0; }
+  thead th:last-child { text-align: right; }
+  tbody td { padding: 14px 16px; font-size: 13px; border-bottom: 1px solid #f1f5f9; color: #334155; }
+  tbody td:last-child { text-align: right; font-weight: 700; }
+  .item-name { font-weight: 700; color: #1e293b; }
+  .item-desc { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+  
+  .totals { display: flex; justify-content: flex-end; margin-bottom: 40px; }
+  .totals-box { width: 280px; }
+  .totals-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 13px; color: #64748b; }
+  .totals-row.total { border-top: 2px solid #1e293b; padding-top: 12px; margin-top: 8px; font-size: 18px; font-weight: 900; color: #1e293b; }
+  
+  .status-badge { display: inline-block; padding: 4px 14px; background: #d1fae5; color: #059669; font-size: 10px; font-weight: 800; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px; }
+  
+  .footer { border-top: 2px solid #f1f5f9; padding-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .footer h4 { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: #94a3b8; margin-bottom: 6px; }
+  .footer p { font-size: 11px; color: #64748b; line-height: 1.6; }
+  
+  .note { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 30px; }
+  .note h4 { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: #94a3b8; margin-bottom: 6px; }
+  .note p { font-size: 12px; color: #64748b; line-height: 1.6; }
+  
+  @media print {
+    body { padding: 20px; }
+    @page { margin: 0.5in; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo-area">
+    <h1>🌿 GLOBAL GREEN ENTERPRISE, LLC</h1>
+    <p>Global Green Hybrid Platform Operating System (GGP-OS)</p>
+    <p style="margin-top: 4px;">globalgreenenterprize@gmail.com | 1-888-963-4447</p>
+    <p>www.globalgreenenterprize.com</p>
+  </div>
+  <div class="invoice-title">
+    <h2>INVOICE</h2>
+    <div class="inv-number">INV-2026-0001</div>
+    <div style="margin-top: 8px;"><span class="status-badge">Paid</span></div>
+  </div>
+</div>
+
+<div class="meta-grid">
+  <div class="meta-block">
+    <h4>Bill To</h4>
+    <p>
+      <strong>Green Valley Cultivation, LLC</strong><br>
+      4521 Rural Route 7<br>
+      Stillwater, OK 74074<br>
+      greenvalley.ok@email.com
+    </p>
+  </div>
+  <div class="meta-block" style="text-align: right;">
+    <h4>Invoice Details</h4>
+    <p>
+      <strong>Invoice Date:</strong> April 1, 2026<br>
+      <strong>Due Date:</strong> April 1, 2026<br>
+      <strong>Payment Method:</strong> Credit Card<br>
+      <strong>Subscription Term:</strong> Monthly
+    </p>
+  </div>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width: 50%;">Service</th>
+      <th>Tier</th>
+      <th>Period</th>
+      <th>Amount</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <div class="item-name">GGP-OS Enterprise Subscription</div>
+        <div class="item-desc">Full platform access: Compliance, Metrc integration, AI intake, dashboards</div>
+      </td>
+      <td>Enterprise</td>
+      <td>Apr 2026</td>
+      <td>$499.00</td>
+    </tr>
+    <tr>
+      <td>
+        <div class="item-name">Sylara AI — Advanced Compliance Module</div>
+        <div class="item-desc">AI-powered regulatory monitoring, automated alert routing, 24/7 intake</div>
+      </td>
+      <td>Add-On</td>
+      <td>Apr 2026</td>
+      <td>$99.00</td>
+    </tr>
+    <tr>
+      <td>
+        <div class="item-name">Telemedicine Call Center Access</div>
+        <div class="item-desc">Twilio voice/SMS integration, toll-free patient line, web dialer</div>
+      </td>
+      <td>Add-On</td>
+      <td>Apr 2026</td>
+      <td>$49.00</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="totals">
+  <div class="totals-box">
+    <div class="totals-row"><span>Subtotal</span><span>$647.00</span></div>
+    <div class="totals-row"><span>Sales Tax (0%)</span><span>$0.00</span></div>
+    <div class="totals-row"><span>Discount (First Month — 10%)</span><span>-$64.70</span></div>
+    <div class="totals-row total"><span>Total Due</span><span>$582.30</span></div>
+  </div>
+</div>
+
+<div class="note">
+  <h4>Notes</h4>
+  <p>Thank you for subscribing to GGP-OS. Your subscription includes full platform access, unlimited users, Metrc API integration, AI-powered compliance monitoring, and 24/7 support via our toll-free line (1-888-963-4447). Subscriptions renew automatically on the 1st of each month. Questions? Contact globalgreenenterprize@gmail.com.</p>
+</div>
+
+<div class="footer">
+  <div>
+    <h4>Company Information</h4>
+    <p>
+      Global Green Enterprise, LLC<br>
+      Oklahoma, USA<br>
+      SAM.gov Active | WOSB Certified<br>
+      UEI: SCXFBFXTDFN1
+    </p>
+  </div>
+  <div style="text-align: right;">
+    <h4>Payment Information</h4>
+    <p>
+      Payments accepted via credit card, ACH, or wire transfer.<br>
+      All subscription revenue is 100% SaaS — non-plant-touching.<br>
+      For billing inquiries: 1-888-963-4447
+    </p>
+  </div>
+</div>
+
+</body>
+</html>
