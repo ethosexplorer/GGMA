@@ -3598,7 +3598,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       let choices = [];
 
       if (isBusiness || variant === 'business' || variant === 'sinc') {
-        response = 'dY"< **GGHP Business Subscription Plans**\n\n' +
+        response = '✅ **GGHP Business Subscription Plans**\n\n' +
           '? **Starter**: $199/mo (POS + Metrc Sync + Basic Compliance)\n' +
           '? **Professional**: $249/mo (Multi-Location + Full Larry Enforcement)\n' +
           '? **Enterprise**: $499/mo (Unlimited Locations + White-Label POS)\n\n' +
@@ -3606,7 +3606,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
           'To upgrade or start your trial, please select **Start Business Intake** below.';
         choices = ['Start Business Intake', 'Speak with Business Expert', 'Main Menu'];
       } else if (variant === 'ggma-patient' || variant === 'patient') {
-        response = 'dY"< **GGHP Patient Subscription Plans**\n\n' +
+        response = '✅ **GGHP Patient Subscription Plans**\n\n' +
           '? **Basic**: $49.99/mo (Care Wallet + Telehealth + Basic Sylara)\n' +
           '? **Medium**: $99/mo (Enhanced Sylara + Priority Support)\n' +
           '? **Full AI**: $199/mo (Unlimited Sylara + Larry + AI Guardian)\n\n' +
@@ -3614,7 +3614,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
           'To upgrade or start your trial, please select **Start Patient Intake** below.';
         choices = ['Start Patient Intake', 'Book Physician ($45)', 'Main Menu'];
       } else if (variant === 'provider' || variant === 'legal' || variant === 'attorney' || variant === 'government' || variant === 'political_executive' || variant === 'advocate' || variant === 'advocacy_research') {
-        response = 'dY"< **GGHP Professional Suite Subscription Plans**\n\n' +
+        response = '✅ **GGHP Professional Suite Subscription Plans**\n\n' +
           '? **Professional Network**: $249/mo (Network Integration, Encrypted Communications, AI Support)\n' +
           '? **Enterprise Operations**: $499/mo (Full Ecosystem Access, Custom Operations)\n\n' +
           '_All Professional tiers include a 30-Day Free Trial and 30% off your first month after the trial._\n\n' +
@@ -3622,7 +3622,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         choices = ['Main Menu'];
       } else {
         // Fallback for General / GGMA generic portal
-        response = 'dY"< **GGHP Subscription Plans**\n\n' +
+        response = '✅ **GGHP Subscription Plans**\n\n' +
           '**Patient Plans:** Starts at $49.99/mo (Includes Care Wallet & Telehealth)\n' +
           '**Business Plans:** Starts at $199/mo (Includes POS & Metrc Sync)\n' +
           '**Professional Plans:** Starts at $249/mo\n\n' +
@@ -4265,9 +4265,9 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         return;
       } else if (lower.includes('start business intake')) {
         setIsBusiness(true);
-        const response = 'dY? Let\'s begin your **Commercial License Application**.\n\n**Section 1: First-Time Registration**\n\nWhat is your **Full Name** (First & Last)? This will be the individual responsible for the account and license information.';
-        setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
-        setSignupStep(100);
+        const response = '🏢 Let\'s begin your **Commercial License Application**.\n\nAre you a **New State Registration** or **Renewal** to determine your application needs?';
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['New Registration', 'Renewal'] } as any]);
+        setSignupStep(990);
         setIsTyping(false);
         return;
       } else if (lower.includes('reschedule') || lower.includes('return later')) {
@@ -4368,8 +4368,11 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         setEligibleLicenses([]);
       } else if (lower.includes('start business intake')) {
         setIsBusiness(true);
-        response = '🏢 Let\'s begin your **Commercial License Application**.\n\n**Section 1: First-Time Registration**\n\nWhat is your **Full Name** (First & Last)? This will be the individual responsible for the account and license information.';
-        setSignupStep(100);
+        const response = '🏢 Let\'s begin your **Commercial License Application**.\n\nAre you a **New State Registration** or **Renewal** to determine your application needs?';
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['New Registration', 'Renewal'] } as any]);
+        setSignupStep(990);
+        setIsTyping(false);
+        return;
       } else if (lower.includes('patient')) {
         setIsBusiness(false);
         response = '🏥 **Medical Card Assistance (2026 Rules)**\n\n' +
