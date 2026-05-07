@@ -327,7 +327,7 @@ export const CallCenterCommandTab = () => {
           <div className="p-4 space-y-3">
             <input type="tel" placeholder="(555) 123-4567" className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:border-emerald-400" id="ops-push-to" />
             <textarea rows={2} placeholder="Message..." className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:border-emerald-400 resize-none" id="ops-push-body" />
-            <button onClick={async () => { const to = (document.getElementById('ops-push-to') as HTMLInputElement)?.value; const b = (document.getElementById('ops-push-body') as HTMLTextAreaElement)?.value; if (to && b) { const r = true // Mock FCM; alert(r ? '✅ Sent!' : '❌ Failed'); } else alert('Fill both fields.'); }} className="w-full py-2 bg-emerald-600 text-white font-bold rounded-lg text-sm">Send Alert</button>
+            <button onClick={async () => { const to = (document.getElementById('ops-push-to') as HTMLInputElement)?.value; const b = (document.getElementById('ops-push-body') as HTMLTextAreaElement)?.value; if (to && b) { const r = true /* Mock FCM */; alert(r ? '✅ Sent!' : '❌ Failed'); } else alert('Fill both fields.'); }} className="w-full py-2 bg-emerald-600 text-white font-bold rounded-lg text-sm">Send Alert</button>
           </div>
         </div>
       </div>
