@@ -1565,7 +1565,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
               ].map(role => (
                 <button key={role.label} onClick={() => {
                     if (role.tier === 'patient') {
-                      onNavigate('patient-signup' as any);
+                      onNavigate('larry-chatbot' as any, 'ggma-patient');
                     } else if (role.tier === 'business') {
                       onNavigate('business-signup' as any);
                     } else {
@@ -3011,7 +3011,7 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
 // --- L.A.R.R.Y AI Chatbot for Med Card / Business License Assistance ---
 export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card', userProfile, jurisdiction = 'Oklahoma', activeRole }: any) => {
   const [isBusiness, setIsBusiness] = useState(variant === 'business');
-  const isGeneral = variant === 'general' || variant === 'ggma' || variant === 'rip' || variant === 'sinc';
+  const isGeneral = variant === 'general' || variant === 'ggma' || variant === 'ggma-patient' || variant === 'rip' || variant === 'sinc';
   
   const currentRole = activeRole || userProfile?.role;
   const emailLower = userProfile?.email?.toLowerCase() || '';
@@ -3031,6 +3031,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     if (isBob && variant !== 'legal') return `🛡️ **Advisory Access Authenticated.** Good Morning, Bob. I am **L.A.R.R.Y.** (Legal Authority & Regulatory Rules Yield).\n\nI am synced with your Executive Advisory Dashboard. All regulatory analytics and compliance models are updated for your review.\n\nHow can I assist your analysis today?`;
     if (isFounderAssistant && variant !== 'legal' && variant !== 'business') return `✨ **Good Morning, Shantell!** I am **Sylara**, your **Executive Personal Assistant**.\n\nAs your mirror AI, I am fully synced with your Founder Dashboard. I have prepared your daily summaries, state news, and upcoming appointments.\n\nHow can I support your schedule and oversight duties today?`;
     if (variant === 'ggma') return `👋 Welcome to the **GGMA Sector**. I am **Sylara**, your **Intake Agent**. We are an official **${metrcStatus}**. I handle all regulatory onboarding, card processing, and registry management. \n\nHow can I assist with your GGMA licensing today?`;
+    if (variant === 'ggma-patient') return `👋 Welcome to the **GGMA Sector**. I am **Sylara**, your **Intake Agent**. We are an official **${metrcStatus}**. I handle all regulatory onboarding, medical card processing, and registry management for patients across all states.\n\nHow can I assist with your GGMA licensing today?`;
     if (variant === 'rip') return `🕵️ **RIP Intelligence Portal**. I am **Sylara**, coordinating with the **L.A.R.R.Y Enforcement Engine**. Due to the highly sensitive nature of intelligence and enforcement operations, I can only provide basic guidance here. For secure access to field reports or oversight actions, you must create an official account. \n\nWould you like to begin intake?`;
     if (variant === 'sinc') return `🛡️ **SINC Compliance Infrastructure**. I am **Sylara**, managing your secure operational backbone. Because SINC handles encrypted audit trails and seed-to-sale architecture, deep access requires an authenticated business account. \n\nWould you like to begin business intake?`;
     
@@ -3047,6 +3048,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     if (isMonica && variant !== 'legal') return ['Run Compliance Sweep', 'Metrc Anomalies', 'Pending Applications', 'Audit Logs'];
     if (isBob && variant !== 'legal') return ['Review Financial Anomalies', 'Compliance Impact Report', 'Regulatory Forecasting'];
     if (variant === 'ggma') return ['Start Patient Intake', 'Start Business Intake', '🏛️ DEA Schedule III Registration', 'View Patient Fee Schedule', 'View Business Fee Schedule', 'View Subscription Plans'];
+    if (variant === 'ggma-patient') return ['Start Patient Intake', 'View Patient Fee Schedule', 'Book Physician ($45)', 'View Subscription Plans'];
     if (variant === 'rip') return ['Field Intelligence Report', 'Background Verification Check', 'Enforcement Status Inquiry', 'Compliance Audit Request', 'Contact Oversight Division', 'View State Authority Plans'];
     if (variant === 'sinc') return ['Start Business Intake', '🏛️ DEA Schedule III Registration', 'Audit Shield Setup', 'Seed-to-Sale Compliance', 'Network Integrity Check', 'View Business Fee Schedule'];
     
@@ -4098,7 +4100,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       setIsTyping(false);
       return;
     } else if (lower.includes('application status')) {
-      response = `📋 **Application Status Inquiry**\n\nL.A.R.R.Y is querying the state portal for your exact application timeline. A compliance agent will review the findings and will follow up with you promptly to provide a status update.\n\n*(A copy of this ticket has been securely routed to the priority queue — Flagged: 🟣 Purple)*\n\nWould you like to return to the Main Menu?`;
+      response = `📋 **Application Status Inquiry**\n\nL.A.R.RY is querying the state portal for your exact application timeline. A compliance agent will review the findings and will follow up with you promptly to provide a status update.\n\n*(A copy of this ticket has been securely routed to the priority queue — Flagged: 🟣 Purple)*\n\nWould you like to return to the Main Menu?`;
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
@@ -4142,7 +4144,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
           return;
         }
 
-        if (variant === 'ggma') {
+        if (variant === 'ggma' || variant === 'ggma-patient') {
           response = 'Welcome to the **GGMA Sector**.\n\nTo ensure we provide the correct licensing and medical card information, please select which **State Jurisdiction** you are inquiring about:';
           setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Oklahoma', 'Kentucky', 'Missouri', 'Texas', 'Other State'] } as any]);
           setSignupStep(902);
