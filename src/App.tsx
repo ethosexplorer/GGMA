@@ -3020,6 +3020,18 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
   const isBob = emailLower.includes('bobmoore') || currentRole === 'executive_advisor' || currentRole === 'advisor';
   const isFounderAssistant = currentRole === 'executive_founder' && !isRyan && !isMonica && !isBob;
   
+  const getBriefSummary = (v: string) => {
+    switch (v) {
+      case 'ggma': case 'ggma-patient': return 'You have selected the **Patient Intake** sector. This process helps you apply for a state medical marijuana card.';
+      case 'business': return 'You have selected the **Business Intake** sector. This process helps commercial entities establish their regulatory profile and apply for state operating licenses.';
+      case 'provider': return 'You have selected the **Provider** sector. This guides medical professionals through our network integration.';
+      case 'legal': case 'attorney': return 'You have selected the **Legal & Attorney** sector. This sector handles regulatory compliance, cease & desists, and general counsel matching.';
+      case 'government': case 'political_executive': return 'You have selected the **Government & Agency** sector. This provides policy data and economic analysis for state officials.';
+      case 'advocate': case 'advocacy_research': return 'You have selected the **Advocate** sector. This provides resources for social equity programs and community polling.';
+      default: return 'You have selected an administrative sector of the Global Green Hybrid Platform.';
+    }
+  };
+
   const getGreeting = () => {
     const date = "April 21, 2026";
     const metrcStatus = "Validated Metrc Integrator (Active)";
@@ -4866,6 +4878,9 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       setBusinessData(prev => ({ ...prev, fullName: text }));
       response = `Nice to meet you, **${text}**! What is your **Email Address**? This will be used for registration and follow-up notices.`;
       setSignupStep(101);
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 101) {
       if (!text.includes('@') || !text.includes('.')) {
         response = 'That doesn\'t look like a valid email. Please provide your **Email Address**.';
@@ -4874,6 +4889,9 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         response = 'Please create a **Password** for your account (strong password recommended). This will be used to access and track all application and license information.\n\n*(Your password will be hidden in the chat)*';
         setSignupStep(102);
       }
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 102) {
       if (text.length < 8) {
         response = 'Password must be at least 8 characters. Please choose a strong password.';
@@ -4882,6 +4900,9 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         response = 'Do you accept the **Terms and Conditions** for the website? (Yes / No)';
         setSignupStep(103);
       }
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 103) {
       if (lower === 'yes' || lower === 'yeah' || lower === 'yep') {
         setBusinessData(prev => ({ ...prev, termsAccepted: true }));
@@ -4918,6 +4939,9 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         response = 'What **Type of Commercial License** are you applying for?\n\n' + BUSINESS_LICENSE_TYPES.map((t, i) => `${i + 1}. ${t}`).join('\n') + '\n\nPlease reply with the **number** or name of the license type.';
         setSignupStep(106);
       }
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 106) {
       const num = parseInt(text.trim());
       let selectedType = '';
@@ -4996,15 +5020,24 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
          response = nextQuestion;
          setSignupStep(107);
       }
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 107) {
       const tradeName = lower === 'same' ? businessData.entityName : text;
       setBusinessData(prev => ({ ...prev, tradeName }));
       response = 'What is the **Phone Number** for the business? (Also include fax number and/or website if applicable)';
       setSignupStep(108);
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 108) {
       setBusinessData(prev => ({ ...prev, phone: text }));
       response = 'What is the **Business Structure Type**?\n\n' + BUSINESS_STRUCTURES.map((s, i) => `${i + 1}. ${s}`).join('\n') + '\n\nPlease reply with the **number**.';
       setSignupStep(109);
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 109) {
       const num = parseInt(text.trim());
       let selectedStructure = '';
@@ -5021,6 +5054,9 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       } else {
         response = 'Please select a valid business structure (1-5).\n\n' + BUSINESS_STRUCTURES.map((s, i) => `${i + 1}. ${s}`).join('\n');
       }
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 110) {
       setBusinessData(prev => ({ ...prev, operatingHours: text }));
       response = '✅ **General Information Complete!**\n\n**Section 4: Owners & Principal Officers**\n\nLet\'s add owner/principal officer information. What is the **Full Name** (First, Middle, Last, Suffix) of the owner/officer?';
@@ -5031,11 +5067,17 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       setBusinessData(prev => ({ ...prev, ownerName: text }));
       response = `What is **${text}**'s **Phone Number and Email**? (e.g., 555-123-4567, email@example.com)`;
       setSignupStep(112);
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 112) {
       const parts = text.split(/[,;]+/).map(s => s.trim());
       setBusinessData(prev => ({ ...prev, ownerPhone: parts[0] || text, ownerEmail: parts[1] || '' }));
       response = 'What **Type of ID Document** is being uploaded?\n\n' + BUSINESS_ID_TYPES.map((t, i) => `${i + 1}. ${t}`).join('\n') + '\n\nPlease reply with the **number**.';
       setSignupStep(113);
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 113) {
       const num = parseInt(text.trim());
       let selectedId = '';
@@ -5052,36 +5094,60 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       } else {
         response = 'Please select a valid ID type (1-4).\n\n' + BUSINESS_ID_TYPES.map((t, i) => `${i + 1}. ${t}`).join('\n');
       }
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 114) {
       const parts = text.split(/[,;]+/).map(s => s.trim());
       setBusinessData(prev => ({ ...prev, ownerIdNumber: parts[0] || text, ownerIdExpiry: parts[1] || '' }));
       response = 'What is their **Date of Birth**? (e.g., mm/dd/yyyy)';
       setSignupStep(115);
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 115) {
       setBusinessData(prev => ({ ...prev, ownerDob: text }));
       response = 'What {{flag:Entity}} or {{flag:Entities}} does this person have affiliation with?';
       setSignupStep(116);
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 116) {
       setBusinessData(prev => ({ ...prev, ownerEntityAffiliation: text }));
       response = 'What are the **Direct and Indirect Ownership Shares** by entity? (e.g., 50% direct ownership in ABC LLC)';
       setSignupStep(117);
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 117) {
       setBusinessData(prev => ({ ...prev, ownerShares: text }));
       response = 'What is their **Relationship to Licensee**? (e.g., member, manager, board member, or owner)';
       setSignupStep(118);
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 118) {
       setBusinessData(prev => ({ ...prev, ownerRelationship: text }));
       response = 'What is their **Residence Address**? (Street Address, Apt#, City, State, Zip)';
       setSignupStep(119);
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 119) {
       setBusinessData(prev => ({ ...prev, ownerResidence: text }));
       response = 'Is the **Mailing Address** different from residence? If so, provide it. (Type **"same"** if same as residence)';
       setSignupStep(120);
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 120) {
       const mailing = lower.includes('same') ? businessData.ownerResidence : text;
       setBusinessData(prev => ({ ...prev, ownerMailing: mailing, ownersCompleted: prev.ownersCompleted + 1 }));
       response = `✅ Owner/Officer **${businessData.ownerName}** added! (${businessData.ownersCompleted + 1} total)\n\nDo you need to **add another owner/officer**? (Yes / No)`;
       setSignupStep(121);
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 121) {
       if (lower === 'yes' || lower === 'yeah' || lower === 'yep') {
         response = 'What is the **Full Name** (First, Middle, Last, Suffix) of the next owner/officer?';
@@ -5133,6 +5199,9 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         response = 'I could not look up GPS coordinates automatically. Please enter the **GPS Coordinates** (Latitude & Longitude) manually. You can look them up at [gps-coordinates.org](https://gps-coordinates.org/)';
         setSignupStep(123);
       }
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 123) {
       // If user confirms auto-geocoded coordinates
       if ((lower === 'yes' || lower === 'yeah' || lower === 'yep') && businessData.gpsCoordinates) {
@@ -5155,6 +5224,9 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         response = 'Is the **Mailing Address** for the establishment different from the physical address? If so, provide it. (Type **"same"** if same)';
         setSignupStep(124);
       }
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 124) {
       const mailing = lower.includes('same') ? businessData.physicalAddress : text;
       setBusinessData(prev => ({ ...prev, locationMailing: mailing }));
@@ -5166,18 +5238,30 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       setBusinessData(prev => ({ ...prev, ppocName: text }));
       response = `What is **${text}**'s **Title**? (e.g., CEO, Managing Member, Owner)`;
       setSignupStep(126);
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 126) {
       setBusinessData(prev => ({ ...prev, ppocTitle: text }));
       response = 'What is the PPOC\'s **Phone Number**?';
       setSignupStep(127);
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 127) {
       setBusinessData(prev => ({ ...prev, ppocPhone: text }));
       response = 'What is the PPOC\'s **Email Address**?';
       setSignupStep(128);
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 128) {
       setBusinessData(prev => ({ ...prev, ppocEmail: text }));
       response = 'What is the PPOC\'s **Address**? (Street Address, City, State, Zip) (Type **"same"** if same as physical location)';
       setSignupStep(129);
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 129) {
       const ppocAddr = lower.includes('same') ? businessData.physicalAddress : text;
       setBusinessData(prev => ({ ...prev, ppocAddress: ppocAddr }));
@@ -5225,6 +5309,9 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       } else {
         response = 'Please answer **Yes** or **No**. Do you confirm all attestations?';
       }
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 131) {
       const requiredDocs = getRequiredDocuments();
       const uploadedCount = Object.keys(uploadedDocuments).length;
@@ -5237,7 +5324,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
           } else {
             // Skip to review step
             response = '✅ **All Documents Uploaded!**\n\nNow that we have finished your application, you will receive a callback to **REVIEW** application to ensure 1st time approval accuracy, then **PAY** your state fee and then **SUBMIT** your application for state approval of business license.\n\nPlease review your complete application below.';
-            setSignupStep(134);
+            setSignupStep(133.5);
           }
         } else {
           const missing = requiredDocs.filter(d => !uploadedDocuments[d]);
@@ -5246,16 +5333,19 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       } else {
         response = `Please use the **Document Upload Center** above to upload your required documents. You have uploaded **${uploadedCount}/${requiredDocs.length}** so far.`;
       }
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 132) {
       const num = parseInt(text.trim());
       if (num === 1) {
         setBusinessData(prev => ({ ...prev, bondType: 'Surety Bond' }));
         response = '📎 Please upload your **Surety Bond documentation** using the attachment icon, or type **"continue"** to proceed.\n\nNow that we have finished your application, you will receive a callback to **REVIEW** application to ensure 1st time approval accuracy, then **PAY** your state fee and then **SUBMIT** your application for state approval of business license.\n\nPlease review your complete application below.';
-        setSignupStep(134);
+        setSignupStep(133.5);
       } else if (num === 2) {
         setBusinessData(prev => ({ ...prev, bondType: 'Land Ownership (5+ years)' }));
         response = '📎 Please upload **Attestation of Land Ownership** and **documentation verifying land ownership for at least 5 years** using the attachment icon, or type **"continue"** to proceed.\n\nNow that we have finished your application, you will receive a callback to **REVIEW** application to ensure 1st time approval accuracy, then **PAY** your state fee and then **SUBMIT** your application for state approval of business license.\n\nPlease review your complete application below.';
-        setSignupStep(134);
+        setSignupStep(133.5);
       } else {
         response = 'Please reply with **1** (Surety Bond) or **2** (Land Ownership).';
         setMessages(prev => [...prev, { 
