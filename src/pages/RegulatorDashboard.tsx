@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ShadowOverlay } from '../components/shared/ShadowOverlay';
 import { Calendar, Building2, Users, FileText, Settings, Shield, Activity, Bell,
   Briefcase, HeartPulse, Scale, Gavel, FileCheck, Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,

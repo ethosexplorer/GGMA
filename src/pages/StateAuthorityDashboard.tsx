@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ShadowOverlay } from '../components/shared/ShadowOverlay';
 import { Calendar, Building2, ShieldCheck, Landmark, FileCheck, DollarSign, Activity, 
   Map as MapIcon, Settings, Download, Search, AlertCircle, FileText, XCircle,
   TrendingUp, Users, ShieldAlert, Bot, HelpCircle, Gavel, Scale, Clock, LogOut, Lock, CircleCheck, Sparkles, CreditCard } from 'lucide-react';

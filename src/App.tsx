@@ -1566,10 +1566,10 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
                 <button key={role.label} onClick={() => {
                     if (role.tier === 'patient') {
                       onNavigate('larry-chatbot' as any, 'ggma-patient');
-                    } else if (role.tier === 'business') {
-                      onNavigate('business-signup' as any);
+                    } else if (role.tier === 'agency') {
+                      onNavigate('larry-chatbot' as any, 'rip');
                     } else {
-                      onNavigate('role-pricing' as any, role.tier);
+                      onNavigate('larry-chatbot' as any, role.tier);
                     }
                 }} className="group bg-white/5 backdrop-blur-md border border-white/15 rounded-2xl p-6 text-center hover:bg-white/15 hover:border-emerald-400/50 hover:scale-[1.03] transition-all duration-300 w-36 sm:w-40 md:w-44 flex-shrink-0">
                   <div className="text-3xl mb-3">{role.icon}</div>
@@ -3011,7 +3011,7 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
 // --- L.A.R.R.Y AI Chatbot for Med Card / Business License Assistance ---
 export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card', userProfile, jurisdiction = 'Oklahoma', activeRole }: any) => {
   const [isBusiness, setIsBusiness] = useState(variant === 'business');
-  const isGeneral = variant === 'general' || variant === 'ggma' || variant === 'ggma-patient' || variant === 'rip' || variant === 'sinc';
+  const isGeneral = variant === 'general' || variant === 'ggma' || variant === 'ggma-patient' || variant === 'rip' || variant === 'sinc' || variant === 'provider' || variant === 'government' || variant === 'advocate';
   
   const currentRole = activeRole || userProfile?.role;
   const emailLower = userProfile?.email?.toLowerCase() || '';
@@ -3034,6 +3034,9 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     if (variant === 'ggma-patient') return `👋 Welcome to the **GGMA Sector**. I am **Sylara**, your **Intake Agent**. We are an official **${metrcStatus}**. I handle all regulatory onboarding, medical card processing, and registry management for patients across all states.\n\nHow can I assist with your GGMA licensing today?`;
     if (variant === 'rip') return `🕵️ **RIP Intelligence Portal**. I am **Sylara**, coordinating with the **L.A.R.R.Y Enforcement Engine**. Due to the highly sensitive nature of intelligence and enforcement operations, I can only provide basic guidance here. For secure access to field reports or oversight actions, you must create an official account. \n\nWould you like to begin intake?`;
     if (variant === 'sinc') return `🛡️ **SINC Compliance Infrastructure**. I am **Sylara**, managing your secure operational backbone. Because SINC handles encrypted audit trails and seed-to-sale architecture, deep access requires an authenticated business account. \n\nWould you like to begin business intake?`;
+    if (variant === 'provider') return `👋 Welcome to the **Provider Sector**. I am **Sylara**, your **Intake Agent**. I handle all regulatory onboarding and network integration for medical providers, clinics, and telehealth professionals.\n\nHow can I assist your practice today?`;
+    if (variant === 'government') return `🏛️ Welcome to the **Government & Policy Sector**. I am **Sylara**, coordinating with **L.A.R.R.Y.** (Legal Authority & Regulatory Rules Yield). I can assist with policy analysis, economic impact data, and regulatory integration.\n\nHow can I assist your office today?`;
+    if (variant === 'advocate') return `🤝 Welcome to the **Advocacy & Health Sector**. I am **Sylara**. I can provide resources on health impact, community polling, and social equity programs.\n\nHow can I support your advocacy efforts today?`;
     
     if (isBusiness) return `👋 Hello! I am **Sylara** — your **Intake & Support Agent**. Global Green Enterprise Inc is now a **${metrcStatus}**. I'm here to guide you through **Cannabis Business Licensing** and handle your initial onboarding. Once we complete intake, your file routes to **L.A.R.R.Y** (Compliance Engine) for operational processing, and **Monica Green** (Compliance Director) for human review. \n\nHow can I assist your business today?`;
     
@@ -3051,6 +3054,9 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     if (variant === 'ggma-patient') return ['Start Patient Intake', 'View Patient Fee Schedule', 'Book Physician ($45)', 'View Subscription Plans'];
     if (variant === 'rip') return ['Field Intelligence Report', 'Background Verification Check', 'Enforcement Status Inquiry', 'Compliance Audit Request', 'Contact Oversight Division', 'View State Authority Plans'];
     if (variant === 'sinc') return ['Start Business Intake', '🏛️ DEA Schedule III Registration', 'Audit Shield Setup', 'Seed-to-Sale Compliance', 'Network Integrity Check', 'View Business Fee Schedule'];
+    if (variant === 'provider') return ['Start Provider Onboarding', 'View Licensing Requirements', 'Network Integration', 'View Subscription Plans'];
+    if (variant === 'government') return ['Request Policy Brief', 'View Economic Impact Data', 'Regulatory Integration Inquiry'];
+    if (variant === 'advocate') return ['View Community Polling', 'Social Equity Programs', 'Health Impact Resources'];
     
     if (isBusiness) return ['Start Business Intake', '🏛️ DEA Schedule III Registration', 'View Business Fee Schedule', 'Speak with Business Expert', 'View Subscription Plans'];
     if (isGeneral) return [

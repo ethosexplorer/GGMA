@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React,
+  { useState } from 'react';
+import { ShadowOverlay } from '../components/shared/ShadowOverlay';
+import { useState, useEffect } from 'react';
 import { useDraggableSidebar } from '../hooks/useDraggableSidebar';
 import { Wallet, Users, Building2, Shield, Clock, TrendingUp, Plus, LayoutDashboard, CreditCard, PackageSearch, AlertCircle, ShoppingCart, Loader2, Trash2, Edit2, CheckCircle, XCircle, Sparkles, MapPin, BarChart2, Activity, MessageSquare, LogOut, FileText, ClipboardList, CheckSquare, UploadCloud, Calendar, Zap, AlertTriangle, Database, Gavel, ArrowRight, ArrowLeft, Send } from 'lucide-react';
 import { cn } from '../lib/utils';
@@ -408,7 +411,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
       </div>
       
       <div className="flex overflow-x-auto gap-2 p-1.5 bg-slate-100/60 rounded-3xl w-full xl:w-auto border border-slate-200/50" style={{ scrollbarWidth: 'thin', scrollbarColor: '#94a3b8 transparent' }}>
-        {bizTabs.filter(tab => isSubscribed).map((tab, index) => {
+        {bizTabs.map((tab, index) => {
           // Special color styling for certain tabs
           const isActive = activeTab === tab.id;
           const specialActive = tab.id === 'compliance' && isActive ? 'bg-white text-amber-600 shadow-sm shadow-slate-200/50'
@@ -446,7 +449,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
           onClick={() => navigateTab('subscription')}
           className={cn("px-5 py-2.5 rounded-2xl text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap", activeTab === 'subscription' ? "bg-amber-500 bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md shadow-amber-500/20" : "text-slate-500 hover:text-amber-600 hover:bg-slate-200/50")}
         >
-          <Sparkles size={18} /> Settings
+          <Sparkles size={18} /> Membership
         </button>
         
       </div>
@@ -464,7 +467,21 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
     )}
 
     {/* HOME TAB - PERFORMANCE DESIGN */}
-    {activeTab === 'home' && (
+    
+      <div className="relative min-h-[600px] flex-1 flex flex-col">
+        {!isSubscribed && activeTab !== 'applications' && activeTab !== 'subscription' && (
+           <ShadowOverlay 
+              title="Premium Feature" 
+              description="Unlock this operational feature by starting your 30-Day Free Trial."
+              moduleName="Live Access"
+              onUpgrade={() => {
+                if (typeof setActiveTab === 'function') setActiveTab('subscription');
+                else if (typeof navigateTab === 'function') navigateTab('subscription');
+              }}
+           />
+        )}
+        <div className={cn("flex-1 transition-all duration-300", !isSubscribed && activeTab !== 'applications' && activeTab !== 'subscription' && "blur-md pointer-events-none")}>
+          {activeTab === 'home' && (
       <div className="space-y-6">
         <StateWelcomeBanner jurisdiction={jurisdiction} type="business" />
         
@@ -1687,5 +1704,8 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
         </div>
       </div>
     )}
-  </div>
+  
+        </div>
+      </div>
+      </div>
 )};

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ShadowOverlay } from '../components/shared/ShadowOverlay';
 import { useDraggableSidebar } from '../hooks/useDraggableSidebar';
 import { Shield, Scale, Briefcase, FileText, Search, BookOpen, Clock, AlertTriangle, 
   ChevronRight, Lock, Unlock, Zap, BarChart2, Bell, MessageSquare, CreditCard,
