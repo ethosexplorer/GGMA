@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { loadStripe } from '@stripe/stripe-js';
 import { CreditCard, Shield, Settings, Zap, FileText, Plus, Sparkles, ArrowRight, Check, ChevronDown, ChevronUp, CircleCheck } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { getAllPlansForLookup, getAllAddonsForLookup, AddOn, getAddOnsForRole } from '../lib/subscriptionPlans';
