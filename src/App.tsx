@@ -3011,7 +3011,7 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
 // --- L.A.R.R.Y AI Chatbot for Med Card / Business License Assistance ---
 export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card', userProfile, jurisdiction = 'Oklahoma', activeRole }: any) => {
   const [isBusiness, setIsBusiness] = useState(variant === 'business');
-  const isGeneral = variant === 'general' || variant === 'ggma' || variant === 'ggma-patient' || variant === 'rip' || variant === 'sinc' || variant === 'provider' || variant === 'government' || variant === 'advocate';
+  const isGeneral = variant === 'general' || variant === 'ggma' || variant === 'ggma-patient' || variant === 'rip' || variant === 'sinc' || variant === 'provider' || variant === 'government' || variant === 'political_executive' || variant === 'advocate' || variant === 'advocacy_research' || variant === 'legal' || variant === 'attorney';
   
   const currentRole = activeRole || userProfile?.role;
   const emailLower = userProfile?.email?.toLowerCase() || '';
@@ -3024,19 +3024,19 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     const date = "April 21, 2026";
     const metrcStatus = "Validated Metrc Integrator (Active)";
     
-    if (variant === 'legal') return `⚖️ **Legal & Regulatory Compliance Mode.** I am **L.A.R.R.Y.** (Legal Authority & Regulatory Rules Yield).\n\nI can analyze state statutes, provide interpretation on compliance policies, and assist with legal oversight tasks.\n\nHow can I assist your jurisdiction today?`;
+    if (variant === 'legal' || variant === 'attorney') return `⚖️ **Legal & Regulatory Compliance Mode.** I am **L.A.R.R.Y.** (Legal Authority & Regulatory Rules Yield).\n\nI can analyze state statutes, provide interpretation on compliance policies, and assist with legal oversight tasks.\n\nHow can I assist your jurisdiction today?`;
     
-    if (isRyan && variant !== 'legal') return `🛡️ **CEO Access Authenticated.** Good Morning, Ryan. I am **L.A.R.R.Y.** (Legal Authority & Regulatory Rules Yield).\n\nI am synced with your Supreme Command Dashboard. All operational pipelines, regulatory enforcement sectors, and jurisdictional metrics are fully operational.\n\nHow can I assist with your executive oversight today?`;
-    if (isMonica && variant !== 'legal') return `🛡️ **Compliance Access Authenticated.** Good Morning, Monica! I am **L.A.R.R.Y.** (Legal Authority & Regulatory Rules Yield).\n\nI am synced with your Compliance Dashboard. I have loaded the latest Metrc anomalies, pending license approvals, and state regulatory updates.\n\nHow can I support your compliance sweeps today?`;
-    if (isBob && variant !== 'legal') return `🛡️ **Advisory Access Authenticated.** Good Morning, Bob. I am **L.A.R.R.Y.** (Legal Authority & Regulatory Rules Yield).\n\nI am synced with your Executive Advisory Dashboard. All regulatory analytics and compliance models are updated for your review.\n\nHow can I assist your analysis today?`;
-    if (isFounderAssistant && variant !== 'legal' && variant !== 'business') return `✨ **Good Morning, Shantell!** I am **Sylara**, your **Executive Personal Assistant**.\n\nAs your mirror AI, I am fully synced with your Founder Dashboard. I have prepared your daily summaries, state news, and upcoming appointments.\n\nHow can I support your schedule and oversight duties today?`;
+    if (isRyan && variant !== 'legal' && variant !== 'attorney') return `🛡️ **CEO Access Authenticated.** Good Morning, Ryan. I am **L.A.R.R.Y.** (Legal Authority & Regulatory Rules Yield).\n\nI am synced with your Supreme Command Dashboard. All operational pipelines, regulatory enforcement sectors, and jurisdictional metrics are fully operational.\n\nHow can I assist with your executive oversight today?`;
+    if (isMonica && variant !== 'legal' && variant !== 'attorney') return `🛡️ **Compliance Access Authenticated.** Good Morning, Monica! I am **L.A.R.R.Y.** (Legal Authority & Regulatory Rules Yield).\n\nI am synced with your Compliance Dashboard. I have loaded the latest Metrc anomalies, pending license approvals, and state regulatory updates.\n\nHow can I support your compliance sweeps today?`;
+    if (isBob && variant !== 'legal' && variant !== 'attorney') return `🛡️ **Advisory Access Authenticated.** Good Morning, Bob. I am **L.A.R.R.Y.** (Legal Authority & Regulatory Rules Yield).\n\nI am synced with your Executive Advisory Dashboard. All regulatory analytics and compliance models are updated for your review.\n\nHow can I assist your analysis today?`;
+    if (isFounderAssistant && variant !== 'legal' && variant !== 'attorney' && variant !== 'business') return `✨ **Good Morning, Shantell!** I am **Sylara**, your **Executive Personal Assistant**.\n\nAs your mirror AI, I am fully synced with your Founder Dashboard. I have prepared your daily summaries, state news, and upcoming appointments.\n\nHow can I support your schedule and oversight duties today?`;
     if (variant === 'ggma') return `👋 Welcome to the **GGMA Sector**. I am **Sylara**, your **Intake Agent**. We are an official **${metrcStatus}**. I handle all regulatory onboarding, card processing, and registry management. \n\nHow can I assist with your GGMA licensing today?`;
     if (variant === 'ggma-patient') return `👋 Welcome to the **GGMA Sector**. I am **Sylara**, your **Intake Agent**. We are an official **${metrcStatus}**. I handle all regulatory onboarding, medical card processing, and registry management for patients across all states.\n\nHow can I assist with your GGMA licensing today?`;
     if (variant === 'rip') return `🕵️ **RIP Intelligence Portal**. I am **Sylara**, coordinating with the **L.A.R.R.Y Enforcement Engine**. Due to the highly sensitive nature of intelligence and enforcement operations, I can only provide basic guidance here. For secure access to field reports or oversight actions, you must create an official account. \n\nWould you like to begin intake?`;
     if (variant === 'sinc') return `🛡️ **SINC Compliance Infrastructure**. I am **Sylara**, managing your secure operational backbone. Because SINC handles encrypted audit trails and seed-to-sale architecture, deep access requires an authenticated business account. \n\nWould you like to begin business intake?`;
     if (variant === 'provider') return `👋 Welcome to the **Provider Sector**. I am **Sylara**, your **Intake Agent**. I handle all regulatory onboarding and network integration for medical providers, clinics, and telehealth professionals.\n\nHow can I assist your practice today?`;
-    if (variant === 'government') return `🏛️ Welcome to the **Government & Policy Sector**. I am **Sylara**, coordinating with **L.A.R.R.Y.** (Legal Authority & Regulatory Rules Yield). I can assist with policy analysis, economic impact data, and regulatory integration.\n\nHow can I assist your office today?`;
-    if (variant === 'advocate') return `🤝 Welcome to the **Advocacy & Health Sector**. I am **Sylara**. I can provide resources on health impact, community polling, and social equity programs.\n\nHow can I support your advocacy efforts today?`;
+    if (variant === 'government' || variant === 'political_executive') return `🏛️ Welcome to the **Government & Policy Sector**. I am **Sylara**, coordinating with **L.A.R.R.Y.** (Legal Authority & Regulatory Rules Yield). I can assist with policy analysis, economic impact data, and regulatory integration.\n\nHow can I assist your office today?`;
+    if (variant === 'advocate' || variant === 'advocacy_research') return `🤝 Welcome to the **Advocacy & Health Sector**. I am **Sylara**. I can provide resources on health impact, community polling, and social equity programs.\n\nHow can I support your advocacy efforts today?`;
     
     if (isBusiness) return `👋 Hello! I am **Sylara** — your **Intake & Support Agent**. Global Green Enterprise Inc is now a **${metrcStatus}**. I'm here to guide you through **Cannabis Business Licensing** and handle your initial onboarding. Once we complete intake, your file routes to **L.A.R.R.Y** (Compliance Engine) for operational processing, and **Monica Green** (Compliance Director) for human review. \n\nHow can I assist your business today?`;
     
@@ -3046,7 +3046,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
   };
 
   const getInitialChoices = () => {
-    if (variant === 'legal') return ['Analyze Jurisdictional Statute', 'Review Compliance Violation', 'Generate Cease & Desist', 'View State Guidelines'];
+    if (variant === 'legal' || variant === 'attorney') return ['Analyze Jurisdictional Statute', 'Review Compliance Violation', 'Generate Cease & Desist', 'View State Guidelines'];
     if (isRyan && variant !== 'legal') return ['View Global Operations', 'Enforcement Status', 'Metrc API Health', 'Jurisdiction Overrides'];
     if (isMonica && variant !== 'legal') return ['Run Compliance Sweep', 'Metrc Anomalies', 'Pending Applications', 'Audit Logs'];
     if (isBob && variant !== 'legal') return ['Review Financial Anomalies', 'Compliance Impact Report', 'Regulatory Forecasting'];
@@ -3055,8 +3055,8 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     if (variant === 'rip') return ['Field Intelligence Report', 'Background Verification Check', 'Enforcement Status Inquiry', 'Compliance Audit Request', 'Contact Oversight Division', 'View State Authority Plans'];
     if (variant === 'sinc') return ['Start Business Intake', '🏛️ DEA Schedule III Registration', 'Audit Shield Setup', 'Seed-to-Sale Compliance', 'Network Integrity Check', 'View Business Fee Schedule'];
     if (variant === 'provider') return ['Start Provider Onboarding', 'View Licensing Requirements', 'Network Integration', 'View Subscription Plans'];
-    if (variant === 'government') return ['Request Policy Brief', 'View Economic Impact Data', 'Regulatory Integration Inquiry'];
-    if (variant === 'advocate') return ['View Community Polling', 'Social Equity Programs', 'Health Impact Resources'];
+    if (variant === 'government' || variant === 'political_executive') return ['Request Policy Brief', 'View Economic Impact Data', 'Regulatory Integration Inquiry'];
+    if (variant === 'advocate' || variant === 'advocacy_research') return ['View Community Polling', 'Social Equity Programs', 'Health Impact Resources'];
     
     if (isBusiness) return ['Start Business Intake', '🏛️ DEA Schedule III Registration', 'View Business Fee Schedule', 'Speak with Business Expert', 'View Subscription Plans'];
     if (isGeneral) return [
