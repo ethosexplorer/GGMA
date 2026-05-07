@@ -4245,7 +4245,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         setSignupStep(99);
         setIsTyping(false);
         return;
-      } else if (lower.includes('yes, i have my documents') || lower.includes('upload them later') || lower.includes('yes, start') || lower.includes('start')) {
+      } else if (lower.includes('yes, i have my documents') || lower.includes('upload them later') || lower.includes('start patient intake') || lower === 'start' || lower === 'yes, start') {
         response = 'Great! Your progress is being securely saved.\n\nNext question: Do you need a **Doctor Recommendation**, or do you already have one?\n\n*(Note: If you already have one, please have the exact date ready. Recommendations expire 30 days from the visit date, and OMMA processing can take up to 14+ days. We want to ensure your recommendation does not expire during state review, which would cause a denial.)*';
         setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['I need a Doctor Recommendation', 'I already have a Recommendation'] } as any]);
         setSignupStep(1001);
