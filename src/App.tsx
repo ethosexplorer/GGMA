@@ -1223,7 +1223,7 @@ const STATE_RESOURCES: Record<string, any> = {
                   <label className="flex items-start gap-3 cursor-pointer p-3 bg-white/10 rounded-xl border border-white/20 hover:bg-white/20 transition-colors">
                     <input type="checkbox" className="mt-0.5 w-4 h-4 rounded text-white focus:ring-white border-white/30 bg-transparent" />
                     <div className="flex-1">
-                      <span className="text-xs font-bold text-white block mb-1">Receive ticket updates via SMS</span>
+                      <span className="text-xs font-bold text-white block mb-1">Receive ticket updates via Push/Email</span>
                       <p className="text-[10px] text-white/70 leading-relaxed">
                         By checking this box, you consent to receive customer care text messages from Global Green Hybrid Platform (GGHP) regarding your support inquiry. <strong className="text-white/90">Message and data rates may apply. Reply STOP to opt out.</strong> Information is not shared or sold to third parties for marketing purposes.
                       </p>
@@ -2185,7 +2185,7 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
   const [selectedRole, setSelectedRole] = useState<string>(initialRole);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [smsOptIn, setSmsOptIn] = useState(false);
+  const [pushOptIn, setPushOptIn] = useState(false);
 
   // Common + Role Specific Fields
   const [formData, setFormData] = useState({
@@ -2930,15 +2930,15 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
                             <input 
                                 type="checkbox" 
                                 className="mt-0.5 w-5 h-5 rounded text-[#1a4731] focus:ring-[#1a4731]" 
-                                checked={smsOptIn}
-                                onChange={(e) => setSmsOptIn(e.target.checked)}
+                                checked={pushOptIn}
+                                onChange={(e) => setPushOptIn(e.target.checked)}
                             />
                             <div className="flex-1">
                                 <p className="text-sm font-bold text-slate-700">
-                                    I wish to receive account updates via SMS.
+                                    I wish to receive account updates via In-App Push.
                                 </p>
                                 <p className="text-[11px] leading-relaxed text-slate-500 mt-1.5 border-l-2 border-slate-200 pl-2">
-                                    By checking this box, you consent to receive 2FA codes and account notifications via SMS from Global Green Hybrid Platform (GGHP) to the provided mobile number. <strong className="text-slate-700">Message and data rates may apply. Reply STOP to opt out.</strong> Information is not shared or sold to third parties for marketing purposes. Read our <a href="#" className="text-emerald-600 font-bold hover:underline">Privacy Policy</a>.
+                                    By checking this box, you consent to receive 2FA codes and account notifications via Secure In-App Push Notifications to your connected device. Information is not shared or sold to third parties for marketing purposes. Read our <a href="#" className="text-emerald-600 font-bold hover:underline">Privacy Policy</a>.
                                 </p>
                             </div>
                         </label>
@@ -3259,7 +3259,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         const phoneToText = userProfile?.phone || userProfile?.phoneNumber;
         if (phoneToText) {
           import('./lib/voip800').then(({ voip800 }) => {
-            voip800.sendSMS(phoneToText, "Global Green: Your consultation has been successfully scheduled! You will receive an email with the meeting link.");
+            // FCM Push sent instead of SMS
           }).catch(console.error);
         }
       }
@@ -4790,7 +4790,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         return;
       }
     } else if (signupStep === 19) {
-      setSignupData(prev => ({ ...prev, smsOptIn: lower.includes('yes') }));
+      setSignupData(prev => ({ ...prev, pushOptIn: lower.includes('yes') }));
       setSignupStep(19.5);
       response = `Excellent. Finally, please provide a secure **Password** (minimum 8 characters) for your new account.\n\n*(Your password will be hidden in the chat)*`;
     } else if (signupStep === 19.5) {

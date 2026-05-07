@@ -4,9 +4,9 @@ import { motion } from 'framer-motion';
 
 export const SettingsPreferencesMockup = () => {
   const [preferences, setPreferences] = useState({
-    deliverySms: true,
-    securitySms: true,
-    psaSms: true,
+    deliveryPush: true,
+    securityPush: true,
+    psaPush: true,
     emailMarketing: false
   });
 
@@ -59,11 +59,11 @@ export const SettingsPreferencesMockup = () => {
                     <input 
                       type="checkbox" 
                       className="mt-0.5 w-5 h-5 rounded text-[#1a4731] focus:ring-[#1a4731]" 
-                      checked={preferences.deliverySms}
-                      onChange={(e) => setPreferences({...preferences, deliverySms: e.target.checked})}
+                      checked={preferences.deliveryPush}
+                      onChange={(e) => setPreferences({...preferences, deliveryPush: e.target.checked})}
                     />
                     <div>
-                      <span className="text-sm font-bold text-slate-800 block">Opt-in to Delivery SMS Alerts</span>
+                      <span className="text-sm font-bold text-slate-800 block">Opt-in to Delivery Push Alerts</span>
                       <p className="text-xs text-slate-500 mt-1 leading-relaxed">
                         By checking this box, you consent to receive order and delivery status text messages from Global Green Hybrid Platform (GGHP) to your registered mobile number. <strong className="text-slate-700">Message and data rates may apply. Reply STOP to opt out.</strong> See our <a href="#" className="text-emerald-600 hover:underline">Privacy Policy</a>.
                       </p>
@@ -87,11 +87,11 @@ export const SettingsPreferencesMockup = () => {
                     <input 
                       type="checkbox" 
                       className="mt-0.5 w-5 h-5 rounded text-[#1a4731] focus:ring-[#1a4731]" 
-                      checked={preferences.securitySms}
-                      onChange={(e) => setPreferences({...preferences, securitySms: e.target.checked})}
+                      checked={preferences.securityPush}
+                      onChange={(e) => setPreferences({...preferences, securityPush: e.target.checked})}
                     />
                     <div>
-                      <span className="text-sm font-bold text-slate-800 block">Opt-in to Security SMS Alerts</span>
+                      <span className="text-sm font-bold text-slate-800 block">Opt-in to Security Push Alerts</span>
                       <p className="text-xs text-slate-500 mt-1 leading-relaxed">
                         By checking this box, you consent to receive critical security and account integrity text messages from Global Green Hybrid Platform (GGHP). <strong className="text-slate-700">Message and data rates may apply. Reply STOP to opt out.</strong> We never share your data with 3rd parties for marketing purposes.
                       </p>
@@ -115,11 +115,11 @@ export const SettingsPreferencesMockup = () => {
                     <input 
                       type="checkbox" 
                       className="mt-0.5 w-5 h-5 rounded text-[#1a4731] focus:ring-[#1a4731]" 
-                      checked={preferences.psaSms}
-                      onChange={(e) => setPreferences({...preferences, psaSms: e.target.checked})}
+                      checked={preferences.psaPush}
+                      onChange={(e) => setPreferences({...preferences, psaPush: e.target.checked})}
                     />
                     <div>
-                      <span className="text-sm font-bold text-slate-800 block">Opt-in to PSA SMS Alerts</span>
+                      <span className="text-sm font-bold text-slate-800 block">Opt-in to PSA Push Alerts</span>
                       <p className="text-xs text-slate-500 mt-1 leading-relaxed">
                         By checking this box, you consent to receive public service and regulatory update text messages from Global Green Hybrid Platform (GGHP). <strong className="text-slate-700">Message and data rates may apply. Reply STOP to opt out.</strong> See our <a href="#" className="text-emerald-600 hover:underline">Privacy Policy</a>.
                       </p>

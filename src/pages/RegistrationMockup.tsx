@@ -80,10 +80,10 @@ export const RegistrationMockup = () => {
               </div>
               <div className="flex-1">
                 <p className="text-sm font-bold text-slate-700 select-none" onClick={() => setAgreed(!agreed)}>
-                  I wish to receive account updates via SMS.
+                  I wish to receive account updates via In-App Push.
                 </p>
                 <p className="text-[11px] leading-relaxed text-slate-500 mt-1.5 select-none border-l-2 border-slate-200 pl-2">
-                  By checking this box, you consent to receive 2FA codes and account notifications via SMS from Global Green Hybrid Platform (GGHP) to the provided mobile number. <strong className="text-slate-700">Message and data rates may apply. Reply STOP to opt out.</strong> Information is not shared or sold to third parties for marketing purposes. Read our <a href="#" className="text-emerald-600 font-bold hover:underline">Privacy Policy</a>.
+                  By checking this box, you consent to receive 2FA codes and account notifications via Secure In-App Push Notifications to your connected device. Information is not shared or sold to third parties for marketing purposes. Read our <a href="#" className="text-emerald-600 font-bold hover:underline">Privacy Policy</a>.
                 </p>
               </div>
             </label>

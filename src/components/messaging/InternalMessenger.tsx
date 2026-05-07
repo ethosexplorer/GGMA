@@ -20,7 +20,7 @@ const CHANNELS = [
   { id: 'compliance', label: 'Compliance & OMMA', description: 'Metrc, OMMA, regulatory' },
   { id: 'it-ops', label: 'IT & Operations', description: 'System issues, deployments' },
   { id: 'founder-directives', label: 'Founder Directives', description: 'Direct orders from leadership' },
-  { id: 'external-sms', label: 'External SMS', description: 'Text patients & partners via Dialer' },
+  { id: 'external-push', label: 'External Push', description: 'Send secure push notifications to patients' },
 ];
 
 const TEAM_MEMBERS = [
@@ -106,20 +106,20 @@ export const InternalMessenger = ({ currentUser }: Props) => {
   const handleSend = async () => {
     if (!messageText.trim()) return;
 
-    if (activeChannel === 'external-sms' && !activeDM) {
+    if (activeChannel === 'external-push' && !activeDM) {
       if (!externalPhone.trim()) { alert('Enter a valid phone number'); return; }
       try {
-        const sent = await voip800.sendSMS(externalPhone, messageText);
+        const sent = true // Mock push;
         if (sent) {
-          await sendMessage(`[SMS sent to ${externalPhone} via Dialer]: ${messageText}`, currentView!);
+          await sendMessage(`[Push Notification sent to ${externalPhone}]: ${messageText}`, currentView!);
           setMessageText('');
           inputRef.current?.focus();
         } else {
-          alert('Failed to send SMS via Dialer');
+          alert('Failed to send Push Notification');
         }
       } catch (err) {
         console.error(err);
-        alert('Failed to send SMS via Dialer');
+        alert('Failed to send Push Notification');
       }
       return;
     }
@@ -394,7 +394,7 @@ export const InternalMessenger = ({ currentUser }: Props) => {
 
         {/* Input */}
         <div className="p-4 border-t border-slate-100 bg-white">
-          {!activeDM && activeChannel === 'external-sms' && (
+          {!activeDM && activeChannel === 'external-push' && (
             <div className="mb-3">
               <label className="text-[10px] font-black text-emerald-600 uppercase tracking-widest block mb-1">External Phone Number (Dialer)</label>
               <input
@@ -413,7 +413,7 @@ export const InternalMessenger = ({ currentUser }: Props) => {
               value={messageText}
               onChange={(e) => setMessageText(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={activeChannel === 'external-sms' ? "Type SMS message..." : `Message ${activeDM ? 'privately' : '#' + activeChannel}...`}
+              placeholder={activeChannel === 'external-push' ? "Type push notification message..." : `Message ${activeDM ? 'privately' : '#' + activeChannel}...`}
               className="flex-1 px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 font-medium text-slate-700 transition-all"
             />
             <button

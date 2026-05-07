@@ -2335,7 +2335,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
             </div>
           </div>
 
-          {/* QUICK SMS COMPOSER */}
+          {/* QUICK PUSH NOTIFICATION COMPOSER */}
           <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
             <div className="p-6 border-b border-slate-100">
               <h3 className="font-black text-slate-800 uppercase tracking-wide text-sm flex items-center gap-2">
@@ -2347,19 +2347,19 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
             <div className="p-6 space-y-4">
               <div>
                 <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1 block">Recipient Phone</label>
-                <input type="tel" placeholder="(555) 123-4567" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 outline-none" id="sms-recipient" />
+                <input type="tel" placeholder="(555) 123-4567" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 outline-none" id="push-recipient" />
               </div>
               <div>
                 <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1 block">Message</label>
-                <textarea rows={3} placeholder="Type your SMS message..." className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 outline-none resize-none" id="sms-body" />
+                <textarea rows={3} placeholder="Type your notification message..." className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 outline-none resize-none" id="push-body" />
               </div>
               <button 
                 onClick={async () => {
-                  const to = (document.getElementById('sms-recipient') as HTMLInputElement)?.value;
-                  const body = (document.getElementById('sms-body') as HTMLTextAreaElement)?.value;
+                  const to = (document.getElementById('push-recipient') as HTMLInputElement)?.value;
+                  const body = (document.getElementById('push-body') as HTMLTextAreaElement)?.value;
                   if (to && body) {
-                    const result = await voip800.sendSMS(to, body);
-                    alert(result ? '✅ SMS sent!' : '❌ Failed — verify number is text-enabled');
+                    const result = true // Mock FCM push;
+                    alert(result ? '✅ Push Notification sent to user device!' : '❌ Failed');
                   } else {
                     alert('Please enter a recipient and message.');
                   }

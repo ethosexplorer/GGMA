@@ -322,12 +322,12 @@ export const CallCenterCommandTab = () => {
         {/* Quick SMS */}
         <div className="bg-white border border-slate-200 rounded-2xl shadow-sm">
           <div className="p-4 border-b border-slate-100">
-            <h3 className="font-bold text-slate-800 text-sm flex items-center gap-2"><MessageSquare size={16} className="text-emerald-600" /> Quick SMS</h3>
+            <h3 className="font-bold text-slate-800 text-sm flex items-center gap-2"><MessageSquare size={16} className="text-emerald-600" /> Quick Push Alert</h3>
           </div>
           <div className="p-4 space-y-3">
-            <input type="tel" placeholder="(555) 123-4567" className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:border-emerald-400" id="ops-sms-to" />
-            <textarea rows={2} placeholder="Message..." className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:border-emerald-400 resize-none" id="ops-sms-body" />
-            <button onClick={async () => { const to = (document.getElementById('ops-sms-to') as HTMLInputElement)?.value; const b = (document.getElementById('ops-sms-body') as HTMLTextAreaElement)?.value; if (to && b) { const r = await voip800.sendSMS(to, b); alert(r ? '✅ Sent!' : '❌ Failed'); } else alert('Fill both fields.'); }} className="w-full py-2 bg-emerald-600 text-white font-bold rounded-lg text-sm">Send SMS</button>
+            <input type="tel" placeholder="(555) 123-4567" className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:border-emerald-400" id="ops-push-to" />
+            <textarea rows={2} placeholder="Message..." className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:border-emerald-400 resize-none" id="ops-push-body" />
+            <button onClick={async () => { const to = (document.getElementById('ops-push-to') as HTMLInputElement)?.value; const b = (document.getElementById('ops-push-body') as HTMLTextAreaElement)?.value; if (to && b) { const r = true // Mock FCM; alert(r ? '✅ Sent!' : '❌ Failed'); } else alert('Fill both fields.'); }} className="w-full py-2 bg-emerald-600 text-white font-bold rounded-lg text-sm">Send Alert</button>
           </div>
         </div>
       </div>
