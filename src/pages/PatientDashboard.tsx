@@ -200,22 +200,31 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
       <AnimatePresence mode="wait">
         {/* ─── OVERVIEW TAB ─── */}
         {activeTab === 'calendar' && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden min-h-[700px] flex flex-col">
-            <div className="p-8 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
-               <div>
-                 <h2 className="text-3xl font-black text-slate-800 tracking-tight">Schedule an Appointment</h2>
-                 <p className="text-slate-500 font-medium mt-1">Book your telehealth or in-person visit below.</p>
-               </div>
-            </div>
-            <div className="flex-1 w-full bg-white relative">
-               <iframe 
-                  src="https://calendly.com/globalgreenhpmeet/health-wellness-consultation?embed_domain=globalgreen.com&embed_type=Inline" 
-                  width="100%" 
-                  height="100%" 
-                  frameBorder="0" 
-                  className="absolute inset-0"
-                  title="Calendly Scheduling Page"
-               ></iframe>
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden min-h-[700px] flex flex-col relative">
+            {!isSubscribed && (
+              <ShadowOverlay 
+                title="My Calendar" 
+                description="Unlock the ability to book and manage telehealth appointments." 
+                moduleName="Calendar"
+              />
+            )}
+            <div className={cn("flex-1 flex flex-col", !isSubscribed && "blur-md pointer-events-none")}>
+              <div className="p-8 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                 <div>
+                   <h2 className="text-3xl font-black text-slate-800 tracking-tight">Schedule an Appointment</h2>
+                   <p className="text-slate-500 font-medium mt-1">Book your telehealth or in-person visit below.</p>
+                 </div>
+              </div>
+              <div className="flex-1 w-full bg-white relative">
+                 <iframe 
+                    src="https://calendly.com/globalgreenhpmeet/health-wellness-consultation?embed_domain=globalgreen.com&embed_type=Inline" 
+                    width="100%" 
+                    height="100%" 
+                    frameBorder="0" 
+                    className="absolute inset-0"
+                    title="Calendly Scheduling Page"
+                 ></iframe>
+              </div>
             </div>
           </motion.div>
         )}
@@ -521,26 +530,44 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
 
         {/* ─── COMMUNITY VOICE TAB ─── */}
         {activeTab === 'community' && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-            <div className="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-3xl p-8 text-white">
-              <h2 className="text-3xl font-black tracking-tight mb-2">Community Voice</h2>
-              <p className="text-purple-100/80 font-medium">Your voice shapes the future of cannabis regulation. Vote, share, and participate.</p>
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="relative min-h-[600px] space-y-6">
+            {!isSubscribed && (
+              <ShadowOverlay 
+                title="Community Voice" 
+                description="Unlock access to community polling and policy participation." 
+                moduleName="Community Voice"
+              />
+            )}
+            <div className={cn("space-y-6", !isSubscribed && "blur-md pointer-events-none")}>
+              <div className="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-3xl p-8 text-white">
+                <h2 className="text-3xl font-black tracking-tight mb-2">Community Voice</h2>
+                <p className="text-purple-100/80 font-medium">Your voice shapes the future of cannabis regulation. Vote, share, and participate.</p>
+              </div>
+              <FeaturedPoll />
+              <RevolvingSurveyBanner />
             </div>
-            <FeaturedPoll />
-            <RevolvingSurveyBanner />
           </motion.div>
         )}
 
         {/* ─── REGULATORY INTELLIGENCE TAB ─── */}
         {activeTab === 'regulatory' && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-            <div className="bg-gradient-to-r from-emerald-700 to-teal-800 rounded-3xl p-8 text-white">
-              <h2 className="text-3xl font-black tracking-tight mb-2">Cannabis Law Updates</h2>
-              <p className="text-emerald-100/80 font-medium">Live legislative intelligence for your state. Stay informed on laws that affect your care.</p>
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <RegulatoryFeedWidget jurisdiction={undefined} />
-              <RegulatoryFeedWidget jurisdiction="Oklahoma" compact />
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="relative min-h-[600px] space-y-6">
+            {!isSubscribed && (
+              <ShadowOverlay 
+                title="Law Updates" 
+                description="Unlock real-time regulatory intelligence and legal updates." 
+                moduleName="Law Updates"
+              />
+            )}
+            <div className={cn("space-y-6", !isSubscribed && "blur-md pointer-events-none")}>
+              <div className="bg-gradient-to-r from-emerald-700 to-teal-800 rounded-3xl p-8 text-white">
+                <h2 className="text-3xl font-black tracking-tight mb-2">Cannabis Law Updates</h2>
+                <p className="text-emerald-100/80 font-medium">Live legislative intelligence for your state. Stay informed on laws that affect your care.</p>
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <RegulatoryFeedWidget jurisdiction={undefined} />
+                <RegulatoryFeedWidget jurisdiction="Oklahoma" compact />
+              </div>
             </div>
           </motion.div>
         )}
