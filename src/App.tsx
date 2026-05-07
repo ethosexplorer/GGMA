@@ -4251,6 +4251,13 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         setSignupStep(1001);
         setIsTyping(false);
         return;
+      } else if (lower.includes('start business intake')) {
+        setIsBusiness(true);
+        const response = 'dY? Let\'s begin your **Commercial License Application**.\n\n**Section 1: First-Time Registration**\n\nWhat is your **Full Name** (First & Last)? This will be the individual responsible for the account and license information.';
+        setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+        setSignupStep(100);
+        setIsTyping(false);
+        return;
       } else if (lower.includes('reschedule') || lower.includes('return later')) {
         response = 'No problem at all! We will securely store your session. You can return at any time to resume your application via your portal.\n\nHave a wonderful day! 👋';
         setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
