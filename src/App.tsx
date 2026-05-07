@@ -3022,13 +3022,29 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
   
   const getBriefSummary = (v: string) => {
     switch (v) {
-      case 'ggma': case 'ggma-patient': return 'You have selected the **Patient Intake** sector. This process helps you apply for a state medical marijuana card.';
-      case 'business': return 'You have selected the **Business Intake** sector. This process helps commercial entities establish their regulatory profile and apply for state operating licenses.';
-      case 'provider': return 'You have selected the **Provider** sector. This guides medical professionals through our network integration.';
-      case 'legal': case 'attorney': return 'You have selected the **Legal & Attorney** sector. This sector handles regulatory compliance, cease & desists, and general counsel matching.';
-      case 'government': case 'political_executive': return 'You have selected the **Government & Agency** sector. This provides policy data and economic analysis for state officials.';
-      case 'advocate': case 'advocacy_research': return 'You have selected the **Advocate** sector. This provides resources for social equity programs and community polling.';
-      default: return 'You have selected an administrative sector of the Global Green Hybrid Platform.';
+      case 'ggma-patient':
+      case 'patient':
+      case 'ggma':
+        return 'You have selected the **Patient Intake** sector. This process helps individuals register for their state-approved medical cannabis cards, verify eligibility, and book telehealth appointments seamlessly.';
+      case 'sinc':
+      case 'business':
+        return 'You have selected the **Business Intake** sector. This process helps commercial entities establish their regulatory profile, apply for state-approved commercial licenses, and access compliance tools.';
+      case 'provider':
+        return 'You have selected the **Provider Intake** sector. This path is for physicians and clinicians looking to join our verified telehealth network and register with the state board.';
+      case 'rip':
+      case 'law-enforcement':
+        return 'You have selected the **Regulatory/Law Enforcement** portal. This is a restricted gateway for state inspectors, regulators, and enforcement agencies to verify compliance and run reports.';
+      case 'legal':
+      case 'attorney':
+        return 'You have selected the **Legal Representation** sector. This connects you with attorneys for compliance defense, corporate counsel, or patient advocacy matters.';
+      case 'government':
+      case 'political_executive':
+        return 'You have selected the **Government Office** sector. This portal provides municipalities and elected officials with economic impact data and regulatory policy tools.';
+      case 'advocate':
+      case 'advocacy_research':
+        return 'You have selected the **Advocacy & Non-Profit** sector. This portal connects social equity applicants and researchers with community polling and resources.';
+      default:
+        return 'You have selected a specialized intake sector. Let\'s proceed to set up your profile.';
     }
   };
 
@@ -3050,7 +3066,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     if (variant === 'government' || variant === 'political_executive') return `🏛️ Welcome to the **Government & Policy Sector**. I am **Sylara**, coordinating with **L.A.R.R.Y.** (Legal Authority & Regulatory Rules Yield). I can assist with policy analysis, economic impact data, and regulatory integration.\n\nHow can I assist your office today?`;
     if (variant === 'advocate' || variant === 'advocacy_research') return `🤝 Welcome to the **Advocacy & Health Sector**. I am **Sylara**. I can provide resources on health impact, community polling, and social equity programs.\n\nHow can I support your advocacy efforts today?`;
     
-    if (isBusiness) return `👋 Hello! I am **Sylara** — your **Intake & Support Agent**. Global Green Enterprise Inc is now a **${metrcStatus}**. I'm here to guide you through **Cannabis Business Licensing** and handle your initial onboarding. Once we complete intake, your file routes to **L.A.R.R.Y** (Compliance Engine) for operational processing, and **Monica Green** (Compliance Director) for human review. \n\nHow can I assist your business today?`;
+    if (isBusiness) return `👋 Hello! I am **Sylara** — your **Intake & Support Agent**. Global Green Enterprise Inc is now a **${metrcStatus}**. I'm here to guide you through **Cannabis Business Licensing** and handle your initial onboarding. *(You will be creating a **FREE account** today, with options to upgrade to premium tiers later)*. Once we complete intake, your file routes to **L.A.R.R.Y** (Compliance Engine) for operational processing, and **Monica Green** (Compliance Director) for human review. \n\nHow can I assist your business today?`;
     
     if (isGeneral) return `👋 Welcome to the **Global Green Hybrid Platform (GGHP)** Concierge. I am **Sylara**, your Intake Agent. \n\n**Integration Status:** ${metrcStatus}.\n\nI handle all initial intake & onboarding across the ecosystem.\n\n**After intake, your file routes to:**\n• **Business & Compliance** → L.A.R.R.Y (Operations) + Monica Green (Human Review)\n• **Legal matters** → Sylara (Legal AI) + Shantell Robinson (Human Review)\n• **Authority & Enforcement** → L.A.R.R.Y Enforcement Engine\n\nHow can I help you navigate the ecosystem today?`;
     
@@ -4173,32 +4189,9 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     // === MAIN STATE MACHINE ===
     if (signupStep === -1) {
       if (lower === 'english' || lower === 'español' || lower.includes('português') || lower.includes('français') || lower.includes('kreyòl') || lower.includes('中文')) {
-        if (variant === 'rip') {
-          response = '🕵️ **RIP Intelligence Portal**\n\nBefore we can proceed with intelligence retrieval, please specify which **Law Enforcement** or **Oversight Agency** you are representing:';
-          setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['State Police (OSBI)', 'Federal Enforcement (DEA/FBI)', 'State Regulator (OMMA)', 'Local Law Enforcement'] } as any]);
-          setSignupStep(900);
-          setIsTyping(false);
-          return;
-        }
-
-        if (variant === 'sinc') {
-          response = '🛡️ **SINC Compliance Infrastructure**\n\nSINC handles encrypted audit trails and seed-to-sale architecture for commercial entities. Are you representing an active **Cannabis Business**, or are you looking for general information on becoming a licensed business?';
-          setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Active Cannabis Business', 'Learn About Licensing', 'Main Menu'] } as any]);
-          setSignupStep(901);
-          setIsTyping(false);
-          return;
-        }
-
-        if (variant === 'ggma' || variant === 'ggma-patient') {
-          response = 'Welcome to the **GGMA Sector**.\n\nTo ensure we provide the correct licensing and medical card information, please select which **State Jurisdiction** you are inquiring about:';
-          setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Oklahoma', 'Kentucky', 'Missouri', 'Texas', 'Other State'] } as any]);
-          setSignupStep(902);
-          setIsTyping(false);
-          return;
-        }
-
-        setMessages(prev => [...prev, { role: 'bot', text: getGreeting(), choices: getInitialChoices() } as any]);
-        setSignupStep(0);
+        setSignupStep(-0.5);
+        const response = getBriefSummary(variant) + '\n\n**Do you understand and would you like to proceed?** (Yes/No)';
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Yes', 'No'] } as any]);
         setIsTyping(false);
         return;
       }
@@ -4246,6 +4239,45 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       response = `Thank you. I have securely set your jurisdiction to **${stateName}**.\n\n${getGreeting()}`;
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: getInitialChoices() } as any]);
       setSignupStep(0);
+      setIsTyping(false);
+      return;
+    }
+
+    if (signupStep === -0.5) {
+      if (lower === 'yes' || lower === 'y' || lower.includes('proceed') || lower.includes('understand')) {
+        if (variant === 'rip') {
+          response = '🕵️ **RIP Intelligence Portal**\n\nBefore we can proceed with intelligence retrieval, please specify which **Law Enforcement** or **Oversight Agency** you are representing:';
+          setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['State Police (OSBI)', 'Federal Enforcement (DEA/FBI)', 'State Regulator (OMMA)', 'Local Law Enforcement'] } as any]);
+          setSignupStep(900);
+          setIsTyping(false);
+          return;
+        }
+        if (variant === 'sinc') {
+          response = '🛡️ **SINC Compliance Infrastructure**\n\nSINC handles encrypted audit trails and seed-to-sale architecture for commercial entities. Are you representing an active **Cannabis Business**, or are you looking for general information on becoming a licensed business?';
+          setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Active Cannabis Business', 'Learn About Licensing', 'Main Menu'] } as any]);
+          setSignupStep(901);
+          setIsTyping(false);
+          return;
+        }
+        if (variant === 'ggma' || variant === 'ggma-patient') {
+          response = 'Welcome to the **GGMA Sector**.\n\nTo ensure we provide the correct licensing and medical card information, please select which **State Jurisdiction** you are inquiring about:';
+          setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Oklahoma', 'Kentucky', 'Missouri', 'Texas', 'Other State'] } as any]);
+          setSignupStep(902);
+          setIsTyping(false);
+          return;
+        }
+
+        setSignupStep(0);
+        response = getGreeting(variant);
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: getGreetingChoices(variant) } as any]);
+      } else if (lower === 'no' || lower === 'n' || lower.includes('back')) {
+        response = 'No problem! Let\'s return to the main selection. How can I assist you today?';
+        setSignupStep(-1);
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Patient', 'Business', 'Provider', 'Legal', 'Government', 'Advocacy'] } as any]);
+      } else {
+        response = getBriefSummary(variant) + '\n\n**Do you understand and would you like to proceed?** (Yes/No)';
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Yes', 'No'] } as any]);
+      }
       setIsTyping(false);
       return;
     }
@@ -4876,6 +4908,16 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       setTimeout(() => onNavigate('patient-portal'), 1500);
     }
     // ── Business License Steps (100-134) ────────────────────────────────────
+    // Registration Classification
+    else if (signupStep === 990) {
+      setBusinessData(prev => ({ ...prev, registrationType: text }));
+      const sectionHeader = text.toLowerCase().includes('renewal') ? 'License Renewal Registration' : 'First-Time Registration';
+      const response = `Got it. Let's proceed with your **${text}**.\n\n**Section 1: ${sectionHeader}**\n\nWhat is your **Full Name** (First & Last)? This will be the individual responsible for the account and license information.`;
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setSignupStep(100);
+      setIsTyping(false);
+      return;
+    }
     // Section 1: First-Time Registration
     else if (signupStep === 100) {
       setBusinessData(prev => ({ ...prev, fullName: text }));
@@ -6454,6 +6496,35 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
           )}
 
           {/* ── Patient Document Upload Panel — shown during step 16 ── */}
+                    {/* 📝 Business Document Upload Panel - shown during step 133.7 📝 */}
+          {signupStep === 133.7 && (
+            <div className="flex justify-start gap-3">
+              <div className="w-9 h-9 rounded-xl bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
+                <Bot size={18} />
+              </div>
+              <div className="flex-1 max-w-[90%] bg-white border border-slate-200/80 rounded-2xl rounded-bl-md shadow-sm p-5">
+                <p className="text-sm font-bold text-slate-800 mb-1">🏢 Business Document Upload</p>
+                <p className="text-xs text-slate-500 mb-4">Click on each document to upload. All documents must be verified before proceeding.</p>
+                <div className="space-y-2 mb-5">
+                  {['Government-Issued Photo ID', 'Proof of State Residency', 'Certificate of Good Standing', 'Affidavit of Lawful Presence'].map((docName) => {
+                    const isUploaded = !!uploadedDocuments[docName];
+                    return (
+                      <div key={docName} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
+                        <div className="flex items-center gap-2">
+                          {isUploaded ? <CheckCircle size={16} className="text-emerald-500" /> : <div className="w-4 h-4 rounded-full border-2 border-slate-300" />}
+                          <p className={`text-xs font-medium ${isUploaded ? 'text-slate-800' : 'text-slate-600'}`}>{docName}</p>
+                        </div>
+                        <button onClick={() => triggerUpload(docName)} disabled={isUploaded} className={`px-3 py-1 rounded-md text-xs font-bold ${isUploaded ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-white border border-[#1a4731] text-[#1a4731] hover:bg-[#1a4731] hover:text-white transition-colors'}`}>
+                          {isUploaded ? 'Uploaded' : 'Upload'}
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+
           {signupStep === 16 && (
             <div className="flex justify-start gap-3">
               <div className="w-9 h-9 rounded-xl bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
