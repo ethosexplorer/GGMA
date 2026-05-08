@@ -119,7 +119,13 @@ export default function LoginPage({ onNavigate, onLogin }: LoginPageProps) {
           </div>
           
           <div className="px-8 py-5 bg-slate-950/50 border-t border-slate-800/50 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <span className="text-xs text-slate-500 font-medium">Don't have clearance?</span>
+            <button 
+              type="button"
+              onClick={() => onNavigate('signup')}
+              className="text-xs text-slate-400 font-medium hover:text-emerald-400 transition-colors text-left"
+            >
+              Don't have clearance? <span className="font-bold text-emerald-500 ml-1 hover:underline">Create an Account</span>
+            </button>
             <button onClick={() => onNavigate('landing')} className="text-xs font-bold text-white uppercase tracking-widest hover:text-emerald-400 transition-colors">
               Return Home
             </button>
