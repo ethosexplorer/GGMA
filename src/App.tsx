@@ -101,7 +101,8 @@ import {
   collection,
   addDoc
 } from 'firebase/firestore';
-import { auth, db } from './firebase';
+import { auth, db, storage } from './firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import MapChart from './components/MapChart';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { FounderDashboard } from './pages/FounderDashboard';
@@ -3107,6 +3108,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const screenshotInputRef = useRef<HTMLInputElement>(null);
   const [uploadedDocuments, setUploadedDocuments] = useState<Record<string, string>>({});
+  const [uploadedDocumentUrls, setUploadedDocumentUrls] = useState<Record<string, string>>({});
   const [pendingDocLabel, setPendingDocLabel] = useState<string>('');
   const [showUploadMenu, setShowUploadMenu] = useState(false);
   const [isEditingReview, setIsEditingReview] = useState(false);
@@ -5061,6 +5063,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
               insurance: finalData.insurance,
               qualifyingCondition: finalData.qualifyingCondition,
               textPhone: finalData.textPhone,
+              uploadedDocuments: uploadedDocumentUrls,
               createdAt: serverTimestamp(),
             };
             await setDoc(doc(db, 'users', firebaseUser.uid), profile);
@@ -5740,11 +5743,37 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       setIsTyping(false);
       return;
     }
-    // ── Step 134: Application Review ──
     else if (signupStep === 134) {
       if (lower === 'confirm' || lower === 'yes' || lower === 'proceed' || lower === 'continue' || lower === 'pay' || lower.includes('submit')) {
         response = '🎉 **Application Complete!**\n\nNow that we have finished your application, you will receive a callback to **REVIEW** application to ensure 1st time approval accuracy, then **PAY** your state fee and then **SUBMIT** your application for state approval of business license.\n\nI want to thank you for allowing me to assist you in this process. If you have any questions feel free to login your portal and chat with me directly 24/7 by clicking the **"help/support"** tab. Thank you and Goodbye 👋';
-        setSignupStep(0);
+        
+        try {
+          const userCredential = await createUserWithEmailAndPassword(auth, businessData.email, businessData.password || 'Temp123!');
+          const firebaseUser = userCredential.user;
+          const profile = {
+            ...businessData,
+            uid: firebaseUser.uid,
+            role: 'business',
+            createdAt: serverTimestamp(),
+            uploadedDocuments: uploadedDocumentUrls
+          };
+          await setDoc(doc(db, 'users', firebaseUser.uid), profile);
+          if (onProfileCreated) onProfileCreated(profile);
+          setTimeout(() => onNavigate('business-dashboard' as any), 3000);
+        } catch (authError: any) {
+          console.warn('[Business Intake] Firebase Auth Error:', authError.message);
+          const profile = {
+            ...businessData,
+            uid: 'local-' + Date.now(),
+            role: 'business',
+            createdAt: new Date().toISOString(),
+            uploadedDocuments: uploadedDocumentUrls
+          };
+          if (onProfileCreated) onProfileCreated(profile);
+          setTimeout(() => onNavigate('business-dashboard' as any), 3000);
+        }
+        
+        setSignupStep(135);
       } else if (lower === 'edit' || lower === 'change') {
         setIsEditingReview(true);
         response = '✏️ **Edit Mode Enabled!** You can now edit any field in the review panel above. Click **"Save Changes"** when you\'re done.';
@@ -6207,43 +6236,61 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     }
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setMessages(prev => [...prev, { role: 'user', text: `📎 Uploaded: ${file.name}` }]);
+      setMessages(prev => [...prev, { role: 'user', text: `📎 Uploading: ${file.name}...` }]);
       setIsTyping(true);
       
-      setTimeout(() => {
+      try {
+        const fileRef = ref(storage, `intake_documents/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_')}`);
+        await uploadBytes(fileRef, file);
+        const downloadUrl = await getDownloadURL(fileRef);
+
+        setMessages(prev => {
+          const newMessages = [...prev];
+          const lastIndex = newMessages.length - 1;
+          if (newMessages[lastIndex].text.includes('Uploading:')) {
+            newMessages[lastIndex] = { role: 'user', text: `✅ Uploaded: ${file.name}` };
+          }
+          return newMessages;
+        });
+
         setIsTyping(false);
         if (signupStep === 8.5) {
           setSignupStep(9);
           setMessages(prev => [...prev, { role: 'bot', text: `Thanks! Document received. \n\nFinally, please provide a secure **Password** (minimum 8 characters) for your new account.\n\n*(Your password will be hidden in the chat)*` }]);
         } else if (signupStep === 131 || signupStep === 16) {
-          // If a pending doc label was set (user clicked a specific doc), mark it
           if (pendingDocLabel) {
             setUploadedDocuments(prev => ({ ...prev, [pendingDocLabel]: file.name }));
+            setUploadedDocumentUrls(prev => ({ ...prev, [pendingDocLabel]: downloadUrl }));
             if (signupStep === 131) {
-              setBusinessData(prev => ({
-                ...prev,
-                documentsUploadedCount: prev.documentsUploadedCount + 1,
-              }));
+              setBusinessData(prev => ({ ...prev, documentsUploadedCount: prev.documentsUploadedCount + 1 }));
             }
-            setMessages(prev => [...prev, { role: 'bot', text: `✅ **${pendingDocLabel}** — uploaded: **${file.name}**` }]);
+            setMessages(prev => [...prev, { role: 'bot', text: `✅ **${pendingDocLabel}** — securely uploaded: **${file.name}**` }]);
             setPendingDocLabel('');
           } else {
-            // Generic upload — ask which document it is
             if (signupStep === 131) {
-              setBusinessData(prev => ({
-                ...prev,
-                documentsUploadedCount: prev.documentsUploadedCount + 1,
-              }));
+              setBusinessData(prev => ({ ...prev, documentsUploadedCount: prev.documentsUploadedCount + 1 }));
             }
-            setMessages(prev => [...prev, { role: 'bot', text: `✅ Document received: **${file.name}**. Please select which document this is from the checklist above.` }]);
+            setMessages(prev => [...prev, { role: 'bot', text: `✅ Document securely received: **${file.name}**. Please select which document this is from the checklist above.` }]);
           }
         } else {
-          setMessages(prev => [...prev, { role: 'bot', text: `I've received your document: **${file.name}**. I've securely attached it to your profile context.` }]);
+          setMessages(prev => [...prev, { role: 'bot', text: `I've securely received your document: **${file.name}**. I've attached it to your profile context.` }]);
         }
-      }, 1000);
+      } catch (error) {
+        console.error("Upload error:", error);
+        setMessages(prev => {
+          const newMessages = [...prev];
+          const lastIndex = newMessages.length - 1;
+          if (newMessages[lastIndex].text.includes('Uploading:')) {
+            newMessages[lastIndex] = { role: 'user', text: `❌ Upload failed: ${file.name}` };
+          }
+          return newMessages;
+        });
+        setMessages(prev => [...prev, { role: 'bot', text: `❌ I encountered an error securely uploading your document. Please check your connection and try again.` }]);
+        setIsTyping(false);
+      }
     }
     // reset input
     if (fileInputRef.current) fileInputRef.current.value = '';

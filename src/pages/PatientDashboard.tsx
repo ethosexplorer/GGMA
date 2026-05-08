@@ -526,7 +526,7 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
         )}
 
         {/* ─── DOCUMENTS TAB ─── */}
-        {activeTab === 'documents' && isSubscribed && <DocumentVaultTab />}
+        {activeTab === 'documents' && isSubscribed && <DocumentVaultTab user={user} />}
 
         {/* ─── COMMUNITY VOICE TAB ─── */}
         {activeTab === 'community' && (

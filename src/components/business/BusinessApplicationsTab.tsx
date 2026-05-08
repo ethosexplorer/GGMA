@@ -14,25 +14,36 @@ export const BusinessApplicationsTab = ({ user, onStartApplication }: { user?: a
   const [view, setView] = useState<'hub' | 'new'>('hub');
   const [paymentState, setPaymentState] = useState<'idle' | 'invoicing' | 'sent' | 'paid'>('idle');
 
-  const hasIntakeData = !!(user?.email);
+  const hasIntakeData = !!(user?.businessName || user?.licenseType);
+  
+  const docsUploaded = user?.uploadedDocuments ? Object.keys(user.uploadedDocuments).length : 0;
+  const hasDocuments = docsUploaded > 0;
+  const hasOwnership = !!(user?.ownerName || user?.ppocName);
+  const hasEntity = !!(user?.businessName);
+  
+  let progress = 0;
+  if (hasEntity) progress += 20;
+  if (hasOwnership) progress += 20;
+  if (hasDocuments) progress += 30; // Up to 70% if they have docs
+  // Give them a bump if they have multiple docs
+  if (docsUploaded > 3) progress += 15; // 85%
 
   const activeApplications = [
     ...(hasIntakeData ? [{
-      id: `SYNC-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
-      type: 'New Commercial License (L.A.R.R.Y Sync)',
-      submitted: 'Draft Auto-Generated',
-      status: 'Ready for Review',
-      progress: 85,
+      id: user?.uid ? `APP-${user.uid.substring(0, 6).toUpperCase()}` : `SYNC-${new Date().getFullYear()}`,
+      type: user?.licenseType ? `Commercial License: ${user.licenseType}` : 'New Commercial License',
+      submitted: new Date(user?.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      status: progress >= 85 ? 'Ready for Review' : 'In Progress',
+      progress: progress,
       isSync: true
     }] : []),
-    { id: 'APP-2026-B882', type: 'Transporter License', submitted: 'Apr 14, 2026', status: 'Under Review', progress: 65 },
   ];
 
   const applicationSteps = [
-    { step: 1, title: 'Entity Information', desc: 'Business name, structure, address', completed: hasIntakeData, syncSource: 'L.A.R.R.Y AI' },
-    { step: 2, title: 'Ownership & Officers', desc: 'Primary point of contact, owners info', completed: hasIntakeData, syncSource: 'L.A.R.R.Y AI' },
-    { step: 3, title: 'Document Upload', desc: 'Cert of Good Standing, Lease/Deed, Bond', completed: false },
-    { step: 4, title: 'Compliance Verifications', desc: '1000ft school distance, Tribal land attest', completed: false },
+    { step: 1, title: 'Entity Information', desc: 'Business name, structure, address', completed: hasEntity, syncSource: hasEntity ? 'L.A.R.R.Y AI' : undefined },
+    { step: 2, title: 'Ownership & Officers', desc: 'Primary point of contact, owners info', completed: hasOwnership, syncSource: hasOwnership ? 'L.A.R.R.Y AI' : undefined },
+    { step: 3, title: 'Document Upload', desc: 'Cert of Good Standing, Lease/Deed, Bond', completed: hasDocuments, syncSource: hasDocuments ? 'L.A.R.R.Y AI' : undefined },
+    { step: 4, title: 'Compliance Verifications', desc: '1000ft school distance, Tribal land attest', completed: progress >= 85 },
     { step: 5, title: 'Review & Submit', desc: 'Final review and state submission', completed: false },
   ];
 

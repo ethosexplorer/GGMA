@@ -36,12 +36,26 @@ const baseCategories = [
   { id: 'cards', label: 'Cards & Licenses' },
 ];
 
-export const DocumentVaultTab = () => {
+export const DocumentVaultTab = ({ user }: { user?: any }) => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [dragOver, setDragOver] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [localDocs, setLocalDocsState] = useState(globalDocuments);
+  
+  const liveUserDocs = user?.uploadedDocuments ? Object.entries(user.uploadedDocuments).map(([name, url], idx) => ({
+    id: `user-doc-${idx}`,
+    name,
+    type: 'Intake Upload',
+    format: typeof url === 'string' && url.includes('firebasestorage') ? 'PDF' : (name.split('.').pop()?.toUpperCase() || 'PDF'),
+    size: '--',
+    uploaded: new Date(user.createdAt || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+    status: 'Verified',
+    category: 'identification',
+    url
+  })) : [];
+
+  const allDocs = [...liveUserDocs, ...localDocs];
   
   const setLocalDocs = (updateFn: any) => {
     setLocalDocsState((prev: any) => {
@@ -51,9 +65,9 @@ export const DocumentVaultTab = () => {
     });
   };
 
-  const filtered = selectedCategory === 'all' ? localDocs : localDocs.filter(d => d.category === selectedCategory);
+  const filtered = selectedCategory === 'all' ? allDocs : allDocs.filter(d => d.category === selectedCategory);
 
-  const getCategoryCount = (catId: string) => catId === 'all' ? localDocs.length : localDocs.filter(d => d.category === catId).length;
+  const getCategoryCount = (catId: string) => catId === 'all' ? allDocs.length : allDocs.filter(d => d.category === catId).length;
 
   const handleUpload = (e?: React.ChangeEvent<HTMLInputElement> | React.DragEvent) => {
     let file;
@@ -203,10 +217,10 @@ export const DocumentVaultTab = () => {
                     )}>
                       {doc.status}
                     </span>
-                    <button onClick={() => window.open('https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', '_blank')} title="View Document" className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors">
+                    <button onClick={() => doc.url ? window.open(doc.url as string, '_blank') : window.open('https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', '_blank')} title="View Document" className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors">
                       <Eye size={14} />
                     </button>
-                    <button onClick={() => alert(`Securely downloading ${doc.name}...`)} title="Download Document" className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors">
+                    <button onClick={() => { if (doc.url) window.open(doc.url as string, '_blank'); else alert(`Securely downloading ${doc.name}...`); }} title="Download Document" className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors">
                       <Download size={14} />
                     </button>
                   </div>

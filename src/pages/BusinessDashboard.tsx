@@ -192,7 +192,23 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
         LEFT JOIN entities ON documents.entity_id = entities.id
         ORDER BY documents.uploaded_at DESC
       `);
-      if(docRes.rows) setDocuments(isExecutive ? docRes.rows : docRes.rows.filter(r => !r.entity_id.toString().startsWith('ent-')));
+      
+      const liveUserDocs = user?.uploadedDocuments ? Object.entries(user.uploadedDocuments).map(([name, url]) => ({
+        id: `user-doc-${name}`,
+        entity_id: user.uid || 'user-entity',
+        entity_name: user.businessName || user.displayName || 'Primary Entity',
+        name,
+        type: 'Intake Upload',
+        uploaded_at: new Date(user.createdAt || Date.now()).toLocaleDateString('en-US'),
+        url
+      })) : [];
+
+      if(docRes.rows) {
+        const tursoDocs = isExecutive ? docRes.rows : docRes.rows.filter(r => !r.entity_id.toString().startsWith('ent-'));
+        setDocuments([...liveUserDocs, ...tursoDocs]);
+      } else {
+        setDocuments(liveUserDocs);
+      }
     } catch (err) {
       console.error('Error fetching data:', err);
     }
@@ -1319,7 +1335,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
                      <td className="px-4 py-4 text-sm text-slate-500">{doc.type}</td>
                      <td className="px-4 py-4 text-sm text-slate-500">{doc.entity_name}</td>
                      <td className="px-4 py-4 text-sm text-slate-500">{doc.uploaded_at}</td>
-                     <td className="px-4 py-4 text-right"><a href={doc.url} onClick={e => e.preventDefault()} className="text-xs font-bold text-[#1a4731] hover:underline">Download</a></td>
+                     <td className="px-4 py-4 text-right"><a href={doc.url as string} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-[#1a4731] hover:underline">Download</a></td>
                   </tr>
                 ))}
               </tbody>

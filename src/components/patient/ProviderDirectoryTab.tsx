@@ -1,15 +1,15 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { turso } from '../../lib/turso';
 import { Search, MapPin, Star, Calendar, Video, Filter, ChevronRight, Shield } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 const providers = [
-  { id: 1, name: 'Dr. Sarah Johnson', credentials: 'MD', type: 'cannabis', specialties: ['Chronic Pain', 'PTSD'], states: ['OK'], rating: 4.9, reviews: 127, nextSlot: 'Tomorrow 10:00 AM', featured: true },
-  { id: 2, name: 'Dr. Michael Chen', credentials: 'DO', type: 'both', specialties: ['Anxiety', 'Insomnia', 'General Wellness'], states: ['OK', 'TX'], rating: 4.8, reviews: 94, nextSlot: 'Today 3:30 PM', featured: true },
-  { id: 3, name: 'Dr. Emily Rodriguez', credentials: 'NP', type: 'cannabis', specialties: ['Epilepsy', 'Chronic Pain'], states: ['OK'], rating: 4.7, reviews: 68, nextSlot: 'Apr 22, 9:00 AM', featured: false },
-  { id: 4, name: 'Dr. James Williams', credentials: 'MD', type: 'traditional', specialties: ['Internal Medicine', 'Preventive Care'], states: ['OK', 'AR'], rating: 4.6, reviews: 203, nextSlot: 'Apr 21, 2:00 PM', featured: false },
-  { id: 5, name: 'Dr. Lisa Park', credentials: 'MD', type: 'cannabis', specialties: ['Holistic Care', 'Nausea', 'PTSD'], states: ['OK', 'CO'], rating: 4.9, reviews: 156, nextSlot: 'Today 5:00 PM', featured: true },
-  { id: 6, name: 'Dr. Robert Martinez', credentials: 'DO', type: 'both', specialties: ['Pain Management', 'Neurology'], states: ['OK'], rating: 4.5, reviews: 42, nextSlot: 'Apr 23, 11:00 AM', featured: false },
+  { id: 1, name: 'Dr. Brandon Bailey', credentials: 'MD', type: 'both', specialties: ['Chronic Pain', 'Anxiety'], states: ['OK'], rating: 4.9, reviews: 312, nextSlot: 'Tomorrow 10:00 AM', featured: true },
+  { id: 2, name: 'Dr. Kelly Woodward', credentials: 'DO', type: 'cannabis', specialties: ['PTSD', 'General Wellness'], states: ['OK'], rating: 4.8, reviews: 145, nextSlot: 'Today 3:30 PM', featured: true },
+  { id: 3, name: 'Dr. Robert Scott', credentials: 'NP', type: 'cannabis', specialties: ['Epilepsy', 'Chronic Pain'], states: ['OK'], rating: 4.7, reviews: 89, nextSlot: 'Apr 22, 9:00 AM', featured: false },
+  { id: 4, name: 'Dr. John Williams', credentials: 'MD', type: 'traditional', specialties: ['Internal Medicine', 'Preventive Care'], states: ['OK', 'AR'], rating: 4.6, reviews: 203, nextSlot: 'Apr 21, 2:00 PM', featured: false },
+  { id: 5, name: 'Dr. Lisa Park', credentials: 'MD', type: 'both', specialties: ['Holistic Care', 'Nausea', 'PTSD'], states: ['OK', 'CO'], rating: 4.9, reviews: 156, nextSlot: 'Today 5:00 PM', featured: true },
+  { id: 6, name: 'Dr. Mark Martinez', credentials: 'DO', type: 'both', specialties: ['Pain Management', 'Neurology'], states: ['OK'], rating: 4.5, reviews: 42, nextSlot: 'Apr 23, 11:00 AM', featured: false },
 ];
 
 const serviceTypes = ['All', 'Cannabis Recommendation', 'Traditional Telehealth', 'Both'];
