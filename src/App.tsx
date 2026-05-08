@@ -5567,7 +5567,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       setIsTyping(false);
       return;
     } else if (signupStep === 130) {
-      if (lower === 'yes' || lower === 'yeah' || lower === 'yep') {
+      if (lower === 'yes' || lower === 'yeah' || lower === 'yep' || lower.includes('attest')) {
         setBusinessData(prev => ({ ...prev, attestationsConfirmed: true }));
         response = '✅ **Attestations Confirmed!**\n\n**Section 7: Document Uploads**\n\nThe following documents are required for your application:\n\n' +
           '📄 **Affidavit of Lawful Presence**\n' +
