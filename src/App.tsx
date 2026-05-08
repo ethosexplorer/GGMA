@@ -4297,9 +4297,9 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         return;
       } else if (lower.includes('start business intake')) {
         setIsBusiness(true);
-        const response = '🏢 Let\'s begin your **Commercial License Application**.\n\nPlease select your registration type below:';
-        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['New Registration (GGHP)', 'New / Renewal (State MMA Application)'] } as any]);
-        setSignupStep(990);
+        const response = '🏢 Let\'s begin your **Commercial License Application**.\n\n**Section 1: Account Setup**\n\nWhat is your **Full Name** (First & Last)? This will be the individual responsible for the account and license information.';
+        setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+        setSignupStep(100);
         setIsTyping(false);
         return;
       } else if (lower.includes('reschedule') || lower.includes('return later')) {
@@ -4400,9 +4400,9 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         setEligibleLicenses([]);
       } else if (lower.includes('start business intake')) {
         setIsBusiness(true);
-        const response = '🏢 Let\'s begin your **Commercial License Application**.\n\nPlease select your registration type below:';
-        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['New Registration (GGHP)', 'New / Renewal (State MMA Application)'] } as any]);
-        setSignupStep(990);
+        const response = '🏢 Let\'s begin your **Commercial License Application**.\n\n**Section 1: Account Setup**\n\nWhat is your **Full Name** (First & Last)? This will be the individual responsible for the account and license information.';
+        setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+        setSignupStep(100);
         setIsTyping(false);
         return;
       } else if (lower.includes('patient')) {
