@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { useDraggableSidebar } from '../hooks/useDraggableSidebar';
 import { Activity, Calendar, Stethoscope, Shield, FileText, Clock, Plus, LayoutDashboard, CreditCard,
   Wallet, Award, Search, FolderOpen, Heart, Bell, Sparkles, TrendingUp, Users, Briefcase, Lock, 
-  ArrowRight, Zap, Brain, Video, Globe, ChevronRight, CircleCheck } from 'lucide-react';
+  ArrowRight, Zap, Brain, Video, Globe, ChevronRight, CircleCheck, User } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
+import { db } from '../lib/firebase';
+import { doc, updateDoc } from 'firebase/firestore';
 import { StatCard } from '../components/StatCard';
 import { SubscriptionPortal } from '../components/SubscriptionPortal';
 import { CareWalletTab } from '../components/shared/CareWalletTab';
@@ -56,6 +58,32 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
 
   // Drag-and-drop tab reordering
   const { items: tabs, handleDragStart, handleDragEnter, handleDragEnd, handleDragOver } = useDraggableSidebar(DEFAULT_TABS, 'ggp_patient_tab_order');
+
+  const [localUser, setLocalUser] = useState(user || {});
+  
+  React.useEffect(() => {
+    if (user) setLocalUser(user);
+  }, [user]);
+
+  const handleEditProfile = async () => {
+    const phone = prompt('Update Phone Number:', localUser.phone || '');
+    if (phone === null) return;
+    const address = prompt('Update Residential Address:', localUser.address || '');
+    if (address === null) return;
+
+    try {
+      if (localUser.id) {
+        await updateDoc(doc(db, 'users', localUser.id), { phone, address });
+        setLocalUser({ ...localUser, phone, address });
+        alert('Profile updated successfully!');
+      } else {
+        alert('Could not update profile (No User ID).');
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Error updating profile.');
+    }
+  };
 
   // Listen for sidebar navigation from DashboardLayout
   React.useEffect(() => {
@@ -249,6 +277,35 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
                 <StatCard label="C³ Score" value={demoUnlocked ? "662" : "0"} trend={demoUnlocked ? 12 : undefined} icon={Award} color={demoUnlocked ? "bg-yellow-600" : "bg-slate-400"} />
                 <StatCard label="Appointments" value={demoUnlocked ? "3 Upcoming" : "0"} icon={Calendar} color={demoUnlocked ? "bg-blue-600" : "bg-slate-400"} />
                 <StatCard label="Prescriptions" value={demoUnlocked ? "2 Active" : "0"} icon={Stethoscope} color={demoUnlocked ? "bg-indigo-600" : "bg-slate-400"} />
+              </div>
+
+              {/* Profile Card */}
+              <div className="bg-white rounded-[2rem] border border-slate-200 shadow-sm p-8">
+                 <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-xl font-black text-slate-800 tracking-tight flex items-center gap-3">
+                       <User size={24} className="text-[#1a4731]" />
+                       Personal Profile & Contact
+                    </h3>
+                    <button onClick={handleEditProfile} className="text-xs text-[#1a4731] font-black uppercase tracking-widest hover:underline border border-[#1a4731] px-4 py-2 rounded-xl transition-colors hover:bg-emerald-50">Edit Info</button>
+                 </div>
+                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Full Name</p>
+                       <p className="font-bold text-slate-800">{localUser.firstName} {localUser.lastName}</p>
+                    </div>
+                    <div>
+                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Email Address</p>
+                       <p className="font-bold text-slate-800">{localUser.email}</p>
+                    </div>
+                    <div>
+                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Phone Number</p>
+                       <p className="font-bold text-slate-800">{localUser.phone || 'Not Provided'}</p>
+                    </div>
+                    <div className="md:col-span-3">
+                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Residential Address</p>
+                       <p className="font-bold text-slate-800">{localUser.address || 'Not Provided'}</p>
+                    </div>
+                 </div>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

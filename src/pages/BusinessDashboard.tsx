@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { ShadowOverlay } from '../components/shared/ShadowOverlay';
 import { useDraggableSidebar } from '../hooks/useDraggableSidebar';
-import { Wallet, Users, Building2, Shield, Clock, TrendingUp, Plus, LayoutDashboard, CreditCard, PackageSearch, AlertCircle, ShoppingCart, Loader2, Trash2, Edit2, CheckCircle, XCircle, Sparkles, MapPin, BarChart2, Activity, MessageSquare, LogOut, FileText, ClipboardList, CheckSquare, UploadCloud, Calendar, Zap, AlertTriangle, Database, Gavel, ArrowRight, ArrowLeft, Send } from 'lucide-react';
+import { Wallet, Users, Building2, Shield, Clock, TrendingUp, Plus, LayoutDashboard, CreditCard, PackageSearch, AlertCircle, ShoppingCart, Loader2, Trash2, Edit2, CheckCircle, XCircle, Sparkles, MapPin, BarChart2, Activity, MessageSquare, LogOut, FileText, ClipboardList, CheckSquare, UploadCloud, Calendar, Zap, AlertTriangle, Database, Gavel, ArrowRight, ArrowLeft, Send, User } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { motion, AnimatePresence } from 'motion/react';
+import { db } from '../lib/firebase';
+import { doc, updateDoc } from 'firebase/firestore';
 import { StatCard } from '../components/StatCard';
 import { CareWalletTab } from '../components/shared/CareWalletTab';
 import { StateWelcomeBanner } from '../components/shared/StateWelcomeBanner';
@@ -62,6 +65,31 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
   const isSubscribed = user?.subscriptionStatus === 'Active' || user?.planId || demoUnlocked;
   const [previousTab, setPreviousTab] = useState<string>('home');
   const [activeTab, setActiveTab] = useState<'home' | 'analytics' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'insurance' | 'documents' | 'subscription' | 'integrations' | 'staff' | 'traceability' | 'readiness' | 'dea' | 'wallet' | 'attorneys' | 'reporting' | 'applications' | 'regulatory'>(isSubscribed ? (initialTab || 'analytics') : 'subscription');
+  const [localUser, setLocalUser] = useState(user || {});
+  
+  React.useEffect(() => {
+    if (user) setLocalUser(user);
+  }, [user]);
+
+  const handleEditProfile = async () => {
+    const phone = prompt('Update Phone Number:', localUser.phone || '');
+    if (phone === null) return;
+    const address = prompt('Update Business Address:', localUser.address || '');
+    if (address === null) return;
+
+    try {
+      if (localUser.id) {
+        await updateDoc(doc(db, 'users', localUser.id), { phone, address });
+        setLocalUser({ ...localUser, phone, address });
+        alert('Profile updated successfully!');
+      } else {
+        alert('Could not update profile (No User ID).');
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Error updating profile.');
+    }
+  };
   const navigateTab = (tab: typeof activeTab) => {
     setPreviousTab(activeTab);
     setActiveTab(tab);
@@ -505,6 +533,35 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
         <StateWelcomeBanner jurisdiction={jurisdiction} type="business" />
         <ImportantUpdates role="business" />
         
+        {/* Profile Card */}
+        <div className="bg-white rounded-[2rem] border border-slate-200 shadow-sm p-8 mb-4">
+           <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-black text-slate-800 tracking-tight flex items-center gap-3">
+                 <User size={24} className="text-[#1a4731]" />
+                 Business Profile & Contact Info
+              </h3>
+              <button onClick={handleEditProfile} className="text-xs text-[#1a4731] font-black uppercase tracking-widest hover:underline border border-[#1a4731] px-4 py-2 rounded-xl transition-colors hover:bg-emerald-50">Edit Info</button>
+           </div>
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Business Rep</p>
+                 <p className="font-bold text-slate-800">{localUser.firstName} {localUser.lastName}</p>
+              </div>
+              <div>
+                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Email Address</p>
+                 <p className="font-bold text-slate-800">{localUser.email}</p>
+              </div>
+              <div>
+                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Phone Number</p>
+                 <p className="font-bold text-slate-800">{localUser.phone || 'Not Provided'}</p>
+              </div>
+              <div className="md:col-span-3">
+                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Registered Address</p>
+                 <p className="font-bold text-slate-800">{localUser.address || 'Not Provided'}</p>
+              </div>
+           </div>
+        </div>
+
         {/* 30-Day Trial Banner */}
         <div className="bg-amber-50 border border-amber-200 rounded-[2rem] p-5 flex flex-col md:flex-row items-center justify-between text-amber-900 shadow-sm mb-4 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-full bg-amber-500/5 blur-2xl"></div>
