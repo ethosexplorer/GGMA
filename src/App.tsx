@@ -4902,26 +4902,12 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         response = `Please enter the **Name** and **Phone Number** of your primary physician.`;
       } else {
         setSignupStep(12);
-        response = `Understood. Why are you applying for your Medical Marijuana Card? Which of the following conditions do you have?`;
-        setMessages(prev => [...prev, { 
-          role: 'bot', 
-          text: response,
-          choices: ['Chronic Pain', 'Depression', 'Anxiety', 'Insomnia', 'PTSD', 'Autism', 'Cancer', 'Glaucoma', 'Seizures', 'Crohns Disease', 'Sickle Cell', 'Other']
-        } as any]);
-        setIsTyping(false);
-        return;
+        response = `Understood. Please **select your qualifying condition** below.`;
       }
     } else if (signupStep === 11.1) {
       setSignupData(prev => ({ ...prev, primaryPhysician: text }));
       setSignupStep(12);
-      response = `Got it. Why are you applying for your Medical Marijuana Card? Which of the following conditions do you have?`;
-      setMessages(prev => [...prev, { 
-        role: 'bot', 
-        text: response,
-        choices: ['Chronic Pain', 'Depression', 'Anxiety', 'Insomnia', 'PTSD', 'Autism', 'Cancer', 'Glaucoma', 'Seizures', 'Crohns Disease', 'Sickle Cell', 'Other']
-      } as any]);
-      setIsTyping(false);
-      return;
+      response = `Got it. Please **select your qualifying condition** below.`;
     } else if (signupStep === 12) {
       setSignupData(prev => ({ ...prev, qualifyingCondition: text }));
       setSignupStep(13);
@@ -6099,9 +6085,9 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       response = 'That sounds like a qualifying medical condition. To ensure you receive the correct state certification, I can begin your intake process now. \n\nCan I create an account for you to begin? (Yes / No)';
       setSignupStep(99);
     } else if (lower === 'no' || lower === 'nope' || lower === 'none' || lower.includes('don\'t') || lower.includes('do not') || lower.includes('none of')) {
-      response = 'Goodbye! Returning you to the platform... 👋';
-      setMessages(prev => [...prev, { role: 'bot', text: response }]);
-      setTimeout(() => onNavigate('landing'), 1500);
+      response = 'No problem! If you need anything else, just select an option below:';
+      setSignupStep(-1);
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: getInitialChoices() } as any]);
       setIsTyping(false);
       return;
     } else if (lower.includes('talk') || lower.includes('speak') || lower.includes('human') || lower.includes('agent') || lower.includes('support') || lower.includes('call') || lower.includes('phone')) {
@@ -6555,8 +6541,8 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
 
           {/* Yes/No buttons removed — inline choices in message bubbles handle this */}
 
-          {/* ── Medical Condition Selection Buttons — shown during step 13 ── */}
-          {signupStep === 13 && (
+          {/* ── Medical Condition Selection Buttons — shown during step 12 ── */}
+          {signupStep === 12 && (
             <div className="flex justify-start gap-3">
               <div className="w-9 h-9 rounded-xl bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
                 <Bot size={18} />
@@ -6983,19 +6969,20 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
                   </div>
                 </div>
 
-                {/* Proceed button - only enabled when all docs uploaded */}
-                {Object.keys(uploadedDocuments).length >= getPatientRequiredDocuments().length ? (
+                {/* Continue button - always visible */}
+                <div className="mt-4 space-y-2">
                   <button
                     onClick={() => handleSend(undefined, 'continue')}
-                    className="mt-4 w-full py-3 bg-[#1a4731] bg-gradient-to-r from-[#1a4731] to-emerald-600 text-white rounded-xl text-sm font-bold hover:from-[#0f2a1f] hover:to-emerald-700 transition-all shadow-md shadow-emerald-200/50"
+                    className="w-full py-3 bg-[#1a4731] bg-gradient-to-r from-[#1a4731] to-emerald-600 text-white rounded-xl text-sm font-bold hover:from-[#0f2a1f] hover:to-emerald-700 transition-all shadow-md shadow-emerald-200/50"
                   >
-                    ✅ Documents Uploaded — Continue
+                    {Object.keys(uploadedDocuments).length >= getPatientRequiredDocuments().length - 1
+                      ? '✅ Required Documents Uploaded — Continue'
+                      : `📋 Continue (${Object.keys(uploadedDocuments).length}/${getPatientRequiredDocuments().length - 1} required uploaded)`}
                   </button>
-                ) : (
-                  <div className="mt-4 w-full py-3 bg-slate-100 text-slate-400 rounded-xl text-sm font-medium text-center cursor-not-allowed border border-slate-200">
-                    ⏳ Upload all required documents to proceed
-                  </div>
-                )}
+                  {Object.keys(uploadedDocuments).length < getPatientRequiredDocuments().length - 1 && (
+                    <p className="text-[11px] text-slate-400 text-center">You can upload remaining documents later via your dashboard or email.</p>
+                  )}
+                </div>
               </div>
             </div>
           )}
