@@ -102,6 +102,10 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
   const [alerts, setAlerts] = useState<any[]>([]);
   const [policies, setPolicies] = useState<any[]>([]);
   const [documents, setDocuments] = useState<any[]>([]);
+  const [staff, setStaff] = useState<any[]>([
+    { name: 'Sarah Lee', role: 'Manager', card: 'Active', cardExp: '08/2026', bg: 'Clear', status: 'Active' },
+    { name: 'James Ortiz', role: 'Compliance Officer', card: 'Expiring', cardExp: '05/2026', bg: 'Clear', status: 'Active' },
+  ]);
 
   // Form States
   const [showAddEntity, setShowAddEntity] = useState(false);
@@ -1349,18 +1353,18 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
           <div className="p-6 border-b border-slate-100 flex justify-between items-center">
             <div><h3 className="font-bold text-slate-800">Staff & Employee Management</h3><p className="text-sm text-slate-500">OMMA agent cards, background checks, role assignments</p></div>
-            <Button icon={Plus} onClick={() => alert('Add Employee wizard initiated. Collecting name, role, OMMA card number, and background check consent...')}>Add Employee</Button>
+            <Button icon={Plus} onClick={() => {
+              const name = prompt('Enter Employee Name:');
+              if (!name) return;
+              const role = prompt('Enter Role (e.g. Budtender, Manager):') || 'Employee';
+              setStaff(prev => [...prev, { name, role, card: 'Pending', cardExp: 'N/A', bg: 'Pending', status: 'Onboarding' }]);
+            }}>Add Employee</Button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead className="bg-slate-50 text-xs uppercase text-slate-500 font-bold tracking-wider border-b"><tr><th className="px-4 py-3">Employee</th><th className="px-4 py-3">Role</th><th className="px-4 py-3">OMMA Card</th><th className="px-4 py-3">Background</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Actions</th></tr></thead>
               <tbody className="divide-y divide-slate-100">
-                {[
-                  { name: 'Marcus Johnson', role: 'Budtender', card: 'Active', cardExp: '12/2026', bg: 'Clear', status: 'Active' },
-                  { name: 'Sarah Kim', role: 'Manager', card: 'Active', cardExp: '08/2026', bg: 'Clear', status: 'Active' },
-                  { name: 'James Ortiz', role: 'Compliance Officer', card: 'Expiring', cardExp: '05/2026', bg: 'Clear', status: 'Active' },
-                  { name: 'Emily Tran', role: 'Budtender', card: 'Pending', cardExp: 'N/A', bg: 'Pending', status: 'Onboarding' },
-                ].map((emp, i) => (
+                {staff.map((emp, i) => (
                   <tr key={i} className="hover:bg-slate-50">
                     <td className="px-4 py-4"><div className="flex items-center gap-3"><div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs">{emp.name[0]}</div><span className="font-bold text-sm text-slate-800">{emp.name}</span></div></td>
                     <td className="px-4 py-4 text-sm text-slate-600">{emp.role}</td>

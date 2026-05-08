@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { turso } from '../lib/turso';
+import { db } from '../lib/firebase';
+import { collection, getDocs } from 'firebase/firestore';
 import { Building2, Users, FileText, Settings, Shield, Activity, Bell,
   Briefcase, HeartPulse, Scale, Gavel, FileCheck, Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
@@ -97,10 +99,23 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
 
   const [dbPatients, setDbPatients] = useState<any[]>([]);
   const [dbBusinesses, setDbBusinesses] = useState<any[]>([]);
+  const [fbUsers, setFbUsers] = useState<any[]>([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     turso.execute('SELECT * FROM patients LIMIT 10').then(res => setDbPatients(res.rows)).catch(console.error);
     turso.execute('SELECT * FROM businesses LIMIT 10').then(res => setDbBusinesses(res.rows)).catch(console.error);
+    
+    // Fetch live users from Firebase
+    const fetchUsers = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'users'));
+        const usersList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setFbUsers(usersList);
+      } catch (err) {
+        console.error("Error fetching firebase users", err);
+      }
+    };
+    fetchUsers();
   }, []);
   const [regSearch, setRegSearch] = useState('');
   const [regCat, setRegCat] = useState<string | null>(null);
@@ -347,18 +362,18 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {[
+            {(fbUsers.length > 0 ? fbUsers.map(u => ({ name: u.firstName + ' ' + (u.lastName || ''), email: u.email, role: u.role || 'User', status: 'Active', date: 'N/A' })) : [
               { name: 'Marcus Johnson', email: 'marcus@apexhealth.com', role: 'Business Admin', status: 'Active', date: 'Apr 18, 2026' },
               { name: 'Sarah Connor', email: 'sarah@greenvalley.com', role: 'Patient', status: 'Pending', date: 'Apr 17, 2026' },
               { name: 'Dr. Rachel Kim', email: 'rkim@provider.org', role: 'Physician', status: 'Active', date: 'Apr 16, 2026' },
               { name: 'David Smith', email: 'dsmith@state.gov', role: 'Compliance Inspector', status: 'Active', date: 'Apr 19, 2026' }
-            ].map((u,i) => (
+            ]).map((u,i) => (
               <tr key={i} className="hover:bg-slate-50 group">
                 <td className="px-4 py-3">
                   <p className="font-bold text-slate-800">{u.name}</p>
                   <p className="text-xs text-slate-500">{u.email}</p>
                 </td>
-                <td className="px-4 py-3 text-slate-600 text-xs font-bold">{u.role}</td>
+                <td className="px-4 py-3 text-slate-600 text-xs font-bold capitalize">{String(u.role).replace('_', ' ')}</td>
                 <td className="px-4 py-3">
                   <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-full", u.status==='Active' ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600")}>
                     {u.status}
