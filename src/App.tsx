@@ -4298,7 +4298,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       } else if (lower.includes('start business intake')) {
         setIsBusiness(true);
         const response = '🏢 Let\'s begin your **Commercial License Application**.\n\nPlease select your registration type below:';
-        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['New Registration (GGHP)', 'New / Renewal (OMMA State Application)'] } as any]);
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['New Registration (GGHP)', 'New / Renewal (State MMA Application)'] } as any]);
         setSignupStep(990);
         setIsTyping(false);
         return;
@@ -4401,7 +4401,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       } else if (lower.includes('start business intake')) {
         setIsBusiness(true);
         const response = '🏢 Let\'s begin your **Commercial License Application**.\n\nPlease select your registration type below:';
-        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['New Registration (GGHP)', 'New / Renewal (OMMA State Application)'] } as any]);
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['New Registration (GGHP)', 'New / Renewal (State MMA Application)'] } as any]);
         setSignupStep(990);
         setIsTyping(false);
         return;
