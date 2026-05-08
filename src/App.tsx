@@ -3642,7 +3642,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
           '? **Starter**: $199/mo (POS + Metrc Sync + Basic Compliance)\n' +
           '? **Professional**: $249/mo (Multi-Location + Full Larry Enforcement)\n' +
           '? **Enterprise**: $499/mo (Unlimited Locations + White-Label POS)\n\n' +
-          '_All Business tiers include a 30-Day Free Trial and 30% off your first month after the trial._\n\n' +
+          '_All Business tiers include a 14-Day Free Trial and 30% off your first month after the trial._\n\n' +
           'To upgrade or start your trial, please select **Start Business Intake** below.';
         choices = ['Start Business Intake', 'Speak with Business Expert', 'Main Menu'];
       } else if (variant === 'ggma-patient' || variant === 'patient') {
@@ -3658,7 +3658,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
           '• **Attorney Basic**: $149/mo (Legal Marketplace Access, Gemini Flash + Basic Sylara)\n' +
           '• **Attorney Medium**: $349/mo (Enhanced Lead Access, Gemini Flash + Enhanced Sylara)\n' +
           '• **Attorney Full AI**: $699/mo (Full Lead Dominance, Full Sylara + Larry Enforcement)\n\n' +
-          '_All Attorney tiers include a 30-Day Free Trial._\n\n' +
+          '_All Attorney tiers include a 14-Day Free Trial._\n\n' +
           'To upgrade or start your trial, please begin your marketplace registration.';
         choices = ['Join Attorney Marketplace', 'Main Menu'];
       } else if (variant === 'provider' || variant === 'government' || variant === 'political_executive' || variant === 'advocate' || variant === 'advocacy_research') {
@@ -3666,7 +3666,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
           '• **Provider Basic**: $99/mo (Gemini Flash + Basic Sylara, 500k tokens)\n' +
           '• **Provider Medium**: $249/mo (Gemini Flash + Enhanced Sylara, 2M tokens)\n' +
           '• **Provider Full AI**: $499/mo (Full Sylara + Larry, Unlimited tokens)\n\n' +
-          '_All Professional tiers include a 30-Day Free Trial and 30% off your first month after the trial._\n\n' +
+          '_All Professional tiers include a 14-Day Free Trial and 30% off your first month after the trial._\n\n' +
           'To upgrade or start your trial, please begin your professional onboarding.';
         choices = ['Start Provider Onboarding', 'Main Menu'];
       } else {
@@ -3675,7 +3675,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
           '**Patient Plans:** Starts at $49.99/mo (Includes Care Wallet & Telehealth)\n' +
           '**Business Plans:** Starts at $199/mo (Includes POS & Metrc Sync)\n' +
           '**Professional Plans:** Starts at $99/mo\n\n' +
-          '_All tiers include a 30-Day Free Trial._\n\n' +
+          '_All tiers include a 14-Day Free Trial._\n\n' +
           'Please select which intake you would like to start to view specific pricing:';
         choices = ['Start Patient Intake', 'Start Business Intake', 'Main Menu'];
       }
@@ -3894,7 +3894,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
 
     if (lower.includes('subscription benefits') || lower.includes('why subscribe')) {
       if (isBusiness) {
-        response = '⭐ **GGHP Business Subscriptions (Cannabis)**\n\n• **Starter** ($199/mo): Full SINC POS + Metrc sync + Basic Larry compliance\n• **Professional** ($249/mo): Multi-location + Advanced POS + Larry real-time enforcement\n• **Enterprise** ($499/mo): Unlimited locations + White-label POS + Full Sylara automation\n\n_All tiers include a 30-Day Free Trial + 30% off your first month._\n\n**Benefit**: Stay 100% compliant and avoid costly fines with automated reporting.';
+        response = '⭐ **GGHP Business Subscriptions (Cannabis)**\n\n• **Starter** ($199/mo): Full SINC POS + Metrc sync + Basic Larry compliance\n• **Professional** ($249/mo): Multi-location + Advanced POS + Larry real-time enforcement\n• **Enterprise** ($499/mo): Unlimited locations + White-label POS + Full Sylara automation\n\n_All tiers include a 14-Day Free Trial + 30% off your first month._\n\n**Benefit**: Stay 100% compliant and avoid costly fines with automated reporting.';
       } else {
         response = '⭐ **GGHP Patient Subscriptions**\n\n• **Basic** ($49.99/mo): Care Wallet + Telehealth access + Basic Sylara AI\n• **Medium** ($99/mo): Enhanced Sylara + Priority Card Processing + Provider access\n• **Full AI** ($199/mo): Unlimited Sylara + Larry AI + Full legal coverage + automated physician sync\n\n_All patient plans include a 30-Day Free Trial._\n\n**Benefit**: A worry-free cannabis journey from intake to renewal.';
       }
@@ -9221,6 +9221,7 @@ export default function App() {
     </ErrorBoundary>
   );
 }
+
 
 
 

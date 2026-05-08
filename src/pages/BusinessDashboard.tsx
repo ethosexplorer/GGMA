@@ -519,7 +519,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
         {!isSubscribed && activeTab !== 'applications' && activeTab !== 'subscription' && (
            <ShadowOverlay 
               title="Premium Feature" 
-              description="Unlock this operational feature by starting your 30-Day Free Trial."
+              description="Unlock this operational feature by starting your 14-Day Free Trial."
               moduleName="Live Access"
               onUpgrade={() => {
                 if (typeof setActiveTab === 'function') setActiveTab('subscription');
@@ -568,8 +568,8 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
           <div className="flex items-center gap-4 relative z-10">
              <div className="p-3 bg-amber-100 rounded-2xl border border-amber-200"><Clock className="text-amber-600" size={24} /></div>
              <div>
-                <h4 className="font-black text-lg tracking-tight text-amber-800">30-Day Free Trial Active</h4>
-                <p className="text-sm text-amber-700/80 font-medium hidden sm:block">Complete your GGE World AI Training during your trial. After 30 days, enjoy 30% off your first month — then standard billing begins.</p>
+                <h4 className="font-black text-lg tracking-tight text-amber-800">14-Day Free Trial Active</h4>
+                <p className="text-sm text-amber-700/80 font-medium hidden sm:block">Complete your GGE World AI Training during your trial. After 14 days, enjoy 30% off your first month — then standard billing begins.</p>
              </div>
           </div>
           <Button onClick={() => { navigateTab('subscription'); }} className="bg-amber-600 hover:bg-amber-700 text-white shadow-md whitespace-nowrap mt-4 md:mt-0 font-black rounded-xl border-transparent">

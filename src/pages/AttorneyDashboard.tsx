@@ -22,7 +22,7 @@ const DEFAULT_SIDEBAR_ITEMS = [
 
 const availableCases = [
   { id: 'FL-9942', state: 'Florida', title: 'Licensing Dispute & Application Review', urgency: 'HIGH URGENCY', docs: 12, value: '$50k', clientType: 'Business', time: '14 days left', sla: 'SLA: 24h', triaged: true },
-  { id: 'CA-8812', state: 'California', title: '280E Tax Audit Representation', urgency: 'MEDIUM URGENCY', docs: 45, value: '$120k', clientType: 'Business', time: '30 days left', sla: 'SLA: 48h', triaged: true },
+  { id: 'CA-8812', state: 'California', title: '280E Tax Audit Representation', urgency: 'MEDIUM URGENCY', docs: 45, value: '$120k', clientType: 'Business', time: '14 days left', sla: 'SLA: 48h', triaged: true },
   { id: 'MI-7721', state: 'Michigan', title: 'Compliance & SOP Drafting', urgency: 'STANDARD', docs: 3, value: '$5k', clientType: 'Business/Provider', time: 'Flexible', sla: 'SLA: 5d', triaged: true },
   { id: 'OK-6643', state: 'Oklahoma', title: 'Patient License Appeal (OMMA)', urgency: 'HIGH URGENCY', docs: 8, value: '$2k', clientType: 'Patient', time: '7 days left', sla: 'SLA: 12h', triaged: true },
 ];
