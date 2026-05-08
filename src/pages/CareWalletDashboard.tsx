@@ -84,6 +84,10 @@ export const CareWalletDashboard = ({ onLogout, onNavigate, user }: { onLogout?:
             <CreditCard size={16} className={cn(activeTab === 'cards' ? "text-purple-400" : "text-slate-500")} />
             Virtual Cards
           </button>
+          <button onClick={() => onNavigate && onNavigate('prose-legal')} className={cn("w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left text-slate-400 hover:bg-slate-800/50 hover:text-slate-200")}>
+            <ShieldCheck size={16} className="text-amber-500" />
+            Legal Intake
+          </button>
           <button onClick={() => setActiveTab('rewards')} className={cn("w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left", activeTab === 'rewards' ? "bg-slate-800 text-white shadow-md border border-slate-700" : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200")}>
             <Award size={16} className={cn(activeTab === 'rewards' ? "text-amber-400" : "text-slate-500")} />
             Care Points

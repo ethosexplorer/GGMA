@@ -3036,7 +3036,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         return 'You have selected the **Regulatory/Law Enforcement** portal. This is a restricted gateway for state inspectors, regulators, and enforcement agencies to verify compliance and run reports.';
       case 'legal':
       case 'attorney':
-        return 'You have selected the **Legal Representation** sector. This connects you with attorneys for compliance defense, corporate counsel, or patient advocacy matters.';
+        return 'You have selected the **Attorney Marketplace Registration** sector. This portal allows qualified legal professionals to join our network and connect with patients and businesses needing representation.';
       case 'government':
       case 'political_executive':
         return 'You have selected the **Government Office** sector. This portal provides municipalities and elected officials with economic impact data and regulatory policy tools.';
@@ -3656,13 +3656,20 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
           '_All Patient tiers include a 30-Day Free Trial._\n\n' +
           'To upgrade or start your trial, please select **Start Patient Intake** below.';
         choices = ['Start Patient Intake', 'Book Physician ($45)', 'Main Menu'];
-      } else if (variant === 'provider' || variant === 'legal' || variant === 'attorney' || variant === 'government' || variant === 'political_executive' || variant === 'advocate' || variant === 'advocacy_research') {
+      } else if (variant === 'legal' || variant === 'attorney') {
+        response = '✅ **GGHP Attorney Marketplace Plans**\n\n' +
+          '• **Solo Practitioner**: $249/mo (Marketplace Directory Listing, Direct Client Routing, L.A.R.R.Y AI Access)\n' +
+          '• **Firm/Enterprise**: $499/mo (Priority Preferred Routing, Multi-Attorney Support, Custom Integration)\n\n' +
+          '_All Attorney tiers include a 30-Day Free Trial._\n\n' +
+          'To upgrade or start your trial, please begin your marketplace registration.';
+        choices = ['Join Attorney Marketplace', 'Main Menu'];
+      } else if (variant === 'provider' || variant === 'government' || variant === 'political_executive' || variant === 'advocate' || variant === 'advocacy_research') {
         response = '✅ **GGHP Professional Suite Subscription Plans**\n\n' +
-          '? **Professional Network**: $249/mo (Network Integration, Encrypted Communications, AI Support)\n' +
-          '? **Enterprise Operations**: $499/mo (Full Ecosystem Access, Custom Operations)\n\n' +
+          '• **Professional Network**: $249/mo (Network Integration, Encrypted Communications, AI Support)\n' +
+          '• **Enterprise Operations**: $499/mo (Full Ecosystem Access, Custom Operations)\n\n' +
           '_All Professional tiers include a 30-Day Free Trial and 30% off your first month after the trial._\n\n' +
           'To upgrade or start your trial, please begin your professional onboarding.';
-        choices = ['Join Attorney Marketplace', 'Main Menu'];
+        choices = ['Start Provider Onboarding', 'Main Menu'];
       } else {
         // Fallback for General / GGMA generic portal
         response = '✅ **GGHP Subscription Plans**\n\n' +
@@ -3866,7 +3873,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       return;
     }
 
-    if (lower.includes('telehealth & legal') || lower.includes('attorney') || lower.includes('paralegal') || lower.includes('find an attorney')) {
+    if (lower.includes('telehealth & legal') || lower.includes('paralegal') || lower.includes('find an attorney') || (lower.includes('attorney') && !lower.includes('join'))) {
       response = '⚖️ **Find an Attorney / Legal Network**\n\nOur **Attorney Marketplace** connects you with bar-verified legal counsel specializing in cannabis law, compliance, and defense.\n\nWhat type of legal representation are you looking for?';
       setMessages(prev => [...prev, { 
         role: 'bot', 
