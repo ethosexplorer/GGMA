@@ -4186,6 +4186,22 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       return;
     }
 
+    // ── Global Escape Hatch: allows user to restart/go back at any point ──
+    if (signupStep > 0 && (
+      lower === 'go back' || lower === 'start over' || lower === 'restart' ||
+      lower === 'cancel' || lower === 'main menu' || lower === 'menu' ||
+      lower === 'back' || lower === 'exit' || lower === 'quit' ||
+      lower.includes('change my mind') || lower.includes('start over') ||
+      lower.includes('go back') || lower.includes('main menu')
+    )) {
+      setSignupStep(0);
+      setIsBusiness(false);
+      const response = '↩️ **No problem!** Your progress has been saved. You can always resume later from your portal.\n\nHow can I assist you today?';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: getInitialChoices() } as any]);
+      setIsTyping(false);
+      return;
+    }
+
     // === MAIN STATE MACHINE ===
     if (signupStep === -1) {
       if (lower === 'english' || lower === 'español' || lower.includes('português') || lower.includes('français') || lower.includes('kreyòl') || lower.includes('中文')) {
