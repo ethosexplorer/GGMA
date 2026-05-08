@@ -3081,7 +3081,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     if (variant === 'government' || variant === 'political_executive') return ['Request Policy Brief', 'View Economic Impact Data', 'Regulatory Integration Inquiry'];
     if (variant === 'advocate' || variant === 'advocacy_research') return ['View Community Polling', 'Social Equity Programs', 'Health Impact Resources'];
     
-    if (isBusiness) return ['Start Business Intake', '🏛️ DEA Schedule III Registration', 'View Business Fee Schedule', 'Speak with Business Expert', 'View Subscription Plans'];
+    if (isBusiness) return ['Start Business Intake', '🏛️ DEA Schedule III Registration', 'View Business Fee Schedule', 'Speak with Business Expert'];
     if (isGeneral) return [
       '🏢 GGMA Licensing',
       '🕵️ RIP Intelligence',
