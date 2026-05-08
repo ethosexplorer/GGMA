@@ -3677,7 +3677,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         response = '✅ **GGHP Subscription Plans**\n\n' +
           '**Patient Plans:** Starts at $49.99/mo (Includes Care Wallet & Telehealth)\n' +
           '**Business Plans:** Starts at $199/mo (Includes POS & Metrc Sync)\n' +
-          '**Professional Plans:** Starts at $249/mo\n\n' +
+          '**Professional Plans:** Starts at $99/mo\n\n' +
           '_All tiers include a 30-Day Free Trial._\n\n' +
           'Please select which intake you would like to start to view specific pricing:';
         choices = ['Start Patient Intake', 'Start Business Intake', 'Main Menu'];
