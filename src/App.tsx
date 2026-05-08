@@ -4297,9 +4297,9 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         return;
       } else if (lower.includes('start business intake')) {
         setIsBusiness(true);
-        const response = '🏢 Let\'s begin your **Commercial License Application**.\n\n**Section 1: Account Setup**\n\nWhat is your **Full Name** (First & Last)? This will be the individual responsible for the account and license information.';
-        setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
-        setSignupStep(100);
+        const response = '🏢 Let\'s begin your **Commercial License Application**.\n\nFirst, what type of license are you applying for?';
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Dispensary', 'Grower / Cultivator', 'Processor / Manufacturer', 'Transporter', 'Testing Laboratory', 'Waste Disposal'] } as any]);
+        setSignupStep(99.5);
         setIsTyping(false);
         return;
       } else if (lower.includes('reschedule') || lower.includes('return later')) {
@@ -4400,9 +4400,9 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         setEligibleLicenses([]);
       } else if (lower.includes('start business intake')) {
         setIsBusiness(true);
-        const response = '🏢 Let\'s begin your **Commercial License Application**.\n\n**Section 1: Account Setup**\n\nWhat is your **Full Name** (First & Last)? This will be the individual responsible for the account and license information.';
-        setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
-        setSignupStep(100);
+        const response = '🏢 Let\'s begin your **Commercial License Application**.\n\nFirst, what type of license are you applying for?';
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Dispensary', 'Grower / Cultivator', 'Processor / Manufacturer', 'Transporter', 'Testing Laboratory', 'Waste Disposal'] } as any]);
+        setSignupStep(99.5);
         setIsTyping(false);
         return;
       } else if (lower.includes('patient')) {
@@ -4928,7 +4928,16 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         return;
       }
     }
-    // Section 1: First-Time Registration
+    // License Type Selection (before account setup)
+    else if (signupStep === 99.5) {
+      setBusinessData(prev => ({ ...prev, licenseType: text }));
+      response = `Great — you're applying for a **${text}** license.\n\n**Section 1: Account Setup**\n\nWhat is your **Full Name** (First & Last)? This will be the individual responsible for the account and license information.`;
+      setSignupStep(100);
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
+    }
+        // Section 1: First-Time Registration
     else if (signupStep === 100) {
       setBusinessData(prev => ({ ...prev, fullName: text }));
       response = `Nice to meet you, **${text}**! What is your **Email Address**? This will be used for registration and follow-up notices.`;
@@ -4963,6 +4972,9 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         setBusinessData(prev => ({ ...prev, termsAccepted: true }));
         response = '✅ **Registration Complete!**\n\n**Section 2: Account Recognition**\n\n📧 An email will be sent to your registered email address. Click the link in the email to confirm your address and begin the application process.\n\n**Section 3: General Information**\n\nWhat is the **Individual Owner Name or Primary Entity Name** for the commercial establishment?';
         setSignupStep(105);
+        setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+        setIsTyping(false);
+        return;
       } else if (lower === 'no' || lower === 'nope') {
         response = 'You must accept the Terms and Conditions to proceed. Do you accept the **Terms and Conditions**?';
         setMessages(prev => [...prev, { 
@@ -5116,6 +5128,9 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       setBusinessData(prev => ({ ...prev, operatingHours: text }));
       response = '✅ **General Information Complete!**\n\n**Section 4: Owners & Principal Officers**\n\nLet\'s add owner/principal officer information. What is the **Full Name** (First, Middle, Last, Suffix) of the owner/officer?';
       setSignupStep(111);
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     }
     // Section 4: All Owners and Principal Officers
     else if (signupStep === 111) {
@@ -5287,6 +5302,9 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       setBusinessData(prev => ({ ...prev, locationMailing: mailing }));
       response = '✅ **Location Information Complete!**\n\n**Section 6: Primary Contact & Registered Agent**\n\nWho is the **Primary Point of Contact (PPOC)**? Please provide their **Full Name** (First, Middle, Last, Suffix).';
       setSignupStep(125);
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     }
     // Section 6: Primary Contact
     else if (signupStep === 125) {
