@@ -32,6 +32,8 @@ import { InternalMessenger } from '../components/messaging/InternalMessenger';
 import { CallCenterCommandTab } from '../components/telephony/CallCenterCommandTab';
 import { AITrainingTab } from '../components/AITrainingTab';
 import { GGEWorldHRHub } from './GGEWorldHRHub';
+import { LanguageSelector } from '../components/LanguageSelector';
+import { ImportantUpdates } from '../components/ImportantUpdates';
 import { UserCalendar } from '../components/UserCalendar';
 import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
 import { EscalationSupportCalendar } from '../components/EscalationSupportCalendar';
@@ -502,6 +504,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
 
   const renderOverview = () => (
     <div className="space-y-6">
+      <ImportantUpdates role="founder" />
 
       <div className="bg-slate-900 bg-gradient-to-r from-slate-900 to-indigo-900 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-full bg-indigo-500/10 blur-3xl"></div>

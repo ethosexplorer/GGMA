@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Calendar, Wallet, CreditCard, TrendingUp, ShieldCheck, History, ArrowUpRight, 
-  ArrowDownLeft, PlusCircle, Award, Target, Activity, Zap, Lock
+  ArrowDownLeft, PlusCircle, Award, Target, Activity, Zap, Lock, Bell
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { turso } from '../lib/turso';
 import { StatCard } from '../components/StatCard';
 import { UserCalendar } from '../components/UserCalendar';
+import { ImportantUpdates } from '../components/ImportantUpdates';
 
 const transactions = [
   { id: 1, type: 'reload', amount: 200, date: 'Today, 10:30 AM', merchant: 'GGP Kiosk - Tulsa', status: 'Completed' },
@@ -124,10 +125,11 @@ export const CareWalletDashboard = ({ onLogout, onNavigate, user }: { onLogout?:
           </div>
         </header>
 
-        {/* Content Area */}
         <div className="flex-1 overflow-y-auto p-6">
           <div className="max-w-6xl mx-auto space-y-6">
             
+            <ImportantUpdates role="patient" />
+
             {/* Top Row: Balance & C3 Score */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               

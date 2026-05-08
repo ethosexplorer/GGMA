@@ -7,6 +7,7 @@ import { cn } from '../lib/utils';
 import { StatCard } from '../components/StatCard';
 import { CannabisCertWizard } from '../components/provider/CannabisCertWizard';
 import { UserCalendar } from '../components/UserCalendar';
+import { ImportantUpdates } from '../components/ImportantUpdates';
 
 const DEFAULT_SIDEBAR_ITEMS = [
   { id: 'overview', label: 'Overview', icon: BarChart },
@@ -206,6 +207,13 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                 </div>
               </div>
             </div>
+
+            {/* Important Updates (Shown on Queue/Overview) */}
+            {(activeTab === 'queue' || activeTab === 'overview') && (
+              <div className="mb-6">
+                <ImportantUpdates role="provider" />
+              </div>
+            )}
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Main Content (Patient Queue) */}

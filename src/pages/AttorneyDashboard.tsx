@@ -5,6 +5,7 @@ import { Shield, Scale, Briefcase, FileText, Search, BookOpen, Clock, AlertTrian
   ChevronRight, Lock, Unlock, Zap, BarChart2, Bell, MessageSquare, CreditCard,
   CheckCircle, PlusCircle, LayoutDashboard, UserCheck, ShieldAlert, Calendar, CircleCheck } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { ImportantUpdates } from '../components/ImportantUpdates';
 import { StatCard } from '../components/StatCard';
 import { UserCalendar } from '../components/UserCalendar';
 
@@ -165,7 +166,8 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
           <div className="max-w-7xl mx-auto space-y-6">
             
             {activeTab === 'dashboard' && (
-              <>
+              <div className="space-y-6">
+                <ImportantUpdates role="attorney" />
               {/* KPI Row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
@@ -466,7 +468,7 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                 </div>
               </div>
             </div>
-            </>
+            </div>
             )}
 
             {activeTab === 'browse' && (

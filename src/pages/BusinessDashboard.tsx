@@ -1,7 +1,5 @@
-import React,
-  { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShadowOverlay } from '../components/shared/ShadowOverlay';
-import { useState, useEffect } from 'react';
 import { useDraggableSidebar } from '../hooks/useDraggableSidebar';
 import { Wallet, Users, Building2, Shield, Clock, TrendingUp, Plus, LayoutDashboard, CreditCard, PackageSearch, AlertCircle, ShoppingCart, Loader2, Trash2, Edit2, CheckCircle, XCircle, Sparkles, MapPin, BarChart2, Activity, MessageSquare, LogOut, FileText, ClipboardList, CheckSquare, UploadCloud, Calendar, Zap, AlertTriangle, Database, Gavel, ArrowRight, ArrowLeft, Send } from 'lucide-react';
 import { cn } from '../lib/utils';
@@ -13,6 +11,7 @@ import { SubscriptionPortal } from '../components/SubscriptionPortal';
 import { turso } from '../lib/turso';
 import { initializeDatabase } from '../lib/tursoMigrations';
 import { ComplianceEngineTab } from '../components/business/ComplianceEngineTab';
+import { ImportantUpdates } from '../components/ImportantUpdates';
 import { AttorneyMarketplaceTab } from '../components/shared/AttorneyMarketplaceTab';
 import { DashboardAnalytics } from '../components/DashboardAnalytics';
 
@@ -484,6 +483,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
           {activeTab === 'home' && (
       <div className="space-y-6">
         <StateWelcomeBanner jurisdiction={jurisdiction} type="business" />
+        <ImportantUpdates role="business" />
         
         {/* 30-Day Trial Banner */}
         <div className="bg-amber-50 border border-amber-200 rounded-[2rem] p-5 flex flex-col md:flex-row items-center justify-between text-amber-900 shadow-sm mb-4 relative overflow-hidden">
