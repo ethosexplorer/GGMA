@@ -3258,19 +3258,46 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
 
   const getRequiredDocuments = () => {
     const base = [
+      'Government-Issued Photo ID (each owner)',
       'Affidavit of Lawful Presence',
-      'Proof of Oklahoma Residency (75% ownership)',
-      'OSBI Background Check (each owner)',
-      'National Background Check Attestation',
-      'ID copies (each person of interest)',
+      'Proof of State Residency (75% ownership)',
+      'Background Check (each owner/officer)',
+      'Certificate of Good Standing',
       'Certificate of Compliance',
       'Certificate(s) of Occupancy & Site Plans',
-      'Certificate of Good Standing',
       'Ownership Disclosure Documentation',
     ];
-    if (businessData.licenseType === 'Processor') base.push('Hazardous License / Chemical Safety Data Sheets');
-    if (businessData.licenseType === 'Dispensary') base.push('Dispensary Distance Attestation (1,000 ft from schools)');
-    if (businessData.licenseType === 'Grower') base.push('Grow Facility Distance Attestation (1,000 ft from schools)');
+    const lt = (businessData.licenseType || '').toLowerCase();
+    if (lt.includes('dispensary')) {
+      base.push('Dispensary Distance Attestation (1,000 ft from schools)');
+      base.push('Product Security & Inventory Plan');
+      base.push('Dispensary Floor Plan');
+    }
+    if (lt.includes('grower') || lt.includes('cultivator')) {
+      base.push('Grow Facility Distance Attestation (1,000 ft from schools)');
+      base.push('Cultivation Plan & Irrigation Layout');
+      base.push('Surety Bond Documentation OR Land Ownership Attestation (5+ yrs)');
+    }
+    if (lt.includes('processor') || lt.includes('manufacturer')) {
+      base.push('Hazardous Materials License / Chemical Safety Data Sheets');
+      base.push('Processing Facility Floor Plan');
+      base.push('Product Labeling & Packaging Compliance Plan');
+    }
+    if (lt.includes('transporter')) {
+      base.push('Vehicle Registration(s) & Insurance');
+      base.push('Transport Route Security Plan');
+      base.push('GPS Tracking System Documentation');
+    }
+    if (lt.includes('testing') || lt.includes('laboratory')) {
+      base.push('Lab Accreditation Certificate (ISO 17025 or equivalent)');
+      base.push('Equipment Calibration Records');
+      base.push('Lab Safety & SOPs Manual');
+    }
+    if (lt.includes('waste')) {
+      base.push('Waste Disposal Permit / License');
+      base.push('Environmental Impact Assessment');
+      base.push('Chain-of-Custody Destruction Protocol');
+    }
     return base;
   };
 
@@ -5159,11 +5186,18 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       }
       if (selectedStructure) {
         setBusinessData(prev => ({ ...prev, businessStructure: selectedStructure }));
-        response = `You selected: **${selectedStructure}**\n\nWhat are the anticipated **Office/Operating Hours** for the commercial establishment? (e.g., Mon-Fri 9am-5pm)`;
-        setSignupStep(110);
+        response = `You selected: **${selectedStructure}**\n\nPlease set your **Office/Operating Hours** using the scheduler below:`;
+        setSignupStep(109.5);
       } else {
         response = 'Please select a valid business structure (1-5).\n\n' + BUSINESS_STRUCTURES.map((s, i) => `${i + 1}. ${s}`).join('\n');
       }
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
+    } else if (signupStep === 109.5) {
+      setBusinessData(prev => ({ ...prev, operatingHours: text }));
+      response = '✅ **Operating hours saved!**\n\n✅ **General Information Complete!**\n\n**Section 3: Owners & Principal Officers**\n\nLet\'s add owner/principal officer information. What is the **Full Name** (First, Middle, Last, Suffix) of the owner/officer?';
+      setSignupStep(111);
       setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
       setIsTyping(false);
       return;
@@ -5178,14 +5212,20 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     // Section 4: All Owners and Principal Officers
     else if (signupStep === 111) {
       setBusinessData(prev => ({ ...prev, ownerName: text }));
-      response = `What is **${text}**'s **Phone Number and Email**? (e.g., 555-123-4567, email@example.com)`;
+      response = `What is **${text}**'s **Phone Number**?`;
+      setSignupStep(111.5);
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
+    } else if (signupStep === 111.5) {
+      setBusinessData(prev => ({ ...prev, ownerPhone: text }));
+      response = `What is **${businessData.ownerName || 'their'}**'s **Email Address**?`;
       setSignupStep(112);
       setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
       setIsTyping(false);
       return;
     } else if (signupStep === 112) {
-      const parts = text.split(/[,;]+/).map(s => s.trim());
-      setBusinessData(prev => ({ ...prev, ownerPhone: parts[0] || text, ownerEmail: parts[1] || '' }));
+      setBusinessData(prev => ({ ...prev, ownerEmail: text }));
       response = 'What **Type of ID Document** is being uploaded?\n\n' + BUSINESS_ID_TYPES.map((t, i) => `${i + 1}. ${t}`).join('\n') + '\n\nPlease reply with the **number**.';
       setSignupStep(113);
       setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
@@ -6642,7 +6682,102 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
 
           {/* ── Patient Document Upload Panel — shown during step 16 ── */}
                     {/* 📝 Business Document Upload Panel - shown during step 133.7 📝 */}
-          {signupStep === 133.7 && (
+          {signupStep === 109.5 && (
+            <div className="flex justify-start gap-3">
+              <div className="w-9 h-9 rounded-xl bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
+                <Bot size={18} />
+              </div>
+              <div className="flex-1 max-w-[90%] bg-white border border-slate-200/80 rounded-2xl rounded-bl-md shadow-sm p-5">
+                <p className="text-sm font-bold text-slate-800 mb-1">🕐 Operating Hours Scheduler</p>
+                <p className="text-xs text-slate-500 mb-4">Select your days, hours, and timezone.</p>
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-xs font-semibold text-slate-600 mb-2">Days of Operation:</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
+                        <button
+                          key={day}
+                          onClick={() => {
+                            const current = (businessData as any).selectedDays || [];
+                            const updated = current.includes(day)
+                              ? current.filter((d: string) => d !== day)
+                              : [...current, day];
+                            setBusinessData(prev => ({ ...prev, selectedDays: updated } as any));
+                          }}
+                          className={`px-3 py-1.5 text-xs font-bold rounded-lg border transition-all ${
+                            ((businessData as any).selectedDays || []).includes(day)
+                              ? 'bg-emerald-500 text-white border-emerald-500'
+                              : 'bg-white text-slate-600 border-slate-300 hover:border-emerald-400'
+                          }`}
+                        >
+                          {day}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-xs font-semibold text-slate-600 mb-1">Start Time:</p>
+                      <select
+                        onChange={(e) => setBusinessData(prev => ({ ...prev, hoursStart: e.target.value } as any))}
+                        className="w-full px-2 py-1.5 text-xs border border-slate-300 rounded-lg focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400"
+                        value={(businessData as any).hoursStart || ''}
+                      >
+                        <option value="">Select...</option>
+                        {['6:00 AM','7:00 AM','8:00 AM','9:00 AM','10:00 AM','11:00 AM','12:00 PM','1:00 PM','2:00 PM','3:00 PM','4:00 PM'].map(t => (
+                          <option key={t} value={t}>{t}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-slate-600 mb-1">End Time:</p>
+                      <select
+                        onChange={(e) => setBusinessData(prev => ({ ...prev, hoursEnd: e.target.value } as any))}
+                        className="w-full px-2 py-1.5 text-xs border border-slate-300 rounded-lg focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400"
+                        value={(businessData as any).hoursEnd || ''}
+                      >
+                        <option value="">Select...</option>
+                        {['12:00 PM','1:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM','6:00 PM','7:00 PM','8:00 PM','9:00 PM','10:00 PM','11:00 PM','12:00 AM'].map(t => (
+                          <option key={t} value={t}>{t}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-slate-600 mb-1">Time Zone:</p>
+                    <select
+                      onChange={(e) => setBusinessData(prev => ({ ...prev, hoursTimezone: e.target.value } as any))}
+                      className="w-full px-2 py-1.5 text-xs border border-slate-300 rounded-lg focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400"
+                      value={(businessData as any).hoursTimezone || ''}
+                    >
+                      <option value="">Select...</option>
+                      <option value="EST">Eastern (EST)</option>
+                      <option value="CST">Central (CST)</option>
+                      <option value="MST">Mountain (MST)</option>
+                      <option value="PST">Pacific (PST)</option>
+                      <option value="AKST">Alaska (AKST)</option>
+                      <option value="HST">Hawaii (HST)</option>
+                    </select>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    const days = ((businessData as any).selectedDays || []).join(', ') || 'Not set';
+                    const start = (businessData as any).hoursStart || 'N/A';
+                    const end = (businessData as any).hoursEnd || 'N/A';
+                    const tz = (businessData as any).hoursTimezone || 'N/A';
+                    const hoursStr = days + ' ' + start + ' - ' + end + ' ' + tz;
+                    handleSend(undefined, hoursStr);
+                  }}
+                  className="mt-4 w-full py-2.5 bg-emerald-500 text-white text-sm font-bold rounded-xl hover:bg-emerald-600 transition-all shadow-sm"
+                >
+                  ✅ Confirm Operating Hours
+                </button>
+              </div>
+            </div>
+          )}
+
+        {signupStep === 133.7 && (
             <div className="flex justify-start gap-3">
               <div className="w-9 h-9 rounded-xl bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
                 <Bot size={18} />
