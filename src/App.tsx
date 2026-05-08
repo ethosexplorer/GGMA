@@ -3779,6 +3779,14 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       return;
     }
 
+    if (lower === 'request policy brief' || lower === 'view economic impact data' || lower === 'regulatory integration inquiry') {
+      response = `🏛️ **Government & Policy Access Required**\n\nThe GGHP Ecosystem generates real-time economic impact reports, granular policy analytics, and municipal tax-yield forecasting models.\n\nDue to the sensitive nature of regulatory data and state-level compliance metrics, **unrestricted access is reserved for verified government officials and policy makers.**\n\nBy registering an official account, your office gains access to:\n• **Live Economic Impact Dashboards**\n• **C³ Patient & Business Compliance Aggregates**\n• **Direct Policy Integration Tools**\n\nTo view these restricted reports and data sets, please create your official account.`;
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Secure Login / Sign Up', 'Main Menu'] } as any]);
+      setSignupStep(0);
+      setIsTyping(false);
+      return;
+    }
+
     if (lower === 'view all tiers') {
        setMessages(prev => [...prev, { 
          role: 'bot', 
