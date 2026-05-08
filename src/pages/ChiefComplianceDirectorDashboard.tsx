@@ -14,6 +14,7 @@ import { ExternalAdminDashboard } from './ExternalAdminDashboard';
 import { StateAuthorityDashboard } from './StateAuthorityDashboard';
 import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
 import { EscalationSupportCalendar } from '../components/EscalationSupportCalendar';
+import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
@@ -83,6 +84,8 @@ const ChiefComplianceDirectorDashboard = ({ user, onLogout }: { user?: any, onLo
 
   return (
     <div className="flex h-screen bg-[#0A0F1C] overflow-hidden text-slate-300 font-sans">
+          {user && <ProfileSettingsCard user={user} roleLabel="User Info" />}
+
       {/* Sidebar */}
       <aside className="w-64 bg-[#0A0F1C] border-r border-slate-800 flex flex-col h-full shrink-0 relative z-20 shadow-2xl">
         <div className="h-16 flex items-center px-6 border-b border-slate-800/50 bg-[#0A0F1C] shrink-0 sticky top-0 z-10">

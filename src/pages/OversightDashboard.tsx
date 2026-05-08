@@ -13,6 +13,7 @@ import { AuditLogsTab } from '../components/oversight/AuditLogsTab';
 import { VirtualAttendantTab } from '../components/oversight/VirtualAttendantTab';
 import { StateWelcomeBanner } from '../components/shared/StateWelcomeBanner';
 import { UserCalendar } from '../components/UserCalendar';
+import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 
 const NAV_ITEMS = [
   { section: 'MAIN OVERSIGHT' },
@@ -109,6 +110,8 @@ export const OversightDashboard = ({ onLogout, user, role, jurisdiction = 'Oklah
       case 'processor':
         return (
           <div className="p-8 space-y-6 overflow-y-auto h-full">
+          {user && <ProfileSettingsCard user={user} roleLabel="User Info" />}
+
             <div className="flex justify-between items-center mb-8">
               <div>
                 <h1 className="text-3xl font-black text-slate-800 tracking-tight">GGE Processor Master Command</h1>

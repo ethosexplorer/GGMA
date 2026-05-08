@@ -8,6 +8,7 @@ import { motion } from 'motion/react';
 import { UserCalendar } from '../components/UserCalendar';
 import { PublicHealthDashboard } from './PublicHealthDashboard';
 import { SubscriptionPortal } from '../components/SubscriptionPortal';
+import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 
 export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
   const [activeTab, setActiveTab] = useState('legal_oversight');
@@ -212,6 +213,8 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 relative">
+          {user && <ProfileSettingsCard user={user} roleLabel="User Info" />}
+
       {!isUnlocked && (
         <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-slate-900/60 backdrop-blur-2xl animate-in fade-in duration-300">
           <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-2xl text-center max-w-sm w-full animate-in zoom-in-95 duration-500">

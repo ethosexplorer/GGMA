@@ -5,6 +5,7 @@ import { Calendar, Activity, ShieldAlert, FlaskConical, AlertTriangle, FileText,
 import { cn } from '../lib/utils';
 import { StatCard } from '../components/StatCard';
 import { UserCalendar } from '../components/UserCalendar';
+import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 
 const sidebarItems = [
   { id: 'dashboard', label: 'Health Dashboard', icon: Activity },
@@ -71,6 +72,8 @@ export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => voi
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] bg-slate-50">
+          {user && <ProfileSettingsCard user={user} roleLabel="User Info" />}
+
       {/* LEFT SIDEBAR */}
       <div className="w-64 bg-slate-900 border-r border-slate-800 text-slate-300 hidden md:flex flex-col">
         <div className="p-6 pb-2">

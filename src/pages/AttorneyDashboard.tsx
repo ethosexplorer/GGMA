@@ -8,6 +8,7 @@ import { cn } from '../lib/utils';
 import { ImportantUpdates } from '../components/ImportantUpdates';
 import { StatCard } from '../components/StatCard';
 import { UserCalendar } from '../components/UserCalendar';
+import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 
 const DEFAULT_SIDEBAR_ITEMS = [
   { id: 'calendar', label: 'My Calendar', icon: Calendar },
@@ -69,6 +70,8 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] bg-slate-50">
+          {user && <ProfileSettingsCard user={user} roleLabel="User Info" />}
+
       {/* LEFT SIDEBAR (Legal Green Theme) */}
       <div className="w-64 bg-[#0a1f16] border-r border-[#153a28] text-slate-300 hidden md:flex flex-col">
         <div className="p-6 pb-2">

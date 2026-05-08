@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { EnforcementIntelTab } from '../components/federal/EnforcementIntelTab';
 import { UserCalendar } from '../components/UserCalendar';
 import { SubscriptionPortal } from '../components/SubscriptionPortal';
+import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 
 const flags = [
   { id: 1, type: 'volume', title: 'Suspicious Volume Anomaly', entity: 'Apex Health LLC', time: 'Just now', severity: 'high', desc: 'Exceeding daily sales limits.' },
@@ -90,6 +91,8 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-950 text-slate-300 font-sans relative">
+          {user && <ProfileSettingsCard user={user} roleLabel="User Info" />}
+
       {!isUnlocked && (
         <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-slate-950/80 backdrop-blur-2xl animate-in fade-in duration-300">
           <div className="bg-slate-900 p-8 rounded-[2rem] border border-emerald-900/50 shadow-2xl shadow-emerald-900/20 text-center max-w-sm w-full animate-in zoom-in-95 duration-500">

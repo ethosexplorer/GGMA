@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { LayoutDashboard, Activity, Shield, HeartPulse, ShieldAlert, FileText, Lock, CreditCard, Users, Download, Database, Dna } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { SubscriptionPortal } from '../components/SubscriptionPortal';
+import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 
 export const AdvocacyResearchDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -138,6 +139,8 @@ export const AdvocacyResearchDashboard = ({ onLogout, user }: { onLogout?: () =>
 
                 {activeTab === 'overview' && (
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <ProfileSettingsCard user={user} roleLabel="User Info" />
+
                     <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                       <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-2">Registered Patients</p>
                       <h3 className="text-4xl font-black text-slate-900">482,912</h3>

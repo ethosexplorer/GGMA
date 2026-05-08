@@ -15,6 +15,7 @@ import { SubscriptionPortal } from '../components/SubscriptionPortal';
 import { LegislativeIntelTab } from '../components/federal/LegislativeIntelTab';
 import { JudicialMonitorTab } from '../components/federal/JudicialMonitorTab';
 import { UserCalendar } from '../components/UserCalendar';
+import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 const tabs = [
   { id: 'overview', label: 'Nationwide Overview', icon: LayoutDashboard, tier: 'basic' },
   { id: 'intel', label: 'Legislative Intel', icon: BookOpen, tier: 'basic' },
@@ -42,6 +43,8 @@ export const FederalDashboard = ({ onLogout, user }: { onLogout?: () => void, us
 
   return (
     <div className="h-screen bg-[#080e1a] overflow-hidden relative">
+          {user && <ProfileSettingsCard user={user} roleLabel="User Info" />}
+
       {!isUnlocked && (
         <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-[#080e1a]/80 backdrop-blur-2xl animate-in fade-in duration-300">
           <div className="bg-[#0b1525] p-8 rounded-[2rem] border border-blue-900/50 shadow-2xl shadow-blue-900/20 text-center max-w-sm w-full animate-in zoom-in-95 duration-500">

@@ -11,6 +11,7 @@ import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
 import { ITSupportDashboard } from '../components/it/ITSupportDashboard';
 import { CallCenterCommandTab } from '../components/telephony/CallCenterCommandTab';
 import { voip800 } from '../lib/voip800';
+import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 
 const NAV_ITEMS = [
   { section: 'CALL CENTER' },
@@ -117,6 +118,8 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
 
   const renderSupport = () => (
     <div className="space-y-6">
+          {user && <ProfileSettingsCard user={user} roleLabel="User Info" />}
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
          <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm text-center">
             <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Average Wait Time</h4>

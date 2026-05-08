@@ -7,6 +7,7 @@ import { Calendar, Building2, Users, FileText, Settings, Shield, Activity, Bell,
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { UserCalendar } from '../components/UserCalendar';
+import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 
 const NAV_ITEMS = [
   { section: 'STATE OVERSIGHT' },
@@ -80,6 +81,8 @@ export const RegulatorDashboard = ({ onLogout, user }: { onLogout?: () => void |
       case 'overview': return renderOverview();
       default: return (
         <div className="flex items-center justify-center h-[60vh]">
+          {user && <ProfileSettingsCard user={user} roleLabel="User Info" />}
+
           <div className="text-center space-y-4 max-w-sm">
             <div className="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto"><FileText size={32}/></div>
             <h3 className="text-xl font-bold text-slate-800 tracking-tight">{activeTab.toUpperCase()} Module</h3>

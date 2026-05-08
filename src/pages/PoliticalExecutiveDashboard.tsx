@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Calendar, LayoutDashboard, Activity, Shield, DollarSign, Scale, Sparkles, FileText, BookOpen, Lock, CreditCard, Users, TrendingUp, Vote, Building } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { SubscriptionPortal } from '../components/SubscriptionPortal';
+import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 
 export const PoliticalExecutiveDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -139,6 +140,8 @@ export const PoliticalExecutiveDashboard = ({ onLogout, user }: { onLogout?: () 
 
                 {activeTab === 'overview' && (
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <ProfileSettingsCard user={user} roleLabel="User Info" />
+
                     <div className="bg-[#0b1525] p-6 rounded-2xl border border-[#1e3a5f]/40">
                       <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mb-2">Constituent Approval</p>
                       <h3 className="text-4xl font-black text-white">62.4%</h3>

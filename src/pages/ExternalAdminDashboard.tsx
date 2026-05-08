@@ -5,6 +5,7 @@ import { Calendar, Building2, Users, FileText, Settings, Shield, Activity, Bell,
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { UserCalendar } from '../components/UserCalendar';
+import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 
 const EXT_NAV = [
   { id: 'overview', label: 'Dashboard Overview', icon: Activity },
@@ -163,6 +164,8 @@ export const ExternalAdminDashboard = ({ onLogout, user }: { onLogout?: () => vo
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 text-slate-800 font-sans relative">
+          {user && <ProfileSettingsCard user={user} roleLabel="User Info" />}
+
       {/* SIDEBAR */}
       <div className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col hidden md:flex shrink-0 transition-all duration-500">
         <div className="p-5 pb-2">

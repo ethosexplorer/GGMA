@@ -7,6 +7,7 @@ import { turso } from '../lib/turso';
 import { StatCard } from '../components/StatCard';
 import { UserCalendar } from '../components/UserCalendar';
 import { ImportantUpdates } from '../components/ImportantUpdates';
+import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 
 const transactions = [
   { id: 1, type: 'reload', amount: 200, date: 'Today, 10:30 AM', merchant: 'GGP Kiosk - Tulsa', status: 'Completed' },
@@ -48,6 +49,8 @@ export const CareWalletDashboard = ({ onLogout, onNavigate, user }: { onLogout?:
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] bg-slate-50">
+          {user && <ProfileSettingsCard user={user} roleLabel="User Info" />}
+
       {/* LEFT SIDEBAR */}
       <div className="w-64 bg-slate-900 border-r border-slate-800 text-slate-300 hidden md:flex flex-col">
         <div className="p-6 pb-2">

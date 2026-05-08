@@ -5,12 +5,15 @@ import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { MasterAddOnsList } from '../components/shared/MasterAddOnsList';
 import { UserCalendar } from '../components/UserCalendar';
+import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 
 export const BackOfficeDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
   const [activeTab, setActiveTab] = useState('core');
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] bg-slate-50 text-slate-800 font-sans">
+          {user && <ProfileSettingsCard user={user} roleLabel="User Info" />}
+
       
       {/* LEFT SIDEBAR */}
       <div className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col hidden md:flex shrink-0">

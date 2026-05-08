@@ -39,6 +39,7 @@ import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
 import { EscalationSupportCalendar } from '../components/EscalationSupportCalendar';
 import { voip800 } from '../lib/voip800';
 import { InvoiceManager } from '../components/founder/InvoiceManager';
+import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
@@ -504,6 +505,8 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
 
   const renderOverview = () => (
     <div className="space-y-6">
+          {user && <ProfileSettingsCard user={user} roleLabel="User Info" />}
+
       <ImportantUpdates role="founder" />
 
       <div className="bg-slate-900 bg-gradient-to-r from-slate-900 to-indigo-900 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">

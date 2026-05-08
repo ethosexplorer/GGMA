@@ -8,6 +8,7 @@ import { StatCard } from '../components/StatCard';
 import { CannabisCertWizard } from '../components/provider/CannabisCertWizard';
 import { UserCalendar } from '../components/UserCalendar';
 import { ImportantUpdates } from '../components/ImportantUpdates';
+import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 
 const DEFAULT_SIDEBAR_ITEMS = [
   { id: 'overview', label: 'Overview', icon: BarChart },
@@ -222,6 +223,8 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                 {activeTab === 'queue' && (
                   <>
                 <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <ProfileSettingsCard user={user} roleLabel="User Info" />
+
                   <div className="p-5 border-b border-slate-100 flex items-center justify-between">
                     <div>
                       <h3 className="font-bold text-slate-800 text-lg flex items-center gap-2">

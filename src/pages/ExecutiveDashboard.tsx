@@ -9,6 +9,7 @@ import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { EXECUTIVE_KNOWLEDGE } from '../executiveKnowledge';
 import { UserCalendar } from '../components/UserCalendar';
+import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 
 // Common Button Component
 const Button = ({ children, className, icon: Icon, variant, disabled, ...props }: any) => (
@@ -506,6 +507,8 @@ export const ExecutiveDashboard = ({ onLogout, user }: any) => {
 
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden font-sans selection:bg-indigo-100 selection:text-indigo-900">
+          {user && <ProfileSettingsCard user={user} roleLabel="User Info" />}
+
       
       {/* Sidebar */}
       <div className="w-64 bg-slate-900 text-slate-300 flex flex-col shadow-2xl z-20 shrink-0">
