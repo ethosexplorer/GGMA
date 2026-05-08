@@ -5030,7 +5030,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         response = 'Password must be at least 8 characters. Please choose a strong password.';
       } else {
         setBusinessData(prev => ({ ...prev, password: text }));
-        response = 'Do you accept the **Terms and Conditions** for the website? (Yes / No)';
+        response = 'Please review and accept our **Terms and Conditions** below:';
         setSignupStep(103);
       }
       setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
@@ -6682,7 +6682,52 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
 
           {/* ── Patient Document Upload Panel — shown during step 16 ── */}
                     {/* 📝 Business Document Upload Panel - shown during step 133.7 📝 */}
-          {signupStep === 109.5 && (
+          {signupStep === 103 && (
+            <div className="flex justify-start gap-3">
+              <div className="w-9 h-9 rounded-xl bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
+                <Bot size={18} />
+              </div>
+              <div className="flex-1 max-w-[90%] bg-white border border-slate-200/80 rounded-2xl rounded-bl-md shadow-sm p-5">
+                <p className="text-sm font-bold text-slate-800 mb-3">📋 Terms and Conditions</p>
+                <div className="relative group inline-block mb-4">
+                  <span className="text-emerald-600 font-bold text-sm underline decoration-dotted cursor-pointer hover:text-emerald-700 transition-colors">
+                    📄 Hover to view Terms and Conditions
+                  </span>
+                  <div className="invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 absolute z-50 left-0 top-full mt-2 w-[340px] max-h-[300px] overflow-y-auto bg-white border border-slate-300 rounded-xl shadow-2xl p-4">
+                    <p className="text-xs font-black text-slate-800 mb-2 uppercase tracking-wider">Global Green Hybrid Platform — Terms of Service</p>
+                    <div className="text-[11px] text-slate-600 space-y-2 leading-relaxed">
+                      <p><strong>1. Acceptance:</strong> By creating an account, you agree to these Terms and our Privacy Policy. You must be 18+ years of age.</p>
+                      <p><strong>2. Account:</strong> You are responsible for maintaining the confidentiality of your login credentials. You agree to provide accurate information during registration.</p>
+                      <p><strong>3. Free Account:</strong> Your initial account is FREE. Premium features are available via paid subscription plans. You will not be charged without explicit consent.</p>
+                      <p><strong>4. Data Privacy:</strong> All personal data is encrypted and stored securely. We do not sell your data to third parties. Documents uploaded are stored in your encrypted Document Vault.</p>
+                      <p><strong>5. Compliance:</strong> GGHP operates as a compliance technology platform. We are not a law firm. Regulatory filings are processed through licensed state authorities.</p>
+                      <p><strong>6. Liability:</strong> GGHP is not liable for application denials by state regulatory bodies. We provide tools and support to maximize approval accuracy.</p>
+                      <p><strong>7. Termination:</strong> You may close your account at any time. Pending applications will be preserved for 90 days.</p>
+                      <p><strong>8. Modifications:</strong> We reserve the right to update these terms. Users will be notified of material changes via email.</p>
+                      <p className="text-[10px] text-slate-400 pt-1">© 2026 Global Green Enterprise Inc. All rights reserved.</p>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-xs text-slate-500 mb-4">Do you accept the Terms and Conditions? </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleSend(undefined, 'Yes')}
+                    className="flex-1 py-2 bg-emerald-500 text-white text-sm font-bold rounded-xl hover:bg-emerald-600 transition-all"
+                  >
+                    ✅ Yes, I Accept
+                  </button>
+                  <button
+                    onClick={() => handleSend(undefined, 'No')}
+                    className="flex-1 py-2 bg-slate-200 text-slate-700 text-sm font-bold rounded-xl hover:bg-slate-300 transition-all"
+                  >
+                    ❌ No
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+        {signupStep === 109.5 && (
             <div className="flex justify-start gap-3">
               <div className="w-9 h-9 rounded-xl bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
                 <Bot size={18} />
