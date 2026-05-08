@@ -3052,7 +3052,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     const date = "April 21, 2026";
     const metrcStatus = "Validated Metrc Integrator (Active)";
     
-    if (variant === 'legal' || variant === 'attorney') return `⚖️ Welcome to the **GGHP Legal Representation Portal**.\n\nWe have created an exclusive **Attorney Marketplace** to protect our community. Whether you are a **Patient** or a **Business**, you can connect directly with qualified legal professionals.\n\n• **For Patients:** Get defense for traffic stops, misdemeanors, and felonies related to cannabis.\n• **For Businesses:** Get representation for compliance violations, raids, and regulatory defense.\n\n*(Note: We actively monitor all attorneys in our network to ensure they are fighting for you—not stalling or overcharging. Top-performing attorneys receive Preferred Status.)*\n\nHow can I assist you today?`;
+    if (variant === 'legal' || variant === 'attorney') return `⚖️ Welcome to the **GGHP Attorney Marketplace**. I am **Sylara**, your Intake Agent.\n\nOur platform offers a massive built-in marketplace where **Patients** and **Businesses** go when they need legal representation for cannabis-related traffic stops, misdemeanors, felonies, or commercial raids and compliance violations.\n\nWe are currently onboarding qualified attorneys to join our network. By subscribing to our platform, you gain direct access to these clients right from their dashboards.\n\nHow can I assist your practice today?`;
     
     if (isRyan && variant !== 'legal' && variant !== 'attorney') return `🛡️ **CEO Access Authenticated.** Good Morning, Ryan. I am **L.A.R.R.Y.** (Legal Authority & Regulatory Rules Yield).\n\nI am synced with your Supreme Command Dashboard. All operational pipelines, regulatory enforcement sectors, and jurisdictional metrics are fully operational.\n\nHow can I assist with your executive oversight today?`;
     if (isMonica && variant !== 'legal' && variant !== 'attorney') return `🛡️ **Compliance Access Authenticated.** Good Morning, Monica! I am **L.A.R.R.Y.** (Legal Authority & Regulatory Rules Yield).\n\nI am synced with your Compliance Dashboard. I have loaded the latest Metrc anomalies, pending license approvals, and state regulatory updates.\n\nHow can I support your compliance sweeps today?`;
@@ -3074,7 +3074,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
   };
 
   const getInitialChoices = () => {
-    if (variant === 'legal' || variant === 'attorney') return ['I am a Patient needing help', 'I am a Business needing help', 'I am an Attorney (Join Network)'];
+    if (variant === 'legal' || variant === 'attorney') return ['Join Attorney Marketplace', 'View Network Benefits', 'View Subscription Plans'];
     if (isRyan && variant !== 'legal') return ['View Global Operations', 'Enforcement Status', 'Metrc API Health', 'Jurisdiction Overrides'];
     if (isMonica && variant !== 'legal') return ['Run Compliance Sweep', 'Metrc Anomalies', 'Pending Applications', 'Audit Logs'];
     if (isBob && variant !== 'legal') return ['Review Financial Anomalies', 'Compliance Impact Report', 'Regulatory Forecasting'];
@@ -3662,7 +3662,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
           '? **Enterprise Operations**: $499/mo (Full Ecosystem Access, Custom Operations)\n\n' +
           '_All Professional tiers include a 30-Day Free Trial and 30% off your first month after the trial._\n\n' +
           'To upgrade or start your trial, please begin your professional onboarding.';
-        choices = ['I am an Attorney (Join Network)', 'Main Menu'];
+        choices = ['Join Attorney Marketplace', 'Main Menu'];
       } else {
         // Fallback for General / GGMA generic portal
         response = '✅ **GGHP Subscription Plans**\n\n' +
@@ -4387,20 +4387,13 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Provider Onboarding', 'Main Menu'] } as any]);
         setIsTyping(false);
         return;
-      } else if (lower.includes('patient needing help') || lower.includes('patient needing an attorney')) {
-        response = '⚖️ **Patient Legal Defense Marketplace**\n\nI am unlocking your access to the **GGHP Attorney Marketplace**. Here you can browse our network of preferred, verified attorneys who specialize in cannabis law, traffic stops, and patient defense.\n\nAll attorneys in our network are actively monitored to ensure they provide top-tier representation without overcharging. Please stand by...';
-        setMessages(prev => [...prev, { role: 'bot', text: response }]);
-        setTimeout(() => onNavigate('legal-advocacy'), 2500);
+      } else if (lower.includes('view network benefits')) {
+        response = '⚖️ **Why Join the GGHP Attorney Marketplace?**\n\n• **Direct Client Access**: Patients and businesses looking for legal help via their GGHP dashboards are routed directly to our marketplace. You get instant access to people needing your services.\n• **Preferred Status Routing**: We monitor network attorneys. Those who provide great service, avoid stalling, and charge fairly earn top ratings and **Preferred Status**, pushing more clients to your firm.\n• **Integrated Operations**: Manage your cases, access jurisdictional statutes via L.A.R.R.Y AI, and receive payment seamlessly.\n\nAre you ready to join our network?';
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Join Attorney Marketplace', 'View Subscription Plans', 'Main Menu'] } as any]);
         setIsTyping(false);
         return;
-      } else if (lower.includes('business needing help') || lower.includes('business needing an attorney')) {
-        response = '⚖️ **Commercial Defense Marketplace**\n\nI am routing you to our **Attorney Marketplace**. We have preferred commercial attorneys ready to assist your business with compliance violations, raids, and regulatory audits.\n\nPlease stand by while I open the directory...';
-        setMessages(prev => [...prev, { role: 'bot', text: response }]);
-        setTimeout(() => onNavigate('legal-advocacy'), 2500);
-        setIsTyping(false);
-        return;
-      } else if (lower.includes('attorney (join') || lower.includes('join attorney marketplace')) {
-        response = '⚖️ **Attorney Marketplace Onboarding**\n\nI am routing you to the secure Attorney Registration portal. Please stand by...';
+      } else if (lower.includes('join') || lower.includes('join attorney marketplace')) {
+        response = '⚖️ **Attorney Marketplace Onboarding**\n\nI am routing you to the secure Attorney Registration portal to begin your subscription and profile setup. Please stand by...';
         setMessages(prev => [...prev, { role: 'bot', text: response }]);
         setTimeout(() => onNavigate('signup', 'attorney'), 1500);
         setIsTyping(false);
