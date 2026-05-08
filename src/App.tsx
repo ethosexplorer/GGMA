@@ -3657,16 +3657,18 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
           'To upgrade or start your trial, please select **Start Patient Intake** below.';
         choices = ['Start Patient Intake', 'Book Physician ($45)', 'Main Menu'];
       } else if (variant === 'legal' || variant === 'attorney') {
-        response = '✅ **GGHP Attorney Marketplace Plans**\n\n' +
-          '• **Solo Practitioner**: $249/mo (Marketplace Directory Listing, Direct Client Routing, L.A.R.R.Y AI Access)\n' +
-          '• **Firm/Enterprise**: $499/mo (Priority Preferred Routing, Multi-Attorney Support, Custom Integration)\n\n' +
+        response = '⚖️ **GGHP Attorney Marketplace Plans**\n\n' +
+          '• **Attorney Basic**: $149/mo (Legal Marketplace Access, Gemini Flash + Basic Sylara)\n' +
+          '• **Attorney Medium**: $349/mo (Enhanced Lead Access, Gemini Flash + Enhanced Sylara)\n' +
+          '• **Attorney Full AI**: $699/mo (Full Lead Dominance, Full Sylara + Larry Enforcement)\n\n' +
           '_All Attorney tiers include a 30-Day Free Trial._\n\n' +
           'To upgrade or start your trial, please begin your marketplace registration.';
         choices = ['Join Attorney Marketplace', 'Main Menu'];
       } else if (variant === 'provider' || variant === 'government' || variant === 'political_executive' || variant === 'advocate' || variant === 'advocacy_research') {
-        response = '✅ **GGHP Professional Suite Subscription Plans**\n\n' +
-          '• **Professional Network**: $249/mo (Network Integration, Encrypted Communications, AI Support)\n' +
-          '• **Enterprise Operations**: $499/mo (Full Ecosystem Access, Custom Operations)\n\n' +
+        response = '⭐ **GGHP Professional Suite Subscription Plans**\n\n' +
+          '• **Provider Basic**: $99/mo (Gemini Flash + Basic Sylara, 500k tokens)\n' +
+          '• **Provider Medium**: $249/mo (Gemini Flash + Enhanced Sylara, 2M tokens)\n' +
+          '• **Provider Full AI**: $499/mo (Full Sylara + Larry, Unlimited tokens)\n\n' +
           '_All Professional tiers include a 30-Day Free Trial and 30% off your first month after the trial._\n\n' +
           'To upgrade or start your trial, please begin your professional onboarding.';
         choices = ['Start Provider Onboarding', 'Main Menu'];
