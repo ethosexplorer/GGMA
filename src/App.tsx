@@ -3771,7 +3771,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       return;
     }
 
-    if (signupStep === 900) {
+    if (signupStep === 900 || lower === 'state police (osbi)' || lower === 'federal enforcement (dea/fbi)' || lower === 'state regulator (omma)' || lower === 'local law enforcement') {
       response = `🚨 **RIP Intelligence Portal: Restricted Access**\n\nDue to the highly sensitive nature of active investigations, facility audits, and seed-to-sale data tracking, I cannot release any intelligence without official authentication.\n\nThe **GGHP Oversight Portal** provides authorized agencies with:\n• **Real-Time Diversion Tracking**\n• **Facility Compliance Scorecards**\n• **Immutable Audit Vaults**\n• **Direct API Access to L.A.R.R.Y Enforcement Logs**\n\nTo proceed with your inquiry and access these tools, you must **securely authenticate your credentials and register for an Official Agency Dashboard.**`;
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Secure Login / Sign Up', 'Main Menu'] } as any]);
       setSignupStep(0);
