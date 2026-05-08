@@ -4187,6 +4187,9 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     }
 
     // ── Global Escape Hatch: allows user to restart/go back at any point ──
+    const LICENSE_TYPES_LOWER = ['dispensary', 'grower / cultivator', 'grower', 'cultivator', 'processor / manufacturer', 'processor', 'manufacturer', 'transporter', 'testing laboratory', 'waste disposal'];
+    const isLicenseTypeInput = LICENSE_TYPES_LOWER.some(lt => lower === lt || lower.includes(lt));
+
     if (signupStep > 0 && (
       lower === 'go back' || lower === 'start over' || lower === 'restart' ||
       lower === 'cancel' || lower === 'main menu' || lower === 'menu' ||
@@ -4198,6 +4201,17 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       setIsBusiness(false);
       const response = '↩️ **No problem!** Your progress has been saved. You can always resume later from your portal.\n\nHow can I assist you today?';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: getInitialChoices() } as any]);
+      setIsTyping(false);
+      return;
+    }
+
+    // ── License Type Switch: catches if user clicks a different license type mid-intake ──
+    if (signupStep >= 100 && signupStep <= 955 && isLicenseTypeInput) {
+      const matchedType = text;
+      setBusinessData(prev => ({ ...prev, licenseType: matchedType }));
+      const response = `↩️ **Switching to ${matchedType}.**\n\nYour previous progress has been saved. Let's restart with your new license selection.\n\n**Section 1: Account Setup**\n\nWhat is your **Full Name** (First & Last)? This will be the individual responsible for the account and license information.`;
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setSignupStep(100);
       setIsTyping(false);
       return;
     }
