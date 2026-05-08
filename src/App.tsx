@@ -3207,7 +3207,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     ownersCompleted: 0,
     // Section 5: Location
     physicalAddress: '', gpsCoordinates: '', locationMailing: '',
-    // Section 6: Primary Contact
+    // Section 5: Primary Contact
     ppocName: '', ppocTitle: '', ppocPhone: '', ppocEmail: '', ppocAddress: '',
     // Section 7-10
     attestationsConfirmed: false, documentsNoted: false, documentsUploadedCount: 0, bondType: '', paymentMethod: '',
@@ -5040,7 +5040,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       if (lower === 'yes' || lower === 'yeah' || lower === 'yep') {
         setBusinessData(prev => ({ ...prev, termsAccepted: true }));
         const userEmail = businessData.email || 'your registered email';
-        response = '✅ **Section 1 Complete — Account Created!**\n\nYour GGHP Business Account has been registered under **' + userEmail + '**.\n\n📧 *Your email address will be verified by **a Live Agent** during human review.*\n\nNow let\'s continue with your **Commercial License Application**.\n\n**Section 2: General Business Information**\n\nWhat is the **Individual Owner Name or Primary Entity Name** for the commercial establishment?';
+        response = '✅ **Section 1 Complete — Account Created!**\n\nYour GGHP Business Account has been registered under **' + userEmail + '**.\n\n📧 *Your email address will be verified by **a Live Agent** during human review.*\n\nNow let\'s continue with your **Commercial License Application**.\n\n**Section 2: General Business Information**\n\nWhat is your **Business Name** (the legal entity or DBA name for the commercial establishment)?';
         setSignupStep(105);
         setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
         setIsTyping(false);
@@ -5065,12 +5065,12 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         return;
       }
     }
-    // Section 3: General Information
+    // Section 2: General Business Information
     else if (signupStep === 105) {
       setBusinessData(prev => ({ ...prev, entityName: text }));
       // Use the pre-selected license type if they came from the "Cost & Fees" flow
       if (businessData.licenseType) {
-        response = `Since you previously selected **${businessData.licenseType}**, we will use that license type.\n\nWhat is the **Trade Name** of the commercial establishment? (Type **"same"** if it\'s the same as the entity name)`;
+        response = `Since you previously selected **${businessData.licenseType}**, we will use that license type.\n\nWhat is your **Trade Name / DBA** (Doing Business As)? Type **"same"** if same as your business name.`;
         setSignupStep(107);
       } else {
         response = 'What **Type of Commercial License** are you applying for?\n\n' + BUSINESS_LICENSE_TYPES.map((t, i) => `${i + 1}. ${t}`).join('\n') + '\n\nPlease reply with the **number** or name of the license type.';
@@ -5090,7 +5090,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       }
       if (selectedType) {
         setBusinessData(prev => ({ ...prev, licenseType: selectedType }));
-        response = `You selected: **${selectedType}**.\n\nWould you like to review the Oklahoma fee structure for this license type before we continue?`;
+        response = `You selected: **${selectedType}**.\n\nWould you like to review the fee structure for this license type before we continue?`;
         setMessages(prev => [...prev, { 
           role: 'bot', 
           text: response,
@@ -5103,7 +5103,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         response = 'Please select a valid license type (1-8).\n\n' + BUSINESS_LICENSE_TYPES.map((t, i) => `${i + 1}. ${t}`).join('\n');
       }
     } else if (signupStep === 1065) {
-      const nextQuestion = `What is the **Trade Name** of the commercial establishment? (Type **"same"** if it's the same as the entity name)`;
+      const nextQuestion = `What is your **Trade Name / DBA** (Doing Business As)? Type **"same"** if same as your business name.`;
       if (lower === 'yes' || lower === 'yeah' || lower === 'yep') {
          let feeMsg = '';
          const typeLower = businessData.licenseType.toLowerCase();
@@ -5163,7 +5163,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     } else if (signupStep === 107) {
       const tradeName = lower === 'same' ? businessData.entityName : text;
       setBusinessData(prev => ({ ...prev, tradeName }));
-      response = 'What is the **Phone Number** for the business? (Also include fax number and/or website if applicable)';
+      response = 'What is the **Business Phone Number**?';
       setSignupStep(108);
       setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
       setIsTyping(false);
@@ -5203,13 +5203,13 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       return;
     } else if (signupStep === 110) {
       setBusinessData(prev => ({ ...prev, operatingHours: text }));
-      response = '✅ **General Information Complete!**\n\n**Section 4: Owners & Principal Officers**\n\nLet\'s add owner/principal officer information. What is the **Full Name** (First, Middle, Last, Suffix) of the owner/officer?';
+      response = '✅ **General Information Complete!**\n\n**Section 3: Owners & Principal Officers**\n\nLet\'s add owner/principal officer information. What is the **Full Name** (First, Middle, Last, Suffix) of the owner/officer?';
       setSignupStep(111);
       setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
       setIsTyping(false);
       return;
     }
-    // Section 4: All Owners and Principal Officers
+    // Section 3: Owners and Principal Officers
     else if (signupStep === 111) {
       setBusinessData(prev => ({ ...prev, ownerName: text }));
       response = `What is **${text}**'s **Phone Number**?`;
@@ -5242,7 +5242,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       }
       if (selectedId) {
         setBusinessData(prev => ({ ...prev, ownerIdType: selectedId }));
-        response = `You selected: **${selectedId}**\n\nWhat is the **ID Number** and **Expiration Date**? (e.g., D12345678, 12/2028)`;
+        response = `You selected: **${selectedId}**\n\nWhat is the **ID Number**? (e.g., D12345678)`;
         setSignupStep(114);
       } else {
         response = 'Please select a valid ID type (1-4).\n\n' + BUSINESS_ID_TYPES.map((t, i) => `${i + 1}. ${t}`).join('\n');
@@ -5251,8 +5251,14 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       setIsTyping(false);
       return;
     } else if (signupStep === 114) {
-      const parts = text.split(/[,;]+/).map(s => s.trim());
-      setBusinessData(prev => ({ ...prev, ownerIdNumber: parts[0] || text, ownerIdExpiry: parts[1] || '' }));
+      setBusinessData(prev => ({ ...prev, ownerIdNumber: text }));
+      response = 'What is the **Expiration Date** on the ID? (e.g., 12/2028)';
+      setSignupStep(114.5);
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
+    } else if (signupStep === 114.5) {
+      setBusinessData(prev => ({ ...prev, ownerIdExpiry: text }));
       response = 'What is their **Date of Birth**? (e.g., mm/dd/yyyy)';
       setSignupStep(115);
       setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
@@ -5260,14 +5266,14 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       return;
     } else if (signupStep === 115) {
       setBusinessData(prev => ({ ...prev, ownerDob: text }));
-      response = 'What {{flag:Entity}} or {{flag:Entities}} does this person have affiliation with?';
+      response = 'What **business entity or entities** does this person have an ownership or management affiliation with?';
       setSignupStep(116);
       setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
       setIsTyping(false);
       return;
     } else if (signupStep === 116) {
       setBusinessData(prev => ({ ...prev, ownerEntityAffiliation: text }));
-      response = 'What are the **Direct and Indirect Ownership Shares** by entity? (e.g., 50% direct ownership in ABC LLC)';
+      response = 'What **percentage of ownership** does this person hold in the business? (e.g., 50% owner, 25% investor)';
       setSignupStep(117);
       setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
       setIsTyping(false);
@@ -5307,7 +5313,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         setBusinessData(prev => ({ ...prev, ownerName: '', ownerPhone: '', ownerEmail: '', ownerIdType: '', ownerIdNumber: '', ownerIdExpiry: '', ownerDob: '', ownerEntityAffiliation: '', ownerShares: '', ownerRelationship: '', ownerResidence: '', ownerMailing: '' }));
         setSignupStep(111);
       } else if (lower === 'no' || lower === 'nope') {
-        response = '✅ **Owners & Officers Complete!**\n\n**Section 5: Location Information**\n\nWhat is the **Physical Address** of the commercial establishment? (Street Address, Unit Number, City, County, State, Zip)';
+        response = '✅ **Owners & Officers Complete!**\n\n**Section 4: Location Information**\n\nWhat is the **Physical Address** of the commercial establishment? (Street Address, Unit Number, City, County, State, Zip)';
         setSignupStep(122);
       } else {
         response = 'Please answer **Yes** or **No**. Do you need to add another owner/officer?';
@@ -5320,7 +5326,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         return;
       }
     }
-    // Section 5: Location Information
+    // Section 4: Location Information
     else if (signupStep === 122) {
       setBusinessData(prev => ({ ...prev, physicalAddress: text }));
       // Auto-geocode the address using OpenStreetMap Nominatim
@@ -5383,7 +5389,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     } else if (signupStep === 124) {
       const mailing = lower.includes('same') ? businessData.physicalAddress : text;
       setBusinessData(prev => ({ ...prev, locationMailing: mailing }));
-      response = '✅ **Location Information Complete!**\n\n**Section 6: Primary Contact & Registered Agent**\n\nWho is the **Primary Point of Contact (PPOC)**? Please provide their **Full Name** (First, Middle, Last, Suffix).';
+      response = '✅ **Location Information Complete!**\n\n**Section 5: Primary Contact & Registered Agent**\n\nWho is the **Primary Point of Contact (PPOC)**? Please provide their **Full Name** (First, Middle, Last, Suffix).';
       setSignupStep(125);
       setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
       setIsTyping(false);
@@ -5421,16 +5427,16 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     } else if (signupStep === 129) {
       const ppocAddr = lower.includes('same') ? businessData.physicalAddress : text;
       setBusinessData(prev => ({ ...prev, ppocAddress: ppocAddr }));
-      response = '✅ **Primary Contact Complete!**\n\n**Section 7: Questions & Verifications**\n\nPlease review and confirm the following attestations:\n\n' +
+      response = '✅ **Primary Contact Complete!**\n\n**Section 6: Questions & Verifications**\n\nPlease review and confirm the following attestations:\n\n' +
         '1️⃣ The commercial entity will **not** be located on tribal lands.\n' +
         '2️⃣ The establishment pledges **not to divert** marijuana to unauthorized individuals.\n' +
         '3️⃣ You are **authorized** to make this application on behalf of the applicant.\n' +
         '4️⃣ All information provided is **true and correct**.\n' +
-        '5️⃣ You understand the name, address, city, county, and phone of the establishment will be **published on the OMMA website**.\n' +
+        '5️⃣ You understand the name, address, city, county, and phone of the establishment will be **published on the state regulatory website**.\n' +
         '6️⃣ If applicable, the dispensary perimeter wall is at least **1,000 feet** from the nearest school.\n' +
         '7️⃣ If applicable, the grower\'s premises property line is at least **1,000 feet** from the nearest school.\n' +
         '8️⃣ The business has obtained all applicable **local licenses and permits**.\n' +
-        '9️⃣ No individual with ownership interest is a **law enforcement officer** or OMMA employee.\n' +
+        '9️⃣ No individual with ownership interest is a **law enforcement officer** or state regulatory agency employee.\n' +
         '🔟 You understand responsibilities for **transporter agent ID cards** and **security measures**.\n\n' +
         'Do you **confirm and attest** to all of the above?';
       setMessages(prev => [...prev, { 
@@ -5444,10 +5450,10 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     } else if (signupStep === 130) {
       if (lower === 'yes' || lower === 'yeah' || lower === 'yep') {
         setBusinessData(prev => ({ ...prev, attestationsConfirmed: true }));
-        response = '✅ **Attestations Confirmed!**\n\n**Section 8: Document Uploads**\n\nThe following documents are required for your application:\n\n' +
+        response = '✅ **Attestations Confirmed!**\n\n**Section 7: Document Uploads**\n\nThe following documents are required for your application:\n\n' +
           '📄 **Affidavit of Lawful Presence**\n' +
-          '📄 **Proof of Oklahoma Residency (75% ownership)**\n' +
-          '📄 **OSBI Background Check (each owner)**\n' +
+          '📄 **Proof of State Residency (75% ownership)**\n' +
+          '📄 **Background Check (each owner)**\n' +
           '📄 **National Background Check Attestation**\n' +
           '📄 **ID copies (each person of interest)**\n' +
           '📄 **Certificate of Compliance**\n' +
@@ -5475,7 +5481,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         if (uploadedCount >= requiredDocs.length) {
           setBusinessData(prev => ({ ...prev, documentsNoted: true }));
           if (businessData.licenseType === 'Grower') {
-            response = '**Section 9: Bond Requirement** (Growers Only)\n\nPlease select one:\n\n1️⃣ I have secured a **Surety Bond** (upload bond documentation)\n2️⃣ I or a person of interest have **owned the permitted land for at least 5 years** prior to this application\n\nPlease reply with **1** or **2**.';
+            response = '**Section 8: Bond Requirement** (Growers Only)\n\nPlease select one:\n\n1️⃣ I have secured a **Surety Bond** (upload bond documentation)\n2️⃣ I or a person of interest have **owned the permitted land for at least 5 years** prior to this application\n\nPlease reply with **1** or **2**.';
             setSignupStep(132);
           } else {
             // Skip to review step
