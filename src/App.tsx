@@ -3771,6 +3771,14 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       return;
     }
 
+    if (signupStep === 900) {
+      response = `🚨 **RIP Intelligence Portal: Restricted Access**\n\nDue to the highly sensitive nature of active investigations, facility audits, and seed-to-sale data tracking, I cannot release any intelligence without official authentication.\n\nThe **GGHP Oversight Portal** provides authorized agencies with:\n• **Real-Time Diversion Tracking**\n• **Facility Compliance Scorecards**\n• **Immutable Audit Vaults**\n• **Direct API Access to L.A.R.R.Y Enforcement Logs**\n\nTo proceed with your inquiry and access these tools, you must **securely authenticate your credentials and register for an Official Agency Dashboard.**`;
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Secure Login / Sign Up', 'Main Menu'] } as any]);
+      setSignupStep(0);
+      setIsTyping(false);
+      return;
+    }
+
     if (lower === 'view all tiers') {
        setMessages(prev => [...prev, { 
          role: 'bot', 
@@ -4274,15 +4282,6 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         }
       }
     }
-
-    if (signupStep === 900) {
-      response = `Due to the highly sensitive nature of intelligence and enforcement operations, I cannot release field data without verification.\n\nFor secure access to restricted intelligence and field reports, you must **sign up and authenticate your official credentials** through the Oversight Portal.`;
-      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Secure Login / Sign Up', 'Main Menu'] } as any]);
-      setSignupStep(0);
-      setIsTyping(false);
-      return;
-    }
-
     if (signupStep === 901) {
       if (lower.includes('active') || lower.includes('business')) {
         response = `To access SINC infrastructure tools, audit shields, and seed-to-sale data, you must **sign up and authenticate your business credentials**.\n\nPlease log in or create your Business Portal account to proceed.`;
