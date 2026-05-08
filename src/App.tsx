@@ -4588,16 +4588,23 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         if (isBusiness) {
           response = 'Are you a **first time user** or **returning user**?';
           setSignupStep(98);
+          setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['First Time User', 'Returning User'] } as any]);
         } else {
           response = 'Great! Let\'s first determine your license eligibility.\n\n**License Eligibility Criteria**\n\nAre you a **Patient Or Legal Guardian**? (Yes / No)';
           setSignupStep(20);
           setLicenseEligibility({ isPatientOrGuardian: '', isStateResident: '', isAdultLicense: '' });
           setEligibleLicenses([]);
+          setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Yes', 'No'] } as any]);
         }
+        setIsTyping(false);
+        return;
       } else if (lower === 'no' || lower === 'nope' || lower.includes('no thank') || lower.includes('nevermind')) {
         response = 'No problem! We understand. Our platform offers a wide range of benefits including the **Care Wallet**, **Priority Renewals**, and **Legal Advocacy** even without an active application.\n\nWould you like to **Speak with a Live Agent** or have a call back? Please provide a date and time, anytime!\n\nIf not, I wish you a wonderful day. 👋';
         setSignupStep(0);
         fetchCalendlySlots();
+        setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+        setIsTyping(false);
+        return;
       } else {
         response = 'Please answer **Yes** or **No**. Can I create an account for you to begin your application?';
         setMessages(prev => [...prev, { 
@@ -4614,10 +4621,20 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         setLicenseEligibility(prev => ({ ...prev, isPatientOrGuardian: 'yes' }));
         response = `What **State** are you applying for?`;
         setSignupStep(20.5);
+        setMessages(prev => [...prev, { 
+          role: 'bot', 
+          text: response,
+          choices: ['Oklahoma', 'Kentucky', 'Missouri', 'Texas', 'Other State'] 
+        } as any]);
+        setIsTyping(false);
+        return;
       } else if (lower === 'no' || lower === 'nope') {
         setLicenseEligibility(prev => ({ ...prev, isPatientOrGuardian: 'no' }));
         response = 'Are you a **Caregiver**? (Yes / No)';
         setSignupStep(22);
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Yes', 'No'] } as any]);
+        setIsTyping(false);
+        return;
       } else {
         response = 'Please answer **Yes** or **No**. Are you a **Patient Or Legal Guardian**?';
         setMessages(prev => [...prev, { 
@@ -4647,10 +4664,16 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         setLicenseEligibility(prev => ({ ...prev, isStateResident: 'yes' }));
         response = 'Are you applying for an **adult patient license**? (Yes / No)';
         setSignupStep(23);
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Yes', 'No'] } as any]);
+        setIsTyping(false);
+        return;
       } else if (lower === 'no' || lower === 'nope') {
         setLicenseEligibility(prev => ({ ...prev, isStateResident: 'no' }));
         response = `⚠️ As a non-resident of **${stateName}**, you are eligible only for an Out-of-State Temporary License.\n\nAre you applying for an **adult patient license**? (Yes / No)`;
         setSignupStep(23);
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Yes', 'No'] } as any]);
+        setIsTyping(false);
+        return;
       } else {
         response = `Please answer **Yes** or **No**. Are you a **${stateName} State Resident**?`;
         setMessages(prev => [...prev, { 
@@ -4669,9 +4692,15 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         setSignupData(prev => ({ ...prev, selectedLicense: 'Caregiver' }));
         response = 'You can apply for the following license:\n\n✅ **Caregiver**\n\nGreat! Now let\'s create your account. What is your **Full Name (First & Last)**?';
         setSignupStep(1);
+        setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+        setIsTyping(false);
+        return;
       } else if (lower === 'no' || lower === 'nope') {
         response = '❌ **You are not eligible to apply for any license.**\n\nIf you have any questions, feel free to call us at **888-963-4447** or type **start** to begin again.';
         setSignupStep(0);
+        setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+        setIsTyping(false);
+        return;
       } else {
         response = 'Please answer **Yes** or **No**. Are you a **Caregiver**?';
         setMessages(prev => [...prev, { 
@@ -4767,6 +4796,9 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         setSignupData(prev => ({ ...prev, ageVerified: true }));
         setSignupStep(2);
         response = `Excellent. What is your **Email Address**?`;
+        setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+        setIsTyping(false);
+        return;
       } else {
         response = `⚠️ You must be 21+ to use this platform. If you are a minor patient, please have a legal guardian start the application.`;
         setMessages(prev => [...prev, { 
@@ -6521,30 +6553,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
             </div>
           )}
 
-          {/* ── License Eligibility Yes/No Buttons — shown during steps 20-23 and business steps ── */}
-          {(signupStep === 20 || signupStep === 21 || signupStep === 22 || signupStep === 23 ||
-            signupStep === 1.1 || signupStep === 6.1 || signupStep === 12 || signupStep === 99 ||
-            signupStep === 103 || signupStep === 121 || signupStep === 130 || signupStep === 133) && (
-            <div className="flex justify-start gap-3">
-              <div className="w-9 h-9 rounded-xl bg-[#1a4731] bg-gradient-to-br from-[#1a4731] to-emerald-600 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
-                <Bot size={18} />
-              </div>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => handleSend(undefined, 'Yes')}
-                  className="px-6 py-2.5 bg-[#1a4731] text-white rounded-xl text-sm font-bold hover:bg-[#0f2a1f] transition-all shadow-sm"
-                >
-                  ✅ Yes
-                </button>
-                <button
-                  onClick={() => handleSend(undefined, 'No')}
-                  className="px-6 py-2.5 bg-white border border-slate-300 text-slate-700 rounded-xl text-sm font-bold hover:bg-red-50 hover:border-red-300 hover:text-red-700 transition-all shadow-sm"
-                >
-                  ❌ No
-                </button>
-              </div>
-            </div>
-          )}
+          {/* Yes/No buttons removed — inline choices in message bubbles handle this */}
 
           {/* ── Medical Condition Selection Buttons — shown during step 13 ── */}
           {signupStep === 13 && (
@@ -7120,19 +7129,20 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
                   </button>
                 </div>
 
-                {/* Proceed button - only enabled when all docs uploaded */}
-                {Object.keys(uploadedDocuments).length >= getRequiredDocuments().length ? (
+                {/* Continue button - always visible */}
+                <div className="mt-4 space-y-2">
                   <button
                     onClick={() => handleSend(undefined, 'done')}
-                    className="mt-4 w-full py-3 bg-[#1a4731] bg-gradient-to-r from-[#1a4731] to-emerald-600 text-white rounded-xl text-sm font-bold hover:from-[#0f2a1f] hover:to-emerald-700 transition-all shadow-md shadow-emerald-200/50"
+                    className="w-full py-3 bg-[#1a4731] bg-gradient-to-r from-[#1a4731] to-emerald-600 text-white rounded-xl text-sm font-bold hover:from-[#0f2a1f] hover:to-emerald-700 transition-all shadow-md shadow-emerald-200/50"
                   >
-                    ✅ All Documents Uploaded — Continue
+                    {Object.keys(uploadedDocuments).length >= getRequiredDocuments().length
+                      ? '✅ All Documents Uploaded — Continue'
+                      : `📋 Continue (${Object.keys(uploadedDocuments).length}/${getRequiredDocuments().length} uploaded)`}
                   </button>
-                ) : (
-                  <div className="mt-4 w-full py-3 bg-slate-100 text-slate-400 rounded-xl text-sm font-medium text-center cursor-not-allowed border border-slate-200">
-                    ⏳ Upload all required documents to proceed
-                  </div>
-                )}
+                  {Object.keys(uploadedDocuments).length < getRequiredDocuments().length && (
+                    <p className="text-[11px] text-slate-400 text-center">You can upload remaining documents later via your dashboard or email.</p>
+                  )}
+                </div>
               </div>
             </div>
           )}
