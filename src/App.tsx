@@ -3069,15 +3069,15 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
   };
 
   const getInitialChoices = () => {
-    if (variant === 'legal' || variant === 'attorney') return ['Join Attorney Marketplace', 'View Network Benefits', 'View Subscription Plans'];
+    if (variant === 'legal' || variant === 'attorney') return ['Join Attorney Marketplace', 'View Network Benefits'];
     if (isRyan && variant !== 'legal') return ['View Global Operations', 'Enforcement Status', 'Metrc API Health', 'Jurisdiction Overrides'];
     if (isMonica && variant !== 'legal') return ['Run Compliance Sweep', 'Metrc Anomalies', 'Pending Applications', 'Audit Logs'];
     if (isBob && variant !== 'legal') return ['Review Financial Anomalies', 'Compliance Impact Report', 'Regulatory Forecasting'];
-    if (variant === 'ggma') return ['Start Patient Intake', 'Start Business Intake', '🏛️ DEA Schedule III Registration', 'View Patient Fee Schedule', 'View Business Fee Schedule', 'View Subscription Plans'];
-    if (variant === 'ggma-patient') return ['Start Patient Intake', 'View Patient Fee Schedule', 'Book Physician ($45)', 'View Subscription Plans'];
+    if (variant === 'ggma') return ['Start Patient Intake', 'Start Business Intake', '🏛️ DEA Schedule III Registration', 'View Patient Fee Schedule', 'View Business Fee Schedule'];
+    if (variant === 'ggma-patient') return ['Start Patient Intake', 'View Patient Fee Schedule', 'Book Physician ($45)'];
     if (variant === 'rip') return ['Field Intelligence Report', 'Background Verification Check', 'Enforcement Status Inquiry', 'Compliance Audit Request', 'Contact Oversight Division', 'View State Authority Plans'];
     if (variant === 'sinc') return ['Start Business Intake', '🏛️ DEA Schedule III Registration', 'Audit Shield Setup', 'Seed-to-Sale Compliance', 'Network Integrity Check', 'View Business Fee Schedule'];
-    if (variant === 'provider') return ['Start Provider Onboarding', 'View Licensing Requirements', 'Network Integration', 'View Subscription Plans'];
+    if (variant === 'provider') return ['Start Provider Onboarding', 'View Licensing Requirements', 'Network Integration'];
     if (variant === 'government' || variant === 'political_executive') return ['Request Policy Brief', 'View Economic Impact Data', 'Regulatory Integration Inquiry'];
     if (variant === 'advocate' || variant === 'advocacy_research') return ['View Community Polling', 'Social Equity Programs', 'Health Impact Resources'];
     
