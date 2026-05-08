@@ -2248,11 +2248,10 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
     { id: 'attorney', label: 'Attorney / Law Firm', category: 'Business', icon: Briefcase, desc: 'Legal counsel managing multi-state licensing and compliance portfolios.' },
     
     // OVERSIGHT PORTAL ROLES
-    { id: 'admin_internal', label: 'Internal Administrator', category: 'Oversight', icon: Shield, desc: 'Full internal operational control for GGP-OS platform management.' },
+    { id: 'enforcement_federal', label: 'Federal Agency (DEA/FBI)', category: 'Oversight', icon: Shield, desc: 'Federal regulatory compliance and interstate enforcement operations.' },
     { id: 'admin_external', label: 'External Administrator', category: 'Oversight', icon: Activity, desc: 'Administrative monitoring for external agencies and partners.' },
     { id: 'enforcement_state', label: 'Law Enforcement (RIP)', category: 'Oversight', icon: Shield, desc: 'Real-time Intelligence & Policing (RIP) for authorized agencies.' },
     { id: 'regulator_state', label: 'Regulator / Authority', category: 'Oversight', icon: Activity, desc: 'State-level licensing authority and legal oversight bodies.' },
-    { id: 'backoffice_staff', label: 'Operations & Support', category: 'Oversight', icon: Cpu, desc: 'Operational staff managing back-office AI systems.' },
     { id: 'other_patient', label: 'Other', category: 'Patient', icon: Plus, desc: 'Not listed here? Define your custom role.' },
     { id: 'other_business', label: 'Other', category: 'Business', icon: Plus, desc: 'Not listed here? Define your custom role.' },
     { id: 'other_oversight', label: 'Other', category: 'Oversight', icon: Plus, desc: 'Not listed here? Define your custom role.' },
@@ -2606,19 +2605,11 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
                                     </optgroup>
                                     
                                     <optgroup label="Oversight & RIP Roles">
-                                        <option value="Executive Founder">Executive Founder</option>
-                                        <option value="Internal Administrator">Internal Administrator</option>
+                                        <option value="Federal Agent / Director">Federal Agent / Director</option>
                                         <option value="External Administrator">External Administrator</option>
                                         <option value="State Authority Director">State Authority Director</option>
                                         <option value="Chief of Police / Sheriff">Chief of Police / Sheriff</option>
                                         <option value="Field Inspector">Field Inspector</option>
-                                    </optgroup>
-
-                                    <optgroup label="Operations (Call Center) Roles">
-                                        <option value="Operations Manager">Operations Manager</option>
-                                        <option value="Call Center Supervisor">Call Center Supervisor</option>
-                                        <option value="Escalation Specialist">Escalation Specialist</option>
-                                        <option value="Support Agent">Support Agent</option>
                                     </optgroup>
                                 </select>
                                 <p className="text-xs text-slate-500 mt-2">This determines your dashboard features and goes to our paralegal queue for verification.</p>
