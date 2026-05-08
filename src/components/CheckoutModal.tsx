@@ -359,17 +359,12 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
                 </div>
 
                 {/* Payment Method Notice */}
-                <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-3">
-                  <Shield size={18} className="text-amber-600 shrink-0 mt-0.5" />
+                <div className="bg-indigo-50 border border-indigo-200 rounded-2xl p-4 flex items-start gap-3">
+                  <CreditCard size={18} className="text-indigo-600 shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-bold text-amber-800">Invoice / Payment Request via ACH</p>
-                    <p className="text-xs text-amber-700 mt-0.5">An invoice or payment request will be sent to your email within 24 hours. Payment is completed via secure ACH bank transfer — no credit card required at this time.</p>
+                    <p className="text-sm font-bold text-indigo-800">Secure Processing via Stripe</p>
+                    <p className="text-xs text-indigo-700 mt-0.5">Your subscription will be securely processed by Stripe. All transactions are encrypted and your payment details are never stored on our servers.</p>
                   </div>
-                </div>
-                <div className="flex items-center justify-center gap-2 py-1.5 px-4 bg-gradient-to-r from-slate-50 to-indigo-50 border border-indigo-100 rounded-xl">
-                  <CreditCard size={14} className="text-indigo-400" />
-                  <span className="text-[11px] font-bold text-indigo-500 tracking-wide">Card Processing Coming Soon</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
                 </div>
 
                 {/* Submit Button */}
