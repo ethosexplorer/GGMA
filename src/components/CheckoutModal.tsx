@@ -363,7 +363,7 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
                   <CreditCard size={18} className="text-indigo-600 shrink-0 mt-0.5" />
                   <div>
                     <p className="text-sm font-bold text-indigo-800">Secure Processing via Stripe</p>
-                    <p className="text-xs text-indigo-700 mt-0.5">Your subscription will be securely processed by Stripe. All transactions are encrypted and your payment details are never stored on our servers.</p>
+                    <p className="text-xs text-indigo-700 mt-0.5">Your subscription will be securely processed by Stripe, which supports <strong>Credit Card, ACH Direct Debit, and Invoicing</strong>. All transactions are encrypted and your payment details are never stored on our servers.</p>
                   </div>
                 </div>
 
