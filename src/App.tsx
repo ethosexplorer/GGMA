@@ -4982,11 +4982,11 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     } else if (signupStep === 14) {
       setSignupData(prev => ({ ...prev, lastDoctorVisit: text }));
       setSignupStep(15);
-      response = `📋 **Document Upload Center**\n\nI need a few documents to complete your file.\n\n📷 **Photo Instructions:** Please take a picture with all 4 corners of the document clearly visible, or scan it.\n\n⚠️ **Trouble Uploading?** If you cannot upload in this chat, you can:\n📱 **Text** your documents to **1-888-963-4447** (Include your Name & D.O.B)\n✉️ **Email\*\* Sylara Administrative Support at \*\*asstsupport@gmail.com\*\*\n\nAre you ready to begin uploads?`;
+      response = `📋 **Document Upload Center**\n\nI need a few documents to complete your file.\n\n📷 **Photo Instructions:** Please take a picture with all 4 corners of the document clearly visible, or scan it.\n\n⚠️ **Trouble Uploading?** If you cannot upload in this chat, you can:\n✉️ **Email** Sylara Administrative Support at **asstsupport@gmail.com** (Include your Name & D.O.B)\n\nAre you ready to begin uploads?`;
       setMessages(prev => [...prev, { 
         role: 'bot', 
         text: response,
-        choices: ['Ready to Upload', 'Skip for Now', 'I Will Email/Text Them'] 
+        choices: ['Ready to Upload', 'Skip for Now', 'I Will Email Them'] 
       } as any]);
       setIsTyping(false);
       return;
@@ -5590,7 +5590,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
           (businessData.licenseType === 'Processor' ? '📄 Hazardous License / Chemical Safety Data Sheets\n' : '') +
           (businessData.licenseType === 'Dispensary' ? '📄 Dispensary Distance Attestation (1,000 ft from schools)\n' : '') +
           (businessData.licenseType === 'Grower' ? '📄 Grow Facility Distance Attestation (1,000 ft from schools)\n' : '') +
-          '\n📷 **Photo Instructions:** Please ensure all 4 corners of the document are visible in the picture or scan.\n\n⚠️ **Trouble Uploading?** If you cannot upload in this chat, you can:\n📱 **Text** your documents to **1-888-963-4447** (Include Business Name & EIN)\n✉️ **Email\*\* Sylara Administrative Support at \*\*asstsupport@gmail.com\*\*\n\nPlease use the **Business Document Upload Center** below to begin. Once uploaded, type **"done"** or click continue.';
+          '\n📷 **Photo Instructions:** Please ensure all 4 corners of the document are visible in the picture or scan.\n\n⚠️ **Trouble Uploading?** If you cannot upload in this chat, you can:\n✉️ **Email** Sylara Administrative Support at **asstsupport@gmail.com** (Include Business Name & EIN)\n\nPlease use the **Business Document Upload Center** below to begin. Once uploaded, type **"done"** or click continue.';
         setBusinessData(prev => ({ ...prev, documentsUploadedCount: 0 }));
         setSignupStep(131);
       } else if (lower === 'no' || lower === 'nope') {
