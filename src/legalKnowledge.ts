@@ -938,4 +938,11 @@ Bidding Links:
 - OKC Municipal Bids: https://www.okc.gov/Infrastructure-Development/Bids-Auctions-and-Sales/Bidding
 Contract Eligibility: Municipal, City, County, State, and Federal.
 POC: Shantell Robinson, diversityhealthandwellness@gmail.com, 405 492-7297.
+
+=== OMMA MEDICATION LOCKBOX PROGRAM ===
+
+attention POTHEADS.. OMMA is giving out lockboxes, the laws HAVE to have a warrant to search it. just thought i'd put yall on game today.. if you need the link hit me #SHARETHIS its free & you might save someone from a dry ass case ‼️
+
+Link: https://oklahoma.gov/odmhsas/prevention/request-medication-lockbox.html
+Context: The Oklahoma Medical Marijuana Authority (OMMA) partners with the Oklahoma Department of Mental Health and Substance Abuse Services (ODMHSAS) to provide free medication lockboxes. Keeping cannabis in a locked box provides an additional layer of legal protection, as law enforcement generally requires a warrant to open and search a locked container, even during a routine traffic stop. This is a critical piece of legal knowledge for patient protection.
 `;
