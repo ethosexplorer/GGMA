@@ -945,4 +945,24 @@ attention POTHEADS.. OMMA is giving out lockboxes, the laws HAVE to have a warra
 
 Link: https://oklahoma.gov/odmhsas/prevention/request-medication-lockbox.html
 Context: The Oklahoma Medical Marijuana Authority (OMMA) partners with the Oklahoma Department of Mental Health and Substance Abuse Services (ODMHSAS) to provide free medication lockboxes. Keeping cannabis in a locked box provides an additional layer of legal protection, as law enforcement generally requires a warrant to open and search a locked container, even during a routine traffic stop. This is a critical piece of legal knowledge for patient protection.
+
+=== OMMA DEA RESCHEDULING STATUS & FAQS ===
+
+UPDATE: OMMA Monitors DEA Rescheduling Status, Shares Recently Filed Lawsuit
+
+As the federal landscape for medical marijuana continues to shift, OMMA is closely monitoring the DEA's final rescheduling rule and the recent petition filed by SAM and NDASA with the U.S. Court of Appeals, which seeks to review and set aside the rule.
+
+"These announcements have created a lot of questions, but very few answers have been received. OMMA will continue to relay information as released by the DEA and federal government, but, ultimately, we encourage licensees to seek professional counsel as they determine the best decisions for their business," said OMMA Executive Director Adria Berry. 
+
+Link: https://oklahoma.gov/omma/about/news/2026/update-omma-monitors-dea-rescheduling-status-shares-recently-filed-lawsuit.html
+
+OMMA FAQ ON FEDERAL RESCHEDULING:
+Q: Will OMMA issue emergency rules to reflect the federal changes?
+A: At this time, OMMA's regulatory and licensing requirements and rules remain unchanged. The federal rule does not, by itself, amend Oklahoma law or automatically require rule changes. Any future OMMA rule changes would proceed through Oklahoma's rulemaking process and applicable state law. OMMA-licensed businesses must continue to adhere to existing state regulatory requirements.
+
+Q: What action should commercial licensees and patients take?
+A: The DEA has only released instructions for dispensaries. Additional analysis is necessary to understand how the rule could impact OMMA-licensed patients and other commercial business types.
+
+Q: Will OMMA issue further guidance for OMMA-licensed businesses and patients about the reclassification or DEA registration?
+A: As a courtesy, the agency will continue to relay any updates received from the DEA to help the industry and patients stay informed. Licensees should follow all guidance released by the federal government, the U.S. Attorney General, the DEA and OBN.
 `;
