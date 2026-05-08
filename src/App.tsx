@@ -4268,8 +4268,8 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         }
 
         setSignupStep(0);
-        response = getGreeting(variant);
-        setMessages(prev => [...prev, { role: 'bot', text: response, choices: getGreetingChoices(variant) } as any]);
+        response = getGreeting();
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: getInitialChoices() } as any]);
       } else if (lower === 'no' || lower === 'n' || lower.includes('back')) {
         response = 'No problem! Let\'s return to the main selection. How can I assist you today?';
         setSignupStep(-1);
@@ -4297,8 +4297,8 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         return;
       } else if (lower.includes('start business intake')) {
         setIsBusiness(true);
-        const response = '🏢 Let\'s begin your **Commercial License Application**.\n\nAre you a **New State Registration** or **Renewal** to determine your application needs?';
-        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['New Registration', 'Renewal'] } as any]);
+        const response = '🏢 Let\'s begin your **Commercial License Application**.\n\nPlease select your registration type below:';
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['New Registration (GGHP)', 'New / Renewal (OMMA State Application)'] } as any]);
         setSignupStep(990);
         setIsTyping(false);
         return;
@@ -4400,8 +4400,8 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         setEligibleLicenses([]);
       } else if (lower.includes('start business intake')) {
         setIsBusiness(true);
-        const response = '🏢 Let\'s begin your **Commercial License Application**.\n\nAre you a **New State Registration** or **Renewal** to determine your application needs?';
-        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['New Registration', 'Renewal'] } as any]);
+        const response = '🏢 Let\'s begin your **Commercial License Application**.\n\nPlease select your registration type below:';
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['New Registration (GGHP)', 'New / Renewal (OMMA State Application)'] } as any]);
         setSignupStep(990);
         setIsTyping(false);
         return;
