@@ -8876,14 +8876,7 @@ export default function App() {
           {view === 'larry-chatbot' && (
             <LarryMedCardChatbot
               userProfile={userProfile}
-              onNavigate={(v: any, variant: any) => {
-                if (variant) {
-                   setView('larry-chatbot');
-                   setInitialRole(variant); // Reuse initialRole for variant mapping
-                } else {
-                   setView(v);
-                }
-              }}
+              onNavigate={(v: any, variant: any) => handleNavigate(v, variant)}
               onProfileCreated={(profile: any) => setUserProfile(profile)}
               variant={initialRole || 'general'}
             />
@@ -8891,8 +8884,8 @@ export default function App() {
           {view === 'larry-business' && (
             <LarryMedCardChatbot
               userProfile={userProfile}
-              onNavigate={(v) => {
-                handleNavigate(v as any);
+              onNavigate={(v, variant) => {
+                handleNavigate(v as any, variant);
               }}
               onProfileCreated={(profile) => setUserProfile(profile)}
               variant="business"
