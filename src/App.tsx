@@ -5422,9 +5422,15 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         response = 'What is the **Full Name** (First, Middle, Last, Suffix) of the next owner/officer?';
         setBusinessData(prev => ({ ...prev, ownerName: '', ownerPhone: '', ownerEmail: '', ownerIdType: '', ownerIdNumber: '', ownerIdExpiry: '', ownerDob: '', ownerEntityAffiliation: '', ownerShares: '', ownerRelationship: '', ownerResidence: '', ownerMailing: '' }));
         setSignupStep(111);
+        setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+        setIsTyping(false);
+        return;
       } else if (lower === 'no' || lower === 'nope') {
         response = '✅ **Owners & Officers Complete!**\n\n**Section 4: Location Information**\n\nWhat is the **Physical Address** of the commercial establishment? (Street Address, Unit Number, City, County, State, Zip)';
         setSignupStep(122);
+        setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+        setIsTyping(false);
+        return;
       } else {
         response = 'Please answer **Yes** or **No**. Do you need to add another owner/officer?';
         setMessages(prev => [...prev, { 
