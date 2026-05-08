@@ -3662,7 +3662,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
           '? **Enterprise Operations**: $499/mo (Full Ecosystem Access, Custom Operations)\n\n' +
           '_All Professional tiers include a 30-Day Free Trial and 30% off your first month after the trial._\n\n' +
           'To upgrade or start your trial, please begin your professional onboarding.';
-        choices = ['Main Menu'];
+        choices = ['Start Provider Onboarding', 'Main Menu'];
       } else {
         // Fallback for General / GGMA generic portal
         response = '✅ **GGHP Subscription Plans**\n\n' +
@@ -4369,6 +4369,22 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         const response = '🏢 Let\'s begin your **Commercial License Application**.\n\nFirst, what type of license are you applying for?';
         setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Dispensary', 'Grower / Cultivator', 'Processor / Manufacturer', 'Transporter', 'Testing Laboratory', 'Waste Disposal'] } as any]);
         setSignupStep(99.5);
+        setIsTyping(false);
+        return;
+      } else if (lower.includes('start provider onboarding')) {
+        response = '🩺 **Provider Onboarding**\n\nI am routing you to the Medical Provider Registration portal. Please stand by...';
+        setMessages(prev => [...prev, { role: 'bot', text: response }]);
+        setTimeout(() => onNavigate('provider-signup'), 1500);
+        setIsTyping(false);
+        return;
+      } else if (lower.includes('view licensing requirements')) {
+        response = '🩺 **Provider Licensing Requirements**\n\nTo join the Global Green Hybrid Platform as a Medical Provider, you must provide:\n1. Active State Medical License\n2. NPI Number\n3. Proof of Malpractice Insurance\n4. Board Certification (if applicable)\n5. Clean disciplinary record\n\nWould you like to begin your onboarding now?';
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Provider Onboarding', 'Main Menu'] } as any]);
+        setIsTyping(false);
+        return;
+      } else if (lower.includes('network integration')) {
+        response = '🌐 **Telehealth Network Integration**\n\nOur platform integrates with your existing practice or allows you to operate fully within our encrypted portal. You will receive patient referrals, compliance logging, and integrated billing.\n\nReady to integrate?';
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Provider Onboarding', 'Main Menu'] } as any]);
         setIsTyping(false);
         return;
       } else if (lower.includes('reschedule') || lower.includes('return later')) {
