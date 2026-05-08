@@ -2249,6 +2249,8 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
     
     // OVERSIGHT PORTAL ROLES
     { id: 'enforcement_federal', label: 'Federal Agency (DEA/FBI)', category: 'Oversight', icon: Shield, desc: 'Federal regulatory compliance and interstate enforcement operations.' },
+    { id: 'gov_office', label: 'Government / Policy Maker', category: 'Oversight', icon: Building2, desc: 'Municipal, state, and federal officials requiring policy and tax impact data.' },
+    { id: 'advocate_researcher', label: 'Advocacy & Non-Profit', category: 'Oversight', icon: HeartHandshake, desc: 'Researchers and advocates tracking public health and social equity metrics.' },
     { id: 'admin_external', label: 'External Administrator', category: 'Oversight', icon: Activity, desc: 'Administrative monitoring for external agencies and partners.' },
     { id: 'enforcement_state', label: 'Law Enforcement (RIP)', category: 'Oversight', icon: Shield, desc: 'Real-time Intelligence & Policing (RIP) for authorized agencies.' },
     { id: 'regulator_state', label: 'Regulator / Authority', category: 'Oversight', icon: Activity, desc: 'State-level licensing authority and legal oversight bodies.' },
@@ -2606,6 +2608,8 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
                                     
                                     <optgroup label="Oversight & RIP Roles">
                                         <option value="Federal Agent / Director">Federal Agent / Director</option>
+                                        <option value="Government Official / Policy Maker">Government Official / Policy Maker</option>
+                                        <option value="Advocacy / Researcher">Advocacy / Researcher</option>
                                         <option value="External Administrator">External Administrator</option>
                                         <option value="State Authority Director">State Authority Director</option>
                                         <option value="Chief of Police / Sheriff">Chief of Police / Sheriff</option>
