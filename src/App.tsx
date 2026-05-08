@@ -4388,15 +4388,15 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         setIsTyping(false);
         return;
       } else if (lower.includes('patient needing help') || lower.includes('patient needing an attorney')) {
-        if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/legal-consultation' }); } else { window.open('https://calendly.com/globalgreenhpmeet/legal-consultation', '_blank'); }
-        response = '⚖️ **Patient Legal Defense**\n\nI am routing you to our Patient Legal Defense specialists. They will match you with a top-rated attorney for traffic stops, misdemeanors, or felony charges.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Patient Defense Match](https://calendly.com/globalgreenhpmeet/legal-consultation)';
-        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+        response = '⚖️ **Patient Legal Defense Marketplace**\n\nI am unlocking your access to the **GGHP Attorney Marketplace**. Here you can browse our network of preferred, verified attorneys who specialize in cannabis law, traffic stops, and patient defense.\n\nAll attorneys in our network are actively monitored to ensure they provide top-tier representation without overcharging. Please stand by...';
+        setMessages(prev => [...prev, { role: 'bot', text: response }]);
+        setTimeout(() => onNavigate('legal-advocacy'), 2500);
         setIsTyping(false);
         return;
       } else if (lower.includes('business needing help') || lower.includes('business needing an attorney')) {
-        if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/legal-consultation' }); } else { window.open('https://calendly.com/globalgreenhpmeet/legal-consultation', '_blank'); }
-        response = '⚖️ **Commercial Defense Team**\n\nI am routing you to our Commercial Defense team. We have preferred attorneys ready to assist with compliance violations, raids, and regulatory audits.\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Business Defense Match](https://calendly.com/globalgreenhpmeet/legal-consultation)';
-        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+        response = '⚖️ **Commercial Defense Marketplace**\n\nI am routing you to our **Attorney Marketplace**. We have preferred commercial attorneys ready to assist your business with compliance violations, raids, and regulatory audits.\n\nPlease stand by while I open the directory...';
+        setMessages(prev => [...prev, { role: 'bot', text: response }]);
+        setTimeout(() => onNavigate('legal-advocacy'), 2500);
         setIsTyping(false);
         return;
       } else if (lower.includes('attorney (join') || lower.includes('join attorney marketplace')) {
