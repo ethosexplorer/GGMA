@@ -6795,7 +6795,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
                   <div className="invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300 absolute z-50 left-0 top-full mt-2 w-[340px] max-h-[300px] overflow-y-auto bg-white border border-slate-300 rounded-xl shadow-2xl p-4">
                     <p className="text-xs font-black text-slate-800 mb-2 uppercase tracking-wider">Global Green Hybrid Platform — Terms of Service</p>
                     <div className="text-[11px] text-slate-600 space-y-2 leading-relaxed">
-                      <p><strong>1. Acceptance:</strong> By creating an account, you agree to these Terms and our Privacy Policy. You must be 18+ years of age.</p>
+                      <p><strong>1. Acceptance:</strong> By creating an account, you agree to these Terms and our Privacy Policy. You must be 21+ years of age.</p>
                       <p><strong>2. Account:</strong> You are responsible for maintaining the confidentiality of your login credentials. You agree to provide accurate information during registration.</p>
                       <p><strong>3. Free Account:</strong> Your initial account is FREE. Premium features are available via paid subscription plans. You will not be charged without explicit consent.</p>
                       <p><strong>4. Data Privacy:</strong> All personal data is encrypted and stored securely. We do not sell your data to third parties. Documents uploaded are stored in your encrypted Document Vault.</p>
