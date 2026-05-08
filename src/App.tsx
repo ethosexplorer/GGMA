@@ -5311,13 +5311,14 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       return;
     } else if (signupStep === 115) {
       setBusinessData(prev => ({ ...prev, ownerDob: text }));
-      response = 'What **business entity or entities** does this person have an ownership or management affiliation with?';
+      response = 'What **business entity or entities** does this person have an ownership or management affiliation with? (Type **"same"** if same as the business being applied for)';
       setSignupStep(116);
       setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
       setIsTyping(false);
       return;
     } else if (signupStep === 116) {
-      setBusinessData(prev => ({ ...prev, ownerEntityAffiliation: text }));
+      const affiliationValue = lower.includes('same') ? (businessData.entityName || text) : text;
+      setBusinessData(prev => ({ ...prev, ownerEntityAffiliation: affiliationValue }));
       response = 'What **percentage of ownership** does this person hold in the business? (e.g., 50% owner, 25% investor)';
       setSignupStep(117);
       setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
@@ -5332,13 +5333,14 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       return;
     } else if (signupStep === 118) {
       setBusinessData(prev => ({ ...prev, ownerRelationship: text }));
-      response = 'What is their **Residence Address**? (Street Address, Apt#, City, State, Zip)';
+      response = 'What is their **Residence Address**? (Street Address, Apt#, City, State, Zip)\n\n*(Type **"same"** if same as the business address)*';
       setSignupStep(119);
       setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
       setIsTyping(false);
       return;
     } else if (signupStep === 119) {
-      setBusinessData(prev => ({ ...prev, ownerResidence: text }));
+      const residenceVal = lower.includes('same') ? (businessData.physicalAddress || text) : text;
+      setBusinessData(prev => ({ ...prev, ownerResidence: residenceVal }));
       response = 'Is the **Mailing Address** different from residence? If so, provide it. (Type **"same"** if same as residence)';
       setSignupStep(120);
       setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
@@ -5434,7 +5436,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     } else if (signupStep === 124) {
       const mailing = lower.includes('same') ? businessData.physicalAddress : text;
       setBusinessData(prev => ({ ...prev, locationMailing: mailing }));
-      response = '✅ **Location Information Complete!**\n\n**Section 5: Primary Contact & Registered Agent**\n\nWho is the **Primary Point of Contact (PPOC)**? Please provide their **Full Name** (First, Middle, Last, Suffix).';
+      response = '✅ **Location Information Complete!**\n\n**Section 5: Primary Contact & Registered Agent**\n\nWho is the **Primary Point of Contact (PPOC)**? Please provide their **Full Name** (First, Middle, Last, Suffix).\n\n*(Type **"same"** if the PPOC is the same as the owner/officer)*';
       setSignupStep(125);
       setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
       setIsTyping(false);
@@ -5442,28 +5444,31 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     }
     // Section 6: Primary Contact
     else if (signupStep === 125) {
-      setBusinessData(prev => ({ ...prev, ppocName: text }));
-      response = `What is **${text}**'s **Title**? (e.g., CEO, Managing Member, Owner)`;
+      const ppocNameVal = lower.includes('same') ? (businessData.ownerName || text) : text;
+      setBusinessData(prev => ({ ...prev, ppocName: ppocNameVal }));
+      response = `What is **${ppocNameVal}**'s **Title**? (e.g., CEO, Managing Member, Owner)`;
       setSignupStep(126);
       setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
       setIsTyping(false);
       return;
     } else if (signupStep === 126) {
       setBusinessData(prev => ({ ...prev, ppocTitle: text }));
-      response = 'What is the PPOC\'s **Phone Number**?';
+      response = 'What is the PPOC\'s **Phone Number**? (Type **"same"** if same as owner)';
       setSignupStep(127);
       setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
       setIsTyping(false);
       return;
     } else if (signupStep === 127) {
-      setBusinessData(prev => ({ ...prev, ppocPhone: text }));
-      response = 'What is the PPOC\'s **Email Address**?';
+      const ppocPhoneVal = lower.includes('same') ? (businessData.ownerPhone || text) : text;
+      setBusinessData(prev => ({ ...prev, ppocPhone: ppocPhoneVal }));
+      response = 'What is the PPOC\'s **Email Address**? (Type **"same"** if same as owner)';
       setSignupStep(128);
       setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
       setIsTyping(false);
       return;
     } else if (signupStep === 128) {
-      setBusinessData(prev => ({ ...prev, ppocEmail: text }));
+      const ppocEmailVal = lower.includes('same') ? (businessData.ownerEmail || text) : text;
+      setBusinessData(prev => ({ ...prev, ppocEmail: ppocEmailVal }));
       response = 'What is the PPOC\'s **Address**? (Street Address, City, State, Zip) (Type **"same"** if same as physical location)';
       setSignupStep(129);
       setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
@@ -5522,23 +5527,21 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     } else if (signupStep === 131) {
       const requiredDocs = getRequiredDocuments();
       const uploadedCount = Object.keys(uploadedDocuments).length;
-      if ((lower === 'done' || lower === 'continue' || lower === 'next' || lower === 'proceed')) {
-        if (uploadedCount >= requiredDocs.length) {
-          setBusinessData(prev => ({ ...prev, documentsNoted: true }));
-          if (businessData.licenseType === 'Grower') {
-            response = '**Section 8: Bond Requirement** (Growers Only)\n\nPlease select one:\n\n1️⃣ I have secured a **Surety Bond** (upload bond documentation)\n2️⃣ I or a person of interest have **owned the permitted land for at least 5 years** prior to this application\n\nPlease reply with **1** or **2**.';
-            setSignupStep(132);
-          } else {
-            // Skip to review step
-            response = '✅ **All Documents Uploaded!**\n\nNow that we have finished your application, you will receive a callback to **REVIEW** application to ensure 1st time approval accuracy, then **PAY** your state fee and then **SUBMIT** your application for state approval of business license.\n\nPlease review your complete application below.';
-            setSignupStep(133.5);
-          }
-        } else {
+      if ((lower === 'done' || lower === 'continue' || lower === 'next' || lower === 'proceed' || lower === 'skip')) {
+        setBusinessData(prev => ({ ...prev, documentsNoted: true }));
+        if (uploadedCount < requiredDocs.length) {
           const missing = requiredDocs.filter(d => !uploadedDocuments[d]);
-          response = `⚠️ You still have **${missing.length}** document(s) remaining:\n\n${missing.map(d => `❌ ${d}`).join('\n')}\n\nPlease upload all required documents using the document panel above.`;
+          setMessages(prev => [...prev, { role: 'bot', text: `📋 **Note:** You have **${missing.length}** document(s) still pending. You can upload them later via your dashboard, email, or text.\n\nProceeding with your application...` } as any]);
+        }
+        if (businessData.licenseType && businessData.licenseType.toLowerCase().includes('grower')) {
+          response = '**Section 8: Bond Requirement** (Growers Only)\n\nPlease select one:\n\n1️⃣ I have secured a **Surety Bond** (upload bond documentation)\n2️⃣ I or a person of interest have **owned the permitted land for at least 5 years** prior to this application\n\nPlease reply with **1** or **2**.';
+          setSignupStep(132);
+        } else {
+          response = '✅ **Document Section Complete!**\n\nNow that we have finished your application, you will receive a callback to **REVIEW** your application to ensure 1st time approval accuracy, then **PAY** your state fee and then **SUBMIT** your application for state approval of business license.\n\nAre you ready to review your complete application?';
+          setSignupStep(133);
         }
       } else {
-        response = `Please use the **Document Upload Center** above to upload your required documents. You have uploaded **${uploadedCount}/${requiredDocs.length}** so far.`;
+        response = `Please use the **Document Upload Center** above to upload your required documents. You have uploaded **${uploadedCount}/${requiredDocs.length}** so far.\n\nType **"done"** when finished, or **"skip"** to upload remaining documents later.`;
       }
       setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
       setIsTyping(false);
@@ -5548,11 +5551,16 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       if (num === 1) {
         setBusinessData(prev => ({ ...prev, bondType: 'Surety Bond' }));
         response = '📎 Please upload your **Surety Bond documentation** using the attachment icon, or type **"continue"** to proceed.\n\nNow that we have finished your application, you will receive a callback to **REVIEW** application to ensure 1st time approval accuracy, then **PAY** your state fee and then **SUBMIT** your application for state approval of business license.\n\nPlease review your complete application below.';
-        setSignupStep(133.5);
+        setSignupStep(133);
       } else if (num === 2) {
         setBusinessData(prev => ({ ...prev, bondType: 'Land Ownership (5+ years)' }));
         response = '📎 Please upload **Attestation of Land Ownership** and **documentation verifying land ownership for at least 5 years** using the attachment icon, or type **"continue"** to proceed.\n\nNow that we have finished your application, you will receive a callback to **REVIEW** application to ensure 1st time approval accuracy, then **PAY** your state fee and then **SUBMIT** your application for state approval of business license.\n\nPlease review your complete application below.';
-        setSignupStep(133.5);
+        setSignupStep(133);
+      }
+      if (num === 1 || num === 2) {
+        setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+        setIsTyping(false);
+        return;
       } else {
         response = 'Please reply with **1** (Surety Bond) or **2** (Land Ownership).';
         setMessages(prev => [...prev, { 
