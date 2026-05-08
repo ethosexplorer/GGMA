@@ -3809,6 +3809,14 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     // response variable already declared above
 
     // ── Global Keywords (Always active) ──────────────────────────────────────
+    if (lower === 'save and exit') {
+      response = '💾 **Progress Saved!**\n\nYour application progress has been saved securely to your Dashboard Vault. You can log in and resume at any time.\n\nSelect an option below to continue:';
+      setSignupStep(0);
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: getInitialChoices() } as any]);
+      setIsTyping(false);
+      return;
+    }
+
     if (lower === 'main menu' || lower.includes('main menu')) {
       if (isFounderAssistant) {
         setMessages(prev => [...prev, { role: 'bot', text: 'How can I assist you, Shantell?', choices: getInitialChoices() } as any]);
@@ -5001,7 +5009,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         return;
       }
     } else if (signupStep === 16) {
-      if (lower === 'done' || lower === 'continue') {
+      if (lower === 'done' || lower === 'continue' || lower === 'skip') {
         setSignupStep(19);
         response = `Excellent. Final step: Would you like to **Opt-In** to subscribe for 2-way messaging for renewal alerts and status updates?`;
         setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Yes', 'No'] } as any]);
@@ -7020,19 +7028,30 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
                   </div>
                 </div>
 
-                {/* Continue button - always visible */}
+                {/* Action buttons */}
                 <div className="mt-4 space-y-2">
                   <button
                     onClick={() => handleSend(undefined, 'continue')}
                     className="w-full py-3 bg-[#1a4731] bg-gradient-to-r from-[#1a4731] to-emerald-600 text-white rounded-xl text-sm font-bold hover:from-[#0f2a1f] hover:to-emerald-700 transition-all shadow-md shadow-emerald-200/50"
                   >
                     {Object.keys(uploadedDocuments).length >= getPatientRequiredDocuments().length - 1
-                      ? '✅ Required Documents Uploaded — Continue'
+                      ? '✅ All Documents Uploaded — Continue'
                       : `📋 Continue (${Object.keys(uploadedDocuments).length}/${getPatientRequiredDocuments().length - 1} required uploaded)`}
                   </button>
-                  {Object.keys(uploadedDocuments).length < getPatientRequiredDocuments().length - 1 && (
-                    <p className="text-[11px] text-slate-400 text-center">You can upload remaining documents later via your dashboard or email.</p>
-                  )}
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleSend(undefined, 'save and exit')}
+                      className="flex-1 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-200 border border-slate-200 transition-all shadow-sm"
+                    >
+                      💾 Save & Exit
+                    </button>
+                    <button
+                      onClick={() => handleSend(undefined, 'skip')}
+                      className="flex-1 py-2.5 bg-amber-50 text-amber-700 rounded-xl text-xs font-bold hover:bg-amber-100 border border-amber-200 transition-all shadow-sm"
+                    >
+                      ⏭️ Bypass / Provide Later
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -7167,7 +7186,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
                   </button>
                 </div>
 
-                {/* Continue button - always visible */}
+                {/* Action buttons */}
                 <div className="mt-4 space-y-2">
                   <button
                     onClick={() => handleSend(undefined, 'done')}
@@ -7177,9 +7196,20 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
                       ? '✅ All Documents Uploaded — Continue'
                       : `📋 Continue (${Object.keys(uploadedDocuments).length}/${getRequiredDocuments().length} uploaded)`}
                   </button>
-                  {Object.keys(uploadedDocuments).length < getRequiredDocuments().length && (
-                    <p className="text-[11px] text-slate-400 text-center">You can upload remaining documents later via your dashboard or email.</p>
-                  )}
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleSend(undefined, 'save and exit')}
+                      className="flex-1 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-200 border border-slate-200 transition-all shadow-sm"
+                    >
+                      💾 Save & Exit
+                    </button>
+                    <button
+                      onClick={() => handleSend(undefined, 'skip')}
+                      className="flex-1 py-2.5 bg-amber-50 text-amber-700 rounded-xl text-xs font-bold hover:bg-amber-100 border border-amber-200 transition-all shadow-sm"
+                    >
+                      ⏭️ Bypass / Provide Later
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
