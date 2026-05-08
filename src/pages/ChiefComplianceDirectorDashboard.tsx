@@ -49,6 +49,8 @@ const INTERNAL_NAV_ITEMS: NavItem[] = [
 
 const ChiefComplianceDirectorDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => void }) => {
   const [activeTab, setActiveTab] = useState('system_health');
+  const [isEditingNav, setIsEditingNav] = useState(false);
+  const handleAddSection = () => { alert('Not implemented'); };
 
   // Draggable nav state with localStorage persistence
   const [navItems, setNavItems] = useState(() => {

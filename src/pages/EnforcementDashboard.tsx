@@ -1,7 +1,5 @@
-import React,
-  { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShadowOverlay } from '../components/shared/ShadowOverlay';
-import { useState, useEffect } from 'react';
 import { turso } from '../lib/turso';
 import { ShieldAlert, Map, Search, FileText, Activity, MapPin, XCircle, AlertTriangle, AlertCircle, Fingerprint, Zap, Crosshair, HelpCircle, Download, Bot, CreditCard, Shield, Clock, Wind, Car, User, Wifi, Lock, Globe, CircleCheck } from 'lucide-react';
 import { cn } from '../lib/utils';
