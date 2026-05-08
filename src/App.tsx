@@ -4219,11 +4219,23 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     // === MAIN STATE MACHINE ===
     if (signupStep === -1) {
       if (lower === 'english' || lower === 'español' || lower.includes('português') || lower.includes('français') || lower.includes('kreyòl') || lower.includes('中文')) {
-        setSignupStep(-0.5);
-        const response = getBriefSummary(variant) + '\n\n**Do you understand and would you like to proceed?** (Yes/No)';
-        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Yes', 'No'] } as any]);
-        setIsTyping(false);
-        return;
+        // For specific entity variants (business, patient, provider, etc.), show brief summary gate
+        // For neutral/general "Chat with Sylara AI", skip straight to concierge
+        const entityVariants = ['ggma', 'ggma-patient', 'patient', 'business', 'sinc', 'provider', 'rip', 'legal', 'attorney', 'government', 'political_executive', 'advocate', 'advocacy_research'];
+        if (entityVariants.includes(variant)) {
+          setSignupStep(-0.5);
+          const response = getBriefSummary(variant) + '\n\n**Do you understand and would you like to proceed?** (Yes/No)';
+          setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Yes', 'No'] } as any]);
+          setIsTyping(false);
+          return;
+        } else {
+          // Neutral chat — go straight to general concierge
+          setSignupStep(0);
+          const response = getGreeting();
+          setMessages(prev => [...prev, { role: 'bot', text: response, choices: getInitialChoices() } as any]);
+          setIsTyping(false);
+          return;
+        }
       }
     }
 
