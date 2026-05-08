@@ -4715,6 +4715,12 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
           response = 'You can apply for the following license:\n\n✅ **Minor Patient - Temporary License (Out of State)**\n\nGreat! Now let\'s create your account. What is your **Full Name (First & Last)**?';
           setSignupStep(1);
         }
+      }
+      // Render the response for all yes/no paths
+      if (lower === 'yes' || lower === 'yeah' || lower === 'yep' || lower === 'no' || lower === 'nope') {
+        setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+        setIsTyping(false);
+        return;
       } else {
         response = 'Please answer **Yes** or **No**. Are you applying for an **adult patient license**?';
         setMessages(prev => [...prev, { 
@@ -4743,6 +4749,9 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       } else {
         response = `Please reply with a valid number (1-${eligibleLicenses.length}) to select your license type.\n\n` + eligibleLicenses.map((l, i) => `${i + 1}️⃣ **${l}**`).join('\n');
       }
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 1) {
       setSignupData(prev => ({ ...prev, fullName: text }));
       setSignupStep(1.1);
@@ -4777,30 +4786,51 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         setSignupStep(3);
         response = `Thanks! What is your **Date of Birth (DOB)**? (e.g. mm/dd/yyyy)`;
       }
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 3) {
       setSignupData(prev => ({ ...prev, dob: text }));
       setSignupStep(3.1);
       response = `Got it. For identity verification, what is your **Social Security Number (SSN)**? \n\n*(This is encrypted and handled by the L.A.R.R.Y Secure Node)*`;
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 3.1) {
       setSignupData(prev => ({ ...prev, ssn: text }));
       setSignupStep(3.2);
       response = `Thank you. What is your **Sex** (as shown on ID)?`;
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 3.2) {
       setSignupData(prev => ({ ...prev, sex: text }));
       setSignupStep(3.3);
       response = `What **Gender** do you identify with?`;
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 3.3) {
       setSignupData(prev => ({ ...prev, genderIdentify: text }));
       setSignupStep(3.4);
       response = `What is your **Preferred Language**?`;
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 3.4) {
       setSignupData(prev => ({ ...prev, preferredLanguage: text }));
       setSignupStep(6);
       response = `Got it. Now, what is the **Physical Address** listed on your Identification?`;
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 6) {
       setSignupData(prev => ({ ...prev, physicalAddress: text }));
       setSignupStep(7);
       response = `Got it. Now, what is the **Mailing Address** where you want your medical card mailed? (Type **"same"** if it is the same as above)`;
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 7) {
       setSignupData(prev => ({ ...prev, mailingAddress: text === 'same' ? signupData.physicalAddress : text }));
       setSignupStep(8);
@@ -4875,6 +4905,9 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       setSignupData(prev => ({ ...prev, allergies: text }));
       setSignupStep(14);
       response = `When was the last time you spoke with a doctor about these complaints?`;
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 14) {
       setSignupData(prev => ({ ...prev, lastDoctorVisit: text }));
       setSignupStep(15);
@@ -4916,9 +4949,15 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       setSignupData(prev => ({ ...prev, pushOptIn: lower.includes('yes') }));
       setSignupStep(19.5);
       response = `Excellent. Finally, please provide a secure **Password** (minimum 8 characters) for your new account.\n\n*(Your password will be hidden in the chat)*`;
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
+      return;
     } else if (signupStep === 19.5) {
       if (text.length < 8) {
         response = `Password must be at least 8 characters. Please choose a secure password.`;
+        setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+        setIsTyping(false);
+        return;
       } else {
         const finalData = { ...signupData, password: text };
         setSignupData(finalData);
@@ -4971,10 +5010,16 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
           response = `Intake processed locally. Are you ready to proceed to your dashboard?`;
           setSignupStep(19.7);
         }
+        setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+        setIsTyping(false);
+        return;
       }
     } else if (signupStep === 19.7) {
       response = `Taking you to your application now!`;
+      setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
+      setIsTyping(false);
       setTimeout(() => onNavigate('patient-portal'), 1500);
+      return;
     }
     // ── Business License Steps (100-134) ────────────────────────────────────
     // Registration Classification
