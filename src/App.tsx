@@ -3786,6 +3786,13 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       setIsTyping(false);
       return;
     }
+    if (lower === 'view community polling' || lower === 'social equity programs' || lower === 'health impact resources') {
+      response = `🌍 **Advocacy & Research Portal Access**\n\nThe GGHP Ecosystem tracks unprecedented live data on public health outcomes, localized community sentiment polling, and social equity impact metrics.\n\nTo protect the integrity of our research pools and ensure data is utilized by verified non-profits, researchers, and advocates, **full access to our community intelligence is restricted.**\n\nBy registering an official Advocacy account, your organization gains access to:\n• **Live Jurisdictional Sentiment & Polling Data**\n• **Social Equity & Micro-Business Impact Reports**\n• **Public Health Outcome Aggregates**\n• **Direct Policy Feedback Channels**\n\nTo view these research hubs and tools, please create your official account.`;
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Secure Login / Sign Up', 'Main Menu'] } as any]);
+      setSignupStep(0);
+      setIsTyping(false);
+      return;
+    }
 
     if (lower === 'view all tiers') {
        setMessages(prev => [...prev, { 
