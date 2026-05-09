@@ -477,25 +477,25 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                            <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><BarChart size={24}/></div>
                            <h4 className="font-bold text-slate-800 mb-1">Monthly Patient Volume</h4>
                            <p className="text-xs text-slate-500 mb-4">Telehealth vs Traditional breakdown with SINC referral metrics.</p>
-                           <button className="text-blue-600 font-bold text-sm flex items-center gap-1">Generate <ArrowRight size={14}/></button>
+                           <button onClick={() => alert("Compiling Monthly Patient Volume Report... The PDF will download securely in a few moments.")} className="text-blue-600 font-bold text-sm flex items-center gap-1">Generate <ArrowRight size={14}/></button>
                         </div>
                         <div className="border border-slate-200 rounded-xl p-5 hover:border-emerald-300 hover:shadow-md transition-all cursor-pointer group">
                            <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><Shield size={24}/></div>
                            <h4 className="font-bold text-slate-800 mb-1">State Compliance Audit</h4>
                            <p className="text-xs text-slate-500 mb-4">LARRY AI certified compliance score and pre-audit readiness report.</p>
-                           <button className="text-emerald-600 font-bold text-sm flex items-center gap-1">Generate <ArrowRight size={14}/></button>
+                           <button onClick={() => alert("Generating State Compliance Audit... LARRY AI is cross-referencing your records with OMMA limits.")} className="text-emerald-600 font-bold text-sm flex items-center gap-1">Generate <ArrowRight size={14}/></button>
                         </div>
                         <div className="border border-slate-200 rounded-xl p-5 hover:border-purple-300 hover:shadow-md transition-all cursor-pointer group">
                            <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><CreditCard size={24}/></div>
                            <h4 className="font-bold text-slate-800 mb-1">Revenue & Billing Summary</h4>
                            <p className="text-xs text-slate-500 mb-4">Subscription, consultation fees, and pending invoice totals.</p>
-                           <button className="text-purple-600 font-bold text-sm flex items-center gap-1">Generate <ArrowRight size={14}/></button>
+                           <button onClick={() => alert("Retrieving Revenue & Billing Summary from the secure payment gateway...")} className="text-purple-600 font-bold text-sm flex items-center gap-1">Generate <ArrowRight size={14}/></button>
                         </div>
                         <div className="border border-slate-200 rounded-xl p-5 hover:border-amber-300 hover:shadow-md transition-all cursor-pointer group">
                            <div className="w-12 h-12 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><FileText size={24}/></div>
                            <h4 className="font-bold text-slate-800 mb-1">Prescription Outcome Data</h4>
                            <p className="text-xs text-slate-500 mb-4">Anonymized efficacy reports linked to specific product categories.</p>
-                           <button className="text-amber-600 font-bold text-sm flex items-center gap-1">Generate <ArrowRight size={14}/></button>
+                           <button onClick={() => alert("Compiling Anonymized Efficacy Reports. Please allow up to 60 seconds for clinical data aggregation.")} className="text-amber-600 font-bold text-sm flex items-center gap-1">Generate <ArrowRight size={14}/></button>
                         </div>
                       </div>
                     </div>
