@@ -379,7 +379,7 @@ export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => voi
                   <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
                     <Settings className="text-slate-500" /> Lab Standards Engine Configuration
                   </h2>
-                  <button className="px-4 py-2 bg-slate-900 text-white rounded-lg font-bold hover:bg-slate-800 text-sm">Add New Protocol</button>
+                  <button onClick={() => alert('Opening Protocol Builder... Loading state legislative guidelines.')} className="px-4 py-2 bg-slate-900 text-white rounded-lg font-bold hover:bg-slate-800 text-sm">Add New Protocol</button>
                 </div>
                 
                 <div className="space-y-6">
@@ -416,8 +416,8 @@ export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => voi
                     <Bell className="text-red-500" /> Active Alerts & Recalls
                   </h2>
                   <div className="flex gap-2">
-                    <button className="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg font-bold hover:bg-slate-50 text-sm">Filter</button>
-                    <button className="px-4 py-2 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 text-sm flex items-center gap-2"><Plus size={16} /> Create Recall Alert</button>
+                    <button onClick={() => alert('Opening Timeline Filters...')} className="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg font-bold hover:bg-slate-50 text-sm">Filter</button>
+                    <button onClick={() => alert('Launching Emergency Broadcast Protocol...')} className="px-4 py-2 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 text-sm flex items-center gap-2"><Plus size={16} /> Create Recall Alert</button>
                   </div>
                 </div>
 
