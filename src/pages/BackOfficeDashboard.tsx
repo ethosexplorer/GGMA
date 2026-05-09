@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { NotificationDropdown } from '../components/shared/NotificationDropdown';
 import { Calendar, Building2, PhoneCall, Calendar as CalendarIcon, Server, Users,
   Map as MapIcon, Bot, Activity, HelpCircle, FileText, TrendingUp, Search, Bell, Shield, Plus, Clock, Globe, CircleCheck } from 'lucide-react';
 import { cn } from '../lib/utils';
@@ -78,10 +79,7 @@ export const BackOfficeDashboard = ({ onLogout, user }: { onLogout?: () => void,
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <button className="relative p-2 text-slate-400 hover:text-slate-600 transition-colors">
-              <Bell size={20} />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
-            </button>
+            <NotificationDropdown />
             <div className="flex items-center gap-3 border-l border-slate-200 pl-4">
                <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center overflow-hidden">
                  <img src="https://ui-avatars.com/api/?name=Support+Admin&background=0D8ABC&color=fff" alt="Admin" className="w-full h-full" />

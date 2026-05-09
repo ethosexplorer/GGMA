@@ -4,6 +4,7 @@ import { useDraggableSidebar } from '../hooks/useDraggableSidebar';
 import { Users, Calendar, Video, MapPin, FileText, Share2, Shield, CreditCard, 
   BarChart, Settings, Bell, Search, Zap, Plus, PhoneCall, AlertTriangle, ChevronRight, FlaskConical, X, UserCheck, CircleCheck, ArrowRight, FolderLock, Download, Eye } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { NotificationDropdown } from '../components/shared/NotificationDropdown';
 import { StatCard } from '../components/StatCard';
 import { CannabisCertWizard } from '../components/provider/CannabisCertWizard';
 import { UserCalendar } from '../components/UserCalendar';
@@ -151,10 +152,7 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <button onClick={() => document.dispatchEvent(new CustomEvent("open-sylara"))} className="relative p-2 text-slate-400 hover:text-slate-600 transition-colors">
-              <Bell size={20} />
-              <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500 border-2 border-white" />
-            </button>
+            <NotificationDropdown />
             <div className="w-px h-6 bg-slate-200" />
             <button onClick={() => alert('Upgrade options and enterprise tier pricing will be available after the pilot period.')} className="px-4 py-1.5 rounded-lg bg-amber-50 text-amber-700 text-xs font-bold border border-amber-200 hover:bg-amber-100 transition-colors">
               Upgrade to Full AI

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { NotificationDropdown } from '../components/shared/NotificationDropdown';
 import { ShadowOverlay } from '../components/shared/ShadowOverlay';
 import { useDraggableSidebar } from '../hooks/useDraggableSidebar';
 import { Shield, Scale, Briefcase, FileText, Search, BookOpen, Clock, AlertTriangle, 
@@ -154,10 +155,7 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <button className="relative p-2 text-slate-400 hover:text-slate-600 transition-colors">
-              <Bell size={20} />
-              <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500 border-2 border-white" />
-            </button>
+            <NotificationDropdown />
             <div className="w-px h-6 bg-slate-200" />
             <button onClick={() => alert('Syncing with national compliance network...')} className="flex items-center gap-2 px-4 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-sm font-bold border border-slate-200 hover:bg-slate-200 transition-colors">
               <div className="w-4 h-4 rounded-full bg-emerald-500 animate-pulse"></div>

@@ -7,6 +7,7 @@ import { Building2, Users, FileText, Settings, Shield, Activity, Bell,
   MapPin, Target, Layers, TrendingDown, Box, PieChart, GraduationCap, Lock, GripVertical,
   Calculator, Save, ExternalLink, Printer, ArrowLeft, Phone, PhoneCall, PhoneOff, PhoneIncoming, PhoneOutgoing, CircleCheck } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { NotificationDropdown } from '../components/shared/NotificationDropdown';
 import { motion } from 'motion/react';
 import { FederalDashboard } from './FederalDashboard';
 import { PublicHealthDashboard } from './PublicHealthDashboard';
