@@ -43,7 +43,7 @@ export const FederalDashboard = ({ onLogout, user }: { onLogout?: () => void, us
 
   return (
     <div className="h-screen bg-[#080e1a] overflow-hidden relative">
-          {user && <ProfileSettingsCard user={user} roleLabel="User Info" />}
+          
 
       {!isUnlocked && (
         <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-[#080e1a]/80 backdrop-blur-2xl animate-in fade-in duration-300">

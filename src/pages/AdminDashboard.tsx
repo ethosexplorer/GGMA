@@ -402,7 +402,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
 
     return (
       <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-700">
-          {user && <ProfileSettingsCard user={user} roleLabel="User Info" />}
+          
 
         <div className="bg-slate-900 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden">
            <div className="absolute top-0 right-0 p-10 opacity-10"><BookOpen size={160} /></div>

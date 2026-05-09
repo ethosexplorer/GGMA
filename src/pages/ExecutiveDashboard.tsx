@@ -507,7 +507,7 @@ export const ExecutiveDashboard = ({ onLogout, user }: any) => {
 
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden font-sans selection:bg-indigo-100 selection:text-indigo-900">
-          {user && <ProfileSettingsCard user={user} roleLabel="User Info" />}
+          
 
       
       {/* Sidebar */}

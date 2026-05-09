@@ -110,7 +110,7 @@ export const OversightDashboard = ({ onLogout, user, role, jurisdiction = 'Oklah
       case 'processor':
         return (
           <div className="p-8 space-y-6 overflow-y-auto h-full">
-          {user && <ProfileSettingsCard user={user} roleLabel="User Info" />}
+          
 
             <div className="flex justify-between items-center mb-8">
               <div>

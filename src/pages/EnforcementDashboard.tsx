@@ -89,7 +89,7 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-950 text-slate-300 font-sans relative">
-          {user && <ProfileSettingsCard user={user} roleLabel="User Info" />}
+          
 
       {!isUnlocked && (
         <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-slate-950/80 backdrop-blur-2xl animate-in fade-in duration-300">

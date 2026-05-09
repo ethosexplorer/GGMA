@@ -13,7 +13,7 @@ export const BackOfficeDashboard = ({ onLogout, user }: { onLogout?: () => void,
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] bg-slate-50 text-slate-800 font-sans">
-          {user && <ProfileSettingsCard user={user} roleLabel="User Info" />}
+          
 
       
       {/* LEFT SIDEBAR */}

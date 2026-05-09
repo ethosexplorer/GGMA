@@ -553,7 +553,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
 
   const renderOverview = () => (
     <div className="space-y-6">
-          {user && <ProfileSettingsCard user={user} roleLabel="User Info" />}
+          
 
       {!hideUpdates && (
         <div className="mb-6 relative group">

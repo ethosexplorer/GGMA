@@ -50,7 +50,7 @@ export const CareWalletDashboard = ({ onLogout, onNavigate, user }: { onLogout?:
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] bg-slate-50">
-          {user && <ProfileSettingsCard user={user} roleLabel="User Info" />}
+          
 
       {/* LEFT SIDEBAR */}
       <div className="w-64 bg-slate-900 border-r border-slate-800 text-slate-300 hidden md:flex flex-col">

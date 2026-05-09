@@ -164,7 +164,7 @@ export const ExternalAdminDashboard = ({ onLogout, user }: { onLogout?: () => vo
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 text-slate-800 font-sans relative">
-          {user && <ProfileSettingsCard user={user} roleLabel="User Info" />}
+          
 
       {/* SIDEBAR */}
       <div className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col hidden md:flex shrink-0 transition-all duration-500">

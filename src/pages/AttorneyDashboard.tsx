@@ -73,7 +73,7 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] bg-slate-50">
-          {user && <ProfileSettingsCard user={user} roleLabel="User Info" />}
+          
 
       {/* LEFT SIDEBAR (Legal Green Theme) */}
       <div className="w-64 bg-[#0a1f16] border-r border-[#153a28] text-slate-300 hidden md:flex flex-col">

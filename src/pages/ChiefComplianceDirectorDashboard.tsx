@@ -86,7 +86,7 @@ const ChiefComplianceDirectorDashboard = ({ user, onLogout }: { user?: any, onLo
 
   return (
     <div className="flex h-screen bg-[#0A0F1C] overflow-hidden text-slate-300 font-sans">
-          {user && <ProfileSettingsCard user={user} roleLabel="User Info" />}
+          
 
       {/* Sidebar */}
       <aside className="w-64 bg-[#0A0F1C] border-r border-slate-800 flex flex-col h-full shrink-0 relative z-20 shadow-2xl">

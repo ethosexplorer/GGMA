@@ -81,7 +81,7 @@ export const RegulatorDashboard = ({ onLogout, user }: { onLogout?: () => void |
       case 'overview': return renderOverview();
       default: return (
         <div className="flex items-center justify-center h-[60vh]">
-          {user && <ProfileSettingsCard user={user} roleLabel="User Info" />}
+          
 
           <div className="text-center space-y-4 max-w-sm">
             <div className="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto"><FileText size={32}/></div>

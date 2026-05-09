@@ -213,7 +213,7 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 relative">
-          {user && <ProfileSettingsCard user={user} roleLabel="User Info" />}
+          
 
       {!isUnlocked && (
         <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-slate-900/60 backdrop-blur-2xl animate-in fade-in duration-300">

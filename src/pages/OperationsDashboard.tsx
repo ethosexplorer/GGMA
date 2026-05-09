@@ -118,7 +118,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
 
   const renderSupport = () => (
     <div className="space-y-6">
-          {user && <ProfileSettingsCard user={user} roleLabel="User Info" />}
+          
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
          <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm text-center">
