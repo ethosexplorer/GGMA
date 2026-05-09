@@ -205,7 +205,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
             { name: 'Sarah Williams', type: 'Caregiver License', state: 'Oklahoma', status: 'Pending', time: '8h ago' },
             { name: 'Highland Processing Inc', type: 'Processor License', state: 'Missouri', status: 'Under Review', time: '12h ago' },
           ].map((a, i) => (
-            <div key={i} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50">
+            <div key={i} onClick={() => alert('Opening application package for ' + a.name + '... Connecting to State Portal.')} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors">
               <div><p className="text-sm font-bold text-slate-800">{a.name}</p><p className="text-xs text-slate-500">{a.type} • {a.state}</p></div>
               <div className="flex items-center gap-3">
                 <span className={cn("text-[9px] font-black uppercase px-2 py-0.5 rounded-full", a.status==='Pending'?'bg-amber-50 text-amber-600':a.status==='Under Review'?'bg-blue-50 text-blue-600':'bg-red-50 text-red-600')}>{a.status}</span>
@@ -340,7 +340,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
         </div>
         <div className="divide-y divide-slate-100">
           {personnelList.map((p, i) => (
-            <div key={i} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50">
+            <div key={i} onClick={() => alert('Opening application package for ' + a.name + '... Connecting to State Portal.')} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500"><Users size={14} /></div>
                 <div>
