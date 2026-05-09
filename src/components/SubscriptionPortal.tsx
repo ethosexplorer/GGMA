@@ -62,9 +62,8 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
   const displayAddons = roleAddons.length > 0 ? roleAddons : allAddons.slice(0, 8);
   const currentAddonsList = allAddons.filter(a => activeAddOns.includes(a.id));
 
-  
-  let allowedTabs = undefined;
-  let defaultTab = undefined;
+  let allowedTabs: string[] | undefined = undefined;
+  let defaultTab: string | undefined = undefined;
   
   if (userRole.includes('business')) {
     allowedTabs = ['cannabis_b2b', 'traditional_b2b'];
@@ -174,7 +173,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
                          <p className="text-xs text-slate-500">Visa ending in 4242</p>
                        </div>
                      </div>
-                     <button onClick={() => alert("Update Payment Method\n\nRedirecting to secure payment gateway to update your card on file. Your current card (Visa ending in 4242) will be replaced.")} className="text-[#1a4731] text-sm font-bold cursor-pointer hover:underline">Update</button>
+                     <button onClick={() => { const newCard = prompt('Enter new 16-digit card number (Stripe Checkout Simulation):'); if(newCard && newCard.length > 10) alert('Success! Your card ending in ' + newCard.slice(-4) + ' has been securely updated via Stripe.'); }} className="text-[#1a4731] text-sm font-bold cursor-pointer hover:underline">Update</button>
                   </div>
                   
                   <div className="flex items-center justify-between p-4 border border-slate-100 rounded-xl hover:bg-slate-50 transition-colors">
@@ -217,7 +216,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
                {currentAddonsList.length === 0 ? (
                  <div className="text-center py-6 bg-slate-50 rounded-xl border border-slate-100 border-dashed">
                     <p className="text-sm font-medium text-slate-500 mb-3">No active add-ons</p>
-                    <Button onClick={() => document.getElementById("available-addons")?.scrollIntoView({ behavior: "smooth", block: "start" })} variant="outline" className="text-xs cursor-pointer">Browse Add-Ons</Button>
+                    <Button onClick={() => document.getElementById('available-addons')?.scrollIntoView({ behavior: 'smooth', block: 'start' })} variant="outline" className="text-xs cursor-pointer">Browse Add-Ons</Button>
                  </div>
                ) : (
                  <div className="space-y-3">
@@ -239,7 +238,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
                <h4 className="font-bold text-slate-800 mb-2">Need Help?</h4>
                <p className="text-xs text-slate-500 mb-4 px-4 font-medium leading-relaxed">Our support team is available 24/7 to help you with billing inquiries or custom pricing tailored to your scale.</p>
                <div className="flex flex-col gap-2">
-                 <Button onClick={() => alert('Starting Sylara Support Session...')} className="w-full bg-purple-600 hover:bg-purple-500 text-white border-transparent shadow-lg shadow-purple-900/20">Ask Sylara AI</Button>
+                 <Button onClick={() => document.dispatchEvent(new CustomEvent('open-sylara'))} className="w-full bg-purple-600 hover:bg-purple-500 text-white border-transparent shadow-lg shadow-purple-900/20">Ask Sylara AI</Button>
                  <Button onClick={() => alert('Phone Support\n\nCall us at: (888) 963-4447\n\nHours: Mon-Fri 8am-8pm CST\nSat-Sun 10am-6pm CST\n\nOr use the QR code feature on the GGHP mobile app to call from your phone.')} variant="outline" className="w-full">Call Phone Support</Button>
                </div>
             </div>
@@ -247,8 +246,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
       </div>
 
       {/* Available Single/Add-on Section */}
-      <div id="available-addons">
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden mt-6">
+      <div id="available-addons" className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden mt-6">
         <div className="flex items-center justify-between p-5 border-b border-slate-100">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
