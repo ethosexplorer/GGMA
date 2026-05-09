@@ -164,7 +164,7 @@ export const AdvocacyResearchDashboard = ({ onLogout, user }: { onLogout?: () =>
                 {activeTab === 'community' && <div className="text-center py-40 text-slate-400 font-bold uppercase tracking-widest">Community Impact Reports...</div>}
                 {activeTab === 'predictive_health' && <div className="text-center py-40 text-slate-400 font-bold uppercase tracking-widest">Predictive Health Modeling Active...</div>}
                 {activeTab === 'research_api' && <div className="text-center py-40 text-slate-400 font-bold uppercase tracking-widest">Developer Research API Endpoints...</div>}
-                {activeTab === 'subscription' && <SubscriptionPortal userRole="patient" initialPlanId={`advocacy_${tier}`} />}
+                {activeTab === 'subscription' && <SubscriptionPortal userRole="advocate" initialPlanId={`advocacy_${tier}`} />}
               </div>
             );
           })()}
