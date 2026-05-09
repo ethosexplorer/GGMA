@@ -4,6 +4,7 @@ import { Calendar, Activity, ShieldAlert, FlaskConical, AlertTriangle, FileText,
   Thermometer, Plus, Smartphone, ChevronRight, CircleCheck } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { StatCard } from '../components/StatCard';
+import { NotificationDropdown } from '../components/shared/NotificationDropdown';
 import { UserCalendar } from '../components/UserCalendar';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 
@@ -132,7 +133,9 @@ export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => voi
             <h1 className="text-xl font-bold text-slate-800 hidden sm:block">Public Health & Labs Dashboard</h1>
           </div>
           <div className="flex items-center gap-4">
-            <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 text-slate-700 text-sm font-bold border border-slate-200 hover:bg-slate-200 transition-colors">
+            <NotificationDropdown />
+            <div className="w-px h-6 bg-slate-200" />
+            <button onClick={() => alert('Generating Public Health Report... Compiling statewide lab data.')} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 text-slate-700 text-sm font-bold border border-slate-200 hover:bg-slate-200 transition-colors">
               <Download size={16} /> Generate Report
             </button>
             <button onClick={() => alert('Opening Emergency Recall Broadcast Protocol...')} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-bold shadow-md hover:bg-red-700 transition-colors">
@@ -227,8 +230,8 @@ export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => voi
                           <p className="text-sm text-slate-500">Auto-validates COAs & Rapid Tests against state limits via Larry.</p>
                         </div>
                         <div className="flex gap-2">
-                          <button className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 bg-white hover:bg-slate-50">State Mapping: Strict</button>
-                          <button className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 bg-white hover:bg-slate-50">Calibrate Tests</button>
+                          <button onClick={() => alert('Opening State Legislature Mapping Configuration...')} className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 bg-white hover:bg-slate-50">State Mapping: Strict</button>
+                          <button onClick={() => alert('Initializing mass calibration sequence for all connected rapid test devices...')} className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 bg-white hover:bg-slate-50">Calibrate Tests</button>
                         </div>
                       </div>
                       
@@ -346,7 +349,7 @@ export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => voi
                             
                             <div className="flex flex-wrap gap-2">
                               {event.actions.map((action, i) => (
-                                <button key={i} className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors">
+                                <button key={i} onClick={() => alert(`Executing: ${action}... L.A.R.R.Y is logging this interaction.`)} className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors shadow-sm">
                                   {action}
                                 </button>
                               ))}
@@ -398,7 +401,7 @@ export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => voi
                         )}>
                           {protocol.status}
                         </span>
-                        <button className="px-4 py-2 border border-slate-200 text-slate-600 rounded-lg text-sm font-bold hover:bg-slate-50">Edit Limits</button>
+                        <button onClick={() => alert('Opening State Threshold Editor...')} className="px-4 py-2 border border-slate-200 text-slate-600 rounded-lg text-sm font-bold hover:bg-slate-50">Edit Limits</button>
                       </div>
                     </div>
                   ))}
@@ -472,7 +475,7 @@ export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => voi
                 <FileText size={48} className="text-emerald-400 mb-4" />
                 <h2 className="text-2xl font-bold text-slate-800 mb-2">Historical Compliance Data</h2>
                 <p className="text-slate-500 max-w-md mb-6">Review laboratory performance, pass/fail ratios, and longitudinal heavy metal tracking across all licensed facilities.</p>
-                <button className="px-6 py-3 bg-[#1a4731] text-white rounded-xl font-bold hover:bg-[#153a28] shadow-md flex items-center gap-2 mx-auto">
+                <button onClick={() => alert('Compiling Historical Compliance Dataset... The CSV download will begin shortly.')} className="px-6 py-3 bg-[#1a4731] text-white rounded-xl font-bold hover:bg-[#153a28] shadow-md flex items-center gap-2 mx-auto">
                   <Download size={18} /> Export Full State Dataset (CSV)
                 </button>
               </div>
