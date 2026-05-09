@@ -9167,9 +9167,9 @@ export default function App() {
         {userProfile && (() => {
           const email = (userProfile.email || '').toLowerCase();
           const roleStr = String(roleOverride || userProfile.role).toLowerCase();
-          const isFounder = userProfile.role === 'executive_founder' || email.includes('globalgreenhp@gmail.com');
-          const isRyan = email.includes('ceo.globalgreenhp');
-          const isMonica = email.includes('compliance.globalgreenhp') || email.includes('monica');
+          const isFounder = userProfile.role === 'executive_founder' || email === 'globalgreenhp@gmail.com';
+          const isRyan = email === 'ceo.globalgreenhp@gmail.com';
+          const isMonica = email === 'compliance.globalgreenhp@gmail.com' || email.includes('monica');
           const isBob = email.includes('bobmoore');
           const isOpsView = roleStr.includes('operations') || roleStr.includes('admin') || roleStr.includes('staff') || roleStr.includes('support') || roleStr.includes('it');
           // Hide when previewing patient/business/external dashboards
@@ -9184,9 +9184,9 @@ export default function App() {
 
         {(() => {
           const email = (userProfile?.email || '').toLowerCase();
-          const isFndr = userProfile?.role === 'executive_founder' || email.includes('globalgreenhp@gmail.com');
-          const isRyn = email.includes('ceo.globalgreenhp');
-          const isMon = email.includes('compliance.globalgreenhp') || email.includes('monica');
+          const isFndr = userProfile?.role === 'executive_founder' || email === 'globalgreenhp@gmail.com';
+          const isRyn = email === 'ceo.globalgreenhp@gmail.com';
+          const isMon = email === 'compliance.globalgreenhp@gmail.com' || email.includes('monica');
           
           if (view === 'landing' || view === 'role-pricing' || view === 'larry-chatbot' || isFndr || isRyn || isMon) return null;
           return <SylaraFloatingWidget userProfile={userProfile} activeRole={roleOverride || userProfile?.role} persona={currentPersona} onClick={() => setShowLarryModal(true)} />;

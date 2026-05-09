@@ -17,16 +17,16 @@ export const ProfileSettingsCard = ({ user, title = "Profile & Contact Info", ro
   }, [user]);
 
   const handleEditProfile = async () => {
-    const phone = prompt('Update Phone Number:', localUser.phone || '');
-    if (phone === null) return;
-    const address = prompt('Update Address:', localUser.address || '');
-    if (address === null) return;
+    const firstName = prompt('Update First Name:', localUser.firstName || '') ?? localUser.firstName;
+    const lastName = prompt('Update Last Name:', localUser.lastName || '') ?? localUser.lastName;
+    const phone = prompt('Update Phone Number:', localUser.phone || '') ?? localUser.phone;
+    const address = prompt('Update Address:', localUser.address || '') ?? localUser.address;
 
     try {
       if (localUser.id || localUser.uid) {
         const id = localUser.id || localUser.uid;
-        await updateDoc(doc(db, 'users', id), { phone, address });
-        setLocalUser({ ...localUser, phone, address });
+        await updateDoc(doc(db, 'users', id), { firstName, lastName, phone, address });
+        setLocalUser({ ...localUser, firstName, lastName, phone, address });
         alert('Profile updated successfully!');
       } else {
         alert('Could not update profile (No User ID).');
@@ -47,21 +47,21 @@ export const ProfileSettingsCard = ({ user, title = "Profile & Contact Info", ro
           <button onClick={handleEditProfile} className="text-xs text-[#1a4731] font-black uppercase tracking-widest hover:underline border border-[#1a4731] px-4 py-2 rounded-xl transition-colors hover:bg-emerald-50">Edit Info</button>
        </div>
        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div>
+          <div className="min-w-0">
              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{roleLabel}</p>
-             <p className="font-bold text-slate-800">{localUser.firstName} {localUser.lastName}</p>
+             <p className="font-bold text-slate-800 truncate">{localUser.firstName} {localUser.lastName}</p>
           </div>
-          <div>
+          <div className="min-w-0">
              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Email Address</p>
-             <p className="font-bold text-slate-800">{localUser.email}</p>
+             <p className="font-bold text-slate-800 truncate" title={localUser.email}>{localUser.email}</p>
           </div>
-          <div>
+          <div className="min-w-0">
              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Phone Number</p>
-             <p className="font-bold text-slate-800">{localUser.phone || 'Not Provided'}</p>
+             <p className="font-bold text-slate-800 truncate">{localUser.phone || 'Not Provided'}</p>
           </div>
-          <div className="md:col-span-3">
+          <div className="md:col-span-3 min-w-0">
              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Registered Address</p>
-             <p className="font-bold text-slate-800">{localUser.address || 'Not Provided'}</p>
+             <p className="font-bold text-slate-800 truncate" title={localUser.address}>{localUser.address || 'Not Provided'}</p>
           </div>
        </div>
     </div>

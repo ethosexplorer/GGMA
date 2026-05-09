@@ -62,13 +62,40 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
   const displayAddons = roleAddons.length > 0 ? roleAddons : allAddons.slice(0, 8);
   const currentAddonsList = allAddons.filter(a => activeAddOns.includes(a.id));
 
+  
+  let allowedTabs = undefined;
+  let defaultTab = undefined;
+  
+  if (userRole.includes('business')) {
+    allowedTabs = ['cannabis_b2b', 'traditional_b2b'];
+    defaultTab = 'cannabis_b2b';
+  } else if (userRole.includes('provider')) {
+    allowedTabs = ['provider'];
+    defaultTab = 'provider';
+  } else if (userRole.includes('attorney')) {
+    allowedTabs = ['attorney'];
+    defaultTab = 'attorney';
+  } else if (userRole.includes('health') || userRole.includes('advocate') || userRole.includes('public')) {
+    allowedTabs = ['public_health'];
+    defaultTab = 'public_health';
+  } else if (userRole.includes('enforcement')) {
+    allowedTabs = ['enforcement'];
+    defaultTab = 'enforcement';
+  } else if (userRole.includes('regulator') || userRole.includes('authority') || userRole.includes('federal')) {
+    allowedTabs = ['finance_ai'];
+    defaultTab = 'finance_ai';
+  } else if (userRole.includes('user') || userRole.includes('patient')) {
+    allowedTabs = ['patient'];
+    defaultTab = 'patient';
+  }
+
   if (showPricing) {
     return (
       <div className="animate-in fade-in duration-500">
         <button onClick={() => setShowPricing(false)} className="mb-4 text-emerald-700 hover:text-emerald-900 font-bold text-sm flex items-center gap-2">
           ← Back to Dashboard
         </button>
-        <PricingTiers />
+        <PricingTiers allowedTabs={allowedTabs} defaultTab={defaultTab as any} />
       </div>
     );
   }
@@ -190,7 +217,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
                {currentAddonsList.length === 0 ? (
                  <div className="text-center py-6 bg-slate-50 rounded-xl border border-slate-100 border-dashed">
                     <p className="text-sm font-medium text-slate-500 mb-3">No active add-ons</p>
-                    <Button onClick={() => alert('Opening Sylara Add-On Manager...')} variant="outline" className="text-xs cursor-pointer">Browse Add-Ons</Button>
+                    <Button onClick={() => document.getElementById("available-addons")?.scrollIntoView({ behavior: "smooth", block: "start" })} variant="outline" className="text-xs cursor-pointer">Browse Add-Ons</Button>
                  </div>
                ) : (
                  <div className="space-y-3">
@@ -220,6 +247,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
       </div>
 
       {/* Available Single/Add-on Section */}
+      <div id="available-addons">
       <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden mt-6">
         <div className="flex items-center justify-between p-5 border-b border-slate-100">
           <div className="flex items-center gap-3">
