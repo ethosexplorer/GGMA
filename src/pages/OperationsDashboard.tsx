@@ -145,7 +145,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
                  </div>
                  <div className="flex items-center gap-3">
                     <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-lg">Wait: 4m</span>
-                    <button className="px-4 py-2 bg-slate-800 text-white text-xs font-bold rounded-xl opacity-0 group-hover:opacity-100 transition-all shadow-md">Pick Up</button>
+                    <button onClick={(e) => { e.stopPropagation(); alert('Connecting to patient queue...'); }} className="px-4 py-2 bg-slate-800 text-white text-xs font-bold rounded-xl opacity-0 group-hover:opacity-100 transition-all shadow-md">Pick Up</button>
                  </div>
               </div>
             ))}

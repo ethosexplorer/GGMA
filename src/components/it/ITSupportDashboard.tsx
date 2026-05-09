@@ -61,9 +61,9 @@ export const ITSupportDashboard = () => {
              onChange={(e) => setSearchQuery(e.target.value)}
            />
         </div>
-        <button className="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl transition-colors">
-          Query User
-        </button>
+        <button onClick={() => alert('Searching Global User Directory...')} className="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl transition-colors">
+            Query User
+          </button>
       </div>
 
       <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
@@ -98,8 +98,8 @@ export const ITSupportDashboard = () => {
                   </td>
                   <td className="py-4 text-xs font-bold text-slate-400">{user.time}</td>
                   <td className="py-4 flex gap-2">
-                    <button className="p-2 hover:bg-slate-100 text-slate-600 rounded-lg tooltip-trigger" title="Reset Password"><KeySquare size={18} /></button>
-                    <button className="p-2 hover:bg-slate-100 text-red-600 rounded-lg tooltip-trigger" title="Suspend Account"><Slash size={18} /></button>
+                    <button onClick={() => alert('Sending forced password reset link...')} className="p-2 hover:bg-slate-100 text-slate-600 rounded-lg tooltip-trigger" title="Reset Password"><KeySquare size={18} /></button>
+                    <button onClick={() => alert('WARNING: Suspending user account will revoke all active API and portal tokens. Proceed?')} className="p-2 hover:bg-slate-100 text-red-600 rounded-lg tooltip-trigger" title="Suspend Account"><Slash size={18} /></button>
                   </td>
                 </tr>
               ))}
@@ -129,7 +129,7 @@ export const ITSupportDashboard = () => {
             { id: 4, name: 'L.A.R.R.Y AI Overrides', active: false, desc: 'Experimental: allows AI to automatically resolve compliance flags.' },
           ].map((flag) => (
             <div key={flag.id} className="p-5 border border-slate-200 rounded-xl flex items-start gap-4">
-              <div className="pt-1 cursor-pointer">
+              <div className="pt-1 cursor-pointer" onClick={() => alert('Are you sure you want to toggle this feature flag? This affects global production traffic.')}>
                 {flag.active ? <ToggleRight size={32} className="text-emerald-500" /> : <ToggleLeft size={32} className="text-slate-300" />}
               </div>
               <div>
