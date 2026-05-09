@@ -220,7 +220,7 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
               {/* Main Content (Patient Queue) */}
               <div className="lg:col-span-2 space-y-6">
                 
-                {activeTab === 'queue' && (
+                {['queue', 'overview'].includes(activeTab) && (
                   <>
                 <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                 <ProfileSettingsCard user={user} roleLabel="User Info" />
@@ -503,21 +503,8 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                   )}
 
                 
-                {['overview', 'settings'].includes(activeTab) && (
-                  <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center shadow-sm">
-                    <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-400">
-                      <Settings size={32} />
-                    </div>
-                    <h2 className="text-2xl font-black text-slate-800 mb-2 uppercase tracking-tight">
-                      {sidebarItems.find(i => i.id === activeTab)?.label}
-                    </h2>
-                    <p className="text-slate-500 max-w-lg mx-auto mb-8">
-                      This module is currently being configured for your practice's specific state regulations.
-                    </p>
-                    <button onClick={() => setActiveTab('queue')} className="px-6 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold transition-all shadow-md">
-                      Return to Patient Queue
-                    </button>
-                  </div>
+                {activeTab === 'settings' && (
+                  <ProfileSettingsCard user={user} roleLabel="User Info" />
                 )}
 
 
