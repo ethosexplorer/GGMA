@@ -3,7 +3,7 @@ import { ShadowOverlay } from '../components/shared/ShadowOverlay';
 import { useDraggableSidebar } from '../hooks/useDraggableSidebar';
 import { Shield, Scale, Briefcase, FileText, Search, BookOpen, Clock, AlertTriangle, 
   ChevronRight, Lock, Unlock, Zap, BarChart2, Bell, MessageSquare, CreditCard,
-  CheckCircle, PlusCircle, LayoutDashboard, UserCheck, ShieldAlert, Calendar, CircleCheck } from 'lucide-react';
+  CheckCircle, PlusCircle, LayoutDashboard, UserCheck, ShieldAlert, Calendar, CircleCheck , FolderLock, Download, Eye, X } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { ImportantUpdates } from '../components/ImportantUpdates';
 import { StatCard } from '../components/StatCard';
@@ -11,13 +11,14 @@ import { UserCalendar } from '../components/UserCalendar';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 
 const DEFAULT_SIDEBAR_ITEMS = [
-  { id: 'calendar', label: 'My Calendar', icon: Calendar },
+{ id: 'calendar', label: 'My Calendar', icon: Calendar },
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'browse', label: 'Browse Cases', icon: Search },
   { id: 'active', label: 'My Active Cases', icon: Briefcase },
   { id: 'library', label: 'Law Library', icon: BookOpen },
   { id: 'reports', label: 'Reports', icon: BarChart2 },
   { id: 'billing', label: 'Billing & Compassion Balance', icon: CreditCard },
+  { id: 'vault', label: 'Secure Vault', icon: FolderLock },
 ];
 
 const availableCases = [
@@ -35,6 +36,7 @@ const alerts = [
 
 export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [hideUpdates, setHideUpdates] = useState(false);
   const [tokens, setTokens] = useState(12);
   const [unlockedCases, setUnlockedCases] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -170,7 +172,19 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
             
             {activeTab === 'dashboard' && (
               <div className="space-y-6">
-                <ImportantUpdates role="attorney" />
+                {!hideUpdates && (
+        <div className="mb-6 relative group">
+          <button onClick={() => setHideUpdates(true)} className="absolute top-2 right-2 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold rounded-lg shadow-sm transition-all z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100">
+            <X size={14} /> Mark as Read
+          </button>
+          <ImportantUpdates role="attorney" />
+        </div>
+      )}
+      {hideUpdates && (
+        <button onClick={() => setHideUpdates(false)} className="w-full max-w-5xl mx-auto bg-blue-50 border border-blue-200 text-blue-700 font-bold text-sm py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-blue-100 transition-colors shadow-sm mb-6">
+          <Bell size={16} /> View Important Updates
+        </button>
+      )}
               {/* KPI Row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">

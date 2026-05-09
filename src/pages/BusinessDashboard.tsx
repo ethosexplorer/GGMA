@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ShadowOverlay } from '../components/shared/ShadowOverlay';
 import { useDraggableSidebar } from '../hooks/useDraggableSidebar';
-import { Wallet, Users, Building2, Shield, Clock, TrendingUp, Plus, LayoutDashboard, CreditCard, PackageSearch, AlertCircle, ShoppingCart, Loader2, Trash2, Edit2, CheckCircle, XCircle, Sparkles, MapPin, BarChart2, Activity, MessageSquare, LogOut, FileText, ClipboardList, CheckSquare, UploadCloud, Calendar, Zap, AlertTriangle, Database, Gavel, ArrowRight, ArrowLeft, Send, User } from 'lucide-react';
+import { Wallet, Users, Building2, Shield, Clock, TrendingUp, Plus, LayoutDashboard, CreditCard, PackageSearch, AlertCircle, ShoppingCart, Loader2, Trash2, Edit2, CheckCircle, XCircle, Sparkles, MapPin, BarChart2, Activity, MessageSquare, LogOut, FileText, ClipboardList, CheckSquare, UploadCloud, Calendar, Zap, AlertTriangle, Database, Gavel, ArrowRight, ArrowLeft, Send, User , FolderLock, Download, Eye, X } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { db } from '../lib/firebase';
@@ -531,7 +531,19 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
           {activeTab === 'home' && (
       <div className="space-y-6">
         <StateWelcomeBanner jurisdiction={jurisdiction} type="business" />
-        <ImportantUpdates role="business" />
+        {!hideUpdates && (
+        <div className="mb-6 relative group">
+          <button onClick={() => setHideUpdates(true)} className="absolute top-2 right-2 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold rounded-lg shadow-sm transition-all z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100">
+            <X size={14} /> Mark as Read
+          </button>
+          <ImportantUpdates role="business" />
+        </div>
+      )}
+      {hideUpdates && (
+        <button onClick={() => setHideUpdates(false)} className="w-full max-w-5xl mx-auto bg-blue-50 border border-blue-200 text-blue-700 font-bold text-sm py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-blue-100 transition-colors shadow-sm mb-6">
+          <Bell size={16} /> View Important Updates
+        </button>
+      )}
         
         {/* Profile Card */}
         <div className="bg-white rounded-[2rem] border border-slate-200 shadow-sm p-8 mb-4">
