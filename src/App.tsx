@@ -8386,8 +8386,8 @@ export default function App() {
   const [isDemoUnlocked, setIsDemoUnlocked] = useState(false);
   const [showLarryModal, setShowLarryModal] = useState(false);
   const [larryVariant, setLarryVariant] = useState<string | undefined>(undefined);
-  const [roleOverride, setRoleOverride] = useState<string | null>(null);
-  const [hasBypassedSelector, setHasBypassedSelector] = useState(false);
+  const [roleOverride, setRoleOverride] = useState<string | null>(() => sessionStorage.getItem('gghp_role_override'));
+  const [hasBypassedSelector, setHasBypassedSelector] = useState(() => sessionStorage.getItem('gghp_has_bypassed_selector') === 'true');
   const [selectedPricingRole, setSelectedPricingRole] = useState<string>('patient');
   const [jurisdiction, setJurisdiction] = useState(() => sessionStorage.getItem('gghp_jurisdiction') || 'Oklahoma');
   const [jurisdictionLocked, setJurisdictionLocked] = useState(() => sessionStorage.getItem('gghp_jurisdiction_locked') === 'true');
@@ -8437,6 +8437,16 @@ export default function App() {
       setView('landing');
     }
   };
+
+  useEffect(() => {
+    if (roleOverride) sessionStorage.setItem('gghp_role_override', roleOverride);
+    else sessionStorage.removeItem('gghp_role_override');
+  }, [roleOverride]);
+
+  useEffect(() => {
+    if (hasBypassedSelector) sessionStorage.setItem('gghp_has_bypassed_selector', 'true');
+    else sessionStorage.removeItem('gghp_has_bypassed_selector');
+  }, [hasBypassedSelector]);
 
   useEffect(() => {
     initDatabase();
