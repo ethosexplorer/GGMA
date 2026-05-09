@@ -620,7 +620,7 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
       </div>
     
       {isIntakeOpen && (
-        <ShadowOverlay onClose={() => setIsIntakeOpen(false)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm">
           <div className="bg-white w-[600px] max-w-full rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col">
             <div className="p-6 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
               <div>
@@ -653,7 +653,7 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
               <button onClick={() => { alert('Intake initiated. L.A.R.R.Y is scanning docs...'); setIsIntakeOpen(false); }} className="px-5 py-2.5 font-bold text-white bg-[#1a4731] hover:bg-[#153a28] rounded-xl transition-colors shadow-md">Initialize Case File</button>
             </div>
           </div>
-        </ShadowOverlay>
+        </div>
       )}
   
     </div>
