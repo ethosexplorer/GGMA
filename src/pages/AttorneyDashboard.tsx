@@ -41,6 +41,7 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
   const [tokens, setTokens] = useState(12);
   const [unlockedCases, setUnlockedCases] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isIntakeOpen, setIsIntakeOpen] = useState(false);
 
   // Drag-and-drop sidebar reordering
   const { items: sidebarItems, handleDragStart, handleDragEnter, handleDragEnd, handleDragOver } = useDraggableSidebar(DEFAULT_SIDEBAR_ITEMS, 'ggp_attorney_sidebar_order');
@@ -105,7 +106,7 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
           </div>
 
           <button 
-            onClick={() => alert('Opening Secure File Portal for external case intake. Client data will be scanned by L.A.R.R.Y.')}
+            onClick={() => setIsIntakeOpen(true)}
             className="w-full py-2.5 rounded-xl bg-[#1a4731] hover:bg-[#153a28] text-white font-bold text-sm transition-all flex items-center justify-center gap-2 mb-6 shadow-lg shadow-black/20 border border-[#2a6b4a]"
           >
             <PlusCircle size={16} /> New Case Intake
@@ -167,6 +168,13 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto p-6">
           <div className="max-w-7xl mx-auto space-y-6">
+
+            {activeTab === 'calendar' && (
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <UserCalendar user={user} />
+              </div>
+            )}
+
             
             {activeTab === 'dashboard' && (
               <div className="space-y-6">
@@ -493,7 +501,7 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                 <p className="text-slate-500 max-w-md">Search the national database for compliance disputes, licensing requests, and patient appeals.</p>
                 <div className="mt-8 w-full max-w-lg relative">
                   <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                  <input type="text" placeholder="Search by jurisdiction, issue type, or keyword..." className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-[#1a4731] outline-none" />
+                  <input type="text" placeholder="Search by jurisdiction, issue type, or keyword..." className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-[#1a4731] outline-none" onKeyDown={(e) => { if(e.key === 'Enter') alert('Searching National Database for: ' + e.currentTarget.value + '... Connecting to L.A.R.R.Y Index.'); }} />
                 </div>
               </div>
             )}
@@ -514,8 +522,8 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                         <h4 className="font-bold text-slate-900 text-lg mb-1">{c.title}</h4>
                         <p className="text-sm text-slate-500">{c.state} • {c.clientType} • Case ID: {c.id}</p>
                         <div className="mt-4 flex gap-3">
-                          <button className="px-4 py-2 bg-[#1a4731] text-white rounded-lg text-sm font-bold hover:bg-[#153a28]">Message Client</button>
-                          <button className="px-4 py-2 border border-slate-200 text-slate-700 rounded-lg text-sm font-bold hover:bg-slate-50">Submit Document</button>
+                          <button onClick={() => alert('Opening secure message thread with client...')} className="px-4 py-2 bg-[#1a4731] text-white rounded-lg text-sm font-bold hover:bg-[#153a28]">Message Client</button>
+                          <button onClick={() => alert('Uploading to Secure Vault...')} className="px-4 py-2 border border-slate-200 text-slate-700 rounded-lg text-sm font-bold hover:bg-slate-50">Submit Document</button>
                         </div>
                       </div>
                     ))
@@ -529,7 +537,7 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                 <BookOpen size={48} className="text-emerald-300 mb-4" />
                 <h2 className="text-2xl font-bold text-slate-800 mb-2">GGP Law Library</h2>
                 <p className="text-slate-500 max-w-md">Access state-by-state regulations, federal compliance standards, and L.A.R.R.Y's legal analysis models.</p>
-                <button className="mt-6 px-6 py-3 bg-[#1a4731] text-white rounded-xl font-bold hover:bg-[#153a28] shadow-md">Browse Library</button>
+                <button onClick={() => alert('Accessing State/Federal Statutes Database...')} className="mt-6 px-6 py-3 bg-[#1a4731] text-white rounded-xl font-bold hover:bg-[#153a28] shadow-md">Browse Library</button>
               </div>
             )}
 
@@ -596,8 +604,8 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                                <td className="p-4 text-slate-600">Today</td>
                                <td className="p-4 text-right">
                                  <div className="flex items-center justify-end gap-2">
-                                   <button className="p-2 text-slate-400 hover:text-indigo-600 transition-colors bg-white border border-slate-200 rounded shadow-sm"><Eye size={14}/></button>
-                                   <button className="p-2 text-slate-400 hover:text-indigo-600 transition-colors bg-white border border-slate-200 rounded shadow-sm"><Download size={14}/></button>
+                                   <button onClick={() => alert('Opening Secure Document Viewer...')} className="p-2 text-slate-400 hover:text-indigo-600 transition-colors bg-white border border-slate-200 rounded shadow-sm"><Eye size={14}/></button>
+                                   <button onClick={() => alert('Decrypting and downloading vault asset...')} className="p-2 text-slate-400 hover:text-indigo-600 transition-colors bg-white border border-slate-200 rounded shadow-sm"><Download size={14}/></button>
                                  </div>
                                </td>
                              </tr>
