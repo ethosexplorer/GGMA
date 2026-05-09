@@ -363,14 +363,14 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                     <Zap size={18} className="text-amber-500" /> Unlock More Capabilities
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm group hover:border-[#1a4731] transition-colors cursor-pointer">
+                    <div onClick={() => alert('Initiating Stripe upgrade for Business Client View module...')} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm group hover:border-[#1a4731] transition-colors cursor-pointer">
                       <h4 className="font-bold text-slate-800 text-sm flex items-center gap-2">
                         <BarChart2 size={16} className="text-blue-500" /> Business Client View
                       </h4>
                       <p className="text-xs text-slate-500 mt-1 mb-3">Access live operations and readiness scores for every client you serve.</p>
                       <button className="text-xs font-bold text-[#1a4731] group-hover:underline">Add for $49/mo &rarr;</button>
                     </div>
-                    <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm group hover:border-[#1a4731] transition-colors cursor-pointer">
+                    <div onClick={() => alert('Initiating Stripe upgrade for Patient Record Access module...')} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm group hover:border-[#1a4731] transition-colors cursor-pointer">
                       <h4 className="font-bold text-slate-800 text-sm flex items-center gap-2">
                         <FileText size={16} className="text-emerald-500" /> Patient Record Access
                       </h4>
