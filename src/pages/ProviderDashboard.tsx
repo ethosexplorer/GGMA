@@ -40,6 +40,7 @@ const alerts = [
 export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
   const [activeTab, setActiveTab] = useState('queue');
   const [showCertWizard, setShowCertWizard] = useState(false);
+  const [hideUpdates, setHideUpdates] = useState(false);
   const [tokens, setTokens] = useState(15);
   const [unlockedPatients, setUnlockedPatients] = useState<string[]>([]);
 
@@ -209,9 +210,12 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
               </div>
             </div>
 
-            {/* Important Updates (Shown on Queue/Overview) */}
-            {(activeTab === 'queue' || activeTab === 'overview') && (
-              <div className="mb-6">
+            {/* Important Updates */}
+            {activeTab === 'queue' && !hideUpdates && (
+              <div className="mb-6 relative group">
+                <button onClick={() => setHideUpdates(true)} className="absolute top-2 right-2 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold rounded-lg shadow-sm transition-all z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100">
+                  <X size={14} /> Mark as Read
+                </button>
                 <ImportantUpdates role="provider" />
               </div>
             )}
@@ -616,6 +620,12 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
               {/* Right Sidebar */}
               <div className="space-y-6">
                 
+                {activeTab === 'queue' && hideUpdates && (
+                  <button onClick={() => setHideUpdates(false)} className="w-full bg-blue-50 border border-blue-200 text-blue-700 font-bold text-sm py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-blue-100 transition-colors shadow-sm">
+                    <Bell size={16} /> View Important Updates (3)
+                  </button>
+                )}
+
                 {/* Prepare for Next Call */}
                 <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
                   <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
