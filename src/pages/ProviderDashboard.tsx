@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ShadowOverlay } from '../components/shared/ShadowOverlay';
 import { useDraggableSidebar } from '../hooks/useDraggableSidebar';
 import { Users, Calendar, Video, MapPin, FileText, Share2, Shield, CreditCard, 
-  BarChart, Settings, Bell, Search, Zap, Plus, PhoneCall, AlertTriangle, ChevronRight, FlaskConical, X, UserCheck, CircleCheck } from 'lucide-react';
+  BarChart, Settings, Bell, Search, Zap, Plus, PhoneCall, AlertTriangle, ChevronRight, FlaskConical, X, UserCheck, CircleCheck, ArrowRight } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { StatCard } from '../components/StatCard';
 import { CannabisCertWizard } from '../components/provider/CannabisCertWizard';
