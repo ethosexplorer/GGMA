@@ -9172,8 +9172,8 @@ export default function App() {
           const isMonica = email === 'compliance.globalgreenhp@gmail.com' || email.includes('monica');
           const isBob = email.includes('bobmoore');
           const isOpsView = roleStr.includes('operations') || roleStr.includes('admin') || roleStr.includes('staff') || roleStr.includes('support') || roleStr.includes('it');
-          // Hide when previewing patient/business/external dashboards
-          const isPreviewingExternal = roleOverride && ['patient', 'business', 'regulator_state', 'law_enforcement', 'enforcement_state', 'compliance_service'].includes(roleOverride);
+          // Hide when previewing any external dashboards
+          const isPreviewingExternal = roleOverride && !['executive_founder', 'operations_staff'].includes(roleOverride);
           if (isPreviewingExternal) return null;
           
           // Take dialer off frontend totally

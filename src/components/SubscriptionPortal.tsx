@@ -65,7 +65,10 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
   let allowedTabs: string[] | undefined = undefined;
   let defaultTab: string | undefined = undefined;
   
-  if (userRole.includes('business')) {
+  if (userRole === 'executive_founder') {
+    allowedTabs = undefined;
+    defaultTab = undefined;
+  } else if (userRole.includes('business')) {
     allowedTabs = ['cannabis_b2b', 'traditional_b2b'];
     defaultTab = 'cannabis_b2b';
   } else if (userRole.includes('provider')) {
@@ -80,7 +83,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
   } else if (userRole.includes('enforcement')) {
     allowedTabs = ['enforcement'];
     defaultTab = 'enforcement';
-  } else if (userRole.includes('regulator') || userRole.includes('authority') || userRole.includes('federal')) {
+  } else if (userRole.includes('regulator') || userRole.includes('authority') || userRole.includes('federal') || userRole.includes('executive')) {
     allowedTabs = ['finance_ai'];
     defaultTab = 'finance_ai';
   } else if (userRole.includes('user') || userRole.includes('patient')) {
