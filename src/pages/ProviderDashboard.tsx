@@ -11,7 +11,6 @@ import { ImportantUpdates } from '../components/ImportantUpdates';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 
 const DEFAULT_SIDEBAR_ITEMS = [
-  { id: 'overview', label: 'Overview', icon: BarChart },
   { id: 'queue', label: 'Patient Queue', icon: Users },
   { id: 'schedule', label: 'Schedule & Appts', icon: Calendar },
   { id: 'telehealth', label: 'Telehealth Visits', icon: Video },
@@ -220,7 +219,7 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
               {/* Main Content (Patient Queue) */}
               <div className="lg:col-span-2 space-y-6">
                 
-                {['queue', 'overview'].includes(activeTab) && (
+                {activeTab === 'queue' && (
                   <>
                 <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                 <ProfileSettingsCard user={user} roleLabel="User Info" />
