@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ShadowOverlay } from '../components/shared/ShadowOverlay';
 import { useDraggableSidebar } from '../hooks/useDraggableSidebar';
 import { Users, Calendar, Video, MapPin, FileText, Share2, Shield, CreditCard, 
-  BarChart, Settings, Bell, Search, Zap, Plus, PhoneCall, AlertTriangle, ChevronRight, FlaskConical, X, UserCheck, CircleCheck, ArrowRight } from 'lucide-react';
+  BarChart, Settings, Bell, Search, Zap, Plus, PhoneCall, AlertTriangle, ChevronRight, FlaskConical, X, UserCheck, CircleCheck, ArrowRight, FolderLock, Download, Eye } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { StatCard } from '../components/StatCard';
 import { CannabisCertWizard } from '../components/provider/CannabisCertWizard';
@@ -20,6 +20,7 @@ const DEFAULT_SIDEBAR_ITEMS = [
   
   { id: 'billing', label: 'Billing & Insurance', icon: CreditCard },
   { id: 'reports', label: 'Reports', icon: BarChart },
+  { id: 'vault', label: 'Secure Vault', icon: FolderLock },
   { id: 'settings', label: 'Settings & Profile', icon: Settings },
 ];
 
@@ -466,6 +467,108 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                     </div>
                   )}
 
+                  
+                  {activeTab === 'vault' && (
+                    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                      <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                        <div>
+                          <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2"><FolderLock size={20} className="text-indigo-600"/> Provider & Patient Vault</h3>
+                          <p className="text-sm text-slate-500">Secure, permanent storage for HIPAA-compliant medical records, compliance audits, and patient histories.</p>
+                        </div>
+                        <button className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-md transition-all flex items-center gap-2">
+                           <Plus size={16} /> Upload Record
+                        </button>
+                      </div>
+                      <div className="p-0">
+                        <table className="w-full text-left text-sm">
+                           <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-100">
+                             <tr>
+                               <th className="p-4">Document Name</th>
+                               <th className="p-4">Category</th>
+                               <th className="p-4">Date Added</th>
+                               <th className="p-4">Size</th>
+                               <th className="p-4 text-right">Actions</th>
+                             </tr>
+                           </thead>
+                           <tbody className="divide-y divide-slate-100">
+                             <tr className="hover:bg-slate-50 transition-colors">
+                               <td className="p-4 font-bold text-slate-800 flex items-center gap-3">
+                                 <div className="p-2 bg-red-50 text-red-500 rounded"><FileText size={16}/></div>
+                                 <div>
+                                   Michael Chen - Complete Medical History
+                                   <span className="block text-xs text-slate-400 font-normal">Patient ID: PT-9942</span>
+                                 </div>
+                               </td>
+                               <td className="p-4"><span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">Patient Record</span></td>
+                               <td className="p-4 text-slate-600">May 09, 2026</td>
+                               <td className="p-4 text-slate-500">4.2 MB</td>
+                               <td className="p-4 text-right">
+                                 <div className="flex items-center justify-end gap-2">
+                                   <button className="p-2 text-slate-400 hover:text-blue-600 transition-colors bg-white border border-slate-200 rounded shadow-sm"><Eye size={14}/></button>
+                                   <button className="p-2 text-slate-400 hover:text-indigo-600 transition-colors bg-white border border-slate-200 rounded shadow-sm"><Download size={14}/></button>
+                                 </div>
+                               </td>
+                             </tr>
+                             <tr className="hover:bg-slate-50 transition-colors">
+                               <td className="p-4 font-bold text-slate-800 flex items-center gap-3">
+                                 <div className="p-2 bg-emerald-50 text-emerald-500 rounded"><Shield size={16}/></div>
+                                 <div>
+                                   State Compliance Audit - Q1 2026
+                                   <span className="block text-xs text-slate-400 font-normal">System Generated</span>
+                                 </div>
+                               </td>
+                               <td className="p-4"><span className="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">Audit Report</span></td>
+                               <td className="p-4 text-slate-600">Apr 30, 2026</td>
+                               <td className="p-4 text-slate-500">1.1 MB</td>
+                               <td className="p-4 text-right">
+                                 <div className="flex items-center justify-end gap-2">
+                                   <button className="p-2 text-slate-400 hover:text-blue-600 transition-colors bg-white border border-slate-200 rounded shadow-sm"><Eye size={14}/></button>
+                                   <button className="p-2 text-slate-400 hover:text-indigo-600 transition-colors bg-white border border-slate-200 rounded shadow-sm"><Download size={14}/></button>
+                                 </div>
+                               </td>
+                             </tr>
+                             <tr className="hover:bg-slate-50 transition-colors">
+                               <td className="p-4 font-bold text-slate-800 flex items-center gap-3">
+                                 <div className="p-2 bg-purple-50 text-purple-500 rounded"><CreditCard size={16}/></div>
+                                 <div>
+                                   Monthly Billing & Revenue Summary
+                                   <span className="block text-xs text-slate-400 font-normal">April 2026</span>
+                                 </div>
+                               </td>
+                               <td className="p-4"><span className="px-2 py-1 bg-purple-100 text-purple-700 text-xs font-bold rounded-full">Financial</span></td>
+                               <td className="p-4 text-slate-600">May 01, 2026</td>
+                               <td className="p-4 text-slate-500">845 KB</td>
+                               <td className="p-4 text-right">
+                                 <div className="flex items-center justify-end gap-2">
+                                   <button className="p-2 text-slate-400 hover:text-blue-600 transition-colors bg-white border border-slate-200 rounded shadow-sm"><Eye size={14}/></button>
+                                   <button className="p-2 text-slate-400 hover:text-indigo-600 transition-colors bg-white border border-slate-200 rounded shadow-sm"><Download size={14}/></button>
+                                 </div>
+                               </td>
+                             </tr>
+                             <tr className="hover:bg-slate-50 transition-colors opacity-60">
+                               <td className="p-4 font-bold text-slate-800 flex items-center gap-3">
+                                 <div className="p-2 bg-slate-100 text-slate-500 rounded"><FileText size={16}/></div>
+                                 <div>
+                                   Sarah Jenkins - Transferred Records
+                                   <span className="block text-xs text-slate-400 font-normal">Patient ID: PT-8812</span>
+                                 </div>
+                               </td>
+                               <td className="p-4"><span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">Patient Record</span></td>
+                               <td className="p-4 text-slate-600">Mar 12, 2026</td>
+                               <td className="p-4 text-slate-500">12.5 MB</td>
+                               <td className="p-4 text-right">
+                                 <div className="flex items-center justify-end gap-2">
+                                   <button className="p-2 text-slate-400 hover:text-blue-600 transition-colors bg-white border border-slate-200 rounded shadow-sm"><Eye size={14}/></button>
+                                   <button className="p-2 text-slate-400 hover:text-indigo-600 transition-colors bg-white border border-slate-200 rounded shadow-sm"><Download size={14}/></button>
+                                 </div>
+                               </td>
+                             </tr>
+                           </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
                   {activeTab === 'reports' && (
                     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                       <div className="p-6 border-b border-slate-100 bg-slate-50">
@@ -477,25 +580,25 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                            <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><BarChart size={24}/></div>
                            <h4 className="font-bold text-slate-800 mb-1">Monthly Patient Volume</h4>
                            <p className="text-xs text-slate-500 mb-4">Telehealth vs Traditional breakdown with SINC referral metrics.</p>
-                           <button onClick={() => alert("Compiling Monthly Patient Volume Report... The PDF will download securely in a few moments.")} className="text-blue-600 font-bold text-sm flex items-center gap-1">Generate <ArrowRight size={14}/></button>
+                           <button onClick={() => { alert("Compiling Monthly Patient Volume Report... The generated PDF is being securely saved to your Vault."); setActiveTab('vault'); }} className="text-blue-600 font-bold text-sm flex items-center gap-1">Generate <ArrowRight size={14}/></button>
                         </div>
                         <div className="border border-slate-200 rounded-xl p-5 hover:border-emerald-300 hover:shadow-md transition-all cursor-pointer group">
                            <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><Shield size={24}/></div>
                            <h4 className="font-bold text-slate-800 mb-1">State Compliance Audit</h4>
                            <p className="text-xs text-slate-500 mb-4">LARRY AI certified compliance score and pre-audit readiness report.</p>
-                           <button onClick={() => alert("Generating State Compliance Audit... LARRY AI is cross-referencing your records with OMMA limits.")} className="text-emerald-600 font-bold text-sm flex items-center gap-1">Generate <ArrowRight size={14}/></button>
+                           <button onClick={() => { alert("Generating State Compliance Audit... LARRY AI is cross-referencing your records. The final audit will be saved to your Vault."); setActiveTab('vault'); }} className="text-emerald-600 font-bold text-sm flex items-center gap-1">Generate <ArrowRight size={14}/></button>
                         </div>
                         <div className="border border-slate-200 rounded-xl p-5 hover:border-purple-300 hover:shadow-md transition-all cursor-pointer group">
                            <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><CreditCard size={24}/></div>
                            <h4 className="font-bold text-slate-800 mb-1">Revenue & Billing Summary</h4>
                            <p className="text-xs text-slate-500 mb-4">Subscription, consultation fees, and pending invoice totals.</p>
-                           <button onClick={() => alert("Retrieving Revenue & Billing Summary from the secure payment gateway...")} className="text-purple-600 font-bold text-sm flex items-center gap-1">Generate <ArrowRight size={14}/></button>
+                           <button onClick={() => { alert("Retrieving Revenue & Billing Summary... The report will be saved to your Vault."); setActiveTab('vault'); }} className="text-purple-600 font-bold text-sm flex items-center gap-1">Generate <ArrowRight size={14}/></button>
                         </div>
                         <div className="border border-slate-200 rounded-xl p-5 hover:border-amber-300 hover:shadow-md transition-all cursor-pointer group">
                            <div className="w-12 h-12 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><FileText size={24}/></div>
                            <h4 className="font-bold text-slate-800 mb-1">Prescription Outcome Data</h4>
                            <p className="text-xs text-slate-500 mb-4">Anonymized efficacy reports linked to specific product categories.</p>
-                           <button onClick={() => alert("Compiling Anonymized Efficacy Reports. Please allow up to 60 seconds for clinical data aggregation.")} className="text-amber-600 font-bold text-sm flex items-center gap-1">Generate <ArrowRight size={14}/></button>
+                           <button onClick={() => { alert("Compiling Anonymized Efficacy Reports... The clinical aggregation will be saved to your Vault when complete."); setActiveTab('vault'); }} className="text-amber-600 font-bold text-sm flex items-center gap-1">Generate <ArrowRight size={14}/></button>
                         </div>
                       </div>
                     </div>
