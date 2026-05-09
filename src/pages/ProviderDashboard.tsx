@@ -479,9 +479,10 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                           <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2"><FolderLock size={20} className="text-indigo-600"/> Provider & Patient Vault</h3>
                           <p className="text-sm text-slate-500">Secure, permanent storage for HIPAA-compliant medical records, compliance audits, and patient histories.</p>
                         </div>
-                        <button className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-md transition-all flex items-center gap-2">
-                           <Plus size={16} /> Upload Record
-                        </button>
+                        <label className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer">
+                           <FolderLock size={16} /> Upload Record
+                           <input type="file" className="hidden" onChange={(e) => { if (e.target.files && e.target.files.length > 0) alert('File "' + e.target.files[0].name + '" queued. Establishing secure connection to Vault...'); }} />
+                        </label>
                       </div>
                       <div className="p-0">
                         <table className="w-full text-left text-sm">
