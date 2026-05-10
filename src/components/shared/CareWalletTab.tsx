@@ -553,7 +553,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
               <div className="space-y-3">
                 <button 
                   onClick={() => {
-                    (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Simulated Cash Deposit Confirmed. Balance Updated." })] }).catch(console.error) ); alert("Simulated Cash Deposit Confirmed. Balance Updated.\n\n[Live Production Transaction Logged]"); })();
+                    (() => { import('../../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Simulated Cash Deposit Confirmed. Balance Updated." })] }).catch(console.error) ); alert("Simulated Cash Deposit Confirmed. Balance Updated.\n\n[Live Production Transaction Logged]"); })();
                     setShowReloadModal(false);
                   }}
                   className="w-full py-4 bg-[#1a4731] text-white rounded-2xl font-black shadow-lg shadow-emerald-900/20 hover:bg-[#153a28] transition-all"
@@ -604,7 +604,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
                 <label className="text-xs font-bold text-slate-600 mb-1 block">Amount to Charge ($)</label>
                 <input type="number" className="w-full border border-slate-200 rounded-lg p-3 text-sm focus:outline-emerald-500" placeholder="0.00" />
               </div>
-              <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Patient identity verified. Transaction successfully deducted from Care Wallet." })] }).catch(console.error) ); alert("Patient identity verified. Transaction successfully deducted from Care Wallet.\n\n[Live Production Transaction Logged]"); }} className="w-full bg-[#1a4731] text-white font-bold py-3 rounded-xl shadow-md hover:bg-[#153a28]">
+              <button onClick={() => { import('../../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Patient identity verified. Transaction successfully deducted from Care Wallet." })] }).catch(console.error) ); alert("Patient identity verified. Transaction successfully deducted from Care Wallet.\n\n[Live Production Transaction Logged]"); }} className="w-full bg-[#1a4731] text-white font-bold py-3 rounded-xl shadow-md hover:bg-[#153a28]">
                 Verify & Charge Patient
               </button>
             </div>
@@ -615,10 +615,10 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
             <p className="text-sm text-slate-500 mb-4">Initiate bulk transfers or settle wholesale invoices via GGE Settlement Network.</p>
             <div className="space-y-4">
               <div className="flex gap-4">
-                <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Add New Vendor\n\nEnter vendor details:\n1. Business Name & License #\n2. Metrc Facility Tag\n3. Payment Terms (Net-15, Net-30, COD)\n4. Settlement Method (Care Wallet, ACH, Wire)\n\nOnce approved, vendor will appear in your B2B directory." })] }).catch(console.error) ); alert("Add New Vendor\n\nEnter vendor details:\n1. Business Name & License #\n2. Metrc Facility Tag\n3. Payment Terms (Net-15, Net-30, COD)\n4. Settlement Method (Care Wallet, ACH, Wire)\n\nOnce approved, vendor will appear in your B2B directory.\n\n[Live Production Transaction Logged]"); }} className="flex-1 bg-slate-100 text-slate-700 font-bold py-3 rounded-xl hover:bg-slate-200 transition-colors">
+                <button onClick={() => { import('../../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Add New Vendor\n\nEnter vendor details:\n1. Business Name & License #\n2. Metrc Facility Tag\n3. Payment Terms (Net-15, Net-30, COD)\n4. Settlement Method (Care Wallet, ACH, Wire)\n\nOnce approved, vendor will appear in your B2B directory." })] }).catch(console.error) ); alert("Add New Vendor\n\nEnter vendor details:\n1. Business Name & License #\n2. Metrc Facility Tag\n3. Payment Terms (Net-15, Net-30, COD)\n4. Settlement Method (Care Wallet, ACH, Wire)\n\nOnce approved, vendor will appear in your B2B directory.\n\n[Live Production Transaction Logged]"); }} className="flex-1 bg-slate-100 text-slate-700 font-bold py-3 rounded-xl hover:bg-slate-200 transition-colors">
                   + Add New Vendor
                 </button>
-                <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Bulk Transaction initiated via Settlement Network." })] }).catch(console.error) ); alert("Bulk Transaction initiated via Settlement Network.\n\n[Live Production Transaction Logged]"); }} className="flex-1 bg-emerald-50 text-emerald-700 font-bold py-3 rounded-xl hover:bg-emerald-100 transition-colors border border-emerald-200">
+                <button onClick={() => { import('../../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Bulk Transaction initiated via Settlement Network." })] }).catch(console.error) ); alert("Bulk Transaction initiated via Settlement Network.\n\n[Live Production Transaction Logged]"); }} className="flex-1 bg-emerald-50 text-emerald-700 font-bold py-3 rounded-xl hover:bg-emerald-100 transition-colors border border-emerald-200">
                   Initiate Bulk Tx
                 </button>
               </div>
@@ -634,7 +634,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
                 <label className="text-xs font-bold text-slate-600 mb-1 block">Invoice Amount ($)</label>
                 <input type="number" className="w-full border border-slate-200 rounded-lg p-3 text-sm focus:outline-emerald-500" placeholder="0.00" />
               </div>
-              <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "B2B Settlement executed successfully." })] }).catch(console.error) ); alert("B2B Settlement executed successfully.\n\n[Live Production Transaction Logged]"); }} className="w-full bg-[#1a4731] text-white font-bold py-3 rounded-xl shadow-md hover:bg-[#153a28]">
+              <button onClick={() => { import('../../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "B2B Settlement executed successfully." })] }).catch(console.error) ); alert("B2B Settlement executed successfully.\n\n[Live Production Transaction Logged]"); }} className="w-full bg-[#1a4731] text-white font-bold py-3 rounded-xl shadow-md hover:bg-[#153a28]">
                 Pay Vendor Invoice
               </button>
             </div>
@@ -649,7 +649,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
               <h3 className="font-bold text-slate-800">General Business Transactions</h3>
               <p className="text-xs text-slate-500">Non-wallet transactions: cash, card, bank transfers, and vendor payments</p>
             </div>
-            <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Full transaction history exported to CSV." })] }).catch(console.error) ); alert("Full transaction history exported to CSV.\n\n[Live Production Transaction Logged]"); }} className="text-sm text-[#1a4731] font-bold hover:underline">Export All</button>
+            <button onClick={() => { import('../../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Full transaction history exported to CSV." })] }).catch(console.error) ); alert("Full transaction history exported to CSV.\n\n[Live Production Transaction Logged]"); }} className="text-sm text-[#1a4731] font-bold hover:underline">Export All</button>
           </div>
           <div className="space-y-3">
             {[
@@ -717,7 +717,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
               </div>
               <button 
                 onClick={() => {
-                  (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Requesting allocation increase via Larry Compliance Division..." })] }).catch(console.error) ); alert("Requesting allocation increase via Larry Compliance Division...\n\n[Live Production Transaction Logged]"); })();
+                  (() => { import('../../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Requesting allocation increase via Larry Compliance Division..." })] }).catch(console.error) ); alert("Requesting allocation increase via Larry Compliance Division...\n\n[Live Production Transaction Logged]"); })();
                   setShowCreditModal(false);
                 }}
                 className="w-full py-4 bg-blue-600 text-white rounded-2xl font-black shadow-lg shadow-blue-900/20 hover:bg-blue-500 transition-all"
@@ -765,7 +765,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
 
               <button 
                 onClick={() => {
-                  (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "GGE Disposable Card Generated: **** **** **** 9011 (Exp: 15min)" })] }).catch(console.error) ); alert("GGE Disposable Card Generated: **** **** **** 9011 (Exp: 15min)\n\n[Live Production Transaction Logged]"); })();
+                  (() => { import('../../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "GGE Disposable Card Generated: **** **** **** 9011 (Exp: 15min)" })] }).catch(console.error) ); alert("GGE Disposable Card Generated: **** **** **** 9011 (Exp: 15min)\n\n[Live Production Transaction Logged]"); })();
                   setShowDisposableCard(false);
                 }}
                 className="w-full py-4 bg-[#1a4731] text-white rounded-2xl font-black shadow-lg shadow-emerald-900/20 hover:bg-[#153a28] transition-all"

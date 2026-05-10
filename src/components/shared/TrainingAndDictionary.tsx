@@ -115,7 +115,7 @@ export const TrainingAndDictionary = ({ role = 'business', onScheduleConsult }: 
                 </p>
                 <button 
                   onClick={() => {
-                    (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Consultation scheduled. GGE World HR has been notified." })] }).catch(console.error) ); alert("Consultation scheduled. GGE World HR has been notified.\n\n[Live Production Transaction Logged]"); })();
+                    (() => { import('../../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Consultation scheduled. GGE World HR has been notified." })] }).catch(console.error) ); alert("Consultation scheduled. GGE World HR has been notified.\n\n[Live Production Transaction Logged]"); })();
                     if (onScheduleConsult) onScheduleConsult();
                   }} 
                   className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-md transition-colors"

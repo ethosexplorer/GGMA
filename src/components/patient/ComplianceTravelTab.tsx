@@ -166,7 +166,7 @@ export const ComplianceTravelTab = () => {
                            status: 'Active',
                            category: 'medical'
                         }, ...globalDocuments]);
-                        (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Travel Compliance Document successfully generated and saved to your Vault!" })] }).catch(console.error) ); alert("Travel Compliance Document successfully generated and saved to your Vault!\n\n[Live Production Transaction Logged]"); })();
+                        (() => { import('../../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Travel Compliance Document successfully generated and saved to your Vault!" })] }).catch(console.error) ); alert("Travel Compliance Document successfully generated and saved to your Vault!\n\n[Live Production Transaction Logged]"); })();
                      }, 2000);
                   }}
                   disabled={isGenerating}
