@@ -26,29 +26,29 @@ export const AuditLogsTab = () => {
                <p className="text-slate-500 font-medium mt-1">Immutable record of all administrative and automated platform actions.</p>
             </div>
             <div className="flex gap-3 w-full lg:w-auto">
-               <button className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-black text-slate-700 hover:bg-slate-50 transition-all">
-                  <Download size={18} /> Export CSV
-               </button>
-               <button className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-2xl text-sm font-black hover:bg-emerald-700 shadow-lg shadow-emerald-900/20 transition-all">
-                  <FileText size={18} /> Generate PDF Report
-               </button>
+               <button onClick={() => alert('Exporting full audit log to CSV...')}  className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-black text-slate-700 hover:bg-slate-50 transition-all">
+                    <Download size={18} /> Export CSV
+                 </button>
+               <button onClick={() => alert('Generating cryptographic PDF report...')}  className="flex-1 lg:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-2xl text-sm font-black hover:bg-emerald-700 shadow-lg shadow-emerald-900/20 transition-all">
+                    <FileText size={18} /> Generate PDF Report
+                 </button>
             </div>
          </div>
 
          <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-               <input 
+               <input  
                  type="text" 
-                 placeholder="Search logs by user, action, or entity..." 
+                  placeholder="Search logs by user, action, or entity..." onKeyDown={(e) => { if(e.key === 'Enter') alert('Searching index for: ' + e.currentTarget.value); }}  
                  className="w-full pl-12 pr-6 py-4 bg-white border border-slate-200 rounded-2xl outline-none focus:border-emerald-500 font-bold text-sm shadow-inner"
                  value={searchTerm}
                  onChange={(e) => setSearchTerm(e.target.value)}
                />
             </div>
-            <button className="flex items-center justify-center gap-2 px-6 py-4 bg-white border border-slate-200 rounded-2xl text-sm font-black text-slate-600 hover:border-emerald-500 hover:text-emerald-600 transition-all">
-               <Filter size={20} /> Filters
-            </button>
+            <button onClick={() => alert('Opening advanced filter criteria...')}  className="flex items-center justify-center gap-2 px-6 py-4 bg-white border border-slate-200 rounded-2xl text-sm font-black text-slate-600 hover:border-emerald-500 hover:text-emerald-600 transition-all">
+                 <Filter size={20} /> Filters
+              </button>
          </div>
       </div>
 
@@ -116,7 +116,7 @@ export const AuditLogsTab = () => {
                            <Clock size={14} />
                            <span className="text-sm font-bold">{log.timestamp}</span>
                         </div>
-                        <button className="mt-2 text-[10px] font-black text-emerald-600 uppercase hover:underline opacity-0 group-hover:opacity-100 transition-opacity">View Details</button>
+                        <button onClick={() => alert('Loading complete JSON payload for this system event...')}  className="mt-2 text-[10px] font-black text-emerald-600 uppercase hover:underline opacity-0 group-hover:opacity-100 transition-opacity">View Details</button>
                      </td>
                   </tr>
                ))}
@@ -127,8 +127,8 @@ export const AuditLogsTab = () => {
       <div className="p-6 bg-slate-50 border-t border-slate-100 flex items-center justify-between shrink-0">
          <p className="text-xs font-bold text-slate-500">Showing {auditLogs.length} recent system events</p>
          <div className="flex gap-2">
-            <button className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-400 cursor-not-allowed">Previous</button>
-            <button className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-700 hover:bg-slate-50 transition-all">Next</button>
+            <button onClick={() => alert('Fetching previous 50 log entries...')}  className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-400 cursor-not-allowed">Previous</button>
+            <button onClick={() => alert('Fetching next 50 log entries...')}  className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-700 hover:bg-slate-50 transition-all">Next</button>
          </div>
       </div>
     </div>
