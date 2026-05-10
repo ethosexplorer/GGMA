@@ -39,7 +39,7 @@ export default async function handler(req: any, res: any) {
           currency: 'usd',
           product_data: {
             name: item.name,
-            description: item.type === 'plan' ? \`\${billing} Subscription\` : 'Add-on module',
+            description: item.type === 'plan' ? `${billing} Subscription` : 'Add-on module',
           },
           unit_amount: unitAmount,
           ...(isRecurring ? {
@@ -60,8 +60,8 @@ export default async function handler(req: any, res: any) {
       payment_method_types: ['card', 'us_bank_account'],
       line_items: lineItems,
       mode: 'subscription',
-      success_url: \`\${req.headers.origin || process.env.APP_URL || 'http://localhost:5173'}?checkout=success\`,
-      cancel_url: \`\${req.headers.origin || process.env.APP_URL || 'http://localhost:5173'}?checkout=cancel\`,
+      success_url: `${req.headers.origin || process.env.APP_URL || 'http://localhost:5173'}?checkout=success`,
+      cancel_url: `${req.headers.origin || process.env.APP_URL || 'http://localhost:5173'}?checkout=cancel`,
     };
 
     if (trialDays && trialDays > 0) {
