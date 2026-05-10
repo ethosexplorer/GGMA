@@ -316,7 +316,7 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
                        <Activity size={24} className="text-[#1a4731]" />
                        Health Timeline
                     </h3>
-                    <button className="text-sm text-[#1a4731] font-bold hover:underline">View Full History</button>
+                    <button onClick={() => setActiveTab('documents')} className="text-sm text-[#1a4731] font-bold hover:underline">View Full History</button>
                   </div>
                   <div className="space-y-3">
                     {demoUnlocked ? [
@@ -354,7 +354,7 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
                   <div className="bg-slate-900 rounded-[2rem] p-6 text-white shadow-xl shadow-slate-900/10">
                      <h4 className="text-xs font-black uppercase tracking-[0.2em] text-emerald-400 mb-4">Dashboard View</h4>
                      <div className="grid grid-cols-2 gap-2 bg-white/5 p-1.5 rounded-2xl border border-white/10">
-                        <button className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white/10 text-xs font-black">
+                        <button onClick={() => setActiveTab('overview')} className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white/10 text-xs font-black">
                            <Shield size={14}/> Medical
                         </button>
                         <button onClick={() => setActiveTab('telehealth')} className="flex items-center justify-center gap-2 py-2.5 rounded-xl hover:bg-white/5 text-xs font-bold text-slate-400">
@@ -383,7 +383,7 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
                   {/* Upcoming Appt */}
                   <div className="bg-white rounded-[2rem] border border-slate-200 shadow-sm p-6">
                     <h3 className="font-black text-slate-800 text-sm uppercase tracking-widest mb-4">Next Appointment</h3>
-                    <div className="p-5 rounded-2xl bg-blue-50 border border-blue-100 relative group cursor-pointer hover:bg-blue-100/50 transition-all">
+                    <div onClick={() => setActiveTab('calendar')} className="p-5 rounded-2xl bg-blue-50 border border-blue-100 relative group cursor-pointer hover:bg-blue-100/50 transition-all">
                       <div className="flex justify-between items-start mb-3">
                         <p className="font-black text-blue-900">Dr. Sarah Johnson</p>
                         <span className="text-[10px] font-black uppercase tracking-widest text-blue-600">Telehealth</span>
@@ -528,14 +528,14 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
                                <p className="text-xs text-slate-500">General Practice • Tomorrow 9:30 AM</p>
                             </div>
                          </div>
-                         <button className="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-black">Join Call</button>
+                         <button onClick={() => { window.open('https://calendly.com/globalgreenhpmeet/health-wellness-consultation', '_blank'); import('../lib/turso').then(({turso}) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), 'JOIN_TELEHEALTH_CALL', user?.email || 'patient', JSON.stringify({ action: 'Patient joined telehealth session' })] }).catch(console.error)); }} className="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-black hover:bg-blue-500 transition-colors">Join Call</button>
                       </div>
                    </div>
                    <div className="bg-white p-8 rounded-[3rem] border border-slate-200 shadow-sm">
                       <h3 className="text-xl font-black mb-6">Medical History Access</h3>
                       <div className="space-y-3">
                          {[1,2].map(i => (
-                           <div key={i} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-transparent hover:border-slate-200">
+                           <div key={i} onClick={() => setActiveTab('documents')} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-transparent hover:border-slate-200 cursor-pointer">
                                <span className="text-sm font-bold text-slate-700">Consultation Summary - Mar {12+i}, 2026</span>
                                <FileText size={18} className="text-slate-400" />
                            </div>
