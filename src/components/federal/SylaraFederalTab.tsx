@@ -51,21 +51,23 @@ export const SylaraFederalTab = () => {
         </div>
       </div>
 
-      {/* Capabilities Grid */}
+      {/* Capabilities Grid — Click any card to query Sylara */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {[
-          { icon: TrendingUp, title: 'Predictive Trend Forecasting', desc: 'Analyzes aggregated data to predict compliance shifts, market trends, diversion risks, and economic impacts nationally.' },
-          { icon: Zap, title: 'Policy Scenario Modeling', desc: 'Simulates outcomes of federal actions — rescheduling effects on interstate commerce, research, and tax revenue.' },
-          { icon: Globe, title: 'Cross-Jurisdictional Risk Mapping', desc: 'Identifies federal concerns like interstate diversion or scheduling conflicts using anonymized state-level data.' },
-          { icon: Shield, title: 'Resource Optimization', desc: 'Recommends federal priority areas for investigations or coordination with state partners.' },
-          { icon: FileText, title: 'Audit-Ready Summaries', desc: 'Generates explainable reports with transparent data sources for congressional or inter-agency use.' },
-          { icon: Sparkles, title: 'Larry Integration', desc: 'Sylara insights feed directly into Larry monitoring — creating a closed federal oversight loop.' },
+          { icon: TrendingUp, title: 'Predictive Trend Forecasting', desc: 'Analyzes aggregated data to predict compliance shifts, market trends, diversion risks, and economic impacts nationally.', query: 'Run a predictive trend forecast for national cannabis compliance shifts, diversion risk indicators, and market trajectory for Q2 2026.' },
+          { icon: Zap, title: 'Policy Scenario Modeling', desc: 'Simulates outcomes of federal actions — rescheduling effects on interstate commerce, research, and tax revenue.', query: 'Model the policy scenario if cannabis is rescheduled to Schedule III — what are the projected impacts on interstate commerce, federal tax revenue (280E repeal), and research funding?' },
+          { icon: Globe, title: 'Cross-Jurisdictional Risk Mapping', desc: 'Identifies federal concerns like interstate diversion or scheduling conflicts using anonymized state-level data.', query: 'Map the top cross-jurisdictional risk vectors across all 50 states — identify the 5 highest-risk corridors for interstate cannabis diversion and scheduling conflicts.' },
+          { icon: Shield, title: 'Resource Optimization', desc: 'Recommends federal priority areas for investigations or coordination with state partners.', query: 'Recommend the top 5 federal priority areas for cannabis enforcement resource allocation and inter-agency coordination with state regulatory partners.' },
+          { icon: FileText, title: 'Audit-Ready Summaries', desc: 'Generates explainable reports with transparent data sources for congressional or inter-agency use.', query: 'Generate an audit-ready executive summary of the current national cannabis regulatory landscape suitable for a congressional briefing, including key compliance metrics and risk areas.' },
+          { icon: Sparkles, title: 'Larry Integration', desc: 'Sylara insights feed directly into Larry monitoring — creating a closed federal oversight loop.', query: 'Provide a status report on the L.A.R.R.Y Enforcement Engine integration — summarize the current federal oversight loop, active monitoring vectors, and any flagged compliance anomalies.' },
         ].map((c, i) => (
-          <div key={i} className="bg-[#0f1b2d] rounded-2xl border border-[#1e3a5f]/60 p-5">
-            <div className="p-2 rounded-xl bg-blue-900 text-blue-300 w-fit mb-3"><c.icon size={18} /></div>
-            <h4 className="text-sm font-bold text-white mb-1">{c.title}</h4>
+          <button key={i} onClick={() => handleSend(c.query)} disabled={isTyping}
+            className="bg-[#0f1b2d] rounded-2xl border border-[#1e3a5f]/60 p-5 text-left hover:border-blue-500/50 hover:bg-[#132240] transition-all duration-200 cursor-pointer group disabled:opacity-50 disabled:cursor-not-allowed">
+            <div className="p-2 rounded-xl bg-blue-900 text-blue-300 w-fit mb-3 group-hover:bg-blue-700 group-hover:text-white transition-colors"><c.icon size={18} /></div>
+            <h4 className="text-sm font-bold text-white mb-1 group-hover:text-blue-200 transition-colors">{c.title}</h4>
             <p className="text-xs text-blue-300/50 leading-relaxed">{c.desc}</p>
-          </div>
+            <span className="text-[9px] font-bold text-blue-500/40 uppercase tracking-widest mt-3 block group-hover:text-blue-400 transition-colors">Click to Query →</span>
+          </button>
         ))}
       </div>
 

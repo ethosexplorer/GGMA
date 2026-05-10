@@ -40,7 +40,31 @@ export const FederalDashboard = ({ onLogout, user }: { onLogout?: () => void, us
   const [liveAction, setLiveAction] = useState<any>(null);
 
   React.useEffect(() => {
-    const handleLiveAction = (e: any) => setLiveAction(e.detail);
+    const handleLiveAction = async (e: any) => {
+      const detail = e.detail;
+      // Show immediate processing state
+      setLiveAction({ ...detail, type: 'process' });
+
+      try {
+        // Fire real Gemini AI call for the action
+        const { generateGeminiResponse } = await import('../lib/gemini');
+        const prompt = `You are acting as the GGP-OS Federal Intelligence System. The user has requested: "${detail.title}". Context: ${detail.message}. Provide a professional, concise federal-grade response or report summary (4-6 sentences). Include any relevant compliance metrics or risk indicators.`;
+        const aiResponse = await generateGeminiResponse(prompt, 'general');
+
+        // Log to Turso
+        const { turso } = await import('../lib/turso');
+        const auditId = 'FED-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+        await turso.execute({
+          sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)",
+          args: [auditId, detail.title, 'Federal_Admin', JSON.stringify({ detail: detail.message, response: aiResponse, action: 'FEDERAL_ACTION' })]
+        }).catch(console.error);
+
+        // Show the real result
+        setLiveAction({ title: detail.title + ' — Complete', type: 'success', message: aiResponse + '\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nFederal Receipt: ' + auditId + '\nSynced to Turso DB • Gemini AI Generated' });
+      } catch (err: any) {
+        setLiveAction({ title: 'Processing Error', type: 'warning', message: 'Failed to complete request: ' + (err.message || 'Unknown error') });
+      }
+    };
     document.addEventListener('live-action', handleLiveAction);
     return () => document.removeEventListener('live-action', handleLiveAction);
   }, []);
