@@ -12,9 +12,11 @@
 const TURSO_URL = 'https://ggma-ggma.aws-us-east-2.turso.io/v2/pipeline';
 const TURSO_TOKEN = process.env.VITE_TURSO_AUTH_TOKEN;
 
-// Sender — use your verified domain or Resend's test domain
-const FROM_EMAIL = process.env.NOTIFICATION_FROM_EMAIL || 'GGP-OS <notifications@globalgreenenterprise.com>';
-const FOUNDER_EMAIL = process.env.FOUNDER_EMAIL || 'shantellrobinson@globalgreenenterprise.com';
+// Sender domain — ggp-os.com (verified in Resend)
+const FROM_EMAIL = process.env.NOTIFICATION_FROM_EMAIL || 'GGP-OS Notifications <notifications@ggp-os.com>';
+// Central audit email — ALL notifications route here as the single source of truth
+const AUDIT_EMAIL = 'ASSTSUPPORT@GMAIL.COM';
+const FOUNDER_EMAIL = process.env.FOUNDER_EMAIL || 'ASSTSUPPORT@GMAIL.COM';
 
 async function tursoExec(statements) {
   const requests = statements.map(sql => ({
@@ -36,7 +38,7 @@ async function tursoExec(statements) {
 }
 
 async function sendEmail({ to, subject, html }) {
-  const apiKey = process.env.RESEND_API_KEY;
+  const apiKey = process.env.RESEND_API_KEY || 're_WpN242Mt_FhYDdMxjo6xumD6gsy2F22sG';
   if (!apiKey) {
     console.warn('[Email] RESEND_API_KEY not configured — skipping email delivery');
     return { skipped: true, reason: 'No API key' };
@@ -194,17 +196,31 @@ export default async function handler(req, res) {
         console.log(`[Email] Sent to ${email}:`, emailResult);
       }
 
-      // Also always notify the founder
-      if (!emailTargets.includes(FOUNDER_EMAIL)) {
+      // Always CC the central audit email (ASSTSUPPORT@GMAIL.COM)
+      if (!emailTargets.includes(AUDIT_EMAIL)) {
         await sendEmail({
-          to: FOUNDER_EMAIL,
-          subject: `[GGP-OS Admin] ${title}`,
+          to: AUDIT_EMAIL,
+          subject: `[GGP-OS AUDIT] ${title}`,
           html: buildEmailHTML({
-            title: `Admin Copy: ${title}`,
-            body: `<strong>Recipient:</strong> ${recipientEmail || 'N/A'}<br/><br/>${message.replace(/\n/g, '<br/>')}`,
+            title: `📋 Audit Copy: ${title}`,
+            body: `<strong>Sent To:</strong> ${emailTargets.join(', ')}<br/><strong>Type:</strong> ${type || 'system'}<br/><strong>Time:</strong> ${new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}<br/><br/><hr style="border:none;border-top:1px solid #e2e8f0;margin:16px 0;"/>${message.replace(/\n/g, '<br/>')}`,
+            footer: 'AUDIT COPY — All platform communications are archived at ASSTSUPPORT@GMAIL.COM',
           }),
         });
       }
+    }
+
+    // For internal-only notifications (no external email), still send audit copy
+    if (internal !== false && !shouldSendEmail && process.env.RESEND_API_KEY) {
+      await sendEmail({
+        to: AUDIT_EMAIL,
+        subject: `[GGP-OS INTERNAL] ${title}`,
+        html: buildEmailHTML({
+          title: `🔔 Internal Action: ${title}`,
+          body: `<strong>Type:</strong> ${type || 'system'}<br/><strong>Time:</strong> ${new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })}<br/><br/>${message.replace(/\n/g, '<br/>')}`,
+          footer: 'INTERNAL AUDIT — All platform actions are logged to ASSTSUPPORT@GMAIL.COM',
+        }),
+      }).catch(err => console.error('[Audit Email] Error:', err));
     }
 
     console.log(`[Notification] ${notificationId} | Internal: ${results.internal} | Email: ${results.email} | Title: ${title}`);
