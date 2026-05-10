@@ -1,4 +1,5 @@
 import React, { Component, useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { LiveToastContainer } from './components/shared/LiveToast';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { STATE_RESOURCES } from './stateResources';
 import { getDetailedStateKnowledge } from './stateDetailedKnowledge';
@@ -8859,6 +8860,7 @@ export default function App() {
   return (
     <ErrorBoundary>
       <div className="antialiased text-slate-900">
+        <LiveToastContainer />
         <GlobalHeader userProfile={userProfile} jurisdiction={jurisdiction} setJurisdiction={setJurisdictionWithGate} roleOverride={roleOverride} setRoleOverride={setRoleOverride} handleBack={handleBack} canGoBack={viewHistory.length > 0 || hasBypassedSelector} onLogout={handleLogout} />
 
         {/* JURISDICTION GATE MODAL */}
