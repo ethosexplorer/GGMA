@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ShadowOverlay } from '../components/shared/ShadowOverlay';
 import { turso } from '../lib/turso';
-import { ShieldAlert, Map, Search, FileText, Activity, MapPin, XCircle, AlertTriangle, AlertCircle, Fingerprint, Zap, Crosshair, HelpCircle, Download, Bot, CreditCard, Shield, Clock, Wind, Car, User, Wifi, Lock, Globe, CircleCheck } from 'lucide-react';
+import { ShieldAlert, Map, Search, FileText, Activity, MapPin, XCircle, AlertTriangle, AlertCircle, Fingerprint, Zap, Crosshair, HelpCircle, Download, Bot, CreditCard, Shield, Clock, Wind, Car, User, Wifi, Lock, Globe, CircleCheck, X, Search, Edit2 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { EnforcementIntelTab } from '../components/federal/EnforcementIntelTab';
@@ -18,6 +18,8 @@ const flags = [
 export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
   const [activeTab, setActiveTab] = useState('rapid_testing');
   const [dbLogs, setDbLogs] = useState<any[]>([]);
+  const [liveAction, setLiveAction] = useState<{ title: string, message: string, type: 'warning' | 'success' | 'process' | 'info' | 'form' } | null>(null);
+  const triggerLiveAction = (title: string, message: string, type: 'warning' | 'success' | 'process' | 'info' | 'form') => { setLiveAction({ title, message, type }); };
 
   React.useEffect(() => {
     turso.execute('SELECT * FROM enforcement_logs LIMIT 10').then(res => setDbLogs(res.rows)).catch(console.error);

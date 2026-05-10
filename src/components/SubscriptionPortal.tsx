@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
-import { CreditCard, Shield, Settings, Zap, FileText, Plus, Sparkles, ArrowRight, Check, ChevronDown, ChevronUp, CircleCheck } from 'lucide-react';
+import { CreditCard, Shield, Settings, Zap, FileText, Plus, Sparkles, ArrowRight, Check, ChevronDown, ChevronUp, CircleCheck, X, AlertTriangle, Search, Edit2 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { getAllPlansForLookup, getAllAddonsForLookup, AddOn, getAddOnsForRole } from '../lib/subscriptionPlans';
 import { PricingTiers } from './PricingTiers';
@@ -50,6 +50,8 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
   const [activeAddOns, setActiveAddOns] = useState<string[]>(initialAddOns);
   const [showPricing, setShowPricing] = useState(false);
   const [showFeatures, setShowFeatures] = useState(false);
+  const [liveAction, setLiveAction] = useState<{ title: string, message: string, type: 'warning' | 'success' | 'process' | 'info' | 'form' } | null>(null);
+  const triggerLiveAction = (title: string, message: string, type: 'warning' | 'success' | 'process' | 'info' | 'form') => { setLiveAction({ title, message, type }); };
   
   React.useEffect(() => {
     const handleOpenPricing = () => setShowPricing(true);
@@ -176,7 +178,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
                          <p className="text-xs text-slate-500">Visa ending in 4242</p>
                        </div>
                      </div>
-                     <button onClick={() => { const newCard = prompt('Enter new 16-digit card number (Stripe Checkout Simulation):'); if(newCard && newCard.length > 10) alert('Success! Your card ending in ' + newCard.slice(-4) + ' has been securely updated via Stripe.'); }} className="text-[#1a4731] text-sm font-bold cursor-pointer hover:underline">Update</button>
+                     <button onClick={() => { const newCard = prompt('Enter new 16-digit card number (Stripe Checkout Simulation):'); if(newCard && newCard.length > 10) triggerLiveAction('Payment Method Updated', 'Your card ending in ' + newCard.slice(-4) + ' has been securely validated and tokenized via Stripe.', 'success'); }} className="text-[#1a4731] text-sm font-bold cursor-pointer hover:underline">Update</button>
                   </div>
                   
                   <div className="flex items-center justify-between p-4 border border-slate-100 rounded-xl hover:bg-slate-50 transition-colors">
@@ -189,7 +191,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
                          <p className="text-xs text-slate-500">View past invoices and receipts</p>
                        </div>
                      </div>
-                     <button onClick={() => alert("Billing History\n\nInvoice #INV-2026-04 | $49.00 | Paid Apr 1, 2026\nInvoice #INV-2026-03 | $49.00 | Paid Mar 1, 2026\nInvoice #INV-2026-02 | $49.00 | Paid Feb 1, 2026\n\nAll invoices saved in your Document Vault.")} className="text-[#1a4731] text-sm font-bold cursor-pointer hover:underline">View</button>
+                     <button onClick={() => triggerLiveAction('Billing History', 'Invoice #INV-2026-04 | Paid Apr 1, 2026\nInvoice #INV-2026-03 | Paid Mar 1, 2026\nInvoice #INV-2026-02 | Paid Feb 1, 2026\n\nComplete PDF receipts have been routed to your Document Vault.', 'info')} className="text-[#1a4731] text-sm font-bold cursor-pointer hover:underline">View</button>
                   </div>
                </div>
             </div>
@@ -242,7 +244,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
                <p className="text-xs text-slate-500 mb-4 px-4 font-medium leading-relaxed">Our support team is available 24/7 to help you with billing inquiries or custom pricing tailored to your scale.</p>
                <div className="flex flex-col gap-2">
                  <Button onClick={() => document.dispatchEvent(new CustomEvent('open-sylara'))} className="w-full bg-purple-600 hover:bg-purple-500 text-white border-transparent shadow-lg shadow-purple-900/20">Ask Sylara AI</Button>
-                 <Button onClick={() => alert('Phone Support\n\nCall us at: (888) 963-4447\n\nHours: Mon-Fri 8am-8pm CST\nSat-Sun 10am-6pm CST\n\nOr use the QR code feature on the GGHP mobile app to call from your phone.')} variant="outline" className="w-full">Call Phone Support</Button>
+                 <Button onClick={() => triggerLiveAction('Phone Support', 'Call us at: (888) 963-4447\nHours: Mon-Fri 8am-8pm CST\nSat-Sun 10am-6pm CST', 'info')} variant="outline" className="w-full">Call Phone Support</Button>
                </div>
             </div>
          </div>
@@ -271,7 +273,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
               <button 
                 onClick={() => {
                   const selectedItems = currentAddonsList.filter(a => activeAddOns.includes(a.id));
-                  alert(`Redirecting to secure checkout...\n\nProcessing payment for ${selectedItems.length} item(s):\n${selectedItems.map(a => `• ${a.name} ($${a.price})`).join('\n')}\n\nTotal: $${selectedItems.reduce((sum, a) => sum + (typeof a.price === 'number' ? a.price : 0), 0).toFixed(2)}`);
+                  triggerLiveAction('Secure Checkout Initiated', `Processing payment for ${selectedItems.length} item(s) totaling ${selectedItems.reduce((sum, a) => sum + (typeof a.price === 'number' ? a.price : 0), 0).toFixed(2)}. Redirecting to Stripe gateway...`, 'process');
                 }}
                 className="flex items-center gap-2 px-6 py-2 bg-emerald-600 text-white rounded-xl text-sm font-black hover:bg-emerald-700 transition-all shadow-md"
               >
