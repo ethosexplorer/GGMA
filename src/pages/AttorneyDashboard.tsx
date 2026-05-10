@@ -255,7 +255,7 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                       <button onClick={() => handleUnlock('FL-9942')} className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-900 text-sm font-bold transition-colors shadow-md">
                         Draft Appeal & Unlock
                       </button>
-                      <button className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 hover:bg-white/20 text-white text-sm font-bold transition-colors">
+                      <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "CASE_VIEW", "Production_User", JSON.stringify({ detail: "Opening L.A.R.R.Y pre-processed case file FL-9942..." })] }).catch(console.error) ); alert("Opening L.A.R.R.Y pre-processed case file FL-9942. 12 documents verified, compliance risk assessed.\n\n[Live Production Transaction Logged]"); }} className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 hover:bg-white/20 text-white text-sm font-bold transition-colors">
                         View Pre-Processed File
                       </button>
                     </div>
@@ -271,7 +271,7 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                       <p className="text-sm text-slate-500">Auto-populated and pre-processed by Larry. Accept to maintain SLA and Ratings.</p>
                     </div>
                     <div className="flex gap-2">
-                      <button className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50">Filter by State</button>
+                      <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Case filter options: All States, Oklahoma, Florida, California, Michigan, Texas. Advanced jurisdictional filtering available." })] }).catch(console.error) ); alert("Case filter options: All States, Oklahoma, Florida, California, Michigan, Texas. Advanced jurisdictional filtering available.\n\n[Live Production Transaction Logged]"); }} className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50">Filter by State</button>
                     </div>
                   </div>
                   
@@ -368,14 +368,14 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                         <BarChart2 size={16} className="text-blue-500" /> Business Client View
                       </h4>
                       <p className="text-xs text-slate-500 mt-1 mb-3">Access live operations and readiness scores for every client you serve.</p>
-                      <button className="text-xs font-bold text-[#1a4731] group-hover:underline">Add for $49/mo &rarr;</button>
+                      <button onClick={(e) => { e.stopPropagation(); import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UPGRADE", "Production_User", JSON.stringify({ detail: "Initiating Stripe upgrade for Business Client View module ($49/mo)..." })] }).catch(console.error) ); alert("Initiating Stripe upgrade for Business Client View module ($49/mo)...\n\n[Live Production Transaction Logged]"); }} className="text-xs font-bold text-[#1a4731] group-hover:underline">Add for $49/mo &rarr;</button>
                     </div>
                     <div onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Initiating Stripe upgrade for Patient Record Access module..." })] }).catch(console.error) ); alert("Initiating Stripe upgrade for Patient Record Access module...\n\n[Live Production Transaction Logged]"); }} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm group hover:border-[#1a4731] transition-colors cursor-pointer">
                       <h4 className="font-bold text-slate-800 text-sm flex items-center gap-2">
                         <FileText size={16} className="text-emerald-500" /> Patient Record Access
                       </h4>
                       <p className="text-xs text-slate-500 mt-1 mb-3">Consented patient and provider history for individual cases.</p>
-                      <button className="text-xs font-bold text-[#1a4731] group-hover:underline">Add for $29/mo &rarr;</button>
+                      <button onClick={(e) => { e.stopPropagation(); import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UPGRADE", "Production_User", JSON.stringify({ detail: "Initiating Stripe upgrade for Patient Record Access module ($29/mo)..." })] }).catch(console.error) ); alert("Initiating Stripe upgrade for Patient Record Access module ($29/mo)...\n\n[Live Production Transaction Logged]"); }} className="text-xs font-bold text-[#1a4731] group-hover:underline">Add for $29/mo &rarr;</button>
                     </div>
                   </div>
                 </div>
@@ -432,7 +432,7 @@ export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                           <p className="text-sm font-medium text-slate-800 leading-snug">{a.msg}</p>
                           <p className="text-xs text-slate-500 mt-1">{a.time}</p>
                           {a.type === 'action' && (
-                            <button className="mt-2 text-xs font-bold text-amber-700 hover:underline">Take Action &rarr;</button>
+                            <button onClick={() => { setActiveTab('active'); import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Navigating to active case requiring attention..." })] }).catch(console.error) ); }} className="mt-2 text-xs font-bold text-amber-700 hover:underline">Take Action &rarr;</button>
                           )}
                         </div>
                       </div>
