@@ -622,8 +622,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
            </div>
 
            {/* Metrc Integration Status */}
-           <div className="bg-white rounded-[2rem] border border-slate-200/60 p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative overflow-hidden group">
-             <div className="absolute top-0 right-0 w-1.5 h-full bg-blue-500"></div>
+           <div onClick={() => navigateTab('integrations')} className="cursor-pointer bg-white rounded-[2rem] border border-slate-200/60 p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative overflow-hidden group"><div className="absolute top-0 right-0 w-1.5 h-full bg-blue-500"></div>
              <div className="flex justify-between items-start mb-2">
                 <div>
                   <h3 className="text-lg font-black text-slate-800 tracking-tight">Metrc Integration</h3>
@@ -652,8 +651,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
            </div>
 
            {/* Insurance & Bonding Tracker */}
-           <div className="bg-white rounded-[2rem] border border-slate-200/60 p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative overflow-hidden group">
-             <div className="absolute top-0 right-0 w-1.5 h-full bg-violet-500"></div>
+           <div onClick={() => navigateTab('insurance')} className="cursor-pointer bg-white rounded-[2rem] border border-slate-200/60 p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative overflow-hidden group"><div className="absolute top-0 right-0 w-1.5 h-full bg-violet-500"></div>
              <div className="flex justify-between items-start mb-2">
                 <div>
                   <h3 className="text-lg font-black text-slate-800 tracking-tight">Policies & Bonds</h3>
@@ -694,8 +692,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
         {/* Main Performance Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Today's Revenue */}
-          <div className="bg-white rounded-3xl border border-slate-200/60 p-6 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-1.5 h-full bg-emerald-500"></div>
+          <div onClick={() => navigateTab('pos')} className="cursor-pointer bg-white rounded-3xl border border-slate-200/60 p-6 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between relative overflow-hidden group"><div className="absolute top-0 right-0 w-1.5 h-full bg-emerald-500"></div>
             <div className="flex justify-between items-start mb-4">
               <div>
                 <p className="text-xs font-black tracking-widest text-slate-400 uppercase mb-1">Today's Revenue</p>
@@ -716,8 +713,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
           </div>
 
           {/* Monthly Revenue Chart */}
-          <div className="bg-white rounded-3xl border border-slate-200/60 p-6 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-1.5 h-full bg-indigo-500"></div>
+          <div onClick={() => navigateTab('analytics')} className="cursor-pointer bg-white rounded-3xl border border-slate-200/60 p-6 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between relative overflow-hidden group"><div className="absolute top-0 right-0 w-1.5 h-full bg-indigo-500"></div>
             <div className="flex justify-between items-start mb-4">
               <div>
                 <p className="text-xs font-black tracking-widest text-slate-400 uppercase mb-1">Monthly Active</p>
@@ -755,9 +751,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
 
         {/* Key Status Cards (5-Cols) */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
-           <div className="bg-white rounded-[2rem] border border-slate-200/60 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
-              <div className="flex justify-between items-center mb-3">
-                 <h4 className="font-black text-slate-800 tracking-tight text-sm">Metrc Tracker</h4>
+           <div onClick={() => navigateTab('integrations')} className="cursor-pointer bg-white rounded-[2rem] border border-slate-200/60 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"><div className="flex justify-between items-center mb-3"><h4 className="font-black text-slate-800 tracking-tight text-sm">Metrc Tracker</h4>
                  <Database size={16} className="text-blue-500" />
               </div>
               <div className="space-y-2">
@@ -772,9 +766,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
               </div>
            </div>
 
-           <div className="bg-white rounded-[2rem] border border-slate-200/60 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
-              <div className="flex justify-between items-center mb-3">
-                 <h4 className="font-black text-slate-800 tracking-tight text-sm">OMMA Checklist</h4>
+           <div onClick={() => navigateTab('readiness')} className="cursor-pointer bg-white rounded-[2rem] border border-slate-200/60 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"><div className="flex justify-between items-center mb-3"><h4 className="font-black text-slate-800 tracking-tight text-sm">OMMA Checklist</h4>
                  <Shield size={16} className="text-amber-500" />
               </div>
               <div className="space-y-2">
@@ -789,9 +781,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
               </div>
            </div>
 
-           <div className="bg-white rounded-[2rem] border border-slate-200/60 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
-              <div className="flex justify-between items-center mb-3">
-                 <h4 className="font-black text-slate-800 tracking-tight text-sm">SINC Inventory</h4>
+           <div onClick={() => navigateTab('inventory')} className="cursor-pointer bg-white rounded-[2rem] border border-slate-200/60 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"><div className="flex justify-between items-center mb-3"><h4 className="font-black text-slate-800 tracking-tight text-sm">SINC Inventory</h4>
                  <PackageSearch size={16} className="text-emerald-500" />
               </div>
               <div className="space-y-2">
@@ -806,9 +796,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
               </div>
            </div>
 
-           <div className="bg-white rounded-[2rem] border border-slate-200/60 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
-              <div className="flex justify-between items-center mb-3">
-                 <h4 className="font-black text-slate-800 tracking-tight text-sm">External Permits</h4>
+           <div onClick={() => navigateTab('compliance')} className="cursor-pointer bg-white rounded-[2rem] border border-slate-200/60 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"><div className="flex justify-between items-center mb-3"><h4 className="font-black text-slate-800 tracking-tight text-sm">External Permits</h4>
                  <FileText size={16} className="text-violet-500" />
               </div>
               <div className="space-y-2">
@@ -820,7 +808,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
               </div>
            </div>
 
-           <div className="bg-indigo-50 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-[2rem] border border-indigo-200/60 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative overflow-hidden">
+           <div className="bg-indigo-50 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-[2rem] border border-indigo-200/60 p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative overflow-hidden cursor-pointer" onClick={() => navigateTab('dea')}>
               <div className="absolute -top-6 -right-6 w-16 h-16 bg-blue-500/10 rounded-full blur-xl"></div>
               <div className="flex justify-between items-center mb-3 relative z-10">
                  <h4 className="font-black text-indigo-900 tracking-tight text-sm">Federal (Sch III)</h4>
