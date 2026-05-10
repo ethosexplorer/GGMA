@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, LayoutDashboard, Globe, Activity, Shield, DollarSign, Scale, Sparkles, FileText, BookOpen, Lock, CreditCard, Gavel } from 'lucide-react';
+import { Calendar, LayoutDashboard, Globe, Activity, Shield, DollarSign, Scale, Sparkles, FileText, BookOpen, Lock, CreditCard, Gavel, AlertTriangle, CircleCheck, Search, Edit2, X } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { FederalOverviewTab } from '../components/federal/FederalOverviewTab';
 import { InterstateMonitoringTab } from '../components/federal/InterstateMonitoringTab';
@@ -37,6 +37,13 @@ export const FederalDashboard = ({ onLogout, user }: { onLogout?: () => void, us
   const [isUnlocked, setIsUnlocked] = useState(true);
   const [pin, setPin] = useState('');
   const [tier, setTier] = useState<'basic' | 'pro' | 'custom'>('pro');
+  const [liveAction, setLiveAction] = useState<any>(null);
+
+  React.useEffect(() => {
+    const handleLiveAction = (e: any) => setLiveAction(e.detail);
+    document.addEventListener('live-action', handleLiveAction);
+    return () => document.removeEventListener('live-action', handleLiveAction);
+  }, []);
 
   const tierLevels = { basic: 1, pro: 2, custom: 3 };
   const hasAccess = (requiredTier: string) => tierLevels[tier] >= tierLevels[requiredTier as keyof typeof tierLevels];

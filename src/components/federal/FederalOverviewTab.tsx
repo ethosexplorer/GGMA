@@ -54,10 +54,10 @@ export const FederalOverviewTab = () => (
           </p>
         </div>
         <div className="shrink-0 flex gap-3 w-full md:w-auto">
-          <button className="flex-1 md:flex-none px-6 py-2.5 bg-red-600 hover:bg-red-500 text-white text-xs font-black rounded-xl transition-all shadow-lg uppercase tracking-widest text-center">
+          <button className="flex-1 md:flex-none px-6 py-2.5 bg-red-600 hover:bg-red-500 text-white text-xs font-black rounded-xl transition-all shadow-lg uppercase tracking-widest text-center" onClick={() => document.dispatchEvent(new CustomEvent('live-action', { detail: { title: 'DOJ Order Reclassification', message: 'Pulling highly restricted PDF order from the Federal Register...', type: 'process' } }))}>
             View DOJ Order
           </button>
-          <button className="flex-1 md:flex-none px-6 py-2.5 bg-[#0a1628] border border-red-500/30 text-red-100 hover:bg-[#111f36] text-xs font-black rounded-xl transition-all uppercase tracking-widest text-center">
+          <button className="flex-1 md:flex-none px-6 py-2.5 bg-[#0a1628] border border-red-500/30 text-red-100 hover:bg-[#111f36] text-xs font-black rounded-xl transition-all uppercase tracking-widest text-center" onClick={() => document.dispatchEvent(new CustomEvent('live-action', { detail: { title: 'State Impact Analysis', message: 'Running Sylara AI cross-reference against all 50 state constitutions and medical marijuana protocols.', type: 'process' } }))}>
             Assess State Impacts
           </button>
         </div>

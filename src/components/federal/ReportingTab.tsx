@@ -21,7 +21,7 @@ export const ReportingTab = () => (
   <div className="space-y-6">
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
       {templates.map((t, i) => (
-        <button key={i} className="bg-[#0f1b2d] p-5 rounded-2xl border border-[#1e3a5f]/60 text-left hover:border-blue-500/40 transition-all group">
+        <button key={i} className="bg-[#0f1b2d] p-5 rounded-2xl border border-[#1e3a5f]/60 text-left hover:border-blue-500/40 transition-all group" onClick={() => document.dispatchEvent(new CustomEvent('live-action', { detail: { title: 'Generate Report', message: 'Compiling federal compliance dossier. This may take up to 45 seconds...', type: 'process' } }))}>
           <div className="p-2 rounded-xl bg-blue-900 text-blue-300 w-fit mb-3 group-hover:bg-blue-700 transition-colors"><t.icon size={18} /></div>
           <h4 className="text-sm font-bold text-white mb-1">{t.name}</h4>
           <p className="text-xs text-blue-300/50">{t.desc}</p>
@@ -33,7 +33,7 @@ export const ReportingTab = () => (
     <div className="bg-[#0f1b2d] rounded-2xl border border-[#1e3a5f]/60 overflow-hidden">
       <div className="p-6 border-b border-[#1e3a5f]/40 flex justify-between items-center">
         <h3 className="text-lg font-bold text-white">Report History</h3>
-        <button className="text-xs font-bold text-blue-400 bg-blue-900/40 px-3 py-1.5 rounded-lg border border-blue-800/30 hover:bg-blue-800/40">Export All</button>
+        <button className="text-xs font-bold text-blue-400 bg-blue-900/40 px-3 py-1.5 rounded-lg border border-blue-800/30 hover:bg-blue-800/40" onClick={() => document.dispatchEvent(new CustomEvent('live-action', { detail: { title: 'Generate Report', message: 'Compiling federal compliance dossier. This may take up to 45 seconds...', type: 'process' } }))}>Export All</button>
       </div>
       <table className="w-full text-left">
         <thead className="bg-[#0a1628] text-blue-300/60 text-[10px] uppercase tracking-wider font-bold">
@@ -57,7 +57,7 @@ export const ReportingTab = () => (
                 )}>{r.status === 'Ready' ? <CircleCheck size={10} /> : <Clock size={10} />} {r.status}</span>
               </td>
               <td className="px-6 py-4">
-                {r.status === 'Ready' && <button className="text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1"><Download size={12} /> Download</button>}
+                {r.status === 'Ready' && <button className="text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1" onClick={() => document.dispatchEvent(new CustomEvent('live-action', { detail: { title: 'Action Initiated', message: 'Executing secure federal-level command module...', type: 'process' } }))}><Download size={12} /> Download</button>}
               </td>
             </tr>
           ))}

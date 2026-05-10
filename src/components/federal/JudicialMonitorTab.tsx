@@ -440,7 +440,7 @@ export const JudicialMonitorTab = () => {
               <p className="text-xs text-blue-200/60 leading-relaxed mb-4 italic">"{j.note}"</p>
               <div className="flex items-center justify-between pt-4 border-t border-blue-900/20">
                 <span className="text-[10px] font-bold text-blue-300/30 uppercase tracking-widest">{j.cases} Cannabis-Related Rulings</span>
-                <button className="text-[10px] font-black text-blue-400 uppercase tracking-widest hover:text-blue-300 transition-colors flex items-center gap-1">
+                <button className="text-[10px] font-black text-blue-400 uppercase tracking-widest hover:text-blue-300 transition-colors flex items-center gap-1" onClick={() => document.dispatchEvent(new CustomEvent('live-action', { detail: { title: 'Accessing Secure Record', message: 'Decrypting requested asset from the federal document vault...', type: 'process' } }))}>
                   View Full Profile <ExternalLink size={10} />
                 </button>
               </div>
@@ -546,7 +546,7 @@ export const JudicialMonitorTab = () => {
                 <p className="text-xs text-blue-200/70 leading-relaxed mb-4">
                   Defense counsel and prosecutors can instantly retrieve complete, untampered digital case files directly from the GGP-OS ledger.
                 </p>
-                <button className="w-full py-3 bg-blue-900/50 hover:bg-blue-800/50 border border-blue-700/50 rounded-xl text-[10px] font-black text-white uppercase tracking-widest transition-all shadow-lg">
+                <button className="w-full py-3 bg-blue-900/50 hover:bg-blue-800/50 border border-blue-700/50 rounded-xl text-[10px] font-black text-white uppercase tracking-widest transition-all shadow-lg" onClick={() => document.dispatchEvent(new CustomEvent('live-action', { detail: { title: 'Generate Report', message: 'Compiling federal compliance dossier. This may take up to 45 seconds...', type: 'process' } }))}>
                   Generate Admissibility Report
                 </button>
               </div>
