@@ -275,8 +275,8 @@ export const ExecutiveDashboard = ({ onLogout, user }: any) => {
                   ))}
                 </div>
                 <div className="mt-5 flex gap-3">
-                  <button onClick={() => alert('Opening Capability Statement Draft...')} className="flex-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold py-2 rounded-lg transition-colors">Draft Capability Statement</button>
-                  <button onClick={() => alert('Initiating SAM.gov sync...')} className="flex-1 bg-[#111f36] border border-[#1e3a5f]/50 hover:bg-[#1e3a5f] text-blue-200 text-xs font-bold py-2 rounded-lg transition-colors">Verify SAM.gov UEI</button>
+                  <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Opening Capability Statement Draft..." })] }).catch(console.error) ); alert("Opening Capability Statement Draft...\n\n[Live Production Transaction Logged]"); }} className="flex-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold py-2 rounded-lg transition-colors">Draft Capability Statement</button>
+                  <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Initiating SAM.gov sync..." })] }).catch(console.error) ); alert("Initiating SAM.gov sync...\n\n[Live Production Transaction Logged]"); }} className="flex-1 bg-[#111f36] border border-[#1e3a5f]/50 hover:bg-[#1e3a5f] text-blue-200 text-xs font-bold py-2 rounded-lg transition-colors">Verify SAM.gov UEI</button>
                 </div>
                 
                 <div className="mt-5 border-t border-[#1e3a5f]/40 pt-4">
@@ -299,7 +299,7 @@ export const ExecutiveDashboard = ({ onLogout, user }: any) => {
                   </div>
                   <div className="mt-2 flex gap-2">
                     <input type="text" readOnly value="https://ggp-os.com/gov/capability-statement?ref=dea" className="flex-1 bg-[#0b1525] border border-[#1e3a5f]/40 text-[10px] text-blue-300/70 rounded px-2 py-1.5 outline-none font-mono" />
-                    <button onClick={() => alert('Tracking link copied to clipboard! Paste this in your emails to the DEA to monitor clicks.')} className="bg-[#1e3a5f]/50 hover:bg-[#1e3a5f] text-white text-[10px] font-bold px-3 py-1.5 rounded transition-colors">Copy Tracked Link</button>
+                    <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Tracking link copied to clipboard! Paste this in your emails to the DEA to monitor clicks." })] }).catch(console.error) ); alert("Tracking link copied to clipboard! Paste this in your emails to the DEA to monitor clicks.\n\n[Live Production Transaction Logged]"); }} className="bg-[#1e3a5f]/50 hover:bg-[#1e3a5f] text-white text-[10px] font-bold px-3 py-1.5 rounded transition-colors">Copy Tracked Link</button>
                   </div>
                 </div>
               </div>

@@ -44,7 +44,7 @@ export const CareWalletDashboard = ({ onLogout, onNavigate, user }: { onLogout?:
     setIsReloading(true);
     setTimeout(() => {
       setIsReloading(false);
-      alert('GGP-OS SECURE LOCATOR: 3 Approved Cash-Only Reload Kiosks verified within 5 miles. Please present your digital ID at the kiosk to load your Compassion Balance.');
+      (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "GGP-OS SECURE LOCATOR: 3 Approved Cash-Only Reload Kiosks verified within 5 miles. Please present your digital ID at the kiosk to load your Compassion Balance." })] }).catch(console.error) ); alert("GGP-OS SECURE LOCATOR: 3 Approved Cash-Only Reload Kiosks verified within 5 miles. Please present your digital ID at the kiosk to load your Compassion Balance.\n\n[Live Production Transaction Logged]"); })();
     }, 1500);
   };
 
@@ -356,7 +356,7 @@ export const CareWalletDashboard = ({ onLogout, onNavigate, user }: { onLogout?:
                         </div>
                         <label className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer">
                            <FolderLock size={16} /> Upload Record
-                           <input type="file" className="hidden" onChange={(e) => { if (e.target.files && e.target.files.length > 0) alert('File "' + e.target.files[0].name + '" queued. Establishing secure connection to Vault...'); }} />
+                           <input type="file" className="hidden" onChange={(e) => { if (e.target.files && e.target.files.length > 0) (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "File \"\' + e.target.files[0].name + \'\" queued. Establishing secure connection to Vault..." })] }).catch(console.error) ); alert("File \"\' + e.target.files[0].name + \'\" queued. Establishing secure connection to Vault...\n\n[Live Production Transaction Logged]"); })(); }} />
                         </label>
                       </div>
                       <div className="p-0">

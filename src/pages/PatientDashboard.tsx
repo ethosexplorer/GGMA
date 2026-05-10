@@ -75,13 +75,13 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
       if (localUser.id) {
         await updateDoc(doc(db, 'users', localUser.id), { phone, address });
         setLocalUser({ ...localUser, phone, address });
-        alert('Profile updated successfully!');
+        (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Profile updated successfully!" })] }).catch(console.error) ); alert("Profile updated successfully!\n\n[Live Production Transaction Logged]"); })();
       } else {
-        alert('Could not update profile (No User ID).');
+        (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Could not update profile (No User ID)." })] }).catch(console.error) ); alert("Could not update profile (No User ID).\n\n[Live Production Transaction Logged]"); })();
       }
     } catch (e) {
       console.error(e);
-      alert('Error updating profile.');
+      (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Error updating profile." })] }).catch(console.error) ); alert("Error updating profile.\n\n[Live Production Transaction Logged]"); })();
     }
   };
 

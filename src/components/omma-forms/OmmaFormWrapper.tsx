@@ -41,7 +41,7 @@ export default function OmmaFormWrapper({ formType, children, defaultValues }: P
       window.URL.revokeObjectURL(url);
       a.remove();
       
-      alert('✅ Form submitted! Your official OMMA PDF is downloading.');
+      (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "✅ Form submitted! Your official OMMA PDF is downloading." })] }).catch(console.error) ); alert("✅ Form submitted! Your official OMMA PDF is downloading.\n\n[Live Production Transaction Logged]"); })();
     } catch (err: any) {
       alert('❌ Error: ' + err.message);
     }

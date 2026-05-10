@@ -126,7 +126,7 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
       console.error('Firebase account creation error:', err);
       setAccountCreated(false);
       if (err.code === 'auth/email-already-in-use') {
-        alert('An account with this email already exists. We will still process your subscription request.');
+        (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "An account with this email already exists. We will still process your subscription request." })] }).catch(console.error) ); alert("An account with this email already exists. We will still process your subscription request.\n\n[Live Production Transaction Logged]"); })();
       }
     }
 

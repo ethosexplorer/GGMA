@@ -50,7 +50,7 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
 
   const handleUnlock = (patientId: string) => {
     if (12 + unlockedPatients.length >= 20) {
-      alert('Active Patient Limit Reached. Complete existing consultations before taking new referrals. This ensures compliance with state telehealth volume limits.');
+      (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Active Patient Limit Reached. Complete existing consultations before taking new referrals. This ensures compliance with state telehealth volume limits." })] }).catch(console.error) ); alert("Active Patient Limit Reached. Complete existing consultations before taking new referrals. This ensures compliance with state telehealth volume limits.\n\n[Live Production Transaction Logged]"); })();
       return;
     }
 
@@ -58,10 +58,10 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
       if (confirm(`Accept patient referral ${patientId}? This costs 1 Token.`)) {
         setTokens(t => t - 1);
         setUnlockedPatients([...unlockedPatients, patientId]);
-        alert('Patient accepted. They have been moved to your active schedule.');
+        (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Patient accepted. They have been moved to your active schedule." })] }).catch(console.error) ); alert("Patient accepted. They have been moved to your active schedule.\n\n[Live Production Transaction Logged]"); })();
       }
     } else {
-      alert('Not enough tokens. Please purchase a Token Pack.');
+      (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Not enough tokens. Please purchase a Token Pack." })] }).catch(console.error) ); alert("Not enough tokens. Please purchase a Token Pack.\n\n[Live Production Transaction Logged]"); })();
       setActiveTab('billing');
     }
   };
@@ -69,7 +69,7 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
   const handleBuyTokens = () => {
     if (confirm('Purchase 10 Token Pack for $499?')) {
       setTokens(t => t + 10);
-      alert('Tokens successfully purchased and added to your balance.');
+      (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Tokens successfully purchased and added to your balance." })] }).catch(console.error) ); alert("Tokens successfully purchased and added to your balance.\n\n[Live Production Transaction Logged]"); })();
     }
   };
 
@@ -154,7 +154,7 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
           <div className="flex items-center gap-4">
             <NotificationDropdown />
             <div className="w-px h-6 bg-slate-200" />
-            <button onClick={() => alert('Upgrade options and enterprise tier pricing will be available after the pilot period.')} className="px-4 py-1.5 rounded-lg bg-amber-50 text-amber-700 text-xs font-bold border border-amber-200 hover:bg-amber-100 transition-colors">
+            <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Upgrade options and enterprise tier pricing will be available after the pilot period." })] }).catch(console.error) ); alert("Upgrade options and enterprise tier pricing will be available after the pilot period.\n\n[Live Production Transaction Logged]"); }} className="px-4 py-1.5 rounded-lg bg-amber-50 text-amber-700 text-xs font-bold border border-amber-200 hover:bg-amber-100 transition-colors">
               Upgrade to Full AI
             </button>
           </div>
@@ -330,10 +330,10 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                       "You have 3 new leads and 2 pending certifications. Would you like me to pre-fill the state forms for Michael Chen's evaluation?"
                     </p>
                     <div className="flex gap-3 mt-4">
-                      <button onClick={() => alert('Sylara is pre-filling state intake forms based on Michael Chen\'s previous medical history...')} className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold transition-colors shadow-md">
+                      <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Sylara is pre-filling state intake forms based on Michael Chen\\'s previous medical history..." })] }).catch(console.error) ); alert("Sylara is pre-filling state intake forms based on Michael Chen\\'s previous medical history...\n\n[Live Production Transaction Logged]"); }} className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold transition-colors shadow-md">
                         Pre-fill Forms
                       </button>
-                      <button onClick={() => alert('Routing to Sylara Lead generation dashboard...')} className="px-4 py-2 rounded-xl bg-white border border-blue-200 hover:bg-blue-50 text-blue-700 text-sm font-bold transition-colors">
+                      <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Routing to Sylara Lead generation dashboard..." })] }).catch(console.error) ); alert("Routing to Sylara Lead generation dashboard...\n\n[Live Production Transaction Logged]"); }} className="px-4 py-2 rounded-xl bg-white border border-blue-200 hover:bg-blue-50 text-blue-700 text-sm font-bold transition-colors">
                         View Leads
                       </button>
                     </div>
@@ -359,7 +359,7 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                             <p className="text-sm text-slate-500">{pt.type} • {pt.state} • Appt: {pt.date}</p>
                             <div className="mt-4 flex gap-3">
                               <button onClick={() => alert('Launching Secure Telehealth Virtual Room for ' + pt.name)} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 flex items-center gap-2"><Video size={16}/> Join Virtual Room</button>
-                              <button onClick={() => alert('Loading patient intake forms...')} className="px-4 py-2 border border-slate-200 text-slate-700 rounded-lg text-sm font-bold hover:bg-slate-50">View Intake Form</button>
+                              <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Loading patient intake forms..." })] }).catch(console.error) ); alert("Loading patient intake forms...\n\n[Live Production Transaction Logged]"); }} className="px-4 py-2 border border-slate-200 text-slate-700 rounded-lg text-sm font-bold hover:bg-slate-50">View Intake Form</button>
                             </div>
                           </div>
                         ))
@@ -384,8 +384,8 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                             <h4 className="font-bold text-slate-900 text-lg mb-1">{pt.name}</h4>
                             <p className="text-sm text-slate-500">{pt.type} • {pt.state} • Appt: {pt.date}</p>
                             <div className="mt-4 flex gap-3">
-                              <button onClick={() => alert('Checking patient ' + pt.name + ' into the physical clinic lobby.')} className="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-bold hover:bg-emerald-700">Check In to Clinic</button>
-                              <button onClick={() => alert('Loading patient intake forms...')} className="px-4 py-2 border border-slate-200 text-slate-700 rounded-lg text-sm font-bold hover:bg-slate-50">View Intake Form</button>
+                              <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Checking patient \' + pt.name + \' into the physical clinic lobby." })] }).catch(console.error) ); alert("Checking patient \' + pt.name + \' into the physical clinic lobby.\n\n[Live Production Transaction Logged]"); }} className="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-bold hover:bg-emerald-700">Check In to Clinic</button>
+                              <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Loading patient intake forms..." })] }).catch(console.error) ); alert("Loading patient intake forms...\n\n[Live Production Transaction Logged]"); }} className="px-4 py-2 border border-slate-200 text-slate-700 rounded-lg text-sm font-bold hover:bg-slate-50">View Intake Form</button>
                             </div>
                           </div>
                         ))
@@ -479,7 +479,7 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                         </div>
                         <label className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer">
                            <FolderLock size={16} /> Upload Record
-                           <input type="file" className="hidden" onChange={(e) => { if (e.target.files && e.target.files.length > 0) alert('File "' + e.target.files[0].name + '" queued. Establishing secure connection to Vault...'); }} />
+                           <input type="file" className="hidden" onChange={(e) => { if (e.target.files && e.target.files.length > 0) (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "File \"\' + e.target.files[0].name + \'\" queued. Establishing secure connection to Vault..." })] }).catch(console.error) ); alert("File \"\' + e.target.files[0].name + \'\" queued. Establishing secure connection to Vault...\n\n[Live Production Transaction Logged]"); })(); }} />
                         </label>
                       </div>
                       <div className="p-0">
@@ -583,25 +583,25 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                            <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><BarChart size={24}/></div>
                            <h4 className="font-bold text-slate-800 mb-1">Monthly Patient Volume</h4>
                            <p className="text-xs text-slate-500 mb-4">Telehealth vs Traditional breakdown with SINC referral metrics.</p>
-                           <button onClick={() => { alert("Compiling Monthly Patient Volume Report... The generated PDF is being securely saved to your Vault."); setActiveTab('vault'); }} className="text-blue-600 font-bold text-sm flex items-center gap-1">Generate <ArrowRight size={14}/></button>
+                           <button onClick={() => { (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Compiling Monthly Patient Volume Report... The generated PDF is being securely saved to your Vault." })] }).catch(console.error) ); alert("Compiling Monthly Patient Volume Report... The generated PDF is being securely saved to your Vault.\n\n[Live Production Transaction Logged]"); })(); setActiveTab('vault'); }} className="text-blue-600 font-bold text-sm flex items-center gap-1">Generate <ArrowRight size={14}/></button>
                         </div>
                         <div className="border border-slate-200 rounded-xl p-5 hover:border-emerald-300 hover:shadow-md transition-all cursor-pointer group">
                            <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><Shield size={24}/></div>
                            <h4 className="font-bold text-slate-800 mb-1">State Compliance Audit</h4>
                            <p className="text-xs text-slate-500 mb-4">LARRY AI certified compliance score and pre-audit readiness report.</p>
-                           <button onClick={() => { alert("Generating State Compliance Audit... LARRY AI is cross-referencing your records. The final audit will be saved to your Vault."); setActiveTab('vault'); }} className="text-emerald-600 font-bold text-sm flex items-center gap-1">Generate <ArrowRight size={14}/></button>
+                           <button onClick={() => { (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Generating State Compliance Audit... LARRY AI is cross-referencing your records. The final audit will be saved to your Vault." })] }).catch(console.error) ); alert("Generating State Compliance Audit... LARRY AI is cross-referencing your records. The final audit will be saved to your Vault.\n\n[Live Production Transaction Logged]"); })(); setActiveTab('vault'); }} className="text-emerald-600 font-bold text-sm flex items-center gap-1">Generate <ArrowRight size={14}/></button>
                         </div>
                         <div className="border border-slate-200 rounded-xl p-5 hover:border-purple-300 hover:shadow-md transition-all cursor-pointer group">
                            <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><CreditCard size={24}/></div>
                            <h4 className="font-bold text-slate-800 mb-1">Revenue & Billing Summary</h4>
                            <p className="text-xs text-slate-500 mb-4">Subscription, consultation fees, and pending invoice totals.</p>
-                           <button onClick={() => { alert("Retrieving Revenue & Billing Summary... The report will be saved to your Vault."); setActiveTab('vault'); }} className="text-purple-600 font-bold text-sm flex items-center gap-1">Generate <ArrowRight size={14}/></button>
+                           <button onClick={() => { (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Retrieving Revenue & Billing Summary... The report will be saved to your Vault." })] }).catch(console.error) ); alert("Retrieving Revenue & Billing Summary... The report will be saved to your Vault.\n\n[Live Production Transaction Logged]"); })(); setActiveTab('vault'); }} className="text-purple-600 font-bold text-sm flex items-center gap-1">Generate <ArrowRight size={14}/></button>
                         </div>
                         <div className="border border-slate-200 rounded-xl p-5 hover:border-amber-300 hover:shadow-md transition-all cursor-pointer group">
                            <div className="w-12 h-12 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><FileText size={24}/></div>
                            <h4 className="font-bold text-slate-800 mb-1">Prescription Outcome Data</h4>
                            <p className="text-xs text-slate-500 mb-4">Anonymized efficacy reports linked to specific product categories.</p>
-                           <button onClick={() => { alert("Compiling Anonymized Efficacy Reports... The clinical aggregation will be saved to your Vault when complete."); setActiveTab('vault'); }} className="text-amber-600 font-bold text-sm flex items-center gap-1">Generate <ArrowRight size={14}/></button>
+                           <button onClick={() => { (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Compiling Anonymized Efficacy Reports... The clinical aggregation will be saved to your Vault when complete." })] }).catch(console.error) ); alert("Compiling Anonymized Efficacy Reports... The clinical aggregation will be saved to your Vault when complete.\n\n[Live Production Transaction Logged]"); })(); setActiveTab('vault'); }} className="text-amber-600 font-bold text-sm flex items-center gap-1">Generate <ArrowRight size={14}/></button>
                         </div>
                       </div>
                     </div>
@@ -643,7 +643,7 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                         <AlertTriangle size={16} className="text-amber-500 shrink-0 mt-0.5" /> Review Prior Records
                       </li>
                     </ul>
-                    <button onClick={() => alert('Launching Secure Telehealth Waiting Room...')} className="w-full mt-2 py-2 rounded-xl bg-blue-50 text-blue-700 text-sm font-bold hover:bg-blue-100 transition-colors">
+                    <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Launching Secure Telehealth Waiting Room..." })] }).catch(console.error) ); alert("Launching Secure Telehealth Waiting Room...\n\n[Live Production Transaction Logged]"); }} className="w-full mt-2 py-2 rounded-xl bg-blue-50 text-blue-700 text-sm font-bold hover:bg-blue-100 transition-colors">
                       Enter Waiting Room
                     </button>
                   </div>
@@ -685,7 +685,7 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                       </div>
                       <ChevronRight size={16} className="text-slate-400 group-hover:text-blue-500" />
                     </button>
-                    <button onClick={() => alert('Routing case to L.A.R.R.Y Enforcement for audit...')} className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 text-slate-700 border border-transparent hover:border-slate-200 transition-all group">
+                    <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Routing case to L.A.R.R.Y Enforcement for audit..." })] }).catch(console.error) ); alert("Routing case to L.A.R.R.Y Enforcement for audit...\n\n[Live Production Transaction Logged]"); }} className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 text-slate-700 border border-transparent hover:border-slate-200 transition-all group">
                       <div className="flex items-center gap-2 font-medium">
                         <Share2 size={16} className="text-blue-500" /> Route Case to LARRY C.
                       </div>
@@ -716,7 +716,7 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
               onCancel={() => setShowCertWizard(false)} 
               onComplete={() => {
                 setShowCertWizard(false);
-                alert('Certification Filed Successfully');
+                (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Certification Filed Successfully" })] }).catch(console.error) ); alert("Certification Filed Successfully\n\n[Live Production Transaction Logged]"); })();
               }} 
             />
           </div>

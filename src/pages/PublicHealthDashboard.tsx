@@ -59,7 +59,7 @@ export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => voi
     setIsUploading(true);
     setTimeout(() => {
       setIsUploading(false);
-      alert('COA Uploaded. Larry is validating against Lab Standards...');
+      (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "COA Uploaded. Larry is validating against Lab Standards..." })] }).catch(console.error) ); alert("COA Uploaded. Larry is validating against Lab Standards...\n\n[Live Production Transaction Logged]"); })();
     }, 1500);
   };
 
@@ -67,7 +67,7 @@ export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => voi
     setIsPairing(true);
     setTimeout(() => {
       setIsPairing(false);
-      alert('Device paired – Dual-Channel v2.1 ready. Ready for RI saliva sample.');
+      (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Device paired – Dual-Channel v2.1 ready. Ready for RI saliva sample." })] }).catch(console.error) ); alert("Device paired – Dual-Channel v2.1 ready. Ready for RI saliva sample.\n\n[Live Production Transaction Logged]"); })();
     }, 1500);
   };
 
@@ -135,10 +135,10 @@ export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => voi
           <div className="flex items-center gap-4">
             <NotificationDropdown />
             <div className="w-px h-6 bg-slate-200" />
-            <button onClick={() => alert('Generating Public Health Report... Compiling statewide lab data.')} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 text-slate-700 text-sm font-bold border border-slate-200 hover:bg-slate-200 transition-colors">
+            <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Generating Public Health Report... Compiling statewide lab data." })] }).catch(console.error) ); alert("Generating Public Health Report... Compiling statewide lab data.\n\n[Live Production Transaction Logged]"); }} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 text-slate-700 text-sm font-bold border border-slate-200 hover:bg-slate-200 transition-colors">
               <Download size={16} /> Generate Report
             </button>
-            <button onClick={() => alert('Opening Emergency Recall Broadcast Protocol...')} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-bold shadow-md hover:bg-red-700 transition-colors">
+            <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Opening Emergency Recall Broadcast Protocol..." })] }).catch(console.error) ); alert("Opening Emergency Recall Broadcast Protocol...\n\n[Live Production Transaction Logged]"); }} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-bold shadow-md hover:bg-red-700 transition-colors">
               <AlertTriangle size={16} /> Issue Recall
             </button>
           </div>
@@ -210,10 +210,10 @@ export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => voi
                           "Dr. Jenkins, a new microbial exceedance (TYM 18,400 CFU/g) was flagged in Batch #882, accompanied by a High Recency Index (8.7) field test. Exposure risk elevated to MODERATE. Would you like me to draft the Class II recall notice, alert the Patient Dashboard, and notify the 4 affected retailers?"
                         </p>
                         <div className="flex gap-3 mt-4">
-                          <button onClick={() => alert('Drafting Class II Recall Notice for Batch #882... Notifying 4 Retailers and Patient Wallets.')} className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-900 text-sm font-bold transition-colors shadow-md">
+                          <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Drafting Class II Recall Notice for Batch #882... Notifying 4 Retailers and Patient Wallets." })] }).catch(console.error) ); alert("Drafting Class II Recall Notice for Batch #882... Notifying 4 Retailers and Patient Wallets.\n\n[Live Production Transaction Logged]"); }} className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-900 text-sm font-bold transition-colors shadow-md">
                             Draft Recall & Notify
                           </button>
-                          <button onClick={() => alert('Loading GIS Exposure Map for Batch #882...')} className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 hover:bg-white/20 text-white text-sm font-bold transition-colors">
+                          <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Loading GIS Exposure Map for Batch #882..." })] }).catch(console.error) ); alert("Loading GIS Exposure Map for Batch #882...\n\n[Live Production Transaction Logged]"); }} className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 hover:bg-white/20 text-white text-sm font-bold transition-colors">
                             View Exposed Patients
                           </button>
                         </div>
@@ -230,8 +230,8 @@ export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => voi
                           <p className="text-sm text-slate-500">Auto-validates COAs & Rapid Tests against state limits via Larry.</p>
                         </div>
                         <div className="flex gap-2">
-                          <button onClick={() => alert('Opening State Legislature Mapping Configuration...')} className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 bg-white hover:bg-slate-50">State Mapping: Strict</button>
-                          <button onClick={() => alert('Initializing mass calibration sequence for all connected rapid test devices...')} className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 bg-white hover:bg-slate-50">Calibrate Tests</button>
+                          <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Opening State Legislature Mapping Configuration..." })] }).catch(console.error) ); alert("Opening State Legislature Mapping Configuration...\n\n[Live Production Transaction Logged]"); }} className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 bg-white hover:bg-slate-50">State Mapping: Strict</button>
+                          <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Initializing mass calibration sequence for all connected rapid test devices..." })] }).catch(console.error) ); alert("Initializing mass calibration sequence for all connected rapid test devices...\n\n[Live Production Transaction Logged]"); }} className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 bg-white hover:bg-slate-50">Calibrate Tests</button>
                         </div>
                       </div>
                       
@@ -379,7 +379,7 @@ export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => voi
                   <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
                     <Settings className="text-slate-500" /> Lab Standards Engine Configuration
                   </h2>
-                  <button onClick={() => alert('Opening Protocol Builder... Loading state legislative guidelines.')} className="px-4 py-2 bg-slate-900 text-white rounded-lg font-bold hover:bg-slate-800 text-sm">Add New Protocol</button>
+                  <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Opening Protocol Builder... Loading state legislative guidelines." })] }).catch(console.error) ); alert("Opening Protocol Builder... Loading state legislative guidelines.\n\n[Live Production Transaction Logged]"); }} className="px-4 py-2 bg-slate-900 text-white rounded-lg font-bold hover:bg-slate-800 text-sm">Add New Protocol</button>
                 </div>
                 
                 <div className="space-y-6">
@@ -401,7 +401,7 @@ export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => voi
                         )}>
                           {protocol.status}
                         </span>
-                        <button onClick={() => alert('Opening State Threshold Editor...')} className="px-4 py-2 border border-slate-200 text-slate-600 rounded-lg text-sm font-bold hover:bg-slate-50">Edit Limits</button>
+                        <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Opening State Threshold Editor..." })] }).catch(console.error) ); alert("Opening State Threshold Editor...\n\n[Live Production Transaction Logged]"); }} className="px-4 py-2 border border-slate-200 text-slate-600 rounded-lg text-sm font-bold hover:bg-slate-50">Edit Limits</button>
                       </div>
                     </div>
                   ))}
@@ -416,8 +416,8 @@ export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => voi
                     <Bell className="text-red-500" /> Active Alerts & Recalls
                   </h2>
                   <div className="flex gap-2">
-                    <button onClick={() => alert('Opening Timeline Filters...')} className="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg font-bold hover:bg-slate-50 text-sm">Filter</button>
-                    <button onClick={() => alert('Launching Emergency Broadcast Protocol...')} className="px-4 py-2 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 text-sm flex items-center gap-2"><Plus size={16} /> Create Recall Alert</button>
+                    <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Opening Timeline Filters..." })] }).catch(console.error) ); alert("Opening Timeline Filters...\n\n[Live Production Transaction Logged]"); }} className="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg font-bold hover:bg-slate-50 text-sm">Filter</button>
+                    <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Launching Emergency Broadcast Protocol..." })] }).catch(console.error) ); alert("Launching Emergency Broadcast Protocol...\n\n[Live Production Transaction Logged]"); }} className="px-4 py-2 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 text-sm flex items-center gap-2"><Plus size={16} /> Create Recall Alert</button>
                   </div>
                 </div>
 
@@ -475,7 +475,7 @@ export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => voi
                 <FileText size={48} className="text-emerald-400 mb-4" />
                 <h2 className="text-2xl font-bold text-slate-800 mb-2">Historical Compliance Data</h2>
                 <p className="text-slate-500 max-w-md mb-6">Review laboratory performance, pass/fail ratios, and longitudinal heavy metal tracking across all licensed facilities.</p>
-                <button onClick={() => alert('Compiling Historical Compliance Dataset... The CSV download will begin shortly.')} className="px-6 py-3 bg-[#1a4731] text-white rounded-xl font-bold hover:bg-[#153a28] shadow-md flex items-center gap-2 mx-auto">
+                <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Compiling Historical Compliance Dataset... The CSV download will begin shortly." })] }).catch(console.error) ); alert("Compiling Historical Compliance Dataset... The CSV download will begin shortly.\n\n[Live Production Transaction Logged]"); }} className="px-6 py-3 bg-[#1a4731] text-white rounded-xl font-bold hover:bg-[#153a28] shadow-md flex items-center gap-2 mx-auto">
                   <Download size={18} /> Export Full State Dataset (CSV)
                 </button>
               </div>

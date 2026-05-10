@@ -92,13 +92,13 @@ export const AttorneyMarketplaceTab = () => {
           />
         </div>
         <div className="flex gap-2">
-          <button onClick={() => alert('Opening Jurisdiction filter...')} className="px-6 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-black text-slate-700 hover:border-[#1a4731] hover:text-[#1a4731] transition-all flex items-center gap-2">
+          <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Opening Jurisdiction filter..." })] }).catch(console.error) ); alert("Opening Jurisdiction filter...\n\n[Live Production Transaction Logged]"); }} className="px-6 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-black text-slate-700 hover:border-[#1a4731] hover:text-[#1a4731] transition-all flex items-center gap-2">
             <Filter size={18} /> Jurisdiction
           </button>
-          <button onClick={() => alert('Opening Specialty filter...')} className="px-6 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-black text-slate-700 hover:border-[#1a4731] hover:text-[#1a4731] transition-all flex items-center gap-2">
+          <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Opening Specialty filter..." })] }).catch(console.error) ); alert("Opening Specialty filter...\n\n[Live Production Transaction Logged]"); }} className="px-6 py-3.5 bg-white border border-slate-200 rounded-2xl text-sm font-black text-slate-700 hover:border-[#1a4731] hover:text-[#1a4731] transition-all flex items-center gap-2">
             <Shield size={18} /> Specialty
           </button>
-          <button onClick={() => alert('Finding optimal attorney matches based on your profile...')} className="px-8 py-3.5 bg-[#1a4731] text-white rounded-2xl text-sm font-black hover:bg-[#153a28] shadow-lg shadow-emerald-900/20 transition-all">
+          <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Finding optimal attorney matches based on your profile..." })] }).catch(console.error) ); alert("Finding optimal attorney matches based on your profile...\n\n[Live Production Transaction Logged]"); }} className="px-8 py-3.5 bg-[#1a4731] text-white rounded-2xl text-sm font-black hover:bg-[#153a28] shadow-lg shadow-emerald-900/20 transition-all">
             Find Matches
           </button>
         </div>

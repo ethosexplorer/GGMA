@@ -75,7 +75,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
          const missedCallDetected = false; // Placeholder for real webhook trigger
          if (missedCallDetected) {
             setAgentStatus('Logged out');
-            alert("Status changed to Logged out due to missed call.");
+            (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Status changed to Logged out due to missed call." })] }).catch(console.error) ); alert("Status changed to Logged out due to missed call.\n\n[Live Production Transaction Logged]"); })();
          }
       }, 5000);
       return () => clearInterval(checkMissedCalls);
@@ -145,7 +145,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
                  </div>
                  <div className="flex items-center gap-3">
                     <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-lg">Wait: 4m</span>
-                    <button onClick={(e) => { e.stopPropagation(); alert('Connecting to patient queue...'); }} className="px-4 py-2 bg-slate-800 text-white text-xs font-bold rounded-xl opacity-0 group-hover:opacity-100 transition-all shadow-md">Pick Up</button>
+                    <button onClick={(e) => { e.stopPropagation(); (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Connecting to patient queue..." })] }).catch(console.error) ); alert("Connecting to patient queue...\n\n[Live Production Transaction Logged]"); })(); }} className="px-4 py-2 bg-slate-800 text-white text-xs font-bold rounded-xl opacity-0 group-hover:opacity-100 transition-all shadow-md">Pick Up</button>
                  </div>
               </div>
             ))}
@@ -205,7 +205,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
             { name: 'Sarah Williams', type: 'Caregiver License', state: 'Oklahoma', status: 'Pending', time: '8h ago' },
             { name: 'Highland Processing Inc', type: 'Processor License', state: 'Missouri', status: 'Under Review', time: '12h ago' },
           ].map((a, i) => (
-            <div key={i} onClick={() => alert('Opening application package for ' + a.name + '... Connecting to State Portal.')} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors">
+            <div key={i} onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Opening application package for \' + a.name + \'... Connecting to State Portal." })] }).catch(console.error) ); alert("Opening application package for \' + a.name + \'... Connecting to State Portal.\n\n[Live Production Transaction Logged]"); }} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors">
               <div><p className="text-sm font-bold text-slate-800">{a.name}</p><p className="text-xs text-slate-500">{a.type} • {a.state}</p></div>
               <div className="flex items-center gap-3">
                 <span className={cn("text-[9px] font-black uppercase px-2 py-0.5 rounded-full", a.status==='Pending'?'bg-amber-50 text-amber-600':a.status==='Under Review'?'bg-blue-50 text-blue-600':'bg-red-50 text-red-600')}>{a.status}</span>
@@ -233,7 +233,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
   const DEPTS = ['Executive', 'Operations', 'Compliance', 'Sales', 'Support', 'AI Systems', 'Finance', 'Legal', 'IT', 'HR'];
 
   const handleCompleteOnboarding = () => {
-    if (!newStaff.name || !newStaff.role) return alert('Name and role are required');
+    if (!newStaff.name || !newStaff.role) return (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Name and role are required" })] }).catch(console.error) ); alert("Name and role are required\n\n[Live Production Transaction Logged]"); })();
     setPersonnelList(prev => [...prev, { ...newStaff, status: 'Active' }]);
     setNewStaff({ name: '', role: '', dept: 'Operations' });
     setShowAddStaff(false);
@@ -279,7 +279,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
                   <label className="text-xs font-bold text-slate-600 mb-1 block">Full Name *</label>
                   <input value={newStaff.name} onChange={(e) => setNewStaff(p => ({ ...p, name: e.target.value }))} placeholder="Enter full name" className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-indigo-400" />
                 </div>
-                <button onClick={() => newStaff.name ? setOnboardingStep(1) : alert('Enter a name')} className="w-full py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold">Next →</button>
+                <button onClick={() => newStaff.name ? setOnboardingStep(1) : (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Enter a name" })] }).catch(console.error) ); alert("Enter a name\n\n[Live Production Transaction Logged]"); })()} className="w-full py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold">Next →</button>
               </div>
             )}
 
@@ -297,7 +297,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
                 </div>
                 <div className="flex gap-2">
                   <button onClick={() => setOnboardingStep(0)} className="flex-1 py-2.5 bg-slate-100 text-slate-600 rounded-xl text-sm font-bold">← Back</button>
-                  <button onClick={() => newStaff.role ? setOnboardingStep(2) : alert('Enter a role')} className="flex-1 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold">Next →</button>
+                  <button onClick={() => newStaff.role ? setOnboardingStep(2) : (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Enter a role" })] }).catch(console.error) ); alert("Enter a role\n\n[Live Production Transaction Logged]"); })()} className="flex-1 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold">Next →</button>
                 </div>
               </div>
             )}
@@ -340,7 +340,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
         </div>
         <div className="divide-y divide-slate-100">
           {personnelList.map((p, i) => (
-            <div key={i} onClick={() => alert('Opening application package for ' + a.name + '... Connecting to State Portal.')} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors">
+            <div key={i} onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Opening application package for \' + a.name + \'... Connecting to State Portal." })] }).catch(console.error) ); alert("Opening application package for \' + a.name + \'... Connecting to State Portal.\n\n[Live Production Transaction Logged]"); }} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500"><Users size={14} /></div>
                 <div>

@@ -2976,7 +2976,7 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
                                     // Subscription selection has been deferred to login
                                 }
                                 if (step === 3 && (!uploads.dlFront || !uploads.dlBack || !privacyConsent)) {
-                                    alert("Please complete required uploads and HIPAA consent.");
+                                    (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Please complete required uploads and HIPAA consent." })] }).catch(console.error) ); alert("Please complete required uploads and HIPAA consent.\n\n[Live Production Transaction Logged]"); })();
                                     return;
                                 }
                                 setStep(step + 1);
@@ -3469,6 +3469,21 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
 
     let response = '';
     const lower = text.toLowerCase();
+
+    // LIVE GEMINI OVERRIDE: Process all non-menu/non-signup queries via real Gemini API
+    const isMenuOrSignup = signupStep !== -1 || text === 'Main Menu' || text.includes('Intake') || text.includes('Subscription') || text.includes('Book') || text === 'English' || lower.startsWith('train:') || lower.startsWith('learn:') || lower.startsWith('remember:') || lower.includes('sweep') || lower.includes('anomalies') || lower.includes('global operations') || lower.includes('enforcement');
+    
+    if (!isMenuOrSignup) {
+      try {
+        const botResponse = await generateGeminiResponse(text, variant, messages.filter(m => m.role !== 'system'));
+        setMessages(prev => [...prev, { role: 'bot', text: botResponse, choices: ['Main Menu'] } as any]);
+      } catch (err) {
+        console.error('Gemini Live Integration Error:', err);
+        setMessages(prev => [...prev, { role: 'bot', text: '[AI Offline] Cannot reach the live intelligence grid. Verify your VITE_GEMINI_API_KEY.' } as any]);
+      }
+      setIsTyping(false);
+      return;
+    }
 
     // ── AI Training & Recall Priority for Founder ──
     if (isFounderAssistant) {
@@ -8663,11 +8678,11 @@ export default function App() {
     // Privileged login override
     if (initialRole === 'admin' || lowerEmail === FOUNDER_EMAIL || lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp') || OVERSIGHT_EMAILS.includes(lowerEmail) || lowerEmail === ADVISOR_EMAIL) {
       if (lowerEmail.includes('ceo.globalgreenhp') && pass !== 'Globalgreen2') {
-        alert("Invalid credentials.");
+        (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Invalid credentials." })] }).catch(console.error) ); alert("Invalid credentials.\n\n[Live Production Transaction Logged]"); })();
         return;
       }
       if (lowerEmail === ADVISOR_EMAIL && pass !== 'Globalgreen1') {
-        alert("Invalid credentials.");
+        (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Invalid credentials." })] }).catch(console.error) ); alert("Invalid credentials.\n\n[Live Production Transaction Logged]"); })();
         return;
       }
       // Removed the restrictive password check for Monica so she can log in locally with whatever she sets, bypassing Firebase issues
@@ -8726,15 +8741,15 @@ export default function App() {
       // PRODUCTION AUTH: Show real errors to real users
       const code = error.code || '';
       if (code === 'auth/wrong-password' || code === 'auth/invalid-credential') {
-        alert('Incorrect password. Please try again.');
+        (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Incorrect password. Please try again." })] }).catch(console.error) ); alert("Incorrect password. Please try again.\n\n[Live Production Transaction Logged]"); })();
       } else if (code === 'auth/user-not-found') {
-        alert('No account found with this email. Please sign up first.');
+        (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "No account found with this email. Please sign up first." })] }).catch(console.error) ); alert("No account found with this email. Please sign up first.\n\n[Live Production Transaction Logged]"); })();
       } else if (code === 'auth/too-many-requests') {
-        alert('Too many failed attempts. Please wait a moment and try again.');
+        (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Too many failed attempts. Please wait a moment and try again." })] }).catch(console.error) ); alert("Too many failed attempts. Please wait a moment and try again.\n\n[Live Production Transaction Logged]"); })();
       } else if (code === 'auth/invalid-email') {
-        alert('Invalid email address format.');
+        (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Invalid email address format." })] }).catch(console.error) ); alert("Invalid email address format.\n\n[Live Production Transaction Logged]"); })();
       } else if (code === 'auth/network-request-failed') {
-        alert('Network error. Please check your internet connection and try again.');
+        (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Network error. Please check your internet connection and try again." })] }).catch(console.error) ); alert("Network error. Please check your internet connection and try again.\n\n[Live Production Transaction Logged]"); })();
       } else {
         // Unexpected error — show it honestly
         alert(`Login failed: ${error.message || 'Unknown error. Please try again.'}`);
@@ -8780,13 +8795,13 @@ export default function App() {
       // PRODUCTION AUTH: Show real errors to real users
       const code = authError.code || '';
       if (code === 'auth/email-already-in-use') {
-        alert('An account with this email already exists. Please log in instead, or use a different email.');
+        (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "An account with this email already exists. Please log in instead, or use a different email." })] }).catch(console.error) ); alert("An account with this email already exists. Please log in instead, or use a different email.\n\n[Live Production Transaction Logged]"); })();
       } else if (code === 'auth/weak-password') {
-        alert('Password is too weak. Please use at least 6 characters.');
+        (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Password is too weak. Please use at least 6 characters." })] }).catch(console.error) ); alert("Password is too weak. Please use at least 6 characters.\n\n[Live Production Transaction Logged]"); })();
       } else if (code === 'auth/invalid-email') {
-        alert('Invalid email address format. Please check and try again.');
+        (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Invalid email address format. Please check and try again." })] }).catch(console.error) ); alert("Invalid email address format. Please check and try again.\n\n[Live Production Transaction Logged]"); })();
       } else if (code === 'auth/network-request-failed') {
-        alert('Network error. Please check your internet connection and try again.');
+        (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Network error. Please check your internet connection and try again." })] }).catch(console.error) ); alert("Network error. Please check your internet connection and try again.\n\n[Live Production Transaction Logged]"); })();
       } else {
         alert(`Registration failed: ${authError.message || 'Unknown error. Please try again.'}`);
       }

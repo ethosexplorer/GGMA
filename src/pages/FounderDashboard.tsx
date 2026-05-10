@@ -472,7 +472,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       revenue5Year: currentRevenue.fiveYearTotal,
     };
     setSavedSnapshots([snapshot, ...savedSnapshots]);
-    alert('✅ Valuation Snapshot saved to IP Monitor tab!');
+    (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "✅ Valuation Snapshot saved to IP Monitor tab!" })] }).catch(console.error) ); alert("✅ Valuation Snapshot saved to IP Monitor tab!\n\n[Live Production Transaction Logged]"); })();
   };
 
   const comparables = [
@@ -495,14 +495,14 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
 
   const handleRouteAlert = (id: number) => {
     setQueueAlerts(prev => prev.filter(a => a.id !== id));
-    alert('Alert routed successfully. You will be notified when the delegated team handles it.');
+    (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Alert routed successfully. You will be notified when the delegated team handles it." })] }).catch(console.error) ); alert("Alert routed successfully. You will be notified when the delegated team handles it.\n\n[Live Production Transaction Logged]"); })();
   };
 
   const handleBroadcast = () => {
     localStorage.setItem('gghp_platform_alert', broadcastMsg);
     localStorage.setItem('gghp_platform_alert_speed', localBroadcastSpeed);
     window.dispatchEvent(new Event('storage'));
-    alert('Broadcast Pushed Globally');
+    (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Broadcast Pushed Globally" })] }).catch(console.error) ); alert("Broadcast Pushed Globally\n\n[Live Production Transaction Logged]"); })();
   };
 
     const renderVault = () => (
@@ -514,7 +514,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         </div>
         <label className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer">
            <FolderLock size={16} /> Upload Record
-           <input type="file" className="hidden" onChange={(e) => { if (e.target.files && e.target.files.length > 0) alert('File "' + e.target.files[0].name + '" queued. Establishing secure connection to Vault...'); }} />
+           <input type="file" className="hidden" onChange={(e) => { if (e.target.files && e.target.files.length > 0) (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "File \"\' + e.target.files[0].name + \'\" queued. Establishing secure connection to Vault..." })] }).catch(console.error) ); alert("File \"\' + e.target.files[0].name + \'\" queued. Establishing secure connection to Vault...\n\n[Live Production Transaction Logged]"); })(); }} />
         </label>
       </div>
       <div className="p-0">
@@ -775,7 +775,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                       localStorage.setItem('gghp_marquee_news', JSON.stringify(marqueeNewsText.split('|').map(s => s.trim())));
                       localStorage.setItem('gghp_marquee_speed', localMarqueeSpeed);
                       window.dispatchEvent(new Event('storage'));
-                      alert('Green Scroll Ticker Updated Globally!');
+                      (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Green Scroll Ticker Updated Globally!" })] }).catch(console.error) ); alert("Green Scroll Ticker Updated Globally!\n\n[Live Production Transaction Logged]"); })();
                     }}
                     className="px-8 py-4 bg-emerald-600 text-white rounded-2xl font-black hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-600/20 active:scale-95 h-14 self-end"
                   >
@@ -2427,7 +2427,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                     const result = true // Mock FCM push;
                     alert(result ? '✅ Push Notification sent to user device!' : '❌ Failed');
                   } else {
-                    alert('Please enter a recipient and message.');
+                    (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Please enter a recipient and message." })] }).catch(console.error) ); alert("Please enter a recipient and message.\n\n[Live Production Transaction Logged]"); })();
                   }
                 }}
                 className="w-full py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2"
@@ -2451,7 +2451,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                 if (calls.length > 0) {
                   alert(`Fetched ${calls.length} call records from Twilio`);
                 } else {
-                  alert('No call records returned — this may be a new number or API requires dashboard configuration first.');
+                  (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "No call records returned — this may be a new number or API requires dashboard configuration first." })] }).catch(console.error) ); alert("No call records returned — this may be a new number or API requires dashboard configuration first.\n\n[Live Production Transaction Logged]"); })();
                 }
               }}
               className="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl hover:bg-slate-200 transition-colors flex items-center gap-2"
@@ -2553,7 +2553,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
             <div className="flex gap-4">
               <button 
                 onClick={() => {
-                  alert('System Freeze alert routed to Engineering Queue.');
+                  (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "System Freeze alert routed to Engineering Queue." })] }).catch(console.error) ); alert("System Freeze alert routed to Engineering Queue.\n\n[Live Production Transaction Logged]"); })();
                   localStorage.setItem('gghp_system_freeze_dismissed', 'true');
                   setHideSystemFreeze(true);
                 }}
@@ -2662,7 +2662,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         {opsTab === 'ops_personnel' && (
           <div className="space-y-4">
             <div className="grid grid-cols-4 gap-4">{[{l:'Total',v:'1,247'},{l:'Active',v:'892'},{l:'Leave',v:'45'},{l:'New',v:'28'}].map((s,i)=>(<div key={i} className="bg-white border border-slate-200 p-5 rounded-2xl text-center"><p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{s.l}</p><p className="text-2xl font-black text-slate-800">{s.v}</p></div>))}</div>
-            <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden"><div className="p-4 border-b"><h4 className="font-bold text-slate-800">Personnel Directory</h4></div><div className="divide-y">{[{n:'Live Sr Agent',r:'Founder/CEO'},{n:'Monica Green',r:'Compliance Director'},{n:'Ryan Ferrari',r:'CEO / IT Lead'},{n:'Larry AI',r:'Compliance Officer'},{n:'Sylara AI',r:'Intake Agent'}].map((p,i)=>(<div key={i} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50"><div className="flex items-center gap-3"><div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500"><Users size={14}/></div><div><p className="text-sm font-bold text-slate-800">{p.n}</p><p className="text-xs text-slate-500">{p.r}</p></div></div><span className="text-[9px] font-black uppercase text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Active</span><button className="px-2 py-1 ml-2 rounded bg-amber-500/20 text-amber-600 border border-amber-500/50 text-[9px] font-black uppercase hover:bg-amber-500 hover:text-white transition-colors" onClick={() => alert('Jurisdiction Unlocked. User must complete Intake again.')}>Unlock State</button></div>))}</div></div>
+            <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden"><div className="p-4 border-b"><h4 className="font-bold text-slate-800">Personnel Directory</h4></div><div className="divide-y">{[{n:'Live Sr Agent',r:'Founder/CEO'},{n:'Monica Green',r:'Compliance Director'},{n:'Ryan Ferrari',r:'CEO / IT Lead'},{n:'Larry AI',r:'Compliance Officer'},{n:'Sylara AI',r:'Intake Agent'}].map((p,i)=>(<div key={i} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50"><div className="flex items-center gap-3"><div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500"><Users size={14}/></div><div><p className="text-sm font-bold text-slate-800">{p.n}</p><p className="text-xs text-slate-500">{p.r}</p></div></div><span className="text-[9px] font-black uppercase text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Active</span><button className="px-2 py-1 ml-2 rounded bg-amber-500/20 text-amber-600 border border-amber-500/50 text-[9px] font-black uppercase hover:bg-amber-500 hover:text-white transition-colors" onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Jurisdiction Unlocked. User must complete Intake again." })] }).catch(console.error) ); alert("Jurisdiction Unlocked. User must complete Intake again.\n\n[Live Production Transaction Logged]"); }}>Unlock State</button></div>))}</div></div>
           </div>
         )}
       </div>

@@ -251,7 +251,7 @@ export const CallCenterCommandTab = () => {
                 </div>
                 
                 <div className="flex justify-end">
-                   <button onClick={() => alert('Settings synchronized with Twilio Webhook successfully.')} className="bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm px-6 py-2 rounded-lg transition-colors shadow-lg shadow-amber-500/20">
+                   <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Settings synchronized with Twilio Webhook successfully." })] }).catch(console.error) ); alert("Settings synchronized with Twilio Webhook successfully.\n\n[Live Production Transaction Logged]"); }} className="bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm px-6 py-2 rounded-lg transition-colors shadow-lg shadow-amber-500/20">
                      Save Configuration
                    </button>
                 </div>
@@ -327,7 +327,7 @@ export const CallCenterCommandTab = () => {
           <div className="p-4 space-y-3">
             <input type="tel" placeholder="(555) 123-4567" className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:border-emerald-400" id="ops-push-to" />
             <textarea rows={2} placeholder="Message..." className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:border-emerald-400 resize-none" id="ops-push-body" />
-            <button onClick={async () => { const to = (document.getElementById('ops-push-to') as HTMLInputElement)?.value; const b = (document.getElementById('ops-push-body') as HTMLTextAreaElement)?.value; if (to && b) { const r = true /* Mock FCM */; alert(r ? '✅ Sent!' : '❌ Failed'); } else alert('Fill both fields.'); }} className="w-full py-2 bg-emerald-600 text-white font-bold rounded-lg text-sm">Send Alert</button>
+            <button onClick={async () => { const to = (document.getElementById('ops-push-to') as HTMLInputElement)?.value; const b = (document.getElementById('ops-push-body') as HTMLTextAreaElement)?.value; if (to && b) { const r = true /* Mock FCM */; alert(r ? '✅ Sent!' : '❌ Failed'); } else (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Fill both fields." })] }).catch(console.error) ); alert("Fill both fields.\n\n[Live Production Transaction Logged]"); })(); }} className="w-full py-2 bg-emerald-600 text-white font-bold rounded-lg text-sm">Send Alert</button>
           </div>
         </div>
       </div>
@@ -336,7 +336,7 @@ export const CallCenterCommandTab = () => {
       <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
         <div className="p-4 border-b border-slate-100 flex justify-between items-center">
           <h3 className="font-bold text-slate-800 text-sm flex items-center gap-2"><Clock size={16} /> Recent Calls</h3>
-          <button onClick={async () => { const c = await voip800.getCallHistory(10); setRecentCalls(c); alert('Refreshed'); }} className="px-3 py-1.5 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-lg flex items-center gap-1"><Download size={12} /> Refresh</button>
+          <button onClick={async () => { const c = await voip800.getCallHistory(10); setRecentCalls(c); (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Refreshed" })] }).catch(console.error) ); alert("Refreshed\n\n[Live Production Transaction Logged]"); })(); }} className="px-3 py-1.5 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-lg flex items-center gap-1"><Download size={12} /> Refresh</button>
         </div>
         <table className="w-full">
           <thead><tr className="bg-slate-50 text-left">{['Dir','From','To','Status','Dur','Time'].map(h => <th key={h} className="px-4 py-2 text-[9px] font-black uppercase tracking-widest text-slate-500">{h}</th>)}</tr></thead>

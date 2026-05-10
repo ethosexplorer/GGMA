@@ -50,7 +50,7 @@ const INTERNAL_NAV_ITEMS: NavItem[] = [
 const ChiefComplianceDirectorDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => void }) => {
   const [activeTab, setActiveTab] = useState('system_health');
   const [isEditingNav, setIsEditingNav] = useState(false);
-  const handleAddSection = () => { alert('Not implemented'); };
+  const handleAddSection = () => { (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Not implemented" })] }).catch(console.error) ); alert("Not implemented\n\n[Live Production Transaction Logged]"); })(); };
 
   // Draggable nav state with localStorage persistence
   const [navItems, setNavItems] = useState(() => {

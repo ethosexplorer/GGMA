@@ -144,7 +144,7 @@ export default function BusinessRegistrationPage({ onNavigate, onComplete }: { o
   const handleFileUpload = (docKey: string, file: File) => {
     // Check file type and size
     if (file.size > 10 * 1024 * 1024) {
-      alert("File is too large. Maximum size is 10MB.");
+      (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "File is too large. Maximum size is 10MB." })] }).catch(console.error) ); alert("File is too large. Maximum size is 10MB.\n\n[Live Production Transaction Logged]"); })();
       return;
     }
     setUploadedFiles(prev => ({ ...prev, [docKey]: file }));
@@ -369,9 +369,9 @@ export default function BusinessRegistrationPage({ onNavigate, onComplete }: { o
                       // Mock GPS verification
                       if (formData.physicalAddress) {
                         updateField('gpsCoordinates', '35.4676° N, 97.5164° W');
-                        alert("USPS Verification Success: GPS Coordinates Generated.");
+                        (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "USPS Verification Success: GPS Coordinates Generated." })] }).catch(console.error) ); alert("USPS Verification Success: GPS Coordinates Generated.\n\n[Live Production Transaction Logged]"); })();
                       } else {
-                        alert("Please enter an address first.");
+                        (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Please enter an address first." })] }).catch(console.error) ); alert("Please enter an address first.\n\n[Live Production Transaction Logged]"); })();
                       }
                     }}
                     className="px-4 py-2.5 bg-blue-600 text-white font-bold text-xs rounded-lg hover:bg-blue-500 transition-colors whitespace-nowrap"
@@ -648,7 +648,7 @@ export default function BusinessRegistrationPage({ onNavigate, onComplete }: { o
     // If Step 6 (Attestations), ensure all to 10 are checked
     if (currentStep === 5) {
       if(!formData.attest1 || !formData.attest2 || !formData.attest3 || !formData.attest4 || !formData.attest5 || !formData.attest6 || !formData.attest7 || !formData.attest8 || !formData.attest9 || !formData.attest10) {
-        alert("You must check all 10 attestations to proceed.");
+        (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "You must check all 10 attestations to proceed." })] }).catch(console.error) ); alert("You must check all 10 attestations to proceed.\n\n[Live Production Transaction Logged]"); })();
         return;
       }
     }

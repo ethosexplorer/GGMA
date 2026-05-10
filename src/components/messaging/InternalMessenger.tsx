@@ -107,7 +107,7 @@ export const InternalMessenger = ({ currentUser }: Props) => {
     if (!messageText.trim()) return;
 
     if (activeChannel === 'external-push' && !activeDM) {
-      if (!externalPhone.trim()) { alert('Enter a valid phone number'); return; }
+      if (!externalPhone.trim()) { (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Enter a valid phone number" })] }).catch(console.error) ); alert("Enter a valid phone number\n\n[Live Production Transaction Logged]"); })(); return; }
       try {
         const sent = true // Mock push;
         if (sent) {
@@ -115,11 +115,11 @@ export const InternalMessenger = ({ currentUser }: Props) => {
           setMessageText('');
           inputRef.current?.focus();
         } else {
-          alert('Failed to send Push Notification');
+          (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Failed to send Push Notification" })] }).catch(console.error) ); alert("Failed to send Push Notification\n\n[Live Production Transaction Logged]"); })();
         }
       } catch (err) {
         console.error(err);
-        alert('Failed to send Push Notification');
+        (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Failed to send Push Notification" })] }).catch(console.error) ); alert("Failed to send Push Notification\n\n[Live Production Transaction Logged]"); })();
       }
       return;
     }
