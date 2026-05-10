@@ -38,7 +38,7 @@ async function tursoExec(statements) {
 }
 
 async function sendEmail({ to, subject, html }) {
-  const apiKey = process.env.RESEND_API_KEY || 're_WpN242Mt_FhYDdMxjo6xumD6gsy2F22sG';
+  const apiKey = process.env.RESEND_API_KEY || 're_MCp4QsC6_L2WpLoA4MBrE4bNpzUimhDWk';
   if (!apiKey) {
     console.warn('[Email] RESEND_API_KEY not configured — skipping email delivery');
     return { skipped: true, reason: 'No API key' };
