@@ -6,7 +6,7 @@ import { Building2, Users, FileText, Settings, Shield, Activity, Bell,
   Briefcase, HeartPulse, Scale, Gavel, FileCheck, Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
   Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Headphones,
-  Zap, UserPlus, GraduationCap, FlaskConical, BookOpen, Phone, ShieldAlert, Lock, CircleCheck, Edit2, Trash2 } from 'lucide-react';
+  Zap, UserPlus, GraduationCap, FlaskConical, BookOpen, Phone, ShieldAlert, Lock, CircleCheck, Edit2, Trash2, X } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { METRC_MANUAL } from '../data/metrcManual';
@@ -124,6 +124,11 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
   const isExecutive = user?.role === 'executive_founder' || user?.role === 'executive_ceo' || user?.role === 'president' || user?.role === 'chief_compliance_director' || user?.role === 'executive_advisor' || user?.role === 'advisor';
   const [isUnlocked, setIsUnlocked] = useState(isExecutive);
   const [pin, setPin] = useState('');
+  const [liveAction, setLiveAction] = useState<{ title: string, message: string, type: 'warning' | 'success' | 'process' | 'info' | 'form' } | null>(null);
+
+  const triggerLiveAction = (title: string, message: string, type: 'warning' | 'success' | 'process' | 'info' | 'form') => {
+    setLiveAction({ title, message, type });
+  };
 
   const renderOverview = () => (
     <div className="space-y-6 animate-in fade-in duration-500">
@@ -294,8 +299,8 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
                     </div>
                     <p className="text-xs text-red-800 font-medium leading-relaxed">{alert.m}</p>
                     <div className="mt-4 flex gap-2">
-                       <button className="px-4 py-2 bg-red-600 text-white text-[10px] font-black rounded-xl hover:bg-red-700 uppercase" onClick={() => alert("Connecting to AI Intercept console...")}>Direct Intercept</button>
-                       <button className="px-4 py-2 bg-white border border-red-200 text-red-600 text-[10px] font-black rounded-xl hover:bg-red-50 uppercase" onClick={() => alert("Drafting official regulatory warning...")}>Issue Warning</button>
+                       <button className="px-4 py-2 bg-red-600 text-white text-[10px] font-black rounded-xl hover:bg-red-700 uppercase" onClick={() => triggerLiveAction("AI Intercept Console", "Connecting to live L.A.R.R.Y monitoring feed to override current staff session...", "process")}>Direct Intercept</button>
+                       <button className="px-4 py-2 bg-white border border-red-200 text-red-600 text-[10px] font-black rounded-xl hover:bg-red-50 uppercase" onClick={() => triggerLiveAction("Issue Regulatory Warning", "Drafting an official warning notice to this user account regarding their recent compliance breach.", "form")}>Issue Warning</button>
                     </div>
                  </div>
                ))}
@@ -319,7 +324,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
                      <div className="h-full bg-emerald-500" style={{ width: '96.8%' }}></div>
                   </div>
                </div>
-               <button className="w-full py-3 bg-white/10 border border-white/20 text-white rounded-xl text-xs font-black hover:bg-white/20 transition-all uppercase" onClick={() => alert("Initiating Full Performance Audit. Running 14-day trailing analysis...")}>Full Performance Audit</button>
+               <button className="w-full py-3 bg-white/10 border border-white/20 text-white rounded-xl text-xs font-black hover:bg-white/20 transition-all uppercase" onClick={() => triggerLiveAction("Full Performance Audit", "Initiating global system audit. Pulling 14-day trailing analysis and parsing 18,402 server logs...", "process")}>Full Performance Audit</button>
             </div>
          </div>
       </div>
@@ -334,7 +339,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
           <p className="text-slate-500 text-sm">Manage state-level staff, inspectors, and patient/business accounts.</p>
         </div>
         <div className="relative z-10 flex gap-4">
-           <button onClick={() => alert("Opening secure Staff Provisioning modal...")} className="px-5 py-2.5 bg-slate-800 text-white text-sm font-bold rounded-xl shadow-md hover:bg-slate-700 transition-colors flex items-center gap-2">
+           <button onClick={() => triggerLiveAction("Staff Provisioning", "Initialize new user profile and bind cryptographic role keys to the state domain.", "form")} className="px-5 py-2.5 bg-slate-800 text-white text-sm font-bold rounded-xl shadow-md hover:bg-slate-700 transition-colors flex items-center gap-2">
               <Plus size={16} /> Create Staff Invite
            </button>
         </div>
@@ -382,8 +387,8 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
                 </td>
                 <td className="px-4 py-3 text-right opacity-0 group-hover:opacity-100 transition-opacity">
                    <div className="flex justify-end gap-2">
-                     <button className="px-3 py-1.5 bg-slate-100 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-200" onClick={() => alert("Opening Entity Editor...")}>Edit</button>
-                     <button className="px-3 py-1.5 bg-red-50 text-red-600 text-xs font-bold rounded-lg hover:bg-red-100" onClick={() => alert("WARNING: State suspension overrides local permissions. Proceed?")}>Suspend</button>
+                     <button className="px-3 py-1.5 bg-slate-100 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-200" onClick={() => triggerLiveAction("Entity Editor", "Accessing deep profile settings for this entity. All changes are immutable and logged.", "form")}>Edit</button>
+                     <button className="px-3 py-1.5 bg-red-50 text-red-600 text-xs font-bold rounded-lg hover:bg-red-100" onClick={() => triggerLiveAction("Emergency Suspension", "WARNING: Executing a state-level suspension will immediately sever all active API keys and portal access for this entity. Are you sure you wish to proceed?", "warning")}>Suspend</button>
                    </div>
                 </td>
               </tr>
@@ -442,13 +447,13 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
              <div key={i} className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group">
                 <div className="flex justify-between items-start mb-4">
                    <span className="text-[9px] font-black uppercase px-2 py-1 bg-slate-100 text-slate-500 rounded-lg group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">{item.category}</span>
-                   <button onClick={() => alert("Opening detailed compliance mandate...")} className="text-slate-300 hover:text-indigo-600 transition-colors"><ArrowUpRight size={18} /></button>
+                   <button onClick={() => triggerLiveAction("Compliance Mandate", "Accessing detailed regulatory sub-sections and historical addendums.", "info")} className="text-slate-300 hover:text-indigo-600 transition-colors"><ArrowUpRight size={18} /></button>
                 </div>
                 <h3 className="text-lg font-black text-slate-800 mb-3 group-hover:text-indigo-700 transition-colors">{item.title}</h3>
                 <p className="text-sm text-slate-500 leading-relaxed line-clamp-4">{item.content}</p>
                 <div className="mt-6 pt-6 border-t border-slate-50 flex justify-between items-center">
                    <span className="text-[10px] font-bold text-slate-400 italic">Source: Metrc Guide 2021 v11.1</span>
-                   <button className="text-[10px] font-black text-indigo-600 uppercase tracking-widest hover:underline" onClick={() => alert("Fetching complete Metrc manual module...")}>Read Full Section</button>
+                   <button className="text-[10px] font-black text-indigo-600 uppercase tracking-widest hover:underline" onClick={() => triggerLiveAction("Regulatory Library", "Pulling full text module from the State Metrc database...", "process")}>Read Full Section</button>
                 </div>
              </div>
            ))}
@@ -502,7 +507,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
                           <p className="text-[10px] font-black uppercase text-amber-600 bg-amber-50 px-2 py-0.5 rounded">{tkt.s}</p>
                           <p className="text-xs font-bold text-slate-400 mt-1">{tkt.time}</p>
                        </div>
-                       <button className="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-black uppercase opacity-0 group-hover:opacity-100 transition-all" onClick={() => alert("Engaging agent override. Connecting to live session...")}>Takeover</button>
+                       <button className="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-black uppercase opacity-0 group-hover:opacity-100 transition-all" onClick={() => triggerLiveAction("Agent Override", "Bypassing standard routing to connect directly with the live user session.", "process")}>Takeover</button>
                     </div>
                  </div>
                ))}
@@ -569,7 +574,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
                       <span className={cn("px-2 py-0.5 rounded text-[9px] font-black uppercase", p.s === 'Active' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600')}>{p.s}</span>
                    </td>
                    <td className="px-6 py-4 text-right">
-                      <button className="text-xs font-black text-indigo-600 hover:underline uppercase tracking-wider" onClick={() => alert("Loading Entity Profile Module...")}>Manage</button>
+                      <button className="text-xs font-black text-indigo-600 hover:underline uppercase tracking-wider" onClick={() => triggerLiveAction("Entity Profile", "Loading detailed business taxonomy, inventory logs, and staff assignments.", "info")}>Manage</button>
                    </td>
                 </tr>
               ))}
@@ -607,7 +612,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
                       </span>
                    </td>
                    <td className="px-6 py-4 text-right">
-                      <button className="text-xs font-black text-indigo-600 hover:underline uppercase tracking-wider" onClick={() => alert("Executing forensic audit on selected node...")}>Audit</button>
+                      <button className="text-xs font-black text-indigo-600 hover:underline uppercase tracking-wider" onClick={() => triggerLiveAction("Forensic Audit", "Connecting to selected node to download complete operational history and error trace logs...", "process")}>Audit</button>
                    </td>
                 </tr>
               ))}
@@ -655,7 +660,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
                      <td className="px-6 py-4 font-bold text-slate-600 text-xs">{a.id}</td>
                      <td className="px-6 py-4 font-black text-slate-800">{a.n}</td>
                      <td className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">{a.p}</td>
-                     <td className="px-6 py-4 text-right"><button className="text-xs font-black text-indigo-600 uppercase hover:underline" onClick={() => alert("Pulling application package from OMMA portal...")}>Review</button></td>
+                     <td className="px-6 py-4 text-right"><button className="text-xs font-black text-indigo-600 uppercase hover:underline" onClick={() => triggerLiveAction("Application Review", "Retrieving secure application payload and scanning attachments for automated pre-approval.", "process")}>Review</button></td>
                   </tr>
                 ))}
              </tbody>
@@ -674,14 +679,14 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
                    <h4 className="font-bold text-amber-900">Missing Metrc API Key</h4>
                    <p className="text-xs text-amber-700 font-medium">Business: Apex Dispensary</p>
                 </div>
-                <button className="px-4 py-2 bg-amber-600 text-white text-[10px] font-black uppercase rounded-lg" onClick={() => alert("Drafting compliance cure notice...")}>Send Notice</button>
+                <button className="px-4 py-2 bg-amber-600 text-white text-[10px] font-black uppercase rounded-lg" onClick={() => triggerLiveAction("Compliance Notice", "Prepare a secure transmission notice with a mandatory cure period for the flagged violation.", "form")}>Send Notice</button>
              </div>
              <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center justify-between">
                 <div>
                    <h4 className="font-bold text-emerald-900">Monthly Audit Completed</h4>
                    <p className="text-xs text-emerald-700 font-medium">System-wide auto-audit finished 2 hours ago.</p>
                 </div>
-                <button className="px-4 py-2 bg-emerald-600 text-white text-[10px] font-black uppercase rounded-lg" onClick={() => alert("Opening detailed cryptographic event log...")}>View Log</button>
+                <button className="px-4 py-2 bg-emerald-600 text-white text-[10px] font-black uppercase rounded-lg" onClick={() => triggerLiveAction("Cryptographic Log", "Decrypting localized event payload to display original API request parameters.", "info")}>View Log</button>
              </div>
           </div>
        </div>
@@ -721,15 +726,15 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
              <div>
                 <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">System Status</label>
                 <div className="flex gap-4">
-                   <button className="flex-1 py-3 bg-emerald-50 border-2 border-emerald-500 text-emerald-700 font-black rounded-xl uppercase text-xs" onClick={() => alert("Confirmed: Global Status is ONLINE.")}>Online</button>
-                   <button className="flex-1 py-3 bg-slate-50 border-2 border-slate-200 text-slate-500 font-black rounded-xl uppercase text-xs hover:bg-slate-100" onClick={() => alert("WARNING: Engaging Maintenance Mode halts external traffic. Confirm?")}>Maintenance Mode</button>
+                   <button className="flex-1 py-3 bg-emerald-50 border-2 border-emerald-500 text-emerald-700 font-black rounded-xl uppercase text-xs" onClick={() => triggerLiveAction("System Status", "Global traffic is currently routing normally. State endpoints are registering 99.98% uptime.", "success")}>Online</button>
+                   <button className="flex-1 py-3 bg-slate-50 border-2 border-slate-200 text-slate-500 font-black rounded-xl uppercase text-xs hover:bg-slate-100" onClick={() => triggerLiveAction("Maintenance Mode", "WARNING: Engaging maintenance mode will disconnect all active user sessions and halt incoming Metrc syncing. Proceed?", "warning")}>Maintenance Mode</button>
                 </div>
              </div>
              <div>
                 <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Auto-Escalation Threshold (Mins)</label>
                 <input type="number" defaultValue="5" className="w-full p-3 border border-slate-200 rounded-xl outline-none focus:border-indigo-500" />
              </div>
-             <button className="w-full py-4 bg-slate-900 text-white font-black uppercase text-xs rounded-xl shadow-lg hover:bg-slate-800" onClick={() => alert("Global configuration saved and replicated across nodes.")}>Save Configuration</button>
+             <button className="w-full py-4 bg-slate-900 text-white font-black uppercase text-xs rounded-xl shadow-lg hover:bg-slate-800" onClick={() => triggerLiveAction("Configuration Saved", "Global administration settings have been successfully distributed across the 4 localized nodes.", "success")}>Save Configuration</button>
           </div>
        </div>
     </div>
@@ -886,7 +891,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
                  </div>
                  <p className="text-xs font-bold text-slate-800">Apex Health CEO requests account override.</p>
                  <div className="mt-3 flex justify-between items-center">
-                    <button className="text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest flex items-center gap-1" onClick={() => alert("Ticket claimed. Opening unified messaging interface...")}>Take Ticket</button>
+                    <button className="text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest flex items-center gap-1" onClick={() => triggerLiveAction("Support Ticket", "Ticket successfully claimed. Transferring context to live ops center...", "success")}>Take Ticket</button>
                     <span className="text-[9px] font-bold text-slate-400">Assigned: AI</span>
                  </div>
               </div>
@@ -897,7 +902,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
                  </div>
                  <p className="text-xs font-bold text-slate-800">Patient licensing error during document upload.</p>
                  <div className="mt-3 flex justify-between items-center">
-                    <button className="text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest flex items-center gap-1" onClick={() => alert("Ticket claimed. Opening unified messaging interface...")}>Take Ticket</button>
+                    <button className="text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest flex items-center gap-1" onClick={() => triggerLiveAction("Support Ticket", "Ticket successfully claimed. Transferring context to live ops center...", "success")}>Take Ticket</button>
                     <span className="text-[9px] font-bold text-slate-400">Assigned: Call Center</span>
                  </div>
               </div>
