@@ -1,5 +1,5 @@
-// Direct Push Notification — Replaces Twilio SMS (declined due to cannabis industry)
-// Saves notifications to Turso DB for in-app delivery + optional browser push
+// Subscription Notification — Routes through the unified notification engine
+// Saves to Turso DB + sends email via Resend (replaces declined Twilio SMS)
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -23,102 +23,47 @@ export default async function handler(req, res) {
     const addonsList = addons && addons.length > 0 ? addons.join(', ') : 'None';
     const trialInfo = trialDays > 0 ? `${trialDays}-day free trial, then ` : '';
 
-    // ── 1. Save notification directly to Turso DB ──
-    const TURSO_URL = process.env.VITE_TURSO_DATABASE_URL
-      ? process.env.VITE_TURSO_DATABASE_URL.replace('libsql://', 'https://') + '/v2/pipeline'
-      : 'https://ggma-ggma.aws-us-east-2.turso.io/v2/pipeline';
-    const TURSO_TOKEN = process.env.VITE_TURSO_AUTH_TOKEN;
-
-    const notificationId = 'NOTIF-' + Date.now().toString(36).toUpperCase();
-    const notificationData = JSON.stringify({
-      type: 'new_subscription',
-      customerName,
-      customerEmail,
-      customerPhone: customerPhone || 'N/A',
-      company: company || 'N/A',
-      plan,
-      billing,
-      total: `${trialInfo}${total}`,
-      addons: addonsList,
-      notes: notes || 'None',
-      timestamp: new Date().toISOString(),
+    // Route through the unified notification API
+    const origin = req.headers.origin || req.headers.host || 'https://ggma.vercel.app';
+    const protocol = origin.startsWith('http') ? '' : 'https://';
+    
+    const notifyRes = await fetch(`${protocol}${origin}/api/notify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'subscription',
+        title: `New Subscription: ${customerName}`,
+        message: [
+          `Customer: ${customerName}`,
+          `Email: ${customerEmail}`,
+          `Phone: ${customerPhone || 'N/A'}`,
+          `Company: ${company || 'N/A'}`,
+          `Plan: ${plan} (${billing})`,
+          `Total: ${trialInfo}${total}`,
+          `Add-ons: ${addonsList}`,
+          notes ? `Notes: ${notes}` : null,
+        ].filter(Boolean).join('\n'),
+        recipientEmail: customerEmail,
+        internal: true,
+        external: true,
+        ctaText: 'Access Your Dashboard',
+        ctaUrl: `${protocol}${origin}/dashboard`,
+        data: { customerName, customerEmail, customerPhone, company, plan, addons, billing, total, trialDays },
+      }),
     });
 
-    if (TURSO_TOKEN) {
-      // Ensure notifications table exists + insert
-      await fetch(TURSO_URL, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${TURSO_TOKEN}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          requests: [
-            {
-              type: 'execute',
-              stmt: {
-                sql: `CREATE TABLE IF NOT EXISTS platform_notifications (
-                  id TEXT PRIMARY KEY,
-                  type TEXT NOT NULL,
-                  title TEXT NOT NULL,
-                  message TEXT NOT NULL,
-                  data TEXT,
-                  recipient TEXT DEFAULT 'founder',
-                  read INTEGER DEFAULT 0,
-                  created_at TEXT DEFAULT (datetime('now'))
-                )`
-              }
-            },
-            {
-              type: 'execute',
-              stmt: {
-                sql: "INSERT INTO platform_notifications (id, type, title, message, data, recipient) VALUES (?, ?, ?, ?, ?, ?)",
-                args: [
-                  { type: 'text', value: notificationId },
-                  { type: 'text', value: 'new_subscription' },
-                  { type: 'text', value: `New Subscription: ${customerName}` },
-                  { type: 'text', value: `${customerName} (${customerEmail}) subscribed to ${plan} (${billing}). Total: ${trialInfo}${total}. Add-ons: ${addonsList}` },
-                  { type: 'text', value: notificationData },
-                  { type: 'text', value: 'founder' },
-                ]
-              }
-            },
-            {
-              type: 'execute',
-              stmt: {
-                sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)",
-                args: [
-                  { type: 'text', value: notificationId },
-                  { type: 'text', value: 'NEW_SUBSCRIPTION_NOTIFICATION' },
-                  { type: 'text', value: customerEmail || 'unknown' },
-                  { type: 'text', value: notificationData },
-                ]
-              }
-            }
-          ]
-        })
-      });
-    }
+    const result = await notifyRes.json();
 
-    // ── 2. Log to Vercel console ──
-    console.log('=== NEW SUBSCRIPTION REQUEST ===');
-    console.log(`Customer: ${customerName} (${customerEmail})`);
-    console.log(`Phone: ${customerPhone || 'N/A'}`);
-    console.log(`Company: ${company || 'N/A'}`);
-    console.log(`Plan: ${plan} (${billing})`);
-    console.log(`Total: ${trialInfo}${total}`);
-    console.log(`Add-ons: ${addonsList}`);
-    console.log(`Notes: ${notes || 'None'}`);
-    console.log(`Notification ID: ${notificationId}`);
-    console.log('================================');
+    // Log
+    console.log('=== NEW SUBSCRIPTION ===');
+    console.log(`${customerName} | ${customerEmail} | ${plan} (${billing}) | ${trialInfo}${total}`);
+    console.log(`Notification Result:`, result);
+    console.log('========================');
 
-    return res.status(200).json({ 
-      success: true, 
-      message: 'Push notification saved to database',
-      notificationId 
-    });
+    return res.status(200).json({ success: true, message: 'Notification sent', ...result });
   } catch (error) {
-    console.error('Notification error:', error);
+    console.error('Subscription notification error:', error);
+    // Graceful degradation — never block checkout
     return res.status(200).json({ success: true, message: 'Order recorded (notification delivery best-effort)' });
   }
 }
