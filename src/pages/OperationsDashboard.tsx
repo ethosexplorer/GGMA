@@ -21,13 +21,13 @@ const NAV_ITEMS = [
   { id: 'phone_intake', label: 'Phone Intake Form', icon: UserPlus, badge: 'New' },
   { section: 'SUPPORT OPERATIONS' },
   { id: 'admin_support_calendar', label: 'Admin Support', icon: Clock, badge: 'Help' },
-  { id: 'support', label: 'Active Support Tickets', icon: MessageSquare, badge: '12' },
-  { id: 'calls', label: 'Call Queue', icon: Headphones, badge: '3' },
+  { id: 'support', label: 'Active Support Tickets', icon: MessageSquare, badge: '0' },
+  { id: 'calls', label: 'Call Queue', icon: Headphones, badge: '0' },
   { id: 'backoffice', label: 'Escalations Queue', icon: Cpu, dot: true },
   { section: 'MANAGEMENT' },
   { id: 'it_support', label: 'IT Support & Diagnostics', icon: MonitorPlay },
   { id: 'hr_intelligence', label: 'HR Intelligence', icon: UserPlus },
-  { id: 'applications', label: 'Applications Queue', icon: FileText, badge: '502' },
+  { id: 'applications', label: 'Applications Queue', icon: FileText, badge: '1' },
   { id: 'personnel', label: 'Personnel Force (Total)', icon: Users },
   { section: 'USER ASSISTANCE' },
   { id: 'patients', label: 'Patient Inquiries', icon: HeartPulse },
@@ -133,32 +133,21 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
          <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm text-center">
             <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Average Wait Time</h4>
-            <p className="text-2xl font-black text-slate-800">1m 42s</p>
+            <p className="text-2xl font-black text-slate-800">0s</p>
          </div>
          <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm text-center">
             <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Active Agents</h4>
-            <p className="text-2xl font-black text-emerald-600">42</p>
+            <p className="text-2xl font-black text-emerald-600">1</p>
          </div>
          <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm text-center">
             <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Resolution Rate</h4>
-            <p className="text-2xl font-black text-indigo-600">94%</p>
+            <p className="text-2xl font-black text-indigo-600">100%</p>
          </div>
       </div>
       <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
          <h3 className="font-bold text-slate-800 mb-6 flex items-center gap-2"><MessageSquare size={18} className="text-blue-500" /> Active Conversations</h3>
          <div className="space-y-3">
-            {[1,2,3,4].map(i => (
-              <div key={i} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-blue-200 transition-all cursor-pointer group">
-                 <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400"><Users size={18} /></div>
-                    <div><p className="text-sm font-bold text-slate-800">User_{4820+i} (Patient)</p><p className="text-xs text-slate-500 font-medium">Topic: License Status Inquiry</p></div>
-                 </div>
-                 <div className="flex items-center gap-3">
-                    <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-lg">Wait: 4m</span>
-                    <button onClick={(e) => { e.stopPropagation(); (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Connecting to patient queue..." })] }).catch(console.error) ); alert("Connecting to patient queue...\n\n[Live Production Transaction Logged]"); })(); }} className="px-4 py-2 bg-slate-800 text-white text-xs font-bold rounded-xl opacity-0 group-hover:opacity-100 transition-all shadow-md">Pick Up</button>
-                 </div>
-              </div>
-            ))}
+            <div className="p-8 text-center text-slate-500 font-bold">No active support tickets.</div>
          </div>
       </div>
     </div>
@@ -177,7 +166,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
         <p className="text-purple-300 text-[10px] font-bold uppercase tracking-widest mt-1">Workforce Analytics & Talent Pipeline</p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {[{ l: 'Active Staff', v: '42', c: 'emerald' }, { l: 'Open Positions', v: '8', c: 'amber' }, { l: 'Applications', v: '156', c: 'blue' }, { l: 'Retention Rate', v: '94%', c: 'indigo' }].map((s, i) => (
+        {[{ l: 'Active Staff', v: '1', c: 'emerald' }, { l: 'Open Positions', v: '0', c: 'amber' }, { l: 'Applications', v: '1', c: 'blue' }, { l: 'Retention Rate', v: '100%', c: 'indigo' }].map((s, i) => (
           <div key={i} className="bg-white border border-slate-200 rounded-2xl p-5 text-center shadow-sm">
             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{s.l}</p>
             <p className={`text-2xl font-black text-${s.c}-600`}>{s.v}</p>
@@ -187,9 +176,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
       <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
         <h3 className="font-bold text-slate-800 mb-4">Recent Hires & Pipeline</h3>
         <div className="space-y-3">
-          {['IT Systems Admin — Ryan Ferrari (Onboarded)', 'Compliance Analyst — Pending Background Check', 'Customer Support Lead — Interview Scheduled', 'Operations Coordinator — Application Received'].map((h, i) => (
-            <div key={i} className="p-3 bg-slate-50 rounded-xl border border-slate-100 text-sm font-medium text-slate-700">{h}</div>
-          ))}
+          <div className="p-8 text-center text-slate-500 font-bold">No recent HR activity.</div>
         </div>
       </div>
     </div>
@@ -198,7 +185,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
   const renderApplicationsQueue = () => (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {[{ l: 'Pending Review', v: '502', c: 'amber' }, { l: 'Approved Today', v: '38', c: 'emerald' }, { l: 'Rejected/Flagged', v: '12', c: 'red' }].map((s, i) => (
+        {[{ l: 'Pending Review', v: liveApplications.length.toString(), c: 'amber' }, { l: 'Approved Today', v: '0', c: 'emerald' }, { l: 'Rejected/Flagged', v: '0', c: 'red' }].map((s, i) => (
           <div key={i} className="bg-white border border-slate-200 rounded-2xl p-5 text-center shadow-sm">
             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{s.l}</p>
             <p className={`text-2xl font-black text-${s.c}-600`}>{s.v}</p>
