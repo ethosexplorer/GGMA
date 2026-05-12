@@ -1776,14 +1776,25 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
             ))}
           </div>
 
-          {/* LOT Network Member Badge */}
-          <div className="flex justify-center mb-12">
+          {/* High-Level Trust Badges */}
+          <div className="flex flex-col md:flex-row justify-center gap-6 mb-12">
+            {/* LOT Network Member Badge */}
             <a href="https://lotnet.com/" target="_blank" rel="noopener noreferrer" className="group flex items-center gap-4 bg-white border-2 border-blue-100 hover:border-blue-300 rounded-2xl px-8 py-5 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1">
               <img src="https://lotnet.com/wp-content/uploads/2017/12/lotnetworkbadge-blue-130x130.png" alt="LOT Network Member" className="w-16 h-16 object-contain" />
               <div className="text-left">
                 <p className="text-sm font-black text-slate-900 group-hover:text-blue-700 transition-colors">LOT Network Member</p>
                 <p className="text-[11px] text-slate-500 font-medium">Defensive Patent Protection — 6,000+ Members</p>
                 <p className="text-[10px] text-blue-600 font-bold mt-1">Protected against PAE litigation from 24.5% of all U.S. patents</p>
+              </div>
+            </a>
+
+            {/* BBB A+ Accredited Badge */}
+            <a href="https://www.bbb.org/us/ok/oklahoma-city/profile/medical-marijuana-card/chronic-cardz-0995-90108724" target="_blank" rel="noopener noreferrer" className="group flex items-center gap-4 bg-white border-2 border-[#163a5f] hover:border-[#1e5082] rounded-2xl px-8 py-5 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1">
+              <div className="w-16 h-16 flex items-center justify-center bg-[#163a5f] rounded-xl text-white font-black text-2xl tracking-tighter shadow-inner">BBB</div>
+              <div className="text-left">
+                <p className="text-sm font-black text-[#163a5f] group-hover:text-[#1e5082] transition-colors">A+ Accredited Business</p>
+                <p className="text-[11px] text-slate-500 font-medium">Better Business Bureau Since 2018</p>
+                <p className="text-[10px] text-emerald-600 font-bold mt-1">6+ Years of verified community trust</p>
               </div>
             </a>
           </div>
@@ -1838,7 +1849,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
           <div className="text-center">
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4">Integrated With &amp; Registered On</p>
             <div className="flex flex-wrap justify-center items-center gap-4 opacity-60 hover:opacity-100 transition-opacity">
-              {['SAM.gov', 'OMES', 'Metrc', 'BidNet Direct', 'OKC City', 'OK ERP', 'Calendly', 'GoHealthUSA', 'LOT Network'].map((partner, i) => (
+              {['SAM.gov', 'OMES', 'Metrc', 'BidNet Direct', 'OKC City', 'OK ERP', 'Calendly', 'GoHealthUSA', 'LOT Network', 'BBB A+ Rated'].map((partner, i) => (
                 <span key={i} className="text-xs font-black text-slate-500 uppercase tracking-wider px-3 py-1.5 bg-slate-100 rounded-full border border-slate-200">{partner}</span>
               ))}
             </div>
@@ -1879,7 +1890,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
              {[
                { name: 'James C.', date: 'Aug 2024', text: 'She is real professional very helpful and really quick. She\'s also understanding she understood that my wife needed help so she did what she could to fill me in a spot immediately. Even though she was booked for the day, she still got my wife\'s medical just spoke to the doctor and waiting for my card now 5 stars.', rating: 5 },
                { name: 'Bobbie P.', date: 'Oct 2024', text: 'They were absolutely wonderful. Being a newly legal state, they were knowledgeable and informative. They were quick, courteous, professional and efficient. They handled everything! They cross the "T\'s" and dot the "i\'s", for you. Available at any time that I\'ve had a question. It was such a relief to have their help. 10/10 recommend!!!', rating: 5 },
-               { name: 'Diana Faith D.', date: 'Jul 2024', text: 'I\'m more than grateful for Shantell and her staff at Global Green. I have breast cancer and previously had access to medical marijuana until my move from a legalized state and moving to Oklahoma. The process to obtain a license is much harder and time consuming but Shantell got the job done and very quickly I might add. I truly appreciate the ease, understanding, quality and professionalism from Global Green. I highly recommend using this service, you won\'t be sorry!!', rating: 5 }
+               { name: 'Diana Faith D.', date: 'Jul 2024', text: 'I\'m more than grateful for the owner and her staff at Global Green. I have breast cancer and previously had access to medical marijuana until my move from a legalized state and moving to Oklahoma. The process to obtain a license is much harder and time consuming but the owner got the job done and very quickly I might add. I truly appreciate the ease, understanding, quality and professionalism from Global Green. I highly recommend using this service, you won\'t be sorry!!', rating: 5 }
              ].map((review, i) => (
                <div key={i} className="bg-slate-50 p-8 rounded-3xl border border-slate-100 hover:border-emerald-200 transition-all group">
                  <div className="flex gap-1 mb-4">
@@ -1929,11 +1940,15 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
             Disclaimer: Global Green Enterprise Inc (GGHP) infrastructure is designed to aggregate and assist with regulatory compliance across GGMA, RIP, and SINC sectors. Compliance is subject to state, local, and federal jurisdictions. Use of this platform does not constitute legal advice. By accessing this portal, you agree to our terms of service, multi-factor authentication requirements, and role-based data restrictions.
           </p>
 
-          {/* LOT Network Footer Badge */}
-          <div className="flex justify-center mb-6">
+          {/* Footer Trust Badges */}
+          <div className="flex justify-center gap-6 mb-6">
             <a href="https://lotnet.com/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
               <img src="https://lotnet.com/wp-content/uploads/2017/12/lotnetworkbadge-blue-65x65.png" alt="LOT Network Member" className="w-8 h-8 object-contain" />
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">LOT Network Member</span>
+            </a>
+            <a href="https://www.bbb.org/us/ok/oklahoma-city/profile/medical-marijuana-card/chronic-cardz-0995-90108724" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
+              <div className="w-8 h-8 flex items-center justify-center bg-[#163a5f] rounded text-white font-black text-xs tracking-tighter">BBB</div>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">A+ Accredited</span>
             </a>
           </div>
 
