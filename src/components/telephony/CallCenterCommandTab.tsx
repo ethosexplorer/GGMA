@@ -361,7 +361,7 @@ export const CallCenterCommandTab = () => {
       {/* Test Connection */}
       <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center justify-between">
         <div><h4 className="text-sm font-bold text-slate-800">API Connection Test</h4><p className="text-xs text-slate-500">Verify Twilio WebRTC integration</p></div>
-        <button onClick={async () => { const r = await voip800.verifyConnection(); alert(r.connected ? `✅ Connected\nAccount: ${r.accountId}` : `❌ Failed: ${r.error}`); }} className="px-4 py-2 bg-indigo-600 text-white font-bold text-sm rounded-lg flex items-center gap-2"><Zap size={14} /> Test</button>
+        <button onClick={async () => { const r = await voip800.verifyConnection(); alert(r.connected ? `✅ Connected\nAccount: ${r.accountId}` : (r.error?.includes('simulated data') ? `⚠️ Offline Mode Active\n${r.error}` : `❌ Failed: ${r.error}`)); }} className="px-4 py-2 bg-indigo-600 text-white font-bold text-sm rounded-lg flex items-center gap-2"><Zap size={14} /> Test</button>
       </div>
     </div>
   );

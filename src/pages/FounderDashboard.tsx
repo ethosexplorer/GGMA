@@ -2508,7 +2508,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                 if (result.connected) {
                   alert(`✅ CONNECTED\nAccount: ${result.accountId}\nNumber: ${result.number}`);
                 } else {
-                  alert(`❌ CONNECTION FAILED\nAccount: ${result.accountId}\nError: ${result.error}\n\nPlease verify credentials in the .env file or configure via Twilio dashboard.`);
+                  if (result.error?.includes('simulated data')) { alert(`⚠️ OFFLINE MODE ACTIVE\nAccount: ${result.accountId}\nStatus: ${result.error}`); } else { alert(`❌ CONNECTION FAILED\nAccount: ${result.accountId}\nError: ${result.error}\n\nPlease verify credentials in the .env file or configure via Twilio dashboard.`); }
                 }
               }}
               className="px-6 py-3 bg-indigo-600 text-white font-bold text-sm rounded-xl hover:bg-indigo-700 transition-colors flex items-center gap-2 shadow-lg shadow-indigo-600/20"
