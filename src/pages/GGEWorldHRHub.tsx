@@ -13,15 +13,15 @@ import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
 
 const NAV_ITEMS = [
   { section: 'THE ACADEMY' },
-  { id: 'academy_ai', label: 'AI Teacher & Training', icon: GraduationCap, badge: 'New' },
-  { id: 'education_queue', label: 'Education Academy Queue', icon: BookOpen, badge: 'Live' },
+  { id: 'academy_ai', label: 'AI Teacher & Training', icon: GraduationCap },
+  { id: 'education_queue', label: 'Education Academy Queue', icon: BookOpen },
   { id: 'business_training', label: 'Business Ops Training', icon: Building2 },
   { id: 'provider_training', label: 'Provider/Aura Training', icon: HeartPulse },
   { id: 'attorney_training', label: 'Attorney/Legal Training', icon: Gavel },
   
   { section: 'LIVE OPERATIONS' },
-  { id: 'ops_livecenter', label: 'GGE World Call Center', icon: Headphones, badge: 'Live' },
-  { id: 'applications_queue', label: 'Applications Queue', icon: FileText, badge: '502' },
+  { id: 'ops_livecenter', label: 'GGE World Call Center', icon: Headphones },
+  { id: 'applications_queue', label: 'Applications Queue', icon: FileText },
   { id: 'internal_admin', label: 'Internal Admin Ops', icon: Shield },
   { id: 'gge_processor', label: 'GGE Processor', icon: Cpu },
   
@@ -31,7 +31,7 @@ const NAV_ITEMS = [
 
   { section: 'SUPPORT & DIAGNOSTICS' },
   { id: 'admin_support', label: 'Admin Support Calendar', icon: Clock },
-  { id: 'support_tickets', label: 'Support Tickets', icon: MessageSquare, badge: '12' },
+  { id: 'support_tickets', label: 'Support Tickets', icon: MessageSquare },
   { id: 'it_diagnostics', label: 'IT Support & Diagnostics', icon: MonitorPlay },
   { id: 'ai_guardian', label: 'AI System Guardian', icon: Bot },
 ];

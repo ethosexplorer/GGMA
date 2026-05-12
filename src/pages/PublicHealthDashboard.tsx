@@ -11,7 +11,7 @@ import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 const sidebarItems = [
   { id: 'dashboard', label: 'Health Dashboard', icon: Activity },
   { id: 'standards', label: 'Lab Standards Engine', icon: Settings },
-  { id: 'alerts', label: 'Alerts & Recalls', icon: Bell, badge: '1' },
+  { id: 'alerts', label: 'Alerts & Recalls', icon: Bell },
   { id: 'exposure', label: 'Exposure Reports', icon: ShieldAlert },
   { id: 'compliance', label: 'Compliance Data', icon: FileText },
 ];

@@ -13,7 +13,7 @@ const NAV_ITEMS = [
   { section: 'STATE OVERSIGHT' },
   { id: 'overview', label: 'Jurisdiction Overview', icon: Activity },
   { id: 'approvals', label: 'Agency Approvals', icon: UserCheck, badge: '8' },
-  { id: 'applications', label: 'Applications Queue', icon: FileText, badge: '342' },
+  { id: 'applications', label: 'Applications Queue', icon: FileText },
   { section: 'COMPLIANCE' },
   { id: 'compliance', label: 'Compliance Monitor', icon: FileCheck },
   { id: 'enforcement', label: 'RIP Enforcement Queue', icon: Gavel, dot: true },

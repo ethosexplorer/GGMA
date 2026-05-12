@@ -48,14 +48,14 @@ const NAV_VERSION = 24; // Bumped: Force update for Invoice Manager
 
 const INITIAL_NAV_ITEMS: NavItem[] = [
   // Single tabs
-  { id: 'ai_training', label: 'My Asst AI', icon: Bot, badge: 'AI' },
+  { id: 'ai_training', label: 'My Asst AI', icon: Bot },
   { id: 'overview', label: 'God Overview', icon: Activity },
-  { id: 'internal_scheduler', label: 'Calendar / Scheduler', icon: Clock, badge: 'New' },
-  { id: 'messages', label: 'Messages', icon: MessageSquare, badge: 'Live' },
-  { id: 'operations', label: 'Ops Center (Live)', icon: Cpu, badge: 'Live' },
-  { id: 'internal_admin', label: 'Internal Team', icon: Shield, badge: '!' },
-  { id: 'admin_support_calendar', label: 'Admin Support', icon: Clock, badge: 'Help' },
-  { id: 'escalation_support_calendar', label: 'Escalation Support', icon: Clock, badge: 'High Priority' },
+  { id: 'internal_scheduler', label: 'Calendar / Scheduler', icon: Clock },
+  { id: 'messages', label: 'Messages', icon: MessageSquare },
+  { id: 'operations', label: 'Ops Center (Live)', icon: Cpu },
+  { id: 'internal_admin', label: 'Internal Team', icon: Shield },
+  { id: 'admin_support_calendar', label: 'Admin Support', icon: Clock },
+  { id: 'escalation_support_calendar', label: 'Escalation Support', icon: Clock },
 
   // Founder/CEO Popout
   { id: '_sec_founder', section: 'FOUNDER/CEO' },
@@ -63,16 +63,16 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'settings', label: 'God Settings', icon: Settings },
   { id: 'launch_script', label: 'Master Launch Script', icon: FileText },
   { id: 'system_health', label: 'System Health / AI', icon: Zap },
-  { id: 'investor_sandbox', label: 'Investor Sandbox', icon: MonitorPlay, badge: 'Demo' },
-  { id: 'gge_world_hr', label: 'GGE World Master Account', icon: Globe, badge: 'Master' },
+  { id: 'investor_sandbox', label: 'Investor Sandbox', icon: MonitorPlay },
+  { id: 'gge_world_hr', label: 'GGE World Master Account', icon: Globe },
 
   // COO/Sr Live Agent Popout
   { id: '_sec_ops', section: 'COO/SR LIVE AGENT' },
   { id: 'virtual_attendant', label: 'GGE World Call Center', icon: Phone },
   { id: 'hr_intelligence', label: 'HR Intelligence (Sylara)', icon: UserPlus },
   { id: 'users', label: 'Personnel Force (Total)', icon: Users },
-  { id: 'support_tickets', label: 'Support Tickets', icon: MessageSquare, badge: '12' },
-  { id: 'it_support', label: 'IT Support & Diagnostics', icon: MonitorPlay, badge: 'Ryan' },
+  { id: 'support_tickets', label: 'Support Tickets', icon: MessageSquare },
+  { id: 'it_support', label: 'IT Support & Diagnostics', icon: MonitorPlay },
 
   // Oversight Popout
   { id: '_sec_oversight', section: 'OVERSIGHT' },
@@ -87,19 +87,19 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'law_enforcement', label: 'Law Enforcement (RIP)', icon: Shield },
   { id: 'state_authority', label: 'Regulator / Authority', icon: Gavel },
   { id: 'external_admin', label: 'External Administrator', icon: Activity },
-  { id: 'negligence_intercept', label: 'Negligence Intercept', icon: AlertTriangle, badge: '1' },
+  { id: 'negligence_intercept', label: 'Negligence Intercept', icon: AlertTriangle },
   { id: 'patients', label: 'Registry Sovereignty', icon: HeartPulse },
   { id: 'business', label: 'Economic Infrastructure', icon: Building2 },
-  { id: 'approvals', label: 'Agency Approvals', icon: UserCheck, badge: '12' },
-  { id: 'applications', label: 'Applications Queue', icon: FileText, badge: '502' },
+  { id: 'approvals', label: 'Agency Approvals', icon: UserCheck },
+  { id: 'applications', label: 'Applications Queue', icon: FileText },
   { id: 'processor', label: 'GGE Processor', icon: Activity },
 
   // Analytics Popout
   { id: '_sec_analytics', section: 'ANALYTICS' },
   { id: 'accounting_ledger', label: 'Accounting Ledger (QuickBooks)', icon: TrendingUp },
   { id: 'global_financials', label: 'Global Financials', icon: TrendingUp },
-  { id: 'subscriptions', label: 'Subscriptions & Revenue', icon: CreditCard, badge: 'Live' },
-  { id: 'invoices', label: 'Invoice Manager', icon: FileText, badge: 'Action Req' },
+  { id: 'subscriptions', label: 'Subscriptions & Revenue', icon: CreditCard },
+  { id: 'invoices', label: 'Invoice Manager', icon: FileText },
   { id: 'reports', label: 'Master Analytics', icon: BarChart3 },
   { id: 'intel', label: 'Global Intelligence', icon: BookOpen },
   { id: 'logs', label: 'System Logs', icon: Database },
@@ -2596,11 +2596,11 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
 
   const renderOpsCenter = () => {
     const opsTabs = [
-      { id: 'call_center', label: 'Call Center', icon: Phone, badge: 'Live' },
-      { id: 'ops_support', label: 'Support Tickets', icon: MessageSquare, badge: '12' },
+      { id: 'call_center', label: 'Call Center', icon: Phone },
+      { id: 'ops_support', label: 'Support Tickets', icon: MessageSquare },
       { id: 'ops_it', label: 'IT Support', icon: MonitorPlay },
       { id: 'ops_hr', label: 'HR Intelligence', icon: UserPlus },
-      { id: 'ops_apps', label: 'Applications', icon: FileText, badge: '502' },
+      { id: 'ops_apps', label: 'Applications', icon: FileText },
       { id: 'ops_personnel', label: 'Personnel Force', icon: Users },
     ];
     return (
