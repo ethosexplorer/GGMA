@@ -10,12 +10,14 @@ import { UserCalendar } from '../components/UserCalendar';
 import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
 import { ITSupportDashboard } from '../components/it/ITSupportDashboard';
 import { CallCenterCommandTab } from '../components/telephony/CallCenterCommandTab';
+import { PhoneIntakeForm } from '../components/telephony/PhoneIntakeForm';
 import { voip800 } from '../lib/voip800';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 
 const NAV_ITEMS = [
   { section: 'CALL CENTER' },
   { id: 'call_center', label: 'Call Center Command', icon: Phone, badge: 'Live' },
+  { id: 'phone_intake', label: 'Phone Intake Form', icon: UserPlus, badge: 'New' },
   { section: 'SUPPORT OPERATIONS' },
   { id: 'admin_support_calendar', label: 'Admin Support', icon: Clock, badge: 'Help' },
   { id: 'support', label: 'Active Support Tickets', icon: MessageSquare, badge: '12' },
@@ -371,6 +373,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
   const getContent = () => {
     switch (activeTab) {
       case 'call_center': return <CallCenterCommandTab />;
+      case 'phone_intake': return <PhoneIntakeForm />;
       case 'admin_support_calendar': return <div className="h-full w-full"><AdminSupportCalendar /></div>;
       case 'support': return renderSupport();
       case 'it_support': return renderITSupport();
