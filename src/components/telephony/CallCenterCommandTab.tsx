@@ -343,7 +343,7 @@ export const CallCenterCommandTab = () => {
           <button onClick={async () => { const c = await voip800.getCallHistory(10); setRecentCalls(c); (() => { import('../../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Refreshed" })] }).catch(console.error) ); alert("Refreshed\n\n[Live Production Transaction Logged]"); })(); }} className="px-3 py-1.5 bg-slate-100 text-slate-700 text-[10px] font-bold rounded-lg flex items-center gap-1"><Download size={12} /> Refresh</button>
         </div>
         <table className="w-full">
-          <thead><tr className="bg-slate-50 text-left">{['Dir','From','To','Status','Dur','Time'].map(h => <th key={h} className="px-4 py-2 text-[9px] font-black uppercase tracking-widest text-slate-500">{h}</th>)}</tr></thead>
+          <thead><tr className="bg-slate-50 text-left">{['Dir','From','To','Status','Dur','Time','Action'].map(h => <th key={h} className={cn("px-4 py-2 text-[9px] font-black uppercase tracking-widest text-slate-500", h === 'Action' && 'text-right')}>{h}</th>)}</tr></thead>
           <tbody className="divide-y divide-slate-100">
             {recentCalls.map((c: any, i: number) => (
               <tr key={i} className="hover:bg-slate-50">
@@ -353,10 +353,22 @@ export const CallCenterCommandTab = () => {
                 <td className="px-4 py-3"><span className={cn("text-[9px] font-bold px-1.5 py-0.5 rounded-full capitalize", c.status==='completed'?'bg-emerald-50 text-emerald-600':c.status==='voicemail'?'bg-amber-50 text-amber-600':'bg-red-50 text-red-600')}>{c.status}</span></td>
                 <td className="px-4 py-3 text-sm text-slate-600">{c.duration > 0 ? `${Math.floor(c.duration/60)}:${(c.duration%60).toString().padStart(2,'0')}` : '—'}</td>
                 <td className="px-4 py-3 text-xs text-slate-500">{new Date(c.timestamp).toLocaleString()}</td>
+                <td className="px-4 py-3 text-right">
+                   <button 
+                     onClick={() => {
+                        setRoutingTab('dialpad');
+                        setDialNumber(c.direction === 'inbound' ? c.from : c.to);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                     }} 
+                     className="text-[10px] font-black text-indigo-600 hover:text-indigo-800 hover:underline uppercase tracking-widest transition-all"
+                   >
+                     {c.direction === 'inbound' ? 'Callback' : 'Redial'}
+                   </button>
+                </td>
               </tr>
             ))}
             {recentCalls.length === 0 && (
-              <tr><td colSpan={6} className="px-4 py-8 text-center text-slate-500 text-sm font-bold">No calls found in history</td></tr>
+              <tr><td colSpan={7} className="px-4 py-8 text-center text-slate-500 text-sm font-bold">No calls found in history</td></tr>
             )}
           </tbody>
         </table>

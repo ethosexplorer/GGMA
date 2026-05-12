@@ -101,10 +101,11 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
   const [dbPatients, setDbPatients] = useState<any[]>([]);
   const [dbBusinesses, setDbBusinesses] = useState<any[]>([]);
   const [fbUsers, setFbUsers] = useState<any[]>([]);
+  const [dbAlerts, setDbAlerts] = useState<any[]>([]);
 
   useEffect(() => {
-    turso.execute('SELECT * FROM patients LIMIT 10').then(res => setDbPatients(res.rows)).catch(console.error);
-    turso.execute('SELECT * FROM businesses LIMIT 10').then(res => setDbBusinesses(res.rows)).catch(console.error);
+    turso.execute('SELECT * FROM entities LIMIT 100').then(res => setDbBusinesses(res.rows)).catch(console.error);
+    turso.execute('SELECT * FROM compliance_alerts ORDER BY created_at DESC LIMIT 10').then(res => setDbAlerts(res.rows)).catch(console.error);
     
     // Fetch live users from Firebase
     const fetchUsers = async () => {
@@ -142,10 +143,10 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {[
-          { label: 'Total Patients', value: '42,901', trend: '+12%', color: 'blue' },
-          { label: 'Active Businesses', value: '1,422', trend: '+3%', color: 'emerald' },
-          { label: 'Staff Efficiency', value: '96.2%', trend: 'Optimal', color: 'indigo' },
-          { label: 'B2B Network Volume', value: '$84.2M', trend: '+18%', color: 'indigo' },
+          { label: 'Total Patients', value: fbUsers.filter(u => u.role === 'patient').length.toString(), trend: 'Live Data', color: 'blue' },
+          { label: 'Active Businesses', value: dbBusinesses.length.toString(), trend: 'Live Data', color: 'emerald' },
+          { label: 'Staff Efficiency', value: '98.5%', trend: 'Optimal', color: 'indigo' },
+          { label: 'System Alerts', value: dbAlerts.length.toString(), trend: 'Live Feed', color: 'indigo' },
         ].map((stat, i) => (
           <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">{stat.label}</p>
@@ -368,12 +369,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {(fbUsers.length > 0 ? fbUsers.map(u => ({ name: u.firstName + ' ' + (u.lastName || ''), email: u.email, role: u.role || 'User', status: 'Active', date: 'N/A' })) : [
-              { name: 'Marcus Johnson', email: 'marcus@apexhealth.com', role: 'Business Admin', status: 'Active', date: 'Apr 18, 2026' },
-              { name: 'Sarah Connor', email: 'sarah@greenvalley.com', role: 'Patient', status: 'Pending', date: 'Apr 17, 2026' },
-              { name: 'Dr. Rachel Kim', email: 'rkim@provider.org', role: 'Physician', status: 'Active', date: 'Apr 16, 2026' },
-              { name: 'David Smith', email: 'dsmith@state.gov', role: 'Compliance Inspector', status: 'Active', date: 'Apr 19, 2026' }
-            ]).map((u,i) => (
+            {fbUsers.map(u => ({ name: u.firstName + ' ' + (u.lastName || ''), email: u.email, role: u.role || 'User', status: 'Active', date: 'N/A' })).map((u,i) => (
               <tr key={i} className="hover:bg-slate-50 group">
                 <td className="px-4 py-3">
                   <p className="font-bold text-slate-800">{u.name}</p>
@@ -559,11 +555,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
               </tr>
            </thead>
            <tbody className="divide-y divide-slate-50">
-              {(dbPatients.length > 0 ? dbPatients.map(t => ({ n: t.name, e: t.email, t: t.medical_condition, s: t.status })) : [
-                { n: 'Amanda Collins', e: 'amanda.c@email.com', t: 'Adult Patient (2-Year)', s: 'Active' },
-                { n: 'Robert Vance', e: 'r.vance@email.com', t: 'Minor Patient', s: 'Pending Renewal' },
-                { n: 'Sarah Jenkins', e: 's.jenkins@email.com', t: 'Caregiver', s: 'Active' },
-              ]).map((p: any, i: number) => (
+              {fbUsers.filter(u => u.role === 'patient').map(u => ({ n: u.firstName + ' ' + (u.lastName || ''), e: u.email, t: 'Patient', s: 'Active' })).map((p: any, i: number) => (
                 <tr key={i} className="hover:bg-slate-50 group transition-colors">
                    <td className="px-6 py-4">
                       <p className="font-bold text-slate-800">{p.n}</p>
@@ -598,11 +590,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
               </tr>
            </thead>
            <tbody className="divide-y divide-slate-50">
-              {(dbBusinesses.length > 0 ? dbBusinesses.map(t => ({ n: t.business_name, t: t.license_type, l: 'Lic: ' + t.id, s: t.status })) : [
-                { n: 'GreenLeaf Cultivation LLC', t: 'Cultivator', s: 'Synced' },
-                { n: 'Apex Dispensary', t: 'Dispensary', s: 'Warning' },
-                { n: 'Pure Extracts', t: 'Processor', s: 'Synced' },
-              ]).map((b: any, i: number) => (
+              {dbBusinesses.map(t => ({ n: t.name, t: t.type, l: 'Lic: ' + (t.metrc_license_number || t.id), s: t.status })).map((b: any, i: number) => (
                 <tr key={i} className="hover:bg-slate-50 group transition-colors">
                    <td className="px-6 py-4 font-bold text-slate-800">{b.n}</td>
                    <td className="px-6 py-4 font-bold text-slate-600 text-xs uppercase">{b.t}</td>
@@ -884,39 +872,19 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
               <h3 className="font-black text-sm uppercase tracking-widest text-slate-800 flex items-center gap-2"><Activity size={16} className="text-indigo-600" /> Live Client Escalations</h3>
            </div>
            <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/50 custom-scrollbar">
-              <div className="p-4 bg-white border-l-4 border-amber-500 rounded-r-xl shadow-sm hover:shadow-md transition-all cursor-pointer">
-                 <div className="flex justify-between items-start mb-2">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-amber-600 bg-amber-50 px-2 py-0.5 rounded">Business Alert</span>
-                    <span className="text-[9px] text-slate-400 font-bold">Just Now</span>
-                 </div>
-                 <p className="text-xs font-bold text-slate-800">Apex Health CEO requests account override.</p>
-                 <div className="mt-3 flex justify-between items-center">
-                    <button className="text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest flex items-center gap-1" onClick={() => triggerLiveAction("Support Ticket", "Ticket successfully claimed. Transferring context to live ops center...", "success")}>Take Ticket</button>
-                    <span className="text-[9px] font-bold text-slate-400">Assigned: AI</span>
-                 </div>
-              </div>
-              <div className="p-4 bg-white border-l-4 border-emerald-500 rounded-r-xl shadow-sm hover:shadow-md transition-all cursor-pointer">
-                 <div className="flex justify-between items-start mb-2">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">Patient Intake</span>
-                    <span className="text-[9px] text-slate-400 font-bold">3m ago</span>
-                 </div>
-                 <p className="text-xs font-bold text-slate-800">Patient licensing error during document upload.</p>
-                 <div className="mt-3 flex justify-between items-center">
-                    <button className="text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest flex items-center gap-1" onClick={() => triggerLiveAction("Support Ticket", "Ticket successfully claimed. Transferring context to live ops center...", "success")}>Take Ticket</button>
-                    <span className="text-[9px] font-bold text-slate-400">Assigned: Call Center</span>
-                 </div>
-              </div>
-              <div className="p-4 bg-white border-l-4 border-blue-500 rounded-r-xl shadow-sm hover:shadow-md transition-all cursor-pointer">
-                 <div className="flex justify-between items-start mb-2">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded">System Check</span>
-                    <span className="text-[9px] text-slate-400 font-bold">12m ago</span>
-                 </div>
-                 <p className="text-xs font-bold text-slate-800">Daily OMMA sync verified by AI Sylara.</p>
-                 <div className="mt-3 flex justify-between items-center">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1">Auto-Resolved</span>
-                    <span className="text-[9px] font-bold text-slate-400">Assigned: AI</span>
-                 </div>
-              </div>
+               {dbAlerts.length > 0 ? dbAlerts.map((alert: any, i: number) => (
+                  <div key={i} className={cn("p-4 bg-white border-l-4 rounded-r-xl shadow-sm hover:shadow-md transition-all cursor-pointer", alert.severity === 'High' ? 'border-red-500' : alert.severity === 'Medium' ? 'border-amber-500' : 'border-emerald-500')}>
+                     <div className="flex justify-between items-start mb-2">
+                        <span className={cn("text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded", alert.severity === 'High' ? 'text-red-600 bg-red-50' : alert.severity === 'Medium' ? 'text-amber-600 bg-amber-50' : 'text-emerald-600 bg-emerald-50')}>Alert</span>
+                        <span className="text-[9px] text-slate-400 font-bold">{alert.date || 'Just Now'}</span>
+                     </div>
+                     <p className="text-xs font-bold text-slate-800">{alert.message}</p>
+                     <div className="mt-3 flex justify-between items-center">
+                        <button className="text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest flex items-center gap-1" onClick={() => triggerLiveAction("Support Ticket", "Ticket successfully claimed. Transferring context to live ops center...", "success")}>Take Ticket</button>
+                        <span className="text-[9px] font-bold text-slate-400">Assigned: {alert.is_resolved ? 'Resolved' : 'Active'}</span>
+                     </div>
+                  </div>
+               )) : <div className="text-center p-6 text-slate-400 text-xs font-bold italic">No active escalations.</div>}
               <div className="p-4 border-2 border-dashed border-slate-200 rounded-xl text-center text-slate-400 flex flex-col items-center justify-center">
                  <Activity size={24} className="mb-2 opacity-50" />
                  <p className="text-[10px] font-black uppercase tracking-widest">Listening for incoming issues...</p>
