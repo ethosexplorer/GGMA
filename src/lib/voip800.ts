@@ -110,6 +110,12 @@ export async function sendSMS(to: string, body: string): Promise<SMSMessage | nu
       body: JSON.stringify({ to, body }),
     });
     if (!res.ok) throw new Error(`Twilio SMS error: ${res.status}`);
+    
+    const contentType = res.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('API returned non-JSON response');
+    }
+
     const data = await res.json();
     return {
       id: data.messageId,
@@ -143,6 +149,12 @@ export async function getForwardingRules(): Promise<ForwardingRule[]> {
       headers: getHeaders(),
     });
     if (!res.ok) throw new Error(`800.com API error: ${res.status}`);
+    
+    const contentType = res.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('API returned non-JSON response');
+    }
+
     const data = await res.json();
     return data.rules || data.data || [];
   } catch (err) {

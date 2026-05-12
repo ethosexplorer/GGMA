@@ -27,6 +27,11 @@ export function WebDialer() {
           throw new Error(`Token fetch failed: ${response.status}`);
         }
         
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('API returned non-JSON response (likely 404 or missing backend)');
+        }
+        
         const data = await response.json();
         if (!data.token) throw new Error('No token in response');
 
