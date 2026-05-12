@@ -147,12 +147,17 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         const bRes = await turso.execute('SELECT COUNT(*) as count FROM businesses');
         const users = (Number(pRes.rows[0].count) + Number(bRes.rows[0].count));
         
-        const wRes = await turso.execute('SELECT SUM(amount) as total FROM wallet_transactions');
-        const rev = Number(wRes.rows[0].total) || 0;
+        // Revenue from founder_ledger (real payments posted)
+        const lRes = await turso.execute('SELECT gross_revenue FROM founder_ledger');
+        let rev = 0;
+        for (const row of lRes.rows) {
+          const val = String(row.gross_revenue || '').replace(/[^0-9.]/g, '');
+          rev += parseFloat(val) || 0;
+        }
 
         setLiveStats({
           totalUsers: users > 1000 ? (users / 1000).toFixed(1) + 'K' : users.toString(),
-          netRevenue: '$' + (rev > 1000000 ? (rev / 1000000).toFixed(1) + 'M' : rev.toLocaleString())
+          netRevenue: '$' + rev.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
         });
       } catch (err) {
         console.error('Error fetching live metrics:', err);
@@ -357,18 +362,25 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   const handleDragStart = (e: any, index: number) => {
     setDraggedIdx(index);
     e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', String(index));
   };
 
-  const handleDragOver = (e: any, index: number) => {
+  const handleDragOver = (e: any, _index: number) => {
     e.preventDefault();
-    if (draggedIdx === null || draggedIdx === index) return;
+  };
+
+  const handleDrop = (e: any, dropIndex: number) => {
+    e.preventDefault();
+    if (draggedIdx === null || draggedIdx === dropIndex) {
+      setDraggedIdx(null);
+      return;
+    }
     const newItems = [...navItemsList];
-    const item = newItems[draggedIdx];
-    newItems.splice(draggedIdx, 1);
-    newItems.splice(index, 0, item);
-    setDraggedIdx(index);
+    const [item] = newItems.splice(draggedIdx, 1);
+    newItems.splice(dropIndex, 0, item);
+    setDraggedIdx(null);
     setNavItemsList(newItems);
-    // Persist order to localStorage — all items have stable ids now
+    // Persist order to localStorage
     const ids = newItems.map(it => it.id!);
     localStorage.setItem('gghp_nav_order_v4', JSON.stringify(ids));
   };
@@ -3952,7 +3964,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
              if (g.children) {
                const isPopoutActive = activePopoutSection === g.item.id;
                return (
-                 <div key={gi} className="group relative" draggable onDragStart={(e) => handleDragStart(e, g.index)} onDragOver={(e) => handleDragOver(e, g.index)} onDragEnd={() => setDraggedIdx(null)}>
+                 <div key={gi} className="group relative" draggable onDragStart={(e) => handleDragStart(e, g.index)} onDragOver={(e) => handleDragOver(e, g.index)} onDrop={(e) => handleDrop(e, g.index)} onDragEnd={() => setDraggedIdx(null)}>
                    <button 
                      onClick={() => setActivePopoutSection(isPopoutActive ? null : g.item.id)}
                      className={cn("w-full flex items-center justify-between px-3 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all", isPopoutActive ? "bg-indigo-600 text-white shadow-xl shadow-indigo-900/40" : "text-slate-400 hover:bg-white/5 hover:text-slate-100", draggedIdx === g.index ? "opacity-30 border border-dashed border-indigo-400" : "")}
@@ -3972,7 +3984,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                const item = g.item;
                const displayLabel = isExecutive ? item.label?.replace('God', 'Executive') : item.label;
                return (
-                  <div key={gi} draggable onDragStart={(e) => handleDragStart(e, g.index)} onDragOver={(e) => handleDragOver(e, g.index)} onDragEnd={() => setDraggedIdx(null)} className={cn("group w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold transition-all", activeTab === item.id ? "bg-white/10 text-white" : "text-slate-400 hover:bg-white/5 hover:text-slate-100", draggedIdx === g.index ? "opacity-30 border border-dashed border-indigo-400" : "")}>
+                  <div key={gi} draggable onDragStart={(e) => handleDragStart(e, g.index)} onDragOver={(e) => handleDragOver(e, g.index)} onDrop={(e) => handleDrop(e, g.index)} onDragEnd={() => setDraggedIdx(null)} className={cn("group w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold transition-all", activeTab === item.id ? "bg-white/10 text-white" : "text-slate-400 hover:bg-white/5 hover:text-slate-100", draggedIdx === g.index ? "opacity-30 border border-dashed border-indigo-400" : "")}>
                     <button onClick={() => { setActiveTab(item.id!); setActivePopoutSection(null); }} className="flex items-center gap-3 flex-1 text-left">
                       <GripVertical size={14} className="text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                       {item.icon && <item.icon size={16} className={activeTab === item.id ? "text-white" : "text-slate-500"} />} 
@@ -4023,6 +4035,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                     draggable
                     onDragStart={(e) => handleDragStart(e, i)}
                     onDragOver={(e) => handleDragOver(e, i)}
+                    onDrop={(e) => handleDrop(e, i)}
                     onDragEnd={() => setDraggedIdx(null)}
                     className={cn("group cursor-grab active:cursor-grabbing w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold transition-all", activeTab === item.id ? "bg-indigo-600 text-white shadow-xl shadow-indigo-900/40" : "text-slate-400 hover:bg-white/5 hover:text-slate-100", draggedIdx === i ? "opacity-30 border border-dashed border-indigo-400" : "")}
                   >
