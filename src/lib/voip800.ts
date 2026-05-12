@@ -76,6 +76,12 @@ async function fetchHistory() {
   try {
     const res = await fetch('/api/twilio/history');
     if (!res.ok) throw new Error('Failed to fetch Twilio history');
+    
+    const contentType = res.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('API returned non-JSON response (likely 404 or missing backend)');
+    }
+    
     cachedHistory = await res.json();
     lastFetchTime = now;
     return cachedHistory;
@@ -201,6 +207,12 @@ export async function getCallCenterStats(): Promise<CallCenterStats> {
 export async function verifyConnection(): Promise<{ connected: boolean; accountId: string; number: string; error?: string }> {
   try {
     const res = await fetch('/api/twilio/verify');
+    
+    const contentType = res.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      return { connected: false, accountId: ACCOUNT_ID, number: COMPANY_NUMBER, error: 'Live server endpoints are not configured. Returning local simulated data.' };
+    }
+    
     const data = await res.json();
     
     if (!res.ok || !data.connected) {
@@ -208,7 +220,7 @@ export async function verifyConnection(): Promise<{ connected: boolean; accountI
     }
     return { connected: true, accountId: data.accountId || ACCOUNT_ID, number: COMPANY_NUMBER };
   } catch (err: any) {
-    return { connected: false, accountId: ACCOUNT_ID, number: COMPANY_NUMBER, error: err.message };
+    return { connected: false, accountId: ACCOUNT_ID, number: COMPANY_NUMBER, error: 'Connection failed: ' + err.message };
   }
 }
 
