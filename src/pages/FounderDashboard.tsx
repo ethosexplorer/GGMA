@@ -3491,7 +3491,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Network Volume</p>
-                <h3 className="text-3xl font-black text-slate-800"></h3>0.00</h3>
+                <h3 className="text-3xl font-black text-slate-800">$20.00</h3>
                 <div className="flex items-center gap-1 text-emerald-600 font-bold text-[10px] mt-1"><Activity size={10} /> Live Data Feed</div>
               </div>
               <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
