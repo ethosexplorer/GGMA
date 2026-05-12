@@ -21,6 +21,17 @@ export async function initializeDatabase() {
     `);
 
     await turso.execute(`
+      CREATE TABLE IF NOT EXISTS poll_votes (
+        id TEXT PRIMARY KEY,
+        poll_id TEXT NOT NULL,
+        voter_id TEXT NOT NULL,
+        jurisdiction TEXT,
+        vote_choice TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    await turso.execute(`
       CREATE TABLE IF NOT EXISTS inventory (
         id TEXT PRIMARY KEY,
         entity_id TEXT NOT NULL,
