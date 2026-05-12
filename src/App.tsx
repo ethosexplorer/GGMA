@@ -8547,9 +8547,8 @@ export default function App() {
         
         const pathName = location.pathname === '/' ? 'Landing Page' : location.pathname;
         await turso.execute({
-          sql: 'INSERT INTO analytics_events (id, event_type, source, path, user_type, details, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
+          sql: 'INSERT INTO analytics_events (event_type, source, path, user_type, details, created_at) VALUES (?, ?, ?, ?, ?, ?)',
           args: [
-            'ev-' + Math.random().toString(36).substr(2, 9),
             'PAGE_VIEW',
             'Web Frontend',
             location.pathname,
