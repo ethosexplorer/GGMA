@@ -334,7 +334,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
         </div>
         <div className="divide-y divide-slate-100">
           {personnelList.map((p, i) => (
-            <div key={i} onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Opening application package for \' + a.name + \'... Connecting to State Portal." })] }).catch(console.error) ); alert("Opening application package for \' + a.name + \'... Connecting to State Portal.\n\n[Live Production Transaction Logged]"); }} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors">
+            <div key={i} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50 transition-colors">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500"><Users size={14} /></div>
                 <div>
@@ -342,8 +342,8 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
                   <p className="text-xs text-slate-500">{p.role} • {p.dept}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="text-right">
+              <div className="flex items-center gap-2">
+                <div className="text-right mr-2">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Ext</p>
                   <p className="text-sm font-bold text-slate-700 font-mono">{p.ext || '---'}</p>
                 </div>
@@ -353,6 +353,18 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
                   className="bg-sky-50 hover:bg-sky-100 text-sky-600 text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 transition-colors"
                 >
                   <UserPlus size={12} /> Transfer
+                </button>
+                <button 
+                  onClick={() => {
+                    const newStatus = (p.status === 'Active' || p.status === 'Online') ? 'Logged Out' : 'Active';
+                    const listCopy = [...personnelList];
+                    listCopy[i].status = newStatus;
+                    setPersonnelList(listCopy);
+                    import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: `Force status change for ${p.name} to ${newStatus}` })] }).catch(console.error));
+                  }}
+                  className={cn("text-[10px] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 transition-colors", (p.status === 'Active' || p.status === 'Online') ? "bg-red-50 hover:bg-red-100 text-red-600" : "bg-emerald-50 hover:bg-emerald-100 text-emerald-600")}
+                >
+                  <LogOut size={12} /> {(p.status === 'Active' || p.status === 'Online') ? 'Log Out' : 'Log In'}
                 </button>
               </div>
             </div>
