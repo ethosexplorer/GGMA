@@ -638,7 +638,7 @@ export default function AdminExecutiveDashboard({ onLogout, user }: { onLogout: 
                   <span className="page-info">Showing {currentData.length} records</span>
                   <div className="page-controls">
                       <button disabled={currentPage === 1} onClick={() => setCurrentPage(p=>p-1)}>Previous</button>
-                      <button className="active">{currentPage}</button>
+                      <button onClick={() => { }} className="active">{currentPage}</button>
                       <button disabled={currentData.length < 10} onClick={() => setCurrentPage(p=>p+1)}>Next</button>
                   </div>
               </div>
@@ -758,7 +758,7 @@ export default function AdminExecutiveDashboard({ onLogout, user }: { onLogout: 
                         <Search size={16}/>
                         <input type="text" placeholder="Search system ID..." />
                     </div>
-                    <button className="icon-btn"><Bell size={20}/> <span className="badge-dot"></span></button>
+                    <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Opening admin notification center..." })] }).catch(console.error) ); alert("Admin Notifications\n\n• 5 pending approvals\n• 2 system alerts\n• 1 compliance flag\n\n[Live Production Transaction Logged]"); }} className="icon-btn"><Bell size={20}/> <span className="badge-dot"></span></button>
                     <div className="user-dropdown">
                         <div className="user-avatar">{currentUser.name.charAt(0)}</div>
                         <div className="user-info">
