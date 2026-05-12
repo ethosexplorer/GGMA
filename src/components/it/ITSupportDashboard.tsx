@@ -19,30 +19,20 @@ export const ITSupportDashboard = () => {
            <p className="text-3xl font-black text-white">28<span className="text-lg text-slate-500 ml-1">%</span></p>
            <p className="text-xs text-indigo-400 font-bold mt-2">Stable (US-East-1)</p>
         </div>
-        <div className="bg-slate-900 rounded-2xl p-6 border border-red-900/50 shadow-xl relative overflow-hidden">
-           <div className="absolute top-0 right-0 p-4 opacity-10"><ShieldAlert size={60} className="text-red-500" /></div>
-           <h3 className="text-slate-400 text-xs font-black uppercase tracking-widest mb-2 flex items-center gap-2"><Terminal size={14} className="text-red-500" /> Exceptions (1H)</h3>
-           <p className="text-3xl font-black text-white">12</p>
-           <p className="text-xs text-red-400 font-bold mt-2">Requires Review</p>
+        <div className="bg-slate-900 rounded-2xl p-6 border border-emerald-900/50 shadow-xl relative overflow-hidden">
+           <div className="absolute top-0 right-0 p-4 opacity-10"><CircleCheck size={60} className="text-emerald-500" /></div>
+           <h3 className="text-slate-400 text-xs font-black uppercase tracking-widest mb-2 flex items-center gap-2"><Terminal size={14} className="text-emerald-500" /> Exceptions (1H)</h3>
+           <p className="text-3xl font-black text-white">0</p>
+           <p className="text-xs text-emerald-400 font-bold mt-2">All Systems Clear</p>
         </div>
       </div>
 
       <div className="bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-xl">
         <h3 className="text-white font-bold mb-4 flex items-center gap-2"><Terminal size={18} className="text-indigo-500" /> Recent Stack Traces (Sentry Simulation)</h3>
         <div className="space-y-3">
-          {[
-            { id: 'ERR-9921', service: 'pdf-gen', msg: 'Timeout waiting for font buffer', time: '2m ago', color: 'text-amber-500' },
-            { id: 'ERR-9920', service: 'auth', msg: 'Invalid token signature', time: '14m ago', color: 'text-red-500' },
-            { id: 'ERR-9919', service: 'db-sync', msg: 'Deadlock during wallet transaction', time: '1h ago', color: 'text-red-500' },
-            { id: 'WARN-441', service: 'metrc', msg: 'API Rate limit approaching (85%)', time: '2h ago', color: 'text-amber-500' },
-          ].map((err, i) => (
-            <div key={i} className="flex items-start gap-4 p-4 bg-slate-800/50 rounded-xl border border-slate-700/50 font-mono text-sm">
-               <span className={`font-bold ${err.color}`}>{err.id}</span>
-               <span className="text-slate-400 w-24">[{err.service}]</span>
-               <span className="text-slate-200 flex-1">{err.msg}</span>
-               <span className="text-slate-500 text-xs">{err.time}</span>
-            </div>
-          ))}
+           <div className="p-8 text-center font-bold text-slate-500 border border-dashed border-slate-700/50 rounded-xl">
+              No recent stack traces logged. System is stable.
+           </div>
         </div>
       </div>
     </div>
@@ -80,29 +70,11 @@ export const ITSupportDashboard = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {[
-                { name: 'Dr. Sarah Jenkins', email: 's.jenkins@oklahoma-med.com', role: 'Provider', status: 'Active', time: '5m ago' },
-                { name: 'Michael Thorne', email: 'm.thorne@thc-legal.com', role: 'Attorney', status: 'Locked', time: '2d ago' },
-                { name: 'DispenseCo Tulsa', email: 'admin@dispenseco.com', role: 'Business', status: 'Active', time: '1h ago' },
-              ].map((user, i) => (
-                <tr key={i}>
-                  <td className="py-4">
-                    <p className="font-bold text-slate-800">{user.name}</p>
-                    <p className="text-xs text-slate-500 font-medium">{user.email}</p>
-                  </td>
-                  <td className="py-4"><span className="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-bold">{user.role}</span></td>
-                  <td className="py-4">
-                    <span className={cn("px-3 py-1 rounded-full text-xs font-bold", user.status === 'Active' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600')}>
-                      {user.status}
-                    </span>
-                  </td>
-                  <td className="py-4 text-xs font-bold text-slate-400">{user.time}</td>
-                  <td className="py-4 flex gap-2">
-                    <button onClick={() => { import('../../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Sending forced password reset link..." })] }).catch(console.error) ); alert("Sending forced password reset link...\n\n[Live Production Transaction Logged]"); }} className="p-2 hover:bg-slate-100 text-slate-600 rounded-lg tooltip-trigger" title="Reset Password"><KeySquare size={18} /></button>
-                    <button onClick={() => { import('../../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "WARNING: Suspending user account will revoke all active API and portal tokens. Proceed?" })] }).catch(console.error) ); alert("WARNING: Suspending user account will revoke all active API and portal tokens. Proceed?\n\n[Live Production Transaction Logged]"); }} className="p-2 hover:bg-slate-100 text-red-600 rounded-lg tooltip-trigger" title="Suspend Account"><Slash size={18} /></button>
-                  </td>
-                </tr>
-              ))}
+               <tr>
+                 <td colSpan={5} className="py-8 text-center font-bold text-slate-400">
+                   No user data loaded. Use the search to query specific accounts.
+                 </td>
+               </tr>
             </tbody>
           </table>
         </div>
