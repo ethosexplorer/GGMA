@@ -552,7 +552,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   );
 
   const renderOverview = () => (
-    <div className="space-y-6">
+    <div className="space-y-4 max-h-[420px] overflow-y-auto pr-2">
           
 
       {!hideUpdates && (
@@ -1466,11 +1466,11 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
               <Globe size={48} className="animate-pulse" />
             </div>
             <h3 className="text-3xl font-black text-slate-800 tracking-tighter uppercase">National Grid Active</h3>
-            <p className="text-slate-500 max-w-sm mx-auto text-sm leading-relaxed font-medium">Cross-referencing live METRC data, seed-to-sale logs, and state licensing registries across 14 active jurisdictions.</p>
+            <p className="text-slate-500 max-w-sm mx-auto text-sm leading-relaxed font-medium">Monitoring all 50 U.S. states. Oklahoma active as of May 12, 2026. Additional states onboarding this week.</p>
           </div>
 
           <div className="absolute bottom-10 left-10 right-10 grid grid-cols-3 gap-6">
-             {[{l:'States Active',v:liveStats.totalUsers > 0 ? '1' : '0',c:'text-indigo-600'},{l:'Under Integration',v:'0',c:'text-amber-600'},{l:'Legal Pending',v:'0',c:'text-red-600'}].map((st,i)=>(
+             {[{l:'States Active',v:'1',c:'text-indigo-600'},{l:'Standby States',v:'49',c:'text-amber-600'},{l:'Applications Today',v:'1',c:'text-emerald-600'}].map((st,i)=>(
                <div key={i} className="p-6 bg-white border border-slate-200 rounded-2xl text-center shadow-sm hover:shadow-md transition-shadow">
                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{st.l}</p>
                  <p className={cn("text-3xl font-black", st.c)}>{st.v}</p>
@@ -1485,8 +1485,8 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                <h3 className="font-bold text-slate-800 flex items-center gap-2"><MapIcon size={20} className="text-indigo-500"/> Priority Hubs</h3>
                <span className="text-[10px] font-black bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full">REAL-TIME</span>
             </div>
-            <div className="space-y-6">
-              {[{ s: 'Oklahoma', r: liveStats.netRevenue, st: 'Live', c: 'text-emerald-600' }].map((st, i) => (
+            <div className="space-y-3 max-h-[420px] overflow-y-auto pr-2">
+              {[{ s: 'Oklahoma', r: liveStats.netRevenue, st: 'Live', c: 'text-emerald-600' }, { s: 'Alabama', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Alaska', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Arizona', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Arkansas', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'California', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Colorado', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Connecticut', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Delaware', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Florida', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Georgia', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Hawaii', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Idaho', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Illinois', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Indiana', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Iowa', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Kansas', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Kentucky', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Louisiana', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Maine', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Maryland', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Massachusetts', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Michigan', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Minnesota', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Mississippi', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Missouri', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Montana', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Nebraska', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Nevada', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'New Hampshire', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'New Jersey', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'New Mexico', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'New York', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'North Carolina', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'North Dakota', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Ohio', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Oregon', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Pennsylvania', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Rhode Island', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'South Carolina', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'South Dakota', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Tennessee', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Texas', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Utah', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Vermont', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Virginia', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Washington', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'West Virginia', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Wisconsin', r: '$0', st: 'Standby', c: 'text-slate-400' }, { s: 'Wyoming', r: '$0', st: 'Standby', c: 'text-slate-400' }].map((st, i) => (
                 <div key={i} className="flex items-center justify-between group cursor-pointer">
                   <div className="flex items-center gap-4">
                     <div className="w-2 h-2 rounded-full bg-slate-200 group-hover:bg-indigo-500 transition-colors" />
@@ -1496,9 +1496,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                     </div>
                   </div>
                   <span className={cn("text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full", 
-                    st.st === 'Critical' ? "bg-red-50 text-red-600" : 
-                    st.st === 'Review' ? "bg-amber-50 text-amber-600" : 
-                    "bg-emerald-50 text-emerald-600"
+                    st.st === 'Critical' ? "bg-red-50 text-red-600" : st.st === 'Review' ? "bg-amber-50 text-amber-600" : st.st === 'Standby' ? "bg-slate-100 text-slate-400" : "bg-emerald-50 text-emerald-600"
                   )}>{st.st}</span>
                 </div>
               ))}
@@ -2645,8 +2643,8 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         )}
         {opsTab === 'ops_apps' && (
           <div className="space-y-4">
-            <div className="grid grid-cols-3 gap-4">{[{l:'Pending',v:'0',c:'text-amber-600'},{l:'Approved',v:'0',c:'text-emerald-600'},{l:'Flagged',v:'0',c:'text-red-600'}].map((s,i)=>(<div key={i} className="bg-white border border-slate-200 p-5 rounded-2xl text-center"><p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{s.l}</p><p className={`text-2xl font-black ${s.c}`}>{s.v}</p></div>))}</div>
-            <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden"><div className="p-4 border-b"><h4 className="font-bold text-slate-800">Applications Queue</h4></div><div className="divide-y">{[]/* Mock applications removed for live launch */.map((a,i)=>(<div key={i} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50"><div><p className="text-sm font-bold text-slate-800">{a.n}</p><p className="text-xs text-slate-500">{a.t}</p></div><span className={cn("text-[9px] font-black uppercase px-2 py-0.5 rounded-full",a.s==='Pending'?'bg-amber-50 text-amber-600':a.s==='Flagged'?'bg-red-50 text-red-600':'bg-blue-50 text-blue-600')}>{a.s}</span></div>))}</div></div>
+            <div className="grid grid-cols-3 gap-4">{[{l:'Pending',v:'1',c:'text-amber-600'},{l:'Approved',v:'0',c:'text-emerald-600'},{l:'Flagged',v:'0',c:'text-red-600'}].map((s,i)=>(<div key={i} className="bg-white border border-slate-200 p-5 rounded-2xl text-center"><p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{s.l}</p><p className={`text-2xl font-black ${s.c}`}>{s.v}</p></div>))}</div>
+            <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden"><div className="p-4 border-b"><h4 className="font-bold text-slate-800">Applications Queue</h4></div><div className="divide-y">{[{n:'Jasmin Garrett',t:'Patient Med Card — New Application (OK)',s:'Pending'}].map((a:any,i:number)=>(<div key={i} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50"><div><p className="text-sm font-bold text-slate-800">{a.n}</p><p className="text-xs text-slate-500">{a.t}</p></div><span className={cn("text-[9px] font-black uppercase px-2 py-0.5 rounded-full",a.s==='Pending'?'bg-amber-50 text-amber-600':a.s==='Flagged'?'bg-red-50 text-red-600':'bg-blue-50 text-blue-600')}>{a.s}</span></div>))}</div></div>
           </div>
         )}
         {opsTab === 'ops_personnel' && (
