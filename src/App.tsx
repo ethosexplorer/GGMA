@@ -1877,9 +1877,9 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
              {[
-               { name: 'Marcus T.', date: 'Oct 2024', text: 'The intake process with Sylara was so fast. Had my recommendation in 15 minutes!', rating: 5 },
-               { name: 'Sarah J.', date: 'Nov 2023', text: 'Global Green makes compliance feel like common sense. The Care Wallet is a game changer.', rating: 5 },
-               { name: 'David L.', date: 'Feb 2024', text: 'Finally a platform that understands Oklahoma regulations from the inside out.', rating: 5 }
+               { name: 'James C.', date: 'Aug 2024', text: 'She is real professional very helpful and really quick. She\'s also understanding she understood that my wife needed help so she did what she could to fill me in a spot immediately. Even though she was booked for the day, she still got my wife\'s medical just spoke to the doctor and waiting for my card now 5 stars.', rating: 5 },
+               { name: 'Bobbie P.', date: 'Oct 2024', text: 'They were absolutely wonderful. Being a newly legal state, they were knowledgeable and informative. They were quick, courteous, professional and efficient. They handled everything! They cross the "T\'s" and dot the "i\'s", for you. Available at any time that I\'ve had a question. It was such a relief to have their help. 10/10 recommend!!!', rating: 5 },
+               { name: 'Diana Faith D.', date: 'Jul 2024', text: 'I\'m more than grateful for Shantell and her staff at Global Green. I have breast cancer and previously had access to medical marijuana until my move from a legalized state and moving to Oklahoma. The process to obtain a license is much harder and time consuming but Shantell got the job done and very quickly I might add. I truly appreciate the ease, understanding, quality and professionalism from Global Green. I highly recommend using this service, you won\'t be sorry!!', rating: 5 }
              ].map((review, i) => (
                <div key={i} className="bg-slate-50 p-8 rounded-3xl border border-slate-100 hover:border-emerald-200 transition-all group">
                  <div className="flex gap-1 mb-4">
@@ -1887,7 +1887,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
                      <Star key={j} size={16} className="fill-amber-400 text-amber-400" />
                    ))}
                  </div>
-                 <p className="text-slate-700 font-medium mb-6 leading-relaxed italic">"{review.text}"</p>
+                 <p className="text-slate-700 font-medium mb-6 leading-relaxed italic line-clamp-6">"{review.text}"</p>
                  <div className="flex items-center justify-between">
                    <div className="font-bold text-slate-900 text-sm">{review.name}</div>
                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{review.date}</div>
