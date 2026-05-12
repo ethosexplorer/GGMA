@@ -80,20 +80,7 @@ export const initDatabase = async () => {
     const ledgerCheck = await turso.execute('SELECT COUNT(*) as count FROM founder_ledger');
     if (ledgerCheck.rows[0].count === 0) {
       const seeds = [
-        { n: 'Sylara Medical Subscriptions', t: 'SaaS / Recurring', g: '$4.2M', net: '$3.8M', s: 'Settled', c: 'bg-emerald-600' },
-        { n: 'Metrc Integration Fees', t: 'API Gateway', g: '$1.8M', net: '$1.5M', s: 'Settled', c: 'bg-emerald-600' },
-        { n: 'Care Wallet Transactions', t: 'B2B Processor', g: '$6.5M', net: '$1.2M', s: 'Liquid', c: 'bg-blue-600' },
-        { n: 'Telehealth Consults', t: 'Service Fee', g: '$1.2M', net: '$950k', s: 'Settled', c: 'bg-emerald-600' },
-        { n: 'State Jurisdiction Licensing', t: 'Enterprise', g: '$1.1M', net: '$880k', s: 'Pending', c: 'bg-amber-500' },
-        { n: 'Back Office Operations (Cannabis)', t: 'Admin Services', g: '$2.4M', net: '$1.9M', s: 'Active', c: 'bg-emerald-600' },
-        { n: 'Back Office Operations (General)', t: 'Admin Services', g: '$1.1M', net: '$820k', s: 'Active', c: 'bg-emerald-600' },
-        { n: 'Attorney / Legal Retainers (Cannabis)', t: 'Professional Svc', g: '$1.8M', net: '$1.4M', s: 'Active', c: 'bg-emerald-600' },
-        { n: 'Attorney / Legal Retainers (General)', t: 'Professional Svc', g: '$890k', net: '$680k', s: 'Active', c: 'bg-blue-600' },
-        { n: 'Ecosystem Add-ons (Patient)', t: 'Marketplace', g: '$620k', net: '$540k', s: 'Active', c: 'bg-emerald-600' },
-        { n: 'Ecosystem Add-ons (Cross-Dashboard)', t: 'Marketplace', g: '$1.3M', net: '$1.1M', s: 'Active', c: 'bg-blue-600' },
-        { n: 'Distributor / Reseller Fees', t: 'Channel Revenue', g: '$950k', net: '$710k', s: 'Active', c: 'bg-emerald-600' },
-        { n: 'Partner Affiliate Commissions', t: 'Partner Program', g: '$480k', net: '$380k', s: 'Active', c: 'bg-blue-600' },
-        { n: 'Enforcement & Finance AI Bundles', t: 'Gov / Enterprise', g: '$2.1M', net: '$1.7M', s: 'Active', c: 'bg-indigo-600' },
+        { n: 'Jasmin Garrett — Patient Application Processing Fee', t: 'Service Fee (Chime)', g: '$20.00', net: '$20.00', s: 'Settled', c: 'bg-emerald-600' },
       ];
       for (const item of seeds) {
         await turso.execute({

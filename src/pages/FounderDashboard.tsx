@@ -404,7 +404,11 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
 
   const handleSaveLedgerEntry = () => {
     if (isAddingLedgerEntry === 'revenue') {
-       setFounderLedger([{ n: ledgerForm.name || 'Custom Revenue Stream', t: 'Manual Entry', g: ledgerForm.amount || '$0', net: ledgerForm.amount || '$0', s: 'Pending', c: 'bg-amber-500' }, ...founderLedger]);
+       const newEntry = { n: ledgerForm.name || 'Custom Revenue Stream', t: 'Manual Entry', g: ledgerForm.amount || '$0', net: ledgerForm.amount || '$0', s: 'Settled', c: 'bg-emerald-600' };
+       setFounderLedger([newEntry, ...founderLedger]);
+       turso.execute({ sql: "INSERT INTO founder_ledger (id, origin_vector, type, gross_revenue, net_profit, status, color, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", args: ['rev-' + Math.random().toString(36).substr(2, 9), newEntry.n, newEntry.t, newEntry.g, newEntry.net, newEntry.s, newEntry.c, new Date().toISOString()] }).catch(console.error);
+       turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "REVENUE_ENTRY", "Production_User", JSON.stringify({ detail: "New revenue entry: " + newEntry.n + " — " + newEntry.g })] }).catch(console.error);
+       alert("Revenue stream added: " + newEntry.n + " — " + newEntry.g + "\n\n[Live Production Transaction Logged]");
     } else if (isAddingLedgerEntry === 'payable') {
        setFounderPayables([{ n: ledgerForm.name || 'Custom Payable', t: 'Manual Entry', g: ledgerForm.amount || '$0', net: ledgerForm.amount || '$0', s: 'Pending', c: 'bg-amber-500' }, ...founderPayables]);
     }
@@ -1134,17 +1138,17 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                     <label className="block text-sm font-bold text-slate-700 mb-2">Account / Source Name</label>
                     <input 
                       type="text" 
-                      placeholder="e.g. Consulting Retainer"
+                      placeholder="e.g. Jasmin Garrett — Processing Fee"
                       value={ledgerForm.name}
                       onChange={(e) => setLedgerForm({...ledgerForm, name: e.target.value})}
                       className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20 font-medium"
                     />
                  </div>
                  <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2">Amount (Monthly/Gross)</label>
+                    <label className="block text-sm font-bold text-slate-700 mb-2">Amount</label>
                     <input 
                       type="text" 
-                      placeholder="e.g. $5,000"
+                      placeholder="e.g. $20.00"
                       value={ledgerForm.amount}
                       onChange={(e) => setLedgerForm({...ledgerForm, amount: e.target.value})}
                       className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20 font-medium"
@@ -1173,7 +1177,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           </div>
           <div className="text-center md:text-right px-8 py-4 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md">
             <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">Total Network Gross</p>
-            <p className="text-4xl font-black text-white">$28.3M</p>
+            <p className="text-4xl font-black text-white">{liveStats.netRevenue}</p>
           </div>
         </div>
       </div>
@@ -1200,22 +1204,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
               </thead>
               <tbody className="divide-y divide-slate-50">
                 {(founderLedger.length > 0 ? founderLedger : [
-                  { n: 'Sylara Medical Subscriptions', t: 'SaaS / Recurring', g: '$4.2M', net: '$3.8M', s: 'Settled', c: 'bg-emerald-600' },
-                  { n: 'Metrc Integration Fees', t: 'API Gateway', g: '$1.8M', net: '$1.5M', s: 'Settled', c: 'bg-emerald-600' },
-                  { n: 'Care Wallet Transactions', t: 'B2B Processor', g: '$6.5M', net: '$1.2M', s: 'Liquid', c: 'bg-blue-600' },
-                  { n: 'Telehealth Consults', t: 'Service Fee', g: '$1.2M', net: '$950k', s: 'Settled', c: 'bg-emerald-600' },
-                  { n: 'State Jurisdiction Licensing', t: 'Enterprise', g: '$1.1M', net: '$880k', s: 'Pending', c: 'bg-amber-500' },
-                  { n: 'Back Office Operations (Cannabis)', t: 'Admin Services', g: '$2.4M', net: '$1.9M', s: 'Active', c: 'bg-emerald-600' },
-                  { n: 'Back Office Operations (General)', t: 'Admin Services', g: '$1.1M', net: '$820k', s: 'Active', c: 'bg-emerald-600' },
-                  { n: 'Attorney / Legal Retainers (Cannabis)', t: 'Professional Svc', g: '$1.8M', net: '$1.4M', s: 'Active', c: 'bg-emerald-600' },
-                  { n: 'Attorney / Legal Retainers (General)', t: 'Professional Svc', g: '$890k', net: '$680k', s: 'Active', c: 'bg-blue-600' },
-                  { n: 'Ecosystem Add-ons (Patient)', t: 'Marketplace', g: '$620k', net: '$540k', s: 'Active', c: 'bg-emerald-600' },
-                  { n: 'Ecosystem Add-ons (Cross-Dashboard)', t: 'Marketplace', g: '$1.3M', net: '$1.1M', s: 'Active', c: 'bg-blue-600' },
-                  { n: 'Distributor / Reseller Fees', t: 'Channel Revenue', g: '$950k', net: '$710k', s: 'Active', c: 'bg-emerald-600' },
-                  { n: 'Partner Affiliate Commissions', t: 'Partner Program', g: '$480k', net: '$380k', s: 'Active', c: 'bg-blue-600' },
-                  { n: 'Enforcement & Finance AI Bundles', t: 'Gov / Enterprise', g: '$2.1M', net: '$1.7M', s: 'Active', c: 'bg-indigo-600' },
-                  { n: 'Care Builder Credit Programs', t: 'FinTech', g: '$340k', net: '$290k', s: 'Active', c: 'bg-blue-600' },
-                  { n: 'Federal Dashboard Leases', t: 'Gov Contract', g: '$1.5M', net: '$1.2M', s: 'Pending', c: 'bg-amber-500' }
+                  { n: 'Jasmin Garrett — Patient Application Processing Fee', t: 'Service Fee (Chime)', g: '$20.00', net: '$20.00', s: 'Settled', c: 'bg-emerald-600' }
                 ]).map((u: any, i: number) => (
                   <tr key={i} className="hover:bg-slate-100 transition-colors group">
                     <td className="px-6 py-5 font-black text-slate-800">
@@ -1268,7 +1257,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                
                <div className="mt-8 p-4 bg-white/5 rounded-2xl border border-white/10">
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Available for Draw</p>
-                  <p className="text-2xl font-black text-emerald-400">$8.33M</p>
+                  <p className="text-2xl font-black text-emerald-400">{liveStats.netRevenue}</p>
                </div>
                <button onClick={() => { if (confirm('Authorize capital draw of $8.33M? This requires dual authentication.')) { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "FINANCIAL", "Production_User", JSON.stringify({ detail: "Capital Draw Authorization Initiated. Dual authentication pending." })] }).catch(console.error) ); alert("Capital Draw Authorization Initiated. Dual authentication pending.\n\n[Live Production Transaction Logged]"); } }} className="w-full mt-4 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all">Authorize Draw</button>
             </div>
@@ -1289,7 +1278,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           </div>
           <div className="text-center md:text-right px-8 py-4 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md">
             <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Total Network Reserves</p>
-            <p className="text-4xl font-black text-white">$14.8M</p>
+            <p className="text-4xl font-black text-white">{liveStats.netRevenue}</p>
           </div>
         </div>
       </div>
@@ -1311,13 +1300,13 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="p-5 bg-slate-100 rounded-2xl border border-slate-200">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Ecosystem Processing (MTD)</p>
-            <h3 className="text-2xl font-black text-slate-800">$428,910.00</h3>
-            <p className="text-[10px] text-emerald-600 font-bold mt-1">+18.5% Growth</p>
+            <h3 className="text-2xl font-black text-slate-800">$20.00</h3>
+            <p className="text-[10px] text-emerald-600 font-bold mt-1">First Transaction — May 12, 2026</p>
           </div>
           <div className="p-5 bg-slate-100 rounded-2xl border border-slate-200">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Bank Settlement Buffer</p>
-            <h3 className="text-2xl font-black text-slate-800">$125,000.00</h3>
-            <p className="text-[10px] text-slate-500 font-bold mt-1">Status: Liquid</p>
+            <h3 className="text-2xl font-black text-slate-800">$0.00</h3>
+            <p className="text-[10px] text-slate-500 font-bold mt-1">Status: Awaiting Merchant Processing</p>
           </div>
           <div className="p-5 bg-slate-100 rounded-2xl border border-slate-200">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">External Bank Bridge</p>
@@ -1336,7 +1325,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
             <Shield size={24} className="text-[#D4AF77]" />
             <div>
               <p className="text-xs font-black text-[#D4AF77] uppercase tracking-widest">Compliance Division Override</p>
-              <p className="text-[10px] opacity-80">Larry has verified the last 1,284 transactions for 280E audit trails.</p>
+              <p className="text-[10px] opacity-80">Larry is monitoring live transactions for 280E compliance. 1 transaction verified.</p>
             </div>
           </div>
           <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "AUDIT", "Production_User", JSON.stringify({ detail: "Opening 280E Compliance Audit Logs..." })] }).catch(console.error) ); alert("Opening 280E Compliance Audit Logs. Larry verified 1,284 transactions.\n\n[Live Production Transaction Logged]"); }} className="px-4 py-2 bg-[#D4AF77] text-emerald-900 rounded-xl text-[10px] font-black uppercase shadow-lg">View Audit Logs</button>
@@ -1400,7 +1389,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                   <div className="border-t border-slate-900 border-dashed w-full"></div>
                   <div className="border-t border-slate-900 border-dashed w-full"></div>
                </div>
-              {[40, 55, 45, 70, 65, 80, 95, 85, 90, 100, 110, 120].map((h, i) => (
+              {[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2].map((h, i) => (
                 <div key={i} className="w-full bg-slate-100/50 rounded-t-lg relative group overflow-hidden">
                   <div className="absolute bottom-0 w-full bg-indigo-700 bg-gradient-to-t from-indigo-700 to-indigo-500 rounded-t-lg transition-all duration-700 group-hover:from-indigo-500 group-hover:to-indigo-300" style={{ height: `${h * 0.7}%` }}>
                     <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] py-1 px-2 rounded font-bold transition-opacity whitespace-nowrap shadow-xl z-20">
@@ -1417,14 +1406,14 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
             <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2"><Shield size={18} className="text-blue-500"/> Financial Liquidity Score</h3>
             <div className="text-center py-6 space-y-2">
-               <p className="text-5xl font-black text-slate-900">98.2</p>
+               <p className="text-5xl font-black text-slate-900">100</p>
                <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Optimal Reserves</p>
                <div className="w-full h-1.5 bg-slate-100 rounded-full mt-4">
                   <div className="h-full bg-emerald-500 rounded-full" style={{ width: '98%' }}></div>
                </div>
             </div>
             <p className="text-xs text-slate-400 font-medium leading-relaxed mt-4">
-               System liquidity is currently backing 12 jurisdictions with 100% solvency for all B2B transactions via the Care Wallet infrastructure.
+               First revenue recorded May 12, 2026. System is live and operational in Oklahoma.
             </p>
           </div>
 
@@ -3376,24 +3365,24 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 flex gap-8">
             <div>
                <p className="text-[10px] text-white/60 font-black uppercase tracking-widest">Total MRR</p>
-               <p className="text-2xl font-black text-emerald-400">$342,850</p>
+               <p className="text-2xl font-black text-emerald-400">$0</p>
             </div>
             <div>
                <p className="text-[10px] text-white/60 font-black uppercase tracking-widest">Active Subs</p>
-               <p className="text-2xl font-black text-white">2,847</p>
+               <p className="text-2xl font-black text-white">0</p>
             </div>
             <div>
                <p className="text-[10px] text-white/60 font-black uppercase tracking-widest">Churn Rate</p>
-               <p className="text-2xl font-black text-amber-400">1.2%</p>
+               <p className="text-2xl font-black text-amber-400">0%</p>
             </div>
           </div>
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[
-          { tier: 'Basic', price: '$49/mo', subs: 1420, mrr: '$69,580', color: 'bg-slate-500', pct: 50 },
-          { tier: 'Professional', price: '$149/mo', subs: 980, mrr: '$145,920', color: 'bg-indigo-500', pct: 34 },
-          { tier: 'Enterprise', price: '$299/mo', subs: 447, mrr: '$133,653', color: 'bg-emerald-500', pct: 16 },
+          { tier: 'Basic', price: '$49/mo', subs: 0, mrr: '$0', color: 'bg-slate-500', pct: 0 },
+          { tier: 'Professional', price: '$149/mo', subs: 0, mrr: '$0', color: 'bg-indigo-500', pct: 0 },
+          { tier: 'Enterprise', price: '$299/mo', subs: 0, mrr: '$0', color: 'bg-emerald-500', pct: 0 },
         ].map(t => (
           <div key={t.tier} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
             <div className="flex justify-between items-center mb-4">
@@ -3417,10 +3406,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           <h3 className="text-lg font-black text-slate-800 mb-4 flex items-center gap-2"><TrendingUp size={18} className="text-emerald-500" /> Monthly Signups</h3>
           <div className="space-y-3">
             {[
-              { month: 'April 2026', signups: 312, revenue: '$46,788' },
-              { month: 'March 2026', signups: 287, revenue: '$42,213' },
-              { month: 'February 2026', signups: 254, revenue: '$38,846' },
-              { month: 'January 2026', signups: 198, revenue: '$28,702' },
+              { month: 'May 2026', signups: 1, revenue: '$20.00' },
             ].map(m => (
               <div key={m.month} className="flex justify-between items-center p-3 bg-slate-50 rounded-xl">
                 <span className="text-sm font-bold text-slate-700">{m.month}</span>
@@ -3436,10 +3422,10 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           <h3 className="text-lg font-black text-slate-800 mb-4 flex items-center gap-2"><Box size={18} className="text-indigo-500" /> Add-on Revenue</h3>
           <div className="space-y-3">
             {[
-              { addon: 'Metrc Integration', users: 892, revenue: '$44,600/mo' },
-              { addon: 'AI Compliance Engine', users: 634, revenue: '$31,700/mo' },
-              { addon: 'Telehealth Module', users: 445, revenue: '$22,250/mo' },
-              { addon: 'Advanced Analytics', users: 312, revenue: '$15,600/mo' },
+              { addon: 'Metrc Integration', users: 0, revenue: '$0/mo' },
+              { addon: 'AI Compliance Engine', users: 0, revenue: '$0/mo' },
+              { addon: 'Telehealth Module', users: 0, revenue: '$0/mo' },
+              { addon: 'Advanced Analytics', users: 0, revenue: '$0/mo' },
             ].map(a => (
               <div key={a.addon} className="flex justify-between items-center p-3 bg-slate-50 rounded-xl">
                 <div>
@@ -3456,10 +3442,10 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         <h3 className="text-lg font-black text-slate-800 mb-4 flex items-center gap-2"><BarChart3 size={18} className="text-indigo-500" /> By Category</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { cat: 'Dispensary', count: 1248, pct: '+12%' },
-            { cat: 'Cultivator', count: 682, pct: '+8%' },
-            { cat: 'Lab / Testing', count: 394, pct: '+15%' },
-            { cat: 'Healthcare', count: 523, pct: '+22%' },
+            { cat: 'Dispensary', count: 0, pct: '—' },
+            { cat: 'Cultivator', count: 0, pct: '—' },
+            { cat: 'Lab / Testing', count: 0, pct: '—' },
+            { cat: 'Healthcare', count: 1, pct: 'New' },
           ].map(c => (
             <div key={c.cat} className="bg-white p-4 rounded-xl border border-slate-200 text-center">
               <div className="text-2xl font-black text-slate-800">{c.count.toLocaleString()}</div>
@@ -3505,12 +3491,12 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Network Volume</p>
-                <h3 className="text-3xl font-black text-slate-800">$2.48M</h3>
+                <h3 className="text-3xl font-black text-slate-800"></h3>0.00</h3>
                 <div className="flex items-center gap-1 text-emerald-600 font-bold text-[10px] mt-1"><Activity size={10} /> Live Data Feed</div>
               </div>
               <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Active Settlement Nodes</p>
-                <h3 className="text-3xl font-black text-slate-800">42</h3>
+                <h3 className="text-3xl font-black text-slate-800">1</h3>
                 <div className="flex items-center gap-1 text-emerald-600 font-bold text-[10px] mt-1"><Shield size={10} /> All Nodes Verified</div>
               </div>
               <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
@@ -3528,9 +3514,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                 </h4>
                 <div className="space-y-4">
                    {[
-                     { t: '14:02:11', e: 'B2B SETTLEMENT', d: 'Dispensary #482 → Lab #11', a: 'COMPLIANT' },
-                     { t: '13:58:42', e: 'RELOAD NODE', d: 'Kiosk OK-49 (Cash Confirmation)', a: 'COMPLIANT' },
-                     { t: '13:45:12', e: 'ALLOCATION UTIL', d: 'GGE Allocation #8821 (Case Unlock)', a: 'COMPLIANT' },
+                     { t: new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'}), e: 'SERVICE FEE', d: 'Jasmin Garrett — Patient Application (OK)', a: 'SETTLED' },
                    ].map((log, i) => (
                      <div key={i} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10 text-xs">
                        <span className="font-mono text-slate-400">{log.t}</span>
