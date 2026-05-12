@@ -12,6 +12,7 @@ import { ITSupportDashboard } from '../components/it/ITSupportDashboard';
 import { CallCenterCommandTab } from '../components/telephony/CallCenterCommandTab';
 import { PhoneIntakeForm } from '../components/telephony/PhoneIntakeForm';
 import { voip800 } from '../lib/voip800';
+import { turso } from '../lib/turso';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 
 const NAV_ITEMS = [
@@ -35,6 +36,13 @@ const NAV_ITEMS = [
 
 export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void | Promise<void>, user?: any }) => {
   const [activeTab, setActiveTab] = useState('call_center');
+  const [liveApplications, setLiveApplications] = useState<any[]>([]);
+
+  useEffect(() => {
+    turso.execute('SELECT * FROM patients ORDER BY created_at DESC')
+      .then(res => setLiveApplications(res.rows))
+      .catch(console.error);
+  }, []);
 
   // Draggable nav state with localStorage persistence
   const [opsNavItems, setOpsNavItems] = useState(() => {
@@ -200,22 +208,18 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
       <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
         <div className="p-4 border-b border-slate-100"><h3 className="font-bold text-slate-800 flex items-center gap-2"><FileText size={16} /> Applications Queue</h3></div>
         <div className="divide-y divide-slate-100">
-          {[
-            { name: 'Jasmin Garrett', type: 'Patient Card Renewal', state: 'Oklahoma', status: 'Pending', time: 'Just Now' },
-            { name: 'Green Leaf Dispensary LLC', type: 'Business License', state: 'Oklahoma', status: 'Pending', time: '2h ago' },
-            { name: 'John D. Carter', type: 'Patient Card Renewal', state: 'Oklahoma', status: 'Under Review', time: '4h ago' },
-            { name: 'MedCanna Corp', type: 'Grower License', state: 'Colorado', status: 'Flagged', time: '6h ago' },
-            { name: 'Sarah Williams', type: 'Caregiver License', state: 'Oklahoma', status: 'Pending', time: '8h ago' },
-            { name: 'Highland Processing Inc', type: 'Processor License', state: 'Missouri', status: 'Under Review', time: '12h ago' },
-          ].map((a, i) => (
-            <div key={i} onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Opening application package for \' + a.name + \'... Connecting to State Portal." })] }).catch(console.error) ); alert("Opening application package for \' + a.name + \'... Connecting to State Portal.\n\n[Live Production Transaction Logged]"); }} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors">
-              <div><p className="text-sm font-bold text-slate-800">{a.name}</p><p className="text-xs text-slate-500">{a.type} • {a.state}</p></div>
+          {liveApplications.map((a, i) => (
+            <div key={i} onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Opening application package for " + a.name + "... Connecting to State Portal." })] }).catch(console.error) ); alert("Opening application package for " + a.name + "... Connecting to State Portal.\n\n[Live Production Transaction Logged]"); }} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors">
+              <div><p className="text-sm font-bold text-slate-800">{a.name}</p><p className="text-xs text-slate-500">Patient Card Renewal • {a.state}</p></div>
               <div className="flex items-center gap-3">
                 <span className={cn("text-[9px] font-black uppercase px-2 py-0.5 rounded-full", a.status==='Pending'?'bg-amber-50 text-amber-600':a.status==='Under Review'?'bg-blue-50 text-blue-600':'bg-red-50 text-red-600')}>{a.status}</span>
-                <span className="text-xs text-slate-400">{a.time}</span>
+                <span className="text-xs text-slate-400">Just Now</span>
               </div>
             </div>
           ))}
+          {liveApplications.length === 0 && (
+            <div className="p-8 text-center text-slate-500 font-bold">No pending applications in the queue.</div>
+          )}
         </div>
       </div>
     </div>
