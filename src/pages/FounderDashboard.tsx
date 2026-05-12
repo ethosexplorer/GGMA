@@ -619,7 +619,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
             <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
               <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Link Conversions</p>
               <div className="flex items-end gap-2">
-                <span className="text-3xl font-black text-blue-400">{((liveAnalytics.conversions / liveAnalytics.clicks) * 100).toFixed(1)}%</span>
+                <span className="text-3xl font-black text-blue-400">{liveAnalytics.clicks > 0 ? ((liveAnalytics.conversions / liveAnalytics.clicks) * 100).toFixed(1) : 0}%</span>
                 <span className="text-[10px] text-emerald-400 font-bold mb-1.5">Avg CR</span>
               </div>
             </div>
@@ -631,9 +631,9 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
               <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-1.5"><Activity size={12} /> Live Traffic Sources</h4>
               <div className="space-y-4">
                 {[
-                  { source: 'Direct / Bookmarks', traffic: '45%', color: 'bg-indigo-500' },
-                  { source: 'Google Organic Search', traffic: '30%', color: 'bg-blue-500' },
-                  { source: 'Federal / SAM.gov Referrals', traffic: '15%', color: 'bg-amber-500' },
+                  { source: 'Direct / Bookmarks', traffic: liveAnalytics.users > 0 ? '100%' : '0%', color: 'bg-indigo-500', width: liveAnalytics.users > 0 ? '100%' : '0%' },
+                  { source: 'Google Organic Search', traffic: '0%', color: 'bg-blue-500', width: '0%' },
+                  { source: 'Federal / SAM.gov Referrals', traffic: '0%', color: 'bg-amber-500', width: '0%' },
                   { source: 'Social Media (LinkedIn, X)', traffic: '10%', color: 'bg-purple-500' },
                 ].map((item, i) => (
                   <div key={i}>
@@ -642,7 +642,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                       <span className="text-white">{item.traffic}</span>
                     </div>
                     <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
-                      <div className={cn("h-full rounded-full", item.color)} style={{ width: item.traffic }}></div>
+                      <div className={cn("h-full rounded-full", item.color)} style={{ width: item.width || item.traffic }}></div>
                     </div>
                   </div>
                 ))}
@@ -788,10 +788,10 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {[
-          { label: 'Active States', value: '42', trend: '+2', color: 'blue' },
-          { label: 'AI Sync Rate', value: '99.9%', trend: 'Optimal', color: 'emerald' },
-          { label: 'Law Enforcement Units', value: '842', trend: '+12', color: 'red' },
-          { label: 'Patient Certificates', value: '891,022', trend: '+45k', color: 'indigo' },
+          { label: 'Active States', value: '1', trend: 'OK', color: 'blue' },
+          { label: 'AI Sync Rate', value: '100%', trend: 'Optimal', color: 'emerald' },
+          { label: 'Law Enforcement Units', value: '0', trend: 'Live', color: 'red' },
+          { label: 'Patient Certificates', value: liveStats.totalUsers, trend: 'Verified', color: 'indigo' },
         ].map((stat, i) => (
           <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">{stat.label}</p>
@@ -817,10 +817,10 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           {[
-            { label: 'Total Searches (24h)', value: '1,420,591', trend: '+18.4% vs yesterday', color: 'text-blue-600' },
-            { label: 'Google Referrals', value: '842,100', trend: 'Global Green Hybrid', color: 'text-emerald-600' },
-            { label: 'Brand Mentions', value: '45,210', trend: 'News & Media', color: 'text-indigo-600' },
-            { label: 'Direct URL Hits', value: '533,281', trend: 'Organic Traffic', color: 'text-amber-600' },
+            { label: 'Total Searches (24h)', value: '0', trend: 'Awaiting sync', color: 'text-blue-600' },
+            { label: 'Google Referrals', value: '0', trend: 'Global Green Hybrid', color: 'text-emerald-600' },
+            { label: 'Brand Mentions', value: '0', trend: 'News & Media', color: 'text-indigo-600' },
+            { label: 'Direct URL Hits', value: liveAnalytics.clicks.toLocaleString(), trend: 'Organic Traffic', color: 'text-amber-600' },
           ].map((s, i) => (
             <div key={i} className="p-4 bg-slate-100 rounded-2xl border border-slate-200">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{s.label}</p>
@@ -834,11 +834,6 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
             <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2"><Globe size={14} className="text-blue-500"/> Top Search Terms (Live)</h4>
             <div className="space-y-3">
               {[
-                { term: '"GGMA Medical Cannabis Card"', volume: '412,500', pct: 95 },
-                { term: '"Global Green Hybrid Platform"', volume: '298,100', pct: 85 },
-                { term: '"RIP Enforcement Login"', volume: '150,420', pct: 60 },
-                { term: '"SINC Compliance Dashboard"', volume: '95,100', pct: 45 },
-                { term: `"${fullName} Cannabis Tech"`, volume: '62,800', pct: 30 },
               ].map((term, i) => (
                 <div key={i} className="flex items-center gap-3">
                   <span className="text-xs font-black text-slate-300 w-5">{i+1}</span>
@@ -857,27 +852,27 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
             <div className="space-y-4">
               <div className="flex justify-between items-center text-sm">
                 <span className="font-bold text-slate-600">Patient Onboarding</span>
-                <span className="font-black text-emerald-600">45%</span>
+                <span className="font-black text-emerald-600">0%</span>
               </div>
-              <div className="w-full bg-slate-100 rounded-full h-2"><div className="bg-emerald-500 h-2 rounded-full" style={{ width: '45%' }}></div></div>
+              <div className="w-full bg-slate-100 rounded-full h-2"><div className="bg-emerald-500 h-2 rounded-full" style={{ width: '0%' }}></div></div>
               
               <div className="flex justify-between items-center text-sm">
                 <span className="font-bold text-slate-600">Business / B2B Licensing</span>
-                <span className="font-black text-blue-600">30%</span>
+                <span className="font-black text-blue-600">0%</span>
               </div>
-              <div className="w-full bg-slate-100 rounded-full h-2"><div className="bg-blue-500 h-2 rounded-full" style={{ width: '30%' }}></div></div>
+              <div className="w-full bg-slate-100 rounded-full h-2"><div className="bg-blue-500 h-2 rounded-full" style={{ width: '0%' }}></div></div>
 
               <div className="flex justify-between items-center text-sm">
                 <span className="font-bold text-slate-600">State & Federal Oversight</span>
-                <span className="font-black text-red-500">15%</span>
+                <span className="font-black text-red-500">0%</span>
               </div>
-              <div className="w-full bg-slate-100 rounded-full h-2"><div className="bg-red-500 h-2 rounded-full" style={{ width: '15%' }}></div></div>
+              <div className="w-full bg-slate-100 rounded-full h-2"><div className="bg-red-500 h-2 rounded-full" style={{ width: '0%' }}></div></div>
 
               <div className="flex justify-between items-center text-sm">
                 <span className="font-bold text-slate-600">Press & Media Inquiries</span>
-                <span className="font-black text-indigo-500">10%</span>
+                <span className="font-black text-indigo-500">0%</span>
               </div>
-              <div className="w-full bg-slate-100 rounded-full h-2"><div className="bg-indigo-500 h-2 rounded-full" style={{ width: '10%' }}></div></div>
+              <div className="w-full bg-slate-100 rounded-full h-2"><div className="bg-indigo-500 h-2 rounded-full" style={{ width: '0%' }}></div></div>
             </div>
           </div>
         </div>
