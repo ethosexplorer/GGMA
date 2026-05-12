@@ -14,6 +14,7 @@ import { PhoneIntakeForm } from '../components/telephony/PhoneIntakeForm';
 import { voip800 } from '../lib/voip800';
 import { turso } from '../lib/turso';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
+import { DocumentVaultTab } from '../components/ops/DocumentVaultTab';
 
 const NAV_ITEMS = [
   { section: 'CALL CENTER' },
@@ -28,6 +29,7 @@ const NAV_ITEMS = [
   { id: 'it_support', label: 'IT Support & Diagnostics', icon: MonitorPlay },
   { id: 'hr_intelligence', label: 'HR Intelligence', icon: UserPlus },
   { id: 'applications', label: 'Applications Queue', icon: FileText },
+  { id: 'document_vault', label: 'Document Vault', icon: FolderLock },
   { id: 'personnel', label: 'Personnel Force (Total)', icon: Users },
   { section: 'USER ASSISTANCE' },
   { id: 'patients', label: 'Patient Inquiries', icon: HeartPulse },
@@ -383,6 +385,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
       case 'it_support': return renderITSupport();
       case 'hr_intelligence': return renderHRIntelligence();
       case 'applications': return renderApplicationsQueue();
+      case 'document_vault': return <DocumentVaultTab />;
       case 'personnel': return renderPersonnel();
       default: return (
         <div className="flex items-center justify-center h-[60vh]">
