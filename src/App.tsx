@@ -1788,11 +1788,11 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
               </div>
             </a>
 
-            {/* BBB A+ Accredited Badge */}
+            {/* BBB A+ Rated Badge */}
             <a href="https://www.bbb.org/us/ok/oklahoma-city/profile/medical-marijuana-card/chronic-cardz-0995-90108724" target="_blank" rel="noopener noreferrer" className="group flex items-center gap-4 bg-white border-2 border-[#163a5f] hover:border-[#1e5082] rounded-2xl px-8 py-5 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1">
               <div className="w-16 h-16 flex items-center justify-center bg-[#163a5f] rounded-xl text-white font-black text-2xl tracking-tighter shadow-inner">BBB</div>
               <div className="text-left">
-                <p className="text-sm font-black text-[#163a5f] group-hover:text-[#1e5082] transition-colors">A+ Accredited Business</p>
+                <p className="text-sm font-black text-[#163a5f] group-hover:text-[#1e5082] transition-colors">A+ Rated Business</p>
                 <p className="text-[11px] text-slate-500 font-medium">Better Business Bureau Since 2018</p>
                 <p className="text-[10px] text-emerald-600 font-bold mt-1">6+ Years of verified community trust</p>
               </div>
@@ -1840,7 +1840,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
                 </div>
               </div>
               <div className="flex flex-col gap-2 relative z-10">
-                <div className="text-[9px] font-black text-emerald-500/70 uppercase tracking-widest pl-1">Registered Entities & DBAs</div>
+                <div className="text-[9px] font-black text-emerald-500/70 uppercase tracking-widest pl-1">Platform Affiliates</div>
                 <div className="flex gap-2 flex-wrap">
                   {['Global Green Enterprise Inc', 'National Cannabis Association Group', 'CCardz', '@thebackoffice.com', 'Diversity Health and Wellness', 'Diversity Health Network', 'Omni Credit'].map((dba, i) => (
                     <span key={i} className={cn("px-3 py-1 rounded-full text-[10px] font-bold border transition-colors cursor-default", i === 0 ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" : "bg-white/5 text-emerald-100/70 border-white/10 hover:bg-white/10")}>
@@ -1954,7 +1954,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
             </a>
             <a href="https://www.bbb.org/us/ok/oklahoma-city/profile/medical-marijuana-card/chronic-cardz-0995-90108724" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
               <div className="w-8 h-8 flex items-center justify-center bg-[#163a5f] rounded text-white font-black text-xs tracking-tighter">BBB</div>
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">A+ Accredited</span>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">A+ Rated</span>
             </a>
           </div>
 
