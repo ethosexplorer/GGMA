@@ -417,7 +417,21 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   };
 
   useEffect(() => {
-    turso.execute('SELECT * FROM founder_ledger').then(res => setFounderLedger(res.rows)).catch(console.error);
+    // Purge old mock seed data from Turso (one-time cleanup)
+    const mockNames = [
+      'Sylara Medical Subscriptions', 'Metrc Integration Fees', 'Care Wallet Transactions',
+      'Telehealth Consults', 'State Jurisdiction Licensing', 'Back Office Operations (Cannabis)',
+      'Back Office Operations (General)', 'Attorney / Legal Retainers (Cannabis)',
+      'Attorney / Legal Retainers (General)', 'Ecosystem Add-ons (Patient)',
+      'Ecosystem Add-ons (Cross-Dashboard)', 'Distributor / Reseller Fees',
+      'Partner Affiliate Commissions', 'Enforcement & Finance AI Bundles',
+      'Care Builder Credit Programs', 'Federal Dashboard Leases'
+    ];
+    Promise.all(mockNames.map(n =>
+      turso.execute({ sql: "DELETE FROM founder_ledger WHERE origin_vector = ?", args: [n] })
+    )).then(() => {
+      turso.execute('SELECT * FROM founder_ledger ORDER BY created_at DESC').then(res => setFounderLedger(res.rows)).catch(console.error);
+    }).catch(console.error);
   }, []);
   const [regSearch, setRegSearch] = useState('');
   const [regCat, setRegCat] = useState<string | null>(null);
@@ -1189,6 +1203,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                <h3 className="font-black text-slate-800 text-lg flex items-center gap-3"><Activity size={20} className="text-emerald-600" /> Accounts Receivable (Revenue Streams)</h3>
                <div className="flex gap-2">
                   <button onClick={addRevenueStream} className="px-4 py-2 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-100 transition-colors">+ Add Revenue Stream</button>
+                  <button onClick={() => { setIsAddingLedgerEntry('revenue'); setLedgerForm({ name: '', amount: '' }); }} className="px-4 py-2 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-100 transition-colors">💵 Post Payment</button>
                   <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "EXPORT", "Production_User", JSON.stringify({ detail: "Exporting Accounts Receivable to CSV..." })] }).catch(console.error) ); alert("Exporting Accounts Receivable to CSV...\n\n[Live Production Transaction Logged]"); }} className="px-4 py-2 bg-slate-100 border border-slate-200 rounded-xl text-[10px] font-black text-slate-600 uppercase tracking-widest hover:bg-slate-100">Export CSV</button>
                </div>
             </div>
@@ -3406,7 +3421,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           <h3 className="text-lg font-black text-slate-800 mb-4 flex items-center gap-2"><TrendingUp size={18} className="text-emerald-500" /> Monthly Signups</h3>
           <div className="space-y-3">
             {[
-              { month: 'May 2026', signups: 1, revenue: '$20.00' },
+              { month: 'May 2026', signups: 0, revenue: '$0' },
             ].map(m => (
               <div key={m.month} className="flex justify-between items-center p-3 bg-slate-50 rounded-xl">
                 <span className="text-sm font-bold text-slate-700">{m.month}</span>
@@ -3445,7 +3460,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
             { cat: 'Dispensary', count: 0, pct: '—' },
             { cat: 'Cultivator', count: 0, pct: '—' },
             { cat: 'Lab / Testing', count: 0, pct: '—' },
-            { cat: 'Healthcare', count: 1, pct: 'New' },
+            { cat: 'Healthcare', count: 0, pct: '—' },
           ].map(c => (
             <div key={c.cat} className="bg-white p-4 rounded-xl border border-slate-200 text-center">
               <div className="text-2xl font-black text-slate-800">{c.count.toLocaleString()}</div>
