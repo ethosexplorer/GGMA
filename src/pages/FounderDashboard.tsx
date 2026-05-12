@@ -25,6 +25,8 @@ import { onSnapshot, collection, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { METRC_MANUAL } from '../data/metrcManual';
 import { turso } from '../lib/turso';
+import { RegulatoryCommandCenter } from '../components/founder/RegulatoryCommandCenter';
+import { getLastSweep, getSweepFreshness, getNextSweepDate } from '../lib/regSweep';
 import { MasterBankingInfo } from '../components/MasterBankingInfo';
 import { FounderModals } from '../components/FounderModals';
 import { ITSupportDashboard } from '../components/it/ITSupportDashboard';
@@ -119,6 +121,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   const userTitle = isMonica ? 'Chief Compliance Director' : (isRyan ? 'President' : (isBobAdvisor ? 'Advisor' : 'Founder'));
 
   const [liveStats, setLiveStats] = useState({ totalUsers: '0', netRevenue: '$0' });
+  const [lastRegSweepDate, setLastRegSweepDate] = useState<string | null>(null);
   const [actionToast, setActionToast] = useState<{ message: string; timestamp: number } | null>(null);
 
   const [liveAnalytics, setLiveAnalytics] = useState({
@@ -166,6 +169,9 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     
     fetchMetrics();
     const interval = setInterval(fetchMetrics, 5000);
+
+    // Fetch last regulatory sweep date
+    getLastSweep().then(s => setLastRegSweepDate(s?.sweep_date || null)).catch(() => {});
 
     // 1b. Fetch live tracking analytics
     const fetchAnalytics = async () => {
@@ -582,7 +588,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   );
 
   const renderOverview = () => (
-    <div className="space-y-4 max-h-[420px] overflow-y-auto pr-2">
+    <div className="space-y-4 overflow-y-auto pr-2">
           
 
       {!hideUpdates && (
@@ -612,6 +618,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                  <p className="text-2xl font-black">{liveStats.totalUsers}</p>
               </div>
               {!isExecutive && (<div className="text-center px-6"><p className="text-[10px] font-bold text-indigo-300 uppercase tracking-wider mb-1">Net Revenue</p><p className="text-2xl font-black text-emerald-400">{liveStats.netRevenue}</p></div>)}
+              {!isExecutive && (() => { const f = getSweepFreshness(lastRegSweepDate); return (<div className="text-center px-6 border-l border-white/10"><p className="text-[10px] font-bold text-indigo-300 uppercase tracking-wider mb-1">Reg Sweep</p><p className={cn("text-sm font-black", f.color === 'text-emerald-600' ? 'text-emerald-400' : f.color === 'text-amber-600' ? 'text-amber-400' : 'text-red-400')}>{f.label}</p></div>); })()}
            </div>
         </div>
       </div>
@@ -1075,6 +1082,9 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
            ))}
         </div>
       </div>
+
+      {/* 🛡️ REGULATORY SWEEP COMMAND CENTER */}
+      <RegulatoryCommandCenter />
     </div>
   );
 
