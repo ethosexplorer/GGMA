@@ -140,9 +140,9 @@ export const PhoneIntakeForm = () => {
         <div className="flex justify-between text-sm"><span className="text-slate-500">Email</span><span className="font-bold text-slate-800">{data.email}</span></div>
         <div className="flex justify-between text-sm"><span className="text-slate-500">Submitted Via</span><span className="font-bold text-emerald-600">Phone Intake — OPS</span></div>
       </div>
-      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-800 font-bold flex items-start gap-2 max-w-md mx-auto text-left">
-        <AlertCircle size={16} className="shrink-0 mt-0.5" />
-        <span>Temporary PIN <strong>1234</strong> has been set. Caller should change this on first login. Application is now visible in their Applications tab.</span>
+      <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-xs text-emerald-800 font-bold flex items-start gap-2 max-w-md mx-auto text-left">
+        <Mail size={16} className="shrink-0 mt-0.5" />
+        <span>A registration invite has been sent to <strong>{data.email}</strong>. The caller can set up their login from that email. Their application is already visible in the Applications tab.</span>
       </div>
       <button onClick={reset} className="px-8 py-3 bg-[#1a4731] text-white font-bold rounded-xl hover:bg-[#153a28] transition-colors shadow-lg">Start New Intake</button>
     </div>
