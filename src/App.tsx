@@ -8538,6 +8538,34 @@ export default function App() {
     else if (path === '/patient-signup') setView('patient-signup');
   }, [location.pathname]);
 
+  // Real-Time Analytics Tracking
+  useEffect(() => {
+    const trackEvent = async () => {
+      try {
+        const { turso } = await import('./lib/turso');
+        await turso.execute('UPDATE analytics_aggregates SET total_clicks = total_clicks + 1 WHERE id = 1');
+        
+        const pathName = location.pathname === '/' ? 'Landing Page' : location.pathname;
+        await turso.execute({
+          sql: 'INSERT INTO analytics_events (id, event_type, source, path, user_type, details, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
+          args: [
+            'ev-' + Math.random().toString(36).substr(2, 9),
+            'PAGE_VIEW',
+            'Web Frontend',
+            location.pathname,
+            userProfile?.role || 'Anonymous Visitor',
+            `Viewed ${pathName}`,
+            new Date().toISOString()
+          ]
+        });
+      } catch (e) {
+        // Silent fail for analytics
+      }
+    };
+    // Only track if not a completely empty initial render to avoid double counting strict mode
+    trackEvent();
+  }, [location.pathname, userProfile?.role]);
+
   useEffect(() => {
     const FOUNDER_EMAIL = "globalgreenhp@gmail.com";
     const FOUNDER_EMAIL_2 = "compliance.globalgreenhp@gmail.com";
