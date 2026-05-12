@@ -206,7 +206,7 @@ export const RegulatoryReportingTab: React.FC<{ facilityId: string }> = ({ facil
                     <h4 className="font-bold text-emerald-900">Submission Successful</h4>
                     <p className="text-xs text-emerald-700 font-medium">Submission ID: {submissionStatus.submissionId} | Logged to State Gateway</p>
                   </div>
-                  <button className="ml-auto px-4 py-2 bg-emerald-100 text-emerald-700 rounded-xl text-xs font-bold hover:bg-emerald-200 transition-colors">View Manifesto</button>
+                  <button onClick={() => { import('../../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="ml-auto px-4 py-2 bg-emerald-100 text-emerald-700 rounded-xl text-xs font-bold hover:bg-emerald-200 transition-colors">View Manifesto</button>
                 </div>
               </div>
             )}

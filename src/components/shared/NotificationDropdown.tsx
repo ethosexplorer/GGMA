@@ -98,7 +98,7 @@ export const NotificationDropdown = () => {
           </div>
           
           <div className="p-3 bg-slate-50 border-t border-slate-100 text-center">
-            <button className="text-xs font-bold text-slate-500 hover:text-slate-800">View History in Vault</button>
+            <button onClick={() => { import('../../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="text-xs font-bold text-slate-500 hover:text-slate-800">View History in Vault</button>
           </div>
         </div>
       )}

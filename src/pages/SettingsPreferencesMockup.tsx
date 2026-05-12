@@ -20,7 +20,7 @@ export const SettingsPreferencesMockup = () => {
         {/* Header */}
         <div className="bg-[#1a4731] p-6 text-white flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <button className="p-2 hover:bg-white/10 rounded-full transition-colors">
+            <button onClick={() => { import('../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="p-2 hover:bg-white/10 rounded-full transition-colors">
               <ChevronLeft size={24} />
             </button>
             <div>
@@ -135,10 +135,10 @@ export const SettingsPreferencesMockup = () => {
 
         {/* Footer */}
         <div className="bg-slate-50 p-6 border-t border-slate-200 flex justify-end gap-4">
-          <button className="px-6 py-2.5 rounded-xl font-bold text-slate-500 hover:bg-slate-200 transition-colors">
+          <button onClick={() => { import('../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="px-6 py-2.5 rounded-xl font-bold text-slate-500 hover:bg-slate-200 transition-colors">
             Cancel
           </button>
-          <button className="px-6 py-2.5 rounded-xl font-bold bg-[#1a4731] text-white hover:bg-[#153a28] transition-colors flex items-center gap-2 shadow-sm">
+          <button onClick={() => { import('../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="px-6 py-2.5 rounded-xl font-bold bg-[#1a4731] text-white hover:bg-[#153a28] transition-colors flex items-center gap-2 shadow-sm">
             <Save size={18} />
             Save Preferences
           </button>

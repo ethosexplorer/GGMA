@@ -231,7 +231,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
                            <p className="font-bold text-sm text-slate-800 leading-tight pr-4">{addon.name}</p>
                            <p className="text-sm font-bold text-[#1a4731]">{typeof addon.price === 'number' ? `$${addon.price}/mo` : addon.price}</p>
                         </div>
-                        <button className="text-xs text-red-500 font-bold hover:underline">Remove</button>
+                        <button onClick={() => { import('../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="text-xs text-red-500 font-bold hover:underline">Remove</button>
                      </div>
                    ))}
                    <Button onClick={() => setShowPricing(true)} variant="outline" className="w-full mt-2 cursor-pointer" icon={Plus}>Add More Features</Button>

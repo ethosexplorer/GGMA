@@ -48,7 +48,7 @@ export const EducationPortal = ({ onBack }: { onBack: () => void }) => {
               >
                 <PlayCircle size={20} /> Start Training
               </button>
-              <button className="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold rounded-xl transition-all flex items-center gap-2">
+              <button onClick={() => { import('../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold rounded-xl transition-all flex items-center gap-2">
                 <Download size={20} /> View Grant Opportunities
               </button>
             </div>
@@ -131,7 +131,7 @@ export const EducationPortal = ({ onBack }: { onBack: () => void }) => {
                       <p className="text-xs text-slate-500 font-medium">Certification valid for 24 months.</p>
                     </div>
                   </div>
-                  <button className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-bold text-slate-700 hover:bg-slate-50">View Requirements</button>
+                  <button onClick={() => { import('../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-bold text-slate-700 hover:bg-slate-50">View Requirements</button>
                 </div>
               ))}
             </div>

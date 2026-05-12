@@ -99,7 +99,7 @@ export const TrainingAndDictionary = ({ role = 'business', onScheduleConsult }: 
                         {examState === 'taking' ? 'Taking Exam...' : 'Begin Exam'} <ArrowRight size={14} />
                       </button>
                     ) : (
-                      <button className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-colors">Start Module</button>
+                      <button onClick={() => { import('../../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition-colors">Start Module</button>
                     )}
                   </div>
                 </div>

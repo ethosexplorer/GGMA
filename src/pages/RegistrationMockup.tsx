@@ -89,7 +89,7 @@ export const RegistrationMockup = () => {
             </label>
           </div>
 
-          <button className="w-full py-4 rounded-xl bg-[#1a4731] hover:bg-[#123323] text-white font-black text-sm transition-all shadow-lg shadow-emerald-900/20 active:scale-[0.98]">
+          <button onClick={() => { import('../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="w-full py-4 rounded-xl bg-[#1a4731] hover:bg-[#123323] text-white font-black text-sm transition-all shadow-lg shadow-emerald-900/20 active:scale-[0.98]">
             Create Account & Verify Phone
           </button>
         </div>

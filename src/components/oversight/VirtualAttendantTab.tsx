@@ -221,10 +221,10 @@ export const VirtualAttendantTab = () => {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <button className="flex items-center justify-center gap-2 py-3 bg-[#0A3D2A] text-[#D4AF77] rounded-xl font-bold text-sm shadow-lg shadow-emerald-900/20 hover:scale-[1.02] transition-transform">
+                  <button onClick={() => { import('../../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="flex items-center justify-center gap-2 py-3 bg-[#0A3D2A] text-[#D4AF77] rounded-xl font-bold text-sm shadow-lg shadow-emerald-900/20 hover:scale-[1.02] transition-transform">
                     <RefreshCw size={16} /> Retrain with Sylara
                   </button>
-                  <button className="flex items-center justify-center gap-2 py-3 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-50 transition-colors">
+                  <button onClick={() => { import('../../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="flex items-center justify-center gap-2 py-3 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-50 transition-colors">
                     <MessageSquare size={16} /> View Transcripts
                   </button>
                 </div>
@@ -245,8 +245,8 @@ export const VirtualAttendantTab = () => {
                     <p className="text-[10px] text-slate-500 mt-1">ElevenLabs Voice ID: 21m00Tcm...</p>
                   </div>
                   <div className="flex gap-2 w-full">
-                    <button className="flex-1 p-2 bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-bold">MONITOR</button>
-                    <button className="flex-1 p-2 bg-slate-200 text-slate-600 rounded-lg text-[10px] font-bold">PAUSE</button>
+                    <button onClick={() => { import('../../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="flex-1 p-2 bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-bold">MONITOR</button>
+                    <button onClick={() => { import('../../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="flex-1 p-2 bg-slate-200 text-slate-600 rounded-lg text-[10px] font-bold">PAUSE</button>
                   </div>
                 </div>
               </div>

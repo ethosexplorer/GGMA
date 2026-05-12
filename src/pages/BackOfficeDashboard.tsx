@@ -140,7 +140,7 @@ export const BackOfficeDashboard = ({ onLogout, user }: { onLogout?: () => void,
                 <div className="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="font-bold text-slate-800 flex items-center gap-2"><CircleCheck size={18} className="text-blue-500"/> Priority Task Stream</h3>
-                    <button className="text-sm font-bold text-blue-600 hover:underline">View All Tasks</button>
+                    <button onClick={() => { import('../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="text-sm font-bold text-blue-600 hover:underline">View All Tasks</button>
                   </div>
                   
                   <div className="space-y-3">
@@ -154,7 +154,7 @@ export const BackOfficeDashboard = ({ onLogout, user }: { onLogout?: () => void,
                           <p className="text-xs text-slate-500">Caller requires human review for Q3 compliance filing.</p>
                         </div>
                       </div>
-                      <button className="px-3 py-1.5 bg-white border border-slate-200 shadow-sm rounded-lg text-xs font-bold hover:bg-slate-50">Handle</button>
+                      <button onClick={() => { import('../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="px-3 py-1.5 bg-white border border-slate-200 shadow-sm rounded-lg text-xs font-bold hover:bg-slate-50">Handle</button>
                     </div>
 
                     <div className="p-3 border border-slate-100 rounded-xl hover:bg-slate-50 transition-colors flex justify-between items-center">
@@ -167,7 +167,7 @@ export const BackOfficeDashboard = ({ onLogout, user }: { onLogout?: () => void,
                           <p className="text-xs text-slate-500">Virtual Attendant could not automatically resolve double-booking.</p>
                         </div>
                       </div>
-                      <button className="px-3 py-1.5 bg-white border border-slate-200 shadow-sm rounded-lg text-xs font-bold hover:bg-slate-50">Resolve</button>
+                      <button onClick={() => { import('../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="px-3 py-1.5 bg-white border border-slate-200 shadow-sm rounded-lg text-xs font-bold hover:bg-slate-50">Resolve</button>
                     </div>
 
                     <div className="p-3 border border-slate-100 rounded-xl hover:bg-slate-50 transition-colors flex justify-between items-center">
@@ -180,7 +180,7 @@ export const BackOfficeDashboard = ({ onLogout, user }: { onLogout?: () => void,
                           <p className="text-xs text-slate-500">Terminal 3 is offline. Remote reboot failed.</p>
                         </div>
                       </div>
-                      <button className="px-3 py-1.5 bg-white border border-slate-200 shadow-sm rounded-lg text-xs font-bold hover:bg-slate-50">Ticket</button>
+                      <button onClick={() => { import('../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="px-3 py-1.5 bg-white border border-slate-200 shadow-sm rounded-lg text-xs font-bold hover:bg-slate-50">Ticket</button>
                     </div>
                   </div>
                 </div>
@@ -199,10 +199,10 @@ export const BackOfficeDashboard = ({ onLogout, user }: { onLogout?: () => void,
                   </div>
                   
                   <div className="space-y-2">
-                    <button className="w-full px-3 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm font-bold transition-colors">
+                    <button onClick={() => { import('../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="w-full px-3 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm font-bold transition-colors">
                       Approve Staffing Shift
                     </button>
-                    <button className="w-full px-3 py-2 bg-slate-800 border border-slate-700 hover:bg-slate-700 rounded-lg text-sm font-bold text-slate-300 transition-colors">
+                    <button onClick={() => { import('../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="w-full px-3 py-2 bg-slate-800 border border-slate-700 hover:bg-slate-700 rounded-lg text-sm font-bold text-slate-300 transition-colors">
                       Review AI Chat Logs
                     </button>
                   </div>

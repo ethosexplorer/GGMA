@@ -228,7 +228,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
           <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
             <div className="flex justify-between items-center mb-6">
               <h3 className="font-bold text-slate-800">Recent Transactions</h3>
-              <button className="text-sm text-[#1a4731] font-medium hover:underline">Export</button>
+              <button onClick={() => { import('../../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="text-sm text-[#1a4731] font-medium hover:underline">Export</button>
             </div>
             <div className="space-y-3">
               {recentTransactions.map((tx) => (
@@ -373,7 +373,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
               {currentTier === tier.id ? (
                 <div className="mt-4 text-center py-2 rounded-xl bg-emerald-50 text-emerald-700 text-sm font-bold">Current Plan</div>
               ) : (
-                <button className="mt-4 w-full py-2 rounded-xl border-2 border-slate-200 text-slate-600 text-sm font-bold hover:bg-slate-50 transition-colors">
+                <button onClick={() => { import('../../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="mt-4 w-full py-2 rounded-xl border-2 border-slate-200 text-slate-600 text-sm font-bold hover:bg-slate-50 transition-colors">
                   {tier.id === 'bronze' ? 'Downgrade' : 'Upgrade'}
                 </button>
               )}
@@ -404,7 +404,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
                       <p className="text-xs text-slate-500 capitalize">{loc.type} • {loc.distance}</p>
                     </div>
                   </div>
-                  <button className="px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-lg text-xs font-bold hover:bg-emerald-100 transition-colors">
+                  <button onClick={() => { import('../../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-lg text-xs font-bold hover:bg-emerald-100 transition-colors">
                     Directions
                   </button>
                 </div>
@@ -450,7 +450,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
             <div className="flex justify-between items-center mb-6">
               <h3 className="font-bold text-slate-800">Approved Vendor Payments</h3>
-              <button className="px-4 py-2 bg-[#1a4731] text-white rounded-lg text-xs font-bold hover:bg-[#153a28]">Add New Vendor</button>
+              <button onClick={() => { import('../../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="px-4 py-2 bg-[#1a4731] text-white rounded-lg text-xs font-bold hover:bg-[#153a28]">Add New Vendor</button>
             </div>
             <div className="space-y-4">
               {[
@@ -491,7 +491,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
                    <div className="h-full bg-blue-400 rounded-full" style={{ width: '45%' }} />
                  </div>
               </div>
-              <button className="w-full py-4 bg-blue-500 hover:bg-blue-400 text-white rounded-2xl font-black shadow-lg shadow-blue-900/30 transition-all">INITIATE BULK SETTLEMENT</button>
+              <button onClick={() => { import('../../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="w-full py-4 bg-blue-500 hover:bg-blue-400 text-white rounded-2xl font-black shadow-lg shadow-blue-900/30 transition-all">INITIATE BULK SETTLEMENT</button>
             </div>
 
             <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">

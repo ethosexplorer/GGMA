@@ -252,14 +252,14 @@ export const StateFactsPage = ({ onBack, onNavigate, setJurisdiction }: { onBack
                   Legislation regarding DEA Schedule III reclassification and local regulatory frameworks is rapidly evolving. As {selectedState.s} prepares for upcoming legislative sessions, community feedback is critical to ensure patients and businesses are protected.
                 </p>
                 <div className="flex flex-col gap-2">
-                  <button className="w-full text-left bg-white px-4 py-3 rounded-xl border border-emerald-200 hover:border-emerald-500 hover:shadow-md transition-all group flex items-center justify-between">
+                  <button onClick={() => { import('../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="w-full text-left bg-white px-4 py-3 rounded-xl border border-emerald-200 hover:border-emerald-500 hover:shadow-md transition-all group flex items-center justify-between">
                     <div>
                       <div className="font-bold text-emerald-950 text-sm">Sign the Petition: Safeguard Care</div>
                       <div className="text-xs text-emerald-700/70">Support fair licensing and patient access in upcoming {selectedState.s} ballots.</div>
                     </div>
                     <ArrowRight size={16} className="text-emerald-500 group-hover:translate-x-1 transition-transform" />
                   </button>
-                  <button className="w-full text-left bg-white px-4 py-3 rounded-xl border border-emerald-200 hover:border-emerald-500 hover:shadow-md transition-all group flex items-center justify-between">
+                  <button onClick={() => { import('../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="w-full text-left bg-white px-4 py-3 rounded-xl border border-emerald-200 hover:border-emerald-500 hover:shadow-md transition-all group flex items-center justify-between">
                     <div>
                       <div className="font-bold text-emerald-950 text-sm">Contact Local Representatives</div>
                       <div className="text-xs text-emerald-700/70">Use our automated tool to message your district's lawmakers.</div>

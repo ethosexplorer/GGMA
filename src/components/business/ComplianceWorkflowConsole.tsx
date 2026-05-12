@@ -249,7 +249,7 @@ export const ComplianceWorkflowConsole = () => {
                         <p className="font-black text-slate-800">{b.strain}</p>
                         <p className="text-[10px] text-slate-500 font-bold uppercase">{b.count} Plants • {b.status}</p>
                       </div>
-                      <button className="p-2 bg-emerald-50 text-emerald-600 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button onClick={() => { import('../../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="p-2 bg-emerald-50 text-emerald-600 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
                         <ArrowRight size={16} />
                       </button>
                     </div>
@@ -321,7 +321,7 @@ export const ComplianceWorkflowConsole = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <button className="text-xs font-black text-[#1a4731] hover:underline uppercase tracking-widest">Manage</button>
+                        <button onClick={() => { import('../../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="text-xs font-black text-[#1a4731] hover:underline uppercase tracking-widest">Manage</button>
                       </td>
                     </tr>
                   ))}
@@ -363,7 +363,7 @@ export const ComplianceWorkflowConsole = () => {
                         </p>
                       </div>
                     </div>
-                    <button className="px-4 py-2 bg-slate-200 text-slate-600 text-[10px] font-black rounded-lg uppercase tracking-widest hover:bg-slate-300">Verify Hash</button>
+                    <button onClick={() => { import('../../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="px-4 py-2 bg-slate-200 text-slate-600 text-[10px] font-black rounded-lg uppercase tracking-widest hover:bg-slate-300">Verify Hash</button>
                   </div>
                 );
               })}

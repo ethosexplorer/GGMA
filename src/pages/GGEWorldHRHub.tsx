@@ -51,10 +51,10 @@ export const GGEWorldHRHub = ({ user }: { user?: any }) => {
             Intelligent onboarding and compliance training for all reps, admins, and personnel. The AI is pre-loaded with federal HR compliance laws, state-specific operational rules, and W2/1099 structures.
           </p>
           <div className="flex gap-4">
-            <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-emerald-500/20">
+            <button onClick={() => { import('../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-emerald-500/20">
               Start New Trainee
             </button>
-            <button className="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-xl font-bold transition-all backdrop-blur-md">
+            <button onClick={() => { import('../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-xl font-bold transition-all backdrop-blur-md">
               View Curriculum Library
             </button>
           </div>
@@ -90,13 +90,13 @@ export const GGEWorldHRHub = ({ user }: { user?: any }) => {
             <h3 className="font-bold text-slate-800 text-lg flex items-center gap-2">
               <Briefcase className="text-purple-500" /> Role & Duty Assignments
             </h3>
-            <button className="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition-colors">+ Add Role</button>
+            <button onClick={() => { import('../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition-colors">+ Add Role</button>
           </div>
           <div className="space-y-4">
             <div className="p-4 border-2 border-dashed border-slate-200 rounded-2xl text-center hover:border-slate-300 transition-colors cursor-pointer">
               <p className="text-sm font-bold text-slate-600 mb-1">Define Title, Department & Duties</p>
               <p className="text-xs text-slate-400 mb-4">AI Teacher will automatically generate the training track.</p>
-              <button className="px-4 py-2 bg-slate-800 text-white text-xs font-bold rounded-lg hover:bg-slate-700 transition-colors">Configure Tracks</button>
+              <button onClick={() => { import('../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="px-4 py-2 bg-slate-800 text-white text-xs font-bold rounded-lg hover:bg-slate-700 transition-colors">Configure Tracks</button>
             </div>
             
             <div className="p-4 border border-slate-100 rounded-2xl bg-slate-50">
@@ -138,7 +138,7 @@ export const GGEWorldHRHub = ({ user }: { user?: any }) => {
           <h3 className="font-bold text-slate-800">Student Pipeline</h3>
           <div className="flex gap-2">
             <input type="text" placeholder="Search students..." className="px-3 py-1.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:border-emerald-500" />
-            <button className="px-3 py-1.5 bg-slate-200 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-300">Filter</button>
+            <button onClick={() => { import('../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="px-3 py-1.5 bg-slate-200 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-300">Filter</button>
           </div>
         </div>
         <div className="divide-y divide-slate-100">
