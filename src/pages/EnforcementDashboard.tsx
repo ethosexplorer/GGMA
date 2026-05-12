@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ShadowOverlay } from '../components/shared/ShadowOverlay';
 import { turso } from '../lib/turso';
-import { ShieldAlert, Map, Search, FileText, Activity, MapPin, XCircle, AlertTriangle, AlertCircle, Fingerprint, Zap, Crosshair, HelpCircle, Download, Bot, CreditCard, Shield, Clock, Wind, Car, User, Wifi, Lock, Globe, CircleCheck, X, Search, Edit2 } from 'lucide-react';
+import { ShieldAlert, Map, Search, FileText, Activity, MapPin, XCircle, AlertTriangle, AlertCircle, Fingerprint, Zap, Crosshair, HelpCircle, Download, Bot, CreditCard, Shield, Clock, Wind, Car, User, Wifi, Lock, Globe, CircleCheck, X, Edit2 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { EnforcementIntelTab } from '../components/federal/EnforcementIntelTab';
