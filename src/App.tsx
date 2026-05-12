@@ -1839,9 +1839,15 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
                   </div>
                 </div>
               </div>
-              <div className="flex gap-2 flex-wrap relative z-10">
-                <span className="px-3 py-1 bg-white/10 rounded-full text-[10px] font-bold text-emerald-300 border border-white/10 hover:bg-emerald-500/20 transition-colors cursor-default">Global Green Enterprise Inc</span>
-                <span className="px-3 py-1 bg-white/10 rounded-full text-[10px] font-bold text-emerald-300 border border-white/10 hover:bg-emerald-500/20 transition-colors cursor-default">Diversity Health & Wellness LLC</span>
+              <div className="flex flex-col gap-2 relative z-10">
+                <div className="text-[9px] font-black text-emerald-500/70 uppercase tracking-widest pl-1">Registered Entities & DBAs</div>
+                <div className="flex gap-2 flex-wrap">
+                  {['Global Green Enterprise Inc', 'National Cannabis Association Group', 'CCardz', '@thebackoffice.com', 'Diversity Health and Wellness', 'Diversity Health Network', 'Omni Credit'].map((dba, i) => (
+                    <span key={i} className={cn("px-3 py-1 rounded-full text-[10px] font-bold border transition-colors cursor-default", i === 0 ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" : "bg-white/5 text-emerald-100/70 border-white/10 hover:bg-white/10")}>
+                      {dba}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
