@@ -1776,6 +1776,18 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
             ))}
           </div>
 
+          {/* LOT Network Member Badge */}
+          <div className="flex justify-center mb-12">
+            <a href="https://lotnet.com/" target="_blank" rel="noopener noreferrer" className="group flex items-center gap-4 bg-white border-2 border-blue-100 hover:border-blue-300 rounded-2xl px-8 py-5 shadow-sm hover:shadow-lg transition-all hover:-translate-y-1">
+              <img src="https://lotnet.com/wp-content/uploads/2017/12/lotnetworkbadge-blue-130x130.png" alt="LOT Network Member" className="w-16 h-16 object-contain" />
+              <div className="text-left">
+                <p className="text-sm font-black text-slate-900 group-hover:text-blue-700 transition-colors">LOT Network Member</p>
+                <p className="text-[11px] text-slate-500 font-medium">Defensive Patent Protection — 6,000+ Members</p>
+                <p className="text-[10px] text-blue-600 font-bold mt-1">Protected against PAE litigation from 24.5% of all U.S. patents</p>
+              </div>
+            </a>
+          </div>
+
           {/* Founder Credentials + Company Stats */}
           <div className="grid grid-cols-1 max-w-4xl mx-auto gap-6 mb-12">
             {/* Accreditations Card */}
@@ -1826,7 +1838,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
           <div className="text-center">
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4">Integrated With &amp; Registered On</p>
             <div className="flex flex-wrap justify-center items-center gap-4 opacity-60 hover:opacity-100 transition-opacity">
-              {['SAM.gov', 'OMES', 'Metrc', 'BidNet Direct', 'OKC City', 'OK ERP', 'Calendly', 'GoHealthUSA'].map((partner, i) => (
+              {['SAM.gov', 'OMES', 'Metrc', 'BidNet Direct', 'OKC City', 'OK ERP', 'Calendly', 'GoHealthUSA', 'LOT Network'].map((partner, i) => (
                 <span key={i} className="text-xs font-black text-slate-500 uppercase tracking-wider px-3 py-1.5 bg-slate-100 rounded-full border border-slate-200">{partner}</span>
               ))}
             </div>
@@ -1916,6 +1928,14 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
           <p className="text-[11px] text-slate-400 max-w-3xl mx-auto leading-relaxed uppercase tracking-wide">
             Disclaimer: Global Green Enterprise Inc (GGHP) infrastructure is designed to aggregate and assist with regulatory compliance across GGMA, RIP, and SINC sectors. Compliance is subject to state, local, and federal jurisdictions. Use of this platform does not constitute legal advice. By accessing this portal, you agree to our terms of service, multi-factor authentication requirements, and role-based data restrictions.
           </p>
+
+          {/* LOT Network Footer Badge */}
+          <div className="flex justify-center mb-6">
+            <a href="https://lotnet.com/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
+              <img src="https://lotnet.com/wp-content/uploads/2017/12/lotnetworkbadge-blue-65x65.png" alt="LOT Network Member" className="w-8 h-8 object-contain" />
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">LOT Network Member</span>
+            </a>
+          </div>
 
           <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 text-xs font-bold text-slate-600 uppercase tracking-widest">
             <a href="#" className="hover:text-[#1a4731] transition-colors">Terms of Service</a>
