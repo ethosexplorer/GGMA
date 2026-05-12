@@ -1604,7 +1604,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
         <div className="max-w-6xl mx-auto px-6">
            <p className="text-center text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-12">Strategic Infrastructure Partners & Sponsors</p>
            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 opacity-50 grayscale hover:grayscale-0 transition-all duration-700">
-              {['Apex Health', 'Verity Labs', 'GreenGrid', 'SecureLogix', 'OMMA', 'METRC'].map((p, i) => (
+              {['LOT Network', 'SAM.gov', 'BidNet Direct', 'GoHealthUSA', 'OMMA', 'METRC'].map((p, i) => (
                 <div key={i} className="flex items-center justify-center h-12 bg-transparent border border-transparent rounded-xl hover:border-slate-200 hover:bg-white hover:shadow-sm transition-all font-black text-slate-900 text-sm italic">
                   {p}
                 </div>

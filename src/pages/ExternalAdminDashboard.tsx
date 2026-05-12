@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+ï»¿import React, { useState } from 'react';
 import { Calendar, Building2, Users, FileText, Settings, Shield, Activity, Bell,
   BarChart3, Folder, TrendingUp, ChevronRight, Bot,
   CreditCard, MessageSquare, AlertTriangle, Upload, Clock, Eye, Lock, CircleCheck } from 'lucide-react';
@@ -34,7 +34,7 @@ const QUEUE = [
 
 export const ExternalAdminDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
   const [activeTab, setActiveTab] = useState('overview');
-  const entityName = user?.entityName || 'Apex Health LLC';
+  const entityName = user?.entityName || 'Example Business LLC';
 
   const renderOverview = () => (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
@@ -217,7 +217,7 @@ export const ExternalAdminDashboard = ({ onLogout, user }: { onLogout?: () => vo
               <option>Eastside Dispensary</option>
               <option>South Processing</option>
             </select>
-            <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Opening notification center..." })] }).catch(console.error) ); alert("Notification Center\n\n• 3 pending compliance alerts\n• 1 executive review request\n• 2 system updates\n\n[Live Production Transaction Logged]"); }} className="relative p-2 text-slate-400 hover:text-slate-600"><Bell size={18} /><span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-white" /></button>
+            <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Opening notification center..." })] }).catch(console.error) ); alert("Notification Center\n\nï¿½ 3 pending compliance alerts\nï¿½ 1 executive review request\nï¿½ 2 system updates\n\n[Live Production Transaction Logged]"); }} className="relative p-2 text-slate-400 hover:text-slate-600"><Bell size={18} /><span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-white" /></button>
           </div>
         </div>
         <div className="flex-1 overflow-y-auto p-6">{getContent()}</div>
