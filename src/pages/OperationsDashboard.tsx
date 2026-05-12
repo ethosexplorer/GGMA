@@ -201,6 +201,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
         <div className="p-4 border-b border-slate-100"><h3 className="font-bold text-slate-800 flex items-center gap-2"><FileText size={16} /> Applications Queue</h3></div>
         <div className="divide-y divide-slate-100">
           {[
+            { name: 'Jasmin Garrett', type: 'Patient Card Renewal', state: 'Oklahoma', status: 'Pending', time: 'Just Now' },
             { name: 'Green Leaf Dispensary LLC', type: 'Business License', state: 'Oklahoma', status: 'Pending', time: '2h ago' },
             { name: 'John D. Carter', type: 'Patient Card Renewal', state: 'Oklahoma', status: 'Under Review', time: '4h ago' },
             { name: 'MedCanna Corp', type: 'Grower License', state: 'Colorado', status: 'Flagged', time: '6h ago' },
