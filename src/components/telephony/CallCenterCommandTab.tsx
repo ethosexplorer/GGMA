@@ -110,19 +110,23 @@ export const CallCenterCommandTab = () => {
 
               <select 
                 value={agentStatus} 
-                onChange={(e) => setAgentStatus(e.target.value)}
+                onChange={(e) => {
+                  setAgentStatus(e.target.value);
+                  // Broadcast status change to WebDialer
+                  window.dispatchEvent(new CustomEvent('twilio-status-change', { detail: { status: e.target.value } }));
+                }}
                 className={cn(
                   "bg-slate-900/50 border rounded-lg px-3 py-1.5 text-[11px] font-black uppercase tracking-wider outline-none cursor-pointer",
                   agentStatus === 'Ready' ? "text-emerald-400 border-emerald-500/50" :
-                  agentStatus === 'Available' ? "text-blue-400 border-blue-500/50" :
+                  agentStatus === 'On Break' ? "text-amber-400 border-amber-500/50" :
                   agentStatus === 'Not available' ? "text-amber-400 border-amber-500/50" :
                   "text-red-400 border-red-500/50"
                 )}
               >
-                <option value="Ready">Ready</option>
-                <option value="Available">Available</option>
-                <option value="Not available">Not available</option>
-                <option value="Logged out">Logged out</option>
+                <option value="Ready">Ready (Accepting Calls)</option>
+                <option value="On Break">On Break</option>
+                <option value="Not available">Not Available</option>
+                <option value="Logged out">Logged Out</option>
               </select>
               <div className={cn("flex items-center gap-2 px-3 py-1.5 rounded-lg font-black text-[10px] uppercase tracking-widest border", isConnected ? "bg-emerald-500/20 border-emerald-400/30 text-emerald-300" : "bg-red-500/20 border-red-400/30 text-red-300")}>
                 <div className={cn("w-2 h-2 rounded-full", isConnected ? "bg-emerald-400 animate-pulse" : "bg-red-400")} />

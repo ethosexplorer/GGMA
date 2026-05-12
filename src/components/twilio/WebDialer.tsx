@@ -45,11 +45,14 @@ export function WebDialer() {
           console.log('[WebDialer] Device registered successfully');
           setStatus('ready');
           setError(null);
+          // Signal to voip800.verifyConnection() that the real SDK is live
+          (window as any).__twilioDeviceReady = true;
         });
 
         newDevice.on('unregistered', () => {
           console.log('[WebDialer] Device unregistered');
           setStatus('offline');
+          (window as any).__twilioDeviceReady = false;
         });
 
         newDevice.on('error', (twilioError: any) => {

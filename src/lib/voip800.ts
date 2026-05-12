@@ -214,15 +214,22 @@ export async function getCallCenterStats(): Promise<CallCenterStats> {
 }
 
 /**
- * Get account/number info to verify connectivity
+ * Get account/number info to verify connectivity.
+ * First checks if the Twilio WebRTC Device SDK is actually registered
+ * (the real source of truth), then falls back to the REST verify endpoint.
  */
 export async function verifyConnection(): Promise<{ connected: boolean; accountId: string; number: string; error?: string }> {
+  // Check the real Twilio WebRTC Device status first (set by WebDialer.tsx)
+  if (typeof window !== 'undefined' && (window as any).__twilioDeviceReady === true) {
+    return { connected: true, accountId: ACCOUNT_ID, number: COMPANY_NUMBER };
+  }
+
   try {
     const res = await fetch('/api/twilio/verify');
     
     const contentType = res.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json')) {
-      return { connected: false, accountId: ACCOUNT_ID, number: COMPANY_NUMBER, error: 'Live server endpoints are not configured. Returning local simulated data.' };
+      return { connected: false, accountId: ACCOUNT_ID, number: COMPANY_NUMBER, error: 'REST verify endpoint unavailable. WebDialer SDK not yet registered.' };
     }
     
     const data = await res.json();
