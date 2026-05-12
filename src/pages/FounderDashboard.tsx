@@ -1431,8 +1431,8 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           <div className="bg-indigo-600 bg-gradient-to-br from-indigo-600 to-blue-700 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-700"><Activity size={64} /></div>
             <h4 className="font-black text-sm uppercase tracking-widest mb-2">Network Reserves</h4>
-            <p className="text-4xl font-black mb-1">$14.8M</p>
-            <p className="text-[10px] font-bold text-indigo-200 mb-6 uppercase tracking-widest">+1.2M THIS MONTH</p>
+            <p className="text-4xl font-black mb-1">{liveStats.netRevenue}</p>
+            <p className="text-[10px] font-bold text-indigo-200 mb-6 uppercase tracking-widest">LIVE TRANSACTIONS (STRIPE / KURV)</p>
             <button onClick={() => setActiveTab('financials')} className="w-full py-3 bg-white text-indigo-600 rounded-xl font-bold transition-all shadow-lg text-sm hover:bg-indigo-50">View Master Ledger</button>
           </div>
         </div>
@@ -1470,7 +1470,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           </div>
 
           <div className="absolute bottom-10 left-10 right-10 grid grid-cols-3 gap-6">
-             {[{l:'States Active',v:'14',c:'text-indigo-600'},{l:'Under Integration',v:'8',c:'text-amber-600'},{l:'Legal Pending',v:'4',c:'text-red-600'}].map((st,i)=>(
+             {[{l:'States Active',v:liveStats.totalUsers > 0 ? '1' : '0',c:'text-indigo-600'},{l:'Under Integration',v:'0',c:'text-amber-600'},{l:'Legal Pending',v:'0',c:'text-red-600'}].map((st,i)=>(
                <div key={i} className="p-6 bg-white border border-slate-200 rounded-2xl text-center shadow-sm hover:shadow-md transition-shadow">
                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{st.l}</p>
                  <p className={cn("text-3xl font-black", st.c)}>{st.v}</p>
@@ -1486,12 +1486,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                <span className="text-[10px] font-black bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full">REAL-TIME</span>
             </div>
             <div className="space-y-6">
-              {[
-                { s: 'Oklahoma', r: '$4.2M', st: 'Critical', c: 'text-red-600' },
-                { s: 'California', r: '$3.8M', st: 'Stable', c: 'text-emerald-600' },
-                { s: 'Colorado', r: '$2.9M', st: 'Stable', c: 'text-emerald-600' },
-                { s: 'Michigan', r: '$2.1M', st: 'Review', c: 'text-amber-600' }
-              ].map((st, i) => (
+              {[{ s: 'Oklahoma', r: liveStats.netRevenue, st: 'Live', c: 'text-emerald-600' }].map((st, i) => (
                 <div key={i} className="flex items-center justify-between group cursor-pointer">
                   <div className="flex items-center gap-4">
                     <div className="w-2 h-2 rounded-full bg-slate-200 group-hover:bg-indigo-500 transition-colors" />
@@ -2650,13 +2645,13 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         )}
         {opsTab === 'ops_apps' && (
           <div className="space-y-4">
-            <div className="grid grid-cols-3 gap-4">{[{l:'Pending',v:'502',c:'text-amber-600'},{l:'Approved',v:'38',c:'text-emerald-600'},{l:'Flagged',v:'12',c:'text-red-600'}].map((s,i)=>(<div key={i} className="bg-white border border-slate-200 p-5 rounded-2xl text-center"><p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{s.l}</p><p className={`text-2xl font-black ${s.c}`}>{s.v}</p></div>))}</div>
-            <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden"><div className="p-4 border-b"><h4 className="font-bold text-slate-800">Applications Queue</h4></div><div className="divide-y">{[{n:'Green Leaf Dispensary',t:'Business License',s:'Pending'},{n:'John D. Carter',t:'Patient Renewal',s:'Review'},{n:'MedCanna Corp',t:'Grower License',s:'Flagged'},{n:'Sarah Williams',t:'Caregiver',s:'Pending'}].map((a,i)=>(<div key={i} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50"><div><p className="text-sm font-bold text-slate-800">{a.n}</p><p className="text-xs text-slate-500">{a.t}</p></div><span className={cn("text-[9px] font-black uppercase px-2 py-0.5 rounded-full",a.s==='Pending'?'bg-amber-50 text-amber-600':a.s==='Flagged'?'bg-red-50 text-red-600':'bg-blue-50 text-blue-600')}>{a.s}</span></div>))}</div></div>
+            <div className="grid grid-cols-3 gap-4">{[{l:'Pending',v:'0',c:'text-amber-600'},{l:'Approved',v:'0',c:'text-emerald-600'},{l:'Flagged',v:'0',c:'text-red-600'}].map((s,i)=>(<div key={i} className="bg-white border border-slate-200 p-5 rounded-2xl text-center"><p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{s.l}</p><p className={`text-2xl font-black ${s.c}`}>{s.v}</p></div>))}</div>
+            <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden"><div className="p-4 border-b"><h4 className="font-bold text-slate-800">Applications Queue</h4></div><div className="divide-y">{[]/* Mock applications removed for live launch */.map((a,i)=>(<div key={i} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50"><div><p className="text-sm font-bold text-slate-800">{a.n}</p><p className="text-xs text-slate-500">{a.t}</p></div><span className={cn("text-[9px] font-black uppercase px-2 py-0.5 rounded-full",a.s==='Pending'?'bg-amber-50 text-amber-600':a.s==='Flagged'?'bg-red-50 text-red-600':'bg-blue-50 text-blue-600')}>{a.s}</span></div>))}</div></div>
           </div>
         )}
         {opsTab === 'ops_personnel' && (
           <div className="space-y-4">
-            <div className="grid grid-cols-4 gap-4">{[{l:'Total',v:'1,247'},{l:'Active',v:'892'},{l:'Leave',v:'45'},{l:'New',v:'28'}].map((s,i)=>(<div key={i} className="bg-white border border-slate-200 p-5 rounded-2xl text-center"><p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{s.l}</p><p className="text-2xl font-black text-slate-800">{s.v}</p></div>))}</div>
+            <div className="grid grid-cols-4 gap-4">{[{l:'Total',v:'0'},{l:'Active',v:'0'},{l:'Leave',v:'0'},{l:'New',v:'0'}].map((s,i)=>(<div key={i} className="bg-white border border-slate-200 p-5 rounded-2xl text-center"><p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{s.l}</p><p className="text-2xl font-black text-slate-800">{s.v}</p></div>))}</div>
             <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden"><div className="p-4 border-b"><h4 className="font-bold text-slate-800">Personnel Directory</h4></div><div className="divide-y">{[{n:'Live Sr Agent',r:'Founder/CEO'},{n:'Monica Green',r:'Compliance Director'},{n:'Ryan Ferrari',r:'CEO / IT Lead'},{n:'Larry AI',r:'Compliance Officer'},{n:'Sylara AI',r:'Intake Agent'}].map((p,i)=>(<div key={i} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50"><div className="flex items-center gap-3"><div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500"><Users size={14}/></div><div><p className="text-sm font-bold text-slate-800">{p.n}</p><p className="text-xs text-slate-500">{p.r}</p></div></div><span className="text-[9px] font-black uppercase text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Active</span><button className="px-2 py-1 ml-2 rounded bg-amber-500/20 text-amber-600 border border-amber-500/50 text-[9px] font-black uppercase hover:bg-amber-500 hover:text-white transition-colors" onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Jurisdiction Unlocked. User must complete Intake again." })] }).catch(console.error) ); alert("Jurisdiction Unlocked. User must complete Intake again.\n\n[Live Production Transaction Logged]"); }}>Unlock State</button></div>))}</div></div>
           </div>
         )}
