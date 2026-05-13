@@ -3885,18 +3885,30 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   let currentGroup: any = null;
 
   navItemsList.forEach((item, i) => {
-    // If not Founder, strictly limit to the 17 requested tabs (plus any custom sections)
-    if ((isMonica || isRyan || isBobAdvisor) && !('section' in item)) {
+    // Advisor: strictly Read-Only Analytics & Oversight
+    if (isBobAdvisor && !('section' in item)) {
+      const advisorTabs = ["overview", "jurisdiction_map", "compliance", "reports", "intel", "global_financials"];
+      if (!advisorTabs.includes(item.id || '')) return;
+    }
+
+    // VP / C-Suite: Partial God View
+    if ((isMonica || isRyan) && !isBobAdvisor && !('section' in item)) {
       const allowedExecutiveTabs = [
         "system_health", "hr_intelligence", "jurisdiction_map", "ai_training", "messages",
         "internal_scheduler", "patients", "business", "compliance", "regulatory_library",
         "internal_admin", "law_enforcement", "processor", "public_health", "rapid_testing",
-        "reports", "intel"
+        "reports", "intel", "overview"
       ];
       if (!allowedExecutiveTabs.includes(item.id || '')) return;
     }
 
-    if ((isMonica || isRyan || isBobAdvisor) && 'section' in item) {
+    // Section filtering
+    if (isBobAdvisor && 'section' in item) {
+       if (item.id === '_sec_founder' || item.id === '_sec_ops' || item.id === '_sec_analytics') {
+         currentGroup = null;
+         return;
+       }
+    } else if ((isMonica || isRyan) && 'section' in item) {
       if (item.id === '_sec_founder' || item.id === '_sec_ops') {
         currentGroup = null;
         return;
