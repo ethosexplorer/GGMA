@@ -2,8 +2,9 @@ import React, { useState, useRef } from 'react';
 import { motion } from 'motion/react';
 import { ArrowLeft, AlertCircle, Upload, Plus, Trash2, CheckCircle, FileText, X, Info, CircleCheck } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '../firebase';
+import { collection, addDoc, serverTimestamp, doc, setDoc } from 'firebase/firestore';
+import { db, auth } from '../firebase';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 
 const BUSINESS_STEPS = [
   'Pre-Registration',
@@ -49,6 +50,8 @@ interface OwnerData {
 export default function BusinessRegistrationPage({ onNavigate, onComplete }: { onNavigate: (view: any) => void, onComplete?: (email: string, pass: string, role: string, payload: any) => Promise<void> }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [accountCreated, setAccountCreated] = useState(false);
+  const [firebaseUid, setFirebaseUid] = useState<string | null>(null);
   
   // Forms State
   const [formData, setFormData] = useState({
@@ -494,7 +497,7 @@ export default function BusinessRegistrationPage({ onNavigate, onComplete }: { o
                         type="file" 
                         ref={el => fileInputRefs.current[docName] = el}
                         className="hidden" 
-                        accept=".pdf,.jpg,.jpeg,.png"
+                        accept="application/pdf,image/jpeg,image/jpg,image/png,.pdf,.jpg,.jpeg,.png"
                         onChange={(e) => {
                           if (e.target.files && e.target.files[0]) {
                             handleFileUpload(docName, e.target.files[0]);
@@ -644,11 +647,52 @@ export default function BusinessRegistrationPage({ onNavigate, onComplete }: { o
     }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
+    // Step 0: Create Firebase account immediately on first "Next"
+    if (currentStep === 0 && !accountCreated) {
+      if (!formData.email || !formData.password || !formData.fullName || !formData.entityName || !formData.licenseType) {
+        alert('Please fill in all required fields before proceeding.');
+        return;
+      }
+      if (formData.password.length < 6) {
+        alert('Password must be at least 6 characters.');
+        return;
+      }
+      setLoading(true);
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+        const uid = userCredential.user.uid;
+        setFirebaseUid(uid);
+        // Create profile immediately so account exists even if they abandon
+        await setDoc(doc(db, 'users', uid), {
+          uid,
+          email: formData.email,
+          role: 'business',
+          status: 'Application In Progress',
+          displayName: formData.entityName,
+          licenseType: formData.licenseType,
+          createdAt: serverTimestamp(),
+        });
+        setAccountCreated(true);
+        setLoading(false);
+      } catch (err: any) {
+        setLoading(false);
+        if (err.code === 'auth/email-already-in-use') {
+          alert('An account with this email already exists. Please log in instead.');
+        } else if (err.code === 'auth/weak-password') {
+          alert('Password is too weak. Please use at least 6 characters.');
+        } else if (err.code === 'auth/invalid-email') {
+          alert('Invalid email format.');
+        } else {
+          alert('Account creation failed: ' + (err.message || 'Unknown error'));
+        }
+        return;
+      }
+    }
     // If Step 6 (Attestations), ensure all to 10 are checked
     if (currentStep === 5) {
       if(!formData.attest1 || !formData.attest2 || !formData.attest3 || !formData.attest4 || !formData.attest5 || !formData.attest6 || !formData.attest7 || !formData.attest8 || !formData.attest9 || !formData.attest10) {
-        (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "You must check all 10 attestations to proceed." })] }).catch(console.error) ); alert("You must check all 10 attestations to proceed.\n\n[Live Production Transaction Logged]"); })();
+        alert('You must check all 10 attestations to proceed.');
         return;
       }
     }
@@ -662,15 +706,31 @@ export default function BusinessRegistrationPage({ onNavigate, onComplete }: { o
 
   const submitApplication = async () => {
      setLoading(true);
-     // Simulate API latency & upload processing
      try {
+       // Update the existing profile with full application data
+       if (firebaseUid) {
+         await setDoc(doc(db, 'users', firebaseUid), {
+           status: 'Pending Review',
+           companyName: formData.entityName,
+           tradeName: formData.tradeName,
+           licenseType: formData.licenseType,
+           businessStructure: formData.businessStructure,
+           physicalAddress: formData.physicalAddress,
+           ppocName: formData.ppocName,
+           ppocPhone: formData.ppocPhone,
+           ppocEmail: formData.ppocEmail,
+           uploadedDocuments: Object.keys(uploadedFiles).length,
+           bondType: formData.bondType,
+           ownersCount: owners.length,
+           submittedAt: new Date().toISOString(),
+         }, { merge: true });
+       }
+       // Also call onComplete if provided (sets profile in App state)
        if (onComplete) {
          await onComplete(formData.email, formData.password, 'business', { ...formData, uploadedDocuments: Object.keys(uploadedFiles).length, bonded: formData.bondType });
-       } else {
-         await new Promise(r => setTimeout(r, 2000));
        }
      } catch(e) {
-       console.error("Submission failed", e);
+       console.error('Submission failed', e);
      }
      setLoading(false);
      setCurrentStep(9);
