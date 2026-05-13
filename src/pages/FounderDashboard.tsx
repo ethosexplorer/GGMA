@@ -124,6 +124,17 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   const [lastRegSweepDate, setLastRegSweepDate] = useState<string | null>(null);
   const [actionToast, setActionToast] = useState<{ message: string; timestamp: number } | null>(null);
 
+  // Law Enforcement: Rapid Test & Breathalyzer state
+  const [ripSearchQuery, setRipSearchQuery] = useState('');
+  const [ripSelectedPatient, setRipSelectedPatient] = useState<any>(null);
+  const [ripTestStep, setRipTestStep] = useState(1);
+  const [breathState, setBreathState] = useState<'idle' | 'blowing' | 'analyzing' | 'complete'>('idle');
+  const [breathLevel, setBreathLevel] = useState(0);
+  const [breathResult, setBreathResult] = useState<{thc: number, pass: boolean, prob: number} | null>(null);
+  const RIP_MOCK = { name: 'Jason Thorne', licenseId: 'OK-4892-2291', status: 'Active', stops: 4, rating: 82, offenses: ['Failed Rapid Test (Apr 2025)', 'Broken Taillight (Jan 2026)'] };
+  const handleRipSearch = (e: React.FormEvent) => { e.preventDefault(); if (ripSearchQuery) { setRipSelectedPatient(RIP_MOCK); setRipTestStep(2); } };
+  const startBreath = () => { setBreathState('blowing'); setBreathLevel(0); const iv = setInterval(() => { setBreathLevel(p => { if (p >= 100) { clearInterval(iv); setBreathState('analyzing'); setTimeout(() => { setBreathResult({ thc: 0.02, pass: true, prob: 94 }); setBreathState('complete'); }, 2000); return 100; } return p + 5; }); }, 150); };
+
   const [liveAnalytics, setLiveAnalytics] = useState({
     users: 0,
     clicks: 0,
@@ -3385,6 +3396,138 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
               ))}
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* ===== RAPID TEST SIMULATOR / IDENTITY LOOKUP ===== */}
+      <div className="bg-slate-950 border border-emerald-500/30 rounded-[2rem] p-8 text-white shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-8 opacity-5"><Zap size={120}/></div>
+        <div className="relative z-10">
+          <h3 className="text-2xl font-black mb-2 flex items-center gap-3"><Zap className="text-emerald-500"/> Identify Verify Test <span className="text-slate-500 font-normal text-lg">| Forensic Intelligence</span></h3>
+          <p className="text-[10px] text-emerald-500 font-bold tracking-widest uppercase mb-6">Real-time Patient Analysis & Responsibility Rating</p>
+
+          {ripTestStep === 1 && (
+            <div className="space-y-6">
+              <form onSubmit={handleRipSearch} className="relative max-w-2xl">
+                <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500" size={20}/>
+                <input value={ripSearchQuery} onChange={(e) => setRipSearchQuery(e.target.value)} className="w-full bg-slate-900 border-2 border-slate-800 rounded-2xl py-5 pl-14 pr-36 text-lg font-bold focus:border-emerald-500 outline-none" placeholder="Scan Card or Enter ID..." />
+                <button type="submit" className="absolute right-2 top-2 bottom-2 bg-blue-600 px-6 rounded-xl font-black text-sm hover:bg-blue-500">IDENTIFY</button>
+              </form>
+              <div className="flex gap-4">
+                {[{i: 'Biometric Match', c: 'text-blue-400'}, {i: 'OCR ID Scan', c: 'text-emerald-400'}, {i: 'GPS Geofence', c: 'text-red-400'}].map(m => (
+                  <div key={m.i} className="p-4 bg-slate-900/50 rounded-xl border border-slate-800 text-center flex-1"><p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{m.i}</p></div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {ripTestStep === 2 && ripSelectedPatient && (
+            <div className="space-y-6">
+              <div className="flex justify-between items-center bg-slate-900/60 p-6 rounded-2xl border border-slate-800">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-xl bg-slate-800 border border-slate-700 overflow-hidden"><img src={`https://ui-avatars.com/api/?name=${ripSelectedPatient.name}&background=random&color=fff&size=128`} alt="" className="w-full h-full"/></div>
+                  <div><h4 className="text-2xl font-black">{ripSelectedPatient.name}</h4><p className="text-slate-400 text-xs font-bold uppercase tracking-widest">License: {ripSelectedPatient.licenseId}</p></div>
+                </div>
+                <span className="bg-emerald-900/30 text-emerald-400 px-4 py-1.5 rounded-full text-xs font-black border border-emerald-500/30">{ripSelectedPatient.status}</span>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 text-center">
+                  <div className="relative w-24 h-24 mx-auto mb-2"><svg className="w-full h-full -rotate-90"><circle cx="48" cy="48" r="42" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-slate-800"/><circle cx="48" cy="48" r="42" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-emerald-500" strokeDasharray="264" strokeDashoffset={264*(1-ripSelectedPatient.rating/100)} strokeLinecap="round"/></svg><div className="absolute inset-0 flex items-center justify-center"><span className="text-2xl font-black">{ripSelectedPatient.rating}</span></div></div>
+                  <p className="text-[10px] font-bold text-emerald-400 uppercase">Low Risk</p>
+                </div>
+                <div className="col-span-2 bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-3">
+                  <div className="flex justify-between"><span className="text-slate-400 text-sm font-bold">Stops (12mo)</span><span className="font-black text-lg">{ripSelectedPatient.stops}</span></div>
+                  <div className="flex flex-wrap gap-2">{ripSelectedPatient.offenses.map((o: string, i: number) => (<span key={i} className="bg-red-950/40 text-red-400 text-[10px] font-black px-2 py-1 rounded-lg border border-red-900/50 flex items-center gap-1"><AlertTriangle size={10}/>{o}</span>))}</div>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <button onClick={() => { setRipTestStep(1); setRipSelectedPatient(null); setRipSearchQuery(''); }} className="flex-1 bg-slate-800 py-4 rounded-xl font-black text-sm hover:bg-slate-700 border border-slate-700">RELEASE</button>
+                <button onClick={() => { setRipTestStep(3); setTimeout(() => setRipTestStep(4), 2500); }} className="flex-[2] bg-emerald-600 py-4 rounded-xl font-black text-sm hover:bg-emerald-500 shadow-lg flex items-center justify-center gap-2"><Zap size={18}/> EXECUTE RAPID TEST</button>
+              </div>
+            </div>
+          )}
+
+          {ripTestStep === 3 && (
+            <div className="flex flex-col items-center py-12 space-y-6">
+              <div className="relative"><div className="w-32 h-32 rounded-full border-4 border-slate-800 flex items-center justify-center bg-slate-900"><Zap className="text-emerald-500 animate-pulse" size={56}/></div><div className="absolute -inset-3 rounded-full border-4 border-emerald-500/20 animate-ping"></div></div>
+              <h3 className="text-2xl font-black italic tracking-wider">ANALYZING SAMPLE...</h3>
+              <p className="text-slate-500 font-mono text-xs tracking-widest">SECURE SYNC: LARRY AI CLOUD V4.2</p>
+            </div>
+          )}
+
+          {ripTestStep === 4 && (
+            <div className="text-center py-8 space-y-6">
+              <div className="w-20 h-20 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto border border-emerald-500/30"><CircleCheck className="text-emerald-500" size={40}/></div>
+              <h3 className="text-3xl font-black">TEST COMPLETE</h3>
+              <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
+                <button onClick={() => setRipTestStep(5)} className="bg-emerald-600 py-5 rounded-xl font-black text-xl hover:bg-emerald-500">PASS</button>
+                <button onClick={() => setRipTestStep(5)} className="bg-red-600 py-5 rounded-xl font-black text-xl hover:bg-red-500">FAIL</button>
+              </div>
+            </div>
+          )}
+
+          {ripTestStep === 5 && (
+            <div className="space-y-4">
+              <div className="p-6 bg-red-950/20 border border-red-900/30 rounded-2xl">
+                <div className="flex items-center gap-2 mb-3"><div className="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center text-white"><Bot size={14}/></div><h4 className="text-red-400 font-black tracking-widest text-xs uppercase">LARRY AI COMPLIANCE ENGINE</h4></div>
+                <p className="text-slate-300 leading-relaxed">Patient has <span className="text-white font-black">{(ripSelectedPatient?.stops || 4) + 1} stops</span> in 12 months. Responsibility rating recalculated from 82 to <strong className="text-white text-xl font-black">71</strong>.</p>
+                <div className="flex gap-2 mt-4"><span className="bg-red-600 text-white text-xs font-black px-3 py-1.5 rounded-lg flex items-center gap-1"><AlertTriangle size={12}/> MANDATORY SAFETY COURSE</span><span className="bg-slate-800 text-slate-300 text-xs font-black px-3 py-1.5 rounded-lg border border-slate-700 flex items-center gap-1"><Activity size={12}/> REVOCATION REVIEW</span></div>
+              </div>
+              <button onClick={() => { setRipTestStep(1); setRipSelectedPatient(null); setRipSearchQuery(''); }} className="w-full bg-blue-600 py-4 rounded-xl font-black hover:bg-blue-500 shadow-lg">FINISH STOP & SECURE SYNC</button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ===== BREATHALYZER / PROBABILITY FIELD TEST ===== */}
+      <div className="bg-slate-950 border border-blue-500/30 rounded-[2rem] p-8 text-white shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-8 opacity-5"><Activity size={120}/></div>
+        <div className="relative z-10">
+          <h3 className="text-2xl font-black mb-2 flex items-center gap-3"><Activity className="text-blue-500"/> Probability Field Test <span className="text-slate-500 font-normal text-lg">| Connected Device</span></h3>
+          <p className="text-[10px] text-blue-400 font-bold tracking-widest uppercase mb-6 flex items-center gap-2"><Globe size={12} className="animate-pulse"/> Live Backend Sync Active</p>
+
+          {breathState === 'idle' && (
+            <div className="text-center bg-slate-900/60 p-10 rounded-2xl border border-slate-800">
+              <div className="w-24 h-24 bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-blue-500/30 shadow-[0_0_30px_rgba(59,130,246,0.2)]"><Activity size={48} className="text-blue-500"/></div>
+              <h4 className="text-3xl font-black mb-3">Device Ready</h4>
+              <p className="text-slate-400 mb-8">Instruct the suspect to blow steadily into the device until the indicator reaches 100%.</p>
+              <button onClick={startBreath} className="bg-blue-600 w-full max-w-md py-6 rounded-xl font-black text-xl hover:bg-blue-500 shadow-lg tracking-widest">START FIELD TEST</button>
+            </div>
+          )}
+
+          {breathState === 'blowing' && (
+            <div className="text-center bg-slate-900/60 p-10 rounded-2xl border border-slate-800">
+              <h4 className="text-2xl font-black mb-8 text-blue-400">Capturing Breath Sample...</h4>
+              <div className="relative w-48 h-48 mx-auto mb-6">
+                <svg className="w-full h-full -rotate-90"><circle cx="96" cy="96" r="88" stroke="currentColor" strokeWidth="12" fill="transparent" className="text-slate-800"/><circle cx="96" cy="96" r="88" stroke="currentColor" strokeWidth="12" fill="transparent" className="text-blue-500 transition-all duration-150" strokeDasharray="553" strokeDashoffset={553*(1-breathLevel/100)} strokeLinecap="round"/></svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center"><Activity className={cn("text-blue-500", breathLevel < 100 && "animate-pulse")} size={48}/><span className="text-3xl font-black mt-1">{breathLevel}%</span></div>
+              </div>
+              <p className="text-slate-500 font-bold tracking-widest uppercase animate-pulse text-xs">Streaming sensor data to backend...</p>
+            </div>
+          )}
+
+          {breathState === 'analyzing' && (
+            <div className="text-center bg-slate-900/60 p-10 rounded-2xl border-2 border-blue-500/30">
+              <div className="w-24 h-24 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6"><Zap size={48} className="text-emerald-500 animate-pulse"/></div>
+              <h4 className="text-2xl font-black mb-3">Sample Captured</h4>
+              <div className="flex items-center justify-center gap-2 mb-4">{[1,2,3].map(i => <div key={i} className="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style={{animationDelay: `${i*150}ms`}}/>)}</div>
+              <p className="text-slate-400 text-xs tracking-widest font-mono">CALCULATING THC CONTENT • CROSS-REFERENCING FEDERAL DB</p>
+            </div>
+          )}
+
+          {breathState === 'complete' && breathResult && (
+            <div className="text-center bg-slate-900/60 p-10 rounded-2xl border border-slate-700">
+              <h4 className="text-lg font-black mb-4 text-slate-400 tracking-widest uppercase">Result Transmitted</h4>
+              <div className="text-7xl font-black text-emerald-400 mb-2">{breathResult.thc} <span className="text-2xl text-emerald-600">ng/mL</span></div>
+              <div className="inline-block bg-emerald-900/30 text-emerald-400 px-5 py-2 rounded-full font-black tracking-widest border border-emerald-500/30 mb-4 text-lg">{breathResult.pass ? 'PASS - BELOW LIMIT' : 'FAIL - IMPAIRED'}</div>
+              <div className="bg-slate-800/80 border border-blue-500/30 p-4 rounded-xl mb-8 max-w-sm mx-auto">
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1 flex items-center justify-center gap-1"><Clock size={10}/> AI Recency Analysis</p>
+                <p className="text-lg font-black text-white">{breathResult.prob}% Probability</p>
+                <p className="text-xs text-blue-400 mt-1 font-bold">Of consumption within the last 2 hours</p>
+              </div>
+              <button onClick={() => { setBreathState('idle'); setBreathResult(null); }} className="bg-slate-800 w-full max-w-md py-5 rounded-xl font-black text-lg hover:bg-slate-700 border border-slate-700 tracking-widest">RESET DEVICE</button>
+            </div>
+          )}
         </div>
       </div>
 
