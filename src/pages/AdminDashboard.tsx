@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { turso } from '../lib/turso';
 import { db } from '../lib/firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, onSnapshot } from 'firebase/firestore';
 import { Building2, Users, FileText, Settings, Shield, Activity, Bell,
   Briefcase, HeartPulse, Scale, Gavel, FileCheck, Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
@@ -14,6 +14,7 @@ import { UserCalendar } from '../components/UserCalendar';
 import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
 import { EscalationSupportCalendar } from '../components/EscalationSupportCalendar';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
+import { PatientCaseTracker } from '../components/patient/PatientCaseTracker';
 
 const NAV_ITEMS = [
   { section: 'INTERNAL COMMAND' },
@@ -544,42 +545,75 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
     </div>
   );
 
+  // Patient case management state
+  const [selectedAdminPatient, setSelectedAdminPatient] = useState<any>(null);
+  const [adminPatientList, setAdminPatientList] = useState<any[]>([]);
+  useEffect(() => {
+    const unsub = onSnapshot(collection(db, 'users'), (snap) => {
+      const adminRoles = ['admin', 'founder', 'executive', 'president', 'chief_compliance_director',
+        'executive_advisor', 'advisor', 'executive_founder', 'internal_admin', 'compliance_director',
+        'manager', 'team_lead', 'rep', 'ai_agent'];
+      const patients = snap.docs
+        .map(d => ({ uid: d.id, ...d.data() }))
+        .filter((u: any) => {
+          const role = (u.role || '').toLowerCase().trim();
+          if (adminRoles.some(ar => role.includes(ar))) return false;
+          if (role === 'business' || role === 'provider' || role === 'attorney') return false;
+          return true;
+        });
+      setAdminPatientList(patients);
+    });
+    return () => unsub();
+  }, []);
+
   const renderPatients = () => (
     <div className="space-y-6">
       <div className="bg-white border border-slate-200 p-8 rounded-[2.5rem] shadow-sm">
         <div className="flex justify-between items-center mb-6">
-           <h2 className="text-2xl font-black text-slate-800 tracking-tight uppercase italic">Patient Registry</h2>
-           <div className="flex gap-2">
-              <input type="text" placeholder="Search patients..." className="border border-slate-200 rounded-xl px-4 py-2 text-sm w-64 focus:outline-none focus:border-indigo-500" />
-           </div>
+           <h2 className="text-2xl font-black text-slate-800 tracking-tight uppercase italic">Patient Registry & Case Management</h2>
+           <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{adminPatientList.length} patients</p>
         </div>
-        <table className="w-full text-sm text-left">
-           <thead className="bg-slate-50 border-b border-slate-100">
-              <tr>
-                 <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest">Patient Details</th>
-                 <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest">License Type</th>
-                 <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest">Status</th>
-                 <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest text-right">Actions</th>
-              </tr>
-           </thead>
-           <tbody className="divide-y divide-slate-50">
-              {fbUsers.filter(u => u.role === 'patient').map(u => ({ n: u.firstName + ' ' + (u.lastName || ''), e: u.email, t: 'Patient', s: 'Active' })).map((p: any, i: number) => (
-                <tr key={i} className="hover:bg-slate-50 group transition-colors">
-                   <td className="px-6 py-4">
-                      <p className="font-bold text-slate-800">{p.n}</p>
-                      <p className="text-[10px] font-bold text-slate-400">{p.e}</p>
-                   </td>
-                   <td className="px-6 py-4 font-bold text-slate-600 text-xs">{p.t}</td>
-                   <td className="px-6 py-4">
-                      <span className={cn("px-2 py-0.5 rounded text-[9px] font-black uppercase", p.s === 'Active' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600')}>{p.s}</span>
-                   </td>
-                   <td className="px-6 py-4 text-right">
-                      <button className="text-xs font-black text-indigo-600 hover:underline uppercase tracking-wider" onClick={() => triggerLiveAction("Entity Profile", "Loading detailed business taxonomy, inventory logs, and staff assignments.", "info")}>Manage</button>
-                   </td>
-                </tr>
-              ))}
-           </tbody>
-        </table>
+
+        {selectedAdminPatient ? (
+          <div>
+            <button onClick={() => setSelectedAdminPatient(null)} className="mb-4 px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-slate-200 transition-colors flex items-center gap-2">
+              ← Back to Patient List
+            </button>
+            <PatientCaseTracker
+              patientUid={selectedAdminPatient.uid}
+              patientName={selectedAdminPatient.fullName || selectedAdminPatient.name || selectedAdminPatient.displayName || 'Unknown'}
+              patientEmail={selectedAdminPatient.email || ''}
+              patientState={selectedAdminPatient.state || selectedAdminPatient.jurisdiction || 'Oklahoma'}
+              patientPhone={selectedAdminPatient.phone || selectedAdminPatient.textPhone || ''}
+              staffName={user?.fullName || user?.displayName || user?.email || 'Staff'}
+            />
+          </div>
+        ) : (
+          <div className="divide-y divide-slate-100 max-h-[600px] overflow-y-auto">
+            {adminPatientList.length === 0 ? (
+              <div className="p-12 text-center text-slate-400 text-sm font-medium">No patients registered yet</div>
+            ) : adminPatientList.map((patient: any) => (
+              <button
+                key={patient.uid}
+                onClick={() => setSelectedAdminPatient(patient)}
+                className="w-full flex items-center justify-between px-4 py-4 hover:bg-emerald-50 transition-colors text-left group"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center font-black text-sm">
+                    {(patient.fullName || patient.name || patient.displayName || '?').charAt(0)}
+                  </div>
+                  <div>
+                    <p className="font-black text-slate-800 group-hover:text-emerald-700 transition-colors">{patient.fullName || patient.name || patient.displayName || 'Unknown'}</p>
+                    <p className="text-[10px] text-slate-400 font-bold">{patient.email} • {patient.state || patient.jurisdiction || 'No state'} • Role: {patient.role || 'unset'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider group-hover:text-emerald-600">Open Case →</span>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
