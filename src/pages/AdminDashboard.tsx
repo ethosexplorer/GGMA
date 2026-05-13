@@ -25,8 +25,8 @@ const NAV_ITEMS = [
   { id: 'patients', label: 'Patient Registry', icon: HeartPulse },
   { id: 'business', label: 'Commercial Nodes', icon: Building2 },
   { section: 'OPS & COMPLIANCE' },
-  { id: 'approvals', label: 'Agency Approvals', icon: UserCheck, badge: '8' },
-  { id: 'applications', label: 'Applications Queue', icon: FileText },
+  { id: 'approvals', label: 'Agency Approvals', icon: UserCheck },
+  { id: 'applications', label: 'Applications Queue', icon: FileText, badge: '1' },
   { id: 'compliance', label: 'Compliance Monitor', icon: FileCheck },
   { section: 'SYSTEM CONTROL' },
   { id: 'ai_monitor', label: 'AI Monitoring', icon: Bot },
@@ -610,19 +610,48 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
     </div>
   );
 
+  const [pendingApprovals, setPendingApprovals] = useState<any[]>([]);
+  useEffect(() => {
+    turso.execute('SELECT * FROM compliance_alerts WHERE is_resolved = 0 ORDER BY created_at DESC')
+      .then(res => setPendingApprovals(res.rows))
+      .catch(console.error);
+  }, []);
+
   const renderApprovals = () => (
     <div className="space-y-6">
        <div className="bg-slate-900 p-8 rounded-[2.5rem] shadow-sm text-white">
           <h2 className="text-2xl font-black italic uppercase tracking-tight mb-2">Agency Approvals Pipeline</h2>
-          <p className="text-slate-400 font-medium text-sm">Internal pre-screening queue before OMMA transmission.</p>
+          <p className="text-slate-400 font-medium text-sm">Internal pre-screening queue before OMMA transmission. Showing {pendingApprovals.length} pending item{pendingApprovals.length !== 1 ? 's' : ''}.</p>
        </div>
-       <div className="bg-white border border-slate-200 p-8 rounded-[2.5rem] shadow-sm">
-          <div className="p-10 border-2 border-dashed border-slate-200 rounded-2xl text-center">
-             <CircleCheck size={40} className="mx-auto text-emerald-500 mb-4" />
-             <h3 className="text-xl font-black text-slate-800 mb-2">Queue is Empty</h3>
-             <p className="text-slate-500 font-medium">Sylara AI has auto-screened and forwarded all pending applications to the State Authority.</p>
-          </div>
-       </div>
+       {pendingApprovals.length > 0 ? (
+         <div className="bg-white border border-slate-200 p-8 rounded-[2.5rem] shadow-sm space-y-4">
+            {pendingApprovals.map((item: any, i: number) => (
+              <div key={i} className={cn("p-5 border rounded-2xl flex justify-between items-center", item.severity === 'High' ? 'bg-red-50 border-red-100' : 'bg-amber-50 border-amber-100')}>
+                <div>
+                  <p className="font-black text-slate-800">{item.message}</p>
+                  <p className="text-xs font-bold text-slate-500 mt-1">Severity: {item.severity} • Status: {item.status}</p>
+                </div>
+                <div className="flex gap-2">
+                  <button data-action-bound="true" className="px-4 py-2 bg-emerald-600 text-white text-[10px] font-black uppercase rounded-xl" onClick={() => {
+                    turso.execute({ sql: 'UPDATE compliance_alerts SET is_resolved = 1 WHERE id = ?', args: [item.id] }).then(() => {
+                      setPendingApprovals(prev => prev.filter(a => a.id !== item.id));
+                      triggerLiveAction('Approval Processed', 'Item approved and forwarded to State Authority.', 'success');
+                    }).catch(console.error);
+                  }}>Approve</button>
+                  <button data-action-bound="true" className="px-4 py-2 bg-white border border-slate-200 text-slate-600 text-[10px] font-black uppercase rounded-xl" onClick={() => triggerLiveAction('Manual Review', 'Opening detailed review panel for this approval request.', 'info')}>Review</button>
+                </div>
+              </div>
+            ))}
+         </div>
+       ) : (
+         <div className="bg-white border border-slate-200 p-8 rounded-[2.5rem] shadow-sm">
+            <div className="p-10 border-2 border-dashed border-slate-200 rounded-2xl text-center">
+               <CircleCheck size={40} className="mx-auto text-emerald-500 mb-4" />
+               <h3 className="text-xl font-black text-slate-800 mb-2">Queue is Empty</h3>
+               <p className="text-slate-500 font-medium">Sylara AI has auto-screened and forwarded all pending applications to the State Authority.</p>
+            </div>
+         </div>
+       )}
     </div>
   );
 
@@ -641,8 +670,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
              </thead>
              <tbody className="divide-y divide-slate-50">
                 {[
-                  { id: 'APP-991', n: 'John Doe', p: 'Background Check' },
-                  { id: 'APP-992', n: 'Jane Smith', p: 'Document Verification' },
+                  { id: 'APP-001', n: 'Shantell Robinson', p: 'Founder Verification' },
                 ].map((a, i) => (
                   <tr key={i} className="hover:bg-slate-50">
                      <td className="px-6 py-4 font-bold text-slate-600 text-xs">{a.id}</td>
@@ -880,7 +908,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
                      </div>
                      <p className="text-xs font-bold text-slate-800">{alert.message}</p>
                      <div className="mt-3 flex justify-between items-center">
-                        <button className="text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest flex items-center gap-1" onClick={() => triggerLiveAction("Support Ticket", "Ticket successfully claimed. Transferring context to live ops center...", "success")}>Take Ticket</button>
+                        <button data-action-bound="true" className="text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest flex items-center gap-1" onClick={() => triggerLiveAction("Support Ticket", "Ticket successfully claimed. Transferring context to live ops center...", "success")}>Take Ticket</button>
                         <span className="text-[9px] font-bold text-slate-400">Assigned: {alert.is_resolved ? 'Resolved' : 'Active'}</span>
                      </div>
                   </div>

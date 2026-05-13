@@ -257,8 +257,12 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       const target = e.target as HTMLElement;
       const btn = target.closest('button');
       
-      // If it's a button inside our dashboard that doesn't already have an onClick or active intercept
-      if (btn && btn.textContent && !btn.hasAttribute('onClick') && !btn.hasAttribute('data-action-bound')) {
+      // Skip if button already has data-action-bound (or is inside a container with it),
+      // or if React has attached an onClick handler to it (check __reactProps)
+      const reactPropsKey = btn ? Object.keys(btn).find(k => k.startsWith('__reactProps')) : null;
+      const hasReactOnClick = reactPropsKey && (btn as any)[reactPropsKey]?.onClick;
+      const hasBoundAncestor = btn?.closest('[data-action-bound]') || btn?.closest('[data-subdashboard]');
+      if (btn && btn.textContent && !btn.hasAttribute('data-action-bound') && !hasBoundAncestor && !hasReactOnClick) {
         const actionText = btn.textContent.trim().substring(0, 40);
         if (!actionText || actionText.length < 2) return;
         
