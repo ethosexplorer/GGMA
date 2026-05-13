@@ -9,11 +9,29 @@
 
 html {
   scroll-behavior: smooth;
+  /* Fix h-screen on iOS Safari (100vh includes address bar) */
+  height: -webkit-fill-available;
 }
 
 @layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    /* Disable iOS tap highlight globally */
+    -webkit-tap-highlight-color: transparent;
+  }
   body {
     @apply font-sans antialiased;
+    /* Safe area insets for iPhone notch / home indicator */
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+  /* Fix flex containers on older Safari */
+  .flex {
+    -webkit-box-orient: horizontal;
+  }
+  .flex-col {
+    -webkit-box-orient: vertical;
   }
 }
 

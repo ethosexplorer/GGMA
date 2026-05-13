@@ -103,9 +103,15 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
   const [fbUsers, setFbUsers] = useState<any[]>([]);
   const [dbAlerts, setDbAlerts] = useState<any[]>([]);
 
+  const [showEscPanel, setShowEscPanel] = useState(true);
+
   useEffect(() => {
-    turso.execute('SELECT * FROM entities LIMIT 100').then(res => setDbBusinesses(res.rows)).catch(console.error);
-    turso.execute('SELECT * FROM compliance_alerts ORDER BY created_at DESC LIMIT 10').then(res => setDbAlerts(res.rows)).catch(console.error);
+    const fetchData = () => {
+      turso.execute('SELECT * FROM entities LIMIT 100').then(res => setDbBusinesses(res.rows)).catch(console.error);
+      turso.execute('SELECT * FROM compliance_alerts ORDER BY created_at DESC LIMIT 10').then(res => setDbAlerts(res.rows)).catch(console.error);
+    };
+    fetchData();
+    const pollIv = setInterval(fetchData, 10000); // Realtime polling every 10s
     
     // Fetch live users from Firebase
     const fetchUsers = async () => {
@@ -118,6 +124,8 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
       }
     };
     fetchUsers();
+    const fbIv = setInterval(fetchUsers, 15000);
+    return () => { clearInterval(pollIv); clearInterval(fbIv); };
   }, []);
   const [regSearch, setRegSearch] = useState('');
   const [regCat, setRegCat] = useState<string | null>(null);
@@ -894,31 +902,39 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
         </div>
         <div className="flex-1 overflow-y-auto p-10">{getContent()}</div>
         
-        {/* LIVE OPERATIONS & CLIENT ESCALATION FEED (RIGHT SIDEBAR) */}
-        <div className={cn("w-80 bg-white border-l border-slate-200 flex flex-col shrink-0 transition-all duration-500 hidden xl:flex", !isUnlocked && "blur-md opacity-50 pointer-events-none")}>
-           <div className="h-20 border-b border-slate-200 flex items-center px-6 bg-slate-50 shrink-0">
-              <h3 className="font-black text-sm uppercase tracking-widest text-slate-800 flex items-center gap-2"><Activity size={16} className="text-indigo-600" /> Live Client Escalations</h3>
+        {/* LIVE OPERATIONS & CLIENT ESCALATION FEED (RIGHT SIDEBAR) — Collapsible */}
+        {showEscPanel && (
+        <div className={cn("w-80 bg-white border-l border-slate-200 flex flex-col shrink-0 transition-all duration-500 hidden xl:flex", !isUnlocked && "blur-md opacity-50 pointer-events-none")} style={{ WebkitOverflowScrolling: 'touch' }}>
+           <div className="h-20 border-b border-slate-200 flex items-center justify-between px-4 bg-slate-50 shrink-0">
+              <h3 className="font-black text-sm uppercase tracking-widest text-slate-800 flex items-center gap-2"><Activity size={16} className="text-indigo-600" /> Escalations</h3>
+              <button onClick={() => setShowEscPanel(false)} title="Collapse panel" className="p-1.5 hover:bg-slate-200 rounded-lg text-slate-400 hover:text-slate-800 transition-colors"><X size={16}/></button>
            </div>
-           <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/50 custom-scrollbar">
+           <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/50" style={{ WebkitOverflowScrolling: 'touch' }}>
                {dbAlerts.length > 0 ? dbAlerts.map((alert: any, i: number) => (
-                  <div key={i} className={cn("p-4 bg-white border-l-4 rounded-r-xl shadow-sm hover:shadow-md transition-all cursor-pointer", alert.severity === 'High' ? 'border-red-500' : alert.severity === 'Medium' ? 'border-amber-500' : 'border-emerald-500')}>
-                     <div className="flex justify-between items-start mb-2">
+                  <div key={i} className={cn("p-3 bg-white border-l-4 rounded-r-xl shadow-sm hover:shadow-md transition-all cursor-pointer", alert.severity === 'High' ? 'border-red-500' : alert.severity === 'Medium' ? 'border-amber-500' : 'border-emerald-500')}>
+                     <div className="flex justify-between items-start mb-1">
                         <span className={cn("text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded", alert.severity === 'High' ? 'text-red-600 bg-red-50' : alert.severity === 'Medium' ? 'text-amber-600 bg-amber-50' : 'text-emerald-600 bg-emerald-50')}>Alert</span>
                         <span className="text-[9px] text-slate-400 font-bold">{alert.date || 'Just Now'}</span>
                      </div>
                      <p className="text-xs font-bold text-slate-800">{alert.message}</p>
-                     <div className="mt-3 flex justify-between items-center">
-                        <button data-action-bound="true" className="text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest flex items-center gap-1" onClick={() => triggerLiveAction("Support Ticket", "Ticket successfully claimed. Transferring context to live ops center...", "success")}>Take Ticket</button>
-                        <span className="text-[9px] font-bold text-slate-400">Assigned: {alert.is_resolved ? 'Resolved' : 'Active'}</span>
+                     <div className="mt-2 flex justify-between items-center">
+                        <button data-action-bound="true" className="text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest" onClick={() => triggerLiveAction("Support Ticket", "Ticket successfully claimed. Transferring context to live ops center...", "success")}>Take Ticket</button>
+                        <span className="text-[9px] font-bold text-slate-400">{alert.is_resolved ? 'Resolved' : 'Active'}</span>
                      </div>
                   </div>
-               )) : <div className="text-center p-6 text-slate-400 text-xs font-bold italic">No active escalations.</div>}
-              <div className="p-4 border-2 border-dashed border-slate-200 rounded-xl text-center text-slate-400 flex flex-col items-center justify-center">
-                 <Activity size={24} className="mb-2 opacity-50" />
-                 <p className="text-[10px] font-black uppercase tracking-widest">Listening for incoming issues...</p>
+               )) : <div className="text-center p-4 text-slate-400 text-xs font-bold italic">No active escalations.</div>}
+              <div className="p-3 border-2 border-dashed border-slate-200 rounded-xl text-center text-slate-400 flex flex-col items-center justify-center">
+                 <Activity size={20} className="mb-1 opacity-50" />
+                 <p className="text-[10px] font-black uppercase tracking-widest">Listening for incoming...</p>
               </div>
            </div>
         </div>
+        )}
+        {!showEscPanel && (
+          <button onClick={() => setShowEscPanel(true)} className="fixed bottom-6 right-6 z-50 bg-indigo-600 text-white p-3 rounded-full shadow-xl hover:bg-indigo-500 transition-all" title="Show Escalations" style={{ WebkitTapHighlightColor: 'transparent' }}>
+            <Activity size={20}/>
+          </button>
+        )}
       </div>
     
       {liveAction && (
