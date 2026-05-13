@@ -8626,7 +8626,8 @@ export default function App() {
             } else if (isAdvisor) {
                setView('dashboard');
             } else {
-               setView(prev => prev === 'larry-chatbot' ? prev : 'dashboard');
+               // Don't navigate away if user is in the middle of a signup flow
+               setView(prev => (prev === 'larry-chatbot' || prev === 'business-signup' || prev === 'patient-signup') ? prev : 'dashboard');
             }
           } else {
             // Auto-provision privileged profiles

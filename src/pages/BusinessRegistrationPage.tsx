@@ -725,10 +725,9 @@ export default function BusinessRegistrationPage({ onNavigate, onComplete }: { o
            submittedAt: new Date().toISOString(),
          }, { merge: true });
        }
-       // Also call onComplete if provided (sets profile in App state)
-       if (onComplete) {
-         await onComplete(formData.email, formData.password, 'business', { ...formData, uploadedDocuments: Object.keys(uploadedFiles).length, bonded: formData.bondType });
-       }
+       // Account already exists from Step 0 — don't call onComplete (handleSignup)
+       // which would try to create the account again and fail.
+       // The user is already authenticated via onAuthStateChanged.
      } catch(e) {
        console.error('Submission failed', e);
      }
