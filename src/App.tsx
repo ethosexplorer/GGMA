@@ -107,6 +107,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import MapChart from './components/MapChart';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { FounderDashboard } from './pages/FounderDashboard';
+import { RepDashboard } from './pages/RepDashboard';
 import { initDatabase } from './lib/initDb';
 import { StateAuthorityDashboard } from './pages/StateAuthorityDashboard';
 import { OperationsDashboard } from './pages/OperationsDashboard';
@@ -8672,6 +8673,14 @@ export default function App() {
     const subTab = path.split('/').pop();
     const validTabs = ['home', 'analytics', 'pos', 'inventory', 'locations', 'compliance', 'insurance', 'documents', 'subscription', 'integrations', 'staff', 'traceability', 'readiness', 'wallet', 'attorneys', 'reporting'];
     const initialTab = validTabs.includes(subTab || '') ? subTab : undefined;
+
+    // Rep Portal Routing (Level 1-2 in corporate hierarchy)
+    if (role === 'rep' || role === 'sales_rep') {
+      return <RepDashboard onLogout={handleReturnToSelector} user={profile} mode="human" />;
+    }
+    if (role === 'ai_rep') {
+      return <RepDashboard onLogout={handleReturnToSelector} user={profile} mode="ai" />;
+    }
 
     // Internal Leadership Portal Routing
     if (role === 'president' || role === 'chief_compliance_director' || role === 'advisor') {
