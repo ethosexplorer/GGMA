@@ -4308,7 +4308,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     // These intercept at any step to reset the flow to the requested sector
     if (lower.includes('ggma') || lower.includes('omma')) {
       response = 'Welcome to the **GGMA Sector**.\n\nTo ensure we provide the correct licensing and medical card information, please select which **State Jurisdiction** you are inquiring about:';
-      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Oklahoma', 'Kentucky', 'Missouri', 'Texas', 'Other State'] } as any]);
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming'] } as any]);
       setSignupStep(902);
       setIsTyping(false);
       return;
@@ -4521,25 +4521,20 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     }
 
     if (signupStep === 902) {
-      if (lower === 'other state') {
-        response = 'Please type the name of the state you are inquiring about:';
-        setMessages(prev => [...prev, { role: 'bot', text: response } as any]);
-        setSignupStep(903);
-        setIsTyping(false);
-        return;
-      }
-      const stateName = text;
-      response = `Thank you. I have securely set your jurisdiction to **${stateName}**.\n\n${getGreeting()}`;
-      setMessages(prev => [...prev, { role: 'bot', text: response, choices: getInitialChoices() } as any]);
+      const stateName = text.trim();
+      setSignupData(prev => ({ ...prev, state: stateName }));
+      response = `Thank you! I have securely set your jurisdiction to **${stateName}**.\n\n🏥 **${stateName} GGMA Intake Portal**\n\nHow would you like to proceed?`;
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Patient Intake', 'Start Business Intake', 'View Patient Fee Schedule', 'View Business Fee Schedule', 'Book Physician ($45)', '📅 Book 15min Consultation', 'Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
       return;
     }
 
     if (signupStep === 903) {
-      const stateName = text;
-      response = `Thank you. I have securely set your jurisdiction to **${stateName}**.\n\n${getGreeting()}`;
-      setMessages(prev => [...prev, { role: 'bot', text: response, choices: getInitialChoices() } as any]);
+      const stateName = text.trim();
+      setSignupData(prev => ({ ...prev, state: stateName }));
+      response = `Thank you! I have securely set your jurisdiction to **${stateName}**.\n\n🏥 **${stateName} GGMA Intake Portal**\n\nHow would you like to proceed?`;
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Patient Intake', 'Start Business Intake', 'View Patient Fee Schedule', 'View Business Fee Schedule', 'Book Physician ($45)', '📅 Book 15min Consultation', 'Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
       return;
@@ -4563,7 +4558,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         }
         if (variant === 'ggma' || variant === 'ggma-patient') {
           response = 'Welcome to the **GGMA Sector**.\n\nTo ensure we provide the correct licensing and medical card information, please select which **State Jurisdiction** you are inquiring about:';
-          setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Oklahoma', 'Kentucky', 'Missouri', 'Texas', 'Other State'] } as any]);
+          setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming'] } as any]);
           setSignupStep(902);
           setIsTyping(false);
           return;
@@ -4884,7 +4879,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         setMessages(prev => [...prev, { 
           role: 'bot', 
           text: response,
-          choices: ['Oklahoma', 'Kentucky', 'Missouri', 'Texas', 'Other State'] 
+          choices: ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming'] 
         } as any]);
         setIsTyping(false);
         return;
@@ -5860,7 +5855,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       if (lower === 'yes' || lower === 'yeah' || lower === 'yep') {
         // GGHP Account created — now transition to State MMA Application
         response = '✅ **GGHP Account Registration Complete!**\n\n**Step 1 is done!** Your free GGHP Business Account has been created.\n\nNow let\'s move to **Step 2: Your State MMA Application**. This is your official Medical Marijuana Authority license application that will be filed with your state.\n\nWhat **State** are you applying for your business license in?';
-        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Oklahoma', 'Kentucky', 'Missouri', 'Texas', 'Other State'] } as any]);
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming'] } as any]);
         setSignupStep(950);
         setIsTyping(false);
         return;
@@ -5929,7 +5924,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         return;
       } else if (lower === 'edit' || lower === 'change') {
         response = 'No problem — let\'s redo the State MMA section. What **State** are you applying for your business license in?';
-        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Oklahoma', 'Kentucky', 'Missouri', 'Texas', 'Other State'] } as any]);
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming'] } as any]);
         setSignupStep(950);
         setIsTyping(false);
         return;
