@@ -4,14 +4,16 @@ import { db } from '../../firebase';
 import {
   Shield, Eye, EyeOff, Save, Clock, CheckCircle, AlertCircle,
   Calendar, FileText, Lock, Plus, ChevronDown, ChevronUp,
-  Clipboard, ExternalLink, Truck, RefreshCw
+  Clipboard, ExternalLink, Truck, RefreshCw, MessageSquare, Send, Phone
 } from 'lucide-react';
+import { sendSMS, checkQuota, SMS_TEMPLATES } from '../../lib/textbelt';
 
 interface PatientCaseTrackerProps {
   patientUid: string;
   patientName: string;
   patientEmail: string;
   patientState?: string;
+  patientPhone?: string;
   staffName?: string;
 }
 
@@ -76,7 +78,7 @@ const getEstimatedDates = (submissionDate: string) => {
 const formatDate = (date: Date) => date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
 export const PatientCaseTracker: React.FC<PatientCaseTrackerProps> = ({
-  patientUid, patientName, patientEmail, patientState = 'Oklahoma', staffName = 'Staff'
+  patientUid, patientName, patientEmail, patientState = 'Oklahoma', patientPhone = '', staffName = 'Staff'
 }) => {
   const [caseData, setCaseData] = useState<CaseData>({
     statePortalEmail: '',
@@ -97,6 +99,50 @@ export const PatientCaseTracker: React.FC<PatientCaseTrackerProps> = ({
   const [newCheckStatus, setNewCheckStatus] = useState('');
   const [showChecks, setShowChecks] = useState(true);
   const [showTimeline, setShowTimeline] = useState(true);
+
+  // SMS Notification state
+  const [smsPhone, setSmsPhone] = useState(patientPhone);
+  const [smsMessage, setSmsMessage] = useState('');
+  const [smsSending, setSmsSending] = useState(false);
+  const [smsResult, setSmsResult] = useState<{ success: boolean; message: string } | null>(null);
+  const [smsQuota, setSmsQuota] = useState<number | null>(null);
+  const [showSmsPanel, setShowSmsPanel] = useState(false);
+
+  // Load SMS quota on mount
+  useEffect(() => {
+    checkQuota().then(q => setSmsQuota(q));
+  }, []);
+
+  // Send SMS notification
+  const handleSendSMS = async () => {
+    if (!smsPhone.trim() || !smsMessage.trim()) return;
+    setSmsSending(true);
+    setSmsResult(null);
+    try {
+      const result = await sendSMS(smsPhone, smsMessage);
+      setSmsResult({
+        success: result.success,
+        message: result.success
+          ? `SMS sent! Quota remaining: ${result.quotaRemaining}`
+          : `Failed: ${result.message || result.error || 'Unknown error'}`
+      });
+      if (result.success) {
+        // Log the SMS in status checks
+        const checksRef = collection(db, 'users', patientUid, 'status_checks');
+        await addDoc(checksRef, {
+          checkedBy: staffName,
+          checkedAt: serverTimestamp(),
+          status: caseData.applicationStatus,
+          notes: `📱 SMS Notification Sent: "${smsMessage.substring(0, 80)}..."`,
+        });
+        setSmsQuota(result.quotaRemaining || null);
+        setSmsMessage('');
+      }
+    } catch (err: any) {
+      setSmsResult({ success: false, message: err.message });
+    }
+    setSmsSending(false);
+  };
 
   // Load case data from Firestore
   useEffect(() => {
@@ -437,6 +483,78 @@ export const PatientCaseTracker: React.FC<PatientCaseTrackerProps> = ({
             />
           </div>
         </div>
+      </div>
+
+      {/* SMS Notification Panel */}
+      <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+        <button onClick={() => setShowSmsPanel(!showSmsPanel)} className="w-full flex items-center justify-between">
+          <h4 className="font-black text-slate-800 flex items-center gap-2 text-sm uppercase tracking-wider">
+            <MessageSquare size={16} className="text-green-600" /> SMS Notifications
+            {smsQuota !== null && <span className="text-[10px] font-bold text-slate-400 normal-case tracking-normal ml-2">({smsQuota} texts remaining)</span>}
+          </h4>
+          {showSmsPanel ? <ChevronUp size={16} className="text-slate-400" /> : <ChevronDown size={16} className="text-slate-400" />}
+        </button>
+        {showSmsPanel && (
+          <div className="mt-4 space-y-4">
+            <div>
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 block">Patient Phone Number</label>
+              <div className="relative">
+                <Phone size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="tel"
+                  value={smsPhone}
+                  onChange={(e) => setSmsPhone(e.target.value)}
+                  placeholder="4055551234"
+                  className="w-full pl-9 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium outline-none focus:ring-2 focus:ring-green-500/20"
+                />
+              </div>
+            </div>
+
+            {/* Quick Templates */}
+            <div>
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Quick Templates</label>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { label: 'App Submitted', fn: () => setSmsMessage(SMS_TEMPLATES.applicationSubmitted(patientName.split(' ')[0], patientState)) },
+                  { label: 'Approved!', fn: () => setSmsMessage(SMS_TEMPLATES.applicationApproved(patientName.split(' ')[0], patientState)) },
+                  { label: 'Card Mailed', fn: () => setSmsMessage(SMS_TEMPLATES.cardMailed(patientName.split(' ')[0])) },
+                  { label: 'Card Delivered', fn: () => setSmsMessage(SMS_TEMPLATES.cardDelivered(patientName.split(' ')[0])) },
+                  { label: 'Status Update', fn: () => setSmsMessage(SMS_TEMPLATES.statusUpdate(patientName.split(' ')[0], STATUS_LABELS[caseData.applicationStatus]?.label || 'Updated')) },
+                ].map((tpl, i) => (
+                  <button key={i} onClick={tpl.fn} className="px-3 py-1.5 bg-green-50 border border-green-200 text-green-700 text-[10px] font-black uppercase tracking-wider rounded-lg hover:bg-green-100 transition-colors">
+                    {tpl.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 block">Message</label>
+              <textarea
+                value={smsMessage}
+                onChange={(e) => setSmsMessage(e.target.value)}
+                placeholder="Type a message or select a template above..."
+                rows={3}
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium outline-none focus:ring-2 focus:ring-green-500/20 resize-none"
+              />
+              <p className="text-[10px] text-slate-400 mt-1 font-medium">{smsMessage.length}/160 characters (1 SMS)</p>
+            </div>
+
+            {smsResult && (
+              <div className={`p-3 rounded-xl border text-xs font-bold ${smsResult.success ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
+                {smsResult.success ? '✅' : '❌'} {smsResult.message}
+              </div>
+            )}
+
+            <button
+              onClick={handleSendSMS}
+              disabled={smsSending || !smsPhone.trim() || !smsMessage.trim()}
+              className="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-black text-xs uppercase tracking-wider rounded-xl transition-colors flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <Send size={14} /> {smsSending ? 'Sending...' : 'Send SMS to Patient'}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Save Bar */}

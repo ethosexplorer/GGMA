@@ -1823,9 +1823,10 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           </button>
           <PatientCaseTracker
             patientUid={selectedPatientCase.uid}
-            patientName={selectedPatientCase.fullName || selectedPatientCase.name || 'Unknown'}
+            patientName={selectedPatientCase.fullName || selectedPatientCase.name || selectedPatientCase.displayName || 'Unknown'}
             patientEmail={selectedPatientCase.email || ''}
             patientState={selectedPatientCase.state || selectedPatientCase.jurisdiction || 'Oklahoma'}
+            patientPhone={selectedPatientCase.phone || selectedPatientCase.textPhone || ''}
             staffName={fullName}
           />
         </div>
