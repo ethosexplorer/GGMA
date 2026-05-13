@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Users, Briefcase, MessageSquare, BarChart3, BookOpen, Phone, Clock, Search,
   TrendingUp, UserPlus, ChevronRight, Activity, Bell, Shield, HeartPulse,
-  Building2, Zap, Target, ArrowUpRight, CircleCheck, AlertTriangle, Bot, X, PhoneCall } from 'lucide-react';
+  Building2, Zap, Target, ArrowUpRight, CircleCheck, AlertTriangle, Bot, X, PhoneCall,
+  PhoneIncoming, PhoneOff, PhoneForwarded } from 'lucide-react';
 import { turso } from '../lib/turso';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
@@ -10,6 +11,7 @@ import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 
 const NAV = [
   { id: 'home', label: 'My Dashboard', icon: Activity },
+  { id: 'calls', label: 'Incoming Calls', icon: PhoneIncoming },
   { id: 'clients', label: 'My Clients', icon: Users },
   { id: 'pipeline', label: 'My Pipeline', icon: Target },
   { id: 'tickets', label: 'My Tickets', icon: MessageSquare },
@@ -31,6 +33,15 @@ export const RepDashboard = ({ onLogout, user, mode = 'human' }: RepDashboardPro
   const [alerts, setAlerts] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   const [regSearch, setRegSearch] = useState('');
+  const [callStatus, setCallStatus] = useState<'idle' | 'ringing' | 'active' | 'ended'>('idle');
+  const [activeCallTimer, setActiveCallTimer] = useState(0);
+  const [callLog] = useState([
+    { id: 1, from: '+1 (405) 555-8291', status: 'completed', duration: 182, time: '10:42 AM', direction: 'inbound' },
+    { id: 2, from: '+1 (918) 555-3044', status: 'missed', duration: 0, time: '10:15 AM', direction: 'inbound' },
+    { id: 3, from: '+1 (580) 555-7120', status: 'completed', duration: 94, time: '09:50 AM', direction: 'inbound' },
+    { id: 4, from: '+1 (405) 555-1198', status: 'voicemail', duration: 31, time: '09:22 AM', direction: 'inbound' },
+    { id: 5, from: '+1 (918) 555-4410', status: 'completed', duration: 245, time: 'Yesterday', direction: 'inbound' },
+  ]);
 
   const repName = user?.displayName || user?.firstName || 'Rep';
   const isAI = mode === 'ai';
@@ -114,6 +125,106 @@ export const RepDashboard = ({ onLogout, user, mode = 'human' }: RepDashboardPro
           </div>
         </div>
       )}
+    </div>
+  );
+
+  // ── INCOMING CALLS ──
+  const renderCalls = () => (
+    <div className="space-y-6">
+      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-2xl p-6 text-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-6 opacity-5"><PhoneIncoming size={120}/></div>
+        <div className="relative z-10 flex justify-between items-center">
+          <div>
+            <h2 className="text-2xl font-black flex items-center gap-2"><PhoneIncoming className="text-emerald-400" size={22}/> Incoming Call Queue</h2>
+            <p className="text-indigo-300 text-xs font-bold mt-1 uppercase tracking-widest">Inbound Calls Only • Outbound Requires Jr. Admin+</p>
+          </div>
+          <div className={cn("flex items-center gap-2 px-3 py-1.5 rounded-full font-black text-[10px] uppercase tracking-widest border", callStatus === 'active' ? "bg-emerald-500/20 border-emerald-400/30 text-emerald-300" : "bg-blue-500/20 border-blue-400/30 text-blue-300")}>
+            <div className={cn("w-2 h-2 rounded-full", callStatus === 'active' ? "bg-emerald-400 animate-pulse" : "bg-blue-400 animate-pulse")}/>
+            {callStatus === 'active' ? 'On Call' : 'Ready'}
+          </div>
+        </div>
+      </div>
+
+      {/* Incoming call simulator */}
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6">
+        {callStatus === 'idle' && (
+          <div className="text-center py-8">
+            <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-blue-100">
+              <PhoneIncoming size={36} className="text-blue-500"/>
+            </div>
+            <h3 className="text-xl font-black text-slate-800 mb-2">Waiting for Calls</h3>
+            <p className="text-slate-400 text-sm mb-6">Your line is active. Incoming calls will appear here.</p>
+            <button onClick={() => setCallStatus('ringing')} className="px-6 py-3 bg-blue-600 text-white font-bold rounded-xl text-sm hover:bg-blue-500 transition-all shadow-lg">Simulate Incoming Call</button>
+          </div>
+        )}
+
+        {callStatus === 'ringing' && (
+          <div className="text-center py-8 animate-pulse">
+            <div className="w-24 h-24 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-emerald-200 shadow-[0_0_30px_rgba(16,185,129,0.3)]">
+              <Phone size={40} className="text-emerald-600 animate-bounce"/>
+            </div>
+            <h3 className="text-2xl font-black text-slate-800 mb-1">Incoming Call</h3>
+            <p className="text-slate-500 font-bold mb-6">+1 (405) 555-9201</p>
+            <div className="flex gap-3 justify-center">
+              <button onClick={() => { setCallStatus('active'); setActiveCallTimer(0); const iv = setInterval(() => setActiveCallTimer(p => p + 1), 1000); (window as any).__callIv = iv; }} className="px-8 py-3 bg-emerald-600 text-white font-black rounded-xl text-sm hover:bg-emerald-500 shadow-lg flex items-center gap-2"><Phone size={16}/> Answer</button>
+              <button onClick={() => setCallStatus('idle')} className="px-8 py-3 bg-red-600 text-white font-black rounded-xl text-sm hover:bg-red-500 shadow-lg flex items-center gap-2"><PhoneOff size={16}/> Decline</button>
+            </div>
+          </div>
+        )}
+
+        {callStatus === 'active' && (
+          <div className="text-center py-6">
+            <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3 border-2 border-emerald-200">
+              <PhoneCall size={28} className="text-emerald-600"/>
+            </div>
+            <h3 className="text-xl font-black text-emerald-700 mb-1">Call Active</h3>
+            <p className="text-slate-500 font-bold">+1 (405) 555-9201</p>
+            <p className="text-2xl font-black text-slate-800 font-mono mt-2">{Math.floor(activeCallTimer / 60)}:{(activeCallTimer % 60).toString().padStart(2, '0')}</p>
+            <div className="flex gap-3 justify-center mt-6">
+              <button onClick={() => { clearInterval((window as any).__callIv); setCallStatus('ended'); setTimeout(() => setCallStatus('idle'), 3000); }} className="px-6 py-3 bg-red-600 text-white font-black rounded-xl text-sm hover:bg-red-500 shadow-lg flex items-center gap-2"><PhoneOff size={16}/> End Call</button>
+              <button onClick={() => { clearInterval((window as any).__callIv); setCallStatus('idle'); alert('Call transferred to Team Lead.'); }} className="px-6 py-3 bg-amber-500 text-white font-black rounded-xl text-sm hover:bg-amber-400 shadow-lg flex items-center gap-2"><PhoneForwarded size={16}/> Transfer to Lead</button>
+            </div>
+          </div>
+        )}
+
+        {callStatus === 'ended' && (
+          <div className="text-center py-8">
+            <CircleCheck size={40} className="mx-auto text-emerald-500 mb-3"/>
+            <h3 className="text-xl font-black text-slate-800">Call Ended</h3>
+            <p className="text-slate-400 text-sm">Duration: {Math.floor(activeCallTimer / 60)}:{(activeCallTimer % 60).toString().padStart(2, '0')}</p>
+          </div>
+        )}
+      </div>
+
+      {/* Call History */}
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+        <div className="p-4 border-b border-slate-100"><h3 className="font-black text-slate-800 text-sm flex items-center gap-2"><Clock size={16}/> Recent Calls</h3></div>
+        <table className="w-full text-sm text-left">
+          <thead className="bg-slate-50 border-b border-slate-100">
+            <tr>
+              <th className="px-5 py-3 font-black text-slate-500 text-[10px] uppercase tracking-widest">From</th>
+              <th className="px-5 py-3 font-black text-slate-500 text-[10px] uppercase tracking-widest">Status</th>
+              <th className="px-5 py-3 font-black text-slate-500 text-[10px] uppercase tracking-widest">Duration</th>
+              <th className="px-5 py-3 font-black text-slate-500 text-[10px] uppercase tracking-widest">Time</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-50">
+            {callLog.map(c => (
+              <tr key={c.id} className="hover:bg-slate-50">
+                <td className="px-5 py-3 font-bold text-slate-800">{c.from}</td>
+                <td className="px-5 py-3"><span className={cn("text-[9px] font-black uppercase px-2 py-0.5 rounded-full", c.status === 'completed' ? 'bg-emerald-50 text-emerald-600' : c.status === 'missed' ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-600')}>{c.status}</span></td>
+                <td className="px-5 py-3 text-slate-600">{c.duration > 0 ? `${Math.floor(c.duration/60)}:${(c.duration%60).toString().padStart(2,'0')}` : '—'}</td>
+                <td className="px-5 py-3 text-xs text-slate-400 font-bold">{c.time}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center gap-3">
+        <AlertTriangle size={18} className="text-amber-600 shrink-0"/>
+        <p className="text-xs font-bold text-amber-800">Outbound dialing is restricted to Jr. Admin and above. To make an outbound call, transfer to your Team Lead or request escalation.</p>
+      </div>
     </div>
   );
 
@@ -261,6 +372,7 @@ export const RepDashboard = ({ onLogout, user, mode = 'human' }: RepDashboardPro
   const getContent = () => {
     switch (tab) {
       case 'home': return renderHome();
+      case 'calls': return renderCalls();
       case 'clients': return renderClients();
       case 'pipeline': return renderPipeline();
       case 'tickets': return renderTickets();
