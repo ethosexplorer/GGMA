@@ -148,13 +148,15 @@ export const RepDashboard = ({ onLogout, user, mode = 'human' }: RepDashboardPro
           <div className="flex gap-2">
             <button onClick={() => setDialNumber(p => p.slice(0,-1))} disabled={!dialNumber} className="w-14 bg-white border border-slate-200 disabled:opacity-50 text-slate-400 p-2.5 rounded-xl flex items-center justify-center">⌫</button>
             <button onClick={() => window.dispatchEvent(new CustomEvent('twilio-dial-out', { detail: { number: dialNumber } }))} disabled={!dialNumber}
-              className="flex-1 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 text-white font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-lg"><Phone size={18}/> {isAI ? 'Dial Out' : 'Call'}</button>
+              className="flex-1 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 text-white font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-lg"><Phone size={18}/> Call</button>
+            <button onClick={() => { if(dialNumber) { window.dispatchEvent(new CustomEvent('twilio-dial-out', { detail: { number: dialNumber } })); alert('Transferring to: ' + dialNumber); } }} disabled={!dialNumber}
+              className="bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-1 shadow-lg"><PhoneForwarded size={16}/> Transfer</button>
           </div>
         </div>
       </div>
 
-      {/* Recent Calls — AI only */}
-      {isAI && recentCalls.length > 0 && (
+      {/* Recent Calls — all reps */}
+      {recentCalls.length > 0 && (
         <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
           <div className="p-3 border-b border-slate-100"><h3 className="font-bold text-slate-800 text-sm flex items-center gap-2"><Clock size={14}/> Recent Calls</h3></div>
           <div className="divide-y divide-slate-50">
