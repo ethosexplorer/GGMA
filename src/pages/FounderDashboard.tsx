@@ -1779,11 +1779,17 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   const [patientList, setPatientList] = useState<any[]>([]);
   useEffect(() => {
     const unsub = onSnapshot(collection(db, 'users'), (snap) => {
+      const adminRoles = ['admin', 'founder', 'executive', 'president', 'chief_compliance_director', 
+        'executive_advisor', 'advisor', 'executive_founder', 'internal_admin', 'compliance_director',
+        'manager', 'team_lead', 'rep', 'ai_agent'];
       const patients = snap.docs
         .map(d => ({ uid: d.id, ...d.data() }))
         .filter((u: any) => {
-          const role = (u.role || '').toLowerCase();
-          return role === 'user' || role === 'patient' || role === 'patient / caregiver';
+          const role = (u.role || '').toLowerCase().trim();
+          // Include patients, users, caregivers, and users with empty/unset roles (chatbot-created)
+          if (adminRoles.some(ar => role.includes(ar))) return false;
+          if (role === 'business' || role === 'provider' || role === 'attorney') return false;
+          return true; // Include: patient, user, patient / caregiver, empty role, etc.
         });
       setPatientList(patients);
     });
