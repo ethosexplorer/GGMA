@@ -1931,7 +1931,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
-                { title: 'Telehealth Physician Evaluation', price: '$45.00', type: 'One-time', desc: 'Virtual physician consultation for medical cannabis recommendation. Includes doctor evaluation ($35) and GGE processing & sync fee ($10). Recommendation valid for state application.', icon: '📋' },
+                { title: 'Telehealth Physician Evaluation', price: 'Varies by state', type: 'Per Visit', desc: 'Virtual physician consultation for medical cannabis recommendation. Pricing varies by provider and state jurisdiction. Includes physician evaluation and GGE processing & sync fee. Recommendation valid for state application.', icon: '📋' },
                 { title: 'AI Virtual Attendant (Sylara)', price: '$149/mo', type: 'Monthly Add-on', desc: 'Branded @TheBackOffice.com virtual receptionist powered by Sylara AI. Handles inbound calls, appointment scheduling, intake routing, and customer service across your business.', icon: '🤖' },
                 { title: 'State Application Processing', price: 'Varies by state', type: 'Per Application', desc: 'We facilitate state cannabis license and medical card applications. State fees (e.g. $22.50–$104.30 in Oklahoma) are collected separately by the state authority. GGE charges a $10 processing fee.', icon: '📄' },
               ].map((svc, i) => (
@@ -3265,7 +3265,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     if (isMonica && variant !== 'legal') return ['Run Compliance Sweep', 'Metrc Anomalies', 'Pending Applications', 'Audit Logs'];
     if (isBob && variant !== 'legal') return ['Review Financial Anomalies', 'Compliance Impact Report', 'Regulatory Forecasting'];
     if (variant === 'ggma') return ['Start Patient Intake', 'Start Business Intake', '🏛️ DEA Schedule III Registration', 'View Patient Fee Schedule', 'View Business Fee Schedule'];
-    if (variant === 'ggma-patient') return ['Start Patient Intake', 'View Patient Fee Schedule', 'Book Physician ($45)'];
+    if (variant === 'ggma-patient') return ['Start Patient Intake', 'View Patient Fee Schedule', 'Book Physician'];
     if (variant === 'rip') return ['Field Intelligence Report', 'Background Verification Check', 'Enforcement Status Inquiry', 'Compliance Audit Request', 'Contact Oversight Division', 'View State Authority Plans'];
     if (variant === 'sinc') return ['Start Business Intake', '🏛️ DEA Schedule III Registration', 'Audit Shield Setup', 'Seed-to-Sale Compliance', 'Network Integrity Check', 'View Business Fee Schedule'];
     if (variant === 'provider') return ['Start Provider Onboarding', 'View Licensing Requirements', 'Network Integration'];
@@ -3857,7 +3857,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
           '? **Full AI**: $199/mo (Unlimited Sylara + Larry + AI Guardian)\n\n' +
           '_All Patient tiers include a 30-Day Free Trial._\n\n' +
           'To upgrade or start your trial, please select **Start Patient Intake** below.';
-        choices = ['Start Patient Intake', 'Book Physician ($45)', 'Main Menu'];
+        choices = ['Start Patient Intake', 'Book Physician', 'Main Menu'];
       } else if (variant === 'legal' || variant === 'attorney') {
         response = '⚖️ **GGHP Attorney Marketplace Plans**\n\n' +
           '• **Attorney Basic**: $149/mo (Legal Marketplace Access, Gemini Flash + Basic Sylara)\n' +
@@ -3912,7 +3912,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
           `🔗 **[Click here to view ${jurisdiction} specific state fees](${portalLink})**\n\n` +
           '_This is for Patient Medical Card applications only. Business fees are separate._';
       }
-      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Patient Intake', 'View Application Forms', 'Book Physician ($45)', 'Main Menu'] } as any]);
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Patient Intake', 'View Application Forms', 'Book Physician', 'Main Menu'] } as any]);
       setIsTyping(false);
       return;
     }
@@ -4524,7 +4524,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       const stateName = text.trim();
       setSignupData(prev => ({ ...prev, state: stateName }));
       response = `Thank you! I have securely set your jurisdiction to **${stateName}**.\n\n🏥 **${stateName} GGMA Intake Portal**\n\nHow would you like to proceed?`;
-      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Patient Intake', 'Start Business Intake', 'View Patient Fee Schedule', 'View Business Fee Schedule', 'Book Physician ($45)', '📅 Book 15min Consultation', 'Main Menu'] } as any]);
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Patient Intake', 'Start Business Intake', 'View Patient Fee Schedule', 'View Business Fee Schedule', 'Book Physician', '📅 Book 15min Consultation', 'Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
       return;
@@ -4534,7 +4534,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       const stateName = text.trim();
       setSignupData(prev => ({ ...prev, state: stateName }));
       response = `Thank you! I have securely set your jurisdiction to **${stateName}**.\n\n🏥 **${stateName} GGMA Intake Portal**\n\nHow would you like to proceed?`;
-      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Patient Intake', 'Start Business Intake', 'View Patient Fee Schedule', 'View Business Fee Schedule', 'Book Physician ($45)', '📅 Book 15min Consultation', 'Main Menu'] } as any]);
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Patient Intake', 'Start Business Intake', 'View Patient Fee Schedule', 'View Business Fee Schedule', 'Book Physician', '📅 Book 15min Consultation', 'Main Menu'] } as any]);
       setSignupStep(0);
       setIsTyping(false);
       return;
@@ -4658,7 +4658,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       } else if (lower.includes('need a doctor') || lower.includes('need one')) {
         response = 'No problem! We can schedule you a telehealth visit right now. The cost is **$35 for the evaluation + $10 processing (Total $45)**. Should we book that now?';
         setSignupStep(1003);
-        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Book Physician ($45)', 'Not right now'] } as any]);
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Book Physician', 'Not right now'] } as any]);
         setIsTyping(false);
         return;
       }
@@ -4736,11 +4736,11 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
           '• **Physician Rec**: Direct booking for **$35.00**.\n' +
           '• **GGE Processing**: Complete file sync for **$10.00**.\n' +
           '• **Total Portal Cost**: **$45.00**.\n\n' +
-          'Would you like to **Book Physician ($45)** or **Speak with a Live Agent**?';
+          'Would you like to **Book Physician** or **Speak with a Live Agent**?';
         setMessages(prev => [...prev, { 
           role: 'bot', 
           text: response,
-          choices: ['Book Physician ($45)', 'Speak with a Live Agent', 'Start Patient Intake'] 
+          choices: ['Book Physician', 'Speak with a Live Agent', 'Start Patient Intake'] 
         } as any]);
         setIsBusiness(false);
         setSignupStep(-1);
@@ -6348,7 +6348,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       setMessages(prev => [...prev, { 
         role: 'bot', 
         text: response,
-        choices: ['Medical Card Evaluation ($45)', 'General Telehealth Wellness', 'Main Menu'] 
+        choices: ['Medical Card Evaluation', 'General Telehealth Wellness', 'Main Menu'] 
       } as any]);
       setIsTyping(false);
       return;
