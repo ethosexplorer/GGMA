@@ -28,6 +28,7 @@ import { turso } from '../lib/turso';
 import { RegulatoryCommandCenter } from '../components/founder/RegulatoryCommandCenter';
 import { getLastSweep, getSweepFreshness, getNextSweepDate } from '../lib/regSweep';
 import { MasterBankingInfo } from '../components/MasterBankingInfo';
+import { PatientCaseTracker } from '../components/patient/PatientCaseTracker';
 import { FounderModals } from '../components/FounderModals';
 import { ITSupportDashboard } from '../components/it/ITSupportDashboard';
 import { RolePermissionsPanel } from '../components/RolePermissionsPanel';
@@ -1772,6 +1773,23 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     </motion.div>
   );
 
+  const [selectedPatientCase, setSelectedPatientCase] = useState<any>(null);
+
+  // Live patient list from Firestore
+  const [patientList, setPatientList] = useState<any[]>([]);
+  useEffect(() => {
+    const unsub = onSnapshot(collection(db, 'users'), (snap) => {
+      const patients = snap.docs
+        .map(d => ({ uid: d.id, ...d.data() }))
+        .filter((u: any) => {
+          const role = (u.role || '').toLowerCase();
+          return role === 'user' || role === 'patient' || role === 'patient / caregiver';
+        });
+      setPatientList(patients);
+    });
+    return () => unsub();
+  }, []);
+
   const renderRegistrySovereignty = () => (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
       <div className="bg-white border-4 border-slate-900 p-10 rounded-[3rem] shadow-2xl relative overflow-hidden">
@@ -1790,6 +1808,53 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
            </div>
         </div>
       </div>
+
+      {/* Patient Case Tracker */}
+      {selectedPatientCase ? (
+        <div>
+          <button onClick={() => setSelectedPatientCase(null)} className="mb-4 px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-slate-200 transition-colors flex items-center gap-2">
+            ← Back to Patient List
+          </button>
+          <PatientCaseTracker
+            patientUid={selectedPatientCase.uid}
+            patientName={selectedPatientCase.fullName || selectedPatientCase.name || 'Unknown'}
+            patientEmail={selectedPatientCase.email || ''}
+            patientState={selectedPatientCase.state || selectedPatientCase.jurisdiction || 'Oklahoma'}
+            staffName={fullName}
+          />
+        </div>
+      ) : (
+        <div className="bg-white border border-slate-200 rounded-[2.5rem] overflow-hidden shadow-sm">
+          <div className="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+            <h3 className="font-black text-slate-800 flex items-center gap-3"><HeartPulse size={20} className="text-emerald-600" /> Patient Case Files ({patientList.length})</h3>
+            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Click a patient to manage their case</p>
+          </div>
+          <div className="divide-y divide-slate-100 max-h-[500px] overflow-y-auto">
+            {patientList.length === 0 ? (
+              <div className="p-12 text-center text-slate-400 text-sm font-medium">No patients registered yet</div>
+            ) : patientList.map((patient: any) => (
+              <button
+                key={patient.uid}
+                onClick={() => setSelectedPatientCase(patient)}
+                className="w-full flex items-center justify-between px-6 py-4 hover:bg-emerald-50 transition-colors text-left group"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center font-black text-sm">
+                    {(patient.fullName || patient.name || '?').charAt(0)}
+                  </div>
+                  <div>
+                    <p className="font-black text-slate-800 group-hover:text-emerald-700 transition-colors">{patient.fullName || patient.name || 'Unknown'}</p>
+                    <p className="text-[10px] text-slate-400 font-bold">{patient.email} • {patient.state || patient.jurisdiction || 'No state'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider group-hover:text-emerald-600">Open Case →</span>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
          <div className="bg-indigo-900 p-8 rounded-[2.5rem] text-white shadow-xl relative overflow-hidden">
