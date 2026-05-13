@@ -8592,8 +8592,8 @@ export default function App() {
               data.displayName = 'Monica Green';
               data.idCode = '1234';
               needsUpdate = true;
-            } else if (lowerEmail.includes('ceo.globalgreenhp') && (data.role !== 'executive_founder' || data.displayName !== 'Ryan Ferrari')) {
-              data.role = 'executive_founder';
+            } else if (lowerEmail.includes('ceo.globalgreenhp') && (data.role !== 'president' || data.displayName !== 'Ryan Ferrari')) {
+              data.role = 'president';
               data.displayName = 'Ryan Ferrari';
               data.idCode = '1234';
               needsUpdate = true;
@@ -8611,14 +8611,18 @@ export default function App() {
             setUserProfile(data);
             
             // Founders bypass Preview Mode (Shadow Mode)
-            const isFounder = lowerEmail === FOUNDER_EMAIL || (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp'));
+            const isFounder = lowerEmail === FOUNDER_EMAIL || (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica'));
+            const isPresident = lowerEmail.includes('ceo.globalgreenhp');
             const isAdvisor = lowerEmail === ADVISOR_EMAIL;
-            if (isFounder) {
+            if (isFounder || isPresident) {
               setIsDemoUnlocked(true);
             }
             
             if (isFounder) {
                setView('pin-verification');
+            } else if (isPresident) {
+               // Ryan goes straight to dashboard — no PIN gate
+               setView('dashboard');
             } else if (isAdvisor) {
                setView('dashboard');
             } else {
@@ -8631,7 +8635,7 @@ export default function App() {
                const privilegedProfile = {
                  uid: firebaseUser.uid,
                  email: firebaseUser.email,
-                 role: isFounder ? 'executive_founder' : (lowerEmail === ADVISOR_EMAIL ? 'executive_advisor' : 'regulator_state'),
+                 role: isFounder ? 'executive_founder' : (lowerEmail.includes('ceo.globalgreenhp') ? 'president' : (lowerEmail === ADVISOR_EMAIL ? 'executive_advisor' : 'regulator_state')),
                  displayName: lowerEmail === FOUNDER_EMAIL ? 'Founder/CEO' : ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica')) ? 'Monica Green' : (lowerEmail.includes('ceo.globalgreenhp') ? 'Ryan Ferrari' : (lowerEmail === ADVISOR_EMAIL ? 'Bob Green-Energy-Financing Moore' : 'Staff'))),
                  status: 'Active',
                  idCode: (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp')) ? '1234' : (lowerEmail === ADVISOR_EMAIL ? '5678' : '0000'),
@@ -8755,9 +8759,24 @@ export default function App() {
     
     // Privileged login override
     if (initialRole === 'admin' || lowerEmail === FOUNDER_EMAIL || lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp') || OVERSIGHT_EMAILS.includes(lowerEmail) || lowerEmail === ADVISOR_EMAIL) {
-      if (lowerEmail.includes('ceo.globalgreenhp') && pass !== 'Globalgreen2') {
-        (() => { import('./lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Invalid credentials." })] }).catch(console.error) ); alert("Invalid credentials.\n\n[Live Production Transaction Logged]"); })();
-        return;
+      // Ryan (President) — try Firebase auth first, fall back to local override
+      if (lowerEmail.includes('ceo.globalgreenhp')) {
+        try {
+          const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+          // Firebase auth succeeded — profile will be set by onAuthStateChanged
+          return;
+        } catch (fbErr: any) {
+          // If Firebase auth fails with wrong password, block
+          if (fbErr.code === 'auth/wrong-password' || fbErr.code === 'auth/invalid-credential') {
+            alert('Invalid credentials. Please check your password.');
+            return;
+          }
+          // For other errors (network, user-not-found), try local override with known password
+          if (pass !== 'Globalgreen2') {
+            alert('Invalid credentials.');
+            return;
+          }
+        }
       }
       if (lowerEmail === ADVISOR_EMAIL && pass !== 'Globalgreen1') {
         (() => { import('./lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Invalid credentials." })] }).catch(console.error) ); alert("Invalid credentials.\n\n[Live Production Transaction Logged]"); })();
