@@ -108,6 +108,8 @@ import MapChart from './components/MapChart';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { FounderDashboard } from './pages/FounderDashboard';
 import { RepDashboard } from './pages/RepDashboard';
+import { TeamLeadDashboard } from './pages/TeamLeadDashboard';
+import { ManagerDashboard } from './pages/ManagerDashboard';
 import { initDatabase } from './lib/initDb';
 import { StateAuthorityDashboard } from './pages/StateAuthorityDashboard';
 import { OperationsDashboard } from './pages/OperationsDashboard';
@@ -8685,6 +8687,16 @@ export default function App() {
     }
     if (role === 'ai_rep') {
       return <RepDashboard onLogout={handleReturnToSelector} user={profile} mode="ai" />;
+    }
+
+    // Team Lead (Level 3)
+    if (role === 'team_lead') {
+      return <TeamLeadDashboard onLogout={handleReturnToSelector} user={profile} />;
+    }
+
+    // Manager (Level 4)
+    if (role === 'manager') {
+      return <ManagerDashboard onLogout={handleReturnToSelector} user={profile} />;
     }
 
     // Internal Leadership Portal Routing

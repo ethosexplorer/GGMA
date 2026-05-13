@@ -88,6 +88,8 @@ export const GlobalHeader = ({
             <option value="enforcement_state">Law Enforcement Officer</option>
             <option value="rep">Sales Rep (Human)</option>
             <option value="ai_rep">Sales Rep (AI Agent)</option>
+            <option value="team_lead">Team Lead</option>
+            <option value="manager">Regional Manager</option>
           </select>
 
           <div className="relative ml-2 flex items-center">
