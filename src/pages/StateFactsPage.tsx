@@ -292,6 +292,7 @@ export const StateFactsPage = ({ onBack, onNavigate, setJurisdiction }: { onBack
               </button>
               <button 
                 onClick={() => {
+                  if (setJurisdiction) setJurisdiction(selectedState.s);
                   setSelectedState(null);
                   if(onNavigate) onNavigate('signup');
                 }}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { FileText, Upload, Clock, CheckCircle, AlertCircle, DollarSign, ChevronRight, Info, Sparkles } from 'lucide-react';
+import { FileText, Upload, Clock, CheckCircle, AlertCircle, DollarSign, ChevronRight, Info, Sparkles, ExternalLink } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { STATE_RESOURCES } from '../../stateResources';
 
 const applicationTypes = [
   { id: 'new_card', title: 'New Medical Card', desc: 'First-time cannabis patient card application', status: null, icon: '🌿' },
@@ -10,11 +11,18 @@ const applicationTypes = [
   { id: 'replacement', title: 'Card Replacement', desc: 'Request a replacement for a lost or stolen card', status: null, icon: '💳' },
 ];
 
-export const ApplicationsTab = ({ user, onStartApplication }: { user?: any, onStartApplication?: () => void }) => {
+export const ApplicationsTab = ({ user, onStartApplication, jurisdiction = 'Oklahoma' }: { user?: any, onStartApplication?: () => void, jurisdiction?: string }) => {
   const [view, setView] = useState<'hub' | 'new'>('hub');
   const [hasStateInsurance, setHasStateInsurance] = useState<boolean | null>(user?.insurance === 'Yes' ? true : user?.insurance === 'No' ? false : null);
   const [paymentState, setPaymentState] = useState<'idle' | 'invoicing' | 'sent' | 'paid'>('idle');
 
+  const stateData = STATE_RESOURCES[jurisdiction] || STATE_RESOURCES['Oklahoma'];
+  const stateName = jurisdiction;
+  const regulator = stateData.regulator || `${stateName} Cannabis Authority`;
+  const patientPortalUrl = stateData.patientPortal || '';
+  const businessPortalUrl = stateData.businessPortal || '';
+  const medicalStatus = stateData.medicalStatus || 'Unknown';
+  const hasNoProgram = medicalStatus === 'No comprehensive program' || medicalStatus === 'No';
   const hasIntakeData = !!(user?.ssn || user?.qualifyingCondition || user?.idNumber);
 
   const activeApplications = [
@@ -33,7 +41,7 @@ export const ApplicationsTab = ({ user, onStartApplication }: { user?: any, onSt
     { step: 1, title: 'Personal Information', desc: 'Name, DOB, address, contact info', completed: hasIntakeData, syncSource: 'Sylara AI' },
     { step: 2, title: 'Medical Information', desc: 'Qualifying conditions, physician info', completed: hasIntakeData, syncSource: 'Sylara AI' },
     { step: 3, title: 'Document Upload', desc: 'Photo ID, doctor recommendation', completed: !!user?.idNumber, syncSource: 'Sylara AI' },
-    { step: 4, title: 'State Fee Payment', desc: 'State application fee (separate from subscription)', completed: false },
+    { step: 4, title: 'State Fee Payment', desc: `${stateName} application fee (separate from subscription)`, completed: false },
     { step: 5, title: 'Review & Submit', desc: 'Final review before submission', completed: false },
   ];
 
@@ -43,34 +51,68 @@ export const ApplicationsTab = ({ user, onStartApplication }: { user?: any, onSt
 
   return (
     <div className="space-y-6">
+      {/* State Notice */}
+      {hasNoProgram && (
+        <div className="bg-red-50 rounded-2xl border border-red-200 p-5">
+          <div className="flex items-start gap-3">
+            <AlertCircle size={20} className="text-red-600 shrink-0 mt-0.5" />
+            <div>
+              <h4 className="font-bold text-red-900 text-sm">{stateName} — No Active Medical Cannabis Program</h4>
+              <p className="text-xs text-red-700 mt-1 leading-relaxed">
+                {stateName} does not currently have a comprehensive medical cannabis program. Applications are not available at this time. If legislation passes, we will automatically update your dashboard.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="bg-blue-50 rounded-2xl border border-blue-200 p-5">
         <div className="flex items-start gap-3">
           <Info size={20} className="text-blue-600 shrink-0 mt-0.5" />
           <div>
-            <h4 className="font-bold text-blue-900 text-sm">2026 Application Fee Breakdown</h4>
+            <h4 className="font-bold text-blue-900 text-sm">{stateName} Application Fee Breakdown</h4>
             <div className="text-xs text-blue-700 mt-2 grid grid-cols-2 gap-y-1 max-w-sm">
               <span>• Physician Recommendation:</span> <span className="font-bold">$35.00</span>
               <span>• GGE Processing & Sync:</span> <span className="font-bold text-[#1a4731]">$10.00</span>
               <span className="border-t border-blue-200 pt-1 font-bold mt-1">Total Portal Cost:</span> <span className="border-t border-blue-200 pt-1 font-black text-lg text-[#1a4731]">$45.00</span>
             </div>
-            <p className="text-[10px] text-blue-500 mt-2 italic">* State Fees of $104.30 / $22.50 are separate and paid directly to OMMA.</p>
+            <p className="text-[10px] text-blue-500 mt-2 italic">* State fees are separate and paid directly to {regulator}.</p>
           </div>
         </div>
       </div>
 
-      {/* SB 1066 Physician Mandate Notice */}
+      {/* Physician Mandate Notice */}
       <div className="bg-amber-50 rounded-2xl border border-amber-200 p-5">
         <div className="flex items-start gap-3">
           <AlertCircle size={20} className="text-amber-600 shrink-0 mt-0.5" />
           <div>
-            <h4 className="font-bold text-amber-900 text-sm">2026 Physician Mandate (SB 1066)</h4>
+            <h4 className="font-bold text-amber-900 text-sm">{stateName} Physician Mandate</h4>
             <p className="text-xs text-amber-700 mt-1 leading-relaxed">
-              As of **January 1, 2026**, all physicians must be registered with **OMMA** to provide valid recommendations. 
-              Additionally, your "Adult Patient Physician Recommendation Form" must be signed within **30 days** of your application date.
+              All physicians must be registered with the <strong>{regulator}</strong> to provide valid recommendations.
+              Please ensure your physician recommendation is current and valid for your {stateName} application.
             </p>
           </div>
         </div>
       </div>
+
+      {/* State Portal Quick Links */}
+      {(patientPortalUrl || businessPortalUrl) && (
+        <div className="bg-emerald-50 rounded-2xl border border-emerald-200 p-5">
+          <h4 className="font-bold text-emerald-900 text-sm mb-3 flex items-center gap-2"><ExternalLink size={16} /> {stateName} Official Portals</h4>
+          <div className="flex flex-wrap gap-3">
+            {patientPortalUrl && (
+              <a href={patientPortalUrl} target="_blank" rel="noopener noreferrer" className="px-4 py-2 bg-emerald-600 text-white text-xs font-bold rounded-xl hover:bg-emerald-500 transition-colors flex items-center gap-2">
+                Patient Portal <ExternalLink size={12} />
+              </a>
+            )}
+            {businessPortalUrl && (
+              <a href={businessPortalUrl} target="_blank" rel="noopener noreferrer" className="px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-xl hover:bg-indigo-500 transition-colors flex items-center gap-2">
+                Business Portal <ExternalLink size={12} />
+              </a>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* View Toggle */}
       <div className="flex bg-white rounded-xl border border-slate-200 p-1 w-max shadow-sm">
@@ -186,12 +228,12 @@ export const ApplicationsTab = ({ user, onStartApplication }: { user?: any, onSt
                         <CheckCircle size={16} /> Payment Verified
                       </div>
                       <a 
-                        href="https://oklahoma.gov/omma/apply.html" 
+                        href={patientPortalUrl || '#'} 
                         target="_blank" 
                         rel="noopener noreferrer"
                         className="w-full py-3 bg-emerald-500 text-white rounded-xl text-xs font-black hover:bg-emerald-400 transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/20"
                       >
-                        🚀 Start OMMA Application
+                        🚀 Start {stateName} Application
                       </a>
                     </div>
                   )}
@@ -208,36 +250,36 @@ export const ApplicationsTab = ({ user, onStartApplication }: { user?: any, onSt
 
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
                <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
-                <DollarSign size={18} className="text-emerald-600" /> State Fee Schedule
+                <DollarSign size={18} className="text-emerald-600" /> {stateName} Fee Schedule
               </h3>
               <div className="space-y-4">
                 <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
                   <p className="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-1">With State-Funded Insurance</p>
-                  <p className="text-xs text-emerald-700 mb-2">Medicaid, Medicare, SoonerCare, 100% Veteran</p>
+                  <p className="text-xs text-emerald-700 mb-2">Medicaid, Medicare, or state programs</p>
                   <div className="flex justify-between text-sm">
                     <span className="text-emerald-700">State & Processing Fee</span>
                     <span className="font-bold text-emerald-800">$22.50</span>
                   </div>
                   <div className="border-t border-emerald-300 mt-2 pt-2 flex justify-between text-sm">
-                    <span className="font-bold text-emerald-800">Total Due at OMMA</span>
+                    <span className="font-bold text-emerald-800">Total Due at {regulator}</span>
                     <span className="font-black text-emerald-900 text-lg">$22.50</span>
                   </div>
                 </div>
 
                 <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
                   <p className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Standard Patient Rate</p>
-                  <p className="text-xs text-slate-500 mb-2">Standard rate for all other OK residents</p>
+                  <p className="text-xs text-slate-500 mb-2">Standard rate for all {stateName} residents</p>
                   <div className="flex justify-between text-sm">
                     <span className="text-slate-600">State & Processing Fee</span>
                     <span className="font-bold text-slate-800">$104.30</span>
                   </div>
                   <div className="border-t border-slate-300 mt-2 pt-2 flex justify-between text-sm">
-                    <span className="font-bold text-slate-700">Total Due at OMMA</span>
+                    <span className="font-bold text-slate-700">Total Due at {regulator}</span>
                     <span className="font-black text-slate-900 text-lg">$104.30</span>
                   </div>
                 </div>
               </div>
-              <p className="text-[10px] text-slate-400 mt-3 leading-relaxed">* State fees are set by the state authority and are separate from GGP-OS subscription costs. Fees are collected at the time of application submission only.</p>
+              <p className="text-[10px] text-slate-400 mt-3 leading-relaxed">* State fees are set by {regulator} and are separate from GGP-OS subscription costs. Fees are collected at the time of application submission only.</p>
             </div>
           </div>
         </div>
@@ -307,7 +349,7 @@ export const ApplicationsTab = ({ user, onStartApplication }: { user?: any, onSt
                     <p className="text-xs text-slate-500">{step.desc}</p>
                     {step.step === 2 && (
                       <p className="text-[10px] text-amber-600 font-bold mt-1 leading-tight italic">
-                        * Physician must be OMMA-registered (SB 1066)
+                        * Physician must be registered with {regulator}
                       </p>
                     )}
                   </div>
@@ -346,6 +388,3 @@ export const ApplicationsTab = ({ user, onStartApplication }: { user?: any, onSt
     </div>
   );
 };
-
-
-

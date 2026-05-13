@@ -8508,6 +8508,10 @@ export default function App() {
     else sessionStorage.removeItem('gghp_has_bypassed_selector');
   }, [hasBypassedSelector]);
 
+  // Staff roles that bypass the age-verification jurisdiction gate
+  const staffRoles = ['executive_founder', 'president', 'chief_compliance_director', 'advisor', 'executive_advisor', 'executive_ceo', 'admin_jr', 'regulator_state', 'team_lead', 'manager', 'rep_human', 'rep_ai'];
+  const isStaff = userProfile && staffRoles.includes((userProfile as any)?.role);
+
   useEffect(() => {
     initDatabase();
     const handleOpenLarry = (e: any) => {
@@ -8520,13 +8524,16 @@ export default function App() {
     };
     window.addEventListener('open-larry-modal', handleOpenLarry);
     
-    // Global Jurisdiction Gate trigger
-    if (!jurisdictionLocked) {
+    // Global Jurisdiction Gate trigger — staff bypass automatically
+    if (!jurisdictionLocked && !isStaff) {
       setTimeout(() => setShowJurisdictionGate(true), 0);
+    } else if (!jurisdictionLocked && isStaff) {
+      // Auto-lock jurisdiction for staff so they never see the gate
+      confirmJurisdiction(jurisdiction);
     }
     
     return () => window.removeEventListener('open-larry-modal', handleOpenLarry);
-  }, [jurisdictionLocked]);
+  }, [jurisdictionLocked, isStaff]);
 
   // Sync view state with URL path for deep linking
   useEffect(() => {
@@ -9047,7 +9054,7 @@ export default function App() {
                     </button>
                   )}
                   <button
-                    disabled={!jurisdictionLocked && !is21Verified}
+                    disabled={!jurisdictionLocked && !is21Verified && !isStaff}
                     onClick={() => confirmJurisdiction(pendingJurisdiction || jurisdiction)}
                     className="flex-1 py-3 px-6 rounded-xl font-black text-white bg-[#1a4731] hover:bg-[#153a28] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg shadow-emerald-900/20 uppercase tracking-wider text-sm"
                   >
