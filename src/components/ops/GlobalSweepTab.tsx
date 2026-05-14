@@ -9,6 +9,33 @@ export const GlobalSweepTab = () => {
   const [liveCounts, setLiveCounts] = useState<Record<string, number>>({});
   const [typeCounts, setTypeCounts] = useState<Record<string, Record<string, number>>>({});
 
+  // Normalize full state names to 2-letter codes
+  const STATE_NAME_TO_CODE: Record<string, string> = {
+    'alabama': 'AL', 'alaska': 'AK', 'arizona': 'AZ', 'arkansas': 'AR',
+    'california': 'CA', 'colorado': 'CO', 'connecticut': 'CT', 'delaware': 'DE',
+    'florida': 'FL', 'georgia': 'GA', 'hawaii': 'HI', 'idaho': 'ID',
+    'illinois': 'IL', 'indiana': 'IN', 'iowa': 'IA', 'kansas': 'KS',
+    'kentucky': 'KY', 'louisiana': 'LA', 'maine': 'ME', 'maryland': 'MD',
+    'massachusetts': 'MA', 'michigan': 'MI', 'minnesota': 'MN', 'mississippi': 'MS',
+    'missouri': 'MO', 'montana': 'MT', 'nebraska': 'NE', 'nevada': 'NV',
+    'new hampshire': 'NH', 'new jersey': 'NJ', 'new mexico': 'NM', 'new york': 'NY',
+    'north carolina': 'NC', 'north dakota': 'ND', 'ohio': 'OH', 'oklahoma': 'OK',
+    'oregon': 'OR', 'pennsylvania': 'PA', 'rhode island': 'RI', 'south carolina': 'SC',
+    'south dakota': 'SD', 'tennessee': 'TN', 'texas': 'TX', 'utah': 'UT',
+    'vermont': 'VT', 'virginia': 'VA', 'washington': 'WA', 'west virginia': 'WV',
+    'wisconsin': 'WI', 'wyoming': 'WY'
+  };
+
+  const normalizeJurisdiction = (raw: string): string => {
+    if (!raw) return 'US';
+    const trimmed = raw.trim();
+    // Already a 2-letter code
+    if (trimmed.length === 2 && trimmed === trimmed.toUpperCase()) return trimmed;
+    // Full name lookup
+    const code = STATE_NAME_TO_CODE[trimmed.toLowerCase()];
+    return code || 'US';
+  };
+
   useEffect(() => {
     const q = query(collection(db, 'crm_deals'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -17,7 +44,7 @@ export const GlobalSweepTab = () => {
       const newTypes: Record<string, Record<string, number>> = {};
       
       deals.forEach(deal => {
-        const state = deal.jurisdiction || 'US';
+        const state = normalizeJurisdiction(deal.jurisdiction);
         const type = deal.type || 'other';
         newCounts[state] = (newCounts[state] || 0) + 1;
         
@@ -62,7 +89,7 @@ export const GlobalSweepTab = () => {
   const states = baseStates.map(s => ({
     ...s,
     count: liveCounts[s.code] || 0,
-    types: typeCounts[s.code] || {}
+    types: (typeCounts[s.code] || {}) as Record<string, number>
   }));
 
   const activeState = states.find(s => s.code === selectedState);
@@ -112,7 +139,7 @@ export const GlobalSweepTab = () => {
               <div className="mt-4 pt-4 border-t border-slate-100">
                 <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-2">Category Breakdown</p>
                 <div className="space-y-1">
-                  {Object.entries(activeState.types || {}).sort((a, b) => b[1] - a[1]).map(([type, count]) => (
+                  {Object.entries(activeState.types || {}).sort((a, b) => (b[1] as number) - (a[1] as number)).map(([type, count]) => (
                     <div key={type} className="flex justify-between items-center text-[10px]">
                       <span className="text-slate-500 capitalize">{type}</span>
                       <span className="font-bold text-slate-700">{count.toLocaleString()}</span>
