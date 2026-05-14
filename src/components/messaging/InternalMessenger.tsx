@@ -21,7 +21,8 @@ const CHANNELS = [
   { id: 'compliance', label: 'Compliance & OMMA', description: 'Metrc, OMMA, regulatory' },
   { id: 'it-ops', label: 'IT & Operations', description: 'System issues, deployments' },
   { id: 'founder-directives', label: 'Founder Directives', description: 'Direct orders from leadership' },
-  { id: 'external-push', label: 'External Push', description: 'Send secure push notifications to patients' },
+  { id: 'external-push', label: 'External Push (Global)', description: 'Team-visible SMS push notifications' },
+  { id: 'private-sms', label: 'Private SMS', description: 'Send SMS privately (Only you see this log)' },
 ];
 
 const CORE_TEAM = [
@@ -54,7 +55,7 @@ export const InternalMessenger = ({ currentUser }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const isFounder = currentUser.role === 'executive_founder' || currentUser.roleId === 'founder';
-  const currentView = activeDM || activeChannel;
+  const currentView = activeDM || (activeChannel === 'private-sms' ? `private-sms-${currentUser.roleId}` : activeChannel);
   const [msgError, setMsgError] = useState<string | null>(null);
 
   // Load all system users dynamically
@@ -166,7 +167,7 @@ export const InternalMessenger = ({ currentUser }: Props) => {
   const handleSend = async () => {
     if (!messageText.trim()) return;
 
-    if (activeChannel === 'external-push' && !activeDM) {
+    if ((activeChannel === 'external-push' || activeChannel === 'private-sms') && !activeDM) {
       if (!externalPhone.trim()) { (() => { import('../../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Enter a valid phone number" })] }).catch(console.error) ); alert("Enter a valid phone number\n\n[Live Production Transaction Logged]"); })(); return; }
       try {
         // Send real SMS via TextBelt
@@ -475,9 +476,11 @@ export const InternalMessenger = ({ currentUser }: Props) => {
 
         {/* Input */}
         <div className="p-4 border-t border-slate-100 bg-white">
-          {!activeDM && activeChannel === 'external-push' && (
+          {!activeDM && (activeChannel === 'external-push' || activeChannel === 'private-sms') && (
             <div className="mb-3">
-              <label className="text-[10px] font-black text-emerald-600 uppercase tracking-widest block mb-1">External Phone Number (Dialer)</label>
+              <label className="text-[10px] font-black text-emerald-600 uppercase tracking-widest block mb-1">
+                {activeChannel === 'private-sms' ? 'Private Phone Number (Dialer)' : 'External Phone Number (Dialer)'}
+              </label>
               <input
                 type="tel"
                 value={externalPhone}
@@ -494,7 +497,7 @@ export const InternalMessenger = ({ currentUser }: Props) => {
               value={messageText}
               onChange={(e) => setMessageText(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={activeChannel === 'external-push' ? "Type push notification message..." : `Message ${activeDM ? 'privately' : '#' + activeChannel}...`}
+              placeholder={(activeChannel === 'external-push' || activeChannel === 'private-sms') && !activeDM ? "Type push notification message..." : `Message ${activeDM ? 'privately' : '#' + activeChannel}...`}
               className="flex-1 px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 font-medium text-slate-700 transition-all"
             />
             <button
@@ -646,13 +649,31 @@ export const InternalMessenger = ({ currentUser }: Props) => {
                     <p className="text-[10px] text-slate-400 font-medium truncate capitalize">{member.role.replace(/_/g, ' ')}</p>
                   </div>
                   {member.id !== currentUser.roleId && (
-                    <button 
-                      onClick={() => { setActiveDM(`dm-${[currentUser.roleId, member.id].sort().join('-')}`); setShowMembers(false); }} 
-                      className="opacity-0 group-hover:opacity-100 p-1.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-md transition-all"
-                      title="Direct Message"
-                    >
-                      <MessageSquare size={14} />
-                    </button>
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                      <button 
+                        onClick={() => { setActiveDM(`dm-${[currentUser.roleId, member.id].sort().join('-')}`); setShowMembers(false); }} 
+                        className="p-1.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-md"
+                        title="Direct Message"
+                      >
+                        <MessageSquare size={14} />
+                      </button>
+                      {activeChannel.startsWith('group-') && (
+                        <button 
+                          onClick={() => {
+                            setCustomGroups(prev => prev.map(g => {
+                              if (g.id === activeChannel) {
+                                return { ...g, members: g.members.filter(mId => mId !== member.id), description: `${g.members.length} members` };
+                              }
+                              return g;
+                            }));
+                          }} 
+                          className="p-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-md"
+                          title="Remove from Group"
+                        >
+                          <X size={14} />
+                        </button>
+                      )}
+                    </div>
                   )}
                 </div>
               ))
