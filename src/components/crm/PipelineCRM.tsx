@@ -176,17 +176,20 @@ export const PipelineCRM = () => {
     return ENTITY_TYPES.find(t => t.id === typeId) || ENTITY_TYPES[8];
   };
 
-  const filteredDeals = deals.filter(d => 
-    d.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    d.contactName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredDeals = deals.filter(d => {
+    const n = d.name || '';
+    const c = d.contactName || '';
+    const s = searchTerm || '';
+    return n.toLowerCase().includes(s.toLowerCase()) || 
+           c.toLowerCase().includes(s.toLowerCase());
+  });
 
   return (
     <div className="h-full flex flex-col bg-slate-50">
       {/* Header */}
       <div className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between shrink-0 shadow-sm z-10">
         <div>
-          <h1 className="text-2xl font-black text-slate-800 tracking-tight">Global Pipeline</h1>
+          <h1 className="text-2xl font-black text-slate-800 tracking-tight">Global Pipeline ({deals.length})</h1>
           <p className="text-sm font-bold text-slate-500">Track and manage all platform relationships</p>
         </div>
         <div className="flex items-center gap-4">
