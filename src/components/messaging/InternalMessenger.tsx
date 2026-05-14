@@ -4,6 +4,7 @@ import { cn } from '../../lib/utils';
 import { db } from '../../firebase';
 import { collection, addDoc, query, limit, onSnapshot, serverTimestamp, where, Timestamp } from 'firebase/firestore';
 import { voip800 } from '../../lib/voip800';
+import { sendSMS } from '../../lib/textbelt';
 
 interface Message {
   id: string;
@@ -124,13 +125,16 @@ export const InternalMessenger = ({ currentUser }: Props) => {
     if (activeChannel === 'external-push' && !activeDM) {
       if (!externalPhone.trim()) { (() => { import('../../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Enter a valid phone number" })] }).catch(console.error) ); alert("Enter a valid phone number\n\n[Live Production Transaction Logged]"); })(); return; }
       try {
-        const sent = true // Mock push;
-        if (sent) {
-          await sendMessage(`[Push Notification sent to ${externalPhone}]: ${messageText}`, currentView!);
+        // Send real SMS via TextBelt
+        const smsResult = await sendSMS(externalPhone, messageText);
+        if (smsResult.success) {
+          await sendMessage(`✅ [SMS sent to ${externalPhone}]: ${messageText} (Quota: ${smsResult.quotaRemaining})`, currentView!);
           setMessageText('');
           inputRef.current?.focus();
         } else {
-          (() => { import('../../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Failed to send Push Notification" })] }).catch(console.error) ); alert("Failed to send Push Notification\n\n[Live Production Transaction Logged]"); })();
+          await sendMessage(`❌ [SMS FAILED to ${externalPhone}]: ${smsResult.error || smsResult.message || 'Unknown error'}`, currentView!);
+          (() => { import('../../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: `SMS failed: ${smsResult.error || smsResult.message}` })] }).catch(console.error) ); })();
+          setMessageText('');
         }
       } catch (err) {
         console.error(err);
