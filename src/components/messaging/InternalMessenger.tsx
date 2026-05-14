@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Send, Hash, MessageSquare, Users, Circle, Megaphone, Plus, X, Check } from 'lucide-react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { Send, Hash, MessageSquare, Users, Circle, Megaphone, Plus, X, Check, Search } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { db } from '../../firebase';
 import { collection, addDoc, query, limit, onSnapshot, serverTimestamp, where, Timestamp } from 'firebase/firestore';
@@ -24,12 +24,7 @@ const CHANNELS = [
   { id: 'external-push', label: 'External Push', description: 'Send secure push notifications to patients' },
 ];
 
-const TEAM_MEMBERS = [
-  { id: 'founder', name: 'Shantell Robinson', role: 'Founder & Chairman', color: 'bg-amber-500', status: 'online' },
-  { id: 'ceo', name: 'Ryan Ferrari', role: 'CEO', color: 'bg-blue-500', status: 'online' },
-  { id: 'compliance_director', name: 'Monica Green', role: 'Compliance Director', color: 'bg-emerald-500', status: 'away' },
-  { id: 'larry_ai', name: 'L.A.R.R.Y', role: 'Chief of Operations AI', color: 'bg-[#1a4731]', status: 'online' },
-];
+// Dynamic users will be loaded from Firestore
 
 interface Props {
   currentUser: { name: string; role: string; roleId: string };
@@ -47,12 +42,50 @@ export const InternalMessenger = ({ currentUser }: Props) => {
   const [groupMembers, setGroupMembers] = useState<string[]>([]);
   const [customGroups, setCustomGroups] = useState<{ id: string; label: string; members: string[]; description: string }[]>([]);
   const [externalPhone, setExternalPhone] = useState('');
+  const [systemUsers, setSystemUsers] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showMembers, setShowMembers] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const isFounder = currentUser.roleId === 'founder';
+  const isFounder = currentUser.role === 'executive_founder' || currentUser.roleId === 'founder';
   const currentView = activeDM || activeChannel;
   const [msgError, setMsgError] = useState<string | null>(null);
+
+  // Load all system users dynamically
+  useEffect(() => {
+    const usersRef = collection(db, 'users');
+    const unsubscribe = onSnapshot(usersRef, (snapshot) => {
+      const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setSystemUsers(users);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const getRoleColor = (role: string) => {
+    if (role.includes('founder') || role.includes('Chairman')) return 'bg-amber-500';
+    if (role.includes('ceo') || role.includes('president')) return 'bg-blue-500';
+    if (role.includes('compliance')) return 'bg-emerald-500';
+    if (role.includes('patient') || role.includes('user')) return 'bg-purple-500';
+    if (role.includes('business')) return 'bg-indigo-500';
+    return 'bg-slate-500';
+  };
+
+  const mappedUsers = useMemo(() => {
+    const users = systemUsers.map(u => ({
+      id: u.uid || u.id,
+      name: u.displayName || u.email || 'Unknown User',
+      role: u.role || 'User',
+      color: getRoleColor(u.role || ''),
+      status: 'online'
+    }));
+    
+    // Ensure L.A.R.R.Y is always available
+    if (!users.find(u => u.id === 'larry_ai')) {
+      users.push({ id: 'larry_ai', name: 'L.A.R.R.Y', role: 'Chief of Operations AI', color: 'bg-[#1a4731]', status: 'online' });
+    }
+    return users;
+  }, [systemUsers]);
 
   // Listen for messages — uses simple query to avoid composite index requirement
   useEffect(() => {
@@ -218,14 +251,7 @@ export const InternalMessenger = ({ currentUser }: Props) => {
     } catch { return 'now'; }
   };
 
-  const getInitials = (name: string) => name.split(' ').map(n => n[0]).join('').substring(0, 2);
-
-  const getRoleColor = (role: string) => {
-    if (role.includes('Founder') || role.includes('Chairman')) return 'bg-amber-500';
-    if (role.includes('CEO')) return 'bg-blue-500';
-    if (role.includes('Compliance')) return 'bg-emerald-500';
-    return 'bg-slate-500';
-  };
+  const getInitials = (name: string) => (name || '').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
 
   const allChannels = [...CHANNELS, ...customGroups];
 
@@ -287,10 +313,22 @@ export const InternalMessenger = ({ currentUser }: Props) => {
         </div>
 
         {/* Direct Messages */}
-        <div className="p-4 border-t border-slate-800 flex-1 overflow-y-auto">
-          <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 px-2">Direct Messages</h4>
-          <div className="space-y-1">
-            {TEAM_MEMBERS.filter(m => m.id !== currentUser.roleId).map(member => {
+        <div className="p-4 border-t border-slate-800 flex-1 overflow-y-auto flex flex-col">
+          <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 px-2">Directory / DMs</h4>
+          <div className="px-2 mb-3 relative">
+            <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+            <input 
+              type="text" 
+              placeholder="Search directory..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-slate-800 border border-slate-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder-slate-500 outline-none focus:border-indigo-500 transition-colors"
+            />
+          </div>
+          <div className="space-y-1 flex-1 overflow-y-auto px-1">
+            {mappedUsers
+              .filter(m => m.id !== currentUser.roleId && (m.name.toLowerCase().includes(searchQuery.toLowerCase()) || m.role.toLowerCase().includes(searchQuery.toLowerCase()) || m.id === 'larry_ai'))
+              .map(member => {
               const dmId = `dm-${[currentUser.roleId, member.id].sort().join('-')}`;
               return (
                 <button
@@ -299,11 +337,11 @@ export const InternalMessenger = ({ currentUser }: Props) => {
                   className={cn(
                     "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-bold transition-all text-left",
                     activeDM === dmId
-                      ? "bg-indigo-600 text-white"
+                      ? "bg-indigo-600 text-white shadow-md shadow-indigo-900/50"
                       : "text-slate-400 hover:bg-white/5 hover:text-white"
                   )}
                 >
-                  <div className="relative">
+                  <div className="relative shrink-0">
                     <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-black", member.color)}>
                       {getInitials(member.name)}
                     </div>
@@ -312,9 +350,9 @@ export const InternalMessenger = ({ currentUser }: Props) => {
                       className={cn("absolute -bottom-0.5 -right-0.5 fill-current", member.status === 'online' ? 'text-emerald-400' : 'text-amber-400')}
                     />
                   </div>
-                  <div className="min-w-0">
-                    <p className="truncate text-xs">{member.name}</p>
-                    <p className="text-[9px] text-slate-500 font-medium">{member.role}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-xs text-white">{member.name}</p>
+                    <p className="text-[9px] text-slate-500 font-medium truncate capitalize">{member.role.replace(/_/g, ' ')}</p>
                   </div>
                 </button>
               );
@@ -330,7 +368,7 @@ export const InternalMessenger = ({ currentUser }: Props) => {
             </div>
             <div>
               <p className="text-xs font-bold text-white">{currentUser.name}</p>
-              <p className="text-[9px] text-slate-500 font-bold">{currentUser.role}</p>
+              <p className="text-[9px] text-slate-500 font-bold capitalize">{currentUser.role.replace(/_/g, ' ')}</p>
             </div>
           </div>
         </div>
@@ -345,7 +383,7 @@ export const InternalMessenger = ({ currentUser }: Props) => {
             <div>
               <h4 className="font-black text-slate-800">
                 {activeDM
-                  ? TEAM_MEMBERS.find(m => activeDM.includes(m.id))?.name || 'Direct Message'
+                  ? mappedUsers.find(m => activeDM.includes(m.id))?.name || 'Direct Message'
                   : allChannels.find(c => c.id === activeChannel)?.label}
               </h4>
               <p className="text-[10px] text-slate-400 font-bold">
@@ -355,9 +393,15 @@ export const InternalMessenger = ({ currentUser }: Props) => {
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 bg-slate-50 px-3 py-1.5 rounded-full">
-            <Users size={14} /> {TEAM_MEMBERS.length} members
-          </div>
+          <button 
+            onClick={() => setShowMembers(!showMembers)} 
+            className={cn(
+              "flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-full transition-colors cursor-pointer",
+              showMembers ? "bg-indigo-100 text-indigo-700" : "bg-slate-50 text-slate-500 hover:bg-slate-100"
+            )}
+          >
+            <Users size={14} /> {activeDM ? 2 : (activeChannel.startsWith('group-') ? (customGroups.find(g => g.id === activeChannel)?.members.length || 0) + 1 : mappedUsers.length)} members
+          </button>
         </div>
 
         {/* Messages */}
@@ -504,7 +548,7 @@ export const InternalMessenger = ({ currentUser }: Props) => {
                 <div>
                   <label className="text-xs font-black text-slate-500 uppercase tracking-widest block mb-2">Add Members</label>
                   <div className="space-y-2">
-                    {TEAM_MEMBERS.filter(m => m.id !== currentUser.roleId).map(member => (
+                    {mappedUsers.filter(m => m.id !== currentUser.roleId).map(member => (
                       <button
                         key={member.id}
                         onClick={() => setGroupMembers(prev =>
@@ -513,7 +557,7 @@ export const InternalMessenger = ({ currentUser }: Props) => {
                         className={cn(
                           "w-full flex items-center justify-between p-3 rounded-xl border transition-all",
                           groupMembers.includes(member.id)
-                            ? "bg-indigo-50 border-indigo-300"
+                            ? "bg-indigo-50 border-indigo-300 shadow-sm"
                             : "bg-slate-50 border-slate-200 hover:border-indigo-200"
                         )}
                       >
@@ -523,7 +567,7 @@ export const InternalMessenger = ({ currentUser }: Props) => {
                           </div>
                           <div className="text-left">
                             <p className="text-sm font-bold text-slate-700">{member.name}</p>
-                            <p className="text-[10px] text-slate-400 font-medium">{member.role}</p>
+                            <p className="text-[10px] text-slate-400 font-medium capitalize">{member.role.replace(/_/g, ' ')}</p>
                           </div>
                         </div>
                         {groupMembers.includes(member.id) && <Check size={18} className="text-indigo-600" />}
@@ -543,6 +587,69 @@ export const InternalMessenger = ({ currentUser }: Props) => {
           </div>
         )}
       </div>
+      {/* Right Sidebar - Members */}
+      {showMembers && (
+        <div className="w-72 border-l border-slate-100 bg-white flex flex-col shrink-0 animate-in slide-in-from-right-8 duration-200">
+          <div className="h-16 border-b border-slate-100 flex items-center justify-between px-4 shrink-0">
+            <h3 className="font-black text-sm text-slate-800 uppercase tracking-widest">
+              {activeDM ? 'Conversation' : 'Channel Members'}
+            </h3>
+            <button onClick={() => setShowMembers(false)} className="p-1 hover:bg-slate-100 rounded-md text-slate-400">
+              <X size={16} />
+            </button>
+          </div>
+          <div className="flex-1 overflow-y-auto p-4 space-y-1">
+            {activeDM ? (
+              // Show the two users in DM
+              mappedUsers.filter(m => activeDM.includes(m.id) || m.id === currentUser.roleId).map(member => (
+                <div key={member.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50">
+                  <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-black", member.color)}>
+                    {getInitials(member.name)}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-slate-700 truncate">{member.name}</p>
+                    <p className="text-[10px] text-slate-400 font-medium truncate capitalize">{member.role.replace(/_/g, ' ')}</p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              // Show channel/group members
+              mappedUsers
+                .filter(m => activeChannel.startsWith('group-') ? (customGroups.find(g => g.id === activeChannel)?.members.includes(m.id) || m.id === currentUser.roleId) : true)
+                .map(member => (
+                <div key={member.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 group">
+                  <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-black", member.color)}>
+                    {getInitials(member.name)}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-bold text-slate-700 truncate">{member.name}</p>
+                    <p className="text-[10px] text-slate-400 font-medium truncate capitalize">{member.role.replace(/_/g, ' ')}</p>
+                  </div>
+                  {member.id !== currentUser.roleId && (
+                    <button 
+                      onClick={() => { setActiveDM(`dm-${[currentUser.roleId, member.id].sort().join('-')}`); setShowMembers(false); }} 
+                      className="opacity-0 group-hover:opacity-100 p-1.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-md transition-all"
+                      title="Direct Message"
+                    >
+                      <MessageSquare size={14} />
+                    </button>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+          {activeChannel.startsWith('group-') && !activeDM && (
+            <div className="p-4 border-t border-slate-100">
+              <button 
+                onClick={() => alert('Editing groups coming soon! For now, create a new group with the desired members.')}
+                className="w-full py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-2"
+              >
+                <Plus size={14} /> Add Members
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
