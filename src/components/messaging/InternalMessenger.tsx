@@ -24,7 +24,12 @@ const CHANNELS = [
   { id: 'external-push', label: 'External Push', description: 'Send secure push notifications to patients' },
 ];
 
-// Dynamic users will be loaded from Firestore
+const CORE_TEAM = [
+  { id: 'ceo', name: 'Ryan Ferrari', role: 'CEO', color: 'bg-blue-500', status: 'online' },
+  { id: 'compliance_director', name: 'Monica Green', role: 'Compliance Director', color: 'bg-emerald-500', status: 'away' },
+  { id: 'advisor', name: 'Bob Moore', role: 'Advisor', color: 'bg-slate-700', status: 'online' },
+  { id: 'larry_ai', name: 'L.A.R.R.Y', role: 'Chief of Operations AI', color: 'bg-[#1a4731]', status: 'online' },
+];
 
 interface Props {
   currentUser: { name: string; role: string; roleId: string };
@@ -63,11 +68,14 @@ export const InternalMessenger = ({ currentUser }: Props) => {
   }, []);
 
   const getRoleColor = (role: string) => {
-    if (role.includes('founder') || role.includes('Chairman')) return 'bg-amber-500';
-    if (role.includes('ceo') || role.includes('president')) return 'bg-blue-500';
-    if (role.includes('compliance')) return 'bg-emerald-500';
-    if (role.includes('patient') || role.includes('user')) return 'bg-purple-500';
-    if (role.includes('business')) return 'bg-indigo-500';
+    if (!role) return 'bg-slate-500';
+    const r = role.toLowerCase();
+    if (r.includes('founder') || r.includes('chairman')) return 'bg-amber-500';
+    if (r.includes('ceo') || r.includes('president')) return 'bg-blue-500';
+    if (r.includes('compliance')) return 'bg-emerald-500';
+    if (r.includes('advisor')) return 'bg-slate-700';
+    if (r.includes('patient') || r.includes('user')) return 'bg-purple-500';
+    if (r.includes('business')) return 'bg-indigo-500';
     return 'bg-slate-500';
   };
 
@@ -80,10 +88,13 @@ export const InternalMessenger = ({ currentUser }: Props) => {
       status: 'online'
     }));
     
-    // Ensure L.A.R.R.Y is always available
-    if (!users.find(u => u.id === 'larry_ai')) {
-      users.push({ id: 'larry_ai', name: 'L.A.R.R.Y', role: 'Chief of Operations AI', color: 'bg-[#1a4731]', status: 'online' });
-    }
+    // Ensure Core Team members are always available (if they haven't logged in to the new DB yet)
+    CORE_TEAM.forEach(coreMember => {
+      if (!users.find(u => u.name === coreMember.name || u.id === coreMember.id)) {
+        users.push(coreMember);
+      }
+    });
+    
     return users;
   }, [systemUsers]);
 
