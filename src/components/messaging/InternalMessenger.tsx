@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Send, Hash, MessageSquare, Users, Circle, Megaphone, Plus, X, Check } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { db } from '../../firebase';
-import { collection, addDoc, query, orderBy, limit, onSnapshot, serverTimestamp, where, Timestamp } from 'firebase/firestore';
+import { collection, addDoc, query, limit, onSnapshot, serverTimestamp, where, Timestamp } from 'firebase/firestore';
 import { voip800 } from '../../lib/voip800';
 
 interface Message {
@@ -51,14 +51,18 @@ export const InternalMessenger = ({ currentUser }: Props) => {
 
   const isFounder = currentUser.roleId === 'founder';
   const currentView = activeDM || activeChannel;
+  const [msgError, setMsgError] = useState<string | null>(null);
 
-  // Listen for messages
+  // Listen for messages — uses simple query to avoid composite index requirement
   useEffect(() => {
+    setMsgError(null);
     const messagesRef = collection(db, 'internal_messages');
+    
+    // Use a simple query that does NOT require a composite index:
+    // Fetch by channel only, sort client-side
     const q = query(
       messagesRef,
       where('channel', '==', currentView),
-      orderBy('timestamp', 'asc'),
       limit(100)
     );
 
@@ -67,8 +71,17 @@ export const InternalMessenger = ({ currentUser }: Props) => {
         id: doc.id,
         ...doc.data()
       } as Message));
+      // Sort client-side by timestamp
+      msgs.sort((a, b) => {
+        const tsA = a.timestamp?.seconds || a.timestamp?.toDate?.()?.getTime() / 1000 || 0;
+        const tsB = b.timestamp?.seconds || b.timestamp?.toDate?.()?.getTime() / 1000 || 0;
+        return tsA - tsB;
+      });
       setMessages(msgs);
-    }, () => {
+      setMsgError(null);
+    }, (err) => {
+      console.error('Messenger Firestore error:', err);
+      setMsgError(err.message || 'Failed to load messages');
       setMessages([]);
     });
 
@@ -90,7 +103,9 @@ export const InternalMessenger = ({ currentUser }: Props) => {
         timestamp: serverTimestamp(),
         isBroadcast,
       });
-    } catch {
+    } catch (err: any) {
+      console.error('Failed to send message:', err);
+      // Fallback: add locally so user still sees their message
       setMessages(prev => [...prev, {
         id: `local-${Date.now()}`,
         sender: currentUser.name,
@@ -343,7 +358,14 @@ export const InternalMessenger = ({ currentUser }: Props) => {
 
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/50">
-          {messages.length === 0 && (
+          {msgError && (
+            <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-4">
+              <p className="text-xs font-black text-red-600 uppercase tracking-wider mb-1">Messaging Error</p>
+              <p className="text-sm text-red-700 font-medium">{msgError}</p>
+              <p className="text-[10px] text-red-400 mt-2">Check browser console for details. You may need to create a Firestore index.</p>
+            </div>
+          )}
+          {messages.length === 0 && !msgError && (
             <div className="flex flex-col items-center justify-center h-full text-slate-300">
               <MessageSquare size={48} className="mb-4 opacity-50" />
               <p className="font-bold text-sm">No messages yet</p>
