@@ -626,7 +626,16 @@ export const InternalMessenger = ({ currentUser }: Props) => {
             ) : (
               // Show channel/group members
               mappedUsers
-                .filter(m => activeChannel.startsWith('group-') ? (customGroups.find(g => g.id === activeChannel)?.members.includes(m.id) || m.id === currentUser.roleId) : true)
+                .filter(m => {
+                  if (activeChannel.startsWith('group-')) {
+                    return customGroups.find(g => g.id === activeChannel)?.members.includes(m.id) || m.id === currentUser.roleId;
+                  } else {
+                    // For standard internal channels, only show internal staff (exclude patients/businesses)
+                    const r = m.role.toLowerCase();
+                    const isInternal = r.includes('founder') || r.includes('ceo') || r.includes('president') || r.includes('compliance') || r.includes('advisor') || r.includes('ai') || r.includes('admin') || r.includes('agent');
+                    return isInternal;
+                  }
+                })
                 .map(member => (
                 <div key={member.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 group">
                   <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-black", member.color)}>
