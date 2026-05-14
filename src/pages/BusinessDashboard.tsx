@@ -153,7 +153,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
   const [newDoc, setNewDoc] = useState({ entity_id: '', name: '', type: 'Compliance' });
   const [stressTestResult, setStressTestResult] = useState<StressTestResult | null>(null);
   const [isStressTesting, setIsStressTesting] = useState(false);
-  const [hideUpdates, setHideUpdates] = useState(false);
+  const [hideUpdates, setHideUpdates] = useState(() => localStorage.getItem('ggp_updates_read') === 'true');
 
 
   useEffect(() => {

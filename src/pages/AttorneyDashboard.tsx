@@ -37,7 +37,7 @@ const alerts = [
 
 export const AttorneyDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [hideUpdates, setHideUpdates] = useState(false);
+  const [hideUpdates, setHideUpdates] = useState(() => localStorage.getItem('ggp_updates_read') === 'true');
   const [tokens, setTokens] = useState(12);
   const [unlockedCases, setUnlockedCases] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');

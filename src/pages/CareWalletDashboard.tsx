@@ -32,7 +32,7 @@ const loyaltyTiers = [
 
 export const CareWalletDashboard = ({ onLogout, onNavigate, user }: { onLogout?: () => void, onNavigate?: (view: string) => void, user?: any }) => {
   const [activeTab, setActiveTab] = useState('wallet');
-  const [hideUpdates, setHideUpdates] = useState(false);
+  const [hideUpdates, setHideUpdates] = useState(() => localStorage.getItem('ggp_updates_read') === 'true');
   const [dbTransactions, setDbTransactions] = useState<any[]>([]);
 
   React.useEffect(() => {

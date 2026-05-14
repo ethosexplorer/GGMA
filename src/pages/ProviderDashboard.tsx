@@ -41,7 +41,7 @@ const alerts = [
 export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
   const [activeTab, setActiveTab] = useState('queue');
   const [showCertWizard, setShowCertWizard] = useState(false);
-  const [hideUpdates, setHideUpdates] = useState(false);
+  const [hideUpdates, setHideUpdates] = useState(() => localStorage.getItem('ggp_updates_read') === 'true');
   const [tokens, setTokens] = useState(15);
   const [unlockedPatients, setUnlockedPatients] = useState<string[]>([]);
 
@@ -211,7 +211,7 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
             {/* Important Updates */}
             {activeTab === 'queue' && !hideUpdates && (
               <div className="mb-6 relative group">
-                <button onClick={() => setHideUpdates(true)} className="absolute top-2 right-2 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold rounded-lg shadow-sm transition-all z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100">
+                <button onClick={() => { setHideUpdates(true); localStorage.setItem('ggp_updates_read', 'true'); localStorage.setItem('ggp_updates_read_date', new Date().toISOString()); }} className="absolute top-2 right-2 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold rounded-lg shadow-sm transition-all z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100">
                   <X size={14} /> Mark as Read
                 </button>
                 <ImportantUpdates role="provider" />
@@ -426,7 +426,7 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                           <h3 className="text-lg font-bold text-slate-800">Recent Certifications</h3>
                           <p className="text-sm text-slate-500">Track and manage state-filed medical evaluations.</p>
                         </div>
-                        <button onClick={() => setShowCertificationModal(true)} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl shadow-md transition-all flex items-center gap-2">
+                        <button onClick={() => setShowCertWizard(true)} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl shadow-md transition-all flex items-center gap-2">
                            <Plus size={16} /> New Cert
                         </button>
                       </div>
@@ -620,7 +620,7 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
               <div className="space-y-6">
                 
                 {activeTab === 'queue' && hideUpdates && (
-                  <button onClick={() => setHideUpdates(false)} className="w-full bg-blue-50 border border-blue-200 text-blue-700 font-bold text-sm py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-blue-100 transition-colors shadow-sm">
+                  <button onClick={() => { setHideUpdates(false); localStorage.removeItem('ggp_updates_read'); }} className="w-full bg-blue-50 border border-blue-200 text-blue-700 font-bold text-sm py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-blue-100 transition-colors shadow-sm">
                     <Bell size={16} /> View Important Updates (3)
                   </button>
                 )}

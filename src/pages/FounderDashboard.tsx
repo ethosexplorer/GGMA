@@ -420,7 +420,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   };
 
   const [activeTab, setActiveTab] = useState(isExecutive ? 'ai_training' : 'overview');
-  const [hideUpdates, setHideUpdates] = useState(false);
+  const [hideUpdates, setHideUpdates] = useState(() => localStorage.getItem('ggp_updates_read') === 'true');
   const [activePopoutSection, setActivePopoutSection] = useState<string | null>(isExecutive ? null : '_sec_founder');
 
   useEffect(() => {
@@ -664,14 +664,14 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
 
       {!hideUpdates && (
         <div className="mb-6 relative group">
-          <button onClick={() => setHideUpdates(true)} className="absolute top-2 right-2 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold rounded-lg shadow-sm transition-all z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100">
+          <button onClick={() => { setHideUpdates(true); localStorage.setItem('ggp_updates_read', 'true'); localStorage.setItem('ggp_updates_read_date', new Date().toISOString()); }} className="absolute top-2 right-2 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold rounded-lg shadow-sm transition-all z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100">
             <X size={14} /> Mark as Read
           </button>
           <ImportantUpdates role="founder" />
         </div>
       )}
       {hideUpdates && (
-        <button onClick={() => setHideUpdates(false)} className="w-full max-w-5xl mx-auto bg-blue-50 border border-blue-200 text-blue-700 font-bold text-sm py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-blue-100 transition-colors shadow-sm mb-6">
+        <button onClick={() => { setHideUpdates(false); localStorage.removeItem('ggp_updates_read'); }} className="w-full max-w-5xl mx-auto bg-blue-50 border border-blue-200 text-blue-700 font-bold text-sm py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-blue-100 transition-colors shadow-sm mb-6">
           <Bell size={16} /> View Important Updates
         </button>
       )}
