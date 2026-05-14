@@ -12,7 +12,7 @@ async function runScraper() {
   const page = await browser.newPage();
   
   const businesses = [];
-  const limit = 40; 
+  const limit = 30000; 
 
   try {
     console.log("🌐 Navigating to OMMA Verify Portal...");

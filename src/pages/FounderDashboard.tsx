@@ -46,7 +46,7 @@ import { voip800 } from '../lib/voip800';
 import { InvoiceManager } from '../components/founder/InvoiceManager';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 import { GlobalDirectoryTab } from '../components/founder/GlobalDirectoryTab';
-import { OMMAPipelineTab } from '../components/ops/OMMAPipelineTab';
+import { GlobalSweepTab } from '../components/ops/GlobalSweepTab';
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
@@ -99,7 +99,7 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'patients', label: 'Registry Sovereignty', icon: HeartPulse },
   { id: 'business', label: 'Economic Infrastructure', icon: Building2 },
   { id: 'b2b_crm', label: 'Global CRM Pipeline', icon: Briefcase },
-  { id: 'omma_pipeline', label: 'OMMA Registry & CRM', icon: MapIcon },
+  { id: 'omma_pipeline', label: 'Global Sweep Hub', icon: MapIcon },
   { id: 'approvals', label: 'Agency Approvals', icon: UserCheck },
   { id: 'applications', label: 'Applications Queue', icon: FileText },
   { id: 'processor', label: 'GGE Processor', icon: Activity },
@@ -4035,7 +4035,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       );
       case 'business': return renderEconomicInfrastructure();
       case 'b2b_crm': return <div className="h-full w-full -m-10 bg-[#080e1a] min-h-screen overflow-auto"><PipelineCRM /></div>;
-      case 'omma_pipeline': return <div className="h-full w-full -m-10"><OMMAPipelineTab /></div>;
+      case 'omma_pipeline': return <div className="h-full w-full -m-10"><GlobalSweepTab /></div>;
       case 'global_directory': return <div className="h-full w-full -m-10"><GlobalDirectoryTab onOpenMessage={(uid) => { setActiveTab('messages'); }} /></div>;
       case 'approvals': return renderApprovals();
       case 'applications': return renderApplications();
