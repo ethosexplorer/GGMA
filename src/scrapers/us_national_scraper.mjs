@@ -46,53 +46,12 @@ async function runNationalScraper(stateCode) {
     console.log("⏳ Waiting for portal to initialize...");
     await new Promise(r => setTimeout(r, 5000));
 
-    let extractedCount = 0;
-    while (extractedCount < limit) {
-      const records = await page.evaluate(() => {
-        const containers = Array.from(document.querySelectorAll('tr, .result-item, .card, li'));
-        const results = [];
-        for (const container of containers) {
-          const text = container.innerText || '';
-          if (text.includes('Active') || text.match(/\\d{3}[-\\.\\s]?\\d{4}/)) {
-             results.push(text);
-          }
-        }
-        return results;
-      });
-
-      if (records.length === 0) break;
-
-      for (let i = 0; i < records.length; i++) {
-        if (extractedCount >= limit) break;
-        
-        const text = records[i];
-        const extractMatch = (regex) => {
-          const match = text.match(regex);
-          return match ? match[1].trim() : "N/A";
-        };
-
-        const emailMatch = text.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/i);
-        const phoneMatch = text.match(/(\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4})/);
-        const lines = text.split('\\n').map(l => l.trim()).filter(l => l);
-
-        const business = {
-          "Business Name": lines.length > 0 ? lines[0] : "Unknown",
-          "DBA": extractMatch(/DBA\s*[:\-]\s*(.*)/i) !== "N/A" ? extractMatch(/DBA\s*[:\-]\s*(.*)/i) : "",
-          "License Number": extractMatch(/([A-Z0-9]{6,12})/i) !== "N/A" ? extractMatch(/([A-Z0-9]{6,12})/i) : "Unknown",
-          "License Type": extractMatch(/(?:Type|Category)\s*[:\-]\s*(.*)/i),
-          "Expiration Date": extractMatch(/(?:Expires|Expiration)\s*[:\-]\s*(\d{1,2}\/\d{1,2}\/\d{4})/i),
-          "Physical Address": extractMatch(/Address\s*[:\-]\s*(.*)/i),
-          "Telephone": phoneMatch ? phoneMatch[1] : "",
-          "Email": emailMatch ? emailMatch[1] : "",
-          "Status": extractMatch(/(?:Status)\s*[:\-]\s*([A-Za-z]+)/i) !== "N/A" ? extractMatch(/(?:Status)\s*[:\-]\s*([A-Za-z]+)/i) : "Active",
-          "Raw Data": text.replace(/\n/g, ' | ')
-        };
-        
-        businesses.push(business);
-        extractedCount++;
-      }
-
-      break;
+    if (stateCode === 'MD') {
+      await scrapeMaryland(page, businesses, limit);
+    } else if (stateCode === 'MO') {
+      await scrapeMissouri(page, businesses, limit);
+    } else {
+      await scrapeGeneric(page, businesses, limit);
     }
 
     if (businesses.length > 0) {
@@ -104,7 +63,7 @@ async function runNationalScraper(stateCode) {
       }
       const csvPath = path.join(process.cwd(), `${stateCode.toLowerCase()}_enriched_directory.csv`);
       fs.writeFileSync(csvPath, csvRows.join('\n'));
-      console.log(`\\n🎉 Success! Saved ${businesses.length} records to ${csvPath}`);
+      console.log(`\n🎉 Success! Saved ${businesses.length} records to ${csvPath}`);
     } else {
       console.log(`❌ No businesses extracted for ${stateCode}. Portal might require custom navigation.`);
     }
@@ -113,6 +72,81 @@ async function runNationalScraper(stateCode) {
     console.error(`❌ Scraper Error [${stateCode}]:`, error);
   } finally {
     await browser.close();
+  }
+}
+
+// ==========================================
+// STATE-SPECIFIC SCRAPING STRATEGIES
+// ==========================================
+
+async function scrapeMaryland(page, businesses, limit) {
+  console.log('🦀 Executing Maryland-specific scraping strategy...');
+  // Maryland typically lists licensees in PDF or HTML tables under "Industry Licensees"
+  // For demonstration, we attempt to find generic tables and parse rows
+  await page.evaluate(() => {
+    const links = Array.from(document.querySelectorAll('a'));
+    const target = links.find(a => a.innerText && a.innerText.includes('Industry Licensees'));
+    if (target) target.click();
+  });
+  
+  await new Promise(r => setTimeout(r, 3000));
+  await scrapeGeneric(page, businesses, limit);
+}
+
+async function scrapeMissouri(page, businesses, limit) {
+  console.log('🐻 Executing Missouri-specific scraping strategy...');
+  // Missouri uses health.mo.gov tables
+  await scrapeGeneric(page, businesses, limit);
+}
+
+async function scrapeGeneric(page, businesses, limit) {
+  let extractedCount = 0;
+  while (extractedCount < limit) {
+    const records = await page.evaluate(() => {
+      const containers = Array.from(document.querySelectorAll('tr, .result-item, .card, li'));
+      const results = [];
+      for (const container of containers) {
+        const text = container.innerText || '';
+        if (text.includes('Active') || text.match(/\d{3}[-\.\s]?\d{4}/)) {
+           results.push(text);
+        }
+      }
+      return results;
+    });
+
+    if (records.length === 0) break;
+
+    for (let i = 0; i < records.length; i++) {
+      if (extractedCount >= limit) break;
+      
+      const text = records[i];
+      const extractMatch = (regex) => {
+        const match = text.match(regex);
+        return match ? match[1].trim() : "N/A";
+      };
+
+      const emailMatch = text.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/i);
+      const phoneMatch = text.match(/(\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4})/);
+      const lines = text.split('\n').map(l => l.trim()).filter(l => l);
+
+      const business = {
+        "Business Name": lines.length > 0 ? lines[0] : "Unknown",
+        "DBA": extractMatch(/DBA\s*[:\-]\s*(.*)/i) !== "N/A" ? extractMatch(/DBA\s*[:\-]\s*(.*)/i) : "",
+        "License Number": extractMatch(/([A-Z0-9]{6,12})/i) !== "N/A" ? extractMatch(/([A-Z0-9]{6,12})/i) : "Unknown",
+        "License Type": extractMatch(/(?:Type|Category)\s*[:\-]\s*(.*)/i),
+        "Expiration Date": extractMatch(/(?:Expires|Expiration)\s*[:\-]\s*(\d{1,2}\/\d{1,2}\/\d{4})/i),
+        "Physical Address": extractMatch(/Address\s*[:\-]\s*(.*)/i),
+        "Telephone": phoneMatch ? phoneMatch[1] : "",
+        "Email": emailMatch ? emailMatch[1] : "",
+        "Status": extractMatch(/(?:Status)\s*[:\-]\s*([A-Za-z]+)/i) !== "N/A" ? extractMatch(/(?:Status)\s*[:\-]\s*([A-Za-z]+)/i) : "Active",
+        "Raw Data": text.replace(/\n/g, ' | ')
+      };
+      
+      businesses.push(business);
+      extractedCount++;
+    }
+
+    break;
   }
 }
 

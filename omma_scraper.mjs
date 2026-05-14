@@ -13,6 +13,60 @@ async function runScraper() {
   
   const businesses = [];
   const limit = 30000; 
+  const csvPath = path.join(process.cwd(), 'omma_enriched_directory.csv');
+  let pagesToSkip = 0;
+
+  if (fs.existsSync(csvPath)) {
+    const existingCsv = fs.readFileSync(csvPath, 'utf8');
+    const existingLines = existingCsv.split('\n').filter(l => l.trim());
+    
+    if (existingLines.length > 1) {
+      const headers = existingLines[0].split(',').map(h => h.replace(/^"|"$/g, ''));
+      for (let i = 1; i < existingLines.length; i++) {
+        const line = existingLines[i];
+        const values = [];
+        let inQuotes = false;
+        let val = '';
+        for (let j = 0; j < line.length; j++) {
+          if (line[j] === '"') {
+            if (inQuotes && line[j+1] === '"') {
+              val += '"';
+              j++;
+            } else {
+              inQuotes = !inQuotes;
+            }
+          } else if (line[j] === ',' && !inQuotes) {
+            values.push(val);
+            val = '';
+          } else {
+            val += line[j];
+          }
+        }
+        values.push(val);
+        
+        const obj = {};
+        headers.forEach((h, idx) => obj[h] = values[idx] || '');
+        businesses.push(obj);
+      }
+      
+      const uniqueBusinesses = [];
+      const seenLicenses = new Set();
+      for (const b of businesses) {
+        const id = b['License Number'] || b['Business Name'];
+        if (!seenLicenses.has(id)) {
+          seenLicenses.add(id);
+          uniqueBusinesses.push(b);
+        }
+      }
+      
+      businesses.length = 0;
+      businesses.push(...uniqueBusinesses);
+      
+      console.log(`✅ Loaded ${businesses.length} unique existing records from CSV.`);
+      pagesToSkip = Math.floor(businesses.length / 20);
+      console.log(`⏭️ Will skip the first ${pagesToSkip} pages to resume extraction.`);
+    }
+  }
 
   try {
     console.log("🌐 Navigating to OMMA Verify Portal...");
@@ -67,7 +121,37 @@ async function runScraper() {
     console.log("⏳ Waiting for search results to populate...");
     await new Promise(r => setTimeout(r, 8000));
 
-    let extractedCount = 0;
+    if (pagesToSkip > 0) {
+      console.log(`⏭️ Fast-forwarding ${pagesToSkip} pages...`);
+      for (let p = 0; p < pagesToSkip; p++) {
+        if (p % 10 === 0) console.log(`Skipping page ${p + 1}/${pagesToSkip}...`);
+        const hasNext = await page.evaluate(() => {
+          function findNext(text, el = document.body) {
+            if (el.innerText && el.innerText.trim() === text && (el.tagName === 'BUTTON' || el.tagName === 'A')) return el;
+            for (const child of Array.from(el.children)) {
+              const res = findNext(text, child);
+              if (res) return res;
+            }
+            if (el.shadowRoot) {
+              const res = findNext(text, el.shadowRoot);
+              if (res) return res;
+            }
+            return null;
+          }
+          const nextBtn = findNext('Next');
+          if (nextBtn && !nextBtn.disabled) {
+            nextBtn.click();
+            return true;
+          }
+          return false;
+        });
+        if (!hasNext) break;
+        await new Promise(r => setTimeout(r, 2000));
+      }
+      console.log(`✅ Reached target page. Resuming extraction...`);
+    }
+
+    let extractedCount = businesses.length;
     
     while (extractedCount < limit) {
       const viewButtonsCount = await page.evaluate(() => {
@@ -223,18 +307,28 @@ async function runScraper() {
     }
 
     if (businesses.length > 0) {
-      const headers = Object.keys(businesses[0]);
-      const csvRows = [headers.join(',')];
+      // Deduplicate again before saving to be safe
+      const uniqueBusinesses = [];
+      const seenLicenses = new Set();
       for (const b of businesses) {
+        const id = b['License Number'] || b['Business Name'];
+        if (!seenLicenses.has(id)) {
+          seenLicenses.add(id);
+          uniqueBusinesses.push(b);
+        }
+      }
+
+      const headers = Object.keys(uniqueBusinesses[0]);
+      const csvRows = [headers.join(',')];
+      for (const b of uniqueBusinesses) {
         const values = headers.map(header => {
           const val = b[header] ? b[header].toString().replace(/"/g, '""') : '';
           return `"${val}"`;
         });
         csvRows.push(values.join(','));
       }
-      const csvPath = path.join(process.cwd(), 'omma_enriched_directory.csv');
       fs.writeFileSync(csvPath, csvRows.join('\n'));
-      console.log(`\n🎉 Success! Saved ${businesses.length} records to ${csvPath}`);
+      console.log(`\n🎉 Success! Saved ${uniqueBusinesses.length} records to ${csvPath} (Duplicates removed)`);
     } else {
       console.log("❌ No businesses were successfully extracted.");
     }

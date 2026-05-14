@@ -30,6 +30,7 @@ export const MarketingHub = () => {
   const [jurisdictions, setJurisdictions] = useState<string[]>([]);
   const [businessTypes, setBusinessTypes] = useState<string[]>([]);
   const [filteredCount, setFilteredCount] = useState(0);
+  const [filteredAudience, setFilteredAudience] = useState<any[]>([]);
   
   // UI State
   const [isSending, setIsSending] = useState(false);
@@ -52,31 +53,61 @@ export const MarketingHub = () => {
       const filtered = deals.filter(d => {
         const matchesState = selectedState === 'All' || d.jurisdiction === selectedState;
         const matchesType = selectedType === 'All' || d.type === selectedType;
+        // Also ensure they have the necessary contact info
+        if (campaignType === 'email' && !d.email) return false;
+        if (campaignType === 'sms' && !d.phone) return false;
         return matchesState && matchesType;
       });
       setFilteredCount(filtered.length);
+      setFilteredAudience(filtered);
     });
     return () => unsubscribe();
-  }, [selectedState, selectedType]);
+  }, [selectedState, selectedType, campaignType]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!subject && campaignType === 'email') return alert('Please enter a subject');
     if (!message) return alert('Please enter a message');
-    if (filteredCount === 0) return alert('No audience selected');
+    if (filteredAudience.length === 0) return alert('No valid audience selected. Ensure contacts have phone/email.');
 
     setIsSending(true);
-    // Simulate send delay
-    setTimeout(() => {
-      setIsSending(false);
-      setSendSuccess(true);
+    
+    try {
+      const response = await fetch('/api/marketing/send-campaign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: campaignType,
+          subject,
+          message,
+          recipients: filteredAudience
+        })
+      });
       
-      // Reset after 3 seconds
-      setTimeout(() => {
-        setSendSuccess(false);
-        setSubject('');
-        setMessage('');
-      }, 3000);
-    }, 2000);
+      const data = await response.json();
+      
+      if (data.success) {
+        setSendSuccess(true);
+        // Log to Turso could go here
+        import('../../lib/turso').then(({ turso }) => {
+          turso.execute({ 
+            sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", 
+            args: ['log-' + Math.random().toString(36).substr(2, 9), "Marketing_Campaign", "System", JSON.stringify({ type: campaignType, count: filteredAudience.length, success: data.results?.successful })] 
+          }).catch(console.error);
+        });
+        
+        setTimeout(() => {
+          setSendSuccess(false);
+          setSubject('');
+          setMessage('');
+        }, 4000);
+      } else {
+        alert('Campaign Error: ' + (data.error || 'Unknown error'));
+      }
+    } catch (err: any) {
+      alert('Network Error: Failed to contact the marketing API.');
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
