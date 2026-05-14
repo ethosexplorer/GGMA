@@ -8917,34 +8917,32 @@ export default function App() {
     const OVERSIGHT_EMAILS = ["ceo.globalgreenhp@gmail.com", ADVISOR_EMAIL];
     const lowerEmail = email.toLowerCase().trim();
     
-    // Privileged login override
+    // Privileged login — try Firebase Auth FIRST for all privileged users
     if (initialRole === 'admin' || lowerEmail === FOUNDER_EMAIL || lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp') || OVERSIGHT_EMAILS.includes(lowerEmail) || lowerEmail === ADVISOR_EMAIL) {
-      // Ryan (President) — try Firebase auth first, fall back to local override
-      if (lowerEmail.includes('ceo.globalgreenhp')) {
-        try {
-          const userCredential = await signInWithEmailAndPassword(auth, email, pass);
-          // Firebase auth succeeded — profile will be set by onAuthStateChanged
+      
+      // Try Firebase Auth first for ALL privileged users
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+        console.log('[App.handleLogin] Firebase Auth succeeded for privileged user:', { email, uid: userCredential.user.uid });
+        // Firebase auth succeeded — profile will be set by onAuthStateChanged
+        return;
+      } catch (fbErr: any) {
+        console.log('[App.handleLogin] Firebase Auth failed for privileged user, falling back to local override:', fbErr.code);
+        // If wrong password, block immediately
+        if (fbErr.code === 'auth/wrong-password' || fbErr.code === 'auth/invalid-credential') {
+          alert('Invalid credentials. Please check your password.');
           return;
-        } catch (fbErr: any) {
-          // If Firebase auth fails with wrong password, block
-          if (fbErr.code === 'auth/wrong-password' || fbErr.code === 'auth/invalid-credential') {
-            alert('Invalid credentials. Please check your password.');
-            return;
-          }
-          // For other errors (network, user-not-found), try local override with known password
-          if (pass !== 'Globalgreen2') {
-            alert('Invalid credentials.');
-            return;
-          }
         }
+        // For other errors (user-not-found, network), fall through to local override
       }
+
+      // Local override fallback (when Firebase Auth isn't available)
       if (lowerEmail === ADVISOR_EMAIL && pass !== 'Globalgreen1') {
         (() => { import('./lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Invalid credentials." })] }).catch(console.error) ); alert("Invalid credentials.\n\n[Live Production Transaction Logged]"); })();
         return;
       }
-      // Removed the restrictive password check for Monica so she can log in locally with whatever she sets, bypassing Firebase issues
       
-      console.log('[App.handleLogin] Privileged login override:', { email });
+      console.log('[App.handleLogin] Privileged login local override:', { email });
       const isFounder = lowerEmail === FOUNDER_EMAIL || lowerEmail === FOUNDER_EMAIL_2;
       const isPresident = lowerEmail.includes('ceo.globalgreenhp');
       const isComplianceDirector = lowerEmail.includes('monica') || lowerEmail.includes('compliance.globalgreenhp') && lowerEmail !== FOUNDER_EMAIL_2;
