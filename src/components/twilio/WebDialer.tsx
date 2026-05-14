@@ -13,6 +13,7 @@ export function WebDialer() {
   const [error, setError] = useState<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const deviceRef = useRef<Device | null>(null);
+  const activeCallRef = useRef<Call | null>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -70,6 +71,7 @@ export function WebDialer() {
             console.log('[WebDialer] Call accepted');
             setIncomingCall(null);
             setActiveCall(call);
+            activeCallRef.current = call;
             startTimer();
           });
 
@@ -104,6 +106,7 @@ export function WebDialer() {
     const cleanup = () => {
       setIncomingCall(null);
       setActiveCall(null);
+      activeCallRef.current = null;
       setIsMuted(false);
       setCallDuration(0);
       if (timerRef.current) clearInterval(timerRef.current);
@@ -140,6 +143,14 @@ export function WebDialer() {
     };
     window.addEventListener('twilio-status-change', handleStatusChange);
 
+    const handleSendDigits = (e: any) => {
+      if (e.detail && e.detail.digits && activeCallRef.current) {
+        console.log('[WebDialer] Sending DTMF:', e.detail.digits);
+        activeCallRef.current.sendDigits(e.detail.digits);
+      }
+    };
+    window.addEventListener('twilio-send-digits', handleSendDigits);
+
     return () => {
       if (deviceRef.current) {
         deviceRef.current.destroy();
@@ -147,6 +158,7 @@ export function WebDialer() {
       if (timerRef.current) clearInterval(timerRef.current);
       window.removeEventListener('twilio-dial-out', handleDialOut);
       window.removeEventListener('twilio-status-change', handleStatusChange);
+      window.removeEventListener('twilio-send-digits', handleSendDigits);
     };
   }, []);
 
@@ -169,9 +181,10 @@ export function WebDialer() {
   };
 
   const handleHangup = () => {
-    if (activeCall) {
-      activeCall.disconnect();
+    if (activeCallRef.current) {
+      activeCallRef.current.disconnect();
       setActiveCall(null);
+      activeCallRef.current = null;
       setIsMuted(false);
       setCallDuration(0);
       if (timerRef.current) clearInterval(timerRef.current);
@@ -186,13 +199,14 @@ export function WebDialer() {
       setShowDialer(false);
       const call = await device.connect({ params: { To: dialNumber } });
       setActiveCall(call);
+      activeCallRef.current = call;
       const startCallTimer = () => {
         setCallDuration(0);
         timerRef.current = setInterval(() => setCallDuration(prev => prev + 1), 1000);
       };
       call.on('accept', () => { console.log('[WebDialer] Outbound call connected'); startCallTimer(); });
-      call.on('disconnect', () => { console.log('[WebDialer] Outbound call ended'); setActiveCall(null); setIsMuted(false); setCallDuration(0); if (timerRef.current) clearInterval(timerRef.current); setStatus('ready'); });
-      call.on('error', (err: any) => { console.error('[WebDialer] Call error:', err); setError(err.message || 'Call failed'); setActiveCall(null); setStatus('ready'); });
+      call.on('disconnect', () => { console.log('[WebDialer] Outbound call ended'); setActiveCall(null); activeCallRef.current = null; setIsMuted(false); setCallDuration(0); if (timerRef.current) clearInterval(timerRef.current); setStatus('ready'); });
+      call.on('error', (err: any) => { console.error('[WebDialer] Call error:', err); setError(err.message || 'Call failed'); setActiveCall(null); activeCallRef.current = null; setStatus('ready'); });
     } catch (err: any) {
       console.error('[WebDialer] Failed to dial:', err);
       setError(err.message || 'Dial failed');
@@ -313,7 +327,12 @@ export function WebDialer() {
             {['1','2','3','4','5','6','7','8','9','*','0','#'].map((key) => (
               <button 
                 key={key}
-                onClick={() => setDialNumber(prev => prev + key)}
+                onClick={() => {
+                  setDialNumber(prev => prev + key);
+                  if (activeCallRef.current) {
+                    activeCallRef.current.sendDigits(key);
+                  }
+                }}
                 className="bg-slate-800 hover:bg-slate-700 text-white text-xl font-bold p-3 rounded-xl transition-colors shadow-sm"
               >
                 {key}
@@ -399,6 +418,13 @@ export function WebDialer() {
           <p className="text-xs text-slate-400 mb-3 truncate">{activeCall.parameters?.To || activeCall.parameters?.From || 'Unknown'}</p>
           
           <div className="flex justify-between items-center bg-slate-800/50 rounded-xl p-2 border border-slate-700/50">
+            <button 
+              onClick={() => { if (!showDialer) setShowDialer(true); }}
+              className="p-3 rounded-lg text-white bg-slate-700 hover:bg-slate-600 transition-colors"
+              title="Open Dial Pad (Send DTMF)"
+            >
+              <span className="font-mono font-black text-[10px]">#</span>
+            </button>
             <button 
               onClick={toggleMute}
               className={cn(

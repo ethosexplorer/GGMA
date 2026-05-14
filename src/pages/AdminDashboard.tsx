@@ -15,6 +15,7 @@ import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
 import { EscalationSupportCalendar } from '../components/EscalationSupportCalendar';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 import { PatientCaseTracker } from '../components/patient/PatientCaseTracker';
+import { PipelineCRM } from '../components/crm/PipelineCRM';
 
 const NAV_ITEMS = [
   { section: 'INTERNAL COMMAND' },
@@ -25,6 +26,7 @@ const NAV_ITEMS = [
   { id: 'users', label: 'User Directory', icon: Users },
   { id: 'patients', label: 'Patient Registry', icon: HeartPulse },
   { id: 'business', label: 'Commercial Nodes', icon: Building2 },
+  { id: 'b2b_crm', label: 'Global CRM Pipeline', icon: Briefcase },
   { section: 'OPS & COMPLIANCE' },
   { id: 'approvals', label: 'Agency Approvals', icon: UserCheck },
   { id: 'applications', label: 'Applications Queue', icon: FileText, badge: '1' },
@@ -809,6 +811,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
       case 'users': return renderUsers();
       case 'patients': return renderPatients();
       case 'business': return renderBusiness();
+      case 'b2b_crm': return <div className="h-full w-full -m-10 bg-[#080e1a] min-h-screen overflow-auto"><PipelineCRM /></div>;
       case 'approvals': return renderApprovals();
       case 'applications': return renderApplications();
       case 'compliance': return renderCompliance();

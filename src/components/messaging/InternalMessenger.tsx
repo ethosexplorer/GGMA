@@ -83,7 +83,7 @@ export const InternalMessenger = ({ currentUser }: Props) => {
   const mappedUsers = useMemo(() => {
     const users = systemUsers.map(u => ({
       id: u.uid || u.id,
-      name: u.displayName || u.email || 'Unknown User',
+      name: u.displayName || (u.firstName && u.lastName ? `${u.firstName} ${u.lastName}` : null) || u.email || 'Unknown User',
       role: u.role || 'User',
       color: getRoleColor(u.role || ''),
       status: 'online'
@@ -91,10 +91,21 @@ export const InternalMessenger = ({ currentUser }: Props) => {
     
     // Ensure Core Team members are always available (if they haven't logged in to the new DB yet)
     CORE_TEAM.forEach(coreMember => {
-      if (!users.find(u => u.name === coreMember.name || u.id === coreMember.id)) {
+      if (!users.find(u => u.name.toLowerCase() === coreMember.name.toLowerCase() || u.id === coreMember.id)) {
         users.push(coreMember);
       }
     });
+
+    // Hardcode Jasmin Garrett for demo purposes since patient app is not connected to auth yet
+    if (!users.find(u => u.name.toLowerCase() === 'jasmin garrett')) {
+      users.push({
+        id: 'patient_jasmin',
+        name: 'Jasmin Garrett',
+        role: 'patient',
+        color: 'bg-purple-500',
+        status: 'online'
+      });
+    }
     
     return users;
   }, [systemUsers]);
@@ -334,6 +345,14 @@ export const InternalMessenger = ({ currentUser }: Props) => {
               placeholder="Search directory..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  const firstResult = mappedUsers.filter(m => m.id !== currentUser.roleId && (m.name.toLowerCase().includes(searchQuery.toLowerCase()) || m.role.toLowerCase().includes(searchQuery.toLowerCase()) || m.id === 'larry_ai'))[0];
+                  if (firstResult) {
+                    setActiveDM(`dm-${[currentUser.roleId, firstResult.id].sort().join('-')}`);
+                  }
+                }
+              }}
               className="w-full bg-slate-800 border border-slate-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder-slate-500 outline-none focus:border-indigo-500 transition-colors"
             />
           </div>

@@ -35,6 +35,7 @@ import { RolePermissionsPanel } from '../components/RolePermissionsPanel';
 import { InternalMessenger } from '../components/messaging/InternalMessenger';
 import { CallCenterCommandTab } from '../components/telephony/CallCenterCommandTab';
 import { AITrainingTab } from '../components/AITrainingTab';
+import { PipelineCRM } from '../components/crm/PipelineCRM';
 import { GGEWorldHRHub } from './GGEWorldHRHub';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { ImportantUpdates } from '../components/ImportantUpdates';
@@ -44,6 +45,8 @@ import { EscalationSupportCalendar } from '../components/EscalationSupportCalend
 import { voip800 } from '../lib/voip800';
 import { InvoiceManager } from '../components/founder/InvoiceManager';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
+import { GlobalDirectoryTab } from '../components/founder/GlobalDirectoryTab';
+import { OMMAPipelineTab } from '../components/ops/OMMAPipelineTab';
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
@@ -55,6 +58,7 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'overview', label: 'God Overview', icon: Activity },
   { id: 'internal_scheduler', label: 'Calendar / Scheduler', icon: Clock },
   { id: 'messages', label: 'Messages', icon: MessageSquare },
+  { id: 'global_directory', label: 'Global Directory', icon: Users },
   { id: 'operations', label: 'Ops Center (Live)', icon: Cpu },
   { id: 'internal_admin', label: 'Internal Team', icon: Shield },
   { id: 'admin_support_calendar', label: 'Admin Support', icon: Clock },
@@ -94,6 +98,8 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'negligence_intercept', label: 'Negligence Intercept', icon: AlertTriangle },
   { id: 'patients', label: 'Registry Sovereignty', icon: HeartPulse },
   { id: 'business', label: 'Economic Infrastructure', icon: Building2 },
+  { id: 'b2b_crm', label: 'Global CRM Pipeline', icon: Briefcase },
+  { id: 'omma_pipeline', label: 'OMMA Registry & CRM', icon: MapIcon },
   { id: 'approvals', label: 'Agency Approvals', icon: UserCheck },
   { id: 'applications', label: 'Applications Queue', icon: FileText },
   { id: 'processor', label: 'GGE Processor', icon: Activity },
@@ -4028,6 +4034,9 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         </motion.div>
       );
       case 'business': return renderEconomicInfrastructure();
+      case 'b2b_crm': return <div className="h-full w-full -m-10 bg-[#080e1a] min-h-screen overflow-auto"><PipelineCRM /></div>;
+      case 'omma_pipeline': return <div className="h-full w-full -m-10"><OMMAPipelineTab /></div>;
+      case 'global_directory': return <div className="h-full w-full -m-10"><GlobalDirectoryTab onOpenMessage={(uid) => { setActiveTab('messages'); }} /></div>;
       case 'approvals': return renderApprovals();
       case 'applications': return renderApplications();
       case 'compliance': return renderCompliance();

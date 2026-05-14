@@ -294,7 +294,10 @@ export const CallCenterCommandTab = () => {
                   {['1','2','3','4','5','6','7','8','9','*','0','#'].map((key) => (
                     <button 
                       key={key}
-                      onClick={() => setDialNumber(prev => prev + key)}
+                      onClick={() => {
+                        setDialNumber(prev => prev + key);
+                        window.dispatchEvent(new CustomEvent('twilio-send-digits', { detail: { digits: key } }));
+                      }}
                       className="bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 text-xl font-bold p-3 rounded-xl transition-all shadow-sm"
                     >
                       {key}

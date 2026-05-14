@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { EXECUTIVE_KNOWLEDGE } from '../executiveKnowledge';
 import { UserCalendar } from '../components/UserCalendar';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
-
+import { PipelineCRM } from '../components/crm/PipelineCRM';
 // Common Button Component
 const Button = ({ children, className, icon: Icon, variant, disabled, ...props }: any) => (
   <button 
@@ -35,6 +35,7 @@ const NAV_ITEMS = [
   { id: 'financial_command', label: 'Financial Command', icon: BarChart3 },
   { id: 'allocation_engine', label: 'Provision Engine (Core)', icon: Wallet },
   { section: 'OPERATIONS' },
+  { id: 'b2b_crm', label: 'Global CRM Pipeline', icon: Briefcase },
   { id: 'ecosystem', label: 'Ecosystem Activity', icon: Users },
   { id: 'compliance_command', label: 'Compliance Command', icon: Shield },
   { id: 'enforcement_intel', label: 'Enforcement Intel', icon: Gavel, dot: true },
@@ -610,6 +611,7 @@ export const ExecutiveDashboard = ({ onLogout, user }: any) => {
                 {activeTab === 'overview' && renderOverview()}
             {activeTab === 'financial_command' && renderModulePlaceholder('Financial Command', 'Total Wallet Balances, Revenue Streams, Processing volume (Kurv), Network reserves, and Cash flow tracking.', BarChart3)}
             {activeTab === 'allocation_engine' && renderModulePlaceholder('Provision Engine (Core)', 'Patient/Business balances, Network reserve, Virtual card activity, and Allocation activation pipeline.', Wallet)}
+            {activeTab === 'b2b_crm' && <div className="h-full w-full -m-8 bg-[#080e1a] min-h-[calc(100vh-4rem)] overflow-auto"><PipelineCRM /></div>}
             {activeTab === 'ecosystem' && renderModulePlaceholder('Ecosystem Activity', 'Global view of Patients, Businesses, Providers, Attorneys, and Backoffice clients.', Users)}
             {activeTab === 'compliance_command' && renderModulePlaceholder('Compliance Command', 'Global compliance status, Violations by type, High-risk entities, and State-by-state compliance.', Shield)}
             {activeTab === 'enforcement_intel' && renderModulePlaceholder('Enforcement Intelligence', 'Real-time flags, Active violations, Enforcement actions, and Rapid testing triggers.', Gavel)}
