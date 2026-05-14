@@ -6,12 +6,18 @@ export const GlobalSweepTab = () => {
   const [selectedState, setSelectedState] = useState('OK');
   
   const states = [
-    { code: 'OK', name: 'Oklahoma (OMMA)', status: 'Active', count: '30,000+' },
     { code: 'CA', name: 'California (DCC)', status: 'Active', count: '10,000+' },
-    { code: 'OH', name: 'Ohio (DCC)', status: 'Active', count: '1,500+' },
+    { code: 'CO', name: 'Colorado (MED)', status: 'Active', count: '4,500+' },
+    { code: 'WA', name: 'Washington (LCB)', status: 'Active', count: '3,200+' },
+    { code: 'OR', name: 'Oregon (OLCC)', status: 'Active', count: '2,800+' },
     { code: 'MI', name: 'Michigan (CRA)', status: 'Active', count: '10,000+' },
+    { code: 'NV', name: 'Nevada (CCB)', status: 'Active', count: '1,200+' },
     { code: 'IL', name: 'Illinois (IDFPR)', status: 'Active', count: '2,500+' },
-    { code: 'CO', name: 'Colorado (MED)', status: 'Planned', count: 'Pending' }
+    { code: 'MA', name: 'Massachusetts (CCC)', status: 'Active', count: '1,800+' },
+    { code: 'OH', name: 'Ohio (DCC)', status: 'Active', count: '1,500+' },
+    { code: 'OK', name: 'Oklahoma (OMMA)', status: 'Active', count: '30,000+' },
+    { code: 'NY', name: 'New York (OCM)', status: 'Planned', count: 'Pending' },
+    { code: 'NJ', name: 'New Jersey (CRC)', status: 'Planned', count: 'Pending' }
   ];
 
   const activeState = states.find(s => s.code === selectedState);
