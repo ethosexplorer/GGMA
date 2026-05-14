@@ -52,6 +52,7 @@ export const PipelineCRM = () => {
   const [deals, setDeals] = useState<Deal[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [filterJurisdiction, setFilterJurisdiction] = useState('All');
   
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -176,12 +177,16 @@ export const PipelineCRM = () => {
     return ENTITY_TYPES.find(t => t.id === typeId) || ENTITY_TYPES[8];
   };
 
+  const uniqueJurisdictions = Array.from(new Set(deals.map(d => d.jurisdiction).filter(Boolean))).sort();
+
   const filteredDeals = deals.filter(d => {
     const n = d.name || '';
     const c = d.contactName || '';
     const s = searchTerm || '';
-    return n.toLowerCase().includes(s.toLowerCase()) || 
-           c.toLowerCase().includes(s.toLowerCase());
+    const matchesSearch = n.toLowerCase().includes(s.toLowerCase()) || c.toLowerCase().includes(s.toLowerCase());
+    const matchesJurisdiction = filterJurisdiction === 'All' || d.jurisdiction === filterJurisdiction;
+    
+    return matchesSearch && matchesJurisdiction;
   });
 
   return (
@@ -202,6 +207,20 @@ export const PipelineCRM = () => {
               onChange={e => setSearchTerm(e.target.value)}
               className="pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-indigo-500 font-medium w-64 bg-slate-50 focus:bg-white transition-colors"
             />
+          </div>
+
+          <div className="relative border border-slate-200 rounded-lg bg-slate-50 overflow-hidden flex items-center">
+            <select 
+              value={filterJurisdiction}
+              onChange={e => setFilterJurisdiction(e.target.value)}
+              className="pl-4 pr-8 py-2 text-sm font-bold text-slate-700 bg-transparent outline-none cursor-pointer appearance-none"
+            >
+              <option value="All">All Jurisdictions</option>
+              {uniqueJurisdictions.map(j => (
+                <option key={j} value={j}>{j}</option>
+              ))}
+            </select>
+            <div className="absolute right-3 pointer-events-none text-slate-400 font-black text-[10px]">▼</div>
           </div>
           
           <label className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg font-bold text-sm transition-colors cursor-pointer border border-slate-200">
