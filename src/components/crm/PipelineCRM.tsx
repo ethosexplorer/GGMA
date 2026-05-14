@@ -216,9 +216,9 @@ export const PipelineCRM = () => {
                   if (!file) return;
                   
                   const text = await file.text();
-                  const rows = text.split('\\n').filter(r => r.trim());
+                  const rows = text.split(/\\r?\\n/).filter(r => r.trim());
                   if (rows.length < 2) {
-                    alert('File is empty or invalid format.');
+                    alert('File has only ' + rows.length + ' valid row(s). First 100 chars of file: ' + text.substring(0, 100));
                     return;
                   }
                   
