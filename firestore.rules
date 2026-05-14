@@ -51,19 +51,48 @@ service cloud.firestore {
     // ===============================================================
 
     match /users/{userId} {
-      allow read: if isOwner(userId) || isAdmin();
+      // Any authenticated user can read user profiles (needed for patient lists, team displays)
+      allow read: if isAuthenticated();
       
-      allow create: if isAuthenticated() && 
-                      isOwner(userId) && 
-                      isValidUser(request.resource.data) &&
-                      (request.resource.data.role == 'user' || isAdmin());
+      // Users can create their own profile
+      allow create: if isAuthenticated() && isOwner(userId);
                       
-      allow update: if isAuthenticated() && 
-                      isOwner(userId) && 
-                      isValidUser(request.resource.data) &&
-                      request.resource.data.role == resource.data.role; // Cannot change own role
+      // Users can update their own profile; admins can update anyone
+      allow update: if isOwner(userId) || isAdmin();
                       
       allow delete: if isAdmin();
+    }
+
+    // Internal Messaging System
+    match /internal_messages/{messageId} {
+      // Any authenticated user can read messages
+      allow read: if isAuthenticated();
+      
+      // Any authenticated user can send messages
+      allow create: if isAuthenticated();
+      
+      // Only admins can update/delete messages
+      allow update, delete: if isAdmin();
+    }
+
+    // Patient Case Notes (Case Tracker)
+    match /case_notes/{noteId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Patient Case Credentials (Case Tracker - Credential Vault)
+    match /case_credentials/{credId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Calendar Events
+    match /calendar_events/{eventId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Support Tickets
+    match /support_tickets/{ticketId} {
+      allow read, write: if isAuthenticated();
     }
   }
 }

@@ -1,10 +1,9 @@
 {
-  "projectId": "key-transformer-470700-e1",
-  "appId": "1:776404312446:web:14392179f4b942ab74932f",
-  "apiKey": "AIzaSyCRPsQaaEsxlTCE2Fb_cLYl6weWCHGkAwM",
-  "authDomain": "key-transformer-470700-e1.firebaseapp.com",
-  "firestoreDatabaseId": "ai-studio-3930d868-c9e4-4f22-a579-99d157ea8dcd",
-  "storageBucket": "key-transformer-470700-e1.firebasestorage.app",
-  "messagingSenderId": "776404312446",
-  "measurementId": ""
+  "apiKey": "AIzaSyDvEmz9VfE27P71tqwL6x9uQlXZgdEFPuw",
+  "authDomain": "ggp-os.firebaseapp.com",
+  "projectId": "ggp-os",
+  "storageBucket": "ggp-os.firebasestorage.app",
+  "messagingSenderId": "982399448797",
+  "appId": "1:982399448797:web:d130218d61392bc1fe8d34",
+  "measurementId": "G-JDLW42TPY8"
 }
