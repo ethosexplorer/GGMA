@@ -47,7 +47,7 @@ import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
-const NAV_VERSION = 26; // Bumped: Move Patient Case Tracker to top-level
+const NAV_VERSION = 27; // Bumped: Full localStorage reset for production sync
 
 const INITIAL_NAV_ITEMS: NavItem[] = [
   // Single tabs
@@ -326,6 +326,8 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         localStorage.removeItem('gghp_nav_order_v4');
         localStorage.removeItem('gghp_section_names');
         localStorage.removeItem('gghp_custom_sections');
+        localStorage.removeItem('gghp_alert_queue_dismissed');
+        localStorage.removeItem('gghp_system_freeze_dismissed');
         localStorage.setItem('gghp_nav_version_v3', String(NAV_VERSION));
         return [...INITIAL_NAV_ITEMS];
       }
