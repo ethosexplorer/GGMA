@@ -23,13 +23,13 @@ export const sendSMS = async (phoneNumber: string, message: string): Promise<Tex
   const cleanNumber = phoneNumber.replace(/[\s\-\(\)\+]/g, '');
   
   try {
-    const response = await fetch(TEXTBELT_URL, {
+    // Route through Vercel serverless function to avoid CORS
+    const response = await fetch('/api/send-sms', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         phone: cleanNumber,
         message: message,
-        key: TEXTBELT_API_KEY,
       }),
     });
 
