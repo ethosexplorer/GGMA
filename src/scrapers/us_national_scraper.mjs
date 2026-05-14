@@ -71,21 +71,21 @@ async function runNationalScraper(stateCode) {
           return match ? match[1].trim() : "N/A";
         };
 
-        const emailMatch = text.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\\.[a-zA-Z0-9._-]+)/i);
-        const phoneMatch = text.match(/(\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4})/);
+        const emailMatch = text.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/i);
+        const phoneMatch = text.match(/(\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4})/);
         const lines = text.split('\\n').map(l => l.trim()).filter(l => l);
 
         const business = {
           "Business Name": lines.length > 0 ? lines[0] : "Unknown",
-          "DBA": extractMatch(/DBA\\s*[:\\-]\\s*(.*)/i) !== "N/A" ? extractMatch(/DBA\\s*[:\\-]\\s*(.*)/i) : "",
+          "DBA": extractMatch(/DBA\s*[:\-]\s*(.*)/i) !== "N/A" ? extractMatch(/DBA\s*[:\-]\s*(.*)/i) : "",
           "License Number": extractMatch(/([A-Z0-9]{6,12})/i) !== "N/A" ? extractMatch(/([A-Z0-9]{6,12})/i) : "Unknown",
-          "License Type": extractMatch(/(?:Type|Category)\\s*[:\\-]\\s*(.*)/i),
-          "Expiration Date": extractMatch(/(?:Expires|Expiration)\\s*[:\\-]\\s*(\\d{1,2}\\/\\d{1,2}\\/\\d{4})/i),
-          "Physical Address": extractMatch(/Address\\s*[:\\-]\\s*(.*)/i),
+          "License Type": extractMatch(/(?:Type|Category)\s*[:\-]\s*(.*)/i),
+          "Expiration Date": extractMatch(/(?:Expires|Expiration)\s*[:\-]\s*(\d{1,2}\/\d{1,2}\/\d{4})/i),
+          "Physical Address": extractMatch(/Address\s*[:\-]\s*(.*)/i),
           "Telephone": phoneMatch ? phoneMatch[1] : "",
           "Email": emailMatch ? emailMatch[1] : "",
-          "Status": extractMatch(/(?:Status)\\s*[:\\-]\\s*([A-Za-z]+)/i) !== "N/A" ? extractMatch(/(?:Status)\\s*[:\\-]\\s*([A-Za-z]+)/i) : "Active",
-          "Raw Data": text.replace(/\\n/g, ' | ')
+          "Status": extractMatch(/(?:Status)\s*[:\-]\s*([A-Za-z]+)/i) !== "N/A" ? extractMatch(/(?:Status)\s*[:\-]\s*([A-Za-z]+)/i) : "Active",
+          "Raw Data": text.replace(/\n/g, ' | ')
         };
         
         businesses.push(business);

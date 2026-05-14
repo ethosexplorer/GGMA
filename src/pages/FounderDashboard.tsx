@@ -5,7 +5,7 @@ import { Building2, Users, FileText, Settings, Shield, Activity, Bell,
   Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Globe, Zap, Database,
   FlaskConical, CreditCard, Map as MapIcon, BookOpen, UserPlus, Trash2,
   MapPin, Target, Layers, TrendingDown, Box, PieChart, GraduationCap, Lock, GripVertical,
-  Calculator, Save, ExternalLink, Printer, ArrowLeft, Phone, PhoneCall, PhoneOff, PhoneIncoming, PhoneOutgoing, CircleCheck, X, Clipboard } from 'lucide-react';
+  Calculator, Save, ExternalLink, Printer, ArrowLeft, Phone, PhoneCall, PhoneOff, PhoneIncoming, PhoneOutgoing, CircleCheck, X, Clipboard, Megaphone } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { NotificationDropdown } from '../components/shared/NotificationDropdown';
 import { motion } from 'motion/react';
@@ -47,6 +47,7 @@ import { InvoiceManager } from '../components/founder/InvoiceManager';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 import { GlobalDirectoryTab } from '../components/founder/GlobalDirectoryTab';
 import { GlobalSweepTab } from '../components/ops/GlobalSweepTab';
+import { MarketingHub } from '../components/crm/MarketingHub';
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
@@ -99,6 +100,7 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'patients', label: 'Registry Sovereignty', icon: HeartPulse },
   { id: 'business', label: 'Economic Infrastructure', icon: Building2 },
   { id: 'b2b_crm', label: 'Global CRM Pipeline', icon: Briefcase },
+  { id: 'marketing_hub', label: 'Marketing Campaigns', icon: Megaphone },
   { id: 'omma_pipeline', label: 'Global Sweep Hub', icon: MapIcon },
   { id: 'approvals', label: 'Agency Approvals', icon: UserCheck },
   { id: 'applications', label: 'Applications Queue', icon: FileText },
@@ -2868,7 +2870,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   const [opsTab, setOpsTab] = useState('call_center');
 
   const renderOpsCenter = () => {
-    const opsTabs = [
+    const opsTabs: Array<{ id: string, label: string, icon: any, badge?: string }> = [
       { id: 'call_center', label: 'Call Center', icon: Phone },
       { id: 'ops_support', label: 'Support Tickets', icon: MessageSquare },
       { id: 'ops_it', label: 'IT Support', icon: MonitorPlay },
@@ -4035,6 +4037,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       );
       case 'business': return renderEconomicInfrastructure();
       case 'b2b_crm': return <div className="h-full w-full -m-10 bg-[#080e1a] min-h-screen overflow-auto"><PipelineCRM /></div>;
+      case 'marketing_hub': return <div className="h-full w-full -m-10 bg-[#080e1a] min-h-screen overflow-auto"><MarketingHub /></div>;
       case 'omma_pipeline': return <div className="h-full w-full -m-10"><GlobalSweepTab /></div>;
       case 'global_directory': return <div className="h-full w-full -m-10"><GlobalDirectoryTab onOpenMessage={(uid) => { setActiveTab('messages'); }} /></div>;
       case 'approvals': return renderApprovals();
