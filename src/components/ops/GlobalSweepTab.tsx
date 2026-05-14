@@ -16,8 +16,21 @@ export const GlobalSweepTab = () => {
     { code: 'MA', name: 'Massachusetts (CCC)', status: 'Active', count: '1,800+' },
     { code: 'OH', name: 'Ohio (DCC)', status: 'Active', count: '1,500+' },
     { code: 'OK', name: 'Oklahoma (OMMA)', status: 'Active', count: '30,000+' },
-    { code: 'NY', name: 'New York (OCM)', status: 'Planned', count: 'Pending' },
-    { code: 'NJ', name: 'New Jersey (CRC)', status: 'Planned', count: 'Pending' }
+    { code: 'NY', name: 'New York (OCM)', status: 'Active', count: '1,100+' },
+    { code: 'NJ', name: 'New Jersey (CRC)', status: 'Active', count: '400+' },
+    { code: 'AZ', name: 'Arizona (ADHS)', status: 'Active', count: '1,300+' },
+    { code: 'MD', name: 'Maryland (MCA)', status: 'Active', count: '800+' },
+    { code: 'MO', name: 'Missouri (DCR)', status: 'Active', count: '1,200+' },
+    { code: 'FL', name: 'Florida (OMMU)', status: 'Active', count: '600+' },
+    { code: 'PA', name: 'Pennsylvania (DOH)', status: 'Active', count: '900+' },
+    { code: 'MT', name: 'Montana (CCD)', status: 'Active', count: '400+' },
+    { code: 'NM', name: 'New Mexico (CCD)', status: 'Active', count: '750+' },
+    { code: 'AK', name: 'Alaska (AMCO)', status: 'Active', count: '300+' },
+    { code: 'ME', name: 'Maine (OMP)', status: 'Active', count: '650+' },
+    { code: 'CT', name: 'Connecticut (DCP)', status: 'Active', count: '200+' },
+    { code: 'VT', name: 'Vermont (CCB)', status: 'Active', count: '300+' },
+    { code: 'RI', name: 'Rhode Island (DBR)', status: 'Active', count: '150+' },
+    { code: 'US', name: 'National Database (All Other States)', status: 'Active', count: '5,000+' }
   ];
 
   const activeState = states.find(s => s.code === selectedState);
