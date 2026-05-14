@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { ChevronLeft, ChevronRight, Plus, X, Clock, Video, MapPin, Users, Calendar as CalIcon, Trash2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, X, Clock, Video, MapPin, Users, Calendar as CalIcon, Trash2, CheckSquare, Bell } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 type ViewMode = 'month' | 'week' | 'day';
@@ -67,6 +67,7 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
   const [current, setCurrent] = useState(new Date(2026, 3, 28)); // April 28, 2026
   const [selectedDate, setSelectedDate] = useState<string>(fmt(new Date(2026, 3, 28)));
   const [showForm, setShowForm] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<CalEvent | null>(null);
   const [form, setForm] = useState({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: isFounder ? 'executive' : 'personal', description: '', attendees: '', location: '', meetLink: '' });
   const [filterCat, setFilterCat] = useState<string | null>(null);
 
@@ -137,7 +138,7 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
 
   const renderEventChip = (ev: CalEvent, compact = false) => (
     <div key={ev.id} className={cn("group rounded-lg px-2 py-1 text-white text-[10px] font-bold truncate cursor-pointer relative", ev.color, compact ? "mb-0.5" : "mb-1")}
-      onClick={(e) => { e.stopPropagation(); setSelectedDate(ev.date); setView('day'); }}>
+      onClick={(e) => { e.stopPropagation(); setSelectedEvent(ev); }}>
       {!compact && <span className="opacity-80 mr-1">{ev.startTime}</span>}{ev.title}
       {ev.meetLink && <Video size={8} className="inline ml-1 opacity-70" />}
     </div>
@@ -171,6 +172,73 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
     ));
   };
 
+  const renderEventDetailsModal = () => selectedEvent && (
+    <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setSelectedEvent(null)}>
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 overflow-hidden relative" onClick={e => e.stopPropagation()}>
+        <div className={cn("absolute top-0 left-0 w-full h-3", selectedEvent.color)} />
+        <div className="flex justify-between items-start mb-6 mt-2">
+          <div>
+            <h3 className="text-2xl font-black text-slate-800 tracking-tight">{selectedEvent.title}</h3>
+            <p className="text-sm font-bold text-slate-500 mt-1">{new Date(selectedEvent.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
+          </div>
+          <button onClick={() => setSelectedEvent(null)} className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full transition-colors"><X size={16} /></button>
+        </div>
+        
+        <div className="space-y-5">
+          <div className="flex items-center gap-3 text-slate-700">
+            <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0"><Clock size={18} className="text-slate-500" /></div>
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Time</p>
+              <p className="text-sm font-bold">{selectedEvent.startTime} – {selectedEvent.endTime}</p>
+            </div>
+          </div>
+          
+          {selectedEvent.attendees && (
+            <div className="flex items-center gap-3 text-slate-700">
+              <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0"><Users size={18} className="text-slate-500" /></div>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Attendees</p>
+                <p className="text-sm font-bold">{selectedEvent.attendees}</p>
+              </div>
+            </div>
+          )}
+          
+          {selectedEvent.location && (
+            <div className="flex items-center gap-3 text-slate-700">
+              <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0"><MapPin size={18} className="text-slate-500" /></div>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Location</p>
+                <p className="text-sm font-bold">{selectedEvent.location}</p>
+              </div>
+            </div>
+          )}
+          
+          {selectedEvent.description && (
+            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+              <p className="text-sm text-slate-600 whitespace-pre-wrap">{selectedEvent.description}</p>
+            </div>
+          )}
+          
+          <div className="pt-4 flex flex-col gap-3">
+            {selectedEvent.meetLink && (
+              <a href={selectedEvent.meetLink} target="_blank" rel="noopener noreferrer" className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-colors shadow-lg shadow-blue-500/20">
+                <Video size={18} /> Join Google Meet
+              </a>
+            )}
+            <div className="flex gap-3">
+              <a href={buildGCalUrl(selectedEvent)} target="_blank" rel="noopener noreferrer" className="flex-1 py-3 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-colors">
+                <CalIcon size={14} /> Add to GCal
+              </a>
+              <button onClick={() => { deleteEvent(selectedEvent.id); setSelectedEvent(null); }} className="px-5 py-3 border border-red-200 hover:bg-red-50 text-red-600 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-colors">
+                <Trash2 size={14} />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   // --- NEW EVENT MODAL ---
   const renderModal = () => showForm && (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setShowForm(false)}>
@@ -203,6 +271,7 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       {renderModal()}
+      {renderEventDetailsModal()}
 
       {/* HEADER */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
@@ -219,13 +288,25 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
           </div>
           <button onClick={goToday} className="px-4 py-2 border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:bg-slate-50">Today</button>
           <button onClick={openGoogleCalendar} className="px-4 py-2 border border-blue-200 bg-blue-50 rounded-xl text-xs font-black text-blue-700 hover:bg-blue-100 flex items-center gap-1.5 transition-colors"><CalIcon size={14} /> Google Calendar</button>
-          <button onClick={() => { setForm(f => ({ ...f, date: selectedDate })); setShowForm(true); }} className="px-4 py-2.5 bg-[#1a4731] text-white rounded-xl text-xs font-black flex items-center gap-2 hover:bg-[#0f291c] transition-colors shadow-md"><Plus size={14} /> New Event</button>
+          
+          <div className="flex items-center gap-2 border-l border-slate-200 pl-3">
+            <button onClick={() => alert('Tasks integration coming soon!')} className="px-4 py-2.5 border border-slate-200 bg-white text-slate-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-slate-50 transition-colors shadow-sm"><CheckSquare size={14} /> Task</button>
+            <button onClick={() => alert('Reminders integration coming soon!')} className="px-4 py-2.5 border border-slate-200 bg-white text-slate-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-slate-50 transition-colors shadow-sm"><Bell size={14} /> Reminder</button>
+            <button onClick={() => { setForm(f => ({ ...f, date: selectedDate })); setShowForm(true); }} className="px-4 py-2.5 bg-[#1a4731] text-white rounded-xl text-xs font-black flex items-center gap-2 hover:bg-[#0f291c] transition-colors shadow-md"><Plus size={14} /> New Event</button>
+          </div>
         </div>
       </div>
 
       {/* NAV BAR */}
       <div className="flex items-center justify-between bg-white border border-slate-200 rounded-2xl px-6 py-3 shadow-sm">
-        <button onClick={() => navigate(-1)} className="p-2 hover:bg-slate-100 rounded-xl transition-colors"><ChevronLeft size={20} /></button>
+        <div className="flex items-center gap-2">
+          {(view === 'day' || view === 'week') && (
+            <button onClick={() => setView('month')} className="p-2 mr-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl transition-colors flex items-center gap-1 text-[10px] font-black uppercase tracking-wider">
+              <ChevronLeft size={16} /> Back to Month
+            </button>
+          )}
+          <button onClick={() => navigate(-1)} className="p-2 hover:bg-slate-100 rounded-xl transition-colors"><ChevronLeft size={20} /></button>
+        </div>
         <h3 className="text-lg font-black text-slate-800">
           {view === 'month' && `${monthNames[current.getMonth()]} ${current.getFullYear()}`}
           {view === 'week' && `Week of ${weekDays[0].toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${weekDays[6].toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`}

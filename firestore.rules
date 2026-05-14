@@ -94,5 +94,10 @@ service cloud.firestore {
     match /support_tickets/{ticketId} {
       allow read, write: if isAuthenticated();
     }
+
+    // CRM Deals (Global Pipeline)
+    match /crm_deals/{dealId} {
+      allow read, write: if isAuthenticated();
+    }
   }
 }
