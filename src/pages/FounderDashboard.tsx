@@ -542,6 +542,49 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   const [hideAlertQueue, setHideAlertQueue] = useState(() => localStorage.getItem('gghp_alert_queue_dismissed') === 'true');
   const [showNotifPanel, setShowNotifPanel] = useState(false);
   const [isSystemFreezeExpanded, setIsSystemFreezeExpanded] = useState(false);
+  
+  // Real-time System Health Monitoring
+  const [healthReport, setHealthReport] = useState<any>(null);
+  const [isHealthChecking, setIsHealthChecking] = useState(false);
+  const [lastHealthCheck, setLastHealthCheck] = useState<string>('Never');
+  const [healthHistory, setHealthHistory] = useState<Array<{time: string, status: string, avgLatency: number}>>([]);
+
+  // Run health check
+  const runCheck = async () => {
+    setIsHealthChecking(true);
+    try {
+      const { runHealthCheck } = await import('../lib/systemHealth');
+      const report = await runHealthCheck();
+      setHealthReport(report);
+      setLastHealthCheck(new Date().toLocaleTimeString());
+      
+      // Store in history (keep last 20)
+      setHealthHistory(prev => {
+        const entry = { time: new Date().toLocaleTimeString(), status: report.overallStatus, avgLatency: report.avgLatencyMs };
+        return [...prev, entry].slice(-20);
+      });
+
+      // Auto-show freeze alert if freeze detected
+      if (report.freezeDetected && !hideSystemFreeze) {
+        setIsSystemFreezeExpanded(true);
+      }
+      // Reset dismissed state if system recovers fully
+      if (report.overallStatus === 'healthy' && hideSystemFreeze) {
+        localStorage.removeItem('gghp_system_freeze_dismissed');
+        setHideSystemFreeze(false);
+      }
+    } catch (err) {
+      console.error('Health check failed:', err);
+    }
+    setIsHealthChecking(false);
+  };
+
+  // Poll every 30 seconds
+  useEffect(() => {
+    runCheck(); // Initial check
+    const interval = setInterval(runCheck, 30000);
+    return () => clearInterval(interval);
+  }, []);
   const [queueAlerts, setQueueAlerts] = useState([
     { id: 1, type: 'State Auth', color: 'cyan', time: 'Just Now', text: 'OMMA Regulatory Update Triggered' },
     { id: 2, type: 'Federal', color: 'red', time: '2m ago', text: 'DOJ compliance review request logged.' },
@@ -2632,48 +2675,145 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   };
 
   const SystemFreezeAlert = () => {
-    if (hideSystemFreeze) return null;
+    if (hideSystemFreeze && !healthReport?.freezeDetected) return null;
+    
+    const statusColors: Record<string, string> = {
+      online: 'bg-emerald-500',
+      degraded: 'bg-amber-500',
+      offline: 'bg-red-500',
+      checking: 'bg-blue-500 animate-pulse'
+    };
+    const statusTextColors: Record<string, string> = {
+      online: 'text-emerald-600',
+      degraded: 'text-amber-600',
+      offline: 'text-red-600',
+      checking: 'text-blue-600'
+    };
+    const overallColors: Record<string, { bg: string; border: string; text: string }> = {
+      healthy: { bg: 'bg-emerald-600', border: 'border-emerald-400', text: 'SYSTEM HEALTHY' },
+      degraded: { bg: 'bg-amber-600', border: 'border-amber-400', text: 'DEGRADED PERFORMANCE' },
+      critical: { bg: 'bg-red-600', border: 'border-red-400', text: 'CRITICAL ALERT' },
+      frozen: { bg: 'bg-red-700', border: 'border-red-500', text: 'SYSTEM FREEZE DETECTED' },
+    };
+
+    const current = overallColors[healthReport?.overallStatus || 'healthy'] || overallColors.healthy;
     
     if (isSystemFreezeExpanded) {
       return (
         <div className="fixed inset-0 z-[100] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-red-600 text-white p-8 rounded-3xl shadow-2xl border-4 border-red-400 w-full max-w-lg">
+          <div className={`${current.bg} text-white p-8 rounded-3xl shadow-2xl border-4 ${current.border} w-full max-w-2xl max-h-[90vh] overflow-y-auto`}>
             <div className="flex justify-between items-start mb-6">
-              <div className="w-16 h-16 bg-white text-red-600 rounded-2xl flex items-center justify-center shrink-0 shadow-lg">
-                <AlertTriangle size={32} />
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-white text-red-600 rounded-2xl flex items-center justify-center shrink-0 shadow-lg">
+                  <AlertTriangle size={32} className={healthReport?.overallStatus === 'healthy' ? 'text-emerald-600' : 'text-red-600'} />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-black uppercase tracking-tight">{current.text}</h3>
+                  <p className="text-sm font-bold opacity-80">Real-time monitoring • Last check: {lastHealthCheck}</p>
+                </div>
               </div>
               <button onClick={() => setIsSystemFreezeExpanded(false)} className="text-white hover:text-red-200 transition-colors bg-black/20 p-2 rounded-full">
                 <LogOut size={24} />
               </button>
             </div>
-            
-            <h3 className="text-2xl font-black uppercase tracking-tight mb-2">System Freeze Detected</h3>
-            <p className="text-sm font-bold opacity-90 mb-6">AI Guardian has initiated immediate fix protocols for OK-Sector.</p>
-            
-            <div className="bg-black/20 rounded-xl p-4 mb-6">
-              <h4 className="text-[10px] font-black tracking-widest uppercase mb-2 text-red-200">Incident Details</h4>
-              <p className="text-xs font-medium">Compliance synchronization failure across 3 connected endpoints. Metrc API reporting 429 Too Many Requests. AI Guardian is currently throttling outgoing packets to stabilize the queue.</p>
+
+            {/* Live Stats Bar */}
+            <div className="grid grid-cols-4 gap-3 mb-6">
+              <div className="bg-black/20 rounded-xl p-3 text-center">
+                <p className="text-[10px] font-black uppercase tracking-widest opacity-70">Uptime</p>
+                <p className="text-2xl font-black">{healthReport?.uptimePercent ?? '--'}%</p>
+              </div>
+              <div className="bg-black/20 rounded-xl p-3 text-center">
+                <p className="text-[10px] font-black uppercase tracking-widest opacity-70">Avg Latency</p>
+                <p className="text-2xl font-black">{healthReport?.avgLatencyMs ?? '--'}<span className="text-xs">ms</span></p>
+              </div>
+              <div className="bg-black/20 rounded-xl p-3 text-center">
+                <p className="text-[10px] font-black uppercase tracking-widest opacity-70">Critical</p>
+                <p className="text-2xl font-black">{healthReport?.criticalCount ?? 0}</p>
+              </div>
+              <div className="bg-black/20 rounded-xl p-3 text-center">
+                <p className="text-[10px] font-black uppercase tracking-widest opacity-70">Degraded</p>
+                <p className="text-2xl font-black">{healthReport?.degradedCount ?? 0}</p>
+              </div>
             </div>
+
+            {/* Service Grid */}
+            <div className="bg-black/20 rounded-xl p-4 mb-6">
+              <h4 className="text-[10px] font-black tracking-widest uppercase mb-3 opacity-70">Live Service Status</h4>
+              <div className="space-y-2">
+                {(healthReport?.services || []).map((svc: any, i: number) => (
+                  <div key={i} className="flex items-center justify-between bg-black/10 rounded-lg px-4 py-3">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-3 h-3 rounded-full ${statusColors[svc.status]} ${svc.status === 'online' ? 'shadow-[0_0_8px_rgba(16,185,129,0.6)]' : svc.status === 'offline' ? 'shadow-[0_0_8px_rgba(239,68,68,0.6)] animate-pulse' : ''}`} />
+                      <div>
+                        <p className="text-sm font-black">{svc.name}</p>
+                        <p className="text-[10px] font-bold opacity-60">{svc.details || svc.error || 'Checking...'}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs font-black uppercase">{svc.status}</p>
+                      <p className="text-[10px] font-bold opacity-60">{svc.latencyMs}ms</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Health History Timeline */}
+            {healthHistory.length > 1 && (
+              <div className="bg-black/20 rounded-xl p-4 mb-6">
+                <h4 className="text-[10px] font-black tracking-widest uppercase mb-3 opacity-70">Health Timeline (Last {healthHistory.length} checks)</h4>
+                <div className="flex items-end gap-1 h-16">
+                  {healthHistory.map((h, i) => {
+                    const heightPct = Math.max(10, Math.min(100, 100 - (h.avgLatency / 50)));
+                    const color = h.status === 'healthy' ? 'bg-emerald-400' : h.status === 'degraded' ? 'bg-amber-400' : 'bg-red-400';
+                    return (
+                      <div key={i} className="flex-1 flex flex-col items-center gap-1 group relative">
+                        <div className={`w-full ${color} rounded-t transition-all`} style={{ height: `${heightPct}%` }} />
+                        <div className="opacity-0 group-hover:opacity-100 absolute -top-10 bg-black/80 text-white text-[9px] px-2 py-1 rounded font-bold whitespace-nowrap z-10">
+                          {h.time} • {h.avgLatency}ms
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Freeze Details */}
+            {healthReport?.freezeDetected && (
+              <div className="bg-black/30 border border-white/20 rounded-xl p-4 mb-6">
+                <h4 className="text-[10px] font-black tracking-widest uppercase mb-2 text-red-200">⚠ Freeze Analysis</h4>
+                <p className="text-xs font-medium">{healthReport.freezeReason}</p>
+              </div>
+            )}
             
             <div className="flex gap-4">
               <button 
-                onClick={() => {
-                  (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "System Freeze alert routed to Engineering Queue." })] }).catch(console.error) ); alert("System Freeze alert routed to Engineering Queue.\n\n[Live Production Transaction Logged]"); })();
-                  localStorage.setItem('gghp_system_freeze_dismissed', 'true');
-                  setHideSystemFreeze(true);
-                }}
-                className="flex-1 py-3 bg-white text-red-600 hover:bg-slate-100 transition-colors rounded-xl text-xs font-black uppercase tracking-widest shadow-lg"
+                onClick={() => { runCheck(); }}
+                disabled={isHealthChecking}
+                className="flex-1 py-3 bg-white text-slate-900 hover:bg-slate-100 transition-colors rounded-xl text-xs font-black uppercase tracking-widest shadow-lg flex items-center justify-center gap-2 disabled:opacity-50"
               >
-                Route to Engineering
+                {isHealthChecking ? (
+                  <><div className="w-4 h-4 border-2 border-slate-400 border-t-slate-800 rounded-full animate-spin" /> Running Check...</>
+                ) : (
+                  <><Zap size={14} /> Run Health Check Now</>
+                )}
               </button>
               <button 
                 onClick={() => {
-                  localStorage.setItem('gghp_system_freeze_dismissed', 'true');
-                  setHideSystemFreeze(true);
+                  if (!healthReport?.freezeDetected) {
+                    setIsSystemFreezeExpanded(false);
+                  } else {
+                    (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "SYSTEM_HEALTH", "Production_User", JSON.stringify({ detail: `System Freeze routed to Engineering. Services down: ${healthReport.freezeReason}` })] }).catch(console.error) ); })();
+                    localStorage.setItem('gghp_system_freeze_dismissed', 'true');
+                    setHideSystemFreeze(true);
+                    setIsSystemFreezeExpanded(false);
+                  }
                 }}
                 className="px-6 py-3 bg-black/20 text-white hover:bg-black/40 transition-colors rounded-xl text-xs font-black uppercase tracking-widest"
               >
-                Dismiss Alert
+                {healthReport?.freezeDetected ? 'Route to Engineering' : 'Close'}
               </button>
             </div>
           </div>
@@ -2681,21 +2821,38 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       );
     }
 
+    // Compact floating badge — always visible
+    const badgeColor = !healthReport ? 'bg-slate-600 border-slate-400' :
+      healthReport.overallStatus === 'healthy' ? 'bg-emerald-600 border-emerald-400' :
+      healthReport.overallStatus === 'degraded' ? 'bg-amber-600 border-amber-400' :
+      'bg-red-600 border-red-400';
+    
+    const pulseClass = healthReport?.overallStatus === 'frozen' ? 'animate-bounce' :
+      healthReport?.overallStatus === 'critical' ? 'animate-pulse' : '';
+
     return (
-      <div className="fixed bottom-10 right-10 z-[100] animate-bounce cursor-pointer" onClick={() => setIsSystemFreezeExpanded(true)}>
-        <div className="bg-red-600 text-white p-4 rounded-2xl shadow-2xl border-4 border-red-400 flex items-center gap-4 max-w-sm hover:bg-red-700 transition-colors">
-          <div className="w-12 h-12 bg-white text-red-600 rounded-xl flex items-center justify-center shrink-0">
-            <AlertTriangle size={24} />
+      <div className={`fixed bottom-10 right-10 z-[100] ${pulseClass} cursor-pointer`} onClick={() => setIsSystemFreezeExpanded(true)}>
+        <div className={`${badgeColor} text-white p-4 rounded-2xl shadow-2xl border-4 flex items-center gap-4 max-w-sm hover:scale-105 transition-transform`}>
+          <div className={`w-12 h-12 bg-white rounded-xl flex items-center justify-center shrink-0 ${healthReport?.overallStatus === 'healthy' ? 'text-emerald-600' : healthReport?.overallStatus === 'degraded' ? 'text-amber-600' : 'text-red-600'}`}>
+            {isHealthChecking ? (
+              <div className="w-6 h-6 border-2 border-slate-300 border-t-slate-800 rounded-full animate-spin" />
+            ) : (
+              <Activity size={24} />
+            )}
           </div>
           <div>
-            <h4 className="text-sm font-black uppercase tracking-tight">System Freeze Detected</h4>
-            <p className="text-[10px] font-bold opacity-90">AI Guardian is initiating immediate fix protocols for OK-Sector.</p>
+            <h4 className="text-sm font-black uppercase tracking-tight">
+              {!healthReport ? 'Checking System...' : current.text}
+            </h4>
+            <p className="text-[10px] font-bold opacity-90">
+              {healthReport ? `${healthReport.uptimePercent}% uptime • ${healthReport.avgLatencyMs}ms avg • ${lastHealthCheck}` : 'Initializing health monitor...'}
+            </p>
           </div>
           <button 
             onClick={(e) => { e.stopPropagation(); setIsSystemFreezeExpanded(true); }}
-            className="px-3 py-1.5 bg-white text-red-600 hover:bg-slate-100 transition-colors rounded-lg text-[10px] font-black uppercase"
+            className="px-3 py-1.5 bg-white/20 hover:bg-white/30 transition-colors rounded-lg text-[10px] font-black uppercase border border-white/20"
           >
-            Review
+            Details
           </button>
         </div>
       </div>
