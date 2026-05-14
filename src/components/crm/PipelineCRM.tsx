@@ -215,30 +215,56 @@ export const PipelineCRM = () => {
                 const rows = text.split('\\n').filter(r => r.trim());
                 if (rows.length < 2) return;
                 
-                // Parse CSV - simplified assuming fields are enclosed in quotes
-                const headers = rows[0].match(/(".*?"|[^",\\s]+)(?=\\s*,|\\s*$)/g)?.map(h => h.replace(/^"|"$/g, '')) || [];
+                const parseCSVRow = (str) => {
+                  const result = [];
+                  let current = '';
+                  let inQuotes = false;
+                  for (let i = 0; i < str.length; i++) {
+                    const char = str[i];
+                    if (char === '"' && str[i+1] === '"') {
+                      current += '"';
+                      i++;
+                    } else if (char === '"') {
+                      inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                      result.push(current);
+                      current = '';
+                    } else {
+                      current += char;
+                    }
+                  }
+                  result.push(current);
+                  return result.map(v => v.trim());
+                };
+                
+                const headers = parseCSVRow(rows[0]);
                 
                 let importCount = 0;
                 for (let i = 1; i < rows.length; i++) {
-                  const values = rows[i].match(/(".*?"|[^",]+)(?=\\s*,|\\s*$)/g)?.map(v => v.replace(/^"|"$/g, '')) || [];
+                  const values = parseCSVRow(rows[i]);
                   if (values.length < 2) continue;
                   
                   const record: any = {};
                   headers.forEach((h, idx) => { record[h] = values[idx] || ''; });
                   
-                  // Map to CRM structure
+                  // Extract business name carefully (sometimes first col is "Close" from the table button)
+                  let bName = record['Business Name'] || record['Name'] || '';
+                  if (bName === 'Close' || !bName) {
+                    bName = record['DBA'] || 'Unknown Business';
+                  }
+                  
                   const dealData = {
-                    name: record['Business Name'] || 'Unknown Business',
-                    contactName: record['DBA'] || '',
+                    name: bName,
+                    contactName: record['DBA'] && record['DBA'] !== bName ? record['DBA'] : '',
                     type: 'business',
                     stage: 'lead',
                     value: 0,
                     assignedTo: 'unassigned',
-                    phone: record['Telephone'] || '',
+                    phone: record['Telephone'] || record['Phone'] || '',
                     email: record['Email'] || '',
-                    licenseNumber: record['License Number'] || '',
-                    jurisdiction: record['State'] || 'Unknown',
-                    notes: record['Raw Data'] || '',
+                    licenseNumber: record['License Number'] || record['License'] || '',
+                    jurisdiction: record['State'] || record['Jurisdiction'] || 'Oklahoma',
+                    notes: record['Raw Data'] || record['Status'] || '',
                     createdAt: serverTimestamp(),
                     updatedAt: serverTimestamp()
                   };
