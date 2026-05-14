@@ -60,59 +60,59 @@ export const GlobalSweepTab = () => {
   
   const baseStates = [
     // Tier 1 — Full Recreational + Medical
-    { code: 'OK', name: 'Oklahoma — Full Medical', status: 'Active' },
-    { code: 'CA', name: 'California — Rec + Medical', status: 'Active' },
-    { code: 'CO', name: 'Colorado — Rec + Medical', status: 'Active' },
-    { code: 'WA', name: 'Washington — Rec + Medical', status: 'Active' },
-    { code: 'OR', name: 'Oregon — Rec + Medical', status: 'Active' },
-    { code: 'MI', name: 'Michigan — Rec + Medical', status: 'Active' },
-    { code: 'NV', name: 'Nevada — Rec + Medical', status: 'Active' },
-    { code: 'IL', name: 'Illinois — Rec + Medical', status: 'Active' },
-    { code: 'MA', name: 'Massachusetts — Rec + Medical', status: 'Active' },
-    { code: 'AZ', name: 'Arizona — Rec + Medical', status: 'Active' },
-    { code: 'NJ', name: 'New Jersey — Rec + Medical', status: 'Active' },
-    { code: 'NY', name: 'New York — Rec + Medical', status: 'Active' },
-    { code: 'MO', name: 'Missouri — Rec + Medical', status: 'Active' },
-    { code: 'MD', name: 'Maryland — Rec + Medical', status: 'Active' },
-    { code: 'OH', name: 'Ohio — Rec + Medical', status: 'Active' },
-    { code: 'MN', name: 'Minnesota — Rec + Medical', status: 'Active' },
-    { code: 'DE', name: 'Delaware — Rec + Medical', status: 'Active' },
-    { code: 'CT', name: 'Connecticut — Rec + Medical', status: 'Active' },
-    { code: 'VT', name: 'Vermont — Rec + Medical', status: 'Active' },
-    { code: 'RI', name: 'Rhode Island — Rec + Medical', status: 'Active' },
-    { code: 'MT', name: 'Montana — Rec + Medical', status: 'Active' },
-    { code: 'NM', name: 'New Mexico — Rec + Medical', status: 'Active' },
-    { code: 'ME', name: 'Maine — Rec + Medical', status: 'Active' },
-    { code: 'AK', name: 'Alaska — Rec + Medical', status: 'Active' },
-    { code: 'VA', name: 'Virginia — Rec + Medical', status: 'Active' },
-    { code: 'HI', name: 'Hawaii — Medical Only', status: 'Active' },
+    { code: 'OK', name: 'Oklahoma — Full Medical', status: 'Active', scraper: 'Built' },
+    { code: 'CA', name: 'California — Rec + Medical', status: 'Active', scraper: 'Need Built' },
+    { code: 'CO', name: 'Colorado — Rec + Medical', status: 'Active', scraper: 'Need Built' },
+    { code: 'WA', name: 'Washington — Rec + Medical', status: 'Active', scraper: 'Need Built' },
+    { code: 'OR', name: 'Oregon — Rec + Medical', status: 'Active', scraper: 'Need Built' },
+    { code: 'MI', name: 'Michigan — Rec + Medical', status: 'Active', scraper: 'Need Built' },
+    { code: 'NV', name: 'Nevada — Rec + Medical', status: 'Active', scraper: 'Need Built' },
+    { code: 'IL', name: 'Illinois — Rec + Medical', status: 'Active', scraper: 'Need Built' },
+    { code: 'MA', name: 'Massachusetts — Rec + Medical', status: 'Active', scraper: 'Need Built' },
+    { code: 'AZ', name: 'Arizona — Rec + Medical', status: 'Active', scraper: 'Need Built' },
+    { code: 'NJ', name: 'New Jersey — Rec + Medical', status: 'Active', scraper: 'Need Built' },
+    { code: 'NY', name: 'New York — Rec + Medical', status: 'Active', scraper: 'Need Built' },
+    { code: 'MO', name: 'Missouri — Rec + Medical', status: 'Active', scraper: 'Need Built' },
+    { code: 'MD', name: 'Maryland — Rec + Medical', status: 'Active', scraper: 'Need Built' },
+    { code: 'OH', name: 'Ohio — Rec + Medical', status: 'Active', scraper: 'Need Built' },
+    { code: 'MN', name: 'Minnesota — Rec + Medical', status: 'Active', scraper: 'Need Built' },
+    { code: 'DE', name: 'Delaware — Rec + Medical', status: 'Active', scraper: 'Need Built' },
+    { code: 'CT', name: 'Connecticut — Rec + Medical', status: 'Active', scraper: 'Need Built' },
+    { code: 'VT', name: 'Vermont — Rec + Medical', status: 'Active', scraper: 'Need Built' },
+    { code: 'RI', name: 'Rhode Island — Rec + Medical', status: 'Active', scraper: 'Need Built' },
+    { code: 'MT', name: 'Montana — Rec + Medical', status: 'Active', scraper: 'Need Built' },
+    { code: 'NM', name: 'New Mexico — Rec + Medical', status: 'Active', scraper: 'Need Built' },
+    { code: 'ME', name: 'Maine — Rec + Medical', status: 'Active', scraper: 'Need Built' },
+    { code: 'AK', name: 'Alaska — Rec + Medical', status: 'Active', scraper: 'Need Built' },
+    { code: 'VA', name: 'Virginia — Rec + Medical', status: 'Active', scraper: 'Need Built' },
+    { code: 'HI', name: 'Hawaii — Medical Only', status: 'Active', scraper: 'Need Built' },
     // Tier 2 — Medical-only programs
-    { code: 'FL', name: 'Florida — Medical Only', status: 'Active' },
-    { code: 'PA', name: 'Pennsylvania — Medical Only', status: 'Active' },
-    { code: 'ND', name: 'North Dakota — Medical Only', status: 'Active' },
-    { code: 'SD', name: 'South Dakota — Medical Only', status: 'Active' },
-    { code: 'AR', name: 'Arkansas — Medical Only', status: 'Active' },
-    { code: 'LA', name: 'Louisiana — Medical Only', status: 'Active' },
-    { code: 'MS', name: 'Mississippi — Medical Only', status: 'Active' },
-    { code: 'AL', name: 'Alabama — Medical (New)', status: 'Active' },
-    { code: 'KY', name: 'Kentucky — Medical (New 2025)', status: 'Active' },
-    { code: 'WV', name: 'West Virginia — Medical Only', status: 'Active' },
-    { code: 'NH', name: 'New Hampshire — Medical Only', status: 'Active' },
-    { code: 'UT', name: 'Utah — Medical Only', status: 'Active' },
+    { code: 'FL', name: 'Florida — Medical Only', status: 'Active', scraper: 'Need Built' },
+    { code: 'PA', name: 'Pennsylvania — Medical Only', status: 'Active', scraper: 'Need Built' },
+    { code: 'ND', name: 'North Dakota — Medical Only', status: 'Active', scraper: 'Need Built' },
+    { code: 'SD', name: 'South Dakota — Medical Only', status: 'Active', scraper: 'Need Built' },
+    { code: 'AR', name: 'Arkansas — Medical Only', status: 'Active', scraper: 'Need Built' },
+    { code: 'LA', name: 'Louisiana — Medical Only', status: 'Active', scraper: 'Need Built' },
+    { code: 'MS', name: 'Mississippi — Medical Only', status: 'Active', scraper: 'Need Built' },
+    { code: 'AL', name: 'Alabama — Medical (New)', status: 'Active', scraper: 'Need Built' },
+    { code: 'KY', name: 'Kentucky — Medical (New 2025)', status: 'Active', scraper: 'Need Built' },
+    { code: 'WV', name: 'West Virginia — Medical Only', status: 'Active', scraper: 'Need Built' },
+    { code: 'NH', name: 'New Hampshire — Medical Only', status: 'Active', scraper: 'Need Built' },
+    { code: 'UT', name: 'Utah — Medical Only', status: 'Active', scraper: 'Need Built' },
     // Tier 3 — Compassionate Use / Hemp / CBD-only
-    { code: 'TX', name: 'Texas — Compassionate Use', status: 'Active' },
-    { code: 'GA', name: 'Georgia — Low-THC Oil', status: 'Active' },
-    { code: 'IA', name: 'Iowa — Medical CBD', status: 'Active' },
-    { code: 'NC', name: 'North Carolina — Hemp Only', status: 'Planned' },
-    { code: 'SC', name: 'South Carolina — Hemp Only', status: 'Planned' },
-    { code: 'TN', name: 'Tennessee — Hemp / CBD Only', status: 'Planned' },
-    { code: 'IN', name: 'Indiana — CBD Only', status: 'Planned' },
-    { code: 'KS', name: 'Kansas — Hemp Only', status: 'Planned' },
-    { code: 'NE', name: 'Nebraska — Hemp (Pending)', status: 'Planned' },
-    { code: 'WI', name: 'Wisconsin — Hemp / CBD Only', status: 'Planned' },
-    { code: 'WY', name: 'Wyoming — Hemp Only', status: 'Planned' },
-    { code: 'ID', name: 'Idaho — No Program', status: 'Planned' },
-    { code: 'US', name: 'National Database (All States)', status: 'Active' }
+    { code: 'TX', name: 'Texas — Compassionate Use', status: 'Active', scraper: 'Need Built' },
+    { code: 'GA', name: 'Georgia — Low-THC Oil', status: 'Active', scraper: 'Need Built' },
+    { code: 'IA', name: 'Iowa — Medical CBD', status: 'Active', scraper: 'Need Built' },
+    { code: 'NC', name: 'North Carolina — Hemp Only', status: 'Planned', scraper: 'N/A' },
+    { code: 'SC', name: 'South Carolina — Hemp Only', status: 'Planned', scraper: 'N/A' },
+    { code: 'TN', name: 'Tennessee — Hemp / CBD Only', status: 'Planned', scraper: 'N/A' },
+    { code: 'IN', name: 'Indiana — CBD Only', status: 'Planned', scraper: 'N/A' },
+    { code: 'KS', name: 'Kansas — Hemp Only', status: 'Planned', scraper: 'N/A' },
+    { code: 'NE', name: 'Nebraska — Hemp (Pending)', status: 'Planned', scraper: 'N/A' },
+    { code: 'WI', name: 'Wisconsin — Hemp / CBD Only', status: 'Planned', scraper: 'N/A' },
+    { code: 'WY', name: 'Wyoming — Hemp Only', status: 'Planned', scraper: 'N/A' },
+    { code: 'ID', name: 'Idaho — No Program', status: 'Planned', scraper: 'N/A' },
+    { code: 'US', name: 'National Database (All States)', status: 'Active', scraper: 'Built' }
   ];
 
   const states = baseStates.map(s => ({
@@ -160,6 +160,16 @@ export const GlobalSweepTab = () => {
                 'bg-slate-100 text-slate-600'
               }`}>
                 {activeState?.status}
+              </span>
+            </div>
+            <div className="mt-2 flex items-center justify-between text-xs">
+              <span className="text-slate-500 font-medium">Registry Scraper:</span>
+              <span className={`font-black px-2 py-0.5 rounded text-[10px] uppercase tracking-wider ${
+                activeState?.scraper === 'Built' ? 'bg-emerald-100 text-emerald-700' :
+                activeState?.scraper === 'Need Built' ? 'bg-red-100 text-red-700' :
+                'bg-slate-100 text-slate-500'
+              }`}>
+                {activeState?.scraper}
               </span>
             </div>
 
