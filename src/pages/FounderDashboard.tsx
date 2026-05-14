@@ -47,7 +47,7 @@ import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
-const NAV_VERSION = 25; // Bumped: Added Patient Case Tracker tab
+const NAV_VERSION = 26; // Bumped: Move Patient Case Tracker to top-level
 
 const INITIAL_NAV_ITEMS: NavItem[] = [
   // Single tabs
@@ -59,6 +59,7 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'internal_admin', label: 'Internal Team', icon: Shield },
   { id: 'admin_support_calendar', label: 'Admin Support', icon: Clock },
   { id: 'escalation_support_calendar', label: 'Escalation Support', icon: Clock },
+  { id: 'patient_case_tracker', label: 'Patient Case Tracker', icon: Clipboard },
 
   // Founder/CEO Popout
   { id: '_sec_founder', section: 'FOUNDER/CEO' },
@@ -92,7 +93,6 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'external_admin', label: 'External Administrator', icon: Activity },
   { id: 'negligence_intercept', label: 'Negligence Intercept', icon: AlertTriangle },
   { id: 'patients', label: 'Registry Sovereignty', icon: HeartPulse },
-  { id: 'patient_case_tracker', label: 'Patient Case Tracker', icon: Clipboard },
   { id: 'business', label: 'Economic Infrastructure', icon: Building2 },
   { id: 'approvals', label: 'Agency Approvals', icon: UserCheck },
   { id: 'applications', label: 'Applications Queue', icon: FileText },
@@ -323,6 +323,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       const savedVersion = localStorage.getItem('gghp_nav_version_v3');
       if (savedVersion !== String(NAV_VERSION)) {
         localStorage.removeItem('gghp_nav_order_v3');
+        localStorage.removeItem('gghp_nav_order_v4');
         localStorage.removeItem('gghp_section_names');
         localStorage.removeItem('gghp_custom_sections');
         localStorage.setItem('gghp_nav_version_v3', String(NAV_VERSION));
