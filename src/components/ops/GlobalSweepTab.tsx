@@ -1,37 +1,69 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PipelineCRM } from '../crm/PipelineCRM';
 import { Search, MapPin, Building2, Download, Play, ShieldAlert, CheckCircle2 } from 'lucide-react';
+import { db } from '../../firebase';
+import { collection, onSnapshot, query } from 'firebase/firestore';
 
 export const GlobalSweepTab = () => {
   const [selectedState, setSelectedState] = useState('OK');
+  const [liveCounts, setLiveCounts] = useState<Record<string, number>>({});
+  const [typeCounts, setTypeCounts] = useState<Record<string, Record<string, number>>>({});
+
+  useEffect(() => {
+    const q = query(collection(db, 'crm_deals'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const deals = snapshot.docs.map(doc => doc.data());
+      const newCounts: Record<string, number> = {};
+      const newTypes: Record<string, Record<string, number>> = {};
+      
+      deals.forEach(deal => {
+        const state = deal.jurisdiction || 'US';
+        const type = deal.type || 'other';
+        newCounts[state] = (newCounts[state] || 0) + 1;
+        
+        if (!newTypes[state]) newTypes[state] = {};
+        newTypes[state][type] = (newTypes[state][type] || 0) + 1;
+      });
+      
+      setLiveCounts(newCounts);
+      setTypeCounts(newTypes);
+    });
+    return () => unsubscribe();
+  }, []);
   
-  const states = [
-    { code: 'CA', name: 'California (DCC)', status: 'Active', count: '10,000+' },
-    { code: 'CO', name: 'Colorado (MED)', status: 'Active', count: '4,500+' },
-    { code: 'WA', name: 'Washington (LCB)', status: 'Active', count: '3,200+' },
-    { code: 'OR', name: 'Oregon (OLCC)', status: 'Active', count: '2,800+' },
-    { code: 'MI', name: 'Michigan (CRA)', status: 'Active', count: '10,000+' },
-    { code: 'NV', name: 'Nevada (CCB)', status: 'Active', count: '1,200+' },
-    { code: 'IL', name: 'Illinois (IDFPR)', status: 'Active', count: '2,500+' },
-    { code: 'MA', name: 'Massachusetts (CCC)', status: 'Active', count: '1,800+' },
-    { code: 'OH', name: 'Ohio (DCC)', status: 'Active', count: '1,500+' },
-    { code: 'OK', name: 'Oklahoma (OMMA)', status: 'Active', count: '30,000+' },
-    { code: 'NY', name: 'New York (OCM)', status: 'Active', count: '1,100+' },
-    { code: 'NJ', name: 'New Jersey (CRC)', status: 'Active', count: '400+' },
-    { code: 'AZ', name: 'Arizona (ADHS)', status: 'Active', count: '1,300+' },
-    { code: 'MD', name: 'Maryland (MCA)', status: 'Active', count: '800+' },
-    { code: 'MO', name: 'Missouri (DCR)', status: 'Active', count: '1,200+' },
-    { code: 'FL', name: 'Florida (OMMU)', status: 'Active', count: '600+' },
-    { code: 'PA', name: 'Pennsylvania (DOH)', status: 'Active', count: '900+' },
-    { code: 'MT', name: 'Montana (CCD)', status: 'Active', count: '400+' },
-    { code: 'NM', name: 'New Mexico (CCD)', status: 'Active', count: '750+' },
-    { code: 'AK', name: 'Alaska (AMCO)', status: 'Active', count: '300+' },
-    { code: 'ME', name: 'Maine (OMP)', status: 'Active', count: '650+' },
-    { code: 'CT', name: 'Connecticut (DCP)', status: 'Active', count: '200+' },
-    { code: 'VT', name: 'Vermont (CCB)', status: 'Active', count: '300+' },
-    { code: 'RI', name: 'Rhode Island (DBR)', status: 'Active', count: '150+' },
-    { code: 'US', name: 'National Database (All Other States)', status: 'Active', count: '5,000+' }
+  const baseStates = [
+    { code: 'CA', name: 'California (DCC)', status: 'Active' },
+    { code: 'CO', name: 'Colorado (MED)', status: 'Active' },
+    { code: 'WA', name: 'Washington (LCB)', status: 'Active' },
+    { code: 'OR', name: 'Oregon (OLCC)', status: 'Active' },
+    { code: 'MI', name: 'Michigan (CRA)', status: 'Active' },
+    { code: 'NV', name: 'Nevada (CCB)', status: 'Active' },
+    { code: 'IL', name: 'Illinois (IDFPR)', status: 'Active' },
+    { code: 'MA', name: 'Massachusetts (CCC)', status: 'Active' },
+    { code: 'OH', name: 'Ohio (DCC)', status: 'Active' },
+    { code: 'OK', name: 'Oklahoma (OMMA)', status: 'Active' },
+    { code: 'NY', name: 'New York (OCM)', status: 'Active' },
+    { code: 'NJ', name: 'New Jersey (CRC)', status: 'Active' },
+    { code: 'AZ', name: 'Arizona (ADHS)', status: 'Active' },
+    { code: 'MD', name: 'Maryland (MCA)', status: 'Active' },
+    { code: 'MO', name: 'Missouri (DCR)', status: 'Active' },
+    { code: 'FL', name: 'Florida (OMMU)', status: 'Active' },
+    { code: 'PA', name: 'Pennsylvania (DOH)', status: 'Active' },
+    { code: 'MT', name: 'Montana (CCD)', status: 'Active' },
+    { code: 'NM', name: 'New Mexico (CCD)', status: 'Active' },
+    { code: 'AK', name: 'Alaska (AMCO)', status: 'Active' },
+    { code: 'ME', name: 'Maine (OMP)', status: 'Active' },
+    { code: 'CT', name: 'Connecticut (DCP)', status: 'Active' },
+    { code: 'VT', name: 'Vermont (CCB)', status: 'Active' },
+    { code: 'RI', name: 'Rhode Island (DBR)', status: 'Active' },
+    { code: 'US', name: 'National Database (All Other States)', status: 'Active' }
   ];
+
+  const states = baseStates.map(s => ({
+    ...s,
+    count: liveCounts[s.code] || 0,
+    types: typeCounts[s.code] || {}
+  }));
 
   const activeState = states.find(s => s.code === selectedState);
 
@@ -62,7 +94,7 @@ export const GlobalSweepTab = () => {
             
             <div className="mt-4 flex items-center justify-between text-xs">
               <span className="text-slate-500 font-medium">Pipeline Volume:</span>
-              <span className="font-black text-slate-700">{activeState?.count}</span>
+              <span className="font-black text-slate-700">{activeState?.count.toLocaleString()}</span>
             </div>
             <div className="mt-2 flex items-center justify-between text-xs">
               <span className="text-slate-500 font-medium">Scraper Status:</span>
@@ -74,6 +106,21 @@ export const GlobalSweepTab = () => {
                 {activeState?.status}
               </span>
             </div>
+
+            {/* Sub-Tally by Category */}
+            {activeState?.count !== undefined && activeState?.count > 0 && (
+              <div className="mt-4 pt-4 border-t border-slate-100">
+                <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-2">Category Breakdown</p>
+                <div className="space-y-1">
+                  {Object.entries(activeState.types || {}).sort((a, b) => b[1] - a[1]).map(([type, count]) => (
+                    <div key={type} className="flex justify-between items-center text-[10px]">
+                      <span className="text-slate-500 capitalize">{type}</span>
+                      <span className="font-bold text-slate-700">{count.toLocaleString()}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex-1 flex flex-col items-center justify-center text-center px-4">

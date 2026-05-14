@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, Building2, LayoutTemplate, Clock, AlertCircle } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { db } from '../../firebase';
+import { db, storage } from '../../firebase';
 import { collection, onSnapshot, query } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 interface Campaign {
   id: string;
@@ -35,6 +36,7 @@ export const MarketingHub = () => {
   // UI State
   const [isSending, setIsSending] = useState(false);
   const [sendSuccess, setSendSuccess] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   // Load CRM Audience Data
   useEffect(() => {
@@ -63,6 +65,32 @@ export const MarketingHub = () => {
     });
     return () => unsubscribe();
   }, [selectedState, selectedType, campaignType]);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setIsUploading(true);
+    try {
+      const fileRef = ref(storage, `marketing_assets/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`);
+      await uploadBytes(fileRef, file);
+      const url = await getDownloadURL(fileRef);
+      
+      if (file.type.startsWith('image/')) {
+        setMessage(prev => prev + `\n<div style="text-align: center; margin: 20px 0;">\n  <img src="${url}" alt="${file.name}" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" />\n</div>\n`);
+      } else if (file.type === 'text/html') {
+        const text = await file.text();
+        setMessage(prev => prev + `\n${text}\n`);
+      } else {
+        setMessage(prev => prev + `\n<a href="${url}" style="color: #4f46e5; font-weight: bold; text-decoration: underline;">View Attachment: ${file.name}</a>\n`);
+      }
+    } catch (error) {
+      console.error("Upload failed:", error);
+      alert("Failed to upload asset. Ensure Firebase Storage rules are configured.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const handleSend = async () => {
     if (!subject && campaignType === 'email') return alert('Please enter a subject');
@@ -218,6 +246,21 @@ export const MarketingHub = () => {
                     <p className="text-[10px] text-amber-400 mt-2 font-bold flex items-center gap-1">
                       <AlertCircle size={12} /> Message exceeds 160 characters and may be split into multiple texts.
                     </p>
+                  )}
+                  
+                  {/* Upload Toolbar */}
+                  {campaignType === 'email' && (
+                    <div className="mt-4 flex items-center gap-4 border-t border-white/10 pt-4">
+                      <label className={cn(
+                        "cursor-pointer flex items-center gap-2 text-xs font-bold transition-colors px-4 py-2 rounded-lg",
+                        isUploading ? "bg-slate-800 text-slate-500" : "bg-indigo-400/10 text-indigo-400 hover:text-indigo-300"
+                      )}>
+                        {isUploading ? <Activity size={14} className="animate-spin" /> : <LayoutTemplate size={14} />} 
+                        {isUploading ? 'Uploading to Cloud...' : 'Upload Flyer / HTML Template'}
+                        <input type="file" className="hidden" accept="image/*,.html,.pdf" onChange={handleFileUpload} disabled={isUploading} />
+                      </label>
+                      <span className="text-[10px] text-slate-500 font-medium">Assets are instantly injected into your message body.</span>
+                    </div>
                   )}
                 </div>
 

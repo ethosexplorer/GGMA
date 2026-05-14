@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, GripVertical, Phone, Mail, Clock, ShieldCheck, Building2, User, Landmark, Building, Briefcase, Scale, HeartHandshake, Truck, Search, X, Upload } from 'lucide-react';
+import { Plus, GripVertical, Phone, Mail, Clock, ShieldCheck, Building2, User, Landmark, Building, Briefcase, Scale, HeartHandshake, Truck, Search, X, Upload, Store, Sprout, Factory } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { db } from '../../firebase';
 import { collection, addDoc, onSnapshot, query, serverTimestamp, doc, updateDoc, deleteDoc } from 'firebase/firestore';
@@ -13,15 +13,17 @@ const STAGES = [
 ];
 
 const ENTITY_TYPES = [
-  { id: 'patient', label: 'Patient', color: 'bg-purple-100 text-purple-700 border-purple-200', icon: User },
-  { id: 'business', label: 'Business', color: 'bg-blue-100 text-blue-700 border-blue-200', icon: Building2 },
+  { id: 'dispensary', label: 'Dispensary / Retail', color: 'bg-emerald-100 text-emerald-700 border-emerald-200', icon: Store },
+  { id: 'grower', label: 'Grower / Cultivator', color: 'bg-green-100 text-green-700 border-green-200', icon: Sprout },
+  { id: 'processor', label: 'Processor / Manufacturer', color: 'bg-amber-100 text-amber-700 border-amber-200', icon: Factory },
   { id: 'provider', label: 'Provider / Clinic', color: 'bg-teal-100 text-teal-700 border-teal-200', icon: ShieldCheck },
-  { id: 'attorney', label: 'Attorney / Law Firm', color: 'bg-amber-100 text-amber-700 border-amber-200', icon: Scale },
+  { id: 'attorney', label: 'Attorney / Law Firm', color: 'bg-indigo-100 text-indigo-700 border-indigo-200', icon: Scale },
+  { id: 'backoffice', label: 'Independent / Backoffice', color: 'bg-blue-100 text-blue-700 border-blue-200', icon: Briefcase },
+  { id: 'patient', label: 'Patient', color: 'bg-purple-100 text-purple-700 border-purple-200', icon: User },
   { id: 'agency', label: 'Gov / State Agency', color: 'bg-slate-100 text-slate-700 border-slate-300', icon: Landmark },
-  { id: 'advocate', label: 'Advocate', color: 'bg-pink-100 text-pink-700 border-pink-200', icon: HeartHandshake },
-  { id: 'distribution', label: 'Distribution', color: 'bg-orange-100 text-orange-700 border-orange-200', icon: Truck },
-  { id: 'partner', label: 'Partner', color: 'bg-indigo-100 text-indigo-700 border-indigo-200', icon: Briefcase },
-  { id: 'other', label: 'Other', color: 'bg-gray-100 text-gray-700 border-gray-200', icon: Building },
+  { id: 'distribution', label: 'Distribution / Transport', color: 'bg-orange-100 text-orange-700 border-orange-200', icon: Truck },
+  { id: 'advocate', label: 'Advocate / Partner', color: 'bg-pink-100 text-pink-700 border-pink-200', icon: HeartHandshake },
+  { id: 'other', label: 'Other Business', color: 'bg-gray-100 text-gray-700 border-gray-200', icon: Building },
 ];
 
 const TEAM = [
@@ -60,7 +62,7 @@ export const PipelineCRM = () => {
 
   // Form State
   const [formData, setFormData] = useState({
-    name: '', contactName: '', type: 'business', stage: 'lead',
+    name: '', contactName: '', type: 'dispensary', stage: 'lead',
     value: '', assignedTo: 'unassigned', phone: '', email: '',
     licenseNumber: '', jurisdiction: '', notes: ''
   });
@@ -121,7 +123,7 @@ export const PipelineCRM = () => {
     } else {
       setEditingDeal(null);
       setFormData({
-        name: '', contactName: '', type: 'business', stage: 'lead',
+        name: '', contactName: '', type: 'dispensary', stage: 'lead',
         value: '', assignedTo: 'unassigned', phone: '', email: '',
         licenseNumber: '', jurisdiction: '', notes: ''
       });
