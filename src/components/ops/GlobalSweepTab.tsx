@@ -10,7 +10,8 @@ export const GlobalSweepTab = () => {
     { code: 'CA', name: 'California (DCC)', status: 'Active', count: '10,000+' },
     { code: 'OH', name: 'Ohio (DCC)', status: 'Active', count: '1,500+' },
     { code: 'MI', name: 'Michigan (CRA)', status: 'Active', count: '10,000+' },
-    { code: 'IL', name: 'Illinois (IDFPR)', status: 'Planned', count: 'Pending' }
+    { code: 'IL', name: 'Illinois (IDFPR)', status: 'Active', count: '2,500+' },
+    { code: 'CO', name: 'Colorado (MED)', status: 'Planned', count: 'Pending' }
   ];
 
   const activeState = states.find(s => s.code === selectedState);
