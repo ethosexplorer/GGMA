@@ -7,9 +7,9 @@ export const GlobalSweepTab = () => {
   
   const states = [
     { code: 'OK', name: 'Oklahoma (OMMA)', status: 'Active', count: '30,000+' },
-    { code: 'CA', name: 'California (DCC)', status: 'Building', count: '10,000+' },
-    { code: 'OH', name: 'Ohio (DCC)', status: 'Building', count: '1,500+' },
-    { code: 'MI', name: 'Michigan (CRA)', status: 'Planned', count: 'Pending' },
+    { code: 'CA', name: 'California (DCC)', status: 'Active', count: '10,000+' },
+    { code: 'OH', name: 'Ohio (DCC)', status: 'Active', count: '1,500+' },
+    { code: 'MI', name: 'Michigan (CRA)', status: 'Active', count: '10,000+' },
     { code: 'IL', name: 'Illinois (IDFPR)', status: 'Planned', count: 'Pending' }
   ];
 

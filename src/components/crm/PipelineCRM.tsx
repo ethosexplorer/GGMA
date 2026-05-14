@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, GripVertical, Phone, Mail, Clock, ShieldCheck, Building2, User, Landmark, Building, Briefcase, Scale, HeartHandshake, Truck, Search, X } from 'lucide-react';
+import { Plus, GripVertical, Phone, Mail, Clock, ShieldCheck, Building2, User, Landmark, Building, Briefcase, Scale, HeartHandshake, Truck, Search, X, Upload } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { db } from '../../firebase';
 import { collection, addDoc, onSnapshot, query, serverTimestamp, doc, updateDoc, deleteDoc } from 'firebase/firestore';
@@ -200,6 +200,62 @@ export const PipelineCRM = () => {
               className="pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-indigo-500 font-medium w-64 bg-slate-50 focus:bg-white transition-colors"
             />
           </div>
+          
+          <label className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg font-bold text-sm transition-colors cursor-pointer border border-slate-200">
+            <Upload size={16} /> Import CSV
+            <input 
+              type="file" 
+              accept=".csv" 
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                
+                const text = await file.text();
+                const rows = text.split('\\n').filter(r => r.trim());
+                if (rows.length < 2) return;
+                
+                // Parse CSV - simplified assuming fields are enclosed in quotes
+                const headers = rows[0].match(/(".*?"|[^",\\s]+)(?=\\s*,|\\s*$)/g)?.map(h => h.replace(/^"|"$/g, '')) || [];
+                
+                let importCount = 0;
+                for (let i = 1; i < rows.length; i++) {
+                  const values = rows[i].match(/(".*?"|[^",]+)(?=\\s*,|\\s*$)/g)?.map(v => v.replace(/^"|"$/g, '')) || [];
+                  if (values.length < 2) continue;
+                  
+                  const record: any = {};
+                  headers.forEach((h, idx) => { record[h] = values[idx] || ''; });
+                  
+                  // Map to CRM structure
+                  const dealData = {
+                    name: record['Business Name'] || 'Unknown Business',
+                    contactName: record['DBA'] || '',
+                    type: 'business',
+                    stage: 'lead',
+                    value: 0,
+                    assignedTo: 'unassigned',
+                    phone: record['Telephone'] || '',
+                    email: record['Email'] || '',
+                    licenseNumber: record['License Number'] || '',
+                    jurisdiction: record['State'] || 'Unknown',
+                    notes: record['Raw Data'] || '',
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp()
+                  };
+                  
+                  try {
+                    await addDoc(collection(db, 'crm_deals'), dealData);
+                    importCount++;
+                  } catch (err) {
+                    console.error('Import failed for row', i, err);
+                  }
+                }
+                alert(`Successfully imported ${importCount} leads into the Lead / Prospect pipeline!`);
+                e.target.value = ''; // reset input
+              }}
+            />
+          </label>
+
           <button 
             onClick={() => openModal()}
             className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors shadow-lg shadow-indigo-600/20"
@@ -210,8 +266,8 @@ export const PipelineCRM = () => {
       </div>
 
       {/* Kanban Board */}
-      <div className="flex-1 overflow-x-auto p-6">
-        <div className="flex h-full gap-6 min-w-max">
+      <div className="flex-1 overflow-x-auto overflow-y-hidden p-6 custom-scrollbar">
+        <div className="flex h-full gap-6 min-w-max pb-4">
           {STAGES.map(stage => (
             <div 
               key={stage.id} 

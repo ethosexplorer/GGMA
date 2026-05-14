@@ -80,6 +80,7 @@ async function runCaliforniaScraper() {
           "Address": extractMatch(/Address\\s*:\\s*(.*)/i),
           "Telephone": phoneMatch ? phoneMatch[1] : "N/A",
           "Email": emailMatch ? emailMatch[1] : "N/A",
+          "Status": extractMatch(/(?:License\\s+)?Status\\s*:\\s*(.*)/i) !== "N/A" ? extractMatch(/(?:License\\s+)?Status\\s*:\\s*(.*)/i) : "Active",
           "Raw Data": text.replace(/\\n/g, ' | ') // Keep whole business card text just in case
         };
         

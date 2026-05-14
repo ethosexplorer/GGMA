@@ -2,8 +2,8 @@ import puppeteer from 'puppeteer';
 import fs from 'fs';
 import path from 'path';
 
-async function runOhioScraper() {
-  console.log("🚀 Starting Ohio eLicense Portal Scraper...");
+async function runMichiganScraper() {
+  console.log("🚀 Starting Michigan CRA Portal Scraper...");
   
   const browser = await puppeteer.launch({ 
     headless: "new",
@@ -15,8 +15,9 @@ async function runOhioScraper() {
   const limit = 50; 
 
   try {
-    console.log("🌐 Navigating to Ohio eLicense Search Portal...");
-    await page.goto("https://elicense.ohio.gov/s/license-lookup", { 
+    console.log("🌐 Navigating to Michigan CRA Search Portal...");
+    // Accela Citizen Access portal for MI CRA
+    await page.goto("https://aca-prod.accela.com/MRA/GeneralProperty/PropertyLookUp.aspx?isLicensee=Y", { 
       waitUntil: 'networkidle2', 
       timeout: 60000 
     });
@@ -24,12 +25,13 @@ async function runOhioScraper() {
     console.log("⏳ Waiting for portal to initialize...");
     await new Promise(r => setTimeout(r, 5000));
 
-    // The Ohio portal uses Salesforce Aura (same as OMMA)
     console.log("🔍 Looking for Search button...");
     await page.evaluate(() => {
-      // In Ohio, we need to select a specific board if possible, or just hit Search
-      const btns = Array.from(document.querySelectorAll('button'));
-      const searchBtn = btns.find(b => b.innerText && b.innerText.toLowerCase().includes('search'));
+      const btns = Array.from(document.querySelectorAll('a, button, input'));
+      const searchBtn = btns.find(b => {
+        const text = (b.innerText || b.value || '').toLowerCase();
+        return text === 'search' || text === 'submit';
+      });
       if (searchBtn) searchBtn.click();
     });
 
@@ -40,12 +42,13 @@ async function runOhioScraper() {
     
     while (extractedCount < limit) {
       const records = await page.evaluate(() => {
-        const containers = Array.from(document.querySelectorAll('tr, article, .card, .slds-card, .slds-table tr'));
+        // Accela uses generic table rows usually with class .ACA_TabRow
+        const containers = Array.from(document.querySelectorAll('tr, .ACA_TabRow, .card'));
         const results = [];
         
         for (const container of containers) {
           const text = container.innerText || '';
-          if (text.includes('MMCPP') || text.includes('MMCPC') || text.includes('Dispensary') || text.includes('@') || text.match(/\\d{3}[-\\.\\s]\\d{3}[-\\.\\s]\\d{4}/)) {
+          if (text.includes('AU-') || text.includes('PC-') || text.includes('GR-') || text.includes('@') || text.match(/\\d{3}[-\\.\\s]\\d{3}[-\\.\\s]\\d{4}/)) {
              results.push(text);
           }
         }
@@ -71,7 +74,7 @@ async function runOhioScraper() {
         const business = {
           "Business Name": lines.length > 0 ? lines[0] : "Unknown",
           "DBA": extractMatch(/DBA\\s*:\\s*(.*)/i) !== "N/A" ? extractMatch(/DBA\\s*:\\s*(.*)/i) : "Check Raw",
-          "License Number": extractMatch(/(MMCP\\w*-\\d+)/i) !== "N/A" ? extractMatch(/(MMCP\\w*-\\d+)/i) : "Unknown",
+          "License Number": extractMatch(/([A-Z]{2}-\\w+-\\d+)/i) !== "N/A" ? extractMatch(/([A-Z]{2}-\\w+-\\d+)/i) : "Unknown",
           "Address": extractMatch(/Address\\s*:\\s*(.*)/i),
           "Telephone": phoneMatch ? phoneMatch[1] : "N/A",
           "Email": emailMatch ? emailMatch[1] : "N/A",
@@ -87,9 +90,9 @@ async function runOhioScraper() {
 
       console.log("➡️ Moving to next page...");
       const hasNext = await page.evaluate(() => {
-        const nextBtns = Array.from(document.querySelectorAll('button, a, .pagination-next'));
-        const nextBtn = nextBtns.find(b => b.innerText && b.innerText.toLowerCase().includes('next'));
-        if (nextBtn && !nextBtn.disabled && !nextBtn.classList.contains('disabled')) {
+        const nextBtns = Array.from(document.querySelectorAll('a, span'));
+        const nextBtn = nextBtns.find(b => b.innerText && b.innerText.includes('Next >'));
+        if (nextBtn) {
           nextBtn.click();
           return true;
         }
@@ -114,7 +117,7 @@ async function runOhioScraper() {
         });
         csvRows.push(values.join(','));
       }
-      const csvPath = path.join(process.cwd(), 'oh_enriched_directory.csv');
+      const csvPath = path.join(process.cwd(), 'mi_enriched_directory.csv');
       fs.writeFileSync(csvPath, csvRows.join('\n'));
       console.log(`\n🎉 Success! Saved ${businesses.length} records to ${csvPath}`);
     } else {
@@ -128,4 +131,4 @@ async function runOhioScraper() {
   }
 }
 
-runOhioScraper();
+runMichiganScraper();
