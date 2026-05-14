@@ -211,76 +211,84 @@ export const PipelineCRM = () => {
               accept=".csv" 
               className="hidden"
               onChange={async (e) => {
-                const file = e.target.files?.[0];
-                if (!file) return;
-                
-                const text = await file.text();
-                const rows = text.split('\\n').filter(r => r.trim());
-                if (rows.length < 2) return;
-                
-                const parseCSVRow = (str) => {
-                  const result = [];
-                  let current = '';
-                  let inQuotes = false;
-                  for (let i = 0; i < str.length; i++) {
-                    const char = str[i];
-                    if (char === '"' && str[i+1] === '"') {
-                      current += '"';
-                      i++;
-                    } else if (char === '"') {
-                      inQuotes = !inQuotes;
-                    } else if (char === ',' && !inQuotes) {
-                      result.push(current);
-                      current = '';
-                    } else {
-                      current += char;
+                try {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  
+                  const text = await file.text();
+                  const rows = text.split('\\n').filter(r => r.trim());
+                  if (rows.length < 2) {
+                    alert('File is empty or invalid format.');
+                    return;
+                  }
+                  
+                  const parseCSVRow = (str) => {
+                    const result = [];
+                    let current = '';
+                    let inQuotes = false;
+                    for (let i = 0; i < str.length; i++) {
+                      const char = str[i];
+                      if (char === '"' && str[i+1] === '"') {
+                        current += '"';
+                        i++;
+                      } else if (char === '"') {
+                        inQuotes = !inQuotes;
+                      } else if (char === ',' && !inQuotes) {
+                        result.push(current);
+                        current = '';
+                      } else {
+                        current += char;
+                      }
                     }
-                  }
-                  result.push(current);
-                  return result.map(v => v.trim());
-                };
-                
-                const headers = parseCSVRow(rows[0]);
-                
-                let importCount = 0;
-                for (let i = 1; i < rows.length; i++) {
-                  const values = parseCSVRow(rows[i]);
-                  if (values.length < 2) continue;
-                  
-                  const record: any = {};
-                  headers.forEach((h, idx) => { record[h] = values[idx] || ''; });
-                  
-                  // Extract business name carefully (sometimes first col is "Close" from the table button)
-                  let bName = record['Business Name'] || record['Name'] || '';
-                  if (bName === 'Close' || !bName) {
-                    bName = record['DBA'] || 'Unknown Business';
-                  }
-                  
-                  const dealData = {
-                    name: bName,
-                    contactName: record['DBA'] && record['DBA'] !== bName ? record['DBA'] : '',
-                    type: 'business',
-                    stage: 'lead',
-                    value: 0,
-                    assignedTo: 'unassigned',
-                    phone: record['Telephone'] || record['Phone'] || '',
-                    email: record['Email'] || '',
-                    licenseNumber: record['License Number'] || record['License'] || '',
-                    jurisdiction: record['State'] || record['Jurisdiction'] || 'Oklahoma',
-                    notes: record['Raw Data'] || record['Status'] || '',
-                    createdAt: serverTimestamp(),
-                    updatedAt: serverTimestamp()
+                    result.push(current);
+                    return result.map(v => v.trim());
                   };
                   
-                  try {
-                    await addDoc(collection(db, 'crm_deals'), dealData);
+                  const headers = parseCSVRow(rows[0]);
+                  
+                  let importCount = 0;
+                  // Map over rows and call addDoc without awaiting each one sequentially
+                  // This prevents the UI from hanging if Firebase network connection is slow
+                  for (let i = 1; i < rows.length; i++) {
+                    const values = parseCSVRow(rows[i]);
+                    if (values.length < 2) continue;
+                    
+                    const record: any = {};
+                    headers.forEach((h, idx) => { record[h] = values[idx] || ''; });
+                    
+                    let bName = record['Business Name'] || record['Name'] || '';
+                    if (bName === 'Close' || !bName) {
+                      bName = record['DBA'] || 'Unknown Business';
+                    }
+                    
+                    const dealData = {
+                      name: bName,
+                      contactName: record['DBA'] && record['DBA'] !== bName ? record['DBA'] : '',
+                      type: 'business',
+                      stage: 'lead',
+                      value: 0,
+                      assignedTo: 'unassigned',
+                      phone: record['Telephone'] || record['Phone'] || '',
+                      email: record['Email'] || '',
+                      licenseNumber: record['License Number'] || record['License'] || '',
+                      jurisdiction: record['State'] || record['Jurisdiction'] || 'Oklahoma',
+                      notes: record['Raw Data'] || record['Status'] || '',
+                      createdAt: serverTimestamp(),
+                      updatedAt: serverTimestamp()
+                    };
+                    
+                    // Don't await - let Firebase local cache handle it instantly
+                    addDoc(collection(db, 'crm_deals'), dealData).catch(err => {
+                      console.error('Import failed for row', i, err);
+                    });
                     importCount++;
-                  } catch (err) {
-                    console.error('Import failed for row', i, err);
                   }
+                  alert(`Successfully imported ${importCount} leads! They are syncing in the background.`);
+                } catch (error) {
+                  alert(`Error during import: ${error.message}`);
+                } finally {
+                  e.target.value = ''; // reset input
                 }
-                alert(`Successfully imported ${importCount} leads into the Lead / Prospect pipeline!`);
-                e.target.value = ''; // reset input
               }}
             />
           </label>
@@ -296,11 +304,11 @@ export const PipelineCRM = () => {
 
       {/* Kanban Board */}
       <div className="flex-1 overflow-x-auto overflow-y-hidden p-6 custom-scrollbar">
-        <div className="flex h-full gap-6 min-w-max pb-4">
+        <div className="flex h-full gap-4 min-w-full pb-4">
           {STAGES.map(stage => (
             <div 
               key={stage.id} 
-              className={cn("w-80 flex flex-col rounded-xl border-t-4 bg-slate-100/50", stage.color)}
+              className={cn("flex-1 min-w-[220px] max-w-[320px] flex flex-col rounded-xl border-t-4 bg-slate-100/50", stage.color)}
               onDragOver={handleDragOver}
               onDrop={(e) => handleDrop(e, stage.id)}
             >
