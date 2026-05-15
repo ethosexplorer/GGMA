@@ -123,6 +123,11 @@ const GOV_ADVOCATES = [
   { name: "Maryland Cannabis Administration (MCA)", city: "Annapolis", state: "MD", type: "gov_state", focus: "State Regulator (Medical + Adult-Use)", email: "mdcannabis.mca@maryland.gov", phone: "410-487-8100" },
   { name: "Maryland NORML", city: "Baltimore", state: "MD", type: "advocate", focus: "Cannabis Advocacy", email: "", phone: "" },
   { name: "Marijuana Policy Project (MPP) - MD Chapter", city: "Annapolis", state: "MD", type: "advocate", focus: "Policy Reform", email: "maryland@mpp.org", phone: "202-462-5747" },
+
+  // Michigan (Dual-use mega-market — $3.17B, 838+ retailers)
+  { name: "Michigan Cannabis Regulatory Agency (CRA)", city: "Lansing", state: "MI", type: "gov_state", focus: "State Regulator (MRTMA + MMFLA)", email: "CRA-Compliance@michigan.gov", phone: "517-284-8599" },
+  { name: "Michigan NORML", city: "Detroit", state: "MI", type: "advocate", focus: "Cannabis Advocacy", email: "", phone: "" },
+  { name: "Marijuana Policy Project (MPP) - MI Chapter", city: "Lansing", state: "MI", type: "advocate", focus: "Policy Reform", email: "michigan@mpp.org", phone: "202-462-5747" },
 ];
 
 function slugify(str) { return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').substring(0, 50); }
@@ -141,7 +146,7 @@ async function importGovAdvocates() {
       contactName: org.name,
       city: org.city,
       state: org.state,
-      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Louisiana', ME:'Maine', MD:'Maryland' }[org.state] || org.state,
+      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Louisiana', ME:'Maine', MD:'Maryland', MI:'Michigan' }[org.state] || org.state,
       type: org.type, // 'gov_state', 'gov_local', 'gov_federal', or 'advocate'
       email: org.email || '',
       phone: org.phone || '',

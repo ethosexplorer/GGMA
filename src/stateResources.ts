@@ -788,15 +788,41 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     program: "https://www.michigan.gov/cra/sections/mmp",
     patientPortal: "https://aca-prod.accela.com/MIMM/Default.aspx",
     businessPortal: "https://www.michigan.gov/cra/sections/mmp",
-    guide: "",
+    guide: "https://www.michigan.gov/cra/sections/mmp",
     resources: "https://www.mpp.org/states/michigan/?state=MI",
     abbreviation: "MI",
-    adultUseStatus: "Yes",
-    medicalStatus: "Yes",
-    regulator: "Michigan Cannabis Regulatory Agency",
+    adultUseStatus: "Yes (since Dec 2019)",
+    medicalStatus: "Yes (since 2008)",
+    regulator: "Michigan Cannabis Regulatory Agency (CRA)",
     compliancePage: "https://www.michigan.gov/cra/",
-    checklistItems: ["License","Testing","METRC","Packaging","Advertising"],
-    complianceSource: "https://www.nsc.org/cannabis-regulations"
+    checklistItems: ["License (MRTMA/MMFLA)","Testing","Metrc tracking","Packaging","Advertising","24% wholesale tax"],
+    complianceSource: "https://www.nsc.org/cannabis-regulations",
+    conditions: ["Chronic Pain","Severe Nausea","Seizures","Severe Muscle Spasms","PTSD","HIV/AIDS","Hepatitis C","ALS","Crohn's Disease","Colitis","Glaucoma","Cancer","Alzheimer's","Nail-Patella Syndrome","Obsessive Compulsive Disorder","Arthritis","Autism","Cerebral Palsy","Tourette Syndrome"],
+    contactPhone: "(517) 284-8599",
+    contactEmail: "CRA-Compliance@michigan.gov",
+    trackingSystem: "Metrc",
+    licenseCaps: "838+ active retailers. 823 Class C growers. 273 processors. No strict state cap — market-driven.",
+    intakeNotes: [
+      "✅ DUAL-USE MEGA-MARKET: $3.17B in 2025 sales. One of the largest US cannabis markets.",
+      "CRA regulates both MRTMA (adult-use, Prop 1 2018) and MMFLA (medical).",
+      "838+ active retail licenses. Intense price competition — historic lows.",
+      "24% wholesale tax on adult-use. 6% sales tax applies to all.",
+      "Medical patients: lower tax rate, higher possession limits, caregiver system.",
+      "Home grow: up to 12 plants per patient (medical). Adult-use: 12 plants per household.",
+      "Border communities (Monroe, Niles, Benton Harbor) = major retail hubs for out-of-state traffic."
+    ],
+    intakeForms: [
+      { name: "Patient Registration (Accela)", url: "https://aca-prod.accela.com/MIMM/Default.aspx" },
+      { name: "CRA Medical Marihuana Program", url: "https://www.michigan.gov/cra/sections/mmp" },
+      { name: "CRA Main Portal", url: "https://www.michigan.gov/cra/" }
+    ],
+    intakeFAQ: [
+      { q: "Do I need a medical card if adult-use is legal?", a: "Not required, but medical patients pay lower taxes and can possess more. Also access to caregiver system." },
+      { q: "How much does a medical card cost?", a: "$40 state registration fee. Physician evaluation typically $100-200." },
+      { q: "Can I grow at home?", a: "Medical patients: up to 12 plants. Adult-use: up to 12 plants per household (must be secured)." },
+      { q: "Why are Michigan prices so low?", a: "Market oversupply with 838+ retailers and 823+ growers. Intense competition has driven prices to historic lows." },
+      { q: "What is the caregiver system?", a: "Registered caregivers can grow up to 12 plants per patient (max 5 patients = 60 plants) and provide cannabis to their patients." }
+    ]
   },
   "Minnesota": {
     program: "https://mn.gov/ocm/businesses/licensing/license-types/",
