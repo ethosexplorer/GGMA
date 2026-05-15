@@ -78,6 +78,13 @@ const GOV_ADVOCATES = [
   { name: "Idaho NORML", city: "Boise", state: "ID", type: "advocate", focus: "Cannabis Reform Advocacy", email: "info@idnorml.org", phone: "" },
   { name: "Natural Medicine Alliance of Idaho", city: "Boise", state: "ID", type: "advocate", focus: "2026 Medical Cannabis Ballot Initiative", email: "", phone: "" },
   { name: "Marijuana Policy Project (MPP) - ID Chapter", city: "Boise", state: "ID", type: "advocate", focus: "Policy Reform", email: "idaho@mpp.org", phone: "202-462-5747" },
+
+  // Illinois
+  { name: "Illinois Department of Financial and Professional Regulation (IDFPR)", city: "Springfield", state: "IL", type: "gov_state", focus: "Cannabis Licensing & Regulation (Adult-Use + Medical)", email: "", phone: "888-473-4858" },
+  { name: "Illinois Department of Public Health (IDPH)", city: "Springfield", state: "IL", type: "gov_state", focus: "Medical Cannabis Patient Registry", email: "", phone: "217-782-4977" },
+  { name: "Illinois Department of Agriculture", city: "Springfield", state: "IL", type: "gov_state", focus: "Craft Grower & Cultivator Licensing", email: "", phone: "217-782-2172" },
+  { name: "Illinois NORML", city: "Chicago", state: "IL", type: "advocate", focus: "Cannabis Advocacy", email: "info@ilnorml.org", phone: "" },
+  { name: "Marijuana Policy Project (MPP) - IL Chapter", city: "Chicago", state: "IL", type: "advocate", focus: "Policy Reform", email: "illinois@mpp.org", phone: "202-462-5747" },
 ];
 
 function slugify(str) { return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').substring(0, 50); }
@@ -96,7 +103,7 @@ async function importGovAdvocates() {
       contactName: org.name,
       city: org.city,
       state: org.state,
-      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho' }[org.state] || org.state,
+      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois' }[org.state] || org.state,
       type: org.type, // 'gov_state', 'gov_local', 'gov_federal', or 'advocate'
       email: org.email || '',
       phone: org.phone || '',
