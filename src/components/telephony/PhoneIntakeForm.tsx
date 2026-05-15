@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Phone, User, Building2, HeartPulse, FileText, CircleCheck, AlertCircle, Shield, MapPin, Mail, Calendar, CreditCard, Loader2, UserPlus, ExternalLink, PhoneIncoming } from 'lucide-react';
+import { Phone, User, Building2, HeartPulse, FileText, CircleCheck, AlertCircle, Shield, MapPin, Mail, Calendar, CreditCard, Loader2, UserPlus, ExternalLink, PhoneIncoming, DollarSign } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { turso } from '../../lib/turso';
 
@@ -53,6 +53,9 @@ const BIZ_TYPES = ['Dispensary','Cultivator / Grower','Processor','Transporter',
 const ENTITY_TYPES = ['LLC','Corporation','Sole Proprietor','Partnership','Non-Profit'];
 const CONDITIONS = ['Chronic Pain','PTSD','Cancer','Epilepsy / Seizures','Glaucoma','HIV/AIDS','Crohn\'s Disease','Multiple Sclerosis','Nausea','Severe or intractable muscle spasms','Terminal Illness','Other'];
 
+const PAYMENT_TYPES = ['Processing Fee', 'Application Fee', 'Consultation Fee', 'Service Fee', 'Filing Fee', 'Late Fee', 'Renewal Fee', 'Licensing Fee', 'Document Fee', 'Other'];
+const PAYMENT_METHODS = ['Chime', 'Cash App', 'Zelle', 'Venmo', 'Cash', 'Check', 'Wire Transfer', 'Credit Card', 'Bank Transfer', 'Other'];
+
 const STEPS_PATIENT = ['Intake Questionnaire', 'Payment Info', 'Schedule Doctor Visit', 'State Portal Setup', 'Review & Submit'];
 const STEPS_BUSINESS = ['Entity & Type', 'Facility & Contact', 'Primary Owner Info', 'Payment Info', 'Review & Submit'];
 
@@ -89,6 +92,15 @@ export const PhoneIntakeForm = () => {
   // Custom step completion flags for patients
   const [scheduledAppt, setScheduledAppt] = useState(false);
   const [completedPortal, setCompletedPortal] = useState(false);
+
+  const [paymentForm, setPaymentForm] = useState({
+    amount: '',
+    type: 'Processing Fee',
+    method: 'Chime',
+    notes: '',
+    date: new Date().toISOString().split('T')[0],
+  });
+  const [paymentPosted, setPaymentPosted] = useState(false);
 
   const set = (k: keyof IntakeData, v: any) => setData(p => ({...p, [k]: v}));
   const toggleCondition = (c: string) => {
@@ -131,7 +143,100 @@ export const PhoneIntakeForm = () => {
     setSubmitting(false);
   };
 
-  const reset = () => { setIntakeType(null); setStep(0); setData({...empty}); setSubmitted(false); setCallerId(''); setCallerNotes(''); setScheduledAppt(false); setCompletedPortal(false); };
+  const handlePostPayment = async () => {
+    if (!paymentForm.amount) return alert('Please enter an amount.');
+    setSubmitting(true);
+    try {
+      const clientName = data.firstName ? `${data.firstName} ${data.lastName}` : data.businessName;
+      if (!clientName.trim()) {
+        setSubmitting(false);
+        return alert('Please go back and fill out the name/business on Step 1 first.');
+      }
+
+      const cleanAmount = paymentForm.amount.replace(/[^0-9.]/g, '');
+      const formatted = '$' + parseFloat(cleanAmount).toFixed(2);
+      const entryName = `${clientName} — ${paymentForm.type} (Intake)`;
+
+      await turso.execute({
+        sql: "INSERT INTO founder_ledger (id, origin_vector, type, gross_revenue, net_profit, status, color, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        args: [
+          'pay-' + Math.random().toString(36).substr(2, 9),
+          entryName,
+          `${paymentForm.type} (${paymentForm.method})`,
+          formatted,
+          formatted,
+          'Settled',
+          'bg-emerald-600',
+          new Date(paymentForm.date).toISOString()
+        ]
+      });
+
+      // Audit log
+      await turso.execute({
+        sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)",
+        args: [
+          'log-' + Math.random().toString(36).substr(2, 9),
+          'PAYMENT_POSTED_INTAKE',
+          'OPS_Agent',
+          JSON.stringify({
+            client: clientName,
+            amount: formatted,
+            type: paymentForm.type,
+            method: paymentForm.method,
+            notes: paymentForm.notes,
+            date: paymentForm.date
+          })
+        ]
+      });
+
+      setPaymentPosted(true);
+    } catch (err: any) {
+      console.error(err);
+      alert('Error posting payment: ' + err.message);
+    }
+    setSubmitting(false);
+  };
+
+  const handleSaveForLater = async () => {
+    setSubmitting(true);
+    try {
+      const accountId = callerId || 'ACC-' + Math.random().toString(36).substr(2, 8).toUpperCase();
+      const appId = 'APP-' + Math.random().toString(36).substr(2, 8).toUpperCase();
+      
+      // Only log account create if we haven't already
+      if (!callerId) {
+        await turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: [
+          'log-' + Math.random().toString(36).substr(2, 9),
+          'PHONE_INTAKE_ACCOUNT_CREATE',
+          'OPS_Agent',
+          JSON.stringify({ accountId, name: data.firstName + ' ' + data.lastName, email: data.email, phone: data.phone, type: intakeType, state: data.state })
+        ]});
+        setCallerId(accountId);
+      }
+
+      await turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: [
+        'log-' + Math.random().toString(36).substr(2, 9),
+        'PHONE_INTAKE_PARTIAL_SAVE',
+        'OPS_Agent',
+        JSON.stringify({
+          appId, accountId, intakeType,
+          applicant: data.firstName + ' ' + data.lastName,
+          ...(intakeType === 'patient_card' ? { conditions: data.conditions.join(', '), appType: data.appType } : { businessName: data.businessName, businessType: data.businessType, ein: data.einNumber }),
+          state: data.state,
+          paymentPreference: data.paymentPreference,
+          callerNotes,
+          submittedVia: 'Phone Intake — OPS Call Center',
+          savedAtStep: step,
+          status: 'Incomplete'
+        })
+      ]});
+      alert('Intake saved! The account is created and you can pull it up later to complete payment or documents.');
+      reset();
+    } catch (e) { console.error(e); alert('Save error. Check console.'); }
+    setSubmitting(false);
+  };
+
+  const reset = () => { setIntakeType(null); setStep(0); setData({...empty}); setSubmitted(false); setCallerId(''); setCallerNotes(''); setScheduledAppt(false); setCompletedPortal(false); setPaymentPosted(false); setPaymentForm({ amount: '', type: 'Processing Fee', method: 'Chime', notes: '', date: new Date().toISOString().split('T')[0] }); };
 
   const renderScript = () => {
     if (intakeType === null) {
@@ -169,7 +274,7 @@ export const PhoneIntakeForm = () => {
           <p><strong>Agent:</strong> "We need to collect the fee to schedule your doctor recommendation appointment. We accept Chime, CashApp, Venmo, PayPal, or we can email you a secure Invoice. How would you like to pay?"</p>
           <div className="mt-4 bg-[#0f291c] p-4 rounded-xl border border-emerald-800/50 shadow-inner">
             <p className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">Action Required</p>
-            <p className="text-xs text-emerald-100/70">Select the payment option so a formal request/invoice can be dispatched via the selected platform.</p>
+            <p className="text-xs text-emerald-100/70">Select the payment option so a formal request/invoice can be dispatched via the selected platform. (You can skip and 'Save for Later' if they need time).</p>
           </div>
         </div>
       );
@@ -239,11 +344,11 @@ export const PhoneIntakeForm = () => {
       );
       if (step === 3) return (
         <div className="space-y-4 text-sm text-emerald-50/90 leading-relaxed">
-          <p><strong>Agent:</strong> "How will your business be handling the application and compliance fees today?"</p>
-          <p><strong>Agent:</strong> "We accept Chime, CashApp, Venmo, PayPal, or we can send a formal Invoice if you do not have those."</p>
+          <p><strong>Agent:</strong> "Our processing fee is $249 without a subscription tier, plus the standard state application fees."</p>
+          <p><strong>Agent:</strong> "How will your business be handling these fees today? We accept Chime, CashApp, Venmo, PayPal, or we can send a formal Invoice."</p>
           <div className="mt-4 bg-[#0f291c] p-4 rounded-xl border border-emerald-800/50 shadow-inner">
             <p className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">Action Required</p>
-            <p className="text-xs text-emerald-100/70">Select the payment option so accounting can dispatch the request.</p>
+            <p className="text-xs text-emerald-100/70">Select the payment option so accounting can dispatch the request. (You can skip and 'Save for Later' if they need time).</p>
           </div>
         </div>
       );
@@ -407,22 +512,61 @@ export const PhoneIntakeForm = () => {
         </div>
       );
       if (step === 1) return (
-        <div className="space-y-6 flex flex-col items-center justify-center text-center py-8">
-          <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-4 shadow-inner">
-            <CreditCard size={36} />
+        <div className="space-y-4">
+          <div className="p-4 rounded-xl border text-xs font-bold flex items-start gap-2 bg-emerald-50 border-emerald-200 text-emerald-800 mb-4">
+            <DollarSign size={14} className="shrink-0 mt-0.5" />
+            <span>Post a one-time payment directly to the accounting ledger.</span>
           </div>
-          <h3 className="text-2xl font-black text-slate-800">Payment Preference</h3>
-          <p className="text-slate-500 max-w-md">How does the patient wish to pay their processing fees?</p>
-          
-          <div className="w-full max-w-sm mt-4 text-left">
-            <Select 
-              label="Select Payment Method" 
-              value={data.paymentPreference} 
-              onChange={(v: string) => set('paymentPreference', v)} 
-              options={['', 'Chime', 'CashApp', 'Venmo', 'PayPal', 'Create Invoice']} 
-              required 
-            />
-          </div>
+
+          {paymentPosted ? (
+            <div className="flex flex-col items-center justify-center py-8 space-y-4 animate-in fade-in zoom-in duration-300">
+              <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center">
+                <CircleCheck size={32} className="text-emerald-600" />
+              </div>
+              <h3 className="text-lg font-black text-slate-800">Payment Posted!</h3>
+              <p className="text-sm text-slate-500 font-medium">Entry added to Accounting Ledger.</p>
+            </div>
+          ) : (
+            <div className="space-y-4 bg-slate-50 border border-slate-200 rounded-2xl p-5">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1.5">Amount *</label>
+                  <div className="relative">
+                    <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <input type="text" value={paymentForm.amount} onChange={(e) => setPaymentForm({ ...paymentForm, amount: e.target.value })} placeholder="102.50" className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20 font-medium text-sm" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1.5">Date Received</label>
+                  <input type="date" value={paymentForm.date} onChange={(e) => setPaymentForm({ ...paymentForm, date: e.target.value })} className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20 font-medium text-sm" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1.5">Payment Type</label>
+                  <select value={paymentForm.type} onChange={(e) => setPaymentForm({ ...paymentForm, type: e.target.value })} className="w-full px-3 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20 font-medium text-sm">
+                    {PAYMENT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1.5">Payment Method</label>
+                  <select value={paymentForm.method} onChange={(e) => setPaymentForm({ ...paymentForm, method: e.target.value })} className="w-full px-3 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20 font-medium text-sm">
+                    {PAYMENT_METHODS.map(m => <option key={m} value={m}>{m}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-600 mb-1.5">Notes (optional)</label>
+                <textarea value={paymentForm.notes} onChange={(e) => setPaymentForm({ ...paymentForm, notes: e.target.value })} rows={2} className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20 font-medium text-sm resize-none" />
+              </div>
+
+              <button onClick={handlePostPayment} disabled={submitting} className={cn("w-full py-3.5 text-white rounded-xl text-sm font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 mt-4", isPatient ? "bg-emerald-600 hover:bg-emerald-700" : "bg-indigo-600 hover:bg-indigo-700")}>
+                <DollarSign size={16} /> Post Payment to Ledger
+              </button>
+            </div>
+          )}
         </div>
       );
       if (step === 2) return (
@@ -559,22 +703,61 @@ export const PhoneIntakeForm = () => {
         </div>
       );
       if (step === 3) return (
-        <div className="space-y-6 flex flex-col items-center justify-center text-center py-8">
-          <div className="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mb-4 shadow-inner">
-            <CreditCard size={36} />
+        <div className="space-y-4">
+          <div className="p-4 rounded-xl border text-xs font-bold flex items-start gap-2 bg-indigo-50 border-indigo-200 text-indigo-800 mb-4">
+            <DollarSign size={14} className="shrink-0 mt-0.5" />
+            <span>Post a one-time payment directly to the accounting ledger.</span>
           </div>
-          <h3 className="text-2xl font-black text-slate-800">Payment Preference</h3>
-          <p className="text-slate-500 max-w-md">How does the business wish to pay their compliance and processing fees?</p>
-          
-          <div className="w-full max-w-sm mt-4 text-left">
-            <Select 
-              label="Select Payment Method" 
-              value={data.paymentPreference} 
-              onChange={(v: string) => set('paymentPreference', v)} 
-              options={['', 'Chime', 'CashApp', 'Venmo', 'PayPal', 'Create Invoice']} 
-              required 
-            />
-          </div>
+
+          {paymentPosted ? (
+            <div className="flex flex-col items-center justify-center py-8 space-y-4 animate-in fade-in zoom-in duration-300">
+              <div className="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center">
+                <CircleCheck size={32} className="text-indigo-600" />
+              </div>
+              <h3 className="text-lg font-black text-slate-800">Payment Posted!</h3>
+              <p className="text-sm text-slate-500 font-medium">Entry added to Accounting Ledger.</p>
+            </div>
+          ) : (
+            <div className="space-y-4 bg-slate-50 border border-slate-200 rounded-2xl p-5">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1.5">Amount *</label>
+                  <div className="relative">
+                    <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <input type="text" value={paymentForm.amount} onChange={(e) => setPaymentForm({ ...paymentForm, amount: e.target.value })} placeholder="249.00" className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/20 font-medium text-sm" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1.5">Date Received</label>
+                  <input type="date" value={paymentForm.date} onChange={(e) => setPaymentForm({ ...paymentForm, date: e.target.value })} className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/20 font-medium text-sm" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1.5">Payment Type</label>
+                  <select value={paymentForm.type} onChange={(e) => setPaymentForm({ ...paymentForm, type: e.target.value })} className="w-full px-3 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/20 font-medium text-sm">
+                    {PAYMENT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1.5">Payment Method</label>
+                  <select value={paymentForm.method} onChange={(e) => setPaymentForm({ ...paymentForm, method: e.target.value })} className="w-full px-3 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/20 font-medium text-sm">
+                    {PAYMENT_METHODS.map(m => <option key={m} value={m}>{m}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-600 mb-1.5">Notes (optional)</label>
+                <textarea value={paymentForm.notes} onChange={(e) => setPaymentForm({ ...paymentForm, notes: e.target.value })} rows={2} className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/20 font-medium text-sm resize-none" />
+              </div>
+
+              <button onClick={handlePostPayment} disabled={submitting} className={cn("w-full py-3.5 text-white rounded-xl text-sm font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 mt-4", isPatient ? "bg-emerald-600 hover:bg-emerald-700" : "bg-indigo-600 hover:bg-indigo-700")}>
+                <DollarSign size={16} /> Post Payment to Ledger
+              </button>
+            </div>
+          )}
         </div>
       );
       if (step === 4) {
@@ -618,14 +801,14 @@ export const PhoneIntakeForm = () => {
   const canNext = () => {
     if (isPatient) {
       if (step === 0) return data.firstName && data.lastName && data.email && data.phone && data.ssn && data.street && data.city && data.state && data.zip && data.mailingAddress;
-      if (step === 1) return data.paymentPreference !== '';
+      if (step === 1) return true; // Payment is optional, allows skipping
       if (step === 2) return scheduledAppt;
       if (step === 3) return completedPortal;
     } else {
       if (step === 0) return data.state && data.businessName && data.licenseType && data.entityType && data.businessType;
       if (step === 1) return data.street && data.city && data.zip && data.ppocName && data.ppocPhone && data.ppocEmail;
       if (step === 2) return data.firstName && data.lastName && data.email && data.phone && data.ownerShares && data.einNumber;
-      if (step === 3) return data.paymentPreference !== '';
+      if (step === 3) return true; // Payment is optional, allows skipping
     }
     return true;
   };
@@ -680,10 +863,18 @@ export const PhoneIntakeForm = () => {
               {step === 0 ? '← Back to Type' : '← Previous'}
             </button>
             {step < steps.length - 1 ? (
-              <button onClick={() => canNext() ? setStep(step + 1) : alert(isPatient && step === 1 ? 'Please check the box confirming you scheduled the appointment.' : isPatient && step === 2 ? 'Please check the box confirming you set up the portal.' : 'Please fill in all required fields.')}
-                className={cn("px-8 py-3 text-white font-bold rounded-xl shadow-lg transition-all", isPatient ? "bg-emerald-600 hover:bg-emerald-700" : "bg-indigo-600 hover:bg-indigo-700")}>
-                Next Step →
-              </button>
+              <div className="flex gap-3">
+                {step > 0 && (
+                  <button onClick={handleSaveForLater} disabled={submitting}
+                    className="px-6 py-3 bg-amber-50 text-amber-700 font-bold rounded-xl border border-amber-200 hover:bg-amber-100 transition-colors">
+                    {submitting ? 'Saving...' : 'Save for Later'}
+                  </button>
+                )}
+                <button onClick={() => canNext() ? setStep(step + 1) : alert('Please fill in all required fields or confirm steps to proceed.')}
+                  className={cn("px-8 py-3 text-white font-bold rounded-xl shadow-lg transition-all", isPatient ? "bg-emerald-600 hover:bg-emerald-700" : "bg-indigo-600 hover:bg-indigo-700")}>
+                  Next Step →
+                </button>
+              </div>
             ) : (
               <button onClick={handleSubmit} disabled={submitting}
                 className={cn("px-8 py-3 text-white font-black rounded-xl shadow-lg transition-all flex items-center gap-2 uppercase tracking-widest text-sm", submitting ? "opacity-60" : "", isPatient ? "bg-emerald-600 hover:bg-emerald-700" : "bg-indigo-600 hover:bg-indigo-700")}>
