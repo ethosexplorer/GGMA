@@ -59,6 +59,7 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
   const [searchTerm, setSearchTerm] = useState('');
   const [filterJurisdiction, setFilterJurisdiction] = useState(defaultJurisdiction || 'All');
   const [filterStatus, setFilterStatus] = useState('All');
+  const [filterType, setFilterType] = useState('All');
   
   // Sync filter when parent changes selected state
   useEffect(() => {
@@ -195,10 +196,13 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
     const c = d.contactName || '';
     const s = searchTerm || '';
     const matchesSearch = n.toLowerCase().includes(s.toLowerCase()) || c.toLowerCase().includes(s.toLowerCase());
-    const matchesJurisdiction = filterJurisdiction === 'All' || d.jurisdiction === filterJurisdiction;
-    const matchesStatus = filterStatus === 'All' || (d.licenseStatus?.toLowerCase() || '') === filterStatus.toLowerCase();
+    const j = (d.jurisdiction || 'Oklahoma').toLowerCase() === 'ok' ? 'oklahoma' : (d.jurisdiction || 'Oklahoma').toLowerCase();
+    const matchesJurisdiction = filterJurisdiction === 'All' || j === filterJurisdiction.toLowerCase();
+    const statusVal = (d.licenseStatus || d.notes || '').toLowerCase(); // fallback to notes for old imports
+    const matchesStatus = filterStatus === 'All' || statusVal.includes(filterStatus.toLowerCase());
+    const matchesType = filterType === 'All' || d.type === filterType;
     
-    return matchesSearch && matchesJurisdiction && matchesStatus;
+    return matchesSearch && matchesJurisdiction && matchesStatus && matchesType;
   });
 
   return (
@@ -230,6 +234,20 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
               <option value="All">All Jurisdictions</option>
               {uniqueJurisdictions.map(j => (
                 <option key={j} value={j}>{j}</option>
+              ))}
+            </select>
+            <div className="absolute right-3 pointer-events-none text-slate-400 font-black text-[10px]">▼</div>
+          </div>
+
+          <div className="relative border border-slate-200 rounded-lg bg-slate-50 overflow-hidden flex items-center">
+            <select 
+              value={filterType}
+              onChange={e => setFilterType(e.target.value)}
+              className="pl-4 pr-8 py-2 text-sm font-bold text-slate-700 bg-transparent outline-none cursor-pointer appearance-none"
+            >
+              <option value="All">All Types</option>
+              {ENTITY_TYPES.map(t => (
+                <option key={t.id} value={t.id}>{t.label.split(' / ')[0]}</option>
               ))}
             </select>
             <div className="absolute right-3 pointer-events-none text-slate-400 font-black text-[10px]">▼</div>
@@ -308,18 +326,33 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
                       bName = record['DBA'] || 'Unknown Business';
                     }
                     
+                    let lType = (record['License Type'] || '').toLowerCase();
+                    let entityType = 'business';
+                    if (lType.includes('grow')) entityType = 'grower';
+                    else if (lType.includes('dispensary') || lType.includes('retail')) entityType = 'dispensary';
+                    else if (lType.includes('process')) entityType = 'processor';
+                    else if (lType.includes('transport') || lType.includes('distrib')) entityType = 'distribution';
+                    else if (lType.includes('patient')) entityType = 'patient';
+                    else if (lType.includes('provid') || lType.includes('clinic') || lType.includes('physician')) entityType = 'provider';
+                    else if (lType.includes('attorney') || lType.includes('law')) entityType = 'attorney';
+                    
+                    const juri = record['State'] || record['Jurisdiction'] || 'Oklahoma';
+
                     const dealData = {
                       name: bName,
                       contactName: record['DBA'] && record['DBA'] !== bName ? record['DBA'] : '',
-                      type: 'business',
+                      type: entityType,
                       stage: 'lead',
                       value: 0,
                       assignedTo: 'unassigned',
                       phone: record['Telephone'] || record['Phone'] || '',
                       email: record['Email'] || '',
                       licenseNumber: record['License Number'] || record['License'] || '',
-                      jurisdiction: record['State'] || record['Jurisdiction'] || 'Oklahoma',
-                      notes: record['Raw Data'] || record['Status'] || '',
+                      licenseStatus: record['Status'] || record['License Status'] || '',
+                      licenseType: record['License Type'] || '',
+                      licenseExpiration: record['Expiration Date'] || record['Expires'] || '',
+                      jurisdiction: (juri.toLowerCase() === 'ok') ? 'Oklahoma' : juri,
+                      notes: record['Raw Data'] || '',
                       createdAt: serverTimestamp(),
                       updatedAt: serverTimestamp()
                     };
