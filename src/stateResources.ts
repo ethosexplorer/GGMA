@@ -520,16 +520,39 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
   "Illinois": {
     program: "https://dph.illinois.gov/topics-services/prevention-wellness/medical-cannabis.html",
     patientPortal: "https://ilogin.illinois.gov/",
-    businessPortal: "",
-    guide: "",
+    businessPortal: "https://idfpr.illinois.gov/profs/cannabis.asp",
+    guide: "https://dph.illinois.gov/topics-services/prevention-wellness/medical-cannabis.html",
     resources: "https://www.mpp.org/states/illinois/?state=IL",
     abbreviation: "IL",
     adultUseStatus: "Yes",
     medicalStatus: "Yes",
-    regulator: "Illinois cannabis regulator (IDFPR)",
+    regulator: "Illinois IDFPR (Dispensaries) / IDPH (Medical) / Dept of Agriculture (Cultivators)",
     compliancePage: "https://dph.illinois.gov/topics-services/prevention-wellness/medical-cannabis.html",
-    checklistItems: ["Adult-use licensing","Testing","Labeling","Equity programs","Taxes"],
-    complianceSource: "https://www.nsc.org/cannabis-regulations"
+    checklistItems: ["Adult-use licensing","Medical card","Testing","Labeling","Social equity programs","Taxes (6.25-25% by THC)"],
+    complianceSource: "https://www.nsc.org/cannabis-regulations",
+    conditions: ["Cancer","Glaucoma","HIV/AIDS","Hepatitis C","ALS","Crohn's Disease","Alzheimer's","Cachexia","Muscular Dystrophy","Severe Fibromyalgia","Spinal Cord Injury","PTSD","Epilepsy","Chronic Pain","Migraines","Osteoarthritis","Autism"],
+    contactPhone: "(217) 782-4977",
+    contactEmail: "DPH.MedicalCannabis@illinois.gov",
+    trackingSystem: "BioTrack",
+    licenseCaps: "Social equity prioritized. Craft grower caps. Dispensary lottery system.",
+    intakeNotes: [
+      "⚠️ DUAL-USE STATE: Adult-use + Medical. Patients still benefit from card (lower tax, higher limits).",
+      "Medical tax: 1% vs adult-use 6.25-25% based on THC content.",
+      "Social equity program — dedicated license category for disadvantaged communities.",
+      "280+ dispensary locations statewide. Major MSO market (Cresco, GTI, Verano, Curaleaf).",
+      "IDFPR regulates dispensaries. Dept of Agriculture regulates cultivators."
+    ],
+    intakeForms: [
+      { name: "Patient Portal (iLogin)", url: "https://ilogin.illinois.gov/" },
+      { name: "IDFPR Cannabis Business", url: "https://idfpr.illinois.gov/profs/cannabis.asp" },
+      { name: "Medical Cannabis Info", url: "https://dph.illinois.gov/topics-services/prevention-wellness/medical-cannabis.html" }
+    ],
+    intakeFAQ: [
+      { q: "Do I need a medical card if adult-use is legal?", a: "Not required, but cardholders pay significantly less tax (1% vs up to 25%) and have higher possession limits." },
+      { q: "How much does a medical card cost?", a: "$50 for 1 year, $100 for 2 years, $125 for 3 years. Veterans are free." },
+      { q: "Can I grow at home?", a: "Medical patients can grow up to 5 plants. Adult-use home cultivation is NOT allowed." },
+      { q: "What is the social equity program?", a: "Illinois prioritizes licenses for applicants from communities disproportionately impacted by the war on drugs." }
+    ]
   },
   "Indiana": {
     program: "https://indianacannabis.org/medical",
@@ -548,16 +571,38 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
   "Iowa": {
     program: "https://hhs.iowa.gov/health-prevention/medical-cannabis/patients-caregivers",
     patientPortal: "https://idph.my.salesforce-sites.com/IowaReg",
-    businessPortal: "",
-    guide: "",
+    businessPortal: "https://hhs.iowa.gov/health-prevention/medical-cannabis/",
+    guide: "https://hhs.iowa.gov/health-prevention/medical-cannabis/patients-caregivers",
     resources: "https://www.mpp.org/states/iowa/?state=IA",
     abbreviation: "IA",
-    adultUseStatus: "No/limited",
-    medicalStatus: "Yes",
+    adultUseStatus: "No",
+    medicalStatus: "Yes (Very Restricted — Medical Cannabidiol)",
     regulator: "Iowa DHHS",
     compliancePage: "https://hhs.iowa.gov/health-prevention/medical-cannabis/",
-    checklistItems: ["Medical product limits","Testing","Labeling","Records"],
-    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws"
+    checklistItems: ["Medical product limits","Testing","Labeling","Records","No flower","No home grow"],
+    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws",
+    conditions: ["Cancer","Seizures","AIDS/HIV","Crohn's Disease","ALS","Parkinson's","MS","Chronic Pain","PTSD","Corticobasal Degeneration","Ulcerative Colitis"],
+    contactPhone: "(515) 281-7689",
+    contactEmail: "medcbd@idph.iowa.gov",
+    trackingSystem: "BioTrack",
+    licenseCaps: "Only 2 licensed manufacturers (Bud & Mary's, Iowa Cannabis Company). 5 total dispensary locations.",
+    intakeNotes: [
+      "⚠️ VERY RESTRICTED: 'Medical Cannabidiol' program — NOT full medical marijuana.",
+      "Only 5 dispensary locations statewide (2 companies: Bud & Mary's + Iowa Cannabis Company).",
+      "NO flower/smoking allowed — oils, capsules, topicals only.",
+      "NO home cultivation, even for patients.",
+      "Registration card fee: $100. Renewal: $25."
+    ],
+    intakeForms: [
+      { name: "Patient Registration Portal", url: "https://idph.my.salesforce-sites.com/IowaReg" },
+      { name: "DHHS Medical Cannabidiol Info", url: "https://hhs.iowa.gov/health-prevention/medical-cannabis/patients-caregivers" }
+    ],
+    intakeFAQ: [
+      { q: "Can I smoke cannabis in Iowa?", a: "No. Iowa only allows cannabidiol products (oils, capsules, topicals). No flower or vape." },
+      { q: "How many dispensaries are there?", a: "Only 5 statewide, operated by 2 companies." },
+      { q: "Can I grow at home?", a: "No. Home cultivation is illegal even for registered patients." },
+      { q: "What does a card cost?", a: "$100 initial registration, $25 renewal." }
+    ]
   },
   "Kansas": {
     program: "https://kansasstatecannabis.org/medical",
@@ -577,29 +622,75 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     program: "https://kymedcan.ky.gov/Pages/index.aspx",
     patientPortal: "https://kymedcan.ky.gov/patients-and-caregivers/Pages/default.aspx",
     businessPortal: "https://kymedcan.ky.gov/businesses/Pages/default.aspx",
-    guide: "",
+    guide: "https://kymedcan.ky.gov/patients-and-caregivers/Pages/default.aspx",
     resources: "https://www.mpp.org/states/kentucky/?state=KY",
     abbreviation: "KY",
-    adultUseStatus: "No/limited",
-    medicalStatus: "Yes",
-    regulator: "Kentucky Cabinet for Health and Family Services",
+    adultUseStatus: "No",
+    medicalStatus: "Yes (New program — operational 2025/2026)",
+    regulator: "Kentucky Office of Medical Cannabis (OMC)",
     compliancePage: "https://kymedcan.ky.gov/",
-    checklistItems: ["Licensing","Testing","Packaging","Seed-to-sale","Dispensing"],
-    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws"
+    checklistItems: ["Licensing (lottery-based)","Testing","Packaging","Seed-to-sale tracking","Dispensing","No home grow"],
+    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws",
+    conditions: ["Cancer","Chronic Pain","Epilepsy","MS","Chronic Nausea","PTSD","Muscular Dystrophy"],
+    contactPhone: "(502) 564-7430",
+    contactEmail: "CHFS.OMCR@ky.gov",
+    trackingSystem: "Metrc",
+    licenseCaps: "Lottery-based licensing. Limited dispensary permits per region.",
+    intakeNotes: [
+      "✅ NEW PROGRAM: Kentucky's medical cannabis program became operational in 2025/2026.",
+      "Lottery-based licensing — dispensary permits awarded by lottery.",
+      "NO home cultivation allowed.",
+      "Seed-to-sale tracking required (Metrc).",
+      "Recreational remains fully illegal."
+    ],
+    intakeForms: [
+      { name: "Patient Portal (kymedcan)", url: "https://kymedcan.ky.gov/patients-and-caregivers/Pages/default.aspx" },
+      { name: "Business Licensing", url: "https://kymedcan.ky.gov/businesses/Pages/default.aspx" },
+      { name: "OMC Main Page", url: "https://kymedcan.ky.gov/Pages/index.aspx" }
+    ],
+    intakeFAQ: [
+      { q: "When did Kentucky legalize medical cannabis?", a: "SB 47 was signed in 2023. The program became operational in 2025 with dispensaries opening in phases." },
+      { q: "Can I grow at home?", a: "No. Home cultivation is prohibited." },
+      { q: "How are licenses awarded?", a: "Through a lottery system managed by the Office of Medical Cannabis." },
+      { q: "Is recreational legal?", a: "No. Only medical cannabis with a valid OMC card." }
+    ]
   },
   "Louisiana": {
     program: "https://ldh.la.gov/page/medical-marijuana",
-    patientPortal: "Requires prescription from regular doctor",
+    patientPortal: "No portal needed — any doctor can prescribe",
     businessPortal: "https://ldh.la.gov/assets/oph/Center-EH/sanitarian/fooddrug/marijuana/Marijuana-Retailer-Plans-Review-Questionnaire---1-26.Fillable.pdf",
-    guide: "",
+    guide: "https://ldh.la.gov/page/medical-marijuana",
     resources: "https://www.mpp.org/states/louisiana/?state=LA",
     abbreviation: "LA",
-    adultUseStatus: "No",
+    adultUseStatus: "No (≤14g decriminalized)",
     medicalStatus: "Yes",
-    regulator: "Louisiana Department of Health",
+    regulator: "Louisiana Department of Health (LDH)",
     compliancePage: "https://ldh.la.gov/page/medical-marijuana",
-    checklistItems: ["Medical cultivation/processing","Testing","Product rules","Retailer permits"],
-    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws"
+    checklistItems: ["Medical cultivation/processing","Testing","Product rules","Retailer pharmacy permits","Any doctor can recommend"],
+    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws",
+    conditions: ["Cancer","Glaucoma","HIV/AIDS","Cachexia","Seizure Disorders","Crohn's Disease","Muscular Dystrophy","MS","Spasticity","PTSD","Chronic Pain","Autism","Intractable Pain"],
+    contactPhone: "(225) 342-9500",
+    contactEmail: "medicalmarijuana@la.gov",
+    trackingSystem: "BioTrack",
+    licenseCaps: "10 retail pharmacy permits statewide. Each can have up to 2 satellite locations.",
+    intakeNotes: [
+      "✅ UNIQUE: ANY licensed Louisiana physician can recommend cannabis — no special certification needed.",
+      "No 'medical card' system — doctor writes recommendation directly into state system.",
+      "10 licensed retail pharmacy permits statewide + satellite locations.",
+      "Flower is legal for medical patients.",
+      "≤14g possession decriminalized ($100 fine, no jail). Recreational remains illegal.",
+      "LDH took over program management from Board of Pharmacy in 2025."
+    ],
+    intakeForms: [
+      { name: "LDH Medical Marijuana Info", url: "https://ldh.la.gov/page/medical-marijuana" },
+      { name: "Retailer Application", url: "https://ldh.la.gov/assets/oph/Center-EH/sanitarian/fooddrug/marijuana/Marijuana-Retailer-Plans-Review-Questionnaire---1-26.Fillable.pdf" }
+    ],
+    intakeFAQ: [
+      { q: "Do I need a special marijuana doctor?", a: "No! Any licensed Louisiana physician can recommend medical cannabis. Just ask your regular doctor." },
+      { q: "Is there a patient card or registry?", a: "No card system. Your doctor enters the recommendation into the state database and you pick up at a licensed pharmacy." },
+      { q: "Is flower legal in Louisiana?", a: "Yes, for medical patients with a valid recommendation." },
+      { q: "What about small amounts recreationally?", a: "≤14g is decriminalized ($100 fine, no jail), but recreational use remains technically illegal." }
+    ]
   },
   "Maine": {
     program: "https://www.maine.gov/dafs/ocp/medical-use/applications-forms/registryidentificationcard-instructions",
@@ -610,10 +701,33 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     abbreviation: "ME",
     adultUseStatus: "Yes",
     medicalStatus: "Yes",
-    regulator: "Maine Office of Cannabis Policy",
+    regulator: "Maine Office of Cannabis Policy (OCP)",
     compliancePage: "https://www.maine.gov/dafs/ocp/",
-    checklistItems: ["License","Testing","Packaging","Labeling","Labor","Tax"],
-    complianceSource: "https://www.nsc.org/cannabis-regulations"
+    checklistItems: ["License","Testing","Packaging","Labeling","Labor","Tax","Caregiver rules"],
+    complianceSource: "https://www.nsc.org/cannabis-regulations",
+    conditions: ["Epilepsy","Glaucoma","MS","Cancer","Crohn's Disease","HIV/AIDS","PTSD","Chronic Pain","Hepatitis C","ALS","Alzheimer's","Huntington's Disease","Nails-Patella Syndrome","Inflammatory Bowel Disease"],
+    contactPhone: "(207) 287-3282",
+    contactEmail: "licensing.ocp@maine.gov",
+    trackingSystem: "Metrc",
+    licenseCaps: "No strict state cap on licenses. Local municipalities can restrict.",
+    intakeNotes: [
+      "✅ DUAL-USE: Medical (since 2016) + Adult-Use sales (since 2020).",
+      "Strong CAREGIVER culture — unique to Maine. Individual caregivers can grow/sell to patients.",
+      "OCP regulates both medical and adult-use programs.",
+      "Portland is the hub — most dispensaries and law firms concentrated there.",
+      "No shipment of cannabis out of state allowed."
+    ],
+    intakeForms: [
+      { name: "Registry ID Card Instructions", url: "https://www.maine.gov/dafs/ocp/medical-use/applications-forms/registryidentificationcard-instructions" },
+      { name: "Online Licensing Portal", url: "https://licensing.web.maine.gov/cgi-bin/online/licensing/begin.pl?board_number=421" },
+      { name: "OCP Main Page", url: "https://www.maine.gov/dafs/ocp/" }
+    ],
+    intakeFAQ: [
+      { q: "What is a caregiver in Maine?", a: "An individual registered with OCP who can grow and provide cannabis to up to 5 patients. Unique to Maine's program." },
+      { q: "Do I need a medical card if adult-use is legal?", a: "Not required, but medical patients have no sales tax (vs 10% adult-use) and can designate a caregiver." },
+      { q: "How do I get a medical card?", a: "Get a physician certification, then apply online through the OCP licensing portal. Fee varies." },
+      { q: "Can I grow at home?", a: "Medical: up to 6 mature plants. Adult-use: up to 3 mature plants per person (6 per household)." }
+    ]
   },
   "Maryland": {
     program: "https://cannabis.maryland.gov/Pages/Medical_Cannabis.aspx",
