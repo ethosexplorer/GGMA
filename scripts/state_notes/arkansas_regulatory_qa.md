@@ -197,6 +197,78 @@ Licensing FAQ: https://www.dfa.arkansas.gov/office/medical-marijuana-commission/
 - **Q: What if I forget my password?**
   A: Use the "Reset Password" button on the login page. If renewing with a new email, call 501-682-4982 first.
 
+## DFA Licensing & Renewal FAQ (Official — Verbatim from DFA)
+Source: https://www.dfa.arkansas.gov/office/medical-marijuana-commission/licensing-and-renewal-faq/
+
+- **Q: I never received my verification email to verify my account**
+  A: Click "Register" and scroll to the bottom of the Create An Account box to select "If you didn't receive your verification email, please click here." Enter the email address used during registration. Ensure no extra spaces. Check spam and junk folders.
+
+- **Q: I do not see my application when logging into my account**
+  A: When logging into your account at https://ar-dfa-public.nls.egov.com/, the License Dashboard is listed first. Click on "Applications" in the left menu to resume working on your application or view submitted applications.
+
+- **Q: I would like to update my contact/personal information but I've already submitted my application**
+  A: Contact the AMMC at mmj@dfa.arkansas.gov to request changes to your submitted application.
+
+- **Q: I would like to see the status of my application**
+  A: Check status online through the NIC Licensing System at https://ar-dfa-public.nls.egov.com/. Look for the "Status" column in your application listing.
+
+- **Q: I would like to cancel my application and receive a refund**
+  A: Contact the AMMC at mmj@dfa.arkansas.gov for cancellation/refund requests.
+
+- **Q: I am having a technical issue uploading my documents**
+  A: 
+  - Hard copy → scan it OR take a photo and email/download to computer
+  - ZIP files are NOT accepted
+  - Max file size: 25MB
+  - To reduce file size: scan at 200 dpi, use greyscale/B&W for text documents
+  - File names: no special characters except the period before the file extension
+  - Try a shorter file name if errors persist
+  - If file is corrupted, make a new copy/scan
+  - If still failing: Open a Support Request at https://cannabislicensing.zendesk.com/hc/en-us/requests/new
+
+- **Q: I received an error while processing my payment**
+  A: Open a Support Request at https://cannabislicensing.zendesk.com/hc/en-us/requests/new
+
+- **Q: I need to apply for/renew my AR Medical Marijuana license**
+  A: Visit the Medical Marijuana Licensing portal at https://ar-dfa-public.nls.egov.com/
+
+- **Q: I have forgotten the email address that I originally registered with**
+  A: Open a Support Request at https://cannabislicensing.zendesk.com/hc/en-us/requests/new
+
+- **Q: I would like to renew my license**
+  A: Complete a Renewal Application through the NIC Licensing System at https://ar-dfa-public.nls.egov.com/
+
+- **Q: My application was rejected. How do I fix it?**
+  A: Login to the NIC Licensing System, go to "Applications" menu on the left, select the application to edit. You MUST resubmit after editing for it to be reviewed.
+
+- **Q: I entered my birthday or SSN incorrectly and need to fix it**
+  A: Open a Support Request at https://cannabislicensing.zendesk.com/hc/en-us/requests/new
+
+- **Q: I'm having trouble with the online system**
+  A: Open a Support Request at https://cannabislicensing.zendesk.com/hc/en-us/requests/new
+
+## Complete Forms & Downloads Index
+| Form | URL |
+|------|-----|
+| AR State Police Background Check Instructions | https://www.dfa.arkansas.gov/wp-content/uploads/MMC_ASP_InstructionSheet.docx |
+| AR State Police Background Application | https://www.dfa.arkansas.gov/wp-content/uploads/MMC_ASP_BackgroundApplication.pdf |
+| Eight Zone Map for Dispensaries | https://www.dfa.arkansas.gov/wp-content/uploads/8Zonemap.pdf |
+| Performance Bond — Cultivation Facility | https://www.dfa.arkansas.gov/wp-content/uploads/PerformanceBondCultivationFacility1.pdf |
+| Performance Bond — Dispensary | https://www.dfa.arkansas.gov/wp-content/uploads/Performance_Bond_Dispensary.pdf |
+| MMC Change in Information Form | https://www.dfa.arkansas.gov/wp-content/uploads/Change_in_Information.pdf |
+| Transfer of Location Application | https://www.dfa.arkansas.gov/wp-content/uploads/Transfer_of_Location_Application_Cultivation.pdf |
+| Transfer of Ownership Application | https://www.dfa.arkansas.gov/wp-content/uploads/Transfer_of_Ownership_Application.pdf |
+| Transporter Application & Instructions | https://www.dfa.arkansas.gov/wp-content/uploads/Transporter_ApplicationandInstructions.pdf |
+| Processor Application & Instructions | https://www.dfa.arkansas.gov/wp-content/uploads/Processor_ApplicationandInstructions.pdf |
+| Patient Registration Forms (ADH) | https://mmj.adh.arkansas.gov/?action=index&subaction=forms |
+
+## System Portals
+| Portal | URL | Purpose |
+|--------|-----|---------|
+| NIC Licensing System (Business) | https://ar-dfa-public.nls.egov.com/ | Apply, renew, check status for business licenses |
+| Patient Registry (ADH) | https://mmj.adh.arkansas.gov/ | Patient registration, login, renewal |
+| Tech Support (Zendesk) | https://cannabislicensing.zendesk.com/hc/en-us/requests/new | File upload errors, payment errors, SSN/DOB corrections, email recovery |
+
 ## Key Compliance Notes
 - **Medical Only** — no recreational program exists
 - **No Home Cultivation** — all product must come from licensed dispensaries
@@ -207,3 +279,5 @@ Licensing FAQ: https://www.dfa.arkansas.gov/office/medical-marijuana-commission/
 - **14-Day Allotment** tracked to the minute — exceeding limits is a violation
 - **Rules & Regulations:** https://www.dfa.arkansas.gov/office/medical-marijuana-commission/rules-regulations/
 - **Commission Members:** https://www.dfa.arkansas.gov/office/medical-marijuana-commission/commission-members/
+- **Staff Directory:** https://www.dfa.arkansas.gov/office/alcohol-beverage-control/staff-directory/
+- **Agendas & Minutes:** https://www.dfa.arkansas.gov/office/medical-marijuana-commission/minutes-prior-meetings/

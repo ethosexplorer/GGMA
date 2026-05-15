@@ -24,6 +24,14 @@ export interface StateResource {
     state: string;
     city: string;
   };
+  // Intake Integration fields
+  contactPhone?: string;
+  contactEmail?: string;
+  trackingSystem?: string;
+  licenseCaps?: string;
+  intakeForms?: { name: string; url: string }[];
+  intakeFAQ?: { q: string; a: string }[];
+  intakeNotes?: string[];
 }
 
 export const STATE_RESOURCES: Record<string, StateResource> = {
@@ -40,7 +48,23 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     compliancePage: "https://amcc.alabama.gov/",
     checklistItems: ["Licensing","Seed-to-sale tracking","Testing","Packaging","Advertising"],
     complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws",
-    conditions: ["Autism Spectrum Disorder (ASD)","Cancer-related cachexia, nausea or vomiting, weight loss, or chronic pain","Crohn's Disease","Depression","Epilepsy or a condition causing seizures","HIV/AIDS-related nausea or weight loss","Panic disorder","Parkinson's disease","Persistent nausea that is not significantly responsive to traditional treatment","Post Traumatic Stress Disorder (PTSD)","Sickle Cell Anemia","Spasticity associated with a motor neuron disease, including ALS","Spasticity associated with Multiple Sclerosis or a spinal cord injury","Terminal illness","Tourette's Syndrome","A condition causing chronic or intractable pain"]
+    conditions: ["Autism Spectrum Disorder (ASD)","Cancer-related cachexia, nausea or vomiting, weight loss, or chronic pain","Crohn's Disease","Depression","Epilepsy or a condition causing seizures","HIV/AIDS-related nausea or weight loss","Panic disorder","Parkinson's disease","Persistent nausea that is not significantly responsive to traditional treatment","Post Traumatic Stress Disorder (PTSD)","Sickle Cell Anemia","Spasticity associated with a motor neuron disease, including ALS","Spasticity associated with Multiple Sclerosis or a spinal cord injury","Terminal illness","Tourette's Syndrome","A condition causing chronic or intractable pain"],
+    contactPhone: "334-585-3375",
+    trackingSystem: "State-managed",
+    licenseCaps: "Limited — AMCC controls license issuance",
+    intakeNotes: [
+      "Medical ONLY — NO smoking/vaping flower products allowed",
+      "Products: tablets, capsules, tinctures, patches, suppositories, nebulizers, topicals",
+      "33 registered certifying physicians statewide as of 5/13/2026",
+      "Physicians must be AMCC-registered to certify patients",
+      "All applications and exhibits become public record under Alabama law"
+    ],
+    intakeFAQ: [
+      { q: "What products are available in Alabama?", a: "Tablets, capsules, tinctures, patches, suppositories, nebulizers, and topicals. NO smokable or vapeable flower products are permitted." },
+      { q: "How do I find a certifying physician?", a: "Check the AMCC registered physician list at amcc.alabama.gov/patients/. There are 33 registered physicians across the state." },
+      { q: "What license types are available for businesses?", a: "6 types: Integrated Facility, Cultivator, Processor, Dispensary, Secure Transporter, and State Testing Laboratory." },
+      { q: "Can I redact information from my application?", a: "Yes — applicants may redact confidential/proprietary info but must cite statutory authority (§ 36-12-40 et seq., Code of Alabama 1975). AMCC reserves the right to revise redactions." }
+    ]
   },
   "Alaska": {
     program: "https://www.commerce.alaska.gov/web/amco/home.aspx",
@@ -55,12 +79,33 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     compliancePage: "https://www.commerce.alaska.gov/web/amco/",
     checklistItems: ["License","Inventory tracking","Testing","Labeling","Taxes"],
     complianceSource: "https://www.nsc.org/cannabis-regulations",
-    conditions: ["Cachexia","Cancer","Chronic Pain","Glaucoma","HIV or AIDS","Multiple Sclerosis","Nausea","Seizures"]
+    conditions: ["Cachexia","Cancer","Chronic Pain","Glaucoma","HIV or AIDS","Multiple Sclerosis","Nausea","Seizures"],
+    contactPhone: "907-269-0350",
+    contactEmail: "marijuana.licensing@alaska.gov",
+    trackingSystem: "METRC (Franwell) — RFID/barcode seed-to-sale",
+    licenseCaps: "No state cap — local govts can restrict",
+    intakeNotes: [
+      "Uses METRC tracking — all licensees must have internet access",
+      "Residency required: all persons with financial interest must be AK residents (PFD eligible)",
+      "Must secure premises BEFORE applying — need deed or lease",
+      "500 ft buffer from schools, youth centers, religious buildings, correctional facilities",
+      "NO delivery permitted under AS 17.38 or 3 AAC 306",
+      "Alaska uses 'Retail Marijuana Store' — NOT 'dispensary'",
+      "Plan for 4-6 month application process",
+      "Communities can opt out by ordinance or petition election"
+    ],
+    intakeFAQ: [
+      { q: "What tracking system does Alaska use?", a: "METRC (Marijuana Enforcement Tracking Reporting Compliance) — real-time RFID/barcode seed-to-sale tracking by Franwell. Internet access is mandatory." },
+      { q: "Do I need to be an Alaska resident?", a: "Yes — ALL persons with financial interest in a marijuana business must be Alaska residents eligible for the Permanent Fund Dividend (PFD)." },
+      { q: "Can I hold multiple license types?", a: "Yes — except testing facilities, which must be independent and cannot hold other license types." },
+      { q: "What are Alaska's personal use rules?", a: "21+ can possess up to 1 oz. Home grow: 6 plants max (3 mature), 12 per dwelling. No cooperative grows." },
+      { q: "Can communities opt out?", a: "Yes — local governments can opt out of allowing marijuana businesses by ordinance or petition election (3 AAC 306.200)." }
+    ]
   },
   "Arizona": {
     program: "AZDHS | Public Health Licensing - Medical Marijuana",
     patientPortal: "https://individual-licensing.azdhs.gov/s/login/?ec=302&startURL=%2Fs%2F",
-    businessPortal: "https://www.azdhs.gov/licensing/medical-marijuana/",
+    businessPortal: "https://facility-licensing.azdhs.gov/",
     guide: "",
     resources: "https://www.mpp.org/states/arizona/?state=AZ",
     status: "Operational", year: "2011", abbreviation: "AZ",
@@ -70,7 +115,36 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     compliancePage: "https://www.azdhs.gov/licensing/medical-marijuana/",
     checklistItems: ["Licensing","Testing","Product rules","Security","Records"],
     complianceSource: "https://www.nsc.org/cannabis-regulations",
-    conditions: ["Alzheimer's Disease","Amyotrophic Lateral Sclerosis (Lou Gehrig's disease)","Cachexia or wasting syndrome","Cancer","Chronic pain","Crohn's Disease","Glaucoma","Hepatitis C","HIV or AIDS","Nausea","Persistent Muscle Spasms","PTSD","Seizures"]
+    conditions: ["Alzheimer's Disease","Amyotrophic Lateral Sclerosis (Lou Gehrig's disease)","Cachexia or wasting syndrome","Cancer","Chronic pain","Crohn's Disease","Glaucoma","Hepatitis C","HIV or AIDS","Nausea","Persistent Muscle Spasms","PTSD","Seizures"],
+    contactPhone: "602-542-1025",
+    trackingSystem: "State-managed (AZDHS)",
+    licenseCaps: "Dispensary allocation managed by AZDHS annually",
+    intakeNotes: [
+      "DUAL-USE: Both medical (Prop 203) AND recreational (Prop 207) programs operate simultaneously",
+      "Patient card fee: $150 (reduced for SNAP recipients), valid 2 years",
+      "Rec: 21+, up to 1 oz (max 5g concentrates). Home grow: 6 plants/person, 12/household",
+      "Delivery legal since Nov 1, 2024",
+      "Medical dispensaries must be Arizona nonprofit entities",
+      "Electronic ID cards — no physical cards mailed",
+      "Fingerprinting required for all agents and caregivers",
+      "Tax: 5.6% sales + 16% excise = 21.6% total on recreational",
+      "⚠️ 2026 BALLOT: Prohibitionist initiative filed to eliminate adult-use sales",
+      "$1B+ in tax revenue generated since legalization"
+    ],
+    intakeForms: [
+      { name: "Individual (Patient/Caregiver) Licensing Portal", url: "https://individual-licensing.azdhs.gov/" },
+      { name: "Facility (Business) Licensing Portal", url: "https://facility-licensing.azdhs.gov/" },
+      { name: "Electronic Card Portal Instructions", url: "https://www.azdhs.gov/documents/licensing/medical-marijuana/portal-instructions.pdf" },
+      { name: "Training Resources (MLMS)", url: "https://www.azdhs.gov/licensing/marijuana/index.php#mlms" }
+    ],
+    intakeFAQ: [
+      { q: "Do I still need a medical card if recreational is legal?", a: "Medical cards offer benefits: lower taxes, higher possession limits, cultivation rights within 25-mile boundary, and access to higher-potency products." },
+      { q: "Can I grow at home?", a: "Recreational: Yes, up to 6 plants per person, 12 per household, in enclosed locked space. Medical: Only if your residence is 25+ miles from nearest dispensary." },
+      { q: "What tracking system does Arizona use?", a: "Arizona uses its own state-managed tracking system through AZDHS (not METRC)." },
+      { q: "Do physicians need special certification?", a: "No separate state cannabis certification. Any licensed AZ physician (MD/DO) can certify patients for qualifying conditions." },
+      { q: "Can I get cannabis delivered?", a: "Yes, delivery has been legal since November 1, 2024 for both adult-use and medical products." },
+      { q: "What are the taxes on recreational?", a: "5.6% state sales tax + 16% excise tax = 21.6% total." }
+    ]
   },
   "Arkansas": {
     program: "Medical Marijuana Program",
@@ -85,7 +159,46 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     compliancePage: "https://www.dfa.arkansas.gov/office/medical-marijuana-commission/",
     checklistItems: ["Licensing","Labeling","Testing","Track-and-trace","Inspections"],
     complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws",
-    conditions: ["ALS","Alzheimer's disease","Cachexia or wasting syndrome","Cancer","Chronic or debilitating disease","Crohn's disease","Fibromyalgia","Glaucoma","Hepatitis C","HIV/AIDS","Intractable pain","Multiple sclerosis","Peripheral neuropathy","PTSD","Seizures","Severe arthritis","Severe nausea","Severe and persistent muscle spasms","Tourette's syndrome","Ulcerative colitis","Any medical condition approved by the Department of Health"]
+    conditions: ["ALS","Alzheimer's disease","Cachexia or wasting syndrome","Cancer","Chronic or debilitating disease","Crohn's disease","Fibromyalgia","Glaucoma","Hepatitis C","HIV/AIDS","Intractable pain","Multiple sclerosis","Peripheral neuropathy","PTSD","Seizures","Severe arthritis","Severe nausea","Severe and persistent muscle spasms","Tourette's syndrome","Ulcerative colitis","Any medical condition approved by the Department of Health"],
+    contactPhone: "501-682-4982",
+    contactEmail: "mmj@dfa.arkansas.gov",
+    trackingSystem: "State-managed (NIC Licensing System)",
+    licenseCaps: "Cultivators: 8 CAPPED | Dispensaries: ~40 CAPPED | Processors: Uncapped",
+    intakeNotes: [
+      "MEDICAL ONLY — no recreational/adult-use program (Issue 4 failed 2022)",
+      "NO home cultivation — all product must come from licensed dispensaries",
+      "Cultivator + dispensary licenses CAPPED — only way in is Transfer of Ownership",
+      "Processor + transporter licenses UNCAPPED — rolling applications via DFA",
+      "8-zone system ensures statewide geographic dispensary coverage",
+      "Possession: 2.5 oz per 14-day rolling period, tracked to the minute",
+      "Payment processing deactivated Sundays 6pm-12am for system maintenance",
+      "Allow up to 14 days for application processing",
+      "⚠️ Hemp ban court decision affecting market — check DFA for updates"
+    ],
+    intakeForms: [
+      { name: "Processor Application & Instructions", url: "https://www.dfa.arkansas.gov/wp-content/uploads/Processor_ApplicationandInstructions.pdf" },
+      { name: "Transporter Application & Instructions", url: "https://www.dfa.arkansas.gov/wp-content/uploads/Transporter_ApplicationandInstructions.pdf" },
+      { name: "Transfer of Ownership Application", url: "https://www.dfa.arkansas.gov/wp-content/uploads/Transfer_of_Ownership_Application.pdf" },
+      { name: "Transfer of Location Application", url: "https://www.dfa.arkansas.gov/wp-content/uploads/Transfer_of_Location_Application_Cultivation.pdf" },
+      { name: "Performance Bond — Cultivation", url: "https://www.dfa.arkansas.gov/wp-content/uploads/PerformanceBondCultivationFacility1.pdf" },
+      { name: "Performance Bond — Dispensary", url: "https://www.dfa.arkansas.gov/wp-content/uploads/Performance_Bond_Dispensary.pdf" },
+      { name: "AR State Police Background Check Instructions", url: "https://www.dfa.arkansas.gov/wp-content/uploads/MMC_ASP_InstructionSheet.docx" },
+      { name: "AR State Police Background Application", url: "https://www.dfa.arkansas.gov/wp-content/uploads/MMC_ASP_BackgroundApplication.pdf" },
+      { name: "Change in Information Form", url: "https://www.dfa.arkansas.gov/wp-content/uploads/Change_in_Information.pdf" },
+      { name: "Eight Zone Map for Dispensaries", url: "https://www.dfa.arkansas.gov/wp-content/uploads/8Zonemap.pdf" },
+      { name: "Patient Registration Forms (ADH)", url: "https://mmj.adh.arkansas.gov/?action=index&subaction=forms" }
+    ],
+    intakeFAQ: [
+      { q: "Can I open a new dispensary?", a: "No — dispensary licenses are capped at ~40 and not accepting new applications. You can pursue a Transfer of Ownership of an existing license." },
+      { q: "Can I become a processor?", a: "YES — processor licenses have no cap. Download the application from the DFA website." },
+      { q: "How do I apply for a medical card?", a: "Online at mmj.adh.arkansas.gov — click Patient Registration, complete the form, submit physician certification and payment." },
+      { q: "How long does processing take?", a: "Up to 14 days from the day after application and payment are received." },
+      { q: "Can I grow marijuana at home?", a: "NO. Home cultivation is NOT permitted under Amendment 98. All marijuana must be purchased from licensed dispensaries." },
+      { q: "How much can I purchase?", a: "2.5 ounces per 14-day rolling period, tracked to the minute of each purchase." },
+      { q: "What if I forget my password?", a: "Use the Reset Password button on the login page. If renewing with a new email, call 501-682-4982 first." },
+      { q: "I'm having trouble uploading documents", a: "Max file size 25MB. No ZIP files. No special characters in filenames. Scan at 200 dpi. If still failing, open a support request at cannabislicensing.zendesk.com" },
+      { q: "Where do I check application status?", a: "Login to the NIC Licensing System at ar-dfa-public.nls.egov.com — click Applications in the left menu." }
+    ]
   },
   "California": {
     program: "https://www.cannabis.ca.gov/",

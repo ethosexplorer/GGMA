@@ -111,6 +111,66 @@ export const ApplicationsTab = ({ user, onStartApplication, jurisdiction = 'Okla
               </a>
             )}
           </div>
+          {/* Contact Info */}
+          {(stateData.contactPhone || stateData.contactEmail) && (
+            <div className="mt-3 flex flex-wrap gap-4 text-xs text-emerald-700">
+              {stateData.contactPhone && <span>📞 <strong>{stateData.contactPhone}</strong></span>}
+              {stateData.contactEmail && <span>✉️ <strong>{stateData.contactEmail}</strong></span>}
+              {stateData.trackingSystem && <span>🔗 Tracking: <strong>{stateData.trackingSystem}</strong></span>}
+            </div>
+          )}
+          {stateData.licenseCaps && (
+            <p className="mt-2 text-[10px] font-bold text-amber-700 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200 inline-block">
+              ⚖️ {stateData.licenseCaps}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* State Intake Notes — Key Agent Guidance */}
+      {stateData.intakeNotes && stateData.intakeNotes.length > 0 && (
+        <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5">
+          <h4 className="font-bold text-slate-800 text-sm mb-3 flex items-center gap-2">📋 {stateName} Intake Notes</h4>
+          <ul className="space-y-1.5">
+            {stateData.intakeNotes.map((note, i) => (
+              <li key={i} className="text-xs text-slate-700 flex items-start gap-2">
+                <span className="text-emerald-500 mt-0.5 shrink-0">•</span>
+                <span>{note}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* State FAQ — Inline Q&A for Agents */}
+      {stateData.intakeFAQ && stateData.intakeFAQ.length > 0 && (
+        <div className="bg-blue-50 rounded-2xl border border-blue-200 p-5">
+          <h4 className="font-bold text-blue-900 text-sm mb-3 flex items-center gap-2">❓ {stateName} Q&A Quick Reference</h4>
+          <div className="space-y-3">
+            {stateData.intakeFAQ.map((faq, i) => (
+              <div key={i} className="p-3 bg-white rounded-xl border border-blue-100">
+                <p className="text-xs font-bold text-blue-900">{faq.q}</p>
+                <p className="text-xs text-blue-700 mt-1 leading-relaxed">{faq.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* State Forms — Downloadable Documents */}
+      {stateData.intakeForms && stateData.intakeForms.length > 0 && (
+        <div className="bg-indigo-50 rounded-2xl border border-indigo-200 p-5">
+          <h4 className="font-bold text-indigo-900 text-sm mb-3 flex items-center gap-2">📄 {stateName} Forms & Applications</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {stateData.intakeForms.map((form, i) => (
+              <a key={i} href={form.url} target="_blank" rel="noopener noreferrer"
+                className="px-3 py-2.5 bg-white rounded-xl border border-indigo-100 text-xs font-medium text-indigo-800 hover:border-indigo-300 hover:bg-indigo-50 transition-all flex items-center gap-2 group">
+                <FileText size={14} className="text-indigo-400 shrink-0" />
+                <span className="truncate">{form.name}</span>
+                <ExternalLink size={10} className="ml-auto text-indigo-300 group-hover:text-indigo-500 shrink-0" />
+              </a>
+            ))}
+          </div>
         </div>
       )}
 
