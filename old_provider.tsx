@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { ShadowOverlay } from '../components/shared/ShadowOverlay';
 import { useDraggableSidebar } from '../hooks/useDraggableSidebar';
 import { Users, Calendar, Video, MapPin, FileText, Share2, Shield, CreditCard, 
-  BarChart, Settings, Bell, Search, Zap, Plus, PhoneCall, AlertTriangle, ChevronRight, FlaskConical, X, UserCheck, CircleCheck, ArrowRight, FolderLock, Download, Eye, ExternalLink } from 'lucide-react';
+  BarChart, Settings, Bell, Search, Zap, Plus, PhoneCall, AlertTriangle, ChevronRight, FlaskConical, X, UserCheck, CircleCheck, ArrowRight, FolderLock, Download, Eye } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { NotificationDropdown } from '../components/shared/NotificationDropdown';
 import { StatCard } from '../components/StatCard';
@@ -646,27 +646,6 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                     <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Launching Secure Telehealth Waiting Room..." })] }).catch(console.error) ); alert("Launching Secure Telehealth Waiting Room...\n\n[Live Production Transaction Logged]"); }} className="w-full mt-2 py-2 rounded-xl bg-blue-50 text-blue-700 text-sm font-bold hover:bg-blue-100 transition-colors">
                       Enter Waiting Room
                     </button>
-                  </div>
-                </div>
-
-                {/* OMMA State Resources */}
-                <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-                  <h3 className="font-bold text-slate-800 mb-3 flex items-center gap-2">
-                    <FileText size={18} className="text-blue-600" /> State Resources
-                  </h3>
-                  <div className="space-y-2">
-                    <a href="https://oklahoma.gov/content/dam/ok/en/omma/docs/patient-caregiver/Adult%20Patient%20Physician%20Recommendation%20Form.pdf" target="_blank" rel="noreferrer" className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors group">
-                      <span className="text-xs font-bold text-slate-700">Adult Recommendation Form</span>
-                      <ExternalLink size={14} className="text-slate-400 group-hover:text-blue-600" />
-                    </a>
-                    <a href="https://oklahoma.gov/content/dam/ok/en/omma/docs/patient-caregiver/Minor%20Patient%20Physician%20Recommendation%20Form.pdf" target="_blank" rel="noreferrer" className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors group">
-                      <span className="text-xs font-bold text-slate-700">Minor Recommendation Form</span>
-                      <ExternalLink size={14} className="text-slate-400 group-hover:text-blue-600" />
-                    </a>
-                    <a href="https://oklahoma.gov/omma/patients-caregivers.html" target="_blank" rel="noreferrer" className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors group">
-                      <span className="text-xs font-bold text-slate-700">OMMA Patient Portal</span>
-                      <ExternalLink size={14} className="text-slate-400 group-hover:text-blue-600" />
-                    </a>
                   </div>
                 </div>
 
