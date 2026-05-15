@@ -108,6 +108,11 @@ const GOV_ADVOCATES = [
   { name: "Louisiana Board of Pharmacy", city: "Baton Rouge", state: "LA", type: "gov_state", focus: "Pharmacy Licensing & Compliance", email: "", phone: "225-925-6496" },
   { name: "Louisiana NORML", city: "New Orleans", state: "LA", type: "advocate", focus: "Cannabis Reform Advocacy", email: "", phone: "" },
   { name: "Marijuana Policy Project (MPP) - LA Chapter", city: "Baton Rouge", state: "LA", type: "advocate", focus: "Policy Reform", email: "louisiana@mpp.org", phone: "202-462-5747" },
+
+  // Kentucky (New medical program — operational 2025/2026)
+  { name: "Kentucky Office of Medical Cannabis (OMC)", city: "Frankfort", state: "KY", type: "gov_state", focus: "State Regulator (kymedcan.ky.gov)", email: "", phone: "502-564-7430" },
+  { name: "Kentucky NORML", city: "Louisville", state: "KY", type: "advocate", focus: "Cannabis Reform Advocacy", email: "", phone: "" },
+  { name: "Marijuana Policy Project (MPP) - KY Chapter", city: "Frankfort", state: "KY", type: "advocate", focus: "Policy Reform", email: "kentucky@mpp.org", phone: "202-462-5747" },
 ];
 
 function slugify(str) { return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').substring(0, 50); }
@@ -126,7 +131,7 @@ async function importGovAdvocates() {
       contactName: org.name,
       city: org.city,
       state: org.state,
-      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', LA:'Louisiana' }[org.state] || org.state,
+      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Louisiana' }[org.state] || org.state,
       type: org.type, // 'gov_state', 'gov_local', 'gov_federal', or 'advocate'
       email: org.email || '',
       phone: org.phone || '',
