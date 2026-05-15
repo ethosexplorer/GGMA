@@ -41,10 +41,9 @@ const getRoleFromCategory = (category?: string) => {
 };
 
 const PAYMENT_OPTIONS = [
-  { id: 'stripe', label: 'Stripe', sub: 'Credit Card, ACH Debit & Invoicing', icon: '💳', color: 'indigo' },
-  { id: 'authnet', label: 'Authorize.net', sub: 'Credit / Debit Card (Pending Approval)', icon: '🔒', color: 'orange' },
-  { id: 'chime', label: 'Chime', sub: 'Supports Cash App, Venmo & Zelle', icon: '🏦', color: 'emerald' },
-  { id: 'invoice', label: 'ACH Invoice', sub: 'Stripe Invoice with Pay Link', icon: '📄', color: 'slate' },
+  { id: 'authnet', label: 'Authorize.net', sub: 'Credit / Debit Card', icon: '💳', color: 'orange' },
+  { id: 'chime', label: 'Chime', sub: 'Cash App, Venmo & Zelle', icon: '🏦', color: 'emerald' },
+  { id: 'invoice', label: 'ACH Invoice', sub: 'Bank Transfer / Pay Link', icon: '📄', color: 'slate' },
 ] as const;
 
 type PayMethodId = typeof PAYMENT_OPTIONS[number]['id'];
@@ -53,7 +52,7 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
   const [step, setStep] = useState<'info' | 'success'>('info');
   const [accountCreated, setAccountCreated] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [payMethod, setPayMethod] = useState<PayMethodId>('stripe');
+  const [payMethod, setPayMethod] = useState<PayMethodId>('authnet');
   const [form, setForm] = useState({
     fullName: '',
     email: '',
@@ -82,10 +81,9 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
 
   const getMethodNotice = () => {
     switch (payMethod) {
-      case 'stripe': return 'Supports Credit Card, ACH Direct Debit, and Invoicing. All transactions encrypted — payment details never stored on our servers.';
-      case 'authnet': return 'PCI-compliant card tokenization via Accept.js. Card data is encrypted and never touches our servers. Visa, Mastercard, Amex, Discover accepted. Currently pending merchant approval.';
+      case 'authnet': return 'PCI-compliant card tokenization via Accept.js. Card data is encrypted and never touches our servers. Visa, Mastercard, Amex, Discover accepted.';
       case 'chime': return 'Pay via Chime request-to-pay. Also accepts Cash App, Venmo, and Zelle transfers. Payment instructions will be sent to your email after submitting.';
-      case 'invoice': return 'A Stripe-powered ACH invoice with a secure payment link will be sent to your email. Click the link to pay via bank transfer or card. Net 30 terms available.';
+      case 'invoice': return 'An ACH invoice with a secure payment link will be sent to your email. Click the link to pay via direct bank transfer. Net 30 terms available.';
       default: return '';
     }
   };
@@ -93,18 +91,17 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
   const getColorClasses = () => {
     const c = selectedPm.color;
     return {
-      bg: c === 'indigo' ? 'bg-indigo-50' : c === 'orange' ? 'bg-orange-50' : c === 'emerald' ? 'bg-emerald-50' : 'bg-slate-50',
-      border: c === 'indigo' ? 'border-indigo-200' : c === 'orange' ? 'border-orange-200' : c === 'emerald' ? 'border-emerald-200' : 'border-slate-200',
-      icon: c === 'indigo' ? 'text-indigo-600' : c === 'orange' ? 'text-orange-600' : c === 'emerald' ? 'text-emerald-600' : 'text-slate-600',
-      title: c === 'indigo' ? 'text-indigo-800' : c === 'orange' ? 'text-orange-800' : c === 'emerald' ? 'text-emerald-800' : 'text-slate-800',
-      text: c === 'indigo' ? 'text-indigo-700' : c === 'orange' ? 'text-orange-700' : c === 'emerald' ? 'text-emerald-700' : 'text-slate-700',
-      btn: c === 'indigo' ? 'bg-[#635BFF] hover:bg-[#4B45D6] shadow-[#635BFF]/30' : c === 'orange' ? 'bg-orange-500 hover:bg-orange-600 shadow-orange-500/30' : c === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/30' : 'bg-slate-700 hover:bg-slate-800 shadow-slate-700/30',
+      bg: c === 'orange' ? 'bg-orange-50' : c === 'emerald' ? 'bg-emerald-50' : 'bg-slate-50',
+      border: c === 'orange' ? 'border-orange-200' : c === 'emerald' ? 'border-emerald-200' : 'border-slate-200',
+      icon: c === 'orange' ? 'text-orange-600' : c === 'emerald' ? 'text-emerald-600' : 'text-slate-600',
+      title: c === 'orange' ? 'text-orange-800' : c === 'emerald' ? 'text-emerald-800' : 'text-slate-800',
+      text: c === 'orange' ? 'text-orange-700' : c === 'emerald' ? 'text-emerald-700' : 'text-slate-700',
+      btn: c === 'orange' ? 'bg-orange-500 hover:bg-orange-600 shadow-orange-500/30' : c === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/30' : 'bg-slate-700 hover:bg-slate-800 shadow-slate-700/30',
     };
   };
 
   const getButtonLabel = () => {
     switch (payMethod) {
-      case 'stripe': return 'Pay with Stripe';
       case 'authnet': return 'Pay with Authorize.net';
       case 'chime': return 'Submit — Pay via Chime';
       case 'invoice': return 'Request ACH Invoice';
@@ -176,7 +173,7 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
 
   const handleClose = () => {
     setStep('info');
-    setPayMethod('stripe');
+    setPayMethod('authnet');
     setForm({ fullName: '', email: '', phone: '', company: '', password: '', notes: '' });
     onClose();
   };
@@ -336,7 +333,7 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
                 {/* Payment Method Selector */}
                 <div className="space-y-3">
                   <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">Payment Method</h3>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <div className="grid grid-cols-3 gap-2">
                     {PAYMENT_OPTIONS.map(pm => (
                       <button key={pm.id} type="button" onClick={() => setPayMethod(pm.id)}
                         className={`p-3 rounded-xl border-2 text-left transition-all ${payMethod === pm.id ? 'border-indigo-500 bg-indigo-50 shadow-md' : 'border-slate-200 hover:border-slate-300 bg-white'}`}>
@@ -355,7 +352,7 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
                   <CreditCard size={18} className={`shrink-0 mt-0.5 ${colors.icon}`} />
                   <div>
                     <p className={`text-sm font-bold ${colors.title}`}>
-                      {payMethod === 'stripe' ? 'Secure Processing via Stripe' : payMethod === 'authnet' ? 'Secure Processing via Authorize.net' : `Payment via ${selectedPm.label}`}
+                      {payMethod === 'authnet' ? 'Secure Processing via Authorize.net' : `Payment via ${selectedPm.label}`}
                     </p>
                     <p className={`text-xs mt-0.5 ${colors.text}`}>{getMethodNotice()}</p>
                   </div>

@@ -1873,7 +1873,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
 
 
 
-      {/* ═══ PRODUCTS & SERVICES — Stripe Merchant Review Section ═══ */}
+      {/* ═══ PRODUCTS & SERVICES — Authorize.net Merchant Review Section ═══ */}
       <section id="products-services" className="py-24 px-6 bg-gradient-to-b from-white via-slate-50 to-white border-t border-slate-200">
         <div className="max-w-6xl mx-auto">
           {/* Section Header */}
@@ -2005,7 +2005,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
                 <span key={i} className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 shadow-sm">{method}</span>
               ))}
             </div>
-            <p className="text-[10px] text-slate-400 max-w-2xl mx-auto leading-relaxed">Payment processing is facilitated by Stripe (credit/debit) and ACH invoicing. All subscription billing is handled digitally. No cash payments are accepted online. Care Wallet is a closed-loop stored value system for in-ecosystem transactions only. Global Green Enterprise Inc (CAGE: 9KXZ2) is a registered federal supplier and Oklahoma state vendor.</p>
+            <p className="text-[10px] text-slate-400 max-w-2xl mx-auto leading-relaxed">Payment processing is facilitated by Authorize.net (credit/debit), Chime (Cash App/Venmo/Zelle), and ACH invoicing. All subscription billing is handled digitally. No cash payments are accepted online. Care Wallet is a closed-loop stored value system for in-ecosystem transactions only. Global Green Enterprise Inc (CAGE: 9KXZ2) is a registered federal supplier and Oklahoma state vendor.</p>
           </div>
 
           {/* ─── LEGAL DISCLOSURE ─── */}
