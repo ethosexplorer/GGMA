@@ -213,7 +213,31 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     compliancePage: "https://www.cannabis.ca.gov/",
     checklistItems: ["Cultivator self-inspection","Testing","Packaging","Labor compliance","Track-and-trace"],
     complianceSource: "https://www.cannabis.ca.gov/posts/cannabis-cultivator-self-inspection-checklist/",
-    conditions: ["Anorexia","Arthritis","Cachexia","Cancer","Chronic Pain","HIV or AIDS","Glaucoma","Migraine","Persistent Muscle Spasms","Severe Nausea","Seizures","Any debilitating illness deemed appropriate"]
+    conditions: ["Anorexia","Arthritis","Cachexia","Cancer","Chronic Pain","HIV or AIDS","Glaucoma","Migraine","Persistent Muscle Spasms","Severe Nausea","Seizures","Any debilitating illness deemed appropriate"],
+    contactPhone: "1-844-61-CA-DCC",
+    contactEmail: "info@cannabis.ca.gov",
+    trackingSystem: "METRC (CCTT)",
+    licenseCaps: "Varies strictly by local municipality ordinance",
+    intakeNotes: [
+      "⚠️ DUAL LICENSING: Must secure city/county permit BEFORE applying for state DCC license",
+      "Over 60% of CA's 482 cities currently ban retail sales — local ordinance check is CRITICAL",
+      "Provisional licenses phased out — all applicants must meet CEQA (environmental) requirements",
+      "Labor Peace Agreement (LPA) required for 20+ employees",
+      "Patient cards (MMIC) are processed in-person at County Health Departments, NOT at state level",
+      "Delivery is permitted statewide, even in cities that ban retail storefronts"
+    ],
+    intakeForms: [
+      { name: "CDPH 9042 (Patient App)", url: "https://www.cdph.ca.gov/Programs/CHSI/CDPH%20Document%20Library/CDPH9042.pdf" },
+      { name: "CDPH 9044 (Physician Rec)", url: "https://www.cdph.ca.gov/Programs/CHSI/CDPH%20Document%20Library/CDPH9044.pdf" },
+      { name: "DCC License Forms", url: "https://cannabis.ca.gov/resources/forms/" },
+      { name: "DCC Accela Portal", url: "https://aca6.accela.com/DCC/Welcome.aspx" }
+    ],
+    intakeFAQ: [
+      { q: "Can I get a DCC license without local approval?", a: "NO. You must have explicit local authorization before DCC will issue a state license." },
+      { q: "Where do I apply for a medical card?", a: "California does not process patient cards online. You must apply in person through your local County Health Department." },
+      { q: "What tracking system does California use?", a: "METRC for the California Cannabis Track-and-Trace (CCTT) system." },
+      { q: "What are the benefits of a state MMIC?", a: "Exempts you from the 15% state cannabis excise tax and standard sales tax. Also allows possession of up to 8 oz of dried flower." }
+    ]
   },
   "Colorado": {
     program: "https://cdphe.colorado.gov/",
