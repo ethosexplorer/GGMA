@@ -43,6 +43,8 @@ interface IntakeData {
   ppocPhone: string;
   ppocEmail: string;
   ownerShares: string;
+  // Payment
+  paymentPreference: string;
 }
 
 const US_STATES = ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming'];
@@ -51,10 +53,10 @@ const BIZ_TYPES = ['Dispensary','Cultivator / Grower','Processor','Transporter',
 const ENTITY_TYPES = ['LLC','Corporation','Sole Proprietor','Partnership','Non-Profit'];
 const CONDITIONS = ['Chronic Pain','PTSD','Cancer','Epilepsy / Seizures','Glaucoma','HIV/AIDS','Crohn\'s Disease','Multiple Sclerosis','Nausea','Severe or intractable muscle spasms','Terminal Illness','Other'];
 
-const STEPS_PATIENT = ['Intake Questionnaire', 'Schedule Doctor Visit', 'State Portal Setup', 'Review & Submit'];
-const STEPS_BUSINESS = ['Entity & Type', 'Facility & Contact', 'Primary Owner Info', 'Review & Submit'];
+const STEPS_PATIENT = ['Intake Questionnaire', 'Payment Info', 'Schedule Doctor Visit', 'State Portal Setup', 'Review & Submit'];
+const STEPS_BUSINESS = ['Entity & Type', 'Facility & Contact', 'Primary Owner Info', 'Payment Info', 'Review & Submit'];
 
-const empty: IntakeData = { firstName:'',lastName:'',email:'',phone:'',dob:'',ssn:'',street:'',city:'',state:'Oklahoma',zip:'', isAdult:'Yes', mailingAddress:'', appointmentType:'Phone', appType:'New MMJ Card', hasPortalAccount:'No', hasPcp:'No', pcpInfo:'', conditions:[], allergies:'No', lastDoctorVisit:'', insuranceName:'', optInMessaging:'Yes', businessName:'',tradeName:'',businessType:'Dispensary',einNumber:'',licenseType:'New Application',entityType:'LLC',ownerCount:'1', ppocName:'', ppocPhone:'', ppocEmail:'', ownerShares:'' };
+const empty: IntakeData = { firstName:'',lastName:'',email:'',phone:'',dob:'',ssn:'',street:'',city:'',state:'Oklahoma',zip:'', isAdult:'Yes', mailingAddress:'', appointmentType:'Phone', appType:'New MMJ Card', hasPortalAccount:'No', hasPcp:'No', pcpInfo:'', conditions:[], allergies:'No', lastDoctorVisit:'', insuranceName:'', optInMessaging:'Yes', businessName:'',tradeName:'',businessType:'Dispensary',einNumber:'',licenseType:'New Application',entityType:'LLC',ownerCount:'1', ppocName:'', ppocPhone:'', ppocEmail:'', ownerShares:'', paymentPreference:'' };
 
 // --- FORM INPUT HELPER (Moved OUTSIDE component to fix focus glitch) ---
 const Field = ({ label, value, onChange, placeholder, type = 'text', required = false }: any) => (
@@ -118,6 +120,7 @@ export const PhoneIntakeForm = () => {
           applicant: data.firstName + ' ' + data.lastName,
           ...(intakeType === 'patient_card' ? { conditions: data.conditions.join(', '), appType: data.appType } : { businessName: data.businessName, businessType: data.businessType, ein: data.einNumber }),
           state: data.state,
+          paymentPreference: data.paymentPreference,
           callerNotes,
           submittedVia: 'Phone Intake — OPS Call Center'
         })
@@ -162,6 +165,16 @@ export const PhoneIntakeForm = () => {
       );
       if (step === 1) return (
         <div className="space-y-4 text-sm text-emerald-50/90 leading-relaxed">
+          <p><strong>Agent:</strong> "Our total price for the medical card is $102.50 with a state discount, which covers the doctor's fee, the state fee, and our processing. If you do not have a state discount, the total is $184.30."</p>
+          <p><strong>Agent:</strong> "We need to collect the fee to schedule your doctor recommendation appointment. We accept Chime, CashApp, Venmo, PayPal, or we can email you a secure Invoice. How would you like to pay?"</p>
+          <div className="mt-4 bg-[#0f291c] p-4 rounded-xl border border-emerald-800/50 shadow-inner">
+            <p className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">Action Required</p>
+            <p className="text-xs text-emerald-100/70">Select the payment option so a formal request/invoice can be dispatched via the selected platform.</p>
+          </div>
+        </div>
+      );
+      if (step === 2) return (
+        <div className="space-y-4 text-sm text-emerald-50/90 leading-relaxed">
           <p><strong>Agent:</strong> "Perfect. Now we need to schedule your telehealth visit with the doctor."</p>
           <p><strong>Agent:</strong> "I'm opening the calendar now. Do you have a preferred day or time?"</p>
           <div className="mt-4 bg-[#0f291c] p-4 rounded-xl border border-emerald-800/50 shadow-inner">
@@ -170,7 +183,7 @@ export const PhoneIntakeForm = () => {
           </div>
         </div>
       );
-      if (step === 2) return (
+      if (step === 3) return (
         <div className="space-y-4 text-sm text-emerald-50/90 leading-relaxed">
           <p><strong>Agent:</strong> "The doctor visit is scheduled. Lastly, the state requires you to be registered in their OMMA portal."</p>
           <p><strong>Agent:</strong> "Have you already created an account on the state website?"</p>
@@ -181,10 +194,10 @@ export const PhoneIntakeForm = () => {
           </div>
         </div>
       );
-      if (step === 3) return (
+      if (step === 4) return (
         <div className="space-y-4 text-sm text-emerald-50/90 leading-relaxed">
           <p><strong>Agent:</strong> "Let me read this back to make sure we have everything correct..."</p>
-          <p className="text-xs italic text-emerald-200">Verify Name, DOB, Address, and Appointment Time.</p>
+          <p className="text-xs italic text-emerald-200">Verify Name, DOB, Address, Appointment Time, and Payment preference.</p>
           <p><strong>Agent:</strong> "Everything looks great. Do you have any questions for me before we wrap up?"</p>
           <div className="mt-4 bg-[#0f291c] p-4 rounded-xl border border-emerald-800/50 shadow-inner">
             <p className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">Final Step</p>
@@ -226,8 +239,18 @@ export const PhoneIntakeForm = () => {
       );
       if (step === 3) return (
         <div className="space-y-4 text-sm text-emerald-50/90 leading-relaxed">
+          <p><strong>Agent:</strong> "How will your business be handling the application and compliance fees today?"</p>
+          <p><strong>Agent:</strong> "We accept Chime, CashApp, Venmo, PayPal, or we can send a formal Invoice if you do not have those."</p>
+          <div className="mt-4 bg-[#0f291c] p-4 rounded-xl border border-emerald-800/50 shadow-inner">
+            <p className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">Action Required</p>
+            <p className="text-xs text-emerald-100/70">Select the payment option so accounting can dispatch the request.</p>
+          </div>
+        </div>
+      );
+      if (step === 4) return (
+        <div className="space-y-4 text-sm text-emerald-50/90 leading-relaxed">
           <p><strong>Agent:</strong> "Let's review the details to ensure accuracy..."</p>
-          <p className="text-xs italic text-emerald-200">Verify Business Name, Address, and Owner Email.</p>
+          <p className="text-xs italic text-emerald-200">Verify Business Name, Address, Owner Email, and Payment preference.</p>
           <p><strong>Agent:</strong> "I will submit this into our GGP-OS portal. You will receive an email shortly with a secure link to upload your required documents (ID, Background Check, Certificate of Compliance)."</p>
           <div className="mt-4 bg-[#0f291c] p-4 rounded-xl border border-emerald-800/50 shadow-inner">
             <p className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">Final Step</p>
@@ -386,6 +409,25 @@ export const PhoneIntakeForm = () => {
       if (step === 1) return (
         <div className="space-y-6 flex flex-col items-center justify-center text-center py-8">
           <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-4 shadow-inner">
+            <CreditCard size={36} />
+          </div>
+          <h3 className="text-2xl font-black text-slate-800">Payment Preference</h3>
+          <p className="text-slate-500 max-w-md">How does the patient wish to pay their processing fees?</p>
+          
+          <div className="w-full max-w-sm mt-4 text-left">
+            <Select 
+              label="Select Payment Method" 
+              value={data.paymentPreference} 
+              onChange={(v: string) => set('paymentPreference', v)} 
+              options={['', 'Chime', 'CashApp', 'Venmo', 'PayPal', 'Create Invoice']} 
+              required 
+            />
+          </div>
+        </div>
+      );
+      if (step === 2) return (
+        <div className="space-y-6 flex flex-col items-center justify-center text-center py-8">
+          <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-4 shadow-inner">
             <Calendar size={36} />
           </div>
           <h3 className="text-2xl font-black text-slate-800">Schedule Telehealth Appointment</h3>
@@ -404,7 +446,7 @@ export const PhoneIntakeForm = () => {
           </div>
         </div>
       );
-      if (step === 2) return (
+      if (step === 3) return (
         <div className="space-y-6 flex flex-col items-center justify-center text-center py-8">
           <div className="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mb-4 shadow-inner">
             <UserPlus size={36} />
@@ -425,17 +467,15 @@ export const PhoneIntakeForm = () => {
           </div>
         </div>
       );
-      if (step === 3) {
+      if (step === 4) {
         const rows = [
           { l: 'Name', v: data.firstName + ' ' + data.lastName },
-          { l: 'Email', v: data.email },
-          { l: 'Phone', v: data.phone },
-          { l: 'DOB', v: data.dob },
-          { l: 'Jurisdiction', v: data.state },
-          { l: 'Physical Address', v: `${data.street}, ${data.city}, ${data.state} ${data.zip}` },
-          { l: 'Mailing Address', v: data.mailingAddress },
           { l: 'App Type', v: data.appType },
-          { l: 'Conditions', v: data.conditions.join(', ') || 'None selected' },
+          { l: 'Payment', v: data.paymentPreference },
+          { l: 'DOB', v: data.dob },
+          { l: 'Phone', v: data.phone },
+          { l: 'State', v: data.state },
+          { l: 'PCP', v: data.hasPcp === 'Yes' ? data.pcpInfo : 'None' },
         ];
         return (
           <div className="space-y-4">
@@ -518,11 +558,31 @@ export const PhoneIntakeForm = () => {
           </div>
         </div>
       );
-      if (step === 3) {
+      if (step === 3) return (
+        <div className="space-y-6 flex flex-col items-center justify-center text-center py-8">
+          <div className="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mb-4 shadow-inner">
+            <CreditCard size={36} />
+          </div>
+          <h3 className="text-2xl font-black text-slate-800">Payment Preference</h3>
+          <p className="text-slate-500 max-w-md">How does the business wish to pay their compliance and processing fees?</p>
+          
+          <div className="w-full max-w-sm mt-4 text-left">
+            <Select 
+              label="Select Payment Method" 
+              value={data.paymentPreference} 
+              onChange={(v: string) => set('paymentPreference', v)} 
+              options={['', 'Chime', 'CashApp', 'Venmo', 'PayPal', 'Create Invoice']} 
+              required 
+            />
+          </div>
+        </div>
+      );
+      if (step === 4) {
         const rows = [
           { l: 'Business Name', v: data.businessName },
           { l: 'Jurisdiction', v: data.state },
           { l: 'License Type', v: data.licenseType },
+          { l: 'Payment', v: data.paymentPreference },
           { l: 'Facility Address', v: data.street ? data.street + ', ' + data.city + ', ' + data.state + ' ' + data.zip : '—' },
           { l: 'PPOC Name', v: data.ppocName },
           { l: 'Primary Owner', v: data.firstName + ' ' + data.lastName },
@@ -558,12 +618,14 @@ export const PhoneIntakeForm = () => {
   const canNext = () => {
     if (isPatient) {
       if (step === 0) return data.firstName && data.lastName && data.email && data.phone && data.ssn && data.street && data.city && data.state && data.zip && data.mailingAddress;
-      if (step === 1) return scheduledAppt;
-      if (step === 2) return completedPortal;
+      if (step === 1) return data.paymentPreference !== '';
+      if (step === 2) return scheduledAppt;
+      if (step === 3) return completedPortal;
     } else {
       if (step === 0) return data.state && data.businessName && data.licenseType && data.entityType && data.businessType;
       if (step === 1) return data.street && data.city && data.zip && data.ppocName && data.ppocPhone && data.ppocEmail;
       if (step === 2) return data.firstName && data.lastName && data.email && data.phone && data.ownerShares && data.einNumber;
+      if (step === 3) return data.paymentPreference !== '';
     }
     return true;
   };
