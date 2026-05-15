@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Phone, User, Building2, HeartPulse, FileText, CircleCheck, AlertCircle, Shield, MapPin, Mail, Calendar, CreditCard, Loader2, UserPlus } from 'lucide-react';
+import { Phone, User, Building2, HeartPulse, FileText, CircleCheck, AlertCircle, Shield, MapPin, Mail, Calendar, CreditCard, Loader2, UserPlus, ExternalLink } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { turso } from '../../lib/turso';
 
@@ -12,17 +12,25 @@ interface IntakeData {
   email: string;
   phone: string;
   dob: string;
-  ssn4: string;
+  ssn: string;
   // Address
   street: string;
   city: string;
   state: string;
   zip: string;
-  // Patient-specific
-  condition: string;
-  physicianName: string;
-  physicianLicense: string;
-  caregiverName: string;
+  // Patient-specific (Acuity)
+  isAdult: string;
+  mailingAddress: string;
+  appointmentType: string;
+  appType: string;
+  hasPortalAccount: string;
+  hasPcp: string;
+  pcpInfo: string;
+  conditions: string[];
+  allergies: string;
+  lastDoctorVisit: string;
+  insuranceName: string;
+  optInMessaging: string;
   // Business-specific
   businessName: string;
   businessType: string;
@@ -36,12 +44,31 @@ const US_STATES = ['Alabama','Alaska','Arizona','Arkansas','California','Colorad
 
 const BIZ_TYPES = ['Dispensary','Cultivator / Grower','Processor','Transporter','Testing Laboratory','Vertically Integrated'];
 const ENTITY_TYPES = ['LLC','Corporation','Sole Proprietor','Partnership','Non-Profit'];
-const CONDITIONS = ['Chronic Pain','PTSD','Cancer','Epilepsy / Seizures','Glaucoma','HIV/AIDS','Crohn\'s Disease','Multiple Sclerosis','Nausea','Other'];
+const CONDITIONS = ['Chronic Pain','PTSD','Cancer','Epilepsy / Seizures','Glaucoma','HIV/AIDS','Crohn\'s Disease','Multiple Sclerosis','Nausea','Severe or intractable muscle spasms','Terminal Illness','Other'];
 
-const STEPS_PATIENT = ['Caller Info', 'Address', 'Medical Details', 'Review & Submit'];
+const STEPS_PATIENT = ['Intake Questionnaire', 'Schedule Doctor Visit', 'State Portal Setup', 'Review & Submit'];
 const STEPS_BUSINESS = ['Owner Info', 'Address', 'Business Details', 'Review & Submit'];
 
-const empty: IntakeData = { firstName:'',lastName:'',email:'',phone:'',dob:'',ssn4:'',street:'',city:'',state:'Oklahoma',zip:'',condition:'',physicianName:'',physicianLicense:'',caregiverName:'',businessName:'',businessType:'Dispensary',einNumber:'',licenseType:'New Application',entityType:'LLC',ownerCount:'1' };
+const empty: IntakeData = { firstName:'',lastName:'',email:'',phone:'',dob:'',ssn:'',street:'',city:'',state:'Oklahoma',zip:'', isAdult:'Yes', mailingAddress:'', appointmentType:'Phone', appType:'New MMJ Card', hasPortalAccount:'No', hasPcp:'No', pcpInfo:'', conditions:[], allergies:'No', lastDoctorVisit:'', insuranceName:'', optInMessaging:'Yes', businessName:'',businessType:'Dispensary',einNumber:'',licenseType:'New Application',entityType:'LLC',ownerCount:'1' };
+
+// --- FORM INPUT HELPER (Moved OUTSIDE component to fix focus glitch) ---
+const Field = ({ label, value, onChange, placeholder, type = 'text', required = false }: any) => (
+  <div>
+    <label className="text-xs font-bold text-slate-600 mb-1.5 block">{label} {required && <span className="text-red-500">*</span>}</label>
+    <input type={type} value={value} onChange={(e: any) => onChange(e.target.value)} placeholder={placeholder}
+      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 transition-all" />
+  </div>
+);
+
+const Select = ({ label, value, onChange, options, required = false }: any) => (
+  <div>
+    <label className="text-xs font-bold text-slate-600 mb-1.5 block">{label} {required && <span className="text-red-500">*</span>}</label>
+    <select value={value} onChange={(e: any) => onChange(e.target.value)}
+      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 transition-all">
+      {options.map((o: string) => <option key={o} value={o}>{o}</option>)}
+    </select>
+  </div>
+);
 
 export const PhoneIntakeForm = () => {
   const [intakeType, setIntakeType] = useState<IntakeType | null>(null);
@@ -51,8 +78,17 @@ export const PhoneIntakeForm = () => {
   const [submitted, setSubmitted] = useState(false);
   const [callerId, setCallerId] = useState('');
   const [callerNotes, setCallerNotes] = useState('');
+  
+  // Custom step completion flags for patients
+  const [scheduledAppt, setScheduledAppt] = useState(false);
+  const [completedPortal, setCompletedPortal] = useState(false);
 
-  const set = (k: keyof IntakeData, v: string) => setData(p => ({...p, [k]: v}));
+  const set = (k: keyof IntakeData, v: any) => setData(p => ({...p, [k]: v}));
+  const toggleCondition = (c: string) => {
+    if (data.conditions.includes(c)) set('conditions', data.conditions.filter(x => x !== c));
+    else set('conditions', [...data.conditions, c]);
+  };
+
   const steps = intakeType === 'patient_card' ? STEPS_PATIENT : STEPS_BUSINESS;
 
   const handleSubmit = async () => {
@@ -75,7 +111,7 @@ export const PhoneIntakeForm = () => {
         JSON.stringify({
           appId, accountId, intakeType,
           applicant: data.firstName + ' ' + data.lastName,
-          ...(intakeType === 'patient_card' ? { condition: data.condition, physician: data.physicianName } : { businessName: data.businessName, businessType: data.businessType, ein: data.einNumber }),
+          ...(intakeType === 'patient_card' ? { conditions: data.conditions.join(', '), appType: data.appType } : { businessName: data.businessName, businessType: data.businessType, ein: data.einNumber }),
           state: data.state,
           callerNotes,
           submittedVia: 'Phone Intake — OPS Call Center'
@@ -87,7 +123,7 @@ export const PhoneIntakeForm = () => {
     setSubmitting(false);
   };
 
-  const reset = () => { setIntakeType(null); setStep(0); setData({...empty}); setSubmitted(false); setCallerId(''); setCallerNotes(''); };
+  const reset = () => { setIntakeType(null); setStep(0); setData({...empty}); setSubmitted(false); setCallerId(''); setCallerNotes(''); setScheduledAppt(false); setCompletedPortal(false); };
 
   // --- TYPE SELECTOR ---
   if (!intakeType) return (
@@ -148,139 +184,251 @@ export const PhoneIntakeForm = () => {
     </div>
   );
 
-  // --- FORM INPUT HELPER ---
-  const Field = ({ label, value, onChange, placeholder, type = 'text', required = false }: any) => (
-    <div>
-      <label className="text-xs font-bold text-slate-600 mb-1.5 block">{label} {required && <span className="text-red-500">*</span>}</label>
-      <input type={type} value={value} onChange={(e: any) => onChange(e.target.value)} placeholder={placeholder}
-        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 transition-all" />
-    </div>
-  );
-
-  const Select = ({ label, value, onChange, options, required = false }: any) => (
-    <div>
-      <label className="text-xs font-bold text-slate-600 mb-1.5 block">{label} {required && <span className="text-red-500">*</span>}</label>
-      <select value={value} onChange={(e: any) => onChange(e.target.value)}
-        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 transition-all">
-        {options.map((o: string) => <option key={o} value={o}>{o}</option>)}
-      </select>
-    </div>
-  );
-
   const isPatient = intakeType === 'patient_card';
-  const themeColor = isPatient ? 'emerald' : 'indigo';
 
   // --- STEP CONTENT ---
   const renderStep = () => {
-    if (step === 0) return (
-      <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-          <Field label="First Name" value={data.firstName} onChange={(v: string) => set('firstName', v)} placeholder="John" required />
-          <Field label="Last Name" value={data.lastName} onChange={(v: string) => set('lastName', v)} placeholder="Doe" required />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <Field label="Email Address" value={data.email} onChange={(v: string) => set('email', v)} placeholder="john@email.com" type="email" required />
-          <Field label="Phone Number" value={data.phone} onChange={(v: string) => set('phone', v)} placeholder="(555) 123-4567" required />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <Field label="Date of Birth" value={data.dob} onChange={(v: string) => set('dob', v)} type="date" required />
-          <Field label="Last 4 SSN (PIN)" value={data.ssn4} onChange={(v: string) => set('ssn4', v)} placeholder="••••" required />
-        </div>
-      </div>
-    );
-    if (step === 1) return (
-      <div className="space-y-4">
-        <Field label="Street Address" value={data.street} onChange={(v: string) => set('street', v)} placeholder="123 Main St" required />
-        <div className="grid grid-cols-3 gap-4">
-          <Field label="City" value={data.city} onChange={(v: string) => set('city', v)} placeholder="Oklahoma City" required />
-          <Select label="State" value={data.state} onChange={(v: string) => set('state', v)} options={US_STATES} required />
-          <Field label="ZIP Code" value={data.zip} onChange={(v: string) => set('zip', v)} placeholder="73102" required />
-        </div>
-      </div>
-    );
-    if (step === 2 && isPatient) return (
-      <div className="space-y-4">
-        <Select label="Qualifying Condition" value={data.condition} onChange={(v: string) => set('condition', v)} options={CONDITIONS} required />
-        <div className="grid grid-cols-2 gap-4">
-          <Field label="Recommending Physician" value={data.physicianName} onChange={(v: string) => set('physicianName', v)} placeholder="Dr. Sarah Smith" required />
-          <Field label="Physician License #" value={data.physicianLicense} onChange={(v: string) => set('physicianLicense', v)} placeholder="OK-MD-12345" />
-        </div>
-        <Field label="Caregiver Name (if applicable)" value={data.caregiverName} onChange={(v: string) => set('caregiverName', v)} placeholder="Optional" />
-        <div>
-          <label className="text-xs font-bold text-slate-600 mb-1.5 block">Agent Notes</label>
-          <textarea value={callerNotes} onChange={(e) => setCallerNotes(e.target.value)} rows={3} placeholder="Additional notes from the call..."
-            className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 transition-all resize-none" />
-        </div>
-      </div>
-    );
-    if (step === 2 && !isPatient) return (
-      <div className="space-y-4">
-        <Field label="Business Legal Name" value={data.businessName} onChange={(v: string) => set('businessName', v)} placeholder="Green Leaf Dispensary LLC" required />
-        <div className="grid grid-cols-2 gap-4">
-          <Select label="Business Type" value={data.businessType} onChange={(v: string) => set('businessType', v)} options={BIZ_TYPES} required />
-          <Select label="Entity Type" value={data.entityType} onChange={(v: string) => set('entityType', v)} options={ENTITY_TYPES} required />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <Field label="EIN / Tax ID" value={data.einNumber} onChange={(v: string) => set('einNumber', v)} placeholder="12-3456789" required />
-          <Field label="Number of Owners" value={data.ownerCount} onChange={(v: string) => set('ownerCount', v)} placeholder="1" />
-        </div>
-        <Select label="License Type" value={data.licenseType} onChange={(v: string) => set('licenseType', v)} options={['New Application','Renewal','Transfer of Ownership','Change of Location']} />
-        <div>
-          <label className="text-xs font-bold text-slate-600 mb-1.5 block">Agent Notes</label>
-          <textarea value={callerNotes} onChange={(e) => setCallerNotes(e.target.value)} rows={3} placeholder="Additional notes from the call..."
-            className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all resize-none" />
-        </div>
-      </div>
-    );
-    // Step 3 — Review
-    const rows = [
-      { l: 'Name', v: data.firstName + ' ' + data.lastName },
-      { l: 'Email', v: data.email },
-      { l: 'Phone', v: data.phone },
-      { l: 'DOB', v: data.dob },
-      { l: 'Address', v: `${data.street}, ${data.city}, ${data.state} ${data.zip}` },
-      ...(isPatient ? [
-        { l: 'Condition', v: data.condition },
-        { l: 'Physician', v: data.physicianName },
-        { l: 'Physician License', v: data.physicianLicense || 'N/A' },
-        { l: 'Caregiver', v: data.caregiverName || 'None' },
-      ] : [
-        { l: 'Business Name', v: data.businessName },
-        { l: 'Business Type', v: data.businessType },
-        { l: 'Entity Type', v: data.entityType },
-        { l: 'EIN', v: data.einNumber },
-        { l: 'License Type', v: data.licenseType },
-      ]),
-    ];
-    return (
-      <div className="space-y-4">
-        <div className={cn("p-4 rounded-xl border text-xs font-bold flex items-start gap-2", isPatient ? "bg-emerald-50 border-emerald-200 text-emerald-800" : "bg-indigo-50 border-indigo-200 text-indigo-800")}>
-          <Shield size={14} className="shrink-0 mt-0.5" />
-          <span>Review all information with the caller before submitting. This will create their account and submit the application to the state portal queue.</span>
-        </div>
-        <div className="bg-slate-50 border border-slate-200 rounded-2xl divide-y divide-slate-200 overflow-hidden">
-          {rows.map((r, i) => (
-            <div key={i} className="flex justify-between px-5 py-3 text-sm">
-              <span className="text-slate-500">{r.l}</span>
-              <span className="font-bold text-slate-800 text-right max-w-[60%]">{r.v || '—'}</span>
-            </div>
-          ))}
-        </div>
-        {callerNotes && (
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
-            <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-1">Agent Notes</p>
-            <p className="text-sm text-amber-900">{callerNotes}</p>
+    if (isPatient) {
+      if (step === 0) return (
+        <div className="space-y-6">
+          <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-sm text-emerald-800 font-medium">
+            <strong>Qualifying Intake for Medical Card:</strong> 18 OR OLDER (if under 18 please have a parent or guardian schedule on your behalf). Fill info accurately.
           </div>
-        )}
-      </div>
-    );
+          
+          <div className="grid grid-cols-2 gap-4">
+            <Select label="Are you an adult?" value={data.isAdult} onChange={(v: string) => set('isAdult', v)} options={['Yes', 'No']} required />
+            <Select label="App Type" value={data.appType} onChange={(v: string) => set('appType', v)} options={['New MMJ Card', 'Renewal']} required />
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="First Name" value={data.firstName} onChange={(v: string) => set('firstName', v)} placeholder="John" required />
+            <Field label="Last Name" value={data.lastName} onChange={(v: string) => set('lastName', v)} placeholder="Doe" required />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Email Address" value={data.email} onChange={(v: string) => set('email', v)} placeholder="john@email.com" type="email" required />
+            <Field label="Phone Number" value={data.phone} onChange={(v: string) => set('phone', v)} placeholder="(555) 123-4567" required />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Date of Birth" value={data.dob} onChange={(v: string) => set('dob', v)} type="date" required />
+            <Field label="Social Security Number" value={data.ssn} onChange={(v: string) => set('ssn', v)} placeholder="XXX-XX-XXXX" required />
+          </div>
+          
+          <Field label="Physical address that is on your ID" value={data.street} onChange={(v: string) => set('street', v)} placeholder="123 Main St, City, State, Zip" required />
+          <Field label="Street Address, City, State, and Zipcode WHERE YOU WANT YOUR CARD MAILED TO" value={data.mailingAddress} onChange={(v: string) => set('mailingAddress', v)} placeholder="Same as above, or enter new address" required />
+          
+          <div className="grid grid-cols-2 gap-4">
+            <Select label="How do you want your appointment to be done?" value={data.appointmentType} onChange={(v: string) => set('appointmentType', v)} options={['Phone', 'Video', 'In-Person']} required />
+            <Select label="HAVE YOU REGISTERED YOUR ACCOUNT UNDER THE NEW MMJ PORTAL?" value={data.hasPortalAccount} onChange={(v: string) => set('hasPortalAccount', v)} options={['Yes', 'No']} required />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <Select label="Do you have a primary care provider?" value={data.hasPcp} onChange={(v: string) => set('hasPcp', v)} options={['Yes', 'No']} required />
+            {data.hasPcp === 'Yes' && <Field label="Primary Physician Name & Phone" value={data.pcpInfo} onChange={(v: string) => set('pcpInfo', v)} placeholder="Dr. Smith - 555-0000" />}
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-slate-600 mb-1.5 block">Why do you want to apply for your Medical Marijuana Card, which of the following do you have? *</label>
+            <div className="grid grid-cols-2 gap-2 mt-2">
+              {CONDITIONS.map(c => (
+                <label key={c} className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
+                  <input type="checkbox" checked={data.conditions.includes(c)} onChange={() => toggleCondition(c)} className="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500" />
+                  {c}
+                </label>
+              ))}
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <Select label="Do you have any allergies?" value={data.allergies} onChange={(v: string) => set('allergies', v)} options={['Yes', 'No']} required />
+            <Field label="When was the last time you spoke with a doctor about these complaints?" value={data.lastDoctorVisit} onChange={(v: string) => set('lastDoctorVisit', v)} placeholder="e.g. 6 months ago" />
+          </div>
+
+          <Field label="Name of your primary health insurance" value={data.insuranceName} onChange={(v: string) => set('insuranceName', v)} placeholder="BlueCross, Medicare, etc." />
+          
+          <div>
+            <label className="text-xs font-bold text-slate-600 mb-1.5 block">Document Uploads</label>
+            <p className="text-xs text-slate-500 mb-2 font-bold text-emerald-700">Instruct the caller to send the following documents to asstsupport@gmail.com or text 1-405-492-7487:</p>
+            <ul className="list-disc list-inside text-xs text-slate-500 mb-2 space-y-1">
+              <li>Medical Records (if available)</li>
+              <li>Front of Driver License, Passport, or Tribal ID</li>
+              <li>Passport-style Selfie on a white background (no hat, necklace, glasses, no teeth showing)</li>
+              <li>Front of Health Insurance Card</li>
+            </ul>
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-slate-600 mb-1.5 block">Agent Notes / Remarks</label>
+            <textarea value={callerNotes} onChange={(e) => setCallerNotes(e.target.value)} rows={3} placeholder="Additional notes from the call..."
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 transition-all resize-none" />
+          </div>
+        </div>
+      );
+      if (step === 1) return (
+        <div className="space-y-6 flex flex-col items-center justify-center text-center py-8">
+          <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-4 shadow-inner">
+            <Calendar size={36} />
+          </div>
+          <h3 className="text-2xl font-black text-slate-800">Schedule Telehealth Appointment</h3>
+          <p className="text-slate-500 max-w-md">The patient's initial intake is recorded. Next, proceed to the Acuity Scheduling system to book their Doctor visit.</p>
+          
+          <a href="https://www.renewoklahomacard.com/booking-calendar/renew-oklahoma-card?referral=service_list_widget" target="_blank" rel="noreferrer" 
+             className="px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black shadow-xl shadow-emerald-600/20 flex items-center justify-center gap-3 transition-transform hover:scale-105 active:scale-95 w-full max-w-sm mt-4">
+            <ExternalLink size={20} /> Open Acuity Scheduling
+          </a>
+
+          <div className="mt-8 pt-6 border-t border-slate-200 w-full flex justify-center">
+            <label className="flex items-center gap-3 cursor-pointer bg-slate-50 border border-slate-200 p-4 rounded-xl hover:bg-slate-100 transition-colors">
+              <input type="checkbox" checked={scheduledAppt} onChange={(e) => setScheduledAppt(e.target.checked)} className="w-5 h-5 text-emerald-600 rounded focus:ring-emerald-500" />
+              <span className="font-bold text-slate-700">I have completed scheduling the appointment.</span>
+            </label>
+          </div>
+        </div>
+      );
+      if (step === 2) return (
+        <div className="space-y-6 flex flex-col items-center justify-center text-center py-8">
+          <div className="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mb-4 shadow-inner">
+            <UserPlus size={36} />
+          </div>
+          <h3 className="text-2xl font-black text-slate-800">State Portal Registration</h3>
+          <p className="text-slate-500 max-w-md">Open the state licensing portal to assist the patient in creating or verifying their government account.</p>
+          
+          <a href="https://login.ok.gov/5daebe6e-7dde-4666-aac4-f2a4e50d5286/B2C_1A_455_SIGNUPORSIGNIN/oauth2/v2.0/authorize?client_id=0f51c232-01e9-40da-bb92-cd58d2ed6525&nonce=185366832846426923&redirect_uri=https%3A%2F%2Fmedportal.omma.ok.gov%2Fservices%2Fauthcallback%2FB2C_OIDC_Custom&response_type=code&scope=openid+offline_access+0f51c232-01e9-40da-bb92-cd58d2ed6525&state=CAAAAZ4p5xctMDAwMDAwMDAwMDAwMDAwAAABBJl5a1INVw5q98hF5BCu-fHokmxKJwCpwoAaRgUsvgl51cTHhLpf7dMSTCYGkqU_U--ppnZySnvsiQobJ5Hk_A_x9S5Pk4srAPOPTbFwHrPOJqEQvw9NMb7uRdp6i_FF5NJNUaMAddov6f-t8wKd-iT0mvS2ZtzvbVa4t-n_uwnUnYJ1rGU-5OM6j8BdtTelnlWs5_rEK9axgSiYpzS-vsue9uxCNbzn1b03gyjzkYwLPgaHWugr_VRMcdz3LtXLQQ%3D%3D" target="_blank" rel="noreferrer" 
+             className="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-black shadow-xl shadow-indigo-600/20 flex items-center justify-center gap-3 transition-transform hover:scale-105 active:scale-95 w-full max-w-sm mt-4">
+            <ExternalLink size={20} /> Open OK.gov Portal
+          </a>
+
+          <div className="mt-8 pt-6 border-t border-slate-200 w-full flex justify-center">
+            <label className="flex items-center gap-3 cursor-pointer bg-slate-50 border border-slate-200 p-4 rounded-xl hover:bg-slate-100 transition-colors">
+              <input type="checkbox" checked={completedPortal} onChange={(e) => setCompletedPortal(e.target.checked)} className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500" />
+              <span className="font-bold text-slate-700">I have successfully registered the patient's portal account.</span>
+            </label>
+          </div>
+        </div>
+      );
+      if (step === 3) {
+        const rows = [
+          { l: 'Name', v: data.firstName + ' ' + data.lastName },
+          { l: 'Email', v: data.email },
+          { l: 'Phone', v: data.phone },
+          { l: 'DOB', v: data.dob },
+          { l: 'ID Address', v: data.street },
+          { l: 'Mailing Address', v: data.mailingAddress },
+          { l: 'App Type', v: data.appType },
+          { l: 'Conditions', v: data.conditions.join(', ') || 'None selected' },
+        ];
+        return (
+          <div className="space-y-4">
+            <div className="p-4 rounded-xl border text-xs font-bold flex items-start gap-2 bg-emerald-50 border-emerald-200 text-emerald-800">
+              <Shield size={14} className="shrink-0 mt-0.5" />
+              <span>Review all information. This will finalize the patient's record in GGP-OS and sync with the scheduling systems.</span>
+            </div>
+            <div className="bg-slate-50 border border-slate-200 rounded-2xl divide-y divide-slate-200 overflow-hidden">
+              {rows.map((r, i) => (
+                <div key={i} className="flex justify-between px-5 py-3 text-sm">
+                  <span className="text-slate-500">{r.l}</span>
+                  <span className="font-bold text-slate-800 text-right max-w-[60%]">{r.v || '—'}</span>
+                </div>
+              ))}
+            </div>
+            {callerNotes && (
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
+                <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-1">Agent Notes</p>
+                <p className="text-sm text-amber-900">{callerNotes}</p>
+              </div>
+            )}
+          </div>
+        );
+      }
+    } else {
+      // --- BUSINESS STEPS ---
+      if (step === 0) return (
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Owner First Name" value={data.firstName} onChange={(v: string) => set('firstName', v)} placeholder="John" required />
+            <Field label="Owner Last Name" value={data.lastName} onChange={(v: string) => set('lastName', v)} placeholder="Doe" required />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Email Address" value={data.email} onChange={(v: string) => set('email', v)} placeholder="john@email.com" type="email" required />
+            <Field label="Phone Number" value={data.phone} onChange={(v: string) => set('phone', v)} placeholder="(555) 123-4567" required />
+          </div>
+        </div>
+      );
+      if (step === 1) return (
+        <div className="space-y-4">
+          <Field label="Business Street Address" value={data.street} onChange={(v: string) => set('street', v)} placeholder="123 Main St" required />
+          <div className="grid grid-cols-3 gap-4">
+            <Field label="City" value={data.city} onChange={(v: string) => set('city', v)} placeholder="Oklahoma City" required />
+            <Select label="State" value={data.state} onChange={(v: string) => set('state', v)} options={US_STATES} required />
+            <Field label="ZIP Code" value={data.zip} onChange={(v: string) => set('zip', v)} placeholder="73102" required />
+          </div>
+        </div>
+      );
+      if (step === 2) return (
+        <div className="space-y-4">
+          <Field label="Business Legal Name" value={data.businessName} onChange={(v: string) => set('businessName', v)} placeholder="Green Leaf Dispensary LLC" required />
+          <div className="grid grid-cols-2 gap-4">
+            <Select label="Business Type" value={data.businessType} onChange={(v: string) => set('businessType', v)} options={BIZ_TYPES} required />
+            <Select label="Entity Type" value={data.entityType} onChange={(v: string) => set('entityType', v)} options={ENTITY_TYPES} required />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="EIN / Tax ID" value={data.einNumber} onChange={(v: string) => set('einNumber', v)} placeholder="12-3456789" required />
+            <Field label="Number of Owners" value={data.ownerCount} onChange={(v: string) => set('ownerCount', v)} placeholder="1" />
+          </div>
+          <Select label="License Type" value={data.licenseType} onChange={(v: string) => set('licenseType', v)} options={['New Application','Renewal','Transfer of Ownership','Change of Location']} />
+          <div>
+            <label className="text-xs font-bold text-slate-600 mb-1.5 block">Agent Notes</label>
+            <textarea value={callerNotes} onChange={(e) => setCallerNotes(e.target.value)} rows={3} placeholder="Additional notes from the call..."
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all resize-none" />
+          </div>
+        </div>
+      );
+      if (step === 3) {
+        const rows = [
+          { l: 'Owner Name', v: data.firstName + ' ' + data.lastName },
+          { l: 'Email', v: data.email },
+          { l: 'Phone', v: data.phone },
+          { l: 'Business Name', v: data.businessName },
+          { l: 'Business Type', v: data.businessType },
+          { l: 'Entity Type', v: data.entityType },
+          { l: 'EIN', v: data.einNumber },
+          { l: 'License Type', v: data.licenseType },
+        ];
+        return (
+          <div className="space-y-4">
+            <div className="p-4 rounded-xl border text-xs font-bold flex items-start gap-2 bg-indigo-50 border-indigo-200 text-indigo-800">
+              <Shield size={14} className="shrink-0 mt-0.5" />
+              <span>Review all information with the caller before submitting. This will create their account and submit the application.</span>
+            </div>
+            <div className="bg-slate-50 border border-slate-200 rounded-2xl divide-y divide-slate-200 overflow-hidden">
+              {rows.map((r, i) => (
+                <div key={i} className="flex justify-between px-5 py-3 text-sm">
+                  <span className="text-slate-500">{r.l}</span>
+                  <span className="font-bold text-slate-800 text-right max-w-[60%]">{r.v || '—'}</span>
+                </div>
+              ))}
+            </div>
+            {callerNotes && (
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
+                <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-1">Agent Notes</p>
+                <p className="text-sm text-amber-900">{callerNotes}</p>
+              </div>
+            )}
+          </div>
+        );
+      }
+    }
   };
 
   const canNext = () => {
-    if (step === 0) return data.firstName && data.lastName && data.email && data.phone;
-    if (step === 1) return data.street && data.city && data.zip;
-    if (step === 2 && isPatient) return data.condition && data.physicianName;
-    if (step === 2 && !isPatient) return data.businessName && data.einNumber;
+    if (isPatient) {
+      if (step === 0) return data.firstName && data.lastName && data.email && data.phone && data.ssn && data.street && data.mailingAddress;
+      if (step === 1) return scheduledAppt;
+      if (step === 2) return completedPortal;
+    } else {
+      if (step === 0) return data.firstName && data.lastName && data.email && data.phone;
+      if (step === 1) return data.street && data.city && data.zip;
+      if (step === 2) return data.businessName && data.einNumber;
+    }
     return true;
   };
 
@@ -320,7 +468,7 @@ export const PhoneIntakeForm = () => {
           {step === 0 ? '← Back to Type' : '← Previous'}
         </button>
         {step < steps.length - 1 ? (
-          <button onClick={() => canNext() ? setStep(step + 1) : alert('Please fill in all required fields.')}
+          <button onClick={() => canNext() ? setStep(step + 1) : alert(isPatient && step === 1 ? 'Please check the box confirming you scheduled the appointment.' : isPatient && step === 2 ? 'Please check the box confirming you set up the portal.' : 'Please fill in all required fields.')}
             className={cn("px-8 py-3 text-white font-bold rounded-xl shadow-lg transition-all", isPatient ? "bg-emerald-600 hover:bg-emerald-700" : "bg-indigo-600 hover:bg-indigo-700")}>
             Next Step →
           </button>
