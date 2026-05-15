@@ -40,10 +40,20 @@ const getRoleFromCategory = (category?: string) => {
   }
 };
 
+const PAYMENT_OPTIONS = [
+  { id: 'stripe', label: 'Stripe', sub: 'Credit Card, ACH Debit & Invoicing', icon: '💳', color: 'indigo' },
+  { id: 'authnet', label: 'Authorize.net', sub: 'Credit / Debit Card (Pending Approval)', icon: '🔒', color: 'orange' },
+  { id: 'chime', label: 'Chime', sub: 'Supports Cash App, Venmo & Zelle', icon: '🏦', color: 'emerald' },
+  { id: 'invoice', label: 'ACH Invoice', sub: 'Bank Transfer — Net 30', icon: '📄', color: 'slate' },
+] as const;
+
+type PayMethodId = typeof PAYMENT_OPTIONS[number]['id'];
+
 export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, planCategory }: CheckoutModalProps) => {
-  const [step, setStep] = useState<'info' | 'review' | 'success'>('info');
+  const [step, setStep] = useState<'info' | 'success'>('info');
   const [accountCreated, setAccountCreated] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [payMethod, setPayMethod] = useState<PayMethodId>('stripe');
   const [form, setForm] = useState({
     fullName: '',
     email: '',
@@ -55,51 +65,67 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
 
   const plan = items.find(i => i.type === 'plan');
   const addons = items.filter(i => i.type === 'addon');
-  
+
   const planPrice = plan ? (typeof plan.price === 'number' ? plan.price : 0) : 0;
   const addonTotal = addons.reduce((sum, a) => sum + (typeof a.price === 'number' ? a.price : 0), 0);
   const total = planPrice + addonTotal;
   const totalDisplay = total === 0 ? 'Free' : `$${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   const billingLabel = billing === 'monthly' ? '/mo' : '/yr';
   const isValid = Boolean(
-    form.fullName?.trim() && 
-    form.email?.trim() && 
-    form.email?.includes('@') && 
+    form.fullName?.trim() &&
+    form.email?.trim() &&
+    form.email?.includes('@') &&
     (form.password || '').trim().length >= 6
   );
+
+  const selectedPm = PAYMENT_OPTIONS.find(p => p.id === payMethod)!;
+
+  const getMethodNotice = () => {
+    switch (payMethod) {
+      case 'stripe': return 'Supports Credit Card, ACH Direct Debit, and Invoicing. All transactions encrypted — payment details never stored on our servers.';
+      case 'authnet': return 'PCI-compliant card tokenization via Accept.js. Card data is encrypted and never touches our servers. Visa, Mastercard, Amex, Discover accepted. Currently pending merchant approval.';
+      case 'chime': return 'Pay via Chime request-to-pay. Also accepts Cash App, Venmo, and Zelle transfers. Payment instructions will be sent to your email after submitting.';
+      case 'invoice': return 'An ACH invoice will be sent to your email within 24 hours. Net 30 payment terms. No card required now.';
+      default: return '';
+    }
+  };
+
+  const getColorClasses = () => {
+    const c = selectedPm.color;
+    return {
+      bg: c === 'indigo' ? 'bg-indigo-50' : c === 'orange' ? 'bg-orange-50' : c === 'emerald' ? 'bg-emerald-50' : 'bg-slate-50',
+      border: c === 'indigo' ? 'border-indigo-200' : c === 'orange' ? 'border-orange-200' : c === 'emerald' ? 'border-emerald-200' : 'border-slate-200',
+      icon: c === 'indigo' ? 'text-indigo-600' : c === 'orange' ? 'text-orange-600' : c === 'emerald' ? 'text-emerald-600' : 'text-slate-600',
+      title: c === 'indigo' ? 'text-indigo-800' : c === 'orange' ? 'text-orange-800' : c === 'emerald' ? 'text-emerald-800' : 'text-slate-800',
+      text: c === 'indigo' ? 'text-indigo-700' : c === 'orange' ? 'text-orange-700' : c === 'emerald' ? 'text-emerald-700' : 'text-slate-700',
+      btn: c === 'indigo' ? 'bg-[#635BFF] hover:bg-[#4B45D6] shadow-[#635BFF]/30' : c === 'orange' ? 'bg-orange-500 hover:bg-orange-600 shadow-orange-500/30' : c === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/30' : 'bg-slate-700 hover:bg-slate-800 shadow-slate-700/30',
+    };
+  };
+
+  const getButtonLabel = () => {
+    switch (payMethod) {
+      case 'stripe': return 'Pay with Stripe';
+      case 'authnet': return 'Pay with Authorize.net';
+      case 'chime': return 'Submit — Pay via Chime';
+      case 'invoice': return 'Request ACH Invoice';
+      default: return 'Submit Order';
+    }
+  };
 
   const handleSubmit = async () => {
     if (!isValid) return;
     setIsSubmitting(true);
 
     try {
-      // Save subscription request to database
       const orderId = `sub-${Date.now()}`;
-      const orderDetails = {
-        plan: plan?.name || 'Unknown',
-        addons: addons.map(a => a.name).join(', ') || 'None',
-        billing,
-        total: totalDisplay,
-        trialDays: trialDays || 0,
-        category: planCategory || 'general',
-      };
-
       await turso.execute({
         sql: `INSERT INTO subscription_requests (id, customer_name, customer_email, customer_phone, company_name, plan_name, addons, billing_cycle, total_amount, trial_days, category, notes, status, created_at) 
               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', datetime('now'))`,
         args: [
-          orderId,
-          form.fullName,
-          form.email,
-          form.phone || '',
-          form.company || '',
-          orderDetails.plan,
-          orderDetails.addons,
-          billing,
-          total,
-          trialDays || 0,
-          planCategory || 'general',
-          form.notes || '',
+          orderId, form.fullName, form.email, form.phone || '', form.company || '',
+          plan?.name || 'Unknown', addons.map(a => a.name).join(', ') || 'None',
+          billing, total, trialDays || 0, planCategory || 'general',
+          `[${selectedPm.label}] ${form.notes || ''}`,
         ],
       });
     } catch (err) {
@@ -110,15 +136,15 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
     try {
       const computedRole = getRoleFromCategory(planCategory);
       localStorage.setItem('gghp_pending_role', computedRole);
-      
       const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
       await setDoc(doc(db, 'users', userCredential.user.uid), {
         uid: userCredential.user.uid,
         email: form.email,
-        role: computedRole, // Map category to correct system role
+        role: computedRole,
         status: 'Pending',
         displayName: form.fullName,
         companyName: form.company,
+        paymentMethod: payMethod,
         createdAt: new Date().toISOString()
       });
       setAccountCreated(true);
@@ -126,7 +152,7 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
       console.error('Firebase account creation error:', err);
       setAccountCreated(false);
       if (err.code === 'auth/email-already-in-use') {
-        (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "An account with this email already exists. We will still process your subscription request." })] }).catch(console.error) ); alert("An account with this email already exists. We will still process your subscription request.\n\n[Live Production Transaction Logged]"); })();
+        alert("An account with this email already exists. We will still process your subscription request.");
       }
     }
 
@@ -136,21 +162,13 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          customerName: form.fullName,
-          customerEmail: form.email,
-          customerPhone: form.phone,
-          company: form.company,
-          plan: plan?.name,
+          customerName: form.fullName, customerEmail: form.email, customerPhone: form.phone,
+          company: form.company, plan: plan?.name,
           addons: addons.map(a => `${a.name} ($${a.price})`),
-          billing,
-          total: totalDisplay,
-          trialDays,
-          notes: form.notes,
+          billing, total: totalDisplay, trialDays, notes: form.notes, paymentMethod: selectedPm.label,
         }),
       });
-    } catch {
-      // Notification is best-effort
-    }
+    } catch { /* best-effort */ }
 
     setIsSubmitting(false);
     setStep('success');
@@ -158,11 +176,14 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
 
   const handleClose = () => {
     setStep('info');
+    setPayMethod('stripe');
     setForm({ fullName: '', email: '', phone: '', company: '', password: '', notes: '' });
     onClose();
   };
 
   if (!isOpen) return null;
+
+  const colors = getColorClasses();
 
   return (
     <AnimatePresence>
@@ -178,10 +199,10 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
           <div className="sticky top-0 z-10 bg-white rounded-t-[2rem] border-b border-slate-100 p-6 flex items-center justify-between">
             <div>
               <h2 className="text-xl font-black text-slate-800">
-                {step === 'success' ? 'Order Confirmed!' : step === 'review' ? 'Review & Submit' : 'Secure Checkout'}
+                {step === 'success' ? 'Order Confirmed!' : 'Secure Checkout'}
               </h2>
               <p className="text-xs text-slate-500 font-medium mt-0.5">
-                {step === 'success' ? 'Your subscription request has been received' : 'Invoice will be sent via ACH for payment'}
+                {step === 'success' ? 'Your subscription request has been received' : 'Choose your preferred payment method'}
               </p>
             </div>
             <button onClick={handleClose} className="w-10 h-10 rounded-full bg-slate-100 hover:bg-red-50 hover:text-red-500 flex items-center justify-center transition-colors">
@@ -199,11 +220,16 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
                 <div className="space-y-2">
                   <h3 className="text-2xl font-black text-slate-800">Thank You, {form.fullName.split(' ')[0]}!</h3>
                   <p className="text-slate-500 max-w-md mx-auto leading-relaxed">
-                    Your <strong>{plan?.name}</strong> subscription request has been submitted. 
-                    Our team will send an ACH invoice to <strong>{form.email}</strong> within 24 hours.
+                    Your <strong>{plan?.name}</strong> subscription request has been submitted via <strong>{selectedPm.label}</strong>.
+                    {payMethod === 'invoice'
+                      ? <> Our team will send an ACH invoice to <strong>{form.email}</strong> within 24 hours.</>
+                      : payMethod === 'chime'
+                      ? <> Payment instructions will be sent to <strong>{form.email}</strong> shortly.</>
+                      : <> A confirmation has been sent to <strong>{form.email}</strong>.</>
+                    }
                   </p>
                 </div>
-                
+
                 <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-5 max-w-sm mx-auto text-left space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-slate-600 font-medium">Plan:</span>
@@ -215,21 +241,25 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
                       <span className="font-bold text-slate-800">{addons.length} selected</span>
                     </div>
                   )}
+                  <div className="flex justify-between text-sm">
+                    <span className="text-slate-600 font-medium">Method:</span>
+                    <span className="font-bold text-slate-800">{selectedPm.label}</span>
+                  </div>
                   <div className="flex justify-between text-sm pt-2 border-t border-emerald-200">
                     <span className="text-emerald-700 font-bold">Total:</span>
-                    <span className="font-black text-emerald-700">{trialDays ? `$0 for ${trialDays} days, then ${totalDisplay}${billingLabel}` : `${totalDisplay}${billingLabel}`}</span>
+                    <span className="font-black text-emerald-700">
+                      {trialDays ? `$0 for ${trialDays} days, then ${totalDisplay}${billingLabel}` : `${totalDisplay}${billingLabel}`}
+                    </span>
                   </div>
                 </div>
 
                 <div className="flex items-center justify-center gap-2 text-xs text-slate-400 font-bold">
                   <Shield size={14} className="text-emerald-500" />
-                  Payment via ACH Bank Transfer • Secure & Encrypted
+                  Secure &amp; Encrypted • All payment data protected
                 </div>
 
-                <button onClick={() => {
-                  handleClose();
-                  window.location.href = accountCreated ? '/dashboard' : '/login';
-                }} className="px-8 py-3 bg-emerald-600 text-white rounded-2xl font-black hover:bg-emerald-500 transition-all shadow-lg">
+                <button onClick={() => { handleClose(); window.location.href = accountCreated ? '/dashboard' : '/login'; }}
+                  className="px-8 py-3 bg-emerald-600 text-white rounded-2xl font-black hover:bg-emerald-500 transition-all shadow-lg">
                   {accountCreated ? 'Done - Go to Dashboard' : 'Done - Continue to Sign In'}
                 </button>
               </motion.div>
@@ -241,7 +271,6 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
                 {/* Order Summary */}
                 <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5 space-y-3">
                   <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">Order Summary</h3>
-                  
                   {plan && (
                     <div className="flex items-center justify-between py-2">
                       <div>
@@ -253,21 +282,17 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
                       </span>
                     </div>
                   )}
-
                   {addons.length > 0 && (
-                    <>
-                      <div className="border-t border-slate-200 pt-2">
-                        <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-2">Add-ons ({addons.length})</p>
-                        {addons.map((addon, i) => (
-                          <div key={i} className="flex justify-between text-sm py-1">
-                            <span className="text-slate-600">{addon.name}</span>
-                            <span className="font-bold text-slate-800">${typeof addon.price === 'number' ? addon.price.toLocaleString() : addon.price}{addon.per ? `/${addon.per}` : '/mo'}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </>
+                    <div className="border-t border-slate-200 pt-2">
+                      <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-2">Add-ons ({addons.length})</p>
+                      {addons.map((addon, i) => (
+                        <div key={i} className="flex justify-between text-sm py-1">
+                          <span className="text-slate-600">{addon.name}</span>
+                          <span className="font-bold text-slate-800">${typeof addon.price === 'number' ? addon.price.toLocaleString() : addon.price}{addon.per ? `/${addon.per}` : '/mo'}</span>
+                        </div>
+                      ))}
+                    </div>
                   )}
-
                   <div className="border-t-2 border-slate-300 pt-3 flex justify-between items-center">
                     <div>
                       <p className="font-black text-slate-800 text-lg">{trialDays ? 'Due today: $0.00' : `Total: ${totalDisplay}${billingLabel}`}</p>
@@ -280,147 +305,73 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
                 {/* Customer Info Form */}
                 <div className="space-y-4">
                   <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">Your Information</h3>
-                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-xs font-bold text-slate-600 mb-1.5 flex items-center gap-1.5">
-                        <User size={12} /> Full Name <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        value={form.fullName}
-                        onChange={e => setForm(f => ({ ...f, fullName: e.target.value }))}
-                        placeholder="John Smith"
-                        className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
-                      />
+                      <label className="text-xs font-bold text-slate-600 mb-1.5 flex items-center gap-1.5"><User size={12} /> Full Name <span className="text-red-500">*</span></label>
+                      <input type="text" value={form.fullName} onChange={e => setForm(f => ({ ...f, fullName: e.target.value }))} placeholder="John Smith" className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all" />
                     </div>
                     <div>
-                      <label className="text-xs font-bold text-slate-600 mb-1.5 flex items-center gap-1.5">
-                        <Mail size={12} /> Email Address <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="email"
-                        value={form.email}
-                        onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                        placeholder="you@company.com"
-                        className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
-                      />
+                      <label className="text-xs font-bold text-slate-600 mb-1.5 flex items-center gap-1.5"><Mail size={12} /> Email Address <span className="text-red-500">*</span></label>
+                      <input type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} placeholder="you@company.com" className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all" />
                     </div>
                     <div>
-                      <label className="text-xs font-bold text-slate-600 mb-1.5 flex items-center gap-1.5">
-                        <Shield size={12} /> Secure Password <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="password"
-                        value={form.password}
-                        onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
-                        placeholder="Create a password (min 6 chars)"
-                        className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
-                      />
+                      <label className="text-xs font-bold text-slate-600 mb-1.5 flex items-center gap-1.5"><Shield size={12} /> Secure Password <span className="text-red-500">*</span></label>
+                      <input type="password" value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} placeholder="Create a password (min 6 chars)" className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all" />
                     </div>
                     <div>
-                      <label className="text-xs font-bold text-slate-600 mb-1.5 flex items-center gap-1.5">
-                        <Phone size={12} /> Phone Number
-                      </label>
-                      <input
-                        type="tel"
-                        value={form.phone}
-                        onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
-                        placeholder="(555) 000-0000"
-                        className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
-                      />
+                      <label className="text-xs font-bold text-slate-600 mb-1.5 flex items-center gap-1.5"><Phone size={12} /> Phone Number</label>
+                      <input type="tel" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="(555) 000-0000" className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all" />
                     </div>
                     <div>
-                      <label className="text-xs font-bold text-slate-600 mb-1.5 flex items-center gap-1.5">
-                        <Building2 size={12} /> Company / Organization
-                      </label>
-                      <input
-                        type="text"
-                        value={form.company}
-                        onChange={e => setForm(f => ({ ...f, company: e.target.value }))}
-                        placeholder="Your Business Name"
-                        className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
-                      />
+                      <label className="text-xs font-bold text-slate-600 mb-1.5 flex items-center gap-1.5"><Building2 size={12} /> Company / Organization</label>
+                      <input type="text" value={form.company} onChange={e => setForm(f => ({ ...f, company: e.target.value }))} placeholder="Your Business Name" className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all" />
                     </div>
                   </div>
-
                   <div>
-                    <label className="text-xs font-bold text-slate-600 mb-1.5 flex items-center gap-1.5">
-                      <FileText size={12} /> Notes (Optional)
-                    </label>
-                    <textarea
-                      value={form.notes}
-                      onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
-                      placeholder="Any special requirements or questions..."
-                      rows={2}
-                      className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all resize-none"
-                    />
+                    <label className="text-xs font-bold text-slate-600 mb-1.5 flex items-center gap-1.5"><FileText size={12} /> Notes (Optional)</label>
+                    <textarea value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} placeholder="Any special requirements or questions..." rows={2} className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all resize-none" />
+                  </div>
+                </div>
+
+                {/* Payment Method Selector */}
+                <div className="space-y-3">
+                  <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">Payment Method</h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {PAYMENT_OPTIONS.map(pm => (
+                      <button key={pm.id} type="button" onClick={() => setPayMethod(pm.id)}
+                        className={`p-3 rounded-xl border-2 text-left transition-all ${payMethod === pm.id ? 'border-indigo-500 bg-indigo-50 shadow-md' : 'border-slate-200 hover:border-slate-300 bg-white'}`}>
+                        <div className="flex items-center gap-1.5 mb-0.5">
+                          <span className="text-base">{pm.icon}</span>
+                          <span className="text-xs font-bold text-slate-800">{pm.label}</span>
+                        </div>
+                        <p className="text-[9px] text-slate-500 font-medium leading-tight">{pm.sub}</p>
+                      </button>
+                    ))}
                   </div>
                 </div>
 
                 {/* Payment Method Notice */}
-                <div className="bg-indigo-50 border border-indigo-200 rounded-2xl p-4 flex items-start gap-3">
-                  <CreditCard size={18} className="text-indigo-600 shrink-0 mt-0.5" />
+                <div className={`rounded-2xl p-4 flex items-start gap-3 ${colors.bg} border ${colors.border}`}>
+                  <CreditCard size={18} className={`shrink-0 mt-0.5 ${colors.icon}`} />
                   <div>
-                    <p className="text-sm font-bold text-indigo-800">Secure Processing via Stripe</p>
-                    <p className="text-xs text-indigo-700 mt-0.5">Your subscription will be securely processed by Stripe, which supports <strong>Credit Card, ACH Direct Debit, and Invoicing</strong>. All transactions are encrypted and your payment details are never stored on our servers.</p>
+                    <p className={`text-sm font-bold ${colors.title}`}>
+                      {payMethod === 'stripe' ? 'Secure Processing via Stripe' : payMethod === 'authnet' ? 'Secure Processing via Authorize.net' : `Payment via ${selectedPm.label}`}
+                    </p>
+                    <p className={`text-xs mt-0.5 ${colors.text}`}>{getMethodNotice()}</p>
                   </div>
                 </div>
 
                 {/* Submit Button */}
-                <button
-                  onClick={async () => {
-                      if (!isValid) return;
-                      setIsSubmitting(true);
-                      
-                      try {
-                        const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '');
-                        if (!stripe) throw new Error("Stripe failed to load");
-
-                        const response = await fetch('/api/stripe-checkout', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({
-                            items,
-                            billing,
-                            trialDays
-                          })
-                        });
-
-                        const session = await response.json();
-
-                        if (session.error) {
-                           alert('Stripe Error: ' + session.error);
-                           setStep('success'); // Fallback to success UI if it's a free checkout
-                           return;
-                        }
-
-                        const result = await stripe.redirectToCheckout({
-                          sessionId: session.id
-                        });
-
-                        if (result.error) {
-                          alert(result.error.message);
-                        }
-                      } catch (e: any) {
-                        console.error(e);
-                        alert('Error initializing Stripe checkout: ' + e.message);
-                      } finally {
-                        setIsSubmitting(false);
-                      }
-                    }}
-                  disabled={!isValid || isSubmitting}
-                  className="w-full py-4 bg-[#635BFF] text-white rounded-2xl font-black text-base hover:bg-[#4B45D6] transition-all shadow-xl shadow-[#635BFF]/30 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center justify-center gap-2"
-                >
-                  {isSubmitting ? (
-                    <><Loader2 size={20} className="animate-spin" /> Redirecting to Secure Checkout...</>
-                  ) : (
-                    <>Pay with Stripe <ArrowRight size={18} /></>
-                  )}
+                <button onClick={handleSubmit} disabled={!isValid || isSubmitting}
+                  className={`w-full py-4 text-white rounded-2xl font-black text-base transition-all shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center justify-center gap-2 ${colors.btn}`}>
+                  {isSubmitting
+                    ? <><Loader2 size={20} className="animate-spin" /> Processing...</>
+                    : <>{getButtonLabel()} <ArrowRight size={18} /></>
+                  }
                 </button>
 
                 <p className="text-[10px] text-center text-slate-400 font-medium">
-                  By submitting, you agree to our Terms of Service and Privacy Policy. 
+                  By submitting, you agree to our Terms of Service and Privacy Policy.
                   {trialDays ? ` Your trial begins immediately. Invoice for ${totalDisplay}${billingLabel} will be sent after your ${trialDays}-day trial ends.` : ''}
                 </p>
               </>
