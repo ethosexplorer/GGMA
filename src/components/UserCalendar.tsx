@@ -18,6 +18,8 @@ const ALL_CATEGORIES = [
   { id: 'ops', label: 'Operations', color: 'bg-indigo-500' },
   { id: 'admin_support', label: 'Admin Support', color: 'bg-pink-500' },
   { id: 'personal', label: 'Personal', color: 'bg-slate-500' },
+  { id: 'task', label: 'Task', color: 'bg-blue-500' },
+  { id: 'reminder', label: 'Reminder', color: 'bg-orange-500' },
 ];
 
 const HOURS = Array.from({ length: 16 }, (_, i) => i + 6); // 6AM-9PM
@@ -47,7 +49,7 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
   const isExecutive = isMonica || isRyan || isBob;
   const isFounder = (user?.role === 'executive_founder' || emailLower === 'globalgreenhp@gmail.com') && !isExecutive;
   
-  const availableCategories = isFounder ? ALL_CATEGORIES : [{ id: 'personal', label: 'Personal', color: 'bg-slate-500' }];
+  const availableCategories = isFounder ? ALL_CATEGORIES : [{ id: 'personal', label: 'Personal', color: 'bg-slate-500' }, { id: 'task', label: 'Task', color: 'bg-blue-500' }, { id: 'reminder', label: 'Reminder', color: 'bg-orange-500' }];
   const initialEvents = isFounder ? SEED_EVENTS : [];
 
   const storageKey = `gghp_calendar_v1_${user?.uid || user?.role || 'default'}`;
@@ -64,8 +66,8 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
   }, [events, storageKey]);
 
   const [view, setView] = useState<ViewMode>('month');
-  const [current, setCurrent] = useState(new Date(2026, 3, 28)); // April 28, 2026
-  const [selectedDate, setSelectedDate] = useState<string>(fmt(new Date(2026, 3, 28)));
+  const [current, setCurrent] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<string>(fmt(new Date()));
   const [showForm, setShowForm] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<CalEvent | null>(null);
   const [form, setForm] = useState({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: isFounder ? 'executive' : 'personal', description: '', attendees: '', location: '', meetLink: '' });
@@ -82,7 +84,7 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
     setCurrent(d);
   };
 
-  const goToday = () => { setCurrent(new Date(2026, 3, 28)); setSelectedDate(fmt(new Date(2026, 3, 28))); };
+  const goToday = () => { setCurrent(new Date()); setSelectedDate(fmt(new Date())); };
 
   const monthDays = useMemo(() => {
     const y = current.getFullYear(), m = current.getMonth();
@@ -290,8 +292,8 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
           <button onClick={openGoogleCalendar} className="px-4 py-2 border border-blue-200 bg-blue-50 rounded-xl text-xs font-black text-blue-700 hover:bg-blue-100 flex items-center gap-1.5 transition-colors"><CalIcon size={14} /> Google Calendar</button>
           
           <div className="flex items-center gap-2 border-l border-slate-200 pl-3">
-            <button onClick={() => alert('Tasks integration coming soon!')} className="px-4 py-2.5 border border-slate-200 bg-white text-slate-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-slate-50 transition-colors shadow-sm"><CheckSquare size={14} /> Task</button>
-            <button onClick={() => alert('Reminders integration coming soon!')} className="px-4 py-2.5 border border-slate-200 bg-white text-slate-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-slate-50 transition-colors shadow-sm"><Bell size={14} /> Reminder</button>
+            <button onClick={() => { setForm(f => ({ ...f, date: selectedDate, category: 'task' })); setShowForm(true); }} className="px-4 py-2.5 border border-slate-200 bg-white text-slate-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-slate-50 transition-colors shadow-sm"><CheckSquare size={14} /> Task</button>
+            <button onClick={() => { setForm(f => ({ ...f, date: selectedDate, category: 'reminder' })); setShowForm(true); }} className="px-4 py-2.5 border border-slate-200 bg-white text-slate-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-slate-50 transition-colors shadow-sm"><Bell size={14} /> Reminder</button>
             <button onClick={() => { setForm(f => ({ ...f, date: selectedDate })); setShowForm(true); }} className="px-4 py-2.5 bg-[#1a4731] text-white rounded-xl text-xs font-black flex items-center gap-2 hover:bg-[#0f291c] transition-colors shadow-md"><Plus size={14} /> New Event</button>
           </div>
         </div>
@@ -337,7 +339,7 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
             {monthDays.map(({ date, inMonth }, i) => {
               const ds = fmt(date);
               const dayEvts = eventsOn(ds);
-              const isToday = ds === '2026-04-28';
+              const isToday = ds === fmt(new Date());
               const isSelected = ds === selectedDate;
               return (
                 <div key={i} onClick={() => { setSelectedDate(ds); setView('day'); }}
@@ -358,7 +360,7 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
           <div className="grid grid-cols-8 border-b border-slate-100">
             <div className="py-3 px-2 text-[10px] font-black text-slate-400 border-r border-slate-100" />
             {weekDays.map(d => {
-              const ds = fmt(d); const isToday = ds === '2026-04-28';
+              const ds = fmt(d); const isToday = ds === fmt(new Date());
               return (<div key={ds} onClick={() => { setSelectedDate(ds); setView('day'); }}
                 className={cn("py-3 text-center cursor-pointer hover:bg-indigo-50/50", isToday && "bg-emerald-50")}>
                 <div className="text-[10px] font-black text-slate-400 uppercase">{dayNames[d.getDay()]}</div>
