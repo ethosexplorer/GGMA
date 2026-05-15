@@ -71,6 +71,13 @@ const GOV_ADVOCATES = [
   { name: "Hawaii Department of Health — Medical Cannabis (OMCCR)", city: "Honolulu", state: "HI", type: "gov_state", focus: "State Regulator (Dispensaries & Registry)", email: "medicalcannabis@doh.hawaii.gov", phone: "808-733-2177" },
   { name: "Hawaii NORML", city: "Honolulu", state: "HI", type: "advocate", focus: "Cannabis Advocacy", email: "info@hinorml.org", phone: "808-555-0101" },
   { name: "Marijuana Policy Project (MPP) - HI Chapter", city: "Honolulu", state: "HI", type: "advocate", focus: "Policy Reform", email: "hawaii@mpp.org", phone: "202-462-5747" },
+
+  // Idaho (⚠️ FULLY ILLEGAL — No cannabis program. 2026 ballot initiative pending.)
+  { name: "Idaho Attorney General's Office", city: "Boise", state: "ID", type: "gov_state", focus: "State Enforcement (Cannabis = Schedule I)", email: "", phone: "208-334-2400" },
+  { name: "Idaho Department of Agriculture", city: "Boise", state: "ID", type: "gov_state", focus: "Hemp Program Oversight", email: "", phone: "208-332-8500" },
+  { name: "Idaho NORML", city: "Boise", state: "ID", type: "advocate", focus: "Cannabis Reform Advocacy", email: "info@idnorml.org", phone: "" },
+  { name: "Natural Medicine Alliance of Idaho", city: "Boise", state: "ID", type: "advocate", focus: "2026 Medical Cannabis Ballot Initiative", email: "", phone: "" },
+  { name: "Marijuana Policy Project (MPP) - ID Chapter", city: "Boise", state: "ID", type: "advocate", focus: "Policy Reform", email: "idaho@mpp.org", phone: "202-462-5747" },
 ];
 
 function slugify(str) { return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').substring(0, 50); }
@@ -89,7 +96,7 @@ async function importGovAdvocates() {
       contactName: org.name,
       city: org.city,
       state: org.state,
-      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii' }[org.state] || org.state,
+      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho' }[org.state] || org.state,
       type: org.type, // 'gov_state', 'gov_local', 'gov_federal', or 'advocate'
       email: org.email || '',
       phone: org.phone || '',
