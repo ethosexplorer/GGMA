@@ -96,6 +96,12 @@ const GOV_ADVOCATES = [
   { name: "Iowa DHHS — Medical Cannabidiol Program", city: "Des Moines", state: "IA", type: "gov_state", focus: "State Regulator (Medical Cannabidiol)", email: "", phone: "515-281-7689" },
   { name: "Iowa NORML", city: "Des Moines", state: "IA", type: "advocate", focus: "Cannabis Reform Advocacy", email: "", phone: "" },
   { name: "Marijuana Policy Project (MPP) - IA Chapter", city: "Des Moines", state: "IA", type: "advocate", focus: "Policy Reform", email: "iowa@mpp.org", phone: "202-462-5747" },
+
+  // Kansas (⚠️ FULLY ILLEGAL — 0.0% THC CBD rule. HB 2678/2679 stalled.)
+  { name: "Kansas Attorney General's Office", city: "Topeka", state: "KS", type: "gov_state", focus: "State Enforcement (Cannabis = Misdemeanor)", email: "", phone: "785-296-2215" },
+  { name: "Kansas Department of Agriculture", city: "Manhattan", state: "KS", type: "gov_state", focus: "Industrial Hemp Program", email: "", phone: "785-564-6700" },
+  { name: "Kansas NORML", city: "Topeka", state: "KS", type: "advocate", focus: "Cannabis Reform Advocacy", email: "", phone: "" },
+  { name: "Marijuana Policy Project (MPP) - KS Chapter", city: "Topeka", state: "KS", type: "advocate", focus: "Policy Reform (HB 2678/2679)", email: "kansas@mpp.org", phone: "202-462-5747" },
 ];
 
 function slugify(str) { return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').substring(0, 50); }
@@ -114,7 +120,7 @@ async function importGovAdvocates() {
       contactName: org.name,
       city: org.city,
       state: org.state,
-      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa' }[org.state] || org.state,
+      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas' }[org.state] || org.state,
       type: org.type, // 'gov_state', 'gov_local', 'gov_federal', or 'advocate'
       email: org.email || '',
       phone: org.phone || '',

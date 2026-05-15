@@ -566,7 +566,7 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     guide: "",
     resources: "https://www.mpp.org/states/kansas/?state=KS",
     abbreviation: "KS",
-    adultUseStatus: "Just legalized Feb/Mar 2026",
+    adultUseStatus: "No (HB 2679 stalled 2026)",
     medicalStatus: "No comprehensive program",
     regulator: "State law only",
     compliancePage: "",
