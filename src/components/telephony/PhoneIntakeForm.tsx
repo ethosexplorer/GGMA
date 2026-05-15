@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Phone, User, Building2, HeartPulse, FileText, CircleCheck, AlertCircle, Shield, MapPin, Mail, Calendar, CreditCard, Loader2, UserPlus, ExternalLink } from 'lucide-react';
+import { Phone, User, Building2, HeartPulse, FileText, CircleCheck, AlertCircle, Shield, MapPin, Mail, Calendar, CreditCard, Loader2, UserPlus, ExternalLink, PhoneIncoming } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { turso } from '../../lib/turso';
 
@@ -125,6 +125,98 @@ export const PhoneIntakeForm = () => {
 
   const reset = () => { setIntakeType(null); setStep(0); setData({...empty}); setSubmitted(false); setCallerId(''); setCallerNotes(''); setScheduledAppt(false); setCompletedPortal(false); };
 
+  const renderScript = () => {
+    if (intakeType === null) {
+      return (
+        <div className="space-y-4 text-sm text-emerald-50/90 leading-relaxed">
+          <p><strong>Agent:</strong> "Thank you for calling GGP. How can I assist you today?"</p>
+          <p><strong>Listen for:</strong> Patient looking for a medical card, OR a business looking for licensing (dispensary, grower, etc.).</p>
+          <div className="mt-4 bg-[#0f291c] p-4 rounded-xl border border-emerald-800/50 shadow-inner">
+            <p className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">Action Required</p>
+            <p className="text-xs text-emerald-100/70">Select the appropriate intake path on the right to load the guided script.</p>
+          </div>
+        </div>
+      );
+    }
+    
+    const isPatient = intakeType === 'patient_card';
+    if (isPatient) {
+      if (step === 0) return (
+        <div className="space-y-4 text-sm text-emerald-50/90 leading-relaxed">
+          <p><strong>Agent:</strong> "I can help you with your medical card. First, are you 18 or older?"</p>
+          <p className="text-xs italic text-emerald-200">If under 18, advise they need a parent/guardian.</p>
+          <p><strong>Agent:</strong> "Are you applying for a new card or a renewal?"</p>
+          <p><strong>Agent:</strong> "Let's get your basic information down: First and last name, email, phone number, and date of birth."</p>
+          <p><strong>Agent:</strong> "I also need the physical address on your ID. If you want the card mailed elsewhere, let me know."</p>
+          <p><strong>Agent:</strong> "What condition are you seeking to treat with medical marijuana?"</p>
+          <div className="mt-4 bg-[#0f291c] p-4 rounded-xl border border-emerald-800/50 shadow-inner">
+            <p className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">Agent Note</p>
+            <p className="text-xs text-emerald-100/70">Make sure to ask about PCP and allergies for the doctor's notes.</p>
+          </div>
+        </div>
+      );
+      if (step === 1) return (
+        <div className="space-y-4 text-sm text-emerald-50/90 leading-relaxed">
+          <p><strong>Agent:</strong> "Perfect. Now we need to schedule your telehealth visit with the doctor."</p>
+          <p><strong>Agent:</strong> "I'm opening the calendar now. Do you have a preferred day or time?"</p>
+          <div className="mt-4 bg-[#0f291c] p-4 rounded-xl border border-emerald-800/50 shadow-inner">
+            <p className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">Action Required</p>
+            <p className="text-xs text-emerald-100/70">Click 'Open Acuity Scheduling' and complete the booking for the patient. Check the box once confirmed.</p>
+          </div>
+        </div>
+      );
+      if (step === 2) return (
+        <div className="space-y-4 text-sm text-emerald-50/90 leading-relaxed">
+          <p><strong>Agent:</strong> "The doctor visit is scheduled. Lastly, the state requires you to be registered in their OMMA portal."</p>
+          <p><strong>Agent:</strong> "Have you already created an account on the state website?"</p>
+          <p className="text-xs italic text-emerald-200">If No: "I can guide you through creating one now, or I can email you the link with instructions."</p>
+          <div className="mt-4 bg-[#0f291c] p-4 rounded-xl border border-emerald-800/50 shadow-inner">
+            <p className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">Action Required</p>
+            <p className="text-xs text-emerald-100/70">Assist the caller with ok.gov registration. Verify email access if possible.</p>
+          </div>
+        </div>
+      );
+      if (step === 3) return (
+        <div className="space-y-4 text-sm text-emerald-50/90 leading-relaxed">
+          <p><strong>Agent:</strong> "Let me read this back to make sure we have everything correct..."</p>
+          <p className="text-xs italic text-emerald-200">Verify Name, DOB, Address, and Appointment Time.</p>
+          <p><strong>Agent:</strong> "Everything looks great. Do you have any questions for me before we wrap up?"</p>
+          <div className="mt-4 bg-[#0f291c] p-4 rounded-xl border border-emerald-800/50 shadow-inner">
+            <p className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">Final Step</p>
+            <p className="text-xs text-emerald-100/70">Submit the form to finalize the intake in the CRM.</p>
+          </div>
+        </div>
+      );
+    } else {
+      if (step === 0) return (
+        <div className="space-y-4 text-sm text-emerald-50/90 leading-relaxed">
+          <p><strong>Agent:</strong> "I can help with your business licensing. Let's start with your information as the primary owner."</p>
+          <p><strong>Agent:</strong> "May I have your first and last name, email, and best contact number?"</p>
+        </div>
+      );
+      if (step === 1) return (
+        <div className="space-y-4 text-sm text-emerald-50/90 leading-relaxed">
+          <p><strong>Agent:</strong> "What is the physical street address for the business facility?"</p>
+          <p className="text-xs italic text-emerald-200">Ensure the ZIP code matches the city.</p>
+        </div>
+      );
+      if (step === 2) return (
+        <div className="space-y-4 text-sm text-emerald-50/90 leading-relaxed">
+          <p><strong>Agent:</strong> "What is the legal name of the business entity?"</p>
+          <p><strong>Agent:</strong> "And what type of license are you applying for? (e.g. Dispensary, Grower, Processor)"</p>
+          <p><strong>Agent:</strong> "Do you have your EIN ready?"</p>
+        </div>
+      );
+      if (step === 3) return (
+        <div className="space-y-4 text-sm text-emerald-50/90 leading-relaxed">
+          <p><strong>Agent:</strong> "Let's review the details to ensure accuracy before I submit this to our compliance team."</p>
+          <p className="text-xs italic text-emerald-200">Verify Business Name, License Type, and Contact Info.</p>
+          <p><strong>Agent:</strong> "Our team will review this and reach out shortly. Thank you!"</p>
+        </div>
+      );
+    }
+  };
+
   // --- TYPE SELECTOR ---
   if (!intakeType) return (
     <div className="max-w-3xl mx-auto space-y-8 animate-in fade-in duration-500">
@@ -213,8 +305,15 @@ export const PhoneIntakeForm = () => {
             <Field label="Social Security Number" value={data.ssn} onChange={(v: string) => set('ssn', v)} placeholder="XXX-XX-XXXX" required />
           </div>
           
-          <Field label="Physical address that is on your ID" value={data.street} onChange={(v: string) => set('street', v)} placeholder="123 Main St, City, State, Zip" required />
-          <Field label="Street Address, City, State, and Zipcode WHERE YOU WANT YOUR CARD MAILED TO" value={data.mailingAddress} onChange={(v: string) => set('mailingAddress', v)} placeholder="Same as above, or enter new address" required />
+          <div className="grid grid-cols-2 gap-4">
+            <Select label="State / Jurisdiction" value={data.state} onChange={(v: string) => set('state', v)} options={US_STATES} required />
+            <Field label="City" value={data.city} onChange={(v: string) => set('city', v)} placeholder="Oklahoma City" required />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Physical Street Address" value={data.street} onChange={(v: string) => set('street', v)} placeholder="123 Main St" required />
+            <Field label="ZIP Code" value={data.zip} onChange={(v: string) => set('zip', v)} placeholder="73102" required />
+          </div>
+          <Field label="Mailing Address (if different)" value={data.mailingAddress} onChange={(v: string) => set('mailingAddress', v)} placeholder="Same as above, or enter new address" required />
           
           <div className="grid grid-cols-2 gap-4">
             <Select label="How do you want your appointment to be done?" value={data.appointmentType} onChange={(v: string) => set('appointmentType', v)} options={['Phone', 'Video', 'In-Person']} required />
@@ -311,7 +410,8 @@ export const PhoneIntakeForm = () => {
           { l: 'Email', v: data.email },
           { l: 'Phone', v: data.phone },
           { l: 'DOB', v: data.dob },
-          { l: 'ID Address', v: data.street },
+          { l: 'Jurisdiction', v: data.state },
+          { l: 'Physical Address', v: `${data.street}, ${data.city}, ${data.state} ${data.zip}` },
           { l: 'Mailing Address', v: data.mailingAddress },
           { l: 'App Type', v: data.appType },
           { l: 'Conditions', v: data.conditions.join(', ') || 'None selected' },
@@ -421,7 +521,7 @@ export const PhoneIntakeForm = () => {
 
   const canNext = () => {
     if (isPatient) {
-      if (step === 0) return data.firstName && data.lastName && data.email && data.phone && data.ssn && data.street && data.mailingAddress;
+      if (step === 0) return data.firstName && data.lastName && data.email && data.phone && data.ssn && data.street && data.city && data.state && data.zip && data.mailingAddress;
       if (step === 1) return scheduledAppt;
       if (step === 2) return completedPortal;
     } else {
@@ -433,51 +533,67 @@ export const PhoneIntakeForm = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {/* Header */}
-      <div className={cn("rounded-2xl p-6 text-white relative overflow-hidden", isPatient ? "bg-gradient-to-r from-emerald-800 to-teal-700" : "bg-gradient-to-r from-indigo-800 to-violet-700")}>
-        <div className="absolute top-0 right-0 p-4 opacity-10">{isPatient ? <HeartPulse size={80} /> : <Building2 size={80} />}</div>
-        <div className="relative z-10 flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-black">{isPatient ? 'Patient Medical Card Intake' : 'Business License Intake'}</h2>
-            <p className={cn("text-[10px] font-bold uppercase tracking-widest mt-1", isPatient ? "text-emerald-200" : "text-indigo-200")}>Step {step + 1} of {steps.length} — {steps[step]}</p>
+    <div className="max-w-6xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        {/* Left Column: Script / Guide */}
+        <div className="col-span-1">
+          <div className="bg-[#1a4731] text-white rounded-3xl p-6 shadow-xl sticky top-6 border border-emerald-800">
+            <h3 className="text-lg font-black flex items-center gap-2 mb-6 text-emerald-50 pb-4 border-b border-emerald-800/50">
+              <PhoneIncoming size={20} className="text-emerald-400" /> Live Call Script
+            </h3>
+            {renderScript()}
           </div>
-          <button onClick={reset} className="text-white/60 hover:text-white text-xs font-bold uppercase tracking-widest">Cancel</button>
         </div>
-      </div>
 
-      {/* Progress */}
-      <div className="flex gap-2">
-        {steps.map((s, i) => (
-          <div key={i} className="flex-1">
-            <div className={cn("h-1.5 rounded-full transition-all", i <= step ? (isPatient ? "bg-emerald-500" : "bg-indigo-500") : "bg-slate-200")} />
-            <p className={cn("text-[9px] font-bold mt-1.5 uppercase tracking-widest", i <= step ? "text-slate-700" : "text-slate-400")}>{s}</p>
+        {/* Right Column: Form */}
+        <div className="col-span-2 space-y-6">
+          {/* Header */}
+          <div className={cn("rounded-2xl p-6 text-white relative overflow-hidden shadow-lg", isPatient ? "bg-gradient-to-r from-emerald-800 to-teal-700" : "bg-gradient-to-r from-indigo-800 to-violet-700")}>
+            <div className="absolute top-0 right-0 p-4 opacity-10">{isPatient ? <HeartPulse size={80} /> : <Building2 size={80} />}</div>
+            <div className="relative z-10 flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-black">{isPatient ? 'Patient Medical Card Intake' : 'Business License Intake'}</h2>
+                <p className={cn("text-[10px] font-bold uppercase tracking-widest mt-1", isPatient ? "text-emerald-200" : "text-indigo-200")}>Step {step + 1} of {steps.length} — {steps[step]}</p>
+              </div>
+              <button onClick={reset} className="text-white/60 hover:text-white text-xs font-bold uppercase tracking-widest">Cancel</button>
+            </div>
           </div>
-        ))}
-      </div>
 
-      {/* Form Content */}
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-8">
-        {renderStep()}
-      </div>
+          {/* Progress */}
+          <div className="flex gap-2">
+            {steps.map((s, i) => (
+              <div key={i} className="flex-1">
+                <div className={cn("h-1.5 rounded-full transition-all", i <= step ? (isPatient ? "bg-emerald-500" : "bg-indigo-500") : "bg-slate-200")} />
+                <p className={cn("text-[9px] font-bold mt-1.5 uppercase tracking-widest", i <= step ? "text-slate-700" : "text-slate-400")}>{s}</p>
+              </div>
+            ))}
+          </div>
 
-      {/* Navigation */}
-      <div className="flex justify-between gap-4">
-        <button onClick={() => step === 0 ? reset() : setStep(step - 1)}
-          className="px-6 py-3 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-colors">
-          {step === 0 ? '← Back to Type' : '← Previous'}
-        </button>
-        {step < steps.length - 1 ? (
-          <button onClick={() => canNext() ? setStep(step + 1) : alert(isPatient && step === 1 ? 'Please check the box confirming you scheduled the appointment.' : isPatient && step === 2 ? 'Please check the box confirming you set up the portal.' : 'Please fill in all required fields.')}
-            className={cn("px-8 py-3 text-white font-bold rounded-xl shadow-lg transition-all", isPatient ? "bg-emerald-600 hover:bg-emerald-700" : "bg-indigo-600 hover:bg-indigo-700")}>
-            Next Step →
-          </button>
-        ) : (
-          <button onClick={handleSubmit} disabled={submitting}
-            className={cn("px-8 py-3 text-white font-black rounded-xl shadow-lg transition-all flex items-center gap-2 uppercase tracking-widest text-sm", submitting ? "opacity-60" : "", isPatient ? "bg-emerald-600 hover:bg-emerald-700" : "bg-indigo-600 hover:bg-indigo-700")}>
-            {submitting ? <><Loader2 size={16} className="animate-spin" /> Submitting...</> : <><CircleCheck size={16} /> Create Account & Submit</>}
-          </button>
-        )}
+          {/* Form Content */}
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-8">
+            {renderStep()}
+          </div>
+
+          {/* Navigation */}
+          <div className="flex justify-between gap-4">
+            <button onClick={() => step === 0 ? reset() : setStep(step - 1)}
+              className="px-6 py-3 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-colors">
+              {step === 0 ? '← Back to Type' : '← Previous'}
+            </button>
+            {step < steps.length - 1 ? (
+              <button onClick={() => canNext() ? setStep(step + 1) : alert(isPatient && step === 1 ? 'Please check the box confirming you scheduled the appointment.' : isPatient && step === 2 ? 'Please check the box confirming you set up the portal.' : 'Please fill in all required fields.')}
+                className={cn("px-8 py-3 text-white font-bold rounded-xl shadow-lg transition-all", isPatient ? "bg-emerald-600 hover:bg-emerald-700" : "bg-indigo-600 hover:bg-indigo-700")}>
+                Next Step →
+              </button>
+            ) : (
+              <button onClick={handleSubmit} disabled={submitting}
+                className={cn("px-8 py-3 text-white font-black rounded-xl shadow-lg transition-all flex items-center gap-2 uppercase tracking-widest text-sm", submitting ? "opacity-60" : "", isPatient ? "bg-emerald-600 hover:bg-emerald-700" : "bg-indigo-600 hover:bg-indigo-700")}>
+                {submitting ? <><Loader2 size={16} className="animate-spin" /> Submitting...</> : <><CircleCheck size={16} /> Create Account & Submit</>}
+              </button>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

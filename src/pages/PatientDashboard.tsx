@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDraggableSidebar } from '../hooks/useDraggableSidebar';
 import { Activity, Calendar, Stethoscope, Shield, FileText, Clock, Plus, LayoutDashboard, CreditCard,
   Wallet, Award, Search, FolderOpen, Heart, Bell, Sparkles, TrendingUp, Users, Briefcase, Lock, 
-  ArrowRight, Zap, Brain, Video, Globe, ChevronRight, CircleCheck, User } from 'lucide-react';
+  ArrowRight, Zap, Brain, Video, Globe, ChevronRight, CircleCheck, User, ExternalLink } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { db } from '../lib/firebase';
@@ -393,6 +393,27 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
                         <span>Tomorrow • 09:30 AM</span>
                       </div>
                       <ArrowRight className="absolute bottom-4 right-4 text-blue-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" size={16}/>
+                    </div>
+                  </div>
+
+                  {/* OMMA State Resources */}
+                  <div className="bg-white rounded-[2rem] border border-slate-200 shadow-sm p-6 mt-6">
+                    <h3 className="font-black text-slate-800 text-sm uppercase tracking-widest mb-4 flex items-center gap-2">
+                      <FileText size={16} className="text-[#1a4731]" /> State Resources
+                    </h3>
+                    <div className="space-y-2">
+                      <a href="https://oklahoma.gov/content/dam/ok/en/omma/docs/patient-caregiver/Adult%20Patient%20Physician%20Recommendation%20Form.pdf" target="_blank" rel="noreferrer" className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors group">
+                        <span className="text-xs font-bold text-slate-700">Adult Recommendation Form</span>
+                        <ExternalLink size={14} className="text-slate-400 group-hover:text-[#1a4731]" />
+                      </a>
+                      <a href="https://oklahoma.gov/content/dam/ok/en/omma/docs/patient-caregiver/Minor%20Patient%20Physician%20Recommendation%20Form.pdf" target="_blank" rel="noreferrer" className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors group">
+                        <span className="text-xs font-bold text-slate-700">Minor Recommendation Form</span>
+                        <ExternalLink size={14} className="text-slate-400 group-hover:text-[#1a4731]" />
+                      </a>
+                      <a href="https://oklahoma.gov/omma/patients-caregivers.html" target="_blank" rel="noreferrer" className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors group">
+                        <span className="text-xs font-bold text-slate-700">OMMA Patient Portal</span>
+                        <ExternalLink size={14} className="text-slate-400 group-hover:text-[#1a4731]" />
+                      </a>
                     </div>
                   </div>
                 </div>
