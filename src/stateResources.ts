@@ -277,18 +277,40 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     ]
   },
   "Connecticut": {
-    program: "https://portal.ct.gov/cannabis/medical-marijuana-program?language=en_US",
-    patientPortal: "https://biznet.ct.gov/AccountMaint/Login.aspx",
-    businessPortal: "https://portal.ct.gov/cannabis/knowledge-base/articles/licensing/licensing-home-page?language=en_US",
-    guide: "https://portal.ct.gov/cannabis/knowledge-base/articles/mmp/register-for-a-medical-marijuana-card?language=en_US",
+    program: "https://portal.ct.gov/cannabis/medical-marijuana-program",
+    patientPortal: "https://biznet.ct.gov/dcp-mmrp",
+    businessPortal: "https://www.elicense.ct.gov/",
+    guide: "https://portal.ct.gov/cannabis/knowledge-base/articles/mmp/register-for-a-medical-marijuana-card",
     resources: "https://www.mpp.org/states/connecticut/?state=CT",
-    abbreviation: "CT",
+    status: "Operational", year: "2012", abbreviation: "CT",
     adultUseStatus: "Yes",
     medicalStatus: "Yes",
-    regulator: "Connecticut Department of Consumer Protection",
+    regulator: "Department of Consumer Protection (DCP)",
     compliancePage: "https://portal.ct.gov/cannabis/",
     checklistItems: ["Licensing","Track-and-trace","Testing","Labeling","Taxes"],
-    complianceSource: "https://www.nsc.org/cannabis-regulations"
+    complianceSource: "https://portal.ct.gov/cannabis/",
+    conditions: ["Cancer","Glaucoma","Parkinson's","MS","Epilepsy","Cachexia","Crohn's","PTSD","Sickle Cell","Tourette's"],
+    contactPhone: "(860) 713-6066",
+    contactEmail: "dcp.mmp@ct.gov",
+    trackingSystem: "BioTrackTHC",
+    licenseCaps: "Subject to lottery limitations for non-equity applicants",
+    intakeNotes: [
+      "⚠️ LOTTERY SYSTEM: Non-equity licenses are heavily restricted and distributed via lottery windows.",
+      "Social Equity: Half of all new licenses are reserved for verified Social Equity applicants.",
+      "Patients use the DAS BizNet portal; Businesses use the eLicense portal.",
+      "Local zoning approval is NOT required to enter the lottery, but IS required before a final license is issued.",
+      "As of July 2023, the state eliminated the $100 registration fee for medical patients."
+    ],
+    intakeForms: [
+      { name: "BizNet Patient Portal", url: "https://biznet.ct.gov/dcp-mmrp" },
+      { name: "eLicense Portal (Business)", url: "https://www.elicense.ct.gov/" }
+    ],
+    intakeFAQ: [
+      { q: "How does a patient change their designated dispensary?", a: "Patients can log into their BizNet account and change their preferred dispensary facility once every 24 hours." },
+      { q: "Does a business need local zoning approval before entering the lottery?", a: "No, applicants do not need local zoning approval to enter the CT lottery, but must obtain it before a final license is issued." },
+      { q: "What tracking system does Connecticut use?", a: "Connecticut utilizes BioTrackTHC for its statewide seed-to-sale tracking." },
+      { q: "Are there application fees for medical patients?", a: "No, Connecticut eliminated the $100 registration fee for medical patients starting July 1, 2023." }
+    ]
   },
   "Delaware": {
     program: "https://omc.delaware.gov/medical/index.shtml?dc=appProc",
