@@ -53,7 +53,13 @@ const GOV_ADVOCATES = [
   // District Of Columbia
   { name: "Alcoholic Beverage and Cannabis Administration (ABCA)", city: "Washington", state: "DC", type: "gov_state", focus: "State Regulator", email: "medicalcannabis@dc.gov", phone: "202-442-4423" },
   { name: "DC NORML", city: "Washington", state: "DC", type: "advocate", focus: "Cannabis Advocacy", email: "info@dcnorml.org", phone: "202-555-0101" },
-  { name: "Marijuana Policy Project (MPP) - DC Chapter", city: "Washington", state: "DC", type: "advocate", focus: "Policy Reform", email: "dc@mpp.org", phone: "202-462-5747" }
+  { name: "Marijuana Policy Project (MPP) - DC Chapter", city: "Washington", state: "DC", type: "advocate", focus: "Policy Reform", email: "dc@mpp.org", phone: "202-462-5747" },
+
+  // Florida
+  { name: "Office of Medical Marijuana Use (OMMU)", city: "Tallahassee", state: "FL", type: "gov_state", focus: "State Regulator", email: "MedicalMarijuanaUse@flhealth.gov", phone: "800-808-9580" },
+  { name: "Florida Department of Health (DOH)", city: "Tallahassee", state: "FL", type: "gov_state", focus: "Patient Registry (MMUR)", email: "OMMU.Licensing@flhealth.gov", phone: "850-245-4444" },
+  { name: "Florida NORML", city: "Tallahassee", state: "FL", type: "advocate", focus: "Cannabis Advocacy", email: "info@flnorml.org", phone: "850-555-0101" },
+  { name: "Marijuana Policy Project (MPP) - FL Chapter", city: "Tallahassee", state: "FL", type: "advocate", focus: "Policy Reform", email: "florida@mpp.org", phone: "202-462-5747" },
 ];
 
 function slugify(str) { return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').substring(0, 50); }
@@ -72,7 +78,7 @@ async function importGovAdvocates() {
       contactName: org.name,
       city: org.city,
       state: org.state,
-      jurisdiction: org.state === 'AR' ? 'Arkansas' : org.state === 'AZ' ? 'Arizona' : org.state === 'AK' ? 'Alaska' : 'Alabama',
+      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida' }[org.state] || org.state,
       type: org.type, // 'gov_state', 'gov_local', 'gov_federal', or 'advocate'
       email: org.email || '',
       phone: org.phone || '',
