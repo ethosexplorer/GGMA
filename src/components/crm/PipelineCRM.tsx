@@ -58,6 +58,7 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterJurisdiction, setFilterJurisdiction] = useState(defaultJurisdiction || 'All');
+  const [filterStatus, setFilterStatus] = useState('All');
   
   // Sync filter when parent changes selected state
   useEffect(() => {
@@ -195,8 +196,9 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
     const s = searchTerm || '';
     const matchesSearch = n.toLowerCase().includes(s.toLowerCase()) || c.toLowerCase().includes(s.toLowerCase());
     const matchesJurisdiction = filterJurisdiction === 'All' || d.jurisdiction === filterJurisdiction;
+    const matchesStatus = filterStatus === 'All' || (d.licenseStatus?.toLowerCase() || '') === filterStatus.toLowerCase();
     
-    return matchesSearch && matchesJurisdiction;
+    return matchesSearch && matchesJurisdiction && matchesStatus;
   });
 
   return (
@@ -229,6 +231,22 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
               {uniqueJurisdictions.map(j => (
                 <option key={j} value={j}>{j}</option>
               ))}
+            </select>
+            <div className="absolute right-3 pointer-events-none text-slate-400 font-black text-[10px]">▼</div>
+          </div>
+
+          <div className="relative border border-slate-200 rounded-lg bg-slate-50 overflow-hidden flex items-center">
+            <select 
+              value={filterStatus}
+              onChange={e => setFilterStatus(e.target.value)}
+              className="pl-4 pr-8 py-2 text-sm font-bold text-slate-700 bg-transparent outline-none cursor-pointer appearance-none"
+            >
+              <option value="All">All Statuses</option>
+              <option value="Expired">Expired</option>
+              <option value="Cancelled">Cancelled</option>
+              <option value="Active">Active</option>
+              <option value="Renewal Pending">Renewal Pending</option>
+              <option value="Suspended/Revoked">Suspended/Revoked</option>
             </select>
             <div className="absolute right-3 pointer-events-none text-slate-400 font-black text-[10px]">▼</div>
           </div>
