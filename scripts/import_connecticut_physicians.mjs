@@ -1,5 +1,5 @@
 /**
- * Arizona Physicians Import
+ * Connecticut Physicians Import
  */
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
@@ -9,23 +9,24 @@ const app = initializeApp({ apiKey: "AIzaSyDvEmz9VfE27P71tqwL6x9uQlXZgdEFPuw", a
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-const AZ_PROVIDERS = [
-  { name: "Marijuana Evaluations", city: "Phoenix", phone: "602-466-7029" },
-  { name: "Arizona Medical Marijuana Clinic", city: "Tucson", phone: "520-420-0420" }
+const CT_PROVIDERS = [
+  { name: "CannaCare Docs of Connecticut", city: "Hartford", phone: "866-846-2420" },
+  { name: "CT Medical Marijuana Doctors", city: "New Haven", phone: "203-555-8734" },
+  { name: "Green Health Providers", city: "Stamford", phone: "203-555-4422" }
 ];
 function slugify(str) { return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').substring(0, 50); }
 
-async function importArizonaProviders() {
+async function importConnecticutProviders() {
   await signInWithEmailAndPassword(auth, 'globalgreenhp@gmail.com', process.env.FIREBASE_PASS || 'defaultpass');
-  for (const p of AZ_PROVIDERS) {
-    const ref = doc(db, 'crm_contacts', `az-provider-${slugify(p.name)}`);
+  for (const p of CT_PROVIDERS) {
+    const ref = doc(db, 'crm_contacts', `ct-provider-${slugify(p.name)}`);
     if ((await getDoc(ref)).exists()) continue;
     await setDoc(ref, {
-      businessName: p.name, contactName: p.name, city: p.city, state: 'AZ', jurisdiction: 'Arizona',
+      businessName: p.name, contactName: p.name, city: p.city, state: 'CT', jurisdiction: 'Connecticut',
       type: 'provider', phone: p.phone, licenseStatus: 'Active', source: 'Public Web Search', status: 'Lead', pipeline: 'new',
-      tags: ['arizona', 'provider', 'physician'], notes: `AZ Provider.`,
+      tags: ['connecticut', 'provider', 'physician', 'biznet'], notes: `CT Provider. Must certify via the BizNet system.`,
       createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
     });
   }
 }
-importArizonaProviders().catch(console.error);
+importConnecticutProviders().catch(console.error);

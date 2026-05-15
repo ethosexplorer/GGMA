@@ -348,9 +348,9 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
       "No Reciprocity: Out-of-state patients must register with the DE system to purchase."
     ],
     intakeForms: [
-      { name: "Patient Portal (OMM)", url: "https://dhss.delaware.gov/dhss/dph/hsp/medmarhome.html" },
+      { name: "BioTrack Patient Registration", url: "https://patients.de.biotr.ac/registration" },
       { name: "Paper Application (PDF)", url: "https://dhss.delaware.gov/dhss/dph/hsp/files/mmpapp.pdf" },
-      { name: "OMC Business Portal", url: "https://omb.delaware.gov/marijuana-commissioner/" }
+      { name: "OMC Licensing Matrix (Business)", url: "https://omc.delaware.gov/adult/licensing/contentFolder/pdfs/matrix.pdf" }
     ],
     intakeFAQ: [
       { q: "Are there limits on how many business licenses will be issued?", a: "Yes, Delaware has strict, hard caps written into law (e.g., exactly 30 retail licenses, 60 cultivation licenses)." },
@@ -365,13 +365,34 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     businessPortal: "https://abca.dc.gov/page/medical-cannabis-program#gsc.tab=0",
     guide: "",
     resources: "https://www.mpp.org/states/district-of-columbia/?state=DC",
-    abbreviation: "DC",
+    status: "Operational", year: "2010", abbreviation: "DC",
     adultUseStatus: "Yes/limited",
     medicalStatus: "Yes",
-    regulator: "DC Alcoholic Beverage and Cannabis Administration",
+    regulator: "Alcoholic Beverage and Cannabis Administration (ABCA)",
     compliancePage: "https://abca.dc.gov/",
     checklistItems: ["Medical authorization","Dispensing rules","Records","Testing"],
-    complianceSource: "https://www.nsc.org/cannabis-regulations"
+    complianceSource: "https://abca.dc.gov/page/medical-cannabis-program",
+    conditions: ["Any condition for which treatment with medical cannabis would be beneficial, as determined by the patient's authorized practitioner"],
+    contactPhone: "202-442-4423",
+    contactEmail: "medicalcannabis@dc.gov",
+    trackingSystem: "METRC",
+    licenseCaps: "Yes (Controlled by ABCA limits)",
+    intakeNotes: [
+      "⚠️ REGULATOR CHANGE: The program moved from DC Health to the Alcoholic Beverage and Cannabis Administration (ABCA).",
+      "Self-Certification: Any adult 21+ can self-certify as a medical patient without a doctor's recommendation.",
+      "Reciprocity: DC accepts medical cannabis cards from ALL U.S. states and territories.",
+      "Gifting Economy: Recreational sales remain illegal due to congressional riders, leading to unregulated 'gifting shops'. ABCA is actively cracking down on unlicensed I-71 gifting shops."
+    ],
+    intakeForms: [
+      { name: "ABCA Quickbase Portal (Patients/Businesses)", url: "https://octo.quickbase.com/db/bscn22va8?a=dbpage&pageid=23" },
+      { name: "Patient Registration Form", url: "https://abca.dc.gov/page/patients%E2%80%94dc-residents" }
+    ],
+    intakeFAQ: [
+      { q: "Can I self-certify without a doctor?", a: "Yes, anyone 21 or older can self-certify as a medical cannabis patient in DC." },
+      { q: "Does DC accept out-of-state cards?", a: "Yes, DC has universal reciprocity and accepts valid medical cards from any state or US territory." },
+      { q: "What tracking system does DC use?", a: "DC utilizes METRC for seed-to-sale tracking." },
+      { q: "What is an I-71 shop?", a: "Initiative 71 allowed possession and gifting, but not sales. 'Gifting shops' emerged, but ABCA now strictly enforces against them, requiring transition to the regulated medical market." }
+    ]
   },
   "Florida": {
     program: "https://mmuregistry.flhealth.gov/spa/",

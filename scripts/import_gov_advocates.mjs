@@ -6,7 +6,7 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
-const app = initializeApp({ apiKey: "AIzaSyCnTrdE2RPivEMJN9JhV0lzH20XJtGaUhQ", authDomain: "ggp-os.firebaseapp.com", projectId: "ggp-os" });
+const app = initializeApp({ apiKey: "AIzaSyDvEmz9VfE27P71tqwL6x9uQlXZgdEFPuw", authDomain: "ggp-os.firebaseapp.com", projectId: "ggp-os" });
 const db = getFirestore(app);
 const auth = getAuth(app);
 
@@ -38,7 +38,22 @@ const GOV_ADVOCATES = [
   { name: "Marijuana Enforcement Division (MED)", city: "Denver", state: "CO", type: "gov_state", focus: "State Regulator", email: "dor_med_inquiries@state.co.us", phone: "303-866-3330" },
   { name: "Colorado Department of Public Health & Environment (CDPHE)", city: "Denver", state: "CO", type: "gov_state", focus: "Patient Registry", email: "medical.marijuana@state.co.us", phone: "303-692-2184" },
   { name: "Colorado NORML", city: "Denver", state: "CO", type: "advocate", focus: "Cannabis Advocacy", email: "info@coloradonorml.org", phone: "720-319-7337" },
-  { name: "Marijuana Policy Project (MPP) - CO Chapter", city: "Denver", state: "CO", type: "advocate", focus: "Policy Reform", email: "colorado@mpp.org", phone: "202-462-5747" }
+  { name: "Marijuana Policy Project (MPP) - CO Chapter", city: "Denver", state: "CO", type: "advocate", focus: "Policy Reform", email: "colorado@mpp.org", phone: "202-462-5747" },
+  
+  // Connecticut
+  { name: "Department of Consumer Protection (DCP)", city: "Hartford", state: "CT", type: "gov_state", focus: "State Regulator", email: "dcp.mmp@ct.gov", phone: "860-713-6066" },
+  { name: "Connecticut NORML", city: "Hartford", state: "CT", type: "advocate", focus: "Cannabis Advocacy", email: "info@ctnorml.org", phone: "860-555-0101" },
+  { name: "Marijuana Policy Project (MPP) - CT Chapter", city: "Hartford", state: "CT", type: "advocate", focus: "Policy Reform", email: "connecticut@mpp.org", phone: "202-462-5747" },
+  
+  // Delaware
+  { name: "Office of the Marijuana Commissioner (OMC)", city: "Dover", state: "DE", type: "gov_state", focus: "State Regulator", email: "MedicalMarijuanaDPH@delaware.gov", phone: "855-420-6797" },
+  { name: "Delaware NORML", city: "Wilmington", state: "DE", type: "advocate", focus: "Cannabis Advocacy", email: "info@denorml.org", phone: "302-555-0101" },
+  { name: "Marijuana Policy Project (MPP) - DE Chapter", city: "Dover", state: "DE", type: "advocate", focus: "Policy Reform", email: "delaware@mpp.org", phone: "202-462-5747" },
+  
+  // District Of Columbia
+  { name: "Alcoholic Beverage and Cannabis Administration (ABCA)", city: "Washington", state: "DC", type: "gov_state", focus: "State Regulator", email: "medicalcannabis@dc.gov", phone: "202-442-4423" },
+  { name: "DC NORML", city: "Washington", state: "DC", type: "advocate", focus: "Cannabis Advocacy", email: "info@dcnorml.org", phone: "202-555-0101" },
+  { name: "Marijuana Policy Project (MPP) - DC Chapter", city: "Washington", state: "DC", type: "advocate", focus: "Policy Reform", email: "dc@mpp.org", phone: "202-462-5747" }
 ];
 
 function slugify(str) { return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').substring(0, 50); }

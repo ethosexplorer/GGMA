@@ -11,7 +11,7 @@ import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCnTrdE2RPivEMJN9JhV0lzH20XJtGaUhQ",
+  apiKey: "AIzaSyDvEmz9VfE27P71tqwL6x9uQlXZgdEFPuw",
   authDomain: "ggp-os.firebaseapp.com",
   projectId: "ggp-os",
   storageBucket: "ggp-os.firebasestorage.app",

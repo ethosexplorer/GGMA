@@ -1,5 +1,5 @@
 /**
- * Colorado Cannabis Attorneys Import
+ * Delaware Cannabis Attorneys Import
  */
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
@@ -9,24 +9,24 @@ const app = initializeApp({ apiKey: "AIzaSyDvEmz9VfE27P71tqwL6x9uQlXZgdEFPuw", a
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-const CO_ATTORNEYS = [
-  { name: "Hoban Law Group", city: "Denver", focus: "MED Licensing & Corporate Law" },
-  { name: "Vicente Sederberg LLP", city: "Denver", focus: "Cannabis Policy & Regulatory Compliance" },
-  { name: "Fortis Law Partners", city: "Denver", focus: "Cannabis Business Strategy" }
+const DE_ATTORNEYS = [
+  { name: "Morris James LLP", city: "Wilmington", focus: "OMC Licensing & Regulatory Compliance" },
+  { name: "Richards, Layton & Finger", city: "Wilmington", focus: "Cannabis Corporate & Taxation" },
+  { name: "Baird Mandalas Brockstedt", city: "Dover", focus: "Cannabis Business Strategy & Local Zoning" }
 ];
 function slugify(str) { return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').substring(0, 50); }
 
-async function importColoradoAttorneys() {
+async function importDelawareAttorneys() {
   await signInWithEmailAndPassword(auth, 'globalgreenhp@gmail.com', process.env.FIREBASE_PASS || 'defaultpass');
-  for (const a of CO_ATTORNEYS) {
-    const ref = doc(db, 'crm_contacts', `co-attorney-${slugify(a.name)}`);
+  for (const a of DE_ATTORNEYS) {
+    const ref = doc(db, 'crm_contacts', `de-attorney-${slugify(a.name)}`);
     if ((await getDoc(ref)).exists()) continue;
     await setDoc(ref, {
-      businessName: a.name, contactName: a.name, city: a.city, state: 'CO', jurisdiction: 'Colorado',
+      businessName: a.name, contactName: a.name, city: a.city, state: 'DE', jurisdiction: 'Delaware',
       type: 'attorney', licenseStatus: 'Active', source: 'Public Web Search', status: 'Lead', pipeline: 'new',
-      tags: ['colorado', 'attorney', 'med'], notes: `Focus: ${a.focus}. Legal services for Colorado MED and local compliance.`,
+      tags: ['delaware', 'attorney', 'omc'], notes: `Focus: ${a.focus}. Legal services for Delaware OMC and statutory license caps.`,
       createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
     });
   }
 }
-importColoradoAttorneys().catch(console.error);
+importDelawareAttorneys().catch(console.error);

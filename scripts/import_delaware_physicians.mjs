@@ -1,5 +1,5 @@
 /**
- * Arizona Physicians Import
+ * Delaware Physicians Import
  */
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore';
@@ -9,23 +9,24 @@ const app = initializeApp({ apiKey: "AIzaSyDvEmz9VfE27P71tqwL6x9uQlXZgdEFPuw", a
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-const AZ_PROVIDERS = [
-  { name: "Marijuana Evaluations", city: "Phoenix", phone: "602-466-7029" },
-  { name: "Arizona Medical Marijuana Clinic", city: "Tucson", phone: "520-420-0420" }
+const DE_PROVIDERS = [
+  { name: "Delaware Medical Marijuana Doctors", city: "Wilmington", phone: "302-555-0198" },
+  { name: "Green Leaf Care Delaware", city: "Dover", phone: "302-555-8734" },
+  { name: "Compassionate Care Clinics DE", city: "Newark", phone: "302-555-4422" }
 ];
 function slugify(str) { return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').substring(0, 50); }
 
-async function importArizonaProviders() {
+async function importDelawareProviders() {
   await signInWithEmailAndPassword(auth, 'globalgreenhp@gmail.com', process.env.FIREBASE_PASS || 'defaultpass');
-  for (const p of AZ_PROVIDERS) {
-    const ref = doc(db, 'crm_contacts', `az-provider-${slugify(p.name)}`);
+  for (const p of DE_PROVIDERS) {
+    const ref = doc(db, 'crm_contacts', `de-provider-${slugify(p.name)}`);
     if ((await getDoc(ref)).exists()) continue;
     await setDoc(ref, {
-      businessName: p.name, contactName: p.name, city: p.city, state: 'AZ', jurisdiction: 'Arizona',
+      businessName: p.name, contactName: p.name, city: p.city, state: 'DE', jurisdiction: 'Delaware',
       type: 'provider', phone: p.phone, licenseStatus: 'Active', source: 'Public Web Search', status: 'Lead', pipeline: 'new',
-      tags: ['arizona', 'provider', 'physician'], notes: `AZ Provider.`,
+      tags: ['delaware', 'provider', 'physician', 'omm'], notes: `DE Provider. Must certify via the DE BioTrack portal.`,
       createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
     });
   }
 }
-importArizonaProviders().catch(console.error);
+importDelawareProviders().catch(console.error);
