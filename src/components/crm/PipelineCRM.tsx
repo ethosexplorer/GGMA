@@ -92,12 +92,18 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
     };
 
     const unsubDeals = onSnapshot(qDeals, (snapshot) => {
-      dealsDataArr = snapshot.docs.map(doc => ({ id: doc.id, collection: 'crm_deals', ...doc.data() } as any));
+      dealsDataArr = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return { id: doc.id, collection: 'crm_deals', stage: data.stage || 'lead', ...data } as any;
+      });
       updateDeals();
     });
     
     const unsubContacts = onSnapshot(qContacts, (snapshot) => {
-      contactsDataArr = snapshot.docs.map(doc => ({ id: doc.id, collection: 'crm_contacts', ...doc.data() } as any));
+      contactsDataArr = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return { id: doc.id, collection: 'crm_contacts', stage: data.stage || 'lead', ...data } as any;
+      });
       updateDeals();
     });
 
