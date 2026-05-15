@@ -313,18 +313,41 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     ]
   },
   "Delaware": {
-    program: "https://omc.delaware.gov/medical/index.shtml?dc=appProc",
-    patientPortal: "https://patients.de.biotr.ac/registration",
-    businessPortal: "https://omc.delaware.gov/adult/licensing/contentFolder/pdfs/matrix.pdf?cache=1773361497392",
-    guide: "https://omc.delaware.gov/adult/licensing/contentFolder/pdfs/matrix.pdf?cache=1773361497392",
+    program: "https://omc.delaware.gov/medical/index.shtml",
+    patientPortal: "https://dhss.delaware.gov/dhss/dph/hsp/medmarhome.html",
+    businessPortal: "https://omb.delaware.gov/marijuana-commissioner/",
+    guide: "https://dhss.delaware.gov/dhss/dph/hsp/files/mmpapp.pdf",
     resources: "https://www.mpp.org/states/delaware/?state=DE",
-    abbreviation: "DE",
+    status: "Operational", year: "2011", abbreviation: "DE",
     adultUseStatus: "Yes",
     medicalStatus: "Yes",
-    regulator: "Delaware Cannabis Control Office",
-    compliancePage: "https://omc.delaware.gov/",
-    checklistItems: ["Licensing","Testing","Packaging","Records","Security"],
-    complianceSource: "https://www.nsc.org/cannabis-regulations"
+    regulator: "Office of the Marijuana Commissioner (OMC) / OMM",
+    compliancePage: "https://omb.delaware.gov/marijuana-commissioner/",
+    checklistItems: ["Testing compliance","Inventory limits","Packaging","Security","Record keeping"],
+    complianceSource: "https://omb.delaware.gov/marijuana-commissioner/",
+    conditions: ["Any condition deemed appropriate by a physician"],
+    contactPhone: "855-420-6797",
+    contactEmail: "MedicalMarijuanaDPH@delaware.gov",
+    trackingSystem: "BioTrack",
+    licenseCaps: "Strict statutory caps (e.g., 30 Retail, 60 Cultivation)",
+    intakeNotes: [
+      "⚠️ STRICT CAPS: Adult-use licenses are highly competitive with hard caps (30 retail total for the state).",
+      "Qualifying Conditions: DE removed its condition list; any physician can recommend for any condition.",
+      "Senior Self-Certification: Patients 65+ can self-certify for a medical card without a doctor's signature.",
+      "Online Applications: If the physician is registered in the state system, patients can apply entirely online.",
+      "No Reciprocity: Out-of-state patients must register with the DE system to purchase."
+    ],
+    intakeForms: [
+      { name: "Patient Portal (OMM)", url: "https://dhss.delaware.gov/dhss/dph/hsp/medmarhome.html" },
+      { name: "Paper Application (PDF)", url: "https://dhss.delaware.gov/dhss/dph/hsp/files/mmpapp.pdf" },
+      { name: "OMC Business Portal", url: "https://omb.delaware.gov/marijuana-commissioner/" }
+    ],
+    intakeFAQ: [
+      { q: "Are there limits on how many business licenses will be issued?", a: "Yes, Delaware has strict, hard caps written into law (e.g., exactly 30 retail licenses, 60 cultivation licenses)." },
+      { q: "Do seniors need a doctor's note for a medical card?", a: "No, Delaware residents aged 65 and older may self-certify and do not require a physician's signature." },
+      { q: "How much is the patient application fee?", a: "$50 for a one-year card. Patients can also opt for 2-year ($75) or 3-year ($100) cards." },
+      { q: "Does Delaware accept out-of-state medical cards?", a: "No, Delaware does not have formal reciprocity agreements." }
+    ]
   },
   "District Of Columbia": {
     program: "https://abca.dc.gov/page/patients%E2%80%94dc-residents",
