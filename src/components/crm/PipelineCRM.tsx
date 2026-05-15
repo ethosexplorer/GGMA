@@ -50,12 +50,17 @@ interface Deal {
   updatedAt: any;
 }
 
-export const PipelineCRM = () => {
+export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: string }) => {
   const [deals, setDeals] = useState<Deal[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterJurisdiction, setFilterJurisdiction] = useState('All');
+  const [filterJurisdiction, setFilterJurisdiction] = useState(defaultJurisdiction || 'All');
   
+  // Sync filter when parent changes selected state
+  useEffect(() => {
+    if (defaultJurisdiction) setFilterJurisdiction(defaultJurisdiction);
+  }, [defaultJurisdiction]);
+
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingDeal, setEditingDeal] = useState<Deal | null>(null);

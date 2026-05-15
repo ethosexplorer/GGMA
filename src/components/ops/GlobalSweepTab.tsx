@@ -245,7 +245,7 @@ export const GlobalSweepTab = () => {
         </div>
         <div className="flex-1 overflow-auto relative -m-6 p-6">
           <div className="absolute inset-0">
-            <PipelineCRM />
+            <PipelineCRM defaultJurisdiction={selectedState} />
           </div>
         </div>
       </div>
