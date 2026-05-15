@@ -8,6 +8,7 @@ export const GlobalSweepTab = () => {
   const [selectedState, setSelectedState] = useState('OK');
   const [liveCounts, setLiveCounts] = useState<Record<string, number>>({});
   const [typeCounts, setTypeCounts] = useState<Record<string, Record<string, number>>>({});
+  const [statusCounts, setStatusCounts] = useState<Record<string, Record<string, number>>>({});
 
   // Normalize full state names to 2-letter codes
   const STATE_NAME_TO_CODE: Record<string, string> = {
@@ -42,18 +43,34 @@ export const GlobalSweepTab = () => {
       const deals = snapshot.docs.map(doc => doc.data());
       const newCounts: Record<string, number> = {};
       const newTypes: Record<string, Record<string, number>> = {};
+      const newStatuses: Record<string, Record<string, number>> = {};
       
       deals.forEach(deal => {
         const state = normalizeJurisdiction(deal.jurisdiction);
         const type = deal.type || 'other';
+        const licStatus = deal.licenseStatus || '';
         newCounts[state] = (newCounts[state] || 0) + 1;
         
         if (!newTypes[state]) newTypes[state] = {};
         newTypes[state][type] = (newTypes[state][type] || 0) + 1;
+        
+        if (licStatus) {
+          if (!newStatuses[state]) newStatuses[state] = {};
+          // Normalize status labels
+          let label = licStatus;
+          const s = licStatus.toLowerCase();
+          if (s === 'active') label = 'Active';
+          else if (s.includes('renewal')) label = 'Renewal Pending';
+          else if (s === 'expired') label = 'Expired';
+          else if (s === 'cancelled' || s === 'surrendered') label = 'Cancelled';
+          else if (s === 'suspended' || s === 'revoked') label = 'Suspended/Revoked';
+          newStatuses[state][label] = (newStatuses[state][label] || 0) + 1;
+        }
       });
       
       setLiveCounts(newCounts);
       setTypeCounts(newTypes);
+      setStatusCounts(newStatuses);
     });
     return () => unsubscribe();
   }, []);
@@ -184,6 +201,29 @@ export const GlobalSweepTab = () => {
                       <span className="font-bold text-slate-700">{count.toLocaleString()}</span>
                     </div>
                   ))}
+                </div>
+              </div>
+            )}
+            
+            {/* License Status Breakdown */}
+            {statusCounts[selectedState] && Object.keys(statusCounts[selectedState]).length > 0 && (
+              <div className="mt-4 pt-4 border-t border-slate-100">
+                <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-2">License Status</p>
+                <div className="space-y-1">
+                  {Object.entries(statusCounts[selectedState]).sort((a, b) => b[1] - a[1]).map(([status, count]) => {
+                    let color = 'text-slate-500';
+                    if (status === 'Active') color = 'text-emerald-600';
+                    else if (status === 'Renewal Pending') color = 'text-amber-600';
+                    else if (status === 'Expired') color = 'text-red-500';
+                    else if (status === 'Cancelled') color = 'text-slate-400';
+                    else if (status === 'Suspended/Revoked') color = 'text-rose-600';
+                    return (
+                      <div key={status} className="flex justify-between items-center text-[10px]">
+                        <span className={`${color} font-semibold`}>{status}</span>
+                        <span className="font-bold text-slate-700">{count.toLocaleString()}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             )}

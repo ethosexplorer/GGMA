@@ -45,6 +45,9 @@ interface Deal {
   phone: string;
   email: string;
   licenseNumber: string;
+  licenseStatus?: string;
+  licenseType?: string;
+  licenseExpiration?: string;
   jurisdiction: string;
   notes: string;
   updatedAt: any;
@@ -365,10 +368,21 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
                       </div>
                       
                       <h4 className="font-bold text-slate-800 text-sm mb-1">{deal.name}</h4>
-                      <p className="text-xs text-slate-500 font-medium mb-3">
+                      <p className="text-xs text-slate-500 font-medium mb-1">
                         {deal.contactName || 'No contact specified'}
                         {deal.jurisdiction && <span className="block mt-0.5 text-indigo-600 font-bold">{deal.jurisdiction}</span>}
                       </p>
+                      
+                      {deal.licenseStatus && (() => {
+                        const s = deal.licenseStatus.toLowerCase();
+                        let badge = 'bg-slate-100 text-slate-600 border-slate-200';
+                        if (s === 'active') badge = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+                        else if (s.includes('renewal')) badge = 'bg-amber-50 text-amber-700 border-amber-200';
+                        else if (s === 'expired') badge = 'bg-red-50 text-red-600 border-red-200';
+                        else if (s === 'cancelled' || s === 'surrendered') badge = 'bg-slate-100 text-slate-500 border-slate-200';
+                        else if (s === 'suspended' || s === 'revoked') badge = 'bg-rose-50 text-rose-700 border-rose-200';
+                        return <span className={`inline-block px-2 py-0.5 rounded text-[9px] font-bold uppercase border mb-2 ${badge}`}>{deal.licenseStatus}</span>;
+                      })()}
                       
                       <div className="flex items-center justify-between pt-3 border-t border-slate-100">
                         <div className="flex -space-x-1">
