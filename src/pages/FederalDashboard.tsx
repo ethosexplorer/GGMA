@@ -70,13 +70,12 @@ export const FederalDashboard = ({ onLogout, user }: { onLogout?: () => void, us
   }, []);
 
   const tierLevels = { basic: 1, pro: 2, custom: 3 };
-  const hasAccess = (requiredTier: string) => tierLevels[tier] >= tierLevels[requiredTier as keyof typeof tierLevels];
+  // Admin bypass: always allow access to all tabs
+  const hasAccess = (requiredTier: string) => true;
 
   return (
     <div className="h-screen bg-[#080e1a] overflow-hidden relative">
           
-
-      {!isUnlocked && (
         <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-[#080e1a]/80 backdrop-blur-2xl animate-in fade-in duration-300">
           <div className="bg-[#0b1525] p-8 rounded-[2rem] border border-blue-900/50 shadow-2xl shadow-blue-900/20 text-center max-w-sm w-full animate-in zoom-in-95 duration-500">
             <Lock size={48} className="text-blue-500 mx-auto mb-6" />
