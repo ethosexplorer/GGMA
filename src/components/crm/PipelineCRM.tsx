@@ -78,18 +78,33 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
   });
 
   useEffect(() => {
-    const q = query(collection(db, 'crm_deals'));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const dealsData: Deal[] = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      } as Deal));
-      // Sort by recently updated
-      dealsData.sort((a, b) => (b.updatedAt?.seconds || 0) - (a.updatedAt?.seconds || 0));
-      setDeals(dealsData);
+    const qDeals = query(collection(db, 'crm_deals'));
+    const qContacts = query(collection(db, 'crm_contacts'));
+    
+    let dealsDataArr: Deal[] = [];
+    let contactsDataArr: Deal[] = [];
+    
+    const updateDeals = () => {
+      const combined = [...dealsDataArr, ...contactsDataArr];
+      combined.sort((a, b) => (b.updatedAt?.seconds || 0) - (a.updatedAt?.seconds || 0));
+      setDeals(combined);
       setLoading(false);
+    };
+
+    const unsubDeals = onSnapshot(qDeals, (snapshot) => {
+      dealsDataArr = snapshot.docs.map(doc => ({ id: doc.id, collection: 'crm_deals', ...doc.data() } as any));
+      updateDeals();
     });
-    return () => unsubscribe();
+    
+    const unsubContacts = onSnapshot(qContacts, (snapshot) => {
+      contactsDataArr = snapshot.docs.map(doc => ({ id: doc.id, collection: 'crm_contacts', ...doc.data() } as any));
+      updateDeals();
+    });
+
+    return () => {
+      unsubDeals();
+      unsubContacts();
+    };
   }, []);
 
   const handleDragStart = (e: React.DragEvent, dealId: string) => {
@@ -112,7 +127,8 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
       
       // Update Firestore
       try {
-        await updateDoc(doc(db, 'crm_deals', dealId), {
+        const collectionName = (deal as any).collection || 'crm_deals';
+        await updateDoc(doc(db, collectionName, dealId), {
           stage: stageId,
           updatedAt: serverTimestamp()
         });
@@ -159,7 +175,8 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
       };
 
       if (editingDeal) {
-        await updateDoc(doc(db, 'crm_deals', editingDeal.id), dealData);
+        const collectionName = (editingDeal as any).collection || 'crm_deals';
+        await updateDoc(doc(db, collectionName, editingDeal.id), dealData);
       } else {
         await addDoc(collection(db, 'crm_deals'), {
           ...dealData,
@@ -177,7 +194,8 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
     if (!editingDeal) return;
     if (window.confirm('Are you sure you want to delete this record?')) {
       try {
-        await deleteDoc(doc(db, 'crm_deals', editingDeal.id));
+        const collectionName = (editingDeal as any).collection || 'crm_deals';
+        await deleteDoc(doc(db, collectionName, editingDeal.id));
         setIsModalOpen(false);
       } catch (err) {
         console.error('Failed to delete deal:', err);

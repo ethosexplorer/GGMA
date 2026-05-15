@@ -38,17 +38,22 @@ export const GlobalSweepTab = () => {
   };
 
   useEffect(() => {
-    const q = query(collection(db, 'crm_deals'));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const deals = snapshot.docs.map(doc => doc.data());
+    const qDeals = query(collection(db, 'crm_deals'));
+    const qContacts = query(collection(db, 'crm_contacts'));
+    
+    let dealsData: any[] = [];
+    let contactsData: any[] = [];
+    
+    const updateCounts = () => {
+      const allRecords = [...dealsData, ...contactsData];
       const newCounts: Record<string, number> = {};
       const newTypes: Record<string, Record<string, number>> = {};
       const newStatuses: Record<string, Record<string, number>> = {};
       
-      deals.forEach(deal => {
-        const state = normalizeJurisdiction(deal.jurisdiction);
-        const type = deal.type || 'other';
-        const licStatus = deal.licenseStatus || '';
+      allRecords.forEach(record => {
+        const state = normalizeJurisdiction(record.jurisdiction);
+        const type = record.type || 'other';
+        const licStatus = record.licenseStatus || '';
         newCounts[state] = (newCounts[state] || 0) + 1;
         
         if (!newTypes[state]) newTypes[state] = {};
@@ -56,7 +61,6 @@ export const GlobalSweepTab = () => {
         
         if (licStatus) {
           if (!newStatuses[state]) newStatuses[state] = {};
-          // Normalize status labels
           let label = licStatus;
           const s = licStatus.toLowerCase();
           if (s === 'active') label = 'Active';
@@ -71,8 +75,22 @@ export const GlobalSweepTab = () => {
       setLiveCounts(newCounts);
       setTypeCounts(newTypes);
       setStatusCounts(newStatuses);
+    };
+
+    const unsubDeals = onSnapshot(qDeals, (snapshot) => {
+      dealsData = snapshot.docs.map(doc => doc.data());
+      updateCounts();
     });
-    return () => unsubscribe();
+    
+    const unsubContacts = onSnapshot(qContacts, (snapshot) => {
+      contactsData = snapshot.docs.map(doc => doc.data());
+      updateCounts();
+    });
+
+    return () => {
+      unsubDeals();
+      unsubContacts();
+    };
   }, []);
   
   const baseStates = [
