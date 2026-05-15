@@ -118,6 +118,11 @@ const GOV_ADVOCATES = [
   { name: "Maine Office of Cannabis Policy (OCP)", city: "Augusta", state: "ME", type: "gov_state", focus: "State Regulator (Medical + Adult-Use)", email: "", phone: "207-287-3282" },
   { name: "Maine NORML", city: "Portland", state: "ME", type: "advocate", focus: "Cannabis Advocacy", email: "", phone: "" },
   { name: "Marijuana Policy Project (MPP) - ME Chapter", city: "Augusta", state: "ME", type: "advocate", focus: "Policy Reform", email: "maine@mpp.org", phone: "202-462-5747" },
+
+  // Maryland (Dual-use since July 2023. MCA regulates.)
+  { name: "Maryland Cannabis Administration (MCA)", city: "Annapolis", state: "MD", type: "gov_state", focus: "State Regulator (Medical + Adult-Use)", email: "mdcannabis.mca@maryland.gov", phone: "410-487-8100" },
+  { name: "Maryland NORML", city: "Baltimore", state: "MD", type: "advocate", focus: "Cannabis Advocacy", email: "", phone: "" },
+  { name: "Marijuana Policy Project (MPP) - MD Chapter", city: "Annapolis", state: "MD", type: "advocate", focus: "Policy Reform", email: "maryland@mpp.org", phone: "202-462-5747" },
 ];
 
 function slugify(str) { return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').substring(0, 50); }
@@ -136,7 +141,7 @@ async function importGovAdvocates() {
       contactName: org.name,
       city: org.city,
       state: org.state,
-      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Louisiana', ME:'Maine' }[org.state] || org.state,
+      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Louisiana', ME:'Maine', MD:'Maryland' }[org.state] || org.state,
       type: org.type, // 'gov_state', 'gov_local', 'gov_federal', or 'advocate'
       email: org.email || '',
       phone: org.phone || '',

@@ -736,12 +736,39 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     guide: "https://cannabis.maryland.gov/Documents/Infographics/DesignateCaregiver_Patient_Process.pdf",
     resources: "https://www.mpp.org/states/maryland/?state=MD",
     abbreviation: "MD",
-    adultUseStatus: "Yes",
+    adultUseStatus: "Yes (since July 1, 2023)",
     medicalStatus: "Yes",
-    regulator: "Maryland Cannabis Administration",
+    regulator: "Maryland Cannabis Administration (MCA)",
     compliancePage: "https://cannabis.maryland.gov/",
-    checklistItems: ["Licensing","Testing","Advertising","Track-and-trace","Taxes"],
-    complianceSource: "https://www.nsc.org/cannabis-regulations"
+    checklistItems: ["Licensing","Testing","Advertising restrictions","Track-and-trace (Metrc)","Taxes (9% state)","Social equity","Caregiver designation"],
+    complianceSource: "https://www.nsc.org/cannabis-regulations",
+    conditions: ["Cachexia","Anorexia","Chronic Pain","Severe Nausea","Seizures","Severe Muscle Spasms","Glaucoma","PTSD","Chronic Pain"],
+    contactPhone: "(410) 487-8100",
+    contactEmail: "mdcannabis.mca@maryland.gov",
+    trackingSystem: "Metrc",
+    licenseCaps: "100+ dispensaries. Social equity licensing prioritized. Micro-licenses available.",
+    intakeNotes: [
+      "✅ DUAL-USE: Adult-use legalized July 1, 2023. Medical program since 2014.",
+      "Maryland Cannabis Administration (MCA) replaced the old MMCC in 2023.",
+      "Social equity licensing — priority for disproportionately impacted communities.",
+      "9% state cannabis tax on adult-use. Medical patients: sales tax exempt.",
+      "Interactive Dispensary Map on MCA website for verified locations.",
+      "QR code verification sticker required at all licensed dispensaries.",
+      "Home grow: up to 2 plants per person (4 per household) for personal use."
+    ],
+    intakeForms: [
+      { name: "Patient Registration", url: "https://cannabis.maryland.gov/Pages/patients.aspx" },
+      { name: "Caregiver Designation Process", url: "https://cannabis.maryland.gov/Documents/Infographics/DesignateCaregiver_Patient_Process.pdf" },
+      { name: "Industry Licensees Directory", url: "https://cannabis.maryland.gov/Pages/Industry_Licensees_and_Registrants.aspx" },
+      { name: "MCA Main Portal", url: "https://cannabis.maryland.gov/" }
+    ],
+    intakeFAQ: [
+      { q: "Do I need a medical card if adult-use is legal?", a: "Not required to purchase, but medical patients are exempt from the 9% state cannabis tax and may have higher possession limits." },
+      { q: "How do I verify a dispensary is licensed?", a: "Use the MCA Interactive Dispensary Map or scan the QR code on the verification sticker at any dispensary." },
+      { q: "Can I grow at home?", a: "Yes — up to 2 plants per person, 4 per household for personal use." },
+      { q: "What is the social equity program?", a: "Maryland prioritizes licenses for applicants from communities disproportionately harmed by cannabis prohibition, including micro-licenses with reduced fees." },
+      { q: "How much does a medical card cost?", a: "Registration is free through the MCA. You will need a physician certification (cost varies by provider)." }
+    ]
   },
   "Massachusetts": {
     program: "https://masscannabiscontrol.com/new-patients/register-as-a-new-patient/",
