@@ -366,16 +366,39 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
   "Florida": {
     program: "https://mmuregistry.flhealth.gov/spa/",
     patientPortal: "https://mmuregistry.flhealth.gov/spa/login",
-    businessPortal: "https://knowthefactsmmj.com/wp-content/uploads/_documents/form-dh8013-ommu-042018-application-for-medical-marijuana-treatment-center-registration.pdf",
+    businessPortal: "https://knowthefactsmmj.com/mmtc/",
     guide: "",
     resources: "https://www.mpp.org/states/florida/?state=FL",
-    abbreviation: "FL",
+    status: "Operational", year: "2016", abbreviation: "FL",
     adultUseStatus: "No",
     medicalStatus: "Yes",
-    regulator: "Florida Department of Health OMMU",
+    regulator: "Office of Medical Marijuana Use (OMMU)",
     compliancePage: "https://knowthefactsmmj.com/",
     checklistItems: ["Medical authorization","Product rules","Testing","Dispensing","Records"],
-    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws"
+    complianceSource: "https://knowthefactsmmj.com/",
+    conditions: ["Cancer","Epilepsy","Glaucoma","HIV/AIDS","PTSD","ALS","Crohn's Disease","Parkinson's","Multiple Sclerosis","Conditions of same kind or class"],
+    contactPhone: "800-808-9580",
+    contactEmail: "MedicalMarijuanaUse@flhealth.gov",
+    trackingSystem: "BioTrack / MMUR",
+    licenseCaps: "Strict statutory limits based on active patient population",
+    intakeNotes: [
+      "⚠️ VERTICAL INTEGRATION: Florida requires full vertical integration. No standalone retail or grow licenses exist.",
+      "⚠️ MEDICAL ONLY: Adult use failed in 2024. Market is strictly medical.",
+      "Telemedicine is NOT allowed for initial physician exams. Must be in person.",
+      "Seasonal residents (31+ consecutive days) are eligible for medical cards with proper documents.",
+      "No reciprocity for out-of-state medical cards."
+    ],
+    intakeForms: [
+      { name: "MMUR Patient Portal", url: "https://mmuregistry.flhealth.gov/" },
+      { name: "Patient Guides & Forms", url: "https://knowthefactsmmj.com/patients/" },
+      { name: "MMTC Business Info", url: "https://knowthefactsmmj.com/mmtc/" }
+    ],
+    intakeFAQ: [
+      { q: "Can I apply for a standalone dispensary license in Florida?", a: "No. Florida requires full vertical integration. You must be licensed as an MMTC." },
+      { q: "How much does a patient card cost?", a: "The state fee is $75 annually, plus the qualified physician's consultation fee." },
+      { q: "Can seasonal residents get a medical card?", a: "Yes. A seasonal resident who lives in Florida for at least 31 consecutive days can apply." },
+      { q: "Is there patient reciprocity in Florida?", a: "No. Florida does not accept out-of-state medical marijuana cards." }
+    ]
   },
   "Georgia": {
     program: "https://www.gmcc.ga.gov/home",
