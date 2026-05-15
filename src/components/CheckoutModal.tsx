@@ -44,7 +44,7 @@ const PAYMENT_OPTIONS = [
   { id: 'stripe', label: 'Stripe', sub: 'Credit Card, ACH Debit & Invoicing', icon: '💳', color: 'indigo' },
   { id: 'authnet', label: 'Authorize.net', sub: 'Credit / Debit Card (Pending Approval)', icon: '🔒', color: 'orange' },
   { id: 'chime', label: 'Chime', sub: 'Supports Cash App, Venmo & Zelle', icon: '🏦', color: 'emerald' },
-  { id: 'invoice', label: 'ACH Invoice', sub: 'Bank Transfer — Net 30', icon: '📄', color: 'slate' },
+  { id: 'invoice', label: 'ACH Invoice', sub: 'Stripe Invoice with Pay Link', icon: '📄', color: 'slate' },
 ] as const;
 
 type PayMethodId = typeof PAYMENT_OPTIONS[number]['id'];
@@ -85,7 +85,7 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
       case 'stripe': return 'Supports Credit Card, ACH Direct Debit, and Invoicing. All transactions encrypted — payment details never stored on our servers.';
       case 'authnet': return 'PCI-compliant card tokenization via Accept.js. Card data is encrypted and never touches our servers. Visa, Mastercard, Amex, Discover accepted. Currently pending merchant approval.';
       case 'chime': return 'Pay via Chime request-to-pay. Also accepts Cash App, Venmo, and Zelle transfers. Payment instructions will be sent to your email after submitting.';
-      case 'invoice': return 'An ACH invoice will be sent to your email within 24 hours. Net 30 payment terms. No card required now.';
+      case 'invoice': return 'A Stripe-powered ACH invoice with a secure payment link will be sent to your email. Click the link to pay via bank transfer or card. Net 30 terms available.';
       default: return '';
     }
   };
