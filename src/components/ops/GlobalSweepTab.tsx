@@ -79,7 +79,7 @@ export const GlobalSweepTab = () => {
     { code: 'AL', name: 'Alabama — Medical (New)', status: 'Active', scraper: 'Built' },
     { code: 'AK', name: 'Alaska — Rec + Medical (METRC)', status: 'Active', scraper: 'Built' },
     { code: 'AZ', name: 'Arizona — Rec + Medical (AZ Care Check)', status: 'Active', scraper: 'Built' },
-    { code: 'AR', name: 'Arkansas — Medical Only', status: 'Active', scraper: 'Need Built' },
+    { code: 'AR', name: 'Arkansas — Medical Only (Capped Licenses)', status: 'Active', scraper: 'Built' },
     { code: 'CA', name: 'California — Rec + Medical', status: 'Active', scraper: 'Need Built' },
     { code: 'CO', name: 'Colorado — Rec + Medical', status: 'Active', scraper: 'Need Built' },
     { code: 'CT', name: 'Connecticut — Rec + Medical', status: 'Active', scraper: 'Need Built' },
