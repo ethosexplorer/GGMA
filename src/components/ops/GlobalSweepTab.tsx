@@ -210,7 +210,7 @@ export const GlobalSweepTab = () => {
               <div className="mt-4 pt-4 border-t border-slate-100">
                 <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-2">License Status</p>
                 <div className="space-y-1">
-                  {Object.entries(statusCounts[selectedState]).sort((a, b) => b[1] - a[1]).map(([status, count]) => {
+                  {Object.entries(statusCounts[selectedState]).sort((a, b) => (b[1] as number) - (a[1] as number)).map(([status, count]) => {
                     let color = 'text-slate-500';
                     if (status === 'Active') color = 'text-emerald-600';
                     else if (status === 'Renewal Pending') color = 'text-amber-600';
