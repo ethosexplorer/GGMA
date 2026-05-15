@@ -36,7 +36,7 @@ export const FederalDashboard = ({ onLogout, user }: { onLogout?: () => void, us
   const [activeTab, setActiveTab] = useState('overview');
   const [isUnlocked, setIsUnlocked] = useState(true);
   const [pin, setPin] = useState('');
-  const [tier, setTier] = useState<'basic' | 'pro' | 'custom'>('pro');
+  const [tier, setTier] = useState<'basic' | 'pro' | 'custom'>('custom');
   const [liveAction, setLiveAction] = useState<any>(null);
 
   React.useEffect(() => {
