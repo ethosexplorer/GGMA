@@ -86,7 +86,7 @@ export const GlobalSweepTab = () => {
     { code: 'DE', name: 'Delaware — Rec + Medical (Strict Caps)', status: 'Active', scraper: 'Built' },
     { code: 'FL', name: 'Florida — Medical Only (Vertical Integration)', status: 'Active', scraper: 'Built' },
     { code: 'GA', name: 'Georgia — Low-THC Oil (Closed Market)', status: 'Active', scraper: 'Built' },
-    { code: 'HI', name: 'Hawaii — Medical Only', status: 'Active', scraper: 'Need Built' },
+    { code: 'HI', name: 'Hawaii — Medical Only (OSP Reciprocity)', status: 'Active', scraper: 'Built' },
     { code: 'ID', name: 'Idaho — No Program', status: 'Planned', scraper: 'N/A' },
     { code: 'IL', name: 'Illinois — Rec + Medical', status: 'Active', scraper: 'Need Built' },
     { code: 'IN', name: 'Indiana — CBD Only', status: 'Planned', scraper: 'N/A' },

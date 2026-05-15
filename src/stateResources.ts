@@ -436,18 +436,41 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     ]
   },
   "Hawaii": {
-    program: "https://medmj.ehawaii.gov/medmj/welcome",
-    patientPortal: "https://id.hawaii.gov/am/XUI/?realm=/alpha&authIndexType=service&authIndexValue=myHawaii%20Secure%20Login",
+    program: "https://health.hawaii.gov/medicalcannabisregistry/",
+    patientPortal: "https://medmj.ehawaii.gov/",
     businessPortal: "https://health.hawaii.gov/medicalcannabis/",
     guide: "",
     resources: "https://www.mpp.org/states/hawaii/?state=HI",
-    abbreviation: "HI",
+    status: "Operational", year: "2000", abbreviation: "HI",
     adultUseStatus: "No",
     medicalStatus: "Yes",
-    regulator: "Hawaii Department of Health",
+    regulator: "Hawaii Department of Health (DOH)",
     compliancePage: "https://health.hawaii.gov/medicalcannabis/",
     checklistItems: ["Medical licensing","Lab testing","Packaging","Dispensary rules"],
-    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws"
+    complianceSource: "https://health.hawaii.gov/medicalcannabis/",
+    conditions: ["ALS","Cancer","Glaucoma","Lupus","MS","Rheumatoid Arthritis","HIV/AIDS","PTSD","Epilepsy","Cachexia","Severe Pain","Severe Nausea","Seizures"],
+    contactPhone: "(808) 733-2177",
+    contactEmail: "medicalcannabis@doh.hawaii.gov",
+    trackingSystem: "BioTrack",
+    licenseCaps: "Strict statutory caps per county. Fully vertically integrated.",
+    intakeNotes: [
+      "⚠️ OSP RECIPROCITY: Out-of-state patients can apply for a temporary 60-day card ($49.50) before arriving. It is NOT automatic reciprocity.",
+      "⚠️ DIGITAL CARDS: Hawaii no longer mails physical cards; patients download a digital 329 card to their phones.",
+      "Condition requirements will be removed July 1, 2025.",
+      "In-state application fee is $38.50 ($35 state fee + $3.50 portal fee).",
+      "Market is heavily restricted and strictly vertically integrated."
+    ],
+    intakeForms: [
+      { name: "Patient Portal (eHawaii)", url: "https://medmj.ehawaii.gov/" },
+      { name: "DOH Registry Info", url: "https://health.hawaii.gov/medicalcannabisregistry/" },
+      { name: "Dispensary Program Info", url: "https://health.hawaii.gov/medicalcannabis/" }
+    ],
+    intakeFAQ: [
+      { q: "Can a tourist purchase medical cannabis in Hawaii?", a: "Yes, if they hold a valid out-of-state medical card and apply for a temporary Hawaii 329 OSP card." },
+      { q: "How much does the registry card cost?", a: "$38.50 for in-state residents and $49.50 for out-of-state temporary cards." },
+      { q: "Are there standalone grow operations in Hawaii?", a: "No, the market is strictly vertically integrated." },
+      { q: "Is adult-use legal in Hawaii?", a: "No. Cannabis is for registered medical patients only." }
+    ]
   },
   "Idaho": {
     program: "https://idahocannabis.org/medical",
