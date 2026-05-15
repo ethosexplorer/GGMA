@@ -66,6 +66,11 @@ const GOV_ADVOCATES = [
   { name: "Georgia Department of Public Health (DPH)", city: "Atlanta", state: "GA", type: "gov_state", focus: "Patient Registry (Low-THC Oil)", email: "THCRegistry@dph.ga.gov", phone: "404-657-2700" },
   { name: "Georgia NORML", city: "Atlanta", state: "GA", type: "advocate", focus: "Cannabis Advocacy", email: "info@ganorml.org", phone: "404-555-0101" },
   { name: "Marijuana Policy Project (MPP) - GA Chapter", city: "Atlanta", state: "GA", type: "advocate", focus: "Policy Reform", email: "georgia@mpp.org", phone: "202-462-5747" },
+
+  // Hawaii
+  { name: "Hawaii Department of Health — Medical Cannabis (OMCCR)", city: "Honolulu", state: "HI", type: "gov_state", focus: "State Regulator (Dispensaries & Registry)", email: "medicalcannabis@doh.hawaii.gov", phone: "808-733-2177" },
+  { name: "Hawaii NORML", city: "Honolulu", state: "HI", type: "advocate", focus: "Cannabis Advocacy", email: "info@hinorml.org", phone: "808-555-0101" },
+  { name: "Marijuana Policy Project (MPP) - HI Chapter", city: "Honolulu", state: "HI", type: "advocate", focus: "Policy Reform", email: "hawaii@mpp.org", phone: "202-462-5747" },
 ];
 
 function slugify(str) { return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').substring(0, 50); }
@@ -84,7 +89,7 @@ async function importGovAdvocates() {
       contactName: org.name,
       city: org.city,
       state: org.state,
-      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia' }[org.state] || org.state,
+      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii' }[org.state] || org.state,
       type: org.type, // 'gov_state', 'gov_local', 'gov_federal', or 'advocate'
       email: org.email || '',
       phone: org.phone || '',
