@@ -242,16 +242,39 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
   "Colorado": {
     program: "https://cdphe.colorado.gov/",
     patientPortal: "https://cdphe.colorado.gov/medical-marijuana-registry-patients",
-    businessPortal: "https://med.colorado.gov/marijuana-business-owner-license-application",
-    guide: "https://med.colorado.gov/regulated-marijuana-business-license-application",
+    businessPortal: "https://sbg.colorado.gov/med-online-services",
+    guide: "",
     resources: "https://www.mpp.org/states/colorado/?state=CO",
-    abbreviation: "CO",
+    status: "Operational", year: "2000", abbreviation: "CO",
     adultUseStatus: "Yes",
     medicalStatus: "Yes",
-    regulator: "Colorado Marijuana Enforcement Division",
-    compliancePage: "https://med.colorado.gov/",
-    checklistItems: ["License","Inventory","Testing","Advertising","Transport"],
-    complianceSource: "https://www.nsc.org/cannabis-regulations"
+    regulator: "Marijuana Enforcement Division (MED)",
+    compliancePage: "https://sbg.colorado.gov/med",
+    checklistItems: ["MED rule compliance","Inventory tracking","Security requirements","Packaging","Testing regulations"],
+    complianceSource: "https://sbg.colorado.gov/med/laws-and-rules",
+    conditions: ["Cancer","Glaucoma","HIV or AIDS","Cachexia","Persistent Muscle Spasms","Seizures","Severe Nausea","Severe Pain","PTSD","Autism Spectrum Disorder","Any condition prescribed an opioid"],
+    contactPhone: "303-692-2184 (Patient) / MED Online",
+    contactEmail: "medical.marijuana@state.co.us",
+    trackingSystem: "METRC",
+    licenseCaps: "Local municipality limits apply (No strict state cap)",
+    intakeNotes: [
+      "⚠️ DUAL LICENSING: Must secure city/county approval alongside MED state license",
+      "Finding of Suitability: Extremely strict background and financial review required for all owners before applying",
+      "Hospitality Licenses: CO now offers consumption lounge/hospitality licenses, subject to strict local zoning",
+      "Patient processing is done entirely online directly through the CDPHE state portal (no county visit required like CA)",
+      "State medical card exempts patient from the 15% retail marijuana sales tax"
+    ],
+    intakeForms: [
+      { name: "CDPHE Patient Portal", url: "https://cdphe.colorado.gov/medical-marijuana-registry-patients" },
+      { name: "MED Business Applications", url: "https://sbg.colorado.gov/med-regulated-business-applications" },
+      { name: "MED Owner Suitability", url: "https://sbg.colorado.gov/med-finding-of-suitability-and-owner-license-applications" }
+    ],
+    intakeFAQ: [
+      { q: "Can I get a MED license without local approval?", a: "No, you must have both state and local approval to operate." },
+      { q: "How much can a medical patient purchase?", a: "Up to 2 ounces of flower, 20,000mg of THC in infused products, and 8 grams of concentrate per day." },
+      { q: "What are the fees for a medical card?", a: "$29.50 state fee (waivers available for indigent patients). Must be submitted online." },
+      { q: "Who can provide a medical certification?", a: "Only a licensed MD or DO in Colorado. Not a PA or nurse practitioner." }
+    ]
   },
   "Connecticut": {
     program: "https://portal.ct.gov/cannabis/medical-marijuana-program?language=en_US",
