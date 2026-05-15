@@ -406,13 +406,34 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     businessPortal: "https://www.gmcc.ga.gov/licensing/dispensing-license",
     guide: "https://drive.google.com/file/d/1fE7ssVack5s48xVXcI_yLKZyPoqoIunm/view",
     resources: "https://www.mpp.org/states/georgia/?state=GA",
-    abbreviation: "GA",
-    adultUseStatus: "No/limited",
-    medicalStatus: "Limited",
-    regulator: "Georgia Access to Medical Cannabis Commission",
+    status: "Operational", year: "2015", abbreviation: "GA",
+    adultUseStatus: "No",
+    medicalStatus: "Limited (Low-THC Only)",
+    regulator: "Georgia Access to Medical Cannabis Commission (GMCC)",
     compliancePage: "https://www.gmcc.ga.gov/",
     checklistItems: ["License","Low-THC limits","Dispensing rules","Records"],
-    complianceSource: "https://www.nsc.org/cannabis-regulations"
+    complianceSource: "https://www.gmcc.ga.gov/",
+    conditions: ["Cancer","ALS","Seizure disorders","MS","Crohn's Disease","Mitochondrial Disease","Parkinson's","Sickle Cell","Tourette's","Autism","PTSD"],
+    contactPhone: "(770) 909-2765",
+    contactEmail: "THCRegistry@dph.ga.gov",
+    trackingSystem: "BioTrack",
+    licenseCaps: "Extremely Limited (6 Producers Total, Dispensing restricted to them)",
+    intakeNotes: [
+      "⚠️ CLOSED MARKET: Dispensing licenses are restricted ONLY to the six companies that hold Class 1 and Class 2 production licenses. No new entrants.",
+      "⚠️ LOW-THC ONLY: Only Low-THC oil (maximum 5% THC content) is permitted. Raw flower, edibles, and vapes are illegal.",
+      "Patients cannot register themselves. The physician must submit the application on the patient's behalf.",
+      "Requires a notarized Low THC Oil Waiver form.",
+      "Patients pick up physical cards at a designated local Public Health Office."
+    ],
+    intakeForms: [
+      { name: "DPH Registry Info", url: "https://dph.georgia.gov/low-thc-oil-registry" },
+      { name: "GMCC Business Rules", url: "https://www.gmcc.ga.gov/" }
+    ],
+    intakeFAQ: [
+      { q: "Can a client apply for a retail dispensary in Georgia?", a: "No. Dispensing licenses are restricted ONLY to the six companies that hold production licenses." },
+      { q: "What forms of cannabis are legal in Georgia?", a: "Only Low-THC oil (maximum 5% THC content). Raw flower, edibles, and traditional high-THC products are illegal." },
+      { q: "Does the GMCC issue the patient cards?", a: "No. The GMCC oversees the businesses. The Department of Public Health (DPH) oversees the patients." }
+    ]
   },
   "Hawaii": {
     program: "https://medmj.ehawaii.gov/medmj/welcome",
