@@ -69,7 +69,7 @@ async function runCaliforniaScraper() {
         };
 
         const emailMatch = text.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\\.[a-zA-Z0-9._-]+)/i);
-        const phoneMatch = text.match(/(\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4})/);
+        const phoneMatch = text.match(/(\\b\\d{3}[-.]?\\d{3}[-.]?\\d{4}\\b)/);
         
         const lines = text.split('\\n').map(l => l.trim()).filter(l => l);
 

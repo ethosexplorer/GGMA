@@ -59,6 +59,11 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
       "Physicians must be AMCC-registered to certify patients",
       "All applications and exhibits become public record under Alabama law"
     ],
+    intakeForms: [
+      { name: "AMCC Patient Registry Instructions", url: "https://amcc.alabama.gov/patients/" },
+      { name: "Physician Certification Form", url: "https://amcc.alabama.gov/physicians/" },
+      { name: "Business License Applications", url: "https://amcc.alabama.gov/cannabis-business-applicants-2/" }
+    ],
     intakeFAQ: [
       { q: "What products are available in Alabama?", a: "Tablets, capsules, tinctures, patches, suppositories, nebulizers, and topicals. NO smokable or vapeable flower products are permitted." },
       { q: "How do I find a certifying physician?", a: "Check the AMCC registered physician list at amcc.alabama.gov/patients/. There are 33 registered physicians across the state." },
@@ -93,6 +98,11 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
       "Alaska uses 'Retail Marijuana Store' — NOT 'dispensary'",
       "Plan for 4-6 month application process",
       "Communities can opt out by ordinance or petition election"
+    ],
+    intakeForms: [
+      { name: "AMCO New License Application", url: "https://www.commerce.alaska.gov/web/amco/MarijuanaLicenseApplications.aspx" },
+      { name: "Patient Registry Form", url: "https://health.alaska.gov/dph/VitalStats/Pages/marijuana.aspx" },
+      { name: "Fingerprint & Background Check", url: "https://www.commerce.alaska.gov/web/amco/FingerprintInformation.aspx" }
     ],
     intakeFAQ: [
       { q: "What tracking system does Alaska use?", a: "METRC (Marijuana Enforcement Tracking Reporting Compliance) — real-time RFID/barcode seed-to-sale tracking by Franwell. Internet access is mandatory." },

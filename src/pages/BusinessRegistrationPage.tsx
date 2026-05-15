@@ -5,6 +5,7 @@ import { cn } from '../lib/utils';
 import { collection, addDoc, serverTimestamp, doc, setDoc } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { STATE_RESOURCES } from '../stateResources';
 
 const BUSINESS_STEPS = [
   'Pre-Registration',
@@ -61,6 +62,7 @@ export default function BusinessRegistrationPage({ onNavigate, onComplete }: { o
     password: '',
     entityName: '',
     licenseType: '',
+    jurisdiction: 'Oklahoma', // Default
     // Step 2
     tradeName: '',
     phone: '',
@@ -162,16 +164,20 @@ export default function BusinessRegistrationPage({ onNavigate, onComplete }: { o
   };
 
   const getRequiredDocuments = () => {
+    // If we have state-specific forms from the new architecture, merge them
+    const stateConfig = STATE_RESOURCES[formData.jurisdiction];
+    const stateDocs = stateConfig?.intakeForms?.map(f => f.name) || [];
+    
     const base = [
       'Affidavit of Lawful Presence',
-      'Proof of Oklahoma Residency (75% ownership)',
-      'OSBI Background Check (each owner)',
+      'Proof of Residency/Ownership',
+      'State Background Check (each owner)',
       'National Background Check Attestation',
       'ID copies (each person of interest)',
       'Certificate of Compliance',
       'Certificate(s) of Occupancy & Site Plans',
       'Certificate of Good Standing',
-      'Ownership Disclosure Documentation',
+      ...stateDocs
     ];
     if (formData.licenseType === 'Processor') base.push('Hazardous License / Chemical Safety Data Sheets');
     if (formData.licenseType === 'Dispensary') base.push('Dispensary Distance Attestation (1,000 ft from schools)');
@@ -219,6 +225,31 @@ export default function BusinessRegistrationPage({ onNavigate, onComplete }: { o
                       </label>
                     ))}
                   </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1.5"><span className="text-red-500 mr-1">*</span>Operating Jurisdiction (State)</label>
+                  <select value={formData.jurisdiction} onChange={(e) => updateField('jurisdiction', e.target.value)} className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1a4731]/20 outline-none bg-white">
+                    {Object.keys(STATE_RESOURCES).map(state => (
+                      <option key={state} value={state}>{state}</option>
+                    ))}
+                  </select>
+                  {STATE_RESOURCES[formData.jurisdiction]?.regulator && (
+                    <div className="mt-3 space-y-1.5">
+                      <p className="text-xs text-slate-500 flex items-center gap-1">
+                        <Info size={14}/> Regulator: <span className="font-semibold text-slate-700">{STATE_RESOURCES[formData.jurisdiction].regulator}</span>
+                      </p>
+                      {STATE_RESOURCES[formData.jurisdiction]?.trackingSystem?.toUpperCase().includes('METRC') && (
+                        <p className="text-xs font-bold text-emerald-700 bg-emerald-100 border border-emerald-200 px-2 py-1 rounded inline-flex items-center gap-1.5">
+                          <CircleCheck size={12}/> METRC INTEGRATION REQUIRED
+                        </p>
+                      )}
+                      {!STATE_RESOURCES[formData.jurisdiction]?.trackingSystem?.toUpperCase().includes('METRC') && STATE_RESOURCES[formData.jurisdiction]?.trackingSystem && (
+                        <p className="text-xs font-bold text-blue-700 bg-blue-100 border border-blue-200 px-2 py-1 rounded inline-flex items-center gap-1.5">
+                          <Info size={12}/> {STATE_RESOURCES[formData.jurisdiction].trackingSystem}
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -616,7 +647,7 @@ export default function BusinessRegistrationPage({ onNavigate, onComplete }: { o
                      <div className="inline-flex items-center group relative ml-1.5 align-middle">
                         <Info size={16} className="text-[#1a4731] hover:text-emerald-600 transition-colors cursor-help" />
                         <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-800 text-white text-xs font-normal rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all shadow-xl z-50">
-                           By agreeing, you consent to our HIPAA-compliant data practices, OMMA reporting requirements, state open records policies, and platform financial terms.
+                           By agreeing, you consent to our HIPAA-compliant data practices, state regulatory reporting requirements, state open records policies, and platform financial terms.
                            <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
                         </div>
                      </div>
@@ -714,6 +745,7 @@ export default function BusinessRegistrationPage({ onNavigate, onComplete }: { o
            companyName: formData.entityName,
            tradeName: formData.tradeName,
            licenseType: formData.licenseType,
+           jurisdiction: formData.jurisdiction,
            businessStructure: formData.businessStructure,
            physicalAddress: formData.physicalAddress,
            ppocName: formData.ppocName,
