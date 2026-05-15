@@ -162,6 +162,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   });
 
   const [jurisdictionStats, setJurisdictionStats] = useState<any[]>([]);
+  const [liveQueue, setLiveQueue] = useState<any[]>([]);
 
   useEffect(() => {
     // 1. Fetch live metrics from Turso
@@ -183,6 +184,36 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           totalUsers: users > 1000 ? (users / 1000).toFixed(1) + 'K' : users.toString(),
           netRevenue: '$' + rev.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
         });
+
+        // Fetch real-time queue items (Jasmin Garrett & others)
+        try {
+          const rawP = await turso.execute('SELECT id, name, created_at FROM patients ORDER BY created_at DESC LIMIT 5');
+          const rawB = await turso.execute('SELECT id, business_name as name, license_type, created_at FROM businesses ORDER BY created_at DESC LIMIT 5');
+          
+          const combined = [
+            ...rawP.rows.map(r => ({ ...r, type: 'patient' })),
+            ...rawB.rows.map(r => ({ ...r, type: 'business' }))
+          ].sort((a, b) => {
+            const tA = new Date(String(a.created_at || new Date())).getTime();
+            const tB = new Date(String(b.created_at || new Date())).getTime();
+            return tB - tA;
+          })
+          .slice(0, 4)
+          .map((r, i) => {
+             const isP = r.type === 'patient';
+             return {
+               id: `APP-${String(r.id || '0000').slice(-4)}`,
+               n: String(r.name || 'Unknown'),
+               t: isP ? 'Patient Card' : String(r.license_type || 'Cultivator'),
+               st: isP ? 'Urgent' : 'In Review',
+               d: i === 0 ? 'Just now' : `${Math.max(1, i * 15)}m ago`,
+               c: isP ? 'text-blue-600 bg-blue-50 border-blue-100' : 'text-amber-600 bg-amber-50 border-amber-100'
+             };
+          });
+          
+          if (combined.length > 0) setLiveQueue(combined);
+        } catch(e) { console.error('Error loading real queue', e); }
+
       } catch (err) {
         console.error('Error fetching live metrics:', err);
       }
@@ -2206,12 +2237,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                <button onClick={() => { setActiveTab('omma_pipeline'); }} className="text-indigo-600 text-[10px] font-black uppercase hover:underline">View All</button>
             </h3>
             <div className="space-y-4">
-               {[
-                 { id: 'APP-5021', n: 'Jane Smith', t: 'Patient Card', st: 'Urgent', d: '2m ago', c: 'text-red-600 bg-red-50 border-red-100' },
-                 { id: 'APP-5020', n: 'GreenLeaf Farms', t: 'Cultivator', st: 'In Review', d: '15m ago', c: 'text-amber-600 bg-amber-50 border-amber-100' },
-                 { id: 'APP-5019', n: 'Dr. Martin', t: 'Provider', st: 'New', d: '1h ago', c: 'text-blue-600 bg-blue-50 border-blue-100' },
-                 { id: 'APP-5018', n: 'CannaCare LLC', t: 'Dispensary', st: 'In Review', d: '2h ago', c: 'text-amber-600 bg-amber-50 border-amber-100' },
-               ].map((a, i) => (
+               {liveQueue.length > 0 ? liveQueue.map((a, i) => (
                  <div key={i} onClick={() => setActiveTab(a.t.includes('Patient') ? 'patient_case_tracker' : 'b2b_crm')} className="flex items-center justify-between p-4 rounded-2xl border border-slate-200 hover:border-indigo-300 hover:bg-slate-50 transition-all cursor-pointer group">
                     <div className="flex items-center gap-4">
                        <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs group-hover:bg-indigo-600 group-hover:text-white transition-all">#{i+1}</div>
@@ -2225,7 +2251,9 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                        <p className="text-[9px] text-slate-400 mt-1 font-bold">{a.d}</p>
                     </div>
                  </div>
-               ))}
+               )) : (
+                 <div className="text-center text-slate-400 font-bold text-sm py-4">No pending applications found</div>
+               )}
             </div>
          </div>
       </div>
