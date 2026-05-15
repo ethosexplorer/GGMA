@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Phone, PhoneCall, PhoneOutgoing, UserPlus, Shield, Globe, Activity, Download, Zap, MessageSquare, Clock, Settings } from 'lucide-react';
+import { Phone, PhoneCall, PhoneOutgoing, UserPlus, Shield, Globe, Activity, Download, Zap, MessageSquare, Clock, Settings, MicOff, Pause } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { voip800 } from '../../lib/voip800';
 
@@ -8,6 +8,8 @@ export const CallCenterCommandTab = () => {
   const [routingTab, setRoutingTab] = useState('routing');
   const [agentStatus, setAgentStatus] = useState('Ready');
   const [isConnected, setIsConnected] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isOnHold, setIsOnHold] = useState(false);
   
   const [showForward, setShowForward] = useState(false);
   const [showTransfer, setShowTransfer] = useState(false);
@@ -67,6 +69,19 @@ export const CallCenterCommandTab = () => {
               </a>
 
               {/* Quick Actions */}
+              <button 
+                onClick={() => { setIsMuted(!isMuted); window.dispatchEvent(new CustomEvent('twilio-mute-toggle', { detail: { muted: !isMuted } })); }} 
+                className={cn("px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all font-bold text-[10px] uppercase tracking-widest border", isMuted ? "bg-rose-500/20 border-rose-500/30 text-rose-300 hover:bg-rose-500/40" : "bg-slate-500/20 border-slate-500/30 text-slate-300 hover:bg-slate-500/40")}
+              >
+                <MicOff size={14} /> {isMuted ? 'Unmute' : 'Mute'}
+              </button>
+              <button 
+                onClick={() => { setIsOnHold(!isOnHold); window.dispatchEvent(new CustomEvent('twilio-hold-toggle', { detail: { hold: !isOnHold } })); }} 
+                className={cn("px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all font-bold text-[10px] uppercase tracking-widest border", isOnHold ? "bg-amber-500/20 border-amber-500/30 text-amber-300 hover:bg-amber-500/40" : "bg-slate-500/20 border-slate-500/30 text-slate-300 hover:bg-slate-500/40")}
+              >
+                <Pause size={14} /> {isOnHold ? 'Resume' : 'Hold'}
+              </button>
+
               <button onClick={() => setRoutingTab('voicemails')} className="bg-purple-500/20 border border-purple-500/30 px-3 py-1.5 rounded-lg flex items-center gap-1.5 hover:bg-purple-500/40 transition-all text-purple-300 font-bold text-[10px] uppercase tracking-widest">
                 <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="5.5" cy="11.5" r="4.5"/><circle cx="18.5" cy="11.5" r="4.5"/><line x1="5.5" y1="16" x2="18.5" y2="16"/></svg>
                 Voicemail
@@ -320,6 +335,20 @@ export const CallCenterCommandTab = () => {
                     className="flex-1 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 text-white font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
                   >
                     <Phone size={20} /> Dial Out
+                  </button>
+                </div>
+                <div className="flex gap-3 mt-3">
+                  <button 
+                    onClick={() => { setIsMuted(!isMuted); window.dispatchEvent(new CustomEvent('twilio-mute-toggle', { detail: { muted: !isMuted } })); }}
+                    className={cn("flex-1 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-colors border shadow-sm", isMuted ? "bg-rose-100 border-rose-300 text-rose-700 hover:bg-rose-200" : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50")}
+                  >
+                    <MicOff size={16} /> {isMuted ? 'Unmute' : 'Mute'}
+                  </button>
+                  <button 
+                    onClick={() => { setIsOnHold(!isOnHold); window.dispatchEvent(new CustomEvent('twilio-hold-toggle', { detail: { hold: !isOnHold } })); }}
+                    className={cn("flex-1 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-colors border shadow-sm", isOnHold ? "bg-amber-100 border-amber-300 text-amber-700 hover:bg-amber-200" : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50")}
+                  >
+                    <Pause size={16} /> {isOnHold ? 'Resume' : 'Hold Call'}
                   </button>
                 </div>
               </div>
