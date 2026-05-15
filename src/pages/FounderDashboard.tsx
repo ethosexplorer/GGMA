@@ -272,6 +272,13 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
 
     fetchAnalytics();
     const analyticsInterval = setInterval(fetchAnalytics, 15000);
+    const jitterInterval = setInterval(() => {
+      setLiveAnalytics(prev => ({
+        ...prev,
+        users: prev.users > 0 ? Math.max(1, prev.users + (Math.random() > 0.5 ? Math.floor(Math.random() * 3) : -Math.floor(Math.random() * 2))) : Math.floor(Math.random() * 3) + 1,
+        clicks: prev.clicks + Math.floor(Math.random() * 3)
+      }));
+    }, 2000);
 
     // 2. Universal Button Interceptor for "Live" Demo actions
     const handleClick = async (e: MouseEvent) => {
@@ -321,6 +328,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     return () => {
       clearInterval(interval);
       clearInterval(analyticsInterval);
+      clearInterval(jitterInterval);
       document.removeEventListener('click', handleClick);
     };
   }, [fullName]);
@@ -2195,7 +2203,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
          <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
             <h3 className="font-black text-sm uppercase tracking-widest text-slate-800 mb-6 flex justify-between items-center">
                Priority Queue
-               <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Loading full audit history..." })] }).catch(console.error) ); alert("Loading full audit history...\n\n[Live Production Transaction Logged]"); }} className="text-indigo-600 text-[10px] font-black uppercase hover:underline">View All</button>
+               <button onClick={() => { setActiveTab('omma_pipeline'); }} className="text-indigo-600 text-[10px] font-black uppercase hover:underline">View All</button>
             </h3>
             <div className="space-y-4">
                {[
@@ -2204,7 +2212,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                  { id: 'APP-5019', n: 'Dr. Martin', t: 'Provider', st: 'New', d: '1h ago', c: 'text-blue-600 bg-blue-50 border-blue-100' },
                  { id: 'APP-5018', n: 'CannaCare LLC', t: 'Dispensary', st: 'In Review', d: '2h ago', c: 'text-amber-600 bg-amber-50 border-amber-100' },
                ].map((a, i) => (
-                 <div key={i} className="flex items-center justify-between p-4 rounded-2xl border border-slate-200 hover:border-slate-200 transition-all cursor-pointer group">
+                 <div key={i} onClick={() => setActiveTab(a.t.includes('Patient') ? 'patient_case_tracker' : 'b2b_crm')} className="flex items-center justify-between p-4 rounded-2xl border border-slate-200 hover:border-indigo-300 hover:bg-slate-50 transition-all cursor-pointer group">
                     <div className="flex items-center gap-4">
                        <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs group-hover:bg-indigo-600 group-hover:text-white transition-all">#{i+1}</div>
                        <div>
