@@ -258,7 +258,7 @@ export const ManagerDashboard = ({ onLogout, user }: { onLogout?: () => void, us
       case 'calllog': return renderCallLog();
       case 'vault': return <DocumentVaultTab />;
       case 'payment': return <PostPaymentTab />;
-      case 'messages': return <InternalMessenger currentUser={{ name: managerName, role: 'manager', email: user?.email || '' }} />;
+      case 'messages': return <InternalMessenger currentUser={{ name: managerName, role: 'manager', roleId: user?.uid || 'manager' }} />;
       case 'performance': return <div className="p-8 text-center text-slate-500 italic">Regional performance analytics coming soon.</div>;
       case 'settings': return <ProfileSettingsCard user={user} roleLabel="Regional Manager" />;
       default: return renderHome();

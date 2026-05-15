@@ -265,7 +265,7 @@ export const RepDashboard = ({ onLogout, user, mode = 'human' }: RepDashboardPro
       case 'calllog': return renderCallLog();
       case 'vault': return <DocumentVaultTab />;
       case 'payment': return <PostPaymentTab />;
-      case 'messages': return <InternalMessenger currentUser={{ name: repName, role: isAI ? 'ai_rep' : 'rep', email: user?.email || '' }} />;
+      case 'messages': return <InternalMessenger currentUser={{ name: repName, role: isAI ? 'ai_rep' : 'rep', roleId: user?.uid || 'rep' }} />;
       case 'settings': return <ProfileSettingsCard user={user} roleLabel={isAI ? 'AI Rep Agent' : 'Sales Representative'} />;
       default: return renderHome();
     }

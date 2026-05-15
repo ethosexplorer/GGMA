@@ -262,7 +262,7 @@ export const TeamLeadDashboard = ({ onLogout, user }: { onLogout?: () => void, u
       case 'calllog': return renderCallLog();
       case 'vault': return <DocumentVaultTab />;
       case 'payment': return <PostPaymentTab />;
-      case 'messages': return <InternalMessenger currentUser={{ name: leadName, role: 'team_lead', email: user?.email || '' }} />;
+      case 'messages': return <InternalMessenger currentUser={{ name: leadName, role: 'team_lead', roleId: user?.uid || 'team_lead' }} />;
       case 'performance': return <div className="p-8 text-center text-slate-500 italic">Team performance analytics coming soon.</div>;
       case 'settings': return <ProfileSettingsCard user={user} roleLabel="Team Lead" />;
       default: return renderHome();

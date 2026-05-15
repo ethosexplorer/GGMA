@@ -7199,7 +7199,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
                           {isUploaded ? <CheckCircle size={16} className="text-emerald-500" /> : <div className="w-4 h-4 rounded-full border-2 border-slate-300" />}
                           <p className={`text-xs font-medium ${isUploaded ? 'text-slate-800' : 'text-slate-600'}`}>{docName}</p>
                         </div>
-                        <button onClick={() => triggerUpload(docName)} disabled={isUploaded} className={`px-3 py-1 rounded-md text-xs font-bold ${isUploaded ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-white border border-[#1a4731] text-[#1a4731] hover:bg-[#1a4731] hover:text-white transition-colors'}`}>
+                        <button onClick={() => { setPendingDocLabel(docName); fileInputRef.current?.click(); }} disabled={isUploaded} className={`px-3 py-1 rounded-md text-xs font-bold ${isUploaded ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-white border border-[#1a4731] text-[#1a4731] hover:bg-[#1a4731] hover:text-white transition-colors'}`}>
                           {isUploaded ? 'Uploaded' : 'Upload'}
                         </button>
                       </div>

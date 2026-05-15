@@ -190,16 +190,16 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           const rawP = await turso.execute('SELECT id, name, created_at FROM patients ORDER BY created_at DESC LIMIT 5');
           const rawB = await turso.execute('SELECT id, business_name as name, license_type, created_at FROM businesses ORDER BY created_at DESC LIMIT 5');
           
-          const combined = [
+          const combined: any[] = [
             ...rawP.rows.map(r => ({ ...r, type: 'patient' })),
             ...rawB.rows.map(r => ({ ...r, type: 'business' }))
-          ].sort((a, b) => {
+          ].sort((a: any, b: any) => {
             const tA = new Date(String(a.created_at || new Date())).getTime();
             const tB = new Date(String(b.created_at || new Date())).getTime();
             return tB - tA;
           })
           .slice(0, 4)
-          .map((r, i) => {
+          .map((r: any, i: number) => {
              const isP = r.type === 'patient';
              return {
                id: `APP-${String(r.id || '0000').slice(-4)}`,
