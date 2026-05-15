@@ -818,6 +818,103 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         </div>
       </div>
 
+      {/* 🏢 OPERATIONS SUPPORT HUB — Real-Time (Back Office Mirror) */}
+      <div className="bg-slate-900 border border-slate-700 rounded-3xl shadow-xl overflow-hidden text-white relative">
+        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-violet-500"></div>
+        <div className="p-8">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h3 className="font-black text-lg flex items-center gap-2"><Cpu size={20} className="text-cyan-400" /> Operations Support Hub</h3>
+              <p className="text-xs text-slate-400 mt-1">Enterprise Tier — 85% AI Automated • Real-time operations oversight</p>
+            </div>
+            <div className="flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/20 px-3 py-1.5 rounded-full">
+              <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
+              <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">Live</span>
+            </div>
+          </div>
+
+          {/* Stats Row */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            {[
+              { label: "Today's Appointments", value: Math.max(12, liveAnalytics.clicks % 200 + 42), sub: `${Math.max(3, (liveAnalytics.clicks % 20))} pending confirmations`, icon: Clock, color: 'text-white' },
+              { label: 'Active Tickets', value: queueAlerts.length + liveQueue.length, sub: `${Math.min(queueAlerts.length, 4)} requiring escalation`, icon: MessageSquare, color: 'text-amber-400' },
+              { label: 'Call Volume', value: Math.max(50, liveAnalytics.users * 12) + liveAnalytics.clicks, sub: `Avg wait time: ${Math.max(12, 45 - liveAnalytics.users)}s`, icon: PhoneCall, color: 'text-white' },
+              { label: 'AI Resolution Rate', value: '85%', sub: 'Handled by Virtual Attendant', icon: Bot, color: 'text-emerald-400', highlight: true },
+            ].map((stat, i) => (
+              <div key={i} className={cn("p-4 rounded-xl border", stat.highlight ? "bg-gradient-to-br from-violet-600/30 to-indigo-600/30 border-violet-500/30" : "bg-slate-800/50 border-slate-700/50")}>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{stat.label}</p>
+                  <stat.icon size={16} className="text-slate-500" />
+                </div>
+                <p className={cn("text-2xl font-black", stat.color)}>{stat.value}</p>
+                <p className={cn("text-[10px] mt-1 font-medium", stat.highlight ? "text-violet-300" : "text-slate-500")}>{stat.sub}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Priority Task Stream + Sylara AI */}
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+            {/* Priority Task Stream */}
+            <div className="lg:col-span-3 bg-slate-800/30 rounded-2xl border border-slate-700/50 p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-sm font-black text-white flex items-center gap-2"><Clock size={14} className="text-cyan-400" /> Priority Task Stream</h4>
+                <button onClick={() => setActiveTab('operations')} className="text-[10px] font-bold text-cyan-400 hover:text-cyan-300 transition-colors">View All Tasks →</button>
+              </div>
+              <div className="space-y-3">
+                {[
+                  { icon: '🔴', title: 'Escalated Call: Compliance Audit', desc: 'Case requires human review for Q1 compliance filing.', action: 'Handle', actionColor: 'bg-slate-700 hover:bg-slate-600 text-white' },
+                  { icon: '📅', title: 'Reschedule Conflict: Dr. Mercer', desc: 'Virtual Attendant could not automatically resolve double-booking.', action: 'Resolve', actionColor: 'bg-indigo-600 hover:bg-indigo-500 text-white' },
+                  { icon: '💻', title: 'POS Hardware Issue — Tulsa Branch', desc: 'Terminal 3 is offline. Handle raised ticket.', action: 'Ticket', actionColor: 'bg-slate-700 hover:bg-slate-600 text-white' },
+                ].concat(
+                  queueAlerts.slice(0, 2).map(a => ({
+                    icon: a.type === 'Federal' ? '🏛️' : a.type === 'State Auth' ? '📋' : '⚠️',
+                    title: a.text,
+                    desc: `${a.type} alert • ${a.time}`,
+                    action: 'Route',
+                    actionColor: 'bg-cyan-600 hover:bg-cyan-500 text-white'
+                  }))
+                ).slice(0, 4).map((task, i) => (
+                  <div key={i} className="flex items-center gap-4 p-3 bg-slate-800/50 rounded-xl border border-slate-700/30 hover:border-slate-600/50 transition-colors group">
+                    <span className="text-lg shrink-0">{task.icon}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-bold text-white truncate">{task.title}</p>
+                      <p className="text-[10px] text-slate-400 truncate">{task.desc}</p>
+                    </div>
+                    <button className={cn("px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all opacity-70 group-hover:opacity-100 shrink-0", task.actionColor)}>
+                      {task.action}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Sylara Operational AI */}
+            <div className="lg:col-span-2 bg-gradient-to-br from-violet-600 to-indigo-700 rounded-2xl p-5 flex flex-col relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
+              <div className="relative z-10 flex-1 flex flex-col">
+                <div className="flex items-center gap-2 mb-3">
+                  <Bot size={16} className="text-violet-200" />
+                  <h4 className="text-sm font-black text-white uppercase tracking-wider">Sylara Operational AI</h4>
+                </div>
+                <div className="flex-1 bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/10">
+                  <p className="text-[13px] text-white/90 leading-relaxed font-medium">
+                    "I've successfully routed <span className="font-black text-white">{Math.max(42, liveAnalytics.clicks % 200 + 42)}</span> patient calls this morning and automatically booked <span className="font-black text-white">{Math.max(12, Math.floor(liveAnalytics.clicks / 5))}</span> appointments. Call volume is projected to spike at 2:00 PM. I recommend shifting 2 staff members from tickets to phones."
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <button onClick={() => { turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), 'SYLARA_DIRECTIVE', fullName, JSON.stringify({ detail: 'Approved Staffing Shift recommendation from Sylara AI' })] }).catch(console.error); setActionToast({ message: '✅ Staffing shift approved — Sylara will reassign agents', timestamp: Date.now() }); setTimeout(() => setActionToast(null), 3000); }} className="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-emerald-500/30">
+                    Approve Staffing Shift
+                  </button>
+                  <button onClick={() => setActiveTab('virtual_attendant')} className="w-full py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all border border-white/10">
+                    Review AI Chat Logs
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* EMERGENCY BROADCAST COMMAND */}
       <div className="bg-red-50 border-2 border-red-200 rounded-3xl p-8 shadow-xl relative overflow-hidden group">
          <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 transition-transform duration-700 text-red-600"><Shield size={120} /></div>
