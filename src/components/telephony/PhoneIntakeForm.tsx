@@ -33,11 +33,16 @@ interface IntakeData {
   optInMessaging: string;
   // Business-specific
   businessName: string;
+  tradeName: string;
   businessType: string;
   einNumber: string;
   licenseType: string;
   entityType: string;
   ownerCount: string;
+  ppocName: string;
+  ppocPhone: string;
+  ppocEmail: string;
+  ownerShares: string;
 }
 
 const US_STATES = ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming'];
@@ -47,9 +52,9 @@ const ENTITY_TYPES = ['LLC','Corporation','Sole Proprietor','Partnership','Non-P
 const CONDITIONS = ['Chronic Pain','PTSD','Cancer','Epilepsy / Seizures','Glaucoma','HIV/AIDS','Crohn\'s Disease','Multiple Sclerosis','Nausea','Severe or intractable muscle spasms','Terminal Illness','Other'];
 
 const STEPS_PATIENT = ['Intake Questionnaire', 'Schedule Doctor Visit', 'State Portal Setup', 'Review & Submit'];
-const STEPS_BUSINESS = ['Owner Info', 'Address', 'Business Details', 'Review & Submit'];
+const STEPS_BUSINESS = ['Entity & Type', 'Facility & Contact', 'Primary Owner Info', 'Review & Submit'];
 
-const empty: IntakeData = { firstName:'',lastName:'',email:'',phone:'',dob:'',ssn:'',street:'',city:'',state:'Oklahoma',zip:'', isAdult:'Yes', mailingAddress:'', appointmentType:'Phone', appType:'New MMJ Card', hasPortalAccount:'No', hasPcp:'No', pcpInfo:'', conditions:[], allergies:'No', lastDoctorVisit:'', insuranceName:'', optInMessaging:'Yes', businessName:'',businessType:'Dispensary',einNumber:'',licenseType:'New Application',entityType:'LLC',ownerCount:'1' };
+const empty: IntakeData = { firstName:'',lastName:'',email:'',phone:'',dob:'',ssn:'',street:'',city:'',state:'Oklahoma',zip:'', isAdult:'Yes', mailingAddress:'', appointmentType:'Phone', appType:'New MMJ Card', hasPortalAccount:'No', hasPcp:'No', pcpInfo:'', conditions:[], allergies:'No', lastDoctorVisit:'', insuranceName:'', optInMessaging:'Yes', businessName:'',tradeName:'',businessType:'Dispensary',einNumber:'',licenseType:'New Application',entityType:'LLC',ownerCount:'1', ppocName:'', ppocPhone:'', ppocEmail:'', ownerShares:'' };
 
 // --- FORM INPUT HELPER (Moved OUTSIDE component to fix focus glitch) ---
 const Field = ({ label, value, onChange, placeholder, type = 'text', required = false }: any) => (
@@ -190,28 +195,44 @@ export const PhoneIntakeForm = () => {
     } else {
       if (step === 0) return (
         <div className="space-y-4 text-sm text-emerald-50/90 leading-relaxed">
-          <p><strong>Agent:</strong> "I can help with your business licensing. Let's start with your information as the primary owner."</p>
-          <p><strong>Agent:</strong> "May I have your first and last name, email, and best contact number?"</p>
+          <p><strong>Agent:</strong> "I can help with your business licensing. What state or jurisdiction are you applying in?"</p>
+          <p><strong>Agent:</strong> "What is the legal name of the business entity, and do you have a DBA or Trade Name?"</p>
+          <p><strong>Agent:</strong> "Are you applying as a Dispensary, Grower, or Processor?"</p>
+          <div className="mt-4 bg-[#0f291c] p-4 rounded-xl border border-emerald-800/50 shadow-inner">
+            <p className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">Agent Note</p>
+            <p className="text-xs text-emerald-100/70">Verify if they are an LLC, Corporation, or Sole Proprietor for the state forms.</p>
+          </div>
         </div>
       );
       if (step === 1) return (
         <div className="space-y-4 text-sm text-emerald-50/90 leading-relaxed">
-          <p><strong>Agent:</strong> "What is the physical street address for the business facility?"</p>
-          <p className="text-xs italic text-emerald-200">Ensure the ZIP code matches the city.</p>
+          <p><strong>Agent:</strong> "What is the physical street address for the facility?"</p>
+          <p><strong>Agent:</strong> "The state requires a Primary Point of Contact (PPOC) for inspections. Who will that be, and what is their phone and email?"</p>
+          <div className="mt-4 bg-[#0f291c] p-4 rounded-xl border border-emerald-800/50 shadow-inner">
+            <p className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">Action Required</p>
+            <p className="text-xs text-emerald-100/70">Ensure the Facility ZIP code matches the city. Remind them that PPOC must be available during business hours.</p>
+          </div>
         </div>
       );
       if (step === 2) return (
         <div className="space-y-4 text-sm text-emerald-50/90 leading-relaxed">
-          <p><strong>Agent:</strong> "What is the legal name of the business entity?"</p>
-          <p><strong>Agent:</strong> "And what type of license are you applying for? (e.g. Dispensary, Grower, Processor)"</p>
-          <p><strong>Agent:</strong> "Do you have your EIN ready?"</p>
+          <p><strong>Agent:</strong> "Let's get the Primary Owner's information down. Can I have your first and last name, email, and direct phone number?"</p>
+          <p><strong>Agent:</strong> "What is your ownership percentage? And do you have the business EIN ready?"</p>
+          <div className="mt-4 bg-[#0f291c] p-4 rounded-xl border border-emerald-800/50 shadow-inner">
+            <p className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">Agent Note</p>
+            <p className="text-xs text-emerald-100/70">Background checks are required for anyone with &gt;10% ownership. Advise the caller.</p>
+          </div>
         </div>
       );
       if (step === 3) return (
         <div className="space-y-4 text-sm text-emerald-50/90 leading-relaxed">
-          <p><strong>Agent:</strong> "Let's review the details to ensure accuracy before I submit this to our compliance team."</p>
-          <p className="text-xs italic text-emerald-200">Verify Business Name, License Type, and Contact Info.</p>
-          <p><strong>Agent:</strong> "Our team will review this and reach out shortly. Thank you!"</p>
+          <p><strong>Agent:</strong> "Let's review the details to ensure accuracy..."</p>
+          <p className="text-xs italic text-emerald-200">Verify Business Name, Address, and Owner Email.</p>
+          <p><strong>Agent:</strong> "I will submit this into our GGP-OS portal. You will receive an email shortly with a secure link to upload your required documents (ID, Background Check, Certificate of Compliance)."</p>
+          <div className="mt-4 bg-[#0f291c] p-4 rounded-xl border border-emerald-800/50 shadow-inner">
+            <p className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">Final Step</p>
+            <p className="text-xs text-emerald-100/70">Submit the form to generate the business account and send the secure upload link.</p>
+          </div>
         </div>
       );
     }
@@ -444,37 +465,52 @@ export const PhoneIntakeForm = () => {
       if (step === 0) return (
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <Field label="Owner First Name" value={data.firstName} onChange={(v: string) => set('firstName', v)} placeholder="John" required />
-            <Field label="Owner Last Name" value={data.lastName} onChange={(v: string) => set('lastName', v)} placeholder="Doe" required />
+            <Select label="Jurisdiction (State)" value={data.state} onChange={(v: string) => set('state', v)} options={US_STATES} required />
+            <Select label="License Type" value={data.licenseType} onChange={(v: string) => set('licenseType', v)} options={['New Application','Renewal','Transfer of Ownership','Change of Location']} required />
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <Field label="Email Address" value={data.email} onChange={(v: string) => set('email', v)} placeholder="john@email.com" type="email" required />
-            <Field label="Phone Number" value={data.phone} onChange={(v: string) => set('phone', v)} placeholder="(555) 123-4567" required />
+            <Field label="Business Legal Name" value={data.businessName} onChange={(v: string) => set('businessName', v)} placeholder="Green Leaf LLC" required />
+            <Field label="Trade Name (DBA)" value={data.tradeName} onChange={(v: string) => set('tradeName', v)} placeholder="Green Leaf Dispensary" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Select label="Business Type" value={data.businessType} onChange={(v: string) => set('businessType', v)} options={BIZ_TYPES} required />
+            <Select label="Entity Type" value={data.entityType} onChange={(v: string) => set('entityType', v)} options={ENTITY_TYPES} required />
           </div>
         </div>
       );
       if (step === 1) return (
         <div className="space-y-4">
-          <Field label="Business Street Address" value={data.street} onChange={(v: string) => set('street', v)} placeholder="123 Main St" required />
-          <div className="grid grid-cols-3 gap-4">
+          <Field label="Facility Street Address" value={data.street} onChange={(v: string) => set('street', v)} placeholder="123 Main St" required />
+          <div className="grid grid-cols-2 gap-4">
             <Field label="City" value={data.city} onChange={(v: string) => set('city', v)} placeholder="Oklahoma City" required />
-            <Select label="State" value={data.state} onChange={(v: string) => set('state', v)} options={US_STATES} required />
             <Field label="ZIP Code" value={data.zip} onChange={(v: string) => set('zip', v)} placeholder="73102" required />
+          </div>
+          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50 mt-4">
+            <h4 className="text-xs font-bold text-slate-800 uppercase tracking-widest mb-3">Primary Point of Contact (PPOC)</h4>
+            <div className="space-y-3">
+              <Field label="PPOC Name" value={data.ppocName} onChange={(v: string) => set('ppocName', v)} placeholder="Jane Doe" required />
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="PPOC Phone" value={data.ppocPhone} onChange={(v: string) => set('ppocPhone', v)} placeholder="(555) 123-4567" required />
+                <Field label="PPOC Email" value={data.ppocEmail} onChange={(v: string) => set('ppocEmail', v)} placeholder="jane@email.com" required />
+              </div>
+            </div>
           </div>
         </div>
       );
       if (step === 2) return (
         <div className="space-y-4">
-          <Field label="Business Legal Name" value={data.businessName} onChange={(v: string) => set('businessName', v)} placeholder="Green Leaf Dispensary LLC" required />
           <div className="grid grid-cols-2 gap-4">
-            <Select label="Business Type" value={data.businessType} onChange={(v: string) => set('businessType', v)} options={BIZ_TYPES} required />
-            <Select label="Entity Type" value={data.entityType} onChange={(v: string) => set('entityType', v)} options={ENTITY_TYPES} required />
+            <Field label="Primary Owner First Name" value={data.firstName} onChange={(v: string) => set('firstName', v)} placeholder="John" required />
+            <Field label="Primary Owner Last Name" value={data.lastName} onChange={(v: string) => set('lastName', v)} placeholder="Smith" required />
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <Field label="EIN / Tax ID" value={data.einNumber} onChange={(v: string) => set('einNumber', v)} placeholder="12-3456789" required />
-            <Field label="Number of Owners" value={data.ownerCount} onChange={(v: string) => set('ownerCount', v)} placeholder="1" />
+            <Field label="Owner Email" value={data.email} onChange={(v: string) => set('email', v)} placeholder="john@email.com" required />
+            <Field label="Owner Phone" value={data.phone} onChange={(v: string) => set('phone', v)} placeholder="(555) 123-4567" required />
           </div>
-          <Select label="License Type" value={data.licenseType} onChange={(v: string) => set('licenseType', v)} options={['New Application','Renewal','Transfer of Ownership','Change of Location']} />
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Ownership %" value={data.ownerShares} onChange={(v: string) => set('ownerShares', v)} placeholder="100%" required />
+            <Field label="Business EIN" value={data.einNumber} onChange={(v: string) => set('einNumber', v)} placeholder="12-3456789" required />
+          </div>
           <div>
             <label className="text-xs font-bold text-slate-600 mb-1.5 block">Agent Notes</label>
             <textarea value={callerNotes} onChange={(e) => setCallerNotes(e.target.value)} rows={3} placeholder="Additional notes from the call..."
@@ -484,20 +520,20 @@ export const PhoneIntakeForm = () => {
       );
       if (step === 3) {
         const rows = [
-          { l: 'Owner Name', v: data.firstName + ' ' + data.lastName },
-          { l: 'Email', v: data.email },
-          { l: 'Phone', v: data.phone },
           { l: 'Business Name', v: data.businessName },
-          { l: 'Business Type', v: data.businessType },
-          { l: 'Entity Type', v: data.entityType },
-          { l: 'EIN', v: data.einNumber },
+          { l: 'Jurisdiction', v: data.state },
           { l: 'License Type', v: data.licenseType },
+          { l: 'Facility Address', v: data.street ? data.street + ', ' + data.city + ', ' + data.state + ' ' + data.zip : '—' },
+          { l: 'PPOC Name', v: data.ppocName },
+          { l: 'Primary Owner', v: data.firstName + ' ' + data.lastName },
+          { l: 'Owner Email', v: data.email },
+          { l: 'EIN', v: data.einNumber },
         ];
         return (
           <div className="space-y-4">
             <div className="p-4 rounded-xl border text-xs font-bold flex items-start gap-2 bg-indigo-50 border-indigo-200 text-indigo-800">
               <Shield size={14} className="shrink-0 mt-0.5" />
-              <span>Review all information with the caller before submitting. This will create their account and submit the application.</span>
+              <span>Review all information with the caller before submitting. This will create their account and submit the initial application.</span>
             </div>
             <div className="bg-slate-50 border border-slate-200 rounded-2xl divide-y divide-slate-200 overflow-hidden">
               {rows.map((r, i) => (
@@ -525,9 +561,9 @@ export const PhoneIntakeForm = () => {
       if (step === 1) return scheduledAppt;
       if (step === 2) return completedPortal;
     } else {
-      if (step === 0) return data.firstName && data.lastName && data.email && data.phone;
-      if (step === 1) return data.street && data.city && data.zip;
-      if (step === 2) return data.businessName && data.einNumber;
+      if (step === 0) return data.state && data.businessName && data.licenseType && data.entityType && data.businessType;
+      if (step === 1) return data.street && data.city && data.zip && data.ppocName && data.ppocPhone && data.ppocEmail;
+      if (step === 2) return data.firstName && data.lastName && data.email && data.phone && data.ownerShares && data.einNumber;
     }
     return true;
   };
