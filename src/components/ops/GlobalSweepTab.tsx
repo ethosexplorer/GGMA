@@ -111,7 +111,7 @@ export const GlobalSweepTab = () => {
     { code: 'AR', name: 'Arkansas — Medical Only', status: 'Active', scraper: 'Need Built' },
     { code: 'LA', name: 'Louisiana — Medical Only', status: 'Active', scraper: 'Need Built' },
     { code: 'MS', name: 'Mississippi — Medical Only', status: 'Active', scraper: 'Need Built' },
-    { code: 'AL', name: 'Alabama — Medical (New)', status: 'Active', scraper: 'Need Built' },
+    { code: 'AL', name: 'Alabama — Medical (New)', status: 'Active', scraper: 'Built' },
     { code: 'KY', name: 'Kentucky — Medical (New 2025)', status: 'Active', scraper: 'Need Built' },
     { code: 'WV', name: 'West Virginia — Medical Only', status: 'Active', scraper: 'Need Built' },
     { code: 'NH', name: 'New Hampshire — Medical Only', status: 'Active', scraper: 'Need Built' },
