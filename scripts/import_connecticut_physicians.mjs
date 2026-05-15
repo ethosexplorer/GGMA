@@ -17,9 +17,9 @@ const CT_PROVIDERS = [
 function slugify(str) { return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').substring(0, 50); }
 
 async function importConnecticutProviders() {
-  await signInWithEmailAndPassword(auth, 'globalgreenhp@gmail.com', process.env.FIREBASE_PASS || 'defaultpass');
+  await signInWithEmailAndPassword(auth, 'globalgreenhp@gmail.com', 'Harlem2025!');
   for (const p of CT_PROVIDERS) {
-    const ref = doc(db, 'crm_contacts', `ct-provider-${slugify(p.name)}`);
+    const ref = doc(db, 'crm_deals', `ct-provider-${slugify(p.name)}`);
     if ((await getDoc(ref)).exists()) continue;
     await setDoc(ref, {
       businessName: p.name, contactName: p.name, city: p.city, state: 'CT', jurisdiction: 'Connecticut',

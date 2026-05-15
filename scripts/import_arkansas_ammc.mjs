@@ -97,7 +97,7 @@ async function importArkansas() {
   console.log('   MEDICAL ONLY — Amendment 98 (2016)');
   console.log(`   📊 ${AR_CULTIVATORS.length} Cultivators | ${AR_DISPENSARIES.length} Dispensaries | ${AR_PROCESSORS.length} Processors\n`);
 
-  await signInWithEmailAndPassword(auth, 'globalgreenhp@gmail.com', process.env.FIREBASE_PASS || 'defaultpass');
+  await signInWithEmailAndPassword(auth, 'globalgreenhp@gmail.com', 'Harlem2025!');
   console.log('✅ Authenticated\n');
 
   let imported = 0, skipped = 0;
@@ -106,7 +106,7 @@ async function importArkansas() {
   console.log('── CULTIVATORS (8 capped) ──');
   for (const c of AR_CULTIVATORS) {
     const docId = `ar-cult-${slugify(c.name)}`;
-    const ref = doc(db, 'crm_contacts', docId);
+    const ref = doc(db, 'crm_deals', docId);
     if ((await getDoc(ref)).exists()) { skipped++; console.log(`⏭️  ${c.name}`); continue; }
 
     await setDoc(ref, {
@@ -137,7 +137,7 @@ async function importArkansas() {
   console.log('\n── DISPENSARIES (~40 capped, 8 zones) ──');
   for (const d of AR_DISPENSARIES) {
     const docId = `ar-disp-${slugify(d.name)}-${slugify(d.city)}`;
-    const ref = doc(db, 'crm_contacts', docId);
+    const ref = doc(db, 'crm_deals', docId);
     if ((await getDoc(ref)).exists()) { skipped++; console.log(`⏭️  ${d.name}`); continue; }
 
     await setDoc(ref, {
@@ -169,7 +169,7 @@ async function importArkansas() {
   console.log('\n── PROCESSORS (uncapped) ──');
   for (const p of AR_PROCESSORS) {
     const docId = `ar-proc-${slugify(p.name)}`;
-    const ref = doc(db, 'crm_contacts', docId);
+    const ref = doc(db, 'crm_deals', docId);
     if ((await getDoc(ref)).exists()) { skipped++; console.log(`⏭️  ${p.name}`); continue; }
 
     await setDoc(ref, {

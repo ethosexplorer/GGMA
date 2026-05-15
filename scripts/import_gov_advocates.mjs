@@ -60,11 +60,11 @@ function slugify(str) { return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').rep
 
 async function importGovAdvocates() {
   console.log('🏛️  Government Offices & Advocates → Firestore CRM Import');
-  await signInWithEmailAndPassword(auth, 'globalgreenhp@gmail.com', process.env.FIREBASE_PASS || 'defaultpass');
+  await signInWithEmailAndPassword(auth, 'globalgreenhp@gmail.com', 'Harlem2025!');
   
   for (const org of GOV_ADVOCATES) {
     const docId = `${org.state.toLowerCase()}-${org.type}-${slugify(org.name)}`;
-    const ref = doc(db, 'crm_contacts', docId);
+    const ref = doc(db, 'crm_deals', docId);
     if ((await getDoc(ref)).exists()) continue;
     
     await setDoc(ref, {

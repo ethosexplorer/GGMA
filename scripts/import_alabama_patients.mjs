@@ -33,14 +33,14 @@ function slugify(str) {
 async function importAlabamaPatients() {
   console.log('🧑‍⚕️ Alabama Medical Patients → Firestore CRM Import');
   
-  await signInWithEmailAndPassword(auth, 'globalgreenhp@gmail.com', process.env.FIREBASE_PASS || 'defaultpass');
+  await signInWithEmailAndPassword(auth, 'globalgreenhp@gmail.com', 'Harlem2025!');
   console.log('✅ Authenticated\n');
 
   let imported = 0, skipped = 0;
 
   for (const p of AL_PATIENTS) {
     const docId = `al-patient-${slugify(p.name)}`;
-    const ref = doc(db, 'crm_contacts', docId);
+    const ref = doc(db, 'crm_deals', docId);
     if ((await getDoc(ref)).exists()) { skipped++; console.log(`⏭️  ${p.name}`); continue; }
 
     await setDoc(ref, {

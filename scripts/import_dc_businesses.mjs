@@ -20,10 +20,10 @@ function slugify(str) { return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').rep
 
 async function importDCBusinesses() {
   console.log('🏢 DC ABCA Businesses → Firestore CRM Import');
-  await signInWithEmailAndPassword(auth, 'globalgreenhp@gmail.com', process.env.FIREBASE_PASS || 'defaultpass');
+  await signInWithEmailAndPassword(auth, 'globalgreenhp@gmail.com', 'Harlem2025!');
   for (const b of DC_BUSINESSES) {
     const docId = `dc-business-${slugify(b.name)}`;
-    const ref = doc(db, 'crm_contacts', docId);
+    const ref = doc(db, 'crm_deals', docId);
     if ((await getDoc(ref)).exists()) continue;
     await setDoc(ref, {
       businessName: b.name, contactName: b.name, city: b.city, state: 'DC', jurisdiction: 'District Of Columbia',

@@ -17,9 +17,9 @@ const DC_PROVIDERS = [
 function slugify(str) { return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').substring(0, 50); }
 
 async function importDCProviders() {
-  await signInWithEmailAndPassword(auth, 'globalgreenhp@gmail.com', process.env.FIREBASE_PASS || 'defaultpass');
+  await signInWithEmailAndPassword(auth, 'globalgreenhp@gmail.com', 'Harlem2025!');
   for (const p of DC_PROVIDERS) {
-    const ref = doc(db, 'crm_contacts', `dc-provider-${slugify(p.name)}`);
+    const ref = doc(db, 'crm_deals', `dc-provider-${slugify(p.name)}`);
     if ((await getDoc(ref)).exists()) continue;
     await setDoc(ref, {
       businessName: p.name, contactName: p.name, city: p.city, state: 'DC', jurisdiction: 'District Of Columbia',

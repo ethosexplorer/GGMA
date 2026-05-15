@@ -13,7 +13,7 @@ export const GlobalSweepTab = () => {
   // Normalize full state names to 2-letter codes
   const STATE_NAME_TO_CODE: Record<string, string> = {
     'alabama': 'AL', 'alaska': 'AK', 'arizona': 'AZ', 'arkansas': 'AR',
-    'california': 'CA', 'colorado': 'CO', 'connecticut': 'CT', 'delaware': 'DE',
+    'california': 'CA', 'colorado': 'CO', 'connecticut': 'CT', 'delaware': 'DE', 'district of columbia': 'DC',
     'florida': 'FL', 'georgia': 'GA', 'hawaii': 'HI', 'idaho': 'ID',
     'illinois': 'IL', 'indiana': 'IN', 'iowa': 'IA', 'kansas': 'KS',
     'kentucky': 'KY', 'louisiana': 'LA', 'maine': 'ME', 'maryland': 'MD',
@@ -102,6 +102,7 @@ export const GlobalSweepTab = () => {
     { code: 'CO', name: 'Colorado — Rec + Medical (Owner Suitability)', status: 'Active', scraper: 'Built' },
     { code: 'CT', name: 'Connecticut — Rec + Medical (Lottery System)', status: 'Active', scraper: 'Built' },
     { code: 'DE', name: 'Delaware — Rec + Medical (Strict Caps)', status: 'Active', scraper: 'Built' },
+    { code: 'DC', name: 'District of Columbia — Medical + Gifting (I-71)', status: 'Active', scraper: 'Built' },
     { code: 'FL', name: 'Florida — Medical Only (Vertical Integration)', status: 'Active', scraper: 'Built' },
     { code: 'GA', name: 'Georgia — Low-THC Oil (Closed Market)', status: 'Active', scraper: 'Built' },
     { code: 'HI', name: 'Hawaii — Medical Only (OSP Reciprocity)', status: 'Active', scraper: 'Built' },
@@ -300,7 +301,7 @@ export const GlobalSweepTab = () => {
         </div>
         <div className="flex-1 overflow-auto relative -m-6 p-6">
           <div className="absolute inset-0">
-            <PipelineCRM defaultJurisdiction={selectedState} />
+            <PipelineCRM defaultJurisdiction={activeState?.code || 'All'} />
           </div>
         </div>
       </div>

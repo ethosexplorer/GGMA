@@ -73,14 +73,14 @@ async function importArizona() {
   console.log(`📊 ${AZ_FACILITIES.length} facilities from AZ Care Check (of 181 total)\n`);
 
   // Auth
-  await signInWithEmailAndPassword(auth, 'globalgreenhp@gmail.com', process.env.FIREBASE_PASS || 'defaultpass');
+  await signInWithEmailAndPassword(auth, 'globalgreenhp@gmail.com', 'Harlem2025!');
   console.log('✅ Authenticated\n');
 
   let imported = 0, skipped = 0;
 
   for (const fac of AZ_FACILITIES) {
     const docId = `az-${slugify(fac.name)}-${slugify(fac.city)}`;
-    const ref = doc(db, 'crm_contacts', docId);
+    const ref = doc(db, 'crm_deals', docId);
 
     // Dedup check
     const existing = await getDoc(ref);

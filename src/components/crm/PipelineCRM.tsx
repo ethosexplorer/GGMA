@@ -60,7 +60,7 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
   const [filterJurisdiction, setFilterJurisdiction] = useState(defaultJurisdiction || 'All');
   const [filterStatus, setFilterStatus] = useState('All');
   const [filterType, setFilterType] = useState('All');
-  
+
   // Sync filter when parent changes selected state
   useEffect(() => {
     if (defaultJurisdiction) setFilterJurisdiction(defaultJurisdiction);
@@ -207,15 +207,42 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
     return ENTITY_TYPES.find(t => t.id === typeId) || ENTITY_TYPES[8];
   };
 
-  const uniqueJurisdictions = Array.from(new Set(deals.map(d => d.jurisdiction).filter(Boolean))).sort();
+  const STATE_NAME_TO_CODE: Record<string, string> = {
+    'alabama': 'AL', 'alaska': 'AK', 'arizona': 'AZ', 'arkansas': 'AR',
+    'california': 'CA', 'colorado': 'CO', 'connecticut': 'CT', 'delaware': 'DE',
+    'district of columbia': 'DC', 'florida': 'FL', 'georgia': 'GA', 'hawaii': 'HI', 'idaho': 'ID',
+    'illinois': 'IL', 'indiana': 'IN', 'iowa': 'IA', 'kansas': 'KS',
+    'kentucky': 'KY', 'louisiana': 'LA', 'maine': 'ME', 'maryland': 'MD',
+    'massachusetts': 'MA', 'michigan': 'MI', 'minnesota': 'MN', 'mississippi': 'MS',
+    'missouri': 'MO', 'montana': 'MT', 'nebraska': 'NE', 'nevada': 'NV',
+    'new hampshire': 'NH', 'new jersey': 'NJ', 'new mexico': 'NM', 'new york': 'NY',
+    'north carolina': 'NC', 'north dakota': 'ND', 'ohio': 'OH', 'oklahoma': 'OK',
+    'oregon': 'OR', 'pennsylvania': 'PA', 'rhode island': 'RI', 'south carolina': 'SC',
+    'south dakota': 'SD', 'tennessee': 'TN', 'texas': 'TX', 'utah': 'UT',
+    'vermont': 'VT', 'virginia': 'VA', 'washington': 'WA', 'west virginia': 'WV',
+    'wisconsin': 'WI', 'wyoming': 'WY'
+  };
+
+  const getJurisdictionCode = (raw: string) => {
+    if (!raw) return 'US';
+    const trimmed = raw.trim().toLowerCase();
+    if (trimmed.length === 2) return trimmed.toUpperCase();
+    return STATE_NAME_TO_CODE[trimmed] || 'US';
+  };
+
+  const uniqueJurisdictions = Array.from(new Set(deals.map(d => getJurisdictionCode(d.jurisdiction)).filter(Boolean))).sort();
 
   const filteredDeals = deals.filter(d => {
     const n = d.name || '';
     const c = d.contactName || '';
     const s = searchTerm || '';
     const matchesSearch = n.toLowerCase().includes(s.toLowerCase()) || c.toLowerCase().includes(s.toLowerCase());
-    const j = (d.jurisdiction || 'Oklahoma').toLowerCase() === 'ok' ? 'oklahoma' : (d.jurisdiction || 'Oklahoma').toLowerCase();
-    const matchesJurisdiction = filterJurisdiction === 'All' || j === filterJurisdiction.toLowerCase();
+    
+    const dealCode = getJurisdictionCode(d.jurisdiction);
+    const filterCode = filterJurisdiction === 'All' ? 'All' : getJurisdictionCode(filterJurisdiction);
+    
+    const matchesJurisdiction = filterCode === 'All' || dealCode === filterCode;
+    
     const statusVal = (d.licenseStatus || d.notes || '').toLowerCase(); // fallback to notes for old imports
     const matchesStatus = filterStatus === 'All' || statusVal.includes(filterStatus.toLowerCase());
     const matchesType = filterType === 'All' || d.type === filterType;

@@ -35,14 +35,14 @@ function slugify(str) {
 async function importArkansasAttorneys() {
   console.log('⚖️  Arkansas Cannabis Attorneys → Firestore CRM Import');
   
-  await signInWithEmailAndPassword(auth, 'globalgreenhp@gmail.com', process.env.FIREBASE_PASS || 'defaultpass');
+  await signInWithEmailAndPassword(auth, 'globalgreenhp@gmail.com', 'Harlem2025!');
   console.log('✅ Authenticated\n');
 
   let imported = 0, skipped = 0;
 
   for (const a of AR_ATTORNEYS) {
     const docId = `ar-attorney-${slugify(a.name)}`;
-    const ref = doc(db, 'crm_contacts', docId);
+    const ref = doc(db, 'crm_deals', docId);
     if ((await getDoc(ref)).exists()) { skipped++; console.log(`⏭️  ${a.name}`); continue; }
 
     await setDoc(ref, {

@@ -47,7 +47,7 @@ async function runMasterImport() {
          else if (f.includes('gov_advocates')) docId = `gov-${slugify(item.name)}`;
          else docId = `${f.split('_')[1]}-business-${slugify(item.name)}`;
          
-         const ref = doc(db, 'crm_contacts', docId);
+         const ref = doc(db, 'crm_deals', docId);
          if ((await getDoc(ref)).exists()) {
              continue;
          }

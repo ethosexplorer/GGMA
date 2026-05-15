@@ -17,9 +17,9 @@ const DE_ATTORNEYS = [
 function slugify(str) { return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').substring(0, 50); }
 
 async function importDelawareAttorneys() {
-  await signInWithEmailAndPassword(auth, 'globalgreenhp@gmail.com', process.env.FIREBASE_PASS || 'defaultpass');
+  await signInWithEmailAndPassword(auth, 'globalgreenhp@gmail.com', 'Harlem2025!');
   for (const a of DE_ATTORNEYS) {
-    const ref = doc(db, 'crm_contacts', `de-attorney-${slugify(a.name)}`);
+    const ref = doc(db, 'crm_deals', `de-attorney-${slugify(a.name)}`);
     if ((await getDoc(ref)).exists()) continue;
     await setDoc(ref, {
       businessName: a.name, contactName: a.name, city: a.city, state: 'DE', jurisdiction: 'Delaware',
