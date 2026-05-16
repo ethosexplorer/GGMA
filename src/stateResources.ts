@@ -1121,18 +1121,46 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     ]
   },
   "New Jersey": {
-    program: "https://www.nj.gov/cannabis/medicinalcannabis/patient-registration/",
+    program: "https://www.nj.gov/cannabis/",
     patientPortal: "https://njmcp.crc.nj.gov/web/#/home/createAdultPatientUser",
     businessPortal: "https://www.nj.gov/cannabis/businesses/recreational/license-application-process/",
-    guide: "",
+    guide: "https://www.nj.gov/cannabis/medicinalcannabis/patient-registration/",
     resources: "https://www.mpp.org/states/new-jersey/?state=NJ",
     abbreviation: "NJ",
-    adultUseStatus: "Yes",
-    medicalStatus: "Yes",
-    regulator: "New Jersey Cannabis Regulatory Commission",
+    adultUseStatus: "Yes (NJCREAMMA, Feb 2021. Sales April 2022)",
+    medicalStatus: "Yes (Compassionate Use Act, 2010)",
+    regulator: "New Jersey Cannabis Regulatory Commission (CRC)",
     compliancePage: "https://www.nj.gov/cannabis/",
-    checklistItems: ["License","Testing","Labeling","Labor","Taxes"],
-    complianceSource: "https://www.nsc.org/cannabis-regulations"
+    checklistItems: ["CRC License","Lab testing","Packaging/Labeling","Labor Peace Agreement","Social equity compliance","Tax compliance (6.625% + muni)","Municipal authorization"],
+    complianceSource: "https://www.nsc.org/cannabis-regulations",
+    conditions: ["ALS","Anxiety","Cancer","Chronic Pain","Dysmenorrhea","Glaucoma","IBD (Crohn's)","Intractable Skeletal Muscular Spasticity","Migraine","Multiple Sclerosis","Muscular Dystrophy","Opioid Use Disorder","PTSD","Seizure Disorders/Epilepsy","Terminal Illness (<12 months)","Tourette Syndrome","HIV/AIDS"],
+    contactPhone: "(609) 376-5550",
+    contactEmail: "cannabis@nj.gov",
+    trackingSystem: "Metrc",
+    licenseCaps: "No strict cap on total licenses. License types: Cultivator, Manufacturer, Retailer, Wholesaler, Distributor, Delivery, Microbusiness. Municipal opt-in required.",
+    intakeNotes: [
+      "✅ DUAL-USE: NJCREAMMA signed Feb 2021. Adult-use sales began April 21, 2022.",
+      "CRC (Cannabis Regulatory Commission) regulates all cannabis. Municipal opt-in required.",
+      "Tax: 6.625% state sales tax on adult-use. Medical patients EXEMPT from sales tax.",
+      "Municipal transfer tax: up to 2% additional. Social Equity Excise Fee on cultivators ($2.50/oz).",
+      "Patient card: FREE digital card. Physical card: $10. Requires CRC-registered practitioner.",
+      "Densely populated state — strong demand across North, Central, and South Jersey.",
+      "License types include Microbusiness (small operators) and Delivery services.",
+      "Key markets: Newark, Jersey City, Hoboken, Paterson, Edison, Atlantic City, Cherry Hill, Trenton."
+    ],
+    intakeForms: [
+      { name: "Patient Registration Portal (NJMCP)", url: "https://njmcp.crc.nj.gov/web/#/home/createAdultPatientUser" },
+      { name: "CRC Business Licensing", url: "https://www.nj.gov/cannabis/businesses/recreational/license-application-process/" },
+      { name: "CRC Dispensary Finder", url: "https://njcrcgov.info/dispensary" },
+      { name: "CRC Main Portal", url: "https://www.nj.gov/cannabis/" }
+    ],
+    intakeFAQ: [
+      { q: "When did NJ legalize adult-use?", a: "NJCREAMMA was signed Feb 2021. Retail sales began April 21, 2022." },
+      { q: "What is the tax?", a: "6.625% state sales tax on adult-use (medical patients EXEMPT). Plus up to 2% municipal transfer tax." },
+      { q: "How much does a medical card cost?", a: "FREE digital card. Physical card: $10. Requires evaluation by a CRC-registered practitioner." },
+      { q: "Do municipalities have to opt in?", a: "Yes. Each municipality must authorize cannabis businesses to operate within their borders." },
+      { q: "What license types are available?", a: "Cultivator, Manufacturer, Retailer, Wholesaler, Distributor, Delivery, and Microbusiness." }
+    ]
   },
   "New Mexico": {
     program: "https://www.rld.nm.gov/cannabis/licensing/new-applications/apply-for-license/",
