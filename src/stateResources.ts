@@ -1218,18 +1218,41 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     complianceSource: "https://www.nsc.org/cannabis-regulations"
   },
   "North Carolina": {
-    program: "https://northcarolinastatecannabis.org/medical",
+    program: "https://www.ncagr.gov/divisions/plant-industry/plant-protection/hemp",
     patientPortal: "",
     businessPortal: "",
-    guide: "",
+    guide: "https://ebci-ccb.org/",
     resources: "https://www.mpp.org/states/north-carolina/?state=NC",
     abbreviation: "NC",
-    adultUseStatus: "No",
-    medicalStatus: "No comprehensive program",
-    regulator: "State law only",
-    compliancePage: "",
-    checklistItems: ["No operational cannabis business framework"],
-    complianceSource: "https://en.wikipedia.org/wiki/Legality_of_cannabis_by_U.S._jurisdiction"
+    adultUseStatus: "No (Illegal statewide. Exception: EBCI Tribal Land)",
+    medicalStatus: "No (Illegal statewide. Exception: EBCI Tribal Land)",
+    regulator: "NC Department of Agriculture (for Hemp/CBD) / EBCI Cannabis Control Board (Tribal)",
+    compliancePage: "https://www.ncagr.gov/divisions/plant-industry/plant-protection/hemp",
+    checklistItems: ["Hemp compliance (<0.3% THC)","CBD testing","Federal farm bill compliance"],
+    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws",
+    conditions: ["N/A - Medical marijuana is illegal statewide in North Carolina."],
+    contactPhone: "(919) 707-3730",
+    contactEmail: "hemp@ncagr.gov",
+    trackingSystem: "N/A",
+    licenseCaps: "N/A - Cannabis is illegal. Hemp is regulated by the state.",
+    intakeNotes: [
+      "⚠️ ILLEGAL STATEWIDE: Both medical and recreational marijuana are illegal in North Carolina.",
+      "HEMP / CBD ONLY: Hemp-derived products (CBD, Delta-8, THCa) <0.3% THC are currently legal.",
+      "TRIBAL EXCEPTION: The Eastern Band of Cherokee Indians (EBCI) operates as a sovereign nation on the Qualla Boundary.",
+      "EBCI legalized both medical and adult-use. 'Great Smoky Cannabis Company' is the ONLY legal dispensary in NC (located on tribal land).",
+      "Transporting cannabis off the Qualla Boundary into NC jurisdiction is a state/federal crime.",
+      "No statewide patient cards, no state dispensary licenses."
+    ],
+    intakeForms: [
+      { name: "NC Hemp Program (Dept of Ag)", url: "https://www.ncagr.gov/divisions/plant-industry/plant-protection/hemp" },
+      { name: "EBCI Cannabis Control Board", url: "https://ebci-ccb.org/" }
+    ],
+    intakeFAQ: [
+      { q: "Is medical marijuana legal in NC?", a: "NO. Medical marijuana is illegal under North Carolina state law." },
+      { q: "What is the Great Smoky Cannabis Company?", a: "It is the only legal dispensary physically located in NC, operating on the sovereign Qualla Boundary (EBCI tribal land)." },
+      { q: "Can I buy CBD?", a: "Yes. Hemp-derived CBD products containing less than 0.3% THC are legal." },
+      { q: "Can I transport tribal cannabis into NC?", a: "NO. Transporting cannabis off tribal land into state jurisdiction is illegal and subject to criminal penalties." }
+    ]
   },
   "North Dakota": {
     program: "https://mmregistration.health.nd.gov/",
