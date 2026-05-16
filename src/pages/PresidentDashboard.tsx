@@ -21,7 +21,8 @@ import {
   LiveRapidTesting,
   MasterAnalyticsTab,
   LiveHRIntelligence,
-  LiveJurisdictionMap
+  LiveJurisdictionMap,
+  LiveRegulatoryLibrary
 } from '../components/dashboard-tabs/LiveExecutiveTabs';
 import { LegislativeIntelTab } from '../components/federal/LegislativeIntelTab';
 import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
@@ -281,7 +282,7 @@ const PresidentDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => v
                 {activeTab === 'business' && <LiveBusinessOversight />}
                 
                 {activeTab === 'compliance' && <LiveComplianceMonitor />}
-                {activeTab === 'regulatory_library' && <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50"><BookOpen size={40} className="mx-auto text-slate-300 mb-4" /><h2 className="text-2xl font-bold text-white mb-2">Regulatory Intelligence Hub</h2><p className="text-slate-400">Standard operating procedures and statutes.</p></div>}
+                {activeTab === 'regulatory_library' && <LiveRegulatoryLibrary />}
                 
                 {activeTab === 'internal_admin' && <div className="bg-white rounded-3xl overflow-hidden h-full"><ExternalAdminDashboard /></div>}
                 {activeTab === 'law_enforcement' && <LiveLawEnforcement />}

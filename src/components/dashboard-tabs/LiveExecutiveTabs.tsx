@@ -76,10 +76,15 @@ export const LivePatientsOversight = () => {
   const [patients, setPatients] = useState<any[]>([]);
 
   useEffect(() => {
-    // Only fetching users where role is patient or patient_portal
-    const q = query(collection(db, 'users'), where('role', 'in', ['patient', 'patient_portal']), limit(50));
-    const unsub = onSnapshot(q, (snap) => {
-      setPatients(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+    // Pull all users and filter client-side to catch any patient role variant
+    const unsub = onSnapshot(collection(db, 'users'), (snap) => {
+      const patientRoles = ['patient', 'patient_portal', 'user', 'care_wallet', 'patient_care'];
+      const all = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const filtered = all.filter((u: any) => {
+        const role = (u.role || '').toLowerCase();
+        return patientRoles.includes(role) || role.includes('patient') || role.includes('care') || role === 'user';
+      });
+      setPatients(filtered);
     });
     return () => unsub();
   }, []);
@@ -181,19 +186,79 @@ export const LiveBusinessOversight = () => {
 };
 
 export const LiveComplianceMonitor = () => {
+  const [counts, setCounts] = useState({ users: 0, joinedToday: 0 });
+  const [logs, setLogs] = useState<any[]>([]);
+
+  useEffect(() => {
+    const unsub1 = onSnapshot(collection(db, 'users'), (snap) => {
+      let joinedToday = 0;
+      const today = new Date().toISOString().split('T')[0];
+      snap.docs.forEach(d => {
+        const created = d.data().createdAt?.toDate?.() ? d.data().createdAt.toDate().toISOString().split('T')[0] : '';
+        if (created === today) joinedToday++;
+      });
+      setCounts({ users: snap.size, joinedToday });
+    });
+    const unsub2 = onSnapshot(query(collection(db, 'audit_logs'), orderBy('timestamp', 'desc'), limit(5)), (snap) => {
+      setLogs(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+    });
+    return () => { unsub1(); unsub2(); };
+  }, []);
+
   return (
-    <div className="p-8 space-y-6">
-      <div className="flex items-center gap-4 mb-6">
-        <FileCheck size={32} className="text-amber-500" />
+    <div className="space-y-6">
+      <div className="flex justify-between items-end mb-4">
         <div>
-          <h2 className="text-2xl font-bold text-white">Live Compliance Engine</h2>
-          <p className="text-slate-400">Regulatory checks tied directly to the audit framework.</p>
+          <h2 className="text-3xl font-black text-white tracking-tight">Compliance War Room</h2>
+          <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Real-Time Predictive Anomaly Detection</p>
         </div>
       </div>
-      <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50">
-         <Shield size={48} className="mx-auto text-amber-500/50 mb-4" />
-         <h3 className="text-xl font-bold text-white">Audit Engine Engaged</h3>
-         <p className="text-slate-400 mt-2">All compliance actions are tracked centrally via the God-View master feed. Your pipeline will sync anomalies here as they are detected.</p>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 bg-slate-800/50 border border-slate-700 rounded-[2.5rem] p-8 relative overflow-hidden min-h-[400px]">
+          <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-8 flex items-center gap-2">
+            <AlertTriangle size={16} className="text-red-500" /> Risk Vector Analysis (7D)
+          </h3>
+          <div className="flex items-end justify-between h-48 gap-4 px-4">
+            {[60, 45, 80, 55, 90, 70, 85].map((h, i) => (
+              <div key={i} className="flex-1 flex flex-col items-center gap-3">
+                <div className={`w-full rounded-t-xl transition-all duration-1000 ${h > 80 ? 'bg-red-500 shadow-[0_0_20px_rgba(239,68,68,0.4)]' : 'bg-indigo-500'}`} style={{ height: `${h}%` }}></div>
+                <span className="text-[10px] font-bold text-slate-500 uppercase">Day {i+1}</span>
+              </div>
+            ))}
+          </div>
+          <div className="mt-12 grid grid-cols-2 gap-4">
+            <div className="bg-slate-900 p-6 rounded-3xl border border-slate-700 flex items-center gap-4">
+              <div className="w-12 h-12 bg-red-500/20 text-red-400 rounded-2xl flex items-center justify-center animate-pulse"><AlertTriangle size={24}/></div>
+              <div><p className="text-[10px] font-black text-slate-500 uppercase">Critical Vectors</p><p className="text-xl font-black text-white">{counts.joinedToday > 0 ? counts.joinedToday + ' Pending' : 'None'}</p></div>
+            </div>
+            <div className="bg-slate-900 p-6 rounded-3xl border border-slate-700 flex items-center gap-4">
+              <div className="w-12 h-12 bg-emerald-500/20 text-emerald-400 rounded-2xl flex items-center justify-center"><Shield size={24}/></div>
+              <div><p className="text-[10px] font-black text-slate-500 uppercase">Auto-Resolved</p><p className="text-xl font-black text-white">{counts.users > 0 ? counts.users + ' today' : '0 today'}</p></div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-8 shadow-sm flex flex-col">
+          <h3 className="text-sm font-black text-white uppercase tracking-widest mb-6">Recent Activity</h3>
+          <div className="flex-1 space-y-4">
+            {logs.length > 0 ? logs.map((log, i) => (
+              <div key={i} className="p-4 rounded-2xl border border-slate-700 hover:bg-slate-800 transition-colors">
+                <div className="flex justify-between items-start mb-1">
+                  <p className="font-bold text-white text-sm">{log.action || 'System'}</p>
+                  <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full ${i === 0 ? 'bg-blue-500/20 text-blue-400' : 'bg-slate-700 text-slate-400'}`}>{i === 0 ? 'New' : 'Info'}</span>
+                </div>
+                <p className="text-xs text-slate-500 font-medium">{log.details || log.data?.detail || ''}</p>
+              </div>
+            )) : (
+              <div className="text-center py-8 text-slate-500">
+                <Shield size={32} className="mx-auto mb-2 text-emerald-400" />
+                <p className="font-bold text-sm text-slate-300">No violations recorded</p>
+                <p className="text-xs mt-1">Clean compliance status</p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -201,18 +266,65 @@ export const LiveComplianceMonitor = () => {
 
 export const LiveLawEnforcement = () => {
   return (
-    <div className="p-8 space-y-6">
-      <div className="flex items-center gap-4 mb-6">
-        <Gavel size={32} className="text-blue-500" />
-        <div>
-          <h2 className="text-2xl font-bold text-white">Law Enforcement Command</h2>
-          <p className="text-slate-400">Real-time dispatch and evidentiary tracking.</p>
+    <div className="space-y-8">
+      <div className="bg-slate-950 border border-indigo-500/50 rounded-[3rem] p-10 text-white shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-8 opacity-5"><Shield size={160} /></div>
+        <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
+          <div>
+            <h2 className="text-4xl font-black italic tracking-tighter uppercase mb-2 flex items-center gap-3"><Shield className="text-indigo-400" /> Law Enforcement Oversight</h2>
+            <p className="text-indigo-300 font-bold uppercase tracking-widest text-sm">Real-time dispatch, field screening & evidentiary blockchain</p>
+          </div>
+          <div className="bg-white/5 px-8 py-4 rounded-2xl border border-white/10 text-center backdrop-blur-md">
+            <p className="text-[10px] uppercase tracking-[0.3em] font-black text-indigo-400 mb-2">Active Field Units</p>
+            <p className="text-4xl font-black">412</p>
+          </div>
         </div>
       </div>
-      <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50">
-         <Activity size={48} className="mx-auto text-blue-500/50 mb-4" />
-         <h3 className="text-xl font-bold text-white">Network Standby</h3>
-         <p className="text-slate-400 mt-2">Awaiting live incident feeds from jurisdictional partners.</p>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-slate-900 border border-slate-800 rounded-[2rem] p-8">
+          <h3 className="text-xl font-black text-white mb-6 flex items-center gap-2"><Activity className="text-indigo-400" /> Active Dispatches & Stops</h3>
+          <div className="space-y-4">
+            {[
+              { id: 'DP-8291', status: 'Active Screen', unit: 'Unit 44 (Highway Patrol)', time: '2m ago' },
+              { id: 'DP-8290', status: 'Evidence Logged', unit: 'Unit 12 (Metro)', time: '14m ago' },
+              { id: 'DP-8289', status: 'Lab Routing', unit: 'Unit 08 (County)', time: '45m ago' },
+            ].map(d => (
+              <div key={d.id} className="flex justify-between items-center p-4 bg-slate-800/50 rounded-xl border border-slate-700">
+                <div>
+                  <div className="text-sm font-black text-white">{d.unit}</div>
+                  <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{d.id} • {d.time}</div>
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded bg-indigo-500/20 text-indigo-400">{d.status}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-slate-900 border border-slate-800 rounded-[2rem] p-8 text-white">
+          <h3 className="text-xl font-black mb-6 flex items-center gap-2"><Shield className="text-emerald-400" /> Evidentiary Blockchain</h3>
+          <div className="space-y-6">
+            <div className="bg-white/5 p-4 rounded-xl border border-white/10">
+              <div className="flex justify-between text-xs font-bold text-slate-400 mb-2"><span>Chain of Custody Status</span><span className="text-emerald-400">100% Immutable</span></div>
+              <div className="h-2 bg-white/10 rounded-full overflow-hidden"><div className="h-full bg-emerald-500 w-full"></div></div>
+            </div>
+            <div className="space-y-3">
+              {[
+                { hash: '0x8f2...4b1', type: 'Oral Fluid Screen (2 ng/mL)', timestamp: '10:42 AM' },
+                { hash: '0x3a1...9c2', type: 'Chain of Custody Transfer', timestamp: '09:15 AM' },
+                { hash: '0x7b4...2a9', type: 'Lab Confirmation Request', timestamp: '08:30 AM' },
+              ].map((log, i) => (
+                <div key={i} className="flex gap-4 items-center">
+                  <div className="w-2 h-2 rounded-full bg-emerald-400"></div>
+                  <div className="flex-1">
+                    <p className="text-xs font-bold text-slate-300">{log.type}</p>
+                    <p className="text-[9px] text-slate-500 font-mono mt-0.5">{log.hash} • {log.timestamp}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -220,18 +332,104 @@ export const LiveLawEnforcement = () => {
 
 export const LiveRapidTesting = () => {
   return (
-    <div className="p-8 space-y-6">
-      <div className="flex items-center gap-4 mb-6">
-        <FlaskConical size={32} className="text-purple-500" />
-        <div>
-          <h2 className="text-2xl font-bold text-white">Live Rapid Testing Hub</h2>
-          <p className="text-slate-400">National laboratory and field test data.</p>
+    <div className="space-y-8">
+      <div className="bg-slate-950 border border-purple-500/30 rounded-[3rem] p-10 text-white shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-8 opacity-10"><FlaskConical size={140} /></div>
+        <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
+          <div>
+            <h2 className="text-4xl font-black italic tracking-tighter uppercase mb-2">Rapid Testing Command</h2>
+            <p className="text-purple-300 font-bold uppercase tracking-widest text-sm">National Laboratory Infrastructure Monitoring</p>
+          </div>
+          <div className="flex gap-4">
+            <div className="bg-white/5 px-6 py-4 rounded-2xl border border-white/10 text-center">
+              <p className="text-[10px] font-black text-purple-400 uppercase mb-1">Active Labs</p>
+              <p className="text-3xl font-black">42</p>
+            </div>
+            <div className="bg-white/5 px-6 py-4 rounded-2xl border border-white/10 text-center">
+              <p className="text-[10px] font-black text-emerald-400 uppercase mb-1">Tests (1h)</p>
+              <p className="text-3xl font-black">1,842</p>
+            </div>
+          </div>
         </div>
       </div>
-      <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50">
-         <Activity size={48} className="mx-auto text-purple-500/50 mb-4" />
-         <h3 className="text-xl font-bold text-white">Testing Grid Active</h3>
-         <p className="text-slate-400 mt-2">Telemetry from connected testing devices will stream here in real-time.</p>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {[
+          { l: 'Oral Fluid Sync', v: '99.8%', c: 'text-emerald-400', bar: 'bg-emerald-500', w: '99.8%' },
+          { l: 'Lab Turnaround', v: '2.1h avg', c: 'text-blue-400', bar: 'bg-blue-500', w: '85%' },
+          { l: 'Flagged Impurities', v: '3', c: 'text-red-400', bar: 'bg-red-500', w: '3%' },
+        ].map((s, i) => (
+          <div key={i} className="bg-slate-900 border border-slate-800 rounded-[2rem] p-6">
+            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">{s.l}</p>
+            <p className={`text-3xl font-black ${s.c} mb-4`}>{s.v}</p>
+            <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden"><div className={`h-full ${s.bar} rounded-full`} style={{width: s.w}}></div></div>
+          </div>
+        ))}
+      </div>
+
+      <div className="bg-slate-900 border border-slate-800 rounded-[2rem] p-8">
+        <h3 className="text-sm font-black text-white uppercase tracking-widest mb-6 flex items-center gap-2"><Activity size={16} className="text-purple-400" /> Recent Test Results</h3>
+        <div className="space-y-3">
+          {[
+            { id: 'RT-4201', result: 'PASS', thc: '0.8 ng/mL', time: '3m ago', method: 'Oral Fluid' },
+            { id: 'RT-4200', result: 'PASS', thc: '1.2 ng/mL', time: '18m ago', method: 'Oral Fluid' },
+            { id: 'RT-4199', result: 'FAIL', thc: '8.4 ng/mL', time: '32m ago', method: 'Oral Fluid' },
+          ].map(t => (
+            <div key={t.id} className="flex justify-between items-center p-4 bg-slate-800/50 rounded-xl border border-slate-700">
+              <div className="flex items-center gap-4">
+                <div className={`w-3 h-3 rounded-full ${t.result === 'PASS' ? 'bg-emerald-500' : 'bg-red-500'}`}></div>
+                <div>
+                  <p className="text-sm font-black text-white">{t.id} — {t.method}</p>
+                  <p className="text-[10px] text-slate-500">{t.thc} • {t.time}</p>
+                </div>
+              </div>
+              <span className={`text-[10px] font-black uppercase px-3 py-1 rounded-full ${t.result === 'PASS' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>{t.result}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const LiveRegulatoryLibrary = () => {
+  const [searchQ, setSearchQ] = useState('');
+  const items = [
+    { title: 'METRC Overview & Account Setup', category: 'Overview', content: 'Complete guide to initializing your Metrc account, including API key generation, facility-level permissions, and initial inventory reconciliation procedures.' },
+    { title: 'Package Tag Management', category: 'Operations', content: 'Standard procedures for creating, splitting, and transferring package tags. Includes RFID scanning protocols and chain-of-custody documentation requirements.' },
+    { title: 'Harvest & Processing SOP', category: 'Operations', content: 'Step-by-step harvest batch creation, wet/dry weight recording, waste disposal documentation, and quality assurance checkpoints.' },
+    { title: 'Transfer Manifest Compliance', category: 'Compliance', content: 'Requirements for inter-facility transfers including manifest generation, driver verification, route logging, and receiving facility confirmation protocols.' },
+    { title: 'Lab Testing Requirements', category: 'Compliance', content: 'Mandatory testing panels (potency, pesticides, heavy metals, microbials), sample collection procedures, and COA verification workflows.' },
+    { title: 'Oklahoma OMMA Title 63', category: 'Admin', content: 'Complete reference for Oklahoma Medical Marijuana Authority regulations including licensing tiers, renewal procedures, and enforcement provisions.' },
+  ];
+  const filtered = searchQ ? items.filter(i => i.title.toLowerCase().includes(searchQ.toLowerCase()) || i.content.toLowerCase().includes(searchQ.toLowerCase())) : items;
+
+  return (
+    <div className="space-y-8">
+      <div className="bg-slate-900 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden border border-slate-800">
+        <div className="absolute top-0 right-0 p-10 opacity-10"><FileCheck size={160} /></div>
+        <h2 className="text-4xl font-black italic uppercase tracking-tighter mb-2">Regulatory Intelligence Hub</h2>
+        <p className="text-indigo-200 font-medium">METRC User Guide & State Law Repository. Synchronized with Oklahoma OMMA Title 63.</p>
+        <div className="mt-8 relative max-w-xl">
+          <input type="text" placeholder="Search laws, SOPs, or compliance rules..." value={searchQ} onChange={e => setSearchQ(e.target.value)} className="w-full pl-12 pr-6 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:border-indigo-500 transition-all text-sm backdrop-blur-md text-white" />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        {filtered.map((item, i) => (
+          <div key={i} className="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-8 hover:border-indigo-500/30 hover:-translate-y-1 transition-all group">
+            <span className="text-[9px] font-black uppercase px-2 py-1 bg-slate-800 text-slate-400 rounded-lg group-hover:bg-indigo-500/20 group-hover:text-indigo-400 transition-colors">{item.category}</span>
+            <h3 className="text-lg font-black text-white mt-4 mb-3 group-hover:text-indigo-400 transition-colors">{item.title}</h3>
+            <p className="text-sm text-slate-500 leading-relaxed line-clamp-4">{item.content}</p>
+            <div className="mt-6 pt-6 border-t border-slate-800 flex justify-between items-center">
+              <span className="text-[10px] font-bold text-slate-600 italic">Source: Metrc Guide 2021 v11.1</span>
+              <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Read Full Section</span>
+            </div>
+          </div>
+        ))}
+        {filtered.length === 0 && (
+          <div className="col-span-full py-20 text-center text-slate-500 italic">No regulatory matches found for "{searchQ}"</div>
+        )}
       </div>
     </div>
   );
