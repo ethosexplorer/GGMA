@@ -979,18 +979,46 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     ]
   },
   "Montana": {
-    program: "https://revenue.mt.gov/",
+    program: "https://mtrevenue.gov/cannabis/",
     patientPortal: "https://tap.dor.mt.gov/_/",
     businessPortal: "https://tap.dor.mt.gov/",
-    guide: "",
+    guide: "https://mtrevenue.gov/cannabis/",
     resources: "https://www.mpp.org/states/montana/?state=MT",
     abbreviation: "MT",
-    adultUseStatus: "Yes",
-    medicalStatus: "Yes",
-    regulator: "Montana Cannabis Control Division",
-    compliancePage: "https://revenue.mt.gov/",
-    checklistItems: ["License","Testing","Labeling","Inventory","Taxes"],
-    complianceSource: "https://www.nsc.org/cannabis-regulations"
+    adultUseStatus: "Yes (I-190, Nov 2020. Sales Jan 2022)",
+    medicalStatus: "Yes (I-148, 2004)",
+    regulator: "Montana Cannabis Control Division (CCD) under DOR",
+    compliancePage: "https://mtrevenue.gov/cannabis/",
+    checklistItems: ["CCD License","Lab testing","METRC tracking","Packaging/Labeling","Tax compliance (20% rec / 4% med)","Local-option compliance","Verified facility decal"],
+    complianceSource: "https://www.nsc.org/cannabis-regulations",
+    conditions: ["Cancer","Glaucoma","HIV/AIDS","Cachexia","Severe Chronic Pain","Intractable Nausea/Vomiting","Epilepsy/Seizure Disorders","Multiple Sclerosis","Crohn's Disease","Painful Peripheral Neuropathy","PTSD","CNS Disorder (Spasticity/Muscle Spasms)","Hospice Care"],
+    contactPhone: "(406) 444-0551",
+    contactEmail: "DORCannabis@mt.gov",
+    trackingSystem: "METRC",
+    licenseCaps: "Hundreds of licensed dispensary sites statewide. Market-driven — no strict state cap. Local jurisdictions may restrict.",
+    intakeNotes: [
+      "✅ DUAL-USE: I-190 passed Nov 2020. Adult-use sales began Jan 1, 2022. Medical since I-148 (2004).",
+      "Cannabis Control Division (CCD) under Department of Revenue regulates all cannabis.",
+      "Tax: 20% state tax on adult-use. Medical patients: only 4% tax.",
+      "Patient card fee: $20 (non-refundable). Applied through TAP (TransAction Portal).",
+      "Home grow: medical patients can grow up to 4 mature / 4 seedlings. Adult-use: 2 mature per person.",
+      "Concentrations in Billings, Missoula, Bozeman, Helena, Kalispell, Butte, Great Falls.",
+      "Some counties/municipalities have opted out of adult-use sales.",
+      "METRC seed-to-sale tracking required for all licensees."
+    ],
+    intakeForms: [
+      { name: "Patient Registration (TAP Portal)", url: "https://tap.dor.mt.gov/_/" },
+      { name: "Business Licensing (TAP Portal)", url: "https://tap.dor.mt.gov/" },
+      { name: "CCD Cannabis Info", url: "https://mtrevenue.gov/cannabis/" },
+      { name: "Licensed Facility List", url: "https://mtrevenue.gov/cannabis/" }
+    ],
+    intakeFAQ: [
+      { q: "When did Montana legalize adult-use?", a: "I-190 passed November 2020. Adult-use sales began January 1, 2022." },
+      { q: "What is the tax difference?", a: "Adult-use: 20% state tax. Medical patients: only 4% tax — a huge savings. Card is $20/year." },
+      { q: "How do I get a medical card?", a: "See a Montana-licensed physician (MD/DO), get a certification, then apply online through TAP (TransAction Portal). $20 fee." },
+      { q: "Can I grow at home?", a: "Medical patients: up to 4 mature + 4 seedlings. Adults 21+: up to 2 mature plants per person." },
+      { q: "Can my county opt out?", a: "Yes. Some counties and municipalities have opted out of allowing adult-use cannabis businesses." }
+    ]
   },
   "Nebraska": {
     program: "https://lcc.nebraska.gov/medical-cannabis/medical-cannabis-commission-how-apply",
