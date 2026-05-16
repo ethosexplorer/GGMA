@@ -35,13 +35,37 @@ const SEED_EVENTS: CalEvent[] = [
   { id: '8', title: 'Weekly Ops Standup', date: '2026-05-05', startTime: '09:00', endTime: '09:30', category: 'ops', color: 'bg-indigo-500', attendees: 'All Departments', meetLink: 'https://meet.google.com/ops-stdup-wk' },
   { id: '9', title: 'New Registration Assistance', date: '2026-05-03', startTime: '10:00', endTime: '10:30', category: 'admin_support', color: 'bg-pink-500', attendees: 'asstsupport@gmail.com', meetLink: 'https://calendly.com/asstsupport' },
   
-  // 30-Day Rapid Revenue Marketing Campaign
-  { id: '10', title: 'Phase 1: Launch Shock & Awe Campaign', date: '2026-05-18', startTime: '08:00', endTime: '09:30', category: 'ops', color: 'bg-indigo-500', description: 'Deploy initial 30-day Free Trial & Setup offer to all dispensaries and clinics imported.' },
-  { id: '11', title: 'Review Initial Free Trial Signups', date: '2026-05-20', startTime: '10:00', endTime: '11:00', category: 'executive', color: 'bg-purple-500', description: 'Check CRM for new signups and conversions from the Phase 1 blast.' },
-  { id: '12', title: 'Phase 2: Video Demo Follow-up', date: '2026-05-25', startTime: '08:00', endTime: '09:00', category: 'ops', color: 'bg-indigo-500', description: 'Send out the 60-second platform walk-through to opens/non-clickers.' },
-  { id: '13', title: 'Phase 3: Telephony VIP Outreach', date: '2026-06-01', startTime: '09:00', endTime: '13:00', category: 'telehealth', color: 'bg-emerald-500', description: 'Direct call blocks targeting large dispensary chains (Trulieve, Cannabist) and major attorneys.' },
-  { id: '14', title: 'Phase 4: FOMO Final Discount Push', date: '2026-06-08', startTime: '08:00', endTime: '09:00', category: 'ops', color: 'bg-indigo-500', description: 'Final email push: "Beta pricing ending soon."' },
-  { id: '15', title: 'Convert Free Trials to Paid', date: '2026-06-15', startTime: '10:00', endTime: '12:00', category: 'executive', color: 'bg-purple-500', description: 'Follow up with all 30-day trial users to secure payment or paid setup.' },
+  // 30-Day DAILY Marketing Tasks
+  { id: '10', title: 'Compile Target List: Dual-Use Dispensaries', date: '2026-05-17', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Filter CRM for VT, WA, CA dual-use retail leads.' },
+  { id: '11', title: 'Email Blast: Dual-Use Dispensaries', date: '2026-05-18', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Send "Shock & Awe" tax calculation email.' },
+  { id: '12', title: 'Compile Target List: Med-Only Dispensaries', date: '2026-05-19', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Filter CRM for WV, VA, UT, OH.' },
+  { id: '13', title: 'Email Blast: Med-Only Dispensaries', date: '2026-05-20', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Send "Shock & Awe" compliance automation email.' },
+  { id: '14', title: 'Compile Target List: Clinics/Providers', date: '2026-05-21', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Filter CRM for certifying doctors.' },
+  { id: '15', title: 'Email Blast: Clinics/Providers', date: '2026-05-22', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Send "Shock & Awe" automated intake email.' },
+  { id: '16', title: 'Compile Target List: Attorneys', date: '2026-05-23', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Filter CRM for cannabis compliance law firms.' },
+  { id: '17', title: 'Email Blast: Attorneys/Law Firms', date: '2026-05-24', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Send "Shock & Awe" command center email.' },
+  { id: '18', title: 'Monitor Initial 30-Day Signups', date: '2026-05-25', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Check CRM for leads who accepted the free trial.' },
+  { id: '19', title: 'Video Demo Email: Dispensaries', date: '2026-05-26', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Send 60-second video demo to non-clickers.' },
+  { id: '20', title: 'Video Demo Email: Providers', date: '2026-05-27', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Send 60-second video demo to non-clickers.' },
+  { id: '21', title: 'Video Demo Email: Attorneys', date: '2026-05-28', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Send 60-second video demo to non-clickers.' },
+  { id: '22', title: 'Follow Up: Active Free Trials', date: '2026-05-29', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Reach out to those who signed up to assist with setup.' },
+  { id: '23', title: 'Prepare VIP Telephony List', date: '2026-05-30', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Identify top 50 highest value leads for direct calls.' },
+  { id: '24', title: 'Telephony Block: Dispensary VIPs', date: '2026-05-31', startTime: '08:00', endTime: '10:00', category: 'task', color: 'bg-blue-500', description: 'Direct dial top dispensary leads.' },
+  { id: '25', title: 'Telephony Block: Provider VIPs', date: '2026-06-01', startTime: '08:00', endTime: '10:00', category: 'task', color: 'bg-blue-500', description: 'Direct dial top provider leads.' },
+  { id: '26', title: 'Telephony Block: Attorney VIPs', date: '2026-06-02', startTime: '08:00', endTime: '10:00', category: 'task', color: 'bg-blue-500', description: 'Direct dial top attorney leads.' },
+  { id: '27', title: 'Host Live Demos (Block A)', date: '2026-06-03', startTime: '09:00', endTime: '11:00', category: 'task', color: 'bg-blue-500', description: 'Screen-shares with interested prospects.' },
+  { id: '28', title: 'Host Live Demos (Block B)', date: '2026-06-04', startTime: '09:00', endTime: '11:00', category: 'task', color: 'bg-blue-500', description: 'Screen-shares with interested prospects.' },
+  { id: '29', title: 'Trial Users: Week 2 Check-in', date: '2026-06-05', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Ensure current trial users are successfully using SMS and compliance tools.' },
+  { id: '30', title: 'Review CRM Conversion Metrics', date: '2026-06-06', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Analyze open rates and demo booking rates.' },
+  { id: '31', title: 'Draft "Beta Pricing Ending" Copy', date: '2026-06-07', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Prepare the FOMO marketing blast.' },
+  { id: '32', title: 'FOMO Blast: Dispensaries', date: '2026-06-08', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Send "Beta Pricing Ending" email.' },
+  { id: '33', title: 'FOMO Blast: Providers', date: '2026-06-09', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Send "Beta Pricing Ending" email.' },
+  { id: '34', title: 'FOMO Blast: Attorneys', date: '2026-06-10', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Send "Beta Pricing Ending" email.' },
+  { id: '35', title: 'Follow Up: High-Intent Clickers', date: '2026-06-11', startTime: '08:00', endTime: '10:00', category: 'task', color: 'bg-blue-500', description: 'Call leads who clicked the FOMO email but didn\'t buy.' },
+  { id: '36', title: 'Gather Feedback from Beta Users', date: '2026-06-12', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Reach out for testimonials or feature requests.' },
+  { id: '37', title: 'Final Telephony Sweep', date: '2026-06-13', startTime: '08:00', endTime: '10:00', category: 'task', color: 'bg-blue-500', description: 'Last call to high-value prospects.' },
+  { id: '38', title: 'Prepare Billing Conversions', date: '2026-06-14', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Set up Stripe invoices for active trial users.' },
+  { id: '39', title: 'Convert Free Trials to Paid', date: '2026-06-15', startTime: '08:00', endTime: '10:00', category: 'task', color: 'bg-blue-500', description: 'Charge setup fees and lock in recurring billing.' },
 ];
 
 const fmt = (d: Date) => d.toISOString().split('T')[0];
@@ -60,7 +84,7 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
   const availableCategories = isFounder ? ALL_CATEGORIES : [{ id: 'personal', label: 'Personal', color: 'bg-slate-500' }, { id: 'task', label: 'Task', color: 'bg-blue-500' }, { id: 'reminder', label: 'Reminder', color: 'bg-orange-500' }];
   const initialEvents = isFounder ? SEED_EVENTS : [];
 
-  const storageKey = `gghp_calendar_v2_${user?.uid || user?.role || 'default'}`;
+  const storageKey = `gghp_calendar_v3_${user?.uid || user?.role || 'default'}`;
   const [events, setEvents] = useState<CalEvent[]>(() => {
     try {
       const saved = localStorage.getItem(storageKey);
