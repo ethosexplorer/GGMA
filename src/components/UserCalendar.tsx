@@ -107,10 +107,11 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
         if (saved) {
           localEvents = JSON.parse(saved);
         } else {
-          localEvents = initialEvents;
+          // Only load seed events for the founder's own personal calendar
+          localEvents = (activeCalendarId === defaultPersonalId) ? initialEvents : [];
         }
       } catch (e) {
-        localEvents = initialEvents;
+        localEvents = (activeCalendarId === defaultPersonalId) ? initialEvents : [];
       }
 
       // 1. INJECT 30-DAY TASKS ON THE FOUNDER'S CALENDAR UNDER 'TASK'
