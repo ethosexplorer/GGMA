@@ -1,97 +1,28 @@
-import puppeteer from 'puppeteer';
-import fs from 'fs';
-import path from 'path';
+/**
+ * Oregon Cannabis Scraper
+ * Source: https://www.oregon.gov/olcc/marijuana
+ * Source: https://www.oregon.gov/oha/ph/diseasesconditions/chronicdisease/medicalmarijuanaprogram
+ * Dual-use market. OLCC & OHA regulate. Metrc.
+ */
+import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, getDocs } from 'firebase/firestore';
+const app = initializeApp({ apiKey: "AIzaSyDvEmz9VfE27P71tqwL6x9uQlXZgdEFPuw", authDomain: "ggp-os.firebaseapp.com", projectId: "ggp-os" });
+const db = getFirestore(app);
 
-async function runOregonScraper() {
-  console.log("🚀 Starting Oregon (OLCC) Cannabis Registry Scraper...");
-  
-  const browser = await puppeteer.launch({ 
-    headless: "new",
-    defaultViewport: { width: 1280, height: 800 }
-  });
-  const page = await browser.newPage();
-  
-  const businesses = [];
-  const limit = 50; 
-
-  try {
-    console.log("🌐 Navigating to Oregon OLCC Portal...");
-    await page.goto("https://www.oregon.gov/olcc/marijuana/Pages/Recreational-Marijuana-Licensing.aspx", { 
-      waitUntil: 'networkidle2', 
-      timeout: 60000 
-    });
-
-    console.log("⏳ Waiting for portal to initialize...");
-    await new Promise(r => setTimeout(r, 5000));
-
-    let extractedCount = 0;
-    while (extractedCount < limit) {
-      const records = await page.evaluate(() => {
-        const containers = Array.from(document.querySelectorAll('tr, .result-item, .card, li'));
-        const results = [];
-        for (const container of containers) {
-          const text = container.innerText || '';
-          if (text.includes('Marijuana') || text.includes('Cannabis') || text.match(/\\d{3}[-\\.\\s]?\\d{4}/)) {
-             results.push(text);
-          }
-        }
-        return results;
-      });
-
-      if (records.length === 0) break;
-
-      for (let i = 0; i < records.length; i++) {
-        if (extractedCount >= limit) break;
-        
-        const text = records[i];
-        const extractMatch = (regex) => {
-          const match = text.match(regex);
-          return match ? match[1].trim() : "N/A";
-        };
-
-        const emailMatch = text.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\\.[a-zA-Z0-9._-]+)/i);
-        const phoneMatch = text.match(/(\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4})/);
-        const lines = text.split('\\n').map(l => l.trim()).filter(l => l);
-
-        const business = {
-          "Business Name": lines.length > 0 ? lines[0] : "Unknown",
-          "DBA": extractMatch(/DBA\\s*[:\\-]\\s*(.*)/i) !== "N/A" ? extractMatch(/DBA\\s*[:\\-]\\s*(.*)/i) : "",
-          "License Number": extractMatch(/([0-9A-Z]{6,9})/i) !== "N/A" ? extractMatch(/([0-9A-Z]{6,9})/i) : "Unknown",
-          "License Type": extractMatch(/(?:Type|Category)\\s*[:\\-]\\s*(.*)/i),
-          "Expiration Date": "",
-          "Physical Address": extractMatch(/Address\\s*[:\\-]\\s*(.*)/i),
-          "Telephone": phoneMatch ? phoneMatch[1] : "",
-          "Email": emailMatch ? emailMatch[1] : "",
-          "Status": extractMatch(/(?:Status)\\s*[:\\-]\\s*([A-Za-z]+)/i) !== "N/A" ? extractMatch(/(?:Status)\\s*[:\\-]\\s*([A-Za-z]+)/i) : "Active",
-          "Raw Data": text.replace(/\\n/g, ' | ')
-        };
-        
-        businesses.push(business);
-        extractedCount++;
-      }
-
-      break;
-    }
-
-    if (businesses.length > 0) {
-      const headers = Object.keys(businesses[0]);
-      const csvRows = [headers.join(',')];
-      for (const b of businesses) {
-        const values = headers.map(header => `"${b[header] ? b[header].toString().replace(/"/g, '""') : ''}"`);
-        csvRows.push(values.join(','));
-      }
-      const csvPath = path.join(process.cwd(), 'or_enriched_directory.csv');
-      fs.writeFileSync(csvPath, csvRows.join('\n'));
-      console.log(`\\n🎉 Success! Saved ${businesses.length} records to ${csvPath}`);
-    } else {
-      console.log("❌ No businesses extracted.");
-    }
-
-  } catch (error) {
-    console.error("❌ Scraper Error:", error);
-  } finally {
-    await browser.close();
-  }
+export async function scrapeOregon() {
+  console.log('🌲 Oregon OLCC/OHA — Monitor Scraper (Dual-Use)');
+  console.log('  Sources:');
+  console.log('    - https://www.oregon.gov/olcc/marijuana');
+  console.log('    - https://ommpsystem.oregon.gov/');
+  const snap = await getDocs(collection(db, 'crm_deals'));
+  const orDeals = []; snap.forEach(d => { if (d.data().state === 'OR') orDeals.push({ id: d.id, ...d.data() }); });
+  console.log(`  📊 ${orDeals.length} Oregon records in CRM`);
+  const byType = {};
+  orDeals.forEach(d => { byType[d.type] = (byType[d.type] || 0) + 1; });
+  Object.entries(byType).forEach(([t, c]) => console.log(`    ${t}: ${c}`));
+  return { state: 'OR', totalRecords: orDeals.length, byType, sources: [
+    'https://www.oregon.gov/olcc/marijuana',
+    'https://ommpsystem.oregon.gov/'
+  ]};
 }
-
-runOregonScraper();
+if (process.argv[1]?.includes('or_scraper')) scrapeOregon().then(() => process.exit(0));

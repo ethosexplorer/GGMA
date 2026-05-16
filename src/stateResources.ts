@@ -1349,18 +1349,41 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     }
   },
   "Oregon": {
-    program: "https://www.oregon.gov/oha/ph/diseasesconditions/chronicdisease/medicalmarijuanaprogram/pages/forms.aspx",
-    patientPortal: "https://www.oregon.gov/oha/ph/diseasesconditions/chronicdisease/medicalmarijuanaprogram/pages/forms.aspx#online",
-    businessPortal: "https://ommpsystem.oregon.gov/",
-    guide: "",
+    program: "https://www.oregon.gov/oha/ph/diseasesconditions/chronicdisease/medicalmarijuanaprogram",
+    patientPortal: "https://ommpsystem.oregon.gov/",
+    businessPortal: "https://www.oregon.gov/olcc/marijuana",
+    guide: "https://www.oregon.gov/oha/ph/diseasesconditions/chronicdisease/medicalmarijuanaprogram/pages/forms.aspx",
     resources: "https://www.mpp.org/states/oregon/?state=OR",
     abbreviation: "OR",
-    adultUseStatus: "Yes",
-    medicalStatus: "Yes",
-    regulator: "Oregon Liquor and Cannabis Commission",
-    compliancePage: "https://www.oregon.gov/olcc/",
-    checklistItems: ["License","Testing","Packaging","Labeling","Taxes"],
-    complianceSource: "https://www.nsc.org/cannabis-regulations"
+    adultUseStatus: "Yes (Measure 91, 2014)",
+    medicalStatus: "Yes (OMMP, 1998)",
+    regulator: "Oregon Liquor and Cannabis Commission (OLCC) / Oregon Health Authority (OHA)",
+    compliancePage: "https://www.oregon.gov/olcc/marijuana/Pages/Rules.aspx",
+    checklistItems: ["OLCC License","Metrc tracking","OMMP compliance","Local city/county limits","Tax compliance (17% state + local)"],
+    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws",
+    conditions: ["Cancer","Glaucoma","HIV/AIDS","Alzheimer's Disease","PTSD","Degenerative/Neurological conditions","Cachexia","Severe Pain","Severe Nausea","Seizures","Persistent Muscle Spasms (including MS)","Hospice/Palliative Care (Effective 2027)"],
+    contactPhone: "(971) 673-1234",
+    contactEmail: "medmarijuana.dispensaries@odhsoha.oregon.gov",
+    trackingSystem: "Metrc",
+    licenseCaps: "Yes. The OLCC has implemented moratoriums on new licenses in certain categories due to oversupply.",
+    intakeNotes: [
+      "✅ DUAL-USE MARKET: Dispensaries are licensed by the OLCC and serve both recreational and medical (OMMP) patients.",
+      "Regulators: OLCC (Retail/Commercial) and OHA (Medical Program - OMMP).",
+      "Tax: 17% state excise tax + up to 3% local tax (Max 20%).",
+      "Medical patients (OMMP) are EXEMPT from the 17% state excise tax.",
+      "NO RECIPROCITY: Oregon does not accept out-of-state medical cards.",
+      "Home grow allowed: Up to 4 plants per household for adult-use; up to 6 mature plants for OMMP patients."
+    ],
+    intakeForms: [
+      { name: "OMMP Patient Registry", url: "https://ommpsystem.oregon.gov/" },
+      { name: "OLCC Cannabis Licensing", url: "https://www.oregon.gov/olcc/marijuana" }
+    ],
+    intakeFAQ: [
+      { q: "What is the OMMP?", a: "The Oregon Medical Marijuana Program, managed by the Oregon Health Authority (OHA)." },
+      { q: "What is the tax rate?", a: "Recreational is taxed at 17% state + up to 3% local. OMMP patients are exempt from the 17% state tax." },
+      { q: "Does Oregon accept out-of-state cards?", a: "NO. Oregon has no reciprocity. Out-of-state cards are invalid." },
+      { q: "Who licenses dispensaries?", a: "The OLCC licenses all retail dispensaries. There are no longer 'medical-only' dispensaries; they are dual-use." }
+    ]
   },
   "Pennsylvania": {
     program: "https://www.pa.gov/services/health/register-for-the-medical-marijuana-program",
