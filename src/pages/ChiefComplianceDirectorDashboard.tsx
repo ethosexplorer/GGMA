@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { 
   Shield, Activity, Users, Database, Globe, Bot, MessageSquare, Clock, HeartPulse, Building2, 
-  FileCheck, BookOpen, Gavel, Zap, FlaskConical, BarChart3, LogOut, ArrowLeft, Edit2, Trash2, Plus, CircleCheck
+  FileCheck, BookOpen, Gavel, Zap, FlaskConical, BarChart3, LogOut, ArrowLeft, Edit2, Trash2, Plus, CircleCheck,
+  Phone, Scale, Megaphone, FileText, Clipboard
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
@@ -29,6 +30,12 @@ import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
 import { EscalationSupportCalendar } from '../components/EscalationSupportCalendar';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 import { ExecutiveCRM } from '../components/crm/ExecutiveCRM';
+import { VirtualAttendantTab } from '../components/oversight/VirtualAttendantTab';
+import { GlobalDirectoryTab } from '../components/founder/GlobalDirectoryTab';
+import { PatientCaseTracker } from '../components/patient/PatientCaseTracker';
+import { MarketingHub } from '../components/crm/MarketingHub';
+import { JudicialMonitorTab } from '../components/federal/JudicialMonitorTab';
+import { CallCenterCommandTab } from '../components/telephony/CallCenterCommandTab';
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
@@ -48,10 +55,17 @@ const INTERNAL_NAV_ITEMS: NavItem[] = [
   { id: '_sec_ops', section: 'OPS & COMPLIANCE' },
   { id: 'compliance', label: 'Compliance Monitor', icon: FileCheck },
   { id: 'regulatory_library', label: 'Regulatory Library', icon: BookOpen },
+  { id: 'judicial', label: 'Judicial Monitor', icon: Scale },
   { id: '_sec_oversight', section: 'OVERSIGHT HUB' },
+  { id: 'virtual_attendant', label: 'GGE World Call Center', icon: Phone },
   { id: 'internal_admin', label: 'Internal Team (GGE Call Center)', icon: Shield },
+  { id: 'global_directory', label: 'Global Directory', icon: Users },
+  { id: 'patient_case_tracker', label: 'Patient Case Tracker', icon: Clipboard },
   { id: 'law_enforcement', label: 'Law Enforcement (RIP)', icon: Gavel },
   { id: 'processor', label: 'GGE Processor', icon: Activity },
+  { id: 'marketing_hub', label: 'Marketing Campaigns', icon: Megaphone },
+  { id: 'launch_script', label: 'Master Launch Script', icon: FileText },
+  { id: 'support_tickets', label: 'Support Intelligence Hub', icon: MessageSquare },
   { id: '_sec_federal', section: 'FEDERAL & IP MONITORS' },
   { id: 'public_health', label: 'Public Health & Labs', icon: FlaskConical },
   { id: 'rapid_testing', label: 'Rapid Testing Hub', icon: FlaskConical },
@@ -289,6 +303,15 @@ const ChiefComplianceDirectorDashboard = ({ user, onLogout }: { user?: any, onLo
                 
                 {activeTab === 'reports' && <MasterAnalyticsTab />}
                 {activeTab === 'intel' && <div className="h-full w-full -m-8 bg-[#080e1a] p-10 min-h-screen overflow-auto"><LegislativeIntelTab /></div>}
+
+                {/* NEW TABS - Matching Founder */}
+                {activeTab === 'virtual_attendant' && <div className="bg-slate-50 p-6 rounded-3xl overflow-auto h-full"><VirtualAttendantTab /></div>}
+                {activeTab === 'global_directory' && <div className="h-full w-full -m-8 bg-slate-50 min-h-screen overflow-auto"><GlobalDirectoryTab onOpenMessage={(id: string) => { setActiveTab('messages'); }} /></div>}
+                {activeTab === 'patient_case_tracker' && <div className="bg-white rounded-3xl overflow-hidden h-full"><PatientCaseTracker onLogout={onLogout} user={user} /></div>}
+                {activeTab === 'marketing_hub' && <div className="h-full w-full -m-8 bg-[#080e1a] min-h-screen overflow-auto"><MarketingHub /></div>}
+                {activeTab === 'judicial' && <div className="h-full w-full -m-8 bg-[#080e1a] p-10 min-h-screen overflow-auto"><JudicialMonitorTab /></div>}
+                {activeTab === 'launch_script' && <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50"><FileText size={40} className="mx-auto text-indigo-400 mb-4" /><h2 className="text-2xl font-bold text-white mb-2">Platform Launch Master Script</h2><p className="text-slate-400">Use this reference sheet while presenting to investors, partners, or state authorities.</p></div>}
+                {activeTab === 'support_tickets' && <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50"><MessageSquare size={40} className="mx-auto text-indigo-400 mb-4" /><h2 className="text-2xl font-bold text-white mb-2">Support Intelligence Hub</h2><p className="text-slate-400">Active Resolution Streams • AI-Assisted Support</p></div>}
 
               </motion.div>
             </AnimatePresence>
