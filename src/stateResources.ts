@@ -1753,18 +1753,41 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     ]
   },
   "West Virginia": {
-    program: "https://omc.wv.gov/patient-application/Pages/default.aspx",
-    patientPortal: "https://omc.wv.gov/patients/Pages/default.aspx",
-    businessPortal: "https://omc.wv.gov/industry/application/Pages/default.aspx",
-    guide: "",
+    program: "https://omc.wv.gov",
+    patientPortal: "https://omc.wv.gov/patients",
+    businessPortal: "https://omc.wv.gov/industry",
+    guide: "https://omc.wv.gov/patients/Pages/default.aspx",
     resources: "https://www.mpp.org/states/west-virginia/?state=WV",
     abbreviation: "WV",
-    adultUseStatus: "No/limited",
-    medicalStatus: "Yes",
-    regulator: "West Virginia Office of Medical Cannabis",
-    compliancePage: "https://omc.wv.gov/",
-    checklistItems: ["Medical licensing","Testing","Dispensing","Records"],
-    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws"
+    adultUseStatus: "No (Medical Only)",
+    medicalStatus: "Yes (Medical Cannabis Act, 2017)",
+    regulator: "West Virginia Office of Medical Cannabis (OMC)",
+    compliancePage: "https://omc.wv.gov/laws-and-rules",
+    checklistItems: ["OMC Dispensary Permit","10% privilege tax remittance","Metrc tracking compliance","No smokable or edible products (vaporization only)"],
+    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws",
+    conditions: ["Amyotrophic Lateral Sclerosis (ALS)","Cancer","Chronic or intractable pain","Crohn's disease","Epilepsy or intractable seizures","HIV/AIDS","Huntington's disease","Multiple sclerosis","Neuropathies","Parkinson's disease","Post-Traumatic Stress Disorder (PTSD)","Sickle cell anemia","Spinal cord damage with intractable spasticity","Terminal illness"],
+    contactPhone: "(304) 356-5090",
+    contactEmail: "medcanwv@wv.gov",
+    trackingSystem: "Metrc",
+    licenseCaps: "Yes. OMC tightly controls the number of dispensary, processor, and grower permits.",
+    intakeNotes: [
+      "⚕️ MEDICAL ONLY: West Virginia has a strict medical cannabis program. Adult-use is illegal.",
+      "Regulator: Office of Medical Cannabis (OMC) under DHHR.",
+      "Consumption Laws: SMOKING CANNABIS IS PROHIBITED. Only vaporization of dry leaf is allowed, alongside oils, tinctures, capsules, and topicals. Edibles are not permitted.",
+      "Tax: Dispensaries pay a 10% excise (privilege) tax. Patient sales are exempt from the 6% state sales tax.",
+      "Reciprocity: Very limited. Only terminally ill cancer patients from other states are recognized. Otherwise, no reciprocity.",
+      "Home grow is strictly prohibited."
+    ],
+    intakeForms: [
+      { name: "OMC Patient Portal", url: "https://omc.wv.gov/patients" },
+      { name: "OMC Industry Portal", url: "https://omc.wv.gov/industry" }
+    ],
+    intakeFAQ: [
+      { q: "Is recreational weed legal in WV?", a: "NO. West Virginia only has a medical cannabis program." },
+      { q: "Can I smoke my medical cannabis?", a: "NO. State law strictly prohibits the smoking of cannabis. Dry leaf is permitted only for vaporization." },
+      { q: "Do patients pay taxes?", a: "Patients do not pay state sales tax. The 10% privilege tax is paid by the dispensary and usually baked into the retail price." },
+      { q: "Can I grow my own plants?", a: "NO. Home cultivation is illegal." }
+    ]
   },
   "Wisconsin": {
     program: "https://docs.legis.wisconsin.gov/2025/related/proposals/sb534",
