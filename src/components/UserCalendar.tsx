@@ -26,18 +26,7 @@ const ALL_CATEGORIES = [
 
 const HOURS = Array.from({ length: 16 }, (_, i) => i + 6); // 6AM-9PM
 
-const SEED_EVENTS: CalEvent[] = [
-  // These remain the core system seed events
-  { id: '1', title: 'OMMA Regulator Review', date: '2026-04-28', startTime: '10:00', endTime: '11:00', category: 'state', color: 'bg-cyan-500', attendees: 'Emily Davis (OK)', location: 'Google Meet', meetLink: 'https://meet.google.com/abc-defg-hij' },
-  { id: '2', title: 'Metrc Integration Sync', date: '2026-04-28', startTime: '14:00', endTime: '15:00', category: 'compliance', color: 'bg-amber-500', attendees: 'SINC Tech Team', location: 'Conference Room A' },
-  { id: '3', title: 'DOJ Intel Briefing', date: '2026-04-29', startTime: '09:00', endTime: '10:30', category: 'federal', color: 'bg-red-500', attendees: 'Federal Oversight Office', meetLink: 'https://meet.google.com/xyz-uvwx-rst' },
-  { id: '4', title: 'Telehealth Escalation', date: '2026-04-29', startTime: '11:00', endTime: '11:45', category: 'telehealth', color: 'bg-emerald-500', attendees: 'Dr. Smith' },
-  { id: '5', title: 'Board Strategy Call', date: '2026-04-30', startTime: '13:00', endTime: '14:30', category: 'executive', color: 'bg-purple-500', attendees: 'Ryan, Monica, Shantell', meetLink: 'https://meet.google.com/brd-mtng-001' },
-  { id: '6', title: 'Compliance Audit Prep', date: '2026-05-01', startTime: '10:00', endTime: '12:00', category: 'compliance', color: 'bg-amber-500', attendees: 'Monica Green', location: 'HQ' },
-  { id: '7', title: 'Patent Portfolio Review', date: '2026-05-02', startTime: '15:00', endTime: '16:00', category: 'executive', color: 'bg-purple-500', attendees: 'Legal Team', meetLink: 'https://meet.google.com/pat-rvw-002' },
-  { id: '8', title: 'Weekly Ops Standup', date: '2026-05-05', startTime: '09:00', endTime: '09:30', category: 'ops', color: 'bg-indigo-500', attendees: 'All Departments', meetLink: 'https://meet.google.com/ops-stdup-wk' },
-  { id: '9', title: 'New Registration Assistance', date: '2026-05-03', startTime: '10:00', endTime: '10:30', category: 'admin_support', color: 'bg-pink-500', attendees: 'asstsupport@gmail.com', meetLink: 'https://calendly.com/asstsupport' }
-];
+const SEED_EVENTS: CalEvent[] = [];
 
 const THIRTY_DAY_TASKS: CalEvent[] = [
   // 30-Day DAILY Marketing Tasks - Specifically plotted to the TASK category
@@ -108,6 +97,9 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
         const saved = localStorage.getItem(storageKey);
         if (saved) {
           localEvents = JSON.parse(saved);
+          // Hard-purge the mock events out of their local storage so they disappear immediately
+          const mockIds = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+          localEvents = localEvents.filter((e: CalEvent) => !mockIds.includes(e.id));
         } else {
           localEvents = (activeCalendarId === defaultPersonalId) ? initialEvents : [];
         }
