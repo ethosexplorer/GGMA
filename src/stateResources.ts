@@ -1716,18 +1716,41 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     ]
   },
   "Washington": {
-    program: "https://doh.wa.gov/you-and-your-family/cannabis/medical-cannabis/patient-information",
-    patientPortal: "",
-    businessPortal: "",
-    guide: "",
+    program: "https://doh.wa.gov/you-and-your-family/cannabis/medical-cannabis",
+    patientPortal: "https://doh.wa.gov/you-and-your-family/cannabis/medical-cannabis/patient-information",
+    businessPortal: "https://lcb.wa.gov/mjlicense/marijuana-licensing",
+    guide: "https://doh.wa.gov/you-and-your-family/cannabis/medical-cannabis/laws-and-rules",
     resources: "https://www.mpp.org/states/washington/?state=WA",
     abbreviation: "WA",
     adultUseStatus: "Yes",
     medicalStatus: "Yes",
-    regulator: "Washington State Liquor and Cannabis Board",
-    compliancePage: "https://lcb.wa.gov/",
-    checklistItems: ["License","Testing","Packaging","Traceability","Taxes"],
-    complianceSource: "https://www.nsc.org/cannabis-regulations"
+    regulator: "Washington LCB (Business) / DOH (Medical)",
+    compliancePage: "https://lcb.wa.gov/laws/laws-and-rules",
+    checklistItems: ["LCB Retail License","DOH Medical Endorsement","Traceability integration","37% excise tax compliance"],
+    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws",
+    conditions: ["Cancer","Chronic renal failure","Crohn's disease","Epilepsy or other seizure disorders","Glaucoma","Hepatitis C","HIV/AIDS","Intractable pain","Multiple Sclerosis","Post-Traumatic Stress Disorder (PTSD)","Traumatic brain injury"],
+    contactPhone: "(360) 236-4819",
+    contactEmail: "medicalcannabis@doh.wa.gov",
+    trackingSystem: "CCRS (Cannabis Central Reporting System)",
+    licenseCaps: "Yes. LCB tightly caps the number of retail licenses statewide.",
+    intakeNotes: [
+      "🌿 DUAL USE: Washington has a robust adult-use market (LCB) and a medical program (DOH).",
+      "Regulators: Liquor and Cannabis Board (LCB) licenses businesses. Department of Health (DOH) manages the patient registry.",
+      "Adult-Use Tax: Very high. 37% cannabis excise tax + 6.5% standard state sales tax (plus local taxes).",
+      "Medical Tax Exemption: Registered patients with a DOH recognition card are EXEMPT from the 37% excise tax and sales tax on DOH-compliant products.",
+      "Reciprocity: NONE. Washington does not accept out-of-state medical cards for tax exemptions.",
+      "Home Grow: Only registered medical patients can legally grow at home (up to 6-15 plants). Adult-use home grow is illegal."
+    ],
+    intakeForms: [
+      { name: "DOH Patient Info", url: "https://doh.wa.gov/you-and-your-family/cannabis/medical-cannabis" },
+      { name: "LCB Business Licensing", url: "https://lcb.wa.gov/mjlicense/marijuana-licensing" }
+    ],
+    intakeFAQ: [
+      { q: "Is weed legal in WA?", a: "Yes, both medical and adult-use (21+) cannabis are legal." },
+      { q: "Do medical patients pay taxes?", a: "Registered patients with a DOH card are exempt from the 37% excise tax and sales tax on compliant products." },
+      { q: "Can I use an out-of-state medical card?", a: "NO. Washington does not have medical reciprocity." },
+      { q: "Can I grow my own plants?", a: "Only if you are a registered medical patient. Recreational home grow is a felony." }
+    ]
   },
   "West Virginia": {
     program: "https://omc.wv.gov/patient-application/Pages/default.aspx",
