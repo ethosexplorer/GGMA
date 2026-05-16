@@ -70,7 +70,7 @@ const monthNames = ['January','February','March','April','May','June','July','Au
 export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?: string, subtitle?: string }) => {
   const availableCategories = ALL_CATEGORIES;
 
-  const initialEvents = isFounder ? SEED_EVENTS : [];
+  const initialEvents = SEED_EVENTS;
 
   const defaultPersonalId = user?.uid || user?.role || 'default';
   const storageKey = `gghp_calendar_v2_${defaultPersonalId}`;
@@ -91,7 +91,7 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
           const mockIds = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
           localEvents = localEvents.filter((e: CalEvent) => !mockIds.includes(e.id));
         } else {
-          localEvents = (activeCalendarId === defaultPersonalId) ? initialEvents : [];
+          localEvents = initialEvents;
         }
       } catch (e) {
         localEvents = [];
