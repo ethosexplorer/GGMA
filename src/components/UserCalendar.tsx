@@ -1,5 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, Plus, X, Clock, Video, MapPin, Users, Calendar as CalIcon, Trash2, CheckSquare, Bell } from 'lucide-react';
+import { collection, query, getDocs } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 import { cn } from '../lib/utils';
 
 type ViewMode = 'month' | 'week' | 'day';
@@ -82,21 +84,64 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
   const [events, setEvents] = useState<CalEvent[]>([]);
 
   React.useEffect(() => {
-    try {
-      const saved = localStorage.getItem(storageKey);
-      if (saved) {
-        setEvents(JSON.parse(saved));
-      } else {
-        // Only load the 30-day marketing agenda if they are explicitly viewing the Executive/Marketing calendar
-        if (activeCalendarId === 'executive_agenda') {
-          setEvents(SEED_EVENTS);
+    const loadEvents = async () => {
+      let localEvents: CalEvent[] = [];
+      try {
+        const saved = localStorage.getItem(storageKey);
+        if (saved) {
+          localEvents = JSON.parse(saved);
         } else {
-          setEvents([]); // Blank personal calendar for them to fill with their own tasks
+          if (activeCalendarId === 'executive_agenda') {
+            localEvents = SEED_EVENTS;
+          } else {
+            localEvents = [];
+          }
+        }
+      } catch (e) {
+        localEvents = [];
+      }
+
+      if (activeCalendarId === 'executive_agenda') {
+        try {
+          const usersSnap = await getDocs(collection(db, 'users'));
+          const signupEvents: CalEvent[] = [];
+          
+          usersSnap.forEach(doc => {
+            const data = doc.data();
+            if (data.createdAt) {
+              const dateObj = data.createdAt.toDate ? data.createdAt.toDate() : new Date(data.createdAt);
+              const dateStr = dateObj.toISOString().split('T')[0];
+              const displayName = data.displayName || data.companyName || data.email || 'New User';
+              
+              const eventId = `signup_${doc.id}`;
+              if (!localEvents.some(e => e.id === eventId)) {
+                signupEvents.push({
+                  id: eventId,
+                  title: `New Signup: ${displayName}`,
+                  date: dateStr,
+                  startTime: '08:00',
+                  endTime: '09:00',
+                  category: 'executive',
+                  color: 'bg-emerald-500',
+                  description: `Role: ${data.role || 'user'}. Contact: ${data.email}. Review for escalation and marketing subscription options.`,
+                });
+              }
+            }
+          });
+
+          if (signupEvents.length > 0) {
+            localEvents = [...localEvents, ...signupEvents];
+            localStorage.setItem(storageKey, JSON.stringify(localEvents));
+          }
+        } catch(e) {
+          console.error("Error fetching users for calendar:", e);
         }
       }
-    } catch (e) {
-      setEvents([]);
-    }
+      
+      setEvents(localEvents);
+    };
+
+    loadEvents();
   }, [activeCalendarId, storageKey]);
 
   React.useEffect(() => {
