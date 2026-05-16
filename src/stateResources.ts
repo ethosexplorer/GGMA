@@ -1078,18 +1078,47 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     ]
   },
   "New Hampshire": {
-    program: "https://www.dhhs.nh.gov/programs-services/population-health/therapeutic-cannabis/therapeutic-cannabis-applications-and",
+    program: "https://www.dhhs.nh.gov/programs-services/population-health/therapeutic-cannabis/",
     patientPortal: "https://www.dhhs.nh.gov/sites/g/files/ehbemt476/files/documents/2021-11/tcp-applicationpatient.pdf",
     businessPortal: "",
-    guide: "",
+    guide: "https://www.dhhs.nh.gov/programs-services/population-health/therapeutic-cannabis/therapeutic-cannabis-applications-and",
     resources: "https://www.mpp.org/states/new-hampshire/?state=NH",
     abbreviation: "NH",
-    adultUseStatus: "No/limited",
-    medicalStatus: "Yes",
-    regulator: "New Hampshire DHHS",
+    adultUseStatus: "No (Medical only — recreational illegal)",
+    medicalStatus: "Yes (HB 573, 2013. Therapeutic Cannabis Program)",
+    regulator: "NH Department of Health and Human Services (DHHS) — Therapeutic Cannabis Program (TCP)",
     compliancePage: "https://www.dhhs.nh.gov/programs-services/population-health/therapeutic-cannabis/",
-    checklistItems: ["Medical cultivation/dispensary rules","Testing","Records"],
-    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws"
+    checklistItems: ["ATC License (vertically integrated)","Lab testing","Patient verification","Records retention","Not-for-profit requirement"],
+    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws",
+    conditions: ["Autism Spectrum Disorder (21+)","Generalized Anxiety Disorder","PTSD (moderate/severe)","Chronic Pain (moderate/severe)","Opioid Use Disorder (w/ addiction treatment)","Cancer","ALS","Crohn's Disease","Epilepsy","Glaucoma","Hepatitis C","HIV/AIDS","Lupus","Multiple Sclerosis","Muscular Dystrophy","Parkinson's Disease","Spinal Cord Injury/Disease","Traumatic Brain Injury","Ulcerative Colitis","Any terminal/debilitating condition (provider-determined)"],
+    contactPhone: "(603) 271-9520",
+    contactEmail: "DHHS-TCP@dhhs.nh.gov",
+    trackingSystem: "BioTrack",
+    licenseCaps: "ONLY 7 ATCs statewide. 3 operators: GraniteLeaf Cannabis, Sanctuary Medicinals, Temescal Wellness. Vertically integrated, not-for-profit.",
+    intakeNotes: [
+      "⚕️ MEDICAL ONLY: HB 573 (2013). NO adult-use. Recreational cannabis is ILLEGAL in NH.",
+      "Only 7 Alternative Treatment Centers (ATCs) statewide — most restrictive in New England.",
+      "3 licensed operators: GraniteLeaf Cannabis (3 ATCs), Sanctuary Medicinals (2 ATCs), Temescal Wellness (2 ATCs).",
+      "ATCs are NOT-FOR-PROFIT, vertically integrated (grow, process, sell).",
+      "TAX EXEMPT: No sales tax in NH. No excise tax on therapeutic cannabis.",
+      "Patient card: $50/year ($25 for Medicaid/SSI). Requires NH-licensed provider certification.",
+      "OUT-OF-STATE RECIPROCITY: Visiting patients with valid cards from other states or Canada can purchase.",
+      "Providers: MD, APRN, PA, dentist, optometrist, podiatrist, or naturopathic doctor can certify.",
+      "Locations: Merrimack, Dover, Keene, Plymouth, Conway, Lebanon, Chichester."
+    ],
+    intakeForms: [
+      { name: "Patient Application (PDF)", url: "https://www.dhhs.nh.gov/sites/g/files/ehbemt476/files/documents/2021-11/tcp-applicationpatient.pdf" },
+      { name: "DHHS TCP Program Page", url: "https://www.dhhs.nh.gov/programs-services/population-health/therapeutic-cannabis/" },
+      { name: "Provider Certification Form", url: "https://www.dhhs.nh.gov/programs-services/population-health/therapeutic-cannabis/therapeutic-cannabis-applications-and" }
+    ],
+    intakeFAQ: [
+      { q: "Is recreational cannabis legal in NH?", a: "NO. New Hampshire is MEDICAL ONLY. Recreational cannabis is illegal." },
+      { q: "How many dispensaries are there?", a: "Only 7 ATCs (Alternative Treatment Centers) statewide, run by 3 operators. Very limited access." },
+      { q: "Is there any tax?", a: "NO — New Hampshire has no sales tax, and medical cannabis is exempt from any excise. Tax-free." },
+      { q: "Can out-of-state patients purchase?", a: "YES — NH has reciprocity. Visiting patients with valid cards from other states or Canada can purchase." },
+      { q: "What does a card cost?", a: "$50/year standard, $25/year for Medicaid/SSI recipients." },
+      { q: "Who can certify me?", a: "MD, APRN, PA, dentist, optometrist, podiatrist, or naturopathic doctor licensed in NH." }
+    ]
   },
   "New Jersey": {
     program: "https://www.nj.gov/cannabis/medicinalcannabis/patient-registration/",
