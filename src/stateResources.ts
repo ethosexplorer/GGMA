@@ -1822,18 +1822,35 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     ]
   },
   "Wyoming": {
-    program: "https://wyomingcannabis.org/medical",
+    program: "https://wyomingcannabis.org",
     patientPortal: "",
     businessPortal: "",
     guide: "",
     resources: "https://www.mpp.org/states/wyoming/?state=WY",
     abbreviation: "WY",
-    adultUseStatus: "No",
-    medicalStatus: "No comprehensive program",
-    regulator: "State law only",
+    adultUseStatus: "Illegal",
+    medicalStatus: "Illegal (No comprehensive program)",
+    regulator: "None (Cannabis is illegal)",
     compliancePage: "",
-    checklistItems: ["No operational cannabis business framework"],
-    complianceSource: "https://en.wikipedia.org/wiki/Legality_of_cannabis_by_U.S._jurisdiction"
+    checklistItems: ["Cannabis possession, sale, and cultivation remain strictly illegal","Exception only for low-THC (<0.3%) hemp-derived CBD"],
+    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws",
+    conditions: ["None (No active medical cannabis program)"],
+    contactPhone: "",
+    contactEmail: "",
+    trackingSystem: "N/A",
+    licenseCaps: "N/A",
+    intakeNotes: [
+      "🚫 ILLEGAL: Wyoming has some of the strictest cannabis laws in the U.S. There is NO medical or adult-use program.",
+      "Enforcement: Possession of up to 3 ounces is a misdemeanor (jail/fines). Over 3 ounces is a felony.",
+      "CBD Exception: There is a very narrow exception for hemp-derived CBD (<0.3% THC), but no state-sanctioned dispensing framework.",
+      "Reciprocity: NONE. Out-of-state medical cards are not recognized and provide zero protection in Wyoming."
+    ],
+    intakeForms: [],
+    intakeFAQ: [
+      { q: "Is weed legal in Wyoming?", a: "NO. Both medical and recreational marijuana are completely illegal in Wyoming." },
+      { q: "Can I use an out-of-state medical card?", a: "NO. Wyoming does not have reciprocity. You can be arrested for possession even with an out-of-state card." },
+      { q: "Is CBD legal?", a: "Hemp-derived CBD with less than 0.3% THC is permitted under federal/state hemp guidelines." }
+    ]
   }
 };
 

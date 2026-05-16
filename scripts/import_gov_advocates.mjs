@@ -254,6 +254,11 @@ const GOV_ADVOCATES = [
   { name: "Wisconsin State Legislature", city: "Madison", state: "WI", type: "gov_state", focus: "Legislative Tracking", email: "legis.info@legis.wisconsin.gov", phone: "608-266-9960" },
   { name: "Wisconsin Cannabis Activist Network (Wisco-CAN)", city: "Madison", state: "WI", type: "advocate", focus: "Cannabis Advocacy", email: "info@wiscocan.org", phone: "" },
   { name: "Marijuana Policy Project (MPP) - WI Chapter", city: "Madison", state: "WI", type: "advocate", focus: "Policy Reform", email: "wisconsin@mpp.org", phone: "202-462-5747" },
+
+  // Wyoming (Illegal. Policy tracking.)
+  { name: "Wyoming State Legislature", city: "Cheyenne", state: "WY", type: "gov_state", focus: "Legislative Tracking", email: "legisinfo@wyoleg.gov", phone: "307-777-7881" },
+  { name: "Wyoming NORML Foundation", city: "Cheyenne", state: "WY", type: "advocate", focus: "Cannabis Advocacy", email: "info@wyomingnormlfoundation.org", phone: "" },
+  { name: "Marijuana Policy Project (MPP) - WY Chapter", city: "Cheyenne", state: "WY", type: "advocate", focus: "Policy Reform", email: "wyoming@mpp.org", phone: "202-462-5747" },
 ];
 
 function slugify(str) { return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').substring(0, 50); }
@@ -272,7 +277,7 @@ async function importGovAdvocates() {
       contactName: org.name,
       city: org.city,
       state: org.state,
-      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Louisiana', ME:'Maine', MD:'Maryland', MA:'Massachusetts', MI:'Michigan', MN:'Minnesota', MS:'Mississippi', MO:'Missouri', MT:'Montana', NV:'Nevada', NH:'New Hampshire', NJ:'New Jersey', NM:'New Mexico', NC:'North Carolina', ND:'North Dakota', OH:'Ohio', OR:'Oregon', PA:'Pennsylvania', RI:'Rhode Island', SC:'South Carolina', SD:'South Dakota', TN:'Tennessee', TX:'Texas', UT:'Utah', VA:'Virginia', VT:'Vermont', WA:'Washington', WV:'West Virginia', WI:'Wisconsin' }[org.state] || org.state,
+      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Louisiana', ME:'Maine', MD:'Maryland', MA:'Massachusetts', MI:'Michigan', MN:'Minnesota', MS:'Mississippi', MO:'Missouri', MT:'Montana', NV:'Nevada', NH:'New Hampshire', NJ:'New Jersey', NM:'New Mexico', NC:'North Carolina', ND:'North Dakota', OH:'Ohio', OR:'Oregon', PA:'Pennsylvania', RI:'Rhode Island', SC:'South Carolina', SD:'South Dakota', TN:'Tennessee', TX:'Texas', UT:'Utah', VA:'Virginia', VT:'Vermont', WA:'Washington', WV:'West Virginia', WI:'Wisconsin', WY:'Wyoming' }[org.state] || org.state,
       type: org.type, // 'gov_state', 'gov_local', 'gov_federal', or 'advocate'
       email: org.email || '',
       phone: org.phone || '',
