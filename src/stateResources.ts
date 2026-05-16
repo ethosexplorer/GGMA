@@ -1567,18 +1567,41 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     ]
   },
   "Texas": {
-    program: "https://www.texas.gov/health-services/texas-medical-marijuana/",
-    patientPortal: "",
-    businessPortal: "",
-    guide: "",
+    program: "https://www.dps.texas.gov/section/compassionate-use-program",
+    patientPortal: "https://curt.dps.texas.gov/app/login",
+    businessPortal: "https://www.dps.texas.gov/section/compassionate-use-program/dispensing-organization-licensing",
+    guide: "https://www.dps.texas.gov/section/compassionate-use-program/patient-frequently-asked-questions",
     resources: "https://www.mpp.org/states/texas/?state=TX",
     abbreviation: "TX",
-    adultUseStatus: "No/limited",
-    medicalStatus: "Limited",
-    regulator: "Texas Department of Public Safety",
-    compliancePage: "https://www.texas.gov/health-services/texas-medical-marijuana/",
-    checklistItems: ["Low-THC product rules","Licensing","Testing","Records"],
-    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws"
+    adultUseStatus: "No (Medical Only)",
+    medicalStatus: "Yes (Compassionate Use Program - TCUP)",
+    regulator: "Texas Department of Public Safety (DPS)",
+    compliancePage: "https://www.dps.texas.gov/section/compassionate-use-program",
+    checklistItems: ["DPS Dispensing Organization License","CURT system integration","1% THC limit compliance","State sales tax (8.25%)"],
+    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws",
+    conditions: ["Amyotrophic Lateral Sclerosis (ALS)","Autism","Cancer (all forms)","Chronic pain","Crohn's Disease","Epilepsy/Seizure disorders","Incurable neurodegenerative diseases","Multiple Sclerosis","Post-Traumatic Stress Disorder (PTSD)","Spasticity","Terminal illness","Traumatic brain injury"],
+    contactPhone: "(512) 424-2000",
+    contactEmail: "TCUP@dps.texas.gov",
+    trackingSystem: "CURT (Compassionate Use Registry of Texas)",
+    licenseCaps: "Yes. Highly restricted. Currently expanding from 3 to 15 dispensing organizations.",
+    intakeNotes: [
+      "⚕️ MEDICAL ONLY (TCUP): Texas has a highly restrictive medical program capped at 1% THC by weight.",
+      "Regulator: Texas Department of Public Safety (DPS) manages the Compassionate Use Program.",
+      "No Medical Cards: Texas does NOT issue physical medical cards. Physicians enter prescriptions directly into the CURT system.",
+      "Tax: No cannabis excise tax. Standard state/local sales tax applies (~8.25%).",
+      "NO RECIPROCITY: Out-of-state cards are NOT accepted.",
+      "Home grow is strictly prohibited."
+    ],
+    intakeForms: [
+      { name: "Compassionate Use Registry (CURT)", url: "https://curt.dps.texas.gov/app/login" },
+      { name: "TCUP Information", url: "https://www.dps.texas.gov/section/compassionate-use-program" }
+    ],
+    intakeFAQ: [
+      { q: "Is recreational weed legal in TX?", a: "NO. Texas only permits low-THC medical cannabis through TCUP." },
+      { q: "How do I get a Texas medical card?", a: "Texas does not issue cards. Your registered physician puts your prescription into the CURT system, and the dispensary looks you up." },
+      { q: "Can I use an out-of-state card?", a: "NO. Texas has no reciprocity." },
+      { q: "Can I buy high-THC flower?", a: "NO. TCUP limits products to a maximum of 1% THC by weight. Smokable flower is prohibited." }
+    ]
   },
   "Utah": {
     program: "https://medicalcannabis.utah.gov/patients/apply-for-patient-card/",

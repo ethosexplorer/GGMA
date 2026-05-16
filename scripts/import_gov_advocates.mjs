@@ -218,6 +218,11 @@ const GOV_ADVOCATES = [
   { name: "Tennessee Alcoholic Beverage Commission (TABC)", city: "Nashville", state: "TN", type: "gov_state", focus: "State Regulator (HDCP Retail)", email: "TABC.Info@tn.gov", phone: "615-741-1602" },
   { name: "Tennessee Department of Agriculture (TDA)", city: "Nashville", state: "TN", type: "gov_state", focus: "State Regulator (Hemp Cultivation)", email: "hemp@tn.gov", phone: "615-837-5100" },
   { name: "Tennessee Growers Coalition", city: "Nashville", state: "TN", type: "advocate", focus: "Hemp Industry Advocacy", email: "info@tngrowerscoalition.com", phone: "" },
+
+  // Texas (Medical only. DPS regulates TCUP.)
+  { name: "Texas Department of Public Safety (DPS)", city: "Austin", state: "TX", type: "gov_state", focus: "State Regulator (TCUP)", email: "TCUP@dps.texas.gov", phone: "512-424-2000" },
+  { name: "Texas NORML", city: "Austin", state: "TX", type: "advocate", focus: "Cannabis Advocacy", email: "info@texasnorml.org", phone: "" },
+  { name: "Marijuana Policy Project (MPP) - TX Chapter", city: "Austin", state: "TX", type: "advocate", focus: "Policy Reform", email: "texas@mpp.org", phone: "202-462-5747" },
 ];
 
 function slugify(str) { return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').substring(0, 50); }
@@ -236,7 +241,7 @@ async function importGovAdvocates() {
       contactName: org.name,
       city: org.city,
       state: org.state,
-      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Louisiana', ME:'Maine', MD:'Maryland', MA:'Massachusetts', MI:'Michigan', MN:'Minnesota', MS:'Mississippi', MO:'Missouri', MT:'Montana', NV:'Nevada', NH:'New Hampshire', NJ:'New Jersey', NM:'New Mexico', NC:'North Carolina', ND:'North Dakota', OH:'Ohio', OR:'Oregon', PA:'Pennsylvania', RI:'Rhode Island', SC:'South Carolina', SD:'South Dakota', TN:'Tennessee' }[org.state] || org.state,
+      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Louisiana', ME:'Maine', MD:'Maryland', MA:'Massachusetts', MI:'Michigan', MN:'Minnesota', MS:'Mississippi', MO:'Missouri', MT:'Montana', NV:'Nevada', NH:'New Hampshire', NJ:'New Jersey', NM:'New Mexico', NC:'North Carolina', ND:'North Dakota', OH:'Ohio', OR:'Oregon', PA:'Pennsylvania', RI:'Rhode Island', SC:'South Carolina', SD:'South Dakota', TN:'Tennessee', TX:'Texas' }[org.state] || org.state,
       type: org.type, // 'gov_state', 'gov_local', 'gov_federal', or 'advocate'
       email: org.email || '',
       phone: org.phone || '',
