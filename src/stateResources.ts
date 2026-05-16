@@ -1532,18 +1532,39 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     ]
   },
   "Tennessee": {
-    program: "https://www.tn.gov/agriculture/businesses/hemp/hemp-derived-cannabinoids/hemp-derived-cannabinoids-licensing.html",
+    program: "https://www.tn.gov/abc.html",
     patientPortal: "",
     businessPortal: "https://www.tn.gov/abc.html",
-    guide: "",
+    guide: "https://www.tn.gov/abc/hdcp.html",
     resources: "https://www.mpp.org/states/tennessee/?state=TN",
     abbreviation: "TN",
-    adultUseStatus: "No",
-    medicalStatus: "No comprehensive program",
-    regulator: "State law only",
-    compliancePage: "",
-    checklistItems: ["No operational cannabis business framework"],
-    complianceSource: "https://en.wikipedia.org/wiki/Legality_of_cannabis_by_U.S._jurisdiction"
+    adultUseStatus: "Illegal",
+    medicalStatus: "Illegal (No Program)",
+    regulator: "Tennessee Alcoholic Beverage Commission (TABC) - Hemp Only",
+    compliancePage: "https://www.tn.gov/abc/hdcp.html",
+    checklistItems: ["TABC HDCP License (Retailers/Suppliers)","Strict age gating (21+)","Wholesale HDCP Tax (2 cents/mg)"],
+    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws",
+    conditions: [],
+    contactPhone: "(615) 741-1602",
+    contactEmail: "TABC.Info@tn.gov",
+    trackingSystem: "None",
+    licenseCaps: "N/A - Marijuana is illegal",
+    intakeNotes: [
+      "🚨 ILLEGAL STATE: Both medical and recreational marijuana are completely illegal in Tennessee.",
+      "The market consists entirely of Hemp-Derived Cannabinoid Products (HDCPs).",
+      "As of Jan 1, 2026, regulatory oversight for HDCPs shifted from the Dept. of Agriculture (TDA) to the Alcoholic Beverage Commission (TABC).",
+      "Tax: No retail tax. There is a wholesale tax of 2 cents per mg of HDCP, $50/oz for flower, or $4.40/gallon for liquid.",
+      "Sales of HDCPs are restricted to individuals 21+ in age-restricted retail environments."
+    ],
+    intakeForms: [
+      { name: "TABC HDCP Licensing", url: "https://www.tn.gov/abc/hdcp.html" }
+    ],
+    intakeFAQ: [
+      { q: "Is medical marijuana legal in TN?", a: "NO. There is no medical marijuana program in Tennessee." },
+      { q: "Can I buy CBD or Delta-8?", a: "Yes, Hemp-Derived Cannabinoid Products (HDCPs) under 0.3% Delta-9 THC are legal for adults 21+, regulated by the TABC." },
+      { q: "Who regulates dispensaries?", a: "There are no marijuana dispensaries. Hemp retailers are regulated by the Tennessee Alcoholic Beverage Commission (TABC)." },
+      { q: "Can I grow my own?", a: "NO. Cultivating marijuana is a criminal offense in Tennessee." }
+    ]
   },
   "Texas": {
     program: "https://www.texas.gov/health-services/texas-medical-marijuana/",
