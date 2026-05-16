@@ -1255,18 +1255,41 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     ]
   },
   "North Dakota": {
-    program: "https://mmregistration.health.nd.gov/",
+    program: "https://www.hhs.nd.gov/health/medical-marijuana",
     patientPortal: "https://mmregistration.health.nd.gov/",
-    businessPortal: "",
-    guide: "",
+    businessPortal: "https://www.hhs.nd.gov/health/medical-marijuana",
+    guide: "https://www.hhs.nd.gov/health/medical-marijuana",
     resources: "https://www.mpp.org/states/north-dakota/?state=ND",
     abbreviation: "ND",
-    adultUseStatus: "No/limited",
-    medicalStatus: "Yes",
-    regulator: "North Dakota DHHS",
-    compliancePage: "https://mmregistration.health.nd.gov/",
-    checklistItems: ["Medical licensing","Testing","Dispensing","Records"],
-    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws"
+    adultUseStatus: "No (Medical Only)",
+    medicalStatus: "Yes (Compassionate Care Act, 2016)",
+    regulator: "North Dakota Department of Health and Human Services (DHHS)",
+    compliancePage: "https://www.hhs.nd.gov/health/medical-marijuana/laws-and-rules",
+    checklistItems: ["DHHS License","Lab testing (BioTrack)","Patient registry verification"],
+    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws",
+    conditions: ["Cancer","HIV/AIDS","Hepatitis C (Cirrhosis)","ALS","PTSD","Alzheimer's/Dementia","Crohn's Disease","Fibromyalgia","Glaucoma","Epilepsy/Seizures","Anorexia/Bulimia","Anxiety Disorder","Tourette Syndrome","Ehlers-Danlos Syndrome","Endometriosis","Interstitial Cystitis","Neuropathy","Migraine","Rheumatoid Arthritis","Autism Spectrum Disorder","Brain Injury","Terminal Illness","Spinal Stenosis","Chronic Back Pain","Cachexia"],
+    contactPhone: "(701) 328-3330",
+    contactEmail: "medmarijuana@nd.gov",
+    trackingSystem: "BioTrackTHC",
+    licenseCaps: "Strict caps. Currently capped at 8 dispensaries statewide (Bismarck, Fargo, Grand Forks, Minot, Devils Lake, Dickinson, Jamestown, Williston).",
+    intakeNotes: [
+      "⚕️ MEDICAL ONLY: Passed in 2016. Extremely limited market with strict caps.",
+      "Regulated by the Department of Health and Human Services (DHHS).",
+      "Only 8 dispensaries operate in the entire state (Curaleaf, Pure Dakota, Strive Life).",
+      "Tax: 5% state sales tax (up to ~7% with local). NO excise tax.",
+      "OUT-OF-STATE RECIPROCITY: ND allows nonresidents to apply for a temporary nonresident medical marijuana card via the BioTrackTHC portal.",
+      "No adult-use or home grow allowed."
+    ],
+    intakeForms: [
+      { name: "ND DHHS Medical Marijuana Portal", url: "https://www.hhs.nd.gov/health/medical-marijuana" },
+      { name: "BioTrackTHC Patient Registration", url: "https://mmregistration.health.nd.gov/" }
+    ],
+    intakeFAQ: [
+      { q: "Is recreational marijuana legal in ND?", a: "NO. North Dakota is strictly a medical-only state." },
+      { q: "How many dispensaries are there?", a: "The state has strictly capped the number of dispensaries to 8 statewide." },
+      { q: "What is the tax rate?", a: "Medical marijuana is subject to the standard 5% state sales tax, plus any local taxes. There is no additional excise tax." },
+      { q: "Can out-of-state patients buy?", a: "Yes, but they cannot use their out-of-state card directly at the register. They must apply for a nonresident ND card through the DHHS portal first." }
+    ]
   },
   "Ohio": {
     program: "https://com.ohio.gov/divisions-and-programs/cannabis-control/patients-caregivers/obtain-medical-marijuana",
