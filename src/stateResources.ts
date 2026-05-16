@@ -831,12 +831,39 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     guide: "https://www.mda.state.mn.us/plants/hemp/firsttimeapplicants",
     resources: "https://www.mpp.org/states/minnesota/?state=MN",
     abbreviation: "MN",
-    adultUseStatus: "Yes",
-    medicalStatus: "Yes",
-    regulator: "Minnesota Office of Cannabis Management",
+    adultUseStatus: "Yes (legalized 2023, sales began 2025)",
+    medicalStatus: "Yes (since 2014)",
+    regulator: "Minnesota Office of Cannabis Management (OCM)",
     compliancePage: "https://mn.gov/ocm/",
-    checklistItems: ["Licensing","Testing","Packaging","Local approvals"],
-    complianceSource: "https://www.nsc.org/cannabis-regulations"
+    checklistItems: ["OCM Licensing","Testing","Packaging","Local approvals","Social equity","Tribal compacts"],
+    complianceSource: "https://www.nsc.org/cannabis-regulations",
+    conditions: ["Cancer","Glaucoma","HIV/AIDS","Tourette Syndrome","ALS","Seizures","Severe Muscle Spasms","Crohn's Disease","Terminal Illness","Intractable Pain","PTSD","Autism","Obstructive Sleep Apnea","Alzheimer's","Chronic Pain","Sickle Cell Disease"],
+    contactPhone: "(651) 201-5000",
+    contactEmail: "cannabis.info@state.mn.us",
+    trackingSystem: "Metrc",
+    licenseCaps: "~135 licenses issued. ~100 adult-use retail sites + 19 medical retail. Tribal dispensaries separate.",
+    intakeNotes: [
+      "✅ NEW DUAL-USE: Adult-use legalized May 2023 (HF 100). First retail sales began 2025.",
+      "OCM regulates ALL cannabis: adult-use, medical, AND hemp-derived cannabinoids.",
+      "Medical Cannabis Combination licenses let existing providers serve both medical + adult-use.",
+      "Tribal dispensaries operate under separate compacts — different rules/products/pricing.",
+      "Social equity priority: lower-potency edibles were legal first (2023-2024) before full retail.",
+      "Home grow: up to 8 plants (4 mature) per household for adults 21+.",
+      "Medical patients: sales tax exempt. Adult-use: 10% state tax."
+    ],
+    intakeForms: [
+      { name: "Medical Patient Portal", url: "https://cannabis.web.health.state.mn.us/" },
+      { name: "OCM Business Licensing", url: "https://mn.gov/ocm/businesses/licensing/license-types/" },
+      { name: "Hemp First-Time Applicants", url: "https://www.mda.state.mn.us/plants/hemp/firsttimeapplicants" },
+      { name: "OCM Main Portal", url: "https://mn.gov/ocm/" }
+    ],
+    intakeFAQ: [
+      { q: "When did Minnesota legalize?", a: "HF 100 was signed May 30, 2023. Lower-potency edibles became legal immediately. Full adult-use retail sales began in 2025." },
+      { q: "Do I need a medical card?", a: "Not for adult-use purchases (21+). But medical patients get tax exemptions and access to pharmacist consultations." },
+      { q: "Can I grow at home?", a: "Yes — up to 8 plants per household (max 4 mature) for adults 21+." },
+      { q: "What about tribal dispensaries?", a: "Tribal nations operate dispensaries on tribal lands under separate compacts. Products, pricing, and tax may differ from state-licensed shops." },
+      { q: "How much is the tax?", a: "10% state cannabis tax on adult-use. Medical purchases are sales tax exempt." }
+    ]
   },
   "Mississippi": {
     program: "https://ms-doh-public.nls.egov.com/login",
