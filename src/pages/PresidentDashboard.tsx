@@ -12,6 +12,16 @@ import { UserCalendar } from '../components/UserCalendar';
 import { PublicHealthDashboard } from './PublicHealthDashboard';
 import { ExternalAdminDashboard } from './ExternalAdminDashboard';
 import { StateAuthorityDashboard } from './StateAuthorityDashboard';
+import {
+  LiveSystemHealth,
+  LivePatientsOversight,
+  LiveBusinessOversight,
+  LiveComplianceMonitor,
+  LiveLawEnforcement,
+  LiveRapidTesting
+} from '../components/dashboard-tabs/LiveExecutiveTabs';
+import { MasterAnalyticsTab } from '../components/dashboard-tabs/ExecutiveOversightViews'; // Extracted Analytics
+import { LegislativeIntelTab } from '../components/federal/LegislativeIntelTab';
 import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
 import { EscalationSupportCalendar } from '../components/EscalationSupportCalendar';
 import { CallCenterCommandTab } from '../components/telephony/CallCenterCommandTab';
@@ -112,7 +122,7 @@ const PresidentDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => v
     localStorage.setItem('gghp_president_nav_order', JSON.stringify(items.map((it, i) => it.id || `sec_${i}`)));
   };
 
-  const fullName = user?.displayName || user?.email?.split('@')[0] || 'President';
+  const fullName = "Ryan Ferrari";
   const title = "President";
 
   return (
@@ -252,8 +262,8 @@ const PresidentDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => v
                 transition={{ duration: 0.2 }}
                 className="max-w-[1600px] mx-auto h-full"
               >
-                {/* TEMPORARY FALLBACKS UNTIL TABS ARE MOVED/IMPORTED */}
-                {activeTab === 'system_health' && <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50"><Zap size={40} className="mx-auto text-emerald-500 mb-4" /><h2 className="text-2xl font-bold text-white mb-2">System Health / AI</h2><p className="text-slate-400">Real-time proactive monitoring & automated resolution engine.</p></div>}
+                {/* LIVE WIRED EXECUTIVE TABS */}
+                {activeTab === 'system_health' && <LiveSystemHealth />}
                 
                 {activeTab === 'hr_intelligence' && <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50"><Users size={40} className="mx-auto text-blue-500 mb-4" /><h2 className="text-2xl font-bold text-white mb-2">HR Intelligence Hub</h2><p className="text-slate-400">Corporate Structure & Departments managed by Larry AI.</p></div>}
                 
@@ -267,22 +277,22 @@ const PresidentDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => v
                 {activeTab === 'admin_support_calendar' && <div className="bg-white rounded-3xl overflow-hidden h-full"><AdminSupportCalendar /></div>}
                 {activeTab === 'escalation_support_calendar' && <div className="bg-white rounded-3xl overflow-hidden h-full"><EscalationSupportCalendar /></div>}
                 
-                {activeTab === 'patients' && <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50"><HeartPulse size={40} className="mx-auto text-pink-500 mb-4" /><h2 className="text-2xl font-bold text-white mb-2">Registry Sovereignty</h2><p className="text-slate-400">Unified citizen oversight and state-level registration reciprocities.</p></div>}
-                {activeTab === 'business' && <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50"><Building2 size={40} className="mx-auto text-emerald-500 mb-4" /><h2 className="text-2xl font-bold text-white mb-2">Economic Infrastructure</h2><p className="text-slate-400">Commercial force monitoring across all sectors.</p></div>}
+                {activeTab === 'patients' && <LivePatientsOversight />}
+                {activeTab === 'business' && <LiveBusinessOversight />}
                 
-                {activeTab === 'compliance' && <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50"><FileCheck size={40} className="mx-auto text-amber-500 mb-4" /><h2 className="text-2xl font-bold text-white mb-2">Compliance Monitor</h2><p className="text-slate-400">Real-time predictive anomaly detection.</p></div>}
+                {activeTab === 'compliance' && <LiveComplianceMonitor />}
                 {activeTab === 'regulatory_library' && <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50"><BookOpen size={40} className="mx-auto text-slate-300 mb-4" /><h2 className="text-2xl font-bold text-white mb-2">Regulatory Intelligence Hub</h2><p className="text-slate-400">Standard operating procedures and statutes.</p></div>}
                 
                 {activeTab === 'internal_admin' && <div className="bg-white rounded-3xl overflow-hidden h-full"><ExternalAdminDashboard /></div>}
-                {activeTab === 'law_enforcement' && <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50"><Gavel size={40} className="mx-auto text-blue-500 mb-4" /><h2 className="text-2xl font-bold text-white mb-2">Law Enforcement Oversight</h2><p className="text-slate-400">Real-time dispatch, field screening & evidentiary blockchain.</p></div>}
+                {activeTab === 'law_enforcement' && <LiveLawEnforcement />}
                 
                 {activeTab === 'processor' && <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50"><Activity size={40} className="mx-auto text-emerald-500 mb-4" /><h2 className="text-2xl font-bold text-white mb-2">GGE Processor Master Command</h2><p className="text-slate-400">Real-time oversight of the standalone private settlement rail.</p></div>}
                 
                 {activeTab === 'public_health' && <div className="bg-white rounded-3xl overflow-hidden h-full"><PublicHealthDashboard onLogout={onLogout} user={user} /></div>}
-                {activeTab === 'rapid_testing' && <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50"><FlaskConical size={40} className="mx-auto text-purple-500 mb-4" /><h2 className="text-2xl font-bold text-white mb-2">Rapid Testing Command</h2><p className="text-slate-400">National laboratory infrastructure monitoring.</p></div>}
+                {activeTab === 'rapid_testing' && <LiveRapidTesting />}
                 
-                {activeTab === 'reports' && <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50"><BarChart3 size={40} className="mx-auto text-emerald-500 mb-4" /><h2 className="text-2xl font-bold text-white mb-2">Master Analytics Intelligence</h2><p className="text-slate-400">Predictive revenue, market saturation, and growth vectors.</p></div>}
-                {activeTab === 'intel' && <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50"><Globe size={40} className="mx-auto text-blue-500 mb-4" /><h2 className="text-2xl font-bold text-white mb-2">Legislative Intelligence Command</h2><p className="text-slate-400">Curated primary sources and real-time state legislative tracking.</p></div>}
+                {activeTab === 'reports' && <MasterAnalyticsTab />}
+                {activeTab === 'intel' && <div className="h-full w-full -m-8 bg-[#080e1a] p-10 min-h-screen overflow-auto"><LegislativeIntelTab /></div>}
 
               </motion.div>
             </AnimatePresence>

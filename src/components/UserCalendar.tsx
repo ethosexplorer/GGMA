@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { ChevronLeft, ChevronRight, Plus, X, Clock, Video, MapPin, Users, Calendar as CalIcon, Trash2, CheckSquare, Bell } from 'lucide-react';
-import { collection, query, onSnapshot, where } from 'firebase/firestore';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronLeft, ChevronRight, Plus, X, Clock, Video, MapPin, Users, Calendar as CalIcon, Trash2, CheckSquare, Bell, Search } from 'lucide-react';
+import { collection, query, onSnapshot, where, getDocs, addDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { cn } from '../lib/utils';
 
@@ -163,8 +164,13 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
   const [selectedDate, setSelectedDate] = useState<string>(fmt(new Date()));
   const [showForm, setShowForm] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<CalEvent | null>(null);
-  const [form, setForm] = useState({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: isFounder ? 'executive' : 'personal', description: '', attendees: '', location: '', meetLink: '' });
+  const [form, setForm] = useState({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: isFounder ? 'executive' : 'personal', description: '', attendees: '', location: '', meetLink: '', assignedToId: '', assignedToName: '' });
   const [filterCat, setFilterCat] = useState<string | null>(null);
+  
+  const [showSearchAssign, setShowSearchAssign] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
 
   const filtered = filterCat ? events.filter(e => e.category === filterCat) : events;
   const eventsOn = (d: string) => filtered.filter(e => e.date === d);
@@ -196,12 +202,47 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
     return Array.from({ length: 7 }, (_, i) => { const dd = new Date(d); dd.setDate(d.getDate() + i); return dd; });
   }, [current]);
 
-  const addEvent = () => {
+  const addEvent = async () => {
     if (!form.title || !form.date) return;
     const cat = availableCategories.find(c => c.id === form.category);
-    setEvents(prev => [...prev, { ...form, id: Date.now().toString(), color: cat?.color || 'bg-slate-500' }]);
+    
+    if (form.assignedToId) {
+       // Direct assignment to someone else's calendar
+       try {
+         await addDoc(collection(db, 'calendar_events'), {
+           title: form.title,
+           date: form.date,
+           startTime: form.startTime,
+           endTime: form.endTime,
+           category: form.category,
+           description: form.description,
+           meetLink: form.meetLink,
+           assignedTo: form.assignedToId,
+           assignedBy: user?.displayName || 'Admin',
+           createdAt: new Date()
+         });
+         
+         // Notify them
+         await addDoc(collection(db, 'notifications'), {
+           userId: form.assignedToId,
+           title: 'New Calendar Event',
+           message: `You have been assigned a new event: ${form.title} on ${form.date}`,
+           timestamp: new Date(),
+           read: false
+         });
+         
+         alert(`Event successfully assigned to ${form.assignedToName}! They will receive a notification.`);
+       } catch (err) {
+         console.error('Failed to assign event:', err);
+         alert('Failed to assign event. See console.');
+       }
+    } else {
+       setEvents(prev => [...prev, { ...form, id: Date.now().toString(), color: cat?.color || 'bg-slate-500' }]);
+    }
+    
     setShowForm(false);
-    setForm({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: isFounder ? 'executive' : 'personal', description: '', attendees: '', location: '', meetLink: '' });
+    setShowSearchAssign(false);
+    setForm({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: isFounder ? 'executive' : 'personal', description: '', attendees: '', location: '', meetLink: '', assignedToId: '', assignedToName: '' });
   };
 
   const deleteEvent = (id: string) => setEvents(prev => prev.filter(e => e.id !== id));
@@ -358,7 +399,78 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
           <button onClick={generateMeetLink} className="px-4 py-3 bg-blue-600 text-white rounded-xl text-xs font-black flex items-center gap-1.5 hover:bg-blue-700 whitespace-nowrap"><Video size={14} /> Generate</button>
         </div>
         <textarea className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm resize-none" rows={2} placeholder="Description (optional)" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} />
-        <button onClick={addEvent} className="w-full py-3 bg-[#1a4731] text-white font-black rounded-xl hover:bg-[#0f291c] transition-colors">Create Event</button>
+        {form.assignedToName && (
+          <div className="p-3 bg-indigo-50 border border-indigo-100 rounded-xl flex justify-between items-center">
+             <span className="text-xs font-bold text-indigo-800">Assigning to: {form.assignedToName}</span>
+             <button onClick={() => setForm(f => ({...f, assignedToId: '', assignedToName: ''}))} className="text-indigo-400 hover:text-indigo-600"><X size={14}/></button>
+          </div>
+        )}
+        <button onClick={addEvent} className="w-full py-3 bg-[#1a4731] text-white font-black rounded-xl hover:bg-[#0f291c] transition-colors">
+          {form.assignedToId ? 'Assign Event & Notify' : 'Create Event'}
+        </button>
+      </div>
+    </div>
+  );
+
+  const handleSearchUsers = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+    setIsSearching(true);
+    try {
+      const q = query(collection(db, 'users'));
+      const snap = await getDocs(q);
+      const results = snap.docs.map(d => ({ id: d.id, ...(d.data() as any) })).filter(u => 
+        (u.displayName || u.fullName || u.email || '').toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setSearchResults(results);
+    } catch (err) {
+      console.error(err);
+    }
+    setIsSearching(false);
+  };
+
+  const renderSearchAssignModal = () => showSearchAssign && (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setShowSearchAssign(false)}>
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-8 space-y-5 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+        <div className="flex justify-between items-center">
+          <h3 className="text-xl font-black text-slate-800">Search User to Assign Event</h3>
+          <button onClick={() => setShowSearchAssign(false)} className="text-slate-400 hover:text-slate-600"><X size={20} /></button>
+        </div>
+        
+        <form onSubmit={handleSearchUsers} className="relative">
+           <input 
+             className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none" 
+             placeholder="Search by name or email..." 
+             value={searchQuery} 
+             onChange={e => setSearchQuery(e.target.value)} 
+             autoFocus
+           />
+           <Search size={16} className="absolute left-3.5 top-3.5 text-slate-400" />
+           <button type="submit" className="absolute right-2 top-2 px-3 py-1.5 bg-indigo-600 text-white text-xs font-bold rounded-lg hover:bg-indigo-700">
+             {isSearching ? '...' : 'Search'}
+           </button>
+        </form>
+
+        {searchResults.length > 0 && (
+          <div className="space-y-2 mt-4">
+             <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Results</p>
+             {searchResults.map(u => (
+               <div key={u.id} className="flex items-center justify-between p-3 border border-slate-100 hover:border-slate-200 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer"
+                 onClick={() => {
+                   setForm(f => ({ ...f, assignedToId: u.id, assignedToName: u.displayName || u.fullName || u.email }));
+                   setShowSearchAssign(false);
+                   setShowForm(true);
+                 }}
+               >
+                 <div>
+                   <p className="font-bold text-sm text-slate-800">{u.displayName || u.fullName || 'Unknown'}</p>
+                   <p className="text-xs text-slate-500">{u.email}</p>
+                 </div>
+                 <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md">Assign</span>
+               </div>
+             ))}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -366,6 +478,7 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       {renderModal()}
+      {renderSearchAssignModal()}
       {renderEventDetailsModal()}
 
       {/* HEADER */}
@@ -400,6 +513,7 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
           <button onClick={openGoogleCalendar} className="px-4 py-2 border border-blue-200 bg-blue-50 rounded-xl text-xs font-black text-blue-700 hover:bg-blue-100 flex items-center gap-1.5 transition-colors"><CalIcon size={14} /> Google Calendar</button>
           
           <div className="flex items-center gap-2 border-l border-slate-200 pl-3">
+            <button onClick={() => setShowSearchAssign(true)} className="px-4 py-2.5 border border-indigo-200 bg-indigo-50 text-indigo-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-indigo-100 transition-colors shadow-sm"><Search size={14} /> Search & Assign</button>
             <button onClick={() => { setForm(f => ({ ...f, date: selectedDate, category: 'task' })); setShowForm(true); }} className="px-4 py-2.5 border border-slate-200 bg-white text-slate-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-slate-50 transition-colors shadow-sm"><CheckSquare size={14} /> Task</button>
             <button onClick={() => { setForm(f => ({ ...f, date: selectedDate, category: 'reminder' })); setShowForm(true); }} className="px-4 py-2.5 border border-slate-200 bg-white text-slate-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-slate-50 transition-colors shadow-sm"><Bell size={14} /> Reminder</button>
             <button onClick={() => { setForm(f => ({ ...f, date: selectedDate })); setShowForm(true); }} className="px-4 py-2.5 bg-[#1a4731] text-white rounded-xl text-xs font-black flex items-center gap-2 hover:bg-[#0f291c] transition-colors shadow-md"><Plus size={14} /> New Event</button>
