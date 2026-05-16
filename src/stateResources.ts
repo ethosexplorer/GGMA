@@ -1681,16 +1681,39 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
   "Virginia": {
     program: "https://cca.virginia.gov/medicalcannabis",
     patientPortal: "https://cca.virginia.gov/medicalcannabis/patients",
-    businessPortal: "https://cca.virginia.gov/medicalcannabis/patients",
-    guide: "",
+    businessPortal: "https://cca.virginia.gov/licensing",
+    guide: "https://cca.virginia.gov/faqs",
     resources: "https://www.mpp.org/states/virginia/?state=VA",
     abbreviation: "VA",
-    adultUseStatus: "Yes/limited retail",
+    adultUseStatus: "Legal to possess/grow (No Retail Sales yet)",
     medicalStatus: "Yes",
-    regulator: "Virginia Cannabis Control Authority",
-    compliancePage: "https://cca.virginia.gov/",
-    checklistItems: ["License framework","Retail status","Labeling","Records"],
-    complianceSource: "https://www.nsc.org/cannabis-regulations"
+    regulator: "Virginia Cannabis Control Authority (CCA)",
+    compliancePage: "https://cca.virginia.gov/laws-and-regulations",
+    checklistItems: ["CCA Pharmaceutical Processor License","Practitioner certification required","Product testing","Inventory tracking"],
+    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws",
+    conditions: ["Any condition or symptom diagnosed by a registered practitioner (No specific list)"],
+    contactPhone: "(804) 688-6112",
+    contactEmail: "info@cca.virginia.gov",
+    trackingSystem: "State mandated tracking",
+    licenseCaps: "Yes. Highly restricted number of pharmaceutical processors (dispensaries).",
+    intakeNotes: [
+      "⚕️ MEDICAL SALES ONLY: While adult-use possession and home grow are legal, there are NO adult-use retail stores open.",
+      "Regulator: Virginia Cannabis Control Authority (CCA).",
+      "Conditions: Virginia does not have a strict list of qualifying conditions. Any registered practitioner can certify a patient for any condition.",
+      "Tax: Medical cannabis purchases are generally exempt from special cannabis excise taxes, subject only to standard sales tax.",
+      "Reciprocity: NONE. Virginia does not accept out-of-state medical cards.",
+      "Home grow is legal: Up to 4 plants per household for adults 21+."
+    ],
+    intakeForms: [
+      { name: "CCA Patient Info", url: "https://cca.virginia.gov/medicalcannabis/patients" },
+      { name: "Practitioner Registry", url: "https://cca.virginia.gov/medicalcannabis/practitioners" }
+    ],
+    intakeFAQ: [
+      { q: "Are recreational dispensaries open in VA?", a: "NO. You can legally possess and grow cannabis, but there is no legal retail market for adult-use yet." },
+      { q: "What conditions qualify for a medical card?", a: "Any condition. It is entirely up to the clinical judgment of a registered practitioner." },
+      { q: "Can I use an out-of-state medical card?", a: "NO. Virginia has no reciprocity." },
+      { q: "How much can I buy?", a: "A registered patient can purchase up to a 90-day supply of cannabis products." }
+    ]
   },
   "Washington": {
     program: "https://doh.wa.gov/you-and-your-family/cannabis/medical-cannabis/patient-information",
