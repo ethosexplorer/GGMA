@@ -153,6 +153,11 @@ const GOV_ADVOCATES = [
   { name: "Montana Cannabis Control Division (CCD)", city: "Helena", state: "MT", type: "gov_state", focus: "State Regulator (Adult-Use + Medical) under DOR", email: "DORCannabis@mt.gov", phone: "406-444-0551" },
   { name: "Montana NORML", city: "Missoula", state: "MT", type: "advocate", focus: "Cannabis Advocacy", email: "", phone: "" },
   { name: "Marijuana Policy Project (MPP) - MT Chapter", city: "Helena", state: "MT", type: "advocate", focus: "Policy Reform", email: "montana@mpp.org", phone: "202-462-5747" },
+
+  // Nevada (Dual-use LIMITED-LICENSE. Question 2 (2016). CCB regulates. Tourism-driven market.)
+  { name: "Nevada Cannabis Compliance Board (CCB)", city: "Carson City", state: "NV", type: "gov_state", focus: "State Regulator (Adult-Use + Medical). Limited-license market.", email: "ccbinfo@ccb.nv.gov", phone: "775-687-7670" },
+  { name: "Nevada NORML", city: "Las Vegas", state: "NV", type: "advocate", focus: "Cannabis Advocacy", email: "", phone: "" },
+  { name: "Marijuana Policy Project (MPP) - NV Chapter", city: "Las Vegas", state: "NV", type: "advocate", focus: "Policy Reform", email: "nevada@mpp.org", phone: "202-462-5747" },
 ];
 
 function slugify(str) { return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').substring(0, 50); }
@@ -171,7 +176,7 @@ async function importGovAdvocates() {
       contactName: org.name,
       city: org.city,
       state: org.state,
-      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Louisiana', ME:'Maine', MD:'Maryland', MA:'Massachusetts', MI:'Michigan', MN:'Minnesota', MS:'Mississippi', MO:'Missouri', MT:'Montana' }[org.state] || org.state,
+      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Louisiana', ME:'Maine', MD:'Maryland', MA:'Massachusetts', MI:'Michigan', MN:'Minnesota', MS:'Mississippi', MO:'Missouri', MT:'Montana', NV:'Nevada' }[org.state] || org.state,
       type: org.type, // 'gov_state', 'gov_local', 'gov_federal', or 'advocate'
       email: org.email || '',
       phone: org.phone || '',

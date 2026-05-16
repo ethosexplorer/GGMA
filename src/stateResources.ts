@@ -1035,18 +1035,47 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     complianceSource: "https://en.wikipedia.org/wiki/Legality_of_cannabis_by_U.S._jurisdiction"
   },
   "Nevada": {
-    program: "https://mmportal.nv.gov/PatientRegistryOnline/PatientRegistryOLCreateLogin",
+    program: "https://ccb.nv.gov/",
     patientPortal: "https://mmportal.nv.gov/PatientRegistryOnline/PatientRegistryOLCreateLogin",
-    businessPortal: "",
-    guide: "",
+    businessPortal: "https://ccb.nv.gov/",
+    guide: "https://ccb.nv.gov/",
     resources: "https://www.mpp.org/states/nevada/?state=NV",
     abbreviation: "NV",
-    adultUseStatus: "Yes",
-    medicalStatus: "Yes",
-    regulator: "Nevada Cannabis Compliance Board",
+    adultUseStatus: "Yes (Question 2, Nov 2016. Sales July 2017)",
+    medicalStatus: "Yes (Question 9, 2000)",
+    regulator: "Nevada Cannabis Compliance Board (CCB)",
     compliancePage: "https://ccb.nv.gov/",
-    checklistItems: ["License","Testing","Packaging","Security","Taxes"],
-    complianceSource: "https://www.nsc.org/cannabis-regulations"
+    checklistItems: ["CCB License","Lab testing","METRC tracking","Packaging/Labeling","Tax compliance (10% retail / 15% wholesale)","Security plan","Limited-license compliance"],
+    complianceSource: "https://www.nsc.org/cannabis-regulations",
+    conditions: ["AIDS","Anorexia/Cachexia","Anxiety Disorder","Autism Spectrum Disorder","Autoimmune Disease","Cancer","Opioid Dependence/Addiction","Glaucoma","HIV/AIDS","Muscle Spasms (MS)","Nausea","Neuropathic Conditions","Seizures/Epilepsy","Severe/Chronic Pain"],
+    contactPhone: "(775) 687-7670",
+    contactEmail: "ccbinfo@ccb.nv.gov",
+    trackingSystem: "METRC",
+    licenseCaps: "LIMITED-LICENSE market. No open application window. Market entry via purchase/relocation of existing licenses (CCB approval required).",
+    intakeNotes: [
+      "✅ MATURE DUAL-USE: Question 2 passed Nov 2016. Adult-use sales began July 1, 2017.",
+      "CCB regulates all cannabis. LIMITED-LICENSE market — no new retail licenses issued openly.",
+      "Tax: 10% retail excise on adult-use. Medical patients EXEMPT from retail excise. 15% wholesale tax applies to all.",
+      "Patient card: $50/year via DPBH. Physician certification required.",
+      "Tourism-driven market — Las Vegas Strip dispensaries dominate revenue.",
+      "Planet 13 = world's largest dispensary (entertainment complex near Strip).",
+      "Tribal cannabis establishments operate under sovereign authority — NOT CCB-licensed.",
+      "Home grow: medical patients only — up to 12 plants if >25 miles from nearest dispensary. No adult-use home grow.",
+      "Key markets: Las Vegas, Henderson, North Las Vegas, Reno, Sparks, Carson City."
+    ],
+    intakeForms: [
+      { name: "Patient Registry Portal", url: "https://mmportal.nv.gov/PatientRegistryOnline/PatientRegistryOLCreateLogin" },
+      { name: "CCB Main Portal", url: "https://ccb.nv.gov/" },
+      { name: "CCB License Search", url: "https://ccb.nv.gov/" },
+      { name: "DPBH Medical Program", url: "https://dpbh.nv.gov/Reg/MME-Registry/MME_Registry_-_Home/" }
+    ],
+    intakeFAQ: [
+      { q: "When did Nevada legalize adult-use?", a: "Question 2 passed November 2016. Sales began July 1, 2017 — one of the first states." },
+      { q: "What is the tax?", a: "10% retail excise on adult-use (medical patients EXEMPT). Plus 15% wholesale tax on all cannabis. Plus standard sales tax." },
+      { q: "Is it a limited-license market?", a: "Yes. Nevada caps retail licenses. No open application window — entry is via purchasing/relocating existing licenses with CCB approval." },
+      { q: "Can I grow at home?", a: "Medical patients only, and only if you live >25 miles from the nearest dispensary (up to 12 plants). NO adult-use home grow." },
+      { q: "What about tribal dispensaries?", a: "Tribal cannabis operations are sovereign and NOT regulated by the CCB. They are not on the state's licensed retailer list." }
+    ]
   },
   "New Hampshire": {
     program: "https://www.dhhs.nh.gov/programs-services/population-health/therapeutic-cannabis/therapeutic-cannabis-applications-and",
