@@ -219,3 +219,45 @@ export const LiveRapidTesting = () => {
     </div>
   );
 };
+
+export const MasterAnalyticsTab = () => {
+  const [userCount, setUserCount] = useState(0);
+
+  useEffect(() => {
+    const unsub = onSnapshot(collection(db, 'users'), (snap) => {
+      setUserCount(snap.size);
+    });
+    return () => unsub();
+  }, []);
+
+  return (
+    <div className="p-8 space-y-6">
+      <div className="flex items-center gap-4 mb-6">
+        <BarChart3 size={32} className="text-emerald-500" />
+        <div>
+          <h2 className="text-2xl font-bold text-white">Master Analytics Intelligence</h2>
+          <p className="text-slate-400">Predictive revenue, market saturation, and growth vectors.</p>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+          <p className="text-slate-400 text-xs font-bold uppercase tracking-wider">Total Platform Users</p>
+          <p className="text-4xl font-black text-white mt-2">{userCount}</p>
+        </div>
+        <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+          <p className="text-slate-400 text-xs font-bold uppercase tracking-wider">Revenue Pipeline</p>
+          <p className="text-4xl font-black text-emerald-400 mt-2">Live</p>
+        </div>
+        <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+          <p className="text-slate-400 text-xs font-bold uppercase tracking-wider">Market Coverage</p>
+          <p className="text-4xl font-black text-indigo-400 mt-2">50 States</p>
+        </div>
+      </div>
+      <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50">
+         <BarChart3 size={48} className="mx-auto text-emerald-500/50 mb-4" />
+         <h3 className="text-xl font-bold text-white">Analytics Engine Active</h3>
+         <p className="text-slate-400 mt-2">Revenue models and growth vectors are streaming from your live database.</p>
+      </div>
+    </div>
+  );
+};

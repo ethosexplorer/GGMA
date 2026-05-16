@@ -18,9 +18,9 @@ import {
   LiveBusinessOversight,
   LiveComplianceMonitor,
   LiveLawEnforcement,
-  LiveRapidTesting
+  LiveRapidTesting,
+  MasterAnalyticsTab
 } from '../components/dashboard-tabs/LiveExecutiveTabs';
-import { MasterAnalyticsTab } from '../components/dashboard-tabs/ExecutiveOversightViews'; // Extracted Analytics
 import { LegislativeIntelTab } from '../components/federal/LegislativeIntelTab';
 import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
 import { EscalationSupportCalendar } from '../components/EscalationSupportCalendar';
