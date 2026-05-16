@@ -36,6 +36,9 @@ import { GlobalDirectoryTab } from '../components/founder/GlobalDirectoryTab';
 import { PatientCaseTracker } from '../components/patient/PatientCaseTracker';
 import { MarketingHub } from '../components/crm/MarketingHub';
 import { JudicialMonitorTab } from '../components/federal/JudicialMonitorTab';
+import { GGEProcessorTab } from '../components/oversight/GGEProcessorTab';
+import { LaunchScriptTab } from '../components/oversight/LaunchScriptTab';
+import { SupportIntelligenceTab } from '../components/oversight/SupportIntelligenceTab';
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
@@ -300,7 +303,7 @@ const PresidentDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => v
                 {activeTab === 'internal_admin' && <div className="bg-white rounded-3xl overflow-hidden h-full"><ExternalAdminDashboard /></div>}
                 {activeTab === 'law_enforcement' && <LiveLawEnforcement />}
                 
-                {activeTab === 'processor' && <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50"><Activity size={40} className="mx-auto text-emerald-500 mb-4" /><h2 className="text-2xl font-bold text-white mb-2">GGE Processor Master Command</h2><p className="text-slate-400">Real-time oversight of the standalone private settlement rail.</p></div>}
+                {activeTab === 'processor' && <GGEProcessorTab />}
                 
                 {activeTab === 'public_health' && <div className="bg-white rounded-3xl overflow-hidden h-full"><PublicHealthDashboard onLogout={onLogout} user={user} /></div>}
                 {activeTab === 'rapid_testing' && <LiveRapidTesting />}
@@ -314,8 +317,8 @@ const PresidentDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => v
                 {activeTab === 'patient_case_tracker' && <div className="bg-white rounded-3xl overflow-hidden h-full"><PatientCaseTracker onLogout={onLogout} user={user} /></div>}
                 {activeTab === 'marketing_hub' && <div className="h-full w-full -m-8 bg-[#080e1a] min-h-screen overflow-auto"><MarketingHub /></div>}
                 {activeTab === 'judicial' && <div className="h-full w-full -m-8 bg-[#080e1a] p-10 min-h-screen overflow-auto"><JudicialMonitorTab /></div>}
-                {activeTab === 'launch_script' && <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50"><FileText size={40} className="mx-auto text-indigo-400 mb-4" /><h2 className="text-2xl font-bold text-white mb-2">Platform Launch Master Script</h2><p className="text-slate-400">Use this reference sheet while presenting to investors, partners, or state authorities.</p></div>}
-                {activeTab === 'support_tickets' && <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50"><MessageSquare size={40} className="mx-auto text-indigo-400 mb-4" /><h2 className="text-2xl font-bold text-white mb-2">Support Intelligence Hub</h2><p className="text-slate-400">Active Resolution Streams • AI-Assisted Support</p></div>}
+                {activeTab === 'launch_script' && <LaunchScriptTab />}
+                {activeTab === 'support_tickets' && <SupportIntelligenceTab />}
 
               </motion.div>
             </AnimatePresence>
