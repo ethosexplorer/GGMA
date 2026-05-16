@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { EXECUTIVE_KNOWLEDGE } from '../executiveKnowledge';
 import { UserCalendar } from '../components/UserCalendar';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
-import { PipelineCRM } from '../components/crm/PipelineCRM';
+import { ExecutiveCRM } from '../components/crm/ExecutiveCRM';
 // Common Button Component
 const Button = ({ children, className, icon: Icon, variant, disabled, ...props }: any) => (
   <button 
@@ -611,7 +611,7 @@ export const ExecutiveDashboard = ({ onLogout, user }: any) => {
                 {activeTab === 'overview' && renderOverview()}
             {activeTab === 'financial_command' && renderModulePlaceholder('Financial Command', 'Total Wallet Balances, Revenue Streams, Processing volume (Kurv), Network reserves, and Cash flow tracking.', BarChart3)}
             {activeTab === 'allocation_engine' && renderModulePlaceholder('Provision Engine (Core)', 'Patient/Business balances, Network reserve, Virtual card activity, and Allocation activation pipeline.', Wallet)}
-            {activeTab === 'b2b_crm' && <div className="h-full w-full -m-8 bg-[#080e1a] min-h-[calc(100vh-4rem)] overflow-auto"><PipelineCRM /></div>}
+            {activeTab === 'b2b_crm' && <div className="h-full w-full -m-8 bg-[#080e1a] min-h-[calc(100vh-4rem)] overflow-auto"><ExecutiveCRM /></div>}
             {activeTab === 'ecosystem' && renderModulePlaceholder('Ecosystem Activity', 'Global view of Patients, Businesses, Providers, Attorneys, and Backoffice clients.', Users)}
             {activeTab === 'compliance_command' && renderModulePlaceholder('Compliance Command', 'Global compliance status, Violations by type, High-risk entities, and State-by-state compliance.', Shield)}
             {activeTab === 'enforcement_intel' && renderModulePlaceholder('Enforcement Intelligence', 'Real-time flags, Active violations, Enforcement actions, and Rapid testing triggers.', Gavel)}

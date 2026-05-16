@@ -11,7 +11,7 @@ import { PostPaymentTab } from '../components/ops/PostPaymentTab';
 import { DocumentVaultTab } from '../components/ops/DocumentVaultTab';
 import { InternalMessenger } from '../components/messaging/InternalMessenger';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
-import { PipelineCRM } from '../components/crm/PipelineCRM';
+import { StaffCRM } from '../components/crm/StaffCRM';
 
 const CALL_CATEGORIES = ['Inquiry','Subscription','Med Card','Add-On','IT Issue','Billing','Complaint','Transfer','Other'];
 
@@ -249,7 +249,7 @@ export const ManagerDashboard = ({ onLogout, user }: { onLogout?: () => void, us
   const getContent = () => {
     switch (tab) {
       case 'home': return renderHome();
-      case 'b2b_crm': return <div className="h-full w-full -m-6 bg-[#080e1a] min-h-[calc(100vh-3.5rem)] overflow-auto"><PipelineCRM /></div>;
+      case 'b2b_crm': return <div className="h-full w-full -m-6 bg-[#080e1a] min-h-[calc(100vh-3.5rem)] overflow-auto"><StaffCRM /></div>;
       case 'calls': return renderCallCenter();
       case 'intake': return <PhoneIntakeForm />;
       case 'teams': return renderTeams();
