@@ -8847,8 +8847,14 @@ export default function App() {
     }
 
     // Internal Leadership Portal Routing
-    if (role === 'president' || role === 'chief_compliance_director' || role === 'advisor') {
-      return <FounderDashboard onLogout={handleReturnToSelector} user={{ ...profile, role }} jurisdiction={jurisdiction} />;
+    if (role === 'president') {
+      return <PresidentDashboard onLogout={handleReturnToSelector} user={{ ...profile, role }} />;
+    }
+    if (role === 'chief_compliance_director') {
+      return <ChiefComplianceDirectorDashboard onLogout={handleReturnToSelector} user={{ ...profile, role }} />;
+    }
+    if (role === 'advisor') {
+      return <AdvisorDashboard onLogout={handleReturnToSelector} user={{ ...profile, role }} />;
     }
 
     // Oversight Portal Routing
