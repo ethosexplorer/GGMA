@@ -28,40 +28,7 @@ const HOURS = Array.from({ length: 16 }, (_, i) => i + 6); // 6AM-9PM
 
 const SEED_EVENTS: CalEvent[] = [];
 
-const THIRTY_DAY_TASKS: CalEvent[] = [
-  // 30-Day DAILY Marketing Tasks - Specifically plotted to the TASK category
-  { id: '10', title: 'Target: Med-Only States (WV, VA, UT, OH)', date: '2026-05-17', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: High compliance risk. Filter CRM for dispensaries needing instant patient verification.' },
-  { id: '11', title: 'Email Blast: Med-Only Dispensaries', date: '2026-05-18', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Pitch strict state compliance tools to WV, VA, UT, OH to prevent licensing fines.' },
-  { id: '12', title: 'Target: Dual-Use States (VT, WA, CA)', date: '2026-05-19', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Complex tax laws (e.g. 37% in WA). Filter CRM for retail leads.' },
-  { id: '13', title: 'Email Blast: Dual-Use Dispensaries', date: '2026-05-20', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Pitch instant tax exemption logic at POS to VT, WA, CA to boost patient retention.' },
-  { id: '14', title: 'Target: High-Volume Patient States (OK, OH, PA)', date: '2026-05-21', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Large registries mean high lead volume. Filter CRM for clinics/providers.' },
-  { id: '15', title: 'Email Blast: Clinics in High-Volume States', date: '2026-05-22', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Pitch automated SMS patient intake to OK, OH, PA to double daily throughput.' },
-  { id: '16', title: 'Target: Strict Regulatory States (CA, WA, IL)', date: '2026-05-23', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Heavy METRC burden. Filter CRM for cannabis compliance law firms.' },
-  { id: '17', title: 'Email Blast: Attorneys in Strict States', date: '2026-05-24', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Pitch the portfolio command center to CA, WA, IL law firms to scale client capacity.' },
-  { id: '18', title: 'Monitor Initial 30-Day Signups (All)', date: '2026-05-25', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Track early conversions and identify which state segment is reacting best.' },
-  { id: '19', title: 'Video Demo: Med-Only (WV, VA, UT, OH)', date: '2026-05-26', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Visual proof of automated compliance for non-clickers.' },
-  { id: '20', title: 'Video Demo: Dual-Use (VT, WA, CA)', date: '2026-05-27', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Visual proof of automated tax logic for non-clickers.' },
-  { id: '21', title: 'Video Demo: Clinics (OK, OH, PA)', date: '2026-05-28', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Show the SMS intake workflow to non-clickers.' },
-  { id: '22', title: 'Video Demo: Attorneys (CA, WA, IL)', date: '2026-05-29', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Show the multi-client dashboard to non-clickers.' },
-  { id: '23', title: 'Follow Up: Active Free Trials', date: '2026-05-30', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: White-glove onboarding secures long-term retention.' },
-  { id: '24', title: 'Prepare VIP Telephony List', date: '2026-05-31', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Focus high-touch sales effort on the top 50 highest revenue potential leads.' },
-  { id: '25', title: 'Call VIP Med-Only (WV, VA, UT, OH)', date: '2026-06-01', startTime: '08:00', endTime: '10:00', category: 'task', color: 'bg-blue-500', description: 'Why: Discuss the immediate financial risk of state fines and audits.' },
-  { id: '26', title: 'Call VIP Dual-Use (VT, WA, CA)', date: '2026-06-02', startTime: '08:00', endTime: '10:00', category: 'task', color: 'bg-blue-500', description: 'Why: Discuss lost revenue from miscalculated tax exemptions.' },
-  { id: '27', title: 'Call VIP Clinics (OK, OH, PA)', date: '2026-06-03', startTime: '08:00', endTime: '10:00', category: 'task', color: 'bg-blue-500', description: 'Why: Discuss increasing daily patient throughput without hiring more staff.' },
-  { id: '28', title: 'Call VIP Attorneys (CA, WA, IL)', date: '2026-06-04', startTime: '08:00', endTime: '10:00', category: 'task', color: 'bg-blue-500', description: 'Why: Discuss scaling their firm\'s client capacity.' },
-  { id: '29', title: 'Live Walk-through Demos (Block A)', date: '2026-06-05', startTime: '09:00', endTime: '11:00', category: 'task', color: 'bg-blue-500', description: 'Why: Close the interested leads gathered from the week\'s calls.' },
-  { id: '30', title: 'Live Walk-through Demos (Block B)', date: '2026-06-06', startTime: '09:00', endTime: '11:00', category: 'task', color: 'bg-blue-500', description: 'Why: Close the interested leads gathered from the week\'s calls.' },
-  { id: '31', title: 'Week 2 Trial Check-in', date: '2026-06-07', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Verify successful first usage of platform to prevent churn.' },
-  { id: '32', title: 'Review CRM Conversion Metrics', date: '2026-06-08', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Determine which state segment performed best to focus FOMO efforts.' },
-  { id: '33', title: 'Draft FOMO "Beta Pricing" Copy', date: '2026-06-09', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Create urgency before standard pricing starts.' },
-  { id: '34', title: 'FOMO Blast to Dispensaries (All)', date: '2026-06-10', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Push fence-sitters to act before prices rise.' },
-  { id: '35', title: 'FOMO Blast to Clinics (All)', date: '2026-06-11', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Push fence-sitters to act before prices rise.' },
-  { id: '36', title: 'FOMO Blast to Attorneys (All)', date: '2026-06-12', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Push fence-sitters to act before prices rise.' },
-  { id: '37', title: 'Call High-Intent FOMO Clickers', date: '2026-06-13', startTime: '08:00', endTime: '10:00', category: 'task', color: 'bg-blue-500', description: 'Why: Secure leads who clicked but didn\'t buy.' },
-  { id: '38', title: 'Final Telephony Sweep', date: '2026-06-14', startTime: '08:00', endTime: '10:00', category: 'task', color: 'bg-blue-500', description: 'Why: Last-minute follow ups before trial expirations.' },
-  { id: '39', title: 'Convert Trials to Paid', date: '2026-06-15', startTime: '08:00', endTime: '10:00', category: 'task', color: 'bg-blue-500', description: 'Why: Lock in recurring revenue and charge setup fees.' },
-
-];
+// Mock events removed to ensure strictly real-time operation
 
 const fmt = (d: Date) => d.toISOString().split('T')[0];
 const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -87,8 +54,8 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
         const saved = localStorage.getItem(storageKey);
         if (saved) {
           localEvents = JSON.parse(saved);
-          // Hard-purge the mock events out of their local storage so they disappear immediately
-          const mockIds = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+          // Hard-purge ALL mock events out of their local storage so they disappear immediately
+          const mockIds = Array.from({length: 45}, (_, i) => String(i+1));
           localEvents = localEvents.filter((e: CalEvent) => !mockIds.includes(e.id));
         } else {
           localEvents = initialEvents;
@@ -96,13 +63,6 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
       } catch (e) {
         localEvents = [];
       }
-
-      // 1. INJECT 30-DAY TASKS ON THE FOUNDER'S CALENDAR UNDER 'TASK'
-      THIRTY_DAY_TASKS.forEach(task => {
-        if (!localEvents.some(e => e.id === task.id)) {
-          localEvents.push(task);
-        }
-      });
 
       setEvents(localEvents);
 
