@@ -43,8 +43,6 @@ const INTERNAL_NAV_ITEMS: NavItem[] = [
   { id: 'call_center', label: 'Call Center Command', icon: Zap },
   { id: 'messages', label: 'Messages', icon: MessageSquare },
   { id: 'internal_scheduler', label: 'Calendar & Scheduler', icon: Clock },
-  { id: 'admin_support_calendar', label: 'Admin Support', icon: Clock },
-  { id: 'escalation_support_calendar', label: 'Escalation Support', icon: Clock },
   { id: '_sec_supreme', section: 'SUPREME COMMAND' },
   { id: 'patients', label: 'Registry Sovereignty', icon: HeartPulse },
   { id: 'business', label: 'Economic Infrastructure', icon: Building2 },

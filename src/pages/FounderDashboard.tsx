@@ -62,8 +62,6 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'global_directory', label: 'Global Directory', icon: Users },
   { id: 'operations', label: 'Ops Center (Live)', icon: Cpu },
   { id: 'internal_admin', label: 'Internal Team', icon: Shield },
-  { id: 'admin_support_calendar', label: 'Admin Support', icon: Clock },
-  { id: 'escalation_support_calendar', label: 'Escalation Support', icon: Clock },
   { id: 'patient_case_tracker', label: 'Patient Case Tracker', icon: Clipboard },
 
   // Founder/CEO Popout

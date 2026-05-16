@@ -20,6 +20,7 @@ const ALL_CATEGORIES = [
   { id: 'state', label: 'State Authority', color: 'bg-cyan-500' },
   { id: 'ops', label: 'Operations', color: 'bg-indigo-500' },
   { id: 'admin_support', label: 'Admin Support', color: 'bg-pink-500' },
+  { id: 'escalation', label: 'Escalation', color: 'bg-rose-600' },
   { id: 'personal', label: 'Personal', color: 'bg-slate-500' },
   { id: 'task', label: 'Task', color: 'bg-blue-500' },
   { id: 'reminder', label: 'Reminder', color: 'bg-orange-500' },
@@ -44,7 +45,7 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
   const isExecutive = isMonica || isRyan || isBob;
   const isFounder = (user?.role === 'executive_founder' || emailLower === 'globalgreenhp@gmail.com') && !isExecutive;
   
-  const availableCategories = isFounder ? ALL_CATEGORIES : [{ id: 'personal', label: 'Personal', color: 'bg-slate-500' }, { id: 'task', label: 'Task', color: 'bg-blue-500' }, { id: 'reminder', label: 'Reminder', color: 'bg-orange-500' }];
+  const availableCategories = ALL_CATEGORIES;
   const initialEvents = isFounder ? SEED_EVENTS : [];
 
   // Allow Founder to view/edit anyone's calendar, defaulting to their own
