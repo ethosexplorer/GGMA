@@ -229,6 +229,11 @@ const GOV_ADVOCATES = [
   { name: "Utah Department of Health and Human Services (DHHS)", city: "Salt Lake City", state: "UT", type: "gov_state", focus: "State Regulator (EVS/Patients)", email: "medicalcannabis@utah.gov", phone: "801-538-6504" },
   { name: "TRUCE Utah", city: "Salt Lake City", state: "UT", type: "advocate", focus: "Patient Advocacy", email: "info@truceutah.org", phone: "" },
   { name: "Marijuana Policy Project (MPP) - UT Chapter", city: "Salt Lake City", state: "UT", type: "advocate", focus: "Policy Reform", email: "utah@mpp.org", phone: "202-462-5747" },
+
+  // Vermont (Dual use. CCB regulates.)
+  { name: "Vermont Cannabis Control Board (CCB)", city: "Montpelier", state: "VT", type: "gov_state", focus: "State Regulator (Dual-Use)", email: "CCB.Info@vermont.gov", phone: "802-828-1010" },
+  { name: "Vermont Cannabis Trade Association", city: "Montpelier", state: "VT", type: "advocate", focus: "Industry Advocacy", email: "info@vtcannabistrade.org", phone: "" },
+  { name: "Marijuana Policy Project (MPP) - VT Chapter", city: "Montpelier", state: "VT", type: "advocate", focus: "Policy Reform", email: "vermont@mpp.org", phone: "202-462-5747" },
 ];
 
 function slugify(str) { return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').substring(0, 50); }
@@ -247,7 +252,7 @@ async function importGovAdvocates() {
       contactName: org.name,
       city: org.city,
       state: org.state,
-      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Louisiana', ME:'Maine', MD:'Maryland', MA:'Massachusetts', MI:'Michigan', MN:'Minnesota', MS:'Mississippi', MO:'Missouri', MT:'Montana', NV:'Nevada', NH:'New Hampshire', NJ:'New Jersey', NM:'New Mexico', NC:'North Carolina', ND:'North Dakota', OH:'Ohio', OR:'Oregon', PA:'Pennsylvania', RI:'Rhode Island', SC:'South Carolina', SD:'South Dakota', TN:'Tennessee', TX:'Texas', UT:'Utah' }[org.state] || org.state,
+      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Louisiana', ME:'Maine', MD:'Maryland', MA:'Massachusetts', MI:'Michigan', MN:'Minnesota', MS:'Mississippi', MO:'Missouri', MT:'Montana', NV:'Nevada', NH:'New Hampshire', NJ:'New Jersey', NM:'New Mexico', NC:'North Carolina', ND:'North Dakota', OH:'Ohio', OR:'Oregon', PA:'Pennsylvania', RI:'Rhode Island', SC:'South Carolina', SD:'South Dakota', TN:'Tennessee', TX:'Texas', UT:'Utah', VT:'Vermont' }[org.state] || org.state,
       type: org.type, // 'gov_state', 'gov_local', 'gov_federal', or 'advocate'
       email: org.email || '',
       phone: org.phone || '',

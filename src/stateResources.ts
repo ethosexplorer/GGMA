@@ -1644,15 +1644,39 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     program: "https://ccb.vermont.gov/med-forms",
     patientPortal: "https://ccb.vermont.gov/forms",
     businessPortal: "https://ccb.vermont.gov/applications",
-    guide: "",
+    guide: "https://ccb.vermont.gov/faq",
     resources: "https://www.mpp.org/states/vermont/?state=VT",
     abbreviation: "VT",
-    adultUseStatus: "Yes",
+    adultUseStatus: "Yes (Legalized 2018, Sales 2022)",
     medicalStatus: "Yes",
-    regulator: "Vermont Cannabis Control Board",
-    compliancePage: "https://ccb.vermont.gov/",
-    checklistItems: ["License","Testing","Packaging","Labeling","Taxes"],
-    complianceSource: "https://www.nsc.org/cannabis-regulations"
+    regulator: "Vermont Cannabis Control Board (CCB)",
+    compliancePage: "https://ccb.vermont.gov/laws-rules-and-guidance",
+    checklistItems: ["CCB License","Municipal approval","Tax compliance","Inventory tracking"],
+    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws",
+    conditions: ["Cancer","Cachexia or wasting syndrome","Chronic pain","Crohn's disease","Epilepsy or other seizures","Glaucoma","HIV/AIDS","Multiple Sclerosis","Parkinson's disease","Post-Traumatic Stress Disorder (PTSD)","Severe nausea","Ulcerative colitis"],
+    contactPhone: "(802) 828-1010",
+    contactEmail: "CCB.Med@vermont.gov",
+    trackingSystem: "State mandated tracking",
+    licenseCaps: "Local municipalities can opt-in/opt-out of adult-use retail.",
+    intakeNotes: [
+      "🌿 DUAL USE: Vermont operates both medical and adult-use markets under the CCB.",
+      "Regulator: Vermont Cannabis Control Board (CCB).",
+      "Medical Tax: Registered medical patients are completely EXEMPT from both the 14% excise tax and 6% sales tax.",
+      "Adult-Use Tax: 14% excise tax + 6% state sales tax (plus possible 1% local option tax).",
+      "Reciprocity: NONE. Vermont does not accept out-of-state medical cards.",
+      "Limits: Medical patients can purchase up to 3 ounces. Adult-use is limited to 1 ounce.",
+      "Home grow is legal: 2 mature and 4 immature plants per household."
+    ],
+    intakeForms: [
+      { name: "CCB Applications Portal", url: "https://ccb.vermont.gov/applications" },
+      { name: "Medical Patient Forms", url: "https://ccb.vermont.gov/med-forms" }
+    ],
+    intakeFAQ: [
+      { q: "Do medical patients pay taxes in VT?", a: "No. Medical cannabis purchases are exempt from the 14% excise tax and 6% sales tax." },
+      { q: "Can I use an out-of-state medical card?", a: "NO. Vermont does not accept out-of-state medical cards." },
+      { q: "How much can I buy?", a: "Adult-use is limited to 1 ounce. Registered medical patients can purchase up to 3 ounces." },
+      { q: "Can I grow at home?", a: "Yes. Adults 21+ can grow up to 2 mature and 4 immature plants per household." }
+    ]
   },
   "Virginia": {
     program: "https://cca.virginia.gov/medicalcannabis",
