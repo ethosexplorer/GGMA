@@ -940,15 +940,43 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     program: "https://mo-public.mycomplia.com/login",
     patientPortal: "https://mo-public.mycomplia.com/register",
     businessPortal: "https://mo-public.mycomplia.com/register",
-    guide: "",
+    guide: "https://health.mo.gov/safety/cannabis/",
     resources: "https://www.mpp.org/states/missouri/?state=MO",
     abbreviation: "MO",
-    adultUseStatus: "Yes",
-    medicalStatus: "Yes",
-    regulator: "Missouri Division of Cannabis Regulation",
+    adultUseStatus: "Yes (Amendment 3, Nov 2022. Sales Feb 2023)",
+    medicalStatus: "Yes (Amendment 2, 2018)",
+    regulator: "Missouri Division of Cannabis Regulation (DCR / DHSS)",
     compliancePage: "https://health.mo.gov/safety/cannabis/",
-    checklistItems: ["License","Testing","Packaging","Track-and-trace","Taxes"],
-    complianceSource: "https://www.nsc.org/cannabis-regulations"
+    checklistItems: ["DCR License","Lab testing","Metrc tracking","Packaging","Tax compliance","Verified Dispensary decal"],
+    complianceSource: "https://www.nsc.org/cannabis-regulations",
+    conditions: ["Cancer","Epilepsy","Glaucoma","Intractable Migraines","Chronic Pain","Debilitating Psychiatric Disorders","HIV/AIDS","Hepatitis C","ALS","Crohn's Disease","Huntington's Disease","Parkinson's Disease","MS","Tourette Syndrome","Neuropathies","Terminal Illness","Autism","PTSD","Sickle Cell"],
+    contactPhone: "(866) 219-0165",
+    contactEmail: "medicalmarijuanainfo@health.mo.gov",
+    trackingSystem: "Metrc",
+    licenseCaps: "200+ licensed dispensaries. ~$2B annual market. No strict retailer cap. Comprehensive licenses.",
+    intakeNotes: [
+      "✅ DUAL-USE: Amendment 3 passed Nov 2022. Adult-use sales began Feb 3, 2023.",
+      "DCR under DHSS regulates. 'Verified Dispensary' decal program for consumer safety.",
+      "200+ licensed dispensaries statewide. Comprehensive (vertically integrated) licenses available.",
+      "Tax: 6% state excise on adult-use. NO additional local option tax.",
+      "Medical patients: 4% sales tax (reduced from 6%). Caregiver system available.",
+      "Home grow: up to 6 flowering, 6 vegetative, 6 clones for patients. Adults: 6 flowering, 6 veg, 6 clones.",
+      "License types: DIS (dispensary), CUL (cultivator), MAN (manufacturer), TES (testing).",
+      "Mycomplia portal for patient/business registration."
+    ],
+    intakeForms: [
+      { name: "Patient/Business Portal (Mycomplia)", url: "https://mo-public.mycomplia.com/login" },
+      { name: "Patient Registration", url: "https://mo-public.mycomplia.com/register" },
+      { name: "DHSS Cannabis Page", url: "https://health.mo.gov/safety/cannabis/" },
+      { name: "DCR Licensed Facility Map", url: "https://health.mo.gov/safety/cannabis/" }
+    ],
+    intakeFAQ: [
+      { q: "When did MO legalize adult-use?", a: "Amendment 3 passed November 2022. Adult-use sales began February 3, 2023." },
+      { q: "What is the tax?", a: "6% state excise on adult-use (no local add-on). Medical: 4% sales tax." },
+      { q: "Can I grow at home?", a: "Yes — patients can grow 6 flowering + 6 vegetative + 6 clones. Adults 21+ same limits." },
+      { q: "What is the Verified Dispensary program?", a: "State-issued decal with QR code for consumer safety. Look for it in dispensary windows." },
+      { q: "What is Mycomplia?", a: "The state's online portal for patient registration and business licensing at mo-public.mycomplia.com." }
+    ]
   },
   "Montana": {
     program: "https://revenue.mt.gov/",

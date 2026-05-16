@@ -143,6 +143,11 @@ const GOV_ADVOCATES = [
   { name: "Mississippi Medical Cannabis Program (MMCP)", city: "Jackson", state: "MS", type: "gov_state", focus: "State Regulator (Medical Only)", email: "MMCP@msdh.ms.gov", phone: "601-576-7400" },
   { name: "Mississippi NORML", city: "Jackson", state: "MS", type: "advocate", focus: "Cannabis Advocacy", email: "", phone: "" },
   { name: "Marijuana Policy Project (MPP) - MS Chapter", city: "Jackson", state: "MS", type: "advocate", focus: "Policy Reform", email: "mississippi@mpp.org", phone: "202-462-5747" },
+
+  // Missouri (Dual-use. Amendment 3 (2022). DCR/DHSS regulates. 200+ dispensaries. ~$2B market.)
+  { name: "Missouri Division of Cannabis Regulation (DCR)", city: "Jefferson City", state: "MO", type: "gov_state", focus: "State Regulator (Adult-Use + Medical)", email: "medicalmarijuanainfo@health.mo.gov", phone: "866-219-0165" },
+  { name: "Missouri NORML", city: "St Louis", state: "MO", type: "advocate", focus: "Cannabis Advocacy", email: "", phone: "" },
+  { name: "Marijuana Policy Project (MPP) - MO Chapter", city: "Kansas City", state: "MO", type: "advocate", focus: "Policy Reform", email: "missouri@mpp.org", phone: "202-462-5747" },
 ];
 
 function slugify(str) { return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').substring(0, 50); }
@@ -161,7 +166,7 @@ async function importGovAdvocates() {
       contactName: org.name,
       city: org.city,
       state: org.state,
-      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Louisiana', ME:'Maine', MD:'Maryland', MA:'Massachusetts', MI:'Michigan', MN:'Minnesota', MS:'Mississippi' }[org.state] || org.state,
+      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Louisiana', ME:'Maine', MD:'Maryland', MA:'Massachusetts', MI:'Michigan', MN:'Minnesota', MS:'Mississippi', MO:'Missouri' }[org.state] || org.state,
       type: org.type, // 'gov_state', 'gov_local', 'gov_federal', or 'advocate'
       email: org.email || '',
       phone: org.phone || '',

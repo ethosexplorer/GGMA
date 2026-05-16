@@ -124,6 +124,7 @@ input:focus {
 .backdrop-blur-xl,
 .backdrop-blur-2xl {
   -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
 
 /* Fix for Safari not respecting min-height with vh */
@@ -136,6 +137,7 @@ input:focus {
 /* Fix Safari gradient text rendering */
 .bg-clip-text {
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -157,6 +159,7 @@ input[type="submit"],
 input[type="button"],
 button {
   -webkit-appearance: none;
+  appearance: none;
 }
 
 /* Hide scrollbar utility for Safari */
