@@ -1425,16 +1425,39 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
   "Rhode Island": {
     program: "https://health.ri.gov/medical-marijuana/information/patients-caregivers",
     patientPortal: "https://cannabislicensing.ri.gov/ricannabis/s/login/",
-    businessPortal: "",
-    guide: "",
+    businessPortal: "https://ccc.ri.gov/",
+    guide: "https://health.ri.gov/publications/policies/MedicalMarijuanaProgram.pdf",
     resources: "https://www.mpp.org/states/rhode-island/?state=RI",
     abbreviation: "RI",
-    adultUseStatus: "Yes",
-    medicalStatus: "Yes",
-    regulator: "Rhode Island Cannabis Control Commission",
-    compliancePage: "https://dbr.ri.gov/cannabis/",
-    checklistItems: ["License","Testing","Labeling","Tax","Inspections"],
-    complianceSource: "https://www.nsc.org/cannabis-regulations"
+    adultUseStatus: "Yes (Legalized 2022)",
+    medicalStatus: "Yes (Edward O. Hawkins Act, 2006)",
+    regulator: "Rhode Island Cannabis Control Commission (CCC) / DOH",
+    compliancePage: "https://ccc.ri.gov/",
+    checklistItems: ["CCC License","DOH Medical Compliance","Hybrid Compassion Center limits","Metrc tracking","Tax compliance (20% adult-use)"],
+    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws",
+    conditions: ["Alzheimer's Disease (Agitation)","Autism Spectrum Disorder","Cancer","Cachexia/Wasting Syndrome","Glaucoma","Hepatitis C","HIV/AIDS","PTSD","Seizures (including Epilepsy)","Severe Nausea","Severe/Chronic/Debilitating Pain","Severe and Persistent Muscle Spasms (including MS & Crohn's)"],
+    contactPhone: "(401) 222-2828",
+    contactEmail: "mmp@health.ri.gov",
+    trackingSystem: "Metrc",
+    licenseCaps: "Yes. The CCC limits the number of compassion centers and adult-use licenses.",
+    intakeNotes: [
+      "✅ DUAL-USE MARKET: Many Compassion Centers hold hybrid licenses, serving both adult-use and medical patients.",
+      "Regulators: Cannabis Control Commission (CCC) oversees the industry. DOH manages the patient registry.",
+      "Tax: Adult-use is taxed at 20% (7% sales + 10% state excise + 3% local).",
+      "Medical patients are EXEMPT from the state and local excise taxes.",
+      "✅ RECIPROCITY: Rhode Island accepts valid out-of-state medical marijuana cards.",
+      "Home grow allowed: Up to 6 plants (max 3 mature) per household."
+    ],
+    intakeForms: [
+      { name: "RI Cannabis Licensing Portal", url: "https://cannabislicensing.ri.gov/ricannabis/s/login/" },
+      { name: "CCC Official Website", url: "https://ccc.ri.gov/" }
+    ],
+    intakeFAQ: [
+      { q: "Is recreational weed legal in RI?", a: "Yes, adult-use was legalized in 2022. Sales are conducted at hybrid compassion centers." },
+      { q: "What is a Compassion Center?", a: "A state-licensed dispensary. Most are now hybrid, meaning they serve both medical and recreational." },
+      { q: "What is the tax rate?", a: "Recreational carries a 20% total tax. Medical patients are exempt from the 13% excise taxes." },
+      { q: "Does RI accept out-of-state cards?", a: "YES. RI has medical reciprocity and accepts valid out-of-state cards." }
+    ]
   },
   "South Carolina": {
     program: "https://southcarolinastatecannabis.org/medical",

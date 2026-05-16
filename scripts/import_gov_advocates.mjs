@@ -199,6 +199,11 @@ const GOV_ADVOCATES = [
   { name: "Pennsylvania Department of Health (DOH)", city: "Harrisburg", state: "PA", type: "gov_state", focus: "State Regulator (Medical Cannabis)", email: "RA-DHMedMarijuana@pa.gov", phone: "888-733-5595" },
   { name: "Keystone Cannabis Coalition", city: "Philadelphia", state: "PA", type: "advocate", focus: "Cannabis Advocacy", email: "info@keystonecannabis.org", phone: "" },
   { name: "Marijuana Policy Project (MPP) - PA Chapter", city: "Harrisburg", state: "PA", type: "advocate", focus: "Policy Reform", email: "pennsylvania@mpp.org", phone: "202-462-5747" },
+
+  // Rhode Island (Dual-use. CCC regulates.)
+  { name: "Rhode Island Cannabis Control Commission (CCC)", city: "Providence", state: "RI", type: "gov_state", focus: "State Regulator (Adult-Use)", email: "ccc@ri.gov", phone: "401-222-2828" },
+  { name: "Rhode Island Department of Health (DOH)", city: "Providence", state: "RI", type: "gov_state", focus: "State Regulator (Medical)", email: "mmp@health.ri.gov", phone: "401-222-5960" },
+  { name: "Rhode Island NORML", city: "Providence", state: "RI", type: "advocate", focus: "Cannabis Advocacy", email: "info@rinorml.org", phone: "" },
 ];
 
 function slugify(str) { return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').substring(0, 50); }
@@ -217,7 +222,7 @@ async function importGovAdvocates() {
       contactName: org.name,
       city: org.city,
       state: org.state,
-      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Louisiana', ME:'Maine', MD:'Maryland', MA:'Massachusetts', MI:'Michigan', MN:'Minnesota', MS:'Mississippi', MO:'Missouri', MT:'Montana', NV:'Nevada', NH:'New Hampshire', NJ:'New Jersey', NM:'New Mexico', NC:'North Carolina', ND:'North Dakota', OH:'Ohio', OR:'Oregon', PA:'Pennsylvania' }[org.state] || org.state,
+      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Louisiana', ME:'Maine', MD:'Maryland', MA:'Massachusetts', MI:'Michigan', MN:'Minnesota', MS:'Mississippi', MO:'Missouri', MT:'Montana', NV:'Nevada', NH:'New Hampshire', NJ:'New Jersey', NM:'New Mexico', NC:'North Carolina', ND:'North Dakota', OH:'Ohio', OR:'Oregon', PA:'Pennsylvania', RI:'Rhode Island' }[org.state] || org.state,
       type: org.type, // 'gov_state', 'gov_local', 'gov_federal', or 'advocate'
       email: org.email || '',
       phone: org.phone || '',
