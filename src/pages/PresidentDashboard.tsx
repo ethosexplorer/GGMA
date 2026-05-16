@@ -19,7 +19,9 @@ import {
   LiveComplianceMonitor,
   LiveLawEnforcement,
   LiveRapidTesting,
-  MasterAnalyticsTab
+  MasterAnalyticsTab,
+  LiveHRIntelligence,
+  LiveJurisdictionMap
 } from '../components/dashboard-tabs/LiveExecutiveTabs';
 import { LegislativeIntelTab } from '../components/federal/LegislativeIntelTab';
 import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
@@ -265,9 +267,9 @@ const PresidentDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => v
                 {/* LIVE WIRED EXECUTIVE TABS */}
                 {activeTab === 'system_health' && <LiveSystemHealth />}
                 
-                {activeTab === 'hr_intelligence' && <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50"><Users size={40} className="mx-auto text-blue-500 mb-4" /><h2 className="text-2xl font-bold text-white mb-2">HR Intelligence Hub</h2><p className="text-slate-400">Corporate Structure & Departments managed by Larry AI.</p></div>}
+                {activeTab === 'hr_intelligence' && <LiveHRIntelligence />}
                 
-                {activeTab === 'jurisdiction_map' && <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50"><Globe size={40} className="mx-auto text-indigo-500 mb-4" /><h2 className="text-2xl font-bold text-white mb-2">Nationwide Jurisdiction Oversight</h2><p className="text-slate-400">Live deployment status and compliance health across the United States.</p></div>}
+                {activeTab === 'jurisdiction_map' && <LiveJurisdictionMap />}
                 
                 {activeTab === 'call_center' && <div className="bg-slate-50 p-6 rounded-3xl overflow-auto h-full"><CallCenterCommandTab /></div>}
                 {activeTab === 'b2b_crm' && <div className="h-full w-full -m-8 bg-slate-50 min-h-screen overflow-auto"><ExecutiveCRM /></div>}
