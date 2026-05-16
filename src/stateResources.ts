@@ -1790,18 +1790,36 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     ]
   },
   "Wisconsin": {
-    program: "https://docs.legis.wisconsin.gov/2025/related/proposals/sb534",
+    program: "https://docs.legis.wisconsin.gov",
     patientPortal: "",
     businessPortal: "",
     guide: "",
     resources: "https://www.mpp.org/states/wisconsin/?state=WI",
     abbreviation: "WI",
-    adultUseStatus: "Just legalized March 2026",
-    medicalStatus: "No comprehensive program",
-    regulator: "State law only",
+    adultUseStatus: "Illegal",
+    medicalStatus: "Illegal (No comprehensive program)",
+    regulator: "None (Cannabis is illegal)",
     compliancePage: "",
-    checklistItems: ["No operational cannabis business framework yet"],
-    complianceSource: "https://en.wikipedia.org/wiki/Legality_of_cannabis_by_U.S._jurisdiction"
+    checklistItems: ["Cannabis possession, sale, and cultivation remain illegal","Limited CBD oil exception only (<0.3% THC)"],
+    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws",
+    conditions: ["None (No active medical cannabis program)"],
+    contactPhone: "",
+    contactEmail: "",
+    trackingSystem: "N/A",
+    licenseCaps: "N/A",
+    intakeNotes: [
+      "🚫 ILLEGAL: Wisconsin does NOT have a medical or adult-use cannabis program as of 2026.",
+      "Legislation: SB 534 was introduced to create a highly restricted medical program, but it failed to pass.",
+      "CBD Exception: Lydia's Law allows for very limited CBD oil use (<0.3% THC) with a physician certification.",
+      "Enforcement: Possession, manufacturing, and distribution of marijuana are subject to criminal penalties.",
+      "Reciprocity: None. Out-of-state cards offer no protection."
+    ],
+    intakeForms: [],
+    intakeFAQ: [
+      { q: "Is weed legal in Wisconsin?", a: "NO. Both medical and recreational marijuana are completely illegal in Wisconsin." },
+      { q: "Can I get a medical card?", a: "NO. Wisconsin does not have a medical cannabis registry or program." },
+      { q: "What happened to the medical bill (SB 534)?", a: "The bill failed to pass the legislature in 2026." }
+    ]
   },
   "Wyoming": {
     program: "https://wyomingcannabis.org/medical",
