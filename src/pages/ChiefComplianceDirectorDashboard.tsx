@@ -15,6 +15,7 @@ import { StateAuthorityDashboard } from './StateAuthorityDashboard';
 import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
 import { EscalationSupportCalendar } from '../components/EscalationSupportCalendar';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
+import { ExecutiveCRM } from '../components/crm/ExecutiveCRM';
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
@@ -24,6 +25,7 @@ const INTERNAL_NAV_ITEMS: NavItem[] = [
   { id: 'hr_intelligence', label: 'HR Intelligence (Sylara)', icon: Users },
   { id: 'jurisdiction_map', label: 'Nationwide Oversight', icon: Globe },
   { id: '_sec_main', section: 'MAIN' },
+  { id: 'b2b_crm', label: 'Executive Pipeline', icon: Users },
   { id: 'ai_training', label: 'My Assistant & Training', icon: Bot },
   { id: 'messages', label: 'Messages', icon: MessageSquare },
   { id: 'internal_scheduler', label: 'Calendar & Scheduler', icon: Clock },
@@ -229,6 +231,7 @@ const ChiefComplianceDirectorDashboard = ({ user, onLogout }: { user?: any, onLo
                 {activeTab === 'jurisdiction_map' && <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50"><Globe size={40} className="mx-auto text-indigo-500 mb-4" /><h2 className="text-2xl font-bold text-white mb-2">Nationwide Jurisdiction Oversight</h2><p className="text-slate-400">Live deployment status and compliance health across the United States.</p></div>}
                 
                 {activeTab === 'ai_training' && <AITrainingTab />}
+                {activeTab === 'b2b_crm' && <div className="h-full w-full -m-8 bg-slate-50 min-h-screen overflow-auto"><ExecutiveCRM /></div>}
                 {activeTab === 'messages' && <InternalMessenger currentUser={{ id: user?.uid || '1', name: fullName, role: title, avatar: null }} />}
                 {activeTab === 'internal_scheduler' && <div className="bg-white rounded-3xl overflow-hidden h-full"><UserCalendar user={user} isGodView={false} /></div>}
                 {activeTab === 'admin_support_calendar' && <div className="bg-white rounded-3xl overflow-hidden h-full"><AdminSupportCalendar /></div>}

@@ -78,8 +78,8 @@ export const ExecutiveCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: st
   });
 
   useEffect(() => {
-    const qDeals = query(collection(db, 'crm_deals'));
-    const qContacts = query(collection(db, 'crm_contacts'));
+    const qDeals = query(collection(db, 'executive_crm_deals'));
+    const qContacts = query(collection(db, 'executive_crm_contacts'));
     
     let dealsDataArr: Deal[] = [];
     let contactsDataArr: Deal[] = [];
@@ -94,7 +94,7 @@ export const ExecutiveCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: st
     const unsubDeals = onSnapshot(qDeals, (snapshot) => {
       dealsDataArr = snapshot.docs.map(doc => {
         const data = doc.data();
-        return { id: doc.id, collection: 'crm_deals', stage: data.stage || 'lead', ...data, name: data.name || data.businessName || 'Unnamed', contactName: data.contactName || '', phone: data.phone || '', email: data.email || '', value: data.value ?? 0, assignedTo: data.assignedTo || 'unassigned', type: data.type || 'other', jurisdiction: data.jurisdiction || data.state || '' } as any;
+        return { id: doc.id, collection: 'executive_crm_deals', stage: data.stage || 'lead', ...data, name: data.name || data.businessName || 'Unnamed', contactName: data.contactName || '', phone: data.phone || '', email: data.email || '', value: data.value ?? 0, assignedTo: data.assignedTo || 'unassigned', type: data.type || 'other', jurisdiction: data.jurisdiction || data.state || '' } as any;
       });
       updateDeals();
     });
@@ -102,7 +102,7 @@ export const ExecutiveCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: st
     const unsubContacts = onSnapshot(qContacts, (snapshot) => {
       contactsDataArr = snapshot.docs.map(doc => {
         const data = doc.data();
-        return { id: doc.id, collection: 'crm_contacts', stage: data.stage || 'lead', ...data, name: data.name || data.businessName || 'Unnamed', contactName: data.contactName || '', phone: data.phone || '', email: data.email || '', value: data.value ?? 0, assignedTo: data.assignedTo || 'unassigned', type: data.type || 'other', jurisdiction: data.jurisdiction || data.state || '' } as any;
+        return { id: doc.id, collection: 'executive_crm_contacts', stage: data.stage || 'lead', ...data, name: data.name || data.businessName || 'Unnamed', contactName: data.contactName || '', phone: data.phone || '', email: data.email || '', value: data.value ?? 0, assignedTo: data.assignedTo || 'unassigned', type: data.type || 'other', jurisdiction: data.jurisdiction || data.state || '' } as any;
       });
       updateDeals();
     });
@@ -133,7 +133,7 @@ export const ExecutiveCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: st
       
       // Update Firestore
       try {
-        const collectionName = (deal as any).collection || 'crm_deals';
+        const collectionName = (deal as any).collection || 'executive_crm_deals';
         await updateDoc(doc(db, collectionName, dealId), {
           stage: stageId,
           updatedAt: serverTimestamp()
@@ -181,10 +181,10 @@ export const ExecutiveCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: st
       };
 
       if (editingDeal) {
-        const collectionName = (editingDeal as any).collection || 'crm_deals';
+        const collectionName = (editingDeal as any).collection || 'executive_crm_deals';
         await updateDoc(doc(db, collectionName, editingDeal.id), dealData);
       } else {
-        await addDoc(collection(db, 'crm_deals'), {
+        await addDoc(collection(db, 'executive_crm_deals'), {
           ...dealData,
           createdAt: serverTimestamp()
         });
@@ -200,7 +200,7 @@ export const ExecutiveCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: st
     if (!editingDeal) return;
     if (window.confirm('Are you sure you want to delete this record?')) {
       try {
-        const collectionName = (editingDeal as any).collection || 'crm_deals';
+        const collectionName = (editingDeal as any).collection || 'executive_crm_deals';
         await deleteDoc(doc(db, collectionName, editingDeal.id));
         setIsModalOpen(false);
       } catch (err) {
@@ -409,7 +409,7 @@ export const ExecutiveCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: st
                     };
                     
                     // Don't await - let Firebase local cache handle it instantly
-                    addDoc(collection(db, 'crm_deals'), dealData).catch(err => {
+                    addDoc(collection(db, 'executive_crm_deals'), dealData).catch(err => {
                       console.error('Import failed for row', i, err);
                     });
                     importCount++;
