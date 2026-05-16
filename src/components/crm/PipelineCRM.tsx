@@ -94,7 +94,7 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
     const unsubDeals = onSnapshot(qDeals, (snapshot) => {
       dealsDataArr = snapshot.docs.map(doc => {
         const data = doc.data();
-        return { id: doc.id, collection: 'crm_deals', stage: data.stage || 'lead', ...data } as any;
+        return { id: doc.id, collection: 'crm_deals', stage: data.stage || 'lead', ...data, name: data.name || data.businessName || 'Unnamed', contactName: data.contactName || '', phone: data.phone || '', email: data.email || '', value: data.value ?? 0, assignedTo: data.assignedTo || 'unassigned', type: data.type || 'other', jurisdiction: data.jurisdiction || data.state || '' } as any;
       });
       updateDeals();
     });
@@ -102,7 +102,7 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
     const unsubContacts = onSnapshot(qContacts, (snapshot) => {
       contactsDataArr = snapshot.docs.map(doc => {
         const data = doc.data();
-        return { id: doc.id, collection: 'crm_contacts', stage: data.stage || 'lead', ...data } as any;
+        return { id: doc.id, collection: 'crm_contacts', stage: data.stage || 'lead', ...data, name: data.name || data.businessName || 'Unnamed', contactName: data.contactName || '', phone: data.phone || '', email: data.email || '', value: data.value ?? 0, assignedTo: data.assignedTo || 'unassigned', type: data.type || 'other', jurisdiction: data.jurisdiction || data.state || '' } as any;
       });
       updateDeals();
     });
@@ -148,9 +148,9 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
     if (deal) {
       setEditingDeal(deal);
       setFormData({
-        name: deal.name, contactName: deal.contactName, type: deal.type,
-        stage: deal.stage, value: deal.value.toString(), assignedTo: deal.assignedTo,
-        phone: deal.phone, email: deal.email, licenseNumber: deal.licenseNumber || '', jurisdiction: deal.jurisdiction || '', notes: deal.notes || ''
+        name: deal.name || '', contactName: deal.contactName || '', type: deal.type || 'other',
+        stage: deal.stage || 'lead', value: (deal.value ?? 0).toString(), assignedTo: deal.assignedTo || 'unassigned',
+        phone: deal.phone || '', email: deal.email || '', licenseNumber: deal.licenseNumber || '', jurisdiction: deal.jurisdiction || '', notes: deal.notes || ''
       });
     } else {
       setEditingDeal(null);
@@ -475,7 +475,7 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
                         {deal.jurisdiction && <span className="block mt-0.5 text-indigo-600 font-bold">{deal.jurisdiction}</span>}
                       </p>
                       
-                      {deal.licenseStatus && (() => {
+                      {deal.licenseStatus && typeof deal.licenseStatus === 'string' && (() => {
                         const s = deal.licenseStatus.toLowerCase();
                         let badge = 'bg-slate-100 text-slate-600 border-slate-200';
                         if (s === 'active') badge = 'bg-emerald-50 text-emerald-700 border-emerald-200';
