@@ -8934,12 +8934,14 @@ export default function App() {
         return;
       } catch (fbErr: any) {
         console.log('[App.handleLogin] Firebase Auth failed for privileged user, falling back to local override:', fbErr.code);
-        // If wrong password, block immediately
+        // If wrong password, block immediately UNLESS it's Bob or Ryan who have local override passwords
         if (fbErr.code === 'auth/wrong-password' || fbErr.code === 'auth/invalid-credential') {
-          alert('Invalid credentials. Please check your password.');
-          return;
+          if (lowerEmail !== ADVISOR_EMAIL && lowerEmail !== 'ceo.globalgreenhp@gmail.com') {
+            alert('Invalid credentials. Please check your password.');
+            return;
+          }
         }
-        // For other errors (user-not-found, network), fall through to local override
+        // For other errors (user-not-found, network), or if Bob/Ryan, fall through to local override
       }
 
       // Local override fallback (when Firebase Auth isn't available)
@@ -8947,10 +8949,14 @@ export default function App() {
         (() => { import('./lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Invalid credentials." })] }).catch(console.error) ); alert("Invalid credentials.\n\n[Live Production Transaction Logged]"); })();
         return;
       }
+      if (lowerEmail === 'ceo.globalgreenhp@gmail.com' && pass !== 'Globalgreen2') {
+        (() => { import('./lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Invalid credentials." })] }).catch(console.error) ); alert("Invalid credentials.\n\n[Live Production Transaction Logged]"); })();
+        return;
+      }
       
       console.log('[App.handleLogin] Privileged login local override:', { email });
       const isFounder = lowerEmail === FOUNDER_EMAIL || lowerEmail === FOUNDER_EMAIL_2;
-      const isPresident = lowerEmail.includes('ceo.globalgreenhp');
+      const isPresident = lowerEmail === 'ceo.globalgreenhp@gmail.com';
       const isComplianceDirector = lowerEmail.includes('monica') || lowerEmail.includes('compliance.globalgreenhp') && lowerEmail !== FOUNDER_EMAIL_2;
       const isAdvisor = lowerEmail === ADVISOR_EMAIL;
       const isAdmin = initialRole === 'admin' || (OVERSIGHT_EMAILS.includes(lowerEmail) && !isPresident && !isAdvisor);
@@ -8968,12 +8974,12 @@ export default function App() {
         role: computedRole,
         displayName: isFounder ? 'Founder/CEO' : (isComplianceDirector ? 'Monica Green' : (isPresident ? 'Ryan Ferrari' : (isAdvisor ? 'Bob Green-Energy-Financing Moore' : email.split('@')[0]))),
         status: 'Active',
-        idCode: (isComplianceDirector || lowerEmail === FOUNDER_EMAIL_2) ? '1234' : (isAdvisor ? '5678' : '0000'),
+        idCode: (isComplianceDirector || lowerEmail === FOUNDER_EMAIL_2 || isPresident) ? '1234' : (isAdvisor ? '5678' : '0000'),
         createdAt: new Date().toISOString(),
       };
       setUserProfile(privilegedProfile);
       // For privileged local override
-      if (isComplianceDirector || lowerEmail === FOUNDER_EMAIL_2) {
+      if (isComplianceDirector || lowerEmail === FOUNDER_EMAIL_2 || isPresident) {
         setView('pin-verification');
       } else {
         setView('dashboard');
