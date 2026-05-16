@@ -39,7 +39,7 @@ import { PipelineCRM } from '../components/crm/PipelineCRM';
 import { GGEWorldHRHub } from './GGEWorldHRHub';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { ImportantUpdates } from '../components/ImportantUpdates';
-import { UserCalendar } from '../components/UserCalendar';
+import { FounderCalendar } from '../components/FounderCalendar';
 import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
 import { EscalationSupportCalendar } from '../components/EscalationSupportCalendar';
 import { voip800 } from '../lib/voip800';
@@ -4184,7 +4184,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         return <div className="h-full w-full -m-10 p-10 min-h-screen overflow-auto bg-slate-50"><ITSupportDashboard /></div>;
       case 'logs': return renderLogs();
       case 'support_tickets': return renderSupportTickets();
-      case 'internal_scheduler': return <UserCalendar user={user} title={isRyan ? "President's Calendar" : (isMonica ? "Compliance Director's Calendar" : (isBobAdvisor ? "Advisory Calendar" : "Executive Calendar"))} />;
+      case 'internal_scheduler': return <FounderCalendar user={user} title="Founder's Master Calendar" />;
       case 'admin_support_calendar': return <div className="h-full w-full -m-10"><AdminSupportCalendar /></div>;
       case 'escalation_support_calendar': return <div className="h-full w-full -m-10"><EscalationSupportCalendar /></div>;
       case 'subscriptions': return renderSubscriptionsTab();

@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { ChevronLeft, ChevronRight, Plus, X, Clock, Video, MapPin, Users, Calendar as CalIcon, Trash2, CheckSquare, Bell } from 'lucide-react';
-import { collection, query, onSnapshot, where } from 'firebase/firestore';
+import { ChevronLeft, ChevronRight, Plus, X, Clock, Video, MapPin, Users, Calendar as CalIcon, Trash2, CheckSquare, Bell, Search, Send } from 'lucide-react';
+import { collection, query, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { cn } from '../lib/utils';
 
@@ -67,26 +67,16 @@ const fmt = (d: Date) => d.toISOString().split('T')[0];
 const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: string, subtitle?: string }) => {
-  const emailLower = user?.email?.toLowerCase() || '';
-  const isMonica = emailLower.includes('compliance.globalgreenhp') || emailLower.includes('monica') || user?.role === 'chief_compliance_director';
-  const isRyan = emailLower.includes('ceo.globalgreenhp') || user?.role === 'president';
-  const isBob = emailLower.includes('bobmooregreenenergy') || emailLower.includes('bobmoore') || user?.role === 'executive_advisor' || user?.role === 'advisor';
-  
-  const isExecutive = isMonica || isRyan || isBob;
-  const isFounder = (user?.role === 'executive_founder' || emailLower === 'globalgreenhp@gmail.com') && !isExecutive;
-  
-  const availableCategories = isFounder ? ALL_CATEGORIES : [{ id: 'personal', label: 'Personal', color: 'bg-slate-500' }, { id: 'task', label: 'Task', color: 'bg-blue-500' }, { id: 'reminder', label: 'Reminder', color: 'bg-orange-500' }];
+export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?: string, subtitle?: string }) => {
+  const availableCategories = ALL_CATEGORIES;
+
   const initialEvents = isFounder ? SEED_EVENTS : [];
 
-  // Allow Founder to view/edit anyone's calendar, defaulting to their own
   const defaultPersonalId = user?.uid || user?.role || 'default';
-  const [activeCalendarId, setActiveCalendarId] = useState<string>(defaultPersonalId);
-
-  // Reverting storage key back to v2 to fully restore all the user's manual calendar data
-  const storageKey = `gghp_calendar_v2_${activeCalendarId}`;
+  const storageKey = `gghp_calendar_v2_${defaultPersonalId}`;
 
   const [events, setEvents] = useState<CalEvent[]>([]);
+  const [allUsers, setAllUsers] = useState<any[]>([]);
 
   React.useEffect(() => {
     let unsubscribe: () => void;
@@ -104,93 +94,62 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
           localEvents = (activeCalendarId === defaultPersonalId) ? initialEvents : [];
         }
       } catch (e) {
-        localEvents = (activeCalendarId === defaultPersonalId) ? initialEvents : [];
+        localEvents = [];
       }
 
       // 1. INJECT 30-DAY TASKS ON THE FOUNDER'S CALENDAR UNDER 'TASK'
-      if (activeCalendarId === defaultPersonalId && isFounder) {
-        THIRTY_DAY_TASKS.forEach(task => {
-          if (!localEvents.some(e => e.id === task.id)) {
-            localEvents.push(task);
-          }
-        });
-      }
+      THIRTY_DAY_TASKS.forEach(task => {
+        if (!localEvents.some(e => e.id === task.id)) {
+          localEvents.push(task);
+        }
+      });
 
       setEvents(localEvents);
 
       // 2. REAL-TIME LISTENER FOR SIGNUPS ON THE FOUNDER'S CALENDAR UNDER 'EXECUTIVE'
-      if (activeCalendarId === defaultPersonalId && isFounder) {
-        unsubscribe = onSnapshot(collection(db, 'users'), (usersSnap) => {
-          setEvents(currentEvents => {
-            const updatedEvents = [...currentEvents];
-            let changed = false;
-            
-            usersSnap.forEach(doc => {
-              const data = doc.data();
-              if (data.createdAt) {
-                const dateObj = data.createdAt.toDate ? data.createdAt.toDate() : new Date(data.createdAt);
-                const dateStr = dateObj.toISOString().split('T')[0];
-                const displayName = data.displayName || data.companyName || data.email || 'New User';
-                
-                const eventId = `signup_${doc.id}`;
-                if (!updatedEvents.some(e => e.id === eventId)) {
-                  updatedEvents.push({
-                    id: eventId,
-                    title: `New Signup: ${displayName}`,
-                    date: dateStr,
-                    startTime: '08:00',
-                    endTime: '09:00',
-                    category: 'executive',
-                    color: 'bg-emerald-500',
-                    description: `Role: ${data.role || 'user'}. Contact: ${data.email}. Review for escalation and marketing subscription options.`,
-                  });
-                  changed = true;
-                }
-              }
-            });
-
-            if (changed) {
-              localStorage.setItem(storageKey, JSON.stringify(updatedEvents));
-              return updatedEvents;
-            }
-            return currentEvents;
-          });
-        }, (error) => {
-          console.error("Error with real-time users sync for calendar:", error);
-        });
-      }
-
-      // 3. FETCH ASSIGNED EVENTS FROM FOUNDER
-      const unsubAssigned = onSnapshot(query(collection(db, 'calendar_events'), where('assignedTo', '==', defaultPersonalId)), (snap) => {
+      unsubscribe = onSnapshot(collection(db, 'users'), (usersSnap) => {
+        const usersList: any[] = [];
         setEvents(currentEvents => {
           const updatedEvents = [...currentEvents];
           let changed = false;
-          snap.forEach(doc => {
+          
+          usersSnap.forEach(doc => {
             const data = doc.data();
-            const eventId = `assigned_${doc.id}`;
-            if (!updatedEvents.some(e => e.id === eventId)) {
-              updatedEvents.push({
-                id: eventId,
-                title: data.title || 'Assigned Event',
-                date: data.date,
-                startTime: data.startTime || '09:00',
-                endTime: data.endTime || '10:00',
-                category: data.category || 'task',
-                color: 'bg-indigo-500',
-                description: `ASSIGNED BY FOUNDER: ${data.description || ''}`,
-                meetLink: data.meetLink || ''
-              });
-              changed = true;
+            usersList.push({ id: doc.id, ...data });
+            
+            if (data.createdAt) {
+              const dateObj = data.createdAt.toDate ? data.createdAt.toDate() : new Date(data.createdAt);
+              const dateStr = dateObj.toISOString().split('T')[0];
+              const displayName = data.displayName || data.companyName || data.email || 'New User';
+              
+              const eventId = `signup_${doc.id}`;
+              if (!updatedEvents.some(e => e.id === eventId)) {
+                updatedEvents.push({
+                  id: eventId,
+                  title: `New Signup: ${displayName}`,
+                  date: dateStr,
+                  startTime: '08:00',
+                  endTime: '09:00',
+                  category: 'executive',
+                  color: 'bg-emerald-500',
+                  description: `Role: ${data.role || 'user'}. Contact: ${data.email}. Review for escalation and marketing subscription options.`,
+                });
+                changed = true;
+              }
             }
           });
+
+          setAllUsers(usersList);
+
           if (changed) {
             localStorage.setItem(storageKey, JSON.stringify(updatedEvents));
             return updatedEvents;
           }
           return currentEvents;
         });
+      }, (error) => {
+        console.error("Error with real-time users sync for calendar:", error);
       });
-
     };
 
     loadEvents();
@@ -198,15 +157,18 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
     return () => {
       if (unsubscribe) unsubscribe();
     };
-  }, [activeCalendarId, storageKey, isFounder, defaultPersonalId]);
+  }, [storageKey, defaultPersonalId]);
 
   const [view, setView] = useState<ViewMode>('month');
   const [current, setCurrent] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<string>(fmt(new Date()));
   const [showForm, setShowForm] = useState(false);
+  const [showAssignForm, setShowAssignForm] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<CalEvent | null>(null);
-  const [form, setForm] = useState({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: isFounder ? 'executive' : 'personal', description: '', attendees: '', location: '', meetLink: '' });
+  const [form, setForm] = useState({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: 'executive', description: '', attendees: '', location: '', meetLink: '' });
+  const [assignForm, setAssignForm] = useState({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: 'task', description: '', meetLink: '', targetUserId: '' });
   const [filterCat, setFilterCat] = useState<string | null>(null);
+  const [userSearch, setUserSearch] = useState('');
 
   const filtered = filterCat ? events.filter(e => e.category === filterCat) : events;
   const eventsOn = (d: string) => filtered.filter(e => e.date === d);
@@ -243,7 +205,45 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
     const cat = availableCategories.find(c => c.id === form.category);
     setEvents(prev => [...prev, { ...form, id: Date.now().toString(), color: cat?.color || 'bg-slate-500' }]);
     setShowForm(false);
-    setForm({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: isFounder ? 'executive' : 'personal', description: '', attendees: '', location: '', meetLink: '' });
+    setForm({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: 'executive', description: '', attendees: '', location: '', meetLink: '' });
+  };
+
+  const assignEvent = async () => {
+    if (!assignForm.title || !assignForm.date || !assignForm.targetUserId) return;
+    
+    try {
+      // 1. Write the calendar event to Firebase for the specific user
+      await addDoc(collection(db, 'calendar_events'), {
+        title: assignForm.title,
+        date: assignForm.date,
+        startTime: assignForm.startTime,
+        endTime: assignForm.endTime,
+        category: assignForm.category,
+        description: assignForm.description,
+        meetLink: assignForm.meetLink,
+        assignedTo: assignForm.targetUserId,
+        assignedBy: 'Founder',
+        createdAt: serverTimestamp()
+      });
+
+      // 2. Trigger the notification in their dashboard
+      await addDoc(collection(db, 'notifications'), {
+        userId: assignForm.targetUserId,
+        title: 'New Calendar Event Assigned',
+        message: `The Founder has assigned a new event to your calendar: ${assignForm.title} on ${assignForm.date}`,
+        type: 'calendar_alert',
+        read: false,
+        createdAt: serverTimestamp()
+      });
+
+      alert('Event successfully assigned and user notified!');
+      setShowAssignForm(false);
+      setAssignForm({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: 'task', description: '', meetLink: '', targetUserId: '' });
+      setUserSearch('');
+    } catch (e) {
+      console.error('Failed to assign event:', e);
+      alert('Failed to assign event.');
+    }
   };
 
   const deleteEvent = (id: string) => setEvents(prev => prev.filter(e => e.id !== id));
@@ -405,9 +405,85 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
     </div>
   );
 
+  // --- ASSIGN EVENT MODAL (OVERSIGHT TOOL) ---
+  const renderAssignModal = () => showAssignForm && (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setShowAssignForm(false)}>
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-8 space-y-5 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+        <div className="flex justify-between items-center border-b border-slate-100 pb-4">
+          <div>
+            <h3 className="text-xl font-black text-indigo-700 flex items-center gap-2"><Send size={20} /> Assign Event</h3>
+            <p className="text-xs font-bold text-slate-500 mt-1">Search any user and add this directly to their personal calendar.</p>
+          </div>
+          <button onClick={() => setShowAssignForm(false)} className="text-slate-400 hover:text-slate-600"><X size={20} /></button>
+        </div>
+        
+        {/* User Search & Select */}
+        <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <label className="text-[10px] font-black text-slate-500 uppercase block mb-2">Search User to Assign To *</label>
+          <div className="relative">
+            <Search size={14} className="absolute left-3 top-3 text-slate-400" />
+            <input 
+              className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none" 
+              placeholder="Type name, email, or role..." 
+              value={userSearch} 
+              onChange={e => {
+                setUserSearch(e.target.value);
+                setAssignForm(f => ({ ...f, targetUserId: '' })); // clear selection if they type
+              }} 
+            />
+          </div>
+          
+          {userSearch && !assignForm.targetUserId && (
+            <div className="mt-2 max-h-32 overflow-y-auto bg-white border border-slate-200 rounded-lg shadow-sm">
+              {allUsers.filter(u => 
+                (u.displayName || '').toLowerCase().includes(userSearch.toLowerCase()) || 
+                (u.email || '').toLowerCase().includes(userSearch.toLowerCase()) ||
+                (u.role || '').toLowerCase().includes(userSearch.toLowerCase())
+              ).map(u => (
+                <div 
+                  key={u.id} 
+                  className="px-3 py-2 border-b last:border-0 border-slate-100 hover:bg-indigo-50 cursor-pointer flex justify-between items-center"
+                  onClick={() => {
+                    setAssignForm(f => ({ ...f, targetUserId: u.id }));
+                    setUserSearch(`${u.displayName || u.email} (${u.role || 'user'})`);
+                  }}
+                >
+                  <span className="text-sm font-bold text-slate-700">{u.displayName || 'Unknown Name'}</span>
+                  <span className="text-xs text-slate-400">{u.email}</span>
+                </div>
+              ))}
+              {allUsers.filter(u => (u.displayName || '').toLowerCase().includes(userSearch.toLowerCase()) || (u.email || '').toLowerCase().includes(userSearch.toLowerCase())).length === 0 && (
+                <div className="px-3 py-2 text-xs text-slate-400 italic">No users found.</div>
+              )}
+            </div>
+          )}
+          {assignForm.targetUserId && (
+            <div className="mt-2 text-xs font-bold text-emerald-600 flex items-center gap-1"><CheckSquare size={12} /> User selected</div>
+          )}
+        </div>
+
+        <input className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Event title *" value={assignForm.title} onChange={e => setAssignForm(f => ({ ...f, title: e.target.value }))} />
+        <input type="date" className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-indigo-500 outline-none" value={assignForm.date} onChange={e => setAssignForm(f => ({ ...f, date: e.target.value }))} />
+        <div className="grid grid-cols-2 gap-3">
+          <div><label className="text-[10px] font-black text-slate-500 uppercase">Start</label><input type="time" className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm" value={assignForm.startTime} onChange={e => setAssignForm(f => ({ ...f, startTime: e.target.value }))} /></div>
+          <div><label className="text-[10px] font-black text-slate-500 uppercase">End</label><input type="time" className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm" value={assignForm.endTime} onChange={e => setAssignForm(f => ({ ...f, endTime: e.target.value }))} /></div>
+        </div>
+        <textarea className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm resize-none" rows={2} placeholder="Description or Instructions to User" value={assignForm.description} onChange={e => setAssignForm(f => ({ ...f, description: e.target.value }))} />
+        <button 
+          onClick={assignEvent} 
+          disabled={!assignForm.title || !assignForm.date || !assignForm.targetUserId}
+          className="w-full py-3 bg-indigo-600 disabled:opacity-50 text-white font-black rounded-xl hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-600/20"
+        >
+          Assign & Notify User
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       {renderModal()}
+      {renderAssignModal()}
       {renderEventDetailsModal()}
 
       {/* HEADER */}
@@ -415,21 +491,8 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
         <div>
           <div className="flex items-center gap-4">
             <h2 className="text-3xl font-black text-slate-900 tracking-tight italic">{title || 'My Calendar'}</h2>
-            {isFounder && (
-              <select 
-                className="text-sm font-bold bg-slate-100 border-none rounded-xl px-4 py-2 text-slate-700 outline-none cursor-pointer hover:bg-slate-200 transition-colors"
-                value={activeCalendarId}
-                onChange={(e) => setActiveCalendarId(e.target.value)}
-              >
-                <option value={defaultPersonalId}>My Personal Calendar</option>
-                <option value="monica_green">Monica Green (Compliance)</option>
-                <option value="ryan_ceo">Ryan (CEO)</option>
-                <option value="bob_moore">Bob Moore (Advisor)</option>
-                <option value="sales_team">Sales Team</option>
-              </select>
-            )}
           </div>
-          <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px] mt-1">{subtitle || 'Schedule • Meetings • Google Meet Integration'}</p>
+          <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px] mt-1">{subtitle || 'Oversight • Schedule • Master Engine'}</p>
         </div>
         <div className="flex items-center gap-3 flex-wrap">
           {/* View toggle */}
@@ -442,9 +505,8 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
           <button onClick={openGoogleCalendar} className="px-4 py-2 border border-blue-200 bg-blue-50 rounded-xl text-xs font-black text-blue-700 hover:bg-blue-100 flex items-center gap-1.5 transition-colors"><CalIcon size={14} /> Google Calendar</button>
           
           <div className="flex items-center gap-2 border-l border-slate-200 pl-3">
-            <button onClick={() => { setForm(f => ({ ...f, date: selectedDate, category: 'task' })); setShowForm(true); }} className="px-4 py-2.5 border border-slate-200 bg-white text-slate-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-slate-50 transition-colors shadow-sm"><CheckSquare size={14} /> Task</button>
-            <button onClick={() => { setForm(f => ({ ...f, date: selectedDate, category: 'reminder' })); setShowForm(true); }} className="px-4 py-2.5 border border-slate-200 bg-white text-slate-700 rounded-xl text-xs font-black flex items-center gap-2 hover:bg-slate-50 transition-colors shadow-sm"><Bell size={14} /> Reminder</button>
-            <button onClick={() => { setForm(f => ({ ...f, date: selectedDate })); setShowForm(true); }} className="px-4 py-2.5 bg-[#1a4731] text-white rounded-xl text-xs font-black flex items-center gap-2 hover:bg-[#0f291c] transition-colors shadow-md"><Plus size={14} /> New Event</button>
+            <button onClick={() => { setAssignForm(f => ({ ...f, date: selectedDate })); setShowAssignForm(true); }} className="px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-black flex items-center gap-2 hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-600/20"><Search size={14} /> Assign Event</button>
+            <button onClick={() => { setForm(f => ({ ...f, date: selectedDate })); setShowForm(true); }} className="px-4 py-2.5 bg-[#1a4731] text-white rounded-xl text-xs font-black flex items-center gap-2 hover:bg-[#0f291c] transition-colors shadow-md"><Plus size={14} /> My Event</button>
           </div>
         </div>
       </div>
