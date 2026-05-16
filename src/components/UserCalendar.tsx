@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, Plus, X, Clock, Video, MapPin, Users, Calendar as CalIcon, Trash2, CheckSquare, Bell } from 'lucide-react';
-import { collection, query, getDocs } from 'firebase/firestore';
+import { collection, query, onSnapshot } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { cn } from '../lib/utils';
 
@@ -100,14 +100,15 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
   const [events, setEvents] = useState<CalEvent[]>([]);
 
   React.useEffect(() => {
-    const loadEvents = async () => {
+    let unsubscribe: () => void;
+    
+    const loadEvents = () => {
       let localEvents: CalEvent[] = [];
       try {
         const saved = localStorage.getItem(storageKey);
         if (saved) {
           localEvents = JSON.parse(saved);
         } else {
-          // Only load seed events for the founder's own personal calendar
           localEvents = (activeCalendarId === defaultPersonalId) ? initialEvents : [];
         }
       } catch (e) {
@@ -123,43 +124,56 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
         });
       }
 
-      // 2. INJECT NEW SIGNUPS ON THE FOUNDER'S CALENDAR UNDER 'EXECUTIVE'
-      if (activeCalendarId === defaultPersonalId && isFounder) {
-        try {
-          const usersSnap = await getDocs(collection(db, 'users'));
-          usersSnap.forEach(doc => {
-            const data = doc.data();
-            if (data.createdAt) {
-              const dateObj = data.createdAt.toDate ? data.createdAt.toDate() : new Date(data.createdAt);
-              const dateStr = dateObj.toISOString().split('T')[0];
-              const displayName = data.displayName || data.companyName || data.email || 'New User';
-              
-              const eventId = `signup_${doc.id}`;
-              if (!localEvents.some(e => e.id === eventId)) {
-                localEvents.push({
-                  id: eventId,
-                  title: `New Signup: ${displayName}`,
-                  date: dateStr,
-                  startTime: '08:00',
-                  endTime: '09:00',
-                  category: 'executive',
-                  color: 'bg-emerald-500',
-                  description: `Role: ${data.role || 'user'}. Contact: ${data.email}. Review for escalation and marketing subscription options.`,
-                });
-              }
-            }
-          });
-        } catch(e) {
-          console.error("Error fetching users for calendar:", e);
-        }
-      }
-
       setEvents(localEvents);
-      // Auto-save any injections back to v2 storage so they persist
-      localStorage.setItem(storageKey, JSON.stringify(localEvents));
+
+      // 2. REAL-TIME LISTENER FOR SIGNUPS ON THE FOUNDER'S CALENDAR UNDER 'EXECUTIVE'
+      if (activeCalendarId === defaultPersonalId && isFounder) {
+        unsubscribe = onSnapshot(collection(db, 'users'), (usersSnap) => {
+          setEvents(currentEvents => {
+            const updatedEvents = [...currentEvents];
+            let changed = false;
+            
+            usersSnap.forEach(doc => {
+              const data = doc.data();
+              if (data.createdAt) {
+                const dateObj = data.createdAt.toDate ? data.createdAt.toDate() : new Date(data.createdAt);
+                const dateStr = dateObj.toISOString().split('T')[0];
+                const displayName = data.displayName || data.companyName || data.email || 'New User';
+                
+                const eventId = `signup_${doc.id}`;
+                if (!updatedEvents.some(e => e.id === eventId)) {
+                  updatedEvents.push({
+                    id: eventId,
+                    title: `New Signup: ${displayName}`,
+                    date: dateStr,
+                    startTime: '08:00',
+                    endTime: '09:00',
+                    category: 'executive',
+                    color: 'bg-emerald-500',
+                    description: `Role: ${data.role || 'user'}. Contact: ${data.email}. Review for escalation and marketing subscription options.`,
+                  });
+                  changed = true;
+                }
+              }
+            });
+
+            if (changed) {
+              localStorage.setItem(storageKey, JSON.stringify(updatedEvents));
+              return updatedEvents;
+            }
+            return currentEvents;
+          });
+        }, (error) => {
+          console.error("Error with real-time users sync for calendar:", error);
+        });
+      }
     };
 
     loadEvents();
+    
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, [activeCalendarId, storageKey, isFounder, defaultPersonalId]);
 
   const [view, setView] = useState<ViewMode>('month');
