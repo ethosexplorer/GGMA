@@ -1463,15 +1463,37 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     program: "https://southcarolinastatecannabis.org/medical",
     patientPortal: "",
     businessPortal: "",
-    guide: "",
+    guide: "https://www.scstatehouse.gov/query.php?search=DOC&searchtext=Julian%27s%20Law",
     resources: "https://www.mpp.org/states/south-carolina/?state=SC",
     abbreviation: "SC",
-    adultUseStatus: "No",
-    medicalStatus: "No comprehensive program",
-    regulator: "State law only",
-    compliancePage: "",
-    checklistItems: ["No operational cannabis business framework"],
-    complianceSource: "https://en.wikipedia.org/wiki/Legality_of_cannabis_by_U.S._jurisdiction"
+    adultUseStatus: "Illegal",
+    medicalStatus: "Illegal (CBD Exception Only - Julian's Law)",
+    regulator: "None (SCDA regulates Hemp)",
+    compliancePage: "https://agriculture.sc.gov/divisions/consumer-protection/hemp/",
+    checklistItems: ["Hemp/CBD compliance","SCDA Hemp Farming Permit (if applicable)","Age gating (21+ for intoxicating hemp)"],
+    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws",
+    conditions: ["Severe Epilepsy / Lennox-Gastaut / Dravet Syndrome (CBD Exception Only)"],
+    contactPhone: "",
+    contactEmail: "",
+    trackingSystem: "None",
+    licenseCaps: "N/A - Marijuana is illegal",
+    intakeNotes: [
+      "🚨 ILLEGAL STATE: Both medical and recreational marijuana are completely illegal in SC.",
+      "Julian's Law (2014) provides a very narrow affirmative defense for patients with severe epilepsy to possess low-THC/high-CBD oil (<0.9% THC).",
+      "There is NO state-regulated medical marijuana program or dispensary system.",
+      "The Compassionate Care Act (S. 53) has repeatedly failed or stalled in the legislature.",
+      "The market consists entirely of Hemp and CBD stores selling Farm Bill-compliant products (Delta-8, CBD, THCA).",
+      "Recent laws (2026) restrict intoxicating hemp products to adults 21+."
+    ],
+    intakeForms: [
+      { name: "SCDA Hemp Farming Program", url: "https://agriculture.sc.gov/divisions/consumer-protection/hemp/" }
+    ],
+    intakeFAQ: [
+      { q: "Is medical marijuana legal in SC?", a: "NO. The Compassionate Care Act has not passed. There is no state medical program." },
+      { q: "What is Julian's Law?", a: "A narrow 2014 law allowing severe epilepsy patients to possess CBD oil with less than 0.9% THC if recommended by a physician." },
+      { q: "Are dispensaries open in SC?", a: "There are NO marijuana dispensaries. Stores selling cannabis products are Hemp/CBD stores operating under Farm Bill rules." },
+      { q: "Can I grow my own?", a: "NO. Cultivating marijuana is a criminal offense in South Carolina." }
+    ]
   },
   "South Dakota": {
     program: "https://medcannabisapplication.sd.gov/",
