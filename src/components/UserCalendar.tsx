@@ -34,6 +34,14 @@ const SEED_EVENTS: CalEvent[] = [
   { id: '7', title: 'Patent Portfolio Review', date: '2026-05-02', startTime: '15:00', endTime: '16:00', category: 'executive', color: 'bg-purple-500', attendees: 'Legal Team', meetLink: 'https://meet.google.com/pat-rvw-002' },
   { id: '8', title: 'Weekly Ops Standup', date: '2026-05-05', startTime: '09:00', endTime: '09:30', category: 'ops', color: 'bg-indigo-500', attendees: 'All Departments', meetLink: 'https://meet.google.com/ops-stdup-wk' },
   { id: '9', title: 'New Registration Assistance', date: '2026-05-03', startTime: '10:00', endTime: '10:30', category: 'admin_support', color: 'bg-pink-500', attendees: 'asstsupport@gmail.com', meetLink: 'https://calendly.com/asstsupport' },
+  
+  // 30-Day Rapid Revenue Marketing Campaign
+  { id: '10', title: 'Phase 1: Launch Shock & Awe Campaign', date: '2026-05-18', startTime: '08:00', endTime: '09:30', category: 'ops', color: 'bg-indigo-500', description: 'Deploy initial 30-day Free Trial & Setup offer to all dispensaries and clinics imported.' },
+  { id: '11', title: 'Review Initial Free Trial Signups', date: '2026-05-20', startTime: '10:00', endTime: '11:00', category: 'executive', color: 'bg-purple-500', description: 'Check CRM for new signups and conversions from the Phase 1 blast.' },
+  { id: '12', title: 'Phase 2: Video Demo Follow-up', date: '2026-05-25', startTime: '08:00', endTime: '09:00', category: 'ops', color: 'bg-indigo-500', description: 'Send out the 60-second platform walk-through to opens/non-clickers.' },
+  { id: '13', title: 'Phase 3: Telephony VIP Outreach', date: '2026-06-01', startTime: '09:00', endTime: '13:00', category: 'telehealth', color: 'bg-emerald-500', description: 'Direct call blocks targeting large dispensary chains (Trulieve, Cannabist) and major attorneys.' },
+  { id: '14', title: 'Phase 4: FOMO Final Discount Push', date: '2026-06-08', startTime: '08:00', endTime: '09:00', category: 'ops', color: 'bg-indigo-500', description: 'Final email push: "Beta pricing ending soon."' },
+  { id: '15', title: 'Convert Free Trials to Paid', date: '2026-06-15', startTime: '10:00', endTime: '12:00', category: 'executive', color: 'bg-purple-500', description: 'Follow up with all 30-day trial users to secure payment or paid setup.' },
 ];
 
 const fmt = (d: Date) => d.toISOString().split('T')[0];
