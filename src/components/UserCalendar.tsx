@@ -60,7 +60,7 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
   const availableCategories = isFounder ? ALL_CATEGORIES : [{ id: 'personal', label: 'Personal', color: 'bg-slate-500' }, { id: 'task', label: 'Task', color: 'bg-blue-500' }, { id: 'reminder', label: 'Reminder', color: 'bg-orange-500' }];
   const initialEvents = isFounder ? SEED_EVENTS : [];
 
-  const storageKey = `gghp_calendar_v1_${user?.uid || user?.role || 'default'}`;
+  const storageKey = `gghp_calendar_v2_${user?.uid || user?.role || 'default'}`;
   const [events, setEvents] = useState<CalEvent[]>(() => {
     try {
       const saved = localStorage.getItem(storageKey);
