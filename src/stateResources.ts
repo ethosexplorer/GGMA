@@ -1388,16 +1388,39 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
   "Pennsylvania": {
     program: "https://www.pa.gov/services/health/register-for-the-medical-marijuana-program",
     patientPortal: "https://padohmmp.custhelp.com/app/login",
-    businessPortal: "",
-    guide: "",
+    businessPortal: "https://www.health.pa.gov/topics/programs/Medical%20Marijuana/Pages/Dispensaries.aspx",
+    guide: "https://www.health.pa.gov/topics/programs/Medical%20Marijuana/Pages/Medical%20Marijuana.aspx",
     resources: "https://www.mpp.org/states/pennsylvania/?state=PA",
     abbreviation: "PA",
-    adultUseStatus: "No",
-    medicalStatus: "Yes",
-    regulator: "Pennsylvania Department of Health",
-    compliancePage: "https://www.pa.gov/services/health/register-for-the-medical-marijuana-program",
-    checklistItems: ["Medical licensing","Testing","Dispensing","Records"],
-    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws"
+    adultUseStatus: "No (Medical Only)",
+    medicalStatus: "Yes (Medical Marijuana Act, 2016)",
+    regulator: "Pennsylvania Department of Health (DOH)",
+    compliancePage: "https://www.health.pa.gov/topics/programs/Medical%20Marijuana/Pages/Medical%20Marijuana.aspx",
+    checklistItems: ["DOH Dispensary/Grower Permit","MJ Freeway tracking (state system)","Pharmacist/Medical Professional on-site","Tax compliance (5% wholesale)"],
+    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws",
+    conditions: ["ALS","Anxiety Disorders","Autism","Cancer","Crohn's Disease","Dyskinetic/Spastic Movement Disorders","Epilepsy","Glaucoma","HIV/AIDS","Huntington's Disease","Inflammatory Bowel Disease","Intractable Seizures","Multiple Sclerosis","Neurodegenerative Diseases","Neuropathies","Opioid Use Disorder","Parkinson's Disease","PTSD","Severe Chronic or Intractable Pain","Sickle Cell Anemia","Terminal Illness","Tourette Syndrome"],
+    contactPhone: "(888) 733-5595",
+    contactEmail: "RA-DHMedMarijuana@pa.gov",
+    trackingSystem: "MJ Freeway",
+    licenseCaps: "Yes. PA limits the number of grower/processor and dispensary permits.",
+    intakeNotes: [
+      "⚕️ MEDICAL ONLY: Adult-use (recreational) marijuana remains strictly illegal in PA.",
+      "Regulator: Pennsylvania Department of Health (DOH).",
+      "Dispensaries must have a medical professional (pharmacist, physician) on-site during hours of operation.",
+      "Tax: 0% retail sales tax. There is a 5% excise tax on the wholesale transfer from grower to dispensary.",
+      "NO RECIPROCITY: PA does not recognize out-of-state medical cards. You must be a PA resident.",
+      "Home grow is strictly prohibited in PA."
+    ],
+    intakeForms: [
+      { name: "PA DOH Patient Portal", url: "https://padohmmp.custhelp.com/app/login" },
+      { name: "PA DOH Medical Marijuana Program", url: "https://www.health.pa.gov/topics/programs/Medical%20Marijuana/Pages/Medical%20Marijuana.aspx" }
+    ],
+    intakeFAQ: [
+      { q: "Is recreational weed legal in PA?", a: "NO. Pennsylvania is strictly a medical-only state." },
+      { q: "What is the tax rate?", a: "Patients pay 0% retail tax. The state levies a 5% wholesale tax on growers selling to dispensaries." },
+      { q: "Can I use my out-of-state card?", a: "NO. PA has no reciprocity. Only PA-issued cards are accepted." },
+      { q: "Can I grow my own?", a: "NO. Home cultivation is a felony in Pennsylvania, even for medical patients." }
+    ]
   },
   "Rhode Island": {
     program: "https://health.ri.gov/medical-marijuana/information/patients-caregivers",
