@@ -901,12 +901,40 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     guide: "https://msdh.ms.gov/page/30,0,425.html",
     resources: "https://www.mpp.org/states/mississippi/?state=MS",
     abbreviation: "MS",
-    adultUseStatus: "No/limited",
-    medicalStatus: "Yes",
-    regulator: "Mississippi Medical Cannabis Program",
+    adultUseStatus: "No",
+    medicalStatus: "Yes (SB 2095, signed Feb 2022)",
+    regulator: "Mississippi Medical Cannabis Program (MMCP / MSDH)",
     compliancePage: "https://www.mmcp.ms.gov/",
-    checklistItems: ["Medical licensing","Testing","Labeling","Records"],
-    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws"
+    checklistItems: ["MMCP License","Lab testing","Labeling/Packaging","Record keeping","BioTrack","3oz monthly limit"],
+    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws",
+    conditions: ["Cancer","Epilepsy","Seizure disorders","Parkinson's Disease","Huntington's Disease","Muscular Dystrophy","Glaucoma","Spastic Quadriplegia","HIV/AIDS","Hepatitis C","ALS","Crohn's Disease","Ulcerative Colitis","Sickle Cell","Alzheimer's","Chronic Pain","PTSD","Spinal Cord Injury","Traumatic Brain Injury","Chronic Nausea","Cachexia","Agitation of Dementia","Multiple Sclerosis"],
+    contactPhone: "(601) 576-7400",
+    contactEmail: "MMCP@msdh.ms.gov",
+    trackingSystem: "BioTrack",
+    licenseCaps: "~200+ licensed dispensaries. Multiple license types. County opt-out allowed.",
+    intakeNotes: [
+      "✅ MEDICAL ONLY: SB 2095 signed Feb 2022. First dispensaries opened 2024.",
+      "MMCP under Mississippi State Department of Health (MSDH) regulates.",
+      "Patient limit: 3 ounces per month (can petition for more with physician).",
+      "~200+ licensed dispensaries statewide. Growing market.",
+      "Counties/municipalities can opt OUT of allowing cannabis businesses.",
+      "No home cultivation allowed.",
+      "DeSoto County (Memphis metro) = highest concentration — TN patient draw.",
+      "23 qualifying conditions — one of the broadest lists nationally."
+    ],
+    intakeForms: [
+      { name: "Patient Registration Portal", url: "https://ms-doh-public.nls.egov.com/login" },
+      { name: "MMCP Patients & Caregivers", url: "https://www.mmcp.ms.gov/patients-caregivers" },
+      { name: "MMCP Business Registration", url: "https://www.mmcp.ms.gov/businesses" },
+      { name: "MSDH Program Guide", url: "https://msdh.ms.gov/page/30,0,425.html" }
+    ],
+    intakeFAQ: [
+      { q: "When did Mississippi legalize medical?", a: "SB 2095 was signed February 2, 2022. First dispensaries opened in 2024." },
+      { q: "How much can I purchase?", a: "3 ounces per month. Physicians can petition MSDH for up to 6 ounces/month for certain conditions." },
+      { q: "Can I grow at home?", a: "No. Home cultivation is NOT allowed in Mississippi." },
+      { q: "Can my county opt out?", a: "Yes. Counties and municipalities can vote to opt out of allowing cannabis businesses within their borders." },
+      { q: "What happened to Initiative 65?", a: "The MS Supreme Court struck down Initiative 65 in May 2021. The legislature then passed SB 2095 as a replacement in Feb 2022." }
+    ]
   },
   "Missouri": {
     program: "https://mo-public.mycomplia.com/login",

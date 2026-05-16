@@ -138,6 +138,11 @@ const GOV_ADVOCATES = [
   { name: "Massachusetts Cannabis Control Commission (CCC)", city: "Boston", state: "MA", type: "gov_state", focus: "State Regulator (Adult-Use + Medical)", email: "CannabisCommission@mass.gov", phone: "617-010-0100" },
   { name: "Massachusetts NORML", city: "Boston", state: "MA", type: "advocate", focus: "Cannabis Advocacy", email: "", phone: "" },
   { name: "Marijuana Policy Project (MPP) - MA Chapter", city: "Boston", state: "MA", type: "advocate", focus: "Policy Reform", email: "massachusetts@mpp.org", phone: "202-462-5747" },
+
+  // Mississippi (Medical only. SB 2095 (2022). MMCP/MSDH regulates. ~200+ dispensaries.)
+  { name: "Mississippi Medical Cannabis Program (MMCP)", city: "Jackson", state: "MS", type: "gov_state", focus: "State Regulator (Medical Only)", email: "MMCP@msdh.ms.gov", phone: "601-576-7400" },
+  { name: "Mississippi NORML", city: "Jackson", state: "MS", type: "advocate", focus: "Cannabis Advocacy", email: "", phone: "" },
+  { name: "Marijuana Policy Project (MPP) - MS Chapter", city: "Jackson", state: "MS", type: "advocate", focus: "Policy Reform", email: "mississippi@mpp.org", phone: "202-462-5747" },
 ];
 
 function slugify(str) { return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').substring(0, 50); }
@@ -156,7 +161,7 @@ async function importGovAdvocates() {
       contactName: org.name,
       city: org.city,
       state: org.state,
-      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Louisiana', ME:'Maine', MD:'Maryland', MA:'Massachusetts', MI:'Michigan', MN:'Minnesota' }[org.state] || org.state,
+      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Louisiana', ME:'Maine', MD:'Maryland', MA:'Massachusetts', MI:'Michigan', MN:'Minnesota', MS:'Mississippi' }[org.state] || org.state,
       type: org.type, // 'gov_state', 'gov_local', 'gov_federal', or 'advocate'
       email: org.email || '',
       phone: org.phone || '',
