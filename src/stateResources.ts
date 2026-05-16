@@ -1499,15 +1499,37 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     program: "https://medcannabisapplication.sd.gov/",
     patientPortal: "https://medcannabis.sd.gov/",
     businessPortal: "https://medcannabis.sd.gov/Establishments/Forms.aspx",
-    guide: "",
+    guide: "https://medcannabis.sd.gov/",
     resources: "https://www.mpp.org/states/south-dakota/?state=SD",
     abbreviation: "SD",
-    adultUseStatus: "No/limited",
-    medicalStatus: "Yes",
-    regulator: "South Dakota Department of Health",
+    adultUseStatus: "No (Medical Only)",
+    medicalStatus: "Yes (Initiated Measure 26, 2020)",
+    regulator: "South Dakota Department of Health (DOH)",
     compliancePage: "https://medcannabis.sd.gov/",
-    checklistItems: ["Medical licensing","Testing","Dispensing","Records"],
-    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws"
+    checklistItems: ["DOH Establishment License","Local Government Compliance Certification (Form E)","Metrc inventory tracking","Sales tax compliance"],
+    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws",
+    conditions: ["Amyotrophic Lateral Sclerosis (ALS)","Cachexia or Wasting Syndrome","Cancer","Crohn's Disease","Epilepsy and Seizures","Glaucoma","HIV/AIDS","Multiple Sclerosis (MS)","Post-Traumatic Stress Disorder (PTSD)","Severe or Chronic Pain","Severe Nausea","Severe and Persistent Muscle Spasms"],
+    contactPhone: "(605) 773-3361",
+    contactEmail: "MCST@state.sd.us",
+    trackingSystem: "Metrc",
+    licenseCaps: "Municipalities can set local caps, but cannot completely ban medical dispensaries.",
+    intakeNotes: [
+      "⚕️ MEDICAL ONLY: Recreational cannabis remains illegal after failed ballot measures in 2022 and 2024.",
+      "Regulator: South Dakota Department of Health (DOH).",
+      "Tax: No cannabis-specific excise tax. Subject to 4.2% state sales tax plus local municipal taxes (approx 5.2%-6.2% total).",
+      "NO RECIPROCITY: Out-of-state cards are NOT accepted. Non-residents must apply for an SD card.",
+      "Possession limit: 3 ounces of cannabis per 14-day period."
+    ],
+    intakeForms: [
+      { name: "SD DOH Medical Cannabis Portal", url: "https://medcannabisapplication.sd.gov/" },
+      { name: "Establishment Licensing Info", url: "https://medcannabis.sd.gov/Establishments/Forms.aspx" }
+    ],
+    intakeFAQ: [
+      { q: "Is recreational weed legal in SD?", a: "NO. It is strictly a medical-only state." },
+      { q: "What is the tax rate?", a: "There is no special cannabis tax. Standard state and local sales taxes apply (around 5.2% to 6.2%)." },
+      { q: "Can I use an out-of-state card?", a: "NO. South Dakota does not have reciprocity. You must have a SD-issued card." },
+      { q: "What is the purchase limit?", a: "Registered patients can purchase up to 3 ounces every 14 days." }
+    ]
   },
   "Tennessee": {
     program: "https://www.tn.gov/agriculture/businesses/hemp/hemp-derived-cannabinoids/hemp-derived-cannabinoids-licensing.html",
