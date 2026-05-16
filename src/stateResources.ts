@@ -1605,17 +1605,40 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
   },
   "Utah": {
     program: "https://medicalcannabis.utah.gov/patients/apply-for-patient-card/",
-    patientPortal: "https://id.utah.gov/login",
-    businessPortal: "https://medicalcannabis.utah.gov/patients/apply-for-patient-card/",
-    guide: "",
+    patientPortal: "https://evs.utah.gov",
+    businessPortal: "https://medicalcannabis.utah.gov/businesses/",
+    guide: "https://medicalcannabis.utah.gov/patients/",
     resources: "https://www.mpp.org/states/utah/?state=UT",
     abbreviation: "UT",
-    adultUseStatus: "No/limited",
-    medicalStatus: "Yes",
-    regulator: "Utah Department of Health and Human Services",
-    compliancePage: "https://medicalcannabis.utah.gov/",
-    checklistItems: ["Medical licensing","Testing","Labeling","Dispensing"],
-    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws"
+    adultUseStatus: "No (Medical Only)",
+    medicalStatus: "Yes (Proposition 2, 2018)",
+    regulator: "Utah Dept. of Agriculture and Food (UDAF) & DHHS",
+    compliancePage: "https://medicalcannabis.utah.gov/businesses/laws-and-rules/",
+    checklistItems: ["Pharmacy/Cultivation Licensing (UDAF)","EVS (Electronic Verification System) integration","Pharmacist in Charge (PIC) requirement","Tax compliance (sales tax exemption)"],
+    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws",
+    conditions: ["Alzheimer's Disease","Amyotrophic Lateral Sclerosis (ALS)","Autism","Cancer","Crohn's Disease or Ulcerative Colitis","Epilepsy/Debilitating seizures","HIV/AIDS","Multiple Sclerosis","Persistent nausea","Persistent pain (refractory to standard treatment)","Post-Traumatic Stress Disorder (PTSD)","Terminal illness (<6 months)"],
+    contactPhone: "(801) 538-6504",
+    contactEmail: "medicalcannabis@utah.gov",
+    trackingSystem: "EVS (Electronic Verification System)",
+    licenseCaps: "Yes. Strictly capped number of pharmacy and cultivation licenses.",
+    intakeNotes: [
+      "⚕️ MEDICAL ONLY: Adult-use recreational cannabis remains strictly illegal.",
+      "Regulator: Currently transitioning oversight from DHHS fully over to UDAF by 2027.",
+      "Pharmacies: Dispensaries are legally termed 'Medical Cannabis Pharmacies' and require a pharmacist.",
+      "Tax: Medical cannabis products are EXEMPT from state and local sales taxes (there is a wholesale cultivation tax).",
+      "EVS: All patient registrations, certifications, and purchases run through the Electronic Verification System (EVS).",
+      "Reciprocity: No direct reciprocity, but out-of-state patients can apply for a 21-day temporary non-resident card."
+    ],
+    intakeForms: [
+      { name: "Electronic Verification System (EVS)", url: "https://evs.utah.gov" },
+      { name: "Medical Cannabis Program Info", url: "https://medicalcannabis.utah.gov" }
+    ],
+    intakeFAQ: [
+      { q: "Is recreational weed legal in UT?", a: "NO. Utah is strictly a medical-only state." },
+      { q: "Do I have to pay sales tax on cannabis?", a: "No. Medical cannabis products in dosage form are exempt from retail sales tax in Utah." },
+      { q: "Can I use an out-of-state card?", a: "Not directly. However, you can use your home state card to apply for a temporary 21-day Utah non-resident card via EVS." },
+      { q: "What is the EVS?", a: "The Electronic Verification System. It's the central portal for patient cards, provider certs, and point-of-sale tracking." }
+    ]
   },
   "Vermont": {
     program: "https://ccb.vermont.gov/med-forms",
