@@ -774,15 +774,44 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     program: "https://masscannabiscontrol.com/new-patients/register-as-a-new-patient/",
     patientPortal: "https://patient.massciportal.com/mmj-patient/login",
     businessPortal: "https://masscannabiscontrol.com/license-types/",
-    guide: "",
+    guide: "https://masscannabiscontrol.com/",
     resources: "https://www.mpp.org/states/massachusetts/?state=MA",
     abbreviation: "MA",
-    adultUseStatus: "Yes",
-    medicalStatus: "Yes",
-    regulator: "Massachusetts Cannabis Control Commission",
+    adultUseStatus: "Yes (since Nov 2018)",
+    medicalStatus: "Yes (since 2013)",
+    regulator: "Massachusetts Cannabis Control Commission (CCC)",
     compliancePage: "https://masscannabiscontrol.com/",
-    checklistItems: ["License","Testing","Security","Recalls","Taxes"],
-    complianceSource: "https://www.nsc.org/cannabis-regulations"
+    checklistItems: ["CCC License","Testing","Security plan","Recall procedures","Tax compliance","Social equity","Host community agreement"],
+    complianceSource: "https://www.nsc.org/cannabis-regulations",
+    conditions: ["Cancer","Glaucoma","HIV/AIDS","Hepatitis C","ALS","Crohn's Disease","Parkinson's Disease","MS","PTSD","Any debilitating condition as determined by physician"],
+    contactPhone: "(617) 010-0100",
+    contactEmail: "CannabisCommission@mass.gov",
+    trackingSystem: "Metrc",
+    licenseCaps: "300+ licensed retailers. No strict state cap. Host community agreements required. Social equity priority.",
+    intakeNotes: [
+      "✅ MATURE DUAL-USE: Adult-use since Nov 2018 (Question 4, 2016). ~$3B annual sales.",
+      "CCC regulates all cannabis — adult-use, medical, and social equity programs.",
+      "300+ licensed retailers. Competitive market with MSOs and craft operators.",
+      "Tax: 10.75% state excise + 6.25% sales tax + up to 3% local option = ~20% total.",
+      "Medical patients: no sales tax or excise tax. Registration fee: $50/year.",
+      "Home grow: up to 6 plants per person, 12 per household (21+).",
+      "Host Community Agreements (HCAs) required — can add up to 3% community impact fee.",
+      "Social equity program: priority licensing for communities disproportionately impacted.",
+      "Berkshires & border towns = major draw for NY, CT, VT visitors."
+    ],
+    intakeForms: [
+      { name: "Patient Registration", url: "https://masscannabiscontrol.com/new-patients/register-as-a-new-patient/" },
+      { name: "Patient Portal Login", url: "https://patient.massciportal.com/mmj-patient/login" },
+      { name: "Business License Types", url: "https://masscannabiscontrol.com/license-types/" },
+      { name: "CCC Main Portal", url: "https://masscannabiscontrol.com/" }
+    ],
+    intakeFAQ: [
+      { q: "How much is the tax?", a: "Adult-use: 10.75% excise + 6.25% sales tax + up to 3% local = ~20%. Medical: NO tax." },
+      { q: "How do I get a medical card?", a: "Register via the Virtual Gateway. See a certified physician. $50/year registration fee. Patients get tax-free cannabis." },
+      { q: "Can I grow at home?", a: "Yes — up to 6 plants per person, 12 per household. Must be 21+. Must be out of public view." },
+      { q: "What is a Host Community Agreement?", a: "Required agreement between cannabis business and municipality. Can include community impact fee up to 3% of gross sales." },
+      { q: "What is social equity?", a: "CCC priority program for applicants from communities disproportionately impacted by marijuana prohibition. Lower fees, technical assistance." }
+    ]
   },
   "Michigan": {
     program: "https://www.michigan.gov/cra/sections/mmp",
