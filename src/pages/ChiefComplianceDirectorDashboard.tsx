@@ -52,7 +52,32 @@ const INTERNAL_NAV_ITEMS: NavItem[] = [
 const ChiefComplianceDirectorDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => void }) => {
   const [activeTab, setActiveTab] = useState('system_health');
   const [isEditingNav, setIsEditingNav] = useState(false);
-  const handleAddSection = () => { (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Not implemented" })] }).catch(console.error) ); alert("Not implemented\n\n[Live Production Transaction Logged]"); })(); };
+  const handleAddSection = () => {
+    const name = prompt('Enter new section name:');
+    if (!name) return;
+    const items = [...navItems, { id: `sec_custom_${Date.now()}`, section: name.toUpperCase() }];
+    setNavItems(items);
+    localStorage.setItem('gghp_compliance_nav_order', JSON.stringify(items.map((it, i) => it.id || `sec_${i}`)));
+  };
+
+  const handleEditSection = (e: any, idx: number) => {
+    e.stopPropagation();
+    const name = prompt('Edit section name:', navItems[idx].section);
+    if (!name) return;
+    const items = [...navItems];
+    items[idx] = { ...items[idx], section: name.toUpperCase() };
+    setNavItems(items);
+    localStorage.setItem('gghp_compliance_nav_order', JSON.stringify(items.map((it, i) => it.id || `sec_${i}`)));
+  };
+
+  const handleDeleteItem = (e: any, idx: number) => {
+    e.stopPropagation();
+    if (!confirm('Remove this item?')) return;
+    const items = [...navItems];
+    items.splice(idx, 1);
+    setNavItems(items);
+    localStorage.setItem('gghp_compliance_nav_order', JSON.stringify(items.map((it, i) => it.id || `sec_${i}`)));
+  };
 
   // Draggable nav state with localStorage persistence
   const [navItems, setNavItems] = useState(() => {
@@ -230,10 +255,10 @@ const ChiefComplianceDirectorDashboard = ({ user, onLogout }: { user?: any, onLo
                 
                 {activeTab === 'jurisdiction_map' && <div className="p-10 text-center border border-slate-800 rounded-2xl bg-slate-900/50"><Globe size={40} className="mx-auto text-indigo-500 mb-4" /><h2 className="text-2xl font-bold text-white mb-2">Nationwide Jurisdiction Oversight</h2><p className="text-slate-400">Live deployment status and compliance health across the United States.</p></div>}
                 
-                {activeTab === 'ai_training' && <AITrainingTab />}
+                {activeTab === 'ai_training' && <AITrainingTab userProfile={user} />}
                 {activeTab === 'b2b_crm' && <div className="h-full w-full -m-8 bg-slate-50 min-h-screen overflow-auto"><ExecutiveCRM /></div>}
-                {activeTab === 'messages' && <InternalMessenger currentUser={{ id: user?.uid || '1', name: fullName, role: title, avatar: null }} />}
-                {activeTab === 'internal_scheduler' && <div className="bg-white rounded-3xl overflow-hidden h-full"><UserCalendar user={user} isGodView={false} /></div>}
+                {activeTab === 'messages' && <InternalMessenger currentUser={{ name: fullName, role: title, roleId: 'compliance' }} />}
+                {activeTab === 'internal_scheduler' && <div className="bg-white rounded-3xl overflow-hidden h-full"><UserCalendar user={user} /></div>}
                 {activeTab === 'admin_support_calendar' && <div className="bg-white rounded-3xl overflow-hidden h-full"><AdminSupportCalendar /></div>}
                 {activeTab === 'escalation_support_calendar' && <div className="bg-white rounded-3xl overflow-hidden h-full"><EscalationSupportCalendar /></div>}
                 
