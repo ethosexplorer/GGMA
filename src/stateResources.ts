@@ -1166,15 +1166,42 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     program: "https://www.rld.nm.gov/cannabis/licensing/new-applications/apply-for-license/",
     patientPortal: "https://www.rld.nm.gov/cannabis/licensing/new-applications/",
     businessPortal: "https://www.rld.nm.gov/cannabis/licensing/apply-renew-a-cannabis-license/",
-    guide: "",
+    guide: "https://www.nmhealth.org/about/phd/mcp/",
     resources: "https://www.mpp.org/states/new-mexico/?state=NM",
     abbreviation: "NM",
-    adultUseStatus: "Yes",
-    medicalStatus: "Yes",
-    regulator: "New Mexico Cannabis Control Division",
-    compliancePage: "https://www.rld.nm.gov/cannabis/",
-    checklistItems: ["License","Testing","Packaging","Track-and-trace"],
-    complianceSource: "https://www.nsc.org/cannabis-regulations"
+    adultUseStatus: "Yes (Cannabis Regulation Act, 2021)",
+    medicalStatus: "Yes (Lynn and Erin Compassionate Use Act, 2007)",
+    regulator: "Cannabis Control Division (CCD) under NM Regulation & Licensing Dept",
+    compliancePage: "https://www.rld.nm.gov/cannabis/compliance/",
+    checklistItems: ["CCD License","Lab testing (BioTrack)","Child-resistant packaging","Tamper-evident sealing","Tax compliance (13% excise + gross receipts)"],
+    complianceSource: "https://www.nsc.org/cannabis-regulations",
+    conditions: ["Alzheimer's Disease","ALS","Anxiety Disorder","Autism Spectrum Disorder","Cancer","Crohn's Disease","Spinal Cord Damage","Epilepsy","Friedreich's Ataxia","Glaucoma","Hepatitis C","HIV/AIDS","Hospice Care","Huntington's Disease","Inclusion Body Myositis","Autoimmune Arthritis","Insomnia","Intractable Nausea","Lewy Body Disease","Multiple Sclerosis","Sleep Apnea","Opioid Use Disorder","Peripheral Neuropathy","Parkinson's Disease","PTSD","Anorexia/Cachexia","Severe Chronic Pain","Cervical Dystonia","Spinal Muscular Atrophy","Ulcerative Colitis"],
+    contactPhone: "(505) 476-4995",
+    contactEmail: "Cannabis.Control@state.nm.us",
+    trackingSystem: "BioTrack",
+    licenseCaps: "No statewide cap on total licenses. Local jurisdictions may limit density/locations.",
+    intakeNotes: [
+      "✅ DUAL-USE: Cannabis Regulation Act passed 2021. Adult-use sales began April 2022.",
+      "Regulated by the Cannabis Control Division (CCD). Medical program managed by DOH.",
+      "Tax: 13% state excise tax on adult-use (increases 1% annually to 18% in 2030) + gross receipts tax.",
+      "Medical patients are EXEMPT from the excise tax.",
+      "Patient card: FREE. No state fee for medical cannabis cards. Handled via online portal.",
+      "OUT-OF-STATE RECIPROCITY: Visiting patients with valid out-of-state cards can purchase tax-free after registering at an NM dispensary.",
+      "Home grow allowed: Up to 6 mature / 6 immature plants per adult (max 12 per household).",
+      "Key markets: Albuquerque, Santa Fe, Las Cruces, Rio Rancho, Roswell."
+    ],
+    intakeForms: [
+      { name: "Medical Cannabis Program Portal", url: "https://www.nmhealth.org/about/phd/mcp/" },
+      { name: "CCD Business Licensing", url: "https://www.rld.nm.gov/cannabis/licensing/" },
+      { name: "CCD Licensee Search", url: "https://ccd.rld.state.nm.us/" }
+    ],
+    intakeFAQ: [
+      { q: "When did NM legalize adult-use?", a: "The Cannabis Regulation Act passed in 2021. Sales began April 1, 2022." },
+      { q: "What is the tax?", a: "13% excise tax currently, plus local gross receipts tax. Medical patients are exempt from the excise tax." },
+      { q: "Is there reciprocity for out-of-state patients?", a: "Yes. Out-of-state patients can purchase medical cannabis tax-free by registering their valid out-of-state card at an NM dispensary." },
+      { q: "How much is a medical card?", a: "The state does not charge a fee for the medical cannabis card itself (provider eval fees still apply)." },
+      { q: "Can adults grow at home?", a: "Yes, up to 6 mature and 6 immature plants per adult (max 12 mature plants per household)." }
+    ]
   },
   "New York": {
     program: "https://cannabis.ny.gov/medical-cannabis-program-applications",

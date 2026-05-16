@@ -163,6 +163,16 @@ const GOV_ADVOCATES = [
   { name: "NH DHHS Therapeutic Cannabis Program (TCP)", city: "Concord", state: "NH", type: "gov_state", focus: "State Regulator (Medical Only — Therapeutic Cannabis)", email: "DHHS-TCP@dhhs.nh.gov", phone: "603-271-9520" },
   { name: "New Hampshire NORML", city: "Concord", state: "NH", type: "advocate", focus: "Cannabis Advocacy", email: "info@nhnorml.org", phone: "" },
   { name: "Marijuana Policy Project (MPP) - NH Chapter", city: "Concord", state: "NH", type: "advocate", focus: "Policy Reform — pushing adult-use legalization", email: "newhampshire@mpp.org", phone: "202-462-5747" },
+
+  // New Jersey (Dual-use. NJCREAMMA. CRC regulates.)
+  { name: "New Jersey Cannabis Regulatory Commission (CRC)", city: "Trenton", state: "NJ", type: "gov_state", focus: "State Regulator (Adult-Use + Medical)", email: "cannabis@nj.gov", phone: "609-376-5550" },
+  { name: "New Jersey NORML", city: "Newark", state: "NJ", type: "advocate", focus: "Cannabis Advocacy", email: "info@njnorml.org", phone: "" },
+  { name: "Marijuana Policy Project (MPP) - NJ Chapter", city: "Trenton", state: "NJ", type: "advocate", focus: "Policy Reform", email: "newjersey@mpp.org", phone: "202-462-5747" },
+
+  // New Mexico (Dual-use. CRA 2021. CCD regulates. 13% tax. Reciprocity.)
+  { name: "NM Cannabis Control Division (CCD)", city: "Santa Fe", state: "NM", type: "gov_state", focus: "State Regulator (Adult-Use + Medical)", email: "Cannabis.Control@state.nm.us", phone: "505-476-4995" },
+  { name: "New Mexico NORML", city: "Albuquerque", state: "NM", type: "advocate", focus: "Cannabis Advocacy", email: "info@nmnorml.org", phone: "" },
+  { name: "Marijuana Policy Project (MPP) - NM Chapter", city: "Santa Fe", state: "NM", type: "advocate", focus: "Policy Reform", email: "newmexico@mpp.org", phone: "202-462-5747" },
 ];
 
 function slugify(str) { return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').substring(0, 50); }
@@ -181,7 +191,7 @@ async function importGovAdvocates() {
       contactName: org.name,
       city: org.city,
       state: org.state,
-      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Louisiana', ME:'Maine', MD:'Maryland', MA:'Massachusetts', MI:'Michigan', MN:'Minnesota', MS:'Mississippi', MO:'Missouri', MT:'Montana', NV:'Nevada', NH:'New Hampshire' }[org.state] || org.state,
+      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Louisiana', ME:'Maine', MD:'Maryland', MA:'Massachusetts', MI:'Michigan', MN:'Minnesota', MS:'Mississippi', MO:'Missouri', MT:'Montana', NV:'Nevada', NH:'New Hampshire', NJ:'New Jersey', NM:'New Mexico' }[org.state] || org.state,
       type: org.type, // 'gov_state', 'gov_local', 'gov_federal', or 'advocate'
       email: org.email || '',
       phone: org.phone || '',
