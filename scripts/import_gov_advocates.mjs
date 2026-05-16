@@ -183,6 +183,11 @@ const GOV_ADVOCATES = [
   { name: "ND DHHS - Medical Marijuana Program", city: "Bismarck", state: "ND", type: "gov_state", focus: "State Regulator (Medical Cannabis)", email: "medmarijuana@nd.gov", phone: "701-328-3330" },
   { name: "North Dakota NORML", city: "Fargo", state: "ND", type: "advocate", focus: "Cannabis Advocacy", email: "info@ndnorml.org", phone: "" },
   { name: "Marijuana Policy Project (MPP) - ND Chapter", city: "Bismarck", state: "ND", type: "advocate", focus: "Policy Reform", email: "northdakota@mpp.org", phone: "202-462-5747" },
+
+  // Ohio (Dual-use. Issue 2 2023. DCC regulates.)
+  { name: "Ohio Division of Cannabis Control (DCC)", city: "Columbus", state: "OH", type: "gov_state", focus: "State Regulator (Dual-Use)", email: "MMCPRegistry@pharmacy.ohio.gov", phone: "833-464-6627" },
+  { name: "Ohio NORML", city: "Columbus", state: "OH", type: "advocate", focus: "Cannabis Advocacy", email: "info@ohionorml.org", phone: "" },
+  { name: "Marijuana Policy Project (MPP) - OH Chapter", city: "Columbus", state: "OH", type: "advocate", focus: "Policy Reform", email: "ohio@mpp.org", phone: "202-462-5747" },
 ];
 
 function slugify(str) { return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').substring(0, 50); }
@@ -201,7 +206,7 @@ async function importGovAdvocates() {
       contactName: org.name,
       city: org.city,
       state: org.state,
-      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Louisiana', ME:'Maine', MD:'Maryland', MA:'Massachusetts', MI:'Michigan', MN:'Minnesota', MS:'Mississippi', MO:'Missouri', MT:'Montana', NV:'Nevada', NH:'New Hampshire', NJ:'New Jersey', NM:'New Mexico', NC:'North Carolina', ND:'North Dakota' }[org.state] || org.state,
+      jurisdiction: { AL:'Alabama', AK:'Alaska', AZ:'Arizona', AR:'Arkansas', CA:'California', CO:'Colorado', CT:'Connecticut', DE:'Delaware', DC:'District Of Columbia', FL:'Florida', GA:'Georgia', HI:'Hawaii', ID:'Idaho', IL:'Illinois', IN:'Indiana', IA:'Iowa', KS:'Kansas', KY:'Kentucky', LA:'Louisiana', ME:'Maine', MD:'Maryland', MA:'Massachusetts', MI:'Michigan', MN:'Minnesota', MS:'Mississippi', MO:'Missouri', MT:'Montana', NV:'Nevada', NH:'New Hampshire', NJ:'New Jersey', NM:'New Mexico', NC:'North Carolina', ND:'North Dakota', OH:'Ohio' }[org.state] || org.state,
       type: org.type, // 'gov_state', 'gov_local', 'gov_federal', or 'advocate'
       email: org.email || '',
       phone: org.phone || '',

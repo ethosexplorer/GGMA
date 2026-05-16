@@ -1295,15 +1295,40 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     program: "https://com.ohio.gov/divisions-and-programs/cannabis-control/patients-caregivers/obtain-medical-marijuana",
     patientPortal: "https://com.ohio.gov/divisions-and-programs/cannabis-control/patients-caregivers/patient-and-caregiver-registry",
     businessPortal: "https://com.ohio.gov/divisions-and-programs/cannabis-control",
-    guide: "",
+    guide: "https://com.ohio.gov/divisions-and-programs/cannabis-control/patients-caregivers",
     resources: "https://www.mpp.org/states/ohio/?state=OH",
     abbreviation: "OH",
-    adultUseStatus: "Yes",
-    medicalStatus: "Yes",
-    regulator: "Ohio Division of Cannabis Control",
-    compliancePage: "https://com.ohio.gov/divisions-and-programs/cannabis-control",
-    checklistItems: ["License","Testing","Packaging","Track-and-trace","Taxes"],
-    complianceSource: "https://www.nsc.org/cannabis-regulations"
+    adultUseStatus: "Yes (Issue 2 passed Nov 2023. Sales started 2024)",
+    medicalStatus: "Yes (HB 523, 2016)",
+    regulator: "Ohio Division of Cannabis Control (DCC)",
+    compliancePage: "https://com.ohio.gov/divisions-and-programs/cannabis-control/about-dcc/rules",
+    checklistItems: ["DCC License","Dual-use certification","Metrc tracking","Local zoning compliance","Tax compliance (10% excise)"],
+    complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws",
+    conditions: ["AIDS/HIV","Alzheimer's Disease","ALS","Cancer","Cachexia","Chronic Traumatic Encephalopathy","Crohn's Disease","Epilepsy/Seizure Disorders","Fibromyalgia","Glaucoma","Hepatitis C","Huntington's Disease","Inflammatory Bowel Disease (IBD)","Multiple Sclerosis","Chronic Pain (Severe/Intractable)","Parkinson's Disease","PTSD","Sickle Cell Anemia","Spasticity","Spinal Cord Disease/Injury","Terminal Illness","Tourette Syndrome","Traumatic Brain Injury","Ulcerative Colitis"],
+    contactPhone: "(833) 464-6627",
+    contactEmail: "MMCPRegistry@pharmacy.ohio.gov",
+    trackingSystem: "Metrc",
+    licenseCaps: "Yes. The state has limited allocations for dispensaries, cultivators, and processors, managed by the DCC.",
+    intakeNotes: [
+      "✅ DUAL-USE: Issue 2 legalized adult-use (Nov 2023). Most dispensaries now operate as 'Dual-Use' (serving both medical and adult-use).",
+      "Regulator: Division of Cannabis Control (DCC) under the Dept of Commerce.",
+      "Tax: 10% state excise tax on adult-use + standard sales tax (5.75%).",
+      "Medical patients are EXEMPT from the 10% excise tax.",
+      "NO RECIPROCITY: Ohio does not accept out-of-state medical cards.",
+      "Home grow allowed: Up to 6 plants per adult (max 12 per household).",
+      "Key markets: Columbus, Cleveland, Cincinnati, Toledo, Dayton, Akron."
+    ],
+    intakeForms: [
+      { name: "Ohio Medical Marijuana Registry", url: "https://com.ohio.gov/divisions-and-programs/cannabis-control/patients-caregivers/patient-and-caregiver-registry" },
+      { name: "DCC Business Portal", url: "https://com.ohio.gov/divisions-and-programs/cannabis-control" }
+    ],
+    intakeFAQ: [
+      { q: "When did Ohio legalize recreational?", a: "Issue 2 passed in November 2023. Dual-use sales began in mid-2024." },
+      { q: "What is a dual-use dispensary?", a: "A dispensary licensed by the DCC to sell to both medical patients and adult-use consumers." },
+      { q: "What is the tax rate?", a: "Adult-use has a 10% excise tax. Medical patients are exempt from this excise tax." },
+      { q: "Does Ohio accept out-of-state cards?", a: "NO. Ohio has no reciprocity. Out-of-state cards are invalid." },
+      { q: "Can I grow at home?", a: "Yes, adults 21+ can grow up to 6 plants (max 12 per household)." }
+    ]
   },
   "Oklahoma": {
     program: "https://oklahoma.gov/omma/apply.html",
