@@ -79,8 +79,8 @@ export const LivePatientsOversight = () => {
     // Pull all users and filter client-side to catch any patient role variant
     const unsub = onSnapshot(collection(db, 'users'), (snap) => {
       const patientRoles = ['patient', 'patient_portal', 'user', 'care_wallet', 'patient_care'];
-      const all = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      const filtered = all.filter((u: any) => {
+      const all: any[] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const filtered: any[] = all.filter((u: any) => {
         const role = (u.role || '').toLowerCase();
         return patientRoles.includes(role) || role.includes('patient') || role.includes('care') || role === 'user';
       });
