@@ -284,31 +284,42 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
     if (!form.title || !form.date) return;
     const cat = availableCategories.find(c => c.id === form.category);
 
+    // Close modal immediately for instant UI response
+    setShowForm(false);
+    
+    // Save state before clearing
+    const isEditing = editingEventId;
+    const currentForm = { ...form };
+    const currentColor = cat?.color || 'bg-slate-500';
+
+    setEditingEventId(null);
+    setForm({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: 'executive', description: '', attendees: '', location: '', meetLink: '' });
+
     try {
-      if (editingEventId) {
-        if (editingEventId.startsWith('fb_')) {
-          const docId = editingEventId.replace('fb_', '');
+      if (isEditing) {
+        if (isEditing.startsWith('fb_')) {
+          const docId = isEditing.replace('fb_', '');
           await updateDoc(doc(db, 'calendar_events', docId), {
-            title: form.title,
-            date: form.date,
-            startTime: form.startTime,
-            endTime: form.endTime,
-            category: form.category,
-            color: cat?.color || 'bg-slate-500',
-            description: form.description,
-            attendees: form.attendees,
-            location: form.location,
-            meetLink: form.meetLink
+            title: currentForm.title || '',
+            date: currentForm.date || '',
+            startTime: currentForm.startTime || '',
+            endTime: currentForm.endTime || '',
+            category: currentForm.category || 'executive',
+            color: currentColor,
+            description: currentForm.description || '',
+            attendees: currentForm.attendees || '',
+            location: currentForm.location || '',
+            meetLink: currentForm.meetLink || ''
           });
         } else {
           setEvents(prev => {
-            const updated = prev.map(e => e.id === editingEventId ? { ...e, ...form, color: cat?.color || 'bg-slate-500' } : e);
+            const updated = prev.map(e => e.id === isEditing ? { ...e, ...currentForm, color: currentColor } : e);
             try { localStorage.setItem(storageKey, JSON.stringify(updated.filter(e => !e.id.startsWith('fb_') && !e.id.startsWith('signup_')))); } catch(e) {}
             return updated;
           });
         }
       } else {
-        const newEvent: CalEvent = { ...form, id: 'local_' + Date.now().toString() + '_' + Math.random().toString(36).substr(2, 5), color: cat?.color || 'bg-slate-500' };
+        const newEvent: CalEvent = { ...currentForm, id: 'local_' + Date.now().toString() + '_' + Math.random().toString(36).substr(2, 5), color: currentColor };
         
         setEvents(prev => {
           const updated = [...prev, newEvent];
@@ -317,16 +328,16 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
         });
         
         await addDoc(collection(db, 'calendar_events'), {
-          title: form.title,
-          date: form.date,
-          startTime: form.startTime,
-          endTime: form.endTime,
-          category: form.category,
-          color: cat?.color || 'bg-slate-500',
-          description: form.description,
-          attendees: form.attendees,
-          location: form.location,
-          meetLink: form.meetLink,
+          title: currentForm.title || '',
+          date: currentForm.date || '',
+          startTime: currentForm.startTime || '',
+          endTime: currentForm.endTime || '',
+          category: currentForm.category || 'executive',
+          color: currentColor,
+          description: currentForm.description || '',
+          attendees: currentForm.attendees || '',
+          location: currentForm.location || '',
+          meetLink: currentForm.meetLink || '',
           assignedTo: user?.uid || defaultPersonalId,
           assignedBy: user?.uid || defaultPersonalId,
           createdAt: serverTimestamp()
@@ -335,10 +346,6 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
     } catch (e) {
       console.error('Firebase calendar write/update error:', e);
     }
-    
-    setShowForm(false);
-    setEditingEventId(null);
-    setForm({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: 'executive', description: '', attendees: '', location: '', meetLink: '' });
   };
 
   const assignEvent = async () => {
@@ -554,7 +561,7 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
           <button onClick={generateMeetLink} className="px-4 py-3 bg-blue-600 text-white rounded-xl text-xs font-black flex items-center gap-1.5 hover:bg-blue-700 whitespace-nowrap"><Video size={14} /> Generate</button>
         </div>
         <textarea className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm resize-none" rows={2} placeholder="Description (optional)" value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} />
-        <button onClick={addEvent} className="w-full py-3 bg-[#1a4731] text-white font-black rounded-xl hover:bg-[#0f291c] transition-colors">Create Event</button>
+        <button onClick={addEvent} className="w-full py-3 bg-[#1a4731] text-white font-black rounded-xl hover:bg-[#0f291c] transition-colors">{editingEventId ? 'Save Event' : 'Create Event'}</button>
       </div>
     </div>
   );
