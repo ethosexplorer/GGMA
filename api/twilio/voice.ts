@@ -1,9 +1,36 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import * as twilio from 'twilio';
+import { createClient } from '@libsql/client/web';
 const VoiceResponse = twilio.twiml.VoiceResponse;
 
-export default function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   const twiml = new VoiceResponse();
+  
+  let routingMode = 'hybrid'; // Default
+  try {
+    const url = process.env.VITE_TURSO_DATABASE_URL || "libsql://gghp-gghp.aws-us-east-2.turso.io";
+    const authToken = process.env.VITE_TURSO_AUTH_TOKEN;
+    if (authToken) {
+      const turso = createClient({ url, authToken });
+      const result = await turso.execute("SELECT data FROM audit_logs WHERE action = 'CALL_ROUTING' ORDER BY rowid DESC LIMIT 1");
+      if (result.rows.length > 0) {
+        const dataStr = result.rows[0].data as string;
+        if (dataStr.includes('100% AI')) routingMode = 'ai_only';
+        else if (dataStr.includes('100% Human')) routingMode = 'human_only';
+      }
+    }
+  } catch (e) {
+    console.error('Failed to fetch routing mode from Turso', e);
+  }
+
+  if (routingMode === 'human_only' && !req.query.action) {
+    twiml.say({ voice: 'Polly.Joanna-Neural' }, "Welcome to the Global Green Call Center. Please hold while I connect you to the next available agent on Extension 101.");
+    const dial = twiml.dial({ timeout: 60, answerOnBridge: true });
+    const client = dial.client({ statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'], statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status', statusCallbackMethod: 'POST' }, 'GGMA_User');
+    client.parameter({ name: 'DepartmentContext', value: '100% Human Routing Override' });
+    res.setHeader('Content-Type', 'text/xml');
+    return res.status(200).send(twiml.toString());
+  }
 
   if (req.query.action === 'respond') {
     // ==========================================
