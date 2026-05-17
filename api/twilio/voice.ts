@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import VoiceResponse from 'twilio/lib/twiml/VoiceResponse.js';
+import * as twilio from 'twilio';
+const VoiceResponse = twilio.twiml.VoiceResponse;
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
   const twiml = new VoiceResponse();
