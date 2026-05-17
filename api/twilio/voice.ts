@@ -35,7 +35,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       twiml.say({ voice: 'Polly.Salli-Neural' }, "This is Hyriah. Please state your emergency or legal issue clearly, and I will immediately create an escalation ticket and transfer you to the executive extension.");
       twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=escalate_legal', timeout: 4, speechTimeout: 'auto' });
 
-    } else if (userSpeech.includes('support') || userSpeech.includes('help') || userSpeech.includes('human') || userSpeech.includes('operator') || userSpeech.includes('agent') || userSpeech.includes('extension')) {
+    } else if (userSpeech.includes('support') || userSpeech.includes('help') || userSpeech.includes('human') || userSpeech.includes('operator') || userSpeech.includes('agent') || userSpeech.includes('extension') || userSpeech.includes('it ') || userSpeech.includes('oversight') || userSpeech.includes('executive')) {
       // 5. Support / Direct Extension Transfer
       twiml.say({ voice: 'Polly.Joanna-Neural' }, "I am transferring you to Extension 101 for the Founder and Senior Agent right now.");
       const dial = twiml.dial({ timeout: 60, answerOnBridge: true });
@@ -104,12 +104,12 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
     gather.say(
       { voice: 'Polly.Joanna-Neural' },
-      "Hello! Welcome to the Global Green Call Center. I am Sylara, your virtual intake agent. Are you calling for Patient Support, Business Licensing, or to speak with Sales?"
+      "Hello! Welcome to the Global Green Call Center. I am Sylara, your virtual intake agent. Are you calling for Patient Support, Telehealth, Business Licensing, Sales, Legal, IT Support, or Executive Oversight?"
     );
 
     twiml.say(
       { voice: 'Polly.Joanna-Neural' },
-      "I didn't quite catch that. Please say Patient, Business, or Sales."
+      "I didn't quite catch that. Please name the department you are trying to reach, such as Legal, Telehealth, Patient Support, or Sales."
     );
     twiml.redirect('/api/twilio/voice');
   }
