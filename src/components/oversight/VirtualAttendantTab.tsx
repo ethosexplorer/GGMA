@@ -35,7 +35,7 @@ export const VirtualAttendantTab = () => {
   const [selectedDept, setSelectedDept] = useState<Department | null>(null);
   const [stats, setStats] = useState<CallCenterStats | null>(null);
   const [liveQueue, setLiveQueue] = useState(0);
-  const [aiEnabled, setAiEnabled] = useState(true);
+  const [routingMode, setRoutingMode] = useState<'ai_only' | 'hybrid' | 'human_only'>('hybrid');
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -73,25 +73,34 @@ export const VirtualAttendantTab = () => {
                 Full-cycle RAG-augmented intelligence led by Sylara, Call Center Commander.
               </p>
               
-              {/* AI vs Human Toggle */}
-              <div className="flex items-center gap-3 bg-[#134d36] p-2 rounded-xl inline-flex border border-emerald-800 shadow-inner">
+              {/* Call Routing Toggle */}
+              <div className="flex items-center gap-2 bg-[#134d36] p-2 rounded-xl inline-flex border border-emerald-800 shadow-inner">
                 <button
                   onClick={() => {
-                    setAiEnabled(true);
-                    import('../../lib/turso').then(m => m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'CALL_ROUTING', 'System', JSON.stringify({ detail: 'Call routing switched to AI (Sylara)' })] }).catch(console.error));
+                    setRoutingMode('ai_only');
+                    import('../../lib/turso').then(m => m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'CALL_ROUTING', 'System', JSON.stringify({ detail: 'Routing switched to 100% AI (Sylara)' })] }).catch(console.error));
                   }}
-                  className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 ${aiEnabled ? 'bg-[#D4AF77] text-[#0A3D2A] shadow-md' : 'text-emerald-200/50 hover:text-emerald-200 hover:bg-emerald-800/50'}`}
+                  className={`px-3 py-2 rounded-lg text-[10px] font-bold transition-all flex items-center gap-1.5 ${routingMode === 'ai_only' ? 'bg-[#D4AF77] text-[#0A3D2A] shadow-md' : 'text-emerald-200/50 hover:text-emerald-200 hover:bg-emerald-800/50'}`}
                 >
-                  <Mic size={14} /> Sylara AI Active
+                  <Mic size={14} /> 100% AI
                 </button>
                 <button
                   onClick={() => {
-                    setAiEnabled(false);
-                    import('../../lib/turso').then(m => m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'CALL_ROUTING', 'System', JSON.stringify({ detail: 'Call routing switched to Human Agents' })] }).catch(console.error));
+                    setRoutingMode('hybrid');
+                    import('../../lib/turso').then(m => m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'CALL_ROUTING', 'System', JSON.stringify({ detail: 'Routing switched to Hybrid (85% AI / 15% Human)' })] }).catch(console.error));
                   }}
-                  className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 ${!aiEnabled ? 'bg-rose-500 text-white shadow-md shadow-rose-900/30' : 'text-emerald-200/50 hover:text-emerald-200 hover:bg-emerald-800/50'}`}
+                  className={`px-3 py-2 rounded-lg text-[10px] font-bold transition-all flex items-center gap-1.5 ${routingMode === 'hybrid' ? 'bg-blue-500 text-white shadow-md shadow-blue-900/30' : 'text-emerald-200/50 hover:text-emerald-200 hover:bg-emerald-800/50'}`}
                 >
-                  <Users size={14} /> Human Agents Only
+                  <RefreshCw size={14} /> 85% AI / 15% Human
+                </button>
+                <button
+                  onClick={() => {
+                    setRoutingMode('human_only');
+                    import('../../lib/turso').then(m => m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'CALL_ROUTING', 'System', JSON.stringify({ detail: 'Routing switched to 100% Human Agents' })] }).catch(console.error));
+                  }}
+                  className={`px-3 py-2 rounded-lg text-[10px] font-bold transition-all flex items-center gap-1.5 ${routingMode === 'human_only' ? 'bg-rose-500 text-white shadow-md shadow-rose-900/30' : 'text-emerald-200/50 hover:text-emerald-200 hover:bg-emerald-800/50'}`}
+                >
+                  <Users size={14} /> 100% Human
                 </button>
               </div>
             </div>
@@ -178,11 +187,11 @@ export const VirtualAttendantTab = () => {
                 <div className="flex flex-col items-end">
                   <span className={cn(
                     "text-[8px] font-black uppercase px-2 py-0.5 rounded-full transition-colors",
-                    !aiEnabled ? "bg-amber-100 text-amber-700" :
+                    routingMode === 'human_only' ? "bg-amber-100 text-amber-700" :
                     dept.status === 'active' ? "bg-emerald-50 text-emerald-600" : 
                     dept.status === 'training' ? "bg-blue-50 text-blue-600" : "bg-rose-50 text-rose-600"
                   )}>
-                    {!aiEnabled ? 'HUMAN OVERRIDE' : dept.status.replace('_', ' ')}
+                    {routingMode === 'human_only' ? 'HUMAN OVERRIDE' : dept.status.replace('_', ' ')}
                   </span>
                   <span className={cn(
                     "text-[10px] font-bold mt-1",
@@ -215,8 +224,8 @@ export const VirtualAttendantTab = () => {
                 "flex items-center justify-between pt-3 border-t transition-colors",
                 selectedDept?.id === dept.id ? "border-emerald-800" : "border-slate-100"
               )}>
-                <span className={cn("text-[9px] font-bold transition-colors", selectedDept?.id === dept.id ? "text-[#D4AF77]" : !aiEnabled ? "text-amber-500" : "text-slate-400")}>
-                  {aiEnabled ? "100% AI Active" : "100% Human Active"}
+                <span className={cn("text-[9px] font-bold transition-colors", selectedDept?.id === dept.id ? "text-[#D4AF77]" : routingMode === 'human_only' ? "text-amber-500" : routingMode === 'hybrid' ? "text-blue-500" : "text-emerald-500")}>
+                  {routingMode === 'ai_only' ? "100% AI Active" : routingMode === 'hybrid' ? "85% AI / 15% Human" : "100% Human Active"}
                 </span>
                 <ChevronRight size={14} className={selectedDept?.id === dept.id ? "text-[#D4AF77]" : "text-slate-300"} />
               </div>
