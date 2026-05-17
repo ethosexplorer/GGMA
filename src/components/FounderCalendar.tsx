@@ -161,6 +161,23 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
                 }).catch(console.error);
               });
             }
+
+            // Inject the new API integration tasks
+            const hasIntegrationTasks = snap.docs.some(d => d.data().title?.includes('Contact Metrc to confirm API approval'));
+            if (!hasIntegrationTasks) {
+              console.log("Injecting API integration tasks to Firestore...");
+              [
+                { title: 'Contact Metrc to confirm API approval for all listed states', date: '2026-05-18', startTime: '09:00', endTime: '10:00', category: 'executive', color: 'bg-purple-500', description: 'Currently login only shows Oklahoma. Need to confirm approval for the other states.' },
+                { title: 'Contact BioTrack, MJ Freeway, and Leaf Data for API integration info', date: '2026-05-19', startTime: '09:00', endTime: '10:00', category: 'executive', color: 'bg-purple-500', description: 'Produce the others info so we can integrate. Contact them to start the process.' }
+              ].forEach(task => {
+                addDoc(collection(db, 'calendar_events'), {
+                  ...task,
+                  assignedTo: user?.uid || 'Founder',
+                  assignedBy: 'Founder',
+                  createdAt: serverTimestamp()
+                }).catch(console.error);
+              });
+            }
           }
           
           return updated;

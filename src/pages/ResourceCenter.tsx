@@ -48,7 +48,7 @@ const LEGAL_TOPICS = [
   ]},
   { title: 'State Compliance', icon: Shield, items: [
     { q: 'How do I know my state\'s regulations?', a: 'GGP-OS has the complete regulatory database for all 50 states + DC built into Sylara AI. Ask her about your specific state and she\'ll provide the exact regulator, tracking system, tax rates, and compliance requirements.' },
-    { q: 'What is seed-to-sale tracking?', a: 'States require cannabis to be tracked from cultivation to final sale. Systems include Metrc (most states), BioTrack (FL, DE, NM), MJ Freeway (PA, several others), and Leaf Data (WA). GGP-OS integrates with all of them.' },
+    { q: 'What is seed-to-sale tracking?', a: 'States require cannabis to be tracked from cultivation to final sale. Systems include Metrc (most states), BioTrack (FL, DE, NM), MJ Freeway (PA, several others), and Leaf Data (WA). Currently, GGP-OS fully integrates with Metrc, with integrations for the others on our active roadmap.' },
     { q: 'Does my state have patient reciprocity?', a: 'Some states accept out-of-state medical cards (e.g., OK, ME, MI, DC, AR). Reciprocity rules vary — ask Sylara for your specific state\'s policy.' },
     { q: 'Can I grow cannabis at home?', a: 'Home cultivation rules vary dramatically by state. Some allow it for medical patients (e.g., OK: 6 mature plants), others prohibit it entirely. Check your state dashboard for specifics.' },
   ]},
