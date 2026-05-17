@@ -4,10 +4,10 @@ import { cn } from '../../lib/utils';
 import { generateGeminiResponse } from '../../lib/gemini';
 
 const sampleQueries = [
-  'What are the top national diversion risks this quarter?',
-  'Model the tax impact of Schedule III implementation',
-  'Which states show highest Recency Index volatility?',
-  'Generate congressional briefing for Q1 2026',
+  'Compare Alabama vs Oklahoma medical cannabis programs — restrictions, tax, and market size',
+  'Which states use BioTrack vs Metrc for seed-to-sale tracking?',
+  'List all states with patient reciprocity for out-of-state medical cards',
+  'What are the top 5 largest cannabis markets by revenue?',
 ];
 
 export const SylaraFederalTab = () => {
