@@ -35,6 +35,7 @@ export const VirtualAttendantTab = () => {
   const [selectedDept, setSelectedDept] = useState<Department | null>(null);
   const [stats, setStats] = useState<CallCenterStats | null>(null);
   const [liveQueue, setLiveQueue] = useState(0);
+  const [aiEnabled, setAiEnabled] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -58,17 +59,41 @@ export const VirtualAttendantTab = () => {
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-12 h-12 rounded-2xl bg-[#D4AF77]/20 flex items-center justify-center text-[#D4AF77]">
-                  <Mic size={28} />
+                  <Phone size={28} />
                 </div>
                 <div>
                   <h1 className="text-3xl font-black text-white tracking-tight">GGE World Call Center</h1>
-                  <p className="text-[#D4AF77] font-bold text-sm tracking-widest uppercase">Twilio Live Integration</p>
+                  <p className="text-[#D4AF77] font-bold text-sm tracking-widest uppercase flex items-center gap-2">
+                    Twilio Live Integration <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF77]"></span> 1-888-963-4447
+                  </p>
                 </div>
               </div>
-              <p className="text-emerald-100/60 max-w-lg mt-2">
+              <p className="text-emerald-100/60 max-w-lg mt-2 mb-4">
                 The 85% AI / 15% Human Virtual Attendant System. Powered by Global Green Enterprise Inc. 
                 Full-cycle RAG-augmented intelligence led by Sylara, Call Center Commander.
               </p>
+              
+              {/* AI vs Human Toggle */}
+              <div className="flex items-center gap-3 bg-[#134d36] p-2 rounded-xl inline-flex border border-emerald-800 shadow-inner">
+                <button
+                  onClick={() => {
+                    setAiEnabled(true);
+                    import('../../lib/turso').then(m => m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'CALL_ROUTING', 'System', JSON.stringify({ detail: 'Call routing switched to AI (Sylara)' })] }).catch(console.error));
+                  }}
+                  className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 ${aiEnabled ? 'bg-[#D4AF77] text-[#0A3D2A] shadow-md' : 'text-emerald-200/50 hover:text-emerald-200 hover:bg-emerald-800/50'}`}
+                >
+                  <Mic size={14} /> Sylara AI Active
+                </button>
+                <button
+                  onClick={() => {
+                    setAiEnabled(false);
+                    import('../../lib/turso').then(m => m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'CALL_ROUTING', 'System', JSON.stringify({ detail: 'Call routing switched to Human Agents' })] }).catch(console.error));
+                  }}
+                  className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 ${!aiEnabled ? 'bg-rose-500 text-white shadow-md shadow-rose-900/30' : 'text-emerald-200/50 hover:text-emerald-200 hover:bg-emerald-800/50'}`}
+                >
+                  <Users size={14} /> Human Agents Only
+                </button>
+              </div>
             </div>
             <div className="bg-emerald-900/50 backdrop-blur-md p-4 rounded-2xl border border-emerald-800">
               <div className="flex items-center gap-2 mb-1">
