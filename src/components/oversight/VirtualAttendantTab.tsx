@@ -69,7 +69,7 @@ export const VirtualAttendantTab = () => {
                 </div>
               </div>
               <p className="text-emerald-100/60 max-w-lg mt-2 mb-4">
-                The 85% AI / 15% Human Virtual Attendant System. Powered by Global Green Enterprise Inc. 
+                The 100% AI / Human Virtual Attendant System. Powered by Global Green Enterprise Inc. 
                 Full-cycle RAG-augmented intelligence led by Sylara, Call Center Commander.
               </p>
               
@@ -216,7 +216,7 @@ export const VirtualAttendantTab = () => {
                 selectedDept?.id === dept.id ? "border-emerald-800" : "border-slate-100"
               )}>
                 <span className={cn("text-[9px] font-bold transition-colors", selectedDept?.id === dept.id ? "text-[#D4AF77]" : !aiEnabled ? "text-amber-500" : "text-slate-400")}>
-                  {aiEnabled ? "85% AI Active" : "100% Human Active"}
+                  {aiEnabled ? "100% AI Active" : "100% Human Active"}
                 </span>
                 <ChevronRight size={14} className={selectedDept?.id === dept.id ? "text-[#D4AF77]" : "text-slate-300"} />
               </div>
