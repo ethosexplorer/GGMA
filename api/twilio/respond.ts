@@ -54,7 +54,11 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     );
     // Ring the WebDialer on the GGP-OS dashboards
     const dial = twiml.dial({ timeout: 60, answerOnBridge: true });
-    const client = dial.client({ statusCallbackEvent: 'initiated ringing answered completed', statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status', statusCallbackMethod: 'POST' }, 'GGMA_User');
+    const client = dial.client({ 
+      statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'], 
+      statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status', 
+      statusCallbackMethod: 'POST' 
+    }, 'GGMA_User');
     client.parameter({ name: 'DepartmentContext', value: 'Human Operator Transfer' });
 
   } else {
