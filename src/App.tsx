@@ -84,7 +84,8 @@ import {
   Home,
   Check,
   Wallet,
-  HeartHandshake
+  HeartHandshake,
+  HelpCircle
  } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from './lib/utils';
