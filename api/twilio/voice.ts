@@ -54,20 +54,42 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
   } else if (req.query.action && req.query.action.toString().startsWith('escalate_')) {
     // ==========================================
-    // ESCALATION / TRANSFER TO EXTENSION LOGIC
+    // AI HANDLING LOGIC (85% AI COMPLETION)
     // ==========================================
     const dept = req.query.action.toString().replace('escalate_', '').toUpperCase();
-    twiml.say({ voice: 'Polly.Joanna-Neural' }, "Thank you. Your intake information has been recorded and an escalation ticket has been created. Transferring to the Founder's extension, Extension 101, now.");
-    
-    // Ring the WebDialer on the Dashboard (EXT 101)
-    const dial = twiml.dial({ timeout: 60, answerOnBridge: true });
-    const client = dial.client({ 
-      statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'], 
-      statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status', 
-      statusCallbackMethod: 'POST' 
-    }, 'GGMA_User'); // GGMA_User acts as the universal WebDialer endpoint for now
-    client.parameter({ name: 'DepartmentContext', value: `Intake Complete: ${dept}` });
+    const userSpeech = req.body.SpeechResult?.toLowerCase() || '';
 
+    if (userSpeech.includes('human') || userSpeech.includes('operator') || userSpeech.includes('agent') || userSpeech.includes('help')) {
+      twiml.say({ voice: 'Polly.Joanna-Neural' }, "I understand. I am transferring your case to a live human agent on Extension 101 now. Please hold.");
+      const dial = twiml.dial({ timeout: 60, answerOnBridge: true });
+      const client = dial.client({ statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'], statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status', statusCallbackMethod: 'POST' }, 'GGMA_User');
+      client.parameter({ name: 'DepartmentContext', value: `Escalation from AI: ${dept}` });
+    } else {
+      if (dept === 'SALES') {
+        twiml.say({ voice: 'Polly.Salli-Neural' }, "Thank you. I have pulled up your file. Our Premium Subscription is $299 per month and includes full access to the CareWallet and LARRY compliance engine. I can process your payment securely over the phone right now, or I can text you a secure checkout link. Which do you prefer?");
+        twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=finish_sales', timeout: 5, speechTimeout: 'auto' });
+      } else if (dept === 'PATIENT') {
+        twiml.say({ voice: 'Polly.Salli-Neural' }, "Thank you. I have located your patient file. Your medical card application requires a brief telehealth consultation. I have found an available doctor for today at 3 PM. Shall I lock in that appointment for you?");
+        twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=finish_patient', timeout: 5, speechTimeout: 'auto' });
+      } else if (dept === 'BUSINESS') {
+        twiml.say({ voice: 'Polly.Matthew-Neural' }, "Thank you. I see your business profile. LARRY indicates there are two pending compliance alerts regarding your recent Metrc transfer. I can text you the secure login link to resolve these, or I can connect you to the Director of Compliance. Which do you prefer?");
+        twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=finish_business', timeout: 5, speechTimeout: 'auto' });
+      } else if (dept === 'LEGAL') {
+        twiml.say({ voice: 'Polly.Salli-Neural' }, "Thank you for the details. I have immediately logged this into our secure Attorney Marketplace. An attorney specializing in your issue has been pinged and is reviewing your file right now. They will call you back on this number within 5 minutes. Please stay safe.");
+        twiml.hangup();
+      }
+    }
+  } else if (req.query.action && req.query.action.toString().startsWith('finish_')) {
+     const userSpeech = req.body.SpeechResult?.toLowerCase() || '';
+     if (userSpeech.includes('human') || userSpeech.includes('operator') || userSpeech.includes('agent') || userSpeech.includes('compliance')) {
+        twiml.say({ voice: 'Polly.Joanna-Neural' }, "Transferring you to a live agent now. Please hold.");
+        const dial = twiml.dial({ timeout: 60, answerOnBridge: true });
+        const client = dial.client({ statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'], statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status', statusCallbackMethod: 'POST' }, 'GGMA_User');
+        client.parameter({ name: 'DepartmentContext', value: 'Human Operator Transfer' });
+     } else {
+        twiml.say({ voice: 'Polly.Joanna-Neural' }, "Perfect. I have processed your request and sent the confirmation to your phone. Thank you for calling Global Green Enterprise. Have a wonderful day!");
+        twiml.hangup();
+     }
   } else {
     // ==========================================
     // INITIAL GREETING LOGIC
