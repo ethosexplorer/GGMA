@@ -1,15 +1,16 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-const twilio = require('twilio');
+import twilio from 'twilio';
+
 const VoiceResponse = twilio.twiml.VoiceResponse;
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const twiml = new VoiceResponse();
 
-    // Dynamic routing mode check (lazy-loaded to prevent module crash)
+    // Dynamic routing mode check
     let routingMode = 'hybrid';
     try {
-      const { createClient } = require('@libsql/client/web');
+      const { createClient } = await import('@libsql/client/web');
       const url = process.env.VITE_TURSO_DATABASE_URL || "libsql://gghp-gghp.aws-us-east-2.turso.io";
       const authToken = process.env.VITE_TURSO_AUTH_TOKEN;
       if (authToken) {
