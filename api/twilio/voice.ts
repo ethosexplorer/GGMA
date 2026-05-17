@@ -36,18 +36,27 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=escalate_legal', timeout: 4, speechTimeout: 'auto' });
 
     } else if (userSpeech.includes('it ') || userSpeech.includes('tech') || userSpeech.includes('computer') || userSpeech.includes('website')) {
-      // 5. IT Support
-      twiml.say({ voice: 'Polly.Joanna-Neural' }, "You have reached IT Support. Please describe your technical issue briefly, and I will create an IT ticket and connect you to a technician.");
+      // 5. IT Support -> Olivia
+      twiml.say({ voice: 'Polly.Joanna-Neural' }, "You have reached IT Support. I am transferring you to Olivia, our AI Technical Specialist.");
+      twiml.say({ voice: 'Polly.Salli-Neural' }, "Hello, this is Olivia. Please describe your technical issue briefly, and I will create an IT ticket and connect you to a technician.");
       twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=escalate_it', timeout: 4, speechTimeout: 'auto' });
 
     } else if (userSpeech.includes('oversight') || userSpeech.includes('executive') || userSpeech.includes('founder') || userSpeech.includes('shantell') || userSpeech.includes('ryan')) {
-      // 6. Executive Oversight
-      twiml.say({ voice: 'Polly.Joanna-Neural' }, "You have reached Executive Oversight. Please state your name and the reason for your call, and I will transfer your request to the Executive Board.");
+      // 6. Executive Oversight -> Rosalie
+      twiml.say({ voice: 'Polly.Joanna-Neural' }, "You have reached Executive Oversight. I am transferring you to Rosalie, our Executive Liaison.");
+      twiml.say({ voice: 'Polly.Salli-Neural' }, "Hello, this is Rosalie. Please state your name and the reason for your call, and I will transfer your request to the Executive Board.");
       twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=escalate_oversight', timeout: 4, speechTimeout: 'auto' });
 
+    } else if (userSpeech.includes('telehealth') || userSpeech.includes('doctor') || userSpeech.includes('appointment')) {
+      // 7. Telehealth -> Logan
+      twiml.say({ voice: 'Polly.Joanna-Neural' }, "You have reached Telehealth Services. I am transferring you to Logan, our Telehealth Coordinator.");
+      twiml.say({ voice: 'Polly.Matthew-Neural' }, "Hello, this is Logan. I can help you schedule a virtual appointment with a state-certified doctor. Please state your name and preferred time, and I will text you the booking link.");
+      twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=escalate_telehealth', timeout: 4, speechTimeout: 'auto' });
+
     } else if (userSpeech.includes('support') || userSpeech.includes('help') || userSpeech.includes('human') || userSpeech.includes('operator') || userSpeech.includes('agent') || userSpeech.includes('extension')) {
-      // 7. Support / Direct Extension Transfer
-      twiml.say({ voice: 'Polly.Joanna-Neural' }, "I am transferring you to Extension 101 for the next available agent right now.");
+      // 8. Support -> Sophia
+      twiml.say({ voice: 'Polly.Joanna-Neural' }, "I understand. I am transferring you to Sophia, our Customer Support Director.");
+      twiml.say({ voice: 'Polly.Salli-Neural' }, "Hello, this is Sophia. Please hold while I connect you to Extension 101 for the next available human agent right now.");
       const dial = twiml.dial({ timeout: 60, answerOnBridge: true });
       const client = dial.client({ 
         statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'], 
@@ -95,6 +104,9 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
         const dial = twiml.dial({ timeout: 60, answerOnBridge: true });
         const client = dial.client({ statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'], statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status', statusCallbackMethod: 'POST' }, 'GGMA_User');
         client.parameter({ name: 'DepartmentContext', value: 'Executive Oversight Escalation' });
+      } else if (dept === 'TELEHEALTH') {
+        twiml.say({ voice: 'Polly.Matthew-Neural' }, "Thank you. I have locked in your appointment request. I am texting you the intake link and appointment details now. Have a healthy day!");
+        twiml.hangup();
       }
     }
   } else if (req.query.action && req.query.action.toString().startsWith('finish_')) {
