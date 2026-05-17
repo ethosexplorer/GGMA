@@ -177,11 +177,12 @@ export const VirtualAttendantTab = () => {
                 </div>
                 <div className="flex flex-col items-end">
                   <span className={cn(
-                    "text-[8px] font-black uppercase px-2 py-0.5 rounded-full",
+                    "text-[8px] font-black uppercase px-2 py-0.5 rounded-full transition-colors",
+                    !aiEnabled ? "bg-amber-100 text-amber-700" :
                     dept.status === 'active' ? "bg-emerald-50 text-emerald-600" : 
-                    dept.status === 'training' ? "bg-blue-50 text-blue-600" : "bg-amber-50 text-amber-600"
+                    dept.status === 'training' ? "bg-blue-50 text-blue-600" : "bg-rose-50 text-rose-600"
                   )}>
-                    {dept.status.replace('_', ' ')}
+                    {!aiEnabled ? 'HUMAN OVERRIDE' : dept.status.replace('_', ' ')}
                   </span>
                   <span className={cn(
                     "text-[10px] font-bold mt-1",
@@ -211,10 +212,12 @@ export const VirtualAttendantTab = () => {
               </ul>
 
               <div className={cn(
-                "flex items-center justify-between pt-3 border-t",
+                "flex items-center justify-between pt-3 border-t transition-colors",
                 selectedDept?.id === dept.id ? "border-emerald-800" : "border-slate-100"
               )}>
-                <span className={cn("text-[9px] font-bold", selectedDept?.id === dept.id ? "text-[#D4AF77]" : "text-slate-400")}>85% AI Active</span>
+                <span className={cn("text-[9px] font-bold transition-colors", selectedDept?.id === dept.id ? "text-[#D4AF77]" : !aiEnabled ? "text-amber-500" : "text-slate-400")}>
+                  {aiEnabled ? "85% AI Active" : "100% Human Active"}
+                </span>
                 <ChevronRight size={14} className={selectedDept?.id === dept.id ? "text-[#D4AF77]" : "text-slate-300"} />
               </div>
             </div>
