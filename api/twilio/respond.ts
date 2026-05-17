@@ -33,7 +33,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     // Wait for "Yes" or "No"
     twiml.gather({
       input: ['speech'],
-      action: '/api/twilio-voice', // We just loop back for now
+      action: '/api/twilio/voice', // We just loop back for now
       timeout: 3,
       speechTimeout: 'auto',
       language: 'en-US'

@@ -11,7 +11,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
   // Sylara introduces herself using a highly realistic Neural Voice
   const gather = twiml.gather({
     input: ['speech'],
-    action: '/api/twilio-respond',
+    action: '/api/twilio/respond',
     timeout: 4,
     speechTimeout: 'auto',
     language: 'en-US'
@@ -27,7 +27,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     { voice: 'Polly.Joanna-Neural' },
     "I didn't quite catch that. Please say Patient, Business, or Sales."
   );
-  twiml.redirect('/api/twilio-voice'); // Loops back to the top
+  twiml.redirect('/api/twilio/voice'); // Loops back to the top
 
   // Send the TwiML XML back to Twilio
   res.setHeader('Content-Type', 'text/xml');
