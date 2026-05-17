@@ -109,13 +109,17 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
       const q = query(collection(db, 'calendar_events'));
       unsubscribeEvents = onSnapshot(q, (snap) => {
         setEvents(current => {
-          let updated = [...current];
+          // Keep all local events (non-Firebase)
+          let updated = current.filter(e => !e.id.startsWith('fb_'));
+          
+          // Add/update all Firebase events
           snap.docs.forEach(doc => {
             const data = doc.data();
-            // ONLY show if it's assigned to ME, or if I created it
-            if (data.assignedTo === user?.uid || data.assignedBy === user?.uid || data.assignedTo === defaultPersonalId || data.assignedBy === 'Founder') {
+            // Show if assigned to me, created by me, or assigned by Founder
+            if (data.assignedTo === user?.uid || data.assignedBy === user?.uid || data.assignedTo === defaultPersonalId || data.assignedBy === defaultPersonalId || data.assignedBy === 'Founder') {
               const evId = `fb_${doc.id}`;
-              const existsIndex = updated.findIndex(e => e.id === evId);
+              // Remove any local duplicate that matches this Firebase event (by title+date)
+              updated = updated.filter(e => !(e.title === data.title && e.date === data.date && e.id.startsWith('local_')));
               const newEv = {
                 id: evId,
                 title: data.title,
@@ -125,13 +129,11 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
                 category: data.category || 'task',
                 color: data.color || 'bg-blue-500',
                 description: data.description,
+                attendees: data.attendees,
+                location: data.location,
                 meetLink: data.meetLink
               };
-              if (existsIndex >= 0) {
-                updated[existsIndex] = newEv;
-              } else {
-                updated.push(newEv);
-              }
+              updated.push(newEv);
             }
           });
           
@@ -260,10 +262,40 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
     return Array.from({ length: 7 }, (_, i) => { const dd = new Date(d); dd.setDate(d.getDate() + i); return dd; });
   }, [current]);
 
-  const addEvent = () => {
+  const addEvent = async () => {
     if (!form.title || !form.date) return;
     const cat = availableCategories.find(c => c.id === form.category);
-    setEvents(prev => [...prev, { ...form, id: Date.now().toString(), color: cat?.color || 'bg-slate-500' }]);
+    const newEvent: CalEvent = { ...form, id: 'local_' + Date.now().toString() + '_' + Math.random().toString(36).substr(2, 5), color: cat?.color || 'bg-slate-500' };
+    
+    // 1. Immediately add to local state for instant UI feedback
+    setEvents(prev => {
+      const updated = [...prev, newEvent];
+      // 2. Persist to localStorage as backup
+      try { localStorage.setItem(storageKey, JSON.stringify(updated.filter(e => !e.id.startsWith('fb_') && !e.id.startsWith('signup_')))); } catch(e) {}
+      return updated;
+    });
+    
+    // 3. Persist to Firebase so it survives re-renders and shows via onSnapshot
+    try {
+      await addDoc(collection(db, 'calendar_events'), {
+        title: form.title,
+        date: form.date,
+        startTime: form.startTime,
+        endTime: form.endTime,
+        category: form.category,
+        color: cat?.color || 'bg-slate-500',
+        description: form.description,
+        attendees: form.attendees,
+        location: form.location,
+        meetLink: form.meetLink,
+        assignedTo: user?.uid || defaultPersonalId,
+        assignedBy: user?.uid || defaultPersonalId,
+        createdAt: serverTimestamp()
+      });
+    } catch (e) {
+      console.error('Firebase calendar write error (event still saved locally):', e);
+    }
+    
     setShowForm(false);
     setForm({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: 'executive', description: '', attendees: '', location: '', meetLink: '' });
   };
