@@ -163,6 +163,6 @@ export const formatPriceBreakdown = (stateName: string, discounted: boolean = fa
   if (discounted) breakdown += ` (discount applied)`;
   breakdown += ` | State Fee: $${state}`;
   if (discounted && fees.stateFeeDiscount !== undefined) breakdown += ` (reduced)`;
-  breakdown += ` | TOTAL: $${total.toFixed(2)}`;
+  breakdown += ` | TOTAL: $${total.toFixed(2)} (cost could vary)`;
   return breakdown;
 };

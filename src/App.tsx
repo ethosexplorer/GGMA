@@ -5283,7 +5283,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
           setSignupStep(19.7);
           const _feeInfo = getStateFees(finalData.state || 'Oklahoma');
           const _feeDisplay = _feeInfo.totalStandard > 0
-            ? `**$${_feeInfo.totalDiscount.toFixed(2)}** (with discounts) to **$${_feeInfo.totalStandard.toFixed(2)}** (standard) — includes doctor ($${_feeInfo.doctorFee}), GGP processing ($${_feeInfo.ggpProcessingFee}), and state fee ($${_feeInfo.stateFee})`
+            ? `**$${_feeInfo.totalDiscount.toFixed(2)}** (with discounts) to **$${_feeInfo.totalStandard.toFixed(2)}** (standard) — includes doctor ($${_feeInfo.doctorFee}), GGP processing ($${_feeInfo.ggpProcessingFee}), and state fee ($${_feeInfo.stateFee}) *(cost could vary)*`
             : `Your state does not yet have a medical cannabis program`;
           response = `✅ **Intake Complete!**\n\nYour file has been prepared for the **L.A.R.R.Y Authority Engine**. \n\n**Next Steps:**\n• **Review**: We will verify your documents within 24 hours.\n• **Total Cost**: ${_feeDisplay}.\n• **Timeline**: Your card will be available within 10 business days.\n\nWhile we process your file, would you like to leave a **Video or Voice Review** for the community? We use these to improve the GGMA Sector! 🎤`;
         } catch (err) {
