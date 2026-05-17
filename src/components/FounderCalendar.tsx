@@ -28,6 +28,17 @@ const HOURS = Array.from({ length: 16 }, (_, i) => i + 6); // 6AM-9PM
 
 const SEED_EVENTS: CalEvent[] = [];
 
+const THIRTY_DAY_TASKS: CalEvent[] = [
+  { id: 'marketing-1', title: 'Launch "Shock & Awe" Email Campaign', date: '2026-05-18', startTime: '09:00', endTime: '10:00', category: 'task', color: 'bg-blue-500', description: 'Mass email out to all imported leads offering 30-day free trial.' },
+  { id: 'marketing-2', title: 'Monitor Initial 30-Day Signups (All)', date: '2026-05-20', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Track early conversions and identify which state segment is reacting best.' },
+  { id: 'marketing-3', title: 'Send out the "Video Demo" follow-up email', date: '2026-05-25', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Visual proof of automated compliance for non-clickers.' },
+  { id: 'marketing-4', title: 'Telephony VIP Outreach', date: '2026-06-01', startTime: '08:00', endTime: '10:00', category: 'task', color: 'bg-blue-500', description: 'Direct call blocks to large chains and attorneys. Discuss immediate financial risk of state fines and audits.' },
+  { id: 'marketing-5', title: 'Review CRM Conversion Metrics', date: '2026-06-05', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Determine which state segment performed best to focus FOMO efforts.' },
+  { id: 'marketing-6', title: 'Final "Beta Pricing" FOMO push', date: '2026-06-08', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Draft and blast FOMO "Beta Pricing" Copy. Create urgency before standard pricing starts.' },
+  { id: 'marketing-7', title: 'Call High-Intent FOMO Clickers', date: '2026-06-13', startTime: '08:00', endTime: '10:00', category: 'task', color: 'bg-blue-500', description: "Secure leads who clicked but didn't buy." },
+  { id: 'marketing-8', title: 'Convert Trials to Paid', date: '2026-06-15', startTime: '08:00', endTime: '10:00', category: 'task', color: 'bg-blue-500', description: 'Lock in recurring revenue and charge setup fees.' }
+];
+
 // Mock events removed to ensure strictly real-time operation
 
 const fmt = (d: Date) => d.toISOString().split('T')[0];
@@ -46,7 +57,10 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
   const [allUsers, setAllUsers] = useState<any[]>([]);
 
   React.useEffect(() => {
-    let unsubscribe: () => void;
+    let unsubscribeUsers: () => void;
+    let unsubscribeEvents: () => void;
+    
+    const isExecutive = ['executive_founder', 'president', 'chief_compliance_director', 'advisor'].includes(user?.role);
     
     const loadEvents = () => {
       let localEvents: CalEvent[] = [];
@@ -64,10 +78,52 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
         localEvents = [];
       }
 
+      // Inject Marketing Tasks for Executives
+      if (isExecutive) {
+        THIRTY_DAY_TASKS.forEach(task => {
+          if (!localEvents.some(e => e.id === task.id)) {
+            localEvents.push(task);
+          }
+        });
+      }
+
       setEvents(localEvents);
 
+      // REAL-TIME LISTENER FOR FIREBASE ASSIGNED EVENTS
+      const q = query(collection(db, 'calendar_events'));
+      unsubscribeEvents = onSnapshot(q, (snap) => {
+        setEvents(current => {
+          let updated = [...current];
+          snap.docs.forEach(doc => {
+            const data = doc.data();
+            // ONLY show if it's assigned to ME, or if I created it
+            if (data.assignedTo === user?.uid || data.assignedBy === user?.uid || data.assignedTo === defaultPersonalId || data.assignedBy === 'Founder') {
+              const evId = `fb_${doc.id}`;
+              const existsIndex = updated.findIndex(e => e.id === evId);
+              const newEv = {
+                id: evId,
+                title: data.title,
+                date: data.date,
+                startTime: data.startTime,
+                endTime: data.endTime,
+                category: data.category || 'task',
+                color: data.color || 'bg-blue-500',
+                description: data.description,
+                meetLink: data.meetLink
+              };
+              if (existsIndex >= 0) {
+                updated[existsIndex] = newEv;
+              } else {
+                updated.push(newEv);
+              }
+            }
+          });
+          return updated;
+        });
+      });
+
       // 2. REAL-TIME LISTENER FOR SIGNUPS ON THE FOUNDER'S CALENDAR UNDER 'EXECUTIVE'
-      unsubscribe = onSnapshot(collection(db, 'users'), (usersSnap) => {
+      unsubscribeUsers = onSnapshot(collection(db, 'users'), (usersSnap) => {
         const usersList: any[] = [];
         setEvents(currentEvents => {
           const updatedEvents = [...currentEvents];
@@ -77,7 +133,7 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
             const data = doc.data();
             usersList.push({ id: doc.id, ...data });
             
-            if (data.createdAt) {
+            if (data.createdAt && isExecutive) {
               const dateObj = data.createdAt.toDate ? data.createdAt.toDate() : new Date(data.createdAt);
               const dateStr = dateObj.toISOString().split('T')[0];
               const displayName = data.displayName || data.companyName || data.email || 'New User';
@@ -102,7 +158,7 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
           setAllUsers(usersList);
 
           if (changed) {
-            localStorage.setItem(storageKey, JSON.stringify(updatedEvents));
+            localStorage.setItem(storageKey, JSON.stringify(updatedEvents.filter(e => !e.id.startsWith('fb_'))));
             return updatedEvents;
           }
           return currentEvents;
@@ -115,7 +171,8 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
     loadEvents();
     
     return () => {
-      if (unsubscribe) unsubscribe();
+      if (unsubscribeUsers) unsubscribeUsers();
+      if (unsubscribeEvents) unsubscribeEvents();
     };
   }, [storageKey, defaultPersonalId]);
 
