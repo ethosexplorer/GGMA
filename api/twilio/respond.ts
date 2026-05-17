@@ -9,49 +9,61 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
   console.log('Sylara heard:', userSpeech);
 
-  if (userSpeech.includes('sale') || userSpeech.includes('rep') || userSpeech.includes('buy') || userSpeech.includes('connect')) {
-    // Route to Sales Rep
+  if (userSpeech.includes('sale') || userSpeech.includes('rep') || userSpeech.includes('buy') || userSpeech.includes('subscrib') || userSpeech.includes('upgrad') || userSpeech.includes('price') || userSpeech.includes('cost')) {
+    // 1. Sales & Subscriptions
     twiml.say(
       { voice: 'Polly.Joanna-Neural' },
-      "Excellent. I will connect you with our AI Sales Representative right now. Please hold on for just a moment."
+      "Excellent. I will connect you with our AI Sales Representative right now. Please hold."
     );
-    
-    // In a full production setup with ElevenLabs, this is where we would bridge the call 
-    // to an ElevenLabs conversational agent via WebSockets or Twilio SIP.
-    // For now, we simulate the transfer or dial a human sales number if AI Sales is offline.
     twiml.say(
       { voice: 'Polly.Matthew-Neural' },
-      "Hello! This is your Global Green Sales Representative. How can I assist you with your subscription today?"
+      "Hello! This is your Global Green AI Sales Representative. How can I assist you with your subscription today?"
     );
-    // You could also use <Dial> to forward the call to Ryan's real phone number here!
+    // In production, we dial out to an ElevenLabs SIP bridge or human rep here
     
-  } else if (userSpeech.includes('patient') || userSpeech.includes('card')) {
+  } else if (userSpeech.includes('patient') || userSpeech.includes('card') || userSpeech.includes('doctor') || userSpeech.includes('telehealth') || userSpeech.includes('appointment')) {
+    // 2. Patient Intake
     twiml.say(
       { voice: 'Polly.Joanna-Neural' },
-      "You have reached Patient Intake. I can text you a secure link to complete your medical card application right from your phone. Would you like me to send that text?"
+      "You have reached Patient Support. For security, I am texting you a direct link to complete your medical intake and book your doctor right from your phone. Have a wonderful day!"
     );
-    // Wait for "Yes" or "No"
-    twiml.gather({
-      input: ['speech'],
-      action: '/api/twilio/voice', // We just loop back for now
-      timeout: 3,
-      speechTimeout: 'auto',
-      language: 'en-US'
-    });
+    // In production, Twilio SMS API logic is placed here.
     
-  } else if (userSpeech.includes('business') || userSpeech.includes('license')) {
+  } else if (userSpeech.includes('business') || userSpeech.includes('license') || userSpeech.includes('dispensary') || userSpeech.includes('compliance') || userSpeech.includes('metrc')) {
+    // 3. Business Licensing
     twiml.say(
       { voice: 'Polly.Joanna-Neural' },
-      "You have reached Business Intake. Business licensing requires completing our secure online portal. I will send a link to your phone number. Have a great day!"
+      "You have reached Business Licensing and Compliance. I am sending a secure link to your phone to access the Business Portal. If you need LARRY, our compliance engine, please press 1."
     );
+    twiml.gather({ numDigits: 1, action: '/api/twilio/voice', timeout: 3 });
+
+  } else if (userSpeech.includes('legal') || userSpeech.includes('lawyer') || userSpeech.includes('attorney') || userSpeech.includes('arrest') || userSpeech.includes('raid') || userSpeech.includes('police')) {
+    // 4. Legal / Urgent
+    twiml.say(
+      { voice: 'Polly.Joanna-Neural' },
+      "I am prioritizing this call to the Legal Network immediately. Please stay on the line."
+    );
+    // Simulate dialing emergency legal line
+    twiml.dial('+18005550000');
+
+  } else if (userSpeech.includes('support') || userSpeech.includes('help') || userSpeech.includes('human') || userSpeech.includes('operator') || userSpeech.includes('agent')) {
+    // 5. Support / Human Operator
+    twiml.say(
+      { voice: 'Polly.Joanna-Neural' },
+      "I understand. Please hold while I connect you with the next available human agent."
+    );
+    // Ring the WebDialer on the GGP-OS dashboards
+    const dial = twiml.dial({ timeout: 60, answerOnBridge: true });
+    const client = dial.client({ statusCallbackEvent: 'initiated ringing answered completed', statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status', statusCallbackMethod: 'POST' }, 'GGMA_User');
+    client.parameter({ name: 'DepartmentContext', value: 'Human Operator Transfer' });
+
   } else {
-    // Fallback if she doesn't understand
+    // Fallback
     twiml.say(
       { voice: 'Polly.Joanna-Neural' },
-      "I'm sorry, I didn't quite catch that. Connecting you to a live operator for further assistance."
+      "I'm sorry, I didn't quite catch that. You can say 'Sales', 'Patient', 'Business', or 'Operator'."
     );
-    // Replace with a real routing number or keep in queue
-    // twiml.dial('+1234567890');
+    twiml.redirect('/api/twilio/voice');
   }
 
   res.setHeader('Content-Type', 'text/xml');
