@@ -12,22 +12,22 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     console.log('Sylara heard:', userSpeech);
 
     if (userSpeech.includes('sale') || userSpeech.includes('rep') || userSpeech.includes('buy') || userSpeech.includes('subscrib') || userSpeech.includes('upgrad') || userSpeech.includes('price') || userSpeech.includes('cost')) {
-      // 1. Sales & Subscriptions
-      twiml.say({ voice: 'Polly.Joanna-Neural' }, "Excellent. I will connect you with our AI Sales Representative right now. Please hold.");
-      twiml.say({ voice: 'Polly.Matthew-Neural' }, "Hello! This is your Global Green AI Sales Representative. How can I assist you with your subscription today?");
+      // 1. Sales & Subscriptions -> E'Onna
+      twiml.say({ voice: 'Polly.Joanna-Neural' }, "Excellent. I will connect you with E'Onna, our AI Sales Director, right now. Please hold.");
+      twiml.say({ voice: 'Polly.Salli-Neural' }, "Hello! This is E'Onna, your Global Green AI Sales Director. How can I assist you with your subscription today?");
       
     } else if (userSpeech.includes('patient') || userSpeech.includes('card') || userSpeech.includes('doctor') || userSpeech.includes('telehealth') || userSpeech.includes('appointment')) {
-      // 2. Patient Intake
-      twiml.say({ voice: 'Polly.Joanna-Neural' }, "You have reached Patient Support. For security, I am texting you a direct link to complete your medical intake and book your doctor right from your phone. Have a wonderful day!");
+      // 2. Patient Intake -> Geneva
+      twiml.say({ voice: 'Polly.Joanna-Neural' }, "You have reached Patient Support. I am transferring you to Geneva, our Patient Care Concierge. She is texting you a secure link right now to complete your medical intake from your phone.");
       
     } else if (userSpeech.includes('business') || userSpeech.includes('license') || userSpeech.includes('dispensary') || userSpeech.includes('compliance') || userSpeech.includes('metrc')) {
-      // 3. Business Licensing
-      twiml.say({ voice: 'Polly.Joanna-Neural' }, "You have reached Business Licensing and Compliance. I am sending a secure link to your phone to access the Business Portal. If you need LARRY, our compliance engine, please press 1.");
+      // 3. Business Licensing -> Harlem
+      twiml.say({ voice: 'Polly.Joanna-Neural' }, "You have reached Business Licensing. I am transferring you to Harlem, our Corporate Integration Executive. If you need LARRY, our compliance engine, please press 1.");
       twiml.gather({ numDigits: 1, action: '/api/twilio/voice', timeout: 3 });
 
     } else if (userSpeech.includes('legal') || userSpeech.includes('lawyer') || userSpeech.includes('attorney') || userSpeech.includes('arrest') || userSpeech.includes('raid') || userSpeech.includes('police')) {
-      // 4. Legal / Urgent
-      twiml.say({ voice: 'Polly.Joanna-Neural' }, "I am prioritizing this call to the Legal Network immediately. Please stay on the line.");
+      // 4. Legal / Urgent -> Hyriah
+      twiml.say({ voice: 'Polly.Joanna-Neural' }, "I am prioritizing this call to the Legal Network immediately. Hyriah, our Legal Triage Agent, is connecting you to a live attorney. Please stay on the line.");
       twiml.dial('+18005550000');
 
     } else if (userSpeech.includes('support') || userSpeech.includes('help') || userSpeech.includes('human') || userSpeech.includes('operator') || userSpeech.includes('agent')) {
