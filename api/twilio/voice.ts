@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import * as twilio from 'twilio';
 import { createClient } from '@libsql/client/web';
+const twilio = require('twilio');
 const VoiceResponse = twilio.twiml.VoiceResponse;
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
