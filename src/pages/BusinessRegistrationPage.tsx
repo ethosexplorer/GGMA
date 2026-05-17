@@ -757,6 +757,43 @@ export default function BusinessRegistrationPage({ onNavigate, onComplete }: { o
            submittedAt: new Date().toISOString(),
          }, { merge: true });
        }
+
+       // AUTO-SYNC TO CRM — every business registration goes into crm_deals
+       try {
+         const stateConfig = STATE_RESOURCES[formData.jurisdiction];
+         const stateAbbrev = stateConfig?.abbreviation || formData.jurisdiction;
+         const bizType = formData.licenseType?.toLowerCase().includes('dispensary') ? 'dispensary'
+           : formData.licenseType?.toLowerCase().includes('grower') || formData.licenseType?.toLowerCase().includes('cultivat') ? 'grower'
+           : formData.licenseType?.toLowerCase().includes('processor') ? 'processor'
+           : 'dispensary';
+         await addDoc(collection(db, 'crm_deals'), {
+           name: formData.entityName,
+           businessName: formData.entityName,
+           contactName: formData.fullName,
+           email: formData.email,
+           phone: formData.phone || formData.ppocPhone || '',
+           address: formData.physicalAddress || '',
+           city: '',
+           state: stateAbbrev,
+           jurisdiction: formData.jurisdiction,
+           type: bizType,
+           stage: 'lead',
+           status: 'Lead',
+           pipeline: 'new',
+           value: 0,
+           assignedTo: 'unassigned',
+           licenseType: formData.licenseType || 'Business License',
+           licenseStatus: 'Pending Review',
+           source: 'Business Registration Portal',
+           tags: ['business-registration', bizType, (stateAbbrev || '').toLowerCase()],
+           notes: `Trade: ${formData.tradeName || 'N/A'} | Structure: ${formData.businessStructure || 'N/A'} | PPOC: ${formData.ppocName || 'N/A'} (${formData.ppocPhone || ''}) | Owners: ${owners.length}`,
+           createdAt: new Date().toISOString(),
+           updatedAt: new Date().toISOString(),
+         });
+       } catch (crmErr) {
+         console.error('CRM sync error (non-blocking):', crmErr);
+       }
+
        // Account already exists from Step 0 — don't call onComplete (handleSignup)
        // which would try to create the account again and fail.
        // The user is already authenticated via onAuthStateChanged.

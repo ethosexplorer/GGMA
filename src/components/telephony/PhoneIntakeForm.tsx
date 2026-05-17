@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Phone, User, Building2, HeartPulse, FileText, CircleCheck, AlertCircle, Shield, MapPin, Mail, Calendar, CreditCard, Loader2, UserPlus, ExternalLink, PhoneIncoming, DollarSign } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { turso } from '../../lib/turso';
+import { db } from '../../lib/firebase';
+import { collection, addDoc } from 'firebase/firestore';
 
 type IntakeType = 'patient_card' | 'business_license';
 
@@ -115,12 +117,17 @@ export const PhoneIntakeForm = () => {
     try {
       const accountId = 'ACC-' + Math.random().toString(36).substr(2, 8).toUpperCase();
       const appId = 'APP-' + Math.random().toString(36).substr(2, 8).toUpperCase();
+      const fullName = (data.firstName + ' ' + data.lastName).trim();
+      const stateAbbrev = US_STATES.indexOf(data.state) >= 0
+        ? ['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'][US_STATES.indexOf(data.state)]
+        : data.state;
+
       // 1. Log account creation
       await turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: [
         'log-' + Math.random().toString(36).substr(2, 9),
         'PHONE_INTAKE_ACCOUNT_CREATE',
         'OPS_Agent',
-        JSON.stringify({ accountId, name: data.firstName + ' ' + data.lastName, email: data.email, phone: data.phone, type: intakeType, state: data.state })
+        JSON.stringify({ accountId, name: fullName, email: data.email, phone: data.phone, type: intakeType, state: data.state })
       ]});
       // 2. Log application submission
       await turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: [
@@ -129,7 +136,7 @@ export const PhoneIntakeForm = () => {
         'OPS_Agent',
         JSON.stringify({
           appId, accountId, intakeType,
-          applicant: data.firstName + ' ' + data.lastName,
+          applicant: fullName,
           ...(intakeType === 'patient_card' ? { conditions: data.conditions.join(', '), appType: data.appType } : { businessName: data.businessName, businessType: data.businessType, ein: data.einNumber }),
           state: data.state,
           paymentPreference: data.paymentPreference,
@@ -137,6 +144,38 @@ export const PhoneIntakeForm = () => {
           submittedVia: 'Phone Intake — OPS Call Center'
         })
       ]});
+
+      // 3. AUTO-SYNC TO CRM — every intake goes into crm_deals for Pipeline/Marketing visibility
+      try {
+        const isPatientIntake = intakeType === 'patient_card';
+        await addDoc(collection(db, 'crm_deals'), {
+          name: isPatientIntake ? fullName : data.businessName,
+          businessName: isPatientIntake ? fullName : data.businessName,
+          contactName: fullName,
+          email: data.email,
+          phone: data.phone,
+          city: data.city,
+          state: stateAbbrev,
+          address: data.street ? `${data.street}, ${data.city}, ${stateAbbrev} ${data.zip}` : '',
+          jurisdiction: data.state,
+          type: isPatientIntake ? 'patient' : (data.businessType?.toLowerCase().includes('dispensary') ? 'dispensary' : data.businessType?.toLowerCase().includes('cultivat') || data.businessType?.toLowerCase().includes('grower') ? 'grower' : 'dispensary'),
+          stage: 'lead',
+          status: 'Lead',
+          pipeline: 'new',
+          value: 0,
+          assignedTo: 'unassigned',
+          licenseType: isPatientIntake ? (data.appType || 'Patient Card') : (data.businessType || 'Business License'),
+          licenseStatus: 'Pending',
+          source: 'Phone Intake — OPS Call Center',
+          tags: ['phone-intake', intakeType || '', stateAbbrev.toLowerCase()],
+          notes: `Account: ${accountId} | App: ${appId} | ${isPatientIntake ? 'Conditions: ' + data.conditions.join(', ') : 'EIN: ' + data.einNumber} | ${callerNotes}`,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        });
+      } catch (crmErr) {
+        console.error('CRM sync error (non-blocking):', crmErr);
+      }
+
       setCallerId(accountId);
       setSubmitted(true);
     } catch (e) { console.error(e); alert('Submission error. Check console.'); }
