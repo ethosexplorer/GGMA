@@ -115,8 +115,8 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
           // Add/update all Firebase events
           snap.docs.forEach(doc => {
             const data = doc.data();
-            // Show if assigned to me, created by me, or assigned by Founder
-            if (data.assignedTo === user?.uid || data.assignedBy === user?.uid || data.assignedTo === defaultPersonalId || data.assignedBy === defaultPersonalId || data.assignedBy === 'Founder') {
+            // Show if assigned to me, created by me, assigned by Founder, or if user is Executive (God View)
+            if (isExecutive || data.assignedTo === user?.uid || data.assignedBy === user?.uid || data.assignedTo === defaultPersonalId || data.assignedBy === defaultPersonalId || data.assignedBy === 'Founder') {
               const evId = `fb_${doc.id}`;
               // Remove any local duplicate that matches this Firebase event (by title+date)
               updated = updated.filter(e => !(e.title === data.title && e.date === data.date && e.id.startsWith('local_')));
