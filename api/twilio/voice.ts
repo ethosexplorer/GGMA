@@ -35,16 +35,26 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       twiml.say({ voice: 'Polly.Salli-Neural' }, "This is Hyriah. Please state your emergency or legal issue clearly, and I will immediately create an escalation ticket and transfer you to the executive extension.");
       twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=escalate_legal', timeout: 4, speechTimeout: 'auto' });
 
-    } else if (userSpeech.includes('support') || userSpeech.includes('help') || userSpeech.includes('human') || userSpeech.includes('operator') || userSpeech.includes('agent') || userSpeech.includes('extension') || userSpeech.includes('it ') || userSpeech.includes('oversight') || userSpeech.includes('executive')) {
-      // 5. Support / Direct Extension Transfer
-      twiml.say({ voice: 'Polly.Joanna-Neural' }, "I am transferring you to Extension 101 for the Founder and Senior Agent right now.");
+    } else if (userSpeech.includes('it ') || userSpeech.includes('tech') || userSpeech.includes('computer') || userSpeech.includes('website')) {
+      // 5. IT Support
+      twiml.say({ voice: 'Polly.Joanna-Neural' }, "You have reached IT Support. Please describe your technical issue briefly, and I will create an IT ticket and connect you to a technician.");
+      twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=escalate_it', timeout: 4, speechTimeout: 'auto' });
+
+    } else if (userSpeech.includes('oversight') || userSpeech.includes('executive') || userSpeech.includes('founder') || userSpeech.includes('shantell') || userSpeech.includes('ryan')) {
+      // 6. Executive Oversight
+      twiml.say({ voice: 'Polly.Joanna-Neural' }, "You have reached Executive Oversight. Please state your name and the reason for your call, and I will transfer your request to the Executive Board.");
+      twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=escalate_oversight', timeout: 4, speechTimeout: 'auto' });
+
+    } else if (userSpeech.includes('support') || userSpeech.includes('help') || userSpeech.includes('human') || userSpeech.includes('operator') || userSpeech.includes('agent') || userSpeech.includes('extension')) {
+      // 7. Support / Direct Extension Transfer
+      twiml.say({ voice: 'Polly.Joanna-Neural' }, "I am transferring you to Extension 101 for the next available agent right now.");
       const dial = twiml.dial({ timeout: 60, answerOnBridge: true });
       const client = dial.client({ 
         statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'], 
         statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status', 
         statusCallbackMethod: 'POST' 
       }, 'GGMA_User');
-      client.parameter({ name: 'DepartmentContext', value: 'Support Transfer' });
+      client.parameter({ name: 'DepartmentContext', value: 'General Support Transfer' });
 
     } else {
       // Fallback
@@ -77,6 +87,14 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       } else if (dept === 'LEGAL') {
         twiml.say({ voice: 'Polly.Salli-Neural' }, "Thank you for the details. I have immediately logged this into our secure Attorney Marketplace. An attorney specializing in your issue has been pinged and is reviewing your file right now. They will call you back on this number within 5 minutes. Please stay safe.");
         twiml.hangup();
+      } else if (dept === 'IT') {
+        twiml.say({ voice: 'Polly.Joanna-Neural' }, "Thank you. Your IT ticket has been submitted. I can text you the ticket tracking link, or connect you to a live tech support agent now. Which do you prefer?");
+        twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=finish_it', timeout: 5, speechTimeout: 'auto' });
+      } else if (dept === 'OVERSIGHT') {
+        twiml.say({ voice: 'Polly.Joanna-Neural' }, "Thank you. Your request has been logged securely in the Founder's Dashboard. I am routing your call to the Executive Extension now. Please hold.");
+        const dial = twiml.dial({ timeout: 60, answerOnBridge: true });
+        const client = dial.client({ statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'], statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status', statusCallbackMethod: 'POST' }, 'GGMA_User');
+        client.parameter({ name: 'DepartmentContext', value: 'Executive Oversight Escalation' });
       }
     }
   } else if (req.query.action && req.query.action.toString().startsWith('finish_')) {
