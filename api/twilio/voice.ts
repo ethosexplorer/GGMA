@@ -42,37 +42,37 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (userSpeech.includes('sale') || userSpeech.includes('rep') || userSpeech.includes('buy') || userSpeech.includes('subscrib') || userSpeech.includes('upgrad') || userSpeech.includes('price') || userSpeech.includes('cost')) {
       // 1. Sales & Subscriptions -> E'Onna
       twiml.say({ voice: 'Polly.Joanna-Neural' }, "Excellent. I will connect you with E'Onna, our AI Sales Director, right now.");
-      twiml.say({ voice: 'Polly.Salli-Neural' }, "Hello! This is E'Onna. Before I transfer you to the CEO's extension, please tell me the name of your business and what state you are calling from.");
+      twiml.say({ voice: 'Polly.Salli-Neural' }, "Hello! This is E'Onna. Before I transfer you to the appropriate extension, please tell me the name of your business and what state you are calling from.");
       twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=escalate_sales', timeout: 4, speechTimeout: 'auto' });
       
     } else if (userSpeech.includes('patient') || userSpeech.includes('card') || userSpeech.includes('doctor') || userSpeech.includes('telehealth') || userSpeech.includes('appointment')) {
       // 2. Patient Intake -> Geneva
       twiml.say({ voice: 'Polly.Joanna-Neural' }, "You have reached Patient Support. I am transferring you to Geneva, our Patient Care Concierge.");
-      twiml.say({ voice: 'Polly.Salli-Neural' }, "Hello, this is Geneva. I can help you with your medical intake. Please state your full name and date of birth, and I will create an escalation ticket and transfer you to the Founder's extension.");
+      twiml.say({ voice: 'Polly.Salli-Neural' }, "Hello, this is Geneva. I can help you with your medical intake. Please state your full name and date of birth, and I will create an escalation ticket. Someone will be in contact as soon as possible, or I will transfer you to the appropriate extension.");
       twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=escalate_patient', timeout: 4, speechTimeout: 'auto' });
 
     } else if (userSpeech.includes('business') || userSpeech.includes('license') || userSpeech.includes('dispensary') || userSpeech.includes('compliance') || userSpeech.includes('metrc')) {
       // 3. Business Licensing -> Harlem
       twiml.say({ voice: 'Polly.Joanna-Neural' }, "You have reached Business Licensing. I am transferring you to Harlem, our Corporate Integration Executive.");
-      twiml.say({ voice: 'Polly.Matthew-Neural' }, "Hello, this is Harlem. Please briefly state your business type, for example, dispensary or grower, and I will transfer your file to the executive extension for processing.");
+      twiml.say({ voice: 'Polly.Matthew-Neural' }, "Hello, this is Harlem. Please briefly state your business type, for example, dispensary or grower, and I will transfer your file to the escalations department for processing.");
       twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=escalate_business', timeout: 4, speechTimeout: 'auto' });
 
     } else if (userSpeech.includes('legal') || userSpeech.includes('lawyer') || userSpeech.includes('attorney') || userSpeech.includes('arrest') || userSpeech.includes('raid') || userSpeech.includes('police')) {
       // 4. Legal / Urgent -> Hyriah
       twiml.say({ voice: 'Polly.Joanna-Neural' }, "I am prioritizing this call to the Legal Network immediately. Hyriah, our Legal Triage Agent, is taking over.");
-      twiml.say({ voice: 'Polly.Salli-Neural' }, "This is Hyriah. Please state your emergency or legal issue clearly, and I will immediately create an escalation ticket and transfer you to the executive extension.");
+      twiml.say({ voice: 'Polly.Salli-Neural' }, "This is Hyriah. Please state your emergency or legal issue clearly, and I will immediately create an escalation ticket and transfer you to the escalations department.");
       twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=escalate_legal', timeout: 4, speechTimeout: 'auto' });
 
     } else if (userSpeech.includes('it ') || userSpeech.includes('tech') || userSpeech.includes('computer') || userSpeech.includes('website')) {
       // 5. IT Support -> Olivia
       twiml.say({ voice: 'Polly.Joanna-Neural' }, "You have reached IT Support. I am transferring you to Olivia, our AI Technical Specialist.");
-      twiml.say({ voice: 'Polly.Salli-Neural' }, "Hello, this is Olivia. Please describe your technical issue briefly, and I will create an IT ticket and connect you to a technician.");
+      twiml.say({ voice: 'Polly.Salli-Neural' }, "Hello, this is Olivia. Please describe your technical issue briefly, and I will create an IT ticket. Someone will be in contact as soon as possible.");
       twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=escalate_it', timeout: 4, speechTimeout: 'auto' });
 
     } else if (userSpeech.includes('oversight') || userSpeech.includes('executive') || userSpeech.includes('founder') || userSpeech.includes('shantell') || userSpeech.includes('ryan')) {
       // 6. Executive Oversight -> Rosalie
       twiml.say({ voice: 'Polly.Joanna-Neural' }, "You have reached Executive Oversight. I am transferring you to Rosalie, our Executive Liaison.");
-      twiml.say({ voice: 'Polly.Salli-Neural' }, "Hello, this is Rosalie. Please state your name and the reason for your call, and I will transfer your request to the Executive Board.");
+      twiml.say({ voice: 'Polly.Salli-Neural' }, "Hello, this is Rosalie. Please state your name and the reason for your call, and I will create a ticket. Someone will be in contact as soon as possible, and I will transfer your request to the escalations department.");
       twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=escalate_oversight', timeout: 4, speechTimeout: 'auto' });
 
     } else if (userSpeech.includes('telehealth') || userSpeech.includes('doctor') || userSpeech.includes('appointment')) {
