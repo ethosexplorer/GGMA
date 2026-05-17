@@ -1,5 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, Plus, X, Clock, Video, MapPin, Users, Calendar as CalIcon, Trash2 } from 'lucide-react';
+import { collection, query, onSnapshot, addDoc, serverTimestamp, deleteDoc, doc } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 import { cn } from '../lib/utils';
 
 type ViewMode = 'month' | 'week' | 'day';
@@ -17,6 +19,7 @@ const HOURS = Array.from({ length: 16 }, (_, i) => i + 6); // 6AM-9PM
 
 const SEED_EVENTS: CalEvent[] = [
   { id: '1', title: 'New Registration Assistance', date: '2026-05-03', startTime: '10:00', endTime: '10:30', category: 'admin_support', color: 'bg-pink-500', attendees: 'support@ggp-os.com', meetLink: 'https://calendly.com/' },
+  { id: '2', title: 'Patient Med Card Application - Jasmin Garrett', date: '2026-05-13', startTime: '10:00', endTime: '11:00', category: 'admin_support', color: 'bg-indigo-500', attendees: 'Jasmin Garrett', description: 'Patient Med Card — New Application (OK). Processed via Operations queue. Status: Pending.' },
 ];
 
 const fmt = (d: Date) => d.toISOString().split('T')[0];
@@ -38,6 +41,39 @@ export const AdminSupportCalendar = () => {
   React.useEffect(() => {
     localStorage.setItem(storageKey, JSON.stringify(events));
   }, [events, storageKey]);
+
+  React.useEffect(() => {
+    const q = query(collection(db, 'calendar_events'));
+    const unsubscribe = onSnapshot(q, (snap) => {
+      setEvents(current => {
+        let updated = [...current];
+        snap.docs.forEach(docSnap => {
+          const data = docSnap.data();
+          if (data.category === 'admin_support' || data.category === 'ops' || data.title?.includes('Jasmin Garrett')) {
+            const evId = `fb_${docSnap.id}`;
+            const existsIndex = updated.findIndex(e => e.id === evId);
+            const newEv = {
+              id: evId,
+              title: data.title,
+              date: data.date,
+              startTime: data.startTime,
+              endTime: data.endTime,
+              category: data.category || 'admin_support',
+              color: data.color || 'bg-pink-500',
+              description: data.description,
+              meetLink: data.meetLink,
+              attendees: data.attendees,
+              location: data.location
+            };
+            if (existsIndex >= 0) updated[existsIndex] = newEv;
+            else updated.push(newEv);
+          }
+        });
+        return updated;
+      });
+    });
+    return () => unsubscribe();
+  }, []);
 
   const [view, setView] = useState<ViewMode>('month');
   const [current, setCurrent] = useState(new Date(2026, 3, 28)); // April 28, 2026
@@ -76,15 +112,35 @@ export const AdminSupportCalendar = () => {
     return Array.from({ length: 7 }, (_, i) => { const dd = new Date(d); dd.setDate(d.getDate() + i); return dd; });
   }, [current]);
 
-  const addEvent = () => {
+  const addEvent = async () => {
     if (!form.title || !form.date) return;
     const cat = availableCategories.find(c => c.id === form.category);
-    setEvents(prev => [...prev, { ...form, id: Date.now().toString(), color: cat?.color || 'bg-pink-500' }]);
+    
+    // Add to Firebase Realtime
+    try {
+      await addDoc(collection(db, 'calendar_events'), {
+        ...form,
+        color: cat?.color || 'bg-pink-500',
+        createdAt: serverTimestamp()
+      });
+    } catch (e) {
+      console.error("Error adding to Firebase:", e);
+      // Fallback to local
+      setEvents(prev => [...prev, { ...form, id: Date.now().toString(), color: cat?.color || 'bg-pink-500' }]);
+    }
+    
     setShowForm(false);
     setForm({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: 'admin_support', description: '', attendees: 'support@ggp-os.com', location: '', meetLink: 'https://calendly.com/' });
   };
 
-  const deleteEvent = (id: string) => setEvents(prev => prev.filter(e => e.id !== id));
+  const deleteEvent = async (id: string) => {
+    if (id.startsWith('fb_')) {
+      try {
+        await deleteDoc(doc(db, 'calendar_events', id.replace('fb_', '')));
+      } catch(e) { console.error(e); }
+    }
+    setEvents(prev => prev.filter(e => e.id !== id));
+  };
 
   const generateMeetLink = () => {
     const code = Math.random().toString(36).substring(2, 5) + '-' + Math.random().toString(36).substring(2, 6) + '-' + Math.random().toString(36).substring(2, 5);
