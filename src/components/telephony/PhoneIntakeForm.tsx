@@ -4,6 +4,7 @@ import { cn } from '../../lib/utils';
 import { turso } from '../../lib/turso';
 import { db } from '../../lib/firebase';
 import { collection, addDoc } from 'firebase/firestore';
+import { captureContact } from '../../lib/contactCapture';
 
 type IntakeType = 'patient_card' | 'business_license';
 
@@ -145,35 +146,29 @@ export const PhoneIntakeForm = () => {
         })
       ]});
 
-      // 3. AUTO-SYNC TO CRM — every intake goes into crm_deals for Pipeline/Marketing visibility
+      // 3. UNIVERSAL CONTACT CAPTURE — writes to BOTH `contacts` (company directory) AND `crm_deals` (pipeline)
       try {
         const isPatientIntake = intakeType === 'patient_card';
-        await addDoc(collection(db, 'crm_deals'), {
+        await captureContact({
           name: isPatientIntake ? fullName : data.businessName,
-          businessName: isPatientIntake ? fullName : data.businessName,
-          contactName: fullName,
           email: data.email,
           phone: data.phone,
+          address: data.street ? `${data.street}, ${data.city}, ${stateAbbrev} ${data.zip}` : '',
           city: data.city,
           state: stateAbbrev,
-          address: data.street ? `${data.street}, ${data.city}, ${stateAbbrev} ${data.zip}` : '',
-          jurisdiction: data.state,
-          type: isPatientIntake ? 'patient' : (data.businessType?.toLowerCase().includes('dispensary') ? 'dispensary' : data.businessType?.toLowerCase().includes('cultivat') || data.businessType?.toLowerCase().includes('grower') ? 'grower' : 'dispensary'),
-          stage: 'lead',
-          status: 'Lead',
-          pipeline: 'new',
-          value: 0,
-          assignedTo: 'unassigned',
+          zip: data.zip,
+          contactType: isPatientIntake ? 'patient' : 'business_owner',
+          source: isPatientIntake ? 'phone_intake_patient' : 'phone_intake_business',
+          businessName: isPatientIntake ? '' : data.businessName,
           licenseType: isPatientIntake ? (data.appType || 'Patient Card') : (data.businessType || 'Business License'),
-          licenseStatus: 'Pending',
-          source: 'Phone Intake — OPS Call Center',
+          ein: data.einNumber || '',
+          jurisdiction: data.state,
           tags: ['phone-intake', intakeType || '', stateAbbrev.toLowerCase()],
           notes: `Account: ${accountId} | App: ${appId} | ${isPatientIntake ? 'Conditions: ' + data.conditions.join(', ') : 'EIN: ' + data.einNumber} | ${callerNotes}`,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
+          emailOptIn: true,
         });
       } catch (crmErr) {
-        console.error('CRM sync error (non-blocking):', crmErr);
+        console.error('Contact capture error (non-blocking):', crmErr);
       }
 
       setCallerId(accountId);

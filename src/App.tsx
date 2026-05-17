@@ -124,6 +124,8 @@ import { AttorneyDashboard } from './pages/AttorneyDashboard';
 import { PublicHealthDashboard } from './pages/PublicHealthDashboard';
 import { CareWalletDashboard } from './pages/CareWalletDashboard';
 import { generateGeminiResponse } from './lib/gemini';
+import { captureContact } from './lib/contactCapture';
+import { getStateFees } from './lib/stateFees';
 import { EnforcementDashboard } from './pages/EnforcementDashboard';
 import { BackOfficeDashboard } from './pages/BackOfficeDashboard';
 import ProviderRegistrationPage from './pages/ProviderRegistrationPage';
@@ -5279,7 +5281,11 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
           }
           if (onProfileCreated && profile) onProfileCreated(profile);
           setSignupStep(19.7);
-          response = `✅ **Intake Complete!**\n\nYour file has been prepared for the **L.A.R.R.Y Authority Engine**. \n\n**Next Steps:**\n• **Review**: We will verify your documents within 24 hours.\n• **OMMA Fee**: You will need to pay **$104.30** ($22.50 for Medicare/Medicaid/Veterans).\n• **Timeline**: Your card will be available within 10 business days.\n\nWhile we process your file, would you like to leave a **Video or Voice Review** for the community? We use these to improve the GGMA Sector! 🎤`;
+          const _feeInfo = getStateFees(finalData.state || 'Oklahoma');
+          const _feeDisplay = _feeInfo.totalStandard > 0
+            ? `**$${_feeInfo.totalDiscount.toFixed(2)}** (with discounts) to **$${_feeInfo.totalStandard.toFixed(2)}** (standard) — includes doctor ($${_feeInfo.doctorFee}), GGP processing ($${_feeInfo.ggpProcessingFee}), and state fee ($${_feeInfo.stateFee})`
+            : `Your state does not yet have a medical cannabis program`;
+          response = `✅ **Intake Complete!**\n\nYour file has been prepared for the **L.A.R.R.Y Authority Engine**. \n\n**Next Steps:**\n• **Review**: We will verify your documents within 24 hours.\n• **Total Cost**: ${_feeDisplay}.\n• **Timeline**: Your card will be available within 10 business days.\n\nWhile we process your file, would you like to leave a **Video or Voice Review** for the community? We use these to improve the GGMA Sector! 🎤`;
         } catch (err) {
           response = `Intake processed locally. Are you ready to proceed to your dashboard?`;
           setSignupStep(19.7);
@@ -9088,6 +9094,30 @@ export default function App() {
     try {
       await setDoc(doc(db, 'users', firebaseUser.uid), profile);
       console.log('[App.handleSignup] User profile saved to Firestore:', { uid: firebaseUser.uid, role });
+
+      // UNIVERSAL CONTACT CAPTURE — log to contacts + crm_deals
+      try {
+        const contactType = role === 'business' ? 'business_owner' : role === 'provider' ? 'provider' : role === 'attorney' ? 'attorney' : 'patient';
+        const source = role === 'business' ? 'business_signup' : role === 'provider' ? 'provider_signup' : role === 'attorney' ? 'attorney_signup' : 'patient_signup';
+        await captureContact({
+          name: profile.displayName || '',
+          email: firebaseUser.email || '',
+          phone: details.phone || details.textPhone || '',
+          address: details.physicalAddress || details.address || '',
+          state: details.state || details.jurisdiction || '',
+          contactType: contactType as any,
+          source: source as any,
+          businessName: details.companyName || details.entityName || '',
+          licenseType: details.licenseType || '',
+          jurisdiction: details.state || details.jurisdiction || '',
+          tags: [role, source, (details.state || '').toLowerCase()].filter(Boolean),
+          notes: `Signup via main portal. Role: ${role}`,
+          emailOptIn: true,
+        });
+      } catch (captureErr) {
+        console.error('[Contact Capture non-blocking]:', captureErr);
+      }
+
       setUserProfile(profile);
       setView('dashboard');
     } catch (error) {

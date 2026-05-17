@@ -6,6 +6,7 @@ import { collection, addDoc, serverTimestamp, doc, setDoc } from 'firebase/fires
 import { db, auth } from '../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { STATE_RESOURCES } from '../stateResources';
+import { captureContact } from '../lib/contactCapture';
 
 const BUSINESS_STEPS = [
   'Pre-Registration',
@@ -758,40 +759,32 @@ export default function BusinessRegistrationPage({ onNavigate, onComplete }: { o
          }, { merge: true });
        }
 
-       // AUTO-SYNC TO CRM — every business registration goes into crm_deals
+       // UNIVERSAL CONTACT CAPTURE — writes to BOTH `contacts` (directory) AND `crm_deals` (pipeline)
        try {
          const stateConfig = STATE_RESOURCES[formData.jurisdiction];
          const stateAbbrev = stateConfig?.abbreviation || formData.jurisdiction;
          const bizType = formData.licenseType?.toLowerCase().includes('dispensary') ? 'dispensary'
            : formData.licenseType?.toLowerCase().includes('grower') || formData.licenseType?.toLowerCase().includes('cultivat') ? 'grower'
            : formData.licenseType?.toLowerCase().includes('processor') ? 'processor'
-           : 'dispensary';
-         await addDoc(collection(db, 'crm_deals'), {
+           : 'business_owner';
+         await captureContact({
            name: formData.entityName,
-           businessName: formData.entityName,
-           contactName: formData.fullName,
            email: formData.email,
            phone: formData.phone || formData.ppocPhone || '',
            address: formData.physicalAddress || '',
-           city: '',
            state: stateAbbrev,
-           jurisdiction: formData.jurisdiction,
-           type: bizType,
-           stage: 'lead',
-           status: 'Lead',
-           pipeline: 'new',
-           value: 0,
-           assignedTo: 'unassigned',
+           contactType: bizType as any,
+           source: 'business_registration',
+           businessName: formData.entityName,
            licenseType: formData.licenseType || 'Business License',
-           licenseStatus: 'Pending Review',
-           source: 'Business Registration Portal',
+           ein: formData.ein || '',
+           jurisdiction: formData.jurisdiction,
            tags: ['business-registration', bizType, (stateAbbrev || '').toLowerCase()],
            notes: `Trade: ${formData.tradeName || 'N/A'} | Structure: ${formData.businessStructure || 'N/A'} | PPOC: ${formData.ppocName || 'N/A'} (${formData.ppocPhone || ''}) | Owners: ${owners.length}`,
-           createdAt: new Date().toISOString(),
-           updatedAt: new Date().toISOString(),
+           emailOptIn: true,
          });
        } catch (crmErr) {
-         console.error('CRM sync error (non-blocking):', crmErr);
+         console.error('Contact capture error (non-blocking):', crmErr);
        }
 
        // Account already exists from Step 0 — don't call onComplete (handleSignup)
