@@ -8,6 +8,7 @@ import { SettingsPreferencesMockup } from './pages/SettingsPreferencesMockup';
 import { FederalStatePage } from './pages/FederalStatePage';
 import { WhatIsC3Page } from './pages/WhatIsC3Page';
 import { WhatIsCareWalletPage } from './pages/WhatIsCareWalletPage';
+import { ResourceCenter } from './pages/ResourceCenter';
 import LoginPage from './pages/LoginPage';
 import { 
   Shield,
@@ -9324,7 +9325,7 @@ export default function App() {
             />
           )}
           {view === 'support' && (
-            <SupportPage
+            <ResourceCenter
               onNavigate={(v) => {
                 handleNavigate(v as any);
               }}
