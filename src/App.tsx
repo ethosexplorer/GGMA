@@ -85,7 +85,9 @@ import {
   Check,
   Wallet,
   HeartHandshake,
-  HelpCircle
+  HelpCircle,
+  Mic,
+  Volume2
  } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from './lib/utils';
@@ -3160,6 +3162,33 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [isSpeakingEnabled, setIsSpeakingEnabled] = useState(false);
+
+  const toggleListening = () => {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      alert('Speech recognition is not supported in this browser. Please use Chrome or Safari.');
+      return;
+    }
+    if (isListening) {
+      setIsListening(false);
+      return;
+    }
+    setIsListening(true);
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      setInputValue(prev => prev ? prev + ' ' + transcript : transcript);
+      setIsListening(false);
+    };
+    recognition.onerror = () => setIsListening(false);
+    recognition.onend = () => setIsListening(false);
+    recognition.start();
+  };
   const chatEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
@@ -7594,6 +7623,22 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
                 placeholder="Message Sylara..."
                 className="flex-1 bg-transparent outline-none text-sm text-slate-800 placeholder:text-slate-400 py-2 min-w-0"
               />
+              <button
+                type="button"
+                onClick={toggleListening}
+                title="Voice Dictation"
+                className={`w-9 h-9 rounded-full flex items-center justify-center transition-all shadow-sm shrink-0 ${isListening ? 'bg-rose-500 text-white animate-pulse shadow-rose-500/40' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
+              >
+                <Mic size={16} />
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsSpeakingEnabled(!isSpeakingEnabled)}
+                title="Voice Responses (Text-to-Speech)"
+                className={`w-9 h-9 rounded-full flex items-center justify-center transition-all shadow-sm shrink-0 ${isSpeakingEnabled ? 'bg-purple-100 text-purple-600 border border-purple-200' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
+              >
+                <Volume2 size={16} />
+              </button>
               <button
                 type="submit"
                 disabled={!inputValue.trim() || isTyping}
