@@ -39,6 +39,7 @@ import { JudicialMonitorTab } from '../components/federal/JudicialMonitorTab';
 import { GGEProcessorTab } from '../components/oversight/GGEProcessorTab';
 import { LaunchScriptTab } from '../components/oversight/LaunchScriptTab';
 import { SupportIntelligenceTab } from '../components/oversight/SupportIntelligenceTab';
+import { RapidRevenueTab } from '../components/crm/RapidRevenueTab';
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
@@ -53,6 +54,7 @@ const INTERNAL_NAV_ITEMS: NavItem[] = [
   { id: 'call_center', label: 'Call Center Command', icon: Zap },
   { id: 'messages', label: 'Messages', icon: MessageSquare },
   { id: 'internal_scheduler', label: 'Calendar & Scheduler', icon: Clock },
+  { id: 'realtime_tasks', label: 'Realtime Daily Tasks', icon: Zap },
   { id: '_sec_supreme', section: 'SUPREME COMMAND' },
   { id: 'patients', label: 'Registry Sovereignty', icon: HeartPulse },
   { id: 'business', label: 'Economic Infrastructure', icon: Building2 },
@@ -291,6 +293,7 @@ const PresidentDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => v
                 {activeTab === 'ai_training' && <AITrainingTab userProfile={user} />}
                 {activeTab === 'messages' && <InternalMessenger currentUser={{ name: fullName, role: title, roleId: 'president' }} />}
                 {activeTab === 'internal_scheduler' && <div className="bg-white rounded-3xl overflow-hidden h-full"><UserCalendar user={user} /></div>}
+                {activeTab === 'realtime_tasks' && <div className="h-full w-full -m-6 bg-slate-50 p-10 min-h-screen overflow-auto"><RapidRevenueTab /></div>}
                 {activeTab === 'admin_support_calendar' && <div className="bg-white rounded-3xl overflow-hidden h-full"><AdminSupportCalendar /></div>}
                 {activeTab === 'escalation_support_calendar' && <div className="bg-white rounded-3xl overflow-hidden h-full"><EscalationSupportCalendar /></div>}
                 

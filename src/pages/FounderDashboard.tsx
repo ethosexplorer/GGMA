@@ -40,6 +40,7 @@ import { GGEWorldHRHub } from './GGEWorldHRHub';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { ImportantUpdates } from '../components/ImportantUpdates';
 import { FounderCalendar } from '../components/FounderCalendar';
+import { RapidRevenueTab } from '../components/crm/RapidRevenueTab';
 import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
 import { EscalationSupportCalendar } from '../components/EscalationSupportCalendar';
 import { voip800 } from '../lib/voip800';
@@ -58,6 +59,7 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'ai_training', label: 'My Asst AI', icon: Bot },
   { id: 'overview', label: 'God Overview', icon: Activity },
   { id: 'internal_scheduler', label: 'Calendar / Scheduler', icon: Clock },
+  { id: 'realtime_tasks', label: 'Realtime Daily Tasks', icon: Target },
   { id: 'messages', label: 'Messages', icon: MessageSquare },
   { id: 'global_directory', label: 'Global Directory', icon: Users },
   { id: 'operations', label: 'Ops Center (Live)', icon: Cpu },
@@ -4183,6 +4185,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       case 'logs': return renderLogs();
       case 'support_tickets': return renderSupportTickets();
       case 'internal_scheduler': return <FounderCalendar user={user} title="Founder's Master Calendar" />;
+      case 'realtime_tasks': return <div className="h-full w-full -m-10 bg-slate-50 p-10 min-h-screen overflow-auto"><RapidRevenueTab /></div>;
       case 'admin_support_calendar': return <div className="h-full w-full -m-10"><AdminSupportCalendar /></div>;
       case 'escalation_support_calendar': return <div className="h-full w-full -m-10"><EscalationSupportCalendar /></div>;
       case 'subscriptions': return renderSubscriptionsTab();
