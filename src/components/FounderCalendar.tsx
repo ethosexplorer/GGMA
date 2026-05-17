@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, Plus, X, Clock, Video, MapPin, Users, Calendar as CalIcon, Trash2, CheckSquare, Bell, Search, Send } from 'lucide-react';
-import { collection, query, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, onSnapshot, addDoc, serverTimestamp, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { cn } from '../lib/utils';
 
@@ -244,6 +244,7 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
   const [showForm, setShowForm] = useState(false);
   const [showAssignForm, setShowAssignForm] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<CalEvent | null>(null);
+  const [editingEventId, setEditingEventId] = useState<string | null>(null);
   const [form, setForm] = useState({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: 'executive', description: '', attendees: '', location: '', meetLink: '' });
   const [assignForm, setAssignForm] = useState({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: 'task', description: '', meetLink: '', targetUserId: '' });
   const [filterCat, setFilterCat] = useState<string | null>(null);
@@ -282,38 +283,61 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
   const addEvent = async () => {
     if (!form.title || !form.date) return;
     const cat = availableCategories.find(c => c.id === form.category);
-    const newEvent: CalEvent = { ...form, id: 'local_' + Date.now().toString() + '_' + Math.random().toString(36).substr(2, 5), color: cat?.color || 'bg-slate-500' };
-    
-    // 1. Immediately add to local state for instant UI feedback
-    setEvents(prev => {
-      const updated = [...prev, newEvent];
-      // 2. Persist to localStorage as backup
-      try { localStorage.setItem(storageKey, JSON.stringify(updated.filter(e => !e.id.startsWith('fb_') && !e.id.startsWith('signup_')))); } catch(e) {}
-      return updated;
-    });
-    
-    // 3. Persist to Firebase so it survives re-renders and shows via onSnapshot
+
     try {
-      await addDoc(collection(db, 'calendar_events'), {
-        title: form.title,
-        date: form.date,
-        startTime: form.startTime,
-        endTime: form.endTime,
-        category: form.category,
-        color: cat?.color || 'bg-slate-500',
-        description: form.description,
-        attendees: form.attendees,
-        location: form.location,
-        meetLink: form.meetLink,
-        assignedTo: user?.uid || defaultPersonalId,
-        assignedBy: user?.uid || defaultPersonalId,
-        createdAt: serverTimestamp()
-      });
+      if (editingEventId) {
+        if (editingEventId.startsWith('fb_')) {
+          const docId = editingEventId.replace('fb_', '');
+          await updateDoc(doc(db, 'calendar_events', docId), {
+            title: form.title,
+            date: form.date,
+            startTime: form.startTime,
+            endTime: form.endTime,
+            category: form.category,
+            color: cat?.color || 'bg-slate-500',
+            description: form.description,
+            attendees: form.attendees,
+            location: form.location,
+            meetLink: form.meetLink
+          });
+        } else {
+          setEvents(prev => {
+            const updated = prev.map(e => e.id === editingEventId ? { ...e, ...form, color: cat?.color || 'bg-slate-500' } : e);
+            try { localStorage.setItem(storageKey, JSON.stringify(updated.filter(e => !e.id.startsWith('fb_') && !e.id.startsWith('signup_')))); } catch(e) {}
+            return updated;
+          });
+        }
+      } else {
+        const newEvent: CalEvent = { ...form, id: 'local_' + Date.now().toString() + '_' + Math.random().toString(36).substr(2, 5), color: cat?.color || 'bg-slate-500' };
+        
+        setEvents(prev => {
+          const updated = [...prev, newEvent];
+          try { localStorage.setItem(storageKey, JSON.stringify(updated.filter(e => !e.id.startsWith('fb_') && !e.id.startsWith('signup_')))); } catch(e) {}
+          return updated;
+        });
+        
+        await addDoc(collection(db, 'calendar_events'), {
+          title: form.title,
+          date: form.date,
+          startTime: form.startTime,
+          endTime: form.endTime,
+          category: form.category,
+          color: cat?.color || 'bg-slate-500',
+          description: form.description,
+          attendees: form.attendees,
+          location: form.location,
+          meetLink: form.meetLink,
+          assignedTo: user?.uid || defaultPersonalId,
+          assignedBy: user?.uid || defaultPersonalId,
+          createdAt: serverTimestamp()
+        });
+      }
     } catch (e) {
-      console.error('Firebase calendar write error (event still saved locally):', e);
+      console.error('Firebase calendar write/update error:', e);
     }
     
     setShowForm(false);
+    setEditingEventId(null);
     setForm({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: 'executive', description: '', attendees: '', location: '', meetLink: '' });
   };
 
@@ -355,7 +379,20 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
     }
   };
 
-  const deleteEvent = (id: string) => setEvents(prev => prev.filter(e => e.id !== id));
+  const deleteEvent = async (id: string) => {
+    if (id.startsWith('fb_')) {
+      try {
+        await deleteDoc(doc(db, 'calendar_events', id.replace('fb_', '')));
+      } catch (e) {
+        console.error('Failed to delete Firebase event:', e);
+      }
+    }
+    setEvents(prev => {
+      const updated = prev.filter(e => e.id !== id);
+      try { localStorage.setItem(storageKey, JSON.stringify(updated.filter(e => !e.id.startsWith('fb_') && !e.id.startsWith('signup_')))); } catch(e) {}
+      return updated;
+    });
+  };
 
   const generateMeetLink = () => {
     const code = Math.random().toString(36).substring(2, 5) + '-' + Math.random().toString(36).substring(2, 6) + '-' + Math.random().toString(36).substring(2, 5);
@@ -475,6 +512,14 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
               <a href={buildGCalUrl(selectedEvent)} target="_blank" rel="noopener noreferrer" className="flex-1 py-3 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-colors">
                 <CalIcon size={14} /> Add to GCal
               </a>
+              <button onClick={() => { 
+                setForm({ title: selectedEvent.title, date: selectedEvent.date, startTime: selectedEvent.startTime, endTime: selectedEvent.endTime, category: selectedEvent.category, description: selectedEvent.description || '', attendees: selectedEvent.attendees || '', location: selectedEvent.location || '', meetLink: selectedEvent.meetLink || '' });
+                setEditingEventId(selectedEvent.id);
+                setSelectedEvent(null);
+                setShowForm(true);
+              }} className="px-5 py-3 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-colors">
+                Edit
+              </button>
               <button onClick={() => { deleteEvent(selectedEvent.id); setSelectedEvent(null); }} className="px-5 py-3 border border-red-200 hover:bg-red-50 text-red-600 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-colors">
                 <Trash2 size={14} />
               </button>
