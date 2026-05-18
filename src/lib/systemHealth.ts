@@ -12,6 +12,7 @@ export interface ServiceHealth {
   lastChecked: string;
   error?: string;
   details?: string;
+  critical?: boolean; // If false, this service won't trigger critical alerts when offline
 }
 
 export interface SystemHealthReport {
@@ -136,7 +137,8 @@ async function checkTextBelt(): Promise<ServiceHealth> {
       latencyMs: Date.now() - start,
       lastChecked: new Date().toISOString(),
       error: err.message || 'Unreachable',
-      details: 'SMS delivery service unreachable'
+      details: 'SMS delivery service unreachable (non-critical)',
+      critical: false
     };
   }
 }
@@ -220,12 +222,14 @@ export async function runHealthCheck(): Promise<SystemHealthReport> {
     }
   );
 
-  const criticalCount = results.filter(s => s.status === 'offline').length;
-  const degradedCount = results.filter(s => s.status === 'degraded').length;
+  const criticalCount = results.filter(s => s.status === 'offline' && s.critical !== false).length;
+  const degradedCount = results.filter(s => s.status === 'degraded' || (s.status === 'offline' && s.critical === false)).length;
   const onlineCount = results.filter(s => s.status === 'online').length;
   const totalLatency = results.reduce((sum, s) => sum + s.latencyMs, 0);
   const avgLatency = Math.round(totalLatency / results.length);
-  const uptimePercent = Math.round((onlineCount / results.length) * 100);
+  // Non-critical offline services count as degraded for uptime calc
+  const effectiveOnline = results.filter(s => s.status === 'online' || (s.status === 'offline' && s.critical === false)).length;
+  const uptimePercent = Math.round((effectiveOnline / results.length) * 100);
 
   const freezeDetected = criticalCount >= FREEZE_THRESHOLD;
   let freezeReason: string | undefined;

@@ -53,7 +53,7 @@ import { DepartmentManager } from '../components/DepartmentManager';
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
-const NAV_VERSION = 28; // Bumped: Added Departments & Roles tab
+const NAV_VERSION = 29; // Bumped: Added Critical Alerts tab under Analytics
 
 const INITIAL_NAV_ITEMS: NavItem[] = [
   // Single tabs
@@ -117,6 +117,7 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'reports', label: 'Master Analytics', icon: BarChart3 },
   { id: 'intel', label: 'Global Intelligence', icon: BookOpen },
   { id: 'logs', label: 'System Logs', icon: Database },
+  { id: 'critical_alerts', label: 'Critical Alerts', icon: AlertTriangle },
 ];
 
 export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, setMarqueeNews, marqueeSpeed, setMarqueeSpeed }: { onLogout?: () => void | Promise<void>, user?: any, jurisdiction?: any, marqueeNews?: string[], setMarqueeNews?: any, marqueeSpeed?: string, setMarqueeSpeed?: any }) => {
@@ -2945,18 +2946,15 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
               </button>
               <button 
                 onClick={() => {
-                  if (!healthReport?.freezeDetected) {
-                    setIsSystemFreezeExpanded(false);
-                  } else {
-                    (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "SYSTEM_HEALTH", "Production_User", JSON.stringify({ detail: `System Freeze routed to Engineering. Services down: ${healthReport.freezeReason}` })] }).catch(console.error) ); })();
+                  setIsSystemFreezeExpanded(false);
+                  if (healthReport?.freezeDetected) {
                     localStorage.setItem('gghp_system_freeze_dismissed', 'true');
                     setHideSystemFreeze(true);
-                    setIsSystemFreezeExpanded(false);
                   }
                 }}
                 className="px-6 py-3 bg-black/20 text-white hover:bg-black/40 transition-colors rounded-xl text-xs font-black uppercase tracking-widest"
               >
-                {healthReport?.freezeDetected ? 'Route to Engineering' : 'Close'}
+                Close
               </button>
             </div>
           </div>
@@ -4207,6 +4205,81 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       case 'settings': return renderSettings();
       case 'call_center': return <CallCenterCommandTab />;
       case 'dept_manager': return <DepartmentManager />;
+      case 'critical_alerts': return (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-3xl font-black text-slate-800 tracking-tight">Critical Alerts</h2>
+              <p className="text-slate-500 font-medium mt-1">Real-time system health monitoring &amp; service status</p>
+            </div>
+            <button onClick={() => { runCheck(); }} disabled={isHealthChecking} className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-xl font-bold text-sm transition-colors shadow-lg">
+              {isHealthChecking ? <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Checking...</> : <><Zap size={16} /> Run Health Check</>}
+            </button>
+          </div>
+
+          {/* Status Banner */}
+          {healthReport && (() => {
+            const colors: Record<string, string> = { healthy: 'bg-emerald-600', degraded: 'bg-amber-600', critical: 'bg-red-600', frozen: 'bg-red-700' };
+            const labels: Record<string, string> = { healthy: 'ALL SYSTEMS OPERATIONAL', degraded: 'MINOR SERVICE DEGRADATION', critical: 'CRITICAL — SERVICES DOWN', frozen: 'SYSTEM FREEZE DETECTED' };
+            return (
+              <div className={`${colors[healthReport.overallStatus]} text-white p-6 rounded-2xl shadow-lg`}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <AlertTriangle size={24} />
+                    <div>
+                      <h3 className="text-lg font-black uppercase tracking-tight">{labels[healthReport.overallStatus]}</h3>
+                      <p className="text-sm opacity-80">Last check: {lastHealthCheck}</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-4 text-center">
+                    <div className="bg-black/20 px-4 py-2 rounded-xl"><p className="text-[10px] font-bold opacity-70">UPTIME</p><p className="text-xl font-black">{healthReport.uptimePercent}%</p></div>
+                    <div className="bg-black/20 px-4 py-2 rounded-xl"><p className="text-[10px] font-bold opacity-70">AVG LATENCY</p><p className="text-xl font-black">{healthReport.avgLatencyMs}ms</p></div>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
+          {/* Service Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {(healthReport?.services || []).map((svc: any, i: number) => (
+              <div key={i} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-3 h-3 rounded-full ${svc.status === 'online' ? 'bg-emerald-500' : svc.status === 'degraded' ? 'bg-amber-500' : 'bg-red-500'} ${svc.status === 'offline' ? 'animate-pulse' : ''}`} />
+                    <span className={`text-xs font-black uppercase ${svc.status === 'online' ? 'text-emerald-600' : svc.status === 'degraded' ? 'text-amber-600' : 'text-red-600'}`}>{svc.status}</span>
+                  </div>
+                  <span className="text-xs font-bold text-slate-400">{svc.latencyMs}ms</span>
+                </div>
+                <h4 className="font-bold text-slate-800 text-sm">{svc.name}</h4>
+                <p className="text-xs text-slate-500 mt-1">{svc.details || svc.error || 'Checking...'}</p>
+                {svc.critical === false && <span className="inline-block mt-2 text-[9px] font-bold uppercase bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">Non-Critical</span>}
+              </div>
+            ))}
+          </div>
+
+          {/* Health History */}
+          {healthHistory.length > 1 && (
+            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+              <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">Health Timeline (Last {healthHistory.length} checks)</h4>
+              <div className="flex items-end gap-1 h-20">
+                {healthHistory.map((h, i) => {
+                  const heightPct = Math.max(10, Math.min(100, 100 - (h.avgLatency / 50)));
+                  const color = h.status === 'healthy' ? 'bg-emerald-400' : h.status === 'degraded' ? 'bg-amber-400' : 'bg-red-400';
+                  return (
+                    <div key={i} className="flex-1 flex flex-col items-center gap-1 group relative">
+                      <div className={`w-full ${color} rounded-t transition-all`} style={{ height: `${heightPct}%` }} />
+                      <div className="opacity-0 group-hover:opacity-100 absolute -top-10 bg-slate-800 text-white text-[9px] px-2 py-1 rounded font-bold whitespace-nowrap z-10">
+                        {h.time} • {h.avgLatency}ms
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      );
       default: return isExecutive ? <div className="h-full w-full -m-10 p-10 bg-slate-50"><AITrainingTab userProfile={user} /></div> : renderOverview();
     }
   };
