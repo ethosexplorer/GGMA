@@ -116,14 +116,18 @@ export const MarketingHub = () => {
     
     setIsUploading(true);
     try {
-      // Timeout after 30s
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 30000);
-
       const fileRef = ref(storage, `marketing_assets/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`);
-      await uploadBytes(fileRef, file);
-      const url = await getDownloadURL(fileRef);
-      clearTimeout(timeout);
+      
+      const timeoutPromise = new Promise<string>((_, reject) => {
+        setTimeout(() => reject(new Error('AbortError')), 45000);
+      });
+
+      const uploadPromise = async () => {
+        await uploadBytes(fileRef, file);
+        return await getDownloadURL(fileRef);
+      };
+
+      const url = await Promise.race([uploadPromise(), timeoutPromise]);
       
       if (file.type.startsWith('image/')) {
         setMessage(prev => prev + `\n<div style="text-align: center; margin: 20px 0;">\n  <img src="${url}" alt="${file.name}" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" />\n</div>\n`);
@@ -136,8 +140,8 @@ export const MarketingHub = () => {
       alert('✅ Asset uploaded and inserted into message body.');
     } catch (error: any) {
       console.error("Upload failed:", error);
-      if (error?.name === 'AbortError') {
-        alert('Upload timed out after 30 seconds. Try a smaller file.');
+      if (error?.message === 'AbortError' || error?.name === 'AbortError') {
+        alert('Upload timed out after 45 seconds. Your connection might be slow or Firebase Storage rules are denying access.');
       } else {
         alert('Upload failed: ' + (error?.message || 'Check Firebase Storage rules.'));
       }
