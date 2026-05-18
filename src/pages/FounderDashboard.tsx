@@ -678,6 +678,25 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
 
   const [queueAlerts, setQueueAlerts] = useState<any[]>([]);
   const [opsChecks, setOpsChecks] = useState<any[]>([]);
+  const [opsLiveTasks, setOpsLiveTasks] = useState<any[]>([]);
+  const [opsTicketCount, setOpsTicketCount] = useState(0);
+  const [opsCrmCount, setOpsCrmCount] = useState(0);
+
+  // Real-time tasks for Ops Hub
+  useEffect(() => {
+    const unsub1 = onSnapshot(query(collection(db, 'realtime_tasks')), snap => {
+      const tasks = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      tasks.sort((a: any, b: any) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+      setOpsLiveTasks(tasks);
+    });
+    const unsub2 = onSnapshot(query(collection(db, 'support_tickets')), snap => {
+      setOpsTicketCount(snap.size);
+    });
+    const unsub3 = onSnapshot(query(collection(db, 'crm_deals')), snap => {
+      setOpsCrmCount(snap.size);
+    });
+    return () => { unsub1(); unsub2(); unsub3(); };
+  }, []);
 
   const handleRouteAlert = (id: string | number) => {
     setActiveTab('support_tickets');
@@ -875,10 +894,10 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           {/* Stats Row */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             {[
-              { label: "Today's Appointments", value: Math.max(12, liveAnalytics.clicks % 200 + 42), sub: `${Math.max(3, (liveAnalytics.clicks % 20))} pending confirmations`, icon: Clock, color: 'text-white' },
-              { label: 'Active Tickets', value: queueAlerts.length + liveQueue.length, sub: `${Math.min(queueAlerts.length, 4)} requiring escalation`, icon: MessageSquare, color: 'text-amber-400' },
-              { label: 'Call Volume', value: Math.max(50, liveAnalytics.users * 12) + liveAnalytics.clicks, sub: `Avg wait time: ${Math.max(12, 45 - liveAnalytics.users)}s`, icon: PhoneCall, color: 'text-white' },
-              { label: 'AI Resolution Rate', value: '85%', sub: 'Handled by Virtual Attendant', icon: Bot, color: 'text-emerald-400', highlight: true },
+              { label: 'Active Tasks', value: opsLiveTasks.length, sub: `${opsLiveTasks.filter((t: any) => t.status === 'pending' || !t.status).length} pending action`, icon: Clock, color: 'text-white' },
+              { label: 'Active Tickets', value: opsTicketCount, sub: `${queueAlerts.length} requiring escalation`, icon: MessageSquare, color: 'text-amber-400' },
+              { label: 'CRM Pipeline', value: opsCrmCount.toLocaleString(), sub: `${liveQueue.length} recent registrations`, icon: PhoneCall, color: 'text-white' },
+              { label: 'AI Resolution Rate', value: opsTicketCount > 0 ? `${Math.round(Math.max(0, opsTicketCount - queueAlerts.length) / Math.max(1, opsTicketCount) * 100)}%` : '—', sub: 'Auto-resolved vs escalated', icon: Bot, color: 'text-emerald-400', highlight: true },
             ].map((stat, i) => (
               <div key={i} className={cn("p-4 rounded-xl border", stat.highlight ? "bg-gradient-to-br from-violet-600/30 to-indigo-600/30 border-violet-500/30" : "bg-slate-800/50 border-slate-700/50")}>
                 <div className="flex items-center justify-between mb-2">
@@ -900,30 +919,40 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                 <button onClick={() => setActiveTab('operations')} className="text-[10px] font-bold text-cyan-400 hover:text-cyan-300 transition-colors">View All Tasks →</button>
               </div>
               <div className="space-y-3">
-                {[
-                  { icon: '🔴', title: 'Escalated Call: Compliance Audit', desc: 'Case requires human review for Q1 compliance filing.', action: 'Handle', actionColor: 'bg-slate-700 hover:bg-slate-600 text-white' },
-                  { icon: '📅', title: 'Reschedule Conflict: Dr. Mercer', desc: 'Virtual Attendant could not automatically resolve double-booking.', action: 'Resolve', actionColor: 'bg-indigo-600 hover:bg-indigo-500 text-white' },
-                  { icon: '💻', title: 'POS Hardware Issue — Tulsa Branch', desc: 'Terminal 3 is offline. Handle raised ticket.', action: 'Ticket', actionColor: 'bg-slate-700 hover:bg-slate-600 text-white' },
-                ].concat(
-                  queueAlerts.slice(0, 2).map(a => ({
-                    icon: a.type === 'Federal' ? '🏛️' : a.type === 'State Auth' ? '📋' : '⚠️',
+                {(() => {
+                  // Build real task stream from Firestore realtime_tasks + queue alerts
+                  const realTasks = opsLiveTasks.slice(0, 4).map((t: any) => ({
+                    icon: t.title?.includes('📧') ? '📧' : t.title?.includes('🔴') ? '🔴' : t.status === 'completed' ? '✅' : '📋',
+                    title: t.title || 'Untitled Task',
+                    desc: t.description || t.notes || `${t.assignedTo || 'Unassigned'} • ${t.dueDate || 'No due date'}`,
+                    action: t.status === 'completed' ? 'Done' : 'Handle',
+                    actionColor: t.status === 'completed' ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-slate-700 hover:bg-slate-600 text-white'
+                  }));
+                  // Append live queue alerts
+                  const alertTasks = queueAlerts.slice(0, 2).map(a => ({
+                    icon: a.type === 'CRITICAL ALERT' ? '🔴' : '⚠️',
                     title: a.text,
-                    desc: `${a.type} alert • ${a.time}`,
+                    desc: `${a.type} • ${a.time}`,
                     action: 'Route',
                     actionColor: 'bg-cyan-600 hover:bg-cyan-500 text-white'
-                  }))
-                ).slice(0, 4).map((task, i) => (
-                  <div key={i} className="flex items-center gap-4 p-3 bg-slate-800/50 rounded-xl border border-slate-700/30 hover:border-slate-600/50 transition-colors group">
-                    <span className="text-lg shrink-0">{task.icon}</span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-white truncate">{task.title}</p>
-                      <p className="text-[10px] text-slate-400 truncate">{task.desc}</p>
+                  }));
+                  const combined = [...realTasks, ...alertTasks].slice(0, 5);
+                  if (combined.length === 0) {
+                    return <p className="text-sm text-slate-500 italic text-center py-6">No active tasks — all clear ✨</p>;
+                  }
+                  return combined.map((task, i) => (
+                    <div key={i} className="flex items-center gap-4 p-3 bg-slate-800/50 rounded-xl border border-slate-700/30 hover:border-slate-600/50 transition-colors group">
+                      <span className="text-lg shrink-0">{task.icon}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-bold text-white truncate">{task.title}</p>
+                        <p className="text-[10px] text-slate-400 truncate">{task.desc}</p>
+                      </div>
+                      <button className={cn("px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all opacity-70 group-hover:opacity-100 shrink-0", task.actionColor)}>
+                        {task.action}
+                      </button>
                     </div>
-                    <button className={cn("px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all opacity-70 group-hover:opacity-100 shrink-0", task.actionColor)}>
-                      {task.action}
-                    </button>
-                  </div>
-                ))}
+                  ));
+                })()}
               </div>
             </div>
 
@@ -937,7 +966,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                 </div>
                 <div className="flex-1 bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border border-white/10">
                   <p className="text-[13px] text-white/90 leading-relaxed font-medium">
-                    "I've successfully routed <span className="font-black text-white">{Math.max(42, liveAnalytics.clicks % 200 + 42)}</span> patient calls this morning and automatically booked <span className="font-black text-white">{Math.max(12, Math.floor(liveAnalytics.clicks / 5))}</span> appointments. Call volume is projected to spike at 2:00 PM. I recommend shifting 2 staff members from tickets to phones."
+                    "Currently tracking <span className="font-black text-white">{opsCrmCount.toLocaleString()}</span> CRM records across all jurisdictions. There are <span className="font-black text-white">{opsLiveTasks.length}</span> active tasks and <span className="font-black text-white">{opsTicketCount}</span> support tickets in the queue. {queueAlerts.length > 0 ? `${queueAlerts.length} ticket(s) need escalation.` : 'No escalations needed — operations running smoothly.'}"
                   </p>
                 </div>
                 <div className="space-y-2">
