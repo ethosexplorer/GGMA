@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, Building2, LayoutTemplate, Clock, AlertCircle, Save, Trash2, X, Plus } from 'lucide-react';
+import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, Building2, LayoutTemplate, Clock, AlertCircle, Save, Trash2, X, Plus, ChevronDown } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { db, storage } from '../../firebase';
 import { collection, onSnapshot, query, addDoc, deleteDoc, doc, serverTimestamp } from 'firebase/firestore';
@@ -31,8 +31,9 @@ export const MarketingHub = () => {
   // Composer State
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
-  const [selectedState, setSelectedState] = useState('All');
+  const [selectedStates, setSelectedStates] = useState<string[]>(['All']);
   const [selectedType, setSelectedType] = useState('All');
+  const [showStateDropdown, setShowStateDropdown] = useState(false);
   
   // Audience Data
   const [totalLeads, setTotalLeads] = useState(0);
@@ -60,14 +61,14 @@ export const MarketingHub = () => {
       setTotalLeads(deals.length);
       
       const states = Array.from(new Set(deals.map(d => d.jurisdiction).filter(Boolean))) as string[];
-      setJurisdictions(states.sort());
+      setJurisdictions(states.sort((a, b) => a.localeCompare(b)));
       
       const types = Array.from(new Set(deals.map(d => d.type).filter(Boolean))) as string[];
-      setBusinessTypes(types.sort());
+      setBusinessTypes(types.sort((a, b) => a.localeCompare(b)));
       
       // Calculate filtered audience
       const filtered = deals.filter(d => {
-        const matchesState = selectedState === 'All' || d.jurisdiction === selectedState;
+        const matchesState = selectedStates.includes('All') || selectedStates.includes(d.jurisdiction);
         const matchesType = selectedType === 'All' || d.type === selectedType;
         // Also ensure they have the necessary contact info
         if (campaignType === 'email' && !d.email) return false;
@@ -78,7 +79,7 @@ export const MarketingHub = () => {
       setFilteredAudience(filtered);
     });
     return () => unsubscribe();
-  }, [selectedState, selectedType, campaignType]);
+  }, [selectedStates, selectedType, campaignType]);
 
   // Load saved templates
   useEffect(() => {
@@ -352,20 +353,53 @@ export const MarketingHub = () => {
               </h3>
 
               <div className="space-y-5">
-                <div>
+                <div className="relative">
                   <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
                     <MapPin size={12} /> Jurisdiction
                   </label>
-                  <select 
-                    value={selectedState}
-                    onChange={(e) => setSelectedState(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:border-indigo-500 transition-colors font-medium appearance-none"
+                  <button 
+                    onClick={() => setShowStateDropdown(!showStateDropdown)}
+                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-left text-white outline-none focus:border-indigo-500 transition-colors font-medium flex justify-between items-center"
                   >
-                    <option value="All">All States (National)</option>
-                    {jurisdictions.map(s => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
+                    <span className="truncate">
+                      {selectedStates.includes('All') ? 'All States (National)' : selectedStates.join(', ')}
+                    </span>
+                    <ChevronDown size={16} className="text-slate-400" />
+                  </button>
+                  {showStateDropdown && (
+                    <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-50 max-h-64 overflow-y-auto p-2">
+                      <label className="flex items-center gap-2 p-2 hover:bg-slate-800 rounded-lg cursor-pointer">
+                        <input 
+                          type="checkbox" 
+                          checked={selectedStates.includes('All')} 
+                          onChange={() => setSelectedStates(['All'])} 
+                          className="accent-indigo-500 w-4 h-4" 
+                        />
+                        <span className="text-sm font-medium text-white">All States (National)</span>
+                      </label>
+                      <div className="h-px bg-slate-800 my-1"></div>
+                      {jurisdictions.map(s => (
+                        <label key={s} className="flex items-center gap-2 p-2 hover:bg-slate-800 rounded-lg cursor-pointer">
+                          <input 
+                            type="checkbox" 
+                            checked={selectedStates.includes(s) && !selectedStates.includes('All')}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedStates(prev => prev.includes('All') ? [s] : [...prev, s]);
+                              } else {
+                                setSelectedStates(prev => {
+                                  const next = prev.filter(x => x !== s);
+                                  return next.length === 0 ? ['All'] : next;
+                                });
+                              }
+                            }}
+                            className="accent-indigo-500 w-4 h-4" 
+                          />
+                          <span className="text-sm font-medium text-white">{s}</span>
+                        </label>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div>
