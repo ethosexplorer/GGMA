@@ -180,22 +180,36 @@ export const MarketingHub = () => {
     setIsSending(true);
     
     try {
+      // Strip base64 images from message for the API payload to avoid body size limits
+      // Keep images under 500KB inline, strip larger ones
+      let apiMessage = message;
+      const base64Regex = /data:image\/[^;]+;base64,[A-Za-z0-9+/=]{500000,}/g;
+      if (base64Regex.test(apiMessage)) {
+        apiMessage = apiMessage.replace(base64Regex, '[Image embedded - too large for email API]');
+      }
+
       const response = await fetch('/api/marketing/send-campaign', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type: campaignType,
           subject,
-          message,
+          message: apiMessage,
           recipients: finalAudience
         })
       });
       
+      if (!response.ok) {
+        const errorText = await response.text();
+        alert(`Campaign API Error (${response.status}): ${errorText.substring(0, 300)}`);
+        return;
+      }
+
       const data = await response.json();
       
       if (data.success) {
         setSendSuccess(true);
-        // Log to Turso could go here
+        // Log to Turso
         import('../../lib/turso').then(({ turso }) => {
           turso.execute({ 
             sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", 
@@ -212,7 +226,8 @@ export const MarketingHub = () => {
         alert('Campaign Error: ' + (data.error || 'Unknown error'));
       }
     } catch (err: any) {
-      alert('Network Error: Failed to contact the marketing API.');
+      console.error('Marketing API fetch error:', err);
+      alert(`Network Error: ${err.message || 'Failed to contact the marketing API.'}\n\nCheck browser console (F12) for details.`);
     } finally {
       setIsSending(false);
     }
