@@ -118,17 +118,27 @@ async function checkVercelEdge(): Promise<ServiceHealth> {
 async function checkTextBelt(): Promise<ServiceHealth> {
   const start = Date.now();
   try {
+    // Use the quota endpoint via Vercel proxy to avoid CORS
+    // This also tells us how many SMS credits remain
     const res = await Promise.race([
-      fetch('https://textbelt.com/status/test', { method: 'GET' }),
+      fetch('/api/send-sms', { method: 'GET' }),
       new Promise<never>((_, reject) => setTimeout(() => reject(new Error('Timeout')), 10000))
     ]);
     const latency = Date.now() - start;
+    // Also try the quota check directly (this endpoint is CORS-safe)
+    let quotaRemaining = -1;
+    try {
+      const quotaRes = await fetch('https://textbelt.com/quota/db52652f3be5c4f6d222f51f0baec042c9c2de1dj5ZJQqhgFMxflAFaM9KXOLUAK');
+      const quotaData = await quotaRes.json();
+      quotaRemaining = quotaData.quotaRemaining ?? -1;
+    } catch { /* quota check is optional */ }
     return {
       name: 'TextBelt SMS Gateway',
       status: latency > LATENCY_CRITICAL_MS ? 'degraded' : (latency > LATENCY_WARN_MS ? 'degraded' : 'online'),
       latencyMs: latency,
       lastChecked: new Date().toISOString(),
-      details: `SMS gateway responding in ${latency}ms`
+      details: quotaRemaining >= 0 ? `SMS gateway online — ${quotaRemaining} credits remaining` : `SMS gateway responding in ${latency}ms`,
+      critical: false
     };
   } catch (err: any) {
     return {
@@ -223,11 +233,12 @@ export async function runHealthCheck(): Promise<SystemHealthReport> {
   );
 
   const criticalCount = results.filter(s => s.status === 'offline' && s.critical !== false).length;
-  const degradedCount = results.filter(s => s.status === 'degraded' || (s.status === 'offline' && s.critical === false)).length;
+  // Only count latency-degraded services as degraded — non-critical offline services are informational only
+  const degradedCount = results.filter(s => s.status === 'degraded').length;
   const onlineCount = results.filter(s => s.status === 'online').length;
   const totalLatency = results.reduce((sum, s) => sum + s.latencyMs, 0);
   const avgLatency = Math.round(totalLatency / results.length);
-  // Non-critical offline services count as degraded for uptime calc
+  // Non-critical offline services count as online for uptime calc
   const effectiveOnline = results.filter(s => s.status === 'online' || (s.status === 'offline' && s.critical === false)).length;
   const uptimePercent = Math.round((effectiveOnline / results.length) * 100);
 
