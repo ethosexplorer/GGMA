@@ -10,8 +10,8 @@ const createTransporter = () => {
     port: parseInt(process.env.SMTP_PORT || '587'),
     secure: process.env.SMTP_SECURE === 'true',
     auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
+      user: process.env.SMTP_USER || 'marketing.globalgreenhp@gmail.com',
+      pass: process.env.SMTP_PASS || 'bzrp rqjd stcj udlg',
     },
   });
 };
@@ -39,10 +39,6 @@ export default async function handler(req, res) {
       // ----------------------------------------------------
       // EMAIL BLAST LOGIC (Nodemailer)
       // ----------------------------------------------------
-      if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-        return res.status(500).json({ error: 'SMTP credentials are not configured on the server.' });
-      }
-
       const transporter = createTransporter();
       
       // We use Promise.allSettled to send all emails in parallel
