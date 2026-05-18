@@ -113,8 +113,7 @@ import MapChart from './components/MapChart';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { FounderDashboard } from './pages/FounderDashboard';
 import { RepDashboard } from './pages/RepDashboard';
-import { TeamLeadDashboard } from './pages/TeamLeadDashboard';
-import { ManagerDashboard } from './pages/ManagerDashboard';
+// TeamLeadDashboard & ManagerDashboard consolidated into FounderDashboard
 import { initDatabase } from './lib/initDb';
 import { StateAuthorityDashboard } from './pages/StateAuthorityDashboard';
 import { OperationsDashboard } from './pages/OperationsDashboard';
@@ -141,7 +140,7 @@ import { OversightDashboard } from './pages/OversightDashboard';
 import { PresidentDashboard } from './pages/PresidentDashboard';
 import { ChiefComplianceDirectorDashboard } from './pages/ChiefComplianceDirectorDashboard';
 import { AdvisorDashboard } from './pages/AdvisorDashboard';
-import { PoliticalExecutiveDashboard } from './pages/PoliticalExecutiveDashboard';
+// PoliticalExecutiveDashboard consolidated into FounderDashboard
 import { AdvocacyResearchDashboard } from './pages/AdvocacyResearchDashboard';
 import { PricingTiers } from './components/PricingTiers';
 import { RolePricingPage } from './pages/RolePricingPage';
@@ -8752,14 +8751,9 @@ export default function App() {
       return <RepDashboard onLogout={handleReturnToSelector} user={profile} mode="ai" />;
     }
 
-    // Team Lead (Level 3)
-    if (role === 'team_lead') {
-      return <TeamLeadDashboard onLogout={handleReturnToSelector} user={profile} />;
-    }
-
-    // Manager (Level 4)
-    if (role === 'manager') {
-      return <ManagerDashboard onLogout={handleReturnToSelector} user={profile} />;
+    // Team Lead & Manager → Founder Dashboard (consolidated)
+    if (role === 'team_lead' || role === 'manager') {
+      return <FounderDashboard onLogout={handleReturnToSelector} user={profile} jurisdiction={jurisdiction} />;
     }
 
     // Internal Leadership Portal Routing
@@ -8786,9 +8780,9 @@ export default function App() {
       return <EnforcementDashboard onLogout={handleReturnToSelector} user={profile} />;
     }
 
-    // Political & Advocacy Portals
+    // Political Executive → Founder Dashboard (consolidated)
     if (role === 'political_executive') {
-      return <PoliticalExecutiveDashboard onLogout={handleReturnToSelector} user={profile} />;
+      return <FounderDashboard onLogout={handleReturnToSelector} user={profile} jurisdiction={jurisdiction} />;
     }
     if (role === 'advocacy_research') {
       return <AdvocacyResearchDashboard onLogout={handleReturnToSelector} user={profile} />;
