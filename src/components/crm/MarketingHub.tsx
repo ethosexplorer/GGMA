@@ -81,10 +81,10 @@ export const MarketingHub = () => {
     setGmailError('');
     try {
       const [inboxRes, bouncesRes, repliesRes, profileRes] = await Promise.all([
-        fetch('/api/marketing/gmail?action=inbox&maxResults=15').then(r => r.json()),
-        fetch('/api/marketing/gmail?action=bounces&maxResults=10').then(r => r.json()),
-        fetch('/api/marketing/gmail?action=replies&maxResults=10').then(r => r.json()),
-        fetch('/api/marketing/gmail?action=profile').then(r => r.json()),
+        fetch('/api/marketing?route=gmail&action=inbox&maxResults=15').then(r => r.json()),
+        fetch('/api/marketing?route=gmail&action=bounces&maxResults=10').then(r => r.json()),
+        fetch('/api/marketing?route=gmail&action=replies&maxResults=10').then(r => r.json()),
+        fetch('/api/marketing?route=gmail&action=profile').then(r => r.json()),
       ]);
       if (inboxRes.error) throw new Error(inboxRes.error);
       setGmailInbox(inboxRes.messages || []);
@@ -313,7 +313,7 @@ export const MarketingHub = () => {
       for (let batchIdx = 0; batchIdx < batches.length; batchIdx++) {
         setSendProgress(`Sending batch ${batchIdx + 1}/${batches.length} (${totalResults.successful} sent)...`);
         try {
-          const res = await fetch('/api/marketing/send-campaign', {
+          const res = await fetch('/api/marketing?route=send', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
