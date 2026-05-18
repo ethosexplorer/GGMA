@@ -211,6 +211,9 @@ export const PatientCaseTracker: React.FC<PatientCaseTrackerProps> = ({
   const estimated = getEstimatedDates(caseData.applicationSubmittedDate);
   const StatusIcon = STATUS_LABELS[caseData.applicationStatus]?.icon || Clock;
 
+  const safeName = patientName || 'Unknown Patient';
+  const safeEmail = patientEmail || 'No email provided';
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -218,11 +221,11 @@ export const PatientCaseTracker: React.FC<PatientCaseTrackerProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-emerald-600 rounded-xl flex items-center justify-center text-white font-black text-lg shadow-lg">
-              {patientName.charAt(0)}
+              {safeName.charAt(0).toUpperCase()}
             </div>
             <div>
-              <h3 className="text-lg font-black tracking-tight">{patientName}</h3>
-              <p className="text-sm text-slate-400 font-medium">{patientEmail}</p>
+              <h3 className="text-lg font-black tracking-tight">{safeName}</h3>
+              <p className="text-sm text-slate-400 font-medium">{safeEmail}</p>
             </div>
           </div>
           <div className="text-right">
@@ -515,11 +518,11 @@ export const PatientCaseTracker: React.FC<PatientCaseTrackerProps> = ({
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Quick Templates</label>
               <div className="flex flex-wrap gap-2">
                 {[
-                  { label: 'App Submitted', fn: () => setSmsMessage(SMS_TEMPLATES.applicationSubmitted(patientName.split(' ')[0], patientState)) },
-                  { label: 'Approved!', fn: () => setSmsMessage(SMS_TEMPLATES.applicationApproved(patientName.split(' ')[0], patientState)) },
-                  { label: 'Card Mailed', fn: () => setSmsMessage(SMS_TEMPLATES.cardMailed(patientName.split(' ')[0])) },
-                  { label: 'Card Delivered', fn: () => setSmsMessage(SMS_TEMPLATES.cardDelivered(patientName.split(' ')[0])) },
-                  { label: 'Status Update', fn: () => setSmsMessage(SMS_TEMPLATES.statusUpdate(patientName.split(' ')[0], STATUS_LABELS[caseData.applicationStatus]?.label || 'Updated')) },
+                  { label: 'App Submitted', fn: () => setSmsMessage(SMS_TEMPLATES.applicationSubmitted(safeName.split(' ')[0], patientState)) },
+                  { label: 'Approved!', fn: () => setSmsMessage(SMS_TEMPLATES.applicationApproved(safeName.split(' ')[0], patientState)) },
+                  { label: 'Card Mailed', fn: () => setSmsMessage(SMS_TEMPLATES.cardMailed(safeName.split(' ')[0])) },
+                  { label: 'Card Delivered', fn: () => setSmsMessage(SMS_TEMPLATES.cardDelivered(safeName.split(' ')[0])) },
+                  { label: 'Status Update', fn: () => setSmsMessage(SMS_TEMPLATES.statusUpdate(safeName.split(' ')[0], STATUS_LABELS[caseData.applicationStatus]?.label || 'Updated')) },
                 ].map((tpl, i) => (
                   <button key={i} onClick={tpl.fn} className="px-3 py-1.5 bg-green-50 border border-green-200 text-green-700 text-[10px] font-black uppercase tracking-wider rounded-lg hover:bg-green-100 transition-colors">
                     {tpl.label}
