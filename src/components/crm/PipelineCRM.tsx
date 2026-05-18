@@ -561,7 +561,7 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
                     <select 
                       value={formData.assignedTo} 
                       onChange={e => setFormData({ ...formData, assignedTo: e.target.value })}
-                      className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium outline-none focus:border-indigo-500"
+                      className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-800 outline-none focus:border-indigo-500"
                     >
                       {TEAM.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
                     </select>
@@ -571,7 +571,7 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
                     <select 
                       value={formData.stage} 
                       onChange={e => setFormData({ ...formData, stage: e.target.value })}
-                      className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium outline-none focus:border-indigo-500"
+                      className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-800 outline-none focus:border-indigo-500"
                     >
                       {STAGES.map(s => <option key={s.id} value={s.id}>{s.title}</option>)}
                     </select>
@@ -584,7 +584,7 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
                     type="text" 
                     value={formData.name} 
                     onChange={e => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium outline-none focus:border-indigo-500"
+                    className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-800 outline-none focus:border-indigo-500"
                     placeholder="e.g. Green Leaf LLC or John Doe"
                   />
                 </div>
@@ -595,7 +595,7 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
                     type="text" 
                     value={formData.contactName} 
                     onChange={e => setFormData({ ...formData, contactName: e.target.value })}
-                    className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium outline-none focus:border-indigo-500"
+                    className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-800 outline-none focus:border-indigo-500"
                     placeholder="Main Point of Contact"
                   />
                 </div>
@@ -606,7 +606,7 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
                     type="number" 
                     value={formData.value} 
                     onChange={e => setFormData({ ...formData, value: e.target.value })}
-                    className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium outline-none focus:border-indigo-500"
+                    className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-800 outline-none focus:border-indigo-500"
                     placeholder="0"
                   />
                 </div>
@@ -617,7 +617,7 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
                     type="tel" 
                     value={formData.phone} 
                     onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium outline-none focus:border-indigo-500"
+                    className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-800 outline-none focus:border-indigo-500"
                     placeholder="+1 (555) 000-0000"
                   />
                 </div>
@@ -628,7 +628,7 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
                     type="email" 
                     value={formData.email} 
                     onChange={e => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium outline-none focus:border-indigo-500"
+                    className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-800 outline-none focus:border-indigo-500"
                     placeholder="contact@company.com"
                   />
                 </div>
@@ -639,7 +639,7 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
                     type="text" 
                     value={formData.licenseNumber} 
                     onChange={e => setFormData({ ...formData, licenseNumber: e.target.value })}
-                    className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium outline-none focus:border-indigo-500"
+                    className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-800 outline-none focus:border-indigo-500"
                     placeholder="e.g. PAAA-XXXX-XXXX"
                   />
                 </div>
@@ -650,7 +650,7 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
                     type="text" 
                     value={formData.jurisdiction} 
                     onChange={e => setFormData({ ...formData, jurisdiction: e.target.value })}
-                    className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium outline-none focus:border-indigo-500"
+                    className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-800 outline-none focus:border-indigo-500"
                     placeholder="e.g. Oklahoma or All States"
                   />
                 </div>
@@ -661,7 +661,7 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
                     value={formData.notes} 
                     onChange={e => setFormData({ ...formData, notes: e.target.value })}
                     rows={4}
-                    className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium outline-none focus:border-indigo-500 resize-none"
+                    className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-800 outline-none focus:border-indigo-500 resize-none"
                     placeholder="Add any relevant details, next steps, or history..."
                   />
                 </div>
