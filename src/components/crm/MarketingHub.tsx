@@ -32,8 +32,9 @@ export const MarketingHub = () => {
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [selectedStates, setSelectedStates] = useState<string[]>(['All']);
-  const [selectedType, setSelectedType] = useState('All');
+  const [selectedTypes, setSelectedTypes] = useState<string[]>(['All']);
   const [showStateDropdown, setShowStateDropdown] = useState(false);
+  const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   
   // Audience Data
   const [totalLeads, setTotalLeads] = useState(0);
@@ -69,7 +70,7 @@ export const MarketingHub = () => {
       // Calculate filtered audience
       const filtered = deals.filter(d => {
         const matchesState = selectedStates.includes('All') || selectedStates.includes(d.jurisdiction);
-        const matchesType = selectedType === 'All' || d.type === selectedType;
+        const matchesType = selectedTypes.includes('All') || selectedTypes.includes(d.type);
         // Also ensure they have the necessary contact info
         if (campaignType === 'email' && !d.email) return false;
         if (campaignType === 'sms' && !d.phone) return false;
@@ -79,7 +80,7 @@ export const MarketingHub = () => {
       setFilteredAudience(filtered);
     });
     return () => unsubscribe();
-  }, [selectedStates, selectedType, campaignType]);
+  }, [selectedStates, selectedTypes, campaignType]);
 
   // Load saved templates
   useEffect(() => {
@@ -402,20 +403,53 @@ export const MarketingHub = () => {
                   )}
                 </div>
 
-                <div>
+                <div className="relative">
                   <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
                     <Building2 size={12} /> Business Type
                   </label>
-                  <select 
-                    value={selectedType}
-                    onChange={(e) => setSelectedType(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:border-indigo-500 transition-colors font-medium appearance-none capitalize"
+                  <button 
+                    onClick={() => setShowTypeDropdown(!showTypeDropdown)}
+                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-left text-white outline-none focus:border-indigo-500 transition-colors font-medium flex justify-between items-center"
                   >
-                    <option value="All">All Types</option>
-                    {businessTypes.map(t => (
-                      <option key={t} value={t}>{t}</option>
-                    ))}
-                  </select>
+                    <span className="truncate capitalize">
+                      {selectedTypes.includes('All') ? 'All Types' : selectedTypes.join(', ')}
+                    </span>
+                    <ChevronDown size={16} className="text-slate-400" />
+                  </button>
+                  {showTypeDropdown && (
+                    <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-50 max-h-64 overflow-y-auto p-2">
+                      <label className="flex items-center gap-2 p-2 hover:bg-slate-800 rounded-lg cursor-pointer">
+                        <input 
+                          type="checkbox" 
+                          checked={selectedTypes.includes('All')} 
+                          onChange={() => setSelectedTypes(['All'])} 
+                          className="accent-indigo-500 w-4 h-4" 
+                        />
+                        <span className="text-sm font-medium text-white">All Types</span>
+                      </label>
+                      <div className="h-px bg-slate-800 my-1"></div>
+                      {businessTypes.map(t => (
+                        <label key={t} className="flex items-center gap-2 p-2 hover:bg-slate-800 rounded-lg cursor-pointer">
+                          <input 
+                            type="checkbox" 
+                            checked={selectedTypes.includes(t) && !selectedTypes.includes('All')}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedTypes(prev => prev.includes('All') ? [t] : [...prev, t]);
+                              } else {
+                                setSelectedTypes(prev => {
+                                  const next = prev.filter(x => x !== t);
+                                  return next.length === 0 ? ['All'] : next;
+                                });
+                              }
+                            }}
+                            className="accent-indigo-500 w-4 h-4" 
+                          />
+                          <span className="text-sm font-medium text-white capitalize">{t}</span>
+                        </label>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="mt-8 pt-6 border-t border-slate-700">
