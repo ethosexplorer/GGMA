@@ -425,6 +425,22 @@ export const ExecutiveCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: st
           </label>
 
           <button 
+            onClick={async () => {
+              if (!window.confirm('Load 50+ Arizona cannabis leads into the CRM? This will add dispensaries, cultivators, physicians, attorneys, and regulators.')) return;
+              try {
+                const { loadArizonaLeads } = await import('../../scripts/runAzImport');
+                const result = await loadArizonaLeads();
+                alert(`🌵 Arizona Import Complete!\n\n✅ ${result.success} leads loaded\n❌ ${result.failed} failed\n📊 ${result.total} total AZ entities`);
+              } catch (err: any) {
+                alert('AZ Import Error: ' + err.message);
+              }
+            }}
+            className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors shadow-lg shadow-amber-500/20"
+          >
+            🌵 Load AZ Leads
+          </button>
+
+          <button 
             onClick={() => openModal()}
             className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors shadow-lg shadow-indigo-600/20"
           >
