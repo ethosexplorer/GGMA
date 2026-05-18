@@ -9075,7 +9075,7 @@ export default function App() {
         {showJurisdictionGate && (
           <div className="fixed inset-0 z-[9999] flex items-center justify-center">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={() => { if (jurisdictionLocked) { setShowJurisdictionGate(false); setPendingJurisdiction(null); } }} />
-            <div className="relative bg-white rounded-3xl shadow-2xl max-w-lg w-full mx-4 overflow-hidden animate-in zoom-in-95 fade-in duration-300">
+            <div className="relative bg-white rounded-3xl shadow-2xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto animate-in zoom-in-95 fade-in duration-300">
               <div className="bg-gradient-to-r from-[#1a4731] to-emerald-800 p-8 text-white text-center">
                 <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 backdrop-blur-sm border border-white/20">
                   <MapPin size={32} className="text-white" />
