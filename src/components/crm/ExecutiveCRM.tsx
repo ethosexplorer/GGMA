@@ -430,7 +430,7 @@ export const ExecutiveCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: st
               try {
                 const { loadArizonaLeads } = await import('../../scripts/runAzImport');
                 const result = await loadArizonaLeads();
-                alert(`🌵 Arizona Import Complete!\n\n✅ ${result.success} leads loaded\n❌ ${result.failed} failed\n📊 ${result.total} total AZ entities`);
+                alert(`🌵 Arizona Import Complete!\n\n✅ ${result.success} new leads loaded\n⏭️ ${result.skipped || 0} duplicates skipped\n❌ ${result.failed} failed\n📊 ${result.total} total AZ entities`);
               } catch (err: any) {
                 alert('AZ Import Error: ' + err.message);
               }
