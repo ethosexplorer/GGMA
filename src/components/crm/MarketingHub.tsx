@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, Building2, LayoutTemplate, Clock, AlertCircle } from 'lucide-react';
+import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, Building2, LayoutTemplate, Clock, AlertCircle, Save, Trash2, X, Plus } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { db, storage } from '../../firebase';
-import { collection, onSnapshot, query } from 'firebase/firestore';
+import { collection, onSnapshot, query, addDoc, deleteDoc, doc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 interface Campaign {
@@ -14,6 +14,14 @@ interface Campaign {
   sentDate?: string;
   openRate?: number;
   clickRate?: number;
+}
+
+interface EmailTemplate {
+  id: string;
+  name: string;
+  subject: string;
+  body: string;
+  createdAt: any;
 }
 
 export const MarketingHub = () => {
@@ -37,6 +45,12 @@ export const MarketingHub = () => {
   const [isSending, setIsSending] = useState(false);
   const [sendSuccess, setSendSuccess] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+
+  // Template State
+  const [templates, setTemplates] = useState<EmailTemplate[]>([]);
+  const [showTemplates, setShowTemplates] = useState(false);
+  const [showSaveTemplate, setShowSaveTemplate] = useState(false);
+  const [templateName, setTemplateName] = useState('');
 
   // Load CRM Audience Data
   useEffect(() => {
@@ -66,15 +80,47 @@ export const MarketingHub = () => {
     return () => unsubscribe();
   }, [selectedState, selectedType, campaignType]);
 
+  // Load saved templates
+  useEffect(() => {
+    const u = onSnapshot(query(collection(db, 'marketing_templates')), snap => {
+      setTemplates(snap.docs.map(d => ({ id: d.id, ...d.data() } as EmailTemplate)));
+    });
+    return () => u();
+  }, []);
+
+  const saveTemplate = async () => {
+    if (!templateName.trim()) return;
+    await addDoc(collection(db, 'marketing_templates'), {
+      name: templateName, subject, body: message, createdAt: serverTimestamp()
+    });
+    setTemplateName('');
+    setShowSaveTemplate(false);
+  };
+
+  const loadTemplate = (t: EmailTemplate) => {
+    setSubject(t.subject || '');
+    setMessage(t.body || '');
+    setShowTemplates(false);
+  };
+
+  const deleteTemplate = async (id: string) => {
+    await deleteDoc(doc(db, 'marketing_templates', id));
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     
     setIsUploading(true);
     try {
+      // Timeout after 30s
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 30000);
+
       const fileRef = ref(storage, `marketing_assets/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`);
       await uploadBytes(fileRef, file);
       const url = await getDownloadURL(fileRef);
+      clearTimeout(timeout);
       
       if (file.type.startsWith('image/')) {
         setMessage(prev => prev + `\n<div style="text-align: center; margin: 20px 0;">\n  <img src="${url}" alt="${file.name}" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" />\n</div>\n`);
@@ -84,11 +130,18 @@ export const MarketingHub = () => {
       } else {
         setMessage(prev => prev + `\n<a href="${url}" style="color: #4f46e5; font-weight: bold; text-decoration: underline;">View Attachment: ${file.name}</a>\n`);
       }
-    } catch (error) {
+      alert('✅ Asset uploaded and inserted into message body.');
+    } catch (error: any) {
       console.error("Upload failed:", error);
-      alert("Failed to upload asset. Ensure Firebase Storage rules are configured.");
+      if (error?.name === 'AbortError') {
+        alert('Upload timed out after 30 seconds. Try a smaller file.');
+      } else {
+        alert('Upload failed: ' + (error?.message || 'Check Firebase Storage rules.'));
+      }
     } finally {
       setIsUploading(false);
+      // Reset the input so the same file can be re-uploaded
+      e.target.value = '';
     }
   };
 
@@ -208,9 +261,14 @@ export const MarketingHub = () => {
               <div className="relative z-10 space-y-6">
                 <div className="flex items-center justify-between border-b border-white/10 pb-6">
                   <h2 className="text-xl font-black text-white">Compose {campaignType === 'email' ? 'Email' : 'SMS'}</h2>
-                  <button className="flex items-center gap-2 text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors bg-indigo-400/10 px-4 py-2 rounded-lg">
-                    <LayoutTemplate size={14} /> Use Template
-                  </button>
+                  <div className="flex gap-2">
+                    <button onClick={() => setShowTemplates(true)} className="flex items-center gap-2 text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors bg-indigo-400/10 px-4 py-2 rounded-lg">
+                      <LayoutTemplate size={14} /> Use Template
+                    </button>
+                    <button onClick={() => setShowSaveTemplate(true)} className="flex items-center gap-2 text-xs font-bold text-emerald-400 hover:text-emerald-300 transition-colors bg-emerald-400/10 px-4 py-2 rounded-lg">
+                      <Save size={14} /> Save as Template
+                    </button>
+                  </div>
                 </div>
 
                 {campaignType === 'email' && (
@@ -373,6 +431,51 @@ export const MarketingHub = () => {
           </div>
         </div>
       </div>
+      {/* Template Picker Modal */}
+      {showTemplates && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg shadow-2xl p-6 max-h-[80vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-lg font-black text-white">My Templates</h3>
+              <button onClick={() => setShowTemplates(false)} className="p-1 hover:bg-slate-800 rounded-lg"><X size={20} className="text-slate-400" /></button>
+            </div>
+            {templates.length === 0 && <p className="text-slate-500 text-sm text-center py-8">No templates saved yet. Compose a message and click "Save as Template".</p>}
+            {templates.map(t => (
+              <div key={t.id} className="flex items-center justify-between p-4 bg-slate-800/50 rounded-xl mb-3 hover:bg-slate-800 transition-colors">
+                <div className="cursor-pointer flex-1" onClick={() => loadTemplate(t)}>
+                  <p className="font-bold text-white text-sm">{t.name}</p>
+                  <p className="text-xs text-slate-500 truncate">{t.subject || 'No subject'}</p>
+                </div>
+                <button onClick={() => deleteTemplate(t.id)} className="p-2 hover:bg-red-500/20 rounded-lg ml-2"><Trash2 size={14} className="text-red-400" /></button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Save Template Modal */}
+      {showSaveTemplate && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md shadow-2xl p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-lg font-black text-white">Save Template</h3>
+              <button onClick={() => setShowSaveTemplate(false)} className="p-1 hover:bg-slate-800 rounded-lg"><X size={20} className="text-slate-400" /></button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs font-bold text-slate-400 uppercase block mb-2">Template Name *</label>
+                <input value={templateName} onChange={e => setTemplateName(e.target.value)} className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:border-indigo-500" placeholder="e.g. AZ Cannabis Promo" />
+              </div>
+              <p className="text-xs text-slate-500">Subject: {subject || '(none)'}</p>
+              <p className="text-xs text-slate-500">Body: {message.substring(0, 100) || '(empty)'}...</p>
+            </div>
+            <div className="flex justify-end gap-3 mt-6">
+              <button onClick={() => setShowSaveTemplate(false)} className="px-4 py-2 text-slate-400 font-bold text-sm">Cancel</button>
+              <button onClick={saveTemplate} disabled={!templateName.trim()} className="px-6 py-2 bg-emerald-600 text-white font-bold text-sm rounded-lg disabled:opacity-50 hover:bg-emerald-700">Save</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

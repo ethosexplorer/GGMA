@@ -50,7 +50,7 @@ export default async function handler(req, res) {
         if (!recipient.email) throw new Error('Missing email address');
         
         return transporter.sendMail({
-          from: `"Global Green Health Platform" <${process.env.SMTP_USER}>`,
+          from: `"Global Green Enterprise - Marketing" <marketing.globalgreenhp@gmail.com>`,
           to: recipient.email,
           subject: subject || 'Important Update',
           text: message,
