@@ -491,7 +491,7 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
                       
                       <h4 className="font-bold text-slate-800 text-sm mb-1">{deal.name}</h4>
                       <p className="text-xs text-slate-500 font-medium mb-1">
-                        {deal.contactName || 'No contact specified'}
+                        {deal.contactName || deal.email || deal.phone || <span className="italic text-slate-400">No contact info</span>}
                         {deal.jurisdiction && <span className="block mt-0.5 text-indigo-600 font-bold">{deal.jurisdiction}</span>}
                       </p>
                       
