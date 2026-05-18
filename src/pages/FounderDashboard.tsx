@@ -21,7 +21,7 @@ import { InvestorSandboxTab } from '../components/founder/InvestorSandboxTab';
 import { LegislativeIntelTab } from '../components/federal/LegislativeIntelTab';
 import { JudicialMonitorTab } from '../components/federal/JudicialMonitorTab';
 import { VirtualAttendantTab } from '../components/oversight/VirtualAttendantTab';
-import { onSnapshot, collection, doc, updateDoc } from 'firebase/firestore';
+import { onSnapshot, collection, doc, updateDoc, query, where } from 'firebase/firestore';
 import { db } from '../firebase';
 import { METRC_MANUAL } from '../data/metrcManual';
 import { turso } from '../lib/turso';
@@ -629,22 +629,58 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     setIsHealthChecking(false);
   };
 
-  // Poll every 30 seconds
+  // Poll every 15 seconds for Ops Checks
   useEffect(() => {
-    runCheck(); // Initial check
-    const interval = setInterval(runCheck, 30000);
-    return () => clearInterval(interval);
-  }, []);
-  const [queueAlerts, setQueueAlerts] = useState([
-    { id: 1, type: 'State Auth', color: 'cyan', time: 'Just Now', text: 'OMMA Regulatory Update Triggered' },
-    { id: 2, type: 'Federal', color: 'red', time: '2m ago', text: 'DOJ compliance review request logged.' },
-    { id: 3, type: 'SINC Alert', color: 'amber', time: '14m ago', text: 'High-risk B2B transaction flagged.' },
-    { id: 4, type: 'Direct Transfer', color: 'purple', time: '31m ago', text: 'Media/Press Inquiry transferred from Sylara.' }
-  ]);
+    // 1. Listen for High/Urgent Support Tickets
+    const q = query(
+      collection(db, 'support_tickets'),
+      where('status', 'in', ['open', 'in_progress']),
+      where('priority', 'in', ['urgent', 'high'])
+    );
+    const unsub = onSnapshot(q, snap => {
+      const tickets = snap.docs.map(doc => ({
+        id: doc.id,
+        type: doc.data().priority === 'urgent' ? 'CRITICAL ALERT' : 'HIGH PRIORITY',
+        color: doc.data().priority === 'urgent' ? 'red' : 'amber',
+        time: 'Active',
+        text: doc.data().subject || 'Support Request'
+      }));
+      setQueueAlerts(tickets.slice(0, 5));
+    });
 
-  const handleRouteAlert = (id: number) => {
-    setQueueAlerts(prev => prev.filter(a => a.id !== id));
-    (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Alert routed successfully. You will be notified when the delegated team handles it." })] }).catch(console.error) ); alert("Alert routed successfully. You will be notified when the delegated team handles it.\n\n[Live Production Transaction Logged]"); })();
+    // 2. Fetch Ops Checks from Turso
+    const fetchOpsChecks = async () => {
+      try {
+        const res = await turso.execute("SELECT * FROM audit_logs WHERE action != 'System_Event' ORDER BY rowid DESC LIMIT 4");
+        const checks = res.rows.map((r: any) => {
+          let detail = 'System action logged';
+          try { detail = JSON.parse(String(r.data)).detail || detail; } catch(e) {}
+          return {
+            id: String(r.id),
+            source: String(r.action).replace(/_/g, ' '),
+            time: 'Recent',
+            text: detail,
+            color: 'indigo'
+          };
+        });
+        setOpsChecks(checks);
+      } catch(e) { console.error('Error fetching ops checks', e); }
+    };
+    
+    fetchOpsChecks();
+    const opsInterval = setInterval(fetchOpsChecks, 15000);
+
+    return () => {
+      unsub();
+      clearInterval(opsInterval);
+    };
+  }, []);
+
+  const [queueAlerts, setQueueAlerts] = useState<any[]>([]);
+  const [opsChecks, setOpsChecks] = useState<any[]>([]);
+
+  const handleRouteAlert = (id: string | number) => {
+    setActiveTab('support_tickets');
   };
 
   const handleBroadcast = () => {
@@ -4847,27 +4883,20 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
               <div className="pt-4 mt-4 border-t border-slate-200">
                  <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3 flex items-center gap-2"><Activity size={12} /> Internal Ops Status Checks</h4>
                  <div className="space-y-3">
-                    <div className="p-3 bg-indigo-50 border border-indigo-100 rounded-xl">
-                       <div className="flex justify-between items-start mb-1">
-                          <span className="text-[9px] font-black uppercase tracking-widest text-indigo-600">AI Sylara</span>
-                          <span className="text-[9px] font-bold text-slate-400">1m ago</span>
-                       </div>
-                       <p className="text-xs font-bold text-slate-700">Daily Metrc Compliance Auto-Audit Completed.</p>
-                    </div>
-                    <div className="p-3 bg-emerald-50 border border-emerald-100 rounded-xl">
-                       <div className="flex justify-between items-start mb-1">
-                          <span className="text-[9px] font-black uppercase tracking-widest text-emerald-600">Call Center Ops</span>
-                          <span className="text-[9px] font-bold text-slate-400">8m ago</span>
-                       </div>
-                       <p className="text-xs font-bold text-slate-700">Patient Licensing issue TKT-9428 resolved by Sarah J.</p>
-                    </div>
-                    <div className="p-3 bg-emerald-50 border border-emerald-100 rounded-xl">
-                       <div className="flex justify-between items-start mb-1">
-                          <span className="text-[9px] font-black uppercase tracking-widest text-emerald-600">Admin Command</span>
-                          <span className="text-[9px] font-bold text-slate-400">12m ago</span>
-                       </div>
-                       <p className="text-xs font-bold text-slate-700">Business Escalation #402 handed over to Legal Sentinel.</p>
-                    </div>
+                    {opsChecks.map(check => (
+                      <div key={check.id} className={`p-3 bg-${check.color}-50 border border-${check.color}-100 rounded-xl`}>
+                         <div className="flex justify-between items-start mb-1">
+                            <span className={`text-[9px] font-black uppercase tracking-widest text-${check.color}-600`}>{check.source}</span>
+                            <span className="text-[9px] font-bold text-slate-400">{check.time}</span>
+                         </div>
+                         <p className="text-xs font-bold text-slate-700 truncate whitespace-normal line-clamp-2">{check.text}</p>
+                      </div>
+                    ))}
+                    {opsChecks.length === 0 && (
+                      <div className="p-4 border border-dashed border-slate-200 rounded-xl text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                        Awaiting Global Telemetry...
+                      </div>
+                    )}
                  </div>
               </div>
            </div>
