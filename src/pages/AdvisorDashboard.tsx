@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   Shield, Activity, Users, Database, Globe, Bot, MessageSquare, Clock, HeartPulse, Building2, 
   FileCheck, BookOpen, Gavel, Zap, FlaskConical, BarChart3, LogOut, ArrowLeft, Edit2, Trash2, Plus, CircleCheck,
-  Phone, Scale, Megaphone, FileText, Clipboard, Lock
+  Phone, Scale, Megaphone, FileText, Clipboard, Lock, MapPin
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
@@ -31,6 +31,7 @@ import { EscalationSupportCalendar } from '../components/EscalationSupportCalend
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 import { ExecutiveCRM } from '../components/crm/ExecutiveCRM';
 import { PipelineCRM } from '../components/crm/PipelineCRM';
+import { GlobalSweepTab } from '../components/ops/GlobalSweepTab';
 import { VirtualAttendantTab } from '../components/oversight/VirtualAttendantTab';
 import { GlobalDirectoryTab } from '../components/founder/GlobalDirectoryTab';
 import { PatientCaseTracker } from '../components/patient/PatientCaseTracker';
@@ -47,7 +48,7 @@ type NavItem = { section?: string; id?: string; label?: string; icon?: any; badg
 const INTERNAL_NAV_ITEMS: NavItem[] = [
   { id: '_sec_crm', section: 'CRM & MARKETING' },
   { id: 'marketing_hub', label: 'Marketing Campaigns', icon: Megaphone },
-  { id: 'b2b_crm', label: 'Global CRM Pipeline', icon: Users },
+  { id: 'omma_pipeline', label: 'Global Sweep Hub', icon: MapPin },
   { id: '_sec_ai', section: 'ARTIFICIAL INTELLIGENCE' },
   { id: 'system_health', label: 'System Health / AI', icon: Zap },
   { id: 'hr_intelligence', label: 'HR Intelligence (Sylara)', icon: Users },
@@ -318,7 +319,7 @@ const AdvisorDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => voi
                 {activeTab === 'jurisdiction_map' && <LiveJurisdictionMap />}
                 
                 {activeTab === 'ai_training' && <AITrainingTab userProfile={user} />}
-                {activeTab === 'b2b_crm' && <div className="h-full w-full -m-8 bg-[#080e1a] min-h-screen overflow-auto"><PipelineCRM /></div>}
+                {activeTab === 'omma_pipeline' && <div className="h-full w-full -m-8"><GlobalSweepTab /></div>}
                 {activeTab === 'messages' && <InternalMessenger currentUser={{ name: fullName, role: title, roleId: 'advisor' }} />}
                 {activeTab === 'internal_scheduler' && <div className="bg-white rounded-3xl overflow-hidden h-full"><UserCalendar user={user} /></div>}
                 {activeTab === 'realtime_tasks' && <div className="h-full w-full -m-6 bg-slate-50 p-10 min-h-screen overflow-auto"><RapidRevenueTab /></div>}
