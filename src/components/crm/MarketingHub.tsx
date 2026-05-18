@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, Building2, LayoutTemplate, Clock, AlertCircle, Save, Trash2, X, Plus, ChevronDown, Eye } from 'lucide-react';
+import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, Building2, LayoutTemplate, Clock, AlertCircle, Save, Trash2, X, Plus, ChevronDown, Eye, MousePointerClick, MailOpen, TrendingUp } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { db } from '../../firebase';
-import { collection, onSnapshot, query, addDoc, deleteDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, onSnapshot, query, addDoc, deleteDoc, doc, updateDoc, serverTimestamp, orderBy, limit } from 'firebase/firestore';
 
 interface Campaign {
   id: string;
@@ -63,6 +63,10 @@ export const MarketingHub = () => {
   const [showSaveTemplate, setShowSaveTemplate] = useState(false);
   const [templateName, setTemplateName] = useState('');
 
+  // Tracking Analytics State
+  const [allCampaigns, setAllCampaigns] = useState<any[]>([]);
+  const [trackingEvents, setTrackingEvents] = useState<any[]>([]);
+
   // Load CRM Audience Data
   useEffect(() => {
     const q = query(collection(db, 'crm_deals'));
@@ -99,12 +103,21 @@ export const MarketingHub = () => {
     return () => u();
   }, []);
 
-  // Load active campaign
+  // Load active campaign + all campaigns for analytics
   useEffect(() => {
     const u = onSnapshot(query(collection(db, 'marketing_campaigns')), snap => {
       const campaigns = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      setAllCampaigns(campaigns);
       const active = campaigns.find((c: any) => c.status === 'active');
       if (active) setActiveCampaign(active);
+    });
+    return () => u();
+  }, []);
+
+  // Load tracking events (recent)
+  useEffect(() => {
+    const u = onSnapshot(query(collection(db, 'marketing_tracking'), orderBy('timestamp', 'desc'), limit(50)), snap => {
+      setTrackingEvents(snap.docs.map(d => ({ id: d.id, ...d.data() })));
     });
     return () => u();
   }, []);
@@ -276,6 +289,7 @@ export const MarketingHub = () => {
               attachments: attachments.length > 0 ? attachments : undefined,
               cc: ccList.length > 0 ? ccList : undefined,
               bcc: bccList.length > 0 ? bccList : undefined,
+              campaignId: campaignDoc?.id || undefined,
             })
           });
           if (!res.ok) { totalResults.failed += batches[batchIdx].length; continue; }
@@ -714,38 +728,99 @@ export const MarketingHub = () => {
               )}
             </div>
 
-            {/* Campaign History Widget */}
+            {/* Campaign Analytics — REAL-TIME */}
             <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-md">
               <h3 className="text-sm font-black text-white uppercase tracking-widest mb-6 flex items-center gap-2">
-                <Clock className="text-slate-400" size={16} /> Recent Blasts
+                <TrendingUp className="text-emerald-400" size={16} /> Campaign Analytics
               </h3>
               
-              <div className="space-y-4">
-                {[
-                  { name: "Q1 B2B Promo", type: "email", sent: "2 hrs ago", reach: 1240 },
-                  { name: "OK License Renewal", type: "sms", sent: "Yesterday", reach: 850 },
-                  { name: "Founder Welcome", type: "email", sent: "Mar 10", reach: 3100 }
-                ].map((camp, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer group">
-                    <div className="flex items-center gap-3">
-                      <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center", camp.type === 'email' ? 'bg-indigo-500/20 text-indigo-400' : 'bg-emerald-500/20 text-emerald-400')}>
-                        {camp.type === 'email' ? <Mail size={14} /> : <MessageSquare size={14} />}
+              {/* Aggregate Stats */}
+              {(() => {
+                const totalSent = allCampaigns.reduce((s, c) => s + (c.sentCount || 0), 0);
+                const totalOpens = allCampaigns.reduce((s, c) => s + (c.totalOpens || 0), 0);
+                const uniqueOpens = allCampaigns.reduce((s, c) => s + (c.openedEmails?.length || 0), 0);
+                const totalClicks = allCampaigns.reduce((s, c) => s + (c.totalClicks || 0), 0);
+                const openRate = totalSent > 0 ? ((uniqueOpens / totalSent) * 100).toFixed(1) : '0';
+                const clickRate = totalSent > 0 ? ((totalClicks / totalSent) * 100).toFixed(1) : '0';
+                return (
+                  <div className="grid grid-cols-2 gap-3 mb-6">
+                    <div className="bg-slate-800/50 rounded-xl p-3 border border-slate-700/50">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <Send size={10} className="text-indigo-400" />
+                        <p className="text-[9px] text-slate-400 font-bold uppercase">Sent</p>
                       </div>
-                      <div>
-                        <p className="text-sm font-bold text-slate-200 group-hover:text-white transition-colors">{camp.name}</p>
-                        <p className="text-[10px] text-slate-500 font-medium">{camp.sent}</p>
-                      </div>
+                      <p className="text-xl font-black text-white">{totalSent.toLocaleString()}</p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-xs font-black text-slate-300">{camp.reach}</p>
-                      <p className="text-[9px] uppercase tracking-widest text-slate-500">Sent</p>
+                    <div className="bg-slate-800/50 rounded-xl p-3 border border-slate-700/50">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <MailOpen size={10} className="text-cyan-400" />
+                        <p className="text-[9px] text-slate-400 font-bold uppercase">Opens</p>
+                      </div>
+                      <p className="text-xl font-black text-cyan-400">{uniqueOpens.toLocaleString()}</p>
+                      <p className="text-[9px] text-slate-500 font-bold">{openRate}% rate</p>
+                    </div>
+                    <div className="bg-slate-800/50 rounded-xl p-3 border border-slate-700/50">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <MousePointerClick size={10} className="text-amber-400" />
+                        <p className="text-[9px] text-slate-400 font-bold uppercase">Clicks</p>
+                      </div>
+                      <p className="text-xl font-black text-amber-400">{totalClicks.toLocaleString()}</p>
+                      <p className="text-[9px] text-slate-500 font-bold">{clickRate}% rate</p>
+                    </div>
+                    <div className="bg-slate-800/50 rounded-xl p-3 border border-slate-700/50">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <Activity size={10} className="text-emerald-400" />
+                        <p className="text-[9px] text-slate-400 font-bold uppercase">Campaigns</p>
+                      </div>
+                      <p className="text-xl font-black text-emerald-400">{allCampaigns.length}</p>
                     </div>
                   </div>
-                ))}
+                );
+              })()}
+
+              {/* Real Campaigns List */}
+              <div className="space-y-3">
+                {allCampaigns.length === 0 && <p className="text-sm text-slate-500 italic text-center py-4">No campaigns yet</p>}
+                {allCampaigns.slice(0, 5).map((camp, i) => {
+                  const openRate = camp.sentCount > 0 ? ((camp.openedEmails?.length || 0) / camp.sentCount * 100).toFixed(0) : '0';
+                  return (
+                    <div key={camp.id || i} className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors group">
+                      <div className="flex items-center gap-3">
+                        <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center", camp.status === 'active' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-indigo-500/20 text-indigo-400')}>
+                          <Mail size={14} />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-slate-200 group-hover:text-white transition-colors truncate max-w-[140px]">{camp.name || camp.subject || 'Untitled'}</p>
+                          <p className="text-[10px] text-slate-500 font-medium">
+                            {camp.sentCount?.toLocaleString() || 0} sent • {openRate}% opened
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className={cn("text-[9px] font-black uppercase px-2 py-0.5 rounded-full", camp.status === 'active' ? 'bg-emerald-500/20 text-emerald-400' : camp.status === 'completed' ? 'bg-blue-500/20 text-blue-400' : 'bg-slate-700 text-slate-400')}>
+                          {camp.status || 'draft'}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-              <button className="w-full mt-4 py-3 text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors">
-                View All Analytics →
-              </button>
+
+              {/* Recent Tracking Events */}
+              {trackingEvents.length > 0 && (
+                <div className="mt-6 pt-4 border-t border-slate-800">
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-3">Live Activity Feed</p>
+                  <div className="space-y-2 max-h-40 overflow-y-auto">
+                    {trackingEvents.slice(0, 10).map((ev, i) => (
+                      <div key={ev.id || i} className="flex items-center gap-2 text-[11px]">
+                        {ev.type === 'open' ? <MailOpen size={10} className="text-cyan-400 shrink-0" /> : <MousePointerClick size={10} className="text-amber-400 shrink-0" />}
+                        <span className="text-slate-300 truncate flex-1">{ev.recipientEmail}</span>
+                        <span className="text-slate-500 shrink-0">{new Date(ev.timestamp).toLocaleTimeString()}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
           </div>

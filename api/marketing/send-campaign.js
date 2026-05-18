@@ -22,7 +22,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { type, subject, message, recipients, attachments, cc, bcc } = req.body;
+    const { type, subject, message, recipients, attachments, cc, bcc, campaignId } = req.body;
 
     if (!message || !recipients || !Array.isArray(recipients) || recipients.length === 0) {
       return res.status(400).json({ error: 'Message and a non-empty recipients array are required.' });
@@ -48,10 +48,34 @@ export default async function handler(req, res) {
         contentType: att.contentType,
         cid: att.cid
       }));
+
+      const TRACK_BASE = process.env.VERCEL_URL 
+        ? `https://${process.env.VERCEL_URL}` 
+        : 'https://www.ggp-os.com';
       
       // We use Promise.allSettled to send all emails in parallel
       const emailPromises = recipients.map(async (recipient) => {
         if (!recipient.email) throw new Error('Missing email address');
+
+        // Build tracked HTML per recipient
+        let htmlBody = `<div style="font-family: sans-serif; padding: 20px; color: #333;">${message.replace(/\n/g, '<br/>')}</div>`;
+
+        if (campaignId) {
+          const rid = encodeURIComponent(recipient.email);
+          
+          // Wrap all links for click tracking
+          htmlBody = htmlBody.replace(
+            /href="(https?:\/\/[^"]+)"/gi,
+            (match, url) => {
+              const trackUrl = `${TRACK_BASE}/api/marketing/track?type=click&cid=${campaignId}&rid=${rid}&url=${encodeURIComponent(url)}`;
+              return `href="${trackUrl}"`;
+            }
+          );
+
+          // Append open-tracking pixel
+          const pixelUrl = `${TRACK_BASE}/api/marketing/track?type=open&cid=${campaignId}&rid=${rid}&t=${Date.now()}`;
+          htmlBody += `<img src="${pixelUrl}" width="1" height="1" style="display:none;border:0;" alt="" />`;
+        }
         
         return transporter.sendMail({
           from: `"Global Green Enterprise - Marketing" <marketing.globalgreenhp@gmail.com>`,
@@ -60,7 +84,7 @@ export default async function handler(req, res) {
           bcc: bcc && bcc.length > 0 ? bcc.join(', ') : undefined,
           subject: subject || 'Important Update',
           text: message.replace(/<[^>]*>/g, ''),
-          html: `<div style="font-family: sans-serif; padding: 20px; color: #333;">${message.replace(/\n/g, '<br/>')}</div>`,
+          html: htmlBody,
           attachments: emailAttachments
         });
       });
