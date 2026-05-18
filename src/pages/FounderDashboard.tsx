@@ -2947,10 +2947,8 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
               <button 
                 onClick={() => {
                   setIsSystemFreezeExpanded(false);
-                  if (healthReport?.freezeDetected) {
-                    localStorage.setItem('gghp_system_freeze_dismissed', 'true');
-                    setHideSystemFreeze(true);
-                  }
+                  localStorage.setItem('gghp_system_freeze_dismissed', 'true');
+                  setHideSystemFreeze(true);
                 }}
                 className="px-6 py-3 bg-black/20 text-white hover:bg-black/40 transition-colors rounded-xl text-xs font-black uppercase tracking-widest"
               >
