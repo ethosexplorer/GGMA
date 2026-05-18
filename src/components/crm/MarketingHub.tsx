@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, Building2, LayoutTemplate, Clock, AlertCircle, Save, Trash2, X, Plus, ChevronDown, Eye } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { db } from '../../firebase';
-import { collection, onSnapshot, query, addDoc, deleteDoc, doc, serverTimestamp } from 'firebase/firestore';
+import { collection, onSnapshot, query, addDoc, deleteDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 
 interface Campaign {
   id: string;
@@ -50,6 +50,12 @@ export const MarketingHub = () => {
   const [sendSuccess, setSendSuccess] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [sendProgress, setSendProgress] = useState('');
+  
+  // Campaign Management State
+  const [ccEmails, setCcEmails] = useState('');
+  const [bccEmails, setBccEmails] = useState('');
+  const [dailyLimit, setDailyLimit] = useState(500);
+  const [activeCampaign, setActiveCampaign] = useState<any>(null);
 
   // Template State
   const [templates, setTemplates] = useState<EmailTemplate[]>([]);
@@ -89,6 +95,16 @@ export const MarketingHub = () => {
   useEffect(() => {
     const u = onSnapshot(query(collection(db, 'marketing_templates')), snap => {
       setTemplates(snap.docs.map(d => ({ id: d.id, ...d.data() } as EmailTemplate)));
+    });
+    return () => u();
+  }, []);
+
+  // Load active campaign
+  useEffect(() => {
+    const u = onSnapshot(query(collection(db, 'marketing_campaigns')), snap => {
+      const campaigns = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const active = campaigns.find((c: any) => c.status === 'active');
+      if (active) setActiveCampaign(active);
     });
     return () => u();
   }, []);
@@ -168,138 +184,167 @@ export const MarketingHub = () => {
     let finalAudience: { email?: string; phone?: string }[] = [];
     if (sendMode === 'direct') {
       if (!directContact) return alert(`Please enter a recipient ${campaignType === 'email' ? 'email' : 'phone number'}`);
-      finalAudience = [{
-        email: campaignType === 'email' ? directContact : undefined,
-        phone: campaignType === 'sms' ? directContact : undefined,
-      }];
+      finalAudience = [{ email: campaignType === 'email' ? directContact : undefined, phone: campaignType === 'sms' ? directContact : undefined }];
     } else {
-      if (filteredAudience.length === 0) return alert('No valid audience selected. Ensure contacts have phone/email.');
-      // Strip to only email/phone — don't send full CRM objects
-      finalAudience = filteredAudience.map(d => ({
-        email: campaignType === 'email' ? d.email : undefined,
-        phone: campaignType === 'sms' ? d.phone : undefined,
-      })).filter(r => r.email || r.phone);
+      if (filteredAudience.length === 0) return alert('No valid audience selected.');
+      // Strip to email/phone only, sort alphabetically
+      finalAudience = filteredAudience
+        .map(d => ({ email: campaignType === 'email' ? d.email : undefined, phone: campaignType === 'sms' ? d.phone : undefined }))
+        .filter(r => r.email || r.phone)
+        .sort((a, b) => ((a.email || a.phone || '') as string).localeCompare((b.email || b.phone || '') as string));
+    }
+
+    // For broadcast: apply daily limit and skip already-sent
+    let batchAudience = finalAudience;
+    let campaignDoc = activeCampaign;
+    const sentSet = new Set<string>(campaignDoc?.sentEmails || []);
+    
+    if (sendMode === 'broadcast') {
+      // Filter out already-sent recipients
+      batchAudience = finalAudience.filter(r => !sentSet.has(r.email || r.phone || ''));
+      // Apply daily limit
+      batchAudience = batchAudience.slice(0, dailyLimit);
+      
+      if (batchAudience.length === 0) {
+        return alert(campaignDoc ? '✅ All recipients have been reached! Campaign complete.' : 'No unsent recipients available.');
+      }
+      
+      const firstEmail = batchAudience[0]?.email || batchAudience[0]?.phone || '';
+      const lastEmail = batchAudience[batchAudience.length - 1]?.email || batchAudience[batchAudience.length - 1]?.phone || '';
+      const rangeLabel = `${firstEmail.charAt(0).toUpperCase()}–${lastEmail.charAt(0).toUpperCase()}`;
+      
+      if (!confirm(`Send ${batchAudience.length} emails (${rangeLabel} range)?\n\nAlready sent: ${sentSet.size}\nRemaining after this: ${finalAudience.length - sentSet.size - batchAudience.length}\nDaily limit: ${dailyLimit}`)) {
+        return;
+      }
     }
 
     setIsSending(true);
     setSendProgress('Preparing campaign...');
     
     try {
-      // Extract and compress base64 images from message body
+      // Compress images
       let apiMessage = message;
       const attachments: { filename: string; content: string; contentType: string; cid: string }[] = [];
+      const compressImage = (dataUrl: string): Promise<string> => new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ratio = Math.min(1, 600 / img.width);
+          canvas.width = img.width * ratio;
+          canvas.height = img.height * ratio;
+          canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL('image/jpeg', 0.5).split(',')[1]);
+        };
+        img.onerror = () => resolve('');
+        img.src = dataUrl;
+      });
       
-      // Compress a base64 image using canvas (600px max for email, 50% quality)
-      const compressImage = (dataUrl: string): Promise<string> => {
-        return new Promise((resolve) => {
-          const img = new Image();
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            const maxWidth = 600; // Email standard width
-            const ratio = Math.min(1, maxWidth / img.width);
-            canvas.width = img.width * ratio;
-            canvas.height = img.height * ratio;
-            const ctx = canvas.getContext('2d')!;
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            const compressed = canvas.toDataURL('image/jpeg', 0.5);
-            resolve(compressed.split(',')[1]);
-          };
-          img.onerror = () => resolve('');
-          img.src = dataUrl;
-        });
-      };
-      
-      // Collect all image matches
       const imageMatches: { fullMatch: string; dataUrl: string }[] = [];
       let m;
       const scanRegex = /src="(data:image\/[^;]+;base64,[^"]+)"/g;
-      while ((m = scanRegex.exec(apiMessage)) !== null) {
-        imageMatches.push({ fullMatch: m[0], dataUrl: m[1] });
-      }
+      while ((m = scanRegex.exec(apiMessage)) !== null) imageMatches.push({ fullMatch: m[0], dataUrl: m[1] });
       
-      // Compress each image
-      setSendProgress(`Compressing ${imageMatches.length} image(s)...`);
+      if (imageMatches.length > 0) setSendProgress(`Compressing ${imageMatches.length} image(s)...`);
       for (let i = 0; i < imageMatches.length; i++) {
-        const compressedBase64 = await compressImage(imageMatches[i].dataUrl);
-        if (!compressedBase64) continue;
-        
+        const compressed = await compressImage(imageMatches[i].dataUrl);
+        if (!compressed) continue;
         const cid = `flyer-${i}@ggp-os`;
-        attachments.push({
-          filename: `flyer-${i}.jpg`,
-          content: compressedBase64,
-          contentType: 'image/jpeg',
-          cid: cid
-        });
+        attachments.push({ filename: `flyer-${i}.jpg`, content: compressed, contentType: 'image/jpeg', cid });
         apiMessage = apiMessage.replace(imageMatches[i].fullMatch, `src="cid:${cid}"`);
       }
       
-      // Batch recipients — 50 per API call to stay under payload limits
-      const BATCH_SIZE = 50;
-      const batches: { email?: string; phone?: string }[][] = [];
-      for (let i = 0; i < finalAudience.length; i += BATCH_SIZE) {
-        batches.push(finalAudience.slice(i, i + BATCH_SIZE));
-      }
+      // Parse CC/BCC
+      const ccList = ccEmails.split(',').map(e => e.trim()).filter(Boolean);
+      const bccList = bccEmails.split(',').map(e => e.trim()).filter(Boolean);
       
-      const totalResults = { total: finalAudience.length, successful: 0, failed: 0, errors: [] as any[] };
+      // Batch send — 50 per API call
+      const BATCH_SIZE = 50;
+      const batches: typeof batchAudience[] = [];
+      for (let i = 0; i < batchAudience.length; i += BATCH_SIZE) batches.push(batchAudience.slice(i, i + BATCH_SIZE));
+      
+      const totalResults = { total: batchAudience.length, successful: 0, failed: 0 };
       
       for (let batchIdx = 0; batchIdx < batches.length; batchIdx++) {
-        setSendProgress(`Sending batch ${batchIdx + 1} of ${batches.length} (${totalResults.successful} sent so far)...`);
-        
-        const payload = {
-          type: campaignType,
-          subject,
-          message: apiMessage,
-          recipients: batches[batchIdx],
-          attachments: attachments.length > 0 ? attachments : undefined
-        };
-        
+        setSendProgress(`Sending batch ${batchIdx + 1}/${batches.length} (${totalResults.successful} sent)...`);
         try {
-          const response = await fetch('/api/marketing/send-campaign', {
+          const res = await fetch('/api/marketing/send-campaign', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            body: JSON.stringify({
+              type: campaignType, subject, message: apiMessage,
+              recipients: batches[batchIdx],
+              attachments: attachments.length > 0 ? attachments : undefined,
+              cc: ccList.length > 0 ? ccList : undefined,
+              bcc: bccList.length > 0 ? bccList : undefined,
+            })
           });
-          
-          if (!response.ok) {
-            const errorText = await response.text();
-            totalResults.failed += batches[batchIdx].length;
-            totalResults.errors.push({ batch: batchIdx + 1, error: errorText.substring(0, 200) });
-            continue;
-          }
-          
-          const data = await response.json();
-          if (data.results) {
-            totalResults.successful += data.results.successful || 0;
-            totalResults.failed += data.results.failed || 0;
-          }
-        } catch (batchErr: any) {
-          totalResults.failed += batches[batchIdx].length;
-          totalResults.errors.push({ batch: batchIdx + 1, error: batchErr.message });
+          if (!res.ok) { totalResults.failed += batches[batchIdx].length; continue; }
+          const data = await res.json();
+          totalResults.successful += data.results?.successful || 0;
+          totalResults.failed += data.results?.failed || 0;
+        } catch { totalResults.failed += batches[batchIdx].length; }
+      }
+      
+      // Track campaign in Firestore (broadcast only)
+      if (sendMode === 'broadcast') {
+        const newSentEmails = [...Array.from(sentSet), ...batchAudience.map(r => r.email || r.phone || '')];
+        const firstChar = batchAudience[0]?.email?.charAt(0)?.toUpperCase() || '?';
+        const lastChar = batchAudience[batchAudience.length - 1]?.email?.charAt(0)?.toUpperCase() || '?';
+        const rangeLabel = `${firstChar}–${lastChar}`;
+        const isComplete = newSentEmails.length >= finalAudience.length;
+        
+        const campaignData = {
+          name: subject || 'Untitled Campaign',
+          subject, type: campaignType,
+          status: isComplete ? 'completed' : 'active',
+          totalRecipients: finalAudience.length,
+          sentCount: newSentEmails.length,
+          sentEmails: newSentEmails,
+          dailyLimit,
+          lastRange: rangeLabel,
+          lastSentAt: serverTimestamp(),
+          ...(campaignDoc ? {} : { createdAt: serverTimestamp() }),
+        };
+        
+        if (campaignDoc?.id) {
+          await updateDoc(doc(db, 'marketing_campaigns', campaignDoc.id), campaignData);
+        } else {
+          const newDoc = await addDoc(collection(db, 'marketing_campaigns'), campaignData);
+          campaignDoc = { id: newDoc.id, ...campaignData };
+        }
+        setActiveCampaign({ ...campaignDoc, ...campaignData });
+        
+        // Create calendar task for next batch
+        if (!isComplete) {
+          const tomorrow = new Date();
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          const remaining = finalAudience.length - newSentEmails.length;
+          await addDoc(collection(db, 'realtime_tasks'), {
+            title: `📧 Continue Email Campaign: ${subject}`,
+            description: `Send next ${Math.min(dailyLimit, remaining)} emails. ${newSentEmails.length}/${finalAudience.length} sent so far (${rangeLabel} completed). ${remaining} remaining.`,
+            dueDate: tomorrow.toISOString().split('T')[0],
+            status: 'pending',
+            priority: 'high',
+            category: 'marketing',
+            createdAt: serverTimestamp(),
+          });
         }
       }
       
-      // Campaign complete
+      // Done
       setSendProgress('');
       setSendSuccess(true);
-      alert(`✅ Campaign Complete!\n\nSent: ${totalResults.successful.toLocaleString()}\nFailed: ${totalResults.failed.toLocaleString()}\nTotal: ${totalResults.total.toLocaleString()}`);
+      const remaining = sendMode === 'broadcast' ? finalAudience.length - (activeCampaign?.sentCount || 0) - batchAudience.length : 0;
+      alert(`✅ Batch Complete!\n\nSent: ${totalResults.successful.toLocaleString()}\nFailed: ${totalResults.failed.toLocaleString()}${sendMode === 'broadcast' ? `\nRemaining: ${remaining.toLocaleString()}` : ''}${remaining > 0 ? '\n\n📅 Next batch task added to calendar for tomorrow.' : sendMode === 'broadcast' ? '\n\n🎉 Campaign complete! All recipients reached.' : ''}`);
       
-      // Log to Turso
       import('../../lib/turso').then(({ turso }) => {
-        turso.execute({ 
-          sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", 
-          args: ['log-' + Math.random().toString(36).substr(2, 9), "Marketing_Campaign", "System", JSON.stringify({ type: campaignType, count: finalAudience.length, success: totalResults.successful, failed: totalResults.failed })] 
-        }).catch(console.error);
+        turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "Marketing_Campaign", "System", JSON.stringify({ type: campaignType, count: batchAudience.length, success: totalResults.successful, failed: totalResults.failed })] }).catch(console.error);
       });
       
-      setTimeout(() => {
-        setSendSuccess(false);
-        setSubject('');
-        setMessage('');
-      }, 4000);
-      
+      setTimeout(() => { setSendSuccess(false); }, 4000);
     } catch (err: any) {
-      console.error('Marketing API fetch error:', err);
-      alert(`Network Error: ${err.message || 'Failed to contact the marketing API.'}\n\nCheck browser console (F12) for details.`);
+      console.error('Marketing API error:', err);
+      alert(`Network Error: ${err.message || 'Failed to contact API.'}`);
     } finally {
       setIsSending(false);
       setSendProgress('');
@@ -396,6 +441,32 @@ export const MarketingHub = () => {
                       placeholder="Enter a compelling subject line..."
                       className="w-full bg-slate-900/50 border border-white/10 rounded-xl px-5 py-4 text-white placeholder-slate-600 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all font-medium"
                     />
+                  </div>
+                )}
+
+                {/* CC / BCC Fields */}
+                {campaignType === 'email' && (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">CC (optional)</label>
+                      <input 
+                        type="text" 
+                        value={ccEmails}
+                        onChange={(e) => setCcEmails(e.target.value)}
+                        placeholder="email1@..., email2@..."
+                        className="w-full bg-slate-900/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-600 outline-none focus:border-indigo-500 transition-all font-medium text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">BCC (optional)</label>
+                      <input 
+                        type="text" 
+                        value={bccEmails}
+                        onChange={(e) => setBccEmails(e.target.value)}
+                        placeholder="email1@..., email2@..."
+                        className="w-full bg-slate-900/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-600 outline-none focus:border-indigo-500 transition-all font-medium text-sm"
+                      />
+                    </div>
                   </div>
                 )}
 
@@ -603,10 +674,41 @@ export const MarketingHub = () => {
                   )}
                 </div>
                 
-                <div className="mt-8 pt-6 border-t border-slate-700">
-                  <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1">Estimated Recipients</p>
-                  <p className="text-4xl font-black text-white mb-2">{filteredCount.toLocaleString()}</p>
-                  <p className="text-xs text-slate-500 font-medium">Matching your CRM filters</p>
+                <div className="mt-6 pt-6 border-t border-slate-700 space-y-5">
+                  {/* Daily Send Limit */}
+                  <div>
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Daily Send Limit</label>
+                    <div className="grid grid-cols-4 gap-2">
+                      {[50, 100, 250, 500].map(lim => (
+                        <button key={lim} onClick={() => setDailyLimit(lim)} className={cn("py-2 rounded-lg text-xs font-black transition-all", dailyLimit === lim ? "bg-indigo-600 text-white shadow-sm" : "bg-slate-950 text-slate-500 border border-slate-700 hover:text-white")}>{lim}</button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Campaign Stats */}
+                  <div className="p-5 bg-slate-950 rounded-2xl border border-slate-700 space-y-3">
+                    <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">This Batch</p>
+                    <p className="text-3xl font-black text-white">{Math.min(dailyLimit, filteredCount - (activeCampaign?.sentCount || 0)).toLocaleString()}</p>
+                    <p className="text-xs text-slate-500 font-medium">of {filteredCount.toLocaleString()} total recipients</p>
+                    
+                    {/* Timeline */}
+                    <div className="pt-3 border-t border-slate-800">
+                      <p className="text-[10px] text-indigo-400 font-bold uppercase tracking-widest mb-1">Estimated Timeline</p>
+                      <p className="text-sm font-bold text-white">{Math.ceil(filteredCount / dailyLimit)} days to complete</p>
+                    </div>
+
+                    {/* Active Campaign Progress */}
+                    {activeCampaign && activeCampaign.status === 'active' && (
+                      <div className="pt-3 border-t border-slate-800">
+                        <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest mb-2">Active Campaign Progress</p>
+                        <div className="h-2 bg-slate-800 rounded-full overflow-hidden mb-2">
+                          <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${Math.min(100, (activeCampaign.sentCount / activeCampaign.totalRecipients) * 100)}%` }} />
+                        </div>
+                        <p className="text-xs font-bold text-white">{activeCampaign.sentCount.toLocaleString()} / {activeCampaign.totalRecipients.toLocaleString()} sent</p>
+                        {activeCampaign.lastRange && <p className="text-[10px] text-slate-500 mt-1">Last batch: {activeCampaign.lastRange}</p>}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
               )}

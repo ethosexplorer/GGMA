@@ -22,7 +22,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { type, subject, message, recipients, attachments } = req.body;
+    const { type, subject, message, recipients, attachments, cc, bcc } = req.body;
 
     if (!message || !recipients || !Array.isArray(recipients) || recipients.length === 0) {
       return res.status(400).json({ error: 'Message and a non-empty recipients array are required.' });
@@ -56,6 +56,8 @@ export default async function handler(req, res) {
         return transporter.sendMail({
           from: `"Global Green Enterprise - Marketing" <marketing.globalgreenhp@gmail.com>`,
           to: recipient.email,
+          cc: cc && cc.length > 0 ? cc.join(', ') : undefined,
+          bcc: bcc && bcc.length > 0 ? bcc.join(', ') : undefined,
           subject: subject || 'Important Update',
           text: message.replace(/<[^>]*>/g, ''),
           html: `<div style="font-family: sans-serif; padding: 20px; color: #333;">${message.replace(/\n/g, '<br/>')}</div>`,
