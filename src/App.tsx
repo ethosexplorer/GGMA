@@ -8588,7 +8588,8 @@ export default function App() {
     window.addEventListener('open-larry-modal', handleOpenLarry);
     
     // Global Jurisdiction Gate trigger — staff bypass automatically
-    if (!jurisdictionLocked && !isStaff) {
+    // Also bypass if we are on the login screen to allow users to log in first
+    if (!jurisdictionLocked && !isStaff && view !== 'login') {
       setTimeout(() => setShowJurisdictionGate(true), 0);
     } else if (!jurisdictionLocked && isStaff) {
       // Auto-lock jurisdiction for staff so they never see the gate
@@ -9153,6 +9154,20 @@ export default function App() {
                     {jurisdictionLocked ? `Switch to ${pendingJurisdiction || jurisdiction}` : `Confirm ${pendingJurisdiction || jurisdiction}`}
                   </button>
                 </div>
+                
+                {!jurisdictionLocked && (
+                  <div className="pt-2 text-center">
+                    <button 
+                      onClick={() => {
+                        setShowJurisdictionGate(false);
+                        handleNavigate('login');
+                      }}
+                      className="text-sm font-bold text-slate-400 hover:text-[#1a4731] transition-colors underline decoration-slate-300 underline-offset-4"
+                    >
+                      Bypass to Staff Login
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
