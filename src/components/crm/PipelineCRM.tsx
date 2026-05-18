@@ -28,7 +28,7 @@ const ENTITY_TYPES = [
 
 const TEAM = [
   { id: 'founder', name: 'Shantell Robinson' },
-  { id: 'ceo', name: 'Ryan Ferrari' },
+  { id: 'president', name: 'Ryan Ferrari' },
   { id: 'compliance', name: 'Monica Green' },
   { id: 'advisor', name: 'Bob Moore' },
   { id: 'unassigned', name: 'Unassigned' },
@@ -78,39 +78,43 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
   });
 
   useEffect(() => {
-    const qDeals = query(collection(db, 'crm_deals'));
-    const qContacts = query(collection(db, 'crm_contacts'));
-    
-    let dealsDataArr: Deal[] = [];
-    let contactsDataArr: Deal[] = [];
-    
-    const updateDeals = () => {
-      const combined = [...dealsDataArr, ...contactsDataArr];
-      combined.sort((a, b) => (b.updatedAt?.seconds || 0) - (a.updatedAt?.seconds || 0));
-      setDeals(combined);
+    // UNIFIED CRM — Pull from ALL collections into one dashboard, dedup by name
+    const collections = ['crm_deals', 'executive_crm_deals', 'crm_contacts', 'executive_crm_contacts'];
+    const dataMap: Record<string, Deal[]> = {};
+    collections.forEach(c => { dataMap[c] = []; });
+
+    const mapDoc = (d: any, col: string): Deal => {
+      const data = d.data();
+      return { id: d.id, collection: col, stage: data.stage || 'lead', ...data, name: data.name || data.businessName || 'Unnamed', contactName: data.contactName || '', phone: data.phone || '', email: data.email || '', value: data.value ?? 0, assignedTo: data.assignedTo || 'unassigned', type: data.type || 'other', jurisdiction: data.jurisdiction || data.state || '' } as any;
+    };
+
+    const updateAll = () => {
+      const all = Object.values(dataMap).flat();
+      const seen = new Map<string, Deal>();
+      for (const deal of all) {
+        const key = (deal.name || '').toLowerCase().trim();
+        if (!key || key === 'unnamed') { seen.set(deal.id, deal); continue; }
+        const existing = seen.get(key);
+        if (!existing) { seen.set(key, deal); }
+        else {
+          const score = (d: Deal) => (d.phone ? 1 : 0) + (d.email ? 1 : 0) + (d.contactName ? 1 : 0) + (d.notes ? 1 : 0);
+          if (score(deal) > score(existing)) seen.set(key, deal);
+        }
+      }
+      const deduped = Array.from(seen.values());
+      deduped.sort((a, b) => (b.updatedAt?.seconds || 0) - (a.updatedAt?.seconds || 0));
+      setDeals(deduped);
       setLoading(false);
     };
 
-    const unsubDeals = onSnapshot(qDeals, (snapshot) => {
-      dealsDataArr = snapshot.docs.map(doc => {
-        const data = doc.data();
-        return { id: doc.id, collection: 'crm_deals', stage: data.stage || 'lead', ...data, name: data.name || data.businessName || 'Unnamed', contactName: data.contactName || '', phone: data.phone || '', email: data.email || '', value: data.value ?? 0, assignedTo: data.assignedTo || 'unassigned', type: data.type || 'other', jurisdiction: data.jurisdiction || data.state || '' } as any;
-      });
-      updateDeals();
-    });
-    
-    const unsubContacts = onSnapshot(qContacts, (snapshot) => {
-      contactsDataArr = snapshot.docs.map(doc => {
-        const data = doc.data();
-        return { id: doc.id, collection: 'crm_contacts', stage: data.stage || 'lead', ...data, name: data.name || data.businessName || 'Unnamed', contactName: data.contactName || '', phone: data.phone || '', email: data.email || '', value: data.value ?? 0, assignedTo: data.assignedTo || 'unassigned', type: data.type || 'other', jurisdiction: data.jurisdiction || data.state || '' } as any;
-      });
-      updateDeals();
-    });
+    const unsubs = collections.map(col =>
+      onSnapshot(query(collection(db, col)), (snapshot) => {
+        dataMap[col] = snapshot.docs.map(d => mapDoc(d, col));
+        updateAll();
+      })
+    );
 
-    return () => {
-      unsubDeals();
-      unsubContacts();
-    };
+    return () => { unsubs.forEach(u => u()); };
   }, []);
 
   const handleDragStart = (e: React.DragEvent, dealId: string) => {
@@ -423,6 +427,22 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
               }}
             />
           </label>
+
+          <button 
+            onClick={async () => {
+              if (!window.confirm('Load 50+ Arizona cannabis leads into the CRM? This will add dispensaries, cultivators, physicians, attorneys, and regulators.')) return;
+              try {
+                const { loadArizonaLeads } = await import('../../scripts/runAzImport');
+                const result = await loadArizonaLeads();
+                alert(`🌵 Arizona Import Complete!\n\n✅ ${result.success} new leads loaded\n⏭️ ${result.skipped || 0} duplicates skipped\n❌ ${result.failed} failed\n📊 ${result.total} total AZ entities`);
+              } catch (err: any) {
+                alert('AZ Import Error: ' + err.message);
+              }
+            }}
+            className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors shadow-lg shadow-amber-500/20"
+          >
+            🌵 Load AZ Leads
+          </button>
 
           <button 
             onClick={() => openModal()}
