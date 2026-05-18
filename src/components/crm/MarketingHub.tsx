@@ -36,6 +36,8 @@ export const MarketingHub = () => {
   const [showStateDropdown, setShowStateDropdown] = useState(false);
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [sendMode, setSendMode] = useState<'broadcast' | 'direct'>('broadcast');
+  const [directContact, setDirectContact] = useState('');
   
   // Audience Data
   const [totalLeads, setTotalLeads] = useState(0);
@@ -155,7 +157,19 @@ export const MarketingHub = () => {
   const handleSend = async () => {
     if (!subject && campaignType === 'email') return alert('Please enter a subject');
     if (!message) return alert('Please enter a message');
-    if (filteredAudience.length === 0) return alert('No valid audience selected. Ensure contacts have phone/email.');
+    
+    let finalAudience = filteredAudience;
+    if (sendMode === 'direct') {
+      if (!directContact) return alert(`Please enter a recipient ${campaignType === 'email' ? 'email' : 'phone number'}`);
+      finalAudience = [{
+        email: campaignType === 'email' ? directContact : undefined,
+        phone: campaignType === 'sms' ? directContact : undefined,
+        jurisdiction: 'Direct Message',
+        type: 'Single Recipient'
+      }];
+    } else {
+      if (filteredAudience.length === 0) return alert('No valid audience selected. Ensure contacts have phone/email.');
+    }
 
     setIsSending(true);
     
@@ -167,7 +181,7 @@ export const MarketingHub = () => {
           type: campaignType,
           subject,
           message,
-          recipients: filteredAudience
+          recipients: finalAudience
         })
       });
       
@@ -179,7 +193,7 @@ export const MarketingHub = () => {
         import('../../lib/turso').then(({ turso }) => {
           turso.execute({ 
             sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", 
-            args: ['log-' + Math.random().toString(36).substr(2, 9), "Marketing_Campaign", "System", JSON.stringify({ type: campaignType, count: filteredAudience.length, success: data.results?.successful })] 
+            args: ['log-' + Math.random().toString(36).substr(2, 9), "Marketing_Campaign", "System", JSON.stringify({ type: campaignType, count: finalAudience.length, success: data.results?.successful })] 
           }).catch(console.error);
         });
         
@@ -334,21 +348,22 @@ export const MarketingHub = () => {
                     onClick={() => {
                       if (!subject && campaignType === 'email') return alert('Please enter a subject');
                       if (!message) return alert('Please enter a message');
+                      if (sendMode === 'direct' && !directContact) return alert(`Please enter a recipient ${campaignType === 'email' ? 'email' : 'phone number'}`);
                       setShowPreview(true);
                     }}
-                    disabled={isSending || filteredCount === 0 || (!message)}
+                    disabled={isSending || (sendMode === 'broadcast' && filteredCount === 0) || (!message)}
                     className="flex items-center gap-2 px-6 py-4 rounded-xl font-bold uppercase tracking-widest text-sm bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Eye size={16} /> Preview
                   </button>
                   <button 
                     onClick={handleSend}
-                    disabled={isSending || filteredCount === 0}
+                    disabled={isSending || (sendMode === 'broadcast' && filteredCount === 0) || (sendMode === 'direct' && !directContact)}
                     className={cn(
                       "flex items-center gap-3 px-8 py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all duration-300",
                       sendSuccess 
                         ? "bg-emerald-500 text-white" 
-                        : isSending || filteredCount === 0
+                        : isSending || (sendMode === 'broadcast' && filteredCount === 0)
                           ? "bg-white/10 text-slate-500 cursor-not-allowed"
                           : "bg-gradient-to-r from-indigo-600 to-blue-600 text-white hover:shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-0.5"
                     )}
@@ -365,12 +380,38 @@ export const MarketingHub = () => {
           <div className="lg:col-span-4 space-y-6">
             
             <div className="bg-gradient-to-b from-slate-800 to-slate-900 border border-slate-700 rounded-3xl p-8 shadow-xl">
-              <h3 className="text-lg font-black text-white mb-6 flex items-center gap-2">
-                <Users className="text-indigo-400" /> Target Audience
-              </h3>
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-lg font-black text-white flex items-center gap-2">
+                  <Users className="text-indigo-400" /> Target Audience
+                </h3>
+                <div className="bg-slate-950 flex p-1 rounded-lg border border-slate-700">
+                  <button onClick={() => setSendMode('broadcast')} className={cn("px-4 py-2 rounded-md text-[10px] font-bold uppercase transition-all", sendMode === 'broadcast' ? "bg-indigo-600 text-white shadow-sm" : "text-slate-500 hover:text-white")}>Broadcast</button>
+                  <button onClick={() => setSendMode('direct')} className={cn("px-4 py-2 rounded-md text-[10px] font-bold uppercase transition-all", sendMode === 'direct' ? "bg-indigo-600 text-white shadow-sm" : "text-slate-500 hover:text-white")}>Direct</button>
+                </div>
+              </div>
 
-              <div className="space-y-5">
-                <div className="relative">
+              {sendMode === 'direct' ? (
+                <div className="space-y-5">
+                  <div>
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                      {campaignType === 'email' ? <Mail size={12} /> : <MessageSquare size={12} />} Recipient {campaignType === 'email' ? 'Email' : 'Phone Number'}
+                    </label>
+                    <input 
+                      type={campaignType === 'email' ? 'email' : 'tel'} 
+                      value={directContact}
+                      onChange={(e) => setDirectContact(e.target.value)}
+                      placeholder={campaignType === 'email' ? 'e.g., recipient@domain.com' : 'e.g., 555-123-4567'}
+                      className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:border-indigo-500 transition-colors font-medium"
+                    />
+                  </div>
+                  <div className="p-6 border border-indigo-500/30 bg-indigo-500/5 rounded-2xl text-center">
+                    <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2">Direct Message Mode</p>
+                    <p className="text-2xl font-black text-white">1 Recipient</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-5">
+                  <div className="relative">
                   <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
                     <MapPin size={12} /> Jurisdiction
                   </label>
@@ -467,15 +508,15 @@ export const MarketingHub = () => {
                     </div>
                   )}
                 </div>
-
+                
                 <div className="mt-8 pt-6 border-t border-slate-700">
-                  <div className="bg-indigo-950/50 border border-indigo-500/20 rounded-2xl p-6 text-center">
-                    <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2">Estimated Recipients</p>
-                    <p className="text-5xl font-black text-white mb-1">{filteredCount.toLocaleString()}</p>
-                    <p className="text-xs text-indigo-300/70 font-medium">Matching your CRM filters</p>
-                  </div>
+                  <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1">Estimated Recipients</p>
+                  <p className="text-4xl font-black text-white mb-2">{filteredCount.toLocaleString()}</p>
+                  <p className="text-xs text-slate-500 font-medium">Matching your CRM filters</p>
                 </div>
               </div>
+              )}
+            </div>
             </div>
 
             {/* Campaign History Widget */}
@@ -596,7 +637,7 @@ export const MarketingHub = () => {
                   <div className="space-y-4">
                     <div>
                       <p className="text-xs text-slate-500 font-bold mb-1">Total Recipients</p>
-                      <p className="text-3xl font-black text-white">{filteredCount.toLocaleString()}</p>
+                      <p className="text-3xl font-black text-white">{sendMode === 'direct' ? '1' : filteredCount.toLocaleString()}</p>
                     </div>
                     <div>
                       <p className="text-xs text-slate-500 font-bold mb-1">Method</p>
@@ -605,17 +646,19 @@ export const MarketingHub = () => {
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs text-slate-500 font-bold mb-1">Target States</p>
+                      <p className="text-xs text-slate-500 font-bold mb-1">Target</p>
                       <p className="text-sm font-bold text-white leading-tight">
-                        {selectedStates.includes('All') ? 'National (All States)' : selectedStates.join(', ')}
+                        {sendMode === 'direct' ? directContact : (selectedStates.includes('All') ? 'National (All States)' : selectedStates.join(', '))}
                       </p>
                     </div>
-                    <div>
-                      <p className="text-xs text-slate-500 font-bold mb-1">Business Types</p>
-                      <p className="text-sm font-bold text-white leading-tight capitalize">
-                        {selectedTypes.includes('All') ? 'All Types' : selectedTypes.join(', ')}
-                      </p>
-                    </div>
+                    {sendMode === 'broadcast' && (
+                      <div>
+                        <p className="text-xs text-slate-500 font-bold mb-1">Business Types</p>
+                        <p className="text-sm font-bold text-white leading-tight capitalize">
+                          {selectedTypes.includes('All') ? 'All Types' : selectedTypes.join(', ')}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
