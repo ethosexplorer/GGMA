@@ -49,10 +49,11 @@ import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 import { GlobalDirectoryTab } from '../components/founder/GlobalDirectoryTab';
 import { GlobalSweepTab } from '../components/ops/GlobalSweepTab';
 import { MarketingHub } from '../components/crm/MarketingHub';
+import { DepartmentManager } from '../components/DepartmentManager';
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
-const NAV_VERSION = 27; // Bumped: Full localStorage reset for production sync
+const NAV_VERSION = 28; // Bumped: Added Departments & Roles tab
 
 const INITIAL_NAV_ITEMS: NavItem[] = [
   // Single tabs
@@ -68,6 +69,7 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
 
   // Founder/CEO Popout
   { id: '_sec_founder', section: 'FOUNDER/CEO' },
+  { id: 'dept_manager', label: 'Departments & Roles', icon: Building2 },
   { id: 'roles_duties', label: 'My Role & Duties', icon: Shield },
   { id: 'settings', label: 'God Settings', icon: Settings },
   { id: 'launch_script', label: 'Master Launch Script', icon: FileText },
@@ -4204,6 +4206,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       case 'ai_training': return <div className="h-full w-full -m-10 p-10 bg-slate-50"><AITrainingTab userProfile={user} /></div>;
       case 'settings': return renderSettings();
       case 'call_center': return <CallCenterCommandTab />;
+      case 'dept_manager': return <DepartmentManager />;
       default: return isExecutive ? <div className="h-full w-full -m-10 p-10 bg-slate-50"><AITrainingTab userProfile={user} /></div> : renderOverview();
     }
   };
