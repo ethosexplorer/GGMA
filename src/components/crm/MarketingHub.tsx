@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, Building2, LayoutTemplate, Clock, AlertCircle, Save, Trash2, X, Plus, ChevronDown, Eye, MousePointerClick, MailOpen, TrendingUp } from 'lucide-react';
+import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, Building2, LayoutTemplate, Clock, AlertCircle, Save, Trash2, X, Plus, ChevronDown, Eye, MousePointerClick, MailOpen, TrendingUp, Inbox, AlertTriangle, Reply, RefreshCw } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { db } from '../../firebase';
 import { collection, onSnapshot, query, addDoc, deleteDoc, doc, updateDoc, serverTimestamp, orderBy, limit } from 'firebase/firestore';
@@ -66,6 +66,39 @@ export const MarketingHub = () => {
   // Tracking Analytics State
   const [allCampaigns, setAllCampaigns] = useState<any[]>([]);
   const [trackingEvents, setTrackingEvents] = useState<any[]>([]);
+
+  // Gmail Inbox State
+  const [gmailTab, setGmailTab] = useState<'inbox' | 'bounces' | 'replies'>('inbox');
+  const [gmailInbox, setGmailInbox] = useState<any[]>([]);
+  const [gmailBounces, setGmailBounces] = useState<any[]>([]);
+  const [gmailReplies, setGmailReplies] = useState<any[]>([]);
+  const [gmailStats, setGmailStats] = useState<any>(null);
+  const [gmailLoading, setGmailLoading] = useState(false);
+  const [gmailError, setGmailError] = useState('');
+
+  const fetchGmail = async () => {
+    setGmailLoading(true);
+    setGmailError('');
+    try {
+      const [inboxRes, bouncesRes, repliesRes, profileRes] = await Promise.all([
+        fetch('/api/marketing/gmail?action=inbox&maxResults=15').then(r => r.json()),
+        fetch('/api/marketing/gmail?action=bounces&maxResults=10').then(r => r.json()),
+        fetch('/api/marketing/gmail?action=replies&maxResults=10').then(r => r.json()),
+        fetch('/api/marketing/gmail?action=profile').then(r => r.json()),
+      ]);
+      if (inboxRes.error) throw new Error(inboxRes.error);
+      setGmailInbox(inboxRes.messages || []);
+      setGmailBounces(bouncesRes.bounces || []);
+      setGmailReplies(repliesRes.replies || []);
+      setGmailStats(profileRes);
+    } catch (err: any) {
+      setGmailError(err.message || 'Failed to connect to Gmail');
+    } finally {
+      setGmailLoading(false);
+    }
+  };
+
+  useEffect(() => { fetchGmail(); }, []);
 
   // Load CRM Audience Data
   useEffect(() => {
@@ -388,8 +421,14 @@ export const MarketingHub = () => {
             </div>
             <div className="bg-white/5 border border-white/10 rounded-2xl px-6 py-4 backdrop-blur-md">
               <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1">Active Campaigns</p>
-              <p className="text-2xl font-black text-indigo-400">3</p>
+              <p className="text-2xl font-black text-indigo-400">{allCampaigns.filter(c => c.status === 'active').length || 0}</p>
             </div>
+            {gmailStats && (
+              <div className="bg-white/5 border border-white/10 rounded-2xl px-6 py-4 backdrop-blur-md">
+                <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1">Inbox</p>
+                <p className="text-2xl font-black text-cyan-400">{gmailStats.unread || 0}<span className="text-sm text-slate-500 ml-1">unread</span></p>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -728,6 +767,122 @@ export const MarketingHub = () => {
               )}
             </div>
 
+            {/* 📬 Gmail Inbox Monitor */}
+            <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-md">
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
+                  <Inbox className="text-cyan-400" size={16} /> Marketing Inbox
+                </h3>
+                <button
+                  onClick={fetchGmail}
+                  disabled={gmailLoading}
+                  className={cn("flex items-center gap-1.5 text-[10px] font-bold px-3 py-1.5 rounded-lg transition-all", gmailLoading ? "text-slate-500 bg-slate-800" : "text-cyan-400 bg-cyan-400/10 hover:bg-cyan-400/20")}
+                >
+                  <RefreshCw size={10} className={gmailLoading ? 'animate-spin' : ''} />
+                  {gmailLoading ? 'Loading...' : 'Refresh'}
+                </button>
+              </div>
+
+              {/* Gmail Tabs */}
+              <div className="flex gap-1 mb-4 bg-slate-800/50 rounded-xl p-1">
+                {([
+                  { id: 'inbox' as const, label: 'Inbox', icon: Inbox, count: gmailInbox.length },
+                  { id: 'bounces' as const, label: 'Bounces', icon: AlertTriangle, count: gmailBounces.length },
+                  { id: 'replies' as const, label: 'Replies', icon: Reply, count: gmailReplies.length },
+                ]).map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setGmailTab(tab.id)}
+                    className={cn(
+                      "flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all",
+                      gmailTab === tab.id
+                        ? "bg-white/10 text-white"
+                        : "text-slate-500 hover:text-slate-300"
+                    )}
+                  >
+                    <tab.icon size={10} />
+                    {tab.label}
+                    {tab.count > 0 && (
+                      <span className={cn("text-[8px] px-1.5 py-0.5 rounded-full font-black", 
+                        tab.id === 'bounces' ? 'bg-red-500/20 text-red-400' : 
+                        tab.id === 'replies' ? 'bg-emerald-500/20 text-emerald-400' : 
+                        'bg-slate-700 text-slate-300'
+                      )}>{tab.count}</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              {gmailError && (
+                <div className="flex items-center gap-2 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl mb-4">
+                  <AlertCircle size={14} className="text-amber-400 shrink-0" />
+                  <p className="text-xs text-amber-300">{gmailError}</p>
+                </div>
+              )}
+
+              {/* Gmail Content */}
+              <div className="space-y-2 max-h-64 overflow-y-auto">
+                {gmailTab === 'inbox' && gmailInbox.map((msg, i) => (
+                  <div key={msg.id || i} className="flex items-start gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors group">
+                    <div className={cn("w-2 h-2 rounded-full mt-1.5 shrink-0", msg.isRead ? 'bg-slate-600' : 'bg-cyan-400')} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-bold text-slate-200 truncate">{msg.from}</p>
+                      <p className="text-[11px] text-slate-400 truncate">{msg.subject}</p>
+                    </div>
+                    <p className="text-[9px] text-slate-600 shrink-0 mt-1">{msg.date ? new Date(msg.date).toLocaleDateString() : ''}</p>
+                  </div>
+                ))}
+                {gmailTab === 'bounces' && gmailBounces.map((b, i) => (
+                  <div key={b.id || i} className="flex items-start gap-3 p-3 rounded-xl bg-red-500/5 border border-red-500/10">
+                    <AlertTriangle size={14} className="text-red-400 mt-0.5 shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-bold text-red-300 truncate">{b.bouncedEmail || 'Unknown recipient'}</p>
+                      <p className="text-[10px] text-slate-500 truncate">{b.subject}</p>
+                    </div>
+                    <p className="text-[9px] text-slate-600 shrink-0 mt-1">{b.date ? new Date(b.date).toLocaleDateString() : ''}</p>
+                  </div>
+                ))}
+                {gmailTab === 'replies' && gmailReplies.map((r, i) => (
+                  <div key={r.id || i} className="flex items-start gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors">
+                    <Reply size={14} className="text-emerald-400 mt-0.5 shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-bold text-emerald-300 truncate">{r.from}</p>
+                      <p className="text-[10px] text-slate-400 truncate">{r.subject}</p>
+                    </div>
+                    <p className="text-[9px] text-slate-600 shrink-0 mt-1">{r.date ? new Date(r.date).toLocaleDateString() : ''}</p>
+                  </div>
+                ))}
+                {((gmailTab === 'inbox' && gmailInbox.length === 0) || 
+                  (gmailTab === 'bounces' && gmailBounces.length === 0) || 
+                  (gmailTab === 'replies' && gmailReplies.length === 0)) && !gmailLoading && !gmailError && (
+                  <p className="text-sm text-slate-500 italic text-center py-6">
+                    {gmailTab === 'inbox' ? 'Inbox clear ✨' : gmailTab === 'bounces' ? 'No bounces detected 🎉' : 'No replies yet'}
+                  </p>
+                )}
+              </div>
+
+              {/* Quick Stats Footer */}
+              {gmailStats && (
+                <div className="flex gap-4 mt-4 pt-4 border-t border-slate-800">
+                  <div className="text-center flex-1">
+                    <p className="text-lg font-black text-white">{gmailStats.inbox?.toLocaleString() || 0}</p>
+                    <p className="text-[9px] text-slate-500 uppercase font-bold">Total</p>
+                  </div>
+                  <div className="text-center flex-1">
+                    <p className="text-lg font-black text-cyan-400">{gmailStats.unread || 0}</p>
+                    <p className="text-[9px] text-slate-500 uppercase font-bold">Unread</p>
+                  </div>
+                  <div className="text-center flex-1">
+                    <p className="text-lg font-black text-indigo-400">{gmailStats.sent?.toLocaleString() || 0}</p>
+                    <p className="text-[9px] text-slate-500 uppercase font-bold">Sent</p>
+                  </div>
+                  <div className="text-center flex-1">
+                    <p className="text-lg font-black text-red-400">{gmailStats.spam || 0}</p>
+                    <p className="text-[9px] text-slate-500 uppercase font-bold">Spam</p>
+                  </div>
+                </div>
+              )}
+            </div>
             {/* Campaign Analytics — REAL-TIME */}
             <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-md">
               <h3 className="text-sm font-black text-white uppercase tracking-widest mb-6 flex items-center gap-2">
