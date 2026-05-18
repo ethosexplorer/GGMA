@@ -28,7 +28,7 @@ const ENTITY_TYPES = [
 
 const TEAM = [
   { id: 'founder', name: 'Shantell Robinson' },
-  { id: 'ceo', name: 'Ryan Ferrari' },
+  { id: 'president', name: 'Ryan Ferrari' },
   { id: 'compliance', name: 'Monica Green' },
   { id: 'advisor', name: 'Bob Moore' },
   { id: 'unassigned', name: 'Unassigned' },

@@ -26,7 +26,7 @@ export async function loadArizonaLeads(): Promise<{ success: number; failed: num
                 lead.contactType === 'regulator' ? 'agency' : 'other',
           stage: 'lead',
           value: 0,
-          assignedTo: 'ceo',
+          assignedTo: 'president',
           phone: lead.phone || '',
           email: lead.email || '',
           licenseNumber: '',
