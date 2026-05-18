@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, Building2, LayoutTemplate, Clock, AlertCircle, Save, Trash2, X, Plus, ChevronDown, Eye } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { db, storage } from '../../firebase';
+import { db } from '../../firebase';
 import { collection, onSnapshot, query, addDoc, deleteDoc, doc, serverTimestamp } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 interface Campaign {
   id: string;
@@ -116,40 +115,47 @@ export const MarketingHub = () => {
     const file = e.target.files?.[0];
     if (!file) return;
     
+    // Max 5MB for inline base64
+    if (file.size > 5 * 1024 * 1024) {
+      alert('File too large. Max 5MB for inline embedding.');
+      e.target.value = '';
+      return;
+    }
+
     setIsUploading(true);
     try {
-      const fileRef = ref(storage, `marketing_assets/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`);
-      
-      const timeoutPromise = new Promise<string>((_, reject) => {
-        setTimeout(() => reject(new Error('AbortError')), 45000);
-      });
-
-      const uploadPromise = async () => {
-        await uploadBytes(fileRef, file);
-        return await getDownloadURL(fileRef);
-      };
-
-      const url = await Promise.race([uploadPromise(), timeoutPromise]);
-      
-      if (file.type.startsWith('image/')) {
-        setMessage(prev => prev + `\n<div style="text-align: center; margin: 20px 0;">\n  <img src="${url}" alt="${file.name}" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" />\n</div>\n`);
-      } else if (file.type === 'text/html') {
+      if (file.type === 'text/html') {
+        // HTML templates: read as text and inject directly
         const text = await file.text();
         setMessage(prev => prev + `\n${text}\n`);
+      } else if (file.type.startsWith('image/')) {
+        // Images: convert to base64 data URL for inline embedding
+        const dataUrl = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = () => reject(new Error('Failed to read file'));
+          reader.readAsDataURL(file);
+        });
+        setMessage(prev => prev + `\n<div style="text-align: center; margin: 20px 0;">\n  <img src="${dataUrl}" alt="${file.name}" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" />\n</div>\n`);
+      } else if (file.type === 'application/pdf') {
+        // PDFs: convert to base64 download link
+        const dataUrl = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = () => reject(new Error('Failed to read file'));
+          reader.readAsDataURL(file);
+        });
+        setMessage(prev => prev + `\n<a href="${dataUrl}" download="${file.name}" style="color: #4f46e5; font-weight: bold; text-decoration: underline;">📎 Download: ${file.name}</a>\n`);
       } else {
-        setMessage(prev => prev + `\n<a href="${url}" style="color: #4f46e5; font-weight: bold; text-decoration: underline;">View Attachment: ${file.name}</a>\n`);
+        alert('Unsupported file type. Please upload an image, HTML template, or PDF.');
+        return;
       }
-      alert('✅ Asset uploaded and inserted into message body.');
+      alert('✅ Asset embedded into message body successfully!');
     } catch (error: any) {
-      console.error("Upload failed:", error);
-      if (error?.message === 'AbortError' || error?.name === 'AbortError') {
-        alert('Upload timed out after 45 seconds. Your connection might be slow or Firebase Storage rules are denying access.');
-      } else {
-        alert('Upload failed: ' + (error?.message || 'Check Firebase Storage rules.'));
-      }
+      console.error('File read failed:', error);
+      alert('Failed to process file: ' + (error?.message || 'Unknown error'));
     } finally {
       setIsUploading(false);
-      // Reset the input so the same file can be re-uploaded
       e.target.value = '';
     }
   };
