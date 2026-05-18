@@ -22,7 +22,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { type, subject, message, recipients } = req.body;
+    const { type, subject, message, recipients, attachments } = req.body;
 
     if (!message || !recipients || !Array.isArray(recipients) || recipients.length === 0) {
       return res.status(400).json({ error: 'Message and a non-empty recipients array are required.' });
@@ -41,6 +41,14 @@ export default async function handler(req, res) {
       // ----------------------------------------------------
       const transporter = createTransporter();
       
+      // Build nodemailer attachments from CID image data
+      const emailAttachments = (attachments || []).map((att) => ({
+        filename: att.filename,
+        content: Buffer.from(att.content, 'base64'),
+        contentType: att.contentType,
+        cid: att.cid
+      }));
+      
       // We use Promise.allSettled to send all emails in parallel
       const emailPromises = recipients.map(async (recipient) => {
         if (!recipient.email) throw new Error('Missing email address');
@@ -49,8 +57,9 @@ export default async function handler(req, res) {
           from: `"Global Green Enterprise - Marketing" <marketing.globalgreenhp@gmail.com>`,
           to: recipient.email,
           subject: subject || 'Important Update',
-          text: message,
-          html: `<div style="font-family: sans-serif; padding: 20px; color: #333;">${message.replace(/\n/g, '<br/>')}</div>`
+          text: message.replace(/<[^>]*>/g, ''),
+          html: `<div style="font-family: sans-serif; padding: 20px; color: #333;">${message.replace(/\n/g, '<br/>')}</div>`,
+          attachments: emailAttachments
         });
       });
 

@@ -180,23 +180,75 @@ export const MarketingHub = () => {
     setIsSending(true);
     
     try {
-      // Strip base64 images from message for the API payload to avoid body size limits
-      // Keep images under 500KB inline, strip larger ones
+      // Extract and compress base64 images from message body
+      // Images are compressed to fit within Vercel's 4.5MB payload limit
       let apiMessage = message;
-      const base64Regex = /data:image\/[^;]+;base64,[A-Za-z0-9+/=]{500000,}/g;
-      if (base64Regex.test(apiMessage)) {
-        apiMessage = apiMessage.replace(base64Regex, '[Image embedded - too large for email API]');
+      const attachments: { filename: string; content: string; contentType: string; cid: string }[] = [];
+      
+      // Find all base64 image sources in the message
+      const imgRegex = /src="(data:image\/([^;]+);base64,([^"]+))"/g;
+      let cidIndex = 0;
+      
+      // Compress a base64 image using canvas
+      const compressImage = (dataUrl: string, maxWidth = 800, quality = 0.6): Promise<string> => {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ratio = Math.min(1, maxWidth / img.width);
+            canvas.width = img.width * ratio;
+            canvas.height = img.height * ratio;
+            const ctx = canvas.getContext('2d')!;
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            // Export as JPEG for smaller size
+            const compressed = canvas.toDataURL('image/jpeg', quality);
+            resolve(compressed.split(',')[1]); // Return just the base64 part
+          };
+          img.onerror = () => resolve(''); // Skip on error
+          img.src = dataUrl;
+        });
+      };
+      
+      // Collect all image matches first
+      const imageMatches: { fullMatch: string; dataUrl: string; mimeType: string }[] = [];
+      let m;
+      const scanRegex = /src="(data:image\/([^;]+);base64,([^"]+))"/g;
+      while ((m = scanRegex.exec(apiMessage)) !== null) {
+        imageMatches.push({ fullMatch: m[0], dataUrl: m[1], mimeType: m[2] });
+      }
+      
+      // Compress each image and build attachments
+      for (const img of imageMatches) {
+        const compressedBase64 = await compressImage(img.dataUrl);
+        if (!compressedBase64) continue;
+        
+        const cid = `flyer-${cidIndex}@ggp-os`;
+        attachments.push({
+          filename: `flyer-${cidIndex}.jpg`,
+          content: compressedBase64,
+          contentType: 'image/jpeg',
+          cid: cid
+        });
+        apiMessage = apiMessage.replace(img.fullMatch, `src="cid:${cid}"`);
+        cidIndex++;
+      }
+      
+      // Check total payload size (Vercel limit is ~4.5MB)
+      const payloadStr = JSON.stringify({
+        type: campaignType, subject, message: apiMessage,
+        recipients: finalAudience, attachments: attachments.length > 0 ? attachments : undefined
+      });
+      
+      if (payloadStr.length > 4 * 1024 * 1024) {
+        alert('⚠️ Your flyer image is too large even after compression. Please use a smaller image (under 2MB) or remove the image and send text only.');
+        setIsSending(false);
+        return;
       }
 
       const response = await fetch('/api/marketing/send-campaign', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: campaignType,
-          subject,
-          message: apiMessage,
-          recipients: finalAudience
-        })
+        body: payloadStr
       });
       
       if (!response.ok) {
