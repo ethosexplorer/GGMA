@@ -517,7 +517,6 @@ export const MarketingHub = () => {
               </div>
               )}
             </div>
-            </div>
 
             {/* Campaign History Widget */}
             <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-md">
