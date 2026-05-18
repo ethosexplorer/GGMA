@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, Building2, LayoutTemplate, Clock, AlertCircle, Save, Trash2, X, Plus, ChevronDown } from 'lucide-react';
+import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, Building2, LayoutTemplate, Clock, AlertCircle, Save, Trash2, X, Plus, ChevronDown, Eye } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { db, storage } from '../../firebase';
 import { collection, onSnapshot, query, addDoc, deleteDoc, doc, serverTimestamp } from 'firebase/firestore';
@@ -35,6 +35,7 @@ export const MarketingHub = () => {
   const [selectedTypes, setSelectedTypes] = useState<string[]>(['All']);
   const [showStateDropdown, setShowStateDropdown] = useState(false);
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
   
   // Audience Data
   const [totalLeads, setTotalLeads] = useState(0);
@@ -324,7 +325,18 @@ export const MarketingHub = () => {
                   )}
                 </div>
 
-                <div className="pt-6 border-t border-white/10 flex justify-end">
+                <div className="pt-6 border-t border-white/10 flex justify-end gap-4">
+                  <button 
+                    onClick={() => {
+                      if (!subject && campaignType === 'email') return alert('Please enter a subject');
+                      if (!message) return alert('Please enter a message');
+                      setShowPreview(true);
+                    }}
+                    disabled={isSending || filteredCount === 0 || (!message)}
+                    className="flex items-center gap-2 px-6 py-4 rounded-xl font-bold uppercase tracking-widest text-sm bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Eye size={16} /> Preview
+                  </button>
                   <button 
                     onClick={handleSend}
                     disabled={isSending || filteredCount === 0}
@@ -544,6 +556,89 @@ export const MarketingHub = () => {
           </div>
         </div>
       )}
+      {/* Preview Modal */}
+      {showPreview && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-[100] p-4">
+          <div className="bg-slate-900 border border-slate-700 rounded-3xl w-full max-w-4xl shadow-2xl flex flex-col max-h-[90vh]">
+            <div className="flex justify-between items-center p-6 border-b border-slate-800 shrink-0">
+              <h3 className="text-xl font-black text-white flex items-center gap-3">
+                <Eye className="text-indigo-400" /> Campaign Preview
+              </h3>
+              <button onClick={() => setShowPreview(false)} className="p-2 hover:bg-slate-800 rounded-xl transition-colors"><X size={24} className="text-slate-400" /></button>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-8 flex flex-col md:flex-row gap-8 bg-slate-950/50">
+              {/* Preview Rendering */}
+              <div className="flex-1 bg-white rounded-2xl p-8 shadow-inner min-h-[400px]">
+                {campaignType === 'email' ? (
+                  <div className="text-slate-800">
+                    <p className="border-b border-slate-200 pb-4 mb-6 font-bold">Subject: <span className="font-normal text-slate-600">{subject}</span></p>
+                    <div dangerouslySetInnerHTML={{ __html: message.replace(/\n/g, '<br/>') }} className="prose prose-slate max-w-none" />
+                  </div>
+                ) : (
+                  <div className="max-w-sm mx-auto bg-slate-100 rounded-3xl p-4 border-4 border-slate-200 shadow-xl relative">
+                    <div className="w-16 h-1 bg-slate-300 rounded-full mx-auto mb-6"></div>
+                    <div className="bg-emerald-500 text-white p-4 rounded-2xl rounded-br-sm shadow-md mb-2 relative left-4 w-[90%]">
+                      <p className="whitespace-pre-wrap text-sm">{message}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Campaign Stats Summary */}
+              <div className="w-full md:w-72 shrink-0 space-y-6">
+                <div className="bg-slate-800 rounded-2xl p-6 border border-slate-700">
+                  <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Delivery Overview</h4>
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-xs text-slate-500 font-bold mb-1">Total Recipients</p>
+                      <p className="text-3xl font-black text-white">{filteredCount.toLocaleString()}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500 font-bold mb-1">Method</p>
+                      <p className="text-lg font-bold text-indigo-400 capitalize flex items-center gap-2">
+                        {campaignType === 'email' ? <Mail size={16} /> : <MessageSquare size={16} />} {campaignType}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500 font-bold mb-1">Target States</p>
+                      <p className="text-sm font-bold text-white leading-tight">
+                        {selectedStates.includes('All') ? 'National (All States)' : selectedStates.join(', ')}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500 font-bold mb-1">Business Types</p>
+                      <p className="text-sm font-bold text-white leading-tight capitalize">
+                        {selectedTypes.includes('All') ? 'All Types' : selectedTypes.join(', ')}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-slate-800 shrink-0 flex justify-end gap-4 bg-slate-900 rounded-b-3xl">
+              <button 
+                onClick={() => setShowPreview(false)} 
+                className="px-6 py-3 text-slate-300 font-bold hover:bg-slate-800 rounded-xl transition-colors"
+              >
+                Keep Editing
+              </button>
+              <button 
+                onClick={() => {
+                  setShowPreview(false);
+                  handleSend();
+                }}
+                disabled={isSending}
+                className="px-8 py-3 bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-black uppercase tracking-widest rounded-xl hover:shadow-lg hover:shadow-indigo-500/30 transition-all disabled:opacity-50 flex items-center gap-2"
+              >
+                <Send size={18} /> Confirm & Launch
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
