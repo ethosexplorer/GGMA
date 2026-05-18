@@ -49,6 +49,7 @@ export const MarketingHub = () => {
   const [isSending, setIsSending] = useState(false);
   const [sendSuccess, setSendSuccess] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [sendProgress, setSendProgress] = useState('');
 
   // Template State
   const [templates, setTemplates] = useState<EmailTemplate[]>([]);
@@ -164,124 +165,144 @@ export const MarketingHub = () => {
     if (!subject && campaignType === 'email') return alert('Please enter a subject');
     if (!message) return alert('Please enter a message');
     
-    let finalAudience = filteredAudience;
+    let finalAudience: { email?: string; phone?: string }[] = [];
     if (sendMode === 'direct') {
       if (!directContact) return alert(`Please enter a recipient ${campaignType === 'email' ? 'email' : 'phone number'}`);
       finalAudience = [{
         email: campaignType === 'email' ? directContact : undefined,
         phone: campaignType === 'sms' ? directContact : undefined,
-        jurisdiction: 'Direct Message',
-        type: 'Single Recipient'
       }];
     } else {
       if (filteredAudience.length === 0) return alert('No valid audience selected. Ensure contacts have phone/email.');
+      // Strip to only email/phone — don't send full CRM objects
+      finalAudience = filteredAudience.map(d => ({
+        email: campaignType === 'email' ? d.email : undefined,
+        phone: campaignType === 'sms' ? d.phone : undefined,
+      })).filter(r => r.email || r.phone);
     }
 
     setIsSending(true);
+    setSendProgress('Preparing campaign...');
     
     try {
       // Extract and compress base64 images from message body
-      // Images are compressed to fit within Vercel's 4.5MB payload limit
       let apiMessage = message;
       const attachments: { filename: string; content: string; contentType: string; cid: string }[] = [];
       
-      // Find all base64 image sources in the message
-      const imgRegex = /src="(data:image\/([^;]+);base64,([^"]+))"/g;
-      let cidIndex = 0;
-      
-      // Compress a base64 image using canvas
-      const compressImage = (dataUrl: string, maxWidth = 800, quality = 0.6): Promise<string> => {
+      // Compress a base64 image using canvas (600px max for email, 50% quality)
+      const compressImage = (dataUrl: string): Promise<string> => {
         return new Promise((resolve) => {
           const img = new Image();
           img.onload = () => {
             const canvas = document.createElement('canvas');
+            const maxWidth = 600; // Email standard width
             const ratio = Math.min(1, maxWidth / img.width);
             canvas.width = img.width * ratio;
             canvas.height = img.height * ratio;
             const ctx = canvas.getContext('2d')!;
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            // Export as JPEG for smaller size
-            const compressed = canvas.toDataURL('image/jpeg', quality);
-            resolve(compressed.split(',')[1]); // Return just the base64 part
+            const compressed = canvas.toDataURL('image/jpeg', 0.5);
+            resolve(compressed.split(',')[1]);
           };
-          img.onerror = () => resolve(''); // Skip on error
+          img.onerror = () => resolve('');
           img.src = dataUrl;
         });
       };
       
-      // Collect all image matches first
-      const imageMatches: { fullMatch: string; dataUrl: string; mimeType: string }[] = [];
+      // Collect all image matches
+      const imageMatches: { fullMatch: string; dataUrl: string }[] = [];
       let m;
-      const scanRegex = /src="(data:image\/([^;]+);base64,([^"]+))"/g;
+      const scanRegex = /src="(data:image\/[^;]+;base64,[^"]+)"/g;
       while ((m = scanRegex.exec(apiMessage)) !== null) {
-        imageMatches.push({ fullMatch: m[0], dataUrl: m[1], mimeType: m[2] });
+        imageMatches.push({ fullMatch: m[0], dataUrl: m[1] });
       }
       
-      // Compress each image and build attachments
-      for (const img of imageMatches) {
-        const compressedBase64 = await compressImage(img.dataUrl);
+      // Compress each image
+      setSendProgress(`Compressing ${imageMatches.length} image(s)...`);
+      for (let i = 0; i < imageMatches.length; i++) {
+        const compressedBase64 = await compressImage(imageMatches[i].dataUrl);
         if (!compressedBase64) continue;
         
-        const cid = `flyer-${cidIndex}@ggp-os`;
+        const cid = `flyer-${i}@ggp-os`;
         attachments.push({
-          filename: `flyer-${cidIndex}.jpg`,
+          filename: `flyer-${i}.jpg`,
           content: compressedBase64,
           contentType: 'image/jpeg',
           cid: cid
         });
-        apiMessage = apiMessage.replace(img.fullMatch, `src="cid:${cid}"`);
-        cidIndex++;
+        apiMessage = apiMessage.replace(imageMatches[i].fullMatch, `src="cid:${cid}"`);
       }
       
-      // Check total payload size (Vercel limit is ~4.5MB)
-      const payloadStr = JSON.stringify({
-        type: campaignType, subject, message: apiMessage,
-        recipients: finalAudience, attachments: attachments.length > 0 ? attachments : undefined
-      });
-      
-      if (payloadStr.length > 4 * 1024 * 1024) {
-        alert('⚠️ Your flyer image is too large even after compression. Please use a smaller image (under 2MB) or remove the image and send text only.');
-        setIsSending(false);
-        return;
+      // Batch recipients — 50 per API call to stay under payload limits
+      const BATCH_SIZE = 50;
+      const batches: { email?: string; phone?: string }[][] = [];
+      for (let i = 0; i < finalAudience.length; i += BATCH_SIZE) {
+        batches.push(finalAudience.slice(i, i + BATCH_SIZE));
       }
-
-      const response = await fetch('/api/marketing/send-campaign', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: payloadStr
-      });
       
-      if (!response.ok) {
-        const errorText = await response.text();
-        alert(`Campaign API Error (${response.status}): ${errorText.substring(0, 300)}`);
-        return;
-      }
-
-      const data = await response.json();
+      const totalResults = { total: finalAudience.length, successful: 0, failed: 0, errors: [] as any[] };
       
-      if (data.success) {
-        setSendSuccess(true);
-        // Log to Turso
-        import('../../lib/turso').then(({ turso }) => {
-          turso.execute({ 
-            sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", 
-            args: ['log-' + Math.random().toString(36).substr(2, 9), "Marketing_Campaign", "System", JSON.stringify({ type: campaignType, count: finalAudience.length, success: data.results?.successful })] 
-          }).catch(console.error);
-        });
+      for (let batchIdx = 0; batchIdx < batches.length; batchIdx++) {
+        setSendProgress(`Sending batch ${batchIdx + 1} of ${batches.length} (${totalResults.successful} sent so far)...`);
         
-        setTimeout(() => {
-          setSendSuccess(false);
-          setSubject('');
-          setMessage('');
-        }, 4000);
-      } else {
-        alert('Campaign Error: ' + (data.error || 'Unknown error'));
+        const payload = {
+          type: campaignType,
+          subject,
+          message: apiMessage,
+          recipients: batches[batchIdx],
+          attachments: attachments.length > 0 ? attachments : undefined
+        };
+        
+        try {
+          const response = await fetch('/api/marketing/send-campaign', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          
+          if (!response.ok) {
+            const errorText = await response.text();
+            totalResults.failed += batches[batchIdx].length;
+            totalResults.errors.push({ batch: batchIdx + 1, error: errorText.substring(0, 200) });
+            continue;
+          }
+          
+          const data = await response.json();
+          if (data.results) {
+            totalResults.successful += data.results.successful || 0;
+            totalResults.failed += data.results.failed || 0;
+          }
+        } catch (batchErr: any) {
+          totalResults.failed += batches[batchIdx].length;
+          totalResults.errors.push({ batch: batchIdx + 1, error: batchErr.message });
+        }
       }
+      
+      // Campaign complete
+      setSendProgress('');
+      setSendSuccess(true);
+      alert(`✅ Campaign Complete!\n\nSent: ${totalResults.successful.toLocaleString()}\nFailed: ${totalResults.failed.toLocaleString()}\nTotal: ${totalResults.total.toLocaleString()}`);
+      
+      // Log to Turso
+      import('../../lib/turso').then(({ turso }) => {
+        turso.execute({ 
+          sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", 
+          args: ['log-' + Math.random().toString(36).substr(2, 9), "Marketing_Campaign", "System", JSON.stringify({ type: campaignType, count: finalAudience.length, success: totalResults.successful, failed: totalResults.failed })] 
+        }).catch(console.error);
+      });
+      
+      setTimeout(() => {
+        setSendSuccess(false);
+        setSubject('');
+        setMessage('');
+      }, 4000);
+      
     } catch (err: any) {
       console.error('Marketing API fetch error:', err);
       alert(`Network Error: ${err.message || 'Failed to contact the marketing API.'}\n\nCheck browser console (F12) for details.`);
     } finally {
       setIsSending(false);
+      setSendProgress('');
     }
   };
 
@@ -441,7 +462,7 @@ export const MarketingHub = () => {
                           : "bg-gradient-to-r from-indigo-600 to-blue-600 text-white hover:shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-0.5"
                     )}
                   >
-                    {sendSuccess ? 'Sent Successfully!' : isSending ? 'Sending...' : 'Launch Campaign'}
+                    {sendSuccess ? 'Sent Successfully!' : isSending ? (sendProgress || 'Sending...') : 'Launch Campaign'}
                     {!sendSuccess && !isSending && <Send size={16} />}
                   </button>
                 </div>
