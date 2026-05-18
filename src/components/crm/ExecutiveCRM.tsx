@@ -78,39 +78,46 @@ export const ExecutiveCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: st
   });
 
   useEffect(() => {
-    const qDeals = query(collection(db, 'executive_crm_deals'));
-    const qContacts = query(collection(db, 'executive_crm_contacts'));
+    // UNIFIED CRM — Pull from ALL collections into one dashboard
+    const collections = ['crm_deals', 'executive_crm_deals', 'crm_contacts', 'executive_crm_contacts'];
     
-    let dealsDataArr: Deal[] = [];
-    let contactsDataArr: Deal[] = [];
+    const dataMap: Record<string, Deal[]> = {};
+    collections.forEach(c => { dataMap[c] = []; });
     
-    const updateDeals = () => {
-      const combined = [...dealsDataArr, ...contactsDataArr];
-      combined.sort((a, b) => (b.updatedAt?.seconds || 0) - (a.updatedAt?.seconds || 0));
-      setDeals(combined);
+    const mapDoc = (d: any, col: string): Deal => {
+      const data = d.data();
+      return { id: d.id, collection: col, stage: data.stage || 'lead', ...data, name: data.name || data.businessName || 'Unnamed', contactName: data.contactName || '', phone: data.phone || '', email: data.email || '', value: data.value ?? 0, assignedTo: data.assignedTo || 'unassigned', type: data.type || 'other', jurisdiction: data.jurisdiction || data.state || '' } as any;
+    };
+
+    const updateAll = () => {
+      const all = Object.values(dataMap).flat();
+      // Deduplicate by name (keep the one with most data)
+      const seen = new Map<string, Deal>();
+      for (const deal of all) {
+        const key = (deal.name || '').toLowerCase().trim();
+        if (!key || key === 'unnamed') { seen.set(deal.id, deal); continue; }
+        const existing = seen.get(key);
+        if (!existing) { seen.set(key, deal); }
+        else {
+          // Keep the one with more fields filled
+          const score = (d: Deal) => (d.phone ? 1 : 0) + (d.email ? 1 : 0) + (d.contactName ? 1 : 0) + (d.notes ? 1 : 0);
+          if (score(deal) > score(existing)) seen.set(key, deal);
+        }
+      }
+      const deduped = Array.from(seen.values());
+      deduped.sort((a, b) => (b.updatedAt?.seconds || 0) - (a.updatedAt?.seconds || 0));
+      setDeals(deduped);
       setLoading(false);
     };
 
-    const unsubDeals = onSnapshot(qDeals, (snapshot) => {
-      dealsDataArr = snapshot.docs.map(doc => {
-        const data = doc.data();
-        return { id: doc.id, collection: 'executive_crm_deals', stage: data.stage || 'lead', ...data, name: data.name || data.businessName || 'Unnamed', contactName: data.contactName || '', phone: data.phone || '', email: data.email || '', value: data.value ?? 0, assignedTo: data.assignedTo || 'unassigned', type: data.type || 'other', jurisdiction: data.jurisdiction || data.state || '' } as any;
-      });
-      updateDeals();
-    });
-    
-    const unsubContacts = onSnapshot(qContacts, (snapshot) => {
-      contactsDataArr = snapshot.docs.map(doc => {
-        const data = doc.data();
-        return { id: doc.id, collection: 'executive_crm_contacts', stage: data.stage || 'lead', ...data, name: data.name || data.businessName || 'Unnamed', contactName: data.contactName || '', phone: data.phone || '', email: data.email || '', value: data.value ?? 0, assignedTo: data.assignedTo || 'unassigned', type: data.type || 'other', jurisdiction: data.jurisdiction || data.state || '' } as any;
-      });
-      updateDeals();
-    });
+    const unsubs = collections.map(col =>
+      onSnapshot(query(collection(db, col)), (snapshot) => {
+        dataMap[col] = snapshot.docs.map(d => mapDoc(d, col));
+        updateAll();
+      })
+    );
 
-    return () => {
-      unsubDeals();
-      unsubContacts();
-    };
+    return () => { unsubs.forEach(u => u()); };
   }, []);
 
   const handleDragStart = (e: React.DragEvent, dealId: string) => {
@@ -184,7 +191,7 @@ export const ExecutiveCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: st
         const collectionName = (editingDeal as any).collection || 'executive_crm_deals';
         await updateDoc(doc(db, collectionName, editingDeal.id), dealData);
       } else {
-        await addDoc(collection(db, 'executive_crm_deals'), {
+        await addDoc(collection(db, 'crm_deals'), {
           ...dealData,
           createdAt: serverTimestamp()
         });

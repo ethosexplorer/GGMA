@@ -1,41 +1,46 @@
 // ═══════════════════════════════════════════════════════════════════════════
-// AZ LEAD IMPORTER — Writes directly to executive_crm_deals for Ryan's CRM
-// Sends leads one at a time to avoid Firebase quota/timeout issues
+// AZ LEAD IMPORTER — Uses Firebase writeBatch for instant bulk import
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { collection, addDoc, serverTimestamp, query, where, getDocs } from 'firebase/firestore';
+import { collection, writeBatch, doc, serverTimestamp, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 import { AZ_LEADS } from './load_az_leads';
 
 export async function loadArizonaLeads(): Promise<{ success: number; failed: number; skipped: number; total: number }> {
-  console.log(`🌵 Loading ${AZ_LEADS.length} Arizona leads into Executive CRM...`);
+  console.log(`🌵 Loading ${AZ_LEADS.length} Arizona leads via batch write...`);
   let success = 0;
   let failed = 0;
   let skipped = 0;
 
-  // Get existing AZ leads to avoid duplicates
+  // Check for existing AZ leads to skip duplicates
   const existingNames = new Set<string>();
   try {
-    const snap = await getDocs(query(collection(db, 'executive_crm_deals'), where('jurisdiction', '==', 'AZ')));
-    snap.docs.forEach(d => {
-      const name = (d.data().name || '').toLowerCase();
-      if (name) existingNames.add(name);
-    });
-    console.log(`Found ${existingNames.size} existing AZ leads, will skip duplicates`);
+    const snap = await getDocs(query(collection(db, 'crm_deals'), where('jurisdiction', '==', 'AZ')));
+    snap.docs.forEach(d => existingNames.add((d.data().name || '').toLowerCase()));
+    // Also check executive collection
+    const snap2 = await getDocs(query(collection(db, 'executive_crm_deals'), where('jurisdiction', '==', 'AZ')));
+    snap2.docs.forEach(d => existingNames.add((d.data().name || '').toLowerCase()));
   } catch (e) {
-    console.warn('Could not check for duplicates, importing all:', e);
+    console.warn('Dedup check failed, importing all:', e);
   }
 
-  for (const lead of AZ_LEADS) {
+  // Filter out duplicates
+  const newLeads = AZ_LEADS.filter(lead => {
     const checkName = (lead.businessName || lead.name || '').toLowerCase();
-    if (existingNames.has(checkName)) {
-      skipped++;
-      continue;
-    }
+    if (existingNames.has(checkName)) { skipped++; return false; }
+    return true;
+  });
 
-    try {
-      await addDoc(collection(db, 'executive_crm_deals'), {
+  // Firebase batch supports up to 500 writes per batch
+  for (let i = 0; i < newLeads.length; i += 450) {
+    const chunk = newLeads.slice(i, i + 450);
+    const batch = writeBatch(db);
+
+    for (const lead of chunk) {
+      const ref = doc(collection(db, 'crm_deals'));
+      batch.set(ref, {
         name: lead.businessName || lead.name,
+        businessName: lead.businessName || '',
         contactName: lead.name,
         type: lead.contactType === 'dispensary' ? 'dispensary' :
               lead.contactType === 'grower' ? 'grower' :
@@ -61,16 +66,18 @@ export async function loadArizonaLeads(): Promise<{ success: number; failed: num
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
-      success++;
-    } catch (err) {
-      console.error(`Failed to import ${lead.name}:`, err);
-      failed++;
     }
 
-    // Small delay between each write to avoid quota
-    await new Promise(r => setTimeout(r, 200));
+    try {
+      await batch.commit();
+      success += chunk.length;
+      console.log(`Batch ${Math.floor(i/450)+1} committed: ${chunk.length} leads`);
+    } catch (err) {
+      console.error('Batch commit failed:', err);
+      failed += chunk.length;
+    }
   }
 
-  console.log(`✅ AZ Import: ${success} new, ${skipped} skipped (duplicates), ${failed} failed`);
+  console.log(`✅ AZ Import: ${success} new, ${skipped} dupes skipped, ${failed} failed`);
   return { success, failed, skipped, total: AZ_LEADS.length };
 }
