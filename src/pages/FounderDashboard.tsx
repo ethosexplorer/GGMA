@@ -4586,7 +4586,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   navItemsList.forEach((item, i) => {
     // Advisor: strictly Read-Only Analytics & Oversight
     if (isBobAdvisor && !('section' in item)) {
-      const advisorTabs = ["overview", "jurisdiction_map", "compliance", "reports", "intel", "global_financials"];
+      const advisorTabs = ["overview", "jurisdiction_map", "compliance", "reports", "intel", "global_financials", "b2b_crm", "marketing_hub"];
       if (!advisorTabs.includes(item.id || '')) return;
     }
 
