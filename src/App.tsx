@@ -8855,7 +8855,7 @@ export default function App() {
       }
 
       // Local override fallback (when Firebase Auth isn't available)
-      if (lowerEmail === ADVISOR_EMAIL && pass !== 'Globalgreen1') {
+      if (lowerEmail === ADVISOR_EMAIL && pass !== 'Globalgreen4') {
         (() => { import('./lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Invalid credentials." })] }).catch(console.error) ); alert("Invalid credentials.\n\n[Live Production Transaction Logged]"); })();
         return;
       }
@@ -8884,7 +8884,7 @@ export default function App() {
         role: computedRole,
         displayName: isFounder ? 'Founder/CEO' : (isComplianceDirector ? 'Monica Green' : (isPresident ? 'Ryan Ferrari' : (isAdvisor ? 'Bob Green-Energy-Financing Moore' : email.split('@')[0]))),
         status: 'Active',
-        idCode: (isComplianceDirector || lowerEmail === FOUNDER_EMAIL_2 || isPresident) ? '1234' : (isAdvisor ? '5678' : '0000'),
+        idCode: (isComplianceDirector || lowerEmail === FOUNDER_EMAIL_2 || isPresident) ? '1234' : (isAdvisor ? '0331' : '0000'),
         createdAt: new Date().toISOString(),
       };
       setUserProfile(privilegedProfile);

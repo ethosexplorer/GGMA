@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   Shield, Activity, Users, Database, Globe, Bot, MessageSquare, Clock, HeartPulse, Building2, 
   FileCheck, BookOpen, Gavel, Zap, FlaskConical, BarChart3, LogOut, ArrowLeft, Edit2, Trash2, Plus, CircleCheck,
-  Phone, Scale, Megaphone, FileText, Clipboard
+  Phone, Scale, Megaphone, FileText, Clipboard, Lock
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
@@ -142,6 +142,34 @@ const AdvisorDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => voi
 
   const fullName = "Bob Moore";
   const title = "Advisor";
+
+  // PIN Gate
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [pin, setPin] = useState('');
+
+  if (!isUnlocked) {
+    return (
+      <div className="flex h-screen bg-[#0A0F1C] items-center justify-center">
+        <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-2xl text-center max-w-sm w-full">
+          <Lock size={48} className="text-emerald-500 mx-auto mb-6" />
+          <h2 className="text-2xl font-black text-slate-900 mb-2">Advisor Access Required</h2>
+          <p className="text-slate-500 text-sm mb-6">Enter 4-digit Advisor PIN</p>
+          <input 
+            type="password" 
+            maxLength={4} 
+            value={pin} 
+            onChange={(e) => {
+              setPin(e.target.value);
+              if (e.target.value === '0331') setIsUnlocked(true);
+            }} 
+            className="w-full bg-slate-100 border border-slate-200 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 rounded-xl p-4 text-center text-3xl font-black text-slate-800 tracking-[1em] mb-4 outline-none transition-all" 
+            placeholder="••••"
+          />
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-4">Advisor Clearance Only</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-[#0A0F1C] overflow-hidden text-slate-300 font-sans">
