@@ -30,6 +30,7 @@ import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
 import { EscalationSupportCalendar } from '../components/EscalationSupportCalendar';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 import { ExecutiveCRM } from '../components/crm/ExecutiveCRM';
+import { PipelineCRM } from '../components/crm/PipelineCRM';
 import { VirtualAttendantTab } from '../components/oversight/VirtualAttendantTab';
 import { GlobalDirectoryTab } from '../components/founder/GlobalDirectoryTab';
 import { PatientCaseTracker } from '../components/patient/PatientCaseTracker';
@@ -44,12 +45,14 @@ import { RapidRevenueTab } from '../components/crm/RapidRevenueTab';
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
 const INTERNAL_NAV_ITEMS: NavItem[] = [
+  { id: '_sec_crm', section: 'CRM & MARKETING' },
+  { id: 'marketing_hub', label: 'Marketing Campaigns', icon: Megaphone },
+  { id: 'b2b_crm', label: 'Global CRM Pipeline', icon: Users },
   { id: '_sec_ai', section: 'ARTIFICIAL INTELLIGENCE' },
   { id: 'system_health', label: 'System Health / AI', icon: Zap },
   { id: 'hr_intelligence', label: 'HR Intelligence (Sylara)', icon: Users },
   { id: 'jurisdiction_map', label: 'Nationwide Oversight', icon: Globe },
   { id: '_sec_main', section: 'MAIN' },
-  { id: 'b2b_crm', label: 'Executive Pipeline', icon: Users },
   { id: 'ai_training', label: 'My Assistant & Training', icon: Bot },
   { id: 'messages', label: 'Messages', icon: MessageSquare },
   { id: 'internal_scheduler', label: 'Calendar & Scheduler', icon: Clock },
@@ -68,7 +71,6 @@ const INTERNAL_NAV_ITEMS: NavItem[] = [
   { id: 'patient_case_tracker', label: 'Patient Case Tracker', icon: Clipboard },
   { id: 'law_enforcement', label: 'Law Enforcement (RIP)', icon: Gavel },
   { id: 'processor', label: 'GGE Processor', icon: Activity },
-  { id: 'marketing_hub', label: 'Marketing Campaigns', icon: Megaphone },
   { id: 'launch_script', label: 'Master Launch Script', icon: FileText },
   { id: 'support_tickets', label: 'Support Intelligence Hub', icon: MessageSquare },
   { id: '_sec_federal', section: 'FEDERAL & IP MONITORS' },
@@ -80,7 +82,7 @@ const INTERNAL_NAV_ITEMS: NavItem[] = [
 ];
 
 const AdvisorDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => void }) => {
-  const [activeTab, setActiveTab] = useState('system_health');
+  const [activeTab, setActiveTab] = useState('marketing_hub');
 
   // Draggable nav state with localStorage persistence
   const [navItems, setNavItems] = useState(() => {
@@ -316,7 +318,7 @@ const AdvisorDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => voi
                 {activeTab === 'jurisdiction_map' && <LiveJurisdictionMap />}
                 
                 {activeTab === 'ai_training' && <AITrainingTab userProfile={user} />}
-                {activeTab === 'b2b_crm' && <div className="h-full w-full -m-8 bg-slate-50 min-h-screen overflow-auto"><ExecutiveCRM /></div>}
+                {activeTab === 'b2b_crm' && <div className="h-full w-full -m-8 bg-[#080e1a] min-h-screen overflow-auto"><PipelineCRM /></div>}
                 {activeTab === 'messages' && <InternalMessenger currentUser={{ name: fullName, role: title, roleId: 'advisor' }} />}
                 {activeTab === 'internal_scheduler' && <div className="bg-white rounded-3xl overflow-hidden h-full"><UserCalendar user={user} /></div>}
                 {activeTab === 'realtime_tasks' && <div className="h-full w-full -m-6 bg-slate-50 p-10 min-h-screen overflow-auto"><RapidRevenueTab /></div>}
