@@ -8514,8 +8514,12 @@ export default function App() {
   const confirmJurisdiction = (state: string) => {
     setJurisdiction(state);
     setJurisdictionLocked(true);
-    sessionStorage.setItem('gghp_jurisdiction', state);
-    sessionStorage.setItem('gghp_jurisdiction_locked', 'true');
+    try {
+      sessionStorage.setItem('gghp_jurisdiction', state);
+      sessionStorage.setItem('gghp_jurisdiction_locked', 'true');
+    } catch (e) {
+      console.warn('Session storage unavailable - skipping persistent jurisdiction lock', e);
+    }
     setShowJurisdictionGate(false);
     setPendingJurisdiction(null);
   };
@@ -8526,7 +8530,11 @@ export default function App() {
       setShowJurisdictionGate(true);
     } else {
       setJurisdiction(newState);
-      sessionStorage.setItem('gghp_jurisdiction', newState);
+      try {
+        sessionStorage.setItem('gghp_jurisdiction', newState);
+      } catch (e) {
+        console.warn('Session storage unavailable', e);
+      }
     }
   };
 
@@ -9138,7 +9146,7 @@ export default function App() {
                     </button>
                   )}
                   <button
-                    disabled={!jurisdictionLocked && !is21Verified && !isStaff}
+                    disabled={!jurisdictionLocked && is21Verified !== true && !isStaff}
                     onClick={() => confirmJurisdiction(pendingJurisdiction || jurisdiction)}
                     className="flex-1 py-3 px-6 rounded-xl font-black text-white bg-[#1a4731] hover:bg-[#153a28] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg shadow-emerald-900/20 uppercase tracking-wider text-sm"
                   >
