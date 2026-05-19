@@ -41,9 +41,9 @@ const getRoleFromCategory = (category?: string) => {
 };
 
 const PAYMENT_OPTIONS = [
-  { id: 'authnet', label: 'Authorize.net', sub: 'Credit / Debit Card', icon: '💳', color: 'orange' },
   { id: 'chime', label: 'Chime', sub: 'Cash App, Venmo & Zelle', icon: '🏦', color: 'emerald' },
-  { id: 'invoice', label: 'ACH Invoice', sub: 'Bank Transfer / Pay Link', icon: '📄', color: 'slate' },
+  { id: 'invoice', label: 'ACH Invoice', sub: 'Business Bank Invoices', icon: '📄', color: 'slate' },
+  { id: 'authnet', label: 'Authorize.net', sub: 'Waiting for Approval', icon: '💳', color: 'orange', disabled: true },
 ] as const;
 
 type PayMethodId = typeof PAYMENT_OPTIONS[number]['id'];
@@ -52,7 +52,7 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
   const [step, setStep] = useState<'info' | 'success'>('info');
   const [accountCreated, setAccountCreated] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [payMethod, setPayMethod] = useState<PayMethodId>('authnet');
+  const [payMethod, setPayMethod] = useState<PayMethodId>('chime');
   const [form, setForm] = useState({
     fullName: '',
     email: '',
@@ -150,6 +150,23 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
       setAccountCreated(false);
       if (err.code === 'auth/email-already-in-use') {
         alert("An account with this email already exists. We will still process your subscription request.");
+      }
+    }
+
+    if (payMethod === 'invoice') {
+      try {
+        await fetch('/api/bank-invoice', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orgId: orderId,
+            amount: total,
+            clientEmail: form.email,
+            description: `GGP-OS ${plan?.name} Subscription`
+          })
+        });
+      } catch (e) {
+        console.error('Invoice request failed:', e);
       }
     }
 
@@ -352,8 +369,8 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
                   <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">Payment Method</h3>
                   <div className="grid grid-cols-3 gap-2">
                     {PAYMENT_OPTIONS.map(pm => (
-                      <button key={pm.id} type="button" onClick={() => setPayMethod(pm.id)}
-                        className={`p-3 rounded-xl border-2 text-left transition-all ${payMethod === pm.id ? 'border-indigo-500 bg-indigo-50 shadow-md' : 'border-slate-200 hover:border-slate-300 bg-white'}`}>
+                      <button key={pm.id} type="button" onClick={() => !pm.disabled && setPayMethod(pm.id)} disabled={pm.disabled}
+                        className={`p-3 rounded-xl border-2 text-left transition-all ${payMethod === pm.id ? 'border-indigo-500 bg-indigo-50 shadow-md' : 'border-slate-200 hover:border-slate-300 bg-white'} ${pm.disabled ? 'opacity-50 cursor-not-allowed grayscale' : ''}`}>
                         <div className="flex items-center gap-1.5 mb-0.5">
                           <span className="text-base">{pm.icon}</span>
                           <span className="text-xs font-bold text-slate-800">{pm.label}</span>
