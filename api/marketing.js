@@ -248,8 +248,31 @@ export default async function handler(req, res) {
             bounces.push({ id: msg.uid, subject: msg.envelope?.subject || '', date: msg.envelope?.date?.toISOString() || '', from: parseAddress(msg.envelope?.from), bouncedEmail });
           }
         }
+
+        // Auto-suppress bounced emails in Firestore
+        const suppressedEmails = bounces.map(b => b.bouncedEmail).filter(Boolean);
+        if (suppressedEmails.length > 0) {
+          try {
+            const db = getAdminDb();
+            const batch = db.batch();
+            for (const email of suppressedEmails) {
+              const docRef = db.collection('suppressed_emails').doc(email.toLowerCase().replace(/[^a-z0-9@._-]/g, '_'));
+              batch.set(docRef, {
+                email: email.toLowerCase(),
+                reason: 'bounce',
+                detectedAt: new Date().toISOString(),
+                source: 'auto_bounce_detection'
+              }, { merge: true });
+            }
+            await batch.commit();
+            console.log(`[Bounce Suppression] Auto-suppressed ${suppressedEmails.length} emails:`, suppressedEmails);
+          } catch (suppErr) {
+            console.error('[Bounce Suppression] Failed to write suppression list:', suppErr);
+          }
+        }
+
         bounces.reverse(); await client.logout();
-        return res.json({ bounces, total: bounces.length });
+        return res.json({ bounces, total: bounces.length, suppressed: suppressedEmails.length });
       }
 
       if (action === 'replies') {

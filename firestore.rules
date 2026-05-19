@@ -180,5 +180,10 @@ service cloud.firestore {
     match /telehealth_appointments/{aptId} {
       allow read, write: if isAuthenticated();
     }
+
+    // Suppressed Emails (auto-bounce detection)
+    match /suppressed_emails/{emailId} {
+      allow read, write: if isAuthenticated();
+    }
   }
 }

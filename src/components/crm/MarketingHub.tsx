@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, Building2, LayoutTemplate, Clock, AlertCircle, Save, Trash2, X, Plus, ChevronDown, Eye, MousePointerClick, MailOpen, TrendingUp, Inbox, AlertTriangle, Reply, RefreshCw } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { db } from '../../firebase';
-import { collection, onSnapshot, query, addDoc, deleteDoc, doc, updateDoc, serverTimestamp, orderBy, limit } from 'firebase/firestore';
+import { collection, onSnapshot, query, addDoc, deleteDoc, doc, updateDoc, serverTimestamp, orderBy, limit, getDocs } from 'firebase/firestore';
 
 interface Campaign {
   id: string;
@@ -76,6 +76,9 @@ export const MarketingHub = () => {
   const [gmailLoading, setGmailLoading] = useState(false);
   const [gmailError, setGmailError] = useState('');
 
+  // Bounce suppression list
+  const [suppressedEmails, setSuppressedEmails] = useState<Set<string>>(new Set());
+
   const fetchGmail = async () => {
     setGmailLoading(true);
     setGmailError('');
@@ -101,6 +104,16 @@ export const MarketingHub = () => {
 
   useEffect(() => { fetchGmail(); }, []);
 
+  // Load suppressed emails from Firestore
+  useEffect(() => {
+    const u = onSnapshot(query(collection(db, 'suppressed_emails')), snap => {
+      const emails = new Set<string>(snap.docs.map(d => (d.data().email || '').toLowerCase()));
+      setSuppressedEmails(emails);
+      if (emails.size > 0) console.log(`[Bounce Guard] ${emails.size} emails suppressed from future campaigns`);
+    });
+    return () => u();
+  }, []);
+
   // Load CRM Audience Data
   useEffect(() => {
     const q = query(collection(db, 'crm_deals'));
@@ -114,13 +127,15 @@ export const MarketingHub = () => {
       const types = Array.from(new Set(deals.map(d => d.type).filter(Boolean))) as string[];
       setBusinessTypes(types.sort((a, b) => a.localeCompare(b)));
       
-      // Calculate filtered audience
+      // Calculate filtered audience (excluding suppressed/bounced emails)
       const filtered = deals.filter(d => {
         const matchesState = selectedStates.includes('All') || selectedStates.includes(d.jurisdiction);
         const matchesType = selectedTypes.includes('All') || selectedTypes.includes(d.type);
-        // Also ensure they have the necessary contact info
+        // Ensure they have the necessary contact info
         if (campaignType === 'email' && !d.email) return false;
         if (campaignType === 'sms' && !d.phone) return false;
+        // Auto-suppress bounced emails
+        if (campaignType === 'email' && suppressedEmails.has((d.email || '').toLowerCase())) return false;
         return matchesState && matchesType;
       });
       setFilteredCount(filtered.length);
