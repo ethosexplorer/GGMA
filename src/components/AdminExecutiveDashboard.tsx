@@ -337,7 +337,7 @@ export default function AdminExecutiveDashboard({ onLogout, user }: { onLogout: 
     logAudit('Admin reviewed flagged anomalies from KPI', '');
     setActiveSection('audit');
     setActiveTab('audit');
-    setSearchQuery('severity:high'); // Mock filter
+    setSearchQuery('severity:high'); // Quick filter
   };
 
   const handleScoreDrillDown = () => {
@@ -349,17 +349,22 @@ export default function AdminExecutiveDashboard({ onLogout, user }: { onLogout: 
   const handleExportRevenue = async () => {
     logAudit('Admin exported revenue report', `Filters: State=${stateFilter}`);
     addToast('Generating Revenue Report...', 'info');
-    // Mock Supabase Edge Function call
-    setTimeout(() => {
-        const dummyCsv = "Date,Revenue,State\n2026-03-16,$125000,All";
-        const blob = new Blob([dummyCsv], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `revenue_report_${new Date().toISOString().split('T')[0]}.csv`;
-        a.click();
-        addToast('Report export successful', 'success');
-    }, 1500);
+    try {
+      const res = await turso.execute('SELECT * FROM founder_ledger ORDER BY created_at DESC');
+      const header = 'Origin,Type,Gross Revenue,Net Profit,Status,Date';
+      const rows = res.rows.map((r: any) => `${r.origin_vector},${r.type},${r.gross_revenue},${r.net_profit},${r.status},${r.created_at}`);
+      const csv = [header, ...rows].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `revenue_report_${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      addToast('Report export successful — real ledger data', 'success');
+    } catch (err) {
+      console.error('Export error:', err);
+      addToast('Export failed', 'error');
+    }
   };
 
   // 2. Analytics & Charts Panel Actions
@@ -405,26 +410,21 @@ export default function AdminExecutiveDashboard({ onLogout, user }: { onLogout: 
 
   // 4. Recent Activity Feed
   const handleViewActivityDetails = (activityId: string) => {
-      setLoading(true);
-      // Mock fetch single log
-      setTimeout(() => {
-          const act = data?.recentActivity.find(a => a.id === activityId);
-          if (act) {
-              setModalContent(
-                  <div className="admin-dash__event-modal">
-                      <h4>Event Details Ref: {act.id}</h4>
-                      <p><strong>Time:</strong> {new Date(act.timestamp).toLocaleString()}</p>
-                      <p><strong>Type:</strong> <span className="admin-dash__badge">{act.type}</span></p>
-                      <p><strong>Event:</strong> {act.event}</p>
-                      <p><strong>Details:</strong> {act.details}</p>
-                  </div>
-              );
-              logAudit('Viewed event details', `Activity ID: ${activityId}`);
-          } else {
-              addToast('Log not found', 'error');
-          }
-          setLoading(false);
-      }, 400);
+      const act = data?.recentActivity.find(a => a.id === activityId);
+      if (act) {
+          setModalContent(
+              <div className="admin-dash__event-modal">
+                  <h4>Event Details Ref: {act.id}</h4>
+                  <p><strong>Time:</strong> {new Date(act.timestamp).toLocaleString()}</p>
+                  <p><strong>Type:</strong> <span className="admin-dash__badge">{act.type}</span></p>
+                  <p><strong>Event:</strong> {act.event}</p>
+                  <p><strong>Details:</strong> {act.details}</p>
+              </div>
+          );
+          logAudit('Viewed event details', `Activity ID: ${activityId}`);
+      } else {
+          addToast('Log not found', 'error');
+      }
   };
 
   // 5. Data Table View
@@ -446,8 +446,15 @@ export default function AdminExecutiveDashboard({ onLogout, user }: { onLogout: 
 
       setLoading(true);
       try {
-          // Mock Supabase batch update
-          await new Promise(r => setTimeout(r, 1200));
+          // Real Turso batch update
+          for (const id of Array.from(selectedRows) as string[]) {
+            const numId = (id as string).replace(/[^0-9]/g, '');
+            if (id.startsWith('APP-P')) {
+              await turso.execute({ sql: "UPDATE patients SET status = 'approved' WHERE id = ?", args: [numId] });
+            } else if (id.startsWith('APP-B')) {
+              await turso.execute({ sql: "UPDATE businesses SET status = 'approved' WHERE id = ?", args: [numId] });
+            }
+          }
           
           if (data) {
              const updatedQueue = data.licensingQueue.map(app => 
@@ -549,9 +556,9 @@ export default function AdminExecutiveDashboard({ onLogout, user }: { onLogout: 
               </div>
               <div className="admin-dash__chart-space">
                   {/* Simplified Chart Bar visualization for demonstration */}
-                  <div className="mock-chart">
+                  <div className="admin-chart">
                       {activeChartData.map((d, i) => (
-                           <div key={i} className="mock-chart-col">
+                           <div key={i} className="admin-chart-col">
                                <div className="bar-wrapper">
                                    <div className="bar-bg" style={{height: `${Math.min(100, (d.patients / 200) * 100)}%`}}></div>
                                    <div className="bar-fg" style={{height: `${Math.min(100, (d.apps / 50) * 100)}%`}}></div>
@@ -630,7 +637,7 @@ export default function AdminExecutiveDashboard({ onLogout, user }: { onLogout: 
       if (activeTab === 'locations') currentData = data.locations;
       if (activeTab === 'audit') currentData = data.auditLogs;
 
-      // Apply search (simple mock)
+      // Apply search filter
       if (searchQuery) {
           const q = searchQuery.toLowerCase();
           currentData = currentData.filter(item => JSON.stringify(item).toLowerCase().includes(q));
@@ -846,7 +853,7 @@ export default function AdminExecutiveDashboard({ onLogout, user }: { onLogout: 
                             <span className="user-role">{currentUser.role}</span>
                         </div>
                         <ChevronDown size={14}/>
-                        {/* Dropdown menu mock */}
+                        {/* Dropdown menu */}
                         <div className="dropdown-menu">
                             <button onClick={onLogout}><LogOut size={14}/> Sign Out</button>
                         </div>

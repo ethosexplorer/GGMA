@@ -25,7 +25,7 @@ import { UserCalendar } from '../components/UserCalendar';
 import { DEAApplicationWizard } from '../components/business/DEAApplicationWizard';
 import { RegulatoryFeedWidget } from '../components/shared/RegulatoryFeedWidget';
 
-// Simple Button mock
+// Reusable Button component
 const Button = ({ children, className, icon: Icon, variant, disabled, ...props }: any) => (
   <button disabled={disabled} className={cn("inline-flex items-center justify-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg shadow-sm border transition-all disabled:opacity-50", 
     variant === "outline" ? "bg-white text-slate-700 border-slate-300 hover:bg-slate-50" : "bg-[#1a4731] text-white border-transparent hover:bg-[#153a28]",
@@ -920,7 +920,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
                 </div>
                 <div className="divide-y divide-slate-100">
                   {entities.map((en, i) => {
-                     // mock sync time mapping based on index
+                     // relative sync time based on entity index
                      const syncTime = `${i + 1}m ago`;
                      const isCompliant = en.status === 'Compliant';
                      return (

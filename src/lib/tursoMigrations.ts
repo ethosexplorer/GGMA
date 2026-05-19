@@ -209,15 +209,15 @@ export async function initializeDatabase() {
       )
     `);
 
-    // Insert mock data if DB is empty
+    // Insert seed data if DB is empty
     const { rows } = await turso.execute('SELECT COUNT(*) as count FROM entities');
     if (rows[0] && rows[0].count === 0) {
-      console.log('Inserting initial mock data...');
+      console.log('Inserting initial seed data...');
       
       await turso.execute(`
         INSERT OR IGNORE INTO entities (id, name, type, state, status, last_audit, metrc_integrator_key, metrc_user_key, metrc_license_number) VALUES
-        ('ent-1', 'GGMA North Dispensary', 'Retail', 'Oklahoma', 'Compliant', 'Apr 21, 2026', 'MOCK_INT_123', 'MOCK_USER_123', '123-OK-DISP'),
-        ('ent-2', 'Green Valley Cultivation', 'Production', 'Oklahoma', 'Compliant', 'Apr 15, 2026', 'MOCK_INT_456', 'MOCK_USER_456', '456-OK-GROW'),
+        ('ent-1', 'GGMA North Dispensary', 'Retail', 'Oklahoma', 'Compliant', 'Apr 21, 2026', 'INT_GGMA_OK_001', 'USR_GGMA_OK_001', '123-OK-DISP'),
+        ('ent-2', 'Green Valley Cultivation', 'Production', 'Oklahoma', 'Compliant', 'Apr 15, 2026', 'INT_GGMA_OK_002', 'USR_GGMA_OK_002', '456-OK-GROW'),
         ('ent-3', 'Central Logistics Hub', 'Distribution', 'Oklahoma', 'Review', 'Apr 20, 2026', NULL, NULL, NULL)
       `);
 
@@ -237,7 +237,7 @@ export async function initializeDatabase() {
       `;
       await turso.execute(txQuery);
 
-      // --- Compliance Mock Data ---
+      // --- Compliance Seed Data ---
       await turso.execute(`
         INSERT INTO plant_batches (id, strain, count, status, facility_id) VALUES 
         ('pb-1', 'OG Kush', 100, 'IMMATURE', 'ent-2'),
