@@ -2033,6 +2033,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   );
 
   const [selectedPatientCase, setSelectedPatientCase] = useState<any>(null);
+  const [appsFilter, setAppsFilter] = useState('Pending');
 
   // Live patient list from Firestore
   const [patientList, setPatientList] = useState<any[]>([]);
@@ -3121,8 +3122,70 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         )}
         {opsTab === 'ops_apps' && (
           <div className="space-y-4">
-            <div className="grid grid-cols-3 gap-4">{[{l:'Pending',v:'1',c:'text-amber-600'},{l:'Approved',v:'0',c:'text-emerald-600'},{l:'Flagged',v:'0',c:'text-red-600'}].map((s,i)=>(<div key={i} className="bg-white border border-slate-200 p-5 rounded-2xl text-center"><p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{s.l}</p><p className={`text-2xl font-black ${s.c}`}>{s.v}</p></div>))}</div>
-            <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden"><div className="p-4 border-b"><h4 className="font-bold text-slate-800">Applications Queue</h4></div><div className="divide-y">{[{n:'Jasmin Garrett',t:'Patient Med Card — New Application (OK)',s:'Pending'}].map((a:any,i:number)=>(<div key={i} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50"><div><p className="text-sm font-bold text-slate-800">{a.n}</p><p className="text-xs text-slate-500">{a.t}</p></div><span className={cn("text-[9px] font-black uppercase px-2 py-0.5 rounded-full",a.s==='Pending'?'bg-amber-50 text-amber-600':a.s==='Flagged'?'bg-red-50 text-red-600':'bg-blue-50 text-blue-600')}>{a.s}</span></div>))}</div></div>
+            {selectedPatientCase ? (
+              <div className="bg-white border-4 border-slate-900 rounded-[2rem] shadow-2xl relative overflow-hidden">
+                <div className="bg-slate-50 border-b border-slate-200 p-4 flex items-center justify-between">
+                  <button onClick={() => setSelectedPatientCase(null)} className="px-5 py-2 bg-slate-900 hover:bg-slate-700 text-white font-black text-xs uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2">
+                    <ArrowLeft size={14} /> Back to Queue
+                  </button>
+                  <h3 className="font-black text-slate-800 uppercase tracking-widest text-xs flex items-center gap-2">
+                    <Clipboard size={14} className="text-indigo-600" /> Patient Case File
+                  </h3>
+                </div>
+                <div className="p-6">
+                  <PatientCaseTracker
+                    patientUid={selectedPatientCase.uid}
+                    patientName={selectedPatientCase.fullName || selectedPatientCase.name || selectedPatientCase.displayName || 'Unknown'}
+                    patientEmail={selectedPatientCase.email || ''}
+                    patientState={selectedPatientCase.state || selectedPatientCase.jurisdiction || 'Oklahoma'}
+                    patientPhone={selectedPatientCase.phone || selectedPatientCase.textPhone || ''}
+                    staffName={fullName}
+                  />
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-3 gap-4">
+                  {[
+                    {l:'Pending Review',v:patientList.length,c:'text-amber-600', f: 'Pending'},
+                    {l:'Approved Today',v:'0',c:'text-emerald-600', f: 'Approved'},
+                    {l:'Rejected/Flagged',v:'0',c:'text-red-600', f: 'Flagged'}
+                  ].map((s,i)=>(
+                    <button key={i} onClick={() => setAppsFilter(s.f)} className={`bg-white border ${appsFilter === s.f ? 'border-indigo-500 shadow-md ring-2 ring-indigo-500/20' : 'border-slate-200 hover:border-slate-300'} p-5 rounded-2xl text-center transition-all cursor-pointer`}>
+                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{s.l}</p>
+                      <p className={`text-2xl font-black ${s.c}`}>{s.v}</p>
+                    </button>
+                  ))}
+                </div>
+                <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                  <div className="p-4 border-b flex justify-between items-center bg-slate-50">
+                    <h4 className="font-bold text-slate-800 flex items-center gap-2">
+                      <Clipboard size={16} className="text-indigo-600"/> Applications Queue: {appsFilter}
+                    </h4>
+                  </div>
+                  <div className="divide-y divide-slate-100 max-h-[600px] overflow-y-auto">
+                    {patientList.length === 0 || (appsFilter !== 'Pending') ? (
+                      <div className="p-12 text-center text-slate-400 font-medium">No applications in {appsFilter} queue</div>
+                    ) : patientList.map((patient: any) => (
+                      <button key={patient.uid} onClick={() => setSelectedPatientCase(patient)} className="w-full flex items-center justify-between px-6 py-4 hover:bg-indigo-50 text-left transition-colors group">
+                        <div className="flex items-center gap-4">
+                           <div className="w-12 h-12 bg-indigo-100 text-indigo-700 rounded-xl flex items-center justify-center font-black text-lg">
+                             {(patient.fullName || patient.name || patient.displayName || '?').charAt(0).toUpperCase()}
+                           </div>
+                           <div>
+                             <p className="text-base font-black text-slate-800 group-hover:text-indigo-700">{patient.fullName || patient.name || patient.displayName || 'Unknown'}</p>
+                             <p className="text-xs text-slate-500 font-medium">Patient Med Card — New Application ({patient.state || patient.jurisdiction || 'OK'})</p>
+                           </div>
+                        </div>
+                        <span className="text-[10px] font-black uppercase px-3 py-1 rounded-full bg-amber-50 text-amber-600 border border-amber-100 shadow-sm">
+                          Pending Review
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         )}
         {opsTab === 'ops_personnel' && (
@@ -4845,9 +4908,10 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                   </div>
                   <div className="max-h-80 overflow-y-auto divide-y divide-slate-100">
                     {[
+                      { icon: '📬', title: 'New Direct Message', desc: 'You have unread messages in the Global Directory', time: 'Just now', tab: 'messages', section: null },
+                      { icon: '📋', title: 'New Application in Queue', desc: 'Jasmin Garrett - Patient Med Card', time: 'Just now', tab: 'operations', section: null },
                       { icon: '🔴', title: 'DEA Schedule III Final Order', desc: 'Medical cannabis & FDA products reclassified — effective April 23, 2026', time: 'Today', tab: 'federal', section: '_sec_oversight' },
                       { icon: '⚖️', title: 'DEA Hearing Scheduled', desc: 'Broader rescheduling hearing begins June 29, 2026', time: 'Today', tab: 'judicial', section: '_sec_oversight' },
-                      { icon: '📋', title: 'Quarterly Compliance Report Due', desc: 'OMMA filing deadline: May 15, 2026', time: '1h ago', tab: 'compliance', section: '_sec_oversight' },
                       { icon: '💚', title: 'New Poll Votes Received', desc: 'Community polls receiving engagement in Oklahoma', time: '2h ago', tab: 'overview', section: null },
                       { icon: '📈', title: 'Investor Meeting Confirmed', desc: 'Monica + 4 investors — Tuesday May 5, 12pm CST', time: '3h ago', tab: 'investor_sandbox', section: '_sec_founder' },
                       { icon: '🔒', title: 'Turso DB Connected', desc: 'Production database environment variables active', time: '5h ago', tab: 'system_health', section: '_sec_founder' },

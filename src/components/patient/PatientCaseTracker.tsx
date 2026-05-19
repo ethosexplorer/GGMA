@@ -22,7 +22,7 @@ interface CaseData {
   statePortalPassword: string;
   accountCreatedBy: 'staff' | 'patient' | '';
   applicationSubmittedDate: string;
-  applicationStatus: 'not_started' | 'submitted' | 'under_review' | 'approved' | 'denied' | 'card_mailed' | 'card_delivered';
+  applicationStatus: string;
   stateAuthority: string;
   licenseNumber: string;
   internalNotes: string;
@@ -37,13 +37,26 @@ interface StatusCheck {
 }
 
 const STATUS_LABELS: Record<string, { label: string; color: string; icon: any }> = {
-  not_started: { label: 'Not Started', color: 'bg-slate-100 text-slate-600 border-slate-200', icon: Clock },
-  submitted: { label: 'Submitted to State', color: 'bg-blue-50 text-blue-700 border-blue-200', icon: FileText },
-  under_review: { label: 'Under Review (Up to 14 Days)', color: 'bg-amber-50 text-amber-700 border-amber-200', icon: RefreshCw },
-  approved: { label: 'Approved — Card Processing', color: 'bg-emerald-50 text-emerald-700 border-emerald-200', icon: CheckCircle },
-  denied: { label: 'Denied — Action Required', color: 'bg-red-50 text-red-700 border-red-200', icon: AlertCircle },
-  card_mailed: { label: 'Card Mailed (7-10 Business Days)', color: 'bg-indigo-50 text-indigo-700 border-indigo-200', icon: Truck },
-  card_delivered: { label: 'Card Delivered ✓', color: 'bg-emerald-100 text-emerald-800 border-emerald-300', icon: CheckCircle },
+  'Lead': { label: 'Lead', color: 'bg-slate-100 text-slate-600 border-slate-200', icon: Plus },
+  'Do not call': { label: 'Do not call', color: 'bg-red-50 text-red-700 border-red-200', icon: AlertCircle },
+  'GGP account created': { label: 'GGP account created', color: 'bg-blue-50 text-blue-700 border-blue-200', icon: CheckCircle },
+  'State account created/access given': { label: 'State account created/access given', color: 'bg-blue-100 text-blue-800 border-blue-300', icon: CheckCircle },
+  'application appointment rescheduled': { label: 'application appointment rescheduled', color: 'bg-amber-50 text-amber-700 border-amber-200', icon: Clock },
+  'doctor appointment set': { label: 'doctor appointment set', color: 'bg-indigo-50 text-indigo-700 border-indigo-200', icon: Calendar },
+  'doctor appointment rescheduled': { label: 'doctor appointment rescheduled', color: 'bg-amber-50 text-amber-700 border-amber-200', icon: Clock },
+  'Doctor recommendation appointment completed': { label: 'Doctor recommendation appointment completed', color: 'bg-emerald-50 text-emerald-700 border-emerald-200', icon: CheckCircle },
+  'doctor recommendation rejected': { label: 'doctor recommendation rejected', color: 'bg-red-50 text-red-700 border-red-200', icon: AlertCircle },
+  'Doctor recommendation pending': { label: 'Doctor recommendation pending', color: 'bg-amber-50 text-amber-700 border-amber-200', icon: Clock },
+  'doctor recommendation recieved': { label: 'doctor recommendation recieved', color: 'bg-emerald-50 text-emerald-700 border-emerald-200', icon: FileText },
+  'doctor recommendation approved': { label: 'doctor recommendation approved', color: 'bg-emerald-100 text-emerald-800 border-emerald-300', icon: CheckCircle },
+  'Incomplete': { label: 'Incomplete', color: 'bg-slate-100 text-slate-600 border-slate-200', icon: AlertCircle },
+  'docs needed': { label: 'docs needed', color: 'bg-amber-50 text-amber-700 border-amber-200', icon: FileText },
+  'admin Review': { label: 'admin Review', color: 'bg-purple-50 text-purple-700 border-purple-200', icon: Eye },
+  'state application submitted': { label: 'state application submitted', color: 'bg-blue-50 text-blue-700 border-blue-200', icon: FileText },
+  'state application pending': { label: 'state application pending', color: 'bg-amber-50 text-amber-700 border-amber-200', icon: RefreshCw },
+  'state rejected': { label: 'state rejected', color: 'bg-red-50 text-red-700 border-red-200', icon: AlertCircle },
+  'state approved': { label: 'state approved', color: 'bg-emerald-50 text-emerald-700 border-emerald-200', icon: CheckCircle },
+  'state mailed': { label: 'state mailed', color: 'bg-indigo-50 text-indigo-700 border-indigo-200', icon: Truck },
 };
 
 // Calculate estimated dates based on Oklahoma OMMA timelines
@@ -85,7 +98,7 @@ export const PatientCaseTracker: React.FC<PatientCaseTrackerProps> = ({
     statePortalPassword: '',
     accountCreatedBy: '',
     applicationSubmittedDate: '',
-    applicationStatus: 'not_started',
+    applicationStatus: 'Lead',
     stateAuthority: patientState === 'Oklahoma' ? 'OMMA' : 'State MMA',
     licenseNumber: '',
     internalNotes: '',
@@ -268,7 +281,7 @@ export const PatientCaseTracker: React.FC<PatientCaseTrackerProps> = ({
                       ? 'bg-emerald-100 border-emerald-300' : 'bg-amber-50 border-amber-200'
                   }`}>
                     <CheckCircle size={14} className={
-                      caseData.applicationStatus === 'approved' || caseData.applicationStatus === 'card_mailed' || caseData.applicationStatus === 'card_delivered'
+                      caseData.applicationStatus === 'state approved' || caseData.applicationStatus === 'state mailed' 
                         ? 'text-emerald-600' : 'text-amber-500'
                     } />
                   </div>
@@ -280,10 +293,10 @@ export const PatientCaseTracker: React.FC<PatientCaseTrackerProps> = ({
                 {/* Card Delivery */}
                 <div className="flex items-start gap-4 relative">
                   <div className={`w-9 h-9 rounded-full flex items-center justify-center z-10 border-2 ${
-                    caseData.applicationStatus === 'card_delivered'
+                    caseData.applicationStatus === 'state mailed'
                       ? 'bg-emerald-100 border-emerald-300' : 'bg-slate-100 border-slate-200'
                   }`}>
-                    <Truck size={14} className={caseData.applicationStatus === 'card_delivered' ? 'text-emerald-600' : 'text-slate-400'} />
+                    <Truck size={14} className={caseData.applicationStatus === 'state mailed' ? 'text-emerald-600' : 'text-slate-400'} />
                   </div>
                   <div>
                     <p className="font-black text-sm text-slate-800">Estimated Delivery</p>
