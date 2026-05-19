@@ -32,6 +32,7 @@ export const MarketingHub = () => {
   const [message, setMessage] = useState('');
   const [selectedStates, setSelectedStates] = useState<string[]>(['All']);
   const [selectedTypes, setSelectedTypes] = useState<string[]>(['All']);
+  const [selectedTier, setSelectedTier] = useState<'all' | 'top_grossing' | 'standard'>('all');
   const [showStateDropdown, setShowStateDropdown] = useState(false);
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -131,18 +132,22 @@ export const MarketingHub = () => {
       const filtered = deals.filter(d => {
         const matchesState = selectedStates.includes('All') || selectedStates.includes(d.jurisdiction);
         const matchesType = selectedTypes.includes('All') || selectedTypes.includes(d.type);
+        // Tier filter: top_grossing, standard, or all
+        const matchesTier = selectedTier === 'all' || 
+          (selectedTier === 'top_grossing' && d.tier === 'top_grossing') ||
+          (selectedTier === 'standard' && d.tier !== 'top_grossing');
         // Ensure they have the necessary contact info
         if (campaignType === 'email' && !d.email) return false;
         if (campaignType === 'sms' && !d.phone) return false;
         // Auto-suppress bounced emails
         if (campaignType === 'email' && suppressedEmails.has((d.email || '').toLowerCase())) return false;
-        return matchesState && matchesType;
+        return matchesState && matchesType && matchesTier;
       });
       setFilteredCount(filtered.length);
       setFilteredAudience(filtered);
     });
     return () => unsubscribe();
-  }, [selectedStates, selectedTypes, campaignType]);
+  }, [selectedStates, selectedTypes, selectedTier, campaignType]);
 
   // Load saved templates
   useEffect(() => {
@@ -740,6 +745,38 @@ export const MarketingHub = () => {
                         </label>
                       ))}
                     </div>
+                  )}
+                </div>
+
+                {/* Tier Filter */}
+                <div>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                    <TrendingUp size={12} /> Priority Tier
+                  </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[
+                      { id: 'all' as const, label: 'All Leads' },
+                      { id: 'top_grossing' as const, label: '💰 Top Grossing' },
+                      { id: 'standard' as const, label: 'Standard' },
+                    ].map(t => (
+                      <button
+                        key={t.id}
+                        onClick={() => setSelectedTier(t.id)}
+                        className={cn(
+                          "py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all",
+                          selectedTier === t.id
+                            ? t.id === 'top_grossing' ? "bg-amber-500 text-black shadow-sm shadow-amber-500/30" : "bg-indigo-600 text-white shadow-sm"
+                            : "bg-slate-950 text-slate-500 border border-slate-700 hover:text-white"
+                        )}
+                      >
+                        {t.label}
+                      </button>
+                    ))}
+                  </div>
+                  {selectedTier === 'top_grossing' && (
+                    <p className="text-[10px] text-amber-400 mt-2 font-bold flex items-center gap-1">
+                      💰 Targeting top-grossing dispensaries only (~$3.9B combined revenue)
+                    </p>
                   )}
                 </div>
                 
