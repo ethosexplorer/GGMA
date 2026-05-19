@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { collection, onSnapshot } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 import { Calendar, Building2, Users, FileText, Settings, Shield, Activity, Bell,
   Briefcase, HeartPulse, Scale, Gavel, FileCheck, Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
@@ -46,21 +48,71 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
   const [appsFilter, setAppsFilter] = useState('Pending');
 
   useEffect(() => {
+    let firebaseUsers: any[] = [];
+    let tursoUsers: any[] = [];
+
+    const mergeData = () => {
+      const mergedMap = new Map();
+      
+      // 1. Load legacy Turso data first
+      tursoUsers.forEach(t => {
+        mergedMap.set(t.name?.toLowerCase() || t.id, {
+          uid: t.id || t.uid || `turso-${t.name}`,
+          fullName: t.name || t.fullName || 'Unknown Patient',
+          email: t.email || '',
+          phone: t.phone || '',
+          state: t.state || t.jurisdiction || 'Oklahoma',
+          applicationStatus: t.status === 'Pending' ? 'Pending Review' : (t.status || 'Pending Review'),
+          createdAt: t.created_at,
+          source: 'turso'
+        });
+      });
+
+      // 2. Override with live Firebase real-time data
+      firebaseUsers.forEach(f => {
+        const key = f.fullName?.toLowerCase() || f.name?.toLowerCase() || f.displayName?.toLowerCase() || f.uid;
+        const existing = mergedMap.get(key) || {};
+        mergedMap.set(key, {
+          ...existing,
+          uid: f.uid,
+          fullName: f.fullName || f.name || f.displayName || existing.fullName,
+          email: f.email || existing.email,
+          phone: f.phone || f.textPhone || existing.phone,
+          state: f.state || f.jurisdiction || existing.state || 'Oklahoma',
+          applicationStatus: f.applicationStatus || existing.applicationStatus || 'Pending Review',
+          createdAt: f.createdAt || existing.createdAt,
+          source: 'firebase'
+        });
+      });
+
+      setLiveApplications(Array.from(mergedMap.values()));
+    };
+
+    // Fetch Turso (Legacy)
     turso.execute('SELECT * FROM patients ORDER BY created_at DESC')
       .then((res: any) => {
-        // Map turso rows to match the expected format for the queue
-        const apps = res.rows.map((r: any, idx: number) => ({
-          uid: r.id || r.uid || `turso-mock-${idx}`,
-          fullName: r.name || r.fullName || 'Unknown Patient',
-          email: r.email || '',
-          phone: r.phone || '',
-          state: r.state || r.jurisdiction || 'Oklahoma',
-          applicationStatus: r.status === 'Pending' ? 'Pending Review' : (r.status || 'Pending Review'),
-          createdAt: r.created_at
-        }));
-        setLiveApplications(apps);
-      })
-      .catch(console.error);
+        tursoUsers = res.rows;
+        mergeData();
+      }).catch(console.error);
+
+    // Fetch Firebase (Live)
+    const unsub = onSnapshot(collection(db, 'users'), (snap) => {
+      const adminRoles = ['admin', 'founder', 'executive', 'president', 'chief_compliance_director', 
+        'executive_advisor', 'advisor', 'executive_founder', 'internal_admin', 'compliance_director',
+        'manager', 'team_lead', 'rep', 'ai_agent'];
+      
+      firebaseUsers = snap.docs
+        .map(d => ({ uid: d.id, ...d.data() }))
+        .filter((u: any) => {
+          const role = (u.role || '').toLowerCase().trim();
+          if (adminRoles.some(ar => role.includes(ar))) return false;
+          if (role === 'business' || role === 'provider' || role === 'attorney') return false;
+          return true;
+        });
+      mergeData();
+    });
+
+    return () => unsub();
   }, []);
 
   // Draggable nav state with localStorage persistence
