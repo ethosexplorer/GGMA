@@ -7,6 +7,7 @@ import {
   Clipboard, ExternalLink, Truck, RefreshCw, MessageSquare, Send, Phone
 } from 'lucide-react';
 import { sendSMS, checkQuota, SMS_TEMPLATES } from '../../lib/textbelt';
+import { STATE_RESOURCES } from '../../stateResources';
 
 interface PatientCaseTrackerProps {
   patientUid: string;
@@ -254,16 +255,32 @@ export const PatientCaseTracker: React.FC<PatientCaseTrackerProps> = ({
               <StatusIcon size={14} />
               {STATUS_LABELS[caseData.applicationStatus]?.label || 'Unknown'}
             </div>
-            {patientState.toLowerCase() === 'oklahoma' && (
-              <a 
-                href="https://oklahoma.gov/omma.html" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors"
-              >
-                Open State Portal (OMMA) →
-              </a>
-            )}
+            {(() => {
+              const stateInfo = STATE_RESOURCES[patientState] || Object.values(STATE_RESOURCES).find(s => s.abbreviation?.toLowerCase() === patientState.toLowerCase());
+              const pLink = stateInfo?.patientPortal || stateInfo?.program || 'https://oklahoma.gov/omma.html';
+              const bLink = stateInfo?.businessPortal || stateInfo?.compliancePage || 'https://oklahoma.gov/omma.html';
+              const stateName = stateInfo ? patientState : 'Oklahoma';
+              return (
+                <div className="flex flex-col gap-2 mt-2">
+                  <a 
+                    href={pLink} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors"
+                  >
+                    Open {stateName} Patient Portal →
+                  </a>
+                  <a 
+                    href={bLink} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors"
+                  >
+                    Open {stateName} Business / Compliance Portal →
+                  </a>
+                </div>
+              );
+            })()}
             <p className="text-[10px] text-slate-500 mt-2 font-bold uppercase tracking-wider">{patientState} • {caseData.stateAuthority}</p>
           </div>
         </div>
