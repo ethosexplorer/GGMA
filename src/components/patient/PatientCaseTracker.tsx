@@ -194,6 +194,14 @@ export const PatientCaseTracker: React.FC<PatientCaseTrackerProps> = ({
         updatedAt: serverTimestamp(),
         updatedBy: staffName,
       }, { merge: true });
+
+      // Sync status to main user doc for global dashboard queues
+      const userRef = doc(db, 'users', patientUid);
+      await setDoc(userRef, {
+        applicationStatus: caseData.applicationStatus,
+        updatedAt: serverTimestamp(),
+      }, { merge: true });
+
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (err) {
@@ -241,11 +249,21 @@ export const PatientCaseTracker: React.FC<PatientCaseTrackerProps> = ({
               <p className="text-sm text-slate-400 font-medium">{safeEmail}</p>
             </div>
           </div>
-          <div className="text-right">
+          <div className="text-right flex flex-col items-end gap-2">
             <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl border text-xs font-black uppercase tracking-wider ${STATUS_LABELS[caseData.applicationStatus]?.color || 'bg-slate-100 text-slate-600'}`}>
               <StatusIcon size={14} />
               {STATUS_LABELS[caseData.applicationStatus]?.label || 'Unknown'}
             </div>
+            {patientState.toLowerCase() === 'oklahoma' && (
+              <a 
+                href="https://oklahoma.gov/omma.html" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors"
+              >
+                Open State Portal (OMMA) →
+              </a>
+            )}
             <p className="text-[10px] text-slate-500 mt-2 font-bold uppercase tracking-wider">{patientState} • {caseData.stateAuthority}</p>
           </div>
         </div>

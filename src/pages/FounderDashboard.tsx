@@ -3144,45 +3144,61 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-3 gap-4">
-                  {[
-                    {l:'Pending Review',v:patientList.length,c:'text-amber-600', f: 'Pending'},
-                    {l:'Approved Today',v:'0',c:'text-emerald-600', f: 'Approved'},
-                    {l:'Rejected/Flagged',v:'0',c:'text-red-600', f: 'Flagged'}
-                  ].map((s,i)=>(
-                    <button key={i} onClick={() => setAppsFilter(s.f)} className={`bg-white border ${appsFilter === s.f ? 'border-indigo-500 shadow-md ring-2 ring-indigo-500/20' : 'border-slate-200 hover:border-slate-300'} p-5 rounded-2xl text-center transition-all cursor-pointer`}>
-                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{s.l}</p>
-                      <p className={`text-2xl font-black ${s.c}`}>{s.v}</p>
-                    </button>
-                  ))}
-                </div>
-                <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-                  <div className="p-4 border-b flex justify-between items-center bg-slate-50">
-                    <h4 className="font-bold text-slate-800 flex items-center gap-2">
-                      <Clipboard size={16} className="text-indigo-600"/> Applications Queue: {appsFilter}
-                    </h4>
-                  </div>
-                  <div className="divide-y divide-slate-100 max-h-[600px] overflow-y-auto">
-                    {patientList.length === 0 || (appsFilter !== 'Pending') ? (
-                      <div className="p-12 text-center text-slate-400 font-medium">No applications in {appsFilter} queue</div>
-                    ) : patientList.map((patient: any) => (
-                      <button key={patient.uid} onClick={() => setSelectedPatientCase(patient)} className="w-full flex items-center justify-between px-6 py-4 hover:bg-indigo-50 text-left transition-colors group">
-                        <div className="flex items-center gap-4">
-                           <div className="w-12 h-12 bg-indigo-100 text-indigo-700 rounded-xl flex items-center justify-center font-black text-lg">
-                             {(patient.fullName || patient.name || patient.displayName || '?').charAt(0).toUpperCase()}
-                           </div>
-                           <div>
-                             <p className="text-base font-black text-slate-800 group-hover:text-indigo-700">{patient.fullName || patient.name || patient.displayName || 'Unknown'}</p>
-                             <p className="text-xs text-slate-500 font-medium">Patient Med Card — New Application ({patient.state || patient.jurisdiction || 'OK'})</p>
-                           </div>
+                {(() => {
+                  const isAppr = (s: string) => s === 'state approved' || s === 'doctor recommendation approved' || s === 'state mailed';
+                  const isFlag = (s: string) => s === 'state rejected' || s === 'doctor recommendation rejected' || s === 'Do not call';
+                  const isPend = (s: string) => !isAppr(s) && !isFlag(s);
+                  
+                  const pendingApps = patientList.filter(p => isPend(p.applicationStatus));
+                  const approvedApps = patientList.filter(p => isAppr(p.applicationStatus));
+                  const flaggedApps = patientList.filter(p => isFlag(p.applicationStatus));
+                  
+                  const displayApps = appsFilter === 'Pending' ? pendingApps : appsFilter === 'Approved' ? approvedApps : flaggedApps;
+
+                  return (
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-3 gap-4">
+                        {[
+                          {l:'Pending Review',v:pendingApps.length,c:'text-amber-600', f: 'Pending'},
+                          {l:'Approved Today',v:approvedApps.length,c:'text-emerald-600', f: 'Approved'},
+                          {l:'Rejected/Flagged',v:flaggedApps.length,c:'text-red-600', f: 'Flagged'}
+                        ].map((s,i)=>(
+                          <button key={i} onClick={() => setAppsFilter(s.f)} className={`bg-white border ${appsFilter === s.f ? 'border-indigo-500 shadow-md ring-2 ring-indigo-500/20' : 'border-slate-200 hover:border-slate-300'} p-5 rounded-2xl text-center transition-all cursor-pointer`}>
+                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{s.l}</p>
+                            <p className={`text-2xl font-black ${s.c}`}>{s.v}</p>
+                          </button>
+                        ))}
+                      </div>
+                      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                        <div className="p-4 border-b flex justify-between items-center bg-slate-50">
+                          <h4 className="font-bold text-slate-800 flex items-center gap-2">
+                            <Clipboard size={16} className="text-indigo-600"/> Applications Queue: {appsFilter}
+                          </h4>
                         </div>
-                        <span className="text-[10px] font-black uppercase px-3 py-1 rounded-full bg-amber-50 text-amber-600 border border-amber-100 shadow-sm">
-                          Pending Review
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                        <div className="divide-y divide-slate-100 max-h-[600px] overflow-y-auto">
+                          {displayApps.length === 0 ? (
+                            <div className="p-12 text-center text-slate-400 font-medium">No applications in {appsFilter} queue</div>
+                          ) : displayApps.map((patient: any) => (
+                            <button key={patient.uid} onClick={() => setSelectedPatientCase(patient)} className="w-full flex items-center justify-between px-6 py-4 hover:bg-indigo-50 text-left transition-colors group">
+                              <div className="flex items-center gap-4">
+                                 <div className="w-12 h-12 bg-indigo-100 text-indigo-700 rounded-xl flex items-center justify-center font-black text-lg">
+                                   {(patient.fullName || patient.name || patient.displayName || '?').charAt(0).toUpperCase()}
+                                 </div>
+                                 <div>
+                                   <p className="text-base font-black text-slate-800 group-hover:text-indigo-700">{patient.fullName || patient.name || patient.displayName || 'Unknown'}</p>
+                                   <p className="text-xs text-slate-500 font-medium">Patient Med Card — New Application ({patient.state || patient.jurisdiction || 'OK'})</p>
+                                 </div>
+                              </div>
+                              <span className={`text-[10px] font-black uppercase px-3 py-1 rounded-full ${patient.applicationStatus && !isPend(patient.applicationStatus) ? (isAppr(patient.applicationStatus) ? 'text-emerald-600 bg-emerald-50 border border-emerald-200' : 'text-red-600 bg-red-50 border border-red-200') : 'text-amber-600 bg-amber-50 border border-amber-100 shadow-sm'}`}>
+                                {patient.applicationStatus || 'Pending Review'}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
               </>
             )}
           </div>
