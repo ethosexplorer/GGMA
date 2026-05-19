@@ -41,8 +41,8 @@ const getRoleFromCategory = (category?: string) => {
 };
 
 const PAYMENT_OPTIONS = [
-  { id: 'chime', label: 'Chime', sub: 'Cash App, Venmo & Zelle', icon: '🏦', color: 'emerald' },
-  { id: 'invoice', label: 'ACH Invoice', sub: 'Business Bank Invoices', icon: '📄', color: 'slate' },
+  { id: 'chime', label: 'Chime', sub: 'Cash App, Venmo & Zelle', icon: '🏦', color: 'emerald', disabled: false },
+  { id: 'invoice', label: 'ACH Invoice', sub: 'Business Bank Invoices', icon: '📄', color: 'slate', disabled: false },
   { id: 'authnet', label: 'Authorize.net', sub: 'Waiting for Approval', icon: '💳', color: 'orange', disabled: true },
 ] as const;
 
@@ -113,8 +113,9 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
     if (!isValid) return;
     setIsSubmitting(true);
 
+    const orderId = `sub-${Date.now()}`;
+
     try {
-      const orderId = `sub-${Date.now()}`;
       await turso.execute({
         sql: `INSERT INTO subscription_requests (id, customer_name, customer_email, customer_phone, company_name, plan_name, addons, billing_cycle, total_amount, trial_days, category, notes, status, created_at) 
               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', datetime('now'))`,
