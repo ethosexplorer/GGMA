@@ -14,7 +14,7 @@ export const RegulatoryFeedWidget = ({ jurisdiction, compact = false }: { jurisd
 
     const interval = setInterval(() => {
       fetchRegulatoryFeed(compact ? 3 : 5, jurisdiction).then(items => setFeed(items));
-    }, 30 * 60 * 1000);
+    }, 10 * 60 * 1000); // Refresh every 10 minutes
     return () => clearInterval(interval);
   }, [jurisdiction, compact]);
 
@@ -23,9 +23,14 @@ export const RegulatoryFeedWidget = ({ jurisdiction, compact = false }: { jurisd
       <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
       
       <div className="flex items-center justify-between mb-4 relative z-10">
-        <h3 className="text-lg font-black text-slate-800 tracking-tight">
-          {jurisdiction ? `${jurisdiction} Regulatory Intel` : 'Cannabis Law Updates'}
-        </h3>
+        <div className="flex items-center gap-3">
+          <h3 className="text-lg font-black text-slate-800 tracking-tight">
+            {jurisdiction ? `${jurisdiction} Regulatory Intel` : 'Cannabis Law Updates'}
+          </h3>
+          <span className="bg-purple-100 text-purple-700 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest">
+            Marijuana Moment
+          </span>
+        </div>
         <span className="bg-red-100 text-red-600 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest flex items-center gap-1 animate-pulse">
           <AlertCircle size={10} /> Live
         </span>
@@ -60,7 +65,7 @@ export const RegulatoryFeedWidget = ({ jurisdiction, compact = false }: { jurisd
         )}
       </div>
       <p className="text-[9px] text-slate-400 text-center mt-4 pt-3 border-t border-slate-100">
-        Source: <span className="text-emerald-600 font-bold">{jurisdiction ? 'Google News Local' : 'Marijuana Moment'}</span> • Auto-updates
+        Source: <span className="text-purple-600 font-bold">Marijuana Moment</span>{jurisdiction ? <span> + <span className="text-emerald-600 font-bold">Google News Local</span></span> : ''} &bull; Real-time RSS &bull; Auto-updates
       </p>
     </div>
   );

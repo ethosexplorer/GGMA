@@ -14,7 +14,7 @@ export interface RegulatoryUpdate {
 }
 
 const CACHE_KEY = 'ggpos_regulatory_feed';
-const CACHE_TTL = 30 * 60 * 1000; // 30 minutes in ms
+const CACHE_TTL = 10 * 60 * 1000; // 10 minutes in ms — keep feed fresh
 
 // RSS feed URL via rss2json (free tier, CORS-safe)
 const FEED_URL = 'https://api.rss2json.com/v1/api.json?rss_url=https://www.marijuanamoment.net/feed/';

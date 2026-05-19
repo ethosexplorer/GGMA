@@ -39,23 +39,31 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
   const [breathLevel, setBreathLevel] = useState(0);
   const [breathResult, setBreathResult] = useState<{thc: number, pass: boolean, probability2hr: number} | null>(null);
 
-  const MOCK_PATIENT = {
-    name: 'Jason Thorne',
-    licenseId: 'OK-4892-2291',
-    status: 'Active',
-    stops: 4,
-    rating: 82, 
-    lastStop: 'Apr 02, 2026',
-    offenses: ['Failed Rapid Test (Apr 2025)', 'Broken Taillight (Jan 2026)'],
-    rapidTests: 3
-  };
-
-  const handleSearch = (e: React.FormEvent) => {
+  // Real-time patient search via Turso (production data)
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery) {
-      setSelectedPatient(MOCK_PATIENT);
+    if (!searchQuery) return;
+    try {
+      const res = await turso.execute({
+        sql: "SELECT id, name, email, status, state, created_at FROM patients WHERE name LIKE ? LIMIT 1",
+        args: [`%${searchQuery}%`]
+      });
+      if (res.rows.length > 0) {
+        const r = res.rows[0];
+        setSelectedPatient({
+          name: String(r.name),
+          licenseId: `${String(r.state || 'OK').substring(0,2).toUpperCase()}-${String(r.id).padStart(4, '0')}`,
+          status: String(r.status || 'Active').charAt(0).toUpperCase() + String(r.status || 'active').slice(1),
+          stops: 0, rating: 100, lastStop: 'N/A', offenses: [], rapidTests: 0
+        });
+      } else {
+        setSelectedPatient({
+          name: searchQuery, licenseId: 'NOT FOUND', status: 'Unknown',
+          stops: 0, rating: 0, lastStop: 'N/A', offenses: [], rapidTests: 0
+        });
+      }
       setRapidTestStep(2);
-    }
+    } catch (err) { console.error('Enforcement search error:', err); }
   };
 
   const handleStartRapidTest = () => {

@@ -26,19 +26,37 @@ interface Appointment {
   notes?: string;
 }
 
-const MOCK_APPOINTMENTS: Appointment[] = [
-  { id: 'apt1', patientName: 'John Doe', doctorName: 'Dr. Sarah Smith', time: '10:00 AM', date: '2026-03-27', type: 'consultation', status: 'upcoming' },
-  { id: 'apt2', patientName: 'John Doe', doctorName: 'Dr. Mike Ross', time: '02:30 PM', date: '2026-03-28', type: 'follow-up', status: 'upcoming' },
-  { id: 'apt3', patientName: 'John Doe', doctorName: 'Dr. Sarah Smith', time: '09:00 AM', date: '2026-03-20', type: 'consultation', status: 'completed', notes: 'Patient showing good progress on treatment plan.' },
-];
+import { onSnapshot, collection, query, orderBy } from 'firebase/firestore';
+import { db } from '../firebase';
 
+// Real-time appointments from Firebase
 export default function TeleHealthDashboard({ user }: { user: any }) {
   const [view, setView] = useState<'lobby' | 'call' | 'schedule'>('lobby');
   const [activeCall, setActiveCall] = useState<Appointment | null>(null);
-  const [appointments, setAppointments] = useState<Appointment[]>(MOCK_APPOINTMENTS);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(false);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
+
+  // Real-time appointment stream from Firebase
+  useEffect(() => {
+    const q = query(collection(db, 'telehealth_appointments'), orderBy('date', 'desc'));
+    const unsub = onSnapshot(q, snap => {
+      if (snap.empty) return; // Keep empty state if no appointments
+      const apts = snap.docs.map(doc => ({
+        id: doc.id,
+        patientName: doc.data().patientName || 'Patient',
+        doctorName: doc.data().doctorName || 'Provider',
+        time: doc.data().time || '10:00 AM',
+        date: doc.data().date || new Date().toISOString().slice(0, 10),
+        type: doc.data().type || 'consultation',
+        status: doc.data().status || 'upcoming',
+        notes: doc.data().notes || '',
+      })) as Appointment[];
+      setAppointments(apts);
+    }, err => console.error('TeleHealth appointments listener error:', err));
+    return () => unsub();
+  }, []);
 
   const handleStartCall = (apt: Appointment) => {
     setActiveCall(apt);
@@ -200,7 +218,7 @@ export default function TeleHealthDashboard({ user }: { user: any }) {
            <div className="flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full text-xs font-mono">
               <div className="w-2 h-2 bg-red-500 rounded-full"></div> 00:14:23
            </div>
-           <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Call options: Record Session, Share Screen, Report Issue, View Patient File." })] }).catch(console.error) ); alert("Call Options:\n• Record Session\n• Share Screen\n• Report Issue\n• View Patient File\n\n[Live Production Transaction Logged]"); }} className="p-2 hover:bg-white/10 rounded-lg transition-colors"><MoreVertical size={20}/></button>
+           <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Call options: Record Session, Share Screen, Report Issue, View Patient File." })] }).catch(console.error) ); alert("Call Options:\nï¿½ Record Session\nï¿½ Share Screen\nï¿½ Report Issue\nï¿½ View Patient File\n\n[Live Production Transaction Logged]"); }} className="p-2 hover:bg-white/10 rounded-lg transition-colors"><MoreVertical size={20}/></button>
         </div>
       </div>
 
