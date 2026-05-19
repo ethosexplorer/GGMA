@@ -49,13 +49,17 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
 
   useEffect(() => {
     const unsub = onSnapshot(collection(db, 'users'), (snap) => {
-      const users: any[] = [];
-      snap.forEach(doc => {
-        const data = doc.data();
-        if (data.role === 'patient') {
-          users.push({ uid: doc.id, ...data });
-        }
-      });
+      const adminRoles = ['admin', 'founder', 'executive', 'president', 'chief_compliance_director', 
+        'executive_advisor', 'advisor', 'executive_founder', 'internal_admin', 'compliance_director',
+        'manager', 'team_lead', 'rep', 'ai_agent'];
+      const users = snap.docs
+        .map(d => ({ uid: d.id, ...d.data() }))
+        .filter((u: any) => {
+          const role = (u.role || '').toLowerCase().trim();
+          if (adminRoles.some(ar => role.includes(ar))) return false;
+          if (role === 'business' || role === 'provider' || role === 'attorney') return false;
+          return true;
+        });
       setLiveApplications(users.sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0)));
     });
     return () => unsub();
