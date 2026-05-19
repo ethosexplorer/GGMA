@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
-import { db } from '../lib/firebase';
 import { Calendar, Building2, Users, FileText, Settings, Shield, Activity, Bell,
   Briefcase, HeartPulse, Scale, Gavel, FileCheck, Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
@@ -48,21 +46,21 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
   const [appsFilter, setAppsFilter] = useState('Pending');
 
   useEffect(() => {
-    const unsub = onSnapshot(collection(db, 'users'), (snap) => {
-      const adminRoles = ['admin', 'founder', 'executive', 'president', 'chief_compliance_director', 
-        'executive_advisor', 'advisor', 'executive_founder', 'internal_admin', 'compliance_director',
-        'manager', 'team_lead', 'rep', 'ai_agent'];
-      const users = snap.docs
-        .map(d => ({ uid: d.id, ...d.data() }))
-        .filter((u: any) => {
-          const role = (u.role || '').toLowerCase().trim();
-          if (adminRoles.some(ar => role.includes(ar))) return false;
-          if (role === 'business' || role === 'provider' || role === 'attorney') return false;
-          return true;
-        });
-      setLiveApplications(users);
-    });
-    return () => unsub();
+    turso.execute('SELECT * FROM patients ORDER BY created_at DESC')
+      .then((res: any) => {
+        // Map turso rows to match the expected format for the queue
+        const apps = res.rows.map((r: any) => ({
+          uid: r.id || r.uid,
+          fullName: r.name || r.fullName,
+          email: r.email,
+          phone: r.phone,
+          state: r.state || r.jurisdiction || 'Oklahoma',
+          applicationStatus: r.status === 'Pending' ? 'Pending Review' : (r.status || 'Pending Review'),
+          createdAt: r.created_at
+        }));
+        setLiveApplications(apps);
+      })
+      .catch(console.error);
   }, []);
 
   // Draggable nav state with localStorage persistence
