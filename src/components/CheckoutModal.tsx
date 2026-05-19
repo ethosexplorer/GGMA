@@ -155,14 +155,31 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
 
     // Send email notification to the team
     try {
-      await fetch('/api/notify-subscription', {
+      const addonsList = addons && addons.length > 0 ? addons.map(a => `${a.name} ($${a.price})`).join(', ') : 'None';
+      const trialInfo = trialDays && trialDays > 0 ? `${trialDays}-day free trial, then ` : '';
+
+      await fetch('/api/notify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          customerName: form.fullName, customerEmail: form.email, customerPhone: form.phone,
-          company: form.company, plan: plan?.name,
-          addons: addons.map(a => `${a.name} ($${a.price})`),
-          billing, total: totalDisplay, trialDays, notes: form.notes, paymentMethod: selectedPm.label,
+          type: 'subscription',
+          title: `New Subscription: ${form.fullName}`,
+          message: [
+            `Customer: ${form.fullName}`,
+            `Email: ${form.email}`,
+            `Phone: ${form.phone || 'N/A'}`,
+            `Company: ${form.company || 'N/A'}`,
+            `Plan: ${plan?.name} (${billing})`,
+            `Total: ${trialInfo}${totalDisplay}`,
+            `Add-ons: ${addonsList}`,
+            form.notes ? `Notes: ${form.notes}` : null,
+          ].filter(Boolean).join('\n'),
+          recipientEmail: form.email,
+          internal: true,
+          external: true,
+          ctaText: 'Access Your Dashboard',
+          ctaUrl: `https://ggma.vercel.app/dashboard`,
+          data: { customerName: form.fullName, customerEmail: form.email, customerPhone: form.phone, company: form.company, plan: plan?.name, addons, billing, total: totalDisplay, trialDays },
         }),
       });
     } catch { /* best-effort */ }
