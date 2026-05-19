@@ -4075,10 +4075,18 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       return;
     }
 
+    if (lower.includes('demo') || lower.includes('book a demo') || lower.includes('schedule a demo') || lower.includes('see a demo')) {
+      if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/gghp-demo' }); } else { window.open('https://calendly.com/globalgreenhpmeet/gghp-demo', '_blank'); }
+      response = '🎯 **GGHP Demo — 15 Min Live Walkthrough**\n\nI\'ve opened the booking page for you! If it didn\'t open, click below:\n\n🔗 [Book GGHP Demo](https://calendly.com/globalgreenhpmeet/gghp-demo)\n\nOur team will walk you through the full platform — compliance, POS, telehealth, and AI automation.\n\n';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] }]);
+      setIsTyping(false);
+      return;
+    }
+
     if (lower.includes('live agent') || lower === 'Speak with a Live Agent') {
       const isBiz = isBusiness || variant === 'sinc' || variant === 'business';
-      const link = isBiz ? 'https://calendly.com/globalgreenhpmeet/business-meeting' : 'https://calendly.com/globalgreenhpmeet/general-patient-support';
-      const title = isBiz ? 'Book Business Meeting with live agent' : 'Book General Patient Support';
+      const link = isBiz ? 'https://calendly.com/globalgreenhpmeet/gghp-demo' : 'https://calendly.com/globalgreenhpmeet/general-patient-support';
+      const title = isBiz ? 'Book GGHP Demo with live agent' : 'Book General Patient Support';
       if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: link }); } else { window.open(link, '_blank'); }
       response = `Sure! I've opened the booking page for you. If it didn't open, click the link below:\n\n🔗 [${title}](${link})\n\n`;
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] }]);

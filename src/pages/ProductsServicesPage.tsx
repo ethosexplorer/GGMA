@@ -59,7 +59,10 @@ export const ProductsServicesPage = ({ onNavigate }: { onNavigate: (view: string
                       <li key={j} className="flex items-start gap-2"><CheckCircle size={12} className="text-emerald-500 shrink-0 mt-0.5" />{f}</li>
                     ))}
                   </ul>
-                  <button onClick={() => onNavigate('larry-chatbot')} className="mt-5 w-full py-2.5 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl hover:bg-emerald-50 hover:text-emerald-700 transition-colors uppercase tracking-wider">Get Started</button>
+                  <div className="mt-5 flex gap-2">
+                    <button onClick={() => onNavigate('larry-chatbot')} className="flex-1 py-2.5 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl hover:bg-emerald-50 hover:text-emerald-700 transition-colors uppercase tracking-wider">Get Started</button>
+                    <button onClick={() => window.open('https://calendly.com/globalgreenhpmeet/gghp-demo', '_blank')} className="flex-1 py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl hover:bg-emerald-500 transition-colors uppercase tracking-wider">Book Demo</button>
+                  </div>
                 </div>
               ))}
             </div>

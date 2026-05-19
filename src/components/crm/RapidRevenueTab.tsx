@@ -87,7 +87,7 @@ export const RapidRevenueTab = () => {
                 <li><strong className="text-slate-800">Integrated Billing:</strong> Collect consultation fees before the patient even hits your Telehealth waiting room.</li>
               </ul>
               <p>We are onboarding our final batch of beta partners in [State]. Try GGP-OS free for 30 Days. If it doesn't save you time and increase your pipeline, walk away.</p>
-              <p className="font-bold text-indigo-600">[Start Your Free Trial Now] | [Book a 10-Min Demo]</p>
+              <p className="font-bold text-indigo-600"><a href="https://ggp-os.com" target="_blank" rel="noopener noreferrer" className="hover:underline">Start Your Free Trial Now</a> | <a href="https://calendly.com/globalgreenhpmeet/gghp-demo" target="_blank" rel="noopener noreferrer" className="hover:underline">Book a 10-Min Demo</a></p>
             </div>
           </div>
 
@@ -110,7 +110,7 @@ export const RapidRevenueTab = () => {
                 <li><strong className="text-slate-800">Compliance Built-In:</strong> From METRC reporting to local authority requirements.</li>
               </ul>
               <p>We are helping dispensaries like yours automate compliance. Start a 30-Day Free Trial today and let our team handle your custom state configuration.</p>
-              <p className="font-bold text-indigo-600">[Claim Your Free Trial]</p>
+              <p className="font-bold text-indigo-600"><a href="https://calendly.com/globalgreenhpmeet/gghp-demo" target="_blank" rel="noopener noreferrer" className="hover:underline">Claim Your Free Trial</a></p>
             </div>
           </div>
 
@@ -129,7 +129,7 @@ export const RapidRevenueTab = () => {
               <p className="font-bold text-slate-800 text-base">GGP-OS gives your firm a centralized Command Center.</p>
               <p>Monitor your clients' regulatory standing, track changes in state and federal law, and automate document collection for licensing renewals all in one place.</p>
               <p>Let's schedule a 10-minute walk-through to show you how law firms are using GGP-OS to manage their cannabis portfolios.</p>
-              <p className="font-bold text-indigo-600">[Book a Walk-Through]</p>
+              <p className="font-bold text-indigo-600"><a href="https://calendly.com/globalgreenhpmeet/gghp-demo" target="_blank" rel="noopener noreferrer" className="hover:underline">Book a Walk-Through</a></p>
             </div>
           </div>
         </div>

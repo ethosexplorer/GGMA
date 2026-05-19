@@ -300,7 +300,7 @@ const PlanCard = ({ plan, index, total, billing, selectedAddons, tabId, onChecko
       <button
         onClick={() => {
           if (price === 'Custom') {
-            window.open('mailto:globalgreenhp@gmail.com?subject=Enterprise Plan Inquiry - ' + plan.name, '_blank');
+            window.open('https://calendly.com/globalgreenhpmeet/gghp-demo', '_blank');
           } else {
             onCheckout(
               [{ name: plan.name, price: billing === 'monthly' ? plan.monthlyPrice : plan.annualPrice, type: 'plan' as const, billing }, ...selectedAddons.map(a => ({ name: a.name, price: a.price, type: 'addon' as const, per: a.per }))],
@@ -638,6 +638,12 @@ export const PricingTiers = ({ onNavigate, defaultTab, onChatRole, allowedTabs }
             >
               Start Free Today
               <ArrowRight size={18} />
+            </button>
+            <button
+              onClick={() => window.open('https://calendly.com/globalgreenhpmeet/gghp-demo', '_blank')}
+              className="inline-flex items-center gap-2 px-8 py-4 bg-emerald-600 text-white rounded-2xl font-black hover:bg-emerald-500 transition-all shadow-xl shadow-emerald-600/20"
+            >
+              📅 Book a Demo
             </button>
             {onChatRole && (
               <button
