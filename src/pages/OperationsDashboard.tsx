@@ -49,11 +49,11 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
     turso.execute('SELECT * FROM patients ORDER BY created_at DESC')
       .then((res: any) => {
         // Map turso rows to match the expected format for the queue
-        const apps = res.rows.map((r: any) => ({
-          uid: r.id || r.uid,
-          fullName: r.name || r.fullName,
-          email: r.email,
-          phone: r.phone,
+        const apps = res.rows.map((r: any, idx: number) => ({
+          uid: r.id || r.uid || `turso-mock-${idx}`,
+          fullName: r.name || r.fullName || 'Unknown Patient',
+          email: r.email || '',
+          phone: r.phone || '',
           state: r.state || r.jurisdiction || 'Oklahoma',
           applicationStatus: r.status === 'Pending' ? 'Pending Review' : (r.status || 'Pending Review'),
           createdAt: r.created_at
@@ -215,7 +215,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
           </div>
           <div className="p-6">
             <PatientCaseTracker
-              patientUid={selectedPatientCase.uid}
+              patientUid={selectedPatientCase.uid || 'unknown-uid'}
               patientName={selectedPatientCase.fullName || selectedPatientCase.name || selectedPatientCase.displayName || 'Unknown'}
               patientEmail={selectedPatientCase.email || ''}
               patientState={selectedPatientCase.state || selectedPatientCase.jurisdiction || 'Oklahoma'}

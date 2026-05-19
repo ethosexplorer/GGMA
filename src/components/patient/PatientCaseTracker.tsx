@@ -256,10 +256,11 @@ export const PatientCaseTracker: React.FC<PatientCaseTrackerProps> = ({
               {STATUS_LABELS[caseData.applicationStatus]?.label || 'Unknown'}
             </div>
             {(() => {
-              const stateInfo = STATE_RESOURCES[patientState] || Object.values(STATE_RESOURCES).find(s => s.abbreviation?.toLowerCase() === patientState.toLowerCase());
+              const safeState = typeof patientState === 'string' ? patientState : 'Oklahoma';
+              const stateInfo = STATE_RESOURCES[safeState] || Object.values(STATE_RESOURCES).find(s => s.abbreviation?.toLowerCase() === safeState.toLowerCase());
               const pLink = stateInfo?.patientPortal || stateInfo?.program || 'https://oklahoma.gov/omma.html';
               const bLink = stateInfo?.businessPortal || stateInfo?.compliancePage || 'https://oklahoma.gov/omma.html';
-              const stateName = stateInfo ? patientState : 'Oklahoma';
+              const stateName = stateInfo ? safeState : 'Oklahoma';
               return (
                 <div className="flex flex-col gap-2 mt-2">
                   <a 
