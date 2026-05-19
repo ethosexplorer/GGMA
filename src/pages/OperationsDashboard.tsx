@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 import { Calendar, Building2, Users, FileText, Settings, Shield, Activity, Bell,
   Briefcase, HeartPulse, Scale, Gavel, FileCheck, Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
@@ -16,6 +18,7 @@ import { turso } from '../lib/turso';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 import { DocumentVaultTab } from '../components/ops/DocumentVaultTab';
 import { PostPaymentTab } from '../components/ops/PostPaymentTab';
+import { PatientCaseTracker } from '../components/patient/PatientCaseTracker';
 
 const NAV_ITEMS = [
   { section: 'CALL CENTER' },
@@ -41,11 +44,21 @@ const NAV_ITEMS = [
 export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void | Promise<void>, user?: any }) => {
   const [activeTab, setActiveTab] = useState('call_center');
   const [liveApplications, setLiveApplications] = useState<any[]>([]);
+  const [selectedPatientCase, setSelectedPatientCase] = useState<any | null>(null);
+  const [appsFilter, setAppsFilter] = useState('Pending');
 
   useEffect(() => {
-    turso.execute('SELECT * FROM patients ORDER BY created_at DESC')
-      .then(res => setLiveApplications(res.rows))
-      .catch(console.error);
+    const unsub = onSnapshot(collection(db, 'users'), (snap) => {
+      const users: any[] = [];
+      snap.forEach(doc => {
+        const data = doc.data();
+        if (data.role === 'patient') {
+          users.push({ uid: doc.id, ...data });
+        }
+      });
+      setLiveApplications(users.sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0)));
+    });
+    return () => unsub();
   }, []);
 
   // Draggable nav state with localStorage persistence
@@ -186,35 +199,87 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
     </div>
   );
 
-  const renderApplicationsQueue = () => (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {[{ l: 'Pending Review', v: liveApplications.length.toString(), c: 'amber' }, { l: 'Approved Today', v: '0', c: 'emerald' }, { l: 'Rejected/Flagged', v: '0', c: 'red' }].map((s, i) => (
-          <div key={i} className="bg-white border border-slate-200 rounded-2xl p-5 text-center shadow-sm">
-            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{s.l}</p>
-            <p className={`text-2xl font-black text-${s.c}-600`}>{s.v}</p>
+  const renderApplicationsQueue = () => {
+    if (selectedPatientCase) {
+      return (
+        <div className="bg-white border-4 border-slate-900 rounded-[2rem] shadow-2xl relative overflow-hidden">
+          <div className="bg-slate-50 border-b border-slate-200 p-4 flex items-center justify-between">
+            <button onClick={() => setSelectedPatientCase(null)} className="px-5 py-2 bg-slate-900 hover:bg-slate-700 text-white font-black text-xs uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2">
+              <span className="text-lg leading-none mt-[-2px]">←</span> Back to Queue
+            </button>
+            <h3 className="font-black text-slate-800 uppercase tracking-widest text-xs flex items-center gap-2">
+              <FileText size={14} className="text-indigo-600" /> Patient Case File
+            </h3>
           </div>
-        ))}
-      </div>
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-slate-100"><h3 className="font-bold text-slate-800 flex items-center gap-2"><FileText size={16} /> Applications Queue</h3></div>
-        <div className="divide-y divide-slate-100">
-          {liveApplications.map((a, i) => (
-            <div key={i} onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Opening application package for " + a.name + "... Connecting to State Portal." })] }).catch(console.error) ); alert("Opening application package for " + a.name + "... Connecting to State Portal.\n\n[Live Production Transaction Logged]"); }} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors">
-              <div><p className="text-sm font-bold text-slate-800">{a.name}</p><p className="text-xs text-slate-500">Patient Card Renewal • {a.state}</p></div>
-              <div className="flex items-center gap-3">
-                <span className={cn("text-[9px] font-black uppercase px-2 py-0.5 rounded-full", a.status==='Pending'?'bg-amber-50 text-amber-600':a.status==='Under Review'?'bg-blue-50 text-blue-600':'bg-red-50 text-red-600')}>{a.status}</span>
-                <span className="text-xs text-slate-400">Just Now</span>
-              </div>
+          <div className="p-6">
+            <PatientCaseTracker
+              patientUid={selectedPatientCase.uid}
+              patientName={selectedPatientCase.fullName || selectedPatientCase.name || selectedPatientCase.displayName || 'Unknown'}
+              patientEmail={selectedPatientCase.email || ''}
+              patientState={selectedPatientCase.state || selectedPatientCase.jurisdiction || 'Oklahoma'}
+              patientPhone={selectedPatientCase.phone || selectedPatientCase.textPhone || ''}
+              staffName={user?.displayName || user?.name || 'Staff User'}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    const isAppr = (s: string) => s === 'state approved' || s === 'doctor recommendation approved' || s === 'state mailed';
+    const isFlag = (s: string) => s === 'state rejected' || s === 'doctor recommendation rejected' || s === 'Do not call';
+    const isPend = (s: string) => !isAppr(s) && !isFlag(s);
+    
+    const pendingApps = liveApplications.filter(p => isPend(p.applicationStatus));
+    const approvedApps = liveApplications.filter(p => isAppr(p.applicationStatus));
+    const flaggedApps = liveApplications.filter(p => isFlag(p.applicationStatus));
+    
+    const displayApps = appsFilter === 'Pending' ? pendingApps : appsFilter === 'Approved' ? approvedApps : flaggedApps;
+
+    return (
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[
+            { l: 'Pending Review', v: pendingApps.length.toString(), c: 'amber', f: 'Pending' }, 
+            { l: 'Approved Today', v: approvedApps.length.toString(), c: 'emerald', f: 'Approved' }, 
+            { l: 'Rejected/Flagged', v: flaggedApps.length.toString(), c: 'red', f: 'Flagged' }
+          ].map((s, i) => (
+            <div key={i} onClick={() => setAppsFilter(s.f)} className={`bg-white border ${appsFilter === s.f ? 'border-indigo-500 shadow-md ring-2 ring-indigo-500/20' : 'border-slate-200 hover:border-slate-300'} rounded-2xl p-5 text-center transition-all cursor-pointer`}>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{s.l}</p>
+              <p className={`text-2xl font-black text-${s.c}-600`}>{s.v}</p>
             </div>
           ))}
-          {liveApplications.length === 0 && (
-            <div className="p-8 text-center text-slate-500 font-bold">No pending applications in the queue.</div>
-          )}
+        </div>
+        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+          <div className="p-4 border-b border-slate-100">
+            <h3 className="font-bold text-slate-800 flex items-center gap-2"><FileText size={16} className="text-indigo-600" /> Applications Queue: {appsFilter}</h3>
+          </div>
+          <div className="divide-y divide-slate-100 max-h-[600px] overflow-y-auto">
+            {displayApps.map((a, i) => (
+              <div key={a.uid || i} onClick={() => setSelectedPatientCase(a)} className="flex items-center justify-between px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors group">
+                <div className="flex items-center gap-4">
+                   <div className="w-10 h-10 bg-indigo-100 text-indigo-700 rounded-xl flex items-center justify-center font-black text-sm">
+                     {(a.fullName || a.name || a.displayName || '?').charAt(0).toUpperCase()}
+                   </div>
+                   <div>
+                     <p className="text-sm font-bold text-slate-800 group-hover:text-indigo-700 transition-colors">{a.fullName || a.name || a.displayName || 'Unknown Patient'}</p>
+                     <p className="text-xs text-slate-500 font-medium">Patient Card Renewal • {a.state || a.jurisdiction || 'OK'}</p>
+                   </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className={cn("text-[9px] font-black uppercase px-2 py-0.5 rounded-full", a.applicationStatus && !isPend(a.applicationStatus) ? (isAppr(a.applicationStatus) ? 'text-emerald-600 bg-emerald-50 border border-emerald-200' : 'text-red-600 bg-red-50 border border-red-200') : 'text-amber-600 bg-amber-50 border border-amber-100')}>
+                    {a.applicationStatus || 'Pending Review'}
+                  </span>
+                </div>
+              </div>
+            ))}
+            {displayApps.length === 0 && (
+              <div className="p-8 text-center text-slate-500 font-medium">No {appsFilter.toLowerCase()} applications in the queue.</div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const [personnelList, setPersonnelList] = useState([
     { name: 'Live Sr Agent', role: 'Founder/CEO', dept: 'Executive', status: 'Active', empId: 'GGE-001', ext: '101' },
