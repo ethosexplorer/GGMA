@@ -60,7 +60,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
           if (role === 'business' || role === 'provider' || role === 'attorney') return false;
           return true;
         });
-      setLiveApplications(users.sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0)));
+      setLiveApplications(users);
     });
     return () => unsub();
   }, []);
