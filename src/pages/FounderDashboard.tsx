@@ -65,7 +65,6 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'global_directory', label: 'Global Directory', icon: Users },
   { id: 'operations', label: 'Ops Center (Live)', icon: Cpu },
   { id: 'internal_admin', label: 'Internal Team', icon: Shield },
-  { id: 'patient_case_tracker', label: 'Patient Case Tracker', icon: Clipboard },
 
   // Founder/CEO Popout
   { id: '_sec_founder', section: 'FOUNDER/CEO' },
@@ -2404,7 +2403,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
             </h3>
             <div className="space-y-4">
                {liveQueue.length > 0 ? liveQueue.map((a, i) => (
-                 <div key={i} onClick={() => setActiveTab(a.t.includes('Patient') ? 'patient_case_tracker' : 'b2b_crm')} className="flex items-center justify-between p-4 rounded-2xl border border-slate-200 hover:border-indigo-300 hover:bg-slate-50 transition-all cursor-pointer group">
+                 <div key={i} onClick={() => { if(a.t.includes('Patient')){ setActiveTab('operations'); setOpsTab('ops_apps'); } else { setActiveTab('b2b_crm'); } }} className="flex items-center justify-between p-4 rounded-2xl border border-slate-200 hover:border-indigo-300 hover:bg-slate-50 transition-all cursor-pointer group">
                     <div className="flex items-center gap-4">
                        <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs group-hover:bg-indigo-600 group-hover:text-white transition-all">#{i+1}</div>
                        <div>
@@ -4227,73 +4226,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       case 'jurisdiction_map': return renderJurisdictionMap();
       case 'users': return renderPersonnelForce();
       case 'patients': return renderRegistrySovereignty();
-      case 'patient_case_tracker': return (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-          <div className="bg-white border-4 border-slate-900 p-10 rounded-[3rem] shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-10 opacity-5 -rotate-12"><Clipboard size={160} /></div>
-            <div className="relative z-10 flex flex-col md:flex-row justify-between items-end gap-8">
-              <div className="space-y-4">
-                <h2 className="text-5xl font-black tracking-tighter italic uppercase text-slate-900 leading-none">Patient Case Tracker</h2>
-                <p className="text-slate-500 font-bold text-lg max-w-xl">Manage patient applications, credentials, SMS notifications, and status checks. Click a patient to open their full case management panel.</p>
-              </div>
-              <div className="bg-emerald-600 text-white p-8 rounded-[2rem] text-center min-w-[240px] shadow-2xl">
-                <p className="text-[10px] font-black text-emerald-200 uppercase tracking-[0.3em] mb-2">Active Cases</p>
-                <p className="text-5xl font-black">{patientList.length}</p>
-                <div className="mt-4 flex items-center justify-center gap-2 text-emerald-200 font-bold text-sm">
-                  <HeartPulse size={16} /> Patients in System
-                </div>
-              </div>
-            </div>
-          </div>
 
-          {selectedPatientCase ? (
-            <div>
-              <button onClick={() => setSelectedPatientCase(null)} className="mb-4 px-6 py-3 bg-slate-900 text-white rounded-xl text-xs font-black uppercase tracking-wider hover:bg-slate-700 transition-colors flex items-center gap-2 shadow-lg">
-                <ArrowLeft size={14} /> Back to Patient List
-              </button>
-              <PatientCaseTracker
-                patientUid={selectedPatientCase.uid}
-                patientName={selectedPatientCase.fullName || selectedPatientCase.name || selectedPatientCase.displayName || 'Unknown'}
-                patientEmail={selectedPatientCase.email || ''}
-                patientState={selectedPatientCase.state || selectedPatientCase.jurisdiction || 'Oklahoma'}
-                patientPhone={selectedPatientCase.phone || selectedPatientCase.textPhone || ''}
-                staffName={fullName}
-              />
-            </div>
-          ) : (
-            <div className="bg-white border border-slate-200 rounded-[2.5rem] overflow-hidden shadow-sm">
-              <div className="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
-                <h3 className="font-black text-slate-800 flex items-center gap-3"><HeartPulse size={20} className="text-emerald-600" /> All Patient Cases ({patientList.length})</h3>
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Click a patient to manage their case</p>
-              </div>
-              <div className="divide-y divide-slate-100 max-h-[600px] overflow-y-auto">
-                {patientList.length === 0 ? (
-                  <div className="p-12 text-center text-slate-400 text-sm font-medium">No patients registered yet. Patients will appear here after they register through the platform.</div>
-                ) : patientList.map((patient: any) => (
-                  <button
-                    key={patient.uid}
-                    onClick={() => setSelectedPatientCase(patient)}
-                    className="w-full flex items-center justify-between px-6 py-5 hover:bg-emerald-50 transition-colors text-left group"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center font-black text-lg">
-                        {(patient.fullName || patient.name || patient.displayName || '?').charAt(0)}
-                      </div>
-                      <div>
-                        <p className="font-black text-slate-800 group-hover:text-emerald-700 transition-colors text-base">{patient.fullName || patient.name || patient.displayName || 'Unknown'}</p>
-                        <p className="text-[11px] text-slate-400 font-bold">{patient.email} • {patient.state || patient.jurisdiction || 'No state'} • {patient.phone || 'No phone'}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-4 py-2 rounded-xl border border-emerald-100 uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Open Case →</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-        </motion.div>
-      );
       case 'business': return renderEconomicInfrastructure();
       case 'b2b_crm': return <div className="h-full w-full -m-10 bg-[#080e1a] min-h-screen overflow-auto"><PipelineCRM /></div>;
       case 'marketing_hub': return <div className="h-full w-full -m-10 bg-[#080e1a] min-h-screen overflow-auto"><MarketingHub /></div>;
@@ -4686,7 +4619,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     if ((isMonica || isRyan) && !isBobAdvisor && !('section' in item)) {
       const allowedExecutiveTabs = [
         "system_health", "hr_intelligence", "jurisdiction_map", "ai_training", "messages",
-        "internal_scheduler", "patients", "patient_case_tracker", "business", "compliance", "regulatory_library",
+        "internal_scheduler", "patients", "business", "compliance", "regulatory_library",
         "internal_admin", "law_enforcement", "processor", "public_health", "rapid_testing",
         "reports", "intel", "overview"
       ];
