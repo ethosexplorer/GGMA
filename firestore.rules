@@ -47,31 +47,21 @@ service cloud.firestore {
     }
 
     // ===============================================================
-    // Rules
+    // Rules — All authenticated users have full access
     // ===============================================================
 
+    // User Profiles
     match /users/{userId} {
-      // Any authenticated user can read user profiles (needed for patient lists, team displays)
       allow read: if isAuthenticated();
-      
-      // Users can create their own profile
       allow create: if isAuthenticated() && isOwner(userId);
-                      
-      // Users can update their own profile; admins can update anyone
       allow update: if isOwner(userId) || isAdmin();
-                      
       allow delete: if isAdmin();
     }
 
     // Internal Messaging System
     match /internal_messages/{messageId} {
-      // Any authenticated user can read messages
       allow read: if isAuthenticated();
-      
-      // Any authenticated user can send messages
       allow create: if isAuthenticated();
-      
-      // Only admins can update/delete messages
       allow update, delete: if isAdmin();
     }
 
@@ -97,6 +87,97 @@ service cloud.firestore {
 
     // CRM Deals (Global Pipeline)
     match /crm_deals/{dealId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // ===============================================================
+    // Marketing Hub Collections
+    // ===============================================================
+
+    // Marketing Campaigns
+    match /marketing_campaigns/{campaignId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Marketing Templates
+    match /marketing_templates/{templateId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Marketing Tracking (open/click events)
+    match /marketing_tracking/{trackingId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // ===============================================================
+    // CRM & Business Collections
+    // ===============================================================
+
+    // CRM Contacts
+    match /crm_contacts/{contactId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Contacts (general)
+    match /contacts/{contactId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Executive CRM Deals
+    match /executive_crm_deals/{dealId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Accounting Ledger
+    match /accounting_ledger/{entryId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // ===============================================================
+    // Operations Collections
+    // ===============================================================
+
+    // Realtime Tasks
+    match /realtime_tasks/{taskId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Notifications
+    match /notifications/{notifId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Documents
+    match /documents/{docId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Staff
+    match /staff/{staffId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Departments
+    match /departments/{deptId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Audit Logs
+    match /audit_logs/{logId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // ===============================================================
+    // Healthcare Collections
+    // ===============================================================
+
+    // Applications (patient/business)
+    match /applications/{appId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Telehealth Appointments
+    match /telehealth_appointments/{aptId} {
       allow read, write: if isAuthenticated();
     }
   }

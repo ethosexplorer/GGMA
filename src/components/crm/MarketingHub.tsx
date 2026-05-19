@@ -80,11 +80,12 @@ export const MarketingHub = () => {
     setGmailLoading(true);
     setGmailError('');
     try {
+      const safeFetch = async (url: string) => { try { const r = await fetch(url); const text = await r.text(); return JSON.parse(text); } catch { return { error: 'Server unavailable' }; } };
       const [inboxRes, bouncesRes, repliesRes, profileRes] = await Promise.all([
-        fetch('/api/marketing?route=gmail&action=inbox&maxResults=15').then(r => r.json()),
-        fetch('/api/marketing?route=gmail&action=bounces&maxResults=10').then(r => r.json()),
-        fetch('/api/marketing?route=gmail&action=replies&maxResults=10').then(r => r.json()),
-        fetch('/api/marketing?route=gmail&action=profile').then(r => r.json()),
+        safeFetch('/api/marketing?route=gmail&action=inbox&maxResults=15'),
+        safeFetch('/api/marketing?route=gmail&action=bounces&maxResults=10'),
+        safeFetch('/api/marketing?route=gmail&action=replies&maxResults=10'),
+        safeFetch('/api/marketing?route=gmail&action=profile'),
       ]);
       if (inboxRes.error) throw new Error(inboxRes.error);
       setGmailInbox(inboxRes.messages || []);
