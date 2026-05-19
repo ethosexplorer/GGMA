@@ -88,46 +88,62 @@ export async function fetchRegulatoryFeed(limit: number = 5, jurisdiction?: stri
   try {
     let items: RegulatoryUpdate[] = [];
 
-    if (jurisdiction) {
-      // Localized News via Google News RSS
-      const query = encodeURIComponent(`${jurisdiction} cannabis OR marijuana OR dispensary news`);
-      // We use rss2json to bypass CORS issues when fetching Google News in the browser
-      const googleNewsUrl = `https://news.google.com/rss/search?q=${query}&hl=en-US&gl=US&ceid=US:en`;
-      const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(googleNewsUrl)}`);
-      
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      
-      if (data.status === 'ok' && data.items?.length) {
-        items = data.items.map((item: any) => ({
-          title: item.title ? item.title.replace(/ - [^-]+$/, '') : 'Untitled Local Update', // Remove source name from end
-          pubDate: item.pubDate || new Date().toISOString(),
-          link: item.link || '#',
-          description: truncateDescription(item.description || item.content || 'Click to view full news article.'),
-          source: item.source || `${jurisdiction} Local News`,
-          isBreaking: isBreakingNews(item.title || '', item.description || ''),
-        })).slice(0, limit);
+    // Strategy 1: Use our own server-side RSS proxy (no CORS issues, no rate limits)
+    try {
+      if (jurisdiction) {
+        const res = await fetch(`/api/rss?source=local&q=${encodeURIComponent(jurisdiction)}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.status === 'ok' && data.items?.length) {
+            items = data.items.map((item: any) => ({
+              title: item.title || 'Untitled',
+              pubDate: item.pubDate || new Date().toISOString(),
+              link: item.link || '#',
+              description: truncateDescription(item.description || ''),
+              source: item.source || `${jurisdiction} Local News`,
+              isBreaking: isBreakingNews(item.title || '', item.description || ''),
+            })).slice(0, limit);
+          }
+        }
       }
+    } catch {}
+
+    // Strategy 2: National Marijuana Moment via our proxy
+    if (items.length === 0) {
+      try {
+        const res = await fetch('/api/rss?source=national');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.status === 'ok' && data.items?.length) {
+            items = data.items.map((item: any) => ({
+              title: item.title || 'Untitled',
+              pubDate: item.pubDate || new Date().toISOString(),
+              link: item.link || '#',
+              description: truncateDescription(item.description || ''),
+              source: 'Marijuana Moment',
+              isBreaking: isBreakingNews(item.title || '', item.description || ''),
+            })).slice(0, limit);
+          }
+        }
+      } catch {}
     }
 
-    // Fallback to National RSS if local news fails or no jurisdiction
+    // Strategy 3: Fallback to rss2json (original method)
     if (items.length === 0) {
       const res = await fetch(FEED_URL);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-
-      if (data.status !== 'ok' || !data.items?.length) {
-        throw new Error('Invalid RSS response');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.status === 'ok' && data.items?.length) {
+          items = data.items.map((item: any) => ({
+            title: item.title || 'Untitled',
+            pubDate: item.pubDate || new Date().toISOString(),
+            link: item.link || '#',
+            description: truncateDescription(item.description || item.content || ''),
+            source: 'Marijuana Moment',
+            isBreaking: isBreakingNews(item.title || '', item.description || ''),
+          })).slice(0, limit);
+        }
       }
-
-      items = data.items.map((item: any) => ({
-        title: item.title || 'Untitled',
-        pubDate: item.pubDate || new Date().toISOString(),
-        link: item.link || '#',
-        description: truncateDescription(item.description || item.content || ''),
-        source: 'National Cannabis Feed',
-        isBreaking: isBreakingNews(item.title || '', item.description || ''),
-      })).slice(0, limit);
     }
 
     try {
