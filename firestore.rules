@@ -185,5 +185,15 @@ service cloud.firestore {
     match /suppressed_emails/{emailId} {
       allow read, write: if isAuthenticated();
     }
+
+    // ===============================================================
+    // Real-time Presence Tracking
+    // ===============================================================
+
+    // Presence — users write their own doc, everyone can read
+    match /presence/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && request.auth.uid == userId;
+    }
   }
 }

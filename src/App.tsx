@@ -108,6 +108,7 @@ import {
   addDoc
 } from 'firebase/firestore';
 import { auth, db, storage } from './firebase';
+import { usePresence } from './hooks/usePresence';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import MapChart from './components/MapChart';
 import { AdminDashboard } from './pages/AdminDashboard';
@@ -8646,6 +8647,14 @@ export default function App() {
     // Only track if not a completely empty initial render to avoid double counting strict mode
     trackEvent();
   }, [location.pathname, userProfile?.role]);
+
+  // ── Real-time Presence Tracking ──────────────────────────────────────────
+  usePresence(user ? {
+    uid: (user as any)?.uid,
+    email: (user as any)?.email || userProfile?.email,
+    displayName: userProfile?.displayName || (user as any)?.displayName || (user as any)?.email,
+    role: userProfile?.role || '',
+  } : null);
 
   useEffect(() => {
     const FOUNDER_EMAIL = "globalgreenhp@gmail.com";
