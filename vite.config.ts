@@ -23,6 +23,15 @@ export default defineConfig(({mode}) => {
     build: {
       target: ['es2015', 'safari11'],
       cssTarget: ['safari11'],
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'vendor-firebase': ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage'],
+            'vendor-ui': ['lucide-react', 'motion/react'],
+            'vendor-router': ['react-router-dom'],
+          }
+        }
+      }
     },
   };
 });

@@ -1,151 +1,79 @@
-import React, { Component, useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import React, { Component, Suspense, useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { LiveToastContainer } from './components/shared/LiveToast';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { STATE_RESOURCES } from './stateResources';
 import { getDetailedStateKnowledge } from './stateDetailedKnowledge';
 import { getPlansForRole, getAddOnsForRole } from './lib/subscriptionPlans';
-import { SettingsPreferencesMockup } from './pages/SettingsPreferencesMockup';
-import { ProductsServicesPage } from './pages/ProductsServicesPage';
-import { FederalStatePage } from './pages/FederalStatePage';
-import { WhatIsC3Page } from './pages/WhatIsC3Page';
-import { WhatIsCareWalletPage } from './pages/WhatIsCareWalletPage';
-import { ResourceCenter } from './pages/ResourceCenter';
-import LoginPage from './pages/LoginPage';
 import { 
-  Shield,
-  User,
-  AlertCircle,
-  Eye,
-  EyeOff,
-  Info,
-  Smartphone,
-  LogIn,
-  ChevronRight,
-  ArrowLeft,
-  Lock,
-  Upload,
-  Save,
-  Leaf,
-  Mail,
-  LayoutDashboard,
-  Users,
-  Settings,
-  BarChart2,
-  BarChart3,
-  Calendar,
-  FileText,
-  Activity,
-  LogOut,
-  Bell,
-  Search,
-  Plus,
-  Building2,
-  Stethoscope,
-  TrendingUp,
-  Clock,
-  CheckCircle,
-  XCircle,
-  MoreVertical,
-  Filter,
-  Loader2,
-  ArrowRight,
-  Globe,
-  MapPin,
-  Map as MapIcon,
-  MessageSquare,
-  ChevronDown,
-  ChevronUp,
-  Send,
-  GraduationCap,
-  Sparkles,
-  Scale,
-  Search as SearchIcon,
-  Briefcase,
-  Bot,
-  BookOpen,
-  Wrench,
-  Video,
-  Flag,
-  Camera,
-  Monitor,
-  Image,
-  Paperclip,
-  CircleCheck,
-  Circle,
-  ShoppingCart,
-  PackageSearch,
-  ClipboardList,
-  Cpu,
-  Gavel,
-  Headphones,
-  Phone,
-  Star,
-  ArrowUpCircle,
-  Home,
-  Check,
-  Wallet,
-  HeartHandshake,
-  HelpCircle,
-  Mic,
-  Volume2
- } from 'lucide-react';
+  Shield, User, AlertCircle, Eye, EyeOff, Info, Smartphone, LogIn, ChevronRight, ArrowLeft,
+  Lock, Upload, Save, Leaf, Mail, LayoutDashboard, Users, Settings, BarChart2, BarChart3,
+  Calendar, FileText, Activity, LogOut, Bell, Search, Plus, Building2, Stethoscope, TrendingUp,
+  Clock, CheckCircle, XCircle, MoreVertical, Filter, Loader2, ArrowRight, Globe, MapPin,
+  Map as MapIcon, MessageSquare, ChevronDown, ChevronUp, Send, GraduationCap, Sparkles, Scale,
+  Search as SearchIcon, Briefcase, Bot, BookOpen, Wrench, Video, Flag, Camera, Monitor, Image,
+  Paperclip, CircleCheck, Circle, ShoppingCart, PackageSearch, ClipboardList, Cpu, Gavel,
+  Headphones, Phone, Star, ArrowUpCircle, Home, Check, Wallet, HeartHandshake, HelpCircle, Mic, Volume2
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from './lib/utils';
 import {
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  sendPasswordResetEmail,
-  User as FirebaseUser
+  onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+  signOut, sendPasswordResetEmail, User as FirebaseUser
 } from 'firebase/auth';
-import {
-  doc,
-  getDoc,
-  setDoc,
-  serverTimestamp,
-  collection,
-  addDoc
-} from 'firebase/firestore';
+import { doc, getDoc, setDoc, serverTimestamp, collection, addDoc } from 'firebase/firestore';
 import { auth, db, storage } from './firebase';
 import { usePresence } from './hooks/usePresence';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import MapChart from './components/MapChart';
-import { AdminDashboard } from './pages/AdminDashboard';
-import { FounderDashboard } from './pages/FounderDashboard';
-import { RepDashboard } from './pages/RepDashboard';
+
+// --- Lazy-loaded Dashboards (Code Splitting) ---
+// Each dashboard is loaded on-demand instead of upfront, dramatically reducing initial bundle size.
+const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
+const FounderDashboard = React.lazy(() => import('./pages/FounderDashboard').then(m => ({ default: m.FounderDashboard })));
+const RepDashboard = React.lazy(() => import('./pages/RepDashboard').then(m => ({ default: m.RepDashboard })));
 // TeamLeadDashboard & ManagerDashboard consolidated into FounderDashboard
+const StateAuthorityDashboard = React.lazy(() => import('./pages/StateAuthorityDashboard').then(m => ({ default: m.StateAuthorityDashboard })));
+const OperationsDashboard = React.lazy(() => import('./pages/OperationsDashboard').then(m => ({ default: m.OperationsDashboard })));
+const ExternalAdminDashboard = React.lazy(() => import('./pages/ExternalAdminDashboard').then(m => ({ default: m.ExternalAdminDashboard })));
+const TeleHealthDashboard = React.lazy(() => import('./components/TeleHealthDashboard'));
+const BusinessDashboard = React.lazy(() => import('./pages/BusinessDashboard').then(m => ({ default: m.BusinessDashboard })));
+const BusinessRegistrationPage = React.lazy(() => import('./pages/BusinessRegistrationPage'));
+const FederalDashboard = React.lazy(() => import('./pages/FederalDashboard').then(m => ({ default: m.FederalDashboard })));
+const ProviderDashboard = React.lazy(() => import('./pages/ProviderDashboard').then(m => ({ default: m.ProviderDashboard })));
+const AttorneyDashboard = React.lazy(() => import('./pages/AttorneyDashboard').then(m => ({ default: m.AttorneyDashboard })));
+const PublicHealthDashboard = React.lazy(() => import('./pages/PublicHealthDashboard').then(m => ({ default: m.PublicHealthDashboard })));
+const CareWalletDashboard = React.lazy(() => import('./pages/CareWalletDashboard').then(m => ({ default: m.CareWalletDashboard })));
+const EnforcementDashboard = React.lazy(() => import('./pages/EnforcementDashboard').then(m => ({ default: m.EnforcementDashboard })));
+const BackOfficeDashboard = React.lazy(() => import('./pages/BackOfficeDashboard').then(m => ({ default: m.BackOfficeDashboard })));
+const ProviderRegistrationPage = React.lazy(() => import('./pages/ProviderRegistrationPage'));
+const EducationPortal = React.lazy(() => import('./pages/EducationPortal').then(m => ({ default: m.EducationPortal })));
+const ProSeLegalIntake = React.lazy(() => import('./pages/ProSeLegalIntake').then(m => ({ default: m.ProSeLegalIntake })));
+const PatientDashboard = React.lazy(() => import('./pages/PatientDashboard').then(m => ({ default: m.PatientDashboard })));
+const OversightDashboard = React.lazy(() => import('./pages/OversightDashboard').then(m => ({ default: m.OversightDashboard })));
+const PresidentDashboard = React.lazy(() => import('./pages/PresidentDashboard').then(m => ({ default: m.PresidentDashboard })));
+const ChiefComplianceDirectorDashboard = React.lazy(() => import('./pages/ChiefComplianceDirectorDashboard').then(m => ({ default: m.ChiefComplianceDirectorDashboard })));
+const AdvisorDashboard = React.lazy(() => import('./pages/AdvisorDashboard').then(m => ({ default: m.AdvisorDashboard })));
+// PoliticalExecutiveDashboard consolidated into FounderDashboard
+const AdvocacyResearchDashboard = React.lazy(() => import('./pages/AdvocacyResearchDashboard').then(m => ({ default: m.AdvocacyResearchDashboard })));
+
+// --- Lazy-loaded Pages ---
+const SettingsPreferencesMockup = React.lazy(() => import('./pages/SettingsPreferencesMockup').then(m => ({ default: m.SettingsPreferencesMockup })));
+const ProductsServicesPage = React.lazy(() => import('./pages/ProductsServicesPage').then(m => ({ default: m.ProductsServicesPage })));
+const FederalStatePage = React.lazy(() => import('./pages/FederalStatePage').then(m => ({ default: m.FederalStatePage })));
+const WhatIsC3Page = React.lazy(() => import('./pages/WhatIsC3Page').then(m => ({ default: m.WhatIsC3Page })));
+const WhatIsCareWalletPage = React.lazy(() => import('./pages/WhatIsCareWalletPage').then(m => ({ default: m.WhatIsCareWalletPage })));
+const ResourceCenter = React.lazy(() => import('./pages/ResourceCenter').then(m => ({ default: m.ResourceCenter })));
+const LoginPage = React.lazy(() => import('./pages/LoginPage'));
+const RolePricingPage = React.lazy(() => import('./pages/RolePricingPage').then(m => ({ default: m.RolePricingPage })));
+const StateFactsPage = React.lazy(() => import('./pages/StateFactsPage').then(m => ({ default: m.StateFactsPage })));
+
+// --- Eagerly loaded utilities (small, needed immediately) ---
 import { initDatabase } from './lib/initDb';
-import { StateAuthorityDashboard } from './pages/StateAuthorityDashboard';
-import { OperationsDashboard } from './pages/OperationsDashboard';
-import { ExternalAdminDashboard } from './pages/ExternalAdminDashboard';
-import TeleHealthDashboard from './components/TeleHealthDashboard';
 import { LARRY_LEGAL_KNOWLEDGE } from './legalKnowledge';
-import { BusinessDashboard } from './pages/BusinessDashboard';
-import BusinessRegistrationPage from './pages/BusinessRegistrationPage';
-import { FederalDashboard } from './pages/FederalDashboard';
-import { ProviderDashboard } from './pages/ProviderDashboard';
-import { AttorneyDashboard } from './pages/AttorneyDashboard';
-import { PublicHealthDashboard } from './pages/PublicHealthDashboard';
-import { CareWalletDashboard } from './pages/CareWalletDashboard';
 import { generateGeminiResponse } from './lib/gemini';
 import { captureContact } from './lib/contactCapture';
 import { getStateFees } from './lib/stateFees';
-import { EnforcementDashboard } from './pages/EnforcementDashboard';
-import { BackOfficeDashboard } from './pages/BackOfficeDashboard';
-import ProviderRegistrationPage from './pages/ProviderRegistrationPage';
-import { EducationPortal } from './pages/EducationPortal';
-import { ProSeLegalIntake } from './pages/ProSeLegalIntake';
-import { PatientDashboard } from './pages/PatientDashboard';
-import { OversightDashboard } from './pages/OversightDashboard';
-import { PresidentDashboard } from './pages/PresidentDashboard';
-import { ChiefComplianceDirectorDashboard } from './pages/ChiefComplianceDirectorDashboard';
-import { AdvisorDashboard } from './pages/AdvisorDashboard';
-// PoliticalExecutiveDashboard consolidated into FounderDashboard
-import { AdvocacyResearchDashboard } from './pages/AdvocacyResearchDashboard';
+import MapChart from './components/MapChart';
 import { PricingTiers } from './components/PricingTiers';
-import { RolePricingPage } from './pages/RolePricingPage';
-import { StateFactsPage } from './pages/StateFactsPage';
 import { LanguageSelector } from './components/LanguageSelector';
 import { FeaturedPoll, StickyPollWidget, RevolvingSurveyBanner } from './components/CommunityPolls';
 import { GlobalHeader } from './components/GlobalHeader';
@@ -9085,6 +9013,7 @@ export default function App() {
 
   return (
     <ErrorBoundary>
+      <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-[#080e1a]"><div className="text-center"><div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div><p className="text-emerald-400 font-bold text-sm uppercase tracking-widest">Loading Dashboard...</p></div></div>}>
       <div className="antialiased text-slate-900">
         <LiveToastContainer />
         <GlobalHeader userProfile={userProfile} jurisdiction={jurisdiction} setJurisdiction={setJurisdictionWithGate} roleOverride={roleOverride} setRoleOverride={setRoleOverride} handleBack={handleBack} canGoBack={viewHistory.length > 0 || hasBypassedSelector} onLogout={handleLogout} />
@@ -9488,6 +9417,7 @@ export default function App() {
           </div>
         )}
       </div>
+      </Suspense>
     </ErrorBoundary>
   );
 }
