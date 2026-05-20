@@ -488,7 +488,7 @@ export const MarketingHub = () => {
             </div>
 
             {/* Composer Box */}
-            <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-md shadow-2xl relative overflow-hidden">
+            <div id="marketing-composer" className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-md shadow-2xl relative overflow-hidden transition-all duration-500">
               <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
                 {campaignType === 'email' ? <Mail size={200} /> : <MessageSquare size={200} />}
               </div>
@@ -925,10 +925,20 @@ export const MarketingHub = () => {
                                   if (camp.message) setMessage(camp.message);
                                   setSendMode('broadcast');
                                   setCampaignType(camp.type || 'email');
-                                  // Scroll the inner container to top
-                                  if (scrollContainerRef.current) {
-                                    scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-                                  }
+                                  // Scroll to the composer using scrollIntoView (works in all layouts)
+                                  setTimeout(() => {
+                                    const el = document.getElementById('marketing-composer');
+                                    if (el) {
+                                      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                      // Flash the composer border to show it loaded
+                                      el.style.borderColor = '#22c55e';
+                                      el.style.boxShadow = '0 0 30px rgba(34,197,94,0.3)';
+                                      setTimeout(() => {
+                                        el.style.borderColor = '';
+                                        el.style.boxShadow = '';
+                                      }, 2000);
+                                    }
+                                  }, 100);
                                 }}
                                 className={cn(
                                   "flex-1 py-2.5 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all flex items-center justify-center gap-1.5",
