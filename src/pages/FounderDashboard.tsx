@@ -2365,11 +2365,11 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
          <div className="relative z-10 flex gap-3">
             <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100 flex flex-col items-center">
                <span className="text-[10px] font-black text-emerald-600 uppercase">Approved (24h)</span>
-               <span className="text-xl font-black text-emerald-700">842</span>
+               <span className="text-xl font-black text-emerald-700">{patientList.filter((p: any) => p.applicationStatus === 'Approved' || p.applicationStatus === 'State Application Pending').length}</span>
             </div>
             <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 flex flex-col items-center">
                <span className="text-[10px] font-black text-amber-600 uppercase">Pending Review</span>
-               <span className="text-xl font-black text-amber-700">342</span>
+               <span className="text-xl font-black text-amber-700">{patientList.filter((p: any) => !p.applicationStatus || p.applicationStatus === 'Pending Review').length}</span>
             </div>
          </div>
       </div>
@@ -3235,18 +3235,18 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
          {[
-           { l: 'Critical Tickets', v: '0', c: 'text-emerald-600', i: Shield },
-           { l: 'Pending Approval', v: '12', c: 'text-amber-600', i: Clock },
-           { l: 'Active Chats', v: '42', c: 'text-indigo-600', i: MessageSquare },
-         ].map((s, i) => (
-           <div key={i} className="bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm flex items-center gap-5">
-              <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center bg-slate-100", s.c)}><s.i size={24}/></div>
-              <div>
-                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{s.l}</p>
-                 <p className="text-2xl font-black text-slate-800">{s.v}</p>
-              </div>
-           </div>
-         ))}
+            { l: 'Critical Tickets', v: '0', c: 'text-emerald-600', i: Shield },
+            { l: 'Pending Approval', v: String(patientList.filter((p: any) => !p.applicationStatus || p.applicationStatus === 'Pending Review').length), c: 'text-amber-600', i: Clock },
+            { l: 'Active Cases', v: String(patientList.length), c: 'text-indigo-600', i: MessageSquare },
+          ].map((s, i) => (
+            <div key={i} className="bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm flex items-center gap-5">
+               <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center bg-slate-100", s.c)}><s.i size={24}/></div>
+               <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{s.l}</p>
+                  <p className="text-2xl font-black text-slate-800">{s.v}</p>
+               </div>
+            </div>
+          ))}
       </div>
 
       <div className="bg-white border border-slate-200 rounded-[2.5rem] shadow-sm overflow-hidden">
@@ -3261,28 +3261,30 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
-            {[
-              { id: 'SUP-9921', s: 'POS Integration Timeout', e: 'Apex Health', a: 'Larry', st: 'In Progress', c: 'text-blue-600 bg-blue-50' },
-              { id: 'SUP-9920', s: 'License Renewal Inquiry', e: 'GreenLeaf Farms', a: 'Sarah Jenkins', st: 'Pending', c: 'text-amber-600 bg-amber-50' },
-              { id: 'SUP-9919', s: 'Account Access Reset', e: 'John Doe', a: 'Bob Moore', st: 'Resolved', c: 'text-emerald-600 bg-emerald-50' },
-            ].map((t, i) => (
-              <tr key={i} className="hover:bg-slate-100 group transition-colors">
-                <td className="px-6 py-4 font-mono text-[10px] font-black text-indigo-600">{t.id}</td>
-                <td className="px-6 py-4">
-                  <p className="font-bold text-slate-800">{t.s}</p>
-                  <p className="text-xs text-slate-400 font-medium">{t.e}</p>
-                </td>
-                <td className="px-6 py-4 text-xs font-bold text-slate-600 flex items-center gap-2">
-                   <div className="w-6 h-6 rounded-full bg-slate-200 border border-white" /> {t.a}
-                </td>
-                <td className="px-6 py-4">
-                   <span className={cn("text-[9px] font-black uppercase px-2 py-0.5 rounded-full", t.c)}>{t.st}</span>
-                </td>
-                <td className="px-6 py-4 text-right opacity-0 group-hover:opacity-100 transition-all">
-                  <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "SECURITY", "Production_User", JSON.stringify({ detail: "Transaction intercepted by executive override." })] }).catch(console.error) ); alert("Transaction intercepted by executive override.\n\n[Live Production Transaction Logged]"); }} className="px-4 py-2 bg-slate-800 text-white text-xs font-black rounded-xl hover:bg-black transition-colors">Intercept</button>
-                </td>
-              </tr>
-            ))}
+            {patientList.length > 0 ? patientList.slice(0, 5).map((p: any, i: number) => {
+               const status = p.applicationStatus || 'Pending Review';
+               const statusColor = status === 'Approved' ? 'text-emerald-600 bg-emerald-50' : status.includes('Pending') ? 'text-amber-600 bg-amber-50' : 'text-blue-600 bg-blue-50';
+               return (
+               <tr key={i} className="hover:bg-slate-100 group transition-colors">
+                 <td className="px-6 py-4 font-mono text-[10px] font-black text-indigo-600">{'SUP-' + String(p.uid || '').slice(-4).toUpperCase()}</td>
+                 <td className="px-6 py-4">
+                   <p className="font-bold text-slate-800">{p.applicationStatus === 'State Application Pending' ? 'State Application Processing' : 'Patient Card ' + (status)}</p>
+                   <p className="text-xs text-slate-400 font-medium">{p.fullName || p.name || p.displayName || 'Unknown'}</p>
+                 </td>
+                 <td className="px-6 py-4 text-xs font-bold text-slate-600 flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-full bg-slate-200 border border-white" /> Sylara AI
+                 </td>
+                 <td className="px-6 py-4">
+                    <span className={cn("text-[9px] font-black uppercase px-2 py-0.5 rounded-full", statusColor)}>{status}</span>
+                 </td>
+                 <td className="px-6 py-4 text-right opacity-0 group-hover:opacity-100 transition-all">
+                   <button onClick={() => { setActiveTab('operations'); setOpsTab('ops_apps'); }} className="px-4 py-2 bg-slate-800 text-white text-xs font-black rounded-xl hover:bg-black transition-colors">Review</button>
+                 </td>
+               </tr>
+               );
+             }) : (
+               <tr><td colSpan={5} className="px-6 py-8 text-center text-slate-400 font-bold text-sm">No active tickets — all clear</td></tr>
+             )}
           </tbody>
         </table>
       </div>

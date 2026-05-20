@@ -479,15 +479,15 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
         <div className="relative z-10">
           <h2 className="text-3xl font-black text-slate-800 tracking-tight italic uppercase mb-2">Ops & Call Center</h2>
           <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Live Support Monitoring • Human Takeover Queue • Sylara Handoffs</p>
-        </div>
-        <div className="flex gap-4 relative z-10">
-          <div className="bg-emerald-50 border border-emerald-100 px-6 py-3 rounded-2xl text-center">
-            <p className="text-[10px] font-black text-emerald-600 uppercase">Sylara Handling</p>
-            <p className="text-2xl font-black text-slate-800">1,402</p>
-          </div>
-          <div className="bg-amber-50 border border-amber-100 px-6 py-3 rounded-2xl text-center">
-            <p className="text-[10px] font-black text-amber-600 uppercase">Human Queue</p>
-            <p className="text-2xl font-black text-slate-800">14</p>
+          <div className="flex gap-4 relative z-10 mt-4">
+             <div className="bg-emerald-50 border border-emerald-100 px-6 py-3 rounded-2xl text-center">
+               <p className="text-[10px] font-black text-emerald-600 uppercase">Sylara Handling</p>
+               <p className="text-2xl font-black text-slate-800">{adminPatientList.length}</p>
+             </div>
+             <div className="bg-amber-50 border border-amber-100 px-6 py-3 rounded-2xl text-center">
+               <p className="text-[10px] font-black text-amber-600 uppercase">Human Queue</p>
+               <p className="text-2xl font-black text-slate-800">{dbAlerts.filter((a: any) => !a.is_resolved).length}</p>
+             </div>
           </div>
         </div>
       </div>
@@ -496,28 +496,27 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
          <div className="lg:col-span-2 bg-white border border-slate-200 rounded-[2rem] p-6 shadow-sm">
             <h3 className="font-black text-slate-800 mb-6 flex items-center gap-2 uppercase tracking-widest text-sm"><MessageSquare size={16} className="text-indigo-600"/> Active Escelations</h3>
             <div className="space-y-4">
-               {[
-                 { id: 'TKT-9428', u: 'Jane Doe (Patient)', t: 'Payment Error during Checkout', s: 'Awaiting Agent', time: '4m ago', prio: 'High' },
-                 { id: 'TKT-9429', u: 'GreenLeaf Farms', t: 'Compliance Form #4A Upload Failure', s: 'Sylara Escalated', time: '12m ago', prio: 'Urgent' },
-                 { id: 'TKT-9430', u: 'Dr. Smith', t: 'Provider Validation Stuck', s: 'Awaiting Agent', time: '1h ago', prio: 'Medium' },
-               ].map(tkt => (
-                 <div key={tkt.id} className="p-4 border border-slate-100 rounded-xl hover:bg-slate-50 flex items-center justify-between group">
-                    <div className="flex items-center gap-4">
-                       <div className={cn("w-2 h-10 rounded-full", tkt.prio === 'Urgent' ? 'bg-red-500' : tkt.prio === 'High' ? 'bg-amber-500' : 'bg-blue-500')}></div>
-                       <div>
-                          <p className="font-bold text-slate-800">{tkt.t}</p>
-                          <p className="text-xs font-medium text-slate-500">{tkt.id} • {tkt.u}</p>
-                       </div>
-                    </div>
-                    <div className="flex items-center gap-6">
-                       <div className="text-right">
-                          <p className="text-[10px] font-black uppercase text-amber-600 bg-amber-50 px-2 py-0.5 rounded">{tkt.s}</p>
-                          <p className="text-xs font-bold text-slate-400 mt-1">{tkt.time}</p>
-                       </div>
-                       <button className="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-black uppercase opacity-0 group-hover:opacity-100 transition-all" onClick={() => triggerLiveAction("Agent Override", "Bypassing standard routing to connect directly with the live user session.", "process")}>Takeover</button>
-                    </div>
-                 </div>
-               ))}
+                {dbAlerts.filter((a: any) => !a.is_resolved).slice(0, 3).map((alert: any, i: number) => (
+                  <div key={i} className="p-4 border border-slate-100 rounded-xl hover:bg-slate-50 flex items-center justify-between group">
+                     <div className="flex items-center gap-4">
+                        <div className={cn("w-2 h-10 rounded-full", alert.severity === 'High' ? 'bg-red-500' : alert.severity === 'Medium' ? 'bg-amber-500' : 'bg-blue-500')}></div>
+                        <div>
+                           <p className="font-bold text-slate-800">{alert.message}</p>
+                           <p className="text-xs font-medium text-slate-500">Alert #{String(alert.id).slice(-4)} • {alert.severity || 'Info'} severity</p>
+                        </div>
+                     </div>
+                     <div className="flex items-center gap-6">
+                        <div className="text-right">
+                           <p className="text-[10px] font-black uppercase text-amber-600 bg-amber-50 px-2 py-0.5 rounded">{alert.status || 'Active'}</p>
+                           <p className="text-xs font-bold text-slate-400 mt-1">{alert.date || 'Recent'}</p>
+                        </div>
+                        <button className="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-black uppercase opacity-0 group-hover:opacity-100 transition-all" onClick={() => triggerLiveAction("Agent Override", "Bypassing standard routing to connect directly with the live user session.", "process")}>Takeover</button>
+                     </div>
+                  </div>
+                ))}
+                {dbAlerts.filter((a: any) => !a.is_resolved).length === 0 && (
+                  <div className="p-8 text-center text-slate-400 text-sm font-bold"><CircleCheck size={32} className="mx-auto mb-2 text-emerald-400" />No active escalations — all clear</div>
+                )}
             </div>
          </div>
          <div className="bg-slate-900 border border-slate-800 rounded-[2rem] p-6 text-white">
@@ -713,16 +712,17 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
                 </tr>
              </thead>
              <tbody className="divide-y divide-slate-50">
-                {[
-                  { id: 'APP-001', n: 'Shantell Robinson', p: 'Founder Verification' },
-                ].map((a, i) => (
-                  <tr key={i} className="hover:bg-slate-50">
-                     <td className="px-6 py-4 font-bold text-slate-600 text-xs">{a.id}</td>
-                     <td className="px-6 py-4 font-black text-slate-800">{a.n}</td>
-                     <td className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">{a.p}</td>
-                     <td className="px-6 py-4 text-right"><button className="text-xs font-black text-indigo-600 uppercase hover:underline" onClick={() => triggerLiveAction("Application Review", "Retrieving secure application payload and scanning attachments for automated pre-approval.", "process")}>Review</button></td>
-                  </tr>
-                ))}
+                 {adminPatientList.slice(0, 5).map((p: any, i: number) => (
+                   <tr key={i} className="hover:bg-slate-50">
+                      <td className="px-6 py-4 font-bold text-slate-600 text-xs">APP-{String(i + 1).padStart(3, '0')}</td>
+                      <td className="px-6 py-4 font-black text-slate-800">{p.fullName || p.name || p.displayName || 'Unknown'}</td>
+                      <td className="px-6 py-4 text-xs font-bold text-slate-500 uppercase">{p.applicationStatus || p.role || 'Pending Review'}</td>
+                      <td className="px-6 py-4 text-right"><button className="text-xs font-black text-indigo-600 uppercase hover:underline" onClick={() => setSelectedAdminPatient(p)}>Review</button></td>
+                   </tr>
+                 ))}
+                 {adminPatientList.length === 0 && (
+                   <tr><td colSpan={4} className="px-6 py-8 text-center text-slate-400 font-bold text-sm">No applications in queue</td></tr>
+                 )}
              </tbody>
           </table>
        </div>
