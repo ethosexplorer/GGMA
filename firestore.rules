@@ -53,9 +53,14 @@ service cloud.firestore {
     // User Profiles
     match /users/{userId} {
       allow read: if isAuthenticated();
-      allow create: if isAuthenticated() && isOwner(userId);
-      allow update: if isOwner(userId) || isAdmin();
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated();
       allow delete: if isAdmin();
+
+      // Allow staff to access subcollections (case_data, status_checks)
+      match /{document=**} {
+        allow read, write: if isAuthenticated();
+      }
     }
 
     // Internal Messaging System
