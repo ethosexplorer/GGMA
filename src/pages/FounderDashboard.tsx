@@ -290,10 +290,22 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         const jBiz = await turso.execute('SELECT state, COUNT(*) as c FROM businesses GROUP BY state');
         
         const stateMap: Record<string, any> = {};
-        jPatients.rows.forEach(r => stateMap[String(r.state)] = { s: String(r.state), p: Number(r.c), d: 0, c: 98, r: '+5.4%', up: true });
+        // Revenue from founder_ledger per state
+        let stateRevenue: Record<string, number> = {};
+        try {
+          const revByState = await turso.execute('SELECT p.state, SUM(CAST(REPLACE(REPLACE(fl.gross_revenue, "$", ""), ",", "") AS REAL)) as rev FROM founder_ledger fl LEFT JOIN patients p ON fl.patient_id = p.id GROUP BY p.state');
+          revByState.rows.forEach(r => { if (r.state) stateRevenue[String(r.state)] = Number(r.rev) || 0; });
+        } catch(e) { /* revenue query may fail if schema differs */ }
+        
+        jPatients.rows.forEach(r => {
+          const st = String(r.state);
+          const rev = stateRevenue[st] || 0;
+          stateMap[st] = { s: st, p: Number(r.c), d: 0, rev: rev, r: rev > 0 ? '$' + rev.toLocaleString() : '$0', up: rev > 0 };
+        });
         jBiz.rows.forEach(r => {
-          if (!stateMap[String(r.state)]) stateMap[String(r.state)] = { s: String(r.state), p: 0, d: 0, c: 95, r: '+2.1%', up: true };
-          stateMap[String(r.state)].d = Number(r.c);
+          const st = String(r.state);
+          if (!stateMap[st]) stateMap[st] = { s: st, p: 0, d: 0, rev: stateRevenue[st] || 0, r: (stateRevenue[st] || 0) > 0 ? '$' + (stateRevenue[st] || 0).toLocaleString() : '$0', up: (stateRevenue[st] || 0) > 0 };
+          stateMap[st].d = Number(r.c);
         });
         
         setJurisdictionStats(Object.values(stateMap).sort((a,b) => (b.p + b.d) - (a.p + a.d)));
@@ -305,13 +317,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
 
     fetchAnalytics();
     const analyticsInterval = setInterval(fetchAnalytics, 15000);
-    const jitterInterval = setInterval(() => {
-      setLiveAnalytics(prev => ({
-        ...prev,
-        users: prev.users > 0 ? Math.max(1, prev.users + (Math.random() > 0.5 ? Math.floor(Math.random() * 3) : -Math.floor(Math.random() * 2))) : Math.floor(Math.random() * 3) + 1,
-        clicks: prev.clicks + Math.floor(Math.random() * 3)
-      }));
-    }, 2000);
+    // Jitter removed — all data is real from analytics_aggregates
 
     // 2. Universal Button Interceptor for "Live" Demo actions
     const handleClick = async (e: MouseEvent) => {
@@ -361,7 +367,6 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     return () => {
       clearInterval(interval);
       clearInterval(analyticsInterval);
-      clearInterval(jitterInterval);
       document.removeEventListener('click', handleClick);
     };
   }, [fullName]);
@@ -817,7 +822,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
               <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Total App Clicks (24h)</p>
               <div className="flex items-end gap-2">
                 <span className="text-3xl font-black text-indigo-400">{liveAnalytics.clicks.toLocaleString()}</span>
-                <span className="text-[10px] text-emerald-400 font-bold mb-1.5">+18%</span>
+                <span className="text-[10px] text-slate-400 font-bold mb-1.5">24h total</span>
               </div>
             </div>
             <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
@@ -838,7 +843,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                   { source: 'Direct / Bookmarks', traffic: liveAnalytics.users > 0 ? '100%' : '0%', color: 'bg-indigo-500', width: liveAnalytics.users > 0 ? '100%' : '0%' },
                   { source: 'Google Organic Search', traffic: '0%', color: 'bg-blue-500', width: '0%' },
                   { source: 'Federal / SAM.gov Referrals', traffic: '0%', color: 'bg-amber-500', width: '0%' },
-                  { source: 'Social Media (LinkedIn, X)', traffic: '10%', color: 'bg-purple-500' },
+                  { source: 'Social Media (LinkedIn, X)', traffic: '0%', color: 'bg-purple-500', width: '0%' },
                 ].map((item, i) => (
                   <div key={i}>
                     <div className="flex justify-between text-xs font-bold mb-1.5">
@@ -1301,7 +1306,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                               </div>
                            </td>
                            <td className="py-4">
-                              <span className={cn("font-black", row.up ? "text-emerald-500" : "text-red-500")}>{row.r}</span>
+                              <span className={cn("font-black", row.up ? "text-emerald-500" : "text-slate-400")}>{row.r}</span>
                            </td>
                         </tr>
                      )) : (
@@ -1317,18 +1322,18 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                <div className="h-40 flex items-end justify-between gap-1">
                   {[30, 45, 35, 60, 55, 70, 65, 80, 85, 90, 85, 95].map((h, i) => (
                      <div key={i} className="flex-1 bg-slate-100 rounded-full relative group">
-                        <div className="absolute bottom-0 w-full bg-emerald-500 rounded-full transition-all duration-700" style={{ height: `${h}%` }}></div>
+                        <div className="absolute bottom-0 w-full bg-emerald-500 rounded-full" style={{ height: `${h}%` }}></div>
                      </div>
                   ))}
                </div>
                <div className="mt-6 pt-6 border-t border-slate-200 space-y-4">
                   <div className="flex justify-between items-center">
                      <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Sylara AI Response</span>
-                     <span className="text-sm font-black text-emerald-600">42ms</span>
+                     <span className="text-sm font-black text-emerald-600">—</span>
                   </div>
                   <div className="flex justify-between items-center">
                      <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Care Wallet Throughput</span>
-                     <span className="text-sm font-black text-blue-600">2.4k txn/sec</span>
+                     <span className="text-sm font-black text-blue-600">—</span>
                   </div>
                </div>
             </div>
