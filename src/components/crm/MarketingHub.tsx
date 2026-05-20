@@ -908,7 +908,28 @@ export const MarketingHub = () => {
                           </div>
 
                           {/* Action buttons */}
-                          <div className="flex gap-2 mt-3">
+                          <div className="space-y-2 mt-3">
+                            {/* Warning if campaign has no saved message body */}
+                            {!camp.message && remaining > 0 && (
+                              <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl">
+                                <p className="text-[10px] text-amber-400 font-bold flex items-center gap-1.5 mb-2">
+                                  <AlertTriangle size={12} /> Message body not saved — load a template or paste your content above
+                                </p>
+                                <button
+                                  onClick={() => {
+                                    // Pre-fill subject and scroll to composer
+                                    if (camp.subject) setSubject(camp.subject);
+                                    setSendMode('broadcast');
+                                    setCampaignType(camp.type || 'email');
+                                    setShowTemplates(true);
+                                  }}
+                                  className="w-full py-2 bg-amber-500/20 text-amber-300 text-[10px] font-black uppercase tracking-wider rounded-lg hover:bg-amber-500/30 transition-all flex items-center justify-center gap-1.5"
+                                >
+                                  <LayoutTemplate size={10} /> Load from Saved Template
+                                </button>
+                              </div>
+                            )}
+                            <div className="flex gap-2">
                             {remaining > 0 && (
                               <button
                                 onClick={async () => {
@@ -925,20 +946,22 @@ export const MarketingHub = () => {
                                   if (camp.message) setMessage(camp.message);
                                   setSendMode('broadcast');
                                   setCampaignType(camp.type || 'email');
-                                  // Scroll to the composer using scrollIntoView (works in all layouts)
+                                  // Scroll to the composer
                                   setTimeout(() => {
                                     const el = document.getElementById('marketing-composer');
                                     if (el) {
                                       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                                      // Flash the composer border to show it loaded
                                       el.style.borderColor = '#22c55e';
                                       el.style.boxShadow = '0 0 30px rgba(34,197,94,0.3)';
-                                      setTimeout(() => {
-                                        el.style.borderColor = '';
-                                        el.style.boxShadow = '';
-                                      }, 2000);
+                                      setTimeout(() => { el.style.borderColor = ''; el.style.boxShadow = ''; }, 2000);
                                     }
                                   }, 100);
+                                  // If no message body, prompt them
+                                  if (!camp.message) {
+                                    setTimeout(() => {
+                                      alert('📝 Subject loaded! Paste your email body/flyer in the Message Body field, then hit Launch Campaign.\n\nGoing forward, the body will be auto-saved with every send.');
+                                    }, 300);
+                                  }
                                 }}
                                 className={cn(
                                   "flex-1 py-2.5 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all flex items-center justify-center gap-1.5",
@@ -953,6 +976,7 @@ export const MarketingHub = () => {
                             {remaining === 0 && (
                               <p className="flex-1 py-2 text-center text-[10px] font-bold text-blue-400 uppercase tracking-wider">✅ Completed</p>
                             )}
+                            </div>
                           </div>
                         </div>
                       );
