@@ -71,14 +71,25 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
 
       // 2. Override with live Firebase real-time data
       firebaseUsers.forEach(f => {
-        const key = f.fullName?.toLowerCase() || f.name?.toLowerCase() || f.displayName?.toLowerCase() || f.uid;
+        // If this Firebase doc was created by saving a Turso legacy record,
+        // its UID starts with "turso-". Merge it back with the original Turso entry.
+        let key = f.fullName?.toLowerCase() || f.name?.toLowerCase() || f.displayName?.toLowerCase() || '';
+        
+        // For turso-prefixed UIDs, extract the name from the UID to find the original entry
+        if (!key && typeof f.uid === 'string' && f.uid.startsWith('turso-')) {
+          key = f.uid.replace('turso-', '').toLowerCase();
+        }
+        
+        // Last resort: use UID as key
+        if (!key) key = f.uid;
+        
         const existing = mergedMap.get(key) || {};
         mergedMap.set(key, {
           ...existing,
           uid: f.uid,
-          fullName: f.fullName || f.name || f.displayName || existing.fullName,
-          email: f.email || existing.email,
-          phone: f.phone || f.textPhone || existing.phone,
+          fullName: f.fullName || f.name || f.displayName || existing.fullName || 'Unknown Patient',
+          email: f.email || existing.email || '',
+          phone: f.phone || f.textPhone || existing.phone || '',
           state: f.state || f.jurisdiction || existing.state || 'Oklahoma',
           applicationStatus: f.applicationStatus || existing.applicationStatus || 'Pending Review',
           createdAt: f.createdAt || existing.createdAt,

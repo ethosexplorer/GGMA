@@ -196,10 +196,15 @@ export const PatientCaseTracker: React.FC<PatientCaseTrackerProps> = ({
         updatedBy: staffName,
       }, { merge: true });
 
-      // Sync status to main user doc for global dashboard queues
+      // Sync status + identity to main user doc for global dashboard queues
       const userRef = doc(db, 'users', patientUid);
       await setDoc(userRef, {
         applicationStatus: caseData.applicationStatus,
+        fullName: patientName || '',
+        name: patientName || '',
+        email: patientEmail || '',
+        phone: patientPhone || '',
+        state: patientState || 'Oklahoma',
         updatedAt: serverTimestamp(),
       }, { merge: true });
 
