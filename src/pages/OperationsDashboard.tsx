@@ -56,8 +56,9 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
       
       // 1. Load legacy Turso data first
       tursoUsers.forEach(t => {
-        mergedMap.set(t.name?.toLowerCase() || t.id, {
-          uid: t.id || t.uid || `turso-${t.name}`,
+        const safeName = typeof t.name === 'string' ? t.name : String(t.name || t.id);
+        mergedMap.set(safeName.toLowerCase(), {
+          uid: String(t.id || t.uid || `turso-${safeName}`),
           fullName: t.name || t.fullName || 'Unknown Patient',
           email: t.email || '',
           phone: t.phone || '',
@@ -267,7 +268,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
           </div>
           <div className="p-6">
             <PatientCaseTracker
-              patientUid={selectedPatientCase.uid || 'unknown-uid'}
+              patientUid={String(selectedPatientCase.uid || 'unknown-uid')}
               patientName={selectedPatientCase.fullName || selectedPatientCase.name || selectedPatientCase.displayName || 'Unknown'}
               patientEmail={selectedPatientCase.email || ''}
               patientState={selectedPatientCase.state || selectedPatientCase.jurisdiction || 'Oklahoma'}
