@@ -218,15 +218,16 @@ export const PatientCaseTracker: React.FC<PatientCaseTrackerProps> = ({
     try {
       const checksRef = collection(db, 'users', patientUid, 'status_checks');
       await addDoc(checksRef, {
-        checkedBy: staffName,
+        checkedBy: staffName || 'Staff User',
         checkedAt: serverTimestamp(),
-        status: newCheckStatus || caseData.applicationStatus,
+        status: newCheckStatus || caseData.applicationStatus || 'Unknown',
         notes: newCheckNote.trim(),
       });
       setNewCheckNote('');
       setNewCheckStatus('');
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error logging status check:', err);
+      alert('Failed to log check: ' + (err.message || 'Unknown error'));
     }
   };
 
