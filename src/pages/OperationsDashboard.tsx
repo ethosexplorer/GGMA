@@ -578,7 +578,11 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
                 className={cn("w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all text-left cursor-grab active:cursor-grabbing", activeTab === item.id ? "bg-slate-800 text-white border border-slate-700" : "text-slate-400 hover:bg-slate-800/50", opsDragIdx === i && "opacity-50")}
               >
                 <span className="flex items-center gap-3">{item.icon && <item.icon size={16} />} {item.label}</span>
-                {item.badge && <span className="text-[10px] bg-indigo-500/20 text-indigo-400 px-1.5 py-0.5 rounded-full font-bold">{item.badge}</span>}
+                {(item.badge || (item.id === 'applications' && liveApplications.length > 0)) && (
+                  <span className="text-[10px] bg-indigo-500/20 text-indigo-400 px-1.5 py-0.5 rounded-full font-bold">
+                    {item.id === 'applications' ? liveApplications.length : item.badge}
+                  </span>
+                )}
               </button>
             );
           })}
