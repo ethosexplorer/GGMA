@@ -844,6 +844,103 @@ export const MarketingHub = () => {
               )}
             </div>
 
+            {/* 📋 Campaign History */}
+            <div className="bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-md">
+              <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2 mb-4">
+                <BarChart2 className="text-indigo-400" size={16} /> Campaign History
+              </h3>
+              {allCampaigns.length === 0 ? (
+                <p className="text-sm text-slate-500 italic text-center py-6">No campaigns sent yet</p>
+              ) : (
+                <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
+                  {allCampaigns
+                    .sort((a: any, b: any) => {
+                      // Active first, then by sent date desc
+                      if (a.status === 'active' && b.status !== 'active') return -1;
+                      if (b.status === 'active' && a.status !== 'active') return 1;
+                      const tA = a.lastSentAt?.toDate?.() || a.createdAt?.toDate?.() || new Date(0);
+                      const tB = b.lastSentAt?.toDate?.() || b.createdAt?.toDate?.() || new Date(0);
+                      return tB.getTime() - tA.getTime();
+                    })
+                    .map((camp: any, i: number) => {
+                      const pct = camp.totalRecipients > 0 ? Math.min(100, Math.round((camp.sentCount / camp.totalRecipients) * 100)) : 0;
+                      const remaining = Math.max(0, (camp.totalRecipients || 0) - (camp.sentCount || 0));
+                      const isActive = camp.status === 'active';
+                      const isCurrentActive = activeCampaign?.id === camp.id;
+                      const sentDate = camp.lastSentAt?.toDate?.() || camp.createdAt?.toDate?.();
+                      const dateLabel = sentDate ? sentDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
+                      
+                      return (
+                        <div key={camp.id || i} className={cn(
+                          "p-4 rounded-2xl border transition-all",
+                          isCurrentActive 
+                            ? "bg-emerald-500/10 border-emerald-500/30" 
+                            : isActive 
+                              ? "bg-indigo-500/10 border-indigo-500/20" 
+                              : "bg-slate-800/50 border-slate-700/50 hover:border-slate-600"
+                        )}>
+                          <div className="flex justify-between items-start mb-2">
+                            <div className="flex-1 min-w-0 mr-3">
+                              <p className="text-sm font-black text-white truncate">{camp.name || camp.subject || 'Untitled Campaign'}</p>
+                              <p className="text-[10px] text-slate-500 font-bold mt-0.5">
+                                {dateLabel && `${dateLabel} • `}{camp.type === 'sms' ? 'SMS' : 'Email'}{camp.lastRange ? ` • Range: ${camp.lastRange}` : ''}
+                              </p>
+                            </div>
+                            <span className={cn("text-[9px] font-black uppercase px-2 py-0.5 rounded-full shrink-0",
+                              isActive ? 'bg-emerald-500/20 text-emerald-400' : 
+                              camp.status === 'completed' ? 'bg-blue-500/20 text-blue-400' : 
+                              'bg-slate-700 text-slate-400'
+                            )}>
+                              {isCurrentActive ? '● Active' : camp.status || 'draft'}
+                            </span>
+                          </div>
+                          
+                          {/* Progress bar */}
+                          <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden mb-2">
+                            <div className={cn("h-full rounded-full transition-all", isActive ? "bg-emerald-500" : "bg-indigo-500")} style={{ width: `${pct}%` }} />
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <p className="text-[10px] text-slate-400 font-bold">
+                              {(camp.sentCount || 0).toLocaleString()} / {(camp.totalRecipients || 0).toLocaleString()} sent ({pct}%)
+                              {remaining > 0 && <span className="text-amber-400 ml-1">• {remaining.toLocaleString()} left</span>}
+                            </p>
+                          </div>
+
+                          {/* Action buttons */}
+                          <div className="flex gap-2 mt-3">
+                            {!isCurrentActive && remaining > 0 && (
+                              <button
+                                onClick={async () => {
+                                  // If there's currently another active campaign, mark it completed first
+                                  if (activeCampaign && activeCampaign.id !== camp.id) {
+                                    await updateDoc(doc(db, 'marketing_campaigns', activeCampaign.id), { status: 'completed' });
+                                  }
+                                  // Re-activate this campaign
+                                  await updateDoc(doc(db, 'marketing_campaigns', camp.id), { status: 'active' });
+                                  setActiveCampaign(camp);
+                                  // Pre-fill the composer with the campaign's subject
+                                  if (camp.subject) setSubject(camp.subject);
+                                  setSendMode('broadcast');
+                                }}
+                                className="flex-1 py-2 bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-black uppercase tracking-wider rounded-lg hover:bg-emerald-500/30 transition-all flex items-center justify-center gap-1.5"
+                              >
+                                <Send size={10} /> Resume ({Math.min(dailyLimit, remaining)} next)
+                              </button>
+                            )}
+                            {isCurrentActive && (
+                              <p className="flex-1 py-2 text-center text-[10px] font-black text-emerald-400 uppercase tracking-wider">✓ Currently Active</p>
+                            )}
+                            {remaining === 0 && (
+                              <p className="flex-1 py-2 text-center text-[10px] font-bold text-blue-400 uppercase tracking-wider">✅ Completed</p>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              )}
+            </div>
+
             {/* 📬 Gmail Inbox Monitor */}
             <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-md">
               <div className="flex items-center justify-between mb-5">
