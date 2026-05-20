@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, Building2, LayoutTemplate, Clock, AlertCircle, Save, Trash2, X, Plus, ChevronDown, Eye, MousePointerClick, MailOpen, TrendingUp, Inbox, AlertTriangle, Reply, RefreshCw } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { db } from '../../firebase';
@@ -24,6 +24,7 @@ interface EmailTemplate {
 }
 
 export const MarketingHub = () => {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState<'composer' | 'campaigns' | 'analytics'>('composer');
   const [campaignType, setCampaignType] = useState<'email' | 'sms'>('email');
   
@@ -363,7 +364,7 @@ export const MarketingHub = () => {
         
         const campaignData = {
           name: subject || 'Untitled Campaign',
-          subject, type: campaignType,
+          subject, message: message, type: campaignType,
           status: isComplete ? 'completed' : 'active',
           totalRecipients: finalAudience.length,
           sentCount: newSentEmails.length,
@@ -454,7 +455,7 @@ export const MarketingHub = () => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-10">
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-10">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
           
           {/* Left Column: Composer */}
@@ -919,11 +920,15 @@ export const MarketingHub = () => {
                                     await updateDoc(doc(db, 'marketing_campaigns', camp.id), { status: 'active' });
                                     setActiveCampaign(camp);
                                   }
-                                  // Pre-fill the composer
+                                  // Pre-fill the composer with subject + message
                                   if (camp.subject) setSubject(camp.subject);
+                                  if (camp.message) setMessage(camp.message);
                                   setSendMode('broadcast');
-                                  // Scroll to top so they can see the composer + hit Launch
-                                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                                  setCampaignType(camp.type || 'email');
+                                  // Scroll the inner container to top
+                                  if (scrollContainerRef.current) {
+                                    scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+                                  }
                                 }}
                                 className={cn(
                                   "flex-1 py-2.5 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all flex items-center justify-center gap-1.5",
