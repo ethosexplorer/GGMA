@@ -7,6 +7,41 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const twiml = new VoiceResponse();
 
+    // ==========================================
+    // OUTBOUND CALL DETECTION
+    // When the Twilio Client SDK (WebDialer) initiates an outbound call,
+    // the request body contains a `To` parameter with the number to dial.
+    // We must intercept this BEFORE the inbound greeting logic runs,
+    // otherwise the call loops back to the call center's own AI greeting.
+    // ==========================================
+    const toNumber = req.body?.To || req.query?.To || '';
+    const direction = req.body?.Direction || '';
+    const fromClient = req.body?.From?.startsWith?.('client:') || false;
+
+    // If this is an outbound call from the WebDialer to an external number
+    if (toNumber && !toNumber.startsWith('client:') && (direction === 'outbound' || fromClient || /^\+?\d{7,15}$/.test(toNumber.replace(/[\s\-\(\)]/g, '')))) {
+      // Clean the number
+      let cleanNumber = toNumber.replace(/[\s\-\(\)]/g, '');
+      if (!cleanNumber.startsWith('+')) {
+        cleanNumber = cleanNumber.startsWith('1') ? '+' + cleanNumber : '+1' + cleanNumber;
+      }
+      
+      const dial = twiml.dial({
+        callerId: '+18889634447',
+        timeout: 45,
+        answerOnBridge: true,
+        action: '/api/twilio/call-status',
+      });
+      dial.number({
+        statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'],
+        statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status',
+        statusCallbackMethod: 'POST',
+      }, cleanNumber);
+
+      res.setHeader('Content-Type', 'text/xml');
+      return res.status(200).send(twiml.toString());
+    }
+
     // Dynamic routing mode check
     let routingMode = 'hybrid';
     try {
