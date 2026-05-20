@@ -792,29 +792,53 @@ export const MarketingHub = () => {
                   </div>
 
                   {/* Campaign Stats */}
-                  <div className="p-5 bg-slate-950 rounded-2xl border border-slate-700 space-y-3">
-                    <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">This Batch</p>
-                    <p className="text-3xl font-black text-white">{Math.min(dailyLimit, filteredCount - (activeCampaign?.sentCount || 0)).toLocaleString()}</p>
-                    <p className="text-xs text-slate-500 font-medium">of {filteredCount.toLocaleString()} total recipients</p>
+                  {(() => {
+                    // Compute ACTUAL unsent within the current filtered audience
+                    const sentSet = new Set<string>(activeCampaign?.sentEmails || []);
+                    const unsentInFilter = filteredAudience.filter(d => {
+                      const key = campaignType === 'email' ? (d.email || '') : (d.phone || '');
+                      return key && !sentSet.has(key);
+                    }).length;
+                    const thisBatch = Math.max(0, Math.min(dailyLimit, unsentInFilter));
+                    const sentInFilter = filteredCount - unsentInFilter;
                     
-                    {/* Timeline */}
-                    <div className="pt-3 border-t border-slate-800">
-                      <p className="text-[10px] text-indigo-400 font-bold uppercase tracking-widest mb-1">Estimated Timeline</p>
-                      <p className="text-sm font-bold text-white">{Math.ceil(filteredCount / dailyLimit)} days to complete</p>
-                    </div>
-
-                    {/* Active Campaign Progress */}
-                    {activeCampaign && activeCampaign.status === 'active' && (
+                    return (
+                    <div className="p-5 bg-slate-950 rounded-2xl border border-slate-700 space-y-3">
+                      <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">This Batch</p>
+                      <p className="text-3xl font-black text-white">{thisBatch.toLocaleString()}</p>
+                      <p className="text-xs text-slate-500 font-medium">of {filteredCount.toLocaleString()} total recipients ({sentInFilter > 0 ? `${sentInFilter} already sent` : 'none sent yet'})</p>
+                    
+                      {/* Timeline */}
                       <div className="pt-3 border-t border-slate-800">
-                        <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest mb-2">Active Campaign Progress</p>
-                        <div className="h-2 bg-slate-800 rounded-full overflow-hidden mb-2">
-                          <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${Math.min(100, (activeCampaign.sentCount / activeCampaign.totalRecipients) * 100)}%` }} />
-                        </div>
-                        <p className="text-xs font-bold text-white">{activeCampaign.sentCount.toLocaleString()} / {activeCampaign.totalRecipients.toLocaleString()} sent</p>
-                        {activeCampaign.lastRange && <p className="text-[10px] text-slate-500 mt-1">Last batch: {activeCampaign.lastRange}</p>}
+                        <p className="text-[10px] text-indigo-400 font-bold uppercase tracking-widest mb-1">Estimated Timeline</p>
+                        <p className="text-sm font-bold text-white">{unsentInFilter > 0 ? `${Math.ceil(unsentInFilter / dailyLimit)} days to complete` : 'All sent ✅'}</p>
                       </div>
-                    )}
-                  </div>
+
+                      {/* Active Campaign Progress */}
+                      {activeCampaign && activeCampaign.status === 'active' && (
+                        <div className="pt-3 border-t border-slate-800">
+                          <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest mb-2">Active Campaign Progress</p>
+                          <div className="h-2 bg-slate-800 rounded-full overflow-hidden mb-2">
+                            <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${Math.min(100, (activeCampaign.sentCount / activeCampaign.totalRecipients) * 100)}%` }} />
+                          </div>
+                          <p className="text-xs font-bold text-white">{activeCampaign.sentCount.toLocaleString()} / {activeCampaign.totalRecipients.toLocaleString()} sent</p>
+                          {activeCampaign.lastRange && <p className="text-[10px] text-slate-500 mt-1">Last batch: {activeCampaign.lastRange}</p>}
+                          <button
+                            onClick={async () => {
+                              if (!confirm('Start a new campaign? This will reset the "already sent" tracker so all recipients become eligible again.')) return;
+                              const { updateDoc: uDoc, doc: dRef } = await import('firebase/firestore');
+                              await uDoc(dRef(db, 'marketing_campaigns', activeCampaign.id), { status: 'completed' });
+                              setActiveCampaign(null);
+                            }}
+                            className="mt-3 w-full py-2 bg-amber-500/20 border border-amber-500/30 text-amber-400 text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-amber-500/30 transition-all"
+                          >
+                            ↻ New Campaign (Reset Sent Tracker)
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                    );
+                  })()}
                 </div>
               </div>
               )}
