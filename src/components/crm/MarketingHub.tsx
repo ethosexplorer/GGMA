@@ -908,27 +908,32 @@ export const MarketingHub = () => {
 
                           {/* Action buttons */}
                           <div className="flex gap-2 mt-3">
-                            {!isCurrentActive && remaining > 0 && (
+                            {remaining > 0 && (
                               <button
                                 onClick={async () => {
-                                  // If there's currently another active campaign, mark it completed first
-                                  if (activeCampaign && activeCampaign.id !== camp.id) {
-                                    await updateDoc(doc(db, 'marketing_campaigns', activeCampaign.id), { status: 'completed' });
+                                  // If this isn't the active campaign, switch to it
+                                  if (!isCurrentActive) {
+                                    if (activeCampaign && activeCampaign.id !== camp.id) {
+                                      await updateDoc(doc(db, 'marketing_campaigns', activeCampaign.id), { status: 'completed' });
+                                    }
+                                    await updateDoc(doc(db, 'marketing_campaigns', camp.id), { status: 'active' });
+                                    setActiveCampaign(camp);
                                   }
-                                  // Re-activate this campaign
-                                  await updateDoc(doc(db, 'marketing_campaigns', camp.id), { status: 'active' });
-                                  setActiveCampaign(camp);
-                                  // Pre-fill the composer with the campaign's subject
+                                  // Pre-fill the composer
                                   if (camp.subject) setSubject(camp.subject);
                                   setSendMode('broadcast');
+                                  // Scroll to top so they can see the composer + hit Launch
+                                  window.scrollTo({ top: 0, behavior: 'smooth' });
                                 }}
-                                className="flex-1 py-2 bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-black uppercase tracking-wider rounded-lg hover:bg-emerald-500/30 transition-all flex items-center justify-center gap-1.5"
+                                className={cn(
+                                  "flex-1 py-2.5 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all flex items-center justify-center gap-1.5",
+                                  isCurrentActive 
+                                    ? "bg-emerald-600 border border-emerald-500 text-white hover:bg-emerald-500 shadow-lg shadow-emerald-500/20" 
+                                    : "bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/30"
+                                )}
                               >
-                                <Send size={10} /> Resume ({Math.min(dailyLimit, remaining)} next)
+                                <Send size={10} /> {isCurrentActive ? `Send Next ${Math.min(dailyLimit, remaining)}` : `Resume (${Math.min(dailyLimit, remaining)} next)`}
                               </button>
-                            )}
-                            {isCurrentActive && (
-                              <p className="flex-1 py-2 text-center text-[10px] font-black text-emerald-400 uppercase tracking-wider">✓ Currently Active</p>
                             )}
                             {remaining === 0 && (
                               <p className="flex-1 py-2 text-center text-[10px] font-bold text-blue-400 uppercase tracking-wider">✅ Completed</p>
