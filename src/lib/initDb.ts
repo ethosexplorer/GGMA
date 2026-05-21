@@ -88,7 +88,32 @@ export const initDatabase = async () => {
           args: [item.n, item.t, item.g, item.net, item.s, item.c]
         });
       }
-    }    console.log("✅ Turso Database initialized: Created tables for all major modules.");
+    }    // 7. Platform Settings Table (Global News Ticker & Emergency Broadcasts)
+    await turso.execute(`
+      CREATE TABLE IF NOT EXISTS platform_settings (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL
+      )
+    `);
+
+    // Seed platform settings if not present
+    const settingsCheck = await turso.execute('SELECT COUNT(*) as count FROM platform_settings');
+    if (settingsCheck.rows[0].count === 0) {
+      const defaultSettings = [
+        { k: 'gghp_marquee_news', v: '🔴 BREAKING: DOJ Final Order — Medical Cannabis & FDA-Approved Products Moved to Schedule III (April 23, 2026) | ⚖️ DEA HEARING: Expedited administrative hearing on broader rescheduling begins JUNE 29, 2026 | 🚨 DEA: Synthetic cannabinoid HHC classified as illegal Schedule I substance | 💰 280E TAX RELIEF: Schedule III status allows medical cannabis businesses to deduct normal business expenses' },
+        { k: 'gghp_marquee_speed', v: 'medium' },
+        { k: 'gghp_platform_alert', v: '🚨 SYSTEM NOTICE: NATIONWIDE COMPLIANCE AUDIT IN PROGRESS • GLOBAL GREEN HYBRID PLATFORM (GGHP) • ALL SECTORS (GGMA/RIP/SINC) OPERATIONAL' },
+        { k: 'gghp_platform_alert_speed', v: 'fast' }
+      ];
+      for (const setting of defaultSettings) {
+        await turso.execute({
+          sql: 'INSERT INTO platform_settings (key, value) VALUES (?, ?)',
+          args: [setting.k, setting.v]
+        });
+      }
+    }
+
+    console.log("✅ Turso Database initialized: Created tables for all major modules.");
   } catch (error) {
     console.error("❌ Failed to initialize Turso tables:", error);
   }

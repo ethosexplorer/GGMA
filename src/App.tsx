@@ -69,6 +69,7 @@ const StateFactsPage = React.lazy(() => import('./pages/StateFactsPage').then(m 
 
 // --- Eagerly loaded utilities (small, needed immediately) ---
 import { initDatabase } from './lib/initDb';
+import { turso } from './lib/turso';
 import { LARRY_LEGAL_KNOWLEDGE } from './legalKnowledge';
 import { generateGeminiResponse } from './lib/gemini';
 import { captureContact } from './lib/contactCapture';
@@ -1282,86 +1283,53 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
   
   const [broadcastMsg, setBroadcastMsg] = useState('🚨 SYSTEM NOTICE: NATIONWIDE COMPLIANCE AUDIT IN PROGRESS • GLOBAL GREEN HYBRID PLATFORM (GGHP) • ALL SECTORS (GGMA/RIP/SINC) OPERATIONAL');
   const [broadcastSpeed, setBroadcastSpeed] = useState('fast');
-  
-    const [inTheKnowNews, setInTheKnowNews] = useState([
-      '🔴 BREAKING: DOJ Final Order — Medical Cannabis & FDA-Approved Products Moved to Schedule III (April 23, 2026)',
-      '⚖️ DEA HEARING: Expedited administrative hearing on broader marijuana rescheduling begins JUNE 29, 2026',
-      '🚨 DEA: Synthetic cannabinoid HHC classified as illegal Schedule I substance — NOT legal hemp',
-      '💰 280E TAX RELIEF: Schedule III status allows medical cannabis businesses to deduct normal business expenses',
-      '📋 NORTH CAROLINA: Advisory Council recommends lawmakers establish regulated marijuana market',
-      '🏛️ TEXAS: Judge issues temporary injunction allowing smokable hemp THCA flower sales through July 27',
-      '🔬 UC SAN DIEGO STUDY: 24 million American adults report cannabis microdosing — published May 4, 2026',
-      '📈 NABIS acquires New Jersey cannabis distribution license — positioning for interstate commerce',
-      '⚠️ INDUSTRY ALERT: Operators report confusion over DEA registration paperwork requiring disclosure of past activity',
-      '🌿 CALIFORNIA: Dept. of Cannabis Control streamlines license transition process for new federal landscape',
-      '📊 GGP-OS PLATFORM: Sylara AI processed 50,000+ compliance checks this hour across 50 states',
-    ]);
-
-    useEffect(() => {
-      const fetchNews = async () => {
-        try {
-          // Live API Scraping for hottest hourly news
-          const query = jurisdiction ? encodeURIComponent(`${jurisdiction} (marijuana OR cannabis)`) : 'marijuana OR cannabis';
-          const res = await fetch(`https://www.reddit.com/search.json?q=${query}&sort=hot&limit=5`);
-          const json = await res.json();
-          if (json?.data?.children?.length > 0) {
-            const livePosts = json.data.children
-              .filter((child: any) => !child.data.over_18)
-              .map((child: any) => `🔴 LIVE NEWS: ${child.data.title.substring(0, 80)}...`);
-            setInTheKnowNews((prev) => [...livePosts, ...prev.slice(0, 3)]);
-          }
-        } catch (err) {
-          console.error('Failed to auto-scrape news:', err);
-        }
-      };
-      fetchNews();
-      const interval = setInterval(fetchNews, 3600000); // Scrape hourly
-      return () => clearInterval(interval);
-    }, [jurisdiction]);
-
-
-  useEffect(() => {
-    // Sync with Founder's Emergency Broadcast
-    const syncAlert = () => {
-      const savedAlert = localStorage.getItem('gghp_platform_alert');
-      if (savedAlert) setBroadcastMsg(savedAlert);
-      
-      const savedAlertSpeed = localStorage.getItem('gghp_platform_alert_speed');
-      if (savedAlertSpeed) setBroadcastSpeed(savedAlertSpeed);
-    };
-    syncAlert();
-    window.addEventListener('storage', syncAlert);
-    const interval = setInterval(syncAlert, 1000); // Polling for demo
-    return () => {
-      window.removeEventListener('storage', syncAlert);
-      clearInterval(interval);
-    };
-  }, []);
-
+  const [inTheKnowNews, setInTheKnowNews] = useState<string[]>([
+    '🔴 BREAKING: DOJ Final Order — Medical Cannabis & FDA-Approved Products Moved to Schedule III (April 23, 2026)',
+    '⚖️ DEA HEARING: Expedited administrative hearing on broader marijuana rescheduling begins JUNE 29, 2026',
+    '🚨 DEA: Synthetic cannabinoid HHC classified as illegal Schedule I substance — NOT legal hemp',
+    '💰 280E TAX RELIEF: Schedule III status allows medical cannabis businesses to deduct normal business expenses',
+    '📋 NORTH CAROLINA: Advisory Council recommends lawmakers establish regulated marijuana market',
+    '🏛️ TEXAS: Judge issues temporary injunction allowing smokable hemp THCA flower sales through July 27',
+    '🔬 UC SAN DIEGO STUDY: 24 million American adults report cannabis microdosing — published May 4, 2026',
+    '📈 NABIS acquires New Jersey cannabis distribution license — positioning for interstate commerce',
+    '⚠️ INDUSTRY ALERT: Operators report confusion over DEA registration paperwork requiring disclosure of past activity',
+    '🌿 CALIFORNIA: Dept. of Cannabis Control streamlines license transition process for new federal landscape',
+    '📊 GGP-OS PLATFORM: Sylara AI processed 50,000+ compliance checks this hour across 50 states',
+  ]);
   const [marqueeSpeed, setMarqueeSpeed] = useState('medium');
 
   useEffect(() => {
-    // Sync with "In The Know" ticker from founder dashboard
-    const syncMarquee = () => {
-      const savedNews = localStorage.getItem('gghp_marquee_news');
-      if (savedNews) {
-        try {
-          const parsed = JSON.parse(savedNews);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-             setInTheKnowNews(parsed);
+    const syncPlatformSettings = async () => {
+      try {
+        const res = await turso.execute('SELECT key, value FROM platform_settings');
+        if (res.rows && res.rows.length > 0) {
+          let customNews: string[] = [];
+          res.rows.forEach((row: any) => {
+            const val = row.value;
+            if (row.key === 'gghp_platform_alert') {
+              setBroadcastMsg(val);
+            } else if (row.key === 'gghp_platform_alert_speed') {
+              setBroadcastSpeed(val);
+            } else if (row.key === 'gghp_marquee_news') {
+              if (val) {
+                customNews = val.split('|').map((s: string) => s.trim()).filter(Boolean);
+              }
+            } else if (row.key === 'gghp_marquee_speed') {
+              setMarqueeSpeed(val);
+            }
+          });
+          if (customNews.length > 0) {
+            setInTheKnowNews(customNews);
           }
-        } catch(e) {}
+        }
+      } catch (err) {
+        console.error('Failed to sync platform settings from Turso:', err);
       }
-      const savedSpeed = localStorage.getItem('gghp_marquee_speed');
-      if (savedSpeed) setMarqueeSpeed(savedSpeed);
     };
-    syncMarquee();
-    window.addEventListener('storage', syncMarquee);
-    const interval = setInterval(syncMarquee, 1000);
-    return () => {
-      window.removeEventListener('storage', syncMarquee);
-      clearInterval(interval);
-    };
+
+    syncPlatformSettings();
+    const interval = setInterval(syncPlatformSettings, 3000); // Sync every 3 seconds
+    return () => clearInterval(interval);
   }, []);
 
   return (

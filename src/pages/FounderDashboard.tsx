@@ -771,6 +771,33 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     return () => { unsub1(); unsub2(); unsub3(); };
   }, []);
 
+  // Sync platform settings (Emergency Broadcast & News Ticker) from Turso on mount
+  useEffect(() => {
+    const fetchPlatformSettings = async () => {
+      try {
+        const { turso } = await import('../lib/turso');
+        const res = await turso.execute('SELECT key, value FROM platform_settings');
+        if (res.rows && res.rows.length > 0) {
+          res.rows.forEach((row: any) => {
+            const val = row.value;
+            if (row.key === 'gghp_platform_alert') {
+              setBroadcastMsg(val);
+            } else if (row.key === 'gghp_platform_alert_speed') {
+              setLocalBroadcastSpeed(val);
+            } else if (row.key === 'gghp_marquee_news') {
+              setMarqueeNewsText(val);
+            } else if (row.key === 'gghp_marquee_speed') {
+              setLocalMarqueeSpeed(val);
+            }
+          });
+        }
+      } catch (err) {
+        console.error('Failed to load settings in Founder Dashboard:', err);
+      }
+    };
+    fetchPlatformSettings();
+  }, []);
+
   const handleRouteAlert = (id: string | number) => {
     setActiveTab('support_tickets');
   };
@@ -779,7 +806,27 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     localStorage.setItem('gghp_platform_alert', broadcastMsg);
     localStorage.setItem('gghp_platform_alert_speed', localBroadcastSpeed);
     window.dispatchEvent(new Event('storage'));
-    (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Broadcast Pushed Globally" })] }).catch(console.error) ); alert("Broadcast Pushed Globally\n\n[Live Production Transaction Logged]"); })();
+
+    import('../lib/turso').then(async ({ turso }) => {
+      try {
+        await turso.execute({
+          sql: "INSERT INTO platform_settings (key, value) VALUES ('gghp_platform_alert', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+          args: [broadcastMsg]
+        });
+        await turso.execute({
+          sql: "INSERT INTO platform_settings (key, value) VALUES ('gghp_platform_alert_speed', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+          args: [localBroadcastSpeed]
+        });
+        await turso.execute({
+          sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)",
+          args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Broadcast Pushed Globally" })]
+        });
+        alert("Broadcast Pushed Globally!\n\n[Live Production Transaction Logged]");
+      } catch (err) {
+        console.error(err);
+        alert("Error saving broadcast settings to database: " + err);
+      }
+    });
   };
 
     const renderVault = () => (
@@ -1157,10 +1204,30 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                   </div>
                   <button 
                     onClick={() => {
-                      localStorage.setItem('gghp_marquee_news', JSON.stringify(marqueeNewsText.split('|').map(s => s.trim())));
-                      localStorage.setItem('gghp_marquee_speed', localMarqueeSpeed);
-                      window.dispatchEvent(new Event('storage'));
-                      (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Green Scroll Ticker Updated Globally!" })] }).catch(console.error) ); alert("Green Scroll Ticker Updated Globally!\n\n[Live Production Transaction Logged]"); })();
+                       localStorage.setItem('gghp_marquee_news', JSON.stringify(marqueeNewsText.split('|').map(s => s.trim())));
+                       localStorage.setItem('gghp_marquee_speed', localMarqueeSpeed);
+                       window.dispatchEvent(new Event('storage'));
+
+                       import('../lib/turso').then(async ({ turso }) => {
+                        try {
+                          await turso.execute({
+                            sql: "INSERT INTO platform_settings (key, value) VALUES ('gghp_marquee_news', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+                            args: [marqueeNewsText]
+                          });
+                          await turso.execute({
+                            sql: "INSERT INTO platform_settings (key, value) VALUES ('gghp_marquee_speed', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+                            args: [localMarqueeSpeed]
+                          });
+                          await turso.execute({
+                            sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)",
+                            args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Green Scroll Ticker Updated Globally!" })]
+                          });
+                          alert("Green Scroll Ticker Updated Globally!\n\n[Live Production Transaction Logged]");
+                        } catch (err) {
+                          console.error(err);
+                          alert("Error updating scroll settings: " + err);
+                        }
+                      });
                     }}
                     className="px-8 py-4 bg-emerald-600 text-white rounded-2xl font-black hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-600/20 active:scale-95 h-14 self-end"
                   >
