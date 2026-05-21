@@ -285,7 +285,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           }))
         });
 
-        // Fetch Jurisdiction Stats (mocking compliance and revenue based on real user counts for now until those tables exist)
+        // Fetch Jurisdiction Stats — real compliance scores + revenue from DB
         const jPatients = await turso.execute('SELECT state, COUNT(*) as c FROM patients GROUP BY state');
         const jBiz = await turso.execute('SELECT state, COUNT(*) as c FROM businesses GROUP BY state');
         
@@ -296,16 +296,35 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           const revByState = await turso.execute('SELECT p.state, SUM(CAST(REPLACE(REPLACE(fl.gross_revenue, "$", ""), ",", "") AS REAL)) as rev FROM founder_ledger fl LEFT JOIN patients p ON fl.patient_id = p.id GROUP BY p.state');
           revByState.rows.forEach(r => { if (r.state) stateRevenue[String(r.state)] = Number(r.rev) || 0; });
         } catch(e) { /* revenue query may fail if schema differs */ }
-        
+
+        // Compliance: avg compliance_score from businesses per state + penalty for unresolved alerts
+        let stateCompliance: Record<string, number> = {};
+        try {
+          const compRes = await turso.execute('SELECT state, AVG(compliance_score) as avg_score FROM businesses WHERE state IS NOT NULL GROUP BY state');
+          compRes.rows.forEach(r => { if (r.state) stateCompliance[String(r.state)] = Math.round(Number(r.avg_score) || 100); });
+        } catch(e) { /* compliance_score column may not exist yet */ }
+        // Subtract penalty for unresolved compliance alerts per state
+        try {
+          const alertRes = await turso.execute('SELECT e.state, COUNT(*) as cnt FROM compliance_alerts ca JOIN entities e ON ca.entity_id = e.id WHERE ca.is_resolved = 0 GROUP BY e.state');
+          alertRes.rows.forEach(r => {
+            const st = String(r.state);
+            const penalty = Math.min(Number(r.cnt) * 5, 30); // up to -30 for unresolved alerts
+            stateCompliance[st] = Math.max(0, (stateCompliance[st] || 100) - penalty);
+          });
+        } catch(e) { /* compliance_alerts join may fail */ }
+
         jPatients.rows.forEach(r => {
           const st = String(r.state);
           const rev = stateRevenue[st] || 0;
-          stateMap[st] = { s: st, p: Number(r.c), d: 0, rev: rev, r: rev > 0 ? '$' + rev.toLocaleString() : '$0', up: rev > 0 };
+          const comp = stateCompliance[st] ?? 100;
+          stateMap[st] = { s: st, p: Number(r.c), d: 0, c: comp, rev: rev, r: rev > 0 ? '$' + rev.toLocaleString() : '$0', up: rev > 0 };
         });
         jBiz.rows.forEach(r => {
           const st = String(r.state);
-          if (!stateMap[st]) stateMap[st] = { s: st, p: 0, d: 0, rev: stateRevenue[st] || 0, r: (stateRevenue[st] || 0) > 0 ? '$' + (stateRevenue[st] || 0).toLocaleString() : '$0', up: (stateRevenue[st] || 0) > 0 };
+          const comp = stateCompliance[st] ?? 100;
+          if (!stateMap[st]) stateMap[st] = { s: st, p: 0, d: 0, c: comp, rev: stateRevenue[st] || 0, r: (stateRevenue[st] || 0) > 0 ? '$' + (stateRevenue[st] || 0).toLocaleString() : '$0', up: (stateRevenue[st] || 0) > 0 };
           stateMap[st].d = Number(r.c);
+          if (!stateMap[st].c) stateMap[st].c = comp;
         });
         
         setJurisdictionStats(Object.values(stateMap).sort((a,b) => (b.p + b.d) - (a.p + a.d)));
@@ -632,6 +651,13 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     }
     setIsHealthChecking(false);
   };
+
+  // Auto-run health checks for Network Health Pulse (every 30s)
+  useEffect(() => {
+    runCheck(); // initial check on mount
+    const hcInterval = setInterval(runCheck, 30000);
+    return () => clearInterval(hcInterval);
+  }, []);
 
   // Poll every 15 seconds for Ops Checks
   useEffect(() => {
@@ -1104,10 +1130,10 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {[
-          { label: 'Active States', value: '1', trend: 'OK', color: 'blue' },
-          { label: 'AI Sync Rate', value: '100%', trend: 'Optimal', color: 'emerald' },
-          { label: 'Law Enforcement Units', value: '0', trend: 'Live', color: 'red' },
-          { label: 'Patient Certificates', value: liveStats.totalUsers, trend: 'Verified', color: 'indigo' },
+          { label: 'Active States', value: jurisdictionStats.length > 0 ? jurisdictionStats.length.toString() : '0', trend: jurisdictionStats.length > 0 ? 'Live' : 'Awaiting data', color: 'blue' },
+          { label: 'AI Sync Rate', value: liveAnalytics.users > 0 || liveAnalytics.clicks > 0 ? '100%' : '—', trend: liveAnalytics.users > 0 ? 'Optimal' : 'Idle', color: 'emerald' },
+          { label: 'Compliance Alerts', value: jurisdictionStats.reduce((a: number, r: any) => a + (r.c < 100 ? 1 : 0), 0).toString(), trend: jurisdictionStats.every((r: any) => r.c >= 95) ? 'All Clear' : 'Needs Review', color: 'red' },
+          { label: 'Total Registrations', value: liveStats.totalUsers, trend: 'Patients + Businesses', color: 'indigo' },
         ].map((stat, i) => (
           <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">{stat.label}</p>
@@ -1320,20 +1346,30 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
             <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-3"><Zap size={22} className="text-amber-500" /> Network Health Pulse</h3>
             <div className="flex-1 flex flex-col justify-between">
                <div className="h-40 flex items-end justify-between gap-1">
-                  {[30, 45, 35, 60, 55, 70, 65, 80, 85, 90, 85, 95].map((h, i) => (
-                     <div key={i} className="flex-1 bg-slate-100 rounded-full relative group">
-                        <div className="absolute bottom-0 w-full bg-emerald-500 rounded-full" style={{ height: `${h}%` }}></div>
-                     </div>
-                  ))}
+                  {(() => {
+                    const bars = healthHistory.length > 0
+                      ? healthHistory.slice(-12).map(h => {
+                          if (h.status === 'healthy') return Math.max(70, Math.min(100, 100 - Math.round(h.avgLatency / 10)));
+                          if (h.status === 'degraded') return Math.max(30, Math.min(69, 70 - Math.round(h.avgLatency / 20)));
+                          return Math.max(10, 30 - Math.round(h.avgLatency / 50));
+                        })
+                      : Array(12).fill(healthReport ? (healthReport.overallStatus === 'healthy' ? 85 : 50) : 0);
+                    while (bars.length < 12) bars.unshift(0);
+                    return bars.map((h: number, i: number) => (
+                      <div key={i} className="flex-1 bg-slate-100 rounded-full relative group">
+                        <div className={`absolute bottom-0 w-full rounded-full ${h >= 70 ? 'bg-emerald-500' : h >= 40 ? 'bg-amber-500' : h > 0 ? 'bg-red-500' : 'bg-slate-200'}`} style={{ height: `${h}%` }}></div>
+                      </div>
+                    ));
+                  })()}
                </div>
                <div className="mt-6 pt-6 border-t border-slate-200 space-y-4">
                   <div className="flex justify-between items-center">
-                     <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Sylara AI Response</span>
-                     <span className="text-sm font-black text-emerald-600">—</span>
+                     <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Avg Latency</span>
+                     <span className={`text-sm font-black ${healthReport?.avgLatencyMs < 500 ? 'text-emerald-600' : 'text-amber-600'}`}>{healthReport ? `${Math.round(healthReport.avgLatencyMs)}ms` : '—'}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                     <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Care Wallet Throughput</span>
-                     <span className="text-sm font-black text-blue-600">—</span>
+                     <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">System Status</span>
+                     <span className={`text-sm font-black ${healthReport?.overallStatus === 'healthy' ? 'text-emerald-600' : healthReport?.overallStatus === 'degraded' ? 'text-amber-600' : healthReport ? 'text-red-600' : 'text-slate-400'}`}>{healthReport ? healthReport.overallStatus.charAt(0).toUpperCase() + healthReport.overallStatus.slice(1) : '—'}</span>
                   </div>
                </div>
             </div>
