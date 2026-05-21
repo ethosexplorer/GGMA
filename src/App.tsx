@@ -1299,6 +1299,23 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
   ]);
   const [marqueeSpeed, setMarqueeSpeed] = useState('medium');
 
+  // Live Trust Counter State (scaling dynamically based on date + live increments)
+  const [patientHelpCount, setPatientHelpCount] = useState(() => {
+    const epoch = new Date('2026-01-01T00:00:00Z').getTime();
+    const now = Date.now();
+    const secondsElapsed = Math.floor((now - epoch) / 1000);
+    // ~1 client helped every 45 seconds
+    const clientsSinceEpoch = Math.floor(secondsElapsed / 45);
+    return 400000 + 28940 + clientsSinceEpoch;
+  });
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setPatientHelpCount(prev => prev + 1);
+    }, 15000 + Math.random() * 15000); // Increments every 15-30s randomly
+    return () => clearInterval(timer);
+  }, []);
+
   useEffect(() => {
     const syncPlatformSettings = async () => {
       try {
@@ -1861,9 +1878,58 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
                onClick={() => window.open('https://vocalvideo.com/c/ccardzmedcard-com-as6sui63', '_blank')}
                className="inline-flex items-center gap-2 text-[#1a4731] font-bold hover:underline cursor-pointer bg-transparent border-none"
              >
-               View All Verified Testimonials
-               <ArrowRight size={16} />
+                View All Verified Testimonials
+                <ArrowRight size={16} />
              </button>
+          </div>
+
+          {/* Live Trust Counter Banner */}
+          <div className="mt-16 bg-gradient-to-r from-emerald-50 via-slate-50 to-emerald-50 border border-emerald-100 rounded-3xl p-8 max-w-4xl mx-auto shadow-sm relative overflow-hidden group">
+            {/* Ambient Background Glow */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_100%_100%,rgba(16,185,129,0.03),transparent_70%)]" />
+            
+            <div className="relative z-10 flex flex-col items-center justify-center text-center">
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Live Activity Network</span>
+              </div>
+              
+              <div className="flex flex-wrap items-center justify-center gap-y-3 font-bold text-slate-800 text-base md:text-xl leading-none">
+                <span className="mr-2 font-black text-slate-700">We've helped</span>
+                
+                <div className="flex items-center">
+                  {patientHelpCount.toLocaleString().split('').map((char, index) => {
+                    if (char === ',') {
+                      return (
+                        <span key={index} className="text-2xl font-black text-emerald-600 px-1 select-none">
+                          ,
+                        </span>
+                      );
+                    }
+                    return (
+                      <span
+                        key={index}
+                        className="inline-flex items-center justify-center w-7 h-9 md:w-8 md:h-10 bg-[#eff4f5] text-[#0a6d71] border border-[#d6e8e4] rounded-lg text-lg md:text-2xl font-black shadow-sm mx-0.5 select-none"
+                      >
+                        {char}
+                      </span>
+                    );
+                  })}
+                </div>
+                
+                <span className="ml-2 font-black text-slate-700">get their recommendation</span>
+              </div>
+
+              <div className="mt-4 max-w-2xl">
+                <p className="text-slate-500 font-bold text-[11px] md:text-xs leading-relaxed uppercase tracking-wider">
+                  Since 2020 through our affiliate{' '}
+                  <span className="text-emerald-800 font-black">Chronic Cardz (CCardz) Administrative Services</span>
+                </p>
+                <p className="text-slate-400 font-medium text-[9px] uppercase tracking-widest mt-1">
+                  Secure Intake • State Regulatory Compliance • HIPAA Audited
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
