@@ -1283,6 +1283,7 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
   
   const [broadcastMsg, setBroadcastMsg] = useState('🚨 SYSTEM NOTICE: NATIONWIDE COMPLIANCE AUDIT IN PROGRESS • GLOBAL GREEN HYBRID PLATFORM (GGHP) • ALL SECTORS (GGMA/RIP/SINC) OPERATIONAL');
   const [broadcastSpeed, setBroadcastSpeed] = useState('fast');
+  const [broadcastType, setBroadcastType] = useState('Urgent Alert (Red)');
   const [inTheKnowNews, setInTheKnowNews] = useState<string[]>([
     '🔴 BREAKING: DOJ Final Order — Medical Cannabis & FDA-Approved Products Moved to Schedule III (April 23, 2026)',
     '⚖️ DEA HEARING: Expedited administrative hearing on broader marijuana rescheduling begins JUNE 29, 2026',
@@ -1310,6 +1311,8 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
               setBroadcastMsg(val);
             } else if (row.key === 'gghp_platform_alert_speed') {
               setBroadcastSpeed(val);
+            } else if (row.key === 'gghp_platform_alert_type') {
+              setBroadcastType(val);
             } else if (row.key === 'gghp_marquee_news') {
               if (val) {
                 customNews = val.split('|').map((s: string) => s.trim()).filter(Boolean);
@@ -1335,7 +1338,13 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
   return (
     <div className="min-h-screen bg-slate-50 overflow-x-hidden">
       {/* URGENT PLATFORM ALERT TICKER */}
-      <div className="bg-red-600 text-white py-2 overflow-hidden whitespace-nowrap border-b border-red-700 relative z-[60]">
+      <div className={`${
+        broadcastType === 'Info Ticker (Green)' 
+          ? 'bg-emerald-950 text-emerald-300 border-b border-emerald-900/30' 
+          : broadcastType === 'Success Blast (Emerald)' 
+          ? 'bg-emerald-600 text-white border-b border-emerald-700' 
+          : 'bg-red-600 text-white border-b border-red-700'
+      } py-2 overflow-hidden whitespace-nowrap relative z-[60]`}>
         <div className={`inline-block animate-marquee-${broadcastSpeed} font-black text-sm uppercase tracking-widest`}>
           {broadcastMsg} &nbsp; • &nbsp; {broadcastMsg} &nbsp; • &nbsp; {broadcastMsg}
         </div>

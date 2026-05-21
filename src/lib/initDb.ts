@@ -103,7 +103,8 @@ export const initDatabase = async () => {
         { k: 'gghp_marquee_news', v: '🔴 BREAKING: DOJ Final Order — Medical Cannabis & FDA-Approved Products Moved to Schedule III (April 23, 2026) | ⚖️ DEA HEARING: Expedited administrative hearing on broader rescheduling begins JUNE 29, 2026 | 🚨 DEA: Synthetic cannabinoid HHC classified as illegal Schedule I substance | 💰 280E TAX RELIEF: Schedule III status allows medical cannabis businesses to deduct normal business expenses' },
         { k: 'gghp_marquee_speed', v: 'medium' },
         { k: 'gghp_platform_alert', v: '🚨 SYSTEM NOTICE: NATIONWIDE COMPLIANCE AUDIT IN PROGRESS • GLOBAL GREEN HYBRID PLATFORM (GGHP) • ALL SECTORS (GGMA/RIP/SINC) OPERATIONAL' },
-        { k: 'gghp_platform_alert_speed', v: 'fast' }
+        { k: 'gghp_platform_alert_speed', v: 'fast' },
+        { k: 'gghp_platform_alert_type', v: 'Urgent Alert (Red)' }
       ];
       for (const setting of defaultSettings) {
         await turso.execute({

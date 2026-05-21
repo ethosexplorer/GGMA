@@ -784,6 +784,8 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
               setBroadcastMsg(val);
             } else if (row.key === 'gghp_platform_alert_speed') {
               setLocalBroadcastSpeed(val);
+            } else if (row.key === 'gghp_platform_alert_type') {
+              setBroadcastType(val);
             } else if (row.key === 'gghp_marquee_news') {
               setMarqueeNewsText(val);
             } else if (row.key === 'gghp_marquee_speed') {
@@ -805,6 +807,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   const handleBroadcast = () => {
     localStorage.setItem('gghp_platform_alert', broadcastMsg);
     localStorage.setItem('gghp_platform_alert_speed', localBroadcastSpeed);
+    localStorage.setItem('gghp_platform_alert_type', broadcastType);
     window.dispatchEvent(new Event('storage'));
 
     import('../lib/turso').then(async ({ turso }) => {
@@ -816,6 +819,10 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         await turso.execute({
           sql: "INSERT INTO platform_settings (key, value) VALUES ('gghp_platform_alert_speed', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
           args: [localBroadcastSpeed]
+        });
+        await turso.execute({
+          sql: "INSERT INTO platform_settings (key, value) VALUES ('gghp_platform_alert_type', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+          args: [broadcastType]
         });
         await turso.execute({
           sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)",
