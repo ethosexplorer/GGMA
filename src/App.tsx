@@ -1544,8 +1544,18 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
           <RegulatoryFeedWidget jurisdiction={jurisdiction} />
         </div>
       </section>
-
-
+      {/* Community Voice / Polls Section */}
+      <section className="py-16 bg-white border-b border-slate-200">
+        <div className="max-w-4xl mx-auto px-6">
+          <div className="text-center mb-8">
+            <h3 className="text-2xl font-black text-slate-800 tracking-tight flex items-center justify-center gap-2">
+              🗳️ Community Voice & Insights
+            </h3>
+            <p className="text-sm text-slate-500 mt-1">Shape the future of ethical cannabis and check how your views align with our community</p>
+          </div>
+          <RevolvingSurveyBanner />
+        </div>
+      </section>
 
       {/* Partners & Paid Advertisements */}
       <section className="py-20 border-t border-slate-100 bg-slate-50/30">

@@ -42,6 +42,110 @@ interface Poll {
 
 // ─── Poll Data ───
 const POLLS: Poll[] = [
+  // ─── 💡 GGHP PLATFORM & SERVICES POLLS (HIGH-PRIORITY MARKETING) ───
+  {
+    id: 'gghp_larry_ai',
+    category: 'education',
+    question: '🤖 How much time does your team spend tracking shifting cannabis laws and regulations every week?',
+    subtitle: 'With state rules changing constantly, compliance errors are the #1 cause of license suspension. Global Green\'s L.A.R.R.Y AI scans regulatory updates in real time.',
+    icon: <Sparkles size={20} />,
+    color: 'emerald',
+    bgGradient: 'from-emerald-600 to-emerald-800',
+    didYouKnow: 'L.A.R.R.Y AI performs 10,000+ legislative scans daily, mapping state rules to your specific business tasks so you never miss a compliance deadline.',
+    actionItem: 'Try L.A.R.R.Y AI today to audit your current state-level compliance instantly.',
+    options: [
+      { id: 'too_much', label: '10+ hours — it is a full-time job', emoji: '⏳', votes: 1420 },
+      { id: 'some_time', label: '3-9 hours — hard to keep up', emoji: '📖', votes: 2310 },
+      { id: 'automated', label: 'We use AI/automated tools already', emoji: '🤖', votes: 840 },
+      { id: 'not_enough', label: 'We struggle to find time / ignore it', emoji: '⚠️', votes: 1105 },
+    ]
+  },
+  {
+    id: 'gghp_med_card_cost',
+    category: 'healing',
+    question: '⚕️ How much did you pay for your last medical cannabis card evaluation or renewal?',
+    subtitle: 'High evaluation fees prevent patients from accessing legal medicine. Global Green offers evaluations for only $45 ($35 doctor consultation + $10 processing).',
+    icon: <Heart size={20} />,
+    color: 'emerald',
+    bgGradient: 'from-emerald-500 to-teal-600',
+    didYouKnow: 'The average medical card consultation in the US costs $125-$200. Global Green\'s $45 flat rate saves patients over 65% on licensing.',
+    actionItem: 'Schedule your $45 Telehealth consultation with our licensed physicians today.',
+    options: [
+      { id: 'over_150', label: 'More than $150', emoji: '💸', votes: 3105 },
+      { id: '100_150', label: '$100 to $150', emoji: '💰', votes: 2450 },
+      { id: '50_100', label: '$50 to $99', emoji: '💵', votes: 1205 },
+      { id: 'under_50', label: 'Under $50 (using Global Green)', emoji: '💚', votes: 890 },
+    ]
+  },
+  {
+    id: 'gghp_care_wallet',
+    category: 'lifestyle',
+    question: '💳 Would you use a dedicated "Care Wallet" that earns you reward points on health and compliance expenses?',
+    subtitle: 'Our integrated Care Wallet lets you store funds securely, pay state fees, and earn Care Points redeemable for physician consultations.',
+    icon: <Leaf size={20} />,
+    color: 'emerald',
+    bgGradient: 'from-teal-500 to-emerald-700',
+    didYouKnow: 'Care Points can be earned by participating in community polls, maintaining compliance, and purchasing health services. They function like ethical cash-back.',
+    actionItem: 'Open your free Care Wallet in the Patient Portal to start earning reward points.',
+    options: [
+      { id: 'love_it', label: 'Yes — I love reward points for health', emoji: '🎉', votes: 4120 },
+      { id: 'interested', label: 'Interested, if easy to use', emoji: '📱', votes: 2980 },
+      { id: 'cash_only', label: 'I prefer traditional payment methods', emoji: '💵', votes: 650 },
+      { id: 'unsure', label: 'Need to see how it works first', emoji: '🤔', votes: 1200 },
+    ]
+  },
+  {
+    id: 'gghp_c3_score',
+    category: 'support',
+    question: '⚖️ Do you support having a transparent "C³ Score" (Compassion, Compliance & Community) to verify ethical operators?',
+    subtitle: 'The C³ framework measures regulatory adherence and ethical community contributions, helping patients identify the highest-quality providers.',
+    icon: <Shield size={20} />,
+    color: 'emerald',
+    bgGradient: 'from-emerald-700 to-indigo-900',
+    didYouKnow: 'Dispensaries and cultivators with high C³ scores receive featured placement on Global Green and discounts on compliance auditing tools.',
+    actionItem: 'Look up your local dispensary\'s C³ Score on our Global Green Directory.',
+    options: [
+      { id: 'highly_support', label: 'Highly support — we need standards', emoji: '🌟', votes: 3420 },
+      { id: 'good_concept', label: 'Good concept, depends on criteria', emoji: '📈', votes: 2150 },
+      { id: 'not_needed', label: 'State inspections are enough', emoji: '🏛️', votes: 530 },
+      { id: 'prefer_reviews', label: 'I rely on standard online reviews', emoji: '⭐', votes: 890 },
+    ]
+  },
+  {
+    id: 'gghp_regsweep',
+    category: 'business',
+    question: '🔍 How confident are you that your cannabis business would pass a surprise state compliance audit?',
+    subtitle: 'METRC mismatches, inventory variances, and paperwork errors lead to thousands of fines. GGHP\'s RegSweep automatically audits your logs daily.',
+    icon: <BarChart3 size={20} />,
+    color: 'emerald',
+    bgGradient: 'from-blue-900 to-emerald-950',
+    didYouKnow: 'GGHP\'s RegSweep scans daily seed-to-sale logs and flags inventory discrepancies within minutes, preventing costly state fines.',
+    actionItem: 'Request a free demo of our RegSweep daily audit automation for your grow or dispensary.',
+    options: [
+      { id: 'very_confident', label: '100% confident — we are airtight', emoji: '🛡️', votes: 1100 },
+      { id: 'nervous', label: 'Nervous — there are always minor errors', emoji: '😟', votes: 2430 },
+      { id: 'struggle', label: 'We struggle with METRC reconciliation', emoji: '📊', votes: 1850 },
+      { id: 'dont_know', label: 'I do not run a business / I am a patient', emoji: '👤', votes: 3120 },
+    ]
+  },
+  {
+    id: 'gghp_support_channel',
+    category: 'support',
+    question: '💬 What is your preferred way to contact support when managing your medical license or business compliance?',
+    subtitle: 'Global Green features instant iMessage support (+1 645-246-8277) alongside our premium toll-free voice line (1-888-963-4447).',
+    icon: <MessageCircle size={20} />,
+    color: 'emerald',
+    bgGradient: 'from-blue-600 to-emerald-800',
+    didYouKnow: 'Over 70% of patient inquiries on Global Green are resolved in under 5 minutes using our direct-to-agent iMessage support channel.',
+    actionItem: 'Add our iMessage Support Line (+1 645-246-8277) to your contacts for instant direct help.',
+    options: [
+      { id: 'imessage', label: 'iMessage / SMS text support', emoji: '💬', votes: 3890 },
+      { id: 'phone_call', label: 'Toll-free voice call (888)', emoji: '📞', votes: 2100 },
+      { id: 'email_support', label: 'Traditional email support', emoji: '✉️', votes: 940 },
+      { id: 'live_chat', label: 'On-site web chat widget', emoji: '💻', votes: 1650 },
+    ]
+  },
+
   // ─── 🚨 BREAKING NEWS POLLS (FIRST) ───
   { id: 'federal_reschedule', category: 'legal', question: '🚨 BREAKING: Cannabis rescheduled from Schedule I to Schedule III — What does this mean for Oklahoma?', subtitle: 'The federal government has officially moved marijuana from Schedule I (alongside heroin) to Schedule III. OBN Director Donnie Anderson says this "opens opportunities for tax breaks and banking options."', icon: <Zap size={20} />, color: 'red', bgGradient: 'from-red-600 to-rose-800', didYouKnow: 'Schedule III means cannabis businesses will NO LONGER be penalized under IRS Code 280E — which previously prevented them from deducting normal business expenses. This could save Oklahoma businesses $50M+ annually.', actionItem: 'Contact your representative to support the SAFE Banking Act — which would give cannabis businesses full access to banking services alongside rescheduling.', deadline: 'SAFE Banking vote expected: Summer 2026', options: [
     { id: 'game_changer', label: 'Game changer — finally legitimate', emoji: '🎉', votes: 4567 },
