@@ -122,6 +122,27 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
 export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, setMarqueeNews, marqueeSpeed, setMarqueeSpeed }: { onLogout?: () => void | Promise<void>, user?: any, jurisdiction?: any, marqueeNews?: string[], setMarqueeNews?: any, marqueeSpeed?: string, setMarqueeSpeed?: any }) => {
   const emailLower = user?.email?.toLowerCase() || '';
   const displayNameLower = user?.displayName?.toLowerCase() || '';
+
+  const insertEmoji = (inputId: string, emoji: string, getValue: string, setValue: (val: string) => void) => {
+    const input = document.getElementById(inputId) as HTMLInputElement;
+    if (input) {
+      const start = input.selectionStart ?? getValue.length;
+      const end = input.selectionEnd ?? getValue.length;
+      const textBefore = getValue.substring(0, start);
+      const textAfter = getValue.substring(end);
+      const newValue = textBefore + emoji + textAfter;
+      
+      setValue(newValue);
+      
+      setTimeout(() => {
+        input.focus();
+        const newCursorPos = start + emoji.length;
+        input.setSelectionRange(newCursorPos, newCursorPos);
+      }, 0);
+    } else {
+      setValue(getValue + emoji);
+    }
+  };
   
   const isMonica = emailLower.includes('compliance.globalgreenhp') || emailLower.includes('monica') || displayNameLower.includes('monica') || user?.role === 'chief_compliance_director';
   const isRyan = emailLower.includes('ceo.globalgreenhp') || user?.role === 'president';
@@ -1130,7 +1151,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                         <button
                           key={emoji}
                           type="button"
-                          onClick={() => setBroadcastMsg(prev => prev + ' ' + emoji)}
+                          onClick={() => insertEmoji('emergency-broadcast-input', emoji, broadcastMsg, setBroadcastMsg)}
                           className="px-1.5 py-0.5 bg-white hover:bg-red-50 border border-red-100 hover:border-red-300 rounded text-xs transition-all active:scale-90"
                         >
                           {emoji}
@@ -1138,12 +1159,13 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                       ))}
                     </div>
                   </div>
-                  <input 
-                    type="text" 
+                  <textarea 
+                    id="emergency-broadcast-input"
                     value={broadcastMsg}
                     onChange={(e) => setBroadcastMsg(e.target.value)}
                     placeholder="E.g., SYSTEM NOTICE: NATIONWIDE COMPLIANCE AUDIT IN PROGRESS..." 
-                    className="w-full px-6 py-4 bg-white border-2 border-red-100 rounded-2xl outline-none focus:border-red-500 font-bold text-red-900 shadow-inner"
+                    rows={3}
+                    className="w-full px-6 py-4 bg-white border-2 border-red-100 rounded-2xl outline-none focus:border-red-500 font-bold text-red-900 shadow-inner resize-none"
                   />
                </div>
                <div className="flex gap-3">
@@ -1207,7 +1229,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                          <button
                            key={emoji}
                            type="button"
-                           onClick={() => setMarqueeNewsText(prev => prev + ' ' + emoji)}
+                           onClick={() => insertEmoji('marquee-news-input', emoji, marqueeNewsText, setMarqueeNewsText)}
                            className="px-1.5 py-0.5 bg-white hover:bg-emerald-50 border border-emerald-100 hover:border-emerald-300 rounded text-xs transition-all active:scale-90"
                          >
                            {emoji}
@@ -1215,12 +1237,13 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                        ))}
                      </div>
                    </div>
-                  <input 
-                    type="text" 
+                  <textarea 
+                    id="marquee-news-input"
                     value={marqueeNewsText}
                     onChange={(e) => setMarqueeNewsText(e.target.value)}
                     placeholder="E.g., BREAKING NEWS | SYLARA AI SCANNED..." 
-                    className="w-full px-6 py-4 bg-white border-2 border-emerald-200 rounded-2xl outline-none focus:border-emerald-500 font-bold text-emerald-900 shadow-sm"
+                    rows={3}
+                    className="w-full px-6 py-4 bg-white border-2 border-emerald-200 rounded-2xl outline-none focus:border-emerald-500 font-bold text-emerald-900 shadow-sm resize-none"
                   />
                </div>
                <div className="flex gap-3">
