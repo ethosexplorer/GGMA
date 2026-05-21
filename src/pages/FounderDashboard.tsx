@@ -18,9 +18,10 @@ import { ExternalAdminDashboard } from './ExternalAdminDashboard';
 import { BackOfficeDashboard } from './BackOfficeDashboard';
 import { SubscriptionPortal } from '../components/SubscriptionPortal';
 import { InvestorSandboxTab } from '../components/founder/InvestorSandboxTab';
-import { LegislativeIntelTab } from '../components/federal/LegislativeIntelTab';
 import { JudicialMonitorTab } from '../components/federal/JudicialMonitorTab';
+import { LegislativeIntelTab } from '../components/federal/LegislativeIntelTab';
 import { VirtualAttendantTab } from '../components/oversight/VirtualAttendantTab';
+import { NationalEnforcementLedger } from '../components/federal/NationalEnforcementLedger';
 import { onSnapshot, collection, doc, updateDoc, query, where } from 'firebase/firestore';
 import { db } from '../firebase';
 import { METRC_MANUAL } from '../data/metrcManual';
@@ -1317,6 +1318,9 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           </div>
         ))}
       </div>
+
+      {/* Reusable National Regulatory & Enforcement Ledger */}
+      <NationalEnforcementLedger dark={false} />
 
       {/* 🌐 GLOBAL SEARCH ANALYTICS — Real data from analytics_events */}
       <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">

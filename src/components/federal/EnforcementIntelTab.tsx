@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, AlertCircle, Target, Zap, Search, Globe } from 'lucide-react';
+import { Shield, AlertCircle, Target, Zap } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { turso } from '../../lib/turso';
+import { NationalEnforcementLedger } from './NationalEnforcementLedger';
 
 const riskTargets = [
   { name: 'Midwest Cannabis Group', score: 87, states: 'MI, OH, IN', reason: 'Traceability breaks + volume anomaly', status: 'Active' },
@@ -20,56 +20,6 @@ const larryAlerts = [
 ];
 
 export const EnforcementIntelTab = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [stateFilter, setStateFilter] = useState('ALL');
-  const [results, setResults] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [recentAudits, setRecentAudits] = useState<any[]>([]);
-
-  useEffect(() => {
-    const fetchRecent = async () => {
-      try {
-        const res = await turso.execute('SELECT * FROM omma_enforcement_records ORDER BY created_at DESC LIMIT 5');
-        setRecentAudits(res.rows);
-      } catch (err) {
-        console.error('EnforcementIntelTab recent load error:', err);
-      }
-    };
-    fetchRecent();
-  }, []);
-
-  const handleSearch = async (queryStr: string, stateCode: string) => {
-    setSearchQuery(queryStr);
-    if (!queryStr.trim() && stateCode === 'ALL') {
-      setResults([]);
-      return;
-    }
-    setLoading(true);
-    try {
-      let sql = 'SELECT * FROM omma_enforcement_records WHERE 1=1';
-      const args: any[] = [];
-
-      if (queryStr.trim()) {
-        sql += ' AND (business_name LIKE ? OR dba LIKE ? OR license_number LIKE ?)';
-        const likeQuery = `%${queryStr}%`;
-        args.push(likeQuery, likeQuery, likeQuery);
-      }
-
-      if (stateCode !== 'ALL') {
-        sql += ' AND state = ?';
-        args.push(stateCode);
-      }
-
-      sql += ' LIMIT 20';
-      const res = await turso.execute({ sql, args });
-      setResults(res.rows);
-    } catch (err) {
-      console.error('National Intel Search error:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -87,132 +37,8 @@ export const EnforcementIntelTab = () => {
         ))}
       </div>
 
-      {/* GGMA National Regulatory Enforcement Database lookup */}
-      <div className="bg-[#0f1b2d] rounded-2xl border border-[#1e3a5f]/60 p-6 space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#1e3a5f]/30 pb-4">
-          <div>
-            <h3 className="text-lg font-bold text-white flex items-center gap-2">
-              <Globe size={18} className="text-blue-400" />
-              National Regulatory & Enforcement Ledger
-            </h3>
-            <p className="text-xs text-blue-300/50">
-              Aggregated historical registry of license suspensions, forfeitures, and regulatory outcomes.
-            </p>
-          </div>
-          <span className="text-[10px] font-black text-emerald-400 bg-emerald-950/60 border border-emerald-900/40 px-2.5 py-1 rounded-lg uppercase tracking-wider self-start md:self-center">
-            Realtime Sync Active
-          </span>
-        </div>
-
-        {/* Controls */}
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" size={16} />
-            <input
-              type="text"
-              placeholder="Search business, DBA, or license ID..."
-              value={searchQuery}
-              onChange={(e) => handleSearch(e.target.value, stateFilter)}
-              className="w-full bg-[#0a1628] border border-[#1e3a5f]/50 focus:border-blue-500 rounded-xl py-2.5 pl-10 pr-4 text-xs font-semibold outline-none text-white transition-all placeholder:text-slate-500"
-            />
-          </div>
-          <div className="sm:w-48 bg-[#0a1628] rounded-xl border border-[#1e3a5f]/50 flex items-center px-3">
-            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mr-2">State:</span>
-            <select
-              value={stateFilter}
-              className="flex-1 bg-transparent border-none text-xs font-bold text-white outline-none cursor-pointer py-2.5"
-              onChange={(e) => {
-                const val = e.target.value;
-                setStateFilter(val);
-                handleSearch(searchQuery, val);
-              }}
-            >
-              <option value="ALL" className="bg-[#0a1628]">All States</option>
-              <option value="OK" className="bg-[#0a1628]">Oklahoma (OK)</option>
-              <option value="MS" className="bg-[#0a1628]">Mississippi (MS)</option>
-              <option value="CA" className="bg-[#0a1628]">California (CA)</option>
-              <option value="TX" className="bg-[#0a1628]">Texas (TX)</option>
-              <option value="MO" className="bg-[#0a1628]">Missouri (MO)</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Results List */}
-        <div className="space-y-3">
-          {loading ? (
-            <div className="flex items-center justify-center py-8 gap-3 text-slate-400 text-xs font-bold">
-              <div className="w-5 h-5 rounded-full border-2 border-slate-700 border-t-blue-500 animate-spin" />
-              Querying national authority databases...
-            </div>
-          ) : (searchQuery.trim() || stateFilter !== 'ALL') ? (
-            results.length > 0 ? (
-              results.map((record) => (
-                <div key={record.id} className="bg-[#0a1628]/60 border border-[#1e3a5f]/30 rounded-xl p-4 flex flex-col md:flex-row justify-between gap-4">
-                  <div className="space-y-1.5">
-                    <div className="flex items-center gap-2">
-                      <span className="px-1.5 py-0.5 rounded bg-blue-950 text-blue-400 text-[9px] font-black border border-blue-900/40 uppercase tracking-wider">{record.state}</span>
-                      <span className="text-xs font-black text-white">{record.business_name}</span>
-                      {record.dba && <span className="text-slate-400 text-[10px] font-medium">({record.dba})</span>}
-                    </div>
-                    <p className="text-[11px] text-slate-300 font-medium leading-relaxed">
-                      <strong className="text-slate-400">Action/Reason:</strong> {record.reasons}
-                    </p>
-                    <div className="flex items-center gap-4 text-[9px] text-slate-500 font-bold uppercase tracking-wider">
-                      <span>Type: {record.license_type}</span>
-                      <span>License: {record.license_number}</span>
-                    </div>
-                  </div>
-                  <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-center gap-2 shrink-0">
-                    <span className={cn("px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border",
-                      record.status.toLowerCase().includes('active') 
-                        ? 'bg-emerald-950/80 text-emerald-400 border-emerald-900/40' 
-                        : record.status.toLowerCase().includes('suspend') 
-                        ? 'bg-amber-950/80 text-amber-400 border-amber-900/40' 
-                        : 'bg-red-950/80 text-red-400 border-red-900/40'
-                    )}>{record.status}</span>
-                    <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider">{record.dates_connected}</span>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="text-center py-8 text-slate-500 text-xs font-semibold bg-[#0a1628]/20 rounded-xl border border-dashed border-[#1e3a5f]/40">
-                No matching records found.
-              </div>
-            )
-          ) : (
-            // Default: show recent database updates
-            <div className="space-y-3">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                Latest Database Audits
-              </p>
-              {recentAudits.map((record) => (
-                <div key={record.id} className="bg-[#0a1628]/30 border border-[#1e3a5f]/20 rounded-xl p-3 flex flex-col md:flex-row justify-between gap-3">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 text-[8px] font-black uppercase tracking-wider">{record.state}</span>
-                      <span className="text-xs font-bold text-white">{record.business_name}</span>
-                    </div>
-                    <p className="text-[11px] text-slate-400 font-medium leading-relaxed truncate max-w-xl">
-                      {record.reasons}
-                    </p>
-                  </div>
-                  <div className="flex items-center justify-between md:justify-end gap-3 shrink-0">
-                    <span className="text-[9px] text-slate-500 font-bold uppercase tracking-wider">{record.dates_connected}</span>
-                    <span className={cn("px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border",
-                      record.status.toLowerCase().includes('active') 
-                        ? 'bg-emerald-950/40 text-emerald-400 border-emerald-900/30' 
-                        : record.status.toLowerCase().includes('suspend') 
-                        ? 'bg-amber-950/40 text-amber-400 border-amber-900/30' 
-                        : 'bg-red-950/40 text-red-400 border-red-900/30'
-                    )}>{record.status}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
+      {/* Reusable National Regulatory Enforcement Database lookup (dark mode version) */}
+      <NationalEnforcementLedger dark={true} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Larry Intelligence Feed */}

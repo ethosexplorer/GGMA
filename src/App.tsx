@@ -1303,16 +1303,17 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
   const [patientHelpCount, setPatientHelpCount] = useState(() => {
     const epoch = new Date('2026-01-01T00:00:00Z').getTime();
     const now = Date.now();
-    const secondsElapsed = Math.floor((now - epoch) / 1000);
-    // ~1 client helped every 45 seconds
-    const clientsSinceEpoch = Math.floor(secondsElapsed / 45);
-    return 583000 + clientsSinceEpoch;
+    const daysElapsed = (now - epoch) / (1000 * 60 * 60 * 24);
+    return Math.floor(583000 + daysElapsed * 10);
   });
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setPatientHelpCount(prev => prev + 1);
-    }, 15000 + Math.random() * 15000); // Increments every 15-30s randomly
+      const epoch = new Date('2026-01-01T00:00:00Z').getTime();
+      const now = Date.now();
+      const daysElapsed = (now - epoch) / (1000 * 60 * 60 * 24);
+      setPatientHelpCount(Math.floor(583000 + daysElapsed * 10));
+    }, 60000); // Update every minute to keep it aligned with the 10-per-day rate
     return () => clearInterval(timer);
   }, []);
 
