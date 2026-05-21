@@ -284,27 +284,29 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           clicksByUserType
         }));
 
-        // Fetch Poll Stats
+        // Fetch Poll Stats — poll_votes table has real votes; polls are defined in code (24 active)
+        const TOTAL_ACTIVE_POLLS = 24; // Matches POLLS array in CommunityPolls.tsx
         const pTotal = await turso.execute('SELECT COUNT(*) as c FROM poll_votes');
-        const pActive = await turso.execute('SELECT COUNT(*) as c FROM community_polls WHERE status="active"');
-        const pTop = await turso.execute('SELECT cp.question as q, cp.category as cat, COUNT(pv.id) as v FROM community_polls cp JOIN poll_votes pv ON cp.id = pv.poll_id GROUP BY cp.id ORDER BY v DESC LIMIT 5');
-        const pCat = await turso.execute('SELECT cp.category as cat, COUNT(pv.id) as votes FROM poll_votes pv JOIN community_polls cp ON pv.poll_id = cp.id GROUP BY cp.category ORDER BY votes DESC');
+        const pDistinct = await turso.execute('SELECT COUNT(DISTINCT poll_id) as c FROM poll_votes');
+        const pTop = await turso.execute('SELECT poll_id as q, COUNT(*) as v FROM poll_votes GROUP BY poll_id ORDER BY v DESC LIMIT 5');
+        const pCat = await turso.execute('SELECT vote_choice as cat, COUNT(*) as votes FROM poll_votes GROUP BY vote_choice ORDER BY votes DESC LIMIT 8');
 
         const totalPollVotes = Number(pTotal.rows[0]?.c || 0);
+        const pollsWithVotes = Number(pDistinct.rows[0]?.c || 0);
         
         setPollStats({
           totalVotes: totalPollVotes,
-          activePolls: Number(pActive.rows[0]?.c || 0),
-          engagementRate: totalPollVotes > 0 ? ((totalPollVotes / Math.max(Number(liveStats.totalUsers.replace(/[^0-9.]/g, '') || 1) * 1000, 1)) * 100).toFixed(1) + '%' : '0%',
-          commentsSubmitted: 0, // Not implemented yet
+          activePolls: TOTAL_ACTIVE_POLLS,
+          engagementRate: pollsWithVotes > 0 ? ((pollsWithVotes / TOTAL_ACTIVE_POLLS) * 100).toFixed(0) + '%' : '0%',
+          commentsSubmitted: 0,
           topPolls: pTop.rows.map(r => ({
-            q: r.q,
+            q: String(r.q).replace(/_/g, ' '),
             v: Number(r.v),
-            cat: r.cat,
+            cat: 'poll',
             pct: totalPollVotes > 0 ? Math.round((Number(r.v) / totalPollVotes) * 100) : 0
           })),
           votesByCategory: pCat.rows.map(r => ({
-            cat: r.cat,
+            cat: String(r.cat).replace(/_/g, ' '),
             votes: Number(r.votes),
             pct: totalPollVotes > 0 ? Math.round((Number(r.votes) / totalPollVotes) * 100) : 0
           }))
