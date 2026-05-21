@@ -14,6 +14,7 @@ import { Vote,
   MessageCircle,
   TrendingUp,
   Zap,
+  Scale,
   Shield, CircleCheck } from 'lucide-react';
 import { turso } from '../lib/turso';
 
@@ -43,6 +44,23 @@ interface Poll {
 // ─── Poll Data ───
 const POLLS: Poll[] = [
   // ─── 💡 GGHP PLATFORM & SERVICES POLLS (HIGH-PRIORITY MARKETING) ───
+  {
+    id: 'gghp_sylara_ai',
+    category: 'support',
+    question: '💬 Would your office or business benefit from a dedicated AI Front-Office receptionist (Sylara) to answer calls and schedule bookings?',
+    subtitle: 'Sylara AI functions as an intelligent virtual attendant, handling phone calls, Calendly scheduling, FAQs, and guided intake across web and voice lines.',
+    icon: <Users size={20} />,
+    color: 'emerald',
+    bgGradient: 'from-blue-600 to-indigo-800',
+    didYouKnow: 'The Sylara AI Virtual Attendant add-on handles calls, appointment scheduling, and patient routing 24/7, reducing front-office overhead by up to 80%.',
+    actionItem: 'Book a demo session to see how Sylara AI automates your front-desk receptionist duties.',
+    options: [
+      { id: 'phone_calls', label: 'Yes — to handle phone calls & inquiries', emoji: '📞', votes: 2450 },
+      { id: 'scheduling', label: 'Yes — to automate calendars & Calendly bookings', emoji: '📅', votes: 1980 },
+      { id: 'intake', label: 'Yes — to guide patients through intake wizards', emoji: '🤝', votes: 3120 },
+      { id: 'not_needed', label: 'No — we prefer a traditional human front-desk', emoji: '👤', votes: 890 },
+    ]
+  },
   {
     id: 'gghp_larry_ai',
     category: 'education',
@@ -143,6 +161,91 @@ const POLLS: Poll[] = [
       { id: 'phone_call', label: 'Toll-free voice call (888)', emoji: '📞', votes: 2100 },
       { id: 'email_support', label: 'Traditional email support', emoji: '✉️', votes: 940 },
       { id: 'live_chat', label: 'On-site web chat widget', emoji: '💻', votes: 1650 },
+    ]
+  },
+  {
+    id: 'gghp_subscriptions',
+    category: 'business',
+    question: '💼 What compliance or operations subscription tier matches your scale of operation?',
+    subtitle: 'Global Green offers tailored subscriptions for individual patients, independent advisors, verified physicians, legal professionals, and commercial grows.',
+    icon: <Users size={20} />,
+    color: 'emerald',
+    bgGradient: 'from-emerald-800 to-slate-900',
+    didYouKnow: 'Our corporate plans enable firms to assign nested child accounts to junior reps, allowing centralized compliance auditing and performance reports.',
+    actionItem: 'Explore our subscription tiers to find the plan built for your role.',
+    options: [
+      { id: 'patient_tier', label: 'Patient Core / Premium ($10/mo)', emoji: '💚', votes: 1980 },
+      { id: 'advisor_tier', label: 'Independent Advisor ($99/mo)', emoji: '💼', votes: 1230 },
+      { id: 'executive_tier', label: 'Executive Operations ($299/mo)', emoji: '📊', votes: 850 },
+      { id: 'enterprise_tier', label: 'Enterprise / Commercial Grow ($499/mo)', emoji: '🏢', votes: 670 },
+    ]
+  },
+  {
+    id: 'gghp_legal_marketplace',
+    category: 'legal',
+    question: '⚖️ Have you ever struggled to find an affordable, vetted attorney who specializes in cannabis compliance?',
+    subtitle: 'Navigating multi-jurisdiction transport, business licensing, and METRC audits requires specialist legal counsel.',
+    icon: <Scale size={20} />,
+    color: 'emerald',
+    bgGradient: 'from-amber-600 to-emerald-900',
+    didYouKnow: 'The Global Green Legal Marketplace connects you directly with screened attorneys specializing in your exact jurisdiction, with zero finder fees.',
+    actionItem: 'Visit our Legal Support Portal to browse local verified attorneys.',
+    options: [
+      { id: 'yes_expensive', label: 'Yes — hourly rates are too high', emoji: '💸', votes: 2450 },
+      { id: 'yes_expertise', label: 'Yes — hard to verify specialized expertise', emoji: '🔍', votes: 1890 },
+      { id: 'no_trusted', label: 'No — we have trusted counsel already', emoji: '🤝', votes: 1120 },
+      { id: 'not_sure', label: 'Not sure where to search', emoji: '🤷', votes: 1540 },
+    ]
+  },
+  {
+    id: 'gghp_telehealth_access',
+    category: 'healing',
+    question: '🏥 What is the most important factor when choosing a telehealth provider for medical recommendations?',
+    subtitle: 'From physician consultations to automated state portal support, our telehealth system is designed for patient ease.',
+    icon: <Users size={20} />,
+    color: 'emerald',
+    bgGradient: 'from-emerald-500 to-blue-700',
+    didYouKnow: 'Global Green telehealth includes direct real-time SMS & iMessage notifications to keep patients updated at every step of their state card application.',
+    actionItem: 'Book a consultation to experience seamless, guided telehealth.',
+    options: [
+      { id: 'speed_booking', label: 'Instant online scheduling & booking', emoji: '📅', votes: 2980 },
+      { id: 'low_fees', label: 'Affordable doctor fees ($35 consultations)', emoji: '💵', votes: 4120 },
+      { id: 'intake_help', label: 'Guided help submitting to the state portal', emoji: '🤝', votes: 3210 },
+      { id: 'guidance', label: 'Expert medical guidance & strain advice', emoji: '🌿', votes: 1650 },
+    ]
+  },
+  {
+    id: 'gghp_independent_backoffice',
+    category: 'business',
+    question: '🏢 What is the biggest administrative bottleneck in your advisory or consulting practice?',
+    subtitle: 'Managing patient lead pipelines, tracking subscriptions, and logging ledger entries manually takes hours of valuable work.',
+    icon: <BarChart3 size={20} />,
+    color: 'emerald',
+    bgGradient: 'from-emerald-900 to-indigo-950',
+    didYouKnow: 'The GGP-OS Backoffice dashboard combines automated invoicing, document vault storage, Calendly booking, and lead tracking in a single console.',
+    actionItem: 'Upgrade to our Advisor tier to automate your billing, calendars, and client tracking.',
+    options: [
+      { id: 'invoicing', label: 'Client invoicing & billing collections', emoji: '💸', votes: 1890 },
+      { id: 'vault', label: 'Tracking client compliance docs & files', emoji: '📂', votes: 2130 },
+      { id: 'marketing', label: 'Lead generation & contact capture', emoji: '📈', votes: 2450 },
+      { id: 'scheduling', label: 'Appointment booking & calendars', emoji: '📅', votes: 1120 },
+    ]
+  },
+  {
+    id: 'gghp_ai_builds',
+    category: 'education',
+    question: '🤖 Would your team benefit from custom AI-generated compliance workflows tailored to your state\'s current rules?',
+    subtitle: 'Our L.A.R.R.Y AI agent can draft custom SOPs, parse local statutes, and cross-reference seed-to-sale logs instantly.',
+    icon: <Sparkles size={20} />,
+    color: 'emerald',
+    bgGradient: 'from-emerald-600 to-slate-900',
+    didYouKnow: 'L.A.R.R.Y AI premium builds are fully integrated with state-specific legal knowledge, meaning answers are grounded in active statutes.',
+    actionItem: 'Try asking L.A.R.R.Y AI a complex compliance question to test its depth.',
+    options: [
+      { id: 'sops', label: 'Yes — to draft custom SOPs & policies', emoji: '📝', votes: 2130 },
+      { id: 'daily_rules', label: 'Yes — to answer daily compliance questions', emoji: '🔍', votes: 2870 },
+      { id: 'no_manual', label: 'No — we prefer manual legal reviews', emoji: '👔', votes: 650 },
+      { id: 'unsure_ai', label: 'Unsure of how AI could help us', emoji: '🤔', votes: 1340 },
     ]
   },
 
