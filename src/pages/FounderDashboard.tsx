@@ -1123,7 +1123,21 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
             
             <div className="flex flex-col md:flex-row gap-6 items-end">
                <div className="flex-1 space-y-2 w-full">
-                  <label className="text-[10px] font-black text-red-700 uppercase tracking-widest">Active Alert Message (Pushed to Landing Page & All Portals)</label>
+                  <div className="flex items-center justify-between">
+                    <label className="text-[10px] font-black text-red-700 uppercase tracking-widest">Active Alert Message (Pushed to Landing Page & All Portals)</label>
+                    <div className="flex items-center gap-1">
+                      {['🚨', '📢', '⚠️', 'ℹ️', '🎉', '🟢', '🔴', '🌿', '⚕️', '⚖️', '🏢'].map(emoji => (
+                        <button
+                          key={emoji}
+                          type="button"
+                          onClick={() => setBroadcastMsg(prev => prev + ' ' + emoji)}
+                          className="px-1.5 py-0.5 bg-white hover:bg-red-50 border border-red-100 hover:border-red-300 rounded text-xs transition-all active:scale-90"
+                        >
+                          {emoji}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                   <input 
                     type="text" 
                     value={broadcastMsg}
@@ -1186,7 +1200,21 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
             
             <div className="flex flex-col md:flex-row gap-6 items-end">
                <div className="flex-1 space-y-2 w-full">
-                  <label className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Active Scrolling Message (Use | to separate)</label>
+                  <div className="flex items-center justify-between">
+                     <label className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Active Scrolling Message (Use | to separate)</label>
+                     <div className="flex items-center gap-1">
+                       {['🔴', '🟢', '⚖️', '🚨', '💰', '🔬', '📈', '⚠️', '🌿', '📊', '💬'].map(emoji => (
+                         <button
+                           key={emoji}
+                           type="button"
+                           onClick={() => setMarqueeNewsText(prev => prev + ' ' + emoji)}
+                           className="px-1.5 py-0.5 bg-white hover:bg-emerald-50 border border-emerald-100 hover:border-emerald-300 rounded text-xs transition-all active:scale-90"
+                         >
+                           {emoji}
+                         </button>
+                       ))}
+                     </div>
+                   </div>
                   <input 
                     type="text" 
                     value={marqueeNewsText}
