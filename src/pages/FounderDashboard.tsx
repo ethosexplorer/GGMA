@@ -317,12 +317,28 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         const jBiz = await turso.execute('SELECT state, COUNT(*) as c FROM businesses GROUP BY state');
         
         const stateMap: Record<string, any> = {};
-        // Revenue from founder_ledger per state
+        // Revenue from founder_ledger — match to patient states via origin_vector name
         let stateRevenue: Record<string, number> = {};
         try {
-          const revByState = await turso.execute('SELECT p.state, SUM(CAST(REPLACE(REPLACE(fl.gross_revenue, "$", ""), ",", "") AS REAL)) as rev FROM founder_ledger fl LEFT JOIN patients p ON fl.patient_id = p.id GROUP BY p.state');
-          revByState.rows.forEach(r => { if (r.state) stateRevenue[String(r.state)] = Number(r.rev) || 0; });
-        } catch(e) { /* revenue query may fail if schema differs */ }
+          // Get all ledger entries and all patients, then match by name
+          const allLedger = await turso.execute("SELECT origin_vector, CAST(REPLACE(REPLACE(gross_revenue, '$', ''), ',', '') AS REAL) as rev FROM founder_ledger");
+          const allPatients = await turso.execute("SELECT name, state FROM patients");
+          const patientStateMap: Record<string, string> = {};
+          allPatients.rows.forEach(p => { if (p.name && p.state) patientStateMap[String(p.name).toLowerCase()] = String(p.state); });
+          
+          allLedger.rows.forEach(r => {
+            const origin = String(r.origin_vector || '').toLowerCase();
+            const rev = Number(r.rev) || 0;
+            // Try to match a patient name in the origin_vector
+            let matchedState = '';
+            for (const [name, state] of Object.entries(patientStateMap)) {
+              if (origin.includes(name)) { matchedState = state; break; }
+            }
+            if (matchedState && rev > 0) {
+              stateRevenue[matchedState] = (stateRevenue[matchedState] || 0) + rev;
+            }
+          });
+        } catch(e) { /* revenue query may fail */ }
 
         // Compliance: avg compliance_score from businesses per state + penalty for unresolved alerts
         let stateCompliance: Record<string, number> = {};
