@@ -122,6 +122,10 @@ export const ResourceCenter = ({ onNavigate }: { onNavigate: (view: string) => v
           <span className="text-slate-800 font-black text-sm tracking-wide">Resource Center</span>
         </div>
         <div className="flex items-center gap-3">
+          <a href="sms:+16452468277" className="hidden sm:flex items-center gap-2 text-blue-600 font-bold text-sm">
+            <MessageCircle size={14} /> iMessage: 645-246-8277
+          </a>
+          <span className="hidden sm:block w-px h-4 bg-slate-300" />
           <a href="tel:18889634447" className="hidden sm:flex items-center gap-2 text-emerald-700 font-bold text-sm">
             <Phone size={14} /> 1-888-963-4447
           </a>
@@ -285,8 +289,11 @@ export const ResourceCenter = ({ onNavigate }: { onNavigate: (view: string) => v
             {/* Contact Info */}
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-3">
               <h4 className="font-black text-slate-800 text-sm uppercase tracking-wider">Contact Us</h4>
+              <a href="sms:+16452468277" className="flex items-center gap-3 p-3 rounded-xl bg-blue-50 border border-blue-100 text-blue-800 font-bold text-sm hover:bg-blue-100 transition-colors">
+                <MessageCircle size={16} /> 💬 iMessage: (645) 246-8277
+              </a>
               <a href="tel:18889634447" className="flex items-center gap-3 p-3 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-800 font-bold text-sm hover:bg-emerald-100 transition-colors">
-                <Phone size={16} /> 1-888-963-4447
+                <Phone size={16} /> 📞 1-888-963-4447
               </a>
               <a href="mailto:support@globalgreenhp.com" className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100 text-slate-700 font-bold text-sm hover:bg-slate-100 transition-colors">
                 <Mail size={16} /> support@globalgreenhp.com

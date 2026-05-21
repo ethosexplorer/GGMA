@@ -12,7 +12,8 @@ import {
   Map as MapIcon, MessageSquare, ChevronDown, ChevronUp, Send, GraduationCap, Sparkles, Scale,
   Search as SearchIcon, Briefcase, Bot, BookOpen, Wrench, Video, Flag, Camera, Monitor, Image,
   Paperclip, CircleCheck, Circle, ShoppingCart, PackageSearch, ClipboardList, Cpu, Gavel,
-  Headphones, Phone, Star, ArrowUpCircle, Home, Check, Wallet, HeartHandshake, HelpCircle, Mic, Volume2
+  Headphones, Phone, Star, ArrowUpCircle, Home, Check, Wallet, HeartHandshake, HelpCircle, Mic, Volume2,
+  MessageCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from './lib/utils';
@@ -1443,6 +1444,9 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
             <Scale size={14} /> Legal Support
           </button>
           <div className="h-6 w-px bg-slate-200 mx-2" />
+          <a href="sms:+16452468277" className="flex items-center gap-2 text-blue-600 font-bold">
+            <MessageCircle size={14} /> 645-246-8277
+          </a>
           <a href="tel:18889634447" className="flex items-center gap-2 text-[#1a4731] font-black">
             <Phone size={14} /> 1-888-963-4447
           </a>
@@ -6161,7 +6165,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       response = '🏢 **Commercial Compliance Consultation**\n\nI am routing you to our **Business Licensing Experts**.\n\n\n\n📅 **Booking page opened!** If it didn\'t open:\n🔗 [Book Business Consultation](https://calendly.com/globalgreenhpmeet/general-business-consultation)';
     } else if (lower.includes('book physician') || lower.includes('doctor') || lower.includes('recommendation') || lower.includes('med card intake') || lower.includes('patient licensing') || lower.includes('physician')) {
       if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/health-wellness-consultation' }); } else { window.open('https://calendly.com/globalgreenhpmeet/health-wellness-consultation', '_blank'); }
-      response = '⚕️ **Physician Booking & Patient Licensing**\n\nI am routing you directly to our physician booking portal.\n\n📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book Health & Wellness Consultation](https://calendly.com/globalgreenhpmeet/health-wellness-consultation)\n\n📞 **Prefer to call?** Dial **1-888-963-4447**';
+      response = '⚕️ **Physician Booking & Patient Licensing**\n\nI am routing you directly to our physician booking portal.\n\n📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book Health & Wellness Consultation](https://calendly.com/globalgreenhpmeet/health-wellness-consultation)\n\n💬 **iMessage us:** Text **645-246-8277**\n📞 **Prefer to call?** Dial **1-888-963-4447**';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Patient Intake', 'I Already Scheduled', 'Main Menu'] } as any]);
       setIsTyping(false);
       return;
@@ -6190,13 +6194,13 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       return;
     } else if (lower.includes('medical card evaluation') || lower.includes('med card eval') || lower.includes('medical card')) {
       if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/medical-card-recommendation' }); } else { window.open('https://calendly.com/globalgreenhpmeet/health-wellness-consultation', '_blank'); }
-      response = '💳 **Medical Card Evaluation ($45)**\n\nYour evaluation includes:\n• **$35** — Physician Consultation\n• **$10** — GGE Processing Fee\n\n📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book Online via Calendly](https://calendly.com/globalgreenhpmeet/medical-card-recommendation)\n\n📞 **Prefer to call?** Dial **1-888-963-4447**';
+      response = '💳 **Medical Card Evaluation ($45)**\n\nYour evaluation includes:\n• **$35** — Physician Consultation\n• **$10** — GGE Processing Fee\n\n📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book Online via Calendly](https://calendly.com/globalgreenhpmeet/medical-card-recommendation)\n\n💬 **iMessage:** Text **645-246-8277**\n📞 **Prefer to call?** Dial **1-888-963-4447**';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Start Patient Intake', 'I Already Scheduled', 'Main Menu'] } as any]);
       setIsTyping(false);
       return;
     } else if (lower.includes('general telehealth wellness') || lower.includes('general telehealth') || lower.includes('general health')) {
       if ((window as any).Calendly) { (window as any).Calendly.initPopupWidget({ url: 'https://calendly.com/globalgreenhpmeet/health-wellness-consultation' }); } else { window.open('https://calendly.com/globalgreenhpmeet/health-wellness-consultation', '_blank'); }
-      response = '🏥 **General Telehealth Wellness Visit**\n\nConnect with a licensed physician for:\n• Non-emergency consultations\n• Follow-up visits\n• Prescription management\n• General health questions\n\n📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book Online via Calendly](https://calendly.com/globalgreenhpmeet/health-wellness-consultation)\n\n📞 **Prefer to call?** Dial **1-888-963-4447**';
+      response = '🏥 **General Telehealth Wellness Visit**\n\nConnect with a licensed physician for:\n• Non-emergency consultations\n• Follow-up visits\n• Prescription management\n• General health questions\n\n📅 **Booking page opened!** If it didn\'t open, click below:\n🔗 [Book Online via Calendly](https://calendly.com/globalgreenhpmeet/health-wellness-consultation)\n\n💬 **iMessage:** Text **645-246-8277**\n📞 **Prefer to call?** Dial **1-888-963-4447**';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
       setIsTyping(false);
       return;

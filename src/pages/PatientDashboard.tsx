@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDraggableSidebar } from '../hooks/useDraggableSidebar';
 import { Activity, Calendar, Stethoscope, Shield, FileText, Clock, Plus, LayoutDashboard, CreditCard,
   Wallet, Award, Search, FolderOpen, Heart, Bell, Sparkles, TrendingUp, Users, Briefcase, Lock, 
-  ArrowRight, Zap, Brain, Video, Globe, ChevronRight, CircleCheck, User, ExternalLink } from 'lucide-react';
+  ArrowRight, Zap, Brain, Video, Globe, ChevronRight, CircleCheck, User, ExternalLink, Phone, MessageCircle } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { db } from '../lib/firebase';
@@ -413,6 +413,33 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
                       <a href="https://oklahoma.gov/omma/patients-caregivers.html" target="_blank" rel="noreferrer" className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors group">
                         <span className="text-xs font-bold text-slate-700">OMMA Patient Portal</span>
                         <ExternalLink size={14} className="text-slate-400 group-hover:text-[#1a4731]" />
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* Patient Support Contact */}
+                  <div className="bg-white rounded-[2rem] border border-slate-200 shadow-sm p-6 mt-6">
+                    <h3 className="font-black text-slate-800 text-sm uppercase tracking-widest mb-4 flex items-center gap-2">
+                      <MessageCircle size={16} className="text-[#1a4731]" /> Patient Support
+                    </h3>
+                    <div className="space-y-3">
+                      <a href="imessage://+16452468277" className="flex items-center gap-3 p-3 rounded-xl bg-blue-50 border border-blue-100 hover:bg-blue-100 transition-colors group">
+                        <div className="w-9 h-9 bg-blue-500 rounded-xl flex items-center justify-center text-white shadow-sm">
+                          <MessageCircle size={16} />
+                        </div>
+                        <div>
+                          <p className="text-xs font-black text-blue-900">iMessage Direct Line</p>
+                          <p className="text-[10px] font-bold text-blue-600">(645) 246-8277</p>
+                        </div>
+                      </a>
+                      <a href="tel:+18889634447" className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100 hover:bg-slate-100 transition-colors group">
+                        <div className="w-9 h-9 bg-[#1a4731] rounded-xl flex items-center justify-center text-white shadow-sm">
+                          <Phone size={16} />
+                        </div>
+                        <div>
+                          <p className="text-xs font-black text-slate-800">Call Support</p>
+                          <p className="text-[10px] font-bold text-slate-500">1-888-963-4447</p>
+                        </div>
                       </a>
                     </div>
                   </div>
