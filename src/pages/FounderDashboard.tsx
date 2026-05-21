@@ -151,7 +151,9 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     users: 0,
     clicks: 0,
     conversions: 0,
-    events: [] as { time: string; user: string; action: string }[]
+    events: [] as { time: string; user: string; action: string }[],
+    clicksByPath: {} as Record<string, number>,
+    clicksByUserType: {} as Record<string, number>
   });
 
   const [pollStats, setPollStats] = useState({
@@ -227,37 +229,60 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     // Fetch last regulatory sweep date
     getLastSweep().then(s => setLastRegSweepDate(s?.sweep_date || null)).catch(() => {});
 
-    // 1b. Fetch live tracking analytics
+    // 1b. Fetch live tracking analytics — REAL data from analytics_events + Firebase presence
     const fetchAnalytics = async () => {
       try {
-        const aggRes = await turso.execute('SELECT * FROM analytics_aggregates LIMIT 1');
+        // Real active users from Firebase presence (online or away within last 2 min)
+        let activeUsers = 0;
+        try {
+          const { getDocs, collection: fbColl, query: fbQuery, where: fbWhere } = await import('firebase/firestore');
+          const presSnap = await getDocs(fbQuery(fbColl(db, 'presence'), fbWhere('status', 'in', ['online', 'away'])));
+          activeUsers = presSnap.size;
+        } catch(e) { /* presence query may fail */ }
+
+        // Real clicks from analytics_events in last 24h
+        const since24h = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+        const clickRes = await turso.execute({ sql: 'SELECT COUNT(*) as c FROM analytics_events WHERE created_at >= ?', args: [since24h] });
+        const totalClicks = Number(clickRes.rows[0]?.c || 0);
+
+        // Conversions: count events with non-landing paths (users navigated deeper)
+        const convRes = await turso.execute({ sql: "SELECT COUNT(*) as c FROM analytics_events WHERE created_at >= ? AND path != '/' AND path != ''", args: [since24h] });
+        const totalConversions = Number(convRes.rows[0]?.c || 0);
+
+        // Click breakdown by path for Search Analytics
+        const pathRes = await turso.execute({ sql: 'SELECT path, COUNT(*) as c FROM analytics_events WHERE created_at >= ? GROUP BY path ORDER BY c DESC LIMIT 10', args: [since24h] });
+        const clicksByPath: Record<string, number> = {};
+        pathRes.rows.forEach(r => { clicksByPath[String(r.path)] = Number(r.c); });
+
+        // Click breakdown by user type
+        const utRes = await turso.execute({ sql: 'SELECT user_type, COUNT(*) as c FROM analytics_events WHERE created_at >= ? GROUP BY user_type ORDER BY c DESC', args: [since24h] });
+        const clicksByUserType: Record<string, number> = {};
+        utRes.rows.forEach(r => { clicksByUserType[String(r.user_type)] = Number(r.c); });
+
+        // Recent events for live stream
         const evRes = await turso.execute('SELECT * FROM analytics_events ORDER BY created_at DESC LIMIT 5');
+        const mappedEvents = evRes.rows.map((r, i) => {
+          const dateStr = r.created_at + (String(r.created_at).endsWith('Z') ? '' : 'Z');
+          const date = new Date(dateStr);
+          const diffSecs = Math.max(0, Math.floor((Date.now() - date.getTime()) / 1000));
+          let timeStr = diffSecs < 60 ? `${diffSecs}s ago` : `${Math.floor(diffSecs/60)}m ago`;
+          if (i === 0 && diffSecs < 10) timeStr = 'Just now';
+          return {
+            time: timeStr,
+            user: String(r.user_type),
+            action: String(r.details)
+          };
+        });
 
-        if (aggRes.rows.length > 0) {
-          const row = aggRes.rows[0];
-          
-          const mappedEvents = evRes.rows.map((r, i) => {
-            // Turso SQLite dates are UTC if appended with Z or parsed properly
-            const dateStr = r.created_at + (String(r.created_at).endsWith('Z') ? '' : 'Z');
-            const date = new Date(dateStr);
-            const diffSecs = Math.max(0, Math.floor((Date.now() - date.getTime()) / 1000));
-            let timeStr = diffSecs < 60 ? `${diffSecs}s ago` : `${Math.floor(diffSecs/60)}m ago`;
-            if (i === 0 && diffSecs < 10) timeStr = 'Just now';
-            return {
-              time: timeStr,
-              user: String(r.user_type),
-              action: String(r.details)
-            };
-          });
-
-          setLiveAnalytics(prev => ({
-            ...prev,
-            users: Number(row.total_users),
-            clicks: Number(row.total_clicks),
-            conversions: Number(row.total_conversions),
-            events: mappedEvents.length > 0 ? mappedEvents : prev.events
-          }));
-        }
+        setLiveAnalytics(prev => ({
+          ...prev,
+          users: activeUsers,
+          clicks: totalClicks,
+          conversions: totalConversions,
+          events: mappedEvents.length > 0 ? mappedEvents : prev.events,
+          clicksByPath,
+          clicksByUserType
+        }));
 
         // Fetch Poll Stats
         const pTotal = await turso.execute('SELECT COUNT(*) as c FROM poll_votes');
@@ -1145,7 +1170,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         ))}
       </div>
 
-      {/* 🌐 GLOBAL SEARCH ANALYTICS — Founder Only */}
+      {/* 🌐 GLOBAL SEARCH ANALYTICS — Real data from analytics_events */}
       <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-bold text-slate-800 flex items-center gap-3">
@@ -1159,10 +1184,10 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           {[
-            { label: 'Total Searches (24h)', value: '0', trend: 'Awaiting sync', color: 'text-blue-600' },
-            { label: 'Google Referrals', value: '0', trend: 'Global Green Hybrid', color: 'text-emerald-600' },
-            { label: 'Brand Mentions', value: '0', trend: 'News & Media', color: 'text-indigo-600' },
-            { label: 'Direct URL Hits', value: liveAnalytics.clicks.toLocaleString(), trend: 'Organic Traffic', color: 'text-amber-600' },
+            { label: 'Total Page Views (24h)', value: liveAnalytics.clicks.toLocaleString(), trend: 'All tracked sessions', color: 'text-blue-600' },
+            { label: 'Unique User Types', value: Object.keys(liveAnalytics.clicksByUserType || {}).length.toString(), trend: 'Distinct roles', color: 'text-emerald-600' },
+            { label: 'Unique Pages Visited', value: Object.keys(liveAnalytics.clicksByPath || {}).length.toString(), trend: 'Distinct routes', color: 'text-indigo-600' },
+            { label: 'Deep Navigation Rate', value: liveAnalytics.clicks > 0 ? ((liveAnalytics.conversions / liveAnalytics.clicks) * 100).toFixed(1) + '%' : '0%', trend: 'Non-landing clicks', color: 'text-amber-600' },
           ].map((s, i) => (
             <div key={i} className="p-4 bg-slate-100 rounded-2xl border border-slate-200">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{s.label}</p>
@@ -1173,48 +1198,46 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div className="border border-slate-200 rounded-2xl p-4 bg-white">
-            <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2"><Globe size={14} className="text-blue-500"/> Top Search Terms (Live)</h4>
+            <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2"><Globe size={14} className="text-blue-500"/> Top Pages (24h)</h4>
             <div className="space-y-3">
-              {[
-              ].map((term, i) => (
+              {Object.entries(liveAnalytics.clicksByPath || {}).slice(0, 5).map(([path, count], i) => (
                 <div key={i} className="flex items-center gap-3">
                   <span className="text-xs font-black text-slate-300 w-5">{i+1}</span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-slate-800 truncate">{term.term}</p>
+                    <p className="text-sm font-bold text-slate-800 truncate">{path === '/' ? 'Landing Page' : path.replace(/\//g, ' / ').replace(/^\s\/\s/, '')}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs font-bold text-indigo-600">{term.volume}</p>
+                    <p className="text-xs font-bold text-indigo-600">{count.toLocaleString()} views</p>
                   </div>
                 </div>
               ))}
+              {Object.keys(liveAnalytics.clicksByPath || {}).length === 0 && (
+                <p className="text-sm text-slate-400 italic text-center py-4">No page views in the last 24h</p>
+              )}
             </div>
           </div>
           <div className="border border-slate-200 rounded-2xl p-4 bg-white">
-            <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2"><Activity size={14} className="text-emerald-500"/> Search Intent Diagnostics</h4>
+            <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2"><Activity size={14} className="text-emerald-500"/> Traffic by User Type</h4>
             <div className="space-y-4">
-              <div className="flex justify-between items-center text-sm">
-                <span className="font-bold text-slate-600">Patient Onboarding</span>
-                <span className="font-black text-emerald-600">0%</span>
-              </div>
-              <div className="w-full bg-slate-100 rounded-full h-2"><div className="bg-emerald-500 h-2 rounded-full" style={{ width: '0%' }}></div></div>
-              
-              <div className="flex justify-between items-center text-sm">
-                <span className="font-bold text-slate-600">Business / B2B Licensing</span>
-                <span className="font-black text-blue-600">0%</span>
-              </div>
-              <div className="w-full bg-slate-100 rounded-full h-2"><div className="bg-blue-500 h-2 rounded-full" style={{ width: '0%' }}></div></div>
-
-              <div className="flex justify-between items-center text-sm">
-                <span className="font-bold text-slate-600">State & Federal Oversight</span>
-                <span className="font-black text-red-500">0%</span>
-              </div>
-              <div className="w-full bg-slate-100 rounded-full h-2"><div className="bg-red-500 h-2 rounded-full" style={{ width: '0%' }}></div></div>
-
-              <div className="flex justify-between items-center text-sm">
-                <span className="font-bold text-slate-600">Press & Media Inquiries</span>
-                <span className="font-black text-indigo-500">0%</span>
-              </div>
-              <div className="w-full bg-slate-100 rounded-full h-2"><div className="bg-indigo-500 h-2 rounded-full" style={{ width: '0%' }}></div></div>
+              {(() => {
+                const entries = Object.entries(liveAnalytics.clicksByUserType || {});
+                const totalUT = entries.reduce((a, [, v]) => a + Number(v), 0);
+                const colors = ['text-emerald-600', 'text-blue-600', 'text-amber-600', 'text-indigo-600', 'text-red-500', 'text-purple-600'];
+                const barColors = ['bg-emerald-500', 'bg-blue-500', 'bg-amber-500', 'bg-indigo-500', 'bg-red-500', 'bg-purple-500'];
+                if (entries.length === 0) return <p className="text-sm text-slate-400 italic text-center py-4">No traffic data yet</p>;
+                return entries.slice(0, 6).map(([userType, count], i) => {
+                  const pct = totalUT > 0 ? Math.round((Number(count) / totalUT) * 100) : 0;
+                  return (
+                    <div key={i}>
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="font-bold text-slate-600">{userType || 'Unknown'}</span>
+                        <span className={`font-black ${colors[i % colors.length]}`}>{pct}%</span>
+                      </div>
+                      <div className="w-full bg-slate-100 rounded-full h-2"><div className={`${barColors[i % barColors.length]} h-2 rounded-full`} style={{ width: `${pct}%` }}></div></div>
+                    </div>
+                  );
+                });
+              })()}
             </div>
           </div>
         </div>
