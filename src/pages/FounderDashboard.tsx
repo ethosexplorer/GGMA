@@ -1190,6 +1190,11 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                       className="px-6 py-3.5 bg-white border-2 border-red-100 rounded-2xl font-bold text-slate-700 outline-none h-14"
                     >
                        <option>Urgent Alert (Red)</option>
+                       <option>Caution (Yellow)</option>
+                       <option>Warning (Orange)</option>
+                       <option>Notice (Pink)</option>
+                       <option>Info Ticker (Blue)</option>
+                       <option>Special Announcement (Purple)</option>
                        <option>Info Ticker (Green)</option>
                        <option>Success Blast (Emerald)</option>
                     </select>

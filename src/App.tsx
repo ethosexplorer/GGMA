@@ -1335,15 +1335,22 @@ const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate
     return () => clearInterval(interval);
   }, []);
 
+  const alertTypeStyles: Record<string, string> = {
+    'Urgent Alert (Red)': 'bg-red-600 text-white border-b border-red-700',
+    'Caution (Yellow)': 'bg-yellow-500 text-yellow-950 border-b border-yellow-600',
+    'Warning (Orange)': 'bg-orange-500 text-white border-b border-orange-600',
+    'Notice (Pink)': 'bg-pink-600 text-white border-b border-pink-700',
+    'Info Ticker (Blue)': 'bg-blue-600 text-white border-b border-blue-700',
+    'Special Announcement (Purple)': 'bg-purple-600 text-white border-b border-purple-700',
+    'Info Ticker (Green)': 'bg-emerald-950 text-emerald-300 border-b border-emerald-900/30',
+    'Success Blast (Emerald)': 'bg-emerald-600 text-white border-b border-emerald-700'
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 overflow-x-hidden">
       {/* URGENT PLATFORM ALERT TICKER */}
       <div className={`${
-        broadcastType === 'Info Ticker (Green)' 
-          ? 'bg-emerald-950 text-emerald-300 border-b border-emerald-900/30' 
-          : broadcastType === 'Success Blast (Emerald)' 
-          ? 'bg-emerald-600 text-white border-b border-emerald-700' 
-          : 'bg-red-600 text-white border-b border-red-700'
+        alertTypeStyles[broadcastType] || 'bg-red-600 text-white border-b border-red-700'
       } py-2 overflow-hidden whitespace-nowrap relative z-[60]`}>
         <div className={`inline-block animate-marquee-${broadcastSpeed} font-black text-sm uppercase tracking-widest`}>
           {broadcastMsg} &nbsp; • &nbsp; {broadcastMsg} &nbsp; • &nbsp; {broadcastMsg}
