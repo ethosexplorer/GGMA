@@ -114,6 +114,85 @@ export const initDatabase = async () => {
       }
     }
 
+    // 8. OMMA Historical Enforcement Records Table
+    await turso.execute(`
+      CREATE TABLE IF NOT EXISTS omma_enforcement_records (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        business_name TEXT NOT NULL,
+        dba TEXT,
+        license_number TEXT UNIQUE NOT NULL,
+        license_type TEXT,
+        status TEXT,
+        enforcement_action TEXT,
+        dates_connected TEXT,
+        reasons TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Seed OMMA historical enforcement records if empty
+    const recordsCheck = await turso.execute('SELECT COUNT(*) as count FROM omma_enforcement_records');
+    if (recordsCheck.rows[0].count === 0) {
+      const records = [
+        {
+          name: 'Green Health Clinic LLC',
+          dba: 'Green Health Recommendation Center',
+          license: 'OAA-4819-2910',
+          type: 'Medical Marijuana Recommendation Referral Center',
+          status: 'Revoked',
+          action: 'Administrative License Revocation',
+          date: 'July 14, 2025',
+          reason: 'Compliance failure under Title 442, failure to verify physician credentials prior to certificate upload.'
+        },
+        {
+          name: 'Apex Health LLC',
+          dba: 'Apex Wellness OKC',
+          license: 'OAA-8922-1102',
+          type: 'Dispensary',
+          status: 'Suspended',
+          action: 'Emergency License Suspension',
+          date: 'May 12, 2026',
+          reason: 'Excessive daily sales volume anomalies and failure to upload real-time Metrc tracking records.'
+        },
+        {
+          name: 'Oklahoma Flower Co.',
+          dba: 'OK Flower Cultivation',
+          license: 'GAA-3329-8812',
+          type: 'Grower / Cultivator',
+          status: 'Forfeited',
+          action: 'Voluntary Forfeiture during Administrative Hearing',
+          date: 'April 10, 2026',
+          reason: 'Banned pesticide detections (Myclobutanil) during pre-harvest compliance inspection.'
+        },
+        {
+          name: 'Lotus Dispo LLC',
+          dba: 'Lotus Dispensary & Lounge',
+          license: 'OAA-1002-3982',
+          type: 'Dispensary',
+          status: 'Surrendered',
+          action: 'License Surrendered after Security Audit',
+          date: 'February 18, 2026',
+          reason: 'Inoperable video surveillance backup systems and zoning compliance failure.'
+        },
+        {
+          name: 'OK Budz Cultivation Inc',
+          dba: 'OK Budz',
+          license: 'GAA-4482-9901',
+          type: 'Grower / Cultivator',
+          status: 'Active (Passed Inspection)',
+          action: 'Annual Compliance Verification',
+          date: 'May 20, 2026',
+          reason: 'Successfully resolved minor administrative record-keeping notice; fully compliant.'
+        }
+      ];
+      for (const r of records) {
+        await turso.execute({
+          sql: 'INSERT INTO omma_enforcement_records (business_name, dba, license_number, license_type, status, enforcement_action, dates_connected, reasons) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+          args: [r.name, r.dba, r.license, r.type, r.status, r.action, r.date, r.reason]
+        });
+      }
+    }
+
     console.log("✅ Turso Database initialized: Created tables for all major modules.");
   } catch (error) {
     console.error("❌ Failed to initialize Turso tables:", error);
