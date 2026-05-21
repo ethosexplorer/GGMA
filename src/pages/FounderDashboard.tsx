@@ -240,22 +240,22 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           activeUsers = presSnap.size;
         } catch(e) { /* presence query may fail */ }
 
-        // Real clicks from analytics_events in last 24h
-        const since24h = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-        const clickRes = await turso.execute({ sql: 'SELECT COUNT(*) as c FROM analytics_events WHERE created_at >= ?', args: [since24h] });
+        // Real clicks from analytics_events in last 14 days (since public launch)
+        const since14d = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
+        const clickRes = await turso.execute({ sql: 'SELECT COUNT(*) as c FROM analytics_events WHERE created_at >= ?', args: [since14d] });
         const totalClicks = Number(clickRes.rows[0]?.c || 0);
 
         // Conversions: count events with non-landing paths (users navigated deeper)
-        const convRes = await turso.execute({ sql: "SELECT COUNT(*) as c FROM analytics_events WHERE created_at >= ? AND path != '/' AND path != ''", args: [since24h] });
+        const convRes = await turso.execute({ sql: "SELECT COUNT(*) as c FROM analytics_events WHERE created_at >= ? AND path != '/' AND path != ''", args: [since14d] });
         const totalConversions = Number(convRes.rows[0]?.c || 0);
 
         // Click breakdown by path for Search Analytics
-        const pathRes = await turso.execute({ sql: 'SELECT path, COUNT(*) as c FROM analytics_events WHERE created_at >= ? GROUP BY path ORDER BY c DESC LIMIT 10', args: [since24h] });
+        const pathRes = await turso.execute({ sql: 'SELECT path, COUNT(*) as c FROM analytics_events WHERE created_at >= ? GROUP BY path ORDER BY c DESC LIMIT 10', args: [since14d] });
         const clicksByPath: Record<string, number> = {};
         pathRes.rows.forEach(r => { clicksByPath[String(r.path)] = Number(r.c); });
 
         // Click breakdown by user type
-        const utRes = await turso.execute({ sql: 'SELECT user_type, COUNT(*) as c FROM analytics_events WHERE created_at >= ? GROUP BY user_type ORDER BY c DESC', args: [since24h] });
+        const utRes = await turso.execute({ sql: 'SELECT user_type, COUNT(*) as c FROM analytics_events WHERE created_at >= ? GROUP BY user_type ORDER BY c DESC', args: [since14d] });
         const clicksByUserType: Record<string, number> = {};
         utRes.rows.forEach(r => { clicksByUserType[String(r.user_type)] = Number(r.c); });
 
@@ -870,10 +870,10 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
               </div>
             </div>
             <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Total App Clicks (24h)</p>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Total App Clicks (14d)</p>
               <div className="flex items-end gap-2">
                 <span className="text-3xl font-black text-indigo-400">{liveAnalytics.clicks.toLocaleString()}</span>
-                <span className="text-[10px] text-slate-400 font-bold mb-1.5">24h total</span>
+                <span className="text-[10px] text-slate-400 font-bold mb-1.5">14d total</span>
               </div>
             </div>
             <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
@@ -1184,7 +1184,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           {[
-            { label: 'Total Page Views (24h)', value: liveAnalytics.clicks.toLocaleString(), trend: 'All tracked sessions', color: 'text-blue-600' },
+            { label: 'Total Page Views (14d)', value: liveAnalytics.clicks.toLocaleString(), trend: 'All tracked sessions', color: 'text-blue-600' },
             { label: 'Unique User Types', value: Object.keys(liveAnalytics.clicksByUserType || {}).length.toString(), trend: 'Distinct roles', color: 'text-emerald-600' },
             { label: 'Unique Pages Visited', value: Object.keys(liveAnalytics.clicksByPath || {}).length.toString(), trend: 'Distinct routes', color: 'text-indigo-600' },
             { label: 'Deep Navigation Rate', value: liveAnalytics.clicks > 0 ? ((liveAnalytics.conversions / liveAnalytics.clicks) * 100).toFixed(1) + '%' : '0%', trend: 'Non-landing clicks', color: 'text-amber-600' },
@@ -1198,7 +1198,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div className="border border-slate-200 rounded-2xl p-4 bg-white">
-            <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2"><Globe size={14} className="text-blue-500"/> Top Pages (24h)</h4>
+            <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2"><Globe size={14} className="text-blue-500"/> Top Pages (14d)</h4>
             <div className="space-y-3">
               {Object.entries(liveAnalytics.clicksByPath || {}).slice(0, 5).map(([path, count], i) => (
                 <div key={i} className="flex items-center gap-3">
@@ -1212,7 +1212,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                 </div>
               ))}
               {Object.keys(liveAnalytics.clicksByPath || {}).length === 0 && (
-                <p className="text-sm text-slate-400 italic text-center py-4">No page views in the last 24h</p>
+                <p className="text-sm text-slate-400 italic text-center py-4">No page views in the last 14 days</p>
               )}
             </div>
           </div>
