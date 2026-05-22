@@ -1,0 +1,55 @@
+name: GGMA National Enforcement Sync
+
+on:
+  schedule:
+    # Run daily at 2:00 AM UTC (9:00 PM CST)
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      states:
+        description: 'Comma-separated state codes (e.g., OK,CA,CO) or leave empty for ALL'
+        required: false
+        default: ''
+
+jobs:
+  enforcement-sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Puppeteer browser
+        run: npx puppeteer browsers install chrome
+
+      - name: Run enforcement pipeline
+        env:
+          TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
+          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
+          VITE_TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
+          VITE_TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
+        run: |
+          STATES="${{ github.event.inputs.states }}"
+          if [ -z "$STATES" ]; then
+            node scripts/enforcement/runner.mjs
+          else
+            IFS=',' read -ra STATE_ARRAY <<< "$STATES"
+            node scripts/enforcement/runner.mjs "${STATE_ARRAY[@]}"
+          fi
+
+      - name: Upload run log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: enforcement-sync-log-${{ github.run_number }}
+          path: scripts/enforcement/*.log
+          retention-days: 30
