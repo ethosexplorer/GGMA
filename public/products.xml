@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
+  <channel>
+    <title>Global Green HP - GGP-OS Platform</title>
+    <link>https://www.ggp-os.com</link>
+    <description>Cannabis compliance, telehealth, and business management platform</description>
+
+    <!-- Medical Card Recommendation -->
+    <item>
+      <g:id>GGHP-MED-CARD-001</g:id>
+      <g:title>Medical Marijuana Card Recommendation - Online Consultation</g:title>
+      <g:description>Get your medical marijuana card recommendation through our certified telehealth platform. Licensed physicians in your state evaluate your qualifying conditions via secure video consultation. Fast, affordable, and 100% compliant with state regulations. Available in Oklahoma, Arkansas, Alabama, and 40+ states.</g:description>
+      <g:link>https://www.ggp-os.com/#medical-card</g:link>
+      <g:image_link>https://www.ggp-os.com/logo.png</g:image_link>
+      <g:availability>in_stock</g:availability>
+      <g:price>149.00 USD</g:price>
+      <g:brand>Global Green HP</g:brand>
+      <g:condition>new</g:condition>
+      <g:google_product_category>Health &gt; Health Care</g:google_product_category>
+      <g:product_type>Telehealth &gt; Medical Card Recommendation</g:product_type>
+      <g:identifier_exists>false</g:identifier_exists>
+    </item>
+
+    <!-- Health & Wellness Consultation -->
+    <item>
+      <g:id>GGHP-WELLNESS-002</g:id>
+      <g:title>Health and Wellness Consultation - Telehealth Visit</g:title>
+      <g:description>Comprehensive health and wellness consultation with certified healthcare professionals. Our telehealth platform connects you with providers who understand holistic wellness, integrative medicine, and patient-centered care. Includes follow-up support and personalized wellness plan.</g:description>
+      <g:link>https://www.ggp-os.com/#wellness</g:link>
+      <g:image_link>https://www.ggp-os.com/logo.png</g:image_link>
+      <g:availability>in_stock</g:availability>
+      <g:price>99.00 USD</g:price>
+      <g:brand>Global Green HP</g:brand>
+      <g:condition>new</g:condition>
+      <g:google_product_category>Health &gt; Health Care</g:google_product_category>
+      <g:product_type>Telehealth &gt; Wellness Consultation</g:product_type>
+      <g:identifier_exists>false</g:identifier_exists>
+    </item>
+
+    <!-- Patient Support -->
+    <item>
+      <g:id>GGHP-PATIENT-003</g:id>
+      <g:title>General Patient Support - Cannabis Care Navigation</g:title>
+      <g:description>Personalized patient support for navigating the medical cannabis program in your state. Our care navigators help with application status, renewal reminders, finding dispensaries, understanding your rights, and connecting with physicians. Ongoing support included.</g:description>
+      <g:link>https://www.ggp-os.com/#patient-support</g:link>
+      <g:image_link>https://www.ggp-os.com/logo.png</g:image_link>
+      <g:availability>in_stock</g:availability>
+      <g:price>0.00 USD</g:price>
+      <g:brand>Global Green HP</g:brand>
+      <g:condition>new</g:condition>
+      <g:google_product_category>Health &gt; Health Care</g:google_product_category>
+      <g:product_type>Patient Services &gt; Care Navigation</g:product_type>
+      <g:identifier_exists>false</g:identifier_exists>
+    </item>
+
+    <!-- Card Renewal -->
+    <item>
+      <g:id>GGHP-RENEWAL-004</g:id>
+      <g:title>Medical Marijuana Card Renewal - Fast Online Process</g:title>
+      <g:description>Renew your medical marijuana card quickly and affordably through our secure telehealth platform. No need to visit a clinic — complete your renewal consultation from home. Licensed physicians verify your qualifying conditions and submit your renewal to the state. Available nationwide.</g:description>
+      <g:link>https://www.ggp-os.com/#renewal</g:link>
+      <g:image_link>https://www.ggp-os.com/logo.png</g:image_link>
+      <g:availability>in_stock</g:availability>
+      <g:price>99.00 USD</g:price>
+      <g:brand>Global Green HP</g:brand>
+      <g:condition>new</g:condition>
+      <g:google_product_category>Health &gt; Health Care</g:google_product_category>
+      <g:product_type>Telehealth &gt; Card Renewal</g:product_type>
+      <g:identifier_exists>false</g:identifier_exists>
+    </item>
+
+    <!-- GGP-OS Platform Subscription -->
+    <item>
+      <g:id>GGHP-PLATFORM-005</g:id>
+      <g:title>GGP-OS Cannabis Business Compliance Platform</g:title>
+      <g:description>All-in-one cannabis business management and compliance platform. Features include Metrc integration, seed-to-sale tracking, SINC oversight directives, retail compliance monitoring, employee management, and automated state reporting. Built for dispensaries, cultivators, processors, and transporters in all legal states.</g:description>
+      <g:link>https://www.ggp-os.com/#platform</g:link>
+      <g:image_link>https://www.ggp-os.com/logo.png</g:image_link>
+      <g:availability>in_stock</g:availability>
+      <g:price>299.00 USD</g:price>
+      <g:brand>Global Green HP</g:brand>
+      <g:condition>new</g:condition>
+      <g:google_product_category>Software &gt; Business &amp; Productivity Software</g:google_product_category>
+      <g:product_type>SaaS &gt; Cannabis Compliance Platform</g:product_type>
+      <g:identifier_exists>false</g:identifier_exists>
+    </item>
+
+    <!-- Legal Consultation -->
+    <item>
+      <g:id>GGHP-LEGAL-006</g:id>
+      <g:title>Cannabis Legal Consultation - Attorney Marketplace</g:title>
+      <g:description>Connect with qualified cannabis attorneys through our attorney marketplace. Get legal support for traffic stops, misdemeanors, business compliance issues, licensing disputes, and regulatory defense. Our network includes attorneys specializing in cannabis law across all legal states.</g:description>
+      <g:link>https://www.ggp-os.com/#legal</g:link>
+      <g:image_link>https://www.ggp-os.com/logo.png</g:image_link>
+      <g:availability>in_stock</g:availability>
+      <g:price>199.00 USD</g:price>
+      <g:brand>Global Green HP</g:brand>
+      <g:condition>new</g:condition>
+      <g:google_product_category>Business &amp; Industrial &gt; Business Services</g:google_product_category>
+      <g:product_type>Legal Services &gt; Cannabis Law</g:product_type>
+      <g:identifier_exists>false</g:identifier_exists>
+    </item>
+
+    <!-- Online Classes -->
+    <item>
+      <g:id>GGHP-CLASSES-007</g:id>
+      <g:title>Cannabis Compliance Online Training Classes</g:title>
+      <g:description>Professional online training courses covering cannabis compliance, Metrc operations, seed-to-sale tracking, retail operations, and state-specific regulatory requirements. Perfect for dispensary staff, compliance officers, and cannabis business owners preparing for licensing or audits.</g:description>
+      <g:link>https://www.ggp-os.com/#classes</g:link>
+      <g:image_link>https://www.ggp-os.com/logo.png</g:image_link>
+      <g:availability>in_stock</g:availability>
+      <g:price>49.00 USD</g:price>
+      <g:brand>Global Green HP</g:brand>
+      <g:condition>new</g:condition>
+      <g:google_product_category>Media &gt; Books &gt; Non-Fiction Books</g:google_product_category>
+      <g:product_type>Education &gt; Cannabis Compliance Training</g:product_type>
+      <g:identifier_exists>false</g:identifier_exists>
+    </item>
+
+    <!-- IT Support -->
+    <item>
+      <g:id>GGHP-IT-008</g:id>
+      <g:title>Cannabis Business IT Technical Support</g:title>
+      <g:description>Dedicated IT technical support for cannabis businesses. Get help with POS system setup, Metrc API integration, security camera compliance, network infrastructure, and point-of-sale troubleshooting. Our technicians understand the unique technology requirements of cannabis operations.</g:description>
+      <g:link>https://www.ggp-os.com/#it-support</g:link>
+      <g:image_link>https://www.ggp-os.com/logo.png</g:image_link>
+      <g:availability>in_stock</g:availability>
+      <g:price>149.00 USD</g:price>
+      <g:brand>Global Green HP</g:brand>
+      <g:condition>new</g:condition>
+      <g:google_product_category>Business &amp; Industrial &gt; Business Services</g:google_product_category>
+      <g:product_type>IT Services &gt; Cannabis Tech Support</g:product_type>
+      <g:identifier_exists>false</g:identifier_exists>
+    </item>
+
+  </channel>
+</rss>
