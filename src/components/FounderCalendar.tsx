@@ -702,6 +702,53 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
         </div>
       )}
 
+      {/* BOOKING LINKS — Shows when Operations filter is active */}
+      {filterCat === 'ops' && (
+        <div className="bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 border border-indigo-200/60 rounded-2xl p-5 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="text-sm font-black text-indigo-900 tracking-tight flex items-center gap-2">
+                <span className="w-6 h-6 bg-indigo-600 rounded-lg flex items-center justify-center text-white text-[10px]">📅</span>
+                Scheduling Links
+              </h3>
+              <p className="text-[10px] font-bold text-indigo-500/80 mt-0.5 uppercase tracking-widest">Calendly & Carepatron • Click to book</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+            {[
+              { label: '🏥 Medical Card', url: 'https://calendly.com/globalgreenhpmeet/medical-card-recommendation', src: 'Calendly' },
+              { label: '🩺 Patient Support', url: 'https://calendly.com/globalgreenhpmeet/general-patient-support', src: 'Calendly' },
+              { label: '💚 Health & Wellness', url: 'https://calendly.com/globalgreenhpmeet/health-wellness-consultation', src: 'Calendly' },
+              { label: '🛠️ IT Support', url: 'https://calendly.com/globalgreenhpmeet/it-technical-support', src: 'Calendly' },
+              { label: '📚 Online Classes', url: 'https://calendly.com/globalgreenhpmeet/online-classes', src: 'Calendly' },
+              { label: '🎯 GGHP Demo', url: 'https://calendly.com/globalgreenhpmeet/gghp-demo', src: 'Calendly' },
+              { label: '💻 GGP-OS Platform', url: 'https://calendly.com/globalgreenhpmeet/calendly-com-ggp-os', src: 'Calendly' },
+              { label: '🤝 Business Meeting', url: 'https://calendly.com/globalgreenhpmeet/business-meeting', src: 'Calendly' },
+              { label: '📊 Business Consult', url: 'https://calendly.com/globalgreenhpmeet/general-business-consultation', src: 'Calendly' },
+              { label: '📋 Retail Compliance', url: 'https://calendly.com/globalgreenhpmeet/retail-compliance-pro', src: 'Calendly' },
+              { label: '🔍 SINC Oversight', url: 'https://calendly.com/globalgreenhpmeet/sinc-oversight-directives', src: 'Calendly' },
+              { label: '📡 Metrc Integration', url: 'https://calendly.com/globalgreenhpmeet/metrc-integration-mastery', src: 'Calendly' },
+              { label: '⚖️ Legal Consultation', url: 'https://calendly.com/globalgreenhpmeet/legal-consultation', src: 'Calendly' },
+              { label: '🏥 Carepatron Booking', url: 'https://book.carepatron.com/Diversity-Health---Wellness-Network--GoHealthUSA---CCardz-/All?p=MeBev6pvQWuqD4djocNXFg', src: 'Carepatron' },
+            ].map(link => (
+              <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer"
+                className={cn(
+                  "group flex items-center gap-2 px-3 py-2.5 rounded-xl text-[11px] font-bold border transition-all hover:shadow-md hover:-translate-y-0.5",
+                  link.src === 'Carepatron'
+                    ? "bg-purple-600 text-white border-purple-700 hover:bg-purple-700"
+                    : "bg-white text-slate-700 border-slate-200 hover:border-indigo-400 hover:bg-indigo-50"
+                )}
+              >
+                <span className="truncate">{link.label}</span>
+                <span className={cn("text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md shrink-0",
+                  link.src === 'Carepatron' ? "bg-white/20 text-white" : "bg-indigo-100 text-indigo-600"
+                )}>{link.src}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* === MONTH VIEW === */}
       {view === 'month' && (
         <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
