@@ -23,12 +23,14 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Install dependencies
         run: npm ci
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: 'true'
 
-      - name: Install Puppeteer browser
+      - name: Install Chrome for Puppeteer
         run: npx puppeteer browsers install chrome
 
       - name: Run enforcement pipeline
@@ -45,11 +47,3 @@ jobs:
             IFS=',' read -ra STATE_ARRAY <<< "$STATES"
             node scripts/enforcement/runner.mjs "${STATE_ARRAY[@]}"
           fi
-
-      - name: Upload run log
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: enforcement-sync-log-${{ github.run_number }}
-          path: scripts/enforcement/*.log
-          retention-days: 30

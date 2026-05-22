@@ -115,11 +115,57 @@ export const NationalEnforcementLedger: React.FC<Props> = ({ dark = false }) => 
             }}
           >
             <option value="ALL" className={selectBg}>All States</option>
-            <option value="OK" className={selectBg}>Oklahoma (OK)</option>
-            <option value="MS" className={selectBg}>Mississippi (MS)</option>
+            <option value="AL" className={selectBg}>Alabama (AL)</option>
+            <option value="AK" className={selectBg}>Alaska (AK)</option>
+            <option value="AZ" className={selectBg}>Arizona (AZ)</option>
+            <option value="AR" className={selectBg}>Arkansas (AR)</option>
             <option value="CA" className={selectBg}>California (CA)</option>
-            <option value="TX" className={selectBg}>Texas (TX)</option>
+            <option value="CO" className={selectBg}>Colorado (CO)</option>
+            <option value="CT" className={selectBg}>Connecticut (CT)</option>
+            <option value="DE" className={selectBg}>Delaware (DE)</option>
+            <option value="DC" className={selectBg}>District of Columbia (DC)</option>
+            <option value="FL" className={selectBg}>Florida (FL)</option>
+            <option value="GA" className={selectBg}>Georgia (GA)</option>
+            <option value="HI" className={selectBg}>Hawaii (HI)</option>
+            <option value="ID" className={selectBg}>Idaho (ID)</option>
+            <option value="IL" className={selectBg}>Illinois (IL)</option>
+            <option value="IN" className={selectBg}>Indiana (IN)</option>
+            <option value="IA" className={selectBg}>Iowa (IA)</option>
+            <option value="KS" className={selectBg}>Kansas (KS)</option>
+            <option value="KY" className={selectBg}>Kentucky (KY)</option>
+            <option value="LA" className={selectBg}>Louisiana (LA)</option>
+            <option value="ME" className={selectBg}>Maine (ME)</option>
+            <option value="MD" className={selectBg}>Maryland (MD)</option>
+            <option value="MA" className={selectBg}>Massachusetts (MA)</option>
+            <option value="MI" className={selectBg}>Michigan (MI)</option>
+            <option value="MN" className={selectBg}>Minnesota (MN)</option>
+            <option value="MS" className={selectBg}>Mississippi (MS)</option>
             <option value="MO" className={selectBg}>Missouri (MO)</option>
+            <option value="MT" className={selectBg}>Montana (MT)</option>
+            <option value="NE" className={selectBg}>Nebraska (NE)</option>
+            <option value="NV" className={selectBg}>Nevada (NV)</option>
+            <option value="NH" className={selectBg}>New Hampshire (NH)</option>
+            <option value="NJ" className={selectBg}>New Jersey (NJ)</option>
+            <option value="NM" className={selectBg}>New Mexico (NM)</option>
+            <option value="NY" className={selectBg}>New York (NY)</option>
+            <option value="NC" className={selectBg}>North Carolina (NC)</option>
+            <option value="ND" className={selectBg}>North Dakota (ND)</option>
+            <option value="OH" className={selectBg}>Ohio (OH)</option>
+            <option value="OK" className={selectBg}>Oklahoma (OK)</option>
+            <option value="OR" className={selectBg}>Oregon (OR)</option>
+            <option value="PA" className={selectBg}>Pennsylvania (PA)</option>
+            <option value="RI" className={selectBg}>Rhode Island (RI)</option>
+            <option value="SC" className={selectBg}>South Carolina (SC)</option>
+            <option value="SD" className={selectBg}>South Dakota (SD)</option>
+            <option value="TN" className={selectBg}>Tennessee (TN)</option>
+            <option value="TX" className={selectBg}>Texas (TX)</option>
+            <option value="UT" className={selectBg}>Utah (UT)</option>
+            <option value="VT" className={selectBg}>Vermont (VT)</option>
+            <option value="VA" className={selectBg}>Virginia (VA)</option>
+            <option value="WA" className={selectBg}>Washington (WA)</option>
+            <option value="WV" className={selectBg}>West Virginia (WV)</option>
+            <option value="WI" className={selectBg}>Wisconsin (WI)</option>
+            <option value="WY" className={selectBg}>Wyoming (WY)</option>
           </select>
         </div>
       </div>
