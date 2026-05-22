@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Globe } from 'lucide-react';
+import { Search, Globe, ExternalLink, ShieldCheck, ShieldAlert } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { turso } from '../../lib/turso';
 
@@ -180,12 +180,25 @@ export const NationalEnforcementLedger: React.FC<Props> = ({ dark = false }) => 
         ) : (searchQuery.trim() || stateFilter !== 'ALL') ? (
           results.length > 0 ? (
             results.map((record) => (
-              <div key={record.id} className={cn("border rounded-2xl p-5 flex flex-col md:flex-row justify-between gap-4 transition-all hover:shadow-md", itemBg)}>
+              <div
+                key={record.id}
+                className={cn("border rounded-2xl p-5 flex flex-col md:flex-row justify-between gap-4 transition-all hover:shadow-md", itemBg, record.source_url && "cursor-pointer hover:ring-1 hover:ring-blue-500/30")}
+                onClick={() => record.source_url && window.open(record.source_url, '_blank')}
+              >
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className={cn("px-2 py-0.5 rounded text-[9px] font-black border uppercase tracking-wider", stateBadge)}>{record.state}</span>
                     <span className={cn("text-sm font-black", dark ? "text-white" : "text-slate-800")}>{record.business_name}</span>
                     {record.dba && <span className={cn("text-[10px] font-bold", itemDba)}>({record.dba})</span>}
+                    {record.source_url ? (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <ShieldCheck size={10} /> Verified Source
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest bg-amber-50 text-amber-600 border border-amber-200">
+                        <ShieldAlert size={10} /> Unverified
+                      </span>
+                    )}
                   </div>
                   <p className={cn("text-xs font-bold leading-relaxed", itemText)}>
                     <strong className={detailLabel}>Action/Reason:</strong> {record.reasons}
@@ -193,6 +206,7 @@ export const NationalEnforcementLedger: React.FC<Props> = ({ dark = false }) => 
                   <div className={cn("flex items-center gap-4 text-[9px] font-black uppercase tracking-wider", detailSub)}>
                     <span>Type: {record.license_type}</span>
                     <span>License: {record.license_number}</span>
+                    {record.source_url && <span className="inline-flex items-center gap-1 text-blue-500"><ExternalLink size={9} /> View Official Source</span>}
                   </div>
                 </div>
                 <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-center gap-2 shrink-0">
@@ -220,11 +234,24 @@ export const NationalEnforcementLedger: React.FC<Props> = ({ dark = false }) => 
               Latest Database Audits
             </p>
             {recentAudits.map((record) => (
-              <div key={record.id} className={cn("border rounded-2xl p-4 flex flex-col md:flex-row justify-between gap-4 hover:shadow-sm transition-all", recentItemBg)}>
+              <div
+                key={record.id}
+                className={cn("border rounded-2xl p-4 flex flex-col md:flex-row justify-between gap-4 hover:shadow-sm transition-all", recentItemBg, record.source_url && "cursor-pointer hover:ring-1 hover:ring-blue-500/30")}
+                onClick={() => record.source_url && window.open(record.source_url, '_blank')}
+              >
                 <div className="space-y-1.5">
                   <div className="flex items-center gap-2">
                     <span className={cn("px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider border", stateBadge)}>{record.state}</span>
                     <span className={cn("text-xs font-black", dark ? "text-white" : "text-slate-800")}>{record.business_name}</span>
+                    {record.source_url ? (
+                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[7px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <ShieldCheck size={8} /> Verified
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[7px] font-black uppercase tracking-widest bg-amber-50 text-amber-600 border border-amber-200">
+                        <ShieldAlert size={8} /> Unverified
+                      </span>
+                    )}
                   </div>
                   <p className={cn("text-[11px] font-bold leading-relaxed truncate max-w-xl", itemText)}>
                     {record.reasons}
