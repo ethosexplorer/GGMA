@@ -380,7 +380,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {fbUsers.map(u => ({ name: u.firstName + ' ' + (u.lastName || ''), email: u.email, role: u.role || 'User', status: 'Active', date: 'N/A' })).map((u,i) => (
+            {fbUsers.filter(u => u.role !== 'patient').map(u => ({ name: u.displayName || u.fullName || u.name || (u.firstName ? u.firstName + ' ' + (u.lastName || '') : u.email), email: u.email, role: u.role || 'User', status: u.status || 'Active', date: 'N/A' })).map((u,i) => (
               <tr key={i} className="hover:bg-slate-50 group">
                 <td className="px-4 py-3">
                   <p className="font-bold text-slate-800">{u.name}</p>
