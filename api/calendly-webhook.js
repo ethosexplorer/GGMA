@@ -6,29 +6,56 @@
 // 2. Logs it to the Turso audit trail
 // 3. Returns 200 to confirm receipt
 //
-// Setup: In Calendly → Integrations → Webhooks → Subscribe
-//   URL: https://your-domain.vercel.app/api/calendly-webhook
-//   Events: invitee.created
+// Webhook registered: https://ggma.vercel.app/api/calendly-webhook
+// Events: invitee.created, invitee.canceled
 // ============================================================
 
-import { initializeApp, cert, getApps } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
+import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, addDoc } from 'firebase/firestore';
 
-// Initialize Firebase Admin (server-side)
-if (!getApps().length) {
-  initializeApp({
-    credential: cert({
-      projectId: process.env.VITE_FIREBASE_PROJECT_ID,
-      clientEmail: `firebase-adminsdk@${process.env.VITE_FIREBASE_PROJECT_ID}.iam.gserviceaccount.com`,
-      // For production, use FIREBASE_ADMIN_PRIVATE_KEY env var
-      // For now, we use the client-side config which works for Firestore writes
-      privateKey: (process.env.FIREBASE_ADMIN_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
-    }),
-  });
+// Initialize Firebase client SDK (server-side compatible)
+const firebaseConfig = {
+  apiKey: process.env.VITE_FIREBASE_API_KEY,
+  authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.VITE_FIREBASE_APP_ID,
+};
+
+let app;
+try { app = initializeApp(firebaseConfig, 'calendly-webhook'); } catch (e) {
+  // App already initialized
+  const { getApp } = await import('firebase/app');
+  try { app = getApp('calendly-webhook'); } catch { app = initializeApp(firebaseConfig, 'calendly-webhook-' + Date.now()); }
+}
+const db = getFirestore(app);
+
+// Map Calendly event slugs to platform categories + colors
+const EVENT_CATEGORY_MAP = {
+  'medical-card-recommendation': { category: 'ops', color: 'bg-indigo-500', label: '🏥 Medical Card' },
+  'general-patient-support':     { category: 'ops', color: 'bg-indigo-500', label: '🩺 Patient Support' },
+  'health-wellness-consultation': { category: 'ops', color: 'bg-indigo-500', label: '💚 Health & Wellness' },
+  'gghp-demo':                   { category: 'executive', color: 'bg-purple-500', label: '🎯 GGHP Demo' },
+  'calendly-com-ggp-os':         { category: 'executive', color: 'bg-purple-500', label: '💻 GGP-OS Platform' },
+  'business-meeting':            { category: 'executive', color: 'bg-purple-500', label: '🤝 Business Meeting' },
+  'general-business-consultation': { category: 'executive', color: 'bg-purple-500', label: '📊 Business Consult' },
+  'retail-compliance-pro':       { category: 'compliance', color: 'bg-amber-500', label: '📋 Retail Compliance' },
+  'sinc-oversight-directives':   { category: 'compliance', color: 'bg-amber-500', label: '🔍 SINC Oversight' },
+  'metrc-integration-mastery':   { category: 'compliance', color: 'bg-amber-500', label: '📡 Metrc Integration' },
+  'legal-consultation':          { category: 'federal', color: 'bg-red-500', label: '⚖️ Legal Consultation' },
+  'it-technical-support':        { category: 'ops', color: 'bg-indigo-500', label: '🛠️ IT Support' },
+  'online-classes':              { category: 'ops', color: 'bg-indigo-500', label: '📚 Online Classes' },
+};
+
+function categorizeEvent(eventUrl) {
+  for (const [slug, meta] of Object.entries(EVENT_CATEGORY_MAP)) {
+    if (eventUrl && eventUrl.includes(slug)) return meta;
+  }
+  return { category: 'ops', color: 'bg-indigo-500', label: '📅 Calendly' };
 }
 
 export default async function handler(req, res) {
-  // Only accept POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -40,42 +67,55 @@ export default async function handler(req, res) {
 
     console.log(`📅 Calendly webhook received: ${event}`);
 
-    // We care about new bookings
+    // Handle cancellations
+    if (event === 'invitee.canceled') {
+      console.log(`   ❌ Cancellation received — logged`);
+      return res.status(200).json({ status: 'canceled_logged', event });
+    }
+
     if (event !== 'invitee.created') {
-      console.log(`   Ignoring event type: ${event}`);
       return res.status(200).json({ status: 'ignored', event });
     }
 
-    // Extract booking details from Calendly payload
+    // Extract booking details
     const invitee = data.invitee || {};
     const eventDetails = data.event || {};
     const scheduledEvent = data.scheduled_event || {};
     const questions = data.questions_and_answers || [];
+    const eventTypeUrl = scheduledEvent.event_type || eventDetails.event_type || '';
 
-    // Parse start/end times
+    // Determine category based on event type
+    const { category, color, label } = categorizeEvent(eventTypeUrl);
+
+    // Parse start/end times (CST)
     const startTime = scheduledEvent.start_time || eventDetails.start_time || '';
     const endTime = scheduledEvent.end_time || eventDetails.end_time || '';
     const startDate = startTime ? new Date(startTime) : new Date();
     const endDate = endTime ? new Date(endTime) : new Date();
 
-    // Build calendar event
+    // Build calendar event matching FounderCalendar's CalEvent interface
     const calendarEvent = {
-      title: `📅 ${invitee.name || 'New Patient'} — Calendly Booking`,
+      title: `${label}: ${invitee.name || 'New Booking'}`,
       date: startDate.toISOString().split('T')[0],
       startTime: startDate.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', timeZone: 'America/Chicago' }),
       endTime: endDate.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', timeZone: 'America/Chicago' }),
-      category: 'admin_support',
-      color: 'bg-emerald-500',
+      category,
+      color,
       description: [
         `Booked via Calendly`,
         `Email: ${invitee.email || 'N/A'}`,
-        `Event: ${scheduledEvent.name || eventDetails.name || 'Appointment'}`,
+        `Phone: ${invitee.text_reminder_number || 'N/A'}`,
+        `Event Type: ${scheduledEvent.name || eventDetails.name || 'Appointment'}`,
         `Location: ${scheduledEvent.location?.location || 'Virtual'}`,
-        questions.map(q => `${q.question}: ${q.answer}`).join('\n'),
+        ...questions.map(q => `${q.question}: ${q.answer}`),
       ].filter(Boolean).join('\n'),
       attendees: invitee.email || '',
       meetLink: scheduledEvent.location?.join_url || '',
       location: scheduledEvent.location?.location || 'Virtual',
+      // Required for FounderCalendar visibility
+      assignedTo: 'Founder',
+      assignedBy: 'Founder',
+      // Calendly metadata
       source: 'calendly',
       calendly_event_uri: scheduledEvent.uri || '',
       calendly_invitee_uri: invitee.uri || '',
@@ -85,28 +125,27 @@ export default async function handler(req, res) {
       createdAt: new Date().toISOString(),
     };
 
-    console.log(`   📋 Booking: ${calendarEvent.title}`);
-    console.log(`   📅 Date: ${calendarEvent.date} ${calendarEvent.startTime}-${calendarEvent.endTime}`);
-    console.log(`   📧 Email: ${invitee.email}`);
+    console.log(`   📋 ${calendarEvent.title}`);
+    console.log(`   📅 ${calendarEvent.date} ${calendarEvent.startTime}-${calendarEvent.endTime}`);
+    console.log(`   🏷️ Category: ${category}`);
 
-    // Write to Firebase Firestore
+    // Write to Firebase Firestore (calendar_events collection)
     let firebaseId = null;
     try {
-      const firestore = getFirestore();
-      const docRef = await firestore.collection('calendar_events').add(calendarEvent);
+      const docRef = await addDoc(collection(db, 'calendar_events'), calendarEvent);
       firebaseId = docRef.id;
-      console.log(`   ✅ Written to Firebase: ${firebaseId}`);
+      console.log(`   ✅ Firebase calendar_events: ${firebaseId}`);
     } catch (fbErr) {
-      console.error(`   ⚠️ Firebase write failed (will still log to Turso):`, fbErr.message);
+      console.error(`   ⚠️ Firebase write failed:`, fbErr.message);
     }
 
-    // Also write a notification to Firebase for real-time alerts
+    // Write notification for real-time alerts
     try {
-      const firestore = getFirestore();
-      await firestore.collection('notifications').add({
+      await addDoc(collection(db, 'notifications'), {
         type: 'calendly_booking',
         title: `🆕 New Appointment: ${invitee.name || 'Patient'}`,
-        body: `${scheduledEvent.name || 'Appointment'} scheduled for ${calendarEvent.date} at ${calendarEvent.startTime}`,
+        message: `${scheduledEvent.name || 'Appointment'} on ${calendarEvent.date} at ${calendarEvent.startTime}`,
+        body: `${label} — ${invitee.email || ''}`,
         email: invitee.email || '',
         read: false,
         createdAt: new Date().toISOString(),
@@ -114,17 +153,16 @@ export default async function handler(req, res) {
       });
       console.log(`   🔔 Notification created`);
     } catch (notifErr) {
-      console.error(`   ⚠️ Notification write failed:`, notifErr.message);
+      console.error(`   ⚠️ Notification failed:`, notifErr.message);
     }
 
-    // Log to Turso audit trail
+    // Audit trail in Turso
     try {
       const { createClient } = await import('@libsql/client');
       const turso = createClient({
         url: process.env.VITE_TURSO_DATABASE_URL,
         authToken: process.env.VITE_TURSO_AUTH_TOKEN,
       });
-
       await turso.execute({
         sql: `INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)`,
         args: [
@@ -135,6 +173,7 @@ export default async function handler(req, res) {
             invitee_name: invitee.name,
             invitee_email: invitee.email,
             event_name: scheduledEvent.name || eventDetails.name,
+            category,
             date: calendarEvent.date,
             start: calendarEvent.startTime,
             end: calendarEvent.endTime,
@@ -142,15 +181,15 @@ export default async function handler(req, res) {
           }),
         ],
       });
-      console.log(`   📝 Audit log written to Turso`);
+      console.log(`   📝 Turso audit logged`);
     } catch (tursoErr) {
-      console.error(`   ⚠️ Turso audit log failed:`, tursoErr.message);
+      console.error(`   ⚠️ Turso log failed:`, tursoErr.message);
     }
 
     return res.status(200).json({
       status: 'success',
-      message: 'Booking received and synced to platform',
       firebaseId,
+      category,
       booking: {
         name: invitee.name,
         email: invitee.email,
