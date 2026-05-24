@@ -4429,7 +4429,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   );
 
   const renderLegalOversight = () => (
-    <div className="space-y-6 animate-in fade-in duration-500 text-slate-800">
+    <div className="space-y-6 animate-in fade-in duration-500 text-slate-800" data-action-bound>
       {/* BREAKING NEWS BANNER */}
       <div className="bg-emerald-900 bg-gradient-to-r from-emerald-900/80 via-teal-900/60 to-emerald-900/80 p-6 rounded-2xl border border-emerald-500/50 shadow-lg shadow-emerald-900/20 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500 animate-pulse"></div>
@@ -4535,7 +4535,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   );
 
   const renderApprovalsDenials = () => (
-    <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500 text-slate-800">
+    <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500 text-slate-800" data-action-bound>
       <div className="bg-white border border-slate-200 p-8 flex justify-between items-end rounded-[2rem] shadow-sm">
          <div>
             <h2 className="text-3xl font-black text-slate-900 tracking-tight italic uppercase">Authorization Hub</h2>
@@ -4602,13 +4602,13 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   const getContent = () => {
     switch (activeTab) {
       case 'operations': 
-        return <div className="h-full w-full -m-10"><OperationsDashboard user={user} onLogout={onLogout} /></div>;
+        return <div className="h-full w-full -m-10" data-action-bound><OperationsDashboard user={user} onLogout={onLogout} /></div>;
       case 'internal_admin': 
-        return <div className="h-full w-full -m-10"><AdminDashboard user={user} onLogout={() => setActiveTab(isExecutive ? 'ai_training' : 'overview')} /></div>;
+        return <div className="h-full w-full -m-10" data-action-bound><AdminDashboard user={user} onLogout={() => setActiveTab(isExecutive ? 'ai_training' : 'overview')} /></div>;
       case 'external_admin': 
-        return <div className="h-full w-full -m-10"><ExternalAdminDashboard user={user} onLogout={onLogout} /></div>;
+        return <div className="h-full w-full -m-10" data-action-bound><ExternalAdminDashboard user={user} onLogout={onLogout} /></div>;
       case 'virtual_attendant':
-        return <div className="p-8 h-full overflow-y-auto"><VirtualAttendantTab /></div>;
+        return <div className="p-8 h-full overflow-y-auto" data-action-bound><VirtualAttendantTab /></div>;
       case 'processor':
         return (
           <div className="p-8 space-y-6 overflow-y-auto h-full">
@@ -4674,38 +4674,38 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       case 'accounting_ledger': return renderAccountingLedger();
       case 'launch_script': return renderLaunchScript();
       case 'global_financials': return renderFinancials();
-      case 'system_health': return <LiveSystemHealth />;
-      case 'jurisdiction_map': return <LiveJurisdictionMap />;
+      case 'system_health': return <div data-action-bound><LiveSystemHealth /></div>;
+      case 'jurisdiction_map': return <div data-action-bound><LiveJurisdictionMap /></div>;
       case 'users': return renderPersonnelForce();
       case 'patients': return renderRegistrySovereignty();
 
       case 'business': return renderEconomicInfrastructure();
-      case 'b2b_crm': return <div className="h-full w-full -m-10 bg-[#080e1a] min-h-screen overflow-auto"><PipelineCRM /></div>;
-      case 'marketing_hub': return <div className="h-full w-full -m-10 bg-[#080e1a] min-h-screen overflow-auto"><MarketingHub /></div>;
-      case 'omma_pipeline': return <div className="h-full w-full -m-10"><GlobalSweepTab /></div>;
-      case 'global_directory': return <div className="h-full w-full -m-10"><GlobalDirectoryTab onOpenMessage={(uid) => { setActiveTab('messages'); }} /></div>;
+      case 'b2b_crm': return <div className="h-full w-full -m-10 bg-[#080e1a] min-h-screen overflow-auto" data-action-bound><PipelineCRM /></div>;
+      case 'marketing_hub': return <div className="h-full w-full -m-10 bg-[#080e1a] min-h-screen overflow-auto" data-action-bound><MarketingHub /></div>;
+      case 'omma_pipeline': return <div className="h-full w-full -m-10" data-action-bound><GlobalSweepTab /></div>;
+      case 'global_directory': return <div className="h-full w-full -m-10" data-action-bound><GlobalDirectoryTab onOpenMessage={(uid) => { setActiveTab('messages'); }} /></div>;
       case 'approvals': return renderApprovals();
       case 'applications': return renderApplications();
-      case 'compliance': return <LiveComplianceMonitor />;
-      case 'regulatory_library': return <LiveRegulatoryLibrary />;
+      case 'compliance': return <div data-action-bound><LiveComplianceMonitor /></div>;
+      case 'regulatory_library': return <div data-action-bound><LiveRegulatoryLibrary /></div>;
       case 'legal_oversight': return renderLegalOversight();
       case 'approvals_denials': return renderApprovalsDenials();
-      case 'metrc_state': return <div className="h-full w-full -m-10 bg-slate-50 p-10 min-h-screen overflow-auto"><ComplianceEngineTab /></div>;
-      case 'reports': return <MasterAnalyticsTab />;
+      case 'metrc_state': return <div className="h-full w-full -m-10 bg-slate-50 p-10 min-h-screen overflow-auto" data-action-bound><ComplianceEngineTab /></div>;
+      case 'reports': return <div data-action-bound><MasterAnalyticsTab /></div>;
       case 'intel': 
-        return <div className="h-full w-full -m-10 bg-[#080e1a] p-10 min-h-screen overflow-auto"><LegislativeIntelTab /></div>;
+        return <div className="h-full w-full -m-10 bg-[#080e1a] p-10 min-h-screen overflow-auto" data-action-bound><LegislativeIntelTab /></div>;
       case 'it_support':
-        return <div className="h-full w-full -m-10 p-10 min-h-screen overflow-auto bg-slate-50"><ITSupportDashboard /></div>;
+        return <div className="h-full w-full -m-10 p-10 min-h-screen overflow-auto bg-slate-50" data-action-bound><ITSupportDashboard /></div>;
       case 'logs': return renderLogs();
       case 'support_tickets': return renderSupportTickets();
-      case 'internal_scheduler': return <FounderCalendar user={user} title="Founder's Master Calendar" />;
-      case 'realtime_tasks': return <div className="h-full w-full -m-10 bg-slate-50 p-10 min-h-screen overflow-auto"><RapidRevenueTab /></div>;
-      case 'admin_support_calendar': return <div className="h-full w-full -m-10"><AdminSupportCalendar /></div>;
-      case 'escalation_support_calendar': return <div className="h-full w-full -m-10"><EscalationSupportCalendar /></div>;
+      case 'internal_scheduler': return <div data-action-bound><FounderCalendar user={user} title="Founder's Master Calendar" /></div>;
+      case 'realtime_tasks': return <div className="h-full w-full -m-10 bg-slate-50 p-10 min-h-screen overflow-auto" data-action-bound><RapidRevenueTab /></div>;
+      case 'admin_support_calendar': return <div className="h-full w-full -m-10" data-action-bound><AdminSupportCalendar /></div>;
+      case 'escalation_support_calendar': return <div className="h-full w-full -m-10" data-action-bound><EscalationSupportCalendar /></div>;
       case 'subscriptions': return renderSubscriptionsTab();
-      case 'invoices': return <div className="h-full w-full -m-10 p-10"><InvoiceManager /></div>;
-      case 'negligence_intercept': return <div className="h-full w-full -m-10"><AdminDashboard user={user} initialTab="negligence" onLogout={() => setActiveTab(isExecutive ? 'ai_training' : 'overview')} /></div>;
-      case 'hr_intelligence': return <LiveHRIntelligence />;
+      case 'invoices': return <div className="h-full w-full -m-10 p-10" data-action-bound><InvoiceManager /></div>;
+      case 'negligence_intercept': return <div className="h-full w-full -m-10" data-action-bound><AdminDashboard user={user} initialTab="negligence" onLogout={() => setActiveTab(isExecutive ? 'ai_training' : 'overview')} /></div>;
+      case 'hr_intelligence': return <div data-action-bound><LiveHRIntelligence /></div>;
       case 'rapid_testing': return <LiveRapidTesting />;
       case 'law_enforcement': return <LiveLawEnforcement />;
       case 'ip_monitor': return renderIPMonitor();
