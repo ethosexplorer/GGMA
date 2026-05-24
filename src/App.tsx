@@ -3275,11 +3275,46 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         const apptsSnap = await getDocs(collection(db, 'calendar_events'));
         let apptsCount = apptsSnap.size;
         let apptsList: string[] = [];
+        let rawAppts: any[] = [];
         apptsSnap.docs.forEach(doc => {
           const data = doc.data();
           if (data.title) {
-            apptsList.push(data.title);
+            rawAppts.push({
+              title: data.title,
+              date: data.date || '',
+              startTime: data.startTime || '00:00',
+              endTime: data.endTime || '00:00',
+              category: data.category || 'task'
+            });
           }
+        });
+
+        // Sort chronologically by date and startTime
+        rawAppts.sort((a, b) => {
+          const dateDiff = (a.date || '').localeCompare(b.date || '');
+          if (dateDiff !== 0) return dateDiff;
+          return (a.startTime || '').localeCompare(b.startTime || '');
+        });
+
+        // Filter for upcoming/today (2026-05-24 and later)
+        const currentLocalDate = '2026-05-24';
+        const upcomingAppts = rawAppts.filter(ev => (ev.date || '') >= currentLocalDate);
+
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        apptsList = upcomingAppts.map(ev => {
+          let dateStr = ev.date;
+          if (ev.date === currentLocalDate) {
+            dateStr = 'Today';
+          } else if (ev.date) {
+            const parts = ev.date.split('-');
+            if (parts.length === 3) {
+              const mIdx = parseInt(parts[1]) - 1;
+              if (mIdx >= 0 && mIdx < 12) {
+                dateStr = `${monthNames[mIdx]} ${parseInt(parts[2])}`;
+              }
+            }
+          }
+          return `${dateStr} @ ${ev.startTime}: ${ev.title} (${ev.category.toUpperCase()})`;
         });
         
         // 3. Fetch Audit Logs
@@ -3295,7 +3330,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
           pendingApprovals: todayIntakes || 14,
           appointmentsCount: apptsCount || 3,
           auditLogsCount: logsCount || 10,
-          appointmentsList: apptsList.length > 0 ? apptsList.slice(0, 5) : [
+          appointmentsList: apptsList.length > 0 ? apptsList : [
             'Legal Strategy Sync with Attorney James',
             'Federal Expansion Call',
             'Live Agent Review'
@@ -3663,7 +3698,37 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     const lower = text.toLowerCase();
 
     // LIVE GEMINI OVERRIDE: Process all non-menu/non-signup queries via real Gemini API
-    const isMenuOrSignup = signupStep !== -1 || text === 'Main Menu' || text.includes('Intake') || text.includes('Subscription') || text.includes('Book') || text === 'English' || lower.startsWith('train:') || lower.startsWith('learn:') || lower.startsWith('remember:') || lower.includes('sweep') || lower.includes('anomalies') || lower.includes('global operations') || lower.includes('enforcement');
+    const isMenuOrSignup = signupStep !== -1 || 
+      text === 'Main Menu' || 
+      text.includes('Intake') || 
+      text.includes('Subscription') || 
+      text.includes('Book') || 
+      text === 'English' || 
+      lower.startsWith('train:') || 
+      lower.startsWith('learn:') || 
+      lower.startsWith('remember:') || 
+      lower.includes('sweep') || 
+      lower.includes('anomalies') || 
+      lower.includes('global operations') || 
+      lower.includes('enforcement') ||
+      lower.includes('daily summary') ||
+      lower.includes('system report') ||
+      lower.includes('larry report') ||
+      lower.includes('chain of command') ||
+      lower.includes('appointments') ||
+      lower.includes('pending approvals') ||
+      lower.includes('send broadcast') ||
+      lower.includes('employee') ||
+      lower.includes('staff') ||
+      lower.includes('c3') ||
+      lower.includes('compassion score') ||
+      lower.includes('community score') ||
+      lower.includes('view my c3 score') ||
+      lower.includes('how to improve c3') ||
+      lower.includes('view supreme command') ||
+      lower.includes('view compliance hub') ||
+      lower.includes('view operations staff') ||
+      lower.includes('view rip staff');
     
     if (!isMenuOrSignup) {
       try {
@@ -3796,7 +3861,13 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         const floridaStr = dbStats.floridaIntakes > 0 ? `• **Florida (FL):** ${dbStats.floridaIntakes}` : "• **Florida (FL):** 1";
         const totalUsersText = dbStats.totalUsers > 0 ? `Total Platform Database Users: **${dbStats.totalUsers}**` : "Total Platform Database Users: **1,248**";
         
-        response = `📊 **Executive Daily Summary (Real Data)**\n\n${totalUsersText}\n\n**New Intakes (Last 24h):**\n${oklahomaStr}\n${michiganStr}\n${floridaStr}\n\n• **Pending Approvals:** ${dbStats.pendingApprovals}\n• **System Logs Count:** ${dbStats.auditLogsCount}\n• **System Health:** 100% Operational\n\nAll metrics are synchronized directly from your Firestore and Turso database.`;
+        // Extract appointments scheduled for "Today"
+        const todayAppts = dbStats.appointmentsList.filter(appt => appt.startsWith('Today'));
+        const todayApptsText = todayAppts.length > 0 
+          ? todayAppts.map(a => `• ${a.replace('Today @ ', '')}`).join('\n')
+          : '• No appointments scheduled for today.';
+        
+        response = `📊 **Executive Daily Summary (Real Data)**\n\n${totalUsersText}\n\n**New Intakes (Last 24h):**\n${oklahomaStr}\n${michiganStr}\n${floridaStr}\n\n• **Pending Approvals:** ${dbStats.pendingApprovals}\n• **System Logs Count:** ${dbStats.auditLogsCount}\n• **System Health:** 100% Operational\n\n📅 **Today's Schedule:**\n${todayApptsText}\n\nAll metrics are synchronized directly from your Firestore and Turso database.`;
         setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
         setIsTyping(false);
         return;
