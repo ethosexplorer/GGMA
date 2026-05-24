@@ -4,8 +4,11 @@ import { db } from '../../lib/firebase';
 import { 
   HeartPulse, Building2, FileCheck, Zap, Gavel, 
   FlaskConical, BarChart3, Activity, Clock, Shield,
-  Globe, Users, Bot, AlertTriangle, Layers, UserPlus, MapPin
+  Globe, Users, Bot, AlertTriangle, Layers, UserPlus, MapPin,
+  Search, ArrowUpRight, BookOpen
 } from 'lucide-react';
+import { cn } from '../../lib/utils';
+import { METRC_MANUAL } from '../../data/metrcManual';
 
 export const LiveSystemHealth = () => {
   const [logs, setLogs] = useState<any[]>([]);
@@ -406,36 +409,62 @@ export const LiveRapidTesting = () => {
 
 export const LiveRegulatoryLibrary = () => {
   const [searchQ, setSearchQ] = useState('');
-  const items = [
-    { title: 'METRC Overview & Account Setup', category: 'Overview', content: 'Complete guide to initializing your Metrc account, including API key generation, facility-level permissions, and initial inventory reconciliation procedures.' },
-    { title: 'Package Tag Management', category: 'Operations', content: 'Standard procedures for creating, splitting, and transferring package tags. Includes RFID scanning protocols and chain-of-custody documentation requirements.' },
-    { title: 'Harvest & Processing SOP', category: 'Operations', content: 'Step-by-step harvest batch creation, wet/dry weight recording, waste disposal documentation, and quality assurance checkpoints.' },
-    { title: 'Transfer Manifest Compliance', category: 'Compliance', content: 'Requirements for inter-facility transfers including manifest generation, driver verification, route logging, and receiving facility confirmation protocols.' },
-    { title: 'Lab Testing Requirements', category: 'Compliance', content: 'Mandatory testing panels (potency, pesticides, heavy metals, microbials), sample collection procedures, and COA verification workflows.' },
-    { title: 'Oklahoma OMMA Title 63', category: 'Admin', content: 'Complete reference for Oklahoma Medical Marijuana Authority regulations including licensing tiers, renewal procedures, and enforcement provisions.' },
-  ];
-  const filtered = searchQ ? items.filter(i => i.title.toLowerCase().includes(searchQ.toLowerCase()) || i.content.toLowerCase().includes(searchQ.toLowerCase())) : items;
+  const [regCat, setRegCat] = useState<string | null>(null);
+
+  const filtered = METRC_MANUAL.filter(s => 
+    (s.title.toLowerCase().includes(searchQ.toLowerCase()) || s.content.toLowerCase().includes(searchQ.toLowerCase())) &&
+    (!regCat || s.category === regCat)
+  );
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-in fade-in duration-500">
       <div className="bg-slate-900 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden border border-slate-800">
-        <div className="absolute top-0 right-0 p-10 opacity-10"><FileCheck size={160} /></div>
+        <div className="absolute top-0 right-0 p-10 opacity-10"><BookOpen size={160} /></div>
         <h2 className="text-4xl font-black italic uppercase tracking-tighter mb-2">Regulatory Intelligence Hub</h2>
         <p className="text-indigo-200 font-medium">METRC User Guide & State Law Repository. Synchronized with Oklahoma OMMA Title 63.</p>
-        <div className="mt-8 relative max-w-xl">
-          <input type="text" placeholder="Search laws, SOPs, or compliance rules..." value={searchQ} onChange={e => setSearchQ(e.target.value)} className="w-full pl-12 pr-6 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:border-indigo-500 transition-all text-sm backdrop-blur-md text-white" />
+        
+        <div className="mt-8 flex flex-col md:flex-row gap-4 items-center">
+          <div className="relative flex-1 w-full">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <input 
+              type="text" 
+              placeholder="Search laws, SOPs, or compliance rules..." 
+              value={searchQ} 
+              onChange={e => setSearchQ(e.target.value)} 
+              className="w-full pl-12 pr-6 py-4 bg-white/5 border border-white/10 rounded-2xl outline-none focus:border-indigo-500 transition-all text-sm backdrop-blur-md text-white font-medium" 
+            />
+          </div>
+          <div className="flex flex-wrap gap-2 w-full md:w-auto shrink-0 justify-start md:justify-end">
+             {['Overview', 'Operations', 'Admin', 'Inventory', 'Compliance'].map(cat => (
+               <button 
+                 key={cat}
+                 onClick={() => setRegCat(regCat === cat ? null : cat)}
+                 className={cn(
+                   "px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border",
+                   regCat === cat ? "bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-500/20" : "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10"
+                 )}
+               >
+                 {cat}
+               </button>
+             ))}
+          </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {filtered.map((item, i) => (
-          <div key={i} className="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-8 hover:border-indigo-500/30 hover:-translate-y-1 transition-all group">
-            <span className="text-[9px] font-black uppercase px-2 py-1 bg-slate-800 text-slate-400 rounded-lg group-hover:bg-indigo-500/20 group-hover:text-indigo-400 transition-colors">{item.category}</span>
-            <h3 className="text-lg font-black text-white mt-4 mb-3 group-hover:text-indigo-400 transition-colors">{item.title}</h3>
-            <p className="text-sm text-slate-500 leading-relaxed line-clamp-4">{item.content}</p>
-            <div className="mt-6 pt-6 border-t border-slate-800 flex justify-between items-center">
+          <div key={i} className="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-8 hover:border-indigo-500/30 hover:-translate-y-1 transition-all group flex flex-col justify-between min-h-[250px]">
+            <div>
+              <div className="flex justify-between items-start mb-4">
+                <span className="text-[9px] font-black uppercase px-2 py-1 bg-slate-800 text-slate-400 rounded-lg group-hover:bg-indigo-500/20 group-hover:text-indigo-400 transition-colors">{item.category}</span>
+                <button onClick={() => { import('../../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Opening external reference..." })] }).catch(console.error) ); }} className="text-slate-500 hover:text-indigo-400 transition-colors"><ArrowUpRight size={18} /></button>
+              </div>
+              <h3 className="text-lg font-black text-white mt-2 mb-3 group-hover:text-indigo-400 transition-colors">{item.title}</h3>
+              <p className="text-sm text-slate-400 leading-relaxed line-clamp-4">{item.content}</p>
+            </div>
+            <div className="mt-6 pt-6 border-t border-slate-800/80 flex justify-between items-center">
               <span className="text-[10px] font-bold text-slate-600 italic">Source: Metrc Guide 2021 v11.1</span>
-              <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Read Full Section</span>
+              <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest cursor-pointer hover:underline">Read Full Section</span>
             </div>
           </div>
         ))}
