@@ -5,7 +5,7 @@ import { Building2, Users, FileText, Settings, Shield, Activity, Bell,
   Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Globe, Zap, Database,
   FlaskConical, CreditCard, Map as MapIcon, BookOpen, UserPlus, Trash2,
   MapPin, Target, Layers, TrendingDown, Box, PieChart, GraduationCap, Lock, GripVertical,
-  Calculator, Save, ExternalLink, Printer, ArrowLeft, Phone, PhoneCall, PhoneOff, PhoneIncoming, PhoneOutgoing, CircleCheck, X, XCircle, Clipboard, Megaphone } from 'lucide-react';
+  Calculator, Save, ExternalLink, Printer, ArrowLeft, Phone, PhoneCall, PhoneOff, PhoneIncoming, PhoneOutgoing, CircleCheck, X, XCircle, Clipboard, Megaphone, Sliders } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { NotificationDropdown } from '../components/shared/NotificationDropdown';
 import { motion } from 'motion/react';
@@ -841,6 +841,36 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   const [opsLiveTasks, setOpsLiveTasks] = useState<any[]>([]);
   const [opsTicketCount, setOpsTicketCount] = useState(0);
   const [opsCrmCount, setOpsCrmCount] = useState(0);
+  const [voipQueue, setVoipQueue] = useState(0);
+  const [unreadVoicemails, setUnreadVoicemails] = useState(0);
+
+  // Poll Twilio VoIP Queue status every 10 seconds
+  useEffect(() => {
+    const fetchVoipQueue = async () => {
+      try {
+        const qCount = await voip800.getQueueCount();
+        setVoipQueue(qCount);
+      } catch (e) {
+        console.error('Error fetching VOIP queue count:', e);
+      }
+    };
+    const fetchVoicemails = async () => {
+      try {
+        const vms = await voip800.getVoicemails();
+        const unreadCount = vms.filter((v: any) => !v.read).length;
+        setUnreadVoicemails(unreadCount);
+      } catch (e) {
+        console.error('Error fetching voicemails:', e);
+      }
+    };
+    fetchVoipQueue();
+    fetchVoicemails();
+    const interval = setInterval(() => {
+      fetchVoipQueue();
+      fetchVoicemails();
+    }, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Real-time tasks for Ops Hub
   useEffect(() => {
@@ -5155,8 +5185,29 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     return true;
   });
 
+  const getCategoryAlertCount = (itemId: string): number => {
+    switch (itemId) {
+      case 'support_comms':
+        return queueAlerts.length + voipQueue + unreadVoicemails;
+      case 'pipeline_revenue':
+        return 2;
+      case 'finance_analytics':
+        return 1;
+      case 'command_hub':
+        return 2;
+      case 'people_hr':
+        return 1;
+      case 'compliance_regulatory':
+        return 2;
+      case 'god_settings':
+        return healthReport?.overallStatus && healthReport.overallStatus !== 'healthy' ? 1 : 0;
+      default:
+        return 0;
+    }
+  };
+
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-100 text-slate-800 font-sans relative">
+    <div className="flex h-full overflow-hidden bg-slate-100 text-slate-800 font-sans relative">
       
       {/* Global Action Toast */}
       {actionToast && (
@@ -5215,7 +5266,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
            {filteredNavItems.map((item, gi) => {
                const displayLabel = isExecutive ? item.label?.replace('God', 'Executive') : item.label;
                const isActive = selectedParent === item.id;
-               const subCount = MERGED_SUB_TABS[item.id!]?.length;
+               const alertCount = getCategoryAlertCount(item.id!);
                return (
                   <div key={item.id || gi} draggable onDragStart={(e) => handleDragStart(e, gi)} onDragOver={(e) => handleDragOver(e, gi)} onDrop={(e) => handleDrop(e, gi)} onDragEnd={() => setDraggedIdx(null)} className={cn("group w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold transition-all", isActive ? "bg-white/10 text-white" : "text-slate-400 hover:bg-white/5 hover:text-slate-100", draggedIdx === gi ? "opacity-30 border border-dashed border-indigo-400" : "")}>
                     <button onClick={() => handleNavClick(item.id!)} className="flex items-center gap-3 flex-1 text-left">
@@ -5224,7 +5275,11 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                       {displayLabel}
                     </button>
                     <div className="flex items-center gap-1">
-                      {subCount && <span className="text-[9px] bg-white/10 text-white px-2 py-0.5 rounded-full font-black mr-1">{subCount}</span>}
+                      {alertCount > 0 && (
+                        <span className="text-[10px] bg-red-500 text-white px-2 py-0.5 rounded-full font-black mr-1 animate-pulse">
+                          {alertCount}
+                        </span>
+                      )}
                       {item.badge && <span className="text-[9px] bg-white/10 text-white px-2 py-0.5 rounded-full font-black mr-1">{item.badge}</span>}
                     </div>
                   </div>
@@ -5244,8 +5299,17 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
                SYSTEM ONLINE
             </div>
-            <div className="relative">
-              <button data-action-bound="true" onClick={(e) => { e.stopPropagation(); setShowNotifPanel(!showNotifPanel); }} className="relative p-2.5 bg-slate-100 rounded-xl text-slate-400 hover:text-indigo-600 transition-all"><Bell size={22} /><span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white" /></button>
+            <div className="flex items-center gap-2">
+              <button data-action-bound="true" onClick={(e) => {
+                e.stopPropagation();
+                const nextVal = !hideAlertQueue;
+                setHideAlertQueue(nextVal);
+                localStorage.setItem('gghp_alert_queue_dismissed', nextVal ? 'true' : 'false');
+              }} className={cn("p-2.5 rounded-xl transition-all", hideAlertQueue ? "bg-slate-100 text-slate-400 hover:text-indigo-600" : "bg-indigo-50 text-indigo-600")} title="Toggle Alerts Queue">
+                <Sliders size={22} />
+              </button>
+              <div className="relative">
+                <button data-action-bound="true" onClick={(e) => { e.stopPropagation(); setShowNotifPanel(!showNotifPanel); }} className="relative p-2.5 bg-slate-100 rounded-xl text-slate-400 hover:text-indigo-600 transition-all"><Bell size={22} /><span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white" /></button>
               {showNotifPanel && (
                 <div className="absolute right-0 top-12 w-80 bg-white border border-slate-200 rounded-2xl shadow-2xl z-[9999] overflow-hidden">
                   <div className="px-4 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
@@ -5293,6 +5357,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
             </div>
           </div>
         </div>
+      </div>
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Sub-tab bar for merged tabs */}
           {MERGED_SUB_TABS[selectedParent] && (
@@ -5322,7 +5387,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         </div>
         
         {/* GLOBAL ALERTS STREAM (RIGHT SIDEBAR) */}
-        {!hideAlertQueue && !isExecutive && (
+        {!hideAlertQueue && (
         <div data-action-bound="true" className={cn("w-80 bg-white border-l border-slate-200 flex flex-col shrink-0 transition-all duration-500 hidden xl:flex print:hidden", !isUnlocked && "blur-md opacity-50 pointer-events-none")}>
            <div className="h-20 border-b border-slate-200 flex items-center justify-between px-6 bg-slate-100 shrink-0">
               <h3 className="font-black text-sm uppercase tracking-widest text-slate-800 flex items-center gap-2"><Bell size={16} className="text-indigo-600" /> Executive Oversight & Alert Queue</h3>

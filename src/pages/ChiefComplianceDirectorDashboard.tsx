@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Shield, Activity, Users, Database, Globe, Bot, MessageSquare, Clock, HeartPulse, Building2, 
   FileCheck, BookOpen, Gavel, Zap, FlaskConical, BarChart3, LogOut, ArrowLeft, Edit2, Trash2, Plus, CircleCheck,
-  Phone, Scale, Megaphone, FileText, Clipboard
+  Phone, Scale, Megaphone, FileText, Clipboard, Bell, ArrowUpRight, Sliders
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
+import { onSnapshot, collection, query, where } from 'firebase/firestore';
+import { db } from '../firebase';
+import { turso } from '../lib/turso';
+import { voip800 } from '../lib/voip800';
 import { InternalMessenger } from '../components/messaging/InternalMessenger';
 import { AITrainingTab } from '../components/AITrainingTab';
 import { UserCalendar } from '../components/UserCalendar';
@@ -81,6 +85,110 @@ const INTERNAL_NAV_ITEMS: NavItem[] = [
 
 const ChiefComplianceDirectorDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => void }) => {
   const [activeTab, setActiveTab] = useState('system_health');
+
+  const [showNotifPanel, setShowNotifPanel] = useState(false);
+  const [hideAlertQueue, setHideAlertQueue] = useState(() => localStorage.getItem('gghp_alert_queue_dismissed') === 'true');
+  const [queueAlerts, setQueueAlerts] = useState<any[]>([]);
+  const [opsChecks, setOpsChecks] = useState<any[]>([]);
+  const [voipQueue, setVoipQueue] = useState(0);
+  const [unreadVoicemails, setUnreadVoicemails] = useState(0);
+
+  // Poll Twilio VoIP Queue status every 10 seconds
+  useEffect(() => {
+    const fetchVoipQueue = async () => {
+      try {
+        const qCount = await voip800.getQueueCount();
+        setVoipQueue(qCount);
+      } catch (e) {
+        console.error('Error fetching VOIP queue count:', e);
+      }
+    };
+    const fetchVoicemails = async () => {
+      try {
+        const vms = await voip800.getVoicemails();
+        const unreadCount = vms.filter((v: any) => !v.read).length;
+        setUnreadVoicemails(unreadCount);
+      } catch (e) {
+        console.error('Error fetching voicemails:', e);
+      }
+    };
+    fetchVoipQueue();
+    fetchVoicemails();
+    const interval = setInterval(() => {
+      fetchVoipQueue();
+      fetchVoicemails();
+    }, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Poll for Ops Checks and support tickets
+  useEffect(() => {
+    const q = query(
+      collection(db, 'support_tickets'),
+      where('status', 'in', ['open', 'in_progress']),
+      where('priority', 'in', ['urgent', 'high'])
+    );
+    const unsub = onSnapshot(q, snap => {
+      const tickets = snap.docs.map(doc => ({
+        id: doc.id,
+        type: doc.data().priority === 'urgent' ? 'CRITICAL ALERT' : 'HIGH PRIORITY',
+        color: doc.data().priority === 'urgent' ? 'red' : 'amber',
+        time: 'Active',
+        text: doc.data().subject || 'Support Request'
+      }));
+      setQueueAlerts(tickets.slice(0, 5));
+    });
+
+    const fetchOpsChecks = async () => {
+      try {
+        const res = await turso.execute("SELECT * FROM audit_logs WHERE action != 'System_Event' ORDER BY rowid DESC LIMIT 4");
+        const checks = res.rows.map((r: any) => {
+          let detail = 'System action logged';
+          try { detail = JSON.parse(String(r.data)).detail || detail; } catch(e) {}
+          return {
+            id: String(r.id),
+            source: String(r.action).replace(/_/g, ' '),
+            time: 'Recent',
+            text: detail,
+            color: 'indigo'
+          };
+        });
+        setOpsChecks(checks);
+      } catch(e) { console.error('Error fetching ops checks', e); }
+    };
+    
+    fetchOpsChecks();
+    const opsInterval = setInterval(fetchOpsChecks, 15000);
+
+    return () => {
+      unsub();
+      clearInterval(opsInterval);
+    };
+  }, []);
+
+  const handleRouteAlert = (id: string | number) => {
+    alert(`Alert ${id} successfully routed to ${fullName}'s executive scheduler.`);
+  };
+
+  const getCategoryAlertCount = (itemId: string): number => {
+    switch (itemId) {
+      case 'call_center':
+      case 'virtual_attendant':
+        return voipQueue + unreadVoicemails;
+      case 'support_tickets':
+        return queueAlerts.length;
+      case 'messages':
+        return 2;
+      case 'realtime_tasks':
+        return 2;
+      case 'compliance':
+        return 2;
+      case 'reports':
+        return 1;
+      default:
+        return 0;
+    }
+  };
   const [isEditingNav, setIsEditingNav] = useState(false);
   const handleAddSection = () => {
     const name = prompt('Enter new section name:');
@@ -142,7 +250,7 @@ const ChiefComplianceDirectorDashboard = ({ user, onLogout }: { user?: any, onLo
   const title = "Chief Compliance Director";
 
   return (
-    <div className="flex h-screen bg-[#0A0F1C] overflow-hidden text-slate-300 font-sans">
+    <div className="flex h-full bg-[#0A0F1C] overflow-hidden text-slate-300 font-sans">
           
 
       {/* Sidebar */}
@@ -207,18 +315,25 @@ const ChiefComplianceDirectorDashboard = ({ user, onLogout }: { user?: any, onLo
                     <Icon size={18} className={cn(isActive && !isEditingNav ? "text-emerald-400" : "text-slate-500")} />
                     {item.label}
                   </div>
-                  {item.badge && !isEditingNav && (
-                    <span className={cn(
-                      "text-[9px] font-bold px-1.5 py-0.5 rounded-md uppercase tracking-wider",
-                      item.badge === 'Live' ? 'bg-blue-500 text-white' :
-                      item.badge === 'New' ? 'bg-emerald-500 text-white' :
-                      item.badge === 'High Priority' ? 'bg-red-500 text-white' :
-                      item.badge === 'AI' ? 'bg-indigo-500 text-white' :
-                      'bg-slate-700 text-slate-300'
-                    )}>
-                      {item.badge}
-                    </span>
-                  )}
+                  <div className="flex items-center gap-1.5">
+                    {getCategoryAlertCount(item.id!) > 0 && !isEditingNav && (
+                      <span className="text-[10px] bg-red-500 text-white px-2 py-0.5 rounded-full font-black animate-pulse">
+                        {getCategoryAlertCount(item.id!)}
+                      </span>
+                    )}
+                    {item.badge && !isEditingNav && (
+                      <span className={cn(
+                        "text-[9px] font-bold px-1.5 py-0.5 rounded-md uppercase tracking-wider",
+                        item.badge === 'Live' ? 'bg-blue-500 text-white' :
+                        item.badge === 'New' ? 'bg-emerald-500 text-white' :
+                        item.badge === 'High Priority' ? 'bg-red-500 text-white' :
+                        item.badge === 'AI' ? 'bg-indigo-500 text-white' :
+                        'bg-slate-700 text-slate-300'
+                      )}>
+                        {item.badge}
+                      </span>
+                    )}
+                  </div>
                 </button>
                 {isEditingNav && (
                   <button onClick={(e) => handleDeleteItem(e, idx)} className="absolute right-2 p-1.5 bg-slate-800 hover:bg-red-900/50 hover:text-red-400 text-slate-400 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity z-10"><Trash2 size={12} /></button>
@@ -248,7 +363,7 @@ const ChiefComplianceDirectorDashboard = ({ user, onLogout }: { user?: any, onLo
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col h-screen overflow-hidden bg-[#0A0F1C] relative">
+      <main className="flex-1 flex flex-col h-full overflow-hidden bg-[#0A0F1C] relative">
         <header className="h-16 flex items-center justify-between px-8 border-b border-slate-800/50 bg-[#0A0F1C]/80 backdrop-blur-md sticky top-0 z-10 shrink-0">
           <div className="flex items-center gap-4">
              <button onClick={onLogout} className="text-slate-400 hover:text-white transition-colors p-2 rounded-lg hover:bg-white/5 mr-2">
@@ -265,6 +380,55 @@ const ChiefComplianceDirectorDashboard = ({ user, onLogout }: { user?: any, onLo
             <span className="px-3 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
                <Bot size={12} /> Larry AI Online
             </span>
+            <div className="flex items-center gap-2 mr-2">
+              <button data-action-bound="true" onClick={(e) => {
+                e.stopPropagation();
+                const nextVal = !hideAlertQueue;
+                setHideAlertQueue(nextVal);
+                localStorage.setItem('gghp_alert_queue_dismissed', nextVal ? 'true' : 'false');
+              }} className={cn("p-2 rounded-xl transition-all border", hideAlertQueue ? "bg-slate-900/50 text-slate-400 border-slate-800 hover:text-white hover:bg-slate-800" : "bg-emerald-600/10 text-emerald-400 border-emerald-500/20 shadow-lg shadow-emerald-950/50")} title="Toggle Alerts Queue">
+                <Sliders size={18} />
+              </button>
+              <div className="relative">
+                <button data-action-bound="true" onClick={(e) => { e.stopPropagation(); setShowNotifPanel(!showNotifPanel); }} className="relative p-2 bg-slate-900/50 border border-slate-800 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-all"><Bell size={18} /><span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-[#0A0F1C]" /></button>
+                {showNotifPanel && (
+                  <div className="absolute right-0 top-12 w-80 bg-[#0E1526] border border-slate-800 rounded-2xl shadow-2xl z-[9999] overflow-hidden">
+                    <div className="px-4 py-3 bg-slate-900/50 border-b border-slate-800/80 flex items-center justify-between">
+                      <span className="text-xs font-black text-slate-300 uppercase tracking-widest">Notifications</span>
+                      <span className="px-2 py-0.5 bg-red-950 text-red-400 text-[10px] font-bold rounded-full">6 New</span>
+                    </div>
+                    <div className="max-h-80 overflow-y-auto divide-y divide-slate-800/50">
+                      {[
+                        { icon: '📬', title: 'New Direct Message', desc: 'You have unread messages in the Global Directory', time: 'Just now', tab: 'messages' },
+                        { icon: '📋', title: 'New Application in Queue', desc: 'Jasmin Garrett - Patient Med Card', time: 'Just now', tab: 'patient_case_tracker' },
+                        { icon: '🔴', title: 'DEA Schedule III Final Order', desc: 'Medical cannabis & FDA products reclassified — effective April 23, 2026', time: 'Today', tab: 'compliance' },
+                        { icon: '⚖️', title: 'DEA Hearing Scheduled', desc: 'Broader rescheduling hearing begins June 29, 2026', time: 'Today', tab: 'judicial' },
+                        { icon: '💚', title: 'New Poll Votes Received', desc: 'Community polls receiving engagement in Oklahoma', time: '2h ago', tab: 'jurisdiction_map' },
+                        { icon: '🔒', title: 'Turso DB Connected', desc: 'Production database environment variables active', time: '5h ago', tab: 'system_health' },
+                      ].map((n, i) => (
+                        <button key={i} data-action-bound="true" onClick={(e) => {
+                          e.stopPropagation();
+                          setShowNotifPanel(false);
+                          setActiveTab(n.tab);
+                        }} className="w-full px-4 py-3 hover:bg-slate-900/60 cursor-pointer transition-colors group text-left">
+                          <div className="flex items-start gap-3">
+                            <span className="text-lg">{n.icon}</span>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs font-bold text-slate-200 group-hover:text-emerald-400">{n.title}</p>
+                              <p className="text-[10px] text-slate-400 mt-0.5">{n.desc}</p>
+                            </div>
+                            <span className="text-[9px] text-slate-500 font-bold shrink-0 mt-0.5">{n.time}</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                    <div className="px-4 py-2 bg-slate-900/30 border-t border-slate-800">
+                      <button data-action-bound="true" onClick={(e) => { e.stopPropagation(); setShowNotifPanel(false); }} className="w-full text-center text-[10px] font-bold text-emerald-400 hover:text-emerald-300 py-1">Dismiss All</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </header>
 
@@ -328,6 +492,59 @@ const ChiefComplianceDirectorDashboard = ({ user, onLogout }: { user?: any, onLo
             </AnimatePresence>
         </div>
       </main>
+
+      {/* GLOBAL ALERTS STREAM (RIGHT SIDEBAR) */}
+      {!hideAlertQueue && (
+        <aside data-action-bound="true" className="w-80 bg-[#080d1a] border-l border-slate-800 flex flex-col shrink-0 transition-all duration-500 hidden xl:flex print:hidden relative z-20 shadow-2xl">
+           <div className="h-16 border-b border-slate-800/50 flex items-center justify-between px-6 bg-[#0A0F1C] shrink-0">
+              <h3 className="font-bold text-xs uppercase tracking-widest text-slate-200 flex items-center gap-2"><Bell size={14} className="text-emerald-400" /> Executive Alert Queue</h3>
+              <button onClick={() => {
+                localStorage.setItem('gghp_alert_queue_dismissed', 'true');
+                setHideAlertQueue(true);
+              }} className="text-slate-500 hover:text-red-400 transition-colors p-1" title="Dismiss Queue"><LogOut size={14} /></button>
+           </div>
+           <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-[#080d1a]/50 custom-scrollbar scrollbar-thin scrollbar-thumb-slate-800">
+                {queueAlerts.map(alert => (
+                  <div key={alert.id} className={cn("p-4 bg-[#0c1326] border-l-4 rounded-r-xl shadow-md border-emerald-500 hover:shadow-lg transition-all cursor-pointer", alert.color === 'red' ? 'border-red-500' : 'border-amber-500')}>
+                     <div className="flex justify-between items-start mb-2">
+                        <span className={cn("text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded", alert.color === 'red' ? 'text-red-400 bg-red-950/40' : 'text-amber-400 bg-amber-950/40')}>{alert.type}</span>
+                        <span className="text-[9px] text-slate-500 font-bold">{alert.time}</span>
+                     </div>
+                     <p className="text-xs font-bold text-slate-200">{alert.text}</p>
+                     <button onClick={() => handleRouteAlert(alert.id)} className="mt-3 text-[10px] font-black text-emerald-400 hover:text-emerald-300 uppercase tracking-widest flex items-center gap-1"><ArrowUpRight size={12}/> Route to Scheduler</button>
+                  </div>
+                ))}
+                
+                {queueAlerts.length === 0 && (
+                  <div className="p-4 border border-dashed border-slate-800 rounded-xl text-center text-slate-500 flex flex-col items-center justify-center">
+                     <CircleCheck size={20} className="mb-2 text-emerald-500 opacity-80" />
+                     <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-500">All Alerts Cleared</p>
+                  </div>
+                )}
+
+              {/* Internal Ops Status Checks */}
+              <div className="pt-4 mt-4 border-t border-slate-800">
+                 <h4 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3 flex items-center gap-2"><Activity size={12} className="text-indigo-400" /> Internal Ops Checks</h4>
+                 <div className="space-y-3">
+                    {opsChecks.map(check => (
+                      <div key={check.id} className="p-3 bg-[#0c1326] border border-slate-800 rounded-xl">
+                         <div className="flex justify-between items-start mb-1">
+                            <span className="text-[9px] font-bold uppercase tracking-widest text-indigo-400">{check.source}</span>
+                            <span className="text-[9px] font-bold text-slate-500">{check.time}</span>
+                         </div>
+                         <p className="text-xs font-medium text-slate-300 truncate whitespace-normal line-clamp-2">{check.text}</p>
+                      </div>
+                    ))}
+                    {opsChecks.length === 0 && (
+                      <div className="p-4 border border-dashed border-slate-800 rounded-xl text-center text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                        Awaiting Telemetry...
+                      </div>
+                    )}
+                 </div>
+              </div>
+           </div>
+        </aside>
+      )}
     </div>
   );
 };

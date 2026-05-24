@@ -9633,7 +9633,7 @@ export default function App() {
                   initial={{ opacity: 0, y: 10 }} 
                   animate={{ opacity: 1, y: 0 }} 
                   exit={{ opacity: 0, y: -10 }}
-                  className="pt-[52px] min-h-screen w-full"
+                  className="pt-[52px] h-screen w-full overflow-hidden"
                 >
                   {userProfile && userProfile.role === 'executive_founder' && !hasBypassedSelector ? (
                     <RoleSelectorScreen 
