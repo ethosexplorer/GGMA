@@ -4000,6 +4000,20 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       return;
     }
 
+    if (lower === 'view my c3 score') {
+      response = '📈 **Your C³ Trust Score: 98/100 (Excellent)**\n\n• **Compliance Check:** 100/100 (All Metrc integrations verified, 0 active anomalies)\n• **Compassion Metric:** 95/100 (Patient support queues responding within SLAs)\n• **Community Hub:** 100/100 (Actively sharing educational resources)\n\nKeep it up! Your high score qualifies you for priority processing and fee discounts.';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['How to Improve C3', 'Main Menu'] } as any]);
+      setIsTyping(false);
+      return;
+    }
+
+    if (lower === 'how to improve c3') {
+      response = '💡 **How to Maximize Your C³ Score:**\n\n1. **Zero Metrc Anomalies:** Keep your compliance track record spotless by resolving inventory discrepancies immediately.\n2. **Engage with Training:** Complete the AI Training modules and compliance audits regularly.\n3. **Quick Support Responses:** Answer ticket escalations promptly to boost the Compassion rating.\n4. **Community Contributions:** Share state policy updates or regulatory alerts in the State Facts & Polls section.';
+      setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['View My C3 Score', 'Main Menu'] } as any]);
+      setIsTyping(false);
+      return;
+    }
+
     if (lower.includes('c3') || lower.includes('compassion score') || lower.includes('community score')) {
       response = '✨ **Introducing C³ (Compassion, Compliance & Community)**\n\nThe C³ Score is the heartbeat of the Global Green ecosystem. It is a real-time trust metric that measures your positive impact on the industry.\n\n• **Compassion**: Rewarding patient care and accessibility.\n• **Compliance**: Real-time adherence to state (Metrc) and federal standards.\n• **Community**: Engagement with GGE educational and support hubs.\n\n**Benefits**: High C³ Scores unlock lower subscription fees, priority processing, and exclusive access to the L.A.R.R.Y Premium Insights.';
       setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['View My C3 Score', 'How to Improve C3', 'Main Menu'] } as any]);
