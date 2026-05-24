@@ -5206,6 +5206,50 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     }
   };
 
+  const getSubTabAlertCount = (subId: string): number => {
+    switch (subId) {
+      // support_comms
+      case 'virtual_attendant':
+      case 'call_center':
+        return voipQueue + unreadVoicemails;
+      case 'support_tickets':
+        return queueAlerts.length;
+      
+      // pipeline_revenue
+      case 'applications':
+        return 1; // Jasmin Garrett application in queue
+      case 'b2b_crm':
+        return 1; // CRM lead alert
+      
+      // finance_analytics
+      case 'critical_alerts':
+        return 1; // Revenue milestone alert
+      
+      // command_hub
+      case 'messages':
+        return 1; // Direct messages
+      case 'internal_scheduler':
+        return 1; // Scheduler alert
+      
+      // people_hr
+      case 'hr_intelligence':
+        return 1; // HR compliance update
+      
+      // compliance_regulatory
+      case 'compliance':
+        return 1; // DEA reschedule alert
+      case 'jurisdiction_map':
+        return 1; // Sweep anomalies
+      
+      // god_settings
+      case 'system_health':
+        return healthReport?.overallStatus && healthReport.overallStatus !== 'healthy' ? 1 : 0;
+      
+      default:
+        return 0;
+    }
+  };
+
   return (
     <div className="flex h-full overflow-hidden bg-slate-100 text-slate-800 font-sans relative">
       
@@ -5374,6 +5418,11 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                 >
                   <sub.icon size={12} />
                   {sub.label}
+                  {getSubTabAlertCount(sub.id) > 0 && (
+                    <span className="text-[9px] bg-red-500 text-white px-1.5 py-0.5 rounded-full font-black animate-pulse ml-1">
+                      {getSubTabAlertCount(sub.id)}
+                    </span>
+                  )}
                 </button>
               ))}
             </div>
