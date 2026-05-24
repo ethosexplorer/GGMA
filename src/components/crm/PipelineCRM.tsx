@@ -56,6 +56,9 @@ interface Deal {
 export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: string }) => {
   const [deals, setDeals] = useState<Deal[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showCRMAlert, setShowCRMAlert] = useState(() => {
+    return localStorage.getItem('gghp_crm_alert_dismissed') !== 'true';
+  });
   const [searchTerm, setSearchTerm] = useState('');
   const [filterJurisdiction, setFilterJurisdiction] = useState(defaultJurisdiction || 'All');
   const [filterStatus, setFilterStatus] = useState('All');
@@ -418,7 +421,7 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
                     else if (lType.includes('attorney') || lType.includes('law')) entityType = 'attorney';
                     
                     const juri = record['State'] || record['Jurisdiction'] || 'Oklahoma';
-
+ 
                     const dealData = {
                       name: bName,
                       contactName: record['DBA'] && record['DBA'] !== bName ? record['DBA'] : '',
@@ -453,7 +456,7 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
               }}
             />
           </label>
-
+ 
           <button 
             onClick={async () => {
               if (!window.confirm('Load 50+ Arizona cannabis leads into the CRM? This will add dispensaries, cultivators, physicians, attorneys, and regulators.')) return;
@@ -469,7 +472,7 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
           >
             🌵 Load AZ Leads
           </button>
-
+ 
           <button 
             onClick={() => openModal()}
             className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors shadow-lg shadow-indigo-600/20"
@@ -478,6 +481,30 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
           </button>
         </div>
       </div>
+
+      {showCRMAlert && (
+        <div className="bg-gradient-to-r from-slate-900 to-indigo-950/80 border-b border-indigo-500/20 px-6 py-4 flex items-center justify-between shadow-inner animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center border border-indigo-500/30">
+              <Briefcase size={16} className="animate-pulse" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-white">💼 New CRM Leads Available</p>
+              <p className="text-[10px] text-slate-400 mt-0.5 font-medium">198 new prospects imported to B2B Pipeline. Ready for review and assignment.</p>
+            </div>
+          </div>
+          <button
+            onClick={() => {
+              localStorage.setItem('gghp_crm_alert_dismissed', 'true');
+              setShowCRMAlert(false);
+              window.dispatchEvent(new CustomEvent('gghp-dismiss-notification', { detail: { tab: 'b2b_crm' } }));
+            }}
+            className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer border-none shadow-md shadow-indigo-900/30"
+          >
+            Acknowledge
+          </button>
+        </div>
+      )}
 
       {/* Kanban Board */}
       <div className="flex-1 overflow-x-auto overflow-y-hidden p-6 custom-scrollbar">

@@ -744,6 +744,9 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   const [hideSystemFreeze, setHideSystemFreeze] = useState(() => localStorage.getItem('gghp_system_freeze_dismissed') === 'true');
   const [hideAlertQueue, setHideAlertQueue] = useState(() => localStorage.getItem('gghp_alert_queue_dismissed') === 'true');
   const [showNotifPanel, setShowNotifPanel] = useState(false);
+  const [showCriticalAlert, setShowCriticalAlert] = useState(() => {
+    return localStorage.getItem('gghp_critical_alert_dismissed') !== 'true';
+  });
   const [notifications, setNotifications] = useState([
     { icon: '💼', title: 'New CRM Leads Available', desc: '198 new prospects imported to B2B Pipeline', time: 'Just now', tab: 'b2b_crm', section: null },
     { icon: '📬', title: 'New Direct Message', desc: 'You have unread messages in the Global Directory', time: 'Just now', tab: 'messages', section: null },
@@ -4870,6 +4873,36 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       case 'critical_alerts': 
         return (
           <div className="space-y-6" data-action-bound="true">
+            {showCriticalAlert && (
+              <div className="bg-gradient-to-r from-indigo-950/40 to-slate-900 border border-indigo-500/30 rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-lg animate-in fade-in slide-in-from-top-4 duration-300">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center border border-indigo-500/30 shrink-0">
+                    <TrendingUp size={20} className="animate-pulse" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                      📈 Revenue Milestone & Valuation Alert
+                    </h4>
+                    <p className="text-xs text-slate-400 mt-1 leading-relaxed max-w-2xl font-medium text-slate-300">
+                      Global Green HP reached $5.2M valuation target based on active cash flows and regulatory license assets.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    onClick={() => {
+                      localStorage.setItem('gghp_critical_alert_dismissed', 'true');
+                      setShowCriticalAlert(false);
+                      setNotifications(prev => prev.filter(n => n.tab !== 'critical_alerts'));
+                    }}
+                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-md cursor-pointer border-none"
+                  >
+                    Acknowledge Milestone
+                  </button>
+                </div>
+              </div>
+            )}
+
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-3xl font-black text-slate-800 tracking-tight">Critical Alerts</h2>

@@ -12,6 +12,9 @@ import { METRC_MANUAL } from '../../data/metrcManual';
 
 export const LiveSystemHealth = () => {
   const [logs, setLogs] = useState<any[]>([]);
+  const [showSystemAlert, setShowSystemAlert] = useState(() => {
+    return localStorage.getItem('gghp_system_alert_dismissed') !== 'true';
+  });
 
   useEffect(() => {
     const q = query(collection(db, 'audit_logs'), orderBy('timestamp', 'desc'), limit(15));
@@ -23,6 +26,32 @@ export const LiveSystemHealth = () => {
 
   return (
     <div className="space-y-6">
+      {showSystemAlert && (
+        <div className="bg-slate-900 border border-indigo-500/30 rounded-2xl p-6 text-white flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-lg animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className="flex items-start gap-4">
+            <div className="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center border border-indigo-500/30 shrink-0">
+              <Shield size={20} className="animate-pulse" />
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-white">🔒 Turso Production DB Connected</h4>
+              <p className="text-xs text-slate-400 mt-1 font-medium">
+                Production database environment variables active. Synchronization protocol verified. Secure connection established.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => {
+              localStorage.setItem('gghp_system_alert_dismissed', 'true');
+              setShowSystemAlert(false);
+              window.dispatchEvent(new CustomEvent('gghp-dismiss-notification', { detail: { tab: 'system_health' } }));
+            }}
+            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all cursor-pointer border-none shrink-0"
+          >
+            Acknowledge
+          </button>
+        </div>
+      )}
+
       <div className="bg-slate-900 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden border border-slate-800">
         <div className="absolute top-0 right-0 p-8 opacity-20"><Zap size={120} className="text-amber-400" /></div>
         <div className="relative z-10">
@@ -203,6 +232,9 @@ export const LiveBusinessOversight = () => {
 export const LiveComplianceMonitor = () => {
   const [counts, setCounts] = useState({ users: 0, joinedToday: 0 });
   const [logs, setLogs] = useState<any[]>([]);
+  const [showComplianceAlerts, setShowComplianceAlerts] = useState(() => {
+    return localStorage.getItem('gghp_compliance_alerts_dismissed') !== 'true';
+  });
 
   useEffect(() => {
     const unsub1 = onSnapshot(collection(db, 'users'), (snap) => {
@@ -222,6 +254,36 @@ export const LiveComplianceMonitor = () => {
 
   return (
     <div className="space-y-6">
+      {showComplianceAlerts && (
+        <div className="bg-gradient-to-r from-red-950/40 to-slate-900 border border-red-500/30 rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-lg animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className="flex items-start gap-4">
+            <div className="w-10 h-10 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center border border-red-500/30 shrink-0">
+              <AlertTriangle size={20} className="animate-pulse" />
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                🔴 DEA Schedule III Final Order & Compliance Alerts
+              </h4>
+              <p className="text-xs text-slate-400 mt-1 leading-relaxed max-w-2xl font-medium">
+                Medical cannabis & FDA products reclassified — effective April 23, 2026. Internal state compliance audit scheduled for next week. Actions required to sync Oklahoma licensing protocol.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={() => {
+                localStorage.setItem('gghp_compliance_alerts_dismissed', 'true');
+                setShowComplianceAlerts(false);
+                window.dispatchEvent(new CustomEvent('gghp-dismiss-notification', { detail: { tab: 'compliance' } }));
+              }}
+              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-md cursor-pointer border-none"
+            >
+              Acknowledge & Clear
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="flex justify-between items-end mb-4">
         <div>
           <h2 className="text-3xl font-black text-white tracking-tight">Compliance War Room</h2>
@@ -893,6 +955,10 @@ export const LiveHRIntelligence = () => {
 
 export const LiveJurisdictionMap = () => {
   const [userCount, setUserCount] = useState(0);
+  const [showJurisdictionAlerts, setShowJurisdictionAlerts] = useState(() => {
+    return localStorage.getItem('gghp_jurisdiction_alerts_dismissed') !== 'true';
+  });
+
   useEffect(() => {
     const unsub = onSnapshot(collection(db, 'users'), (snap) => setUserCount(snap.size));
     return () => unsub();
@@ -900,6 +966,37 @@ export const LiveJurisdictionMap = () => {
 
   return (
     <div className="space-y-6">
+      {showJurisdictionAlerts && (
+        <div className="bg-gradient-to-r from-amber-950/40 to-slate-900 border border-amber-500/30 rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-lg animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className="flex items-start gap-4">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/30 shrink-0">
+              <Gavel size={20} className="animate-pulse" />
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                ⚖️ DEA Hearing Rescheduling & Poll Activity Alerts
+              </h4>
+              <p className="text-xs text-slate-400 mt-1 leading-relaxed max-w-2xl font-medium text-slate-300">
+                DEA Hearing Scheduled to begin June 29, 2026. Broader rescheduling briefs are active. New community poll engagement registered in Oklahoma jurisdiction.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={() => {
+                localStorage.setItem('gghp_jurisdiction_alerts_dismissed', 'true');
+                setShowJurisdictionAlerts(false);
+                window.dispatchEvent(new CustomEvent('gghp-dismiss-notification', { detail: { tab: 'jurisdiction_map' } }));
+                window.dispatchEvent(new CustomEvent('gghp-dismiss-notification', { detail: { tab: 'judicial' } }));
+              }}
+              className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-md cursor-pointer border-none"
+            >
+              Acknowledge & Dismiss
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="bg-slate-900 p-8 rounded-3xl text-white shadow-2xl relative overflow-hidden border border-slate-800">
         <div className="absolute top-0 right-0 p-8 opacity-10"><Globe size={120} /></div>
         <div className="relative z-10">
