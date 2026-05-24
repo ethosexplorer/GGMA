@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, GripVertical, Phone, Mail, Clock, ShieldCheck, Building2, User, Landmark, Building, Briefcase, Scale, HeartHandshake, Truck, Search, X, Upload, Store, Sprout, Factory } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { db } from '../../firebase';
-import { collection, addDoc, onSnapshot, query, serverTimestamp, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, addDoc, onSnapshot, query, serverTimestamp, doc, updateDoc, deleteDoc, where, limit } from 'firebase/firestore';
 
 const STAGES = [
   { id: 'lead', title: 'Lead / Prospect', color: 'border-slate-300', bg: 'bg-slate-50' },
@@ -107,15 +107,41 @@ export const PipelineCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: str
       setLoading(false);
     };
 
-    const unsubs = collections.map(col =>
-      onSnapshot(query(collection(db, col)), (snapshot) => {
+    const possibleStates = (stateCode: string) => {
+      const code = stateCode.toUpperCase();
+      const fullName = Object.keys(STATE_NAME_TO_CODE).find(k => STATE_NAME_TO_CODE[k] === code);
+      const list = [code, code.toLowerCase()];
+      if (fullName) {
+        list.push(fullName);
+        list.push(fullName.toLowerCase());
+        list.push(fullName.toUpperCase());
+        const cap = fullName.charAt(0).toUpperCase() + fullName.slice(1).toLowerCase();
+        list.push(cap);
+      }
+      return Array.from(new Set(list)).slice(0, 10);
+    };
+
+    const unsubs = collections.map(col => {
+      let q;
+      if (filterJurisdiction && filterJurisdiction !== 'All') {
+        const statesList = possibleStates(filterJurisdiction);
+        q = query(collection(db, col), where('jurisdiction', 'in', statesList), limit(250));
+      } else {
+        q = query(collection(db, col), limit(200));
+      }
+      return onSnapshot(q, (snapshot) => {
         dataMap[col] = snapshot.docs.map(d => mapDoc(d, col));
         updateAll();
-      })
-    );
+      }, (err) => {
+        console.error(`Firestore error on collection ${col}:`, err);
+        // Fallback: update empty to not block UI
+        dataMap[col] = [];
+        updateAll();
+      });
+    });
 
     return () => { unsubs.forEach(u => u()); };
-  }, []);
+  }, [filterJurisdiction]);
 
   const handleDragStart = (e: React.DragEvent, dealId: string) => {
     e.dataTransfer.setData('dealId', dealId);

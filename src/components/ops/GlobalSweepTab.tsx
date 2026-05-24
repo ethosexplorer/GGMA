@@ -2,13 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { PipelineCRM } from '../crm/PipelineCRM';
 import { Search, MapPin, Building2, Download, Play, ShieldAlert, CheckCircle2 } from 'lucide-react';
 import { db } from '../../firebase';
-import { collection, onSnapshot, query } from 'firebase/firestore';
+import { collection, onSnapshot, query, getDocs } from 'firebase/firestore';
+
+// Module-level cache to persist counts across tab switches
+let cachedLiveCounts: Record<string, number> | null = null;
+let cachedTypeCounts: Record<string, Record<string, number>> | null = null;
+let cachedStatusCounts: Record<string, Record<string, number>> | null = null;
 
 export const GlobalSweepTab = () => {
   const [selectedState, setSelectedState] = useState('AL');
-  const [liveCounts, setLiveCounts] = useState<Record<string, number>>({});
-  const [typeCounts, setTypeCounts] = useState<Record<string, Record<string, number>>>({});
-  const [statusCounts, setStatusCounts] = useState<Record<string, Record<string, number>>>({});
+  const [liveCounts, setLiveCounts] = useState<Record<string, number>>(cachedLiveCounts || {});
+  const [typeCounts, setTypeCounts] = useState<Record<string, Record<string, number>>>(cachedTypeCounts || {});
+  const [statusCounts, setStatusCounts] = useState<Record<string, Record<string, number>>>(cachedStatusCounts || {});
 
   // Normalize full state names to 2-letter codes
   const STATE_NAME_TO_CODE: Record<string, string> = {
@@ -40,57 +45,59 @@ export const GlobalSweepTab = () => {
   useEffect(() => {
     const qDeals = query(collection(db, 'crm_deals'));
     const qContacts = query(collection(db, 'crm_contacts'));
-    
-    let dealsData: any[] = [];
-    let contactsData: any[] = [];
-    
-    const updateCounts = () => {
-      const allRecords = [...dealsData, ...contactsData];
-      const newCounts: Record<string, number> = {};
-      const newTypes: Record<string, Record<string, number>> = {};
-      const newStatuses: Record<string, Record<string, number>> = {};
-      
-      allRecords.forEach(record => {
-        const state = normalizeJurisdiction(record.jurisdiction);
-        const type = record.type || 'other';
-        const licStatus = record.licenseStatus || '';
-        newCounts[state] = (newCounts[state] || 0) + 1;
-        
-        if (!newTypes[state]) newTypes[state] = {};
-        newTypes[state][type] = (newTypes[state][type] || 0) + 1;
-        
-        if (licStatus) {
-          if (!newStatuses[state]) newStatuses[state] = {};
-          let label = licStatus;
-          const s = licStatus.toLowerCase();
-          if (s === 'active') label = 'Active';
-          else if (s.includes('renewal')) label = 'Renewal Pending';
-          else if (s === 'expired') label = 'Expired';
-          else if (s === 'cancelled' || s === 'surrendered') label = 'Cancelled';
-          else if (s === 'suspended' || s === 'revoked') label = 'Suspended/Revoked';
-          newStatuses[state][label] = (newStatuses[state][label] || 0) + 1;
-        }
-      });
-      
-      setLiveCounts(newCounts);
-      setTypeCounts(newTypes);
-      setStatusCounts(newStatuses);
+
+    const loadCounts = async () => {
+      try {
+        const [dealsSnap, contactsSnap] = await Promise.all([
+          getDocs(qDeals),
+          getDocs(qContacts)
+        ]);
+
+        const dealsData = dealsSnap.docs.map(doc => doc.data());
+        const contactsData = contactsSnap.docs.map(doc => doc.data());
+        const allRecords = [...dealsData, ...contactsData];
+
+        const newCounts: Record<string, number> = {};
+        const newTypes: Record<string, Record<string, number>> = {};
+        const newStatuses: Record<string, Record<string, number>> = {};
+
+        allRecords.forEach(record => {
+          const state = normalizeJurisdiction(record.jurisdiction);
+          const type = record.type || 'other';
+          const licStatus = record.licenseStatus || '';
+          newCounts[state] = (newCounts[state] || 0) + 1;
+
+          if (!newTypes[state]) newTypes[state] = {};
+          newTypes[state][type] = (newTypes[state][type] || 0) + 1;
+
+          if (licStatus) {
+            if (!newStatuses[state]) newStatuses[state] = {};
+            let label = licStatus;
+            const s = licStatus.toLowerCase();
+            if (s === 'active') label = 'Active';
+            else if (s.includes('renewal')) label = 'Renewal Pending';
+            else if (s === 'expired') label = 'Expired';
+            else if (s === 'cancelled' || s === 'surrendered') label = 'Cancelled';
+            else if (s === 'suspended' || s === 'revoked') label = 'Suspended/Revoked';
+            newStatuses[state][label] = (newStatuses[state][label] || 0) + 1;
+          }
+        });
+
+        // Update module-level cache
+        cachedLiveCounts = newCounts;
+        cachedTypeCounts = newTypes;
+        cachedStatusCounts = newStatuses;
+
+        // Update state
+        setLiveCounts(newCounts);
+        setTypeCounts(newTypes);
+        setStatusCounts(newStatuses);
+      } catch (err) {
+        console.error('Failed to load live sweep counts:', err);
+      }
     };
 
-    const unsubDeals = onSnapshot(qDeals, (snapshot) => {
-      dealsData = snapshot.docs.map(doc => doc.data());
-      updateCounts();
-    });
-    
-    const unsubContacts = onSnapshot(qContacts, (snapshot) => {
-      contactsData = snapshot.docs.map(doc => doc.data());
-      updateCounts();
-    });
-
-    return () => {
-      unsubDeals();
-      unsubContacts();
-    };
+    loadCounts();
   }, []);
   
   const baseStates = [

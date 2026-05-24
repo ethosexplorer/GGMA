@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, Building2, LayoutTemplate, Clock, AlertCircle, Save, Trash2, X, Plus, ChevronDown, Eye, MousePointerClick, MailOpen, TrendingUp, Inbox, AlertTriangle, Reply, RefreshCw } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { db } from '../../firebase';
@@ -23,6 +23,9 @@ interface EmailTemplate {
   createdAt: any;
 }
 
+// Module-level cache to persist deals across tab switches in Marketing Campaigns
+let cachedDealsForMarketing: any[] | null = null;
+
 export const MarketingHub = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState<'composer' | 'campaigns' | 'analytics'>('composer');
@@ -41,11 +44,7 @@ export const MarketingHub = () => {
   const [directContact, setDirectContact] = useState('');
   
   // Audience Data
-  const [totalLeads, setTotalLeads] = useState(0);
-  const [jurisdictions, setJurisdictions] = useState<string[]>([]);
-  const [businessTypes, setBusinessTypes] = useState<string[]>([]);
-  const [filteredCount, setFilteredCount] = useState(0);
-  const [filteredAudience, setFilteredAudience] = useState<any[]>([]);
+  const [deals, setDeals] = useState<any[]>(cachedDealsForMarketing || []);
   
   // UI State
   const [isSending, setIsSending] = useState(false);
@@ -116,39 +115,61 @@ export const MarketingHub = () => {
     return () => u();
   }, []);
 
-  // Load CRM Audience Data
+  // Load CRM Audience Data ONCE on mount (or use cache)
   useEffect(() => {
     const q = query(collection(db, 'crm_deals'));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const deals = snapshot.docs.map(doc => doc.data());
-      setTotalLeads(deals.length);
-      
-      const states = Array.from(new Set(deals.map(d => d.jurisdiction).filter(Boolean))) as string[];
-      setJurisdictions(states.sort((a, b) => a.localeCompare(b)));
-      
-      const types = Array.from(new Set(deals.map(d => d.type).filter(Boolean))) as string[];
-      setBusinessTypes(types.sort((a, b) => a.localeCompare(b)));
-      
-      // Calculate filtered audience (excluding suppressed/bounced emails)
-      const filtered = deals.filter(d => {
-        const matchesState = selectedStates.includes('All') || selectedStates.includes(d.jurisdiction);
-        const matchesType = selectedTypes.includes('All') || selectedTypes.includes(d.type);
-        // Tier filter: top_grossing, standard, or all
-        const matchesTier = selectedTier === 'all' || 
-          (selectedTier === 'top_grossing' && d.tier === 'top_grossing') ||
-          (selectedTier === 'standard' && d.tier !== 'top_grossing');
-        // Ensure they have the necessary contact info
-        if (campaignType === 'email' && !d.email) return false;
-        if (campaignType === 'sms' && !d.phone) return false;
-        // Auto-suppress bounced emails
-        if (campaignType === 'email' && suppressedEmails.has((d.email || '').toLowerCase())) return false;
-        return matchesState && matchesType && matchesTier;
-      });
-      setFilteredCount(filtered.length);
-      setFilteredAudience(filtered);
+    const loadDeals = async () => {
+      try {
+        if (!cachedDealsForMarketing) {
+          const snap = await getDocs(q);
+          const data = snap.docs.map(doc => doc.data());
+          cachedDealsForMarketing = data;
+          setDeals(data);
+        }
+      } catch (err) {
+        console.error('Failed to load deals for marketing:', err);
+      }
+    };
+    loadDeals();
+  }, []);
+
+  // Memoized Audience Calculations (Executes client-side in ~1ms without queries)
+  const audienceStats = useMemo(() => {
+    const total = deals.length;
+    const states = Array.from(new Set(deals.map(d => d.jurisdiction).filter(Boolean))) as string[];
+    const sortedStates = states.sort((a, b) => a.localeCompare(b));
+    const types = Array.from(new Set(deals.map(d => d.type).filter(Boolean))) as string[];
+    const sortedTypes = types.sort((a, b) => a.localeCompare(b));
+
+    const filtered = deals.filter(d => {
+      const matchesState = selectedStates.includes('All') || selectedStates.includes(d.jurisdiction);
+      const matchesType = selectedTypes.includes('All') || selectedTypes.includes(d.type);
+      const matchesTier = selectedTier === 'all' || 
+        (selectedTier === 'top_grossing' && d.tier === 'top_grossing') ||
+        (selectedTier === 'standard' && d.tier !== 'top_grossing');
+
+      if (campaignType === 'email' && !d.email) return false;
+      if (campaignType === 'sms' && !d.phone) return false;
+      if (campaignType === 'email' && suppressedEmails.has((d.email || '').toLowerCase())) return false;
+
+      return matchesState && matchesType && matchesTier;
     });
-    return () => unsubscribe();
-  }, [selectedStates, selectedTypes, selectedTier, campaignType]);
+
+    return {
+      totalLeads: total,
+      jurisdictions: sortedStates,
+      businessTypes: sortedTypes,
+      filteredCount: filtered.length,
+      filteredAudience: filtered
+    };
+  }, [deals, selectedStates, selectedTypes, selectedTier, campaignType, suppressedEmails]);
+
+  // Derived properties from useMemo
+  const totalLeads = audienceStats.totalLeads;
+  const jurisdictions = audienceStats.jurisdictions;
+  const businessTypes = audienceStats.businessTypes;
+  const filteredCount = audienceStats.filteredCount;
+  const filteredAudience = audienceStats.filteredAudience;
 
   // Load saved templates
   useEffect(() => {
