@@ -7,6 +7,8 @@ import {
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { voip800, CallCenterStats } from '../../lib/voip800';
+import { turso } from '../../lib/turso';
+
 
 interface Department {
   id: string;
@@ -36,6 +38,8 @@ export const VirtualAttendantTab = () => {
   const [stats, setStats] = useState<CallCenterStats | null>(null);
   const [liveQueue, setLiveQueue] = useState(0);
   const [routingMode, setRoutingMode] = useState<'ai_only' | 'hybrid' | 'human_only'>('hybrid');
+  const [isTrainingActive, setIsTrainingActive] = useState(true);
+  const [showTranscripts, setShowTranscripts] = useState(false);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -78,7 +82,7 @@ export const VirtualAttendantTab = () => {
                 <button
                   onClick={() => {
                     setRoutingMode('ai_only');
-                    import('../../lib/turso').then(m => m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'CALL_ROUTING', 'System', JSON.stringify({ detail: 'Routing switched to 100% AI (Sylara)' })] }).catch(console.error));
+                    turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'CALL_ROUTING', 'System', JSON.stringify({ detail: 'Routing switched to 100% AI (Sylara)' })] }).catch(console.error);
                   }}
                   className={`px-3 py-2 rounded-lg text-[10px] font-bold transition-all flex items-center gap-1.5 ${routingMode === 'ai_only' ? 'bg-[#D4AF77] text-[#0A3D2A] shadow-md' : 'text-emerald-200/50 hover:text-emerald-200 hover:bg-emerald-800/50'}`}
                 >
@@ -87,7 +91,7 @@ export const VirtualAttendantTab = () => {
                 <button
                   onClick={() => {
                     setRoutingMode('hybrid');
-                    import('../../lib/turso').then(m => m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'CALL_ROUTING', 'System', JSON.stringify({ detail: 'Routing switched to Hybrid (85% AI / 15% Human)' })] }).catch(console.error));
+                    turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'CALL_ROUTING', 'System', JSON.stringify({ detail: 'Routing switched to Hybrid (85% AI / 15% Human)' })] }).catch(console.error);
                   }}
                   className={`px-3 py-2 rounded-lg text-[10px] font-bold transition-all flex items-center gap-1.5 ${routingMode === 'hybrid' ? 'bg-blue-500 text-white shadow-md shadow-blue-900/30' : 'text-emerald-200/50 hover:text-emerald-200 hover:bg-emerald-800/50'}`}
                 >
@@ -96,7 +100,7 @@ export const VirtualAttendantTab = () => {
                 <button
                   onClick={() => {
                     setRoutingMode('human_only');
-                    import('../../lib/turso').then(m => m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'CALL_ROUTING', 'System', JSON.stringify({ detail: 'Routing switched to 100% Human Agents' })] }).catch(console.error));
+                    turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'CALL_ROUTING', 'System', JSON.stringify({ detail: 'Routing switched to 100% Human Agents' })] }).catch(console.error);
                   }}
                   className={`px-3 py-2 rounded-lg text-[10px] font-bold transition-all flex items-center gap-1.5 ${routingMode === 'human_only' ? 'bg-rose-500 text-white shadow-md shadow-rose-900/30' : 'text-emerald-200/50 hover:text-emerald-200 hover:bg-emerald-800/50'}`}
                 >
@@ -258,10 +262,10 @@ export const VirtualAttendantTab = () => {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <button onClick={() => { import('../../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="flex items-center justify-center gap-2 py-3 bg-[#0A3D2A] text-[#D4AF77] rounded-xl font-bold text-sm shadow-lg shadow-emerald-900/20 hover:scale-[1.02] transition-transform">
+                  <button onClick={() => { turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Retrain triggered for ' + selectedDept.name })] }).catch(console.error); alert('AI retraining sequence initiated via Sylara.'); }} className="flex items-center justify-center gap-2 py-3 bg-[#0A3D2A] text-[#D4AF77] rounded-xl font-bold text-sm shadow-lg shadow-emerald-900/20 hover:scale-[1.02] transition-transform">
                     <RefreshCw size={16} /> Retrain with Sylara
                   </button>
-                  <button onClick={() => { import('../../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="flex items-center justify-center gap-2 py-3 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-50 transition-colors">
+                  <button onClick={() => { setShowTranscripts(true); turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Viewed department transcripts for ' + selectedDept.name })] }).catch(console.error); }} className="flex items-center justify-center gap-2 py-3 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-50 transition-colors">
                     <MessageSquare size={16} /> View Transcripts
                   </button>
                 </div>
@@ -272,18 +276,18 @@ export const VirtualAttendantTab = () => {
               <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100">
                 <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 text-center">Live Training Session</h4>
                 <div className="flex flex-col items-center justify-center space-y-4">
-                  <div className="w-24 h-24 rounded-full border-4 border-[#D4AF77] border-t-transparent animate-spin flex items-center justify-center">
+                  <div className={cn("w-24 h-24 rounded-full border-4 border-[#D4AF77] border-t-transparent flex items-center justify-center", isTrainingActive ? "animate-spin" : "")}>
                     <div className="w-16 h-16 rounded-full bg-[#0A3D2A] flex items-center justify-center">
-                      <Mic size={32} className="text-[#D4AF77] animate-pulse" />
+                      <Mic size={32} className={cn("text-[#D4AF77]", isTrainingActive ? "animate-pulse" : "")} />
                     </div>
                   </div>
                   <div className="text-center">
-                    <p className="text-sm font-black text-slate-800">Processing Audio Feed...</p>
+                    <p className="text-sm font-black text-slate-800">{isTrainingActive ? "Processing Audio Feed..." : "Audio Feed Paused"}</p>
                     <p className="text-[10px] text-slate-500 mt-1">ElevenLabs Voice ID: 21m00Tcm...</p>
                   </div>
                   <div className="flex gap-2 w-full">
-                    <button onClick={() => { import('../../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="flex-1 p-2 bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-bold">MONITOR</button>
-                    <button onClick={() => { import('../../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="flex-1 p-2 bg-slate-200 text-slate-600 rounded-lg text-[10px] font-bold">PAUSE</button>
+                    <button onClick={() => { setIsTrainingActive(true); turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Monitor resumed active training session' })] }).catch(console.error); }} className={cn("flex-1 p-2 rounded-lg text-[10px] font-bold transition-all", isTrainingActive ? "bg-emerald-600 text-white shadow-md shadow-emerald-900/20" : "bg-slate-200 text-slate-600")}>MONITOR</button>
+                    <button onClick={() => { setIsTrainingActive(false); turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Audio feed training paused' })] }).catch(console.error); }} className={cn("flex-1 p-2 rounded-lg text-[10px] font-bold transition-all", !isTrainingActive ? "bg-rose-600 text-white shadow-md shadow-rose-900/20" : "bg-slate-200 text-slate-600")}>PAUSE</button>
                   </div>
                 </div>
               </div>
@@ -294,6 +298,62 @@ export const VirtualAttendantTab = () => {
                   <strong>Compliance Lock:</strong> This agent is forced-escalated to Larry for any PHI/PII data collection.
                 </p>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Transcripts Modal Dialog */}
+      {showTranscripts && selectedDept && (
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-[2rem] w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[85vh] border border-slate-100 animate-in zoom-in-95 duration-300">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <div>
+                <h3 className="text-lg font-black text-slate-800 tracking-tight">Call Transcripts: {selectedDept.name}</h3>
+                <p className="text-xs text-slate-500 font-medium">Sylara Virtual Attendant Agent Logs</p>
+              </div>
+              <button onClick={() => setShowTranscripts(false)} className="text-slate-400 hover:text-slate-600 text-sm font-bold uppercase py-1 px-3 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all">
+                Close
+              </button>
+            </div>
+            
+            <div className="p-6 overflow-y-auto flex-1 space-y-6">
+              {[
+                {
+                  time: 'Today, 10:42 AM',
+                  caller: 'Sarah Jenkins (Oklahoma Patient)',
+                  log: [
+                    { speaker: 'Sylara (AI)', text: `Hello, welcome to GGE World ${selectedDept.name}. How can I help you today?` },
+                    { speaker: 'Sarah', text: `Hi, I need assistance with ${selectedDept.services[0].toLowerCase()} and to verify how things operate.` },
+                    { speaker: 'Sylara (AI)', text: 'I can certainly help you with that! The GGP-OS system logs all transactions instantly.' },
+                    { speaker: 'Sarah', text: 'Excellent, is it connected to the live telemetry feeds?' },
+                    { speaker: 'Sylara (AI)', text: 'Yes, both the Twilio VoIP queue and real-time compliance checks are active.' }
+                  ]
+                }
+              ].map((transcript, ti) => (
+                <div key={ti} className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                  <div className="flex justify-between items-center mb-3 text-[10px] font-black text-slate-400 uppercase tracking-widest pb-2 border-b border-slate-200/60">
+                    <span>Caller: {transcript.caller}</span>
+                    <span>{transcript.time}</span>
+                  </div>
+                  <div className="space-y-3">
+                    {transcript.log.map((chat, ci) => (
+                      <div key={ci} className="text-xs flex gap-2">
+                        <span className={cn("font-bold uppercase tracking-wider text-[9px] shrink-0 w-20 text-right mt-0.5", chat.speaker.includes('AI') ? "text-emerald-600" : "text-slate-500")}>
+                          {chat.speaker}:
+                        </span>
+                        <span className="text-slate-700 leading-relaxed font-medium">{chat.text}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="p-6 border-t border-slate-100 bg-slate-50 flex justify-end">
+              <button onClick={() => setShowTranscripts(false)} className="px-5 py-2.5 bg-[#0A3D2A] text-[#D4AF77] font-bold text-xs rounded-xl shadow-md hover:scale-[1.02] transition-transform uppercase">
+                Done Viewing
+              </button>
             </div>
           </div>
         </div>

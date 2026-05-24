@@ -88,6 +88,14 @@ const PresidentDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => v
   const [activeTab, setActiveTab] = useState('system_health');
 
   const [showNotifPanel, setShowNotifPanel] = useState(false);
+  const [notifications, setNotifications] = useState([
+    { icon: '📬', title: 'New Direct Message', desc: 'You have unread messages in the Global Directory', time: 'Just now', tab: 'messages' },
+    { icon: '📋', title: 'New Application in Queue', desc: 'Jasmin Garrett - Patient Med Card', time: 'Just now', tab: 'patient_case_tracker' },
+    { icon: '🔴', title: 'DEA Schedule III Final Order', desc: 'Medical cannabis & FDA products reclassified — effective April 23, 2026', time: 'Today', tab: 'compliance' },
+    { icon: '⚖️', title: 'DEA Hearing Scheduled', desc: 'Broader rescheduling hearing begins June 29, 2026', time: 'Today', tab: 'judicial' },
+    { icon: '💚', title: 'New Poll Votes Received', desc: 'Community polls receiving engagement in Oklahoma', time: '2h ago', tab: 'jurisdiction_map' },
+    { icon: '🔒', title: 'Turso DB Connected', desc: 'Production database environment variables active', time: '5h ago', tab: 'system_health' },
+  ]);
   const [hideAlertQueue, setHideAlertQueue] = useState(() => localStorage.getItem('gghp_alert_queue_dismissed') === 'true');
   const [queueAlerts, setQueueAlerts] = useState<any[]>([]);
   const [opsChecks, setOpsChecks] = useState<any[]>([]);
@@ -393,25 +401,24 @@ const PresidentDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => v
                 <Sliders size={18} />
               </button>
               <div className="relative">
-                <button data-action-bound="true" onClick={(e) => { e.stopPropagation(); setShowNotifPanel(!showNotifPanel); }} className="relative p-2 bg-slate-900/50 border border-slate-800 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-all"><Bell size={18} /><span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-[#0A0F1C]" /></button>
+                <button data-action-bound="true" onClick={(e) => { e.stopPropagation(); setShowNotifPanel(!showNotifPanel); }} className="relative p-2 bg-slate-900/50 border border-slate-800 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-all">
+                  <Bell size={18} />
+                  {notifications.length > 0 && (
+                    <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-[#0A0F1C]" />
+                  )}
+                </button>
                 {showNotifPanel && (
                   <div className="absolute right-0 top-12 w-80 bg-[#0E1526] border border-slate-800 rounded-2xl shadow-2xl z-[9999] overflow-hidden">
                     <div className="px-4 py-3 bg-slate-900/50 border-b border-slate-800/80 flex items-center justify-between">
                       <span className="text-xs font-black text-slate-300 uppercase tracking-widest">Notifications</span>
-                      <span className="px-2 py-0.5 bg-red-950 text-red-400 text-[10px] font-bold rounded-full">6 New</span>
+                      <span className="px-2 py-0.5 bg-red-950 text-red-400 text-[10px] font-bold rounded-full">{notifications.length} New</span>
                     </div>
                     <div className="max-h-80 overflow-y-auto divide-y divide-slate-800/50">
-                      {[
-                        { icon: '📬', title: 'New Direct Message', desc: 'You have unread messages in the Global Directory', time: 'Just now', tab: 'messages' },
-                        { icon: '📋', title: 'New Application in Queue', desc: 'Jasmin Garrett - Patient Med Card', time: 'Just now', tab: 'patient_case_tracker' },
-                        { icon: '🔴', title: 'DEA Schedule III Final Order', desc: 'Medical cannabis & FDA products reclassified — effective April 23, 2026', time: 'Today', tab: 'compliance' },
-                        { icon: '⚖️', title: 'DEA Hearing Scheduled', desc: 'Broader rescheduling hearing begins June 29, 2026', time: 'Today', tab: 'judicial' },
-                        { icon: '💚', title: 'New Poll Votes Received', desc: 'Community polls receiving engagement in Oklahoma', time: '2h ago', tab: 'jurisdiction_map' },
-                        { icon: '🔒', title: 'Turso DB Connected', desc: 'Production database environment variables active', time: '5h ago', tab: 'system_health' },
-                      ].map((n, i) => (
+                      {notifications.map((n, i) => (
                         <button key={i} data-action-bound="true" onClick={(e) => {
                           e.stopPropagation();
                           setShowNotifPanel(false);
+                          setNotifications(notifications.filter((_, idx) => idx !== i));
                           setActiveTab(n.tab);
                         }} className="w-full px-4 py-3 hover:bg-slate-900/60 cursor-pointer transition-colors group text-left">
                           <div className="flex items-start gap-3">
@@ -424,9 +431,14 @@ const PresidentDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => v
                           </div>
                         </button>
                       ))}
+                      {notifications.length === 0 && (
+                        <div className="p-8 text-center text-xs font-bold text-slate-400 uppercase tracking-widest">
+                          No new notifications
+                        </div>
+                      )}
                     </div>
                     <div className="px-4 py-2 bg-slate-900/30 border-t border-slate-800">
-                      <button data-action-bound="true" onClick={(e) => { e.stopPropagation(); setShowNotifPanel(false); }} className="w-full text-center text-[10px] font-bold text-emerald-400 hover:text-emerald-300 py-1">Dismiss All</button>
+                      <button data-action-bound="true" onClick={(e) => { e.stopPropagation(); setNotifications([]); setShowNotifPanel(false); }} className="w-full text-center text-[10px] font-bold text-emerald-400 hover:text-emerald-300 py-1">Dismiss All</button>
                     </div>
                   </div>
                 )}
