@@ -5313,7 +5313,12 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
               ))}
             </div>
           )}
-          <div className="flex-1 overflow-y-auto p-10">{getContent()}</div>
+          <div className={cn(
+            "flex-1 p-10 min-h-0",
+            ['ai_training', 'messages', 'b2b_crm', 'marketing_hub', 'operations', 'internal_admin', 'external_admin', 'global_directory'].includes(activeTab)
+              ? "overflow-hidden"
+              : "overflow-y-auto"
+          )}>{getContent()}</div>
         </div>
         
         {/* GLOBAL ALERTS STREAM (RIGHT SIDEBAR) */}

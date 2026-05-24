@@ -3097,7 +3097,7 @@ const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'user' }:
 };
 
 // --- L.A.R.R.Y AI Chatbot for Med Card / Business License Assistance ---
-export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card', userProfile, jurisdiction = 'Oklahoma', activeRole }: any) => {
+export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card', userProfile, jurisdiction = 'Oklahoma', activeRole, inline = false }: any) => {
   const [isBusiness, setIsBusiness] = useState(variant === 'business');
   const isGeneral = variant === 'general' || variant === 'ggma' || variant === 'ggma-patient' || variant === 'rip' || variant === 'sinc' || variant === 'provider' || variant === 'government' || variant === 'political_executive' || variant === 'advocate' || variant === 'advocacy_research' || variant === 'legal' || variant === 'attorney';
   
@@ -6586,7 +6586,10 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
   }
 
   return (
-    <div className="min-h-screen bg-[#f0fdf4] bg-gradient-to-br from-[#f0fdf4] via-[#FDFBF7] to-[#ecfdf5] flex flex-col relative overflow-hidden">
+    <div className={cn(
+      "bg-[#f0fdf4] bg-gradient-to-br from-[#f0fdf4] via-[#FDFBF7] to-[#ecfdf5] flex flex-col relative overflow-hidden",
+      inline ? "h-full w-full" : "min-h-screen"
+    )}>
       {/* Header */}
       <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200/60 px-6 h-16 flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-3">
@@ -6599,14 +6602,15 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
           </div>
         </div>
         <div className="flex items-center gap-3">
-
-          <button
-            onClick={() => onNavigate('landing')}
-            className="flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors"
-          >
-            <ArrowLeft size={16} />
-            Back
-          </button>
+          {!inline && (
+            <button
+              onClick={() => onNavigate('landing')}
+              className="flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors"
+            >
+              <ArrowLeft size={16} />
+              Back
+            </button>
+          )}
         </div>
       </nav>
 
@@ -6616,7 +6620,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       <input type="file" ref={screenshotInputRef} onChange={(e) => { handleFileUpload(e); setShowUploadMenu(false); }} className="hidden" accept="image/*,.png,.jpg,.jpeg" />
 
       {/* Chat Area */}
-      <div className="flex-1 flex flex-col max-w-3xl w-full mx-auto px-4 py-6 relative z-10">
+      <div className="flex-1 flex flex-col max-w-3xl w-full mx-auto px-4 py-6 relative z-10 min-h-0">
         <div className="flex-1 space-y-5 overflow-y-scroll custom-scrollbar pb-4 min-h-0 relative pr-2">
 
           {messages.map((msg, i) => (
@@ -9550,11 +9554,12 @@ export default function App() {
               >
                 <XCircle size={28} />
               </button>
-              <div className="flex-1 overflow-y-auto relative z-10">
+              <div className="flex-1 h-full relative z-10">
                 <LarryMedCardChatbot 
                   userProfile={userProfile}
                   activeRole={roleOverride || userProfile?.role}
                   variant={larryVariant}
+                  inline={true}
                   onNavigate={(view: any, role: any) => { 
                     setShowLarryModal(false); 
                     setView(view); 

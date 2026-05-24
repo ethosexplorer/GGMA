@@ -301,7 +301,12 @@ const AdvisorDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => voi
           </div>
         </header>
 
-        <div className="flex-1 overflow-auto bg-[#0A0F1C] p-8">
+        <div className={cn(
+          "flex-1 bg-[#0A0F1C] p-8 min-h-0",
+          ['ai_training', 'messages', 'b2b_crm', 'marketing_hub', 'operations', 'internal_admin', 'external_admin', 'global_directory'].includes(activeTab)
+            ? "overflow-hidden"
+            : "overflow-auto"
+        )}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeTab}

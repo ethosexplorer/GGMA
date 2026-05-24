@@ -43,7 +43,7 @@ export const AITrainingTab = ({ userProfile, onNavigate }: { userProfile: any; o
   };
 
   return (
-    <div className="flex h-[calc(100vh-12rem)] gap-6">
+    <div className="flex h-full w-full gap-6 min-h-0">
       {/* Left Side: Training & Memory Matrix */}
       <div className="w-1/3 bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
         <div className="p-6 border-b border-slate-100 bg-slate-900 text-white">
@@ -106,6 +106,7 @@ export const AITrainingTab = ({ userProfile, onNavigate }: { userProfile: any; o
         <div className="absolute inset-0">
           <LarryMedCardChatbot 
             userProfile={userProfile} 
+            inline={true}
             onNavigate={(view: string) => {
               if (onNavigate) {
                 onNavigate(view);
