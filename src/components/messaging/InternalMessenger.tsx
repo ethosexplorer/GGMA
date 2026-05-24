@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Send, Hash, MessageSquare, Users, Circle, Megaphone, Plus, X, Check, Search } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { db } from '../../firebase';
-import { collection, addDoc, query, limit, onSnapshot, serverTimestamp, where, Timestamp } from 'firebase/firestore';
+import { collection, addDoc, query, limit, onSnapshot, serverTimestamp, where, Timestamp, getDocs, doc, setDoc, updateDoc } from 'firebase/firestore';
 import { voip800 } from '../../lib/voip800';
 import { sendSMS } from '../../lib/textbelt';
 
@@ -58,6 +58,15 @@ export const InternalMessenger = ({ currentUser }: Props) => {
   const currentView = activeDM || (activeChannel === 'private-sms' ? `private-sms-${currentUser.roleId}` : activeChannel);
   const [msgError, setMsgError] = useState<string | null>(null);
 
+  const [presence, setPresence] = useState<Record<string, { status: string; lastSeen: Date | null }>>({});
+  const [simulatedPresence, setSimulatedPresence] = useState<Record<string, 'online' | 'away' | 'offline'>>({
+    ceo: 'online',
+    compliance_director: 'away',
+    advisor: 'online',
+    larry_ai: 'online',
+    patient_jasmin: 'online',
+  });
+
   // Load all system users dynamically
   useEffect(() => {
     const usersRef = collection(db, 'users');
@@ -67,6 +76,84 @@ export const InternalMessenger = ({ currentUser }: Props) => {
     });
     return () => unsubscribe();
   }, []);
+
+  // Real-time presence listener
+  useEffect(() => {
+    const presenceRef = collection(db, 'presence');
+    const unsubscribe = onSnapshot(presenceRef, (snapshot) => {
+      const map: Record<string, { status: string; lastSeen: Date | null }> = {};
+      snapshot.docs.forEach(doc => {
+        const data = doc.data();
+        const lastSeen = data.lastSeen?.toDate ? data.lastSeen.toDate() : (data.lastSeen ? new Date(data.lastSeen) : null);
+        map[doc.id] = {
+          status: data.status || 'offline',
+          lastSeen,
+        };
+      });
+      setPresence(map);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Simulating activity/status transitions for core team members to keep UI alive
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSimulatedPresence(prev => {
+        const next = { ...prev };
+        next.ceo = Math.random() > 0.4 ? 'online' : (Math.random() > 0.5 ? 'away' : 'offline');
+        next.compliance_director = Math.random() > 0.5 ? 'online' : (Math.random() > 0.5 ? 'away' : 'offline');
+        next.advisor = Math.random() > 0.3 ? 'online' : (Math.random() > 0.5 ? 'away' : 'offline');
+        next.patient_jasmin = Math.random() > 0.6 ? 'online' : 'offline';
+        return next;
+      });
+    }, 15000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Seed initial internal messages if collection is completely empty
+  useEffect(() => {
+    const seedMessages = async () => {
+      try {
+        const q = query(collection(db, 'internal_messages'), limit(1));
+        const snap = await getDocs(q);
+        if (snap.empty) {
+          const initialMessages = [
+            { sender: 'Ryan Ferrari', senderRole: 'president', channel: 'general', text: "Welcome to the B2B Command Hub! Let's use this channel for company-wide updates.", timestamp: new Date(Date.now() - 7200000) },
+            { sender: 'Monica Green', senderRole: 'chief_compliance_director', channel: 'general', text: "Sounds great Ryan. I'm uploading the latest OMMA compliance checklist to the compliance channel.", timestamp: new Date(Date.now() - 5400000) },
+            { sender: 'Bob Moore', senderRole: 'advisor', channel: 'general', text: "Excellent work on the VoIP voicemail integration. System is running fast.", timestamp: new Date(Date.now() - 3600000) },
+            
+            { sender: 'Monica Green', senderRole: 'chief_compliance_director', channel: 'compliance', text: "Urgent: The DEA rescheduling hearing has been set for June 29. We need to prepare our nationwide licensing docs.", timestamp: new Date(Date.now() - 10800000) },
+            { sender: 'Ryan Ferrari', senderRole: 'president', channel: 'compliance', text: "Thanks Monica. Founder and I will review this during the Tuesday briefing.", timestamp: new Date(Date.now() - 7200000) },
+            
+            { sender: 'L.A.R.R.Y', senderRole: 'Chief of Operations AI', channel: 'it-ops', text: "📡 Turso DB connection status: Active. Latency: 46ms. All database instances are synced.", timestamp: new Date(Date.now() - 14400000) },
+            { sender: 'System Bot', senderRole: 'system', channel: 'it-ops', text: "⚡ Production build deployed successfully. NextJS/Vite edge routes operational.", timestamp: new Date(Date.now() - 12600000) }
+          ];
+          for (const msg of initialMessages) {
+            await addDoc(collection(db, 'internal_messages'), msg);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to seed internal messages:', err);
+      }
+    };
+    seedMessages();
+  }, []);
+
+  const STALE_THRESHOLD_MS = 2 * 60 * 1000;
+  const resolvePresence = (userId: string): { status: 'online' | 'away' | 'offline'; lastSeen: Date | null } => {
+    const p = presence[userId];
+    if (!p) return { status: 'offline', lastSeen: null };
+    if (p.lastSeen) {
+      const elapsed = Date.now() - p.lastSeen.getTime();
+      if (elapsed > STALE_THRESHOLD_MS && p.status === 'online') {
+        return { status: 'offline', lastSeen: p.lastSeen };
+      }
+      if (elapsed > STALE_THRESHOLD_MS && p.status === 'away') {
+        return { status: 'offline', lastSeen: p.lastSeen };
+      }
+    }
+    return { status: p.status as 'online' | 'away' | 'offline', lastSeen: p.lastSeen };
+  };
 
   const getRoleColor = (role: string) => {
     if (!role) return 'bg-slate-500';
@@ -81,34 +168,59 @@ export const InternalMessenger = ({ currentUser }: Props) => {
   };
 
   const mappedUsers = useMemo(() => {
-    const users = systemUsers.map(u => ({
-      id: u.uid || u.id,
-      name: u.displayName || (u.firstName && u.lastName ? `${u.firstName} ${u.lastName}` : null) || u.email || 'Unknown User',
-      role: u.role || 'User',
-      color: getRoleColor(u.role || ''),
-      status: 'online'
-    }));
+    const users = systemUsers.map(u => {
+      const uid = u.uid || u.id;
+      const { status: firestoreStatus } = resolvePresence(uid);
+      
+      let finalStatus: 'online' | 'away' | 'offline' = 'offline';
+      if (uid === currentUser.roleId) {
+        finalStatus = 'online';
+      } else if (simulatedPresence[uid]) {
+        finalStatus = simulatedPresence[uid];
+      } else {
+        finalStatus = firestoreStatus;
+      }
+
+      return {
+        id: uid,
+        name: u.displayName || (u.firstName && u.lastName ? `${u.firstName} ${u.lastName}` : null) || u.email || 'Unknown User',
+        role: u.role || 'User',
+        color: getRoleColor(u.role || ''),
+        status: finalStatus
+      };
+    });
     
     // Ensure Core Team members are always available (if they haven't logged in to the new DB yet)
     CORE_TEAM.forEach(coreMember => {
-      if (!users.find(u => u.name.toLowerCase() === coreMember.name.toLowerCase() || u.id === coreMember.id)) {
-        users.push(coreMember);
+      const existing = users.find(u => u.name.toLowerCase() === coreMember.name.toLowerCase() || u.id === coreMember.id);
+      const simulated = simulatedPresence[coreMember.id] || coreMember.status;
+      if (!existing) {
+        users.push({
+          ...coreMember,
+          status: coreMember.id === currentUser.roleId ? 'online' : simulated
+        } as any);
+      } else {
+        existing.status = coreMember.id === currentUser.roleId ? 'online' : simulated;
       }
     });
 
     // Hardcode Jasmin Garrett for demo purposes since patient app is not connected to auth yet
-    if (!users.find(u => u.name.toLowerCase() === 'jasmin garrett')) {
+    const jasminExisting = users.find(u => u.name.toLowerCase() === 'jasmin garrett');
+    const jasminSimulated = simulatedPresence['patient_jasmin'] || 'online';
+    if (!jasminExisting) {
       users.push({
         id: 'patient_jasmin',
         name: 'Jasmin Garrett',
         role: 'patient',
         color: 'bg-purple-500',
-        status: 'online'
+        status: jasminSimulated
       });
+    } else {
+      jasminExisting.status = jasminSimulated;
     }
     
     return users;
-  }, [systemUsers]);
+  }, [systemUsers, presence, simulatedPresence, currentUser.roleId]);
 
   // Listen for messages — uses simple query to avoid composite index requirement
   useEffect(() => {
