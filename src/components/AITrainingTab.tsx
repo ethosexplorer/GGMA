@@ -8,7 +8,7 @@ interface Memory {
   content: string;
 }
 
-export const AITrainingTab = ({ userProfile }: { userProfile: any }) => {
+export const AITrainingTab = ({ userProfile, onNavigate }: { userProfile: any; onNavigate?: (tabId: string) => void }) => {
   const [memories, setMemories] = useState<Memory[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -106,7 +106,11 @@ export const AITrainingTab = ({ userProfile }: { userProfile: any }) => {
         <div className="absolute inset-0">
           <LarryMedCardChatbot 
             userProfile={userProfile} 
-            onNavigate={() => {}}
+            onNavigate={(view: string) => {
+              if (onNavigate) {
+                onNavigate(view);
+              }
+            }}
           />
         </div>
       </div>

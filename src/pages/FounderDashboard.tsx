@@ -4623,7 +4623,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         return <div className="p-8 h-full overflow-y-auto" data-action-bound><VirtualAttendantTab /></div>;
       case 'processor':
         return (
-          <div className="p-8 space-y-6 overflow-y-auto h-full">
+          <div className="p-8 space-y-6 overflow-y-auto h-full" data-action-bound="true">
             <div className="flex justify-between items-center mb-8">
               <div>
                 <h1 className="text-3xl font-black text-slate-800 tracking-tight">GGE Processor Master Command</h1>
@@ -4676,137 +4676,201 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           </div>
         );
       case 'subscription': 
-        return <SubscriptionPortal userRole="executive_founder" initialPlanId="fed_pro" />;
+        return <div data-action-bound="true"><SubscriptionPortal userRole="executive_founder" initialPlanId="fed_pro" /></div>;
       case 'investor_sandbox': 
-        return <div className="h-full w-full -m-10"><InvestorSandboxTab /></div>;
+        return <div className="h-full w-full -m-10" data-action-bound="true"><InvestorSandboxTab /></div>;
       case 'gge_world_hr': 
-        return <div className="h-full w-full"><GGEWorldHRHub user={user} /></div>;
-      case 'vault': return renderVault();
-        case 'overview': return renderOverview();
-      case 'accounting_ledger': return renderAccountingLedger();
-      case 'launch_script': return renderLaunchScript();
-      case 'global_financials': return renderFinancials();
-      case 'system_health': return <div data-action-bound><LiveSystemHealth /></div>;
-      case 'jurisdiction_map': return <div data-action-bound><LiveJurisdictionMap /></div>;
-      case 'users': return renderPersonnelForce();
-      case 'patients': return renderRegistrySovereignty();
-
-      case 'business': return renderEconomicInfrastructure();
-      case 'b2b_crm': return <div className="h-full w-full -m-10 bg-[#080e1a] min-h-screen overflow-auto" data-action-bound><PipelineCRM /></div>;
-      case 'marketing_hub': return <div className="h-full w-full -m-10 bg-[#080e1a] min-h-screen overflow-auto" data-action-bound><MarketingHub /></div>;
-      case 'omma_pipeline': return <div className="h-full w-full -m-10" data-action-bound><GlobalSweepTab /></div>;
-      case 'global_directory': return <div className="h-full w-full -m-10" data-action-bound><GlobalDirectoryTab onOpenMessage={(uid) => { setActiveTab('messages'); }} /></div>;
-      case 'approvals': return renderApprovals();
-      case 'applications': return renderApplications();
-      case 'compliance': return <div data-action-bound><LiveComplianceMonitor /></div>;
-      case 'regulatory_library': return <div data-action-bound><LiveRegulatoryLibrary /></div>;
-      case 'legal_oversight': return renderLegalOversight();
-      case 'approvals_denials': return renderApprovalsDenials();
-      case 'metrc_state': return <div className="h-full w-full -m-10 bg-slate-50 p-10 min-h-screen overflow-auto" data-action-bound><ComplianceEngineTab /></div>;
-      case 'reports': return <div data-action-bound><MasterAnalyticsTab /></div>;
+        return <div className="h-full w-full" data-action-bound="true"><GGEWorldHRHub user={user} /></div>;
+      case 'vault': 
+        return <div data-action-bound="true">{renderVault()}</div>;
+      case 'overview': 
+        return <div data-action-bound="true">{renderOverview()}</div>;
+      case 'accounting_ledger': 
+        return <div data-action-bound="true">{renderAccountingLedger()}</div>;
+      case 'launch_script': 
+        return <div data-action-bound="true">{renderLaunchScript()}</div>;
+      case 'global_financials': 
+        return <div data-action-bound="true">{renderFinancials()}</div>;
+      case 'system_health': 
+        return <div data-action-bound="true"><LiveSystemHealth /></div>;
+      case 'jurisdiction_map': 
+        return <div data-action-bound="true"><LiveJurisdictionMap /></div>;
+      case 'users': 
+        return <div data-action-bound="true">{renderPersonnelForce()}</div>;
+      case 'patients': 
+        return <div data-action-bound="true">{renderRegistrySovereignty()}</div>;
+      case 'business': 
+        return <div data-action-bound="true">{renderEconomicInfrastructure()}</div>;
+      case 'b2b_crm': 
+        return <div className="h-full w-full -m-10 bg-[#080e1a] min-h-screen overflow-auto" data-action-bound="true"><PipelineCRM /></div>;
+      case 'marketing_hub': 
+        return <div className="h-full w-full -m-10 bg-[#080e1a] min-h-screen overflow-auto" data-action-bound="true"><MarketingHub /></div>;
+      case 'omma_pipeline': 
+        return <div className="h-full w-full -m-10" data-action-bound="true"><GlobalSweepTab /></div>;
+      case 'global_directory': 
+        return <div className="h-full w-full -m-10" data-action-bound="true"><GlobalDirectoryTab onOpenMessage={(uid) => { setActiveTab('messages'); }} /></div>;
+      case 'approvals': 
+        return <div data-action-bound="true">{renderApprovals()}</div>;
+      case 'applications': 
+        return <div data-action-bound="true">{renderApplications()}</div>;
+      case 'compliance': 
+        return <div data-action-bound="true"><LiveComplianceMonitor /></div>;
+      case 'regulatory_library': 
+        return <div data-action-bound="true"><LiveRegulatoryLibrary /></div>;
+      case 'legal_oversight': 
+        return <div data-action-bound="true">{renderLegalOversight()}</div>;
+      case 'approvals_denials': 
+        return <div data-action-bound="true">{renderApprovalsDenials()}</div>;
+      case 'metrc_state': 
+        return <div className="h-full w-full -m-10 bg-slate-50 p-10 min-h-screen overflow-auto" data-action-bound="true"><ComplianceEngineTab /></div>;
+      case 'reports': 
+        return <div data-action-bound="true"><MasterAnalyticsTab /></div>;
       case 'intel': 
-        return <div className="h-full w-full -m-10 bg-[#080e1a] p-10 min-h-screen overflow-auto" data-action-bound><LegislativeIntelTab /></div>;
+        return <div className="h-full w-full -m-10 bg-[#080e1a] p-10 min-h-screen overflow-auto" data-action-bound="true"><LegislativeIntelTab /></div>;
       case 'it_support':
-        return <div className="h-full w-full -m-10 p-10 min-h-screen overflow-auto bg-slate-50" data-action-bound><ITSupportDashboard /></div>;
-      case 'logs': return renderLogs();
-      case 'support_tickets': return renderSupportTickets();
-      case 'internal_scheduler': return <div data-action-bound><FounderCalendar user={user} title="Founder's Master Calendar" /></div>;
-      case 'realtime_tasks': return <div className="h-full w-full -m-10 bg-slate-50 p-10 min-h-screen overflow-auto" data-action-bound><RapidRevenueTab /></div>;
-      case 'admin_support_calendar': return <div className="h-full w-full -m-10" data-action-bound><AdminSupportCalendar /></div>;
-      case 'escalation_support_calendar': return <div className="h-full w-full -m-10" data-action-bound><EscalationSupportCalendar /></div>;
-      case 'subscriptions': return renderSubscriptionsTab();
-      case 'invoices': return <div className="h-full w-full -m-10 p-10" data-action-bound><InvoiceManager /></div>;
-      case 'negligence_intercept': return <div className="h-full w-full -m-10" data-action-bound><AdminDashboard user={user} initialTab="negligence" onLogout={() => setActiveTab(isExecutive ? 'ai_training' : 'overview')} /></div>;
-      case 'hr_intelligence': return <div data-action-bound><LiveHRIntelligence /></div>;
-      case 'rapid_testing': return <LiveRapidTesting />;
-      case 'law_enforcement': return <LiveLawEnforcement />;
-      case 'ip_monitor': return renderIPMonitor();
+        return <div className="h-full w-full -m-10 p-10 min-h-screen overflow-auto bg-slate-50" data-action-bound="true"><ITSupportDashboard /></div>;
+      case 'logs': 
+        return <div data-action-bound="true">{renderLogs()}</div>;
+      case 'support_tickets': 
+        return <div data-action-bound="true">{renderSupportTickets()}</div>;
+      case 'internal_scheduler': 
+        return <div data-action-bound="true"><FounderCalendar user={user} title="Founder's Master Calendar" /></div>;
+      case 'realtime_tasks': 
+        return <div className="h-full w-full -m-10 bg-slate-50 p-10 min-h-screen overflow-auto" data-action-bound="true"><RapidRevenueTab /></div>;
+      case 'admin_support_calendar': 
+        return <div className="h-full w-full -m-10" data-action-bound="true"><AdminSupportCalendar /></div>;
+      case 'escalation_support_calendar': 
+        return <div className="h-full w-full -m-10" data-action-bound="true"><EscalationSupportCalendar /></div>;
+      case 'subscriptions': 
+        return <div data-action-bound="true">{renderSubscriptionsTab()}</div>;
+      case 'invoices': 
+        return <div className="h-full w-full -m-10 p-10" data-action-bound="true"><InvoiceManager /></div>;
+      case 'negligence_intercept': 
+        return <div className="h-full w-full -m-10" data-action-bound="true"><AdminDashboard user={user} initialTab="negligence" onLogout={() => setActiveTab(isExecutive ? 'ai_training' : 'overview')} /></div>;
+      case 'hr_intelligence': 
+        return <div data-action-bound="true"><LiveHRIntelligence /></div>;
+      case 'rapid_testing': 
+        return <div data-action-bound="true"><LiveRapidTesting /></div>;
+      case 'law_enforcement': 
+        return <div data-action-bound="true"><LiveLawEnforcement /></div>;
+      case 'ip_monitor': 
+        return <div data-action-bound="true">{renderIPMonitor()}</div>;
       case 'judicial':
-        return <div className="h-full w-full -m-10 bg-[#080e1a] p-10 min-h-screen overflow-auto"><JudicialMonitorTab /></div>;
+        return <div className="h-full w-full -m-10 bg-[#080e1a] p-10 min-h-screen overflow-auto" data-action-bound="true"><JudicialMonitorTab /></div>;
       case 'roles_duties':
-        return <RolePermissionsPanel viewerRole={isMonica ? 'compliance_director' : (isRyan ? 'ceo' : 'founder')} />;
+        return <div data-action-bound="true"><RolePermissionsPanel viewerRole={isMonica ? 'compliance_director' : (isRyan ? 'ceo' : 'founder')} /></div>;
       case 'messages':
-        return <InternalMessenger currentUser={{ name: fullName, role: userTitle, roleId: isMonica ? 'compliance_director' : (isRyan ? 'ceo' : 'founder') }} />;
-      case 'ai_training': return <div className="h-full w-full -m-10 p-10 bg-slate-50"><AITrainingTab userProfile={user} /></div>;
-      case 'settings': return renderSettings();
-      case 'call_center': return <CallCenterCommandTab />;
-      case 'dept_manager': return <DepartmentManager />;
-      case 'critical_alerts': return (
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-3xl font-black text-slate-800 tracking-tight">Critical Alerts</h2>
-              <p className="text-slate-500 font-medium mt-1">Real-time system health monitoring &amp; service status</p>
+        return <div data-action-bound="true"><InternalMessenger currentUser={{ name: fullName, role: userTitle, roleId: isMonica ? 'compliance_director' : (isRyan ? 'ceo' : 'founder') }} /></div>;
+      case 'ai_training': 
+        return (
+          <div className="h-full w-full -m-10 p-10 bg-slate-50" data-action-bound="true">
+            <AITrainingTab 
+              userProfile={user} 
+              onNavigate={(tabId: string) => {
+                const parent = findParentTab(tabId);
+                setSelectedParent(parent || tabId);
+                setActiveTab(tabId);
+              }}
+            />
+          </div>
+        );
+      case 'settings': 
+        return <div data-action-bound="true">{renderSettings()}</div>;
+      case 'call_center': 
+        return <div data-action-bound="true"><CallCenterCommandTab /></div>;
+      case 'dept_manager': 
+        return <div data-action-bound="true"><DepartmentManager /></div>;
+      case 'critical_alerts': 
+        return (
+          <div className="space-y-6" data-action-bound="true">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-3xl font-black text-slate-800 tracking-tight">Critical Alerts</h2>
+                <p className="text-slate-500 font-medium mt-1">Real-time system health monitoring &amp; service status</p>
+              </div>
+              <button onClick={() => { runCheck(); }} disabled={isHealthChecking} className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-xl font-bold text-sm transition-colors shadow-lg">
+                {isHealthChecking ? <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Checking...</> : <><Zap size={16} /> Run Health Check</>}
+              </button>
             </div>
-            <button onClick={() => { runCheck(); }} disabled={isHealthChecking} className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-xl font-bold text-sm transition-colors shadow-lg">
-              {isHealthChecking ? <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Checking...</> : <><Zap size={16} /> Run Health Check</>}
-            </button>
-          </div>
 
-          {/* Status Banner */}
-          {healthReport && (() => {
-            const colors: Record<string, string> = { healthy: 'bg-emerald-600', degraded: 'bg-amber-600', critical: 'bg-red-600', frozen: 'bg-red-700' };
-            const labels: Record<string, string> = { healthy: 'ALL SYSTEMS OPERATIONAL', degraded: 'MINOR SERVICE DEGRADATION', critical: 'CRITICAL — SERVICES DOWN', frozen: 'SYSTEM FREEZE DETECTED' };
-            return (
-              <div className={`${colors[healthReport.overallStatus]} text-white p-6 rounded-2xl shadow-lg`}>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <AlertTriangle size={24} />
-                    <div>
-                      <h3 className="text-lg font-black uppercase tracking-tight">{labels[healthReport.overallStatus]}</h3>
-                      <p className="text-sm opacity-80">Last check: {lastHealthCheck}</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-4 text-center">
-                    <div className="bg-black/20 px-4 py-2 rounded-xl"><p className="text-[10px] font-bold opacity-70">UPTIME</p><p className="text-xl font-black">{healthReport.uptimePercent}%</p></div>
-                    <div className="bg-black/20 px-4 py-2 rounded-xl"><p className="text-[10px] font-bold opacity-70">AVG LATENCY</p><p className="text-xl font-black">{healthReport.avgLatencyMs}ms</p></div>
-                  </div>
-                </div>
-              </div>
-            );
-          })()}
-
-          {/* Service Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {(healthReport?.services || []).map((svc: any, i: number) => (
-              <div key={i} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-3 h-3 rounded-full ${svc.status === 'online' ? 'bg-emerald-500' : svc.status === 'degraded' ? 'bg-amber-500' : 'bg-red-500'} ${svc.status === 'offline' ? 'animate-pulse' : ''}`} />
-                    <span className={`text-xs font-black uppercase ${svc.status === 'online' ? 'text-emerald-600' : svc.status === 'degraded' ? 'text-amber-600' : 'text-red-600'}`}>{svc.status}</span>
-                  </div>
-                  <span className="text-xs font-bold text-slate-400">{svc.latencyMs}ms</span>
-                </div>
-                <h4 className="font-bold text-slate-800 text-sm">{svc.name}</h4>
-                <p className="text-xs text-slate-500 mt-1">{svc.details || svc.error || 'Checking...'}</p>
-                {svc.critical === false && <span className="inline-block mt-2 text-[9px] font-bold uppercase bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">Non-Critical</span>}
-              </div>
-            ))}
-          </div>
-
-          {/* Health History */}
-          {healthHistory.length > 1 && (
-            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-              <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">Health Timeline (Last {healthHistory.length} checks)</h4>
-              <div className="flex items-end gap-1 h-20">
-                {healthHistory.map((h, i) => {
-                  const heightPct = Math.max(10, Math.min(100, 100 - (h.avgLatency / 50)));
-                  const color = h.status === 'healthy' ? 'bg-emerald-400' : h.status === 'degraded' ? 'bg-amber-400' : 'bg-red-400';
-                  return (
-                    <div key={i} className="flex-1 flex flex-col items-center gap-1 group relative">
-                      <div className={`w-full ${color} rounded-t transition-all`} style={{ height: `${heightPct}%` }} />
-                      <div className="opacity-0 group-hover:opacity-100 absolute -top-10 bg-slate-800 text-white text-[9px] px-2 py-1 rounded font-bold whitespace-nowrap z-10">
-                        {h.time} • {h.avgLatency}ms
+            {/* Status Banner */}
+            {healthReport && (() => {
+              const colors: Record<string, string> = { healthy: 'bg-emerald-600', degraded: 'bg-amber-600', critical: 'bg-red-600', frozen: 'bg-red-700' };
+              const labels: Record<string, string> = { healthy: 'ALL SYSTEMS OPERATIONAL', degraded: 'MINOR SERVICE DEGRADATION', critical: 'CRITICAL — SERVICES DOWN', frozen: 'SYSTEM FREEZE DETECTED' };
+              return (
+                <div className={`${colors[healthReport.overallStatus]} text-white p-6 rounded-2xl shadow-lg`}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <AlertTriangle size={24} />
+                      <div>
+                        <h3 className="text-lg font-black uppercase tracking-tight">{labels[healthReport.overallStatus]}</h3>
+                        <p className="text-sm opacity-80">Last check: {lastHealthCheck}</p>
                       </div>
                     </div>
-                  );
-                })}
-              </div>
+                    <div className="flex gap-4 text-center">
+                      <div className="bg-black/20 px-4 py-2 rounded-xl"><p className="text-[10px] font-bold opacity-70">UPTIME</p><p className="text-xl font-black">{healthReport.uptimePercent}%</p></div>
+                      <div className="bg-black/20 px-4 py-2 rounded-xl"><p className="text-[10px] font-bold opacity-70">AVG LATENCY</p><p className="text-xl font-black">{healthReport.avgLatencyMs}ms</p></div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Service Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {(healthReport?.services || []).map((svc: any, i: number) => (
+                <div key={i} className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <div className={`w-3 h-3 rounded-full ${svc.status === 'online' ? 'bg-emerald-500' : svc.status === 'degraded' ? 'bg-amber-500' : 'bg-red-500'} ${svc.status === 'offline' ? 'animate-pulse' : ''}`} />
+                      <span className={`text-xs font-black uppercase ${svc.status === 'online' ? 'text-emerald-600' : svc.status === 'degraded' ? 'text-amber-600' : 'text-red-600'}`}>{svc.status}</span>
+                    </div>
+                    <span className="text-xs font-bold text-slate-400">{svc.latencyMs}ms</span>
+                  </div>
+                  <h4 className="font-bold text-slate-800 text-sm">{svc.name}</h4>
+                  <p className="text-xs text-slate-500 mt-1">{svc.details || svc.error || 'Checking...'}</p>
+                  {svc.critical === false && <span className="inline-block mt-2 text-[9px] font-bold uppercase bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">Non-Critical</span>}
+                </div>
+              ))}
             </div>
-          )}
-        </div>
-      );
-      default: return isExecutive ? <div className="h-full w-full -m-10 p-10 bg-slate-50"><AITrainingTab userProfile={user} /></div> : renderOverview();
+
+            {/* Health History */}
+            {healthHistory.length > 1 && (
+              <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+                <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">Health Timeline (Last {healthHistory.length} checks)</h4>
+                <div className="flex items-end gap-1 h-20">
+                  {healthHistory.map((h, i) => {
+                    const heightPct = Math.max(10, Math.min(100, 100 - (h.avgLatency / 50)));
+                    const color = h.status === 'healthy' ? 'bg-emerald-400' : h.status === 'degraded' ? 'bg-amber-400' : 'bg-red-400';
+                    return (
+                      <div key={i} className="flex-1 flex flex-col items-center gap-1 group relative">
+                        <div className={`w-full ${color} rounded-t transition-all`} style={{ height: `${heightPct}%` }} />
+                        <div className="opacity-0 group-hover:opacity-100 absolute -top-10 bg-slate-800 text-white text-[9px] px-2 py-1 rounded font-bold whitespace-nowrap z-10">
+                          {h.time} • {h.avgLatency}ms
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      default: 
+        return isExecutive 
+          ? (
+            <div className="h-full w-full -m-10 p-10 bg-slate-50" data-action-bound="true">
+              <AITrainingTab 
+                userProfile={user} 
+                onNavigate={(tabId: string) => {
+                  const parent = findParentTab(tabId);
+                  setSelectedParent(parent || tabId);
+                  setActiveTab(tabId);
+                }}
+              />
+            </div>
+          )
+          : <div data-action-bound="true">{renderOverview()}</div>;
     }
   };
 
@@ -5254,7 +5318,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         
         {/* GLOBAL ALERTS STREAM (RIGHT SIDEBAR) */}
         {!hideAlertQueue && !isExecutive && (
-        <div className={cn("w-80 bg-white border-l border-slate-200 flex flex-col shrink-0 transition-all duration-500 hidden xl:flex print:hidden", !isUnlocked && "blur-md opacity-50 pointer-events-none")}>
+        <div data-action-bound="true" className={cn("w-80 bg-white border-l border-slate-200 flex flex-col shrink-0 transition-all duration-500 hidden xl:flex print:hidden", !isUnlocked && "blur-md opacity-50 pointer-events-none")}>
            <div className="h-20 border-b border-slate-200 flex items-center justify-between px-6 bg-slate-100 shrink-0">
               <h3 className="font-black text-sm uppercase tracking-widest text-slate-800 flex items-center gap-2"><Bell size={16} className="text-indigo-600" /> Executive Oversight & Alert Queue</h3>
               <button onClick={() => {

@@ -3166,6 +3166,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     if (isRyan && variant !== 'legal') return ['View Global Operations', 'Enforcement Status', 'Metrc API Health', 'Jurisdiction Overrides'];
     if (isMonica && variant !== 'legal') return ['Run Compliance Sweep', 'Metrc Anomalies', 'Pending Applications', 'Audit Logs'];
     if (isBob && variant !== 'legal') return ['Review Financial Anomalies', 'Compliance Impact Report', 'Regulatory Forecasting'];
+    if (isFounderAssistant) return ['View Daily Summary', 'System Report', 'State News Briefing', 'My Appointments', 'Pending Approvals', 'Send Broadcast'];
     if (variant === 'ggma') return ['Start Patient Intake', 'Start Business Intake', '🏛️ DEA Schedule III Registration', 'View Patient Fee Schedule', 'View Business Fee Schedule'];
     if (variant === 'ggma-patient') return ['Start Patient Intake', 'View Patient Fee Schedule', 'Book Physician'];
     if (variant === 'rip') return ['Field Intelligence Report', 'Background Verification Check', 'Enforcement Status Inquiry', 'Compliance Audit Request', 'Contact Oversight Division', 'View State Authority Plans'];
@@ -3690,6 +3691,33 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     }
 
     if (isFounderAssistant) {
+      if (lower === 'view supreme command') {
+        if (onNavigate) {
+          onNavigate('command_hub');
+        }
+        response = "📡 Connecting you to the **Command Hub**...";
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+        setIsTyping(false);
+        return;
+      }
+      if (lower === 'view compliance hub') {
+        if (onNavigate) {
+          onNavigate('compliance_regulatory');
+        }
+        response = "🛡️ Connecting you to the **Compliance & Regulatory** center...";
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+        setIsTyping(false);
+        return;
+      }
+      if (lower === 'view operations staff' || lower === 'view rip staff') {
+        if (onNavigate) {
+          onNavigate('people_hr');
+        }
+        response = "👥 Connecting you to the **People & HR** center...";
+        setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);
+        setIsTyping(false);
+        return;
+      }
       if (lower.includes('daily summary')) {
         response = "📊 **Executive Daily Summary**\n\n• **Revenue (24h):** $1.2M\n• **New Registrations:** 4,829\n• **Pending Approvals:** 14\n• **System Health:** 100% Operational\n\nI've also sent the detailed metrics to your Secure Dashboard.";
         setMessages(prev => [...prev, { role: 'bot', text: response, choices: ['Main Menu'] } as any]);

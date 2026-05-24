@@ -5,7 +5,7 @@ export const FounderModals = ({ activeModal, onClose }: { activeModal: any, onCl
   if (!activeModal) return null;
 
   return (
-    <div className="fixed inset-0 z-[200] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div data-action-bound="true" className="fixed inset-0 z-[200] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-3xl border border-slate-200 relative animate-in zoom-in-95 duration-300 my-8">
         <button onClick={onClose} className="absolute top-6 right-6 p-2 bg-slate-100 hover:bg-slate-200 rounded-full text-slate-500 transition-colors">
           <X size={20} />
