@@ -77,6 +77,16 @@ export const InternalMessenger = ({ currentUser }: Props) => {
     return () => unsubscribe();
   }, []);
 
+  // Auto-select DM target on redirect
+  useEffect(() => {
+    const target = sessionStorage.getItem('active_dm_target');
+    if (target) {
+      const dmId = `dm-${[currentUser.roleId, target].sort().join('-')}`;
+      setActiveDM(dmId);
+      sessionStorage.removeItem('active_dm_target');
+    }
+  }, [currentUser.roleId, systemUsers]);
+
   // Real-time presence listener
   useEffect(() => {
     const presenceRef = collection(db, 'presence');

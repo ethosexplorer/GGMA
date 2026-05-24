@@ -5,7 +5,7 @@ import {
   HeartPulse, Building2, FileCheck, Zap, Gavel, 
   FlaskConical, BarChart3, Activity, Clock, Shield,
   Globe, Users, Bot, AlertTriangle, Layers, UserPlus, MapPin,
-  Search, ArrowUpRight, BookOpen
+  Search, ArrowUpRight, BookOpen, MessageSquare, X, Phone
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { METRC_MANUAL } from '../../data/metrcManual';
@@ -603,12 +603,70 @@ export const MasterAnalyticsTab = () => {
   );
 };
 
+const DEPT_STAFF: Record<string, any[]> = {
+  'Executive & Strategy': [
+    { id: 'founder', name: 'Founder/CEO', role: 'Founder', email: 'globalgreenhp@gmail.com', color: 'bg-amber-500', status: 'online' },
+    { id: 'ceo', name: 'Ryan Ferrari', role: 'CEO / President', email: 'ryan@ggp-os.com', color: 'bg-blue-500', status: 'online' },
+    { id: 'compliance_director', name: 'Monica Green', role: 'Compliance Director / Chief Legal', email: 'monica@ggp-os.com', color: 'bg-emerald-500', status: 'away' },
+  ],
+  'Medical & Clinical Intake': [
+    { id: 'jenkins_clinical', name: 'Dr. Sarah Jenkins', role: 'Clinical Lead', email: 's.jenkins@ggp-os.com', color: 'bg-emerald-500', status: 'online' },
+    { id: 'cooper_physician', name: 'Dr. Lisa Cooper', role: 'Intake Physician', email: 'l.cooper@ggp-os.com', color: 'bg-teal-500', status: 'online' },
+    { id: 'rn_miller', name: 'James Miller, RN', role: 'Nurse Case Manager', email: 'j.miller@ggp-os.com', color: 'bg-purple-500', status: 'offline' },
+    { id: 'rn_collins', name: 'Mary Collins, RN', role: 'Intake Coordinator', email: 'm.collins@ggp-os.com', color: 'bg-purple-500', status: 'online' },
+  ],
+  'Regulatory & Compliance': [
+    { id: 'compliance_director', name: 'Monica Green', role: 'Head of Compliance', email: 'monica@ggp-os.com', color: 'bg-emerald-500', status: 'away' },
+    { id: 'advisor', name: 'Bob Moore', role: 'Senior Advisor', email: 'bob@ggp-os.com', color: 'bg-slate-700', status: 'online' },
+    { id: 'davis_sync', name: 'John Davis', role: 'Metrc Sync Officer', email: 'j.davis@ggp-os.com', color: 'bg-blue-500', status: 'online' },
+    { id: 'clark_audit', name: 'Susan Clark', role: 'Compliance Auditor', email: 's.clark@ggp-os.com', color: 'bg-slate-500', status: 'offline' },
+  ],
+  'Engineering & SysOps': [
+    { id: 'ceo', name: 'Ryan Ferrari', role: 'Head of Engineering', email: 'ryan@ggp-os.com', color: 'bg-blue-500', status: 'online' },
+    { id: 'jenkins_ops', name: 'Tom Jenkins', role: 'SysOps Lead', email: 't.jenkins@ggp-os.com', color: 'bg-amber-500', status: 'online' },
+    { id: 'wood_arch', name: 'Karen Wood', role: 'Database Architect', email: 'k.wood@ggp-os.com', color: 'bg-slate-500', status: 'offline' },
+  ],
+};
+
 export const LiveHRIntelligence = () => {
   const [userCount, setUserCount] = useState(0);
+  const [selectedDept, setSelectedDept] = useState<any | null>(null);
+  const [showDeptModal, setShowDeptModal] = useState(false);
+  const [presence, setPresence] = useState<Record<string, { status: string; lastSeen: Date | null }>>({});
+  const [showComplianceAlert, setShowComplianceAlert] = useState(() => {
+    return localStorage.getItem('gghp_hr_compliance_completed') !== 'true';
+  });
+
+  const handleOpenDeptModal = (dept: any) => {
+    setSelectedDept(dept);
+    setShowDeptModal(true);
+  };
+
   useEffect(() => {
     const unsub = onSnapshot(collection(db, 'users'), (snap) => setUserCount(snap.size));
     return () => unsub();
   }, []);
+
+  useEffect(() => {
+    const unsub = onSnapshot(collection(db, 'presence'), (snapshot) => {
+      const map: Record<string, { status: string; lastSeen: Date | null }> = {};
+      snapshot.docs.forEach(doc => {
+        const data = doc.data();
+        const lastSeen = data.lastSeen?.toDate ? data.lastSeen.toDate() : (data.lastSeen ? new Date(data.lastSeen) : null);
+        map[doc.id] = {
+          status: data.status || 'offline',
+          lastSeen,
+        };
+      });
+      setPresence(map);
+    });
+    return () => unsub();
+  }, []);
+
+  const getInitials = (name: string) => {
+    if (!name) return 'U';
+    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  };
 
   return (
     <div className="space-y-8">
@@ -657,11 +715,22 @@ export const LiveHRIntelligence = () => {
                       <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-1"><Bot size={12} className="text-indigo-400" /> AI Force</p>
                       <div className="flex items-baseline gap-2 mt-1"><span className="text-lg font-black text-white">{dept.ai.count}</span><span className="text-[9px] font-bold text-slate-500 truncate">{dept.ai.desc}</span></div>
                     </div>
-                    <div className="flex-1 bg-slate-900 border border-slate-700 rounded-xl p-3 relative overflow-hidden">
+                    <button
+                      onClick={() => handleOpenDeptModal(dept)}
+                      className="flex-1 bg-slate-900 border border-slate-700 hover:border-emerald-500/50 rounded-xl p-3 relative overflow-hidden text-left cursor-pointer transition-all hover:bg-slate-800/80 group/btn"
+                    >
                       <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
-                      <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-1"><Users size={12} className="text-emerald-400" /> Humans</p>
-                      <div className="flex items-baseline gap-2 mt-1"><span className="text-lg font-black text-white">{dept.humans.count}</span><span className="text-[9px] font-bold text-slate-500 truncate">{dept.humans.desc}</span></div>
-                    </div>
+                      <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-1">
+                        <Users size={12} className="text-emerald-400" /> Humans
+                      </p>
+                      <div className="flex items-baseline gap-2 mt-1">
+                        <span className="text-lg font-black text-white">{dept.humans.count}</span>
+                        <span className="text-[9px] font-bold text-slate-500 truncate">{dept.humans.desc}</span>
+                      </div>
+                      <div className="absolute right-2 bottom-1.5 opacity-0 group-hover/btn:opacity-100 transition-opacity text-[8px] font-bold text-emerald-400 uppercase tracking-wider">
+                        View Staff →
+                      </div>
+                    </button>
                   </div>
                 </div>
               ))}
@@ -670,6 +739,68 @@ export const LiveHRIntelligence = () => {
         </div>
 
         <div className="space-y-6">
+          {showComplianceAlert ? (
+            <div className="bg-gradient-to-br from-slate-900 to-indigo-950/80 rounded-[2.5rem] p-8 border border-red-500/30 shadow-xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-6 opacity-5"><AlertTriangle size={80} className="text-red-500" /></div>
+              <div className="flex items-center gap-3 mb-4">
+                <span className="flex h-3 w-3 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                </span>
+                <h4 className="text-xs font-black text-red-400 uppercase tracking-widest">Pending Compliance Task</h4>
+              </div>
+              <h3 className="text-lg font-black text-white mb-2">HR Compliance Update</h3>
+              <p className="text-xs text-slate-400 leading-relaxed font-medium mb-5">
+                Employee handbook compliance checklist ready. Larry AI has verified Oklahoma Title 63 compliance rules. Final signature required to sync.
+              </p>
+              <div className="bg-slate-950/60 rounded-2xl p-4 border border-slate-800/80 space-y-3 mb-6">
+                <div className="flex items-start gap-3">
+                  <div className="w-4 h-4 rounded bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[10px] font-bold mt-0.5">✓</div>
+                  <p className="text-xs text-slate-300 font-semibold">Verify compliance credentials (100% pass)</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-4 h-4 rounded bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[10px] font-bold mt-0.5">✓</div>
+                  <p className="text-xs text-slate-300 font-semibold">Larry AI State law scan complete</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <input type="checkbox" id="handbook_check" className="w-4 h-4 rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500 focus:ring-offset-slate-900 accent-indigo-500 mt-0.5" defaultChecked={false} />
+                  <label htmlFor="handbook_check" className="text-xs text-slate-300 font-semibold cursor-pointer">Founder handbook final sign-off</label>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    localStorage.setItem('gghp_hr_compliance_completed', 'true');
+                    setShowComplianceAlert(false);
+                    window.dispatchEvent(new CustomEvent('gghp-dismiss-notification', { detail: { tab: 'hr_intelligence' } }));
+                  }}
+                  className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-md cursor-pointer"
+                >
+                  Approve & Sync
+                </button>
+                <button
+                  onClick={() => {
+                    setShowComplianceAlert(false);
+                    window.dispatchEvent(new CustomEvent('gghp-dismiss-notification', { detail: { tab: 'hr_intelligence' } }));
+                  }}
+                  className="px-4 py-3 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all cursor-pointer"
+                >
+                  Dismiss
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white border border-slate-800 flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20">
+                <FileCheck size={24} />
+              </div>
+              <div>
+                <h4 className="text-xs font-black text-emerald-400 uppercase tracking-widest">HR Systems Nominal</h4>
+                <p className="text-xs text-slate-400 mt-1 font-semibold">All staff handbooks & credentials are 100% synchronized.</p>
+              </div>
+            </div>
+          )}
+
           <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white border border-slate-800">
             <h4 className="text-xs font-black text-indigo-400 uppercase tracking-widest mb-4">Staffing Health Index</h4>
             <div className="flex items-baseline gap-2 mb-6"><span className="text-4xl font-black">96.8</span><span className="text-sm font-bold text-emerald-400">/ 100</span></div>
@@ -693,6 +824,69 @@ export const LiveHRIntelligence = () => {
           </div>
         </div>
       </div>
+
+      {/* Department Staff Modal */}
+      {showDeptModal && selectedDept && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] animate-in fade-in duration-200">
+          <div className="bg-slate-950 border border-slate-800 rounded-3xl p-8 max-w-lg w-full mx-4 shadow-2xl animate-in zoom-in-95 duration-300 relative text-white">
+            <button 
+              onClick={() => setShowDeptModal(false)} 
+              className="absolute top-6 right-6 p-2 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white rounded-xl transition-all cursor-pointer"
+            >
+              <X size={20} />
+            </button>
+
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center border border-indigo-500/30">
+                <Users size={24} />
+              </div>
+              <div>
+                <h3 className="text-2xl font-black tracking-tight">{selectedDept.dept} Staff</h3>
+                <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mt-1">Head: {selectedDept.head}</p>
+              </div>
+            </div>
+
+            <div className="space-y-4 max-h-[350px] overflow-y-auto pr-2 divide-y divide-slate-800">
+              {(DEPT_STAFF[selectedDept.dept] || []).map((member) => {
+                const liveStatus = presence[member.id]?.status || member.status;
+                return (
+                  <div key={member.id} className="flex items-center justify-between py-4 first:pt-0 border-slate-800">
+                    <div className="flex items-center gap-3">
+                      <div className="relative">
+                        <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center text-white text-xs font-black", member.color || 'bg-slate-700')}>
+                          {getInitials(member.name)}
+                        </div>
+                        <span className={cn(
+                          "absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-slate-950",
+                          liveStatus === 'online' ? 'bg-emerald-500' : liveStatus === 'away' ? 'bg-amber-500' : 'bg-slate-500'
+                        )} />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-bold text-white">{member.name}</h4>
+                        <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">{member.role}</p>
+                        <p className="text-[10px] text-slate-500 mt-0.5">{member.email}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button 
+                        onClick={() => {
+                          sessionStorage.setItem('active_dm_target', member.id);
+                          window.dispatchEvent(new CustomEvent('gghp-navigate', { detail: { tab: 'messages' } }));
+                          setShowDeptModal(false);
+                        }}
+                        className="flex items-center gap-2 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-indigo-900/35 cursor-pointer"
+                      >
+                        <MessageSquare size={12} /> Message
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -887,6 +887,28 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     };
     window.addEventListener('voicemails-updated', handleVoicemailsUpdate);
 
+    const handleNavigate = (e: any) => {
+      const { tab } = e.detail;
+      if (tab) {
+        const parent = findParentTab(tab);
+        if (parent) {
+          setSelectedParent(parent);
+        } else {
+          setSelectedParent(tab);
+        }
+        setActiveTab(tab);
+      }
+    };
+    window.addEventListener('gghp-navigate', handleNavigate);
+
+    const handleDismissNotif = (e: any) => {
+      const { tab } = e.detail;
+      if (tab) {
+        setNotifications(prev => prev.filter(n => n.tab !== tab));
+      }
+    };
+    window.addEventListener('gghp-dismiss-notification', handleDismissNotif);
+
     const interval = setInterval(() => {
       fetchVoipQueue();
       fetchVoicemails();
@@ -894,6 +916,8 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     return () => {
       clearInterval(interval);
       window.removeEventListener('voicemails-updated', handleVoicemailsUpdate);
+      window.removeEventListener('gghp-navigate', handleNavigate);
+      window.removeEventListener('gghp-dismiss-notification', handleDismissNotif);
     };
   }, []);
 

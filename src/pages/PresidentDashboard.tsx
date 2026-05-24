@@ -135,6 +135,20 @@ const PresidentDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => v
     };
     window.addEventListener('voicemails-updated', handleVoicemailsUpdate);
 
+    const handleNavigate = (e: any) => {
+      const { tab } = e.detail;
+      if (tab) setActiveTab(tab);
+    };
+    window.addEventListener('gghp-navigate', handleNavigate);
+
+    const handleDismissNotif = (e: any) => {
+      const { tab } = e.detail;
+      if (tab) {
+        setNotifications(prev => prev.filter(n => n.tab !== tab));
+      }
+    };
+    window.addEventListener('gghp-dismiss-notification', handleDismissNotif);
+
     const interval = setInterval(() => {
       fetchVoipQueue();
       fetchVoicemails();
@@ -142,6 +156,8 @@ const PresidentDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => v
     return () => {
       clearInterval(interval);
       window.removeEventListener('voicemails-updated', handleVoicemailsUpdate);
+      window.removeEventListener('gghp-navigate', handleNavigate);
+      window.removeEventListener('gghp-dismiss-notification', handleDismissNotif);
     };
   }, []);
 
