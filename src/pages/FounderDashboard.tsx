@@ -54,71 +54,87 @@ import { DepartmentManager } from '../components/DepartmentManager';
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
-const NAV_VERSION = 29; // Bumped: Added Critical Alerts tab under Analytics
+const NAV_VERSION = 30; // Bumped: Consolidated 48 tabs into 10 merged sidebar tabs
 
 const INITIAL_NAV_ITEMS: NavItem[] = [
-  // Single tabs
-  { id: 'ai_training', label: 'My Asst AI', icon: Bot },
   { id: 'overview', label: 'God Overview', icon: Activity },
-  { id: 'internal_scheduler', label: 'Calendar / Scheduler', icon: Clock },
-  { id: 'realtime_tasks', label: 'Realtime Daily Tasks', icon: Target },
-  { id: 'messages', label: 'Messages', icon: MessageSquare },
-  { id: 'global_directory', label: 'Global Directory', icon: Users },
-  { id: 'operations', label: 'Ops Center (Live)', icon: Cpu },
-  { id: 'internal_admin', label: 'Internal Team', icon: Shield },
-
-  // Founder/CEO Popout
-  { id: '_sec_founder', section: 'FOUNDER/CEO' },
-  { id: 'dept_manager', label: 'Departments & Roles', icon: Building2 },
-  { id: 'roles_duties', label: 'My Role & Duties', icon: Shield },
-  { id: 'settings', label: 'God Settings', icon: Settings },
-  { id: 'launch_script', label: 'Master Launch Script', icon: FileText },
-  { id: 'system_health', label: 'System Health / AI', icon: Zap },
+  { id: 'ai_training', label: 'My Asst AI', icon: Bot },
+  { id: 'pipeline_revenue', label: 'Pipeline & Revenue', icon: Briefcase },
+  { id: 'finance_analytics', label: 'Finance & Analytics', icon: TrendingUp },
+  { id: 'command_hub', label: 'Command Hub', icon: Cpu },
+  { id: 'support_comms', label: 'Support & Comms', icon: Phone },
+  { id: 'people_hr', label: 'People & HR', icon: Users },
+  { id: 'compliance_regulatory', label: 'Compliance & Regulatory', icon: FileCheck },
+  { id: 'god_settings', label: 'God Settings', icon: Settings },
   { id: 'investor_sandbox', label: 'Investor Sandbox', icon: MonitorPlay },
-  { id: 'gge_world_hr', label: 'GGE World Master Account', icon: Globe },
-
-  // COO/Sr Live Agent Popout
-  { id: '_sec_ops', section: 'COO/SR LIVE AGENT' },
-  { id: 'virtual_attendant', label: 'GGE World Call Center', icon: Phone },
-  { id: 'hr_intelligence', label: 'HR Intelligence (Sylara)', icon: UserPlus },
-  { id: 'users', label: 'Personnel Force (Total)', icon: Users },
-  { id: 'support_tickets', label: 'Support Tickets', icon: MessageSquare },
-  { id: 'it_support', label: 'IT Support & Diagnostics', icon: MonitorPlay },
-
-  // Oversight Popout
-  { id: '_sec_oversight', section: 'OVERSIGHT' },
-  { id: 'jurisdiction_map', label: 'Nationwide Oversight', icon: Globe },
-  { id: 'compliance', label: 'Compliance Monitor', icon: FileCheck },
-  { id: 'regulatory_library', label: 'Regulatory Library', icon: BookOpen },
-  { id: 'federal', label: 'Federal Command', icon: Globe },
-  { id: 'public_health', label: 'Public Health & Labs', icon: FlaskConical },
-  { id: 'judicial', label: 'Judicial Monitor', icon: Scale },
-  { id: 'ip_monitor', label: 'IP / Patent Monitor', icon: Shield },
-  { id: 'rapid_testing', label: 'Rapid Testing Hub', icon: FlaskConical },
-  { id: 'law_enforcement', label: 'Law Enforcement (RIP)', icon: Shield },
-  { id: 'state_authority', label: 'Regulator / Authority', icon: Gavel },
-  { id: 'external_admin', label: 'External Administrator', icon: Activity },
-  { id: 'negligence_intercept', label: 'Negligence Intercept', icon: AlertTriangle },
-  { id: 'patients', label: 'Registry Sovereignty', icon: HeartPulse },
-  { id: 'business', label: 'Economic Infrastructure', icon: Building2 },
-  { id: 'b2b_crm', label: 'Global CRM Pipeline', icon: Briefcase },
-  { id: 'marketing_hub', label: 'Marketing Campaigns', icon: Megaphone },
-  { id: 'omma_pipeline', label: 'Global Sweep Hub', icon: MapIcon },
-  { id: 'approvals', label: 'Agency Approvals', icon: UserCheck },
-  { id: 'applications', label: 'Applications Queue', icon: FileText },
-  { id: 'processor', label: 'GGE Processor', icon: Activity },
-
-  // Analytics Popout
-  { id: '_sec_analytics', section: 'ANALYTICS' },
-  { id: 'accounting_ledger', label: 'Accounting Ledger (QuickBooks)', icon: TrendingUp },
-  { id: 'global_financials', label: 'Global Financials', icon: TrendingUp },
-  { id: 'subscriptions', label: 'Subscriptions & Revenue', icon: CreditCard },
-  { id: 'invoices', label: 'Invoice Manager', icon: FileText },
-  { id: 'reports', label: 'Master Analytics', icon: BarChart3 },
-  { id: 'intel', label: 'Global Intelligence', icon: BookOpen },
-  { id: 'logs', label: 'System Logs', icon: Database },
-  { id: 'critical_alerts', label: 'Critical Alerts', icon: AlertTriangle },
 ];
+
+const MERGED_SUB_TABS: Record<string, {id: string, label: string, icon: any}[]> = {
+  pipeline_revenue: [
+    { id: 'patients', label: 'Registry Sovereignty', icon: HeartPulse },
+    { id: 'business', label: 'Economic Infrastructure', icon: Building2 },
+    { id: 'b2b_crm', label: 'Global CRM Pipeline', icon: Briefcase },
+    { id: 'marketing_hub', label: 'Marketing Campaigns', icon: Megaphone },
+    { id: 'omma_pipeline', label: 'Global Sweep Hub', icon: MapIcon },
+    { id: 'approvals', label: 'Agency Approvals', icon: UserCheck },
+    { id: 'applications', label: 'Applications Queue', icon: FileText },
+    { id: 'processor', label: 'GGE Processor', icon: Activity },
+  ],
+  finance_analytics: [
+    { id: 'accounting_ledger', label: 'Accounting Ledger', icon: TrendingUp },
+    { id: 'global_financials', label: 'Global Financials', icon: TrendingUp },
+    { id: 'subscriptions', label: 'Subscriptions & Revenue', icon: CreditCard },
+    { id: 'invoices', label: 'Invoice Manager', icon: FileText },
+    { id: 'reports', label: 'Master Analytics', icon: BarChart3 },
+    { id: 'intel', label: 'Global Intelligence', icon: BookOpen },
+    { id: 'logs', label: 'System Logs', icon: Database },
+    { id: 'critical_alerts', label: 'Critical Alerts', icon: AlertTriangle },
+  ],
+  command_hub: [
+    { id: 'internal_scheduler', label: 'Calendar / Scheduler', icon: Clock },
+    { id: 'realtime_tasks', label: 'Realtime Daily Tasks', icon: Target },
+    { id: 'messages', label: 'Messages', icon: MessageSquare },
+    { id: 'operations', label: 'Ops Center (Live)', icon: Cpu },
+  ],
+  support_comms: [
+    { id: 'global_directory', label: 'Global Directory', icon: Users },
+    { id: 'virtual_attendant', label: 'Call Center', icon: Phone },
+    { id: 'support_tickets', label: 'Support Tickets', icon: MessageSquare },
+    { id: 'it_support', label: 'IT Support & Diagnostics', icon: MonitorPlay },
+    { id: 'negligence_intercept', label: 'Negligence Intercept', icon: AlertTriangle },
+  ],
+  people_hr: [
+    { id: 'internal_admin', label: 'Internal Team', icon: Shield },
+    { id: 'dept_manager', label: 'Departments & Roles', icon: Building2 },
+    { id: 'hr_intelligence', label: 'HR Intelligence (Sylara)', icon: UserPlus },
+    { id: 'users', label: 'Personnel Force', icon: Users },
+    { id: 'gge_world_hr', label: 'GGE World Master Account', icon: Globe },
+    { id: 'external_admin', label: 'External Administrator', icon: Activity },
+  ],
+  compliance_regulatory: [
+    { id: 'jurisdiction_map', label: 'Nationwide Oversight', icon: Globe },
+    { id: 'compliance', label: 'Compliance Monitor', icon: FileCheck },
+    { id: 'regulatory_library', label: 'Regulatory Library', icon: BookOpen },
+    { id: 'judicial', label: 'Judicial Monitor', icon: Scale },
+    { id: 'ip_monitor', label: 'IP / Patent Monitor', icon: Shield },
+    { id: 'rapid_testing', label: 'Rapid Testing Hub', icon: FlaskConical },
+    { id: 'law_enforcement', label: 'Law Enforcement (RIP)', icon: Shield },
+  ],
+  god_settings: [
+    { id: 'settings', label: 'God Settings', icon: Settings },
+    { id: 'roles_duties', label: 'My Role & Duties', icon: Shield },
+    { id: 'launch_script', label: 'Master Launch Script', icon: FileText },
+    { id: 'system_health', label: 'System Health / AI', icon: Zap },
+  ],
+};
+
+// Helper: find parent tab for any sub-tab ID
+const findParentTab = (tabId: string): string | null => {
+  for (const [parent, subs] of Object.entries(MERGED_SUB_TABS)) {
+    if (subs.some(s => s.id === tabId)) return parent;
+  }
+  return null;
+};
 
 export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, setMarqueeNews, marqueeSpeed, setMarqueeSpeed }: { onLogout?: () => void | Promise<void>, user?: any, jurisdiction?: any, marqueeNews?: string[], setMarqueeNews?: any, marqueeSpeed?: string, setMarqueeSpeed?: any }) => {
   const emailLower = user?.email?.toLowerCase() || '';
@@ -550,8 +566,30 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   };
 
   const [activeTab, setActiveTab] = useState(isExecutive ? 'ai_training' : 'overview');
+  const [selectedParent, setSelectedParent] = useState<string>(isExecutive ? 'ai_training' : 'overview');
+
+  // Handle sidebar navigation click
+  const handleNavClick = (navId: string) => {
+    if (MERGED_SUB_TABS[navId]) {
+      // Merged tab — set parent and go to first sub-tab
+      setSelectedParent(navId);
+      setActiveTab(MERGED_SUB_TABS[navId][0].id);
+      setActivePopoutSection(null);
+    } else {
+      // Standalone tab
+      setSelectedParent(navId);
+      setActiveTab(navId);
+      setActivePopoutSection(null);
+    }
+  };
+
+  // Handle sub-tab click within merged tab
+  const handleSubTabClick = (subTabId: string) => {
+    setActiveTab(subTabId);
+  };
+
   const [hideUpdates, setHideUpdates] = useState(() => localStorage.getItem('ggp_updates_read') === 'true');
-  const [activePopoutSection, setActivePopoutSection] = useState<string | null>(isExecutive ? null : '_sec_founder');
+  const [activePopoutSection, setActivePopoutSection] = useState<string | null>(null);
 
   useEffect(() => {
     const larryTabs = ['state_authority', 'federal', 'jurisdiction_map', 'compliance', 'operations', 'internal_admin', 'external_admin'];
@@ -4377,18 +4415,12 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
 
   const getContent = () => {
     switch (activeTab) {
-      case 'federal': 
-        return <div className="h-full w-full -m-10"><FederalDashboard user={user} onLogout={onLogout} /></div>;
-      case 'public_health': 
-        return <div className="h-full w-full -m-10"><PublicHealthDashboard user={user} onLogout={onLogout} /></div>;
       case 'operations': 
         return <div className="h-full w-full -m-10"><OperationsDashboard user={user} onLogout={onLogout} /></div>;
       case 'internal_admin': 
         return <div className="h-full w-full -m-10"><AdminDashboard user={user} onLogout={() => setActiveTab(isExecutive ? 'ai_training' : 'overview')} /></div>;
       case 'external_admin': 
         return <div className="h-full w-full -m-10"><ExternalAdminDashboard user={user} onLogout={onLogout} /></div>;
-      case 'state_authority':
-        return <div className="h-full w-full -m-10"><StateAuthorityDashboard user={user} onLogout={onLogout} /></div>;
       case 'virtual_attendant':
         return <div className="p-8 h-full overflow-y-auto"><VirtualAttendantTab /></div>;
       case 'processor':
@@ -4839,53 +4871,24 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     localStorage.setItem('gghp_nav_order', JSON.stringify(ids));
   };
 
-  let navGroups: any[] = [];
-  let currentGroup: any = null;
-
-  navItemsList.forEach((item, i) => {
+  // Build flat nav list for the 10 merged sidebar items
+  const filteredNavItems = navItemsList.filter((item) => {
+    if (!item.id) return false;
     // Advisor: strictly Read-Only Analytics & Oversight
-    if (isBobAdvisor && !('section' in item)) {
-      const advisorTabs = ["overview", "jurisdiction_map", "compliance", "reports", "intel", "global_financials", "b2b_crm", "marketing_hub"];
-      if (!advisorTabs.includes(item.id || '')) return;
+    if (isBobAdvisor) {
+      const advisorTabs = ['overview', 'finance_analytics', 'compliance_regulatory', 'pipeline_revenue'];
+      return advisorTabs.includes(item.id);
     }
-
     // VP / C-Suite: Partial God View
-    if ((isMonica || isRyan) && !isBobAdvisor && !('section' in item)) {
+    if ((isMonica || isRyan) && !isBobAdvisor) {
       const allowedExecutiveTabs = [
-        "system_health", "hr_intelligence", "jurisdiction_map", "ai_training", "messages",
-        "internal_scheduler", "patients", "business", "compliance", "regulatory_library",
-        "internal_admin", "law_enforcement", "processor", "public_health", "rapid_testing",
-        "reports", "intel", "overview"
+        'overview', 'ai_training', 'command_hub', 'pipeline_revenue',
+        'compliance_regulatory', 'people_hr', 'finance_analytics', 'god_settings'
       ];
-      if (!allowedExecutiveTabs.includes(item.id || '')) return;
+      return allowedExecutiveTabs.includes(item.id);
     }
-
-    // Section filtering
-    if (isBobAdvisor && 'section' in item) {
-       if (item.id === '_sec_founder' || item.id === '_sec_ops' || item.id === '_sec_analytics') {
-         currentGroup = null;
-         return;
-       }
-    } else if ((isMonica || isRyan) && 'section' in item) {
-      if (item.id === '_sec_founder' || item.id === '_sec_ops') {
-        currentGroup = null;
-        return;
-      }
-    }
-
-    if ('section' in item) {
-      currentGroup = { item, index: i, children: [] };
-      navGroups.push(currentGroup);
-    } else {
-      if (currentGroup) currentGroup.children.push({ item, index: i });
-      else navGroups.push({ item, index: i });
-    }
+    return true;
   });
-
-  // Remove empty sections
-  navGroups = navGroups.filter(g => !g.children || g.children.length > 0);
-
-  const activeGroup = navGroups.find(g => g.children && g.item.id === activePopoutSection);
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-100 text-slate-800 font-sans relative">
@@ -4943,119 +4946,30 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
             </div>
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto px-4 pb-6 space-y-2">
-           {navGroups.map((g, gi) => {
-             if (g.children) {
-               const isPopoutActive = activePopoutSection === g.item.id;
-               return (
-                 <div key={gi} className="group relative" draggable onDragStart={(e) => handleDragStart(e, g.index)} onDragOver={(e) => handleDragOver(e, g.index)} onDrop={(e) => handleDrop(e, g.index)} onDragEnd={() => setDraggedIdx(null)}>
-                   <button 
-                     onClick={() => setActivePopoutSection(isPopoutActive ? null : g.item.id)}
-                     className={cn("w-full flex items-center justify-between px-3 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all", isPopoutActive ? "bg-indigo-600 text-white shadow-xl shadow-indigo-900/40" : "text-slate-400 hover:bg-white/5 hover:text-slate-100", draggedIdx === g.index ? "opacity-30 border border-dashed border-indigo-400" : "")}
-                   >
-                     <div className="flex items-center gap-3">
-                        <GripVertical size={14} className="text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity" />
-                        {g.item.section}
-                     </div>
-                     <div className="flex items-center gap-2">
-                       <button onClick={(e) => handleDeleteItem(e, g.index)} className="text-slate-500 opacity-0 group-hover:opacity-100 hover:text-red-400 transition-all p-1" title="Delete Section"><Trash2 size={12} /></button>
-                       <span className="opacity-50 text-[14px]">{isPopoutActive ? '-' : '+'}</span>
-                     </div>
-                   </button>
-                 </div>
-               );
-             } else {
-               const item = g.item;
+        <div className="flex-1 overflow-y-auto px-4 pb-6 space-y-1">
+           {filteredNavItems.map((item, gi) => {
                const displayLabel = isExecutive ? item.label?.replace('God', 'Executive') : item.label;
+               const isActive = selectedParent === item.id;
+               const subCount = MERGED_SUB_TABS[item.id!]?.length;
                return (
-                  <div key={gi} draggable onDragStart={(e) => handleDragStart(e, g.index)} onDragOver={(e) => handleDragOver(e, g.index)} onDrop={(e) => handleDrop(e, g.index)} onDragEnd={() => setDraggedIdx(null)} className={cn("group w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold transition-all", activeTab === item.id ? "bg-white/10 text-white" : "text-slate-400 hover:bg-white/5 hover:text-slate-100", draggedIdx === g.index ? "opacity-30 border border-dashed border-indigo-400" : "")}>
-                    <button onClick={() => { setActiveTab(item.id!); setActivePopoutSection(null); }} className="flex items-center gap-3 flex-1 text-left">
+                  <div key={item.id || gi} draggable onDragStart={(e) => handleDragStart(e, gi)} onDragOver={(e) => handleDragOver(e, gi)} onDrop={(e) => handleDrop(e, gi)} onDragEnd={() => setDraggedIdx(null)} className={cn("group w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold transition-all", isActive ? "bg-white/10 text-white" : "text-slate-400 hover:bg-white/5 hover:text-slate-100", draggedIdx === gi ? "opacity-30 border border-dashed border-indigo-400" : "")}>
+                    <button onClick={() => handleNavClick(item.id!)} className="flex items-center gap-3 flex-1 text-left">
                       <GripVertical size={14} className="text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-                      {item.icon && <item.icon size={16} className={activeTab === item.id ? "text-white" : "text-slate-500"} />} 
+                      {item.icon && <item.icon size={16} className={isActive ? "text-white" : "text-slate-500"} />} 
                       {displayLabel}
                     </button>
                     <div className="flex items-center gap-1">
+                      {subCount && <span className="text-[9px] bg-white/10 text-white px-2 py-0.5 rounded-full font-black mr-1">{subCount}</span>}
                       {item.badge && <span className="text-[9px] bg-white/10 text-white px-2 py-0.5 rounded-full font-black mr-1">{item.badge}</span>}
-                      <button onClick={(e) => handleDeleteItem(e, g.index)} className="text-slate-500 opacity-0 group-hover:opacity-100 hover:text-red-400 transition-all p-1" title="Delete Item"><Trash2 size={12} /></button>
                     </div>
                   </div>
                );
-             }
            })}
-           <button
-             onClick={() => {
-               const name = prompt('Enter new group label:');
-               if (name && name.trim()) {
-                 const newSec = { id: `_sec_custom_${Date.now()}`, section: name.trim().toUpperCase() };
-                 const newItems = [...navItemsList, newSec];
-                 setNavItemsList(newItems);
-                 localStorage.setItem('gghp_nav_order', JSON.stringify(newItems.map(it => it.id!)));
-               }
-             }}
-             className="w-full mt-4 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-emerald-400 hover:bg-white/5 border border-dashed border-white/10 hover:border-emerald-400/30 transition-all"
-           >
-             <Plus size={14} /> New Group
-           </button>
         </div>
         
       </div>
 
-      {activeGroup && (
-        <div className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col hidden md:flex shrink-0 shadow-2xl z-10 animate-in slide-in-from-left-8 duration-300 relative print:hidden">
-           <div className="p-6 border-b border-white/5 flex items-center justify-between">
-              <div>
-                 <h3 className="text-xs font-black text-white uppercase tracking-widest">{activeGroup.item.section}</h3>
-                 <p className="text-[10px] font-bold text-slate-500 mt-1">Operational Module</p>
-              </div>
-           </div>
-           <div className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
-             {activeGroup.children.map((child: any) => {
-                const item = child.item;
-                const i = child.index;
-                const displayLabel = isExecutive ? item.label?.replace('God', 'Executive') : item.label;
-                return (
-                  <div 
-                    key={item.id || i} 
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, i)}
-                    onDragOver={(e) => handleDragOver(e, i)}
-                    onDrop={(e) => handleDrop(e, i)}
-                    onDragEnd={() => setDraggedIdx(null)}
-                    className={cn("group cursor-grab active:cursor-grabbing w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold transition-all", activeTab === item.id ? "bg-indigo-600 text-white shadow-xl shadow-indigo-900/40" : "text-slate-400 hover:bg-white/5 hover:text-slate-100", draggedIdx === i ? "opacity-30 border border-dashed border-indigo-400" : "")}
-                  >
-                    <button onClick={() => setActiveTab(item.id!)} className="flex items-center gap-3 flex-1 text-left">
-                      <GripVertical size={14} className={cn("transition-opacity", activeTab === item.id ? "text-white opacity-50" : "text-slate-500 opacity-0 group-hover:opacity-100")} />
-                      {item.icon && <item.icon size={18} className={activeTab === item.id ? "text-white" : "text-slate-500"} />} 
-                      {displayLabel}
-                    </button>
-                    <div className="flex items-center gap-1">
-                      {item.badge && <span className="text-[10px] bg-white/10 text-white px-2 py-0.5 rounded-full font-black mr-1">{item.badge}</span>}
-                      <button onClick={(e) => handleDeleteItem(e, i)} className="text-slate-500 opacity-0 group-hover:opacity-100 hover:text-red-400 transition-all p-1" title="Delete Item">
-                        <Trash2 size={12} />
-                      </button>
-                    </div>
-                  </div>
-                );
-             })}
-           </div>
-           <button onClick={() => {
-              const name = prompt('Enter new item label:');
-              if (name && name.trim()) {
-                 const newId = `_item_custom_${Date.now()}`;
-                 const newItem = { id: newId, label: name.trim(), icon: FileText };
-                 const insertIndex = activeGroup.children.length > 0 
-                     ? activeGroup.children[activeGroup.children.length - 1].index + 1 
-                     : activeGroup.index + 1;
-                 const newItemsList = [...navItemsList];
-                 newItemsList.splice(insertIndex, 0, newItem);
-                 setNavItemsList(newItemsList);
-                 localStorage.setItem('gghp_nav_order', JSON.stringify(newItemsList.map(it => it.id!)));
-              }
-           }} className="p-4 border-t border-white/5 text-center text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-emerald-400 hover:bg-white/5 transition-colors flex items-center justify-center gap-2">
-              <Plus size={12} /> Add Tool
-           </button>
-        </div>
-      )}
+      {/* Popout sidebar panel removed — sub-tabs now render as a horizontal bar in content area */}
 
       <div className={cn("flex-1 flex flex-col h-[calc(100vh)] overflow-hidden transition-all duration-500", !isUnlocked && "blur-xl scale-[0.98] opacity-50 pointer-events-none")}>
         <div className="h-20 border-b border-slate-200 flex items-center justify-between px-10 bg-white shrink-0 print:hidden">
@@ -5086,8 +5000,14 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                       <button key={i} data-action-bound="true" onClick={(e) => {
                         e.stopPropagation();
                         setShowNotifPanel(false);
+                        const parent = findParentTab(n.tab);
+                        if (parent) {
+                          setSelectedParent(parent);
+                        } else {
+                          setSelectedParent(n.tab);
+                        }
                         setActiveTab(n.tab);
-                        setActivePopoutSection(n.section);
+                        setActivePopoutSection(null);
                       }} className="w-full px-4 py-3 hover:bg-indigo-50 cursor-pointer transition-colors group text-left">
                         <div className="flex items-start gap-3">
                           <span className="text-lg">{n.icon}</span>
@@ -5108,7 +5028,28 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
             </div>
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto p-10">{getContent()}</div>
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Sub-tab bar for merged tabs */}
+          {MERGED_SUB_TABS[selectedParent] && (
+            <div className="flex items-center gap-1 px-6 py-3 bg-slate-50 border-b border-slate-200 overflow-x-auto shrink-0">
+              {MERGED_SUB_TABS[selectedParent].map(sub => (
+                <button
+                  key={sub.id}
+                  onClick={() => handleSubTabClick(sub.id)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${
+                    activeTab === sub.id
+                      ? 'bg-emerald-600 text-white shadow-sm'
+                      : 'text-slate-500 hover:bg-white hover:text-slate-700 hover:shadow-sm'
+                  }`}
+                >
+                  <sub.icon size={12} />
+                  {sub.label}
+                </button>
+              ))}
+            </div>
+          )}
+          <div className="flex-1 overflow-y-auto p-10">{getContent()}</div>
+        </div>
         
         {/* GLOBAL ALERTS STREAM (RIGHT SIDEBAR) */}
         {!hideAlertQueue && !isExecutive && (
