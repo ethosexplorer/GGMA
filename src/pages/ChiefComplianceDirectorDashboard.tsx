@@ -189,6 +189,13 @@ const ChiefComplianceDirectorDashboard = ({ user, onLogout }: { user?: any, onLo
     };
   }, []);
 
+  // Automatically clear active tab notification when tab changes
+  useEffect(() => {
+    if (activeTab) {
+      setNotifications(prev => prev.filter(n => n.tab !== activeTab));
+    }
+  }, [activeTab]);
+
   const handleRouteAlert = (id: string | number) => {
     alert(`Alert ${id} successfully routed to ${fullName}'s executive scheduler.`);
   };

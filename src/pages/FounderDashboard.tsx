@@ -785,9 +785,12 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         setIsSystemFreezeExpanded(true);
       }
       // Reset dismissed state if system recovers fully
-      if (report.overallStatus === 'healthy' && hideSystemFreeze) {
-        localStorage.removeItem('gghp_system_freeze_dismissed');
-        setHideSystemFreeze(false);
+      if (report.overallStatus === 'healthy') {
+        setNotifications(prev => prev.filter(n => n.tab !== 'system_health' && n.tab !== 'critical_alerts'));
+        if (hideSystemFreeze) {
+          localStorage.removeItem('gghp_system_freeze_dismissed');
+          setHideSystemFreeze(false);
+        }
       }
     } catch (err) {
       console.error('Health check failed:', err);
@@ -893,6 +896,14 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       window.removeEventListener('voicemails-updated', handleVoicemailsUpdate);
     };
   }, []);
+
+  // Automatically clear active tab notification when tab changes
+  useEffect(() => {
+    if (activeTab) {
+      setNotifications(prev => prev.filter(n => n.tab !== activeTab));
+    }
+  }, [activeTab]);
+
 
   // Real-time tasks for Ops Hub
   useEffect(() => {
