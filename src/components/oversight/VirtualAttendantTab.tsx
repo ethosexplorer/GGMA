@@ -34,7 +34,7 @@ const departments: Department[] = [
 ];
 
 export const VirtualAttendantTab = () => {
-  const [selectedDept, setSelectedDept] = useState<Department | null>(null);
+  const [selectedDept, setSelectedDept] = useState<Department | null>(departments[0]);
   const [stats, setStats] = useState<CallCenterStats | null>(null);
   const [liveQueue, setLiveQueue] = useState(0);
   const [routingMode, setRoutingMode] = useState<'ai_only' | 'hybrid' | 'human_only'>('hybrid');
