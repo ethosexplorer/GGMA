@@ -89,9 +89,15 @@ const PresidentDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => v
 
   const [showNotifPanel, setShowNotifPanel] = useState(false);
   const [notifications, setNotifications] = useState([
+    { icon: '💼', title: 'New CRM Leads Available', desc: '198 new prospects imported to B2B Pipeline', time: 'Just now', tab: 'b2b_crm' },
     { icon: '📬', title: 'New Direct Message', desc: 'You have unread messages in the Global Directory', time: 'Just now', tab: 'messages' },
+    { icon: '📬', title: 'System Notification', desc: 'New team chat message received', time: '5m ago', tab: 'messages' },
     { icon: '📋', title: 'New Application in Queue', desc: 'Jasmin Garrett - Patient Med Card', time: 'Just now', tab: 'patient_case_tracker' },
     { icon: '🔴', title: 'DEA Schedule III Final Order', desc: 'Medical cannabis & FDA products reclassified — effective April 23, 2026', time: 'Today', tab: 'compliance' },
+    { icon: '⚖️', title: 'State License Audit Alert', desc: 'Compliance audit scheduled for next week', time: '2h ago', tab: 'compliance' },
+    { icon: '🗓️', title: 'Critical Task Due', desc: 'Review pending state regulations', time: '3h ago', tab: 'realtime_tasks' },
+    { icon: '🗓️', title: 'Daily Report Deadline', desc: 'Submit compliance certification form', time: 'Today', tab: 'realtime_tasks' },
+    { icon: '📈', title: 'Monthly Revenue Report Ready', desc: 'Financial summaries for last month available', time: 'Yesterday', tab: 'reports' },
     { icon: '⚖️', title: 'DEA Hearing Scheduled', desc: 'Broader rescheduling hearing begins June 29, 2026', time: 'Today', tab: 'judicial' },
     { icon: '💚', title: 'New Poll Votes Received', desc: 'Community polls receiving engagement in Oklahoma', time: '2h ago', tab: 'jurisdiction_map' },
     { icon: '🔒', title: 'Turso DB Connected', desc: 'Production database environment variables active', time: '5h ago', tab: 'system_health' },
@@ -195,16 +201,8 @@ const PresidentDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => v
         return voipQueue + unreadVoicemails;
       case 'support_tickets':
         return queueAlerts.length;
-      case 'messages':
-        return 2;
-      case 'realtime_tasks':
-        return 2;
-      case 'compliance':
-        return 2;
-      case 'reports':
-        return 1;
       default:
-        return 0;
+        return notifications.filter(n => n.tab === itemId).length;
     }
   };
 

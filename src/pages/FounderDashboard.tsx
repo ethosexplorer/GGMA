@@ -745,10 +745,14 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   const [hideAlertQueue, setHideAlertQueue] = useState(() => localStorage.getItem('gghp_alert_queue_dismissed') === 'true');
   const [showNotifPanel, setShowNotifPanel] = useState(false);
   const [notifications, setNotifications] = useState([
+    { icon: '💼', title: 'New CRM Leads Available', desc: '198 new prospects imported to B2B Pipeline', time: 'Just now', tab: 'b2b_crm', section: null },
     { icon: '📬', title: 'New Direct Message', desc: 'You have unread messages in the Global Directory', time: 'Just now', tab: 'messages', section: null },
-    { icon: '📋', title: 'New Application in Queue', desc: 'Jasmin Garrett - Patient Med Card', time: 'Just now', tab: 'operations', section: null },
-    { icon: '🔴', title: 'DEA Schedule III Final Order', desc: 'Medical cannabis & FDA products reclassified — effective April 23, 2026', time: 'Today', tab: 'federal', section: '_sec_oversight' },
-    { icon: '⚖️', title: 'DEA Hearing Scheduled', desc: 'Broader rescheduling hearing begins June 29, 2026', time: 'Today', tab: 'judicial', section: '_sec_oversight' },
+    { icon: '📋', title: 'New Application in Queue', desc: 'Jasmin Garrett - Patient Med Card', time: 'Just now', tab: 'applications', section: null },
+    { icon: '🔴', title: 'DEA Schedule III Final Order', desc: 'Medical cannabis & FDA products reclassified — effective April 23, 2026', time: 'Today', tab: 'compliance', section: '_sec_oversight' },
+    { icon: '⚖️', title: 'DEA Hearing Scheduled', desc: 'Broader rescheduling hearing begins June 29, 2026', time: 'Today', tab: 'jurisdiction_map', section: '_sec_oversight' },
+    { icon: '🗓️', title: 'Scheduler Alert', desc: 'Upcoming agency review meeting at 3:00 PM', time: 'Just now', tab: 'internal_scheduler', section: null },
+    { icon: '👥', title: 'HR Compliance Update', desc: 'Employee handbook compliance checklist ready', time: '1h ago', tab: 'hr_intelligence', section: null },
+    { icon: '📈', title: 'Revenue Milestone Alert', desc: 'Global Green HP reached $5.2M valuation target', time: 'Yesterday', tab: 'critical_alerts', section: null },
     { icon: '💚', title: 'New Poll Votes Received', desc: 'Community polls receiving engagement in Oklahoma', time: '2h ago', tab: 'overview', section: null },
     { icon: '📈', title: 'Investor Meeting Confirmed', desc: 'Monica + 4 investors — Tuesday May 5, 12pm CST', time: '3h ago', tab: 'investor_sandbox', section: '_sec_founder' },
     { icon: '🔒', title: 'Turso DB Connected', desc: 'Production database environment variables active', time: '5h ago', tab: 'system_health', section: '_sec_founder' },
@@ -5208,17 +5212,17 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       case 'support_comms':
         return queueAlerts.length + voipQueue + unreadVoicemails;
       case 'pipeline_revenue':
-        return 2;
+        return getSubTabAlertCount('applications') + getSubTabAlertCount('b2b_crm');
       case 'finance_analytics':
-        return 1;
+        return getSubTabAlertCount('critical_alerts');
       case 'command_hub':
-        return 2;
+        return getSubTabAlertCount('messages') + getSubTabAlertCount('internal_scheduler');
       case 'people_hr':
-        return 1;
+        return getSubTabAlertCount('hr_intelligence');
       case 'compliance_regulatory':
-        return 2;
+        return getSubTabAlertCount('compliance') + getSubTabAlertCount('jurisdiction_map');
       case 'god_settings':
-        return healthReport?.overallStatus && healthReport.overallStatus !== 'healthy' ? 1 : 0;
+        return (healthReport?.overallStatus && healthReport.overallStatus !== 'healthy' ? 1 : 0) + getSubTabAlertCount('system_health');
       default:
         return 0;
     }
@@ -5235,33 +5239,33 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       
       // pipeline_revenue
       case 'applications':
-        return 1; // Jasmin Garrett application in queue
+        return notifications.filter(n => n.tab === 'applications').length;
       case 'b2b_crm':
-        return 1; // CRM lead alert
+        return notifications.filter(n => n.tab === 'b2b_crm').length;
       
       // finance_analytics
       case 'critical_alerts':
-        return 1; // Revenue milestone alert
+        return notifications.filter(n => n.tab === 'critical_alerts').length;
       
       // command_hub
       case 'messages':
-        return 1; // Direct messages
+        return notifications.filter(n => n.tab === 'messages').length;
       case 'internal_scheduler':
-        return 1; // Scheduler alert
+        return notifications.filter(n => n.tab === 'internal_scheduler').length;
       
       // people_hr
       case 'hr_intelligence':
-        return 1; // HR compliance update
+        return notifications.filter(n => n.tab === 'hr_intelligence').length;
       
       // compliance_regulatory
       case 'compliance':
-        return 1; // DEA reschedule alert
+        return notifications.filter(n => n.tab === 'compliance').length;
       case 'jurisdiction_map':
-        return 1; // Sweep anomalies
+        return notifications.filter(n => n.tab === 'jurisdiction_map').length;
       
       // god_settings
       case 'system_health':
-        return healthReport?.overallStatus && healthReport.overallStatus !== 'healthy' ? 1 : 0;
+        return notifications.filter(n => n.tab === 'system_health').length;
       
       default:
         return 0;
