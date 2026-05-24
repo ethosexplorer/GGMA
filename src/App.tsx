@@ -9121,7 +9121,9 @@ export default function App() {
       <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-[#080e1a]"><div className="text-center"><div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div><p className="text-emerald-400 font-bold text-sm uppercase tracking-widest">Loading Dashboard...</p></div></div>}>
       <div className="antialiased text-slate-900">
         <LiveToastContainer />
-        <GlobalHeader userProfile={userProfile} jurisdiction={jurisdiction} setJurisdiction={setJurisdictionWithGate} roleOverride={roleOverride} setRoleOverride={setRoleOverride} handleBack={handleBack} canGoBack={viewHistory.length > 0 || hasBypassedSelector} onLogout={handleLogout} />
+        <div data-action-bound="true">
+          <GlobalHeader userProfile={userProfile} jurisdiction={jurisdiction} setJurisdiction={setJurisdictionWithGate} roleOverride={roleOverride} setRoleOverride={setRoleOverride} handleBack={handleBack} canGoBack={viewHistory.length > 0 || hasBypassedSelector} onLogout={handleLogout} />
+        </div>
 
         {/* JURISDICTION GATE MODAL */}
         {showJurisdictionGate && (

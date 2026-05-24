@@ -438,6 +438,7 @@ export const LiveRegulatoryLibrary = () => {
              {['Overview', 'Operations', 'Admin', 'Inventory', 'Compliance'].map(cat => (
                <button 
                  key={cat}
+                 data-action-bound="true"
                  onClick={() => setRegCat(regCat === cat ? null : cat)}
                  className={cn(
                    "px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border",
@@ -457,7 +458,7 @@ export const LiveRegulatoryLibrary = () => {
             <div>
               <div className="flex justify-between items-start mb-4">
                 <span className="text-[9px] font-black uppercase px-2 py-1 bg-slate-800 text-slate-400 rounded-lg group-hover:bg-indigo-500/20 group-hover:text-indigo-400 transition-colors">{item.category}</span>
-                <button onClick={() => { import('../../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Opening external reference..." })] })).catch(console.error); }} className="text-slate-500 hover:text-indigo-400 transition-colors"><ArrowUpRight size={18} /></button>
+                <button data-action-bound="true" onClick={() => { import('../../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Opening external reference..." })] })).catch(console.error); }} className="text-slate-500 hover:text-indigo-400 transition-colors"><ArrowUpRight size={18} /></button>
               </div>
               <h3 className="text-lg font-black text-white mt-2 mb-3 group-hover:text-indigo-400 transition-colors">{item.title}</h3>
               <p className="text-sm text-slate-400 leading-relaxed line-clamp-4">{item.content}</p>

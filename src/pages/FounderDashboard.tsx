@@ -437,13 +437,25 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     const handleClick = async (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       const btn = target.closest('button');
+      if (!btn) return;
       
-      // Skip if button already has data-action-bound (or is inside a container with it),
-      // or if React has attached an onClick handler to it (check __reactProps)
-      const reactPropsKey = btn ? Object.keys(btn).find(k => k.startsWith('__reactProps')) : null;
-      const hasReactOnClick = reactPropsKey && (btn as any)[reactPropsKey]?.onClick;
-      const hasBoundAncestor = btn?.closest('[data-action-bound]') || btn?.closest('[data-subdashboard]');
-      if (btn && btn.textContent && !btn.hasAttribute('data-action-bound') && !hasBoundAncestor && !hasReactOnClick) {
+      // Skip if button already has data-action-bound (or is inside a container with it)
+      const hasBoundAncestor = btn.closest('[data-action-bound]') || btn.closest('[data-subdashboard]');
+      if (btn.hasAttribute('data-action-bound') || hasBoundAncestor) {
+        return;
+      }
+      
+      // Detect React event handlers in both development and production/minified bundles
+      const reactKey = Object.keys(btn).find(k => k.startsWith('__reactProps') || k.startsWith('__reactFiber') || k.startsWith('__reactEvents'));
+      const propsObj = reactKey ? (btn as any)[reactKey] : null;
+      const hasReactOnClick = propsObj && (
+        propsObj.onClick || 
+        propsObj.onClickCapture || 
+        propsObj.memoizedProps?.onClick || 
+        propsObj.pendingProps?.onClick
+      );
+
+      if (btn.textContent && !hasReactOnClick) {
         const actionText = btn.textContent.trim().substring(0, 40);
         if (!actionText || actionText.length < 2) return;
         
@@ -5112,7 +5124,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         </div>
       )}
 
-      <div className={cn("w-64 bg-slate-950 border-r border-slate-900 flex flex-col hidden md:flex shrink-0 transition-all duration-500 print:hidden z-20 relative", !isUnlocked && "blur-md opacity-50 pointer-events-none")}>
+      <div data-action-bound="true" className={cn("w-64 bg-slate-950 border-r border-slate-900 flex flex-col hidden md:flex shrink-0 transition-all duration-500 print:hidden z-20 relative", !isUnlocked && "blur-md opacity-50 pointer-events-none")}>
         <div className="p-6 pb-2">
           <div className="flex items-center gap-3 mb-6">
             <img src="/gghp-branding.png" alt="GGHP Logo" className="w-12 h-12 object-contain" />
@@ -5220,7 +5232,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Sub-tab bar for merged tabs */}
           {MERGED_SUB_TABS[selectedParent] && (
-            <div className="flex items-center gap-1 px-6 py-3 bg-slate-50 border-b border-slate-200 overflow-x-auto shrink-0">
+            <div data-action-bound="true" className="flex items-center gap-1 px-6 py-3 bg-slate-50 border-b border-slate-200 overflow-x-auto shrink-0">
               {MERGED_SUB_TABS[selectedParent].map(sub => (
                 <button
                   key={sub.id}
