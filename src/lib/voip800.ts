@@ -277,7 +277,15 @@ export async function getQueueCount(): Promise<number> {
 export async function getVoicemails(): Promise<any[]> {
   try {
     const data = await fetchHistory();
-    return data.voicemails || [];
+    const voicemails = data.voicemails || [];
+    if (typeof window !== 'undefined') {
+      const readSids = JSON.parse(localStorage.getItem('read_voicemail_sids') || '[]');
+      return voicemails.map((v: any) => ({
+        ...v,
+        read: readSids.includes(v.sid)
+      }));
+    }
+    return voicemails;
   } catch (err) {
     console.error('[Twilio] Failed to fetch voicemails:', err);
     return [];

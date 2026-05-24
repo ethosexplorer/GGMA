@@ -122,11 +122,20 @@ const ChiefComplianceDirectorDashboard = ({ user, onLogout }: { user?: any, onLo
     };
     fetchVoipQueue();
     fetchVoicemails();
+
+    const handleVoicemailsUpdate = () => {
+      fetchVoicemails();
+    };
+    window.addEventListener('voicemails-updated', handleVoicemailsUpdate);
+
     const interval = setInterval(() => {
       fetchVoipQueue();
       fetchVoicemails();
     }, 10000);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('voicemails-updated', handleVoicemailsUpdate);
+    };
   }, []);
 
   // Poll for Ops Checks and support tickets

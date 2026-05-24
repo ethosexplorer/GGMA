@@ -40,17 +40,32 @@ export const VirtualAttendantTab = () => {
   const [routingMode, setRoutingMode] = useState<'ai_only' | 'hybrid' | 'human_only'>('hybrid');
   const [isTrainingActive, setIsTrainingActive] = useState(true);
   const [showTranscripts, setShowTranscripts] = useState(false);
+  const [unreadVoicemails, setUnreadVoicemails] = useState(0);
+  const [voicemailList, setVoicemailList] = useState<any[]>([]);
+  const [showVoicemails, setShowVoicemails] = useState(false);
 
   useEffect(() => {
     const fetchStats = async () => {
       const data = await voip800.getCallCenterStats();
       const qCount = await voip800.getQueueCount();
+      const vms = await voip800.getVoicemails();
       setStats(data);
       setLiveQueue(qCount);
+      setVoicemailList(vms);
+      setUnreadVoicemails(vms.filter((v: any) => !v.read).length);
     };
     fetchStats();
+    
+    const handleVoicemailsUpdate = () => {
+      fetchStats();
+    };
+    window.addEventListener('voicemails-updated', handleVoicemailsUpdate);
+
     const interval = setInterval(fetchStats, 5000); // refresh every 5s for queue accuracy
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('voicemails-updated', handleVoicemailsUpdate);
+    };
   }, []);
 
   return (
@@ -118,16 +133,28 @@ export const VirtualAttendantTab = () => {
                   <p className="text-xl font-black text-white">{voip800.isConfigured() ? 'Twilio Linked' : 'Offline'}</p>
                   <p className="text-[10px] text-emerald-100/50">Current Capacity: {stats?.activeAgents || 0} Agent(s) Ready</p>
                 </div>
-                <a 
-                  href="https://console.twilio.com/us1/monitor/logs/calls"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-center ml-4 px-3 py-1.5 bg-rose-500/20 border border-rose-500/30 rounded-xl hover:bg-rose-500/40 hover:scale-105 transition-all cursor-pointer block"
-                  title="Click to open Twilio Call Monitor"
-                >
-                  <p className="text-[9px] font-bold text-rose-300 uppercase tracking-widest">Active Queue</p>
-                  <p className="text-lg font-black text-rose-400">{liveQueue}</p>
-                </a>
+                <div className="flex gap-2 ml-4">
+                  <a 
+                    href="https://console.twilio.com/us1/monitor/logs/calls"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-center px-3 py-1.5 bg-rose-500/20 border border-rose-500/30 rounded-xl hover:bg-rose-500/40 hover:scale-105 transition-all cursor-pointer block"
+                    title="Click to open Twilio Call Monitor"
+                  >
+                    <p className="text-[9px] font-bold text-rose-300 uppercase tracking-widest">Active Queue</p>
+                    <p className="text-lg font-black text-rose-400">{liveQueue}</p>
+                  </a>
+                  {unreadVoicemails > 0 && (
+                    <button 
+                      onClick={() => setShowVoicemails(true)}
+                      className="text-center px-3 py-1.5 bg-purple-500/20 border border-purple-500/30 rounded-xl hover:bg-purple-500/40 hover:scale-105 transition-all cursor-pointer block"
+                      title="Click to view unread voicemails"
+                    >
+                      <p className="text-[9px] font-bold text-purple-300 uppercase tracking-widest">Voicemails</p>
+                      <p className="text-lg font-black text-purple-400">{unreadVoicemails}</p>
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -353,6 +380,85 @@ export const VirtualAttendantTab = () => {
             <div className="p-6 border-t border-slate-100 bg-slate-50 flex justify-end">
               <button onClick={() => setShowTranscripts(false)} className="px-5 py-2.5 bg-[#0A3D2A] text-[#D4AF77] font-bold text-xs rounded-xl shadow-md hover:scale-[1.02] transition-transform uppercase">
                 Done Viewing
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showVoicemails && (
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-[2rem] w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[85vh] border border-slate-100 animate-in zoom-in-95 duration-300">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <div>
+                <h3 className="text-lg font-black text-slate-800 tracking-tight">Voicemail Box</h3>
+                <p className="text-xs text-slate-500 font-medium">Unread recordings waiting for your review</p>
+              </div>
+              <button onClick={() => setShowVoicemails(false)} className="text-slate-400 hover:text-slate-600 text-sm font-bold uppercase py-1 px-3 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all">
+                Close
+              </button>
+            </div>
+            
+            <div className="p-6 overflow-y-auto flex-1 space-y-4">
+              {voicemailList.filter(vm => !vm.read).length === 0 ? (
+                <div className="text-center py-12 text-slate-400 font-bold text-sm uppercase tracking-widest animate-pulse">
+                  No new voicemails.
+                </div>
+              ) : (
+                voicemailList.filter(vm => !vm.read).map((vm) => (
+                  <div key={vm.sid} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-[#D4AF77] hover:shadow-sm transition-all">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center">
+                        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="5.5" cy="11.5" r="4.5"/><circle cx="18.5" cy="11.5" r="4.5"/><line x1="5.5" y1="16" x2="18.5" y2="16"/></svg>
+                      </div>
+                      <div>
+                        <p className="text-sm font-black text-slate-800">Recording ({vm.duration}s)</p>
+                        <p className="text-[10px] text-slate-500 font-semibold">{new Date(vm.time).toLocaleString()}</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <a 
+                        href={vm.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        onClick={() => {
+                          const readSids = JSON.parse(localStorage.getItem('read_voicemail_sids') || '[]');
+                          if (!readSids.includes(vm.sid)) {
+                            const newRead = [...readSids, vm.sid];
+                            localStorage.setItem('read_voicemail_sids', JSON.stringify(newRead));
+                            setVoicemailList(prev => prev.map(v => v.sid === vm.sid ? { ...v, read: true } : v));
+                            setUnreadVoicemails(prev => Math.max(0, prev - 1));
+                            window.dispatchEvent(new Event('voicemails-updated'));
+                          }
+                        }}
+                        className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-purple-900/20"
+                      >
+                        Play
+                      </a>
+                      <button 
+                        onClick={() => {
+                          const readSids = JSON.parse(localStorage.getItem('read_voicemail_sids') || '[]');
+                          if (!readSids.includes(vm.sid)) {
+                            const newRead = [...readSids, vm.sid];
+                            localStorage.setItem('read_voicemail_sids', JSON.stringify(newRead));
+                            setVoicemailList(prev => prev.map(v => v.sid === vm.sid ? { ...v, read: true } : v));
+                            setUnreadVoicemails(prev => Math.max(0, prev - 1));
+                            window.dispatchEvent(new Event('voicemails-updated'));
+                          }
+                        }}
+                        className="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold transition-all"
+                      >
+                        Dismiss
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+            
+            <div className="p-6 border-t border-slate-100 bg-slate-50 flex justify-end">
+              <button onClick={() => setShowVoicemails(false)} className="px-5 py-2.5 bg-slate-800 text-white font-bold text-xs rounded-xl hover:bg-slate-700 transition-all uppercase">
+                Done
               </button>
             </div>
           </div>
