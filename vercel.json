@@ -6,6 +6,8 @@
     }
   },
   "rewrites": [
+    { "source": "/api/twilio/:path*", "destination": "/api/twilio.js?__endpoint=:path*" },
+    { "source": "/api/send-sms", "destination": "/api/twilio.js?__endpoint=send-sms" },
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
