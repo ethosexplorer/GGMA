@@ -69,6 +69,68 @@ function parseAddress(addr) {
   return addr.address || `${addr.name || ''} <${addr.address || ''}>`;
 }
 
+function decodePart(body, headers) {
+  const encodingMatch = headers.match(/Content-Transfer-Encoding:\s*([^\r\n]+)/i);
+  const encoding = encodingMatch ? encodingMatch[1].trim().toLowerCase() : '';
+  
+  if (encoding === 'base64') {
+    const cleanB64 = body.replace(/\s+/g, '');
+    try {
+      return Buffer.from(cleanB64, 'base64').toString('utf-8');
+    } catch {
+      return body;
+    }
+  } else if (encoding === 'quoted-printable') {
+    return body
+      .replace(/=\r?\n/g, '')
+      .replace(/=([0-9A-F]{2})/gi, (match, hex) => String.fromCharCode(parseInt(hex, 16)));
+  }
+  return body;
+}
+
+function parseEmailSource(sourceBuffer) {
+  const source = sourceBuffer.toString('utf-8');
+  const separator = '\r\n\r\n';
+  const firstSeparatorIdx = source.indexOf(separator);
+  if (firstSeparatorIdx === -1) return source;
+  
+  const headersStr = source.substring(0, firstSeparatorIdx);
+  const body = source.substring(firstSeparatorIdx + separator.length);
+  
+  const contentTypeMatch = headersStr.match(/Content-Type:\s*([^\r\n]+)/i);
+  const contentType = contentTypeMatch ? contentTypeMatch[1].trim() : '';
+  
+  if (contentType.toLowerCase().includes('multipart/')) {
+    const boundaryMatch = contentType.match(/boundary="?([^";\s]+)"?/i);
+    if (boundaryMatch) {
+      const boundary = boundaryMatch[1];
+      const parts = body.split('--' + boundary);
+      for (const part of parts) {
+        const partSepIdx = part.indexOf(separator);
+        if (partSepIdx === -1) continue;
+        const partHeaders = part.substring(0, partSepIdx);
+        const partBody = part.substring(partSepIdx + separator.length).replace(/--\s*$/, '').trim();
+        
+        if (partHeaders.toLowerCase().includes('text/html')) {
+          return decodePart(partBody, partHeaders);
+        }
+      }
+      for (const part of parts) {
+        const partSepIdx = part.indexOf(separator);
+        if (partSepIdx === -1) continue;
+        const partHeaders = part.substring(0, partSepIdx);
+        const partBody = part.substring(partSepIdx + separator.length).replace(/--\s*$/, '').trim();
+        
+        if (partHeaders.toLowerCase().includes('text/plain')) {
+          return decodePart(partBody, partHeaders);
+        }
+      }
+    }
+  }
+  
+  return decodePart(body, headersStr);
+}
+
 // ============================================================
 // MAIN ROUTER
 // ============================================================
@@ -312,6 +374,55 @@ export default async function handler(req, res) {
         return res.json({ sent: sentList, total });
       }
 
+      if (action === 'message') {
+        const { uid, mailbox = 'INBOX' } = req.query;
+        if (!uid) return res.status(400).json({ error: 'uid parameter is required' });
+        await client.mailboxOpen(mailbox);
+        const msg = await client.fetchOne(uid, { source: true }, { uid: true });
+        await client.logout();
+        if (!msg || !msg.source) {
+          return res.status(404).json({ error: 'Message body not found' });
+        }
+        const parsedBody = parseEmailSource(msg.source);
+        return res.json({ body: parsedBody });
+      }
+
+      if (action === 'delete') {
+        // Support GET (via query) or POST (via body) for deletion flexibility
+        const uidsRaw = req.method === 'POST' ? req.body.uids : req.query.uids;
+        const mailbox = (req.method === 'POST' ? req.body.mailbox : req.query.mailbox) || 'INBOX';
+        if (!uidsRaw) return res.status(400).json({ error: 'uids is required' });
+        const uidList = Array.isArray(uidsRaw) ? uidsRaw : String(uidsRaw).split(',').map(id => id.trim()).filter(Boolean);
+        await client.mailboxOpen(mailbox);
+        await client.messageFlagsAdd(uidList, ['\\Deleted'], { uid: true });
+        await client.logout();
+        return res.json({ success: true, deleted: uidList });
+      }
+
+      if (action === 'move') {
+        const { uids, fromMailbox = 'INBOX', toMailbox } = req.body;
+        if (!uids || !toMailbox) return res.status(400).json({ error: 'uids and toMailbox are required' });
+        const uidList = Array.isArray(uids) ? uids : String(uids).split(',').map(id => id.trim()).filter(Boolean);
+        await client.mailboxOpen(fromMailbox);
+        
+        // Ensure destination mailbox exists
+        const mailboxes = await client.list();
+        const exists = mailboxes.some(m => m.path === toMailbox || m.name === toMailbox);
+        if (!exists) {
+          await client.mailboxCreate(toMailbox);
+        }
+        
+        await client.messageMove(uidList, toMailbox, { uid: true });
+        await client.logout();
+        return res.json({ success: true, moved: uidList, destination: toMailbox });
+      }
+
+      if (action === 'folders') {
+        const mailboxes = await client.list();
+        await client.logout();
+        return res.json({ folders: mailboxes.map(m => ({ name: m.name, path: m.path })) });
+      }
+
       if (action === 'profile') {
         const inbox = await client.status('INBOX', { messages: true, unseen: true, recent: true });
         const sent = await client.status('[Gmail]/Sent Mail', { messages: true }).catch(() => ({ messages: 0 }));
@@ -321,7 +432,7 @@ export default async function handler(req, res) {
       }
 
       await client.logout();
-      return res.status(400).json({ error: 'Invalid action', validActions: ['inbox', 'bounces', 'replies', 'sent', 'profile'] });
+      return res.status(400).json({ error: 'Invalid action', validActions: ['inbox', 'bounces', 'replies', 'sent', 'message', 'delete', 'move', 'folders', 'profile'] });
     } catch (err) {
       console.error('[Gmail IMAP]', err);
       if (client) await client.logout().catch(() => {});

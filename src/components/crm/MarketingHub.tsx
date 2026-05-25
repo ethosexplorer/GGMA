@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, Building2, LayoutTemplate, Clock, AlertCircle, Save, Trash2, X, Plus, ChevronDown, Eye, MousePointerClick, MailOpen, TrendingUp, Inbox, AlertTriangle, Reply, RefreshCw } from 'lucide-react';
+import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, Building2, LayoutTemplate, Clock, AlertCircle, Save, Trash2, X, Plus, ChevronDown, Eye, MousePointerClick, MailOpen, TrendingUp, Inbox, AlertTriangle, Reply, RefreshCw, Folder } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { db } from '../../firebase';
 import { collection, onSnapshot, query, addDoc, deleteDoc, doc, updateDoc, serverTimestamp, orderBy, limit, getDocs } from 'firebase/firestore';
@@ -78,6 +78,112 @@ export const MarketingHub = () => {
   const [gmailLoading, setGmailLoading] = useState(false);
   const [gmailError, setGmailError] = useState('');
 
+  // Webmail popup and folders states
+  const [selectedEmail, setSelectedEmail] = useState<any | null>(null);
+  const [selectedEmailBody, setSelectedEmailBody] = useState<string>('');
+  const [loadingEmailBody, setLoadingEmailBody] = useState(false);
+  const [checkedEmailIds, setCheckedEmailIds] = useState<Set<string>>(new Set());
+  const [allFolders, setAllFolders] = useState<{ name: string; path: string }[]>([]);
+  const [showMoveModal, setShowMoveModal] = useState(false);
+  const [newFolderName, setNewFolderName] = useState('');
+
+  const fetchFolders = async () => {
+    try {
+      const res = await fetch('/api/marketing?route=gmail&action=folders');
+      if (res.ok) {
+        const data = await res.json();
+        setAllFolders(data.folders || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch IMAP folders:', err);
+    }
+  };
+
+  const handleViewEmail = async (msg: any, folderType: string) => {
+    let imapMailbox = 'INBOX';
+    if (folderType === 'sent') imapMailbox = '[Gmail]/Sent Mail';
+    else if (folderType === 'spam') imapMailbox = '[Gmail]/Spam';
+    
+    setSelectedEmail({ ...msg, folderType });
+    setSelectedEmailBody('');
+    setLoadingEmailBody(true);
+    try {
+      const res = await fetch(`/api/marketing?route=gmail&action=message&uid=${msg.id}&mailbox=${encodeURIComponent(imapMailbox)}`);
+      if (res.ok) {
+        const data = await res.json();
+        setSelectedEmailBody(data.body || '(Empty body)');
+      } else {
+        setSelectedEmailBody('Failed to retrieve email content from server.');
+      }
+    } catch (err: any) {
+      setSelectedEmailBody(`Error loading email: ${err.message || err}`);
+    } finally {
+      setLoadingEmailBody(false);
+    }
+  };
+
+  const handleDeleteSelected = async () => {
+    if (checkedEmailIds.size === 0) return;
+    if (!confirm(`Delete ${checkedEmailIds.size} selected message(s)?`)) return;
+    
+    let imapMailbox = 'INBOX';
+    if (gmailTab === 'sent') imapMailbox = '[Gmail]/Sent Mail';
+    
+    setGmailLoading(true);
+    try {
+      const res = await fetch('/api/marketing?route=gmail&action=delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          uids: Array.from(checkedEmailIds),
+          mailbox: imapMailbox
+        })
+      });
+      if (res.ok) {
+        alert('Messages successfully deleted!');
+        setCheckedEmailIds(new Set());
+        fetchGmail();
+      } else {
+        alert('Failed to delete messages.');
+      }
+    } catch (err: any) {
+      alert(`Error deleting messages: ${err.message || err}`);
+    } finally {
+      setGmailLoading(false);
+    }
+  };
+
+  const handleMoveSelected = async (targetFolder: string) => {
+    if (checkedEmailIds.size === 0) return;
+    let imapMailbox = 'INBOX';
+    if (gmailTab === 'sent') imapMailbox = '[Gmail]/Sent Mail';
+    
+    setGmailLoading(true);
+    try {
+      const res = await fetch('/api/marketing?route=gmail&action=move', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          uids: Array.from(checkedEmailIds),
+          fromMailbox: imapMailbox,
+          toMailbox: targetFolder
+        })
+      });
+      if (res.ok) {
+        alert(`Successfully moved messages to ${targetFolder}`);
+        setCheckedEmailIds(new Set());
+        setShowMoveModal(false);
+        fetchGmail();
+      } else {
+        alert('Failed to move messages.');
+      }
+    } catch (err: any) {
+      alert(`Error moving messages: ${err.message || err}`);
+    } finally {
+      setGmailLoading(false);
+    }
+  };
+
   // Bounce suppression list
   const [suppressedEmails, setSuppressedEmails] = useState<Set<string>>(new Set());
 
@@ -99,6 +205,7 @@ export const MarketingHub = () => {
       setGmailReplies(repliesRes.replies || []);
       setGmailSent(sentRes.sent || []);
       setGmailStats(profileRes);
+      fetchFolders();
     } catch (err: any) {
       setGmailError(err.message || 'Failed to connect to Gmail');
     } finally {
@@ -1035,7 +1142,7 @@ export const MarketingHub = () => {
                 ]).map(tab => (
                   <button
                     key={tab.id}
-                    onClick={() => setGmailTab(tab.id)}
+                    onClick={() => { setGmailTab(tab.id); setCheckedEmailIds(new Set()); }}
                     className={cn(
                       "flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all",
                       gmailTab === tab.id
@@ -1063,48 +1170,121 @@ export const MarketingHub = () => {
                 </div>
               )}
 
+              {/* Batch Actions Bar */}
+              {checkedEmailIds.size > 0 && (
+                <div className="flex gap-2 mb-3 bg-slate-800/80 p-2.5 rounded-xl border border-white/5 animate-in fade-in duration-200">
+                  <span className="text-[10px] text-slate-400 font-bold self-center ml-2">{checkedEmailIds.size} selected</span>
+                  <button onClick={handleDeleteSelected} className="ml-auto flex items-center gap-1 text-[10px] font-black uppercase tracking-wider px-3 py-1.5 bg-red-600/20 text-red-400 border border-red-500/20 hover:bg-red-600 hover:text-white rounded-lg transition-all">
+                    <Trash2 size={10} /> Delete
+                  </button>
+                  <button onClick={() => setShowMoveModal(true)} className="flex items-center gap-1 text-[10px] font-black uppercase tracking-wider px-3 py-1.5 bg-indigo-500/20 text-indigo-400 border border-indigo-500/20 hover:bg-indigo-600 hover:text-white rounded-lg transition-all">
+                    <Folder size={10} /> Move To Folder
+                  </button>
+                </div>
+              )}
+
               {/* Gmail Content */}
               <div className="space-y-2 max-h-64 overflow-y-auto">
-                {gmailTab === 'inbox' && gmailInbox.map((msg, i) => (
-                  <div key={msg.id || i} className="flex items-start gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors group">
-                    <div className={cn("w-2 h-2 rounded-full mt-1.5 shrink-0", msg.isRead ? 'bg-slate-600' : 'bg-cyan-400')} />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-bold text-slate-200 truncate">{msg.from}</p>
-                      <p className="text-[11px] text-slate-400 truncate">{msg.subject}</p>
+                {gmailTab === 'inbox' && gmailInbox.map((msg, i) => {
+                  const isChecked = checkedEmailIds.has(String(msg.id));
+                  return (
+                    <div key={msg.id || i} className="flex items-start gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors group cursor-pointer" onClick={() => handleViewEmail(msg, 'inbox')}>
+                      <input 
+                        type="checkbox" 
+                        checked={isChecked} 
+                        onClick={(e) => e.stopPropagation()} 
+                        onChange={(e) => {
+                          const next = new Set(checkedEmailIds);
+                          if (e.target.checked) next.add(String(msg.id));
+                          else next.delete(String(msg.id));
+                          setCheckedEmailIds(next);
+                        }}
+                        className="mt-1 accent-indigo-500 w-4 h-4 shrink-0" 
+                      />
+                      <div className={cn("w-2 h-2 rounded-full mt-2 shrink-0", msg.isRead ? 'bg-slate-600' : 'bg-cyan-400')} />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-bold text-slate-200 truncate">{msg.from}</p>
+                        <p className="text-[11px] text-slate-400 truncate">{msg.subject}</p>
+                      </div>
+                      <p className="text-[9px] text-slate-600 shrink-0 mt-1">{msg.date ? new Date(msg.date).toLocaleDateString() : ''}</p>
                     </div>
-                    <p className="text-[9px] text-slate-600 shrink-0 mt-1">{msg.date ? new Date(msg.date).toLocaleDateString() : ''}</p>
-                  </div>
-                ))}
-                {gmailTab === 'bounces' && gmailBounces.map((b, i) => (
-                  <div key={b.id || i} className="flex items-start gap-3 p-3 rounded-xl bg-red-500/5 border border-red-500/10">
-                    <AlertTriangle size={14} className="text-red-400 mt-0.5 shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-bold text-red-300 truncate">{b.bouncedEmail || 'Unknown recipient'}</p>
-                      <p className="text-[10px] text-slate-500 truncate">{b.subject}</p>
+                  );
+                })}
+                {gmailTab === 'sent' && gmailSent.map((s, i) => {
+                  const isChecked = checkedEmailIds.has(String(s.id));
+                  return (
+                    <div key={s.id || i} className="flex items-start gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors group cursor-pointer" onClick={() => handleViewEmail(s, 'sent')}>
+                      <input 
+                        type="checkbox" 
+                        checked={isChecked} 
+                        onClick={(e) => e.stopPropagation()} 
+                        onChange={(e) => {
+                          const next = new Set(checkedEmailIds);
+                          if (e.target.checked) next.add(String(s.id));
+                          else next.delete(String(s.id));
+                          setCheckedEmailIds(next);
+                        }}
+                        className="mt-1 accent-indigo-500 w-4 h-4 shrink-0" 
+                      />
+                      <Send size={14} className="text-indigo-400 mt-1 shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-bold text-slate-200 truncate">To: {s.to}</p>
+                        <p className="text-[11px] text-slate-400 truncate">{s.subject}</p>
+                      </div>
+                      <p className="text-[9px] text-slate-600 shrink-0 mt-1">{s.date ? new Date(s.date).toLocaleDateString() : ''}</p>
                     </div>
-                    <p className="text-[9px] text-slate-600 shrink-0 mt-1">{b.date ? new Date(b.date).toLocaleDateString() : ''}</p>
-                  </div>
-                ))}
-                {gmailTab === 'sent' && gmailSent.map((s, i) => (
-                  <div key={s.id || i} className="flex items-start gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors">
-                    <Send size={14} className="text-indigo-400 mt-0.5 shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-bold text-slate-200 truncate">To: {s.to}</p>
-                      <p className="text-[10px] text-slate-400 truncate">{s.subject}</p>
+                  );
+                })}
+                {gmailTab === 'bounces' && gmailBounces.map((b, i) => {
+                  const isChecked = checkedEmailIds.has(String(b.id));
+                  return (
+                    <div key={b.id || i} className="flex items-start gap-3 p-3 rounded-xl bg-red-500/5 border border-red-500/10 cursor-pointer" onClick={() => handleViewEmail(b, 'bounces')}>
+                      <input 
+                        type="checkbox" 
+                        checked={isChecked} 
+                        onClick={(e) => e.stopPropagation()} 
+                        onChange={(e) => {
+                          const next = new Set(checkedEmailIds);
+                          if (e.target.checked) next.add(String(b.id));
+                          else next.delete(String(b.id));
+                          setCheckedEmailIds(next);
+                        }}
+                        className="mt-1 accent-indigo-500 w-4 h-4 shrink-0" 
+                      />
+                      <AlertTriangle size={14} className="text-red-400 mt-1 shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-bold text-red-300 truncate">{b.bouncedEmail || 'Unknown recipient'}</p>
+                        <p className="text-[10px] text-slate-500 truncate">{b.subject}</p>
+                      </div>
+                      <p className="text-[9px] text-slate-600 shrink-0 mt-1">{b.date ? new Date(b.date).toLocaleDateString() : ''}</p>
                     </div>
-                    <p className="text-[9px] text-slate-600 shrink-0 mt-1">{s.date ? new Date(s.date).toLocaleDateString() : ''}</p>
-                  </div>
-                ))}
-                {gmailTab === 'replies' && gmailReplies.map((r, i) => (
-                  <div key={r.id || i} className="flex items-start gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors">
-                    <Reply size={14} className="text-emerald-400 mt-0.5 shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-bold text-emerald-300 truncate">{r.from}</p>
-                      <p className="text-[10px] text-slate-400 truncate">{r.subject}</p>
+                  );
+                })}
+                {gmailTab === 'replies' && gmailReplies.map((r, i) => {
+                  const isChecked = checkedEmailIds.has(String(r.id));
+                  return (
+                    <div key={r.id || i} className="flex items-start gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors group cursor-pointer" onClick={() => handleViewEmail(r, 'replies')}>
+                      <input 
+                        type="checkbox" 
+                        checked={isChecked} 
+                        onClick={(e) => e.stopPropagation()} 
+                        onChange={(e) => {
+                          const next = new Set(checkedEmailIds);
+                          if (e.target.checked) next.add(String(r.id));
+                          else next.delete(String(r.id));
+                          setCheckedEmailIds(next);
+                        }}
+                        className="mt-1 accent-indigo-500 w-4 h-4 shrink-0" 
+                      />
+                      <Reply size={14} className="text-emerald-400 mt-1 shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-bold text-emerald-300 truncate">{r.from}</p>
+                        <p className="text-[10px] text-slate-400 truncate">{r.subject}</p>
+                      </div>
+                      <p className="text-[9px] text-slate-600 shrink-0 mt-1">{r.date ? new Date(r.date).toLocaleDateString() : ''}</p>
                     </div>
-                    <p className="text-[9px] text-slate-600 shrink-0 mt-1">{r.date ? new Date(r.date).toLocaleDateString() : ''}</p>
-                  </div>
-                ))}
+                  );
+                })}
                 {((gmailTab === 'inbox' && gmailInbox.length === 0) || 
                   (gmailTab === 'sent' && gmailSent.length === 0) || 
                   (gmailTab === 'bounces' && gmailBounces.length === 0) || 
@@ -1383,6 +1563,158 @@ export const MarketingHub = () => {
               >
                 <Send size={18} /> Confirm & Launch
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Email View Modal */}
+      {selectedEmail && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[150] p-4 animate-in fade-in duration-200 text-left">
+          <div className="bg-slate-900 border border-white/10 rounded-[2rem] max-w-3xl w-full max-h-[85vh] overflow-hidden flex flex-col shadow-2xl animate-in zoom-in-95 duration-300">
+            {/* Header */}
+            <div className="p-6 border-b border-white/10 flex items-start justify-between bg-slate-950/40">
+              <div>
+                <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">{selectedEmail.folderType} Message</p>
+                <h3 className="text-xl font-black text-white leading-tight">{selectedEmail.subject || '(No Subject)'}</h3>
+                <p className="text-xs text-slate-400 font-medium mt-2">
+                  <span className="text-slate-500">From:</span> {selectedEmail.from || 'Unknown'} 
+                  {selectedEmail.to && <> <span className="text-slate-500 ml-3">To:</span> {selectedEmail.to}</>}
+                </p>
+              </div>
+              <button 
+                onClick={() => setSelectedEmail(null)} 
+                className="p-2 hover:bg-white/10 rounded-xl text-slate-400 hover:text-white transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            
+            {/* Content Body */}
+            <div className="flex-1 overflow-y-auto p-8 text-slate-300 text-sm leading-relaxed whitespace-pre-wrap select-text custom-scrollbar bg-slate-950/20">
+              {loadingEmailBody ? (
+                <div className="flex flex-col items-center justify-center py-20 text-slate-500 gap-3">
+                  <RefreshCw className="w-8 h-8 animate-spin text-indigo-400" />
+                  <p className="text-xs font-bold uppercase tracking-wider">Loading message content...</p>
+                </div>
+              ) : (
+                selectedEmailBody ? (
+                  selectedEmailBody.trim().startsWith('<') || selectedEmailBody.includes('</') ? (
+                    <iframe
+                      title="Email Content"
+                      srcDoc={`<style>body{font-family:sans-serif;color:#e2e8f0;background-color:#0f172a;line-height:1.6;margin:0;padding:10px;}a{color:#818cf8;}</style>${selectedEmailBody}`}
+                      className="w-full h-[400px] border-0 rounded-xl bg-[#0f172a]"
+                    />
+                  ) : (
+                    selectedEmailBody
+                  )
+                ) : (
+                  <p className="text-slate-500 italic text-center py-10">This message has no text body.</p>
+                )
+              )}
+            </div>
+            
+            {/* Footer */}
+            <div className="p-6 border-t border-white/10 flex justify-end gap-3 bg-slate-950/20">
+              <button
+                onClick={() => {
+                  const uids = new Set([String(selectedEmail.id)]);
+                  setCheckedEmailIds(uids);
+                  setSelectedEmail(null);
+                  setShowMoveModal(true);
+                }}
+                className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-colors"
+              >
+                Organize (Move)
+              </button>
+              <button
+                onClick={async () => {
+                  if (!confirm('Delete this message?')) return;
+                  let imapMailbox = 'INBOX';
+                  if (selectedEmail.folderType === 'sent') imapMailbox = '[Gmail]/Sent Mail';
+                  try {
+                    const res = await fetch(`/api/marketing?route=gmail&action=delete&uids=${selectedEmail.id}&mailbox=${encodeURIComponent(imapMailbox)}`);
+                    if (res.ok) {
+                      alert('Message deleted');
+                      setSelectedEmail(null);
+                      fetchGmail();
+                    } else {
+                      alert('Failed to delete');
+                    }
+                  } catch (e: any) {
+                    alert('Error: ' + e.message);
+                  }
+                }}
+                className="px-5 py-2.5 bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-colors border border-red-500/20"
+              >
+                Delete Message
+              </button>
+              <button
+                onClick={() => setSelectedEmail(null)}
+                className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-indigo-900/40"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Folder Select / Create Modal */}
+      {showMoveModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[160] p-4 animate-in fade-in duration-200 text-left">
+          <div className="bg-slate-900 border border-white/10 rounded-[2rem] max-w-md w-full p-8 shadow-2xl animate-in zoom-in-95 duration-300">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-black text-white flex items-center gap-2">
+                <Folder className="text-indigo-400" size={22} /> Move to Folder
+              </h3>
+              <button onClick={() => setShowMoveModal(false)} className="p-2 hover:bg-white/10 rounded-xl text-slate-400 hover:text-white"><X size={20} /></button>
+            </div>
+            
+            <p className="text-xs text-slate-400 font-medium mb-4">Select an existing IMAP folder or create a new folder/label to organize the {checkedEmailIds.size} selected email(s).</p>
+            
+            {/* List of folders */}
+            <div className="space-y-1.5 max-h-48 overflow-y-auto mb-6 pr-1 custom-scrollbar">
+              {allFolders
+                .filter(f => f.path !== 'INBOX' && f.path !== '[Gmail]/Sent Mail' && f.path !== '[Gmail]/Spam' && f.path !== '[Gmail]/Trash')
+                .map(folder => (
+                  <button
+                    key={folder.path}
+                    onClick={() => handleMoveSelected(folder.path)}
+                    className="w-full flex items-center gap-3 p-3 bg-slate-800/40 border border-slate-700/50 hover:border-indigo-500/50 hover:bg-indigo-500/5 text-slate-200 hover:text-white rounded-xl text-sm font-bold text-left transition-colors"
+                  >
+                    <Folder size={14} className="text-indigo-400" />
+                    {folder.name}
+                  </button>
+              ))}
+              {allFolders.filter(f => f.path !== 'INBOX' && f.path !== '[Gmail]/Sent Mail' && f.path !== '[Gmail]/Spam' && f.path !== '[Gmail]/Trash').length === 0 && (
+                <p className="text-xs text-slate-500 italic">No custom folders created yet.</p>
+              )}
+            </div>
+            
+            {/* Create new folder input */}
+            <div className="border-t border-white/5 pt-4">
+              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Create New Folder</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={newFolderName}
+                  onChange={(e) => setNewFolderName(e.target.value)}
+                  placeholder="e.g. Clients, Regulatory, Hot Leads"
+                  className="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-white outline-none focus:border-indigo-500 text-xs font-medium"
+                />
+                <button
+                  onClick={() => {
+                    if (!newFolderName.trim()) return;
+                    handleMoveSelected(newFolderName.trim());
+                    setNewFolderName('');
+                  }}
+                  disabled={!newFolderName.trim()}
+                  className="px-4 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-30 disabled:cursor-not-allowed text-white rounded-xl text-xs font-black uppercase tracking-wider transition-colors"
+                >
+                  Create & Move
+                </button>
+              </div>
             </div>
           </div>
         </div>
