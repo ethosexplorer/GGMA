@@ -241,27 +241,34 @@ async function handleVoice(req, res) {
   const direction = req.body?.Direction || '';
   const fromClient = req.body?.From?.startsWith?.('client:') || false;
 
-  // Intercept Outbound calls from WebDialer to external numbers
-  if (toNumber && !toNumber.startsWith('client:') && (direction === 'outbound' || fromClient || /^\+?\d{7,15}$/.test(toNumber.replace(/[\s\-\(\)]/g, '')))) {
-    let cleanNumber = toNumber.replace(/[\s\-\(\)]/g, '');
-    if (!cleanNumber.startsWith('+')) {
-      cleanNumber = cleanNumber.startsWith('1') ? '+' + cleanNumber : '+1' + cleanNumber;
-    }
-    
-    const dial = twiml.dial({
-      callerId: '+18889634447',
-      timeout: 45,
-      answerOnBridge: true,
-      action: '/api/twilio/call-status',
-    });
-    dial.number({
-      statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'],
-      statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status',
-      statusCallbackMethod: 'POST',
-    }, cleanNumber);
+  // Intercept Outbound calls from WebDialer
+  if (fromClient && toNumber) {
+    if (toNumber.startsWith('client:')) {
+      const dial = twiml.dial({ timeout: 45, answerOnBridge: true });
+      dial.client(toNumber.replace('client:', ''));
+      res.setHeader('Content-Type', 'text/xml');
+      return res.status(200).send(twiml.toString());
+    } else {
+      let cleanNumber = toNumber.replace(/[\s\-\(\)]/g, '');
+      if (!cleanNumber.startsWith('+')) {
+        cleanNumber = cleanNumber.startsWith('1') ? '+' + cleanNumber : '+1' + cleanNumber;
+      }
+      
+      const dial = twiml.dial({
+        callerId: '+18889634447',
+        timeout: 45,
+        answerOnBridge: true,
+        action: '/api/twilio/call-status',
+      });
+      dial.number({
+        statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'],
+        statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status',
+        statusCallbackMethod: 'POST',
+      }, cleanNumber);
 
-    res.setHeader('Content-Type', 'text/xml');
-    return res.status(200).send(twiml.toString());
+      res.setHeader('Content-Type', 'text/xml');
+      return res.status(200).send(twiml.toString());
+    }
   }
 
   // Dynamic routing mode configuration check
