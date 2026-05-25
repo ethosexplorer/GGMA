@@ -69,8 +69,9 @@ export const MarketingHub = () => {
   const [trackingEvents, setTrackingEvents] = useState<any[]>([]);
 
   // Gmail Inbox State
-  const [gmailTab, setGmailTab] = useState<'inbox' | 'bounces' | 'replies'>('inbox');
+  const [gmailTab, setGmailTab] = useState<'inbox' | 'sent' | 'bounces' | 'replies'>('inbox');
   const [gmailInbox, setGmailInbox] = useState<any[]>([]);
+  const [gmailSent, setGmailSent] = useState<any[]>([]);
   const [gmailBounces, setGmailBounces] = useState<any[]>([]);
   const [gmailReplies, setGmailReplies] = useState<any[]>([]);
   const [gmailStats, setGmailStats] = useState<any>(null);
@@ -85,16 +86,18 @@ export const MarketingHub = () => {
     setGmailError('');
     try {
       const safeFetch = async (url: string) => { try { const r = await fetch(url); const text = await r.text(); return JSON.parse(text); } catch { return { error: 'Server unavailable' }; } };
-      const [inboxRes, bouncesRes, repliesRes, profileRes] = await Promise.all([
+      const [inboxRes, bouncesRes, repliesRes, sentRes, profileRes] = await Promise.all([
         safeFetch('/api/marketing?route=gmail&action=inbox&maxResults=15'),
         safeFetch('/api/marketing?route=gmail&action=bounces&maxResults=10'),
         safeFetch('/api/marketing?route=gmail&action=replies&maxResults=10'),
+        safeFetch('/api/marketing?route=gmail&action=sent&maxResults=15'),
         safeFetch('/api/marketing?route=gmail&action=profile'),
       ]);
       if (inboxRes.error) throw new Error(inboxRes.error);
       setGmailInbox(inboxRes.messages || []);
       setGmailBounces(bouncesRes.bounces || []);
       setGmailReplies(repliesRes.replies || []);
+      setGmailSent(sentRes.sent || []);
       setGmailStats(profileRes);
     } catch (err: any) {
       setGmailError(err.message || 'Failed to connect to Gmail');
@@ -1026,6 +1029,7 @@ export const MarketingHub = () => {
               <div className="flex gap-1 mb-4 bg-slate-800/50 rounded-xl p-1">
                 {([
                   { id: 'inbox' as const, label: 'Inbox', icon: Inbox, count: gmailInbox.length },
+                  { id: 'sent' as const, label: 'Sent', icon: Send, count: gmailSent.length },
                   { id: 'bounces' as const, label: 'Bounces', icon: AlertTriangle, count: gmailBounces.length },
                   { id: 'replies' as const, label: 'Replies', icon: Reply, count: gmailReplies.length },
                 ]).map(tab => (
@@ -1081,6 +1085,16 @@ export const MarketingHub = () => {
                     <p className="text-[9px] text-slate-600 shrink-0 mt-1">{b.date ? new Date(b.date).toLocaleDateString() : ''}</p>
                   </div>
                 ))}
+                {gmailTab === 'sent' && gmailSent.map((s, i) => (
+                  <div key={s.id || i} className="flex items-start gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors">
+                    <Send size={14} className="text-indigo-400 mt-0.5 shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-bold text-slate-200 truncate">To: {s.to}</p>
+                      <p className="text-[10px] text-slate-400 truncate">{s.subject}</p>
+                    </div>
+                    <p className="text-[9px] text-slate-600 shrink-0 mt-1">{s.date ? new Date(s.date).toLocaleDateString() : ''}</p>
+                  </div>
+                ))}
                 {gmailTab === 'replies' && gmailReplies.map((r, i) => (
                   <div key={r.id || i} className="flex items-start gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors">
                     <Reply size={14} className="text-emerald-400 mt-0.5 shrink-0" />
@@ -1092,10 +1106,11 @@ export const MarketingHub = () => {
                   </div>
                 ))}
                 {((gmailTab === 'inbox' && gmailInbox.length === 0) || 
+                  (gmailTab === 'sent' && gmailSent.length === 0) || 
                   (gmailTab === 'bounces' && gmailBounces.length === 0) || 
                   (gmailTab === 'replies' && gmailReplies.length === 0)) && !gmailLoading && !gmailError && (
                   <p className="text-sm text-slate-500 italic text-center py-6">
-                    {gmailTab === 'inbox' ? 'Inbox clear ✨' : gmailTab === 'bounces' ? 'No bounces detected 🎉' : 'No replies yet'}
+                    {gmailTab === 'inbox' ? 'Inbox clear ✨' : gmailTab === 'sent' ? 'No sent messages' : gmailTab === 'bounces' ? 'No bounces detected 🎉' : 'No replies yet'}
                   </p>
                 )}
               </div>

@@ -293,6 +293,25 @@ export default async function handler(req, res) {
         return res.json({ replies, total: replies.length });
       }
 
+      if (action === 'sent') {
+        await client.mailboxOpen('[Gmail]/Sent Mail');
+        const sentList = [];
+        const limit = Math.min(parseInt(maxResults) || 20, 50);
+        const status = await client.status('[Gmail]/Sent Mail', { messages: true });
+        const total = status.messages || 0;
+        const start = Math.max(1, total - limit + 1);
+        for await (const msg of client.fetch(`${start}:*`, { envelope: true, bodyStructure: true, flags: true, uid: true })) {
+          sentList.push({
+            id: msg.uid, seq: msg.seq, from: parseAddress(msg.envelope?.from),
+            to: parseAddress(msg.envelope?.to), subject: msg.envelope?.subject || '(no subject)',
+            date: msg.envelope?.date?.toISOString() || '',
+          });
+        }
+        sentList.reverse();
+        await client.logout();
+        return res.json({ sent: sentList, total });
+      }
+
       if (action === 'profile') {
         const inbox = await client.status('INBOX', { messages: true, unseen: true, recent: true });
         const sent = await client.status('[Gmail]/Sent Mail', { messages: true }).catch(() => ({ messages: 0 }));
@@ -302,7 +321,7 @@ export default async function handler(req, res) {
       }
 
       await client.logout();
-      return res.status(400).json({ error: 'Invalid action', validActions: ['inbox', 'bounces', 'replies', 'profile'] });
+      return res.status(400).json({ error: 'Invalid action', validActions: ['inbox', 'bounces', 'replies', 'sent', 'profile'] });
     } catch (err) {
       console.error('[Gmail IMAP]', err);
       if (client) await client.logout().catch(() => {});
