@@ -120,11 +120,11 @@ export const InternalMessenger = ({ currentUser }: Props) => {
     return () => clearInterval(interval);
   }, []);
 
-  // Seed initial internal messages if collection is completely empty
+  // Seed initial internal messages if general channel is empty
   useEffect(() => {
     const seedMessages = async () => {
       try {
-        const q = query(collection(db, 'internal_messages'), limit(1));
+        const q = query(collection(db, 'internal_messages'), where('channel', '==', 'general'), limit(1));
         const snap = await getDocs(q);
         if (snap.empty) {
           const initialMessages = [
