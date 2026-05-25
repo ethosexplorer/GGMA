@@ -6,11 +6,22 @@ export const NotificationDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   
-  const [notifications, setNotifications] = useState([
-    { id: '1', type: 'system', msg: 'System Maintenance Scheduled for Sunday 2AM EST.', time: '1h ago', icon: Info, color: 'text-blue-500 bg-blue-50', read: false },
-    { id: '2', type: 'oversight', msg: 'OVERSIGHT: Please verify your state license credentials by Friday.', time: '3h ago', icon: AlertTriangle, color: 'text-amber-500 bg-amber-50 border-amber-200', read: false },
-    { id: '3', type: 'lead', msg: 'New inbound inquiry from the Patient Portal.', time: '5h ago', icon: Zap, color: 'text-emerald-500 bg-emerald-50', read: false },
-  ]);
+  const [notifications, setNotifications] = useState(() => {
+    const initial = [
+      { id: '1', type: 'system', msg: 'System Maintenance Scheduled for Sunday 2AM EST.', time: '1h ago', icon: Info, color: 'text-blue-500 bg-blue-50', read: false },
+      { id: '2', type: 'oversight', msg: 'OVERSIGHT: Please verify your state license credentials by Friday.', time: '3h ago', icon: AlertTriangle, color: 'text-amber-500 bg-amber-50 border-amber-200', read: false },
+      { id: '3', type: 'lead', msg: 'New inbound inquiry from the Patient Portal.', time: '5h ago', icon: Zap, color: 'text-emerald-500 bg-emerald-50', read: false },
+    ];
+    try {
+      const readIds = JSON.parse(localStorage.getItem('gghp_read_notification_ids') || '[]');
+      if (Array.isArray(readIds) && readIds.length > 0) {
+        return initial.map(n => readIds.includes(n.id) ? { ...n, read: true } : n);
+      }
+    } catch (e) {
+      console.error('Error reading notifications cache', e);
+    }
+    return initial;
+  });
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
@@ -25,11 +36,21 @@ export const NotificationDropdown = () => {
   }, []);
 
   const markAsRead = (id: string) => {
-    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+    setNotifications(prev => {
+      const updated = prev.map(n => n.id === id ? { ...n, read: true } : n);
+      const readIds = updated.filter(n => n.read).map(n => n.id);
+      localStorage.setItem('gghp_read_notification_ids', JSON.stringify(readIds));
+      return updated;
+    });
   };
 
   const dismissAll = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    setNotifications(prev => {
+      const updated = prev.map(n => ({ ...n, read: true }));
+      const readIds = updated.map(n => n.id);
+      localStorage.setItem('gghp_read_notification_ids', JSON.stringify(readIds));
+      return updated;
+    });
   };
 
   return (

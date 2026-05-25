@@ -88,20 +88,44 @@ const PresidentDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => v
   const [activeTab, setActiveTab] = useState('system_health');
 
   const [showNotifPanel, setShowNotifPanel] = useState(false);
-  const [notifications, setNotifications] = useState([
-    { icon: '💼', title: 'New CRM Leads Available', desc: '198 new prospects imported to B2B Pipeline', time: 'Just now', tab: 'b2b_crm' },
-    { icon: '📬', title: 'New Direct Message', desc: 'You have unread messages in the Global Directory', time: 'Just now', tab: 'messages' },
-    { icon: '📬', title: 'System Notification', desc: 'New team chat message received', time: '5m ago', tab: 'messages' },
-    { icon: '📋', title: 'New Application in Queue', desc: 'Jasmin Garrett - Patient Med Card', time: 'Just now', tab: 'patient_case_tracker' },
-    { icon: '🔴', title: 'DEA Schedule III Final Order', desc: 'Medical cannabis & FDA products reclassified — effective April 23, 2026', time: 'Today', tab: 'compliance' },
-    { icon: '⚖️', title: 'State License Audit Alert', desc: 'Compliance audit scheduled for next week', time: '2h ago', tab: 'compliance' },
-    { icon: '🗓️', title: 'Critical Task Due', desc: 'Review pending state regulations', time: '3h ago', tab: 'realtime_tasks' },
-    { icon: '🗓️', title: 'Daily Report Deadline', desc: 'Submit compliance certification form', time: 'Today', tab: 'realtime_tasks' },
-    { icon: '📈', title: 'Monthly Revenue Report Ready', desc: 'Financial summaries for last month available', time: 'Yesterday', tab: 'reports' },
-    { icon: '⚖️', title: 'DEA Hearing Scheduled', desc: 'Broader rescheduling hearing begins June 29, 2026', time: 'Today', tab: 'judicial' },
-    { icon: '💚', title: 'New Poll Votes Received', desc: 'Community polls receiving engagement in Oklahoma', time: '2h ago', tab: 'jurisdiction_map' },
-    { icon: '🔒', title: 'Turso DB Connected', desc: 'Production database environment variables active', time: '5h ago', tab: 'system_health' },
-  ]);
+  const INITIAL_NOTIFICATIONS = [
+    { id: 'crm_leads', icon: '💼', title: 'New CRM Leads Available', desc: '198 new prospects imported to B2B Pipeline', time: 'Just now', tab: 'b2b_crm' },
+    { id: 'direct_msg', icon: '📬', title: 'New Direct Message', desc: 'You have unread messages in the Global Directory', time: 'Just now', tab: 'messages' },
+    { id: 'team_chat', icon: '📬', title: 'System Notification', desc: 'New team chat message received', time: '5m ago', tab: 'messages' },
+    { id: 'patient_app', icon: '📋', title: 'New Application in Queue', desc: 'Jasmin Garrett - Patient Med Card', time: 'Just now', tab: 'patient_case_tracker' },
+    { id: 'dea_sched3', icon: '🔴', title: 'DEA Schedule III Final Order', desc: 'Medical cannabis & FDA products reclassified — effective April 23, 2026', time: 'Today', tab: 'compliance' },
+    { id: 'state_audit', icon: '⚖️', title: 'State License Audit Alert', desc: 'Compliance audit scheduled for next week', time: '2h ago', tab: 'compliance' },
+    { id: 'crit_task', icon: '🗓️', title: 'Critical Task Due', desc: 'Review pending state regulations', time: '3h ago', tab: 'realtime_tasks' },
+    { id: 'daily_report', icon: '🗓️', title: 'Daily Report Deadline', desc: 'Submit compliance certification form', time: 'Today', tab: 'realtime_tasks' },
+    { id: 'rev_report', icon: '📈', title: 'Monthly Revenue Report Ready', desc: 'Financial summaries for last month available', time: 'Yesterday', tab: 'reports' },
+    { id: 'dea_hearing', icon: '⚖️', title: 'DEA Hearing Scheduled', desc: 'Broader rescheduling hearing begins June 29, 2026', time: 'Today', tab: 'judicial' },
+    { id: 'poll_votes', icon: '💚', title: 'New Poll Votes Received', desc: 'Community polls receiving engagement in Oklahoma', time: '2h ago', tab: 'jurisdiction_map' },
+    { id: 'turso_db', icon: '🔒', title: 'Turso DB Connected', desc: 'Production database environment variables active', time: '5h ago', tab: 'system_health' },
+  ];
+
+  const [notifications, setNotifications] = useState(() => {
+    try {
+      const dismissedIds = JSON.parse(localStorage.getItem('gghp_dismissed_president_notifications') || '[]');
+      if (Array.isArray(dismissedIds)) {
+        return INITIAL_NOTIFICATIONS.filter(n => !dismissedIds.includes(n.id));
+      }
+    } catch (e) {
+      console.error('Error loading dismissed president notifications', e);
+    }
+    return INITIAL_NOTIFICATIONS;
+  });
+
+  useEffect(() => {
+    try {
+      const currentIds = new Set(notifications.map(n => n.id));
+      const dismissedIds = INITIAL_NOTIFICATIONS
+        .filter(n => !currentIds.has(n.id))
+        .map(n => n.id);
+      localStorage.setItem('gghp_dismissed_president_notifications', JSON.stringify(dismissedIds));
+    } catch (e) {
+      console.error('Error saving dismissed president notifications', e);
+    }
+  }, [notifications]);
   const [hideAlertQueue, setHideAlertQueue] = useState(() => localStorage.getItem('gghp_alert_queue_dismissed') === 'true');
   const [queueAlerts, setQueueAlerts] = useState<any[]>([]);
   const [opsChecks, setOpsChecks] = useState<any[]>([]);
