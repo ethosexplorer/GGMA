@@ -1278,11 +1278,34 @@ export const MarketingHub = () => {
             
             <div className="flex-1 overflow-y-auto p-8 flex flex-col md:flex-row gap-8 bg-slate-950/50">
               {/* Preview Rendering */}
-              <div className="flex-1 bg-white rounded-2xl p-8 shadow-inner min-h-[400px]">
+              <div className="flex-1 bg-white rounded-2xl p-8 shadow-inner min-h-[400px] flex flex-col">
                 {campaignType === 'email' ? (
-                  <div className="text-slate-800">
-                    <p className="border-b border-slate-200 pb-4 mb-6 font-bold">Subject: <span className="font-normal text-slate-600">{subject}</span></p>
-                    <div dangerouslySetInnerHTML={{ __html: message.replace(/\n/g, '<br/>') }} className="prose prose-slate max-w-none" />
+                  <div className="text-slate-800 flex-1 flex flex-col">
+                    <p className="border-b border-slate-200 pb-4 mb-4 font-bold shrink-0">Subject: <span className="font-normal text-slate-600">{subject}</span></p>
+                    <iframe 
+                      srcDoc={`
+                        <!DOCTYPE html>
+                        <html>
+                          <head>
+                            <style>
+                              body { 
+                                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+                                color: #334155; 
+                                line-height: 1.6; 
+                                margin: 0; 
+                                font-size: 14px;
+                              }
+                            </style>
+                          </head>
+                          <body>
+                            ${message.includes('<html') || message.includes('<body') ? message : message.replace(/\n/g, '<br/>')}
+                          </body>
+                        </html>
+                      `}
+                      sandbox=""
+                      title="Email Preview"
+                      className="w-full flex-1 min-h-[300px] border-0 outline-none"
+                    />
                   </div>
                 ) : (
                   <div className="max-w-sm mx-auto bg-slate-100 rounded-3xl p-4 border-4 border-slate-200 shadow-xl relative">

@@ -12,41 +12,69 @@ async function callGemini(
   userPrompt: string,
   opts?: { temperature?: number; maxTokens?: number; history?: { role: string; parts: { text: string }[] }[] }
 ): Promise<string> {
-  const key = API_KEY();
-  if (!key) {
-    console.error('[Gemini] API Key missing.');
-    return '[AI Offline] Configure VITE_GEMINI_API_KEY in your .env file to enable live intelligence.';
-  }
-
+  // 1. Try secure Vercel API proxy
   try {
-    const res = await fetch(`${MODEL_ENDPOINT}?key=${key}`, {
+    const res = await fetch('/api/gemini', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        systemInstruction: { parts: [{ text: systemInstruction }] },
-        contents: [
-          ...(opts?.history ?? []),
-          { role: 'user', parts: [{ text: userPrompt }] },
-        ],
-        generationConfig: {
-          temperature: opts?.temperature ?? 0.7,
-          maxOutputTokens: opts?.maxTokens ?? 500,
-        },
+        systemInstruction,
+        userPrompt,
+        opts,
       }),
     });
-
-    if (!res.ok) {
-      const err = await res.json();
-      console.error('[Gemini] API Error:', err);
-      return '[AI Error] I encountered a processing error. Please try again.';
+    
+    if (res.ok) {
+      const data = await res.json();
+      return data.text || 'No response generated.';
     }
 
-    const data = await res.json();
-    return data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response generated.';
+    // If it's a 404, we are likely in local dev without Vercel CLI, so we try client-side fallback.
+    if (res.status !== 404) {
+      const err = await res.json();
+      console.error('[Gemini Proxy Error]:', err);
+      return '[AI Error] I encountered a processing error. Please try again.';
+    }
   } catch (error) {
-    console.error('[Gemini] Network error:', error);
-    return '[AI Offline] Network connection to the AI engine failed. Check your connection.';
+    console.warn('[Gemini Proxy Unavailable, trying client fallback]:', error);
   }
+
+  // 2. Local development fallback (direct client request to Google endpoint)
+  if (import.meta.env.DEV) {
+    const key = API_KEY();
+    if (key) {
+      try {
+        const res = await fetch(`${MODEL_ENDPOINT}?key=${key}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            systemInstruction: { parts: [{ text: systemInstruction }] },
+            contents: [
+              ...(opts?.history ?? []),
+              { role: 'user', parts: [{ text: userPrompt }] },
+            ],
+            generationConfig: {
+              temperature: opts?.temperature ?? 0.7,
+              maxOutputTokens: opts?.maxTokens ?? 500,
+            },
+          }),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          return data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response generated.';
+        }
+        
+        const err = await res.json();
+        console.error('[Gemini Direct Fallback Error]:', err);
+        return '[AI Error] I encountered a processing error. Please try again.';
+      } catch (clientError) {
+        console.error('[Gemini Direct Fallback Exception]:', clientError);
+      }
+    }
+  }
+
+  return '[AI Offline] Configure VITE_GEMINI_API_KEY in your .env file to enable live intelligence.';
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
