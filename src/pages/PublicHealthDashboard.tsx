@@ -8,7 +8,14 @@ import { NotificationDropdown } from '../components/shared/NotificationDropdown'
 import { UserCalendar } from '../components/UserCalendar';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 
-const sidebarItems = [
+interface SidebarItem {
+  id: string;
+  label: string;
+  icon: any;
+  badge?: string | number;
+}
+
+const sidebarItems: SidebarItem[] = [
   { id: 'dashboard', label: 'Health Dashboard', icon: Activity },
   { id: 'standards', label: 'Lab Standards Engine', icon: Settings },
   { id: 'alerts', label: 'Alerts & Recalls', icon: Bell },

@@ -133,6 +133,11 @@ service cloud.firestore {
       allow read, write: if isAuthenticated();
     }
 
+    // Executive CRM Contacts
+    match /executive_crm_contacts/{contactId} {
+      allow read, write: if isAuthenticated();
+    }
+
     // Accounting Ledger
     match /accounting_ledger/{entryId} {
       allow read, write: if isAuthenticated();

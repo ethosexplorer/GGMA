@@ -131,6 +131,10 @@ export const ExecutiveCRM = ({
       onSnapshot(query(collection(db, col)), (snapshot) => {
         dataMap[col] = snapshot.docs.map(d => mapDoc(d, col));
         updateAll();
+      }, (err) => {
+        console.error(`Firestore error on collection ${col}:`, err);
+        dataMap[col] = [];
+        updateAll();
       })
     );
 
@@ -270,7 +274,7 @@ export const ExecutiveCRM = ({
 
   const filteredDeals = deals.filter(d => {
     // 1. Identify if the deal is top-grossing
-    const isTopGrossing = d.tier === 'top_grossing' || d.source === 'US Top Grossing Dispensaries' || (d.value !== undefined && d.value > 0);
+    const isTopGrossing = d.tier === 'top_grossing' || d.source === 'US Top Grossing Dispensaries' || (d.value !== undefined && d.value >= 1000000);
     
     // 2. Check if the deal matches the active sweep mode
     const matchesSweepMode = isSweepOnly ? isTopGrossing : !isTopGrossing;

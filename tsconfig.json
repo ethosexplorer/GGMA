@@ -23,5 +23,9 @@
     "allowImportingTsExtensions": true,
     "noEmit": true,
     "esModuleInterop": true
-  }
+  },
+  "exclude": [
+    "src/scrapers",
+    "scratch"
+  ]
 }
