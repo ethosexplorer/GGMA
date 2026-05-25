@@ -3,14 +3,30 @@ import { PipelineCRM } from '../crm/PipelineCRM';
 import { Search, MapPin, Building2, Download, Play, ShieldAlert, CheckCircle2 } from 'lucide-react';
 import { db } from '../../firebase';
 import { collection, onSnapshot, query, getDocs } from 'firebase/firestore';
+import { cn } from '../../lib/utils';
 
 // Module-level cache to persist counts across tab switches
 let cachedLiveCounts: Record<string, number> | null = null;
 let cachedTypeCounts: Record<string, Record<string, number>> | null = null;
 let cachedStatusCounts: Record<string, Record<string, number>> | null = null;
 
-export const GlobalSweepTab = () => {
-  const [selectedState, setSelectedState] = useState('AL');
+export const GlobalSweepTab = ({ 
+  isAdvisor = false,
+  isRyan = false,
+  userEmail
+}: { 
+  isAdvisor?: boolean;
+  isRyan?: boolean;
+  userEmail?: string;
+}) => {
+  const [selectedState, setSelectedState] = useState(isRyan ? 'AZ' : 'AL');
+
+  // Lock selectedState to AZ if Ryan
+  useEffect(() => {
+    if (isRyan) {
+      setSelectedState('AZ');
+    }
+  }, [isRyan]);
   const [liveCounts, setLiveCounts] = useState<Record<string, number>>(cachedLiveCounts || {});
   const [typeCounts, setTypeCounts] = useState<Record<string, Record<string, number>>>(cachedTypeCounts || {});
   const [statusCounts, setStatusCounts] = useState<Record<string, Record<string, number>>>(cachedStatusCounts || {});
@@ -179,13 +195,21 @@ export const GlobalSweepTab = () => {
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 mb-6">
             <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Target Jurisdiction</label>
             <select 
-              value={selectedState}
+              value={isRyan ? 'AZ' : selectedState}
               onChange={(e) => setSelectedState(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm font-bold rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              disabled={isRyan}
+              className={cn(
+                "w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm font-bold rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500",
+                isRyan ? "cursor-not-allowed opacity-80" : "cursor-pointer"
+              )}
             >
-              {states.map(s => (
-                <option key={s.code} value={s.code}>{s.name}</option>
-              ))}
+              {isRyan ? (
+                <option value="AZ">Arizona — Rec + Medical (AZ Care Check)</option>
+              ) : (
+                states.map(s => (
+                  <option key={s.code} value={s.code}>{s.name}</option>
+                ))
+              )}
             </select>
             
             <div className="mt-4 flex items-center justify-between text-xs">
@@ -308,7 +332,12 @@ export const GlobalSweepTab = () => {
         </div>
         <div className="flex-1 overflow-auto relative -m-6 p-6">
           <div className="absolute inset-0">
-            <PipelineCRM defaultJurisdiction={activeState?.code || 'All'} />
+            <PipelineCRM 
+              defaultJurisdiction={isRyan ? 'AZ' : (activeState?.code || 'All')} 
+              forceJurisdiction={isRyan ? 'AZ' : undefined}
+              isSweepOnly={isAdvisor} 
+              currentUserEmail={userEmail}
+            />
           </div>
         </div>
       </div>

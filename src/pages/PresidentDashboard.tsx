@@ -500,7 +500,7 @@ const PresidentDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => v
                 {activeTab === 'jurisdiction_map' && <LiveJurisdictionMap />}
                 
                 {activeTab === 'call_center' && <div className="bg-slate-50 p-6 rounded-3xl overflow-auto h-full"><CallCenterCommandTab /></div>}
-                {activeTab === 'b2b_crm' && <div className="h-full w-full -m-8 bg-slate-50 min-h-screen overflow-auto"><ExecutiveCRM /></div>}
+                {activeTab === 'b2b_crm' && <div className="h-full w-full -m-8 bg-slate-50 min-h-screen overflow-auto"><ExecutiveCRM defaultJurisdiction="AZ" forceJurisdiction="AZ" currentUserEmail={user?.email} /></div>}
                 {activeTab === 'ai_training' && <AITrainingTab userProfile={user} />}
                 {activeTab === 'messages' && <InternalMessenger currentUser={{ name: fullName, role: title, roleId: 'president' }} />}
                 {activeTab === 'internal_scheduler' && <div className="bg-white rounded-3xl overflow-hidden h-full"><UserCalendar user={user} /></div>}

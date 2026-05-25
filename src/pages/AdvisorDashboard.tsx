@@ -289,6 +289,11 @@ const AdvisorDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => voi
     localStorage.setItem('gghp_advisor_nav_order', JSON.stringify(items.map((it, i) => it.id || `sec_${i}`)));
   };
 
+  const emailLower = user?.email?.toLowerCase() || '';
+  const displayNameLower = user?.displayName?.toLowerCase() || '';
+  const isBobAdvisor = emailLower.includes('bobmooregreenenergy') || displayNameLower.includes('bob') || user?.role === 'executive_advisor' || user?.role === 'advisor';
+  const isRyan = emailLower.includes('ceo.globalgreenhp') || user?.role === 'president';
+
   const fullName = "Bob Moore";
   const title = "Advisor";
 
@@ -530,7 +535,7 @@ const AdvisorDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => voi
                 {activeTab === 'jurisdiction_map' && <LiveJurisdictionMap />}
                 
                 {activeTab === 'ai_training' && <AITrainingTab userProfile={user} />}
-                {activeTab === 'omma_pipeline' && <div className="h-full w-full -m-8"><GlobalSweepTab /></div>}
+                {activeTab === 'omma_pipeline' && <div className="h-full w-full -m-8"><GlobalSweepTab isAdvisor={isBobAdvisor} isRyan={isRyan} userEmail={user?.email} /></div>}
                 {activeTab === 'messages' && <InternalMessenger currentUser={{ name: fullName, role: title, roleId: 'advisor' }} />}
                 {activeTab === 'internal_scheduler' && <div className="bg-white rounded-3xl overflow-hidden h-full"><UserCalendar user={user} /></div>}
                 {activeTab === 'realtime_tasks' && <div className="h-full w-full -m-6 bg-slate-50 p-10 min-h-screen overflow-auto"><RapidRevenueTab /></div>}

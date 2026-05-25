@@ -4792,11 +4792,11 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       case 'business': 
         return <div data-action-bound="true">{renderEconomicInfrastructure()}</div>;
       case 'b2b_crm': 
-        return <div className="h-full w-full -m-10 bg-[#080e1a] min-h-screen overflow-auto" data-action-bound="true"><PipelineCRM /></div>;
+        return <div className="h-full w-full -m-10 bg-[#080e1a] min-h-screen overflow-auto" data-action-bound="true"><PipelineCRM defaultJurisdiction={isRyan ? "AZ" : undefined} forceJurisdiction={isRyan ? "AZ" : undefined} currentUserEmail={user?.email} /></div>;
       case 'marketing_hub': 
         return <div className="h-full w-full -m-10 bg-[#080e1a] min-h-screen overflow-auto" data-action-bound="true"><MarketingHub /></div>;
       case 'omma_pipeline': 
-        return <div className="h-full w-full -m-10" data-action-bound="true"><GlobalSweepTab /></div>;
+        return <div className="h-full w-full -m-10" data-action-bound="true"><GlobalSweepTab isAdvisor={isBobAdvisor} isRyan={isRyan} userEmail={user?.email} /></div>;
       case 'global_directory': 
         return <div className="h-full w-full -m-10" data-action-bound="true"><GlobalDirectoryTab onOpenMessage={(uid) => { setActiveTab('messages'); }} /></div>;
       case 'approvals': 

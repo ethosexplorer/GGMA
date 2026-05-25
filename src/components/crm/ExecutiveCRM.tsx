@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, GripVertical, Phone, Mail, Clock, ShieldCheck, Building2, User, Landmark, Building, Briefcase, Scale, HeartHandshake, Truck, Search, X, Upload, Store, Sprout, Factory } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { db } from '../../firebase';
+import { db, auth } from '../../firebase';
 import { collection, addDoc, onSnapshot, query, serverTimestamp, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 
 const STAGES = [
@@ -53,13 +53,30 @@ interface Deal {
   updatedAt: any;
 }
 
-export const ExecutiveCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: string }) => {
+export const ExecutiveCRM = ({ 
+  defaultJurisdiction,
+  forceJurisdiction,
+  isSweepOnly = false,
+  currentUserEmail
+}: { 
+  defaultJurisdiction?: string;
+  forceJurisdiction?: string;
+  isSweepOnly?: boolean;
+  currentUserEmail?: string;
+}) => {
   const [deals, setDeals] = useState<Deal[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterJurisdiction, setFilterJurisdiction] = useState(defaultJurisdiction || 'All');
   const [filterStatus, setFilterStatus] = useState('All');
   const [filterType, setFilterType] = useState('All');
+
+  // Lock filter to forced jurisdiction if provided
+  useEffect(() => {
+    if (forceJurisdiction) {
+      setFilterJurisdiction(forceJurisdiction);
+    }
+  }, [forceJurisdiction]);
 
   // Sync filter when parent changes selected state
   useEffect(() => {
@@ -245,14 +262,45 @@ export const ExecutiveCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: st
 
   const uniqueJurisdictions = Array.from(new Set(deals.map(d => getJurisdictionCode(d.jurisdiction)).filter(Boolean))).sort();
 
+  const emailLower = (currentUserEmail || auth.currentUser?.email || '').toLowerCase();
+  
+  const isFounder = emailLower.includes('founder') || emailLower.includes('shantell') || emailLower.includes('globalgreenhp@gmail.com') || emailLower === '';
+  const isBobAdvisor = emailLower.includes('bobmooregreenenergy') || emailLower.includes('bob');
+  const isRyan = emailLower.includes('ceo.globalgreenhp') || emailLower.includes('ryan');
+
   const filteredDeals = deals.filter(d => {
+    // 1. Identify if the deal is top-grossing
+    const isTopGrossing = d.tier === 'top_grossing' || d.source === 'US Top Grossing Dispensaries' || (d.value !== undefined && d.value > 0);
+    
+    // 2. Check if the deal matches the active sweep mode
+    const matchesSweepMode = isSweepOnly ? isTopGrossing : !isTopGrossing;
+    if (!matchesSweepMode) return false;
+
+    // 3. Enforce role assignments
+    if (isFounder) {
+      // Founder sees all matching deals
+    } else if (isBobAdvisor) {
+      // Bob only sees Sweep deals; sees 0 in standard view
+      if (!isSweepOnly) return false;
+    } else if (isRyan) {
+      // Ryan only sees standard deals in Arizona (AZ)
+      if (isSweepOnly) return false;
+      const dealCode = getJurisdictionCode(d.jurisdiction);
+      if (dealCode !== 'AZ') return false;
+    } else {
+      // Unassigned users (Monica, etc.) see 0 deals
+      return false;
+    }
+
+    // 4. Search and metadata filters
     const n = d.name || '';
     const c = d.contactName || '';
     const s = searchTerm || '';
     const matchesSearch = n.toLowerCase().includes(s.toLowerCase()) || c.toLowerCase().includes(s.toLowerCase());
     
+    const activeJurisdiction = forceJurisdiction || filterJurisdiction;
     const dealCode = getJurisdictionCode(d.jurisdiction);
-    const filterCode = filterJurisdiction === 'All' ? 'All' : getJurisdictionCode(filterJurisdiction);
+    const filterCode = activeJurisdiction === 'All' ? 'All' : getJurisdictionCode(activeJurisdiction);
     
     const matchesJurisdiction = filterCode === 'All' || dealCode === filterCode;
     
@@ -268,7 +316,7 @@ export const ExecutiveCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: st
       {/* Header */}
       <div className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between shrink-0 shadow-sm z-10">
         <div>
-          <h1 className="text-2xl font-black text-slate-800 tracking-tight">Global Pipeline ({deals.length})</h1>
+          <h1 className="text-2xl font-black text-slate-800 tracking-tight">Global Pipeline ({filteredDeals.length})</h1>
           <p className="text-sm font-bold text-slate-500">Track and manage all platform relationships</p>
         </div>
         <div className="flex items-center gap-4">
@@ -285,14 +333,24 @@ export const ExecutiveCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: st
 
           <div className="relative border border-slate-200 rounded-lg bg-slate-50 overflow-hidden flex items-center">
             <select 
-              value={filterJurisdiction}
+              value={forceJurisdiction || filterJurisdiction}
               onChange={e => setFilterJurisdiction(e.target.value)}
-              className="pl-4 pr-8 py-2 text-sm font-bold text-slate-700 bg-transparent outline-none cursor-pointer appearance-none"
+              disabled={!!forceJurisdiction}
+              className={cn(
+                "pl-4 pr-8 py-2 text-sm font-bold text-slate-700 bg-transparent outline-none appearance-none",
+                forceJurisdiction ? "cursor-not-allowed" : "cursor-pointer"
+              )}
             >
-              <option value="All">All Jurisdictions</option>
-              {uniqueJurisdictions.map(j => (
-                <option key={j} value={j}>{j}</option>
-              ))}
+              {forceJurisdiction ? (
+                <option value={forceJurisdiction}>{getJurisdictionCode(forceJurisdiction)}</option>
+              ) : (
+                <>
+                  <option value="All">All Jurisdictions</option>
+                  {uniqueJurisdictions.map(j => (
+                    <option key={j} value={j}>{j}</option>
+                  ))}
+                </>
+              )}
             </select>
             <div className="absolute right-3 pointer-events-none text-slate-400 font-black text-[10px]">▼</div>
           </div>
