@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft, ArrowRight, Activity, Shield, Building2, ChevronRight, X, FileText, Scale, BookOpen, AlertCircle } from 'lucide-react';
 import MapChart from '../components/MapChart';
-import { FeaturedPoll, RevolvingSurveyBanner } from '../components/CommunityPolls';
+// No polls on state facts page
 
 const US_STATES = [
   "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia",
@@ -129,21 +129,7 @@ export const StateFactsPage = ({ onBack, onNavigate, setJurisdiction }: { onBack
         </div>
       </div>
 
-      {/* Community Polls Section */}
-      <section className="py-16 px-6 bg-slate-100 border-b border-slate-200">
-        <div className="max-w-6xl mx-auto space-y-8">
-          <div className="text-center space-y-4 mb-8">
-             <h2 className="text-3xl font-black text-slate-800 tracking-tight">Community Voice & Action</h2>
-             <p className="text-slate-500 font-medium">Share your opinion, learn new facts, and take action in your jurisdiction.</p>
-          </div>
-          
-          <FeaturedPoll />
-          
-          <div className="mt-8">
-            <RevolvingSurveyBanner />
-          </div>
-        </div>
-      </section>
+
 
       {/* State Facts Grid */}
       <section className="py-24 px-6 bg-white">

@@ -19,7 +19,7 @@ import { DocumentVaultTab } from '../components/patient/DocumentVaultTab';
 import { ComplianceTravelTab } from '../components/patient/ComplianceTravelTab';
 import { UserCalendar } from '../components/UserCalendar';
 import { RegulatoryFeedWidget } from '../components/shared/RegulatoryFeedWidget';
-import { FeaturedPoll, RevolvingSurveyBanner } from '../components/CommunityPolls';
+// PatientDashboard.tsx
 const Button = ({ children, className, disabled, ...props }: any) => (
   <button
     disabled={disabled}
@@ -44,7 +44,6 @@ const DEFAULT_TABS = [
   { id: 'c3score', label: 'C³ Score', icon: Award },
   { id: 'attorneys', label: 'Legal Counsel', icon: Briefcase },
   { id: 'documents', label: 'Vault', icon: FolderOpen },
-  { id: 'community', label: 'Community Voice', icon: Users },
   { id: 'regulatory', label: 'Law Updates', icon: Bell },
   { id: 'subscription', label: 'Membership', icon: Sparkles },
 ];
@@ -633,26 +632,6 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
         {/* ─── DOCUMENTS TAB ─── */}
         {activeTab === 'documents' && isSubscribed && <DocumentVaultTab user={user} />}
 
-        {/* ─── COMMUNITY VOICE TAB ─── */}
-        {activeTab === 'community' && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="relative min-h-[600px] space-y-6">
-            {!isSubscribed && (
-              <ShadowOverlay 
-                title="Community Voice" 
-                description="Unlock access to community polling and policy participation." 
-                moduleName="Community Voice"
-              />
-            )}
-            <div className={cn("space-y-6", !isSubscribed && "blur-md pointer-events-none")}>
-              <div className="bg-gradient-to-r from-purple-600 to-indigo-700 rounded-3xl p-8 text-white">
-                <h2 className="text-3xl font-black tracking-tight mb-2">Community Voice</h2>
-                <p className="text-purple-100/80 font-medium">Your voice shapes the future of cannabis regulation. Vote, share, and participate.</p>
-              </div>
-              <FeaturedPoll />
-              <RevolvingSurveyBanner />
-            </div>
-          </motion.div>
-        )}
 
         {/* ─── REGULATORY INTELLIGENCE TAB ─── */}
         {activeTab === 'regulatory' && (

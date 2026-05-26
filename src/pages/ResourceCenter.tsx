@@ -3,12 +3,7 @@ import { Search, ChevronDown, ChevronUp, BookOpen, Shield, Scale, Wrench, User, 
 import { cn } from '../lib/utils';
 import { generateGeminiResponse } from '../lib/gemini';
 
-// ═══ POLLS ═══
-const COMMUNITY_POLLS = [
-  { id: 'p1', question: 'Should cannabis be fully legalized at the federal level?', options: ['Yes — Full Legalization', 'Medical Only', 'Decriminalized Only', 'No Change'], votes: [1847, 623, 312, 89] },
-  { id: 'p2', question: 'What is your biggest challenge with cannabis compliance?', options: ['Understanding state laws', 'Application paperwork', 'Cost of licensing', 'Finding a physician'], votes: [934, 712, 1203, 445] },
-  { id: 'p3', question: 'How did you hear about GGP-OS?', options: ['Google Search', 'Social Media', 'Word of Mouth', 'Provider Referral', 'Other'], votes: [567, 823, 1102, 389, 201] },
-];
+// Polls removed from resource center
 
 // ═══ Q&A DATA ═══
 const GENERAL_TOPICS = [
@@ -66,7 +61,6 @@ export const ResourceCenter = ({ onNavigate }: { onNavigate: (view: string) => v
   const [searchQuery, setSearchQuery] = useState('');
   const [contactForm, setContactForm] = useState({ name: '', email: '', role: 'Patient', subject: '', message: '' });
   const [formSent, setFormSent] = useState(false);
-  const [pollVotes, setPollVotes] = useState<Record<string, number>>({});
 
   // Chat state
   const [chatOpen, setChatOpen] = useState(false);
@@ -303,51 +297,7 @@ export const ResourceCenter = ({ onNavigate }: { onNavigate: (view: string) => v
         </div>
       </div>
 
-      {/* ═══ COMMUNITY POLLS ═══ */}
-      <div className="max-w-5xl mx-auto px-6 pb-16">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-indigo-500 flex items-center justify-center text-white shadow-sm">
-            <BarChart3 size={18} />
-          </div>
-          <div>
-            <h2 className="text-xl font-black text-slate-800">Community Polls</h2>
-            <p className="text-xs text-slate-400 font-medium">Your voice matters — vote and see what others think</p>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {COMMUNITY_POLLS.map(poll => {
-            const totalVotes = poll.votes.reduce((a, b) => a + b, 0) + (pollVotes[poll.id] !== undefined ? 1 : 0);
-            const hasVoted = pollVotes[poll.id] !== undefined;
-            return (
-              <div key={poll.id} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-                <p className="font-bold text-sm text-slate-800 mb-4">{poll.question}</p>
-                <div className="space-y-2">
-                  {poll.options.map((opt, oi) => {
-                    const voteCount = poll.votes[oi] + (pollVotes[poll.id] === oi ? 1 : 0);
-                    const pct = totalVotes > 0 ? Math.round((voteCount / totalVotes) * 100) : 0;
-                    return (
-                      <button key={oi} disabled={hasVoted}
-                        onClick={() => setPollVotes(p => ({ ...p, [poll.id]: oi }))}
-                        className={cn("w-full text-left rounded-xl border transition-all relative overflow-hidden",
-                          hasVoted ? "cursor-default" : "hover:border-indigo-300 hover:bg-indigo-50/30 cursor-pointer",
-                          pollVotes[poll.id] === oi ? "border-indigo-400 bg-indigo-50" : "border-slate-100")}>
-                        {hasVoted && (
-                          <div className="absolute inset-0 bg-indigo-100/40 rounded-xl" style={{ width: `${pct}%` }} />
-                        )}
-                        <div className="relative flex items-center justify-between px-3 py-2.5">
-                          <span className={cn("text-xs font-bold", pollVotes[poll.id] === oi ? "text-indigo-700" : "text-slate-600")}>{opt}</span>
-                          {hasVoted && <span className="text-xs font-black text-indigo-600">{pct}%</span>}
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-                <p className="text-[10px] text-slate-400 font-bold mt-3 text-right">{totalVotes.toLocaleString()} votes</p>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+
 
       {/* Floating Sylara Chat */}
       <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
