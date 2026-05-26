@@ -147,6 +147,7 @@ async function main() {
   }
 
   console.log('\n✅ Sync complete. Check Operations Calendar now.');
+  process.exit(0);
 }
 
 main().catch(err => {
