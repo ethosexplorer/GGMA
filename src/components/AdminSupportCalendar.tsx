@@ -29,6 +29,13 @@ const monthNames = ['January','February','March','April','May','June','July','Au
 export const AdminSupportCalendar = () => {
   const availableCategories = ADMIN_CATEGORIES;
   
+  const OPS_EMAILS = [
+    'asstsupport@gmail.com',
+    'chroniccardz@gmail.com',
+    'thebackoffice.com@gmail.com'
+  ];
+  const [selectedGCalEmail, setSelectedGCalEmail] = useState('asstsupport@gmail.com');
+  
   const storageKey = `gghp_admin_support_calendar_global_v1`;
   const [events, setEvents] = useState<CalEvent[]>(() => {
     try {
@@ -79,7 +86,7 @@ export const AdminSupportCalendar = () => {
   const [current, setCurrent] = useState(new Date(2026, 3, 28)); // April 28, 2026
   const [selectedDate, setSelectedDate] = useState<string>(fmt(new Date(2026, 3, 28)));
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: 'admin_support', description: '', attendees: 'asstsupport@gmail.com', location: '', meetLink: 'https://calendly.com/' });
+  const [form, setForm] = useState({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: 'admin_support', description: '', attendees: selectedGCalEmail, location: '', meetLink: 'https://calendly.com/' });
   const [filterCat, setFilterCat] = useState<string | null>(null);
 
   const filtered = filterCat ? events.filter(e => e.category === filterCat) : events;
@@ -130,7 +137,7 @@ export const AdminSupportCalendar = () => {
     }
     
     setShowForm(false);
-    setForm({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: 'admin_support', description: '', attendees: 'asstsupport@gmail.com', location: '', meetLink: 'https://calendly.com/' });
+    setForm({ title: '', date: '', startTime: '09:00', endTime: '10:00', category: 'admin_support', description: '', attendees: selectedGCalEmail, location: '', meetLink: 'https://calendly.com/' });
   };
 
   const deleteEvent = async (id: string) => {
@@ -147,7 +154,7 @@ export const AdminSupportCalendar = () => {
     setForm(f => ({ ...f, meetLink: `https://meet.google.com/${code}` }));
   };
 
-  const GOOGLE_EMAIL = 'asstsupport@gmail.com';
+  const GOOGLE_EMAIL = selectedGCalEmail;
 
   const openGoogleCalendar = () => window.open(`https://calendar.google.com/calendar/u/0/r?authuser=${GOOGLE_EMAIL}`, '_blank');
 
@@ -234,7 +241,7 @@ export const AdminSupportCalendar = () => {
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
         <div>
           <h2 className="text-3xl font-black text-slate-900 tracking-tight italic">Admin Support Calendar</h2>
-          <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">asstsupport@gmail.com • Calendly Sync</p>
+          <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px]">{selectedGCalEmail} • Calendly Sync</p>
         </div>
         <div className="flex items-center gap-3 flex-wrap">
           {/* View toggle */}
@@ -244,6 +251,23 @@ export const AdminSupportCalendar = () => {
             ))}
           </div>
           <button onClick={goToday} className="px-4 py-2 border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:bg-slate-50">Today</button>
+          <div className="flex items-center bg-pink-50 border border-pink-200 rounded-xl overflow-hidden shadow-sm">
+            <button onClick={openGoogleCalendar} className="px-4 py-2 text-xs font-black text-pink-700 hover:bg-pink-100 flex items-center gap-1.5 transition-all border-r border-pink-200/50 h-9">
+              <CalIcon size={14} /> Google Calendar
+            </button>
+            <select 
+              className="px-2 py-2 bg-transparent text-xs font-bold text-pink-700 outline-none cursor-pointer hover:bg-pink-100/50 transition-all border-none h-9 pr-6"
+              value={selectedGCalEmail}
+              onChange={(e) => {
+                setSelectedGCalEmail(e.target.value);
+                setForm(f => ({ ...f, attendees: e.target.value }));
+              }}
+            >
+              {OPS_EMAILS.map(email => (
+                <option key={email} value={email}>{email}</option>
+              ))}
+            </select>
+          </div>
           <button onClick={() => window.open('https://calendly.com/asstsupport', '_blank')} className="px-4 py-2 border border-pink-200 bg-pink-50 rounded-xl text-xs font-black text-pink-700 hover:bg-pink-100 flex items-center gap-1.5 transition-colors"><CalIcon size={14} /> Calendly Page</button>
           <button onClick={() => { setForm(f => ({ ...f, date: selectedDate })); setShowForm(true); }} className="px-4 py-2.5 bg-pink-600 text-white rounded-xl text-xs font-black flex items-center gap-2 hover:bg-pink-700 transition-colors shadow-md"><Plus size={14} /> New Event</button>
         </div>

@@ -72,6 +72,14 @@ const monthNames = ['January','February','March','April','May','June','July','Au
 export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?: string, subtitle?: string }) => {
   const availableCategories = ALL_CATEGORIES;
 
+  const PERSONAL_EMAILS = [
+    'globalgreenhp@gmail.com',
+    'globalgreenenterprize@gmail.com',
+    'thebackoffice2021@gmail.com',
+    'diversityhealthandwellness@gmail.com'
+  ];
+  const [selectedGCalEmail, setSelectedGCalEmail] = useState('globalgreenhp@gmail.com');
+
   const initialEvents = SEED_EVENTS;
 
   const defaultPersonalId = user?.uid || user?.role || 'default';
@@ -525,7 +533,7 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
     setForm(f => ({ ...f, meetLink: `https://meet.google.com/${code}` }));
   };
 
-  const GOOGLE_EMAIL = user?.email || 'globalgreenhp@gmail.com';
+  const GOOGLE_EMAIL = selectedGCalEmail;
 
   // Opens Google Calendar in a new tab for the connected account
   const openGoogleCalendar = () => window.open(`https://calendar.google.com/calendar/u/0/r?authuser=${GOOGLE_EMAIL}`, '_blank');
@@ -782,7 +790,20 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
             ))}
           </div>
           <button onClick={goToday} className="px-4 py-2 border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:bg-slate-50">Today</button>
-          <button onClick={openGoogleCalendar} className="px-4 py-2 border border-blue-200 bg-blue-50 rounded-xl text-xs font-black text-blue-700 hover:bg-blue-100 flex items-center gap-1.5 transition-colors"><CalIcon size={14} /> Google Calendar</button>
+          <div className="flex items-center bg-blue-50 border border-blue-200 rounded-xl overflow-hidden shadow-sm">
+            <button onClick={openGoogleCalendar} className="px-4 py-2 text-xs font-black text-blue-700 hover:bg-blue-100 flex items-center gap-1.5 transition-all border-r border-blue-200/50 h-9">
+              <CalIcon size={14} /> Google Calendar
+            </button>
+            <select 
+              className="px-2 py-2 bg-transparent text-xs font-bold text-blue-700 outline-none cursor-pointer hover:bg-blue-100/50 transition-all border-none h-9 pr-6"
+              value={selectedGCalEmail}
+              onChange={(e) => setSelectedGCalEmail(e.target.value)}
+            >
+              {PERSONAL_EMAILS.map(email => (
+                <option key={email} value={email}>{email}</option>
+              ))}
+            </select>
+          </div>
           
           <div className="flex items-center gap-2 border-l border-slate-200 pl-3">
             <button onClick={() => { setAssignForm(f => ({ ...f, date: selectedDate })); setShowAssignForm(true); }} className="px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-black flex items-center gap-2 hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-600/20"><Search size={14} /> Assign Event</button>
