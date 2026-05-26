@@ -70,7 +70,7 @@ function parseAddress(addr) {
 }
 
 function decodePart(body, headers) {
-  const encodingMatch = headers.match(/Content-Transfer-Encoding:\s*([^\r\n]+)/i);
+  const encodingMatch = headers.match(/Content-Transfer-Encoding:\s*([^\n\r]+)/i);
   const encoding = encodingMatch ? encodingMatch[1].trim().toLowerCase() : '';
   
   if (encoding === 'base64') {
@@ -81,30 +81,48 @@ function decodePart(body, headers) {
       return body;
     }
   } else if (encoding === 'quoted-printable') {
-    return body
-      .replace(/=\r?\n/g, '')
-      .replace(/=([0-9A-F]{2})/gi, (match, hex) => String.fromCharCode(parseInt(hex, 16)));
+    const cleanStr = body.replace(/=\n/g, '');
+    const bytes = [];
+    for (let i = 0; i < cleanStr.length; i++) {
+      const char = cleanStr[i];
+      if (char === '=' && i + 2 < cleanStr.length) {
+        const hex = cleanStr.substring(i + 1, i + 3);
+        if (/^[0-9A-F]{2}$/i.test(hex)) {
+          bytes.push(parseInt(hex, 16));
+          i += 2;
+          continue;
+        }
+      }
+      bytes.push(cleanStr.charCodeAt(i));
+    }
+    return Buffer.from(bytes).toString('utf-8');
   }
   return body;
 }
 
 function parseEmailSource(sourceBuffer) {
   const source = sourceBuffer.toString('utf-8');
-  const separator = '\r\n\r\n';
-  const firstSeparatorIdx = source.indexOf(separator);
+  // Handle both CRLF and LF line endings gracefully
+  const cleanSource = source.replace(/\r\n/g, '\n');
+  const separator = '\n\n';
+  const firstSeparatorIdx = cleanSource.indexOf(separator);
   if (firstSeparatorIdx === -1) return source;
   
-  const headersStr = source.substring(0, firstSeparatorIdx);
-  const body = source.substring(firstSeparatorIdx + separator.length);
+  const headersStr = cleanSource.substring(0, firstSeparatorIdx);
+  const body = cleanSource.substring(firstSeparatorIdx + separator.length);
   
-  const contentTypeMatch = headersStr.match(/Content-Type:\s*([^\r\n]+)/i);
+  const contentTypeMatch = headersStr.match(/Content-Type:\s*([^\n\r]+)/i);
   const contentType = contentTypeMatch ? contentTypeMatch[1].trim() : '';
   
   if (contentType.toLowerCase().includes('multipart/')) {
-    const boundaryMatch = contentType.match(/boundary="?([^";\s]+)"?/i);
+    const boundaryMatch = contentType.match(/boundary="?([^";\s\n\r]+)"?/i);
     if (boundaryMatch) {
       const boundary = boundaryMatch[1];
+      // Split by boundary; handle boundary with or without leading hyphens gracefully.
+      // Standard MIME boundaries in the body are preceded by '--'.
       const parts = body.split('--' + boundary);
+      
+      // Look for html first
       for (const part of parts) {
         const partSepIdx = part.indexOf(separator);
         if (partSepIdx === -1) continue;
@@ -115,6 +133,8 @@ function parseEmailSource(sourceBuffer) {
           return decodePart(partBody, partHeaders);
         }
       }
+      
+      // Look for plain text next
       for (const part of parts) {
         const partSepIdx = part.indexOf(separator);
         if (partSepIdx === -1) continue;
