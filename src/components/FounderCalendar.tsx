@@ -80,6 +80,19 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
   ];
   const [selectedGCalEmail, setSelectedGCalEmail] = useState('globalgreenhp@gmail.com');
 
+  const OPS_EMAILS = [
+    'asstsupport@gmail.com',
+    'chroniccardz@gmail.com',
+    'thebackoffice.com@gmail.com'
+  ];
+  const [selectedOpsEmail, setSelectedOpsEmail] = useState('asstsupport@gmail.com');
+
+  const getOpsCalendlyUrl = (email: string) => {
+    if (email === 'chroniccardz@gmail.com') return 'https://calendly.com/chroniccardz';
+    if (email === 'thebackoffice.com@gmail.com') return 'https://calendly.com/thebackoffice';
+    return 'https://calendly.com/asstsupport';
+  };
+
   const initialEvents = SEED_EVENTS;
 
   const defaultPersonalId = user?.uid || user?.role || 'default';
@@ -790,9 +803,10 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
             ))}
           </div>
           <button onClick={goToday} className="px-4 py-2 border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:bg-slate-50">Today</button>
+          {/* PERSONAL CALENDAR SELECTOR */}
           <div className="flex items-center bg-blue-50 border border-blue-200 rounded-xl overflow-hidden shadow-sm">
-            <button onClick={openGoogleCalendar} className="px-4 py-2 text-xs font-black text-blue-700 hover:bg-blue-100 flex items-center gap-1.5 transition-all border-r border-blue-200/50 h-9">
-              <CalIcon size={14} /> Google Calendar
+            <button onClick={() => window.open(`https://calendar.google.com/calendar/u/0/r?authuser=${selectedGCalEmail}`, '_blank')} className="px-4 py-2 text-xs font-black text-blue-700 hover:bg-blue-100 flex items-center gap-1.5 transition-all border-r border-blue-200/50 h-9">
+              <CalIcon size={14} /> Personal GCal
             </button>
             <select 
               className="px-2 py-2 bg-transparent text-xs font-bold text-blue-700 outline-none cursor-pointer hover:bg-blue-100/50 transition-all border-none h-9 pr-6"
@@ -804,6 +818,26 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
               ))}
             </select>
           </div>
+
+          {/* OPERATIONS CALENDAR SELECTOR */}
+          <div className="flex items-center bg-pink-50 border border-pink-200 rounded-xl overflow-hidden shadow-sm">
+            <button onClick={() => window.open(`https://calendar.google.com/calendar/u/0/r?authuser=${selectedOpsEmail}`, '_blank')} className="px-4 py-2 text-xs font-black text-pink-700 hover:bg-pink-100 flex items-center gap-1.5 transition-all border-r border-pink-200/50 h-9">
+              <CalIcon size={14} /> Operations GCal
+            </button>
+            <select 
+              className="px-2 py-2 bg-transparent text-xs font-bold text-pink-700 outline-none cursor-pointer hover:bg-pink-100/50 transition-all border-none h-9 pr-6"
+              value={selectedOpsEmail}
+              onChange={(e) => setSelectedOpsEmail(e.target.value)}
+            >
+              {OPS_EMAILS.map(email => (
+                <option key={email} value={email}>{email}</option>
+              ))}
+            </select>
+          </div>
+          
+          <button onClick={() => window.open(getOpsCalendlyUrl(selectedOpsEmail), '_blank')} className="px-4 py-2 border border-pink-200 bg-pink-50 rounded-xl text-xs font-black text-pink-700 hover:bg-pink-100 flex items-center gap-1.5 transition-colors h-9">
+            <CalIcon size={14} /> Calendly Page
+          </button>
           
           <div className="flex items-center gap-2 border-l border-slate-200 pl-3">
             <button onClick={() => { setAssignForm(f => ({ ...f, date: selectedDate })); setShowAssignForm(true); }} className="px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-black flex items-center gap-2 hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-600/20"><Search size={14} /> Assign Event</button>

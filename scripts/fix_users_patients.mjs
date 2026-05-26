@@ -34,19 +34,23 @@ async function main() {
     console.log('   ⏭️ Already in patients table');
   }
 
-  // 2. Fix asstsupport@gmail.com in Firebase users
-  console.log('2️⃣ Adding asstsupport@gmail.com to Firebase users...');
-  try {
-    await addDoc(collection(db, 'users'), {
-      displayName: 'Admin Support',
-      email: 'asstsupport@gmail.com',
-      role: 'admin_support',
-      status: 'Active',
-      createdAt: new Date().toISOString(),
-    });
-    console.log('   ✅ Admin Support user created');
-  } catch (e) {
-    console.log('   ⚠️', e.message);
+  // 2. Fix operations/admin support accounts in Firebase users
+  const opsEmails = ['asstsupport@gmail.com', 'chroniccardz@gmail.com', 'thebackoffice.com@gmail.com'];
+  for (const email of opsEmails) {
+    console.log(`2️⃣ Adding ${email} to Firebase users...`);
+    try {
+      const displayName = email === 'asstsupport@gmail.com' ? 'Admin Support' : (email === 'chroniccardz@gmail.com' ? 'Chronic Cardz Support' : 'The Back Office Support');
+      await addDoc(collection(db, 'users'), {
+        displayName,
+        email,
+        role: 'admin_support',
+        status: 'Active',
+        createdAt: new Date().toISOString(),
+      });
+      console.log(`   ✅ User created for ${email}`);
+    } catch (e) {
+      console.log('   ⚠️', e.message);
+    }
   }
 
   // 3. Verify patients table
