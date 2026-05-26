@@ -1,6 +1,6 @@
 Dear Nina,
 
-Thank you for reaching out to Global Green Enterprise Inc. Below are the detailed answers to your questions to help you better understand our business integration history, the state-regulated medical cannabis compliance features of the GGHP OS (GGP-OS) platform, and our merchant processing requirements.
+Thank you for reaching out to Global Green Enterprise Inc. Below are the detailed answers to your questions to help you better understand our business integration history, the state-regulated medical cannabis compliance features of the GGHP OS (GGP-OS) platform, our highly automated AI-driven operations (85% AI automation and 15% human oversight), and our merchant processing requirements.
 
 1. Is your business Ecommerce and what are you selling?
 
@@ -12,6 +12,8 @@ We sell:
 - Direct-to-Consumer (B2C) telemedicine services, doctor clinical evaluations, and state-licensed medical cannabis card recommendation services.
 - Business-to-Business (B2B) SaaS subscriptions and compliance software tools tailored for state-regulated medical cannabis dispensaries, cultivation facilities (grows), processors, medical clinics, and legal firms.
 - Government/Agency subscriptions and compliance auditing dashboards for state and federal cannabis regulatory bodies.
+
+Our operations are highly automated and run on a structure of 85% AI automation and 15% human oversight. This allows us to scale compliance verification, database syncing, and patient intake with absolute precision.
 
 
 2. What types of payment solutions are you looking for?
@@ -61,7 +63,7 @@ We are a hybrid B2B and B2C enterprise:
 
 9. How many employees do you have in the US/Canada?
 
-We operate with a core corporate and executive team in the United States, supplemented by a network of contracted medical professionals, IT developers, and support staff.
+Because our platform operations are built to run 85% on AI automation and 15% on human oversight, we operate with an extremely lean core corporate and executive team in the United States. Our proprietary AI agents (Sylara and L.A.R.R.Y.) handle the vast majority of customer intake, compliance tracking, and administrative tasks, while a small network of contracted clinical professionals, developers, and support staff provide the human validation (15%) required for clinical compliance and oversight.
 
 ***
 
