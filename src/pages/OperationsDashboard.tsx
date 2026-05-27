@@ -213,7 +213,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
       setRecentCalls(sortedCalls);
     };
     fetchData();
-    const intervalId = setInterval(fetchData, 5000);
+    const intervalId = setInterval(fetchData, 30000); // Scaled: 5s→30s for 100k+ user support
     return () => clearInterval(intervalId);
   }, []);
 

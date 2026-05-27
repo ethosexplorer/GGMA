@@ -41,7 +41,7 @@ export const RepDashboard = ({ onLogout, user, mode = 'human' }: RepDashboardPro
     turso.execute('SELECT * FROM compliance_alerts WHERE is_resolved = 0 ORDER BY created_at DESC LIMIT 20').then(r => setAlerts(r.rows)).catch(() => {});
     voip800.getQueueCount().then(setLiveQueue);
     voip800.getCallHistory(15).then(setRecentCalls);
-    const iv = setInterval(() => { voip800.getQueueCount().then(setLiveQueue); voip800.getCallHistory(15).then(setRecentCalls); }, 10000);
+    const iv = setInterval(() => { voip800.getQueueCount().then(setLiveQueue); voip800.getCallHistory(15).then(setRecentCalls); }, 30000); // Scaled: 10s→30s for 100k+ user support
     return () => clearInterval(iv);
   }, []);
 

@@ -167,7 +167,7 @@ export const VirtualAttendantTab = () => {
     };
     window.addEventListener('voicemails-updated', handleVoicemailsUpdate);
 
-    const interval = setInterval(fetchStats, 5000); // refresh every 5s for queue accuracy
+    const interval = setInterval(fetchStats, 30000); // Scaled: 5s→30s for 100k+ user support
     return () => {
       clearInterval(interval);
       window.removeEventListener('voicemails-updated', handleVoicemailsUpdate);

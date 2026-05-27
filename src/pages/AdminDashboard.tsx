@@ -114,7 +114,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
       turso.execute('SELECT * FROM compliance_alerts ORDER BY created_at DESC LIMIT 10').then(res => setDbAlerts(res.rows)).catch(console.error);
     };
     fetchData();
-    const pollIv = setInterval(fetchData, 10000); // Realtime polling every 10s
+    const pollIv = setInterval(fetchData, 45000); // Scaled: 10s→45s for 100k+ user support
     
     // Fetch live users from Firebase
     const fetchUsers = async () => {
@@ -127,7 +127,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
       }
     };
     fetchUsers();
-    const fbIv = setInterval(fetchUsers, 15000);
+    const fbIv = setInterval(fetchUsers, 60000); // Scaled: 15s→60s for 100k+ user support
     return () => { clearInterval(pollIv); clearInterval(fbIv); };
   }, []);
   const [regSearch, setRegSearch] = useState('');

@@ -266,7 +266,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     };
 
     fetchMetrics();
-    const interval = setInterval(fetchMetrics, 5000);
+    const interval = setInterval(fetchMetrics, 45000); // Scaled: 5s→45s for 100k+ user support
 
     // Fetch last regulatory sweep date
     getLastSweep().then(s => setLastRegSweepDate(s?.sweep_date || null)).catch(() => { });
@@ -407,7 +407,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     };
 
     fetchAnalytics();
-    const analyticsInterval = setInterval(fetchAnalytics, 15000);
+    const analyticsInterval = setInterval(fetchAnalytics, 60000); // Scaled: 15s→60s for 100k+ user support
 
     // 2. Universal Button Interceptor for "Live" Action Logs
     const handleClick = async (e: MouseEvent) => {
@@ -760,7 +760,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       } catch (e) {}
     };
     fetchVoipQueue();
-    const interval = setInterval(fetchVoipQueue, 15000);
+    const interval = setInterval(fetchVoipQueue, 45000); // Scaled: 15s→45s for 100k+ user support
 
     return () => { unsub1(); unsub2(); unsub3(); unsub4(); clearInterval(interval); };
   }, []);

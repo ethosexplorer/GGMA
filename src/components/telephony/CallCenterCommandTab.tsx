@@ -37,7 +37,7 @@ export const CallCenterCommandTab = () => {
       voip800.getCallHistory(10).then(setRecentCalls);
       voip800.getQueueCount().then(setLiveQueue);
       voip800.getVoicemails().then(setVoicemails);
-    }, 10000);
+    }, 30000); // Scaled: 10s→30s for 100k+ user support
     return () => clearInterval(iv);
   }, []);
 

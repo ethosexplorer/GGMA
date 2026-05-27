@@ -134,7 +134,7 @@ const AdvisorDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => voi
   const [voipQueue, setVoipQueue] = useState(0);
   const [unreadVoicemails, setUnreadVoicemails] = useState(0);
 
-  // Poll Twilio VoIP Queue status every 10 seconds
+  // Poll Twilio VoIP Queue status every 45 seconds (Scaled: 10s→45s for 100k+ user support)
   useEffect(() => {
     const fetchVoipQueue = async () => {
       try {
@@ -178,7 +178,7 @@ const AdvisorDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => voi
     const interval = setInterval(() => {
       fetchVoipQueue();
       fetchVoicemails();
-    }, 10000);
+    }, 45000);
     return () => {
       clearInterval(interval);
       window.removeEventListener('voicemails-updated', handleVoicemailsUpdate);
@@ -224,7 +224,7 @@ const AdvisorDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => voi
     };
     
     fetchOpsChecks();
-    const opsInterval = setInterval(fetchOpsChecks, 15000);
+    const opsInterval = setInterval(fetchOpsChecks, 60000); // Scaled: 15s→60s for 100k+ user support
 
     return () => {
       unsub();

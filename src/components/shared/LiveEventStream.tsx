@@ -19,7 +19,7 @@ export const LiveEventStream: React.FC = () => {
     };
 
     fetchEvents();
-    const interval = setInterval(fetchEvents, 5000); // Poll every 5 seconds
+    const interval = setInterval(fetchEvents, 30000); // Scaled: 5s→30s for 100k+ user support
     return () => clearInterval(interval);
   }, [isLive]);
 

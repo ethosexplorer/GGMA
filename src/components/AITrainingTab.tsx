@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Brain, Trash2, Shield, Plus, Info, RefreshCw } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { LarryMedCardChatbot } from '../App'; // Importing the chatbot directly
+import { LarryMedCardChatbot } from './LarryMedCardChatbot'; // Extracted from App.tsx (Phase 2 code splitting)
 
 interface Memory {
   timestamp: number;
@@ -25,7 +25,7 @@ export const AITrainingTab = ({ userProfile, onNavigate }: { userProfile: any; o
     loadMemories();
     
     // Poll for updates in case the chatbot modifies it
-    const interval = setInterval(loadMemories, 2000);
+    const interval = setInterval(loadMemories, 30000); // Scaled: 2s→30s for 100k+ user support
     return () => clearInterval(interval);
   }, []);
 

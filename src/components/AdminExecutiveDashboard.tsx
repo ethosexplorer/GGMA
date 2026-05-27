@@ -310,10 +310,10 @@ export default function AdminExecutiveDashboard({ onLogout, user }: { onLogout: 
     }
   };
 
-  // Real-time polling — 15s interval
+  // Real-time polling — 60s interval (Scaled: 15s→60s for 100k+ user support)
   useEffect(() => {
     loadData();
-    const interval = setInterval(loadData, 15000);
+    const interval = setInterval(loadData, 60000);
     return () => clearInterval(interval);
   }, [stateFilter, countyFilter]);
 

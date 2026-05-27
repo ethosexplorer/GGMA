@@ -131,7 +131,7 @@ const ChiefComplianceDirectorDashboard = ({ user, onLogout }: { user?: any, onLo
   const [voipQueue, setVoipQueue] = useState(0);
   const [unreadVoicemails, setUnreadVoicemails] = useState(0);
 
-  // Poll Twilio VoIP Queue status every 10 seconds
+  // Poll Twilio VoIP Queue status every 45 seconds (Scaled: 10s→45s for 100k+ user support)
   useEffect(() => {
     const fetchVoipQueue = async () => {
       try {
@@ -175,7 +175,7 @@ const ChiefComplianceDirectorDashboard = ({ user, onLogout }: { user?: any, onLo
     const interval = setInterval(() => {
       fetchVoipQueue();
       fetchVoicemails();
-    }, 10000);
+    }, 45000);
     return () => {
       clearInterval(interval);
       window.removeEventListener('voicemails-updated', handleVoicemailsUpdate);
@@ -221,7 +221,7 @@ const ChiefComplianceDirectorDashboard = ({ user, onLogout }: { user?: any, onLo
     };
     
     fetchOpsChecks();
-    const opsInterval = setInterval(fetchOpsChecks, 15000);
+    const opsInterval = setInterval(fetchOpsChecks, 60000); // Scaled: 15s→60s for 100k+ user support
 
     return () => {
       unsub();
