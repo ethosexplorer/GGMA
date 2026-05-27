@@ -47,6 +47,18 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
   const [selectedPatientCase, setSelectedPatientCase] = useState<any | null>(null);
   const [appsFilter, setAppsFilter] = useState('Pending');
 
+  const isAppr = (s: string) => {
+    const status = (s || '').toLowerCase();
+    return status === 'state approved' || status === 'doctor recommendation approved' || status === 'state mailed';
+  };
+  const isFlag = (s: string) => {
+    const status = (s || '').toLowerCase();
+    return status === 'state rejected' || status === 'doctor recommendation rejected' || status === 'do not call';
+  };
+  const isPend = (s: string) => !isAppr(s) && !isFlag(s);
+
+  const pendingAppsCount = liveApplications.filter(p => isPend(p.applicationStatus)).length;
+
   useEffect(() => {
     let firebaseUsers: any[] = [];
     let tursoUsers: any[] = [];
@@ -268,8 +280,8 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
   const renderApplicationsQueue = () => {
     if (selectedPatientCase) {
       return (
-        <div className="bg-white border-4 border-slate-900 rounded-[2rem] shadow-2xl relative overflow-hidden">
-          <div className="bg-slate-50 border-b border-slate-200 p-4 flex items-center justify-between">
+        <div className="bg-white border-4 border-slate-900 rounded-[2rem] shadow-2xl relative overflow-hidden max-h-full flex flex-col">
+          <div className="bg-slate-50 border-b border-slate-200 p-4 flex items-center justify-between shrink-0">
             <button onClick={() => setSelectedPatientCase(null)} className="px-5 py-2 bg-slate-900 hover:bg-slate-700 text-white font-black text-xs uppercase tracking-wider rounded-lg transition-colors flex items-center gap-2">
               <span className="text-lg leading-none mt-[-2px]">←</span> Back to Queue
             </button>
@@ -277,7 +289,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
               <FileText size={14} className="text-indigo-600" /> Patient Case File
             </h3>
           </div>
-          <div className="p-6">
+          <div className="p-6 overflow-y-auto flex-1">
             <PatientCaseTracker
               patientUid={String(selectedPatientCase.uid || 'unknown-uid')}
               patientName={selectedPatientCase.fullName || selectedPatientCase.name || selectedPatientCase.displayName || 'Unknown'}
@@ -290,10 +302,6 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
         </div>
       );
     }
-
-    const isAppr = (s: string) => s === 'state approved' || s === 'doctor recommendation approved' || s === 'state mailed';
-    const isFlag = (s: string) => s === 'state rejected' || s === 'doctor recommendation rejected' || s === 'Do not call';
-    const isPend = (s: string) => !isAppr(s) && !isFlag(s);
     
     const pendingApps = liveApplications.filter(p => isPend(p.applicationStatus));
     const approvedApps = liveApplications.filter(p => isAppr(p.applicationStatus));
@@ -534,7 +542,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] bg-slate-50 text-slate-800 font-sans">
+    <div className="flex h-full min-h-0 bg-slate-50 text-slate-800 font-sans">
       <div className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col hidden md:flex shrink-0">
         <div className="p-5 pb-2">
           <div className="flex items-center gap-3 mb-4">
@@ -589,9 +597,9 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
                 className={cn("w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all text-left cursor-grab active:cursor-grabbing", activeTab === item.id ? "bg-slate-800 text-white border border-slate-700" : "text-slate-400 hover:bg-slate-800/50", opsDragIdx === i && "opacity-50")}
               >
                 <span className="flex items-center gap-3">{item.icon && <item.icon size={16} />} {item.label}</span>
-                {(item.badge || (item.id === 'applications' && liveApplications.length > 0)) && (
+                {(item.badge || (item.id === 'applications' && pendingAppsCount > 0)) && (
                   <span className="text-[10px] bg-indigo-500/20 text-indigo-400 px-1.5 py-0.5 rounded-full font-bold">
-                    {item.id === 'applications' ? liveApplications.length : item.badge}
+                    {item.id === 'applications' ? pendingAppsCount : item.badge}
                   </span>
                 )}
               </button>
@@ -614,7 +622,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
         </div>
         
       </div>
-      <div className="flex-1 flex flex-col h-[calc(100vh-4rem)] overflow-hidden">
+      <div className="flex-1 flex flex-col h-full min-h-0 overflow-hidden">
         <div className="h-16 border-b border-slate-200 flex items-center justify-between px-8 bg-white shrink-0">
           <h1 className="text-xl font-bold text-slate-800 tracking-tight capitalize">{activeTab.replace(/_/g, ' ')}</h1>
           <div className="flex items-center gap-4">

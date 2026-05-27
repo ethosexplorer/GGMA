@@ -1594,67 +1594,69 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
             </div>
           </div>
         </div>
-        <div className="flex-1 flex flex-col overflow-hidden">
-          {MERGED_SUB_TABS[selectedParent] && (
-            <div data-action-bound="true" className="flex items-center gap-1 px-6 py-3 bg-slate-50 border-b border-slate-200 overflow-x-auto shrink-0">
-              {MERGED_SUB_TABS[selectedParent].map(sub => (
-                <button
-                  key={sub.id}
-                  onClick={() => handleSubTabClick(sub.id)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${activeTab === sub.id
-                      ? 'bg-emerald-600 text-white shadow-sm'
-                      : 'text-slate-500 hover:bg-white hover:text-slate-700 hover:shadow-sm'
-                    }`}
-                >
-                  <sub.icon size={12} />
-                  {sub.label}
-                  {getSubTabAlertCount(sub.id) > 0 && (
-                    <span className="text-[9px] bg-red-500 text-white px-1.5 py-0.5 rounded-full font-black animate-pulse ml-1">
-                      {getSubTabAlertCount(sub.id)}
-                    </span>
-                  )}
-                </button>
-              ))}
+        <div className="flex-1 flex flex-row overflow-hidden min-h-0">
+          <div className="flex-1 flex flex-col overflow-hidden">
+            {MERGED_SUB_TABS[selectedParent] && (
+              <div data-action-bound="true" className="flex items-center gap-1 px-6 py-3 bg-slate-50 border-b border-slate-200 overflow-x-auto shrink-0">
+                {MERGED_SUB_TABS[selectedParent].map(sub => (
+                  <button
+                    key={sub.id}
+                    onClick={() => handleSubTabClick(sub.id)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${activeTab === sub.id
+                        ? 'bg-emerald-600 text-white shadow-sm'
+                        : 'text-slate-500 hover:bg-white hover:text-slate-700 hover:shadow-sm'
+                      }`}
+                  >
+                    <sub.icon size={12} />
+                    {sub.label}
+                    {getSubTabAlertCount(sub.id) > 0 && (
+                      <span className="text-[9px] bg-red-500 text-white px-1.5 py-0.5 rounded-full font-black animate-pulse ml-1">
+                        {getSubTabAlertCount(sub.id)}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+            <div className={cn(
+              "flex-1 p-10 min-h-0",
+              ['ai_training', 'messages', 'b2b_crm', 'marketing_hub', 'operations', 'internal_admin', 'external_admin', 'global_directory'].includes(activeTab)
+                ? "overflow-hidden"
+                : "overflow-y-auto"
+            )}>{getContent()}</div>
+          </div>
+
+          {!hideAlertQueue && (
+            <div data-action-bound="true" className={cn("w-80 bg-white border-l border-slate-200 flex flex-col shrink-0 transition-all duration-500 hidden xl:flex print:hidden", !isUnlocked && "blur-md opacity-50 pointer-events-none")}>
+              <div className="h-20 border-b border-slate-200 flex items-center justify-between px-6 bg-slate-100 shrink-0">
+                <h3 className="font-black text-sm uppercase tracking-widest text-slate-800 flex items-center gap-2"><Bell size={16} className="text-indigo-600" /> Executive Oversight & Alert Queue</h3>
+                <button onClick={() => {
+                  localStorage.setItem('gghp_alert_queue_dismissed', 'true');
+                  setHideAlertQueue(true);
+                }} className="text-slate-400 hover:text-red-500 transition-colors p-1" title="Dismiss Queue"><LogOut size={16} /></button>
+              </div>
+              <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-100/50 custom-scrollbar">
+                {queueAlerts.map(alert => (
+                  <div key={alert.id} className={cn("p-4 bg-white border-l-4 rounded-r-xl shadow-sm hover:shadow-md transition-all cursor-pointer", alert.color === 'red' ? "border-red-500" : "border-indigo-500")}>
+                    <div className="flex justify-between items-start mb-2">
+                      <span className={cn("text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded", alert.color === 'red' ? "text-red-600 bg-red-50" : "text-indigo-600 bg-indigo-50")}>{alert.type}</span>
+                      <span className="text-[9px] text-slate-400 font-bold">{alert.time}</span>
+                    </div>
+                    <p className="text-xs font-bold text-slate-800">{alert.text}</p>
+                    <button onClick={() => handleRouteAlert(alert.id)} className="mt-3 text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest flex items-center gap-1"><ArrowUpRight size={12} /> Route to My Scheduler</button>
+                  </div>
+                ))}
+
+                {queueAlerts.length === 0 && (
+                  <div className="p-4 border-2 border-dashed border-slate-200 rounded-xl text-center text-slate-400 flex flex-col items-center justify-center">
+                    <CircleCheck size={24} className="mb-2 text-emerald-500 opacity-80" />
+                    <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">All Alerts Routed Successfully</p>
+                  </div>
+                )}
+              </div>
             </div>
           )}
-          <div className={cn(
-            "flex-1 p-10 min-h-0",
-            ['ai_training', 'messages', 'b2b_crm', 'marketing_hub', 'operations', 'internal_admin', 'external_admin', 'global_directory'].includes(activeTab)
-              ? "overflow-hidden"
-              : "overflow-y-auto"
-          )}>{getContent()}</div>
         </div>
-
-        {!hideAlertQueue && (
-          <div data-action-bound="true" className={cn("w-80 bg-white border-l border-slate-200 flex flex-col shrink-0 transition-all duration-500 hidden xl:flex print:hidden", !isUnlocked && "blur-md opacity-50 pointer-events-none")}>
-            <div className="h-20 border-b border-slate-200 flex items-center justify-between px-6 bg-slate-100 shrink-0">
-              <h3 className="font-black text-sm uppercase tracking-widest text-slate-800 flex items-center gap-2"><Bell size={16} className="text-indigo-600" /> Executive Oversight & Alert Queue</h3>
-              <button onClick={() => {
-                localStorage.setItem('gghp_alert_queue_dismissed', 'true');
-                setHideAlertQueue(true);
-              }} className="text-slate-400 hover:text-red-500 transition-colors p-1" title="Dismiss Queue"><LogOut size={16} /></button>
-            </div>
-            <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-100/50 custom-scrollbar">
-              {queueAlerts.map(alert => (
-                <div key={alert.id} className={cn("p-4 bg-white border-l-4 rounded-r-xl shadow-sm hover:shadow-md transition-all cursor-pointer", alert.color === 'red' ? "border-red-500" : "border-indigo-500")}>
-                  <div className="flex justify-between items-start mb-2">
-                    <span className={cn("text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded", alert.color === 'red' ? "text-red-600 bg-red-50" : "text-indigo-600 bg-indigo-50")}>{alert.type}</span>
-                    <span className="text-[9px] text-slate-400 font-bold">{alert.time}</span>
-                  </div>
-                  <p className="text-xs font-bold text-slate-800">{alert.text}</p>
-                  <button onClick={() => handleRouteAlert(alert.id)} className="mt-3 text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest flex items-center gap-1"><ArrowUpRight size={12} /> Route to My Scheduler</button>
-                </div>
-              ))}
-
-              {queueAlerts.length === 0 && (
-                <div className="p-4 border-2 border-dashed border-slate-200 rounded-xl text-center text-slate-400 flex flex-col items-center justify-center">
-                  <CircleCheck size={24} className="mb-2 text-emerald-500 opacity-80" />
-                  <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">All Alerts Routed Successfully</p>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
 
         <FounderModals activeModal={activeModal} onClose={() => setActiveModal(null)} />
 

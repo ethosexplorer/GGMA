@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Calendar, Building2, Users, FileText, Settings, Shield, Activity, Bell,
   BarChart3, Folder, TrendingUp, ChevronRight, Bot,
   CreditCard, MessageSquare, AlertTriangle, Upload, Clock, Eye, Lock, CircleCheck } from 'lucide-react';
@@ -163,7 +163,7 @@ export const ExternalAdminDashboard = ({ onLogout, user }: { onLogout?: () => vo
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 text-slate-800 font-sans relative">
+    <div className="flex h-full min-h-0 overflow-hidden bg-slate-50 text-slate-800 font-sans relative">
           
 
       {/* SIDEBAR */}
@@ -202,7 +202,7 @@ export const ExternalAdminDashboard = ({ onLogout, user }: { onLogout?: () => vo
       </div>
 
       {/* MAIN */}
-      <div className="flex-1 flex flex-col h-[calc(100vh)] overflow-hidden bg-slate-50 transition-all duration-500">
+      <div className="flex-1 flex flex-col h-full min-h-0 overflow-hidden bg-slate-50 transition-all duration-500">
         <div className="h-14 border-b border-slate-200 flex items-center justify-between px-6 bg-white shrink-0">
           <div className="flex items-center gap-3">
             <h1 className="text-lg font-bold text-slate-800 tracking-tight">Admin Dashboard – {entityName}</h1>

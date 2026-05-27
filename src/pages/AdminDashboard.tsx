@@ -824,7 +824,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 text-slate-800 font-sans relative">
+    <div className="flex h-full min-h-0 overflow-hidden bg-slate-50 text-slate-800 font-sans relative">
       {!isUnlocked && (
         <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-slate-900/60 backdrop-blur-2xl animate-in fade-in duration-300">
           <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-2xl text-center max-w-sm w-full animate-in zoom-in-95 duration-500">
@@ -927,7 +927,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
         </div>
       </div>
 
-      <div className={cn("flex-1 flex flex-col h-[calc(100vh)] overflow-hidden transition-all duration-500", !isUnlocked && "blur-xl scale-[0.98] opacity-50 pointer-events-none")}>
+      <div className={cn("flex-1 flex flex-col h-full min-h-0 overflow-hidden transition-all duration-500", !isUnlocked && "blur-xl scale-[0.98] opacity-50 pointer-events-none")}>
         <div className="h-20 border-b border-slate-200 flex items-center justify-between px-10 bg-white shrink-0">
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">{activeTab.replace('_', ' ')}</h1>
           <div className="flex items-center gap-6">
