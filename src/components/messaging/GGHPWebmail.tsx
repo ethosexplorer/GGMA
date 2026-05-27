@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import DOMPurify from 'dompurify';
 import { 
   Mail, Send, Inbox, RefreshCw, Folder, Trash2, X, Plus, ChevronDown, 
   AlertCircle, AlertTriangle, Reply, Search, Archive, Star, 
@@ -586,7 +587,7 @@ export const GGHPWebmail = () => {
                 // Render html securely in iframe or direct dangerouslySetInnerHTML (sandbox it ideally)
                 <div 
                   className="bg-slate-900/40 rounded-2xl p-4 border border-white/5 overflow-auto max-w-full"
-                  dangerouslySetInnerHTML={{ __html: emailBody }} 
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(emailBody) }} 
                 />
               ) : (
                 <div className="bg-slate-900/40 rounded-2xl p-6 border border-white/5 whitespace-pre-wrap leading-relaxed max-w-full">

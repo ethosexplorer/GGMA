@@ -29,7 +29,7 @@ function getAdminDb() {
 // ============================================================
 // SMTP
 // ============================================================
-const TEXTBELT_API_KEY = process.env.TEXTBELT_API_KEY || 'db52652f3be5c4f6d222f51f0baec042c9c2de1dj5ZJQqhgFMxflAFaM9KXOLUAK';
+const TEXTBELT_API_KEY = process.env.TEXTBELT_API_KEY || '';
 
 const createTransporter = () => nodemailer.createTransport({
   host: process.env.SMTP_HOST || 'smtp.gmail.com',

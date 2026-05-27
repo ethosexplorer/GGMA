@@ -105,7 +105,8 @@ const PinVerificationScreen = ({ userProfile, onVerify, onBack }: { userProfile:
     setLoading(true);
     setTimeout(() => {
       // Logic: idCode is last 4 of SSN stored in profile
-      if (pin === (userProfile.idCode || '0000') || pin === '0000') {
+      // Founder=0000, Ryan/Monica=1234, Bob=0331, everyone else=last 4 SSN
+      if (pin === (userProfile.idCode || '')) {
         onVerify();
       } else {
         setError('Invalid Security PIN. Access Denied.');
@@ -8923,26 +8924,28 @@ export default function App() {
               await setDoc(docRef, data, { merge: true });
             }
             
-            if (!data.idCode && (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp') || lowerEmail === ADVISOR_EMAIL)) {
-              data.idCode = '1234';
+            if (!data.idCode) {
+              if (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp')) {
+                data.idCode = '1234';
+              } else if (lowerEmail === ADVISOR_EMAIL) {
+                data.idCode = '0331';
+              }
             }
             setUserProfile(data);
             
-            // Founders bypass Preview Mode (Shadow Mode)
-            const isFounder = lowerEmail === FOUNDER_EMAIL || (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica'));
+            // Define executive roles explicitly
+            const isFounder = lowerEmail === FOUNDER_EMAIL;
+            const isComplianceDirector = lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica');
             const isPresident = lowerEmail.includes('ceo.globalgreenhp');
             const isAdvisor = lowerEmail === ADVISOR_EMAIL;
-            if (isFounder || isPresident) {
+            if (isFounder || isComplianceDirector || isPresident) {
               setIsDemoUnlocked(true);
             }
             
-            if (isFounder) {
+            // All executives go through PIN verification:
+            // Founder (Shantell)=0000, Monica=1234, Ryan=1234, Bob=0331
+            if (isFounder || isComplianceDirector || isPresident || isAdvisor) {
                setView('pin-verification');
-            } else if (isPresident) {
-               // Ryan goes straight to dashboard — no PIN gate
-               setView('dashboard');
-            } else if (isAdvisor) {
-               setView('dashboard');
             } else {
                // Don't navigate away if user is in the middle of a signup flow
                setView(prev => (prev === 'larry-chatbot' || prev === 'business-signup' || prev === 'patient-signup') ? prev : 'dashboard');
@@ -8957,12 +8960,12 @@ export default function App() {
                  role: isFounder ? 'executive_founder' : (lowerEmail.includes('ceo.globalgreenhp') ? 'president' : (lowerEmail === ADVISOR_EMAIL ? 'executive_advisor' : 'regulator_state')),
                  displayName: lowerEmail === FOUNDER_EMAIL ? 'Founder/CEO' : ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica')) ? 'Monica Green' : (lowerEmail.includes('ceo.globalgreenhp') ? 'Ryan Ferrari' : (lowerEmail === ADVISOR_EMAIL ? 'Bob Green-Energy-Financing Moore' : 'Staff'))),
                  status: 'Active',
-                 idCode: (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp')) ? '1234' : (lowerEmail === ADVISOR_EMAIL ? '5678' : '0000'),
+                 idCode: (lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp')) ? '1234' : (lowerEmail === ADVISOR_EMAIL ? '0331' : '0000'),
                  createdAt: new Date().toISOString()
                };
                await setDoc(docRef, privilegedProfile);
                setUserProfile(privilegedProfile);
-               if ((lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp'))) {
+               if (lowerEmail === FOUNDER_EMAIL || lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp') || lowerEmail === ADVISOR_EMAIL) {
                  setView('pin-verification');
                } else {
                  setView('dashboard');
@@ -9142,8 +9145,8 @@ export default function App() {
         createdAt: new Date().toISOString(),
       };
       setUserProfile(privilegedProfile);
-      // For privileged local override
-      if (isComplianceDirector || lowerEmail === FOUNDER_EMAIL_2 || isPresident) {
+      // All executives go through PIN verification
+      if (isFounder || isComplianceDirector || lowerEmail === FOUNDER_EMAIL_2 || isPresident || isAdvisor) {
         setView('pin-verification');
       } else {
         setView('dashboard');

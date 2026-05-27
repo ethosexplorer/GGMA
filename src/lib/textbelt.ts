@@ -1,8 +1,6 @@
 // TextBelt SMS Service — https://textbelt.com
-// Sends SMS via TextBelt API (US/Canada)
-
-const TEXTBELT_API_KEY = 'db52652f3be5c4f6d222f51f0baec042c9c2de1dj5ZJQqhgFMxflAFaM9KXOLUAK';
-const TEXTBELT_URL = 'https://textbelt.com/text';
+// Sends SMS via server-side proxy at /api/twilio/send-sms
+// API key is stored server-side only (TEXTBELT_API_KEY env var)
 
 export interface TextBeltResponse {
   success: boolean;
@@ -13,7 +11,7 @@ export interface TextBeltResponse {
 }
 
 /**
- * Send an SMS message via TextBelt
+ * Send an SMS message via TextBelt (routed through server-side proxy)
  * @param phoneNumber - US/Canada phone number (e.g. "4055551234" or "+14055551234")
  * @param message - The SMS message body (max ~160 chars for single SMS)
  * @returns TextBelt API response with success status and remaining quota
@@ -49,17 +47,18 @@ export const sendSMS = async (phoneNumber: string, message: string): Promise<Tex
 };
 
 /**
- * Check remaining SMS quota
+ * Check remaining SMS quota (routed through server-side proxy)
  */
 export const checkQuota = async (): Promise<number> => {
   try {
-    const response = await fetch(`https://textbelt.com/quota/${TEXTBELT_API_KEY}`);
+    const response = await fetch('/api/twilio/send-sms?action=quota');
     const data = await response.json();
     return data.quotaRemaining || 0;
   } catch {
     return -1;
   }
 };
+
 
 /**
  * Pre-built notification templates

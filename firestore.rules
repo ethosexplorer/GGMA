@@ -128,9 +128,10 @@ service cloud.firestore {
       allow read, write: if isAuthenticated();
     }
 
-    // Executive CRM Deals
+    // Executive CRM Deals (admin/server write only)
     match /executive_crm_deals/{dealId} {
-      allow read, write: if isAuthenticated();
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
     }
 
     // Executive CRM Contacts
@@ -138,9 +139,10 @@ service cloud.firestore {
       allow read, write: if isAuthenticated();
     }
 
-    // Accounting Ledger
+    // Accounting Ledger (admin/server write only)
     match /accounting_ledger/{entryId} {
-      allow read, write: if isAuthenticated();
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
     }
 
     // ===============================================================
@@ -172,9 +174,10 @@ service cloud.firestore {
       allow read, write: if isAuthenticated();
     }
 
-    // Audit Logs
+    // Audit Logs (admin/server write only)
     match /audit_logs/{logId} {
-      allow read, write: if isAuthenticated();
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
     }
 
     // ===============================================================

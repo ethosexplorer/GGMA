@@ -6,7 +6,7 @@ const AccessToken = twilio.jwt.AccessToken;
 const VoiceGrant = AccessToken.VoiceGrant;
 const VoiceResponse = twilio.twiml.VoiceResponse;
 
-const TEXTBELT_API_KEY = 'db52652f3be5c4f6d222f51f0baec042c9c2de1dj5ZJQqhgFMxflAFaM9KXOLUAK';
+const TEXTBELT_API_KEY = process.env.TEXTBELT_API_KEY || '';
 const TEXTBELT_URL = 'https://textbelt.com/text';
 
 export default async function handler(req, res) {
@@ -430,6 +430,18 @@ async function handleVoice(req, res) {
 // 5. SEND SMS HANDLER — Proxies to TextBelt SMS service
 // ─────────────────────────────────────────────────────────────────────────────
 async function handleSendSMS(req, res) {
+  // GET request for quota check
+  if (req.method === 'GET' && req.query.action === 'quota') {
+    if (!TEXTBELT_API_KEY) return res.status(200).json({ quotaRemaining: -1, error: 'TEXTBELT_API_KEY not configured' });
+    try {
+      const qRes = await fetch(`https://textbelt.com/quota/${TEXTBELT_API_KEY}`);
+      const qData = await qRes.json();
+      return res.status(200).json(qData);
+    } catch (e) {
+      return res.status(500).json({ quotaRemaining: -1, error: e.message });
+    }
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ success: false, error: 'Method not allowed' });
   }
