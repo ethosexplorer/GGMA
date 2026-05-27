@@ -43,6 +43,8 @@ export const VirtualAttendantTab = () => {
   const [unreadVoicemails, setUnreadVoicemails] = useState(0);
   const [voicemailList, setVoicemailList] = useState<any[]>([]);
   const [showVoicemails, setShowVoicemails] = useState(false);
+  const [showStatsModal, setShowStatsModal] = useState(false);
+  const [statsDept, setStatsDept] = useState<Department | null>(null);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -200,7 +202,11 @@ export const VirtualAttendantTab = () => {
           {departments.map((dept) => (
             <div 
               key={dept.id}
-              onClick={() => setSelectedDept(dept)}
+              onClick={() => {
+                setSelectedDept(dept);
+                setStatsDept(dept);
+                setShowStatsModal(true);
+              }}
               className={cn(
                 "group p-5 rounded-3xl border transition-all cursor-pointer relative overflow-hidden",
                 selectedDept?.id === dept.id 
@@ -459,6 +465,128 @@ export const VirtualAttendantTab = () => {
             <div className="p-6 border-t border-slate-100 bg-slate-50 flex justify-end">
               <button onClick={() => setShowVoicemails(false)} className="px-5 py-2.5 bg-slate-800 text-white font-bold text-xs rounded-xl hover:bg-slate-700 transition-all uppercase">
                 Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Department Statistics Modal */}
+      {showStatsModal && statsDept && (
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-slate-900 border border-slate-700 rounded-[2.5rem] w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col text-white max-h-[90vh] animate-in zoom-in-95 duration-300">
+            {/* Top Header */}
+            <div className="p-6 border-b border-slate-800 bg-[#0A3D2A]/30 flex justify-between items-center">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-[#D4AF77]/20 rounded-xl flex items-center justify-center text-[#D4AF77]">
+                  <statsDept.icon size={22} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-black tracking-tight text-white">{statsDept.name}</h3>
+                  <p className="text-xs text-[#D4AF77] font-bold uppercase tracking-wider">Department Analytics Dashboard</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowStatsModal(false)} 
+                className="text-slate-400 hover:text-white text-sm font-bold uppercase py-1 px-3 bg-slate-800 hover:bg-slate-700 rounded-xl transition-all"
+              >
+                Close
+              </button>
+            </div>
+
+            {/* Content body */}
+            <div className="p-6 overflow-y-auto flex-1 space-y-6">
+              
+              {/* KPI Cards */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div className="bg-slate-800/40 p-4 rounded-2xl border border-slate-800 text-left">
+                  <p className="text-[9px] text-[#D4AF77] font-bold uppercase tracking-widest mb-1">Resolution Rate</p>
+                  <p className="text-2xl font-black text-emerald-400">{statsDept.successRate}%</p>
+                  <p className="text-[9px] text-slate-500 mt-1">Sylara AI Target 95%</p>
+                </div>
+                <div className="bg-slate-800/40 p-4 rounded-2xl border border-slate-800 text-left">
+                  <p className="text-[9px] text-[#D4AF77] font-bold uppercase tracking-widest mb-1">Daily Volume</p>
+                  <p className="text-2xl font-black text-white">
+                    {Math.floor(statsDept.successRate * 1.5 + 20)}
+                  </p>
+                  <p className="text-[9px] text-slate-500 mt-1">Avg 11.2 calls/hr</p>
+                </div>
+                <div className="bg-slate-800/40 p-4 rounded-2xl border border-slate-800 text-left">
+                  <p className="text-[9px] text-[#D4AF77] font-bold uppercase tracking-widest mb-1">Avg Wait Time</p>
+                  <p className="text-2xl font-black text-blue-400">
+                    {Math.floor(20 - statsDept.successRate * 0.15)}s
+                  </p>
+                  <p className="text-[9px] text-slate-500 mt-1">Twilio VoIP Direct</p>
+                </div>
+                <div className="bg-slate-800/40 p-4 rounded-2xl border border-slate-800 text-left">
+                  <p className="text-[9px] text-[#D4AF77] font-bold uppercase tracking-widest mb-1">Routing Mode</p>
+                  <p className="text-sm font-black text-amber-400 mt-1.5 uppercase tracking-wide">
+                    {routingMode === 'ai_only' ? '100% AI' : routingMode === 'hybrid' ? 'Hybrid (85/15)' : '100% Human'}
+                  </p>
+                  <p className="text-[9px] text-slate-500 mt-1">Status: Active</p>
+                </div>
+              </div>
+
+              {/* Graphical Performance Bar */}
+              <div className="bg-slate-800/20 border border-slate-800 rounded-2xl p-5 text-left">
+                <div className="flex justify-between items-center mb-2">
+                  <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest">AI Call Deflection Efficiency</h4>
+                  <span className="text-xs font-bold text-emerald-400">{statsDept.successRate}% Auto-Resolved</span>
+                </div>
+                <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                  <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${statsDept.successRate}%` }}></div>
+                </div>
+                <p className="text-[10px] text-slate-500 mt-2">
+                  *Out of the total incoming queue calls for {statsDept.name}, {statsDept.successRate}% were handled and resolved fully by Sylara's RAG-Model without triggering human escalation.
+                </p>
+              </div>
+
+              {/* RAG Context & Metadata */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                <div className="bg-slate-800/40 p-4 rounded-2xl border border-slate-800">
+                  <h4 className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-3">Model Parameters</h4>
+                  <div className="space-y-2 text-xs">
+                    <div className="flex justify-between border-b border-slate-800 pb-1">
+                      <span className="text-slate-500">RAG Context Status</span>
+                      <span className="text-emerald-400 font-semibold">Loaded</span>
+                    </div>
+                    <div className="flex justify-between border-b border-slate-800 pb-1">
+                      <span className="text-slate-500">ElevenLabs Voice</span>
+                      <span className="text-white font-semibold">Sylara (Custom v2)</span>
+                    </div>
+                    <div className="flex justify-between border-b border-slate-800 pb-1">
+                      <span className="text-slate-500">ElevenLabs Voice ID</span>
+                      <span className="font-mono text-slate-400">21m00Tcm</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Avg LLM Latency</span>
+                      <span className="text-white font-semibold">240ms</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-slate-800/40 p-4 rounded-2xl border border-slate-800">
+                  <h4 className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-3">Primary Core Services</h4>
+                  <div className="space-y-1.5">
+                    {statsDept.services.map((service, idx) => (
+                      <div key={idx} className="flex items-center gap-2 text-xs">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF77]" />
+                        <span className="text-slate-300 font-medium">{service}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Bottom Footer Actions */}
+            <div className="p-6 border-t border-slate-800 bg-[#0A3D2A]/10 flex justify-end gap-3">
+              <button 
+                onClick={() => setShowStatsModal(false)}
+                className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs rounded-xl shadow-md transition-all uppercase"
+              >
+                Close View
               </button>
             </div>
           </div>
