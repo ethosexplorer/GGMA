@@ -683,8 +683,8 @@ export const VirtualAttendantTab = () => {
                           <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF77]" />
                           <span className="text-slate-300 font-medium">{service}</span>
                         </div>
-                        <span className="text-[10px] font-extrabold text-[#D4AF77] bg-[#D4AF77]/10 px-2 py-0.5 rounded-md">
-                          {getServiceCount(service).toLocaleString()} Taken Care Of Nationwide
+                        <span className="text-[10px] font-extrabold text-[#D4AF77] bg-[#D4AF77]/10 px-2.5 py-0.5 rounded-md">
+                          {getServiceCount(service).toLocaleString()}
                         </span>
                       </div>
                     ))}
