@@ -54,11 +54,11 @@ export const VirtualAttendantTab = () => {
   });
 
   const getServiceCount = (service: string): number => {
-    const patientsVal = dbCounts.patients || 1240;
-    const businessesVal = dbCounts.businesses || 482;
-    const providersVal = dbCounts.providers || 185;
-    const recordsVal = dbCounts.records || 340;
-    const auditsVal = dbCounts.audits || 2850;
+    const patientsVal = dbCounts.patients;
+    const businessesVal = dbCounts.businesses;
+    const providersVal = dbCounts.providers;
+    const recordsVal = dbCounts.records;
+    const auditsVal = dbCounts.audits;
 
     switch (service) {
       // Appointments / Scheduling
