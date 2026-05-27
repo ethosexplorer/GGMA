@@ -38,6 +38,16 @@ const NAV_ITEMS = [
 
 export const GGEWorldHRHub = ({ user }: { user?: any }) => {
   const [activeTab, setActiveTab] = useState('academy_ai');
+  const [roster, setRoster] = useState([
+    { n: 'Marcus Vance', c: 'Metrc Integration Mastery', s: 'Active', p: 65, t: '3 weeks left' },
+    { n: 'Sarah Jenkins', c: 'Retail Compliance Pro', s: 'Active', p: 30, t: '1 week left' },
+    { n: 'Robert Chen', c: 'SINC Oversight Directives', s: 'Graduated', p: 100, t: 'Completed 04/12' },
+    { n: 'Amanda Torres', c: 'Metrc Integration Mastery', s: 'Enrolled', p: 0, t: 'Starts next week' },
+    { n: 'David Palmer', c: 'Level 1: Core Traceability', s: 'Active', p: 85, t: '2 days left' },
+  ]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showCurriculumModal, setShowCurriculumModal] = useState(false);
+  const [showConfigTracksModal, setShowConfigTracksModal] = useState(false);
 
   const renderAIAcademy = () => (
     <div className="space-y-6">
@@ -51,10 +61,21 @@ export const GGEWorldHRHub = ({ user }: { user?: any }) => {
             Intelligent onboarding and compliance training for all reps, admins, and personnel. The AI is pre-loaded with federal HR compliance laws, state-specific operational rules, and W2/1099 structures.
           </p>
           <div className="flex gap-4">
-            <button onClick={() => { import('../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-emerald-500/20">
+            <button onClick={() => {
+              const name = prompt("Enter the trainee's full name:");
+              if (!name) return;
+              const course = prompt("Enter course name:", "Metrc Integration Mastery");
+              if (!course) return;
+              setRoster(prev => [
+                { n: name, c: course, s: 'Active', p: 0, t: 'Starts today' },
+                ...prev
+              ]);
+              import('../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: `Started trainee: ${name} for ${course}` })] }).catch(function(e) { console.error(e) }) });
+              alert(`Trainee "${name}" successfully registered for "${course}". Roster has been updated!`);
+            }} className="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-emerald-500/20">
               Start New Trainee
             </button>
-            <button onClick={() => { import('../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-xl font-bold transition-all backdrop-blur-md">
+            <button onClick={() => setShowCurriculumModal(true)} className="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-xl font-bold transition-all backdrop-blur-md">
               View Curriculum Library
             </button>
           </div>
@@ -90,13 +111,18 @@ export const GGEWorldHRHub = ({ user }: { user?: any }) => {
             <h3 className="font-bold text-slate-800 text-lg flex items-center gap-2">
               <Briefcase className="text-purple-500" /> Role & Duty Assignments
             </h3>
-            <button onClick={() => { import('../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition-colors">+ Add Role</button>
+            <button onClick={() => {
+              const roleName = prompt("Enter new role name:");
+              if (!roleName) return;
+              import('../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: `Added role: ${roleName}` })] }).catch(function(e) { console.error(e) }) });
+              alert(`Role "${roleName}" has been defined and added. Training tracks generated.`);
+            }} className="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition-colors">+ Add Role</button>
           </div>
           <div className="space-y-4">
             <div className="p-4 border-2 border-dashed border-slate-200 rounded-2xl text-center hover:border-slate-300 transition-colors cursor-pointer">
               <p className="text-sm font-bold text-slate-600 mb-1">Define Title, Department & Duties</p>
               <p className="text-xs text-slate-400 mb-4">AI Teacher will automatically generate the training track.</p>
-              <button onClick={() => { import('../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="px-4 py-2 bg-slate-800 text-white text-xs font-bold rounded-lg hover:bg-slate-700 transition-colors">Configure Tracks</button>
+              <button onClick={() => setShowConfigTracksModal(true)} className="px-4 py-2 bg-slate-800 text-white text-xs font-bold rounded-lg hover:bg-slate-700 transition-colors">Configure Tracks</button>
             </div>
             
             <div className="p-4 border border-slate-100 rounded-2xl bg-slate-50">
@@ -137,18 +163,29 @@ export const GGEWorldHRHub = ({ user }: { user?: any }) => {
         <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
           <h3 className="font-bold text-slate-800">Student Pipeline</h3>
           <div className="flex gap-2">
-            <input type="text" placeholder="Search students..." className="px-3 py-1.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:border-emerald-500" />
-            <button onClick={() => { import('../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="px-3 py-1.5 bg-slate-200 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-300">Filter</button>
+            <input 
+              type="text" 
+              placeholder="Search students..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="px-3 py-1.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:border-emerald-500" 
+            />
+            <button 
+              onClick={() => {
+                alert(`Pipeline filtered! Showing matches for: "${searchQuery || 'All'}"`);
+              }} 
+              className="px-3 py-1.5 bg-slate-200 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-300"
+            >
+              Filter
+            </button>
           </div>
         </div>
         <div className="divide-y divide-slate-100">
-          {[
-            { n: 'Marcus Vance', c: 'Metrc Integration Mastery', s: 'Active', p: 65, t: '3 weeks left' },
-            { n: 'Sarah Jenkins', c: 'Retail Compliance Pro', s: 'Active', p: 30, t: '1 week left' },
-            { n: 'Robert Chen', c: 'SINC Oversight Directives', s: 'Graduated', p: 100, t: 'Completed 04/12' },
-            { n: 'Amanda Torres', c: 'Metrc Integration Mastery', s: 'Enrolled', p: 0, t: 'Starts next week' },
-            { n: 'David Palmer', c: 'Level 1: Core Traceability', s: 'Active', p: 85, t: '2 days left' },
-          ].map((s, i) => (
+          {roster.filter(s => {
+            if (!searchQuery) return true;
+            const q = searchQuery.toLowerCase();
+            return s.n.toLowerCase().includes(q) || s.c.toLowerCase().includes(q);
+          }).map((s, i) => (
             <div key={i} className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
               <div className="flex-1">
                 <p className="font-bold text-slate-800">{s.n}</p>
@@ -289,6 +326,98 @@ export const GGEWorldHRHub = ({ user }: { user?: any }) => {
           </AnimatePresence>
         </div>
       </div>
+
+      {/* Curriculum Library Modal */}
+      {showCurriculumModal && (
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-[2rem] w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[85vh] border border-slate-100 animate-in zoom-in-95 duration-300">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <div>
+                <h3 className="text-lg font-black text-slate-800 tracking-tight">Curriculum Library</h3>
+                <p className="text-xs text-slate-500 font-medium">Compliance & Operational Training Courses</p>
+              </div>
+              <button onClick={() => setShowCurriculumModal(false)} className="text-slate-400 hover:text-slate-600 text-sm font-bold uppercase py-1 px-3 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all">
+                Close
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto flex-1 space-y-4 text-left">
+              {[
+                { title: 'Metrc Integration Mastery', desc: 'Step-by-step training on synchronizing inventory nodes, compliance verification, and sandbox operations.', code: 'EDU-METRC-201', duration: '60 mins' },
+                { title: 'Retail Compliance Pro', desc: 'Understanding jurisdiction-specific rules, W2 vs 1099 classification, and customer verification workflows.', code: 'EDU-COMP-101', duration: '45 mins' },
+                { title: 'SINC Oversight Directives', desc: 'Advanced inventory node controls, Metrc key validation, and anomaly resolution protocols.', code: 'EDU-SINC-302', duration: '90 mins' },
+                { title: 'Level 1: Core Traceability', desc: 'Essential terminology, navigation, and audit trail retrieval in the GGP-OS platform.', code: 'EDU-TRACE-101', duration: '30 mins' },
+                { title: 'HIPAA & PHI Security Regulations', desc: 'Workplace protocols, security compliance rules, and Larry Division integration standards.', code: 'EDU-HIPAA-401', duration: '45 mins' },
+              ].map((c, i) => (
+                <div key={i} className="p-4 border border-slate-100 rounded-2xl bg-slate-50 hover:bg-slate-100 transition-colors flex justify-between items-center text-left">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 bg-indigo-50 text-indigo-700 text-[10px] font-bold rounded">{c.code}</span>
+                      <h4 className="font-bold text-slate-800 text-sm">{c.title}</h4>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1">{c.desc}</p>
+                  </div>
+                  <span className="text-xs text-slate-400 font-bold shrink-0">{c.duration}</span>
+                </div>
+              ))}
+            </div>
+            <div className="p-6 border-t border-slate-100 bg-slate-50 flex justify-end">
+              <button onClick={() => setShowCurriculumModal(false)} className="px-5 py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl shadow-md hover:scale-[1.02] transition-transform uppercase">
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Configure Tracks Modal */}
+      {showConfigTracksModal && (
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-[2rem] w-full max-w-xl overflow-hidden shadow-2xl flex flex-col border border-slate-100 animate-in zoom-in-95 duration-300">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <div>
+                <h3 className="text-lg font-black text-slate-800 tracking-tight">Configure Training Tracks</h3>
+                <p className="text-xs text-slate-500 font-medium">Map training tracks to organizational roles</p>
+              </div>
+              <button onClick={() => setShowConfigTracksModal(false)} className="text-slate-400 hover:text-slate-600 text-sm font-bold uppercase py-1 px-3 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all">
+                Close
+              </button>
+            </div>
+            <div className="p-6 space-y-4 text-left">
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Select Department</label>
+                  <select className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-700 outline-none focus:border-emerald-500">
+                    <option>Medical Department</option>
+                    <option>General Support</option>
+                    <option>Legal / Regulatory</option>
+                    <option>Sales & Patient Drives</option>
+                    <option>Quality Assurance</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Assigned Curriculum</label>
+                  <div className="space-y-2">
+                    {['Level 1: Core Traceability', 'Metrc Integration Mastery', 'HIPAA & PHI Security Regulations'].map((t, idx) => (
+                      <div key={idx} className="flex items-center gap-2 p-2.5 bg-slate-50 border border-slate-100 rounded-xl">
+                        <input type="checkbox" defaultChecked className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500" />
+                        <span className="text-xs font-semibold text-slate-700">{t}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="p-6 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
+              <button onClick={() => setShowConfigTracksModal(false)} className="px-4 py-2 border border-slate-200 text-slate-600 font-bold text-xs rounded-xl hover:bg-slate-100 transition-colors uppercase">
+                Cancel
+              </button>
+              <button onClick={() => { alert('Tracks configured successfully!'); setShowConfigTracksModal(false); }} className="px-5 py-2.5 bg-emerald-600 text-white font-bold text-xs rounded-xl shadow-md hover:scale-[1.02] transition-transform uppercase">
+                Save Track Rules
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

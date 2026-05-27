@@ -309,7 +309,7 @@ export function WebDialer() {
 
       {/* Outbound Dial Pad Overlay */}
       {showDialer && !activeCall && !incomingCall && (
-        <div className="fixed bottom-24 left-6 z-[150] bg-slate-900 border border-slate-700 p-5 rounded-3xl shadow-2xl w-72">
+        <div className="fixed bottom-24 right-6 z-[150] bg-slate-900 border border-slate-700 p-5 rounded-3xl shadow-2xl w-72">
           <div className="flex justify-between items-center mb-4">
             <span className="text-sm font-bold text-white">Make a Call</span>
             <button onClick={() => setShowDialer(false)} className="text-slate-500 hover:text-white bg-slate-800 p-1 rounded-lg">✕</button>
@@ -407,7 +407,7 @@ export function WebDialer() {
 
       {/* Active Call Overlay */}
       {activeCall && (
-        <div className="fixed bottom-24 left-6 z-[100] bg-slate-900 border border-slate-700 p-4 rounded-2xl shadow-2xl w-64">
+        <div className="fixed bottom-24 right-6 z-[100] bg-slate-900 border border-slate-700 p-4 rounded-2xl shadow-2xl w-64">
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
