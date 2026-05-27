@@ -23,7 +23,7 @@ export function WebDialer() {
         setStatus('connecting');
         setError(null);
 
-        const response = await fetch('/api/twilio/token');
+        const response = await fetch('/api/twilio/token?_t=' + Date.now());
         if (!response.ok) {
           throw new Error(`Token fetch failed: ${response.status}`);
         }
@@ -40,6 +40,28 @@ export function WebDialer() {
           logLevel: 1,
           codecPreferences: [Call.Codec.Opus, Call.Codec.PCMU],
         });
+
+        const refreshTwilioToken = async () => {
+          try {
+            console.log('[WebDialer] Twilio token expiring or errored. Fetching a fresh one...');
+            const refreshRes = await fetch('/api/twilio/token?_t=' + Date.now());
+            if (refreshRes.ok) {
+              const refreshData = await refreshRes.json();
+              if (refreshData.token) {
+                newDevice.updateToken(refreshData.token);
+                console.log('[WebDialer] Twilio token updated successfully.');
+                setError(null);
+                return true;
+              }
+            }
+          } catch (refreshErr) {
+            console.error('[WebDialer] Failed to refresh Twilio token:', refreshErr);
+          }
+          return false;
+        };
+
+        // Handle token expiration events
+        newDevice.on('tokenWillExpire', refreshTwilioToken);
 
         // v2 SDK events
         newDevice.on('registered', () => {
@@ -58,8 +80,14 @@ export function WebDialer() {
 
         newDevice.on('error', (twilioError: any) => {
           console.error('[WebDialer] Twilio Device Error:', twilioError);
-          setError(twilioError.message || 'Unknown error');
-          // Don't set offline on transient errors
+          const isTokenError = twilioError.code === 20104 || twilioError.code === 31205 || 
+                               (twilioError.message && twilioError.message.toLowerCase().includes('token'));
+          if (isTokenError) {
+            console.warn('[WebDialer] Token error detected. Initiating immediate refresh...');
+            refreshTwilioToken();
+          } else {
+            setError(twilioError.message || 'Unknown error');
+          }
         });
         
         newDevice.on('incoming', (call: Call) => {

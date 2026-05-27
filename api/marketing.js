@@ -287,7 +287,7 @@ export default async function handler(req, res) {
 
   // ---- ROUTE: GMAIL INBOX ----
   if (route === 'gmail') {
-    if (!process.env.GMAIL_MARKETING_APP_PASSWORD) {
+    if (!process.env.GMAIL_MARKETING_APP_PASSWORD && !process.env.SMTP_PASS) {
       return res.status(503).json({ error: 'Gmail not configured', setup: 'Add GMAIL_MARKETING_APP_PASSWORD env var' });
     }
     const { action, maxResults = '20', q } = req.query;
@@ -460,7 +460,16 @@ export default async function handler(req, res) {
     } catch (err) {
       console.error('[Gmail IMAP]', err);
       if (client) await client.logout().catch(() => {});
-      return res.status(500).json({ error: err.message || 'Gmail connection failed' });
+      
+      let errMsg = err.message || 'Gmail connection failed';
+      const responseText = err.responseText || err.response || '';
+      if (String(responseText).includes('Application-specific password required')) {
+        errMsg = 'Gmail authentication failed: An Application-specific password is required for this Gmail account. Please generate one in your Google Account security settings and set it as GMAIL_MARKETING_APP_PASSWORD in your .env file.';
+      } else if (err.authenticationFailed) {
+        errMsg = 'Gmail authentication failed. Please verify that your email and App Password (GMAIL_MARKETING_APP_PASSWORD) are set correctly.';
+      }
+      
+      return res.status(500).json({ error: errMsg });
     }
   }
 

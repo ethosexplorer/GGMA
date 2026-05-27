@@ -25,6 +25,7 @@ export default async function handler(req, res) {
 
   try {
     if (endpoint === 'token') {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
       return handleToken(req, res);
     } else if (endpoint === 'history') {
       return await handleHistory(req, res);
@@ -68,7 +69,7 @@ function handleToken(req, res) {
     twilioAccountSid,
     twilioApiKey,
     twilioApiSecret,
-    { identity: identity }
+    { identity: identity, ttl: 14400 }
   );
   token.addGrant(voiceGrant);
 
