@@ -35,7 +35,7 @@ const TIME_SLOTS = [
 ];
 
 // ── Chat step flow ──
-type Step = 'greeting' | 'ask_name' | 'ask_phone' | 'ask_email' | 'ask_state' | 'schedule_date' | 'schedule_time' | 'confirm' | 'done';
+type Step = 'greeting' | 'ask_name' | 'ask_phone' | 'ask_email' | 'ask_state' | 'ask_reason' | 'schedule_date' | 'schedule_time' | 'confirm' | 'done';
 
 interface ChatMsg { role: 'bot' | 'user'; text: string }
 
@@ -78,7 +78,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [contactData, setContactData] = useState({ name: '', phone: '', email: '', state: jurisdiction, date: '', time: '' });
+  const [contactData, setContactData] = useState({ name: '', phone: '', email: '', state: jurisdiction, reason: '', date: '', time: '' });
   const [submitting, setSubmitting] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
@@ -142,10 +142,15 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       case 'ask_state': {
         const matched = US_STATES.find(s => s.toLowerCase() === text.toLowerCase()) || text;
         setContactData(prev => ({ ...prev, state: matched }));
-        setStep('schedule_date');
-        addBotMsg(`Great — **${matched}**! 📅 Now let's schedule your callback. Please select a **date** below:`);
+        setStep('ask_reason');
+        addBotMsg(`Great — **${matched}**! 📝 In a few words, **what do you need help with?**\n\n(e.g. "New patient card application", "Business license renewal", "Questions about compliance", etc.)`);
         break;
       }
+      case 'ask_reason':
+        setContactData(prev => ({ ...prev, reason: text }));
+        setStep('schedule_date');
+        addBotMsg(`Got it — **"${text}"**. Our specialist will be prepared for this when they call you.\n\n📅 Now let's schedule your callback. Please select a **date** below:`);
+        break;
       default:
         break;
     }
@@ -171,6 +176,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       `• **Phone:** ${finalData.phone}\n` +
       `• **Email:** ${finalData.email}\n` +
       `• **State:** ${finalData.state}\n` +
+      `• **Reason:** ${finalData.reason}\n` +
       `• **Sector:** ${sector.label}\n` +
       `• **Date:** ${formatDate(finalData.date)}\n` +
       `• **Time:** ${time}\n\n` +
@@ -194,6 +200,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
           `📱 Phone: ${finalData.phone}`,
           `📧 Email: ${finalData.email}`,
           `🗺️ State: ${finalData.state}`,
+          `📝 Reason: ${finalData.reason}`,
           `🏷️ Sector: ${variant}`,
           `Source: Sylara Intake Bot`,
         ].join('\n'),
@@ -371,6 +378,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
                 step === 'ask_phone' ? 'Enter phone number...' :
                 step === 'ask_email' ? 'Enter email address...' :
                 step === 'ask_state' ? 'Enter your state...' :
+                step === 'ask_reason' ? 'Describe what you need help with...' :
                 'Type a message...'
               }
               className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400"
