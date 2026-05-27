@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Building2, Users, FileText, Settings, Shield, Activity, Bell,
+  Building2, Mail, Users, FileText, Settings, Shield, Activity, Bell,
   Briefcase, HeartPulse, Scale, Gavel, FileCheck, Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
   Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Globe, Zap, Database,
@@ -52,6 +52,7 @@ import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 import { GlobalDirectoryTab } from '../components/founder/GlobalDirectoryTab';
 import { GlobalSweepTab } from '../components/ops/GlobalSweepTab';
 import { MarketingHub } from '../components/crm/MarketingHub';
+import { GGHPWebmail } from '../components/messaging/GGHPWebmail';
 import { DepartmentManager } from '../components/DepartmentManager';
 import {
   LiveComplianceMonitor,
@@ -121,6 +122,7 @@ const MERGED_SUB_TABS: Record<string, { id: string, label: string, icon: any }[]
     { id: 'critical_alerts', label: 'Critical Alerts', icon: AlertTriangle },
   ],
   command_hub: [
+    { id: 'gge_webmail', label: 'GGHP OS Webmail', icon: Mail },
     { id: 'internal_scheduler', label: 'Calendar / Scheduler', icon: Clock },
     { id: 'realtime_tasks', label: 'Realtime Daily Tasks', icon: Target },
     { id: 'messages', label: 'Messages', icon: MessageSquare },
@@ -1026,6 +1028,8 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         return <div className="h-full w-full -m-10" data-action-bound="true"><GlobalSweepTab isAdvisor={isBobAdvisor} isRyan={isRyan} userEmail={user?.email} /></div>;
       case 'global_directory':
         return <div className="h-full w-full -m-10" data-action-bound="true"><GlobalDirectoryTab onOpenMessage={(uid) => { setActiveTab('messages'); }} /></div>;
+      case 'gge_webmail':
+        return <div className="h-full w-full -m-10 bg-[#080e1a] min-h-screen overflow-auto" data-action-bound="true"><GGHPWebmail /></div>;
       case 'approvals':
         return <div data-action-bound="true"><ApprovalsTab /></div>;
       case 'applications':

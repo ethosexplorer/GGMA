@@ -50,11 +50,13 @@ const PIXEL = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBR
 // IMAP
 // ============================================================
 async function getImapClient() {
+  const user = process.env.GMAIL_MARKETING_EMAIL || process.env.SMTP_USER || 'marketing.globalgreenhp@gmail.com';
+  const pass = process.env.GMAIL_MARKETING_APP_PASSWORD || process.env.SMTP_PASS || '';
   const client = new ImapFlow({
     host: 'imap.gmail.com', port: 993, secure: true,
     auth: {
-      user: process.env.GMAIL_MARKETING_EMAIL || 'marketing.globalgreenhp@gmail.com',
-      pass: process.env.GMAIL_MARKETING_APP_PASSWORD || ''
+      user,
+      pass
     },
     logger: false
   });
@@ -166,7 +168,7 @@ export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
     
     try {
-      const { type, subject, message, recipients, attachments, cc, bcc, campaignId } = req.body;
+      const { type, subject, message, recipients, attachments, cc, bcc, campaignId, fromEmail } = req.body;
       if (!message || !recipients || !Array.isArray(recipients) || recipients.length === 0) {
         return res.status(400).json({ error: 'Message and a non-empty recipients array are required.' });
       }
@@ -182,6 +184,8 @@ export default async function handler(req, res) {
 
         const TRACK_BASE = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://www.ggp-os.com';
         
+        const defaultFrom = `"Global Green Enterprise" <${process.env.SMTP_USER || 'marketing.globalgreenhp@gmail.com'}>`;
+        
         const emailPromises = recipients.map(async (recipient) => {
           if (!recipient.email) throw new Error('Missing email address');
           let htmlBody = `<div style="font-family: sans-serif; padding: 20px; color: #333;">${message.replace(/\n/g, '<br/>')}</div>`;
@@ -195,7 +199,7 @@ export default async function handler(req, res) {
           }
           
           return transporter.sendMail({
-            from: `"Global Green Enterprise - Marketing" <marketing.globalgreenhp@gmail.com>`,
+            from: fromEmail || defaultFrom,
             to: recipient.email,
             cc: cc && cc.length > 0 ? cc.join(', ') : undefined,
             bcc: bcc && bcc.length > 0 ? bcc.join(', ') : undefined,
@@ -448,7 +452,7 @@ export default async function handler(req, res) {
         const sent = await client.status('[Gmail]/Sent Mail', { messages: true }).catch(() => ({ messages: 0 }));
         const spam = await client.status('[Gmail]/Spam', { messages: true }).catch(() => ({ messages: 0 }));
         await client.logout();
-        return res.json({ email: process.env.GMAIL_MARKETING_EMAIL || 'marketing.globalgreenhp@gmail.com', inbox: inbox.messages || 0, unread: inbox.unseen || 0, sent: sent.messages || 0, spam: spam.messages || 0 });
+        return res.json({ email: process.env.GMAIL_MARKETING_EMAIL || process.env.SMTP_USER || 'marketing.globalgreenhp@gmail.com', inbox: inbox.messages || 0, unread: inbox.unseen || 0, sent: sent.messages || 0, spam: spam.messages || 0 });
       }
 
       await client.logout();
