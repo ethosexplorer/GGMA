@@ -112,55 +112,74 @@ function decodePart(body, headers) {
   return body;
 }
 
-function parseEmailSource(sourceBuffer) {
-  const source = sourceBuffer.toString('utf-8');
-  // Handle both CRLF and LF line endings gracefully
-  const cleanSource = source.replace(/\r\n/g, '\n');
+function parseMimePart(rawPart) {
+  // Split headers from body
   const separator = '\n\n';
-  const firstSeparatorIdx = cleanSource.indexOf(separator);
-  if (firstSeparatorIdx === -1) return source;
+  const sepIdx = rawPart.indexOf(separator);
+  if (sepIdx === -1) return { headers: '', body: rawPart, contentType: '' };
   
-  const headersStr = cleanSource.substring(0, firstSeparatorIdx);
-  const body = cleanSource.substring(firstSeparatorIdx + separator.length);
+  const headers = rawPart.substring(0, sepIdx);
+  const body = rawPart.substring(sepIdx + separator.length);
   
-  const contentTypeMatch = headersStr.match(/Content-Type:\s*([^\n\r]+)/i);
-  const contentType = contentTypeMatch ? contentTypeMatch[1].trim() : '';
+  // Extract content type (may span multiple lines with folding)
+  const ctMatch = headers.match(/Content-Type:\s*([^\n]*(?:\n\s+[^\n]*)*)/i);
+  const contentType = ctMatch ? ctMatch[1].replace(/\s+/g, ' ').trim() : '';
   
+  return { headers, body, contentType };
+}
+
+function extractBestContent(rawSection) {
+  const { headers, body, contentType } = parseMimePart(rawSection);
+  
+  // If this part is multipart, recurse into sub-parts
   if (contentType.toLowerCase().includes('multipart/')) {
-    const boundaryMatch = contentType.match(/boundary="?([^";\s\n\r]+)"?/i);
+    const boundaryMatch = contentType.match(/boundary="?([^";\s]+)"?/i);
     if (boundaryMatch) {
       const boundary = boundaryMatch[1];
-      // Split by boundary; handle boundary with or without leading hyphens gracefully.
-      // Standard MIME boundaries in the body are preceded by '--'.
-      const parts = body.split('--' + boundary);
+      const subParts = body.split('--' + boundary);
       
-      // Look for html first
-      for (const part of parts) {
-        const partSepIdx = part.indexOf(separator);
-        if (partSepIdx === -1) continue;
-        const partHeaders = part.substring(0, partSepIdx);
-        const partBody = part.substring(partSepIdx + separator.length).replace(/--\s*$/, '').trim();
+      // Collect all sub-part results (skip first empty and last closing marker)
+      let htmlResult = null;
+      let plainResult = null;
+      
+      for (const subPart of subParts) {
+        const trimmed = subPart.replace(/--\s*$/, '').trim();
+        if (!trimmed || trimmed === '--') continue;
         
-        if (partHeaders.toLowerCase().includes('text/html')) {
-          return decodePart(partBody, partHeaders);
-        }
+        const result = extractBestContent(trimmed);
+        if (result.type === 'html' && !htmlResult) htmlResult = result;
+        if (result.type === 'plain' && !plainResult) plainResult = result;
       }
       
-      // Look for plain text next
-      for (const part of parts) {
-        const partSepIdx = part.indexOf(separator);
-        if (partSepIdx === -1) continue;
-        const partHeaders = part.substring(0, partSepIdx);
-        const partBody = part.substring(partSepIdx + separator.length).replace(/--\s*$/, '').trim();
-        
-        if (partHeaders.toLowerCase().includes('text/plain')) {
-          return decodePart(partBody, partHeaders);
-        }
-      }
+      // Prefer HTML over plain text
+      return htmlResult || plainResult || { content: body, type: 'unknown' };
     }
   }
   
-  return decodePart(body, headersStr);
+  // Skip attachments — we only want inline body content
+  if (headers.toLowerCase().includes('content-disposition: attachment')) {
+    return { content: '', type: 'attachment' };
+  }
+  
+  // Leaf node — decode and return
+  const decoded = decodePart(body.replace(/--\s*$/, '').trim(), headers);
+  
+  if (contentType.toLowerCase().includes('text/html')) {
+    return { content: decoded, type: 'html' };
+  }
+  if (contentType.toLowerCase().includes('text/plain')) {
+    return { content: decoded, type: 'plain' };
+  }
+  
+  return { content: decoded, type: 'unknown' };
+}
+
+function parseEmailSource(sourceBuffer) {
+  const source = sourceBuffer.toString('utf-8');
+  const cleanSource = source.replace(/\r\n/g, '\n');
+  
+  const result = extractBestContent(cleanSource);
+  return result.content || source;
 }
 
 // ============================================================
