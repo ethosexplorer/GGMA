@@ -50,16 +50,13 @@ const PIXEL = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBR
 // IMAP
 // ============================================================
 async function getImapClient() {
-  // IMAP reads the Founder inbox — must be founder@ggp-os.com, NOT the marketing account
-  const user = process.env.GMAIL_MARKETING_EMAIL || 'founder@ggp-os.com';
-  const pass = process.env.GMAIL_MARKETING_APP_PASSWORD || '';
-  if (!pass) throw new Error('GMAIL_MARKETING_APP_PASSWORD is not set. Cannot connect to founder mailbox.');
+  // Founder personal inbox — completely separate from the marketing SMTP account
+  const user = process.env.FOUNDER_EMAIL || 'founder@ggp-os.com';
+  const pass = process.env.FOUNDER_APP_PASSWORD || '';
+  if (!pass) throw new Error('FOUNDER_APP_PASSWORD is not set. Cannot connect to founder mailbox.');
   const client = new ImapFlow({
     host: 'imap.gmail.com', port: 993, secure: true,
-    auth: {
-      user,
-      pass
-    },
+    auth: { user, pass },
     logger: false
   });
   await client.connect();
@@ -289,8 +286,8 @@ export default async function handler(req, res) {
 
   // ---- ROUTE: GMAIL INBOX ----
   if (route === 'gmail') {
-    if (!process.env.GMAIL_MARKETING_APP_PASSWORD && !process.env.SMTP_PASS) {
-      return res.status(503).json({ error: 'Gmail not configured', setup: 'Add GMAIL_MARKETING_APP_PASSWORD env var' });
+    if (!process.env.FOUNDER_APP_PASSWORD) {
+      return res.status(503).json({ error: 'Founder inbox not configured', setup: 'Add FOUNDER_EMAIL and FOUNDER_APP_PASSWORD env vars' });
     }
     const { action, maxResults = '20', q } = req.query;
     let client;
@@ -454,7 +451,7 @@ export default async function handler(req, res) {
         const sent = await client.status('[Gmail]/Sent Mail', { messages: true }).catch(() => ({ messages: 0 }));
         const spam = await client.status('[Gmail]/Spam', { messages: true }).catch(() => ({ messages: 0 }));
         await client.logout();
-        return res.json({ email: process.env.GMAIL_MARKETING_EMAIL || process.env.SMTP_USER || 'marketing.globalgreenhp@gmail.com', inbox: inbox.messages || 0, unread: inbox.unseen || 0, sent: sent.messages || 0, spam: spam.messages || 0 });
+        return res.json({ email: process.env.FOUNDER_EMAIL || 'founder@ggp-os.com', inbox: inbox.messages || 0, unread: inbox.unseen || 0, sent: sent.messages || 0, spam: spam.messages || 0 });
       }
 
       await client.logout();
