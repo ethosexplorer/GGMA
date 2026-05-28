@@ -567,6 +567,8 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
 
   const handleSubTabClick = (subTabId: string) => {
     setActiveTab(subTabId);
+    // Auto-clear notifications for this tab when visited
+    setNotifications(prev => prev.filter(n => n.tab !== subTabId));
   };
 
   useEffect(() => {
@@ -604,25 +606,29 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   const [notifications, setNotifications] = useState(() => {
     try {
       const dismissedIds = JSON.parse(localStorage.getItem('gghp_dismissed_founder_notifications') || '[]');
-      if (Array.isArray(dismissedIds)) {
+      if (Array.isArray(dismissedIds) && dismissedIds.length > 0) {
         return INITIAL_NOTIFICATIONS.filter(n => !dismissedIds.includes(n.id));
       }
     } catch (e) {
       console.error('Error loading dismissed founder notifications', e);
     }
-    return INITIAL_NOTIFICATIONS;
+    return [...INITIAL_NOTIFICATIONS];
   });
 
+  // Persist dismissed notifications to localStorage (Safari-safe: use setTimeout to avoid sync issues)
   useEffect(() => {
-    try {
-      const currentIds = new Set(notifications.map(n => n.id));
-      const dismissedIds = INITIAL_NOTIFICATIONS
-        .filter(n => !currentIds.has(n.id))
-        .map(n => n.id);
-      localStorage.setItem('gghp_dismissed_founder_notifications', JSON.stringify(dismissedIds));
-    } catch (e) {
-      console.error('Error saving dismissed founder notifications', e);
-    }
+    const timer = setTimeout(() => {
+      try {
+        const currentIds = new Set(notifications.map((n: any) => n.id));
+        const dismissedIds = INITIAL_NOTIFICATIONS
+          .filter(n => !currentIds.has(n.id))
+          .map(n => n.id);
+        localStorage.setItem('gghp_dismissed_founder_notifications', JSON.stringify(dismissedIds));
+      } catch (e) {
+        console.error('Error saving dismissed founder notifications', e);
+      }
+    }, 100);
+    return () => clearTimeout(timer);
   }, [notifications]);
 
   const [isSystemFreezeExpanded, setIsSystemFreezeExpanded] = useState(false);
@@ -1561,10 +1567,11 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                     </div>
                     <div className="max-h-80 overflow-y-auto divide-y divide-slate-100">
                       {notifications.map((n, i) => (
-                        <button key={i} data-action-bound="true" onClick={(e) => {
+                        <button key={n.id || i} data-action-bound="true" onClick={(e) => {
                           e.stopPropagation();
+                          e.preventDefault();
                           setShowNotifPanel(false);
-                          setNotifications(notifications.filter((_, idx) => idx !== i));
+                          setNotifications(prev => prev.filter(item => item.id !== n.id));
                           const parent = findParentTab(n.tab);
                           if (parent) {
                             setSelectedParent(parent);
@@ -1590,7 +1597,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                       )}
                     </div>
                     <div className="px-4 py-2 bg-slate-50 border-t border-slate-200">
-                      <button data-action-bound="true" onClick={(e) => { e.stopPropagation(); setNotifications([]); setShowNotifPanel(false); }} className="w-full text-center text-[10px] font-bold text-[#0A3D2A] hover:text-[#1a4731] py-1">Dismiss All</button>
+                      <button data-action-bound="true" onClick={(e) => { e.stopPropagation(); e.preventDefault(); setNotifications([]); setShowNotifPanel(false); }} className="w-full text-center text-[10px] font-bold text-[#0A3D2A] hover:text-[#1a4731] py-1 cursor-pointer">Dismiss All</button>
                     </div>
                   </div>
                 )}
