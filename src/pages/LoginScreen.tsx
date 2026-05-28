@@ -4,6 +4,7 @@ import {
   Shield, Eye, EyeOff, LogIn, Loader2, Leaf, Lock, Mail, Globe
 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { Button } from '../components/shared/Button';
 export const LoginScreen = ({ onLogin, onSignUp, onForgotPassword, jurisdiction = 'Oklahoma' }: { onLogin: (email: string, pass: string) => Promise<void>; onSignUp: () => void; onForgotPassword: () => void; onBack?: () => void; initialRole?: any; key?: string; jurisdiction?: string }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');

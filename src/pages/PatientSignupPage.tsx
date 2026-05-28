@@ -6,6 +6,8 @@ import {
   AlertCircle, Eye, EyeOff, User
 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { Input } from '../components/shared/Input';
+import { Button } from '../components/shared/Button';
 
 const PATIENT_STEPS = [
   'License Eligibility Criteria',

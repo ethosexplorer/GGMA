@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Bot, MessageCircle, Sparkles } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { Button } from './shared/Button';
 export const SylaraFloatingWidget = ({ onClick, persona = 'sylara', userProfile, activeRole }: { onClick: () => void, persona?: 'sylara' | 'larry', userProfile?: any, activeRole?: string }) => {
   const currentRole = activeRole || userProfile?.role;
   const isRyan = currentRole === 'executive_founder' && userProfile && userProfile.email?.toLowerCase().includes('ceo.globalgreenhp');

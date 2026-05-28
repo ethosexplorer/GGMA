@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
-  Shield, User, LayoutDashboard, Users, Settings, BarChart2,
+  Shield, User, LayoutDashboard, Users, Settings, BarChart2, BarChart3,
   Calendar, FileText, Activity, LogOut, Bell, Search, Plus, Building2,
-  Stethoscope, TrendingUp, Clock, CheckCircle, Loader2, Globe,
+  Stethoscope, TrendingUp, Clock, CheckCircle, CircleCheck, Loader2, Globe,
   MapPin, MessageSquare, ChevronDown, ChevronUp, Send, GraduationCap,
   Sparkles, Scale, Briefcase, Bot, BookOpen, Wrench, Video, Flag,
   Headphones, Phone, Star, Home, Check, Wallet, HeartHandshake, HelpCircle,
-  Leaf
+  Leaf, ShoppingCart, PackageSearch, ClipboardList
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 export const DashboardLayout = ({ children, role, onLogout, userProfile, onOpenConcierge }: { children: React.ReactNode, role: string, onLogout: () => void, userProfile: any, onOpenConcierge?: () => void }) => {
@@ -187,15 +187,15 @@ export const DashboardLayout = ({ children, role, onLogout, userProfile, onOpenC
                 ))}
               </div>
               <div className="px-4 py-2 bg-slate-50 border-t border-slate-200">
-                <button onClick={() => { import('./lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="w-full text-center text-[10px] font-bold text-emerald-600 hover:text-emerald-700 py-1">View All Notifications</button>
+                <button onClick={() => { import('../../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="w-full text-center text-[10px] font-bold text-emerald-600 hover:text-emerald-700 py-1">View All Notifications</button>
               </div>
             </div>
             <div className="flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-800 rounded-full border border-emerald-200 shadow-sm mr-2">
               <span className="font-bold text-[10px] uppercase tracking-wider">Compassion Balance:</span>
               <span className="font-black text-sm">$0.00</span>
-              <button onClick={() => { import('./lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="ml-2 px-2 py-0.5 bg-[#1a4731] text-white rounded text-[10px] font-bold hover:bg-[#153a28] transition-colors">Reload</button>
+              <button onClick={() => { import('../../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="ml-2 px-2 py-0.5 bg-[#1a4731] text-white rounded text-[10px] font-bold hover:bg-[#153a28] transition-colors">Reload</button>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-800 rounded-full border border-emerald-200 shadow-sm mr-2"><span className="font-bold text-xs uppercase tracking-wider">Care Wallet:</span><span className="font-black text-sm">0 Tokens</span><button onClick={() => { import('./lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="ml-2 px-2 py-0.5 bg-[#1a4731] text-white rounded text-xs font-bold hover:bg-[#153a28] transition-colors">Buy</button></div>
+            <div className="flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-800 rounded-full border border-emerald-200 shadow-sm mr-2"><span className="font-bold text-xs uppercase tracking-wider">Care Wallet:</span><span className="font-black text-sm">0 Tokens</span><button onClick={() => { import('../../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="ml-2 px-2 py-0.5 bg-[#1a4731] text-white rounded text-xs font-bold hover:bg-[#153a28] transition-colors">Buy</button></div>
             <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
               <div className="text-right hidden sm:block">
                 <p className="text-sm font-medium text-slate-900">Jane Doe</p>

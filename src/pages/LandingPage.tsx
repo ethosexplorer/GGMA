@@ -8,6 +8,7 @@ import {
   Users, ShoppingCart, PackageSearch, ClipboardList, Cpu
 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { Button } from '../components/shared/Button';
 import MapChart from '../components/MapChart';
 import { FeaturedPoll, StickyPollWidget, RevolvingSurveyBanner } from '../components/CommunityPolls';
 import { RegulatoryFeedWidget } from '../components/shared/RegulatoryFeedWidget';

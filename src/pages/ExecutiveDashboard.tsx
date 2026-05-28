@@ -5,6 +5,8 @@ import {
   Loader2, TrendingUp, Leaf
 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { StatCard } from '../components/shared/StatCard';
+import { Button } from '../components/shared/Button';
 export const ExecutiveDashboard = () => (
   <div className="space-y-8">
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -62,7 +64,7 @@ export const ExecutiveDashboard = () => (
             </div>
           ))}
         </div>
-        <button onClick={() => { import('./lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="w-full mt-8 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-all">
+        <button onClick={() => { import('../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="w-full mt-8 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-all">
           Download Executive Report
         </button>
       </div>

@@ -7,6 +7,8 @@ import {
   Phone, Building2, GraduationCap
 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { Input } from '../components/shared/Input';
+import { Button } from '../components/shared/Button';
 import {
   createUserWithEmailAndPassword
 } from 'firebase/auth';
@@ -823,7 +825,7 @@ export const SignupScreen = ({ onLogin, onComplete, onNavigate, initialRole = 'u
                                     // Subscription selection has been deferred to login
                                 }
                                 if (step === 3 && (!uploads.dlFront || !uploads.dlBack || !privacyConsent)) {
-                                    (() => { import('./lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Please complete required uploads and HIPAA consent." })] }).catch(console.error) ); alert("Please complete required uploads and HIPAA consent.\n\n[Live Production Transaction Logged]"); })();
+                                    (() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Please complete required uploads and HIPAA consent." })] }).catch(console.error) ); alert("Please complete required uploads and HIPAA consent.\n\n[Live Production Transaction Logged]"); })();
                                     return;
                                 }
                                 setStep(step + 1);

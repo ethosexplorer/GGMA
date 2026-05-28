@@ -4,6 +4,7 @@ import {
   Shield, ArrowLeft, Mail, Loader2, CheckCircle, Leaf
 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { Button } from '../components/shared/Button';
 export const ForgotPasswordScreen = ({ onBack, onReset }: { onBack: () => void; onReset: (email: string) => Promise<void>; key?: string }) => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
