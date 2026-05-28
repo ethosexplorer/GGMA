@@ -504,6 +504,15 @@ export const GGHPWebmail = () => {
           </div>
         </div>
 
+        {/* Error Banner */}
+        {error && (
+          <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-bold flex items-center gap-2">
+            <AlertCircle size={14} />
+            <span className="flex-1">{error}</span>
+            <button onClick={() => setError('')} className="text-red-400 hover:text-white"><X size={12} /></button>
+          </div>
+        )}
+
         {/* Email Scroll List */}
         <div className="flex-1 overflow-y-auto divide-y divide-white/5">
           {loading && emails.length === 0 ? (

@@ -53,7 +53,8 @@ async function getImapClient() {
   // Founder personal inbox — accepts both new and legacy env var names
   const user = process.env.FOUNDER_EMAIL || process.env.GMAIL_MARKETING_EMAIL || 'founder@ggp-os.com';
   const pass = process.env.FOUNDER_APP_PASSWORD || process.env.GMAIL_MARKETING_APP_PASSWORD || '';
-  if (!pass) throw new Error('FOUNDER_APP_PASSWORD (or GMAIL_MARKETING_APP_PASSWORD) is not set.');
+  console.log('[IMAP] Connecting to:', user, '| FOUNDER_EMAIL set:', !!process.env.FOUNDER_EMAIL, '| GMAIL_MARKETING_EMAIL set:', !!process.env.GMAIL_MARKETING_EMAIL, '| Pass length:', pass.length);
+  if (!pass) throw new Error('No IMAP password found. Set FOUNDER_APP_PASSWORD or GMAIL_MARKETING_APP_PASSWORD on Vercel.');
   const client = new ImapFlow({
     host: 'imap.gmail.com', port: 993, secure: true,
     auth: { user, pass },
