@@ -62,6 +62,9 @@ export const GGHPWebmail = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set());
+  const [connectedAccount, setConnectedAccount] = useState('');
+  const [totalCount, setTotalCount] = useState(0);
+  const [unreadCount, setUnreadCount] = useState(0);
   
   // Selected Email Details View
   const [selectedEmail, setSelectedEmail] = useState<any | null>(null);
@@ -110,19 +113,21 @@ export const GGHPWebmail = () => {
       if (activeFolder === '[Gmail]/Sent Mail') action = 'sent';
       else if (activeFolder === '[Gmail]/Spam') action = 'bounces';
       
-      // Fetch inbox or custom folder
+      // Fetch inbox or custom folder — pull up to 50 most recent
       const queryParams = new URLSearchParams({
         route: 'gmail',
         action: mailbox === 'INBOX' ? 'inbox' : mailbox === '[Gmail]/Sent Mail' ? 'sent' : 'inbox',
         mailbox: mailbox,
-        maxResults: '25'
+        maxResults: '50'
       });
 
       const res = await fetch(`/api/marketing?${queryParams.toString()}`);
       if (res.ok) {
         const data = await res.json();
-        const list = data.messages || data.sent || [];
+        const list = data.messages || data.sent || data.bounces || [];
         setEmails(list);
+        if (data.total !== undefined) setTotalCount(data.total);
+        if (data.unread !== undefined) setUnreadCount(data.unread);
       } else {
         const data = await res.json();
         throw new Error(data.error || 'Server error');
@@ -314,6 +319,12 @@ export const GGHPWebmail = () => {
     fetchFolders();
     fetchEmails();
 
+    // Fetch connected account info on mount
+    fetch('/api/marketing?route=gmail&action=profile')
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (data?.email) setConnectedAccount(data.email); })
+      .catch(() => {});
+
     // Auto-poll every 30s so the inbox stays live without manual refresh
     const pollInterval = setInterval(() => {
       fetchEmails();
@@ -483,8 +494,13 @@ export const GGHPWebmail = () => {
             </div>
             
             <span className="text-[10px] text-slate-500 font-bold">
-              {filteredEmails.length} messages
+              {filteredEmails.length} messages{totalCount > 0 ? ` of ${totalCount}` : ''}{unreadCount > 0 ? ` · ${unreadCount} unread` : ''}
             </span>
+            {connectedAccount && (
+              <span className="text-[9px] text-indigo-400/60 font-mono truncate max-w-[140px]" title={connectedAccount}>
+                📧 {connectedAccount}
+              </span>
+            )}
           </div>
         </div>
 

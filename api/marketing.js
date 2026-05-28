@@ -50,8 +50,10 @@ const PIXEL = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBR
 // IMAP
 // ============================================================
 async function getImapClient() {
-  const user = process.env.GMAIL_MARKETING_EMAIL || process.env.SMTP_USER || 'marketing.globalgreenhp@gmail.com';
-  const pass = process.env.GMAIL_MARKETING_APP_PASSWORD || process.env.SMTP_PASS || '';
+  // IMAP reads the Founder inbox — must be founder@ggp-os.com, NOT the marketing account
+  const user = process.env.GMAIL_MARKETING_EMAIL || 'founder@ggp-os.com';
+  const pass = process.env.GMAIL_MARKETING_APP_PASSWORD || '';
+  if (!pass) throw new Error('GMAIL_MARKETING_APP_PASSWORD is not set. Cannot connect to founder mailbox.');
   const client = new ImapFlow({
     host: 'imap.gmail.com', port: 993, secure: true,
     auth: {
@@ -298,7 +300,7 @@ export default async function handler(req, res) {
       if (action === 'inbox') {
         await client.mailboxOpen('INBOX');
         const messages = [];
-        const limit = Math.min(parseInt(maxResults) || 20, 50);
+        const limit = Math.min(parseInt(maxResults) || 50, 100);
         const status = await client.status('INBOX', { messages: true, unseen: true });
         const total = status.messages || 0;
         const start = Math.max(1, total - limit + 1);
