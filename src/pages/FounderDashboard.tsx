@@ -122,7 +122,7 @@ const MERGED_SUB_TABS: Record<string, { id: string, label: string, icon: any }[]
     { id: 'critical_alerts', label: 'Critical Alerts', icon: AlertTriangle },
   ],
   command_hub: [
-    { id: 'gge_webmail', label: 'GGHP OS Webmail', icon: Mail },
+    { id: 'gge_webmail', label: 'Founder Email', icon: Mail },
     { id: 'internal_scheduler', label: 'Calendar / Scheduler', icon: Clock },
     { id: 'realtime_tasks', label: 'Realtime Daily Tasks', icon: Target },
     { id: 'messages', label: 'Messages', icon: MessageSquare },
