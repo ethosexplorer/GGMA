@@ -101,11 +101,14 @@ export const GGHPWebmail = () => {
   };
 
   // Fetch Emails for Active Folder
-  const fetchEmails = async () => {
+  const fetchEmails = async (isAutoRefresh = false) => {
     setLoading(true);
     setError('');
-    setCheckedIds(new Set());
-    setSelectedEmail(null);
+    // Only reset selections on manual actions (folder change, manual refresh), NOT on auto-poll
+    if (!isAutoRefresh) {
+      setCheckedIds(new Set());
+      setSelectedEmail(null);
+    }
     try {
       let action = 'inbox';
       let mailbox = activeFolder;
@@ -327,7 +330,7 @@ export const GGHPWebmail = () => {
 
     // Auto-poll every 30s so the inbox stays live without manual refresh
     const pollInterval = setInterval(() => {
-      fetchEmails();
+      fetchEmails(true); // true = auto-refresh, don't clear checkboxes
     }, 30_000);
 
     return () => clearInterval(pollInterval);
@@ -473,6 +476,22 @@ export const GGHPWebmail = () => {
                 title="Refresh messages"
               >
                 <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+              </button>
+
+              {/* Select All / Deselect All */}
+              <button
+                onClick={() => {
+                  if (checkedIds.size === filteredEmails.length) {
+                    setCheckedIds(new Set());
+                  } else {
+                    setCheckedIds(new Set(filteredEmails.map(e => e.id)));
+                  }
+                }}
+                className="p-1.5 hover:bg-white/5 text-slate-400 hover:text-white rounded-lg transition-colors flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider"
+                title={checkedIds.size === filteredEmails.length ? 'Deselect All' : 'Select All'}
+              >
+                {checkedIds.size === filteredEmails.length && filteredEmails.length > 0 ? <CheckSquare size={14} className="text-indigo-400" /> : <Square size={14} />}
+                <span className="hidden sm:inline">{checkedIds.size === filteredEmails.length && filteredEmails.length > 0 ? 'Deselect' : 'All'}</span>
               </button>
               
               {checkedIds.size > 0 && (
