@@ -183,6 +183,40 @@ function parseEmailSource(sourceBuffer) {
 }
 
 // ============================================================
+// ATTACHMENT HELPER
+// ============================================================
+function extractAttachments(bodyStructure) {
+  const attachments = [];
+  function walk(node, partPath = '') {
+    if (!node) return;
+    if (node.childNodes && node.childNodes.length > 0) {
+      node.childNodes.forEach((child, i) => {
+        const nextPath = partPath ? `${partPath}.${i + 1}` : `${i + 1}`;
+        walk(child, nextPath);
+      });
+    } else {
+      const disp = (node.disposition || '').toLowerCase();
+      const type = (node.type || '').toLowerCase();
+      const subtype = (node.subtype || '').toLowerCase();
+      // Treat as attachment if disposition says so, or if it's not text/html or text/plain inline
+      if (disp === 'attachment' || (type !== 'text' && type !== 'multipart' && type !== '')) {
+        const filename = node.dispositionParameters?.filename
+          || node.parameters?.name
+          || `attachment.${subtype || 'bin'}`;
+        attachments.push({
+          filename,
+          contentType: `${type}/${subtype}`,
+          size: node.size || 0,
+          part: node.part || partPath,
+        });
+      }
+    }
+  }
+  walk(bodyStructure);
+  return attachments;
+}
+
+// ============================================================
 // MAIN ROUTER
 // ============================================================
 export default async function handler(req, res) {
@@ -341,11 +375,13 @@ export default async function handler(req, res) {
         const total = status.messages || 0;
         const start = Math.max(1, total - limit + 1);
         for await (const msg of client.fetch(`${start}:*`, { envelope: true, bodyStructure: true, flags: true, uid: true })) {
+          const attachments = extractAttachments(msg.bodyStructure);
           messages.push({
             id: msg.uid, seq: msg.seq, from: parseAddress(msg.envelope?.from),
             to: parseAddress(msg.envelope?.to), subject: msg.envelope?.subject || '(no subject)',
             date: msg.envelope?.date?.toISOString() || '', isRead: msg.flags?.has('\\Seen') || false,
             isReply: !!(msg.envelope?.inReplyTo), messageId: msg.envelope?.messageId || '',
+            hasAttachments: attachments.length > 0, attachmentCount: attachments.length,
           });
         }
         messages.reverse();
@@ -440,13 +476,32 @@ export default async function handler(req, res) {
         const { uid, mailbox = 'INBOX' } = req.query;
         if (!uid) return res.status(400).json({ error: 'uid parameter is required' });
         await client.mailboxOpen(mailbox);
-        const msg = await client.fetchOne(uid, { source: true }, { uid: true });
+        const msg = await client.fetchOne(uid, { source: true, bodyStructure: true }, { uid: true });
         await client.logout();
         if (!msg || !msg.source) {
           return res.status(404).json({ error: 'Message body not found' });
         }
         const parsedBody = parseEmailSource(msg.source);
-        return res.json({ body: parsedBody });
+        const attachments = extractAttachments(msg.bodyStructure);
+        return res.json({ body: parsedBody, attachments });
+      }
+
+      if (action === 'attachment') {
+        const { uid, part, mailbox = 'INBOX' } = req.query;
+        if (!uid || !part) return res.status(400).json({ error: 'uid and part are required' });
+        await client.mailboxOpen(mailbox);
+        const download = await client.download(uid, part, { uid: true });
+        if (!download || !download.content) {
+          await client.logout();
+          return res.status(404).json({ error: 'Attachment not found' });
+        }
+        const chunks = [];
+        for await (const chunk of download.content) { chunks.push(chunk); }
+        const buffer = Buffer.concat(chunks);
+        await client.logout();
+        res.setHeader('Content-Type', download.meta?.contentType || 'application/octet-stream');
+        res.setHeader('Content-Disposition', `attachment; filename="${download.meta?.filename || 'attachment'}"`);
+        return res.send(buffer);
       }
 
       if (action === 'delete') {
