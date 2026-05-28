@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, Building2, LayoutTemplate, Clock, AlertCircle, Save, Trash2, X, Plus, ChevronDown, Eye, MousePointerClick, MailOpen, TrendingUp, Inbox, AlertTriangle, Reply, RefreshCw, Folder } from 'lucide-react';
+import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, Building2, LayoutTemplate, Clock, AlertCircle, Save, Trash2, X, Plus, ChevronDown, Eye, MousePointerClick, MailOpen, TrendingUp, Inbox, AlertTriangle, Reply, RefreshCw, Folder, Pencil, Check } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { db } from '../../firebase';
 import { collection, onSnapshot, query, addDoc, deleteDoc, doc, updateDoc, serverTimestamp, orderBy, limit, getDocs } from 'firebase/firestore';
@@ -63,6 +63,10 @@ export const MarketingHub = () => {
   const [showTemplates, setShowTemplates] = useState(false);
   const [showSaveTemplate, setShowSaveTemplate] = useState(false);
   const [templateName, setTemplateName] = useState('');
+  const [editingTemplateId, setEditingTemplateId] = useState<string | null>(null);
+  const [editTemplateName, setEditTemplateName] = useState('');
+  const [editTemplateSubject, setEditTemplateSubject] = useState('');
+  const [editTemplateBody, setEditTemplateBody] = useState('');
 
   // Tracking Analytics State
   const [allCampaigns, setAllCampaigns] = useState<any[]>([]);
@@ -324,7 +328,26 @@ export const MarketingHub = () => {
   };
 
   const deleteTemplate = async (id: string) => {
+    if (!confirm('Delete this template permanently?')) return;
     await deleteDoc(doc(db, 'marketing_templates', id));
+  };
+
+  const startEditTemplate = (t: EmailTemplate) => {
+    setEditingTemplateId(t.id);
+    setEditTemplateName(t.name);
+    setEditTemplateSubject(t.subject || '');
+    setEditTemplateBody(t.body || '');
+  };
+
+  const saveEditTemplate = async () => {
+    if (!editingTemplateId || !editTemplateName.trim()) return;
+    await updateDoc(doc(db, 'marketing_templates', editingTemplateId), {
+      name: editTemplateName,
+      subject: editTemplateSubject,
+      body: editTemplateBody,
+      updatedAt: serverTimestamp(),
+    });
+    setEditingTemplateId(null);
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1421,16 +1444,46 @@ export const MarketingHub = () => {
           <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg shadow-2xl p-6 max-h-[80vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-lg font-black text-white">My Templates</h3>
-              <button onClick={() => setShowTemplates(false)} className="p-1 hover:bg-slate-800 rounded-lg"><X size={20} className="text-slate-400" /></button>
+              <button onClick={() => { setShowTemplates(false); setEditingTemplateId(null); }} className="p-1 hover:bg-slate-800 rounded-lg"><X size={20} className="text-slate-400" /></button>
             </div>
             {templates.length === 0 && <p className="text-slate-500 text-sm text-center py-8">No templates saved yet. Compose a message and click "Save as Template".</p>}
             {templates.map(t => (
-              <div key={t.id} className="flex items-center justify-between p-4 bg-slate-800/50 rounded-xl mb-3 hover:bg-slate-800 transition-colors">
-                <div className="cursor-pointer flex-1" onClick={() => loadTemplate(t)}>
-                  <p className="font-bold text-white text-sm">{t.name}</p>
-                  <p className="text-xs text-slate-500 truncate">{t.subject || 'No subject'}</p>
-                </div>
-                <button onClick={() => deleteTemplate(t.id)} className="p-2 hover:bg-red-500/20 rounded-lg ml-2"><Trash2 size={14} className="text-red-400" /></button>
+              <div key={t.id} className="p-4 bg-slate-800/50 rounded-xl mb-3 hover:bg-slate-800 transition-colors">
+                {editingTemplateId === t.id ? (
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-1">Template Name</label>
+                      <input value={editTemplateName} onChange={e => setEditTemplateName(e.target.value)} className="w-full bg-slate-950 border border-slate-600 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-indigo-500" />
+                    </div>
+                    <div>
+                      <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-1">Subject Line</label>
+                      <input value={editTemplateSubject} onChange={e => setEditTemplateSubject(e.target.value)} className="w-full bg-slate-950 border border-slate-600 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-indigo-500" />
+                    </div>
+                    <div>
+                      <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-1">Message Body</label>
+                      <textarea value={editTemplateBody} onChange={e => setEditTemplateBody(e.target.value)} rows={6} className="w-full bg-slate-950 border border-slate-600 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-indigo-500 resize-none" />
+                    </div>
+                    <div className="flex justify-end gap-2">
+                      <button onClick={() => setEditingTemplateId(null)} className="px-3 py-1.5 text-slate-400 text-xs font-bold hover:text-white">Cancel</button>
+                      <button onClick={saveEditTemplate} className="px-4 py-1.5 bg-emerald-600 text-white text-xs font-bold rounded-lg hover:bg-emerald-500 flex items-center gap-1"><Check size={12} /> Save Changes</button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between">
+                    <div className="cursor-pointer flex-1" onClick={() => loadTemplate(t)}>
+                      <p className="font-bold text-white text-sm">{t.name}</p>
+                      <p className="text-xs text-slate-500 truncate">{t.subject || 'No subject'}</p>
+                    </div>
+                    <div className="flex items-center gap-1 ml-2">
+                      <button onClick={() => startEditTemplate(t)} className="p-2 hover:bg-indigo-500/20 rounded-lg" title="Edit template">
+                        <Pencil size={14} className="text-indigo-400" />
+                      </button>
+                      <button onClick={() => deleteTemplate(t.id)} className="p-2 hover:bg-red-500/20 rounded-lg" title="Delete template">
+                        <Trash2 size={14} className="text-red-400" />
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
