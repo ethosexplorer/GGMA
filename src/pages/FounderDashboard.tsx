@@ -993,7 +993,11 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
               opsLiveTasks={opsLiveTasks}
               opsTicketCount={opsTicketCount}
               queueAlerts={queueAlerts}
-              setActiveTab={setActiveTab}
+              setActiveTab={(tabId: string) => {
+                const parent = findParentTab(tabId);
+                if (parent) setSelectedParent(parent);
+                setActiveTab(tabId);
+              }}
               notifications={notifications}
               setNotifications={setNotifications}
               runCheck={runCheck}

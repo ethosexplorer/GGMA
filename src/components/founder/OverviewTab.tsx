@@ -327,8 +327,20 @@ export const OverviewTab = ({
                         <p className="text-sm font-bold text-white truncate">{task.title}</p>
                         <p className="text-[10px] text-slate-400 truncate">{task.desc}</p>
                       </div>
-                      <button className={cn("px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all opacity-70 group-hover:opacity-100 shrink-0", task.actionColor)}>
-                        {task.action}
+                      <button 
+                        onClick={() => {
+                          if (task.action === 'Done') return;
+                          if (task.title?.toLowerCase().includes('campaign') || task.title?.toLowerCase().includes('email')) {
+                            setActiveTab('marketing_hub');
+                          } else if (task.action === 'Route') {
+                            setActiveTab('operations');
+                          } else {
+                            setActiveTab('operations');
+                          }
+                        }}
+                        className={cn("px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all opacity-70 group-hover:opacity-100 shrink-0 cursor-pointer", task.actionColor)}
+                      >
+                        {task.action} →
                       </button>
                     </div>
                   ));
