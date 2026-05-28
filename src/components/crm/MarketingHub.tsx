@@ -89,7 +89,7 @@ export const MarketingHub = () => {
 
   const fetchFolders = async () => {
     try {
-      const res = await fetch('/api/marketing?route=gmail&action=folders');
+      const res = await fetch('/api/marketing?route=gmail&action=folders&account=marketing');
       if (res.ok) {
         const data = await res.json();
         setAllFolders(data.folders || []);
@@ -108,7 +108,7 @@ export const MarketingHub = () => {
     setSelectedEmailBody('');
     setLoadingEmailBody(true);
     try {
-      const res = await fetch(`/api/marketing?route=gmail&action=message&uid=${msg.id}&mailbox=${encodeURIComponent(imapMailbox)}`);
+      const res = await fetch(`/api/marketing?route=gmail&action=message&uid=${msg.id}&mailbox=${encodeURIComponent(imapMailbox)}&account=marketing`);
       if (res.ok) {
         const data = await res.json();
         setSelectedEmailBody(data.body || '(Empty body)');
@@ -131,7 +131,7 @@ export const MarketingHub = () => {
     
     setGmailLoading(true);
     try {
-      const res = await fetch('/api/marketing?route=gmail&action=delete', {
+      const res = await fetch('/api/marketing?route=gmail&action=delete&account=marketing', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -160,7 +160,7 @@ export const MarketingHub = () => {
     
     setGmailLoading(true);
     try {
-      const res = await fetch('/api/marketing?route=gmail&action=move', {
+      const res = await fetch('/api/marketing?route=gmail&action=move&account=marketing', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -193,11 +193,11 @@ export const MarketingHub = () => {
     try {
       const safeFetch = async (url: string) => { try { const r = await fetch(url); const text = await r.text(); return JSON.parse(text); } catch { return { error: 'Server unavailable' }; } };
       const [inboxRes, bouncesRes, repliesRes, sentRes, profileRes] = await Promise.all([
-        safeFetch('/api/marketing?route=gmail&action=inbox&maxResults=15'),
-        safeFetch('/api/marketing?route=gmail&action=bounces&maxResults=10'),
-        safeFetch('/api/marketing?route=gmail&action=replies&maxResults=10'),
-        safeFetch('/api/marketing?route=gmail&action=sent&maxResults=15'),
-        safeFetch('/api/marketing?route=gmail&action=profile'),
+        safeFetch('/api/marketing?route=gmail&action=inbox&maxResults=15&account=marketing'),
+        safeFetch('/api/marketing?route=gmail&action=bounces&maxResults=10&account=marketing'),
+        safeFetch('/api/marketing?route=gmail&action=replies&maxResults=10&account=marketing'),
+        safeFetch('/api/marketing?route=gmail&action=sent&maxResults=15&account=marketing'),
+        safeFetch('/api/marketing?route=gmail&action=profile&account=marketing'),
       ]);
       if (inboxRes.error) throw new Error(inboxRes.error);
       setGmailInbox(inboxRes.messages || []);

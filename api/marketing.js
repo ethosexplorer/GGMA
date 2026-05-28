@@ -49,12 +49,22 @@ const PIXEL = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBR
 // ============================================================
 // IMAP
 // ============================================================
-async function getImapClient() {
-  // Founder personal inbox — accepts both new and legacy env var names
-  const user = process.env.FOUNDER_EMAIL || process.env.GMAIL_MARKETING_EMAIL || 'founder@ggp-os.com';
-  const pass = process.env.FOUNDER_APP_PASSWORD || process.env.GMAIL_MARKETING_APP_PASSWORD || '';
-  console.log('[IMAP] Connecting to:', user, '| FOUNDER_EMAIL set:', !!process.env.FOUNDER_EMAIL, '| GMAIL_MARKETING_EMAIL set:', !!process.env.GMAIL_MARKETING_EMAIL, '| Pass length:', pass.length);
-  if (!pass) throw new Error('No IMAP password found. Set FOUNDER_APP_PASSWORD or GMAIL_MARKETING_APP_PASSWORD on Vercel.');
+async function getImapClient(account = 'founder') {
+  let user, pass;
+  
+  if (account === 'marketing') {
+    // Marketing campaign account — for the Marketing Hub inbox
+    user = process.env.GMAIL_MARKETING_EMAIL || process.env.SMTP_USER || 'marketing.globalgreenhp@gmail.com';
+    pass = process.env.GMAIL_MARKETING_APP_PASSWORD || process.env.SMTP_PASS || '';
+    if (!pass) throw new Error('GMAIL_MARKETING_APP_PASSWORD (or SMTP_PASS) is not set for marketing account.');
+  } else {
+    // Founder personal inbox — for the Founder Dashboard webmail
+    user = process.env.FOUNDER_EMAIL || 'founder@ggp-os.com';
+    pass = process.env.FOUNDER_APP_PASSWORD || '';
+    if (!pass) throw new Error('FOUNDER_APP_PASSWORD is not set for founder account.');
+  }
+  
+  console.log('[IMAP] Connecting to:', user, '(account:', account, ')');
   const client = new ImapFlow({
     host: 'imap.gmail.com', port: 993, secure: true,
     auth: { user, pass },
@@ -287,13 +297,22 @@ export default async function handler(req, res) {
 
   // ---- ROUTE: GMAIL INBOX ----
   if (route === 'gmail') {
-    if (!process.env.FOUNDER_APP_PASSWORD && !process.env.GMAIL_MARKETING_APP_PASSWORD) {
-      return res.status(503).json({ error: 'Founder inbox not configured', setup: 'Add FOUNDER_EMAIL and FOUNDER_APP_PASSWORD (or GMAIL_MARKETING_APP_PASSWORD) env vars' });
+    const { action, maxResults = '20', q, account = 'founder' } = req.query;
+    
+    // Validate credentials based on which account is requested
+    if (account === 'marketing') {
+      if (!process.env.GMAIL_MARKETING_APP_PASSWORD && !process.env.SMTP_PASS) {
+        return res.status(503).json({ error: 'Marketing inbox not configured', setup: 'Add GMAIL_MARKETING_EMAIL and GMAIL_MARKETING_APP_PASSWORD env vars' });
+      }
+    } else {
+      if (!process.env.FOUNDER_APP_PASSWORD) {
+        return res.status(503).json({ error: 'Founder inbox not configured', setup: 'Add FOUNDER_EMAIL and FOUNDER_APP_PASSWORD env vars' });
+      }
     }
-    const { action, maxResults = '20', q } = req.query;
+    
     let client;
     try {
-      client = await getImapClient();
+      client = await getImapClient(account);
 
       if (action === 'inbox') {
         await client.mailboxOpen('INBOX');
@@ -452,7 +471,10 @@ export default async function handler(req, res) {
         const sent = await client.status('[Gmail]/Sent Mail', { messages: true }).catch(() => ({ messages: 0 }));
         const spam = await client.status('[Gmail]/Spam', { messages: true }).catch(() => ({ messages: 0 }));
         await client.logout();
-        return res.json({ email: process.env.FOUNDER_EMAIL || process.env.GMAIL_MARKETING_EMAIL || 'founder@ggp-os.com', inbox: inbox.messages || 0, unread: inbox.unseen || 0, sent: sent.messages || 0, spam: spam.messages || 0 });
+        const emailForProfile = account === 'marketing'
+          ? (process.env.GMAIL_MARKETING_EMAIL || process.env.SMTP_USER || 'marketing.globalgreenhp@gmail.com')
+          : (process.env.FOUNDER_EMAIL || 'founder@ggp-os.com');
+        return res.json({ email: emailForProfile, inbox: inbox.messages || 0, unread: inbox.unseen || 0, sent: sent.messages || 0, spam: spam.messages || 0 });
       }
 
       await client.logout();
