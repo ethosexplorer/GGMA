@@ -309,10 +309,17 @@ export const GGHPWebmail = () => {
     setShowCompose(true);
   };
 
-  // Load data on mount
+  // Load data on mount + AUTO-REFRESH every 30 seconds for live updates
   useEffect(() => {
     fetchFolders();
     fetchEmails();
+
+    // Auto-poll every 30s so the inbox stays live without manual refresh
+    const pollInterval = setInterval(() => {
+      fetchEmails();
+    }, 30_000);
+
+    return () => clearInterval(pollInterval);
   }, [activeFolder]);
 
   // Load Saved Templates from Firestore
