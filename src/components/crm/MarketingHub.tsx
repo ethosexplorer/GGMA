@@ -406,7 +406,9 @@ export const MarketingHub = () => {
     let finalAudience: { email?: string; phone?: string }[] = [];
     if (sendMode === 'direct') {
       if (!directContact) return alert(`Please enter a recipient ${campaignType === 'email' ? 'email' : 'phone number'}`);
-      finalAudience = [{ email: campaignType === 'email' ? directContact : undefined, phone: campaignType === 'sms' ? directContact : undefined }];
+      const directRecipients = directContact.split(/[,;\n]+/).map(s => s.trim()).filter(Boolean);
+      if (directRecipients.length === 0) return alert('No valid recipients found.');
+      finalAudience = directRecipients.map(r => ({ email: campaignType === 'email' ? r : undefined, phone: campaignType === 'sms' ? r : undefined }));
     } else {
       if (filteredAudience.length === 0) return alert('No valid audience selected.');
       // Strip to email/phone only, sort alphabetically
@@ -788,19 +790,20 @@ export const MarketingHub = () => {
                 <div className="space-y-5">
                   <div>
                     <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
-                      {campaignType === 'email' ? <Mail size={12} /> : <MessageSquare size={12} />} Recipient {campaignType === 'email' ? 'Email' : 'Phone Number'}
+                      {campaignType === 'email' ? <Mail size={12} /> : <MessageSquare size={12} />} Recipient{directContact.split(/[,;\n]+/).map(s => s.trim()).filter(Boolean).length > 1 ? 's' : ''} {campaignType === 'email' ? '(Email)' : '(Phone)'}
                     </label>
-                    <input 
-                      type={campaignType === 'email' ? 'email' : 'tel'} 
+                    <textarea 
                       value={directContact}
                       onChange={(e) => setDirectContact(e.target.value)}
-                      placeholder={campaignType === 'email' ? 'e.g., recipient@domain.com' : 'e.g., 555-123-4567'}
-                      className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:border-indigo-500 transition-colors font-medium"
+                      placeholder={campaignType === 'email' ? 'Enter emails separated by commas or new lines:\ne.g., john@example.com, jane@example.com' : 'Enter phone numbers separated by commas:\ne.g., 555-123-4567, 555-987-6543'}
+                      rows={3}
+                      className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:border-indigo-500 transition-colors font-medium resize-none text-sm"
                     />
+                    <p className="text-[9px] text-slate-500 mt-1.5 font-medium">Separate multiple recipients with commas, semicolons, or new lines</p>
                   </div>
                   <div className="p-6 border border-indigo-500/30 bg-indigo-500/5 rounded-2xl text-center">
                     <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2">Direct Message Mode</p>
-                    <p className="text-2xl font-black text-white">1 Recipient</p>
+                    <p className="text-2xl font-black text-white">{directContact.split(/[,;\n]+/).map(s => s.trim()).filter(Boolean).length || 0} Recipient{directContact.split(/[,;\n]+/).map(s => s.trim()).filter(Boolean).length !== 1 ? 's' : ''}</p>
                   </div>
                 </div>
               ) : (
@@ -1572,7 +1575,7 @@ export const MarketingHub = () => {
                   <div className="space-y-4">
                     <div>
                       <p className="text-xs text-slate-500 font-bold mb-1">Total Recipients</p>
-                      <p className="text-3xl font-black text-white">{sendMode === 'direct' ? '1' : filteredCount.toLocaleString()}</p>
+                      <p className="text-3xl font-black text-white">{sendMode === 'direct' ? (directContact.split(/[,;\n]+/).map(s => s.trim()).filter(Boolean).length || 1).toLocaleString() : filteredCount.toLocaleString()}</p>
                     </div>
                     <div>
                       <p className="text-xs text-slate-500 font-bold mb-1">Method</p>
