@@ -237,7 +237,7 @@ export const MarketingHub = () => {
       try {
         if (!cachedDealsForMarketing) {
           const snap = await getDocs(q);
-          const data = snap.docs.map(doc => doc.data());
+          const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
           cachedDealsForMarketing = data;
           setDeals(data);
         }
@@ -419,7 +419,7 @@ export const MarketingHub = () => {
     if (!subject && campaignType === 'email') return alert('Please enter a subject');
     if (!message) return alert('Please enter a message');
     
-    let finalAudience: { email?: string; phone?: string }[] = [];
+    let finalAudience: { email?: string; phone?: string; crmId?: string }[] = [];
     if (sendMode === 'direct') {
       if (!directContact) return alert(`Please enter a recipient ${campaignType === 'email' ? 'email' : 'phone number'}`);
       const directRecipients = directContact.split(/[,;\n]+/).map(s => s.trim()).filter(Boolean);
@@ -430,7 +430,7 @@ export const MarketingHub = () => {
       if (filteredAudience.length === 0) return alert('No valid audience selected.');
       // Strip to email/phone only, sort alphabetically
       finalAudience = filteredAudience
-        .map(d => ({ email: campaignType === 'email' ? d.email : undefined, phone: campaignType === 'sms' ? d.phone : undefined }))
+        .map(d => ({ email: campaignType === 'email' ? d.email : undefined, phone: campaignType === 'sms' ? d.phone : undefined, crmId: d.id }))
         .filter(r => r.email || r.phone)
         .sort((a, b) => ((a.email || a.phone || '') as string).localeCompare((b.email || b.phone || '') as string));
     }
@@ -1663,6 +1663,12 @@ export const MarketingHub = () => {
                         <p className="text-sm font-bold text-white leading-tight capitalize">
                           {selectedTypes.includes('All') ? 'All Types' : selectedTypes.join(', ')}
                         </p>
+                      </div>
+                    )}
+                    {sendMode === 'broadcast' && (
+                      <div className="pt-3 border-t border-slate-700">
+                        <p className="text-[10px] text-emerald-400 font-bold flex items-center gap-1.5">✅ CRM ID attached to each recipient</p>
+                        <p className="text-[9px] text-slate-500 mt-0.5">Every email is traceable to a unique CRM record</p>
                       </div>
                     )}
                   </div>
