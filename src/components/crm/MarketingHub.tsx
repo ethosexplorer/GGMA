@@ -575,7 +575,7 @@ export const MarketingHub = () => {
   };
 
   return (
-    <div className="h-full flex flex-col bg-slate-900 text-slate-100 font-sans">
+    <div className="h-full min-h-full flex flex-col bg-slate-900 text-slate-100 font-sans">
       {/* Header */}
       <div className="px-10 py-8 border-b border-white/10 bg-slate-950/50 backdrop-blur-xl shrink-0">
         <div className="flex items-end justify-between max-w-7xl mx-auto">
@@ -609,7 +609,7 @@ export const MarketingHub = () => {
         </div>
       </div>
 
-      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-10">
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-10 pb-20 bg-slate-900">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
           
           {/* Left Column: Composer */}
