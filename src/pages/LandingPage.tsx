@@ -14,6 +14,7 @@ import { FeaturedPoll, StickyPollWidget, RevolvingSurveyBanner } from '../compon
 import { RegulatoryFeedWidget } from '../components/shared/RegulatoryFeedWidget';
 import { StateWelcomeBanner } from '../components/shared/StateWelcomeBanner';
 import { fetchRegulatoryFeed, formatFeedDate, type RegulatoryUpdate } from '../lib/regulatoryFeed';
+import { LanguageSelector } from '../components/LanguageSelector';
 export const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate: (view: 'what-is-care-wallet' | 'what-is-c3' | 'login' | 'signup' | 'patient-portal' | 'support' | 'larry-chatbot' | 'larry-business' | 'legal-advocacy', role?: string) => void, jurisdiction?: string, setJurisdiction?: (s: string) => void }) => {
   const [liveFeed, setLiveFeed] = useState<RegulatoryUpdate[]>([]);
   const [feedLoading, setFeedLoading] = useState(true);
