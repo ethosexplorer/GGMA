@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, Globe, Activity, Search, Shield, Cpu, MessageSquare, Bot, PhoneCall, Clock, X, AlertTriangle, Zap, BookOpen, ExternalLink, Download, Eye, BarChart3 } from 'lucide-react';
+import { Bell, Globe, Activity, Search, Shield, Cpu, MessageSquare, Bot, PhoneCall, Clock, X, AlertTriangle, Zap, BookOpen, ExternalLink, Download, Eye, BarChart3, UserPlus, LogIn } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { turso } from '../../lib/turso';
 import { getSweepFreshness } from '../../lib/regSweep';
 import { ImportantUpdates } from '../ImportantUpdates';
 import { NationalEnforcementLedger } from '../federal/NationalEnforcementLedger';
 import { RegulatoryCommandCenter } from './RegulatoryCommandCenter';
+import { collection, onSnapshot, query, orderBy, limit } from 'firebase/firestore';
+import { db } from '../../firebase';
 
 export const OverviewTab = ({
   user,
@@ -64,6 +66,61 @@ export const OverviewTab = ({
   const [isSystemFreezeExpanded, setIsSystemFreezeExpanded] = useState(false);
   const [hideSystemFreeze, setHideSystemFreeze] = useState(() => localStorage.getItem('gghp_system_freeze_dismissed') === 'true');
   const [hideAlertQueue, setHideAlertQueue] = useState(() => localStorage.getItem('gghp_alert_queue_dismissed') === 'true');
+
+  // ── LIVE ACCOUNT ACTIVITY FEED ──────────────────────────────────────────
+  const [recentAccounts, setRecentAccounts] = useState<any[]>([]);
+  const [accountCounts, setAccountCounts] = useState({ total: 0, today: 0, thisWeek: 0, thisMonth: 0 });
+
+  useEffect(() => {
+    const unsub = onSnapshot(collection(db, 'users'), (snap) => {
+      const now = new Date();
+      const todayStr = now.toISOString().split('T')[0];
+      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+      let today = 0;
+      let thisWeek = 0;
+      let thisMonth = 0;
+
+      const allUsers = snap.docs.map(d => {
+        const data = d.data();
+        let createdDate: Date | null = null;
+        if (data.createdAt?.toDate) {
+          createdDate = data.createdAt.toDate();
+        } else if (typeof data.createdAt === 'string') {
+          createdDate = new Date(data.createdAt);
+        }
+
+        if (createdDate) {
+          const cStr = createdDate.toISOString().split('T')[0];
+          if (cStr === todayStr) today++;
+          if (createdDate >= weekAgo) thisWeek++;
+          if (createdDate >= monthAgo) thisMonth++;
+        }
+
+        return {
+          uid: d.id,
+          email: data.email || 'Unknown',
+          displayName: data.displayName || data.email?.split('@')[0] || 'Unknown',
+          role: data.role || 'user',
+          status: data.status || 'Active',
+          createdAt: createdDate,
+          state: data.state || data.jurisdiction || '',
+        };
+      });
+
+      // Sort by createdAt descending (most recent first)
+      allUsers.sort((a, b) => {
+        if (!a.createdAt) return 1;
+        if (!b.createdAt) return -1;
+        return b.createdAt.getTime() - a.createdAt.getTime();
+      });
+
+      setRecentAccounts(allUsers.slice(0, 15));
+      setAccountCounts({ total: snap.size, today, thisWeek, thisMonth });
+    });
+    return () => unsub();
+  }, []);
 
   const [broadcastMsg, setBroadcastMsg] = useState('🚨 SYSTEM NOTICE: NATIONWIDE COMPLIANCE AUDIT IN PROGRESS • GLOBAL GREEN HYBRID PLATFORM (GGHP) • ALL SECTORS (GGMA/RIP/SINC) OPERATIONAL');
   const [broadcastType, setBroadcastType] = useState('Urgent Alert (Red)');
@@ -377,6 +434,106 @@ export const OverviewTab = ({
                   </button>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 👁️ LIVE ACCOUNT ACTIVITY FEED — God's Eye on Signups & Logins */}
+      <div className="bg-slate-900 border border-slate-700 rounded-3xl shadow-xl overflow-hidden text-white relative">
+        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500"></div>
+        <div className="p-8">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h3 className="font-black text-lg flex items-center gap-2"><UserPlus size={20} className="text-emerald-400" /> Live Account Activity</h3>
+              <p className="text-xs text-slate-400 mt-1">Real-time Firebase user registrations • Who's creating accounts on your platform right now</p>
+            </div>
+            <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-full">
+              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+              <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Live Firebase Sync</span>
+            </div>
+          </div>
+
+          {/* Account Stats Row */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            {[
+              { label: 'Total Accounts', value: accountCounts.total.toLocaleString(), icon: '👥', color: 'text-white' },
+              { label: 'Joined Today', value: accountCounts.today.toString(), icon: '🟢', color: accountCounts.today > 0 ? 'text-emerald-400' : 'text-slate-400' },
+              { label: 'This Week', value: accountCounts.thisWeek.toString(), icon: '📅', color: accountCounts.thisWeek > 0 ? 'text-cyan-400' : 'text-slate-400' },
+              { label: 'This Month', value: accountCounts.thisMonth.toString(), icon: '📊', color: accountCounts.thisMonth > 0 ? 'text-indigo-400' : 'text-slate-400' },
+            ].map((stat, i) => (
+              <div key={i} className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{stat.label}</p>
+                  <span className="text-sm">{stat.icon}</span>
+                </div>
+                <p className={cn("text-2xl font-black", stat.color)}>{stat.value}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Recent Account Activity Feed */}
+          <div className="bg-slate-800/30 rounded-2xl border border-slate-700/50 overflow-hidden">
+            <div className="px-5 py-3 border-b border-slate-700/50 flex items-center justify-between">
+              <h4 className="text-sm font-black text-white flex items-center gap-2"><LogIn size={14} className="text-emerald-400" /> Recent Signups & Accounts</h4>
+              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{recentAccounts.length} most recent</span>
+            </div>
+            <div className="divide-y divide-slate-800/50 max-h-[400px] overflow-y-auto">
+              {recentAccounts.length > 0 ? recentAccounts.map((acct, i) => {
+                const roleColors: Record<string, string> = {
+                  'user': 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+                  'patient': 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+                  'Patient / Caregiver': 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+                  'business': 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+                  'provider': 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+                  'attorney': 'bg-rose-500/20 text-rose-300 border-rose-500/30',
+                  'executive_founder': 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+                  'president': 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+                  'admin_internal': 'bg-red-500/20 text-red-300 border-red-500/30',
+                };
+                const roleColor = roleColors[acct.role] || 'bg-slate-500/20 text-slate-300 border-slate-500/30';
+                const statusColor = acct.status === 'Active' ? 'text-emerald-400' : acct.status === 'Pending' ? 'text-amber-400' : 'text-red-400';
+
+                // Time ago calculation
+                let timeAgo = 'Unknown';
+                if (acct.createdAt) {
+                  const diffMs = Date.now() - acct.createdAt.getTime();
+                  const diffMins = Math.floor(diffMs / 60000);
+                  const diffHours = Math.floor(diffMs / 3600000);
+                  const diffDays = Math.floor(diffMs / 86400000);
+                  if (diffMins < 1) timeAgo = 'Just now';
+                  else if (diffMins < 60) timeAgo = `${diffMins}m ago`;
+                  else if (diffHours < 24) timeAgo = `${diffHours}h ago`;
+                  else if (diffDays < 30) timeAgo = `${diffDays}d ago`;
+                  else timeAgo = acct.createdAt.toLocaleDateString();
+                }
+
+                return (
+                  <div key={acct.uid || i} className="px-5 py-3.5 flex items-center gap-4 hover:bg-slate-800/30 transition-colors group">
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-500/30 to-cyan-500/30 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+                      <UserPlus size={14} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <p className="text-sm font-bold text-white truncate">{acct.displayName}</p>
+                        <span className={cn("text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border", roleColor)}>
+                          {acct.role?.replace(/_/g, ' ')}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-400 truncate">
+                        {acct.email}
+                        {acct.state && <span className="text-slate-500"> • {acct.state}</span>}
+                      </p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <p className={cn("text-[10px] font-black uppercase tracking-wider", statusColor)}>{acct.status}</p>
+                      <p className="text-[10px] text-slate-500 font-bold mt-0.5">{timeAgo}</p>
+                    </div>
+                  </div>
+                );
+              }) : (
+                <div className="px-5 py-8 text-center text-sm text-slate-500 italic">No accounts found in Firebase</div>
+              )}
             </div>
           </div>
         </div>
