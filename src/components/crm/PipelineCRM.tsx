@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, GripVertical, Phone, Mail, Clock, ShieldCheck, Building2, User, Landmark, Building, Briefcase, Scale, HeartHandshake, Truck, Search, X, Upload, Store, Sprout, Factory } from 'lucide-react';
+import { Plus, GripVertical, Phone, Mail, Clock, ShieldCheck, Building2, User, Landmark, Building, Briefcase, Scale, HeartHandshake, Truck, Search, X, Upload, Store, Sprout, Factory, Copy, Check } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { db, auth } from '../../firebase';
 import { collection, addDoc, onSnapshot, query, serverTimestamp, doc, updateDoc, deleteDoc, where, limit } from 'firebase/firestore';
@@ -598,7 +598,7 @@ export const PipelineCRM = ({
                           <TypeIcon size={10} />
                           {getTypeConfig(deal.type).label}
                         </div>
-                        <GripVertical size={14} className="text-slate-300 opacity-0 group-hover:opacity-100 cursor-grab" />
+                        <span className="text-[8px] font-mono text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200" title={`CRM ID: ${deal.id}`}>ID: {deal.id.slice(0, 6)}…</span>
                       </div>
                       
                       <h4 className="font-bold text-slate-800 text-sm mb-1">{deal.name}</h4>
@@ -642,7 +642,18 @@ export const PipelineCRM = ({
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 animate-in fade-in duration-200">
           <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200">
             <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-2xl">
-              <h2 className="text-lg font-black text-slate-800">{editingDeal ? 'Edit Record' : 'Add New Record'}</h2>
+              <div>
+                <h2 className="text-lg font-black text-slate-800">{editingDeal ? 'Edit Record' : 'Add New Record'}</h2>
+                {editingDeal && (
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(editingDeal.id); const btn = e.currentTarget; btn.classList.add('text-emerald-600'); setTimeout(() => btn.classList.remove('text-emerald-600'), 1500); }}
+                    className="flex items-center gap-1.5 mt-1 text-[10px] font-mono text-slate-400 hover:text-indigo-600 transition-colors cursor-pointer"
+                    title="Click to copy full CRM ID"
+                  >
+                    <Copy size={10} /> CRM ID: {editingDeal.id}
+                  </button>
+                )}
+              </div>
               <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600 hover:bg-slate-200 p-1 rounded-lg transition-colors"><X size={20} /></button>
             </div>
             
