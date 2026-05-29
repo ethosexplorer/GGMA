@@ -39,6 +39,34 @@ export const LegalOversightTab = () => {
         </div>
       </div>
 
+      {/* OBNDD DEA REGISTRATION WARNING */}
+      <div className="bg-amber-900 bg-gradient-to-r from-amber-900/80 via-orange-900/60 to-amber-900/80 p-6 rounded-2xl border border-amber-500/50 shadow-lg shadow-amber-900/20 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-1 h-full bg-amber-500 animate-pulse"></div>
+        <div className="flex flex-col md:flex-row gap-6 items-start md:items-center relative z-10">
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="bg-amber-600 text-white text-[10px] font-black px-2.5 py-1 rounded uppercase tracking-widest flex items-center gap-1.5 shadow-md">
+                <Gavel size={12} />
+                OBNDD / DEA ALERT
+              </span>
+              <span className="text-amber-200 text-[10px] font-bold uppercase tracking-wider">May 2026 • DEA Registration Warning</span>
+            </div>
+            <h2 className="text-xl font-extrabold text-white leading-tight mb-2">OK Bureau of Narcotics Urges DEA Registration for Cannabis Businesses</h2>
+            <p className="text-sm text-amber-100/90 leading-relaxed max-w-4xl">
+              The Oklahoma Bureau of Narcotics and Dangerous Drugs Control (OBNDD) sent a letter to licensed medical cannabis businesses encouraging them to register with the DEA and warning of possible sanctions, including <strong className="text-white">revocation of state licenses</strong>, for failing to comply with federal requirements.
+              <strong className="text-amber-300 block mt-1">OMMA said the letter came as a surprise — it remains unclear whether federal officials actually intend to require DEA registration for medical operators.</strong>
+            </p>
+          </div>
+          <div className="shrink-0 flex gap-3 w-full md:w-auto">
+            <button onClick={() => {
+              window.open('https://www.newsfromthestates.com/article/feds-have-embraced', '_blank');
+            }} className="flex-1 md:flex-none px-6 py-2.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-black rounded-xl transition-all shadow-lg uppercase tracking-widest text-center">
+              Read Full Article
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div className="bg-slate-900 bg-gradient-to-br from-slate-900 to-slate-950 p-8 rounded-[2rem] border border-slate-800 shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 right-0 p-8 opacity-10"><Gavel size={120} className="text-amber-500" /></div>
         <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter mb-2">Legalization & Policy Monitor</h2>

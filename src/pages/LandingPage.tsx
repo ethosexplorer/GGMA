@@ -38,6 +38,8 @@ export const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onN
   const [inTheKnowNews, setInTheKnowNews] = useState<string[]>([
     '🔴 BREAKING: DOJ Final Order — Medical Cannabis & FDA-Approved Products Moved to Schedule III (April 23, 2026)',
     '⚖️ DEA HEARING: Expedited administrative hearing on broader marijuana rescheduling begins JUNE 29, 2026',
+    '🚨 OBNDD WARNING: Oklahoma Bureau of Narcotics urges licensed cannabis businesses to register with DEA — warns of possible license revocation for non-compliance',
+    '⚠️ OMMA RESPONSE: Oklahoma Medical Marijuana Authority says OBNDD letter came as a surprise — unclear if feds will enforce DEA registration',
     '🚨 DEA: Synthetic cannabinoid HHC classified as illegal Schedule I substance — NOT legal hemp',
     '💰 280E TAX RELIEF: Schedule III status allows medical cannabis businesses to deduct normal business expenses',
     '📋 NORTH CAROLINA: Advisory Council recommends lawmakers establish regulated marijuana market',
