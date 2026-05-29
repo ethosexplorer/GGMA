@@ -408,6 +408,7 @@ export const MarketingHub = () => {
       if (!directContact) return alert(`Please enter a recipient ${campaignType === 'email' ? 'email' : 'phone number'}`);
       const directRecipients = directContact.split(/[,;\n]+/).map(s => s.trim()).filter(Boolean);
       if (directRecipients.length === 0) return alert('No valid recipients found.');
+      if (directRecipients.length > 30 && !confirm(`⚠️ You're sending to ${directRecipients.length} recipients in Direct mode.\n\nDirect mode sends each email individually, and more than 30 may cause timeouts.\n\nFor large sends, Broadcast mode is recommended.\n\nContinue anyway?`)) return;
       finalAudience = directRecipients.map(r => ({ email: campaignType === 'email' ? r : undefined, phone: campaignType === 'sms' ? r : undefined }));
     } else {
       if (filteredAudience.length === 0) return alert('No valid audience selected.');
@@ -801,9 +802,17 @@ export const MarketingHub = () => {
                     />
                     <p className="text-[9px] text-slate-500 mt-1.5 font-medium">Separate multiple recipients with commas, semicolons, or new lines</p>
                   </div>
-                  <div className="p-6 border border-indigo-500/30 bg-indigo-500/5 rounded-2xl text-center">
+                  <div className={cn("p-6 rounded-2xl text-center", directContact.split(/[,;\n]+/).map(s => s.trim()).filter(Boolean).length > 30 ? 'border border-amber-500/30 bg-amber-500/5' : 'border border-indigo-500/30 bg-indigo-500/5')}>
                     <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2">Direct Message Mode</p>
                     <p className="text-2xl font-black text-white">{directContact.split(/[,;\n]+/).map(s => s.trim()).filter(Boolean).length || 0} Recipient{directContact.split(/[,;\n]+/).map(s => s.trim()).filter(Boolean).length !== 1 ? 's' : ''}</p>
+                    {directContact.split(/[,;\n]+/).map(s => s.trim()).filter(Boolean).length > 30 && (
+                      <div className="mt-3 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl">
+                        <p className="text-[10px] text-amber-400 font-bold flex items-center justify-center gap-1.5">
+                          <AlertTriangle size={12} /> Recommended max: 30 recipients
+                        </p>
+                        <p className="text-[9px] text-amber-400/70 mt-1">Sending to more than 30 may cause SMTP timeouts. Use Broadcast mode for large sends.</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               ) : (
