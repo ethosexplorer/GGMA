@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, Building2, LayoutTemplate, Clock, AlertCircle, Save, Trash2, X, Plus, ChevronDown, Eye, MousePointerClick, MailOpen, TrendingUp, Inbox, AlertTriangle, Reply, RefreshCw, Folder, Pencil, Check } from 'lucide-react';
+import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, Building2, LayoutTemplate, Clock, AlertCircle, Save, Trash2, X, Plus, ChevronDown, Eye, MousePointerClick, MailOpen, TrendingUp, Inbox, AlertTriangle, Reply, RefreshCw, Folder, Pencil, Check, CalendarDays } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { db } from '../../firebase';
 import { collection, onSnapshot, query, addDoc, deleteDoc, doc, updateDoc, serverTimestamp, orderBy, limit, getDocs } from 'firebase/firestore';
@@ -37,6 +37,7 @@ export const MarketingHub = () => {
   const [selectedStates, setSelectedStates] = useState<string[]>(['All']);
   const [selectedTypes, setSelectedTypes] = useState<string[]>(['All']);
   const [selectedTier, setSelectedTier] = useState<'all' | 'top_grossing' | 'standard'>('all');
+  const [renewalFilter, setRenewalFilter] = useState<'off' | 'today' | '7days' | '30days' | '90days' | 'expired'>('off');
   const [showStateDropdown, setShowStateDropdown] = useState(false);
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -266,6 +267,21 @@ export const MarketingHub = () => {
       if (campaignType === 'sms' && !d.phone) return false;
       if (campaignType === 'email' && suppressedEmails.has((d.email || '').toLowerCase())) return false;
 
+      // Renewal filter
+      if (renewalFilter !== 'off') {
+        if (!d.licenseExpiration) return false;
+        const expDate = new Date(d.licenseExpiration);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const diffDays = Math.floor((expDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+        
+        if (renewalFilter === 'expired' && diffDays > 0) return false;
+        if (renewalFilter === 'today' && (diffDays < 0 || diffDays > 0)) return false;
+        if (renewalFilter === '7days' && (diffDays < 0 || diffDays > 7)) return false;
+        if (renewalFilter === '30days' && (diffDays < 0 || diffDays > 30)) return false;
+        if (renewalFilter === '90days' && (diffDays < 0 || diffDays > 90)) return false;
+      }
+
       return matchesState && matchesType && matchesTier;
     });
 
@@ -276,7 +292,7 @@ export const MarketingHub = () => {
       filteredCount: filtered.length,
       filteredAudience: filtered
     };
-  }, [deals, selectedStates, selectedTypes, selectedTier, campaignType, suppressedEmails]);
+  }, [deals, selectedStates, selectedTypes, selectedTier, renewalFilter, campaignType, suppressedEmails]);
 
   // Derived properties from useMemo
   const totalLeads = audienceStats.totalLeads;
@@ -911,6 +927,49 @@ export const MarketingHub = () => {
                           <span className="text-sm font-medium text-white capitalize">{t}</span>
                         </label>
                       ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Patient Renewal Filter */}
+                <div>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                    <CalendarDays size={12} /> Patient Renewal Filter
+                  </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {([
+                      { id: 'off' as const, label: 'Off' },
+                      { id: 'today' as const, label: '📅 Today' },
+                      { id: '7days' as const, label: '7 Days' },
+                      { id: '30days' as const, label: '30 Days' },
+                      { id: '90days' as const, label: '90 Days' },
+                      { id: 'expired' as const, label: '🔴 Expired' },
+                    ]).map(t => (
+                      <button
+                        key={t.id}
+                        onClick={() => setRenewalFilter(t.id)}
+                        className={cn(
+                          "py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all",
+                          renewalFilter === t.id
+                            ? t.id === 'expired' ? "bg-red-600 text-white shadow-sm shadow-red-500/30" 
+                              : t.id === 'off' ? "bg-slate-600 text-white shadow-sm" 
+                              : "bg-emerald-600 text-white shadow-sm shadow-emerald-500/30"
+                            : "bg-slate-950 text-slate-500 border border-slate-700 hover:text-white"
+                        )}
+                      >
+                        {t.label}
+                      </button>
+                    ))}
+                  </div>
+                  {renewalFilter !== 'off' && (
+                    <div className={cn("mt-2 p-3 rounded-xl border", renewalFilter === 'expired' ? 'bg-red-500/10 border-red-500/20' : 'bg-emerald-500/10 border-emerald-500/20')}>
+                      <p className={cn("text-[10px] font-bold flex items-center gap-1.5", renewalFilter === 'expired' ? 'text-red-400' : 'text-emerald-400')}>
+                        <CalendarDays size={12} />
+                        {renewalFilter === 'expired' ? `Showing patients with expired cards (past renewal date)` 
+                          : renewalFilter === 'today' ? `Showing patients whose card expires today`
+                          : `Showing patients expiring within ${renewalFilter.replace('days', '')} days`}
+                      </p>
+                      <p className="text-[9px] text-slate-500 mt-1">Only patients with renewal dates from Acuity CRM data</p>
                     </div>
                   )}
                 </div>
