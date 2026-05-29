@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, Building2, LayoutTemplate, Clock, AlertCircle, Save, Trash2, X, Plus, ChevronDown, Eye, MousePointerClick, MailOpen, TrendingUp, Inbox, AlertTriangle, Reply, RefreshCw, Folder, Pencil, Check, CalendarDays } from 'lucide-react';
+import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, Building2, LayoutTemplate, Clock, AlertCircle, Save, Trash2, X, Plus, ChevronDown, ChevronLeft, ChevronRight, Eye, MousePointerClick, MailOpen, TrendingUp, Inbox, AlertTriangle, Reply, RefreshCw, Folder, Pencil, Check, CalendarDays } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { db } from '../../firebase';
 import { collection, onSnapshot, query, addDoc, deleteDoc, doc, updateDoc, serverTimestamp, orderBy, limit, getDocs } from 'firebase/firestore';
@@ -37,7 +37,11 @@ export const MarketingHub = () => {
   const [selectedStates, setSelectedStates] = useState<string[]>(['All']);
   const [selectedTypes, setSelectedTypes] = useState<string[]>(['All']);
   const [selectedTier, setSelectedTier] = useState<'all' | 'top_grossing' | 'standard'>('all');
-  const [renewalFilter, setRenewalFilter] = useState<'off' | 'today' | '7days' | '30days' | '90days' | 'expired'>('off');
+  const [renewalMode, setRenewalMode] = useState<'off' | 'month' | 'all_expired'>('off');
+  const [renewalMonth, setRenewalMonth] = useState(() => {
+    const now = new Date();
+    return { year: now.getFullYear(), month: now.getMonth() }; // 0-indexed month
+  });
   const [showStateDropdown, setShowStateDropdown] = useState(false);
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -268,18 +272,21 @@ export const MarketingHub = () => {
       if (campaignType === 'email' && suppressedEmails.has((d.email || '').toLowerCase())) return false;
 
       // Renewal filter
-      if (renewalFilter !== 'off') {
+      if (renewalMode !== 'off') {
         if (!d.licenseExpiration) return false;
         const expDate = new Date(d.licenseExpiration);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const diffDays = Math.floor((expDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+        if (isNaN(expDate.getTime())) return false;
         
-        if (renewalFilter === 'expired' && diffDays > 0) return false;
-        if (renewalFilter === 'today' && (diffDays < 0 || diffDays > 0)) return false;
-        if (renewalFilter === '7days' && (diffDays < 0 || diffDays > 7)) return false;
-        if (renewalFilter === '30days' && (diffDays < 0 || diffDays > 30)) return false;
-        if (renewalFilter === '90days' && (diffDays < 0 || diffDays > 90)) return false;
+        if (renewalMode === 'all_expired') {
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          return expDate.getTime() < today.getTime();
+        }
+        
+        // Month mode — match patients whose expiration falls in the selected month
+        if (renewalMode === 'month') {
+          return expDate.getFullYear() === renewalMonth.year && expDate.getMonth() === renewalMonth.month;
+        }
       }
 
       return matchesState && matchesType && matchesTier;
@@ -292,7 +299,7 @@ export const MarketingHub = () => {
       filteredCount: filtered.length,
       filteredAudience: filtered
     };
-  }, [deals, selectedStates, selectedTypes, selectedTier, renewalFilter, campaignType, suppressedEmails]);
+  }, [deals, selectedStates, selectedTypes, selectedTier, renewalMode, renewalMonth, campaignType, suppressedEmails]);
 
   // Derived properties from useMemo
   const totalLeads = audienceStats.totalLeads;
@@ -936,40 +943,73 @@ export const MarketingHub = () => {
                   <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
                     <CalendarDays size={12} /> Patient Renewal Filter
                   </label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {([
-                      { id: 'off' as const, label: 'Off' },
-                      { id: 'today' as const, label: '📅 Today' },
-                      { id: '7days' as const, label: '7 Days' },
-                      { id: '30days' as const, label: '30 Days' },
-                      { id: '90days' as const, label: '90 Days' },
-                      { id: 'expired' as const, label: '🔴 Expired' },
-                    ]).map(t => (
-                      <button
-                        key={t.id}
-                        onClick={() => setRenewalFilter(t.id)}
-                        className={cn(
-                          "py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all",
-                          renewalFilter === t.id
-                            ? t.id === 'expired' ? "bg-red-600 text-white shadow-sm shadow-red-500/30" 
-                              : t.id === 'off' ? "bg-slate-600 text-white shadow-sm" 
-                              : "bg-emerald-600 text-white shadow-sm shadow-emerald-500/30"
-                            : "bg-slate-950 text-slate-500 border border-slate-700 hover:text-white"
-                        )}
-                      >
-                        {t.label}
-                      </button>
-                    ))}
+                  <div className="grid grid-cols-3 gap-2 mb-3">
+                    <button
+                      onClick={() => setRenewalMode('off')}
+                      className={cn(
+                        "py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all",
+                        renewalMode === 'off' ? "bg-slate-600 text-white shadow-sm" : "bg-slate-950 text-slate-500 border border-slate-700 hover:text-white"
+                      )}
+                    >Off</button>
+                    <button
+                      onClick={() => setRenewalMode('month')}
+                      className={cn(
+                        "py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all",
+                        renewalMode === 'month' ? "bg-emerald-600 text-white shadow-sm shadow-emerald-500/30" : "bg-slate-950 text-slate-500 border border-slate-700 hover:text-white"
+                      )}
+                    >📅 By Month</button>
+                    <button
+                      onClick={() => setRenewalMode('all_expired')}
+                      className={cn(
+                        "py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all",
+                        renewalMode === 'all_expired' ? "bg-red-600 text-white shadow-sm shadow-red-500/30" : "bg-slate-950 text-slate-500 border border-slate-700 hover:text-white"
+                      )}
+                    >🔴 All Expired</button>
                   </div>
-                  {renewalFilter !== 'off' && (
-                    <div className={cn("mt-2 p-3 rounded-xl border", renewalFilter === 'expired' ? 'bg-red-500/10 border-red-500/20' : 'bg-emerald-500/10 border-emerald-500/20')}>
-                      <p className={cn("text-[10px] font-bold flex items-center gap-1.5", renewalFilter === 'expired' ? 'text-red-400' : 'text-emerald-400')}>
-                        <CalendarDays size={12} />
-                        {renewalFilter === 'expired' ? `Showing patients with expired cards (past renewal date)` 
-                          : renewalFilter === 'today' ? `Showing patients whose card expires today`
-                          : `Showing patients expiring within ${renewalFilter.replace('days', '')} days`}
+
+                  {renewalMode === 'month' && (
+                    <div className="bg-slate-950 rounded-xl border border-slate-700 p-3">
+                      <div className="flex items-center justify-between">
+                        <button
+                          onClick={() => setRenewalMonth(prev => {
+                            const d = new Date(prev.year, prev.month - 1, 1);
+                            return { year: d.getFullYear(), month: d.getMonth() };
+                          })}
+                          className="p-2 hover:bg-slate-800 rounded-lg transition-colors text-slate-400 hover:text-white"
+                        >
+                          <ChevronLeft size={18} />
+                        </button>
+                        <div className="text-center">
+                          <p className="text-white font-black text-sm">
+                            {new Date(renewalMonth.year, renewalMonth.month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                          </p>
+                          <p className="text-[9px] text-slate-500 font-bold mt-0.5">Patients expiring this month</p>
+                        </div>
+                        <button
+                          onClick={() => setRenewalMonth(prev => {
+                            const d = new Date(prev.year, prev.month + 1, 1);
+                            return { year: d.getFullYear(), month: d.getMonth() };
+                          })}
+                          className="p-2 hover:bg-slate-800 rounded-lg transition-colors text-slate-400 hover:text-white"
+                        >
+                          <ChevronRight size={18} />
+                        </button>
+                      </div>
+                      <div className="mt-3 pt-3 border-t border-slate-800">
+                        <p className="text-[10px] text-emerald-400 font-bold flex items-center gap-1.5">
+                          <CalendarDays size={12} />
+                          {filteredCount} patient{filteredCount !== 1 ? 's' : ''} with cards expiring in {new Date(renewalMonth.year, renewalMonth.month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {renewalMode === 'all_expired' && (
+                    <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 mt-1">
+                      <p className="text-[10px] text-red-400 font-bold flex items-center gap-1.5">
+                        <CalendarDays size={12} /> Showing all patients with expired cards
                       </p>
-                      <p className="text-[9px] text-slate-500 mt-1">Only patients with renewal dates from Acuity CRM data</p>
+                      <p className="text-[9px] text-slate-500 mt-1">{filteredCount} patients past their renewal date</p>
                     </div>
                   )}
                 </div>
