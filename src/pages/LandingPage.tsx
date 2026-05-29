@@ -5,7 +5,7 @@ import {
   Map as MapIcon, MessageSquare, ChevronDown, Send, GraduationCap, Sparkles, Scale,
   Briefcase, Bot, BookOpen, Phone, Star, ArrowUpCircle, Home, Check, Wallet,
   HeartHandshake, HelpCircle, Building2, Leaf, Activity, Gavel, Headphones,
-  Users, ShoppingCart, PackageSearch, ClipboardList, Cpu
+  Users, ShoppingCart, PackageSearch, ClipboardList, Cpu, MessageCircle
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Button } from '../components/shared/Button';
@@ -15,6 +15,7 @@ import { RegulatoryFeedWidget } from '../components/shared/RegulatoryFeedWidget'
 import { StateWelcomeBanner } from '../components/shared/StateWelcomeBanner';
 import { fetchRegulatoryFeed, formatFeedDate, type RegulatoryUpdate } from '../lib/regulatoryFeed';
 import { LanguageSelector } from '../components/LanguageSelector';
+import { turso } from '../lib/turso';
 export const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate: (view: 'what-is-care-wallet' | 'what-is-c3' | 'login' | 'signup' | 'patient-portal' | 'support' | 'larry-chatbot' | 'larry-business' | 'legal-advocacy', role?: string) => void, jurisdiction?: string, setJurisdiction?: (s: string) => void }) => {
   const [liveFeed, setLiveFeed] = useState<RegulatoryUpdate[]>([]);
   const [feedLoading, setFeedLoading] = useState(true);
