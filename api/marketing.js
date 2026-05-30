@@ -36,9 +36,17 @@ const createTransporter = () => nodemailer.createTransport({
   port: parseInt(process.env.SMTP_PORT || '587'),
   secure: process.env.SMTP_SECURE === 'true',
   auth: {
-    user: process.env.SMTP_USER || 'marketing.globalgreenhp@gmail.com',
+    user: process.env.SMTP_USER || 'marketing@ggp-os.com',
     pass: process.env.SMTP_PASS || process.env.GMAIL_MARKETING_APP_PASSWORD || '',
   },
+  pool: true,
+  maxConnections: 3,
+  maxMessages: 100,
+  rateDelta: 1000,
+  rateLimit: 5,
+  connectionTimeout: 30000,
+  greetingTimeout: 15000,
+  socketTimeout: 60000,
 });
 
 // ============================================================
@@ -226,7 +234,7 @@ export default async function handler(req, res) {
 
   const route = req.query.route || '';
 
-  // ---- ROUTE: SEND CAMPAIGN ----
+// ---- ROUTE: SEND CAMPAIGN ----
   if (route === 'send') {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
     
@@ -238,8 +246,37 @@ export default async function handler(req, res) {
 
       const results = { total: recipients.length, successful: 0, failed: 0, errors: [] };
 
+      // --- Throttled send helper: waits between sends to avoid rate limits ---
+      const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+      // --- Retry helper: retries a function up to maxRetries times with backoff ---
+      const withRetry = async (fn, maxRetries = 2) => {
+        for (let attempt = 0; attempt <= maxRetries; attempt++) {
+          try {
+            return await fn();
+          } catch (err) {
+            if (attempt === maxRetries) throw err;
+            // Exponential backoff: 500ms, 1500ms
+            await delay(500 * (attempt + 1));
+          }
+        }
+      };
+
       if (type === 'email') {
         const transporter = createTransporter();
+        
+        // Verify SMTP connection first
+        try {
+          await transporter.verify();
+          console.log('[SMTP] Connection verified for', process.env.SMTP_USER || 'marketing@ggp-os.com');
+        } catch (verifyErr) {
+          console.error('[SMTP] Connection verification failed:', verifyErr.message);
+          return res.status(503).json({ 
+            error: `SMTP connection failed: ${verifyErr.message}. Check SMTP_USER and SMTP_PASS in your .env file.`,
+            hint: 'If using marketing@ggp-os.com, ensure an App Password is generated in Google Admin.'
+          });
+        }
+
         const emailAttachments = (attachments || []).map(att => ({
           filename: att.filename, content: Buffer.from(att.content, 'base64'),
           contentType: att.contentType, cid: att.cid
@@ -247,54 +284,75 @@ export default async function handler(req, res) {
 
         const TRACK_BASE = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://www.ggp-os.com';
         
-        const defaultFrom = `"Global Green Enterprise" <${process.env.SMTP_USER || 'marketing.globalgreenhp@gmail.com'}>`;
+        // Official domain sender — trusted by .gov mail servers
+        const defaultFrom = `"Global Green Enterprise" <${process.env.SMTP_USER || 'marketing@ggp-os.com'}>`;
         
-        const emailPromises = recipients.map(async (recipient) => {
-          if (!recipient.email) throw new Error('Missing email address');
-          let htmlBody = `<div style="font-family: sans-serif; padding: 20px; color: #333;">${message.replace(/\n/g, '<br/>')}</div>`;
-          
-          if (campaignId) {
-            const rid = encodeURIComponent(recipient.email);
-            htmlBody = htmlBody.replace(/href="(https?:\/\/[^"]+)"/gi, (match, url) => {
-              return `href="${TRACK_BASE}/api/marketing?route=track&type=click&cid=${campaignId}&rid=${rid}&url=${encodeURIComponent(url)}"`;
-            });
-            htmlBody += `<img src="${TRACK_BASE}/api/marketing?route=track&type=open&cid=${campaignId}&rid=${rid}&t=${Date.now()}" width="1" height="1" style="display:none;border:0;" alt="" />`;
+        // THROTTLED SEQUENTIAL SEND — 350ms between each email to avoid rate limits
+        const THROTTLE_MS = 350;
+        
+        for (let i = 0; i < recipients.length; i++) {
+          const recipient = recipients[i];
+          if (!recipient.email) {
+            results.failed++;
+            results.errors.push({ recipient, error: 'Missing email address' });
+            continue;
           }
-          
-          return transporter.sendMail({
-            from: fromEmail || defaultFrom,
-            to: recipient.email,
-            cc: cc && cc.length > 0 ? cc.join(', ') : undefined,
-            bcc: bcc && bcc.length > 0 ? bcc.join(', ') : undefined,
-            subject: subject || 'Important Update',
-            text: message.replace(/<[^>]*>/g, ''),
-            html: htmlBody, attachments: emailAttachments
-          });
-        });
 
-        const outcomes = await Promise.allSettled(emailPromises);
-        outcomes.forEach((o, i) => {
-          if (o.status === 'fulfilled') results.successful++;
-          else { results.failed++; results.errors.push({ recipient: recipients[i], error: o.reason.message }); }
-        });
+          try {
+            await withRetry(async () => {
+              let htmlBody = `<div style="font-family: sans-serif; padding: 20px; color: #333;">${message.replace(/\n/g, '<br/>')}</div>`;
+              
+              if (campaignId) {
+                const rid = encodeURIComponent(recipient.email);
+                htmlBody = htmlBody.replace(/href="(https?:\/\/[^"]+)"/gi, (match, url) => {
+                  return `href="${TRACK_BASE}/api/marketing?route=track&type=click&cid=${campaignId}&rid=${rid}&url=${encodeURIComponent(url)}"`;
+                });
+                htmlBody += `<img src="${TRACK_BASE}/api/marketing?route=track&type=open&cid=${campaignId}&rid=${rid}&t=${Date.now()}" width="1" height="1" style="display:none;border:0;" alt="" />`;
+              }
+              
+              await transporter.sendMail({
+                from: fromEmail || defaultFrom,
+                to: recipient.email,
+                cc: cc && cc.length > 0 ? cc.join(', ') : undefined,
+                bcc: bcc && bcc.length > 0 ? bcc.join(', ') : undefined,
+                subject: subject || 'Important Update',
+                text: message.replace(/<[^>]*>/g, ''),
+                html: htmlBody, attachments: emailAttachments
+              });
+            });
+            results.successful++;
+          } catch (err) {
+            results.failed++;
+            results.errors.push({ recipient, error: err.message });
+            console.error(`[SMTP] Failed after retries: ${recipient.email} — ${err.message}`);
+          }
+
+          // Throttle: wait between sends (skip delay on last email)
+          if (i < recipients.length - 1) {
+            await delay(THROTTLE_MS);
+          }
+        }
 
       } else if (type === 'sms') {
-        const smsPromises = recipients.map(async (recipient) => {
-          if (!recipient.phone) throw new Error('Missing phone number');
-          const cleanNumber = recipient.phone.replace(/[\s\-\(\)\+]/g, '');
-          const response = await fetch('https://textbelt.com/text', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ phone: cleanNumber, message, key: TEXTBELT_API_KEY })
-          });
-          const data = await response.json();
-          if (!data.success) throw new Error(data.error || 'TextBelt API Error');
-          return data;
-        });
-        const outcomes = await Promise.allSettled(smsPromises);
-        outcomes.forEach((o, i) => {
-          if (o.status === 'fulfilled') results.successful++;
-          else { results.failed++; results.errors.push({ recipient: recipients[i], error: o.reason.message }); }
-        });
+        for (let i = 0; i < recipients.length; i++) {
+          const recipient = recipients[i];
+          try {
+            if (!recipient.phone) throw new Error('Missing phone number');
+            const cleanNumber = recipient.phone.replace(/[\s\-\(\)\+]/g, '');
+            const response = await fetch('https://textbelt.com/text', {
+              method: 'POST', headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ phone: cleanNumber, message, key: TEXTBELT_API_KEY })
+            });
+            const data = await response.json();
+            if (!data.success) throw new Error(data.error || 'TextBelt API Error');
+            results.successful++;
+          } catch (err) {
+            results.failed++;
+            results.errors.push({ recipient, error: err.message });
+          }
+          // 200ms throttle for SMS
+          if (i < recipients.length - 1) await delay(200);
+        }
       } else {
         return res.status(400).json({ error: 'Invalid campaign type. Must be "email" or "sms".' });
       }

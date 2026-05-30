@@ -274,6 +274,19 @@ export const MarketingHub = () => {
       if (campaignType === 'email' && !d.email) return false;
       if (campaignType === 'sms' && !d.phone) return false;
       if (campaignType === 'email' && suppressedEmails.has((d.email || '').toLowerCase())) return false;
+      // Block fabricated emails (flagged by quarantine script or matching known fake patterns)
+      if (campaignType === 'email') {
+        if ((d as any).emailFabricated === true) return false;
+        const em = (d.email || '').toLowerCase();
+        const prefix = em.split('@')[0];
+        const domain = em.split('@')[1] || '';
+        const domainBase = domain.replace(/\.(com|org|net|gov)$/, '');
+        // Block contact@/appointments@/info@ with slug-matching domains
+        if (['contact', 'appointments', 'info'].includes(prefix)) {
+          const nameSlug = (d.businessName || d.name || '').toLowerCase().replace(/[^a-z0-9]/g, '').substring(0, 40);
+          if (nameSlug && domainBase && (domainBase.includes(nameSlug.substring(0, 8)) || nameSlug.includes(domainBase.substring(0, 8)))) return false;
+        }
+      }
 
       // Renewal filter
       if (renewalMode !== 'off') {
@@ -581,15 +594,15 @@ export const MarketingHub = () => {
       const ccList = ccEmails.split(',').map(e => e.trim()).filter(Boolean);
       const bccList = bccEmails.split(',').map(e => e.trim()).filter(Boolean);
       
-      // Batch send — 50 per API call
-      const BATCH_SIZE = 50;
+      // Batch send — 20 per API call (throttled backend, ~7s per batch)
+      const BATCH_SIZE = 20;
       const batches: typeof batchAudience[] = [];
       for (let i = 0; i < batchAudience.length; i += BATCH_SIZE) batches.push(batchAudience.slice(i, i + BATCH_SIZE));
       
       const totalResults = { total: batchAudience.length, successful: 0, failed: 0 };
       
       for (let batchIdx = 0; batchIdx < batches.length; batchIdx++) {
-        setSendProgress(`Sending batch ${batchIdx + 1}/${batches.length} (${totalResults.successful} sent)...`);
+        setSendProgress(`Sending batch ${batchIdx + 1}/${batches.length} (${totalResults.successful} delivered, ${totalResults.failed} failed) — throttled for reliability...`);
         try {
           const res = await fetch('/api/marketing?route=send', {
             method: 'POST',
@@ -761,6 +774,15 @@ export const MarketingHub = () => {
                     </button>
                   </div>
                 </div>
+
+                {/* From Address */}
+                {campaignType === 'email' && (
+                  <div className="flex items-center gap-3 bg-slate-900/50 border border-white/5 rounded-xl px-5 py-3">
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest shrink-0">From</span>
+                    <span className="text-sm font-bold text-white">marketing@ggp-os.com</span>
+                    <span className="text-[8px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-black uppercase tracking-wider border border-emerald-500/30 shrink-0">Official Domain</span>
+                  </div>
+                )}
 
                 {campaignType === 'email' && (
                   <div>

@@ -2,7 +2,7 @@
   "buildCommand": "vite build",
   "functions": {
     "api/**/*.js": {
-      "maxDuration": 60
+      "maxDuration": 120
     }
   },
   "rewrites": [
