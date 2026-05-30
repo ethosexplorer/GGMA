@@ -1045,6 +1045,106 @@ export const MarketingHub = () => {
                     </p>
                   )}
                 </div>
+
+                {/* ═══ VALUATION BLAST PRESETS ═══ */}
+                <div className="mt-6 pt-6 border-t border-slate-700">
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                    📋 Valuation Blast Presets
+                  </label>
+                  <p className="text-[9px] text-slate-500 font-medium mb-3">One-click presets to target agency/gov/advocate/attorney/provider audiences with the valuation brief.</p>
+                  
+                  {/* HUB Preset — All non-business/patient types */}
+                  <button
+                    onClick={() => {
+                      setSelectedTypes(['agency', 'advocate', 'attorney', 'provider', 'backoffice', 'distribution', 'other']);
+                      setSelectedStates(['All']);
+                      setSelectedTier('all');
+                      setRenewalMode('off');
+                      setCampaignType('email');
+                      setSendMode('broadcast');
+                      setSubject('GGHP-OS Strategic Valuation Brief — The Compliance Operating System for Legal Cannabis');
+                      setMessage(`<div style="font-family: 'Inter', Arial, sans-serif; max-width: 640px; margin: 0 auto; padding: 32px 0;">
+  <div style="background: linear-gradient(135deg, #061F15, #0A3D2A); padding: 32px; border-radius: 16px; color: white; margin-bottom: 24px;">
+    <p style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #D4AF77; font-weight: 800; margin-bottom: 12px;">Strategic Valuation Brief</p>
+    <h1 style="font-size: 24px; font-weight: 900; margin: 0 0 8px;">Global Green Hybrid Platform</h1>
+    <p style="color: rgba(255,255,255,0.6); font-size: 14px; margin: 0;">The first unified compliance operating system for regulated cannabis.</p>
+  </div>
+  
+  <p style="font-size: 15px; color: #334155; line-height: 1.8; margin-bottom: 16px;">This brief outlines the strategic value of the <strong>GGHP-OS platform</strong> — a full-spectrum operating system connecting state agencies, federal regulators, law enforcement, governor's offices, advocacy organizations, attorneys, and providers on a single, auditable, real-time compliance backbone.</p>
+  
+  <p style="font-size: 15px; color: #334155; line-height: 1.8; margin-bottom: 24px;">No other platform addresses the entire regulatory lifecycle across all 50 states. This document is prepared for agency evaluation — no financial projections or pricing are included.</p>
+  
+  <div style="text-align: center; margin: 32px 0;">
+    <a href="https://globalgreenhp.com/GGHP_Agency_Valuation_Brief.html" style="display: inline-block; background: linear-gradient(135deg, #0A3D2A, #134D36); color: #E8D5B5; padding: 16px 40px; border-radius: 12px; font-weight: 800; text-decoration: none; font-size: 14px; letter-spacing: 0.5px;">View the Full Valuation Brief →</a>
+  </div>
+  
+  <div style="border-top: 1px solid #E2E8F0; padding-top: 20px; margin-top: 32px;">
+    <p style="font-size: 11px; color: #94A3B8; line-height: 1.6; margin: 0;">
+      <strong style="color: #0A3D2A;">Global Green Enterprise Inc.</strong><br>
+      CAGE: 9KXZ2 · UEI: TY1BQ3XK3925 · SAM.gov Active · BBB A+ Rated<br>
+      WOSB Certified · HIPAA Compliant · AES-256 Encryption<br>
+      📞 1-888-963-4447 · 📱 645-246-8277
+    </p>
+  </div>
+</div>`);
+                      alert('✅ HUB Preset Loaded!\n\n📋 Audience: All agency, gov, advocate, attorney, provider types\n📧 Subject & body pre-filled with valuation brief\n🌐 All states selected\n\nReview the audience count and hit Launch Campaign when ready.');
+                    }}
+                    className="w-full py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-emerald-600/20 mb-2 flex items-center justify-center gap-2"
+                  >
+                    🏛️ HUB — All Agency & Partner Types
+                  </button>
+
+                  {/* SWEEP Presets — Segmented by type */}
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { types: ['agency'], label: '🏛️ Gov/Agency', seg: 'Government & State Agencies' },
+                      { types: ['advocate'], label: '🤝 Advocates', seg: 'Advocacy & Research Organizations' },
+                      { types: ['attorney'], label: '⚖️ Attorneys', seg: 'Attorneys & Law Firms' },
+                      { types: ['provider'], label: '🩺 Providers', seg: 'Healthcare Providers & Clinics' },
+                    ].map(preset => (
+                      <button
+                        key={preset.label}
+                        onClick={() => {
+                          setSelectedTypes(preset.types);
+                          setSelectedStates(['All']);
+                          setSelectedTier('all');
+                          setRenewalMode('off');
+                          setCampaignType('email');
+                          setSendMode('broadcast');
+                          setSubject(`GGHP-OS Strategic Valuation Brief — ${preset.seg}`);
+                          setMessage(`<div style="font-family: 'Inter', Arial, sans-serif; max-width: 640px; margin: 0 auto; padding: 32px 0;">
+  <div style="background: linear-gradient(135deg, #061F15, #0A3D2A); padding: 32px; border-radius: 16px; color: white; margin-bottom: 24px;">
+    <p style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #D4AF77; font-weight: 800; margin-bottom: 12px;">Strategic Valuation Brief — ${preset.seg}</p>
+    <h1 style="font-size: 24px; font-weight: 900; margin: 0 0 8px;">Global Green Hybrid Platform</h1>
+    <p style="color: rgba(255,255,255,0.6); font-size: 14px; margin: 0;">Purpose-built compliance infrastructure for ${preset.seg.toLowerCase()}.</p>
+  </div>
+  
+  <p style="font-size: 15px; color: #334155; line-height: 1.8; margin-bottom: 16px;">This brief outlines the strategic value of the <strong>GGHP-OS platform</strong> specifically for <strong>${preset.seg.toLowerCase()}</strong> operating in the regulated cannabis space.</p>
+  
+  <p style="font-size: 15px; color: #334155; line-height: 1.8; margin-bottom: 24px;">GGHP-OS provides real-time compliance scoring, predictive enforcement, role-based dashboards, and cross-jurisdictional visibility across all 50 states. This document contains no financial projections — it is prepared exclusively for evaluation.</p>
+  
+  <div style="text-align: center; margin: 32px 0;">
+    <a href="https://globalgreenhp.com/GGHP_Agency_Valuation_Brief.html" style="display: inline-block; background: linear-gradient(135deg, #0A3D2A, #134D36); color: #E8D5B5; padding: 16px 40px; border-radius: 12px; font-weight: 800; text-decoration: none; font-size: 14px; letter-spacing: 0.5px;">View the Full Valuation Brief →</a>
+  </div>
+  
+  <div style="border-top: 1px solid #E2E8F0; padding-top: 20px; margin-top: 32px;">
+    <p style="font-size: 11px; color: #94A3B8; line-height: 1.6; margin: 0;">
+      <strong style="color: #0A3D2A;">Global Green Enterprise Inc.</strong><br>
+      CAGE: 9KXZ2 · UEI: TY1BQ3XK3925 · SAM.gov Active · BBB A+ Rated<br>
+      WOSB Certified · HIPAA Compliant · AES-256 Encryption<br>
+      📞 1-888-963-4447 · 📱 645-246-8277
+    </p>
+  </div>
+</div>`);
+                        }}
+                        className="py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition-all border border-slate-700 hover:border-slate-600"
+                      >
+                        {preset.label}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-[9px] text-slate-500 mt-2 font-medium text-center">SWEEP sends segmented campaigns per audience type</p>
+                </div>
                 
                 <div className="mt-6 pt-6 border-t border-slate-700 space-y-5">
                   {/* Daily Send Limit */}
