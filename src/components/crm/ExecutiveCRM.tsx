@@ -68,7 +68,9 @@ export const ExecutiveCRM = ({
   const [deals, setDeals] = useState<Deal[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterJurisdiction, setFilterJurisdiction] = useState(defaultJurisdiction || 'All');
+  const [filterJurisdiction, setFilterJurisdiction] = useState(
+    defaultJurisdiction === 'US' ? 'All' : (defaultJurisdiction || 'All')
+  );
   const [filterStatus, setFilterStatus] = useState('All');
   const [filterType, setFilterType] = useState('All');
 
@@ -81,7 +83,9 @@ export const ExecutiveCRM = ({
 
   // Sync filter when parent changes selected state
   useEffect(() => {
-    if (defaultJurisdiction) setFilterJurisdiction(defaultJurisdiction);
+    if (defaultJurisdiction) {
+      setFilterJurisdiction(defaultJurisdiction === 'US' ? 'All' : defaultJurisdiction);
+    }
   }, [defaultJurisdiction]);
 
   // Modal states

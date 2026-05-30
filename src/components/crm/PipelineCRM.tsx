@@ -71,7 +71,9 @@ export const PipelineCRM = ({
     return localStorage.getItem('gghp_crm_alert_dismissed') !== 'true';
   });
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterJurisdiction, setFilterJurisdiction] = useState(defaultJurisdiction || 'All');
+  const [filterJurisdiction, setFilterJurisdiction] = useState(
+    defaultJurisdiction === 'US' ? 'All' : (defaultJurisdiction || 'All')
+  );
   const [filterStatus, setFilterStatus] = useState('All');
   const [filterType, setFilterType] = useState('All');
 
@@ -85,7 +87,9 @@ export const PipelineCRM = ({
 
   // Sync filter when parent changes selected state
   useEffect(() => {
-    if (defaultJurisdiction) setFilterJurisdiction(defaultJurisdiction);
+    if (defaultJurisdiction) {
+      setFilterJurisdiction(defaultJurisdiction === 'US' ? 'All' : defaultJurisdiction);
+    }
   }, [defaultJurisdiction]);
 
   // Modal states

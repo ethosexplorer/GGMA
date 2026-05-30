@@ -84,25 +84,41 @@ export const GlobalSweepTab = ({
           const state = normalizeJurisdiction(record.jurisdiction);
           const type = record.type || 'other';
           const licStatus = record.licenseStatus || '';
+          
+          // Specific state counts
           newCounts[state] = (newCounts[state] || 0) + 1;
-
           if (record.email && record.emailVerified === true) {
             newVerifiedCounts[state] = (newVerifiedCounts[state] || 0) + 1;
           }
-
           if (!newTypes[state]) newTypes[state] = {};
           newTypes[state][type] = (newTypes[state][type] || 0) + 1;
 
+          let label = '';
           if (licStatus) {
-            if (!newStatuses[state]) newStatuses[state] = {};
-            let label = licStatus;
             const s = licStatus.toLowerCase();
             if (s === 'active') label = 'Active';
             else if (s.includes('renewal')) label = 'Renewal Pending';
             else if (s === 'expired') label = 'Expired';
             else if (s === 'cancelled' || s === 'surrendered') label = 'Cancelled';
             else if (s === 'suspended' || s === 'revoked') label = 'Suspended/Revoked';
-            newStatuses[state][label] = (newStatuses[state][label] || 0) + 1;
+            
+            if (label) {
+              if (!newStatuses[state]) newStatuses[state] = {};
+              newStatuses[state][label] = (newStatuses[state][label] || 0) + 1;
+            }
+          }
+
+          // National/Global (US) aggregate counts
+          newCounts['US'] = (newCounts['US'] || 0) + 1;
+          if (record.email && record.emailVerified === true) {
+            newVerifiedCounts['US'] = (newVerifiedCounts['US'] || 0) + 1;
+          }
+          if (!newTypes['US']) newTypes['US'] = {};
+          newTypes['US'][type] = (newTypes['US'][type] || 0) + 1;
+          
+          if (licStatus && label) {
+            if (!newStatuses['US']) newStatuses['US'] = {};
+            newStatuses['US'][label] = (newStatuses['US'][label] || 0) + 1;
           }
         });
 
