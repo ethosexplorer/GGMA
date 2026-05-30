@@ -20,6 +20,10 @@ interface EmailTemplate {
   name: string;
   subject: string;
   body: string;
+  attachment?: string;
+  attachmentName?: string;
+  audienceTypes?: string[];
+  isValuation?: boolean;
   createdAt: any;
 }
 
@@ -335,6 +339,70 @@ export const MarketingHub = () => {
     return () => u();
   }, []);
 
+  // Seed Valuation Brief templates if not already present
+  useEffect(() => {
+    const seedValuationTemplates = async () => {
+      try {
+        const snap = await getDocs(collection(db, 'marketing_templates'));
+        const existing = snap.docs.map(d => d.data().name || '');
+        const VALUATION_URL = 'https://globalgreenhp.com/GGHP_Agency_Valuation_Brief.html';
+        const ATTACHMENT_NAME = 'GGHP_Agency_Valuation_Brief.html';
+        const footer = `<div style="border-top: 1px solid #E2E8F0; padding-top: 24px; margin-top: 32px;"><p style="font-size: 14px; color: #334155; margin: 0 0 4px;"><strong>Respectfully,</strong></p><p style="font-size: 15px; color: #0A3D2A; font-weight: 800; margin: 0 0 4px;">Shantell Robinson</p><p style="font-size: 13px; color: #64748B; margin: 0 0 12px;">Founder and CEO, Global Green Enterprise Inc.</p><p style="font-size: 11px; color: #94A3B8; line-height: 1.8; margin: 0;">1-888-963-4447 | 645-246-8277<br>CAGE: 9KXZ2 | UEI: TY1BQ3XK3925 | SAM.gov Active | BBB A+ Rated<br>WOSB Certified | HIPAA Compliant | AES-256 Encryption</p></div>`;
+        const header = (sub: string) => `<div style="background: linear-gradient(135deg, #061F15, #0A3D2A); padding: 40px 32px; border-radius: 16px; color: white; margin-bottom: 28px;"><p style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #D4AF77; font-weight: 800; margin: 0 0 16px;">${sub}</p><h1 style="font-size: 26px; font-weight: 900; margin: 0 0 8px; line-height: 1.2;">Global Green Hybrid Platform</h1></div>`;
+        const cta = `<div style="text-align: center; margin: 32px 0;"><a href="${VALUATION_URL}" style="display: inline-block; background: linear-gradient(135deg, #0A3D2A, #134D36); color: #E8D5B5; padding: 16px 44px; border-radius: 12px; font-weight: 800; text-decoration: none; font-size: 14px;">View the Full Valuation Brief</a></div>`;
+        const wrap = (content: string) => `<div style="font-family: 'Inter', Arial, sans-serif; max-width: 640px; margin: 0 auto; padding: 32px 0;">${content}</div>`;
+
+        const presets = [
+          {
+            name: 'Valuation Brief - HUB (All Types)',
+            subject: '51 Jurisdictions. Zero Interoperability. Until Now.',
+            audienceTypes: ['agency', 'advocate', 'attorney', 'provider', 'backoffice', 'distribution', 'other'],
+            body: wrap(header('Strategic Valuation Brief') + '<p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">To Whom It May Concern,</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">Cannabis regulation is the most fragmented compliance landscape in American government. Every state operates its own licensing authority, tracking system, and enforcement protocols &mdash; none of which communicate with each other.</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;"><strong>We solved that.</strong></p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;"><strong>GGHP-OS</strong> is the first and only unified compliance operating system that connects state regulators, federal agencies, law enforcement, attorneys, providers, and advocacy organizations on a single, auditable, real-time backbone &mdash; across all 50 states and DC.</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">The attached Strategic Valuation Brief outlines what this platform replaces, how it works, and why your office needs access to it before interstate commerce begins.</p><div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px 24px; margin: 24px 0;"><p style="font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #94A3B8; font-weight: 800; margin: 0 0 12px;">Key Facts</p><p style="font-size: 14px; color: #334155; line-height: 2; margin: 0;">Registered at every level of government (SAM.gov, OMES, BidNet, OKC Trusts)<br>WOSB and Minority-Owned certified<br>HIPAA compliant, AES-256 encrypted, court-admissible audit trails<br>Two AI engines (Sylara + L.A.R.R.Y) &mdash; predictive enforcement, not reactive<br>Metrc validated integrator with full production API access</p></div><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">This is not a pitch deck. It is an infrastructure briefing. No financials, no pricing &mdash; just the architecture your jurisdiction is missing.</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 28px;">I welcome a 15-minute call at your convenience.</p>' + cta + footer),
+          },
+          {
+            name: 'Valuation Brief - Gov/Agency',
+            subject: 'Briefing: The First Compliance OS Registered at Every Level of Government',
+            audienceTypes: ['agency'],
+            body: wrap(header('Strategic Valuation Brief &mdash; Government and State Agencies') + '<p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">Dear Director,</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">Your agency oversees a cannabis market with no unified compliance infrastructure. Licensees operate across disconnected tracking systems, enforcement is reactive, and cross-jurisdictional visibility does not exist.</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;"><strong>GGHP-OS</strong> was built specifically to solve this for agencies like yours. It is not a vendor product seeking approval &mdash; it is a compliance operating system already registered at the federal, state, county, and municipal level.</p><div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px 24px; margin: 24px 0;"><p style="font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #94A3B8; font-weight: 800; margin: 0 0 12px;">The Attached Brief Details</p><p style="font-size: 14px; color: #334155; line-height: 2; margin: 0;">How GGHP-OS replaces fragmented tracking with real-time, cross-state visibility<br>The L.A.R.R.Y predictive enforcement engine that forecasts violations before they occur<br>Role-based dashboards purpose-built for regulatory authorities<br>Full SAM.gov integration with daily entity verification and debarment monitoring</p></div><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 28px;">We are currently scheduling agency evaluation briefings. No commitment required &mdash; just a conversation about what your office is currently missing.</p>' + cta + footer),
+          },
+          {
+            name: 'Valuation Brief - Advocates',
+            subject: 'The Data Your Advocacy Work Has Been Missing',
+            audienceTypes: ['advocate'],
+            body: wrap(header('Strategic Valuation Brief &mdash; Advocacy and Research') + '<p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">Good afternoon,</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">Evidence-based cannabis policy requires data that does not exist in any public system today &mdash; anonymized health outcomes, social equity metrics, community impact measurements, and compliance trends across jurisdictions.</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;"><strong>GGHP-OS</strong> is the first platform that aggregates this data across all 50 states into a single, auditable infrastructure. For advocacy and research organizations, this means access to the intelligence layer that turns position papers into policy.</p><div style="background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 12px; padding: 16px 24px; margin: 24px 0;"><p style="font-size: 14px; color: #166534; line-height: 1.8; margin: 0;">We are a certified <strong>Woman-Owned, Minority-Owned, Black American-Owned, and American Indian-Owned</strong> small business. This platform was built by someone who understands the communities your organization serves.</p></div><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 28px;">I would welcome a brief conversation about how we can support your work.</p>' + cta + footer),
+          },
+          {
+            name: 'Valuation Brief - Attorneys',
+            subject: "Your Clients' Compliance Records Should Be Court-Ready. They're Not.",
+            audienceTypes: ['attorney'],
+            body: wrap(header('Strategic Valuation Brief &mdash; Legal Professionals') + '<p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">Counselor,</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">When you represent a cannabis licensee, the compliance data you need is scattered across state portals, spreadsheets, and disconnected tracking systems. Nothing is standardized. Nothing is court-ready.</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;"><strong>GGHP-OS</strong> changes that. Every action on our platform is logged with timestamps, user attribution, explainable AI reasoning, and an immutable audit trail &mdash; built to withstand regulatory scrutiny and legal challenge.</p><div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px 24px; margin: 24px 0;"><p style="font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #94A3B8; font-weight: 800; margin: 0 0 12px;">The Attached Brief Outlines</p><p style="font-size: 14px; color: #334155; line-height: 2; margin: 0;">How the platform creates evidentiary-grade compliance records<br>Real-time license status verification across all 50 states<br>Dynamic risk scoring with explainable, defensible methodology<br>Cross-jurisdictional visibility for multi-state operators</p></div><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 28px;">If your practice touches cannabis licensing, compliance disputes, or regulatory defense, this platform is the infrastructure behind your next case.</p>' + cta + footer),
+          },
+          {
+            name: 'Valuation Brief - Providers',
+            subject: 'Your Patient Pipeline Deserves Real-Time Compliance Infrastructure',
+            audienceTypes: ['provider'],
+            body: wrap(header('Strategic Valuation Brief &mdash; Healthcare Providers') + '<p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">Doctor,</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">Your patients depend on timely medical card approvals, renewal reminders, and compliant physician coordination across state lines. The current system is manual, fragmented, and slow.</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;"><strong>GGHP-OS</strong> automates the entire patient intake lifecycle &mdash; from telehealth scheduling and physician matching to state registry submission and renewal alerts &mdash; across all 50 states and 26 languages.</p><div style="background: #F0F9FF; border: 1px solid #BAE6FD; border-radius: 12px; padding: 16px 24px; margin: 24px 0;"><p style="font-size: 14px; color: #0C4A6E; line-height: 1.8; margin: 0;">We are scheduling provider onboarding calls this month. No obligation &mdash; just a walkthrough of what the platform does for your practice.</p></div>' + cta + footer),
+          },
+        ];
+
+        for (const preset of presets) {
+          if (!existing.includes(preset.name)) {
+            await addDoc(collection(db, 'marketing_templates'), {
+              ...preset,
+              attachment: VALUATION_URL,
+              attachmentName: ATTACHMENT_NAME,
+              isValuation: true,
+              createdAt: serverTimestamp(),
+            });
+          }
+        }
+      } catch (err) {
+        console.error('Failed to seed valuation templates:', err);
+      }
+    };
+    seedValuationTemplates();
+  }, []);
+
   const saveTemplate = async () => {
     if (!templateName.trim()) return;
     await addDoc(collection(db, 'marketing_templates'), {
@@ -347,6 +415,14 @@ export const MarketingHub = () => {
   const loadTemplate = (t: EmailTemplate) => {
     setSubject(t.subject || '');
     setMessage(t.body || '');
+    if (t.audienceTypes && t.audienceTypes.length > 0) {
+      setSelectedTypes(t.audienceTypes);
+      setSelectedStates(['All']);
+      setSelectedTier('all');
+      setRenewalMode('off');
+      setCampaignType('email');
+      setSendMode('broadcast');
+    }
     setShowTemplates(false);
   };
 
@@ -1626,6 +1702,12 @@ export const MarketingHub = () => {
               <button onClick={() => { setShowTemplates(false); setEditingTemplateId(null); }} className="p-1 hover:bg-slate-800 rounded-lg"><X size={20} className="text-slate-400" /></button>
             </div>
             {templates.length === 0 && <p className="text-slate-500 text-sm text-center py-8">No templates saved yet. Compose a message and click "Save as Template".</p>}
+            {templates.filter(t => (t as any).isValuation).length > 0 && (
+              <div className="mb-4 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+                <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">Valuation Brief Templates</p>
+                <p className="text-[9px] text-slate-400">Pre-built templates with the GGHP Valuation Brief attached. Click to load, edit to customize.</p>
+              </div>
+            )}
             {templates.map(t => (
               <div key={t.id} className="p-4 bg-slate-800/50 rounded-xl mb-3 hover:bg-slate-800 transition-colors">
                 {editingTemplateId === t.id ? (
@@ -1650,8 +1732,10 @@ export const MarketingHub = () => {
                 ) : (
                   <div className="flex items-center justify-between">
                     <div className="cursor-pointer flex-1" onClick={() => loadTemplate(t)}>
-                      <p className="font-bold text-white text-sm">{t.name}</p>
+                      <p className="font-bold text-white text-sm flex items-center gap-2">{t.name} {(t as any).isValuation && <span className="text-[8px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-black uppercase tracking-wider border border-emerald-500/30">Brief Attached</span>}</p>
                       <p className="text-xs text-slate-500 truncate">{t.subject || 'No subject'}</p>
+                      {(t as any).attachment && <p className="text-[10px] text-indigo-400 mt-1 flex items-center gap-1"><LayoutTemplate size={10} /> {(t as any).attachmentName || 'Attachment'}</p>}
+                      {(t as any).audienceTypes && <p className="text-[9px] text-slate-600 mt-0.5">Audience: {(t as any).audienceTypes.join(', ')}</p>}
                     </div>
                     <div className="flex items-center gap-1 ml-2">
                       <button onClick={() => startEditTemplate(t)} className="p-2 hover:bg-indigo-500/20 rounded-lg" title="Edit template">
