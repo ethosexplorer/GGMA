@@ -7,6 +7,7 @@ import { cn } from '../../lib/utils';
 
 // Module-level cache to persist counts across tab switches
 let cachedLiveCounts: Record<string, number> | null = null;
+let cachedVerifiedCounts: Record<string, number> | null = null;
 let cachedTypeCounts: Record<string, Record<string, number>> | null = null;
 let cachedStatusCounts: Record<string, Record<string, number>> | null = null;
 
@@ -28,6 +29,7 @@ export const GlobalSweepTab = ({
     }
   }, [isRyan]);
   const [liveCounts, setLiveCounts] = useState<Record<string, number>>(cachedLiveCounts || {});
+  const [verifiedCounts, setVerifiedCounts] = useState<Record<string, number>>(cachedVerifiedCounts || {});
   const [typeCounts, setTypeCounts] = useState<Record<string, Record<string, number>>>(cachedTypeCounts || {});
   const [statusCounts, setStatusCounts] = useState<Record<string, Record<string, number>>>(cachedStatusCounts || {});
 
@@ -74,6 +76,7 @@ export const GlobalSweepTab = ({
         const allRecords = [...dealsData, ...contactsData];
 
         const newCounts: Record<string, number> = {};
+        const newVerifiedCounts: Record<string, number> = {};
         const newTypes: Record<string, Record<string, number>> = {};
         const newStatuses: Record<string, Record<string, number>> = {};
 
@@ -82,6 +85,10 @@ export const GlobalSweepTab = ({
           const type = record.type || 'other';
           const licStatus = record.licenseStatus || '';
           newCounts[state] = (newCounts[state] || 0) + 1;
+
+          if (record.email && record.emailVerified === true) {
+            newVerifiedCounts[state] = (newVerifiedCounts[state] || 0) + 1;
+          }
 
           if (!newTypes[state]) newTypes[state] = {};
           newTypes[state][type] = (newTypes[state][type] || 0) + 1;
@@ -101,11 +108,13 @@ export const GlobalSweepTab = ({
 
         // Update module-level cache
         cachedLiveCounts = newCounts;
+        cachedVerifiedCounts = newVerifiedCounts;
         cachedTypeCounts = newTypes;
         cachedStatusCounts = newStatuses;
 
         // Update state
         setLiveCounts(newCounts);
+        setVerifiedCounts(newVerifiedCounts);
         setTypeCounts(newTypes);
         setStatusCounts(newStatuses);
       } catch (err) {
@@ -174,6 +183,7 @@ export const GlobalSweepTab = ({
   const states = baseStates.map(s => ({
     ...s,
     count: liveCounts[s.code] || 0,
+    verifiedCount: verifiedCounts[s.code] || 0,
     types: (typeCounts[s.code] || {}) as Record<string, number>
   }));
 
@@ -215,6 +225,10 @@ export const GlobalSweepTab = ({
             <div className="mt-4 flex items-center justify-between text-xs">
               <span className="text-slate-500 font-medium">Pipeline Volume:</span>
               <span className="font-black text-slate-700">{activeState?.count.toLocaleString()}</span>
+            </div>
+            <div className="mt-2 flex items-center justify-between text-xs border-b border-slate-100 pb-2">
+              <span className="text-slate-500 font-medium">Verified Emails:</span>
+              <span className="font-black text-emerald-600">{activeState?.verifiedCount.toLocaleString()}</span>
             </div>
             <div className="mt-2 flex items-center justify-between text-xs">
               <span className="text-slate-500 font-medium">Scraper Status:</span>

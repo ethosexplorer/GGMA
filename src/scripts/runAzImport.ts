@@ -53,6 +53,7 @@ export async function loadArizonaLeads(): Promise<{ success: number; failed: num
         assignedTo: 'president',
         phone: lead.phone || '',
         email: lead.email || '',
+        emailVerified: false,
         licenseNumber: '',
         licenseType: lead.licenseType || '',
         licenseStatus: 'Active',

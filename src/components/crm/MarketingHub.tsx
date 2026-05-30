@@ -271,7 +271,7 @@ export const MarketingHub = () => {
         (selectedTier === 'top_grossing' && d.tier === 'top_grossing') ||
         (selectedTier === 'standard' && d.tier !== 'top_grossing');
 
-      if (campaignType === 'email' && !d.email) return false;
+      if (campaignType === 'email' && (!d.email || d.emailVerified !== true)) return false;
       if (campaignType === 'sms' && !d.phone) return false;
       if (campaignType === 'email' && suppressedEmails.has((d.email || '').toLowerCase())) return false;
       // Block fabricated emails (flagged by quarantine script or matching known fake patterns)
@@ -324,6 +324,10 @@ export const MarketingHub = () => {
   const businessTypes = audienceStats.businessTypes;
   const filteredCount = audienceStats.filteredCount;
   const filteredAudience = audienceStats.filteredAudience;
+
+  const verifiedEmailsCount = useMemo(() => {
+    return deals.filter(d => d.email && d.emailVerified === true).length;
+  }, [deals]);
 
   // Load saved templates
   useEffect(() => {
@@ -707,8 +711,8 @@ export const MarketingHub = () => {
           {/* Top Metrics */}
           <div className="flex gap-6">
             <div className="bg-white/5 border border-white/10 rounded-2xl px-6 py-4 backdrop-blur-md">
-              <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1">Total Reachable</p>
-              <p className="text-2xl font-black text-white">{totalLeads.toLocaleString()}</p>
+              <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1">Verified Emails</p>
+              <p className="text-2xl font-black text-white">{verifiedEmailsCount.toLocaleString()}</p>
             </div>
             <div className="bg-white/5 border border-white/10 rounded-2xl px-6 py-4 backdrop-blur-md">
               <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold mb-1">Active Campaigns</p>
