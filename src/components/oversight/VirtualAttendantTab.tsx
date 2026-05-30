@@ -425,7 +425,7 @@ export const VirtualAttendantTab = () => {
                   </div>
                   <div className="text-center">
                     <p className="text-sm font-black text-slate-800">{isTrainingActive ? "Processing Audio Feed..." : "Audio Feed Paused"}</p>
-                    <p className="text-[10px] text-slate-500 mt-1">ElevenLabs Voice ID: 21m00Tcm...</p>
+                    <p className="text-[10px] text-slate-500 mt-1">ElevenLabs Voice ID: Sylara (Female)</p>
                   </div>
                   <div className="flex gap-2 w-full">
                     <button onClick={() => { setIsTrainingActive(true); turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Monitor resumed active training session' })] }).catch(console.error); }} className={cn("flex-1 p-2 rounded-lg text-[10px] font-bold transition-all", isTrainingActive ? "bg-emerald-600 text-white shadow-md shadow-emerald-900/20" : "bg-slate-200 text-slate-600")}>MONITOR</button>
@@ -661,11 +661,11 @@ export const VirtualAttendantTab = () => {
                     </div>
                     <div className="flex justify-between border-b border-slate-800 pb-1">
                       <span className="text-slate-500">ElevenLabs Voice</span>
-                      <span className="text-white font-semibold">Sylara (Custom v2)</span>
+                      <span className="text-white font-semibold">Sylara (Female • Custom v2)</span>
                     </div>
                     <div className="flex justify-between border-b border-slate-800 pb-1">
                       <span className="text-slate-500">ElevenLabs Voice ID</span>
-                      <span className="font-mono text-slate-400">21m00Tcm</span>
+                      <span className="font-mono text-slate-400">syl-fem-v2</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-500">Avg LLM Latency</span>

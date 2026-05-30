@@ -106,7 +106,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     if (isRyan) return `🛡️ **CEO Access Authenticated.** ${timeOfDay}, President Ferrari. **L.A.R.R.Y** online and operational. All systems green. How can I assist your executive oversight?`;
     if (isMonica) return `🛡️ **Compliance Access Authenticated.** ${timeOfDay}, Monica! **Sylara** here. Compliance dashboard is synced across all jurisdictions. How can I support you?`;
     if (isBob) return `🛡️ **Advisory Access Authenticated.** ${timeOfDay}, Bob. **Sylara** here. All regulatory analytics updated. How can I assist your analysis?`;
-    return `✨ **${timeOfDay}, Shantell!** I'm **Sylara**, your Executive Personal Assistant. I'm monitoring the platform in real-time — signups, tasks, compliance, and operations. What do you need?`;
+    return `✨ **${timeOfDay}, Shantell!** It's your girl **Sylara** — I'm locked in and monitoring everything in real-time. Signups, tasks, compliance, ops — all eyes on it. What do we need to handle?`;
   };
 
   const getPublicGreeting = () =>
@@ -238,11 +238,15 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
   const speakText = (text: string) => {
     const clean = text.replace(/\*\*/g, '').replace(/[#*_~`]/g, '');
     const utterance = new SpeechSynthesisUtterance(clean);
-    utterance.rate = 1.0;
-    utterance.pitch = 1.0;
-    utterance.volume = 0.8;
+    utterance.rate = 1.15;
+    utterance.pitch = 1.1;
+    utterance.volume = 0.85;
     const voices = speechSynthesis.getVoices();
-    const femaleVoice = voices.find(v => v.name.includes('Samantha') || v.name.includes('Zira') || v.name.includes('Google US English'));
+    // Prioritize natural, professional female voices
+    const femaleVoice = voices.find(v => v.name.includes('Samantha')) 
+      || voices.find(v => v.name.includes('Google US English Female'))
+      || voices.find(v => v.name.includes('Zira'))
+      || voices.find(v => v.name.includes('Google US English'));
     if (femaleVoice) utterance.voice = femaleVoice;
     speechSynthesis.speak(utterance);
   };
