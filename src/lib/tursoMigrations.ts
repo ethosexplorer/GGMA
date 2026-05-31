@@ -22,12 +22,15 @@ export async function initializeDatabase() {
 
     await turso.execute(`
       CREATE TABLE IF NOT EXISTS poll_votes (
-        id TEXT PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         poll_id TEXT NOT NULL,
-        voter_id TEXT NOT NULL,
-        jurisdiction TEXT,
-        vote_choice TEXT NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        option_id TEXT NOT NULL,
+        user_id TEXT,
+        session_id TEXT,
+        ip_hash TEXT,
+        state TEXT DEFAULT 'Unknown',
+        category TEXT DEFAULT 'general',
+        created_at TEXT DEFAULT (datetime('now'))
       )
     `);
 

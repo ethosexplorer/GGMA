@@ -42,7 +42,7 @@ interface Poll {
 }
 
 // ─── Poll Data ───
-const POLLS: Poll[] = [
+export const POLLS: Poll[] = [
   // ─── 💡 GGHP PLATFORM & SERVICES POLLS (HIGH-PRIORITY MARKETING) ───
   {
     id: 'gghp_sylara_ai',
@@ -280,7 +280,9 @@ const POLLS: Poll[] = [
       { id: 'neutral', label: 'Neutral / Need More Info', emoji: '🤔', votes: 523 },
       { id: 'disagree', label: 'Disagree', emoji: '❌', votes: 187 },
       { id: 'strongly_disagree', label: 'Strongly Disagree', emoji: '🚫', votes: 89 },
-    ]
+    ],
+    didYouKnow: 'A 2024 Harvard review showed that over 80% of medical cannabis patients reported significant relief from chronic pain and inflammation, with fewer side effects than traditional opioids.',
+    actionItem: 'Consult with a licensed healthcare practitioner to understand how medical cannabis can fit into your pain management routine.'
   },
   {
     id: 'medical_conditions',
@@ -300,7 +302,9 @@ const POLLS: Poll[] = [
       { id: 'inflammation', label: 'Inflammation / Arthritis', emoji: '🔥', votes: 1187 },
       { id: 'mental_health', label: 'Depression / Mental Health', emoji: '💜', votes: 987 },
       { id: 'other', label: 'Other (comment below)', emoji: '📝', votes: 345 },
-    ]
+    ],
+    didYouKnow: 'The National Academies of Sciences, Engineering, and Medicine found conclusive evidence that cannabis is highly effective for chronic pain, MS-related spasms, and chemotherapy-induced nausea.',
+    actionItem: 'Contribute to medical research by logging your symptom relief logs in the Care Wallet portal.'
   },
   {
     id: 'education_level',
@@ -316,7 +320,9 @@ const POLLS: Poll[] = [
       { id: 'somewhat', label: 'Somewhat Informed', emoji: '📖', votes: 1456 },
       { id: 'learning', label: 'Just Starting to Learn', emoji: '🌱', votes: 987 },
       { id: 'uninformed', label: 'I want to learn more', emoji: '🔍', votes: 654 },
-    ]
+    ],
+    didYouKnow: 'Over 60% of first-time medical cannabis users report feeling overwhelmed by dosing and strain choices. Guided education reduces adverse experiences by 90%.',
+    actionItem: 'Visit the Global Green Education Center to download our free dosage guide.'
   },
   {
     id: 'age_group',
@@ -333,7 +339,9 @@ const POLLS: Poll[] = [
       { id: '45_54', label: '45 – 54', emoji: '🏡', votes: 987 },
       { id: '55_64', label: '55 – 64', emoji: '🌻', votes: 654 },
       { id: '65_plus', label: '65+', emoji: '🌾', votes: 345 },
-    ]
+    ],
+    didYouKnow: 'The fastest-growing demographic of new medical cannabis patients is adults over the age of 50, seeking relief from arthritis and insomnia.',
+    actionItem: 'Share our senior patient guide with family members who could benefit from natural relief.'
   },
   {
     id: 'med_vs_rec',
@@ -349,7 +357,9 @@ const POLLS: Poll[] = [
       { id: 'both', label: 'Support both equally', emoji: '⚖️', votes: 876 },
       { id: 'recreational', label: 'Prefer recreational approach', emoji: '🌿', votes: 432 },
       { id: 'neither', label: 'Neither / Undecided', emoji: '🤷', votes: 198 },
-    ]
+    ],
+    didYouKnow: 'Medical cannabis programs require batch lab testing for heavy metals, pesticides, and mold, ensuring a higher standard of safety than unregulated sources.',
+    actionItem: 'Always verify that your dispensary provides a Certificate of Analysis (COA) for every product purchase.'
   },
   {
     id: 'side_effects',
@@ -365,7 +375,9 @@ const POLLS: Poll[] = [
       { id: 'comparable', label: 'About the same', emoji: '↔️', votes: 567 },
       { id: 'more_research', label: 'Need more research', emoji: '🔬', votes: 876 },
       { id: 'more_effects', label: 'Cannabis has more side effects', emoji: '⚠️', votes: 123 },
-    ]
+    ],
+    didYouKnow: 'Unlike prescription opioids or NSAIDs, cannabis has no known risk of fatal overdose, making it a significantly safer alternative for long-term pain management.',
+    actionItem: 'Log any side effects or strain preferences in your GGP-OS Care Wallet to track what works best for you.'
   },
   {
     id: 'nationality_background',
@@ -383,7 +395,9 @@ const POLLS: Poll[] = [
       { id: 'middle_eastern', label: 'Middle Eastern / North African', emoji: '🌍', votes: 234 },
       { id: 'multiracial', label: 'Multiracial / Other', emoji: '🌈', votes: 567 },
       { id: 'prefer_not', label: 'Prefer not to say', emoji: '🔒', votes: 345 },
-    ]
+    ],
+    didYouKnow: 'Cannabis has been used as a sacred healing herb for over 5,000 years across ancient Chinese, Indian, Egyptian, and African civilizations.',
+    actionItem: 'Participate in local community focus groups to help shape culturally inclusive health education.'
   },
   {
     id: 'growth_priority',
@@ -400,7 +414,9 @@ const POLLS: Poll[] = [
       { id: 'education', label: 'Public education & destigmatization', emoji: '📚', votes: 1098 },
       { id: 'quality', label: 'Quality control & lab testing', emoji: '🧪', votes: 876 },
       { id: 'equity', label: 'Social equity & inclusion', emoji: '⚖️', votes: 654 },
-    ]
+    ],
+    didYouKnow: 'Expanding clinical research on minor cannabinoids like CBG and CBN is the highest priority for medical researchers studying neuroprotection and sleep.',
+    actionItem: 'Support federal research funding initiatives by contacting your congressional representative.',
   },
   // ─── ECONOMIC ───
   { id: 'econ_jobs', category: 'economic', question: 'Should your state invest in cannabis industry job training programs?', subtitle: 'The cannabis industry created 440,000+ jobs nationwide in 2025.', icon: <TrendingUp size={20} />, color: 'emerald', bgGradient: 'from-green-500 to-emerald-700', didYouKnow: 'Oklahoma\'s medical cannabis industry generates over $1.5B in annual revenue and employs 30,000+ workers.', actionItem: 'Contact your state representative to support HB 2742 (Cannabis Workforce Development Act).', deadline: 'Committee vote: May 15, 2026', options: [
@@ -546,8 +562,8 @@ export const FeaturedPoll = () => {
   useEffect(() => {
     const j = sessionStorage.getItem('gghp_jurisdiction');
     const query = j 
-      ? { sql: 'SELECT poll_id, vote_choice as option_id, COUNT(*) as total_votes FROM poll_votes WHERE jurisdiction = ? GROUP BY poll_id, vote_choice', args: [j] }
-      : { sql: 'SELECT poll_id, vote_choice as option_id, COUNT(*) as total_votes FROM poll_votes GROUP BY poll_id, vote_choice', args: [] };
+      ? { sql: 'SELECT poll_id, option_id, COUNT(*) as total_votes FROM poll_votes WHERE state = ? GROUP BY poll_id, option_id', args: [j] }
+      : { sql: 'SELECT poll_id, option_id, COUNT(*) as total_votes FROM poll_votes GROUP BY poll_id, option_id', args: [] };
       
     turso.execute(query)
       .then(res => {
@@ -573,8 +589,8 @@ export const FeaturedPoll = () => {
       const jurisdiction = sessionStorage.getItem('gghp_jurisdiction') || 'Unknown';
       
       const stmts = optionIds.map(opt => ({
-        sql: 'INSERT INTO poll_votes (id, poll_id, voter_id, jurisdiction, vote_choice) VALUES (?, ?, ?, ?, ?)',
-        args: [`vote_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`, pollId, sessionId, jurisdiction, opt]
+        sql: 'INSERT INTO poll_votes (poll_id, option_id, session_id, state, category) VALUES (?, ?, ?, ?, ?)',
+        args: [pollId, opt, sessionId, jurisdiction, poll.category]
       }));
       await turso.batch(stmts, 'write');
     } catch (e) {
@@ -774,14 +790,14 @@ export const FeaturedPoll = () => {
           </div>
         </div>
 
-        {/* 💡 Did You Know + Action Item — ALWAYS VISIBLE */}
+        {/* 💡 IN THE KNOW + NEED ACTION — ALWAYS VISIBLE */}
         {(poll.didYouKnow || poll.actionItem) && (
           <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
             {poll.didYouKnow && (
               <div className="bg-amber-500 bg-gradient-to-br from-amber-500/15 to-yellow-500/5 border-2 border-amber-400/30 rounded-xl p-4 shadow-lg shadow-amber-500/5">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-xl">💡</span>
-                  <span className="text-[11px] font-black text-amber-400 uppercase tracking-widest">Did You Know?</span>
+                  <span className="text-[11px] font-black text-amber-400 uppercase tracking-widest">IN THE KNOW</span>
                 </div>
                 <p className="text-emerald-100 text-xs leading-relaxed">{poll.didYouKnow}</p>
               </div>
@@ -790,7 +806,7 @@ export const FeaturedPoll = () => {
               <div className="bg-emerald-500 bg-gradient-to-br from-emerald-500/15 to-green-500/5 border-2 border-emerald-400/30 rounded-xl p-4 shadow-lg shadow-emerald-500/5">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-xl">📢</span>
-                  <span className="text-[11px] font-black text-emerald-400 uppercase tracking-widest">Take Action</span>
+                  <span className="text-[11px] font-black text-emerald-400 uppercase tracking-widest">NEED ACTION</span>
                 </div>
                 <p className="text-emerald-100 text-xs leading-relaxed mb-2">{poll.actionItem}</p>
                 {poll.deadline && (
@@ -815,7 +831,6 @@ export const RevolvingSurveyBanner = ({ compact = false }: { compact?: boolean }
   const [hasVoted, setHasVoted] = useState<Record<string, boolean>>({});
 
   const poll = POLLS[currentPollIndex];
-  const totalVotes = poll.options.reduce((sum, o) => sum + o.votes, 0);
 
   // Load live results from API on mount
   const [liveResults, setLiveResults] = useState<Record<string, Record<string, number>>>({});
@@ -823,8 +838,8 @@ export const RevolvingSurveyBanner = ({ compact = false }: { compact?: boolean }
   useEffect(() => {
     const j = sessionStorage.getItem('gghp_jurisdiction');
     const query = j 
-      ? { sql: 'SELECT poll_id, vote_choice as option_id, COUNT(*) as total_votes FROM poll_votes WHERE jurisdiction = ? GROUP BY poll_id, vote_choice', args: [j] }
-      : { sql: 'SELECT poll_id, vote_choice as option_id, COUNT(*) as total_votes FROM poll_votes GROUP BY poll_id, vote_choice', args: [] };
+      ? { sql: 'SELECT poll_id, option_id, COUNT(*) as total_votes FROM poll_votes WHERE state = ? GROUP BY poll_id, option_id', args: [j] }
+      : { sql: 'SELECT poll_id, option_id, COUNT(*) as total_votes FROM poll_votes GROUP BY poll_id, option_id', args: [] };
 
     turso.execute(query)
       .then(res => {
@@ -841,10 +856,7 @@ export const RevolvingSurveyBanner = ({ compact = false }: { compact?: boolean }
       .catch(() => {}); // Graceful fallback to seed data
   }, []);
 
-  // Helper: Get vote count (live + seed)
-  const getVoteCount = (pollId: string, optionId: string, seedVotes: number) => {
-    return seedVotes + (liveResults[pollId]?.[optionId] || 0);
-  };
+  const totalVotes = poll.options.reduce((sum, o) => sum + o.votes + (liveResults[poll.id]?.[o.id] || 0), 0);
 
   // Auto-rotate every 30 seconds if user hasn't voted on current poll
   useEffect(() => {
@@ -863,8 +875,8 @@ export const RevolvingSurveyBanner = ({ compact = false }: { compact?: boolean }
       const jurisdiction = sessionStorage.getItem('gghp_jurisdiction') || 'Unknown';
       
       const stmts = optionIds.map(opt => ({
-        sql: 'INSERT INTO poll_votes (id, poll_id, voter_id, jurisdiction, vote_choice) VALUES (?, ?, ?, ?, ?)',
-        args: [`vote_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`, pollId, sessionId, jurisdiction, opt]
+        sql: 'INSERT INTO poll_votes (poll_id, option_id, session_id, state, category) VALUES (?, ?, ?, ?, ?)',
+        args: [pollId, opt, sessionId, jurisdiction, poll.category]
       }));
       await turso.batch(stmts, 'write');
     } catch (e) {
@@ -969,41 +981,74 @@ export const RevolvingSurveyBanner = ({ compact = false }: { compact?: boolean }
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -15 }}
               transition={{ duration: 0.2 }}
-              className="grid grid-cols-1 sm:grid-cols-2 gap-2"
+              className="space-y-4"
             >
-              {poll.options.map((option) => {
-                const percentage = Math.round((option.votes / totalVotes) * 100);
-                const isSelected = (selectedOptions[poll.id] || []).includes(option.id);
-                const voted = hasVoted[poll.id];
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {poll.options.map((option) => {
+                  const liveVoteCount = option.votes + (liveResults[poll.id]?.[option.id] || 0);
+                  const percentage = Math.round((liveVoteCount / totalVotes) * 100) || 0;
+                  const isSelected = (selectedOptions[poll.id] || []).includes(option.id);
+                  const voted = hasVoted[poll.id];
 
-                return (
-                  <button
-                    key={option.id}
-                    onClick={() => handleVote(option.id)}
-                    disabled={voted && !poll.allowMultiple}
-                    className={`relative overflow-hidden rounded-xl p-2.5 text-left transition-all ${
-                      isSelected
-                        ? 'bg-emerald-500/30 border-2 border-emerald-400 shadow-lg shadow-emerald-500/10'
-                        : 'bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20'
-                    } ${voted ? 'cursor-default' : 'cursor-pointer'}`}
-                  >
-                    {voted && (
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${percentage}%` }}
-                        transition={{ duration: 0.6, delay: 0.1 }}
-                        className="absolute inset-y-0 left-0 bg-emerald-500/15 rounded-xl"
-                      />
-                    )}
-                    <div className="relative z-10 flex items-center gap-2">
-                      <span className="text-sm">{option.emoji}</span>
-                      <span className="text-white text-[11px] font-bold flex-1 leading-tight">{option.label}</span>
-                      {voted && <span className="text-emerald-400 text-[11px] font-black">{percentage}%</span>}
-                      {isSelected && !voted && <CircleCheck size={13} className="text-emerald-400" />}
+                  return (
+                    <button
+                      key={option.id}
+                      onClick={() => handleVote(option.id)}
+                      disabled={voted && !poll.allowMultiple}
+                      className={`relative overflow-hidden rounded-xl p-2.5 text-left transition-all ${
+                        isSelected
+                          ? 'bg-emerald-500/30 border-2 border-emerald-400 shadow-lg shadow-emerald-500/10'
+                          : 'bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20'
+                      } ${voted ? 'cursor-default' : 'cursor-pointer'}`}
+                    >
+                      {voted && (
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${percentage}%` }}
+                          transition={{ duration: 0.6, delay: 0.1 }}
+                          className="absolute inset-y-0 left-0 bg-emerald-500/15 rounded-xl"
+                        />
+                      )}
+                      <div className="relative z-10 flex items-center gap-2">
+                        <span className="text-sm">{option.emoji}</span>
+                        <span className="text-white text-[11px] font-bold flex-1 leading-tight">{option.label}</span>
+                        {voted && <span className="text-emerald-400 text-[11px] font-black">{percentage}%</span>}
+                        {isSelected && !voted && <CircleCheck size={13} className="text-emerald-400" />}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* 💡 IN THE KNOW & NEED ACTION — revolving dynamically with the poll */}
+              {(poll.didYouKnow || poll.actionItem) && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4 border-t border-emerald-800/40 pt-4">
+                  {poll.didYouKnow && (
+                    <div className="bg-amber-500 bg-gradient-to-br from-amber-500/15 to-yellow-500/5 border border-amber-400/30 rounded-xl p-3 shadow-lg shadow-amber-500/5">
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <span className="text-base">💡</span>
+                        <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest">IN THE KNOW</span>
+                      </div>
+                      <p className="text-emerald-100 text-[11px] leading-relaxed">{poll.didYouKnow}</p>
                     </div>
-                  </button>
-                );
-              })}
+                  )}
+                  {poll.actionItem && (
+                    <div className="bg-emerald-500 bg-gradient-to-br from-emerald-500/15 to-green-500/5 border border-emerald-400/30 rounded-xl p-3 shadow-lg shadow-emerald-500/5">
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <span className="text-base">📢</span>
+                        <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">NEED ACTION</span>
+                      </div>
+                      <p className="text-emerald-100 text-[11px] leading-relaxed mb-2.5">{poll.actionItem}</p>
+                      {poll.deadline && (
+                        <div className="flex items-center gap-1 px-2 py-1 bg-red-500/20 border border-red-400/20 rounded-md w-fit animate-pulse">
+                          <span className="text-xs">⏰</span>
+                          <span className="text-[9px] font-black text-red-300 uppercase tracking-widest">{poll.deadline}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
             </motion.div>
           </AnimatePresence>
         </div>

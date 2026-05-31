@@ -19,13 +19,15 @@ async function setup() {
 
   await client.execute(`
     CREATE TABLE IF NOT EXISTS poll_votes (
-      id TEXT PRIMARY KEY,
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
       poll_id TEXT NOT NULL,
-      voter_id TEXT,
-      jurisdiction TEXT,
-      vote_choice TEXT NOT NULL,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (poll_id) REFERENCES community_polls(id)
+      option_id TEXT NOT NULL,
+      user_id TEXT,
+      session_id TEXT,
+      ip_hash TEXT,
+      state TEXT DEFAULT 'Unknown',
+      category TEXT DEFAULT 'general',
+      created_at TEXT DEFAULT (datetime('now'))
     );
   `);
 

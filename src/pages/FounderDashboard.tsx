@@ -28,6 +28,7 @@ import { onSnapshot, collection, doc, updateDoc, query, where } from 'firebase/f
 import { db } from '../firebase';
 import { METRC_MANUAL } from '../data/metrcManual';
 import { turso } from '../lib/turso';
+import { POLLS } from '../components/CommunityPolls';
 import { RegulatoryCommandCenter } from '../components/founder/RegulatoryCommandCenter';
 import { getLastSweep, getSweepFreshness, getNextSweepDate } from '../lib/regSweep';
 import { MasterBankingInfo } from '../components/MasterBankingInfo';
@@ -320,11 +321,11 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           clicksByUserType
         }));
 
-        const TOTAL_ACTIVE_POLLS = 24;
+        const TOTAL_ACTIVE_POLLS = POLLS.length;
         const pTotal = await turso.execute('SELECT COUNT(*) as c FROM poll_votes');
         const pDistinct = await turso.execute('SELECT COUNT(DISTINCT poll_id) as c FROM poll_votes');
         const pTop = await turso.execute('SELECT poll_id as q, COUNT(*) as v FROM poll_votes GROUP BY poll_id ORDER BY v DESC LIMIT 5');
-        const pCat = await turso.execute('SELECT vote_choice as cat, COUNT(*) as votes FROM poll_votes GROUP BY vote_choice ORDER BY votes DESC LIMIT 8');
+        const pCat = await turso.execute('SELECT category as cat, COUNT(*) as votes FROM poll_votes GROUP BY category ORDER BY votes DESC LIMIT 8');
 
         const totalPollVotes = Number(pTotal.rows[0]?.c || 0);
         const pollsWithVotes = Number(pDistinct.rows[0]?.c || 0);
