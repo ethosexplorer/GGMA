@@ -343,7 +343,7 @@ export const MarketingHub = () => {
       const campaigns = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       setAllCampaigns(campaigns);
       const active = campaigns.find((c: any) => c.status === 'active');
-      if (active) setActiveCampaign(active);
+      setActiveCampaign(active || null);
     });
     return () => u();
   }, []);
@@ -633,13 +633,14 @@ export const MarketingHub = () => {
         const firstChar = batchAudience[0]?.email?.charAt(0)?.toUpperCase() || '?';
         const lastChar = batchAudience[batchAudience.length - 1]?.email?.charAt(0)?.toUpperCase() || '?';
         const rangeLabel = `${firstChar}–${lastChar}`;
-        const isComplete = newSentEmails.length >= finalAudience.length;
+        const targetTotal = Math.max(campaignDoc?.totalRecipients || 0, finalAudience.length);
+        const isComplete = newSentEmails.length >= targetTotal;
         
         const campaignData = {
           name: subject || 'Untitled Campaign',
           subject, message: message, type: campaignType,
           status: isComplete ? 'completed' : 'active',
-          totalRecipients: finalAudience.length,
+          totalRecipients: targetTotal,
           sentCount: newSentEmails.length,
           sentEmails: newSentEmails,
           dailyLimit,
