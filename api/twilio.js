@@ -9,6 +9,76 @@ const VoiceResponse = twilio.twiml.VoiceResponse;
 const TEXTBELT_API_KEY = process.env.TEXTBELT_API_KEY || '';
 const TEXTBELT_URL = 'https://textbelt.com/text';
 
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || '';
+const MODEL_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+
+// Helper to log speech turns to Turso database
+async function logCallSpeech(callSid, role, text, department = null) {
+  if (!callSid) return;
+  try {
+    const url = process.env.VITE_TURSO_DATABASE_URL || "libsql://gghp-gghp.aws-us-east-2.turso.io";
+    const authToken = process.env.VITE_TURSO_AUTH_TOKEN;
+    if (authToken) {
+      const turso = createClient({ url, authToken });
+      const logId = `speech-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
+      await turso.execute({
+        sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)",
+        args: [
+          logId,
+          "CALL_SPEECH",
+          callSid,
+          JSON.stringify({
+            role,
+            text,
+            department,
+            timestamp: new Date().toISOString()
+          })
+        ]
+      });
+    }
+  } catch (err) {
+    console.error(`[Twilio Log Speech Error]:`, err);
+  }
+}
+
+// Helper to generate AI summary from transcript
+async function generateCallSummary(transcriptText) {
+  if (!GEMINI_API_KEY) {
+    console.warn("Live Gemini API key missing, could not auto-generate AI summary.");
+    return "AI Summary unavailable (Gemini key not configured).";
+  }
+  try {
+    const response = await fetch(`${MODEL_ENDPOINT}?key=${GEMINI_API_KEY}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        systemInstruction: {
+          parts: [{
+            text: "You are Sylara, the virtual call assistant for Global Green. Review this transcript of a customer phone call and write a concise, professional summary (2-3 sentences max) highlighting: the caller's main request, the department it was routed to, and the final outcome or next steps."
+          }]
+        },
+        contents: [
+          { role: 'user', parts: [{ text: `Here is the call transcript:\n\n${transcriptText}` }] }
+        ],
+        generationConfig: {
+          temperature: 0.4,
+          maxOutputTokens: 300
+        }
+      })
+    });
+    if (response.ok) {
+      const data = await response.json();
+      return data.candidates?.[0]?.content?.parts?.[0]?.text || "Summary returned empty.";
+    }
+    const err = await response.json();
+    console.error('[Gemini Summary API Error]:', err);
+    return "Failed to generate AI summary.";
+  } catch (err) {
+    console.error('[Gemini Summary Exception]:', err);
+    return "Failed to generate AI summary.";
+  }
+}
+
 export default async function handler(req, res) {
   // Setup CORS Headers
   res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -159,7 +229,8 @@ async function handleCallStatus(req, res) {
 
   console.log(`[Twilio Call Status] ${CallSid} | ${Direction} | ${CallStatus}`);
 
-  // Insert live Audit Log into Turso database
+  // Insert live Audit Log into Turso database and generate summary if completed
+  let aiSummaryText = '';
   try {
     const url = process.env.VITE_TURSO_DATABASE_URL || "libsql://gghp-gghp.aws-us-east-2.turso.io";
     const authToken = process.env.VITE_TURSO_AUTH_TOKEN;
@@ -190,17 +261,74 @@ async function handleCallStatus(req, res) {
         ]
       });
       console.log(`[Twilio Call Status] Logged to Turso database: ${actionName}`);
+
+      // If call completed, fetch transcript and generate summary
+      if (CallStatus === 'completed') {
+        const speechRes = await turso.execute({
+          sql: "SELECT data FROM audit_logs WHERE action = 'CALL_SPEECH' AND user_id = ? ORDER BY rowid ASC",
+          args: [CallSid]
+        });
+
+        const transcript = [];
+        let department = 'GENERAL';
+
+        speechRes.rows.forEach(r => {
+          try {
+            const item = JSON.parse(r.data);
+            transcript.push({
+              role: item.role === 'sylara' ? 'Sylara (AI)' : 'Caller',
+              text: item.text
+            });
+            if (item.department) {
+              department = item.department;
+            }
+          } catch (e) {}
+        });
+
+        if (transcript.length > 0) {
+          const transcriptText = transcript.map(t => `${t.role}: ${t.text}`).join('\n');
+          aiSummaryText = await generateCallSummary(transcriptText);
+
+          // Log CALL_SUMMARY record to audit_logs
+          await turso.execute({
+            sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)",
+            args: [
+              `summary-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+              "CALL_SUMMARY",
+              CallSid,
+              JSON.stringify({
+                from: From,
+                to: To,
+                timestamp: new Date().toISOString(),
+                transcript,
+                summary: aiSummaryText,
+                department,
+                duration: CallDuration,
+                recordingUrl: RecordingUrl || null
+              })
+            ]
+          });
+          console.log(`[Twilio Call Status] AI Call Summary logged successfully for department: ${department}`);
+        }
+      }
     }
   } catch (dbErr) {
-    console.error(`[Twilio Call Status] Failed to log to Turso:`, dbErr);
+    console.error(`[Twilio Call Status] Failed to log to Turso / generate summary:`, dbErr);
   }
 
   // Backup Email notification
   let subject = `Call Center Update: ${CallStatus.toUpperCase()} Call`;
   let text = `Call Details:\n\nDirection: ${Direction}\nFrom: ${From}\nTo: ${To}\nStatus: ${CallStatus}\nDuration: ${CallDuration || 0} seconds`;
 
+  if (aiSummaryText) {
+    subject = `[AI SUMMARY] Call from ${From} (${CallStatus.toUpperCase()})`;
+    text += `\n\nAI CALL SUMMARY:\n${aiSummaryText}`;
+  }
+
   if (CallStatus === 'no-answer' || CallStatus === 'failed' || CallStatus === 'busy' || CallStatus === 'canceled') {
-    subject = `[MISSED CALL / ALERT] Call Center Update: ${CallStatus.toUpperCase()}`;
+    if (!aiSummaryText) {
+      subject = `[MISSED CALL / ALERT] Call Center Update: ${CallStatus.toUpperCase()}`;
+    }
   }
 
   if (RecordingUrl) {
@@ -241,6 +369,7 @@ async function handleVoice(req, res) {
   const toNumber = req.body?.To || req.query?.To || '';
   const direction = req.body?.Direction || '';
   const fromClient = req.body?.From?.startsWith?.('client:') || false;
+  const callSid = req.body?.CallSid || req.query?.CallSid || '';
 
   // Intercept Outbound calls from WebDialer
   if (fromClient && toNumber) {
@@ -272,6 +401,23 @@ async function handleVoice(req, res) {
     }
   }
 
+  // Handle voicemail completion
+  if (req.query.action === 'voicemail-completed') {
+    const speechMsg = "Thank you for leaving a message. Goodbye.";
+    twiml.say({ voice: 'Polly.Joanna-Neural' }, speechMsg);
+    twiml.hangup();
+    
+    if (callSid) {
+      await logCallSpeech(callSid, 'sylara', speechMsg, 'VOICEMAIL');
+      if (req.body.RecordingUrl) {
+        await logCallSpeech(callSid, 'user', `[Left a voicemail recording: ${req.body.RecordingUrl}]`, 'VOICEMAIL');
+      }
+    }
+    
+    res.setHeader('Content-Type', 'text/xml');
+    return res.status(200).send(twiml.toString());
+  }
+
   // Dynamic routing mode configuration check
   let routingMode = 'hybrid';
   try {
@@ -292,10 +438,23 @@ async function handleVoice(req, res) {
 
   // 100% Human Override
   if (routingMode === 'human_only' && !req.query.action) {
-    twiml.say({ voice: 'Polly.Joanna-Neural' }, "Welcome to the Global Green Call Center. Please hold while I connect you to the next available agent on Extension 101.");
-    const dial = twiml.dial({ timeout: 60, answerOnBridge: true });
-    const client = dial.client({ statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'], statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status', statusCallbackMethod: 'POST' }, 'GGMA_User');
-    client.parameter({ name: 'DepartmentContext', value: '100% Human Routing Override' });
+    const speechMsg = "Welcome to the Global Green Call Center. Please hold while I connect you to the next available agent on Extension 101.";
+    twiml.say({ voice: 'Polly.Joanna-Neural' }, speechMsg);
+    
+    if (callSid) {
+      await logCallSpeech(callSid, 'sylara', speechMsg, 'HUMAN_OVERRIDE');
+    }
+
+    const dial = twiml.dial({ timeout: 20, answerOnBridge: true });
+    dial.client({ statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'], statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status', statusCallbackMethod: 'POST' }, 'GGMA_User');
+    
+    twiml.say({ voice: 'Polly.Joanna-Neural' }, "The agent is currently unavailable. Please leave a message after the tone.");
+    twiml.record({
+      action: '/api/twilio/voice?action=voicemail-completed',
+      maxLength: 60,
+      playBeep: true
+    });
+    
     res.setHeader('Content-Type', 'text/xml');
     return res.status(200).send(twiml.toString());
   }
@@ -304,54 +463,126 @@ async function handleVoice(req, res) {
     const userSpeech = (req.body && req.body.SpeechResult) ? req.body.SpeechResult.toLowerCase() : '';
     console.log('Sylara heard:', userSpeech);
 
+    if (callSid && userSpeech) {
+      await logCallSpeech(callSid, 'user', req.body.SpeechResult, 'GENERAL');
+    }
+
     if (userSpeech.includes('sale') || userSpeech.includes('rep') || userSpeech.includes('buy') || userSpeech.includes('subscrib') || userSpeech.includes('upgrad') || userSpeech.includes('price') || userSpeech.includes('cost')) {
-      twiml.say({ voice: 'Polly.Joanna-Neural' }, "Excellent. I will connect you with E'Onna, our AI Sales Director, right now.");
-      twiml.say({ voice: 'Polly.Salli-Neural' }, "Hello! This is E'Onna. Before I transfer you to the appropriate extension, please state your full name or business name, phone number, email address, and the best time to reach you.");
+      const msg1 = "Excellent. I will connect you with E'Onna, our AI Sales Director, right now.";
+      const msg2 = "Hello! This is E'Onna. Before I transfer you to the appropriate extension, please state your full name or business name, phone number, email address, and the best time to reach you.";
+      
+      twiml.say({ voice: 'Polly.Joanna-Neural' }, msg1);
+      twiml.say({ voice: 'Polly.Salli-Neural' }, msg2);
+      
+      if (callSid) {
+        await logCallSpeech(callSid, 'sylara', msg1 + " " + msg2, 'SALES');
+      }
       twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=escalate_sales', timeout: 6, speechTimeout: 'auto' });
 
     } else if (userSpeech.includes('patient') || userSpeech.includes('card') || userSpeech.includes('doctor') || userSpeech.includes('telehealth') || userSpeech.includes('appointment')) {
-      twiml.say({ voice: 'Polly.Joanna-Neural' }, "You have reached Patient Support. I am transferring you to Geneva, our Patient Care Concierge.");
-      twiml.say({ voice: 'Polly.Salli-Neural' }, "Hello, this is Geneva. I can help you with your medical intake. Please state your full name, date of birth, phone number, email address, and the best time to reach you. I will create a ticket and someone will contact you as soon as possible.");
+      const msg1 = "You have reached Patient Support. I am transferring you to Geneva, our Patient Care Concierge.";
+      const msg2 = "Hello, this is Geneva. I can help you with your medical intake. Please state your full name, date of birth, phone number, email address, and the best time to reach you. I will create a ticket and someone will contact you as soon as possible.";
+      
+      twiml.say({ voice: 'Polly.Joanna-Neural' }, msg1);
+      twiml.say({ voice: 'Polly.Salli-Neural' }, msg2);
+      
+      if (callSid) {
+        await logCallSpeech(callSid, 'sylara', msg1 + " " + msg2, 'PATIENT');
+      }
       twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=escalate_patient', timeout: 6, speechTimeout: 'auto' });
 
     } else if (userSpeech.includes('business') || userSpeech.includes('license') || userSpeech.includes('dispensary') || userSpeech.includes('compliance') || userSpeech.includes('metrc')) {
-      twiml.say({ voice: 'Polly.Joanna-Neural' }, "You have reached Business Licensing. I am transferring you to Harlem, our Corporate Integration Executive.");
-      twiml.say({ voice: 'Polly.Matthew-Neural' }, "Hello, this is Harlem. Please state the name of your business, your full name, phone number, email address, and a good time to reach you. I will transfer your file to the escalations department for processing.");
+      const msg1 = "You have reached Business Licensing. I am transferring you to Harlem, our Corporate Integration Executive.";
+      const msg2 = "Hello, this is Harlem. Please state the name of your business, your full name, phone number, email address, and a good time to reach you. I will transfer your file to the escalations department for processing.";
+      
+      twiml.say({ voice: 'Polly.Joanna-Neural' }, msg1);
+      twiml.say({ voice: 'Polly.Matthew-Neural' }, msg2);
+      
+      if (callSid) {
+        await logCallSpeech(callSid, 'sylara', msg1 + " " + msg2, 'BUSINESS');
+      }
       twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=escalate_business', timeout: 6, speechTimeout: 'auto' });
 
     } else if (userSpeech.includes('legal') || userSpeech.includes('lawyer') || userSpeech.includes('attorney') || userSpeech.includes('arrest') || userSpeech.includes('raid') || userSpeech.includes('police')) {
-      twiml.say({ voice: 'Polly.Joanna-Neural' }, "I am prioritizing this call to the Legal Network immediately. Hyriah, our Legal Triage Agent, is taking over.");
-      twiml.say({ voice: 'Polly.Salli-Neural' }, "This is Hyriah. Please state your emergency clearly, followed by your full name, phone number, and the best time to reach you. I will immediately create an escalation ticket.");
+      const msg1 = "I am prioritizing this call to the Legal Network immediately. Hyriah, our Legal Triage Agent, is taking over.";
+      const msg2 = "This is Hyriah. Please state your emergency clearly, followed by your full name, phone number, and the best time to reach you. I will immediately create an escalation ticket.";
+      
+      twiml.say({ voice: 'Polly.Joanna-Neural' }, msg1);
+      twiml.say({ voice: 'Polly.Salli-Neural' }, msg2);
+      
+      if (callSid) {
+        await logCallSpeech(callSid, 'sylara', msg1 + " " + msg2, 'LEGAL');
+      }
       twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=escalate_legal', timeout: 6, speechTimeout: 'auto' });
 
     } else if (userSpeech.includes('it ') || userSpeech.includes('tech') || userSpeech.includes('computer') || userSpeech.includes('website')) {
-      twiml.say({ voice: 'Polly.Joanna-Neural' }, "You have reached IT Support. I am transferring you to Olivia, our AI Technical Specialist.");
-      twiml.say({ voice: 'Polly.Salli-Neural' }, "Hello, this is Olivia. Please describe your technical issue, then provide your full name, phone number, email address, and the best time to reach you so I can create an IT ticket.");
+      const msg1 = "You have reached IT Support. I am transferring you to Olivia, our AI Technical Specialist.";
+      const msg2 = "Hello, this is Olivia. Please describe your technical issue, then provide your full name, phone number, email address, and the best time to reach you so I can create an IT ticket.";
+      
+      twiml.say({ voice: 'Polly.Joanna-Neural' }, msg1);
+      twiml.say({ voice: 'Polly.Salli-Neural' }, msg2);
+      
+      if (callSid) {
+        await logCallSpeech(callSid, 'sylara', msg1 + " " + msg2, 'TECH');
+      }
       twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=escalate_it', timeout: 6, speechTimeout: 'auto' });
 
     } else if (userSpeech.includes('oversight') || userSpeech.includes('executive') || userSpeech.includes('founder') || userSpeech.includes('shantell') || userSpeech.includes('ryan')) {
-      twiml.say({ voice: 'Polly.Joanna-Neural' }, "You have reached Executive Oversight. I am transferring you to Rosalie, our Executive Liaison.");
-      twiml.say({ voice: 'Polly.Salli-Neural' }, "Hello, this is Rosalie. Please state the reason for your call, along with your full name, phone number, email address, and a good time to reach you. I will create a ticket and transfer your request to the escalations department.");
+      const msg1 = "You have reached Executive Oversight. I am transferring you to Rosalie, our Executive Liaison.";
+      const msg2 = "Hello, this is Rosalie. Please state the reason for your call, along with your full name, phone number, email address, and a good time to reach you. I will create a ticket and transfer your request to the escalations department.";
+      
+      twiml.say({ voice: 'Polly.Joanna-Neural' }, msg1);
+      twiml.say({ voice: 'Polly.Salli-Neural' }, msg2);
+      
+      if (callSid) {
+        await logCallSpeech(callSid, 'sylara', msg1 + " " + msg2, 'OVERSIGHT');
+      }
       twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=escalate_oversight', timeout: 6, speechTimeout: 'auto' });
 
     } else if (userSpeech.includes('telehealth') || userSpeech.includes('doctor') || userSpeech.includes('appointment')) {
-      twiml.say({ voice: 'Polly.Joanna-Neural' }, "You have reached Telehealth Services. I am transferring you to Logan, our Telehealth Coordinator.");
-      twiml.say({ voice: 'Polly.Matthew-Neural' }, "Hello, this is Logan. I can help you schedule a virtual appointment with a state-certified doctor. Please state your name and preferred time, and I will text you the booking link.");
+      const msg1 = "You have reached Telehealth Services. I am transferring you to Logan, our Telehealth Coordinator.";
+      const msg2 = "Hello, this is Logan. I can help you schedule a virtual appointment with a state-certified doctor. Please state your name and preferred time, and I will text you the booking link.";
+      
+      twiml.say({ voice: 'Polly.Joanna-Neural' }, msg1);
+      twiml.say({ voice: 'Polly.Matthew-Neural' }, msg2);
+      
+      if (callSid) {
+        await logCallSpeech(callSid, 'sylara', msg1 + " " + msg2, 'TELEHEALTH');
+      }
       twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=escalate_telehealth', timeout: 4, speechTimeout: 'auto' });
 
     } else if (userSpeech.includes('support') || userSpeech.includes('help') || userSpeech.includes('human') || userSpeech.includes('operator') || userSpeech.includes('agent') || userSpeech.includes('extension')) {
-      twiml.say({ voice: 'Polly.Joanna-Neural' }, "I understand. I am transferring you to Sophia, our Customer Support Director.");
-      twiml.say({ voice: 'Polly.Salli-Neural' }, "Hello, this is Sophia. Please hold while I connect you to Extension 101 for the next available human agent right now.");
-      const dial = twiml.dial({ timeout: 60, answerOnBridge: true });
-      const client = dial.client({
+      const msg1 = "I understand. I am transferring you to Sophia, our Customer Support Director.";
+      const msg2 = "Hello, this is Sophia. Please hold while I connect you to Extension 101 for the next available human agent right now.";
+      
+      twiml.say({ voice: 'Polly.Joanna-Neural' }, msg1);
+      twiml.say({ voice: 'Polly.Salli-Neural' }, msg2);
+      
+      if (callSid) {
+        await logCallSpeech(callSid, 'sylara', msg1 + " " + msg2, 'SUPPORT');
+      }
+      
+      const dial = twiml.dial({ timeout: 20, answerOnBridge: true });
+      dial.client({
         statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'],
         statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status',
         statusCallbackMethod: 'POST'
       }, 'GGMA_User');
-      client.parameter({ name: 'DepartmentContext', value: 'General Support Transfer' });
+      
+      twiml.say({ voice: 'Polly.Joanna-Neural' }, "The agent is currently unavailable. Please leave a message after the tone.");
+      twiml.record({
+        action: '/api/twilio/voice?action=voicemail-completed',
+        maxLength: 60,
+        playBeep: true
+      });
 
     } else {
-      twiml.say({ voice: 'Polly.Joanna-Neural' }, "I'm sorry, I didn't quite catch that. You can say 'Sales', 'Patient', 'Business', or 'Operator'.");
+      const msg = "I'm sorry, I didn't quite catch that. You can say 'Sales', 'Patient', 'Business', or 'Operator'.";
+      twiml.say({ voice: 'Polly.Joanna-Neural' }, msg);
+      
+      if (callSid) {
+        await logCallSpeech(callSid, 'sylara', msg, 'GENERAL');
+      }
       twiml.redirect('/api/twilio/voice');
     }
 
@@ -359,49 +590,128 @@ async function handleVoice(req, res) {
     const dept = req.query.action.toString().replace('escalate_', '').toUpperCase();
     const userSpeech = (req.body && req.body.SpeechResult) ? req.body.SpeechResult.toLowerCase() : '';
 
+    if (callSid && userSpeech) {
+      await logCallSpeech(callSid, 'user', req.body.SpeechResult, dept);
+    }
+
     if (userSpeech.includes('human') || userSpeech.includes('operator') || userSpeech.includes('agent') || userSpeech.includes('help')) {
-      twiml.say({ voice: 'Polly.Joanna-Neural' }, "I understand. I am transferring your case to a live human agent on Extension 101 now. Please hold.");
-      const dial = twiml.dial({ timeout: 60, answerOnBridge: true });
-      const client = dial.client({ statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'], statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status', statusCallbackMethod: 'POST' }, 'GGMA_User');
-      client.parameter({ name: 'DepartmentContext', value: 'Escalation from AI: ' + dept });
+      const msg = "I understand. I am transferring your case to a live human agent on Extension 101 now. Please hold.";
+      twiml.say({ voice: 'Polly.Joanna-Neural' }, msg);
+      
+      if (callSid) {
+        await logCallSpeech(callSid, 'sylara', msg, dept);
+      }
+      
+      const dial = twiml.dial({ timeout: 20, answerOnBridge: true });
+      dial.client({ statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'], statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status', statusCallbackMethod: 'POST' }, 'GGMA_User');
+      
+      twiml.say({ voice: 'Polly.Joanna-Neural' }, "The agent is currently unavailable. Please leave a message after the tone.");
+      twiml.record({
+        action: '/api/twilio/voice?action=voicemail-completed',
+        maxLength: 60,
+        playBeep: true
+      });
     } else {
       if (dept === 'SALES') {
-        twiml.say({ voice: 'Polly.Salli-Neural' }, "Thank you. I have pulled up your file. Our Premium Subscription is $299 per month and includes full access to the CareWallet and LARRY compliance engine. I can process your payment securely over the phone right now, or I can text you a secure checkout link. Which do you prefer?");
+        const msg = "Thank you. I have pulled up your file. Our Premium Subscription is $299 per month and includes full access to the CareWallet and LARRY compliance engine. I can process your payment securely over the phone right now, or I can text you a secure checkout link. Which do you prefer?";
+        twiml.say({ voice: 'Polly.Salli-Neural' }, msg);
+        if (callSid) {
+          await logCallSpeech(callSid, 'sylara', msg, 'SALES');
+        }
         twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=finish_sales', timeout: 5, speechTimeout: 'auto' });
       } else if (dept === 'PATIENT') {
-        twiml.say({ voice: 'Polly.Salli-Neural' }, "Thank you. I have located your patient file. Your medical card application requires a brief telehealth consultation. I have found an available doctor for today at 3 PM. Shall I lock in that appointment for you?");
+        const msg = "Thank you. I have located your patient file. Your medical card application requires a brief telehealth consultation. I have found an available doctor for today at 3 PM. Shall I lock in that appointment for you?";
+        twiml.say({ voice: 'Polly.Salli-Neural' }, msg);
+        if (callSid) {
+          await logCallSpeech(callSid, 'sylara', msg, 'PATIENT');
+        }
         twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=finish_patient', timeout: 5, speechTimeout: 'auto' });
       } else if (dept === 'BUSINESS') {
-        twiml.say({ voice: 'Polly.Matthew-Neural' }, "Thank you. I see your business profile. LARRY indicates there are two pending compliance alerts regarding your recent Metrc transfer. I can text you the secure login link to resolve these, or I can connect you to the Director of Compliance. Which do you prefer?");
+        const msg = "Thank you. I see your business profile. LARRY indicates there are two pending compliance alerts regarding your recent Metrc transfer. I can text you the secure login link to resolve these, or I can connect you to the Director of Compliance. Which do you prefer?";
+        twiml.say({ voice: 'Polly.Matthew-Neural' }, msg);
+        if (callSid) {
+          await logCallSpeech(callSid, 'sylara', msg, 'BUSINESS');
+        }
         twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=finish_business', timeout: 5, speechTimeout: 'auto' });
       } else if (dept === 'LEGAL') {
-        twiml.say({ voice: 'Polly.Salli-Neural' }, "Thank you for the details. I have immediately logged this into our secure Attorney Marketplace. An attorney specializing in your issue has been pinged and is reviewing your file right now. They will call you back on this number within 5 minutes. Please stay safe.");
+        const msg = "Thank you for the details. I have immediately logged this into our secure Attorney Marketplace. An attorney specializing in your issue has been pinged and is reviewing your file right now. They will call you back on this number within 5 minutes. Please stay safe.";
+        twiml.say({ voice: 'Polly.Salli-Neural' }, msg);
+        if (callSid) {
+          await logCallSpeech(callSid, 'sylara', msg, 'LEGAL');
+        }
         twiml.hangup();
       } else if (dept === 'IT') {
-        twiml.say({ voice: 'Polly.Joanna-Neural' }, "Thank you. Your IT ticket has been submitted. I can text you the ticket tracking link, or connect you to a live tech support agent now. Which do you prefer?");
+        const msg = "Thank you. Your IT ticket has been submitted. I can text you the ticket tracking link, or connect you to a live tech support agent now. Which do you prefer?";
+        twiml.say({ voice: 'Polly.Joanna-Neural' }, msg);
+        if (callSid) {
+          await logCallSpeech(callSid, 'sylara', msg, 'TECH');
+        }
         twiml.gather({ input: ['speech'], action: '/api/twilio/voice?action=finish_it', timeout: 5, speechTimeout: 'auto' });
       } else if (dept === 'OVERSIGHT') {
-        twiml.say({ voice: 'Polly.Joanna-Neural' }, "Thank you. Your request has been logged securely. I am routing your call to the escalations department now. Please hold.");
-        const dial = twiml.dial({ timeout: 60, answerOnBridge: true });
-        const client = dial.client({ statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'], statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status', statusCallbackMethod: 'POST' }, 'GGMA_User');
-        client.parameter({ name: 'DepartmentContext', value: 'Executive Oversight Escalation' });
+        const msg = "Thank you. Your request has been logged securely. I am routing your call to the escalations department now. Please hold.";
+        twiml.say({ voice: 'Polly.Joanna-Neural' }, msg);
+        if (callSid) {
+          await logCallSpeech(callSid, 'sylara', msg, 'OVERSIGHT');
+        }
+        const dial = twiml.dial({ timeout: 20, answerOnBridge: true });
+        dial.client({ statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'], statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status', statusCallbackMethod: 'POST' }, 'GGMA_User');
+        twiml.say({ voice: 'Polly.Joanna-Neural' }, "The agent is currently unavailable. Please leave a message after the tone.");
+        twiml.record({
+          action: '/api/twilio/voice?action=voicemail-completed',
+          maxLength: 60,
+          playBeep: true
+        });
       } else if (dept === 'TELEHEALTH') {
-        twiml.say({ voice: 'Polly.Matthew-Neural' }, "Thank you. I have locked in your appointment request. I am texting you the intake link and appointment details now. Have a healthy day!");
+        const msg = "Thank you. I have locked in your appointment request. I am texting you the intake link and appointment details now. Have a healthy day!";
+        twiml.say({ voice: 'Polly.Matthew-Neural' }, msg);
+        if (callSid) {
+          await logCallSpeech(callSid, 'sylara', msg, 'TELEHEALTH');
+        }
         twiml.hangup();
       }
     }
   } else if (req.query.action && req.query.action.toString().startsWith('finish_')) {
     const userSpeech = (req.body && req.body.SpeechResult) ? req.body.SpeechResult.toLowerCase() : '';
+    const dept = req.query.action.toString().replace('finish_', '').toUpperCase();
+
+    if (callSid && userSpeech) {
+      await logCallSpeech(callSid, 'user', req.body.SpeechResult, dept);
+    }
+
     if (userSpeech.includes('human') || userSpeech.includes('operator') || userSpeech.includes('agent') || userSpeech.includes('compliance')) {
-      twiml.say({ voice: 'Polly.Joanna-Neural' }, "Transferring you to a live agent now. Please hold.");
-      const dial = twiml.dial({ timeout: 60, answerOnBridge: true });
-      const client = dial.client({ statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'], statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status', statusCallbackMethod: 'POST' }, 'GGMA_User');
-      client.parameter({ name: 'DepartmentContext', value: 'Human Operator Transfer' });
+      const msg = "Transferring you to a live agent now. Please hold.";
+      twiml.say({ voice: 'Polly.Joanna-Neural' }, msg);
+      
+      if (callSid) {
+        await logCallSpeech(callSid, 'sylara', msg, dept);
+      }
+      
+      const dial = twiml.dial({ timeout: 20, answerOnBridge: true });
+      dial.client({ statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'], statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status', statusCallbackMethod: 'POST' }, 'GGMA_User');
+      
+      twiml.say({ voice: 'Polly.Joanna-Neural' }, "The agent is currently unavailable. Please leave a message after the tone.");
+      twiml.record({
+        action: '/api/twilio/voice?action=voicemail-completed',
+        maxLength: 60,
+        playBeep: true
+      });
     } else {
-      twiml.say({ voice: 'Polly.Joanna-Neural' }, "Perfect. I have processed your request and sent the confirmation to your phone. Thank you for calling Global Green Enterprise. Have a wonderful day!");
+      const msg = "Perfect. I have processed your request and sent the confirmation to your phone. Thank you for calling Global Green Enterprise. Have a wonderful day!";
+      twiml.say({ voice: 'Polly.Joanna-Neural' }, msg);
+      
+      if (callSid) {
+        await logCallSpeech(callSid, 'sylara', msg, dept);
+      }
       twiml.hangup();
     }
   } else {
+    const speechMsg = "Hello! Welcome to the Global Green Call Center. I am Sylara, your virtual intake agent. Are you calling for Patient Support, Telehealth, Business Licensing, Sales, Legal, IT Support, or Executive Oversight?";
+    const fallbackMsg = "I didn't quite catch that. Please name the department you are trying to reach, such as Legal, Telehealth, Patient Support, or Sales.";
+    
+    if (callSid) {
+      await logCallSpeech(callSid, 'sylara', speechMsg, 'GENERAL');
+    }
+
     const gather = twiml.gather({
       input: ['speech'],
       action: '/api/twilio/voice?action=respond',
@@ -412,12 +722,12 @@ async function handleVoice(req, res) {
 
     gather.say(
       { voice: 'Polly.Joanna-Neural' },
-      "Hello! Welcome to the Global Green Call Center. I am Sylara, your virtual intake agent. Are you calling for Patient Support, Telehealth, Business Licensing, Sales, Legal, IT Support, or Executive Oversight?"
+      speechMsg
     );
 
     twiml.say(
       { voice: 'Polly.Joanna-Neural' },
-      "I didn't quite catch that. Please name the department you are trying to reach, such as Legal, Telehealth, Patient Support, or Sales."
+      fallbackMsg
     );
     twiml.redirect('/api/twilio/voice');
   }

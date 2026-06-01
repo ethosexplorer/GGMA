@@ -37,7 +37,15 @@ export const VirtualAttendantTab = () => {
   const [selectedDept, setSelectedDept] = useState<Department | null>(departments[0]);
   const [stats, setStats] = useState<CallCenterStats | null>(null);
   const [liveQueue, setLiveQueue] = useState(0);
-  const [routingMode, setRoutingMode] = useState<'ai_only' | 'hybrid' | 'human_only'>('hybrid');
+  const [routingMode, setRoutingMode] = useState<'ai_only' | 'hybrid' | 'human_only'>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('gge_routing_mode');
+      if (saved === 'ai_only' || saved === 'hybrid' || saved === 'human_only') {
+        return saved;
+      }
+    }
+    return 'hybrid';
+  });
   const [isTrainingActive, setIsTrainingActive] = useState(true);
   const [showTranscripts, setShowTranscripts] = useState(false);
   const [unreadVoicemails, setUnreadVoicemails] = useState(0);
@@ -45,6 +53,8 @@ export const VirtualAttendantTab = () => {
   const [showVoicemails, setShowVoicemails] = useState(false);
   const [showStatsModal, setShowStatsModal] = useState(false);
   const [statsDept, setStatsDept] = useState<Department | null>(null);
+  const [realTranscripts, setRealTranscripts] = useState<any[]>([]);
+  const [isLoadingTranscripts, setIsLoadingTranscripts] = useState(false);
   const [dbCounts, setDbCounts] = useState({
     patients: 0,
     businesses: 0,
@@ -159,6 +169,22 @@ export const VirtualAttendantTab = () => {
       } catch (err) {
         console.error("Failed to query live-wired counts:", err);
       }
+
+      // Fetch latest routing mode from database to sync it
+      try {
+        const routeRes = await turso.execute("SELECT data FROM audit_logs WHERE action = 'CALL_ROUTING' ORDER BY rowid DESC LIMIT 1");
+        if (routeRes.rows.length > 0) {
+          const dataStr = String(routeRes.rows[0].data || '');
+          let dbMode: 'ai_only' | 'hybrid' | 'human_only' = 'hybrid';
+          if (dataStr.includes('100% AI')) dbMode = 'ai_only';
+          else if (dataStr.includes('100% Human')) dbMode = 'human_only';
+          
+          setRoutingMode(dbMode);
+          localStorage.setItem('gge_routing_mode', dbMode);
+        }
+      } catch (err) {
+        console.error("Failed to query call routing mode:", err);
+      }
     };
     fetchStats();
     
@@ -173,6 +199,56 @@ export const VirtualAttendantTab = () => {
       window.removeEventListener('voicemails-updated', handleVoicemailsUpdate);
     };
   }, []);
+
+  useEffect(() => {
+    if (showTranscripts && selectedDept) {
+      const fetchTranscripts = async () => {
+        setIsLoadingTranscripts(true);
+        try {
+          const res = await turso.execute({
+            sql: "SELECT * FROM audit_logs WHERE action = 'CALL_SUMMARY' ORDER BY rowid DESC LIMIT 20",
+            args: []
+          });
+          const list: any[] = [];
+          res.rows.forEach((row: any) => {
+            try {
+              const data = JSON.parse(row.data);
+              const deptMap: Record<string, string[]> = {
+                appts: ['PATIENT', 'TELEHEALTH'],
+                support: ['GENERAL', 'SUPPORT'],
+                medical: ['PATIENT'],
+                legal: ['LEGAL'],
+                sales: ['SALES'],
+                tech: ['IT', 'TECH'],
+                financials: ['BUSINESS'],
+                hr: ['HR'],
+                bilingual: ['BILINGUAL']
+              };
+              
+              const matchDepts = deptMap[selectedDept.id] || [selectedDept.id.toUpperCase()];
+              if (data.department && matchDepts.includes(data.department.toUpperCase())) {
+                list.push({
+                  id: row.id,
+                  time: data.timestamp ? new Date(data.timestamp).toLocaleString() : 'Recent Call',
+                  caller: data.from || 'Unknown Caller',
+                  summary: data.summary || 'No summary available.',
+                  log: data.transcript || []
+                });
+              }
+            } catch (e) {
+              console.error(e);
+            }
+          });
+          setRealTranscripts(list);
+        } catch (err) {
+          console.error("Error fetching transcripts:", err);
+        } finally {
+          setIsLoadingTranscripts(false);
+        }
+      };
+      fetchTranscripts();
+    }
+  }, [showTranscripts, selectedDept]);
 
   return (
     <div className="space-y-6">
@@ -203,6 +279,7 @@ export const VirtualAttendantTab = () => {
                 <button
                   onClick={() => {
                     setRoutingMode('ai_only');
+                    localStorage.setItem('gge_routing_mode', 'ai_only');
                     turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'CALL_ROUTING', 'System', JSON.stringify({ detail: 'Routing switched to 100% AI (Sylara)' })] }).catch(console.error);
                   }}
                   className={`px-3 py-2 rounded-lg text-[10px] font-bold transition-all flex items-center gap-1.5 ${routingMode === 'ai_only' ? 'bg-[#D4AF77] text-[#0A3D2A] shadow-md' : 'text-emerald-200/50 hover:text-emerald-200 hover:bg-emerald-800/50'}`}
@@ -212,6 +289,7 @@ export const VirtualAttendantTab = () => {
                 <button
                   onClick={() => {
                     setRoutingMode('hybrid');
+                    localStorage.setItem('gge_routing_mode', 'hybrid');
                     turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'CALL_ROUTING', 'System', JSON.stringify({ detail: 'Routing switched to Hybrid (85% AI / 15% Human)' })] }).catch(console.error);
                   }}
                   className={`px-3 py-2 rounded-lg text-[10px] font-bold transition-all flex items-center gap-1.5 ${routingMode === 'hybrid' ? 'bg-blue-500 text-white shadow-md shadow-blue-900/30' : 'text-emerald-200/50 hover:text-emerald-200 hover:bg-emerald-800/50'}`}
@@ -221,6 +299,7 @@ export const VirtualAttendantTab = () => {
                 <button
                   onClick={() => {
                     setRoutingMode('human_only');
+                    localStorage.setItem('gge_routing_mode', 'human_only');
                     turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'CALL_ROUTING', 'System', JSON.stringify({ detail: 'Routing switched to 100% Human Agents' })] }).catch(console.error);
                   }}
                   className={`px-3 py-2 rounded-lg text-[10px] font-bold transition-all flex items-center gap-1.5 ${routingMode === 'human_only' ? 'bg-rose-500 text-white shadow-md shadow-rose-900/30' : 'text-emerald-200/50 hover:text-emerald-200 hover:bg-emerald-800/50'}`}
@@ -460,36 +539,84 @@ export const VirtualAttendantTab = () => {
             </div>
             
             <div className="p-6 overflow-y-auto flex-1 space-y-6">
-              {[
-                {
-                  time: 'Today, 10:42 AM',
-                  caller: 'Sarah Jenkins (Oklahoma Patient)',
-                  log: [
-                    { speaker: 'Sylara (AI)', text: `Hello, welcome to GGE World ${selectedDept.name}. How can I help you today?` },
-                    { speaker: 'Sarah', text: `Hi, I need assistance with ${selectedDept.services[0].toLowerCase()} and to verify how things operate.` },
-                    { speaker: 'Sylara (AI)', text: 'I can certainly help you with that! The GGP-OS system logs all transactions instantly.' },
-                    { speaker: 'Sarah', text: 'Excellent, is it connected to the live telemetry feeds?' },
-                    { speaker: 'Sylara (AI)', text: 'Yes, both the Twilio VoIP queue and real-time compliance checks are active.' }
-                  ]
-                }
-              ].map((transcript, ti) => (
-                <div key={ti} className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
-                  <div className="flex justify-between items-center mb-3 text-[10px] font-black text-slate-400 uppercase tracking-widest pb-2 border-b border-slate-200/60">
-                    <span>Caller: {transcript.caller}</span>
-                    <span>{transcript.time}</span>
-                  </div>
-                  <div className="space-y-3">
-                    {transcript.log.map((chat, ci) => (
-                      <div key={ci} className="text-xs flex gap-2">
-                        <span className={cn("font-bold uppercase tracking-wider text-[9px] shrink-0 w-20 text-right mt-0.5", chat.speaker.includes('AI') ? "text-emerald-600" : "text-slate-500")}>
-                          {chat.speaker}:
-                        </span>
-                        <span className="text-slate-700 leading-relaxed font-medium">{chat.text}</span>
-                      </div>
-                    ))}
-                  </div>
+              {isLoadingTranscripts ? (
+                <div className="text-center py-12 text-slate-400 font-bold text-sm uppercase tracking-widest animate-pulse flex flex-col items-center justify-center gap-3">
+                  <RefreshCw size={24} className="animate-spin text-[#0A3D2A]" />
+                  Loading Transcripts...
                 </div>
-              ))}
+              ) : realTranscripts.length > 0 ? (
+                realTranscripts.map((transcript, ti) => (
+                  <div key={transcript.id || ti} className="bg-slate-50 rounded-2xl p-5 border border-slate-100 space-y-4">
+                    <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase tracking-widest pb-2 border-b border-slate-200/60">
+                      <span>Caller: {transcript.caller}</span>
+                      <span>{transcript.time}</span>
+                    </div>
+                    {transcript.summary && (
+                      <div className="p-3.5 bg-emerald-50 border border-emerald-100 rounded-xl">
+                        <p className="text-[10px] font-black text-emerald-800 uppercase tracking-widest mb-1">AI Call Summary</p>
+                        <p className="text-xs text-emerald-900 leading-relaxed font-semibold italic">{transcript.summary}</p>
+                      </div>
+                    )}
+                    <div className="space-y-3 pt-2">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Transcript</p>
+                      {transcript.log.map((chat: any, ci: number) => (
+                        <div key={ci} className="text-xs flex gap-2">
+                          <span className={cn(
+                            "font-bold uppercase tracking-wider text-[9px] shrink-0 w-20 text-right mt-0.5", 
+                            chat.role?.toLowerCase().includes('sylara') || chat.speaker?.toLowerCase().includes('sylara') ? "text-emerald-600" : "text-slate-500"
+                          )}>
+                            {chat.role || chat.speaker || 'Agent'}:
+                          </span>
+                          <span className="text-slate-700 leading-relaxed font-medium">{chat.text}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="space-y-6">
+                  <div className="text-center py-6 px-4 bg-slate-50 border border-slate-200 border-dashed rounded-2xl text-slate-400 font-bold text-xs uppercase tracking-wider">
+                    No active call records found for this department. Showing demo data below.
+                  </div>
+                  
+                  {[
+                    {
+                      time: 'Today, 10:42 AM',
+                      caller: 'Sarah Jenkins (Oklahoma Patient)',
+                      summary: 'Patient calling to inquire about medical card intake and verify if state portal uploads are connected to Metrc. Sylara explained the compliance verification steps and confirmed real-time connectivity.',
+                      log: [
+                        { speaker: 'Sylara (AI)', text: `Hello, welcome to GGE World ${selectedDept.name}. How can I help you today?` },
+                        { speaker: 'Sarah', text: `Hi, I need assistance with ${selectedDept.services[0].toLowerCase()} and to verify how things operate.` },
+                        { speaker: 'Sylara (AI)', text: 'I can certainly help you with that! The GGP-OS system logs all transactions instantly.' },
+                        { speaker: 'Sarah', text: 'Excellent, is it connected to the live telemetry feeds?' },
+                        { speaker: 'Sylara (AI)', text: 'Yes, both the Twilio VoIP queue and real-time compliance checks are active.' }
+                      ]
+                    }
+                  ].map((transcript, ti) => (
+                    <div key={ti} className="bg-slate-50 rounded-2xl p-5 border border-slate-100 opacity-60 space-y-4">
+                      <div className="flex justify-between items-center text-[10px] font-black text-slate-400 uppercase tracking-widest pb-2 border-b border-slate-200/60">
+                        <span>Demo Caller: {transcript.caller}</span>
+                        <span>{transcript.time}</span>
+                      </div>
+                      <div className="p-3.5 bg-emerald-50 border border-emerald-100 rounded-xl">
+                        <p className="text-[10px] font-black text-emerald-800 uppercase tracking-widest mb-1">Demo AI Summary</p>
+                        <p className="text-xs text-emerald-900 leading-relaxed font-semibold italic">{transcript.summary}</p>
+                      </div>
+                      <div className="space-y-3 pt-2">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Transcript</p>
+                        {transcript.log.map((chat, ci) => (
+                          <div key={ci} className="text-xs flex gap-2">
+                            <span className={cn("font-bold uppercase tracking-wider text-[9px] shrink-0 w-20 text-right mt-0.5", chat.speaker.includes('AI') ? "text-emerald-600" : "text-slate-500")}>
+                              {chat.speaker}:
+                            </span>
+                            <span className="text-slate-700 leading-relaxed font-medium">{chat.text}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
             
             <div className="p-6 border-t border-slate-100 bg-slate-50 flex justify-end">
