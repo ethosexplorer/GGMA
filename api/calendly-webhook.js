@@ -10,8 +10,12 @@
 // Events: invitee.created, invitee.canceled
 // ============================================================
 
+import dotenv from 'dotenv';
+dotenv.config();
+
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 // Initialize Firebase client SDK (server-side compatible)
 const firebaseConfig = {
@@ -30,6 +34,7 @@ try { app = initializeApp(firebaseConfig, 'calendly-webhook'); } catch (e) {
   try { app = getApp('calendly-webhook'); } catch { app = initializeApp(firebaseConfig, 'calendly-webhook-' + Date.now()); }
 }
 const db = getFirestore(app);
+const auth = getAuth(app);
 
 // Map Calendly event slugs to platform categories + colors
 const EVENT_CATEGORY_MAP = {
@@ -58,6 +63,13 @@ function categorizeEvent(eventUrl) {
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Authenticate with Firebase first to satisfy firestore.rules
+  try {
+    await signInWithEmailAndPassword(auth, 'globalgreenhp@gmail.com', 'Harlem2025!');
+  } catch (authErr) {
+    console.error('❌ Firebase Webhook Authentication failed:', authErr.message);
   }
 
   try {

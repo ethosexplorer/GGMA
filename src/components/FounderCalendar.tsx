@@ -130,93 +130,25 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
     return { category: 'ops', color: 'bg-indigo-500', label: '📅' };
   };
 
-  // LIVE FETCH: Pull bookings from Calendly API
+  // LIVE FETCH: Trigger server-side Calendly sync
   React.useEffect(() => {
-    const CALENDLY_TOKEN = import.meta.env.VITE_CALENDLY_TOKEN_V2 || import.meta.env.VITE_CALENDLY_TOKEN;
-    if (!CALENDLY_TOKEN) return;
-
-    const fetchCalendlyBookings = async () => {
+    const syncCalendly = async () => {
       try {
-        // Get user URI
-        const userRes = await fetch('https://api.calendly.com/users/me', {
-          headers: { Authorization: `Bearer ${CALENDLY_TOKEN}` },
-        });
-        if (!userRes.ok) return;
-        const userData = await userRes.json();
-        const userUri = userData.resource.uri;
-
-        // Fetch events from 3 months back to 2 months forward
-        const now = new Date();
-        const minDate = new Date(now);
-        minDate.setMonth(minDate.getMonth() - 3);
-        const maxDate = new Date(now);
-        maxDate.setMonth(maxDate.getMonth() + 2);
-
-        const allCalendlyEvents: CalEvent[] = [];
-
-        for (const status of ['active', 'canceled']) {
-          const url = `https://api.calendly.com/scheduled_events?user=${encodeURIComponent(userUri)}&min_start_time=${minDate.toISOString()}&max_start_time=${maxDate.toISOString()}&count=100&status=${status}`;
-          const evRes = await fetch(url, { headers: { Authorization: `Bearer ${CALENDLY_TOKEN}` } });
-          if (!evRes.ok) continue;
-          const evData = await evRes.json();
-
-          for (const ev of evData.collection || []) {
-            // Fetch invitees for each event
-            let inviteeName = '', inviteeEmail = '';
-            try {
-              const invRes = await fetch(`${ev.uri}/invitees`, { headers: { Authorization: `Bearer ${CALENDLY_TOKEN}` } });
-              if (invRes.ok) {
-                const invData = await invRes.json();
-                if (invData.collection?.length > 0) {
-                  inviteeName = invData.collection[0].name || '';
-                  inviteeEmail = invData.collection[0].email || '';
-                }
-              }
-            } catch {}
-
-            const startDate = new Date(ev.start_time);
-            const endDate = new Date(ev.end_time);
-            const { category, color, label } = categorizeCalendly(ev.name);
-            const isCanceled = ev.status === 'canceled';
-
-            allCalendlyEvents.push({
-              id: `calendly_${ev.uri.split('/').pop()}`,
-              title: `${isCanceled ? '❌ ' : ''}${label}: ${inviteeName || ev.name}`,
-              date: startDate.toISOString().split('T')[0],
-              startTime: startDate.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', timeZone: 'America/Chicago' }),
-              endTime: endDate.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', timeZone: 'America/Chicago' }),
-              category,
-              color: isCanceled ? 'bg-slate-400' : color,
-              description: [
-                `📅 ${ev.name}`,
-                inviteeName ? `👤 ${inviteeName}` : '',
-                inviteeEmail ? `📧 ${inviteeEmail}` : '',
-                `📍 ${ev.location?.location || 'Virtual'}`,
-                isCanceled ? '⚠️ CANCELED' : `✅ ${ev.status.toUpperCase()}`,
-                `Source: Calendly`,
-              ].filter(Boolean).join('\n'),
-              attendees: inviteeEmail,
-              meetLink: ev.location?.join_url || '',
-              location: ev.location?.location || 'Virtual',
-            });
-          }
+        const res = await fetch('/api/sync-calendly');
+        if (res.ok) {
+          const data = await res.json();
+          console.log(`📅 Calendly sync status: ${data.message}`);
+        } else {
+          console.warn('⚠️ Calendly sync failed:', res.statusText);
         }
-
-        console.log(`📅 Calendly: Loaded ${allCalendlyEvents.length} bookings`);
-
-        // Merge Calendly events into state (without duplicating Firebase events)
-        setEvents(current => {
-          const nonCalendly = current.filter(e => !e.id.startsWith('calendly_'));
-          return [...nonCalendly, ...allCalendlyEvents];
-        });
       } catch (err) {
-        console.error('Calendly fetch error:', err);
+        console.error('Failed to sync Calendly events:', err);
       }
     };
 
-    fetchCalendlyBookings();
+    syncCalendly();
     // Refresh every 5 minutes
-    const interval = setInterval(fetchCalendlyBookings, 5 * 60 * 1000);
+    const interval = setInterval(syncCalendly, 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
 
