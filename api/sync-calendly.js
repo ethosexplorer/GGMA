@@ -51,7 +51,9 @@ const CALENDLY_CAT_MAP = {
 const categorizeCalendly = (name) => {
   const lower = (name || '').toLowerCase();
   for (const [key, meta] of Object.entries(CALENDLY_CAT_MAP)) {
-    if (lower.includes(key)) return meta;
+    if (lower.includes(key)) {
+      return { category: 'ops', color: 'bg-indigo-500', label: meta.label };
+    }
   }
   return { category: 'ops', color: 'bg-indigo-500', label: '📅' };
 };

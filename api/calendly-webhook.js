@@ -55,7 +55,9 @@ const EVENT_CATEGORY_MAP = {
 
 function categorizeEvent(eventUrl) {
   for (const [slug, meta] of Object.entries(EVENT_CATEGORY_MAP)) {
-    if (eventUrl && eventUrl.includes(slug)) return meta;
+    if (eventUrl && eventUrl.includes(slug)) {
+      return { category: 'ops', color: 'bg-indigo-500', label: meta.label };
+    }
   }
   return { category: 'ops', color: 'bg-indigo-500', label: '📅 Calendly' };
 }
