@@ -8,13 +8,13 @@ type ViewMode = 'month' | 'week' | 'day';
 interface CalEvent {
   id: string; title: string; date: string; startTime: string; endTime: string;
   category: string; color: string; description?: string; attendees?: string;
-  location?: string; meetLink?: string;
+  location?: string; meetLink?: string; source?: string;
 }
 
 const ALL_CATEGORIES = [
   { id: 'executive', label: 'Executive', color: 'bg-purple-500' },
   { id: 'compliance', label: 'Compliance', color: 'bg-amber-500' },
-  { id: 'telehealth', label: 'Telehealth', color: 'bg-emerald-500' },
+  { id: 'telehealth', label: 'Telehealth', color: 'bg-emerald-600' },
   { id: 'federal', label: 'Federal', color: 'bg-red-500' },
   { id: 'state', label: 'State Authority', color: 'bg-cyan-500' },
   { id: 'ops', label: 'Operations', color: 'bg-indigo-500' },
@@ -23,6 +23,41 @@ const ALL_CATEGORIES = [
   { id: 'task', label: 'Task', color: 'bg-blue-500' },
   { id: 'reminder', label: 'Reminder', color: 'bg-orange-500' },
 ];
+
+const LEGEND_CATEGORIES = [
+  { id: 'ops', label: 'Operations', color: 'bg-indigo-500' },
+  { id: 'booking', label: 'Scheduled Booking', color: 'bg-emerald-600' },
+  { id: 'renewal', label: 'License Renewal', color: 'bg-yellow-500' },
+  { id: 'canceled', label: 'Canceled Booking', color: 'bg-slate-400' },
+  { id: 'telehealth', label: 'Telehealth', color: 'bg-emerald-600' },
+  { id: 'executive', label: 'Executive', color: 'bg-purple-500' },
+  { id: 'compliance', label: 'Compliance', color: 'bg-amber-500' },
+  { id: 'federal', label: 'Federal', color: 'bg-red-500' },
+  { id: 'state', label: 'State Authority', color: 'bg-cyan-500' },
+  { id: 'admin_support', label: 'Admin Support', color: 'bg-pink-500' },
+  { id: 'personal', label: 'Personal', color: 'bg-slate-500' },
+  { id: 'task', label: 'Task', color: 'bg-blue-500' },
+  { id: 'reminder', label: 'Reminder', color: 'bg-orange-500' },
+];
+
+const getEventCategoryObj = (ev: CalEvent) => {
+  if (ev.category && ev.category !== 'task') {
+    const cat = LEGEND_CATEGORIES.find(c => c.id === ev.category);
+    if (cat) return cat;
+  }
+  if (ev.color === 'bg-yellow-500' || (ev.color === 'bg-indigo-500' && ev.title.startsWith('Renewal:'))) {
+    return { id: 'renewal', label: 'License Renewal', color: 'bg-yellow-500' };
+  }
+  if (ev.color === 'bg-slate-400' || ev.title.includes('❌') || ev.description?.includes('CANCELED')) {
+    return { id: 'canceled', label: 'Canceled Booking', color: 'bg-slate-400' };
+  }
+  if (ev.source === 'calendly' || ev.source === 'carepatron') {
+    return { id: 'booking', label: 'Scheduled Booking', color: 'bg-emerald-600' };
+  }
+  const cat = ALL_CATEGORIES.find(c => c.color === ev.color) || ALL_CATEGORIES.find(c => c.id === ev.category);
+  return cat || { id: 'task', label: 'Task', color: 'bg-blue-500' };
+};
+
 
 const HOURS = Array.from({ length: 16 }, (_, i) => i + 6); // 6AM-9PM
 
@@ -203,26 +238,25 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
           // Add/update all Firebase events
           snap.docs.forEach(doc => {
             const data = doc.data();
-            // Show if assigned to me, created by me, assigned by Founder, or if user is Executive (God View)
-            if (isExecutive || data.assignedTo === user?.uid || data.assignedBy === user?.uid || data.assignedTo === defaultPersonalId || data.assignedBy === defaultPersonalId || data.assignedBy === 'Founder') {
-              const evId = `fb_${doc.id}`;
-              // Remove any local duplicate that matches this Firebase event (by title+date)
-              updated = updated.filter(e => !(e.title === data.title && e.date === data.date && e.id.startsWith('local_')));
-              const newEv = {
-                id: evId,
-                title: data.title,
-                date: data.date,
-                startTime: data.startTime,
-                endTime: data.endTime,
-                category: data.category || 'task',
-                color: data.color || 'bg-blue-500',
-                description: data.description,
-                attendees: data.attendees,
-                location: data.location,
-                meetLink: data.meetLink
-              };
-              updated.push(newEv);
-            }
+            // Show all events on the master operations calendar
+            const evId = `fb_${doc.id}`;
+            // Remove any local duplicate that matches this Firebase event (by title+date)
+            updated = updated.filter(e => !(e.title === data.title && e.date === data.date && e.id.startsWith('local_')));
+            const newEv = {
+              id: evId,
+              title: data.title,
+              date: data.date,
+              startTime: data.startTime,
+              endTime: data.endTime,
+              category: data.category || 'task',
+              color: data.color || 'bg-blue-500',
+              description: data.description,
+              attendees: data.attendees,
+              location: data.location,
+              meetLink: data.meetLink,
+              source: data.source || ''
+            };
+            updated.push(newEv);
           });
           
           // Firebase Injection Logic - Pushes THIRTY_DAY_TASKS if they don't exist
@@ -338,8 +372,15 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
   const [filterCat, setFilterCat] = useState<string | null>(null);
   const [userSearch, setUserSearch] = useState('');
 
-  const filtered = filterCat ? events.filter(e => e.category === filterCat) : events;
+  const filtered = useMemo(() => {
+    if (!filterCat) return events;
+    return events.filter(e => {
+      const catObj = getEventCategoryObj(e);
+      return catObj.id === filterCat;
+    });
+  }, [events, filterCat]);
   const eventsOn = (d: string) => filtered.filter(e => e.date === d);
+
 
   const navigate = (dir: number) => {
     const d = new Date(current);
@@ -490,28 +531,26 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
   };
 
   const getEventColor = (ev: CalEvent) => {
-    if (ev.color === 'bg-indigo-500' && ev.title.startsWith('Renewal:')) {
-      return 'bg-yellow-500';
-    }
-    return ev.color || 'bg-blue-500';
+    return getEventCategoryObj(ev).color;
   };
 
-  const changeEventColor = async (id: string, newColor: string) => {
+  const changeEventColorAndCategory = async (id: string, newColor: string, newCategory: string) => {
     if (id.startsWith('fb_')) {
       const docId = id.replace('fb_', '');
       try {
-        await updateDoc(doc(db, 'calendar_events', docId), { color: newColor });
+        await updateDoc(doc(db, 'calendar_events', docId), { color: newColor, category: newCategory });
       } catch (e) {
-        console.error('Failed to update event color in Firestore:', e);
+        console.error('Failed to update event color and category in Firestore:', e);
       }
     }
     setEvents(prev => {
-      const updated = prev.map(e => e.id === id ? { ...e, color: newColor } : e);
+      const updated = prev.map(e => e.id === id ? { ...e, color: newColor, category: newCategory } : e);
       try { localStorage.setItem(storageKey, JSON.stringify(updated.filter(e => !e.id.startsWith('fb_') && !e.id.startsWith('signup_')))); } catch(e) {}
       return updated;
     });
-    setSelectedEvent(prev => prev && prev.id === id ? { ...prev, color: newColor } : prev);
+    setSelectedEvent(prev => prev && prev.id === id ? { ...prev, color: newColor, category: newCategory } : prev);
   };
+
 
   const generateMeetLink = () => {
     const code = Math.random().toString(36).substring(2, 5) + '-' + Math.random().toString(36).substring(2, 6) + '-' + Math.random().toString(36).substring(2, 5);
@@ -554,7 +593,13 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
           <div className={cn("w-3 h-3 rounded-full mt-1 shrink-0 shadow-sm", getEventColor(ev))} />
           <div className="min-w-0">
             <p className="font-black text-sm text-slate-800 truncate">{ev.title}</p>
-            <div className="flex flex-wrap gap-3 mt-1 text-xs text-slate-500">
+            <div className="flex items-center gap-2 mt-1">
+              <span className={cn("inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider text-white shadow-sm", getEventCategoryObj(ev).color)}>
+                <span className="w-1.5 h-1.5 rounded-full bg-white shrink-0" />
+                {getEventCategoryObj(ev).label}
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-3 mt-2 text-xs text-slate-500">
               <span className="flex items-center gap-1"><Clock size={10} /> {format12h(ev.startTime)} – {format12h(ev.endTime)}</span>
               {ev.attendees && <span className="flex items-center gap-1"><Users size={10} /> {ev.attendees}</span>}
               {ev.location && <span className="flex items-center gap-1"><MapPin size={10} /> {ev.location}</span>}
@@ -581,8 +626,15 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
         <div className="flex justify-between items-start mb-6 mt-2">
           <div>
             <h3 className="text-2xl font-black text-slate-800 tracking-tight">{selectedEvent.title}</h3>
-            <p className="text-sm font-bold text-slate-500 mt-1">{new Date(selectedEvent.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
+            <div className="flex items-center gap-2 mt-2">
+              <span className={cn("inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider text-white shadow-sm", getEventCategoryObj(selectedEvent).color)}>
+                <span className="w-1.5 h-1.5 rounded-full bg-white shrink-0" />
+                {getEventCategoryObj(selectedEvent).label}
+              </span>
+            </div>
+            <p className="text-sm font-bold text-slate-500 mt-2">{new Date(selectedEvent.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
           </div>
+
           <button onClick={() => setSelectedEvent(null)} className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full transition-colors"><X size={16} /></button>
         </div>
         
@@ -623,31 +675,36 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
 
           {/* Color Coordinator */}
           <div className="space-y-2 pt-2 border-t border-slate-100">
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Color Coordinator</p>
-            <div className="flex gap-2 flex-wrap">
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Color Coordinator (Click to change department/color)</p>
+            <div className="grid grid-cols-2 gap-2">
               {[
-                { color: 'bg-indigo-500', label: 'Operations' },
-                { color: 'bg-emerald-500', label: 'Telehealth' },
-                { color: 'bg-purple-500', label: 'Executive' },
-                { color: 'bg-red-500', label: 'Federal' },
-                { color: 'bg-amber-500', label: 'Compliance' },
-                { color: 'bg-cyan-500', label: 'State' },
-                { color: 'bg-pink-500', label: 'Admin Support' },
-                { color: 'bg-slate-500', label: 'Personal' },
-                { color: 'bg-blue-500', label: 'Task' },
-                { color: 'bg-orange-500', label: 'Reminder' },
+                { color: 'bg-indigo-500', label: 'Operations', category: 'ops' },
+                { color: 'bg-emerald-600', label: 'Scheduled Booking', category: 'booking' },
+                { color: 'bg-yellow-500', label: 'License Renewal', category: 'renewal' },
+                { color: 'bg-slate-400', label: 'Canceled Booking', category: 'canceled' },
+                { color: 'bg-emerald-600', label: 'Telehealth', category: 'telehealth' },
+                { color: 'bg-purple-500', label: 'Executive', category: 'executive' },
+                { color: 'bg-red-500', label: 'Federal', category: 'federal' },
+                { color: 'bg-amber-500', label: 'Compliance', category: 'compliance' },
+                { color: 'bg-cyan-500', label: 'State Authority', category: 'state' },
+                { color: 'bg-pink-500', label: 'Admin Support', category: 'admin_support' },
+                { color: 'bg-slate-500', label: 'Personal', category: 'personal' },
+                { color: 'bg-blue-500', label: 'Task', category: 'task' },
+                { color: 'bg-orange-500', label: 'Reminder', category: 'reminder' },
               ].map(c => (
                 <button
-                  key={c.color}
-                  onClick={() => changeEventColor(selectedEvent.id, c.color)}
+                  key={c.category}
+                  onClick={() => changeEventColorAndCategory(selectedEvent.id, c.color, c.category)}
                   className={cn(
-                    "w-6 h-6 rounded-full cursor-pointer border-2 transition-all hover:scale-110",
-                    c.color,
-                    getEventColor(selectedEvent) === c.color ? "border-slate-800 scale-105 shadow-sm" : "border-transparent"
+                    "flex items-center gap-2 px-3 py-2 rounded-xl border text-[11px] font-bold transition-all text-left hover:bg-slate-50 cursor-pointer",
+                    getEventCategoryObj(selectedEvent).id === c.category ? "border-slate-800 bg-slate-50 shadow-sm" : "border-slate-200 bg-white text-slate-600"
                   )}
-                  title={c.label}
-                />
+                >
+                  <div className={cn("w-3 h-3 rounded-full shrink-0 shadow-sm", c.color)} />
+                  <span className="truncate">{c.label}</span>
+                </button>
               ))}
+            </div>
             </div>
           </div>
           
@@ -676,7 +733,6 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
           </div>
         </div>
       </div>
-    </div>
   );
 
   // --- NEW EVENT MODAL ---
@@ -867,16 +923,15 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
       </div>
 
       {/* CATEGORY FILTERS */}
-      {availableCategories.length > 1 && (
-        <div className="flex flex-wrap gap-2">
-          <button onClick={() => setFilterCat(null)} className={cn("px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider border transition-all", !filterCat ? "bg-slate-800 text-white border-slate-800" : "bg-white text-slate-500 border-slate-200 hover:border-slate-400")}>All</button>
-          {availableCategories.map(c => (
-            <button key={c.id} onClick={() => setFilterCat(filterCat === c.id ? null : c.id)} className={cn("px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider border transition-all flex items-center gap-1.5", filterCat === c.id ? "bg-slate-800 text-white border-slate-800" : "bg-white text-slate-500 border-slate-200 hover:border-slate-400")}>
-              <div className={cn("w-2 h-2 rounded-full", c.color)} />{c.label}
-            </button>
-          ))}
-        </div>
-      )}
+      <div className="flex flex-wrap gap-2">
+        <button onClick={() => setFilterCat(null)} className={cn("px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider border transition-all", !filterCat ? "bg-slate-800 text-white border-slate-800" : "bg-white text-slate-500 border-slate-200 hover:border-slate-400")}>All</button>
+        {LEGEND_CATEGORIES.map(c => (
+          <button key={c.id} onClick={() => setFilterCat(filterCat === c.id ? null : c.id)} className={cn("px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider border transition-all flex items-center gap-1.5", filterCat === c.id ? "bg-slate-800 text-white border-slate-800" : "bg-white text-slate-500 border-slate-200 hover:border-slate-400")}>
+            <div className={cn("w-2 h-2 rounded-full", c.color)} />{c.label}
+          </button>
+        ))}
+      </div>
+
 
       {/* BOOKING LINKS — Shows when Operations filter is active */}
       {filterCat === 'ops' && (

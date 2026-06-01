@@ -42,9 +42,9 @@ const EVENT_MAP = {
 function categorize(name) {
   const lower = (name || '').toLowerCase();
   for (const [key, meta] of Object.entries(EVENT_MAP)) {
-    if (lower.includes(key)) return meta;
+    if (lower.includes(key)) return { ...meta, color: 'bg-emerald-600' };
   }
-  return { category: 'ops', color: 'bg-indigo-500', label: '📅' };
+  return { category: 'ops', color: 'bg-emerald-600', label: '📅' };
 }
 
 async function writeToFirestore(docData) {
@@ -131,7 +131,7 @@ async function main() {
       startTime: '15:00',
       endTime: '16:00',
       category: 'ops',
-      color: 'bg-pink-500',
+      color: 'bg-emerald-600',
       description: 'Carepatron Operations Support Hub\nTeam: Shantell R. Patient Intake, Wendy Smith (Demo)\nBooking: https://book.carepatron.com/Diversity-Health---Wellness-Network--GoHealthUSA---CCardz-/All?p=MeBev6pvQWuqD4djocNXFg',
       attendees: '',
       meetLink: '',

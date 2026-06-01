@@ -5,14 +5,13 @@ import { collection, getDocs, onSnapshot } from 'firebase/firestore';
 import { Building2, Users, FileText, Settings, Shield, Activity, Bell,
   Briefcase, HeartPulse, Scale, Gavel, FileCheck, Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
-  Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Headphones,
+  Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Headphones, Calendar,
   Zap, UserPlus, GraduationCap, FlaskConical, BookOpen, Phone, ShieldAlert, Lock, CircleCheck, Edit2, Trash2, X } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { METRC_MANUAL } from '../data/metrcManual';
 import { UserCalendar } from '../components/UserCalendar';
-import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
-import { EscalationSupportCalendar } from '../components/EscalationSupportCalendar';
+import { FounderCalendar } from '../components/FounderCalendar';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 import { PatientCaseTracker } from '../components/patient/PatientCaseTracker';
 import { StaffCRM } from '../components/crm/StaffCRM';
@@ -35,8 +34,7 @@ const NAV_ITEMS = [
   { id: 'ai_monitor', label: 'AI Monitoring', icon: Bot },
   { id: 'regulatory_library', label: 'Regulatory Library', icon: BookOpen },
   { id: 'support', label: 'Support Hub', icon: MessageSquare },
-  { id: 'admin_support_calendar', label: 'Admin Support', icon: Clock },
-  { id: 'escalation_support_calendar', label: 'Escalation Support', icon: Clock },
+  { id: 'operations_calendar', label: 'Operations Calendar', icon: Calendar },
   { id: 'settings', label: 'Admin Settings', icon: Settings },
 ];
 
@@ -803,8 +801,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
   const getContent = () => {
     switch (activeTab) {
       case 'calendar': return <div className="h-full w-full -m-10"><UserCalendar user={user} title="src\pages\Admin Calendar" subtitle="Appointments & Scheduling" /></div>;
-      case 'admin_support_calendar': return <div className="h-full w-full -m-10"><AdminSupportCalendar /></div>;
-      case 'escalation_support_calendar': return <div className="h-full w-full -m-10"><EscalationSupportCalendar /></div>;
+      case 'operations_calendar': return <div className="h-full w-full -m-10"><FounderCalendar user={user} title="Operations Calendar" /></div>;
       case 'overview': return renderOverview();
       case 'staffing': return renderStaffing();
       case 'negligence': return renderNegligence();

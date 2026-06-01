@@ -45,8 +45,6 @@ import { LanguageSelector } from '../components/LanguageSelector';
 import { ImportantUpdates } from '../components/ImportantUpdates';
 import { FounderCalendar } from '../components/FounderCalendar';
 import { RapidRevenueTab } from '../components/crm/RapidRevenueTab';
-import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
-import { EscalationSupportCalendar } from '../components/EscalationSupportCalendar';
 import { voip800 } from '../lib/voip800';
 import { InvoiceManager } from '../components/founder/InvoiceManager';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
@@ -124,7 +122,7 @@ const MERGED_SUB_TABS: Record<string, { id: string, label: string, icon: any }[]
   ],
   command_hub: [
     { id: 'gge_webmail', label: 'Founder Email', icon: Mail },
-    { id: 'internal_scheduler', label: 'Calendar / Scheduler', icon: Clock },
+    { id: 'internal_scheduler', label: 'Operations Calendar', icon: Clock },
     { id: 'realtime_tasks', label: 'Realtime Daily Tasks', icon: Target },
     { id: 'messages', label: 'Messages', icon: MessageSquare },
     { id: 'operations', label: 'Ops Center (Live)', icon: Cpu },
@@ -1086,10 +1084,6 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         return <div data-action-bound="true"><FounderCalendar user={user} title="Founder's Master Calendar" /></div>;
       case 'realtime_tasks':
         return <div className="h-full w-full -m-10 bg-slate-50 p-10 min-h-screen overflow-auto" data-action-bound="true"><RapidRevenueTab /></div>;
-      case 'admin_support_calendar':
-        return <div className="h-full w-full -m-10" data-action-bound="true"><AdminSupportCalendar /></div>;
-      case 'escalation_support_calendar':
-        return <div className="h-full w-full -m-10" data-action-bound="true"><EscalationSupportCalendar /></div>;
       case 'subscriptions':
         return <div data-action-bound="true"><SubscriptionsTab /></div>;
       case 'invoices':

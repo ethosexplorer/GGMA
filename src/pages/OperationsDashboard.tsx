@@ -9,7 +9,7 @@ import { Calendar, Building2, Users, FileText, Settings, Shield, Activity, Bell,
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { UserCalendar } from '../components/UserCalendar';
-import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
+import { FounderCalendar } from '../components/FounderCalendar';
 import { ITSupportDashboard } from '../components/it/ITSupportDashboard';
 import { CallCenterCommandTab } from '../components/telephony/CallCenterCommandTab';
 import { PhoneIntakeForm } from '../components/telephony/PhoneIntakeForm';
@@ -25,7 +25,7 @@ const NAV_ITEMS = [
   { id: 'call_center', label: 'Call Center Command', icon: Phone },
   { id: 'phone_intake', label: 'Phone Intake Form', icon: UserPlus },
   { section: 'SUPPORT OPERATIONS' },
-  { id: 'admin_support_calendar', label: 'Admin Support', icon: Clock },
+  { id: 'operations_calendar', label: 'Operations Calendar', icon: Calendar },
   { id: 'support', label: 'Active Support Tickets', icon: MessageSquare, badge: '0' },
   { id: 'calls', label: 'Call Queue', icon: Headphones, badge: '0' },
   { id: 'backoffice', label: 'Escalations Queue', icon: Cpu, dot: true },
@@ -521,7 +521,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
     switch (activeTab) {
       case 'call_center': return <CallCenterCommandTab />;
       case 'phone_intake': return <PhoneIntakeForm />;
-      case 'admin_support_calendar': return <div className="h-full w-full"><AdminSupportCalendar /></div>;
+      case 'operations_calendar': return <div className="h-full w-full -m-10"><FounderCalendar user={user} title="Operations Calendar" /></div>;
       case 'support': return renderSupport();
       case 'it_support': return renderITSupport();
       case 'hr_intelligence': return renderHRIntelligence();

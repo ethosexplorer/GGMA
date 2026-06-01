@@ -52,10 +52,10 @@ const categorizeCalendly = (name) => {
   const lower = (name || '').toLowerCase();
   for (const [key, meta] of Object.entries(CALENDLY_CAT_MAP)) {
     if (lower.includes(key)) {
-      return { category: 'ops', color: 'bg-indigo-500', label: meta.label };
+      return { category: 'ops', color: 'bg-emerald-600', label: meta.label };
     }
   }
-  return { category: 'ops', color: 'bg-indigo-500', label: '📅' };
+  return { category: 'ops', color: 'bg-emerald-600', label: '📅' };
 };
 
 export default async function handler(req, res) {

@@ -12,7 +12,7 @@ import { turso } from '../lib/turso';
 import { voip800 } from '../lib/voip800';
 import { InternalMessenger } from '../components/messaging/InternalMessenger';
 import { AITrainingTab } from '../components/AITrainingTab';
-import { UserCalendar } from '../components/UserCalendar';
+import { FounderCalendar } from '../components/FounderCalendar';
 // Import existing dashboard components to render as tabs
 import { PublicHealthDashboard } from './PublicHealthDashboard';
 import { ExternalAdminDashboard } from './ExternalAdminDashboard';
@@ -30,8 +30,7 @@ import {
   LiveRegulatoryLibrary
 } from '../components/dashboard-tabs/LiveExecutiveTabs';
 import { LegislativeIntelTab } from '../components/federal/LegislativeIntelTab';
-import { AdminSupportCalendar } from '../components/AdminSupportCalendar';
-import { EscalationSupportCalendar } from '../components/EscalationSupportCalendar';
+
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 import { ExecutiveCRM } from '../components/crm/ExecutiveCRM';
 import { PipelineCRM } from '../components/crm/PipelineCRM';
@@ -60,7 +59,7 @@ const INTERNAL_NAV_ITEMS: NavItem[] = [
   { id: '_sec_main', section: 'MAIN' },
   { id: 'ai_training', label: 'My Assistant & Training', icon: Bot },
   { id: 'messages', label: 'Messages', icon: MessageSquare },
-  { id: 'internal_scheduler', label: 'Calendar & Scheduler', icon: Clock },
+  { id: 'internal_scheduler', label: 'Operations Calendar', icon: Clock },
   { id: 'realtime_tasks', label: 'Realtime Daily Tasks', icon: Zap },
   { id: '_sec_supreme', section: 'SUPREME COMMAND' },
   { id: 'patients', label: 'Registry Sovereignty', icon: HeartPulse },
@@ -561,10 +560,8 @@ const AdvisorDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => voi
                 {activeTab === 'ai_training' && <AITrainingTab userProfile={user} />}
                 {activeTab === 'omma_pipeline' && <div className="h-full w-full -m-8"><GlobalSweepTab isAdvisor={isBobAdvisor} isRyan={isRyan} userEmail={user?.email} /></div>}
                 {activeTab === 'messages' && <InternalMessenger currentUser={{ name: fullName, role: title, roleId: 'advisor' }} />}
-                {activeTab === 'internal_scheduler' && <div className="bg-white rounded-3xl overflow-hidden h-full"><UserCalendar user={user} /></div>}
+                {activeTab === 'internal_scheduler' && <div className="bg-white rounded-3xl overflow-hidden h-full"><FounderCalendar user={user} title="Operations Calendar" /></div>}
                 {activeTab === 'realtime_tasks' && <div className="h-full w-full -m-6 bg-slate-50 p-10 min-h-screen overflow-auto"><RapidRevenueTab /></div>}
-                {activeTab === 'admin_support_calendar' && <div className="bg-white rounded-3xl overflow-hidden h-full"><AdminSupportCalendar /></div>}
-                {activeTab === 'escalation_support_calendar' && <div className="bg-white rounded-3xl overflow-hidden h-full"><EscalationSupportCalendar /></div>}
                 
                 {activeTab === 'patients' && <LivePatientsOversight />}
                 {activeTab === 'business' && <LiveBusinessOversight />}
