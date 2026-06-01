@@ -489,6 +489,30 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
     });
   };
 
+  const getEventColor = (ev: CalEvent) => {
+    if (ev.color === 'bg-indigo-500' && ev.title.startsWith('Renewal:')) {
+      return 'bg-yellow-500';
+    }
+    return ev.color || 'bg-blue-500';
+  };
+
+  const changeEventColor = async (id: string, newColor: string) => {
+    if (id.startsWith('fb_')) {
+      const docId = id.replace('fb_', '');
+      try {
+        await updateDoc(doc(db, 'calendar_events', docId), { color: newColor });
+      } catch (e) {
+        console.error('Failed to update event color in Firestore:', e);
+      }
+    }
+    setEvents(prev => {
+      const updated = prev.map(e => e.id === id ? { ...e, color: newColor } : e);
+      try { localStorage.setItem(storageKey, JSON.stringify(updated.filter(e => !e.id.startsWith('fb_') && !e.id.startsWith('signup_')))); } catch(e) {}
+      return updated;
+    });
+    setSelectedEvent(prev => prev && prev.id === id ? { ...prev, color: newColor } : prev);
+  };
+
   const generateMeetLink = () => {
     const code = Math.random().toString(36).substring(2, 5) + '-' + Math.random().toString(36).substring(2, 6) + '-' + Math.random().toString(36).substring(2, 5);
     setForm(f => ({ ...f, meetLink: `https://meet.google.com/${code}` }));
@@ -515,7 +539,7 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
   };
 
   const renderEventChip = (ev: CalEvent, compact = false) => (
-    <div key={ev.id} className={cn("group rounded-lg px-2 py-1 text-white text-[10px] font-bold truncate cursor-pointer relative", ev.color, compact ? "mb-0.5" : "mb-1")}
+    <div key={ev.id} className={cn("group rounded-lg px-2 py-1 text-white text-[10px] font-bold truncate cursor-pointer relative", getEventColor(ev), compact ? "mb-0.5" : "mb-1")}
       onClick={(e) => { e.stopPropagation(); setSelectedEvent(ev); }}>
       {!compact && <span className="opacity-80 mr-1">{format12h(ev.startTime)}</span>}{ev.title}
       {ev.meetLink && <Video size={8} className="inline ml-1 opacity-70" />}
@@ -525,9 +549,9 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
   const renderDayEvents = (dateStr: string) => {
     const dayEvts = eventsOn(dateStr).sort((a, b) => a.startTime.localeCompare(b.startTime));
     return dayEvts.map(ev => (
-      <div key={ev.id} className={cn("rounded-2xl border p-4 flex items-start justify-between gap-4 transition-all hover:shadow-md", ev.color.replace('bg-', 'bg-') + '/10 border-' + ev.color.replace('bg-', '') + '/30')}>
+      <div key={ev.id} className={cn("rounded-2xl border p-4 flex items-start justify-between gap-4 transition-all hover:shadow-md", getEventColor(ev).replace('bg-', 'bg-') + '/10 border-' + getEventColor(ev).replace('bg-', '') + '/30')}>
         <div className="flex items-start gap-3 min-w-0">
-          <div className={cn("w-3 h-3 rounded-full mt-1 shrink-0 shadow-sm", ev.color)} />
+          <div className={cn("w-3 h-3 rounded-full mt-1 shrink-0 shadow-sm", getEventColor(ev))} />
           <div className="min-w-0">
             <p className="font-black text-sm text-slate-800 truncate">{ev.title}</p>
             <div className="flex flex-wrap gap-3 mt-1 text-xs text-slate-500">
@@ -553,7 +577,7 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
   const renderEventDetailsModal = () => selectedEvent && (
     <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setSelectedEvent(null)}>
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 overflow-hidden relative" onClick={e => e.stopPropagation()}>
-        <div className={cn("absolute top-0 left-0 w-full h-3", selectedEvent.color)} />
+        <div className={cn("absolute top-0 left-0 w-full h-3", getEventColor(selectedEvent))} />
         <div className="flex justify-between items-start mb-6 mt-2">
           <div>
             <h3 className="text-2xl font-black text-slate-800 tracking-tight">{selectedEvent.title}</h3>
@@ -596,6 +620,36 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
               <p className="text-sm text-slate-600 whitespace-pre-wrap">{selectedEvent.description}</p>
             </div>
           )}
+
+          {/* Color Coordinator */}
+          <div className="space-y-2 pt-2 border-t border-slate-100">
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Color Coordinator</p>
+            <div className="flex gap-2 flex-wrap">
+              {[
+                { color: 'bg-indigo-500', label: 'Operations' },
+                { color: 'bg-emerald-500', label: 'Telehealth' },
+                { color: 'bg-purple-500', label: 'Executive' },
+                { color: 'bg-red-500', label: 'Federal' },
+                { color: 'bg-amber-500', label: 'Compliance' },
+                { color: 'bg-cyan-500', label: 'State' },
+                { color: 'bg-pink-500', label: 'Admin Support' },
+                { color: 'bg-slate-500', label: 'Personal' },
+                { color: 'bg-blue-500', label: 'Task' },
+                { color: 'bg-orange-500', label: 'Reminder' },
+              ].map(c => (
+                <button
+                  key={c.color}
+                  onClick={() => changeEventColor(selectedEvent.id, c.color)}
+                  className={cn(
+                    "w-6 h-6 rounded-full cursor-pointer border-2 transition-all hover:scale-110",
+                    c.color,
+                    getEventColor(selectedEvent) === c.color ? "border-slate-800 scale-105 shadow-sm" : "border-transparent"
+                  )}
+                  title={c.label}
+                />
+              ))}
+            </div>
+          </div>
           
           <div className="pt-4 flex flex-col gap-3">
             {selectedEvent.meetLink && (

@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, Plus, X, Clock, Video, MapPin, Users, Calendar as CalIcon, Trash2 } from 'lucide-react';
-import { collection, query, onSnapshot, addDoc, serverTimestamp, deleteDoc, doc } from 'firebase/firestore';
+import { collection, query, onSnapshot, addDoc, serverTimestamp, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { cn } from '../lib/utils';
 
@@ -165,6 +165,13 @@ export const AdminSupportCalendar = () => {
     setEvents(prev => prev.filter(e => e.id !== id));
   };
 
+  const getEventColor = (ev: CalEvent) => {
+    if (ev.color === 'bg-indigo-500' && ev.title.startsWith('Renewal:')) {
+      return 'bg-yellow-500';
+    }
+    return ev.color || 'bg-blue-500';
+  };
+
   const generateMeetLink = () => {
     const code = Math.random().toString(36).substring(2, 5) + '-' + Math.random().toString(36).substring(2, 6) + '-' + Math.random().toString(36).substring(2, 5);
     setForm(f => ({ ...f, meetLink: `https://meet.google.com/${code}` }));
@@ -189,7 +196,7 @@ export const AdminSupportCalendar = () => {
   };
 
   const renderEventChip = (ev: CalEvent, compact = false) => (
-    <div key={ev.id} className={cn("group rounded-lg px-2 py-1 text-white text-[10px] font-bold truncate cursor-pointer relative", ev.color, compact ? "mb-0.5" : "mb-1")}
+    <div key={ev.id} className={cn("group rounded-lg px-2 py-1 text-white text-[10px] font-bold truncate cursor-pointer relative", getEventColor(ev), compact ? "mb-0.5" : "mb-1")}
       onClick={(e) => { e.stopPropagation(); setSelectedDate(ev.date); setView('day'); }}>
       {!compact && <span className="opacity-80 mr-1">{format12h(ev.startTime)}</span>}{ev.title}
       {ev.meetLink && <Video size={8} className="inline ml-1 opacity-70" />}
@@ -199,9 +206,9 @@ export const AdminSupportCalendar = () => {
   const renderDayEvents = (dateStr: string) => {
     const dayEvts = eventsOn(dateStr).sort((a, b) => a.startTime.localeCompare(b.startTime));
     return dayEvts.map(ev => (
-      <div key={ev.id} className={cn("rounded-2xl border p-4 flex items-start justify-between gap-4 transition-all hover:shadow-md", ev.color.replace('bg-', 'bg-') + '/10 border-' + ev.color.replace('bg-', '') + '/30')}>
+      <div key={ev.id} className={cn("rounded-2xl border p-4 flex items-start justify-between gap-4 transition-all hover:shadow-md", getEventColor(ev).replace('bg-', 'bg-') + '/10 border-' + getEventColor(ev).replace('bg-', '') + '/30')}>
         <div className="flex items-start gap-3 min-w-0">
-          <div className={cn("w-3 h-3 rounded-full mt-1 shrink-0 shadow-sm", ev.color)} />
+          <div className={cn("w-3 h-3 rounded-full mt-1 shrink-0 shadow-sm", getEventColor(ev))} />
           <div className="min-w-0">
             <p className="font-black text-sm text-slate-800 truncate">{ev.title}</p>
             <div className="flex flex-wrap gap-3 mt-1 text-xs text-slate-500">
