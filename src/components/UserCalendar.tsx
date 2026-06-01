@@ -634,13 +634,21 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
 
       {/* CATEGORY FILTERS */}
       {availableCategories.length > 1 && (
-        <div className="flex flex-wrap gap-2">
-          <button onClick={() => setFilterCat(null)} className={cn("px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider border transition-all", !filterCat ? "bg-slate-800 text-white border-slate-800" : "bg-white text-slate-500 border-slate-200 hover:border-slate-400")}>All</button>
-          {availableCategories.map(c => (
-            <button key={c.id} onClick={() => setFilterCat(filterCat === c.id ? null : c.id)} className={cn("px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider border transition-all flex items-center gap-1.5", filterCat === c.id ? "bg-slate-800 text-white border-slate-800" : "bg-white text-slate-500 border-slate-200 hover:border-slate-400")}>
-              <div className={cn("w-2 h-2 rounded-full", c.color)} />{c.label}
-            </button>
-          ))}
+        <div className="flex items-center gap-2">
+          <label htmlFor="user-category-filter-select" className="text-xs font-black text-slate-500 uppercase tracking-wider">Filter by Category:</label>
+          <select
+            id="user-category-filter-select"
+            value={filterCat || ''}
+            onChange={(e) => setFilterCat(e.target.value || null)}
+            className="text-xs font-black bg-white border border-slate-200 hover:border-slate-300 rounded-xl px-3 py-2 text-slate-700 outline-none cursor-pointer transition-all shadow-sm max-w-xs"
+          >
+            <option value="">All Categories</option>
+            {availableCategories.map(c => (
+              <option key={c.id} value={c.id}>
+                {c.label}
+              </option>
+            ))}
+          </select>
         </div>
       )}
 

@@ -70,37 +70,7 @@ const SEED_EVENTS: CalEvent[] = [];
 const CLINIC_HOOK = `Subject: Double your patient intake without hiring more staff.\n\nHi [Name],\nMost cannabis clinics in [State] are wasting 10+ hours a week on manual patient verifications, filing out state registry forms, and chasing down payments.\n\nGGP-OS is the operating system built specifically to automate your clinic.\n• Automated SMS Reminders: Patients get texted a link to their forms.\n• State Registry Integration: Automatically match conditions to your state's active requirements.\n• Integrated Billing: Collect consultation fees before the patient even hits your Telehealth waiting room.\n\nWe are onboarding our final batch of beta partners in [State]. Try GGP-OS free for 30 Days. If it doesn't save you time and increase your pipeline, walk away.\n\n→ Start Your Free Trial: https://ggp-os.com\n→ Book a 10-Min Demo: https://calendly.com/globalgreenhpmeet/gghp-demo`;
 const DISPENSARY_HOOK = `Subject: Are you miscalculating state cannabis tax exemptions?\n\nHi [Name],\nDepending on your state, miscalculating a medical patient's tax exemption at checkout can result in severe state penalties—or worse, a loss of your business license.\n\nGGP-OS takes the risk out of compliance. Our platform connects directly with state resources to ensure that every patient walking through your door is instantly verified for medical status, ensuring exact compliance with local tax code.\n\n• Instant Verification: Don't guess if an out-of-state card is valid. We track state reciprocity laws in real-time.\n• Pipeline CRM: See exactly who your highest-value patients are.\n• Compliance Built-In: From METRC reporting to local authority requirements.\n\nWe are helping dispensaries like yours automate compliance. Start a 30-Day Free Trial today and let our team handle your custom state configuration.\n\n→ Claim Your Free Trial: https://ggp-os.com\n→ Book a Demo: https://calendly.com/globalgreenhpmeet/gghp-demo`;
 const ATTORNEY_HOOK = `Subject: Manage your clients' cannabis licensing & compliance from one dashboard.\n\nHi [Name],\nAs an attorney navigating the complex regulations of [State]'s cannabis program, managing permit renewals and METRC compliance for multiple clients is a massive administrative burden.\n\nGGP-OS gives your firm a centralized Command Center.\nMonitor your clients' regulatory standing, track changes in state and federal law, and automate document collection for licensing renewals all in one place.\n\nLet's schedule a 10-minute walk-through to show you how law firms are using GGP-OS to manage their cannabis portfolios.\n\n→ Book a Walk-Through: https://calendly.com/globalgreenhpmeet/gghp-demo`;
-
-const THIRTY_DAY_TASKS: CalEvent[] = [
-  { id: 'marketing-1', title: 'Email Blast: Clinics (OK, OH, PA)', date: '2026-05-18', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: CLINIC_HOOK },
-  { id: 'marketing-2', title: 'Email Blast: Dispensaries (All)', date: '2026-05-19', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: DISPENSARY_HOOK },
-  { id: 'marketing-3', title: 'Email Blast: Attorneys (CA, WA, IL)', date: '2026-05-20', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: ATTORNEY_HOOK },
-  { id: 'marketing-4', title: 'Monitor Initial 30-Day Signups (All)', date: '2026-05-21', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Track early conversions and identify which state segment is reacting best.' },
-  { id: 'marketing-5', title: 'Follow-up: Unopened Emails Sweep', date: '2026-05-22', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Resend hooks to contacts who did not open the first email.' },
-  { id: 'marketing-6', title: 'Strategy Sync: Analyze First Week', date: '2026-05-23', startTime: '10:00', endTime: '11:00', category: 'executive', color: 'bg-purple-500', description: 'Why: Executive review of which hooks generated the most trial signups.' },
-  { id: 'marketing-7', title: 'Prep Video Demos', date: '2026-05-24', startTime: '13:00', endTime: '15:00', category: 'task', color: 'bg-blue-500', description: 'Why: Record personalized 2-minute Looms for VIP targets.' },
-  { id: 'marketing-8', title: 'Video Demo: Med-Only (WV, VA, UT, OH)', date: '2026-05-25', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Visual proof of automated compliance for non-clickers.' },
-  { id: 'marketing-9', title: 'Video Demo: Dual-Use (VT, WA, CA)', date: '2026-05-26', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Visual proof of automated tax logic for non-clickers.' },
-  { id: 'marketing-10', title: 'Video Demo: Clinics (OK, OH, PA)', date: '2026-05-27', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Show the SMS intake workflow to non-clickers.' },
-  { id: 'marketing-11', title: 'Video Demo: Attorneys (CA, WA, IL)', date: '2026-05-28', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Show the multi-client dashboard to non-clickers.' },
-  { id: 'marketing-12', title: 'Follow Up: Active Free Trials', date: '2026-05-29', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: White-glove onboarding secures long-term retention.' },
-  { id: 'marketing-13', title: 'Prepare VIP Telephony List', date: '2026-05-30', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Focus high-touch sales effort on the top 50 highest revenue potential leads.' },
-  { id: 'marketing-14', title: 'Call VIP Med-Only (WV, VA, UT, OH)', date: '2026-06-01', startTime: '08:00', endTime: '10:00', category: 'task', color: 'bg-blue-500', description: 'Why: Discuss the immediate financial risk of state fines and audits.' },
-  { id: 'marketing-15', title: 'Call VIP Dual-Use (VT, WA, CA)', date: '2026-06-02', startTime: '08:00', endTime: '10:00', category: 'task', color: 'bg-blue-500', description: 'Why: Discuss lost revenue from miscalculated tax exemptions.' },
-  { id: 'marketing-16', title: 'Call VIP Clinics (OK, OH, PA)', date: '2026-06-03', startTime: '08:00', endTime: '10:00', category: 'task', color: 'bg-blue-500', description: 'Why: Discuss increasing daily patient throughput without hiring more staff.' },
-  { id: 'marketing-17', title: 'Call VIP Attorneys (CA, WA, IL)', date: '2026-06-04', startTime: '08:00', endTime: '10:00', category: 'task', color: 'bg-blue-500', description: "Why: Discuss scaling their firm's client capacity." },
-  { id: 'marketing-18', title: 'Live Walk-through Demos (Block A)', date: '2026-06-05', startTime: '09:00', endTime: '11:00', category: 'task', color: 'bg-blue-500', description: "Why: Close the interested leads gathered from the week's calls." },
-  { id: 'marketing-19', title: 'Live Walk-through Demos (Block B)', date: '2026-06-06', startTime: '09:00', endTime: '11:00', category: 'task', color: 'bg-blue-500', description: "Why: Close the interested leads gathered from the week's calls." },
-  { id: 'marketing-20', title: 'Week 2 Trial Check-in', date: '2026-06-07', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Verify successful first usage of platform to prevent churn.' },
-  { id: 'marketing-21', title: 'Review CRM Conversion Metrics', date: '2026-06-08', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Determine which state segment performed best to focus FOMO efforts.' },
-  { id: 'marketing-22', title: 'Draft FOMO "Beta Pricing" Copy', date: '2026-06-09', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Create urgency before standard pricing starts.' },
-  { id: 'marketing-23', title: 'FOMO Blast to Dispensaries (All)', date: '2026-06-10', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Push fence-sitters to act before prices rise.' },
-  { id: 'marketing-24', title: 'FOMO Blast to Clinics (All)', date: '2026-06-11', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Push fence-sitters to act before prices rise.' },
-  { id: 'marketing-25', title: 'FOMO Blast to Attorneys (All)', date: '2026-06-12', startTime: '08:00', endTime: '09:00', category: 'task', color: 'bg-blue-500', description: 'Why: Push fence-sitters to act before prices rise.' },
-  { id: 'marketing-26', title: 'Call High-Intent FOMO Clickers', date: '2026-06-13', startTime: '08:00', endTime: '10:00', category: 'task', color: 'bg-blue-500', description: "Why: Secure leads who clicked but didn't buy." },
-  { id: 'marketing-27', title: 'Final Telephony Sweep', date: '2026-06-14', startTime: '08:00', endTime: '10:00', category: 'task', color: 'bg-blue-500', description: 'Why: Last-minute follow ups before trial expirations.' },
-  { id: 'marketing-28', title: 'Convert Trials to Paid', date: '2026-06-15', startTime: '08:00', endTime: '10:00', category: 'task', color: 'bg-blue-500', description: 'Why: Lock in recurring revenue and charge setup fees.' },
-];
+// Mock events removed to ensure strictly real-time operation
 
 // Mock events removed to ensure strictly real-time operation
 
@@ -263,48 +233,7 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
             updated.push(newEv);
           });
           
-          // Firebase Injection Logic - Pushes THIRTY_DAY_TASKS if they don't exist
-          if (isExecutive && snap.docs.length >= 0) {
-            const hasMarketingEvents = snap.docs.some(d => d.id.startsWith('marketing-') || d.data().title?.includes('Email Blast') || d.data().title?.includes('Video Demo'));
-            const alreadyInjected = sessionStorage.getItem('hasInjectedTasks') === 'true';
-            
-            if (!hasMarketingEvents && !alreadyInjected) {
-              sessionStorage.setItem('hasInjectedTasks', 'true');
-              console.log("No 30-Day marketing tasks found in Firebase. Injecting to Firestore for real-time sync...");
-              // We execute async injection
-              THIRTY_DAY_TASKS.forEach(task => {
-                addDoc(collection(db, 'calendar_events'), {
-                  title: task.title,
-                  date: task.date,
-                  startTime: task.startTime,
-                  endTime: task.endTime,
-                  category: task.category,
-                  color: task.color,
-                  description: task.description,
-                  assignedTo: user?.uid || 'Founder',
-                  assignedBy: 'Founder', // Make it visible to all executives!
-                  createdAt: serverTimestamp()
-                }).catch(console.error);
-              });
-            }
-
-            // Inject the new API integration tasks
-            const hasIntegrationTasks = snap.docs.some(d => d.data().title?.includes('Contact Metrc to confirm API approval'));
-            if (!hasIntegrationTasks) {
-              console.log("Injecting API integration tasks to Firestore...");
-              [
-                { title: 'Contact Metrc to confirm API approval for all listed states', date: '2026-05-18', startTime: '09:00', endTime: '10:00', category: 'executive', color: 'bg-purple-500', description: 'Currently login only shows Oklahoma. Need to confirm approval for the other states.' },
-                { title: 'Contact BioTrack, MJ Freeway, and Leaf Data for API integration info', date: '2026-05-19', startTime: '09:00', endTime: '10:00', category: 'executive', color: 'bg-purple-500', description: 'Produce the others info so we can integrate. Contact them to start the process.' }
-              ].forEach(task => {
-                addDoc(collection(db, 'calendar_events'), {
-                  ...task,
-                  assignedTo: user?.uid || 'Founder',
-                  assignedBy: 'Founder',
-                  createdAt: serverTimestamp()
-                }).catch(console.error);
-              });
-            }
-          }
+          // Real-time synced database events loaded successfully
           
           return updated;
         });
@@ -927,13 +856,21 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
       </div>
 
       {/* CATEGORY FILTERS */}
-      <div className="flex flex-wrap gap-2">
-        <button onClick={() => setFilterCat(null)} className={cn("px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider border transition-all", !filterCat ? "bg-slate-800 text-white border-slate-800" : "bg-white text-slate-500 border-slate-200 hover:border-slate-400")}>All</button>
-        {LEGEND_CATEGORIES.map(c => (
-          <button key={c.id} onClick={() => setFilterCat(filterCat === c.id ? null : c.id)} className={cn("px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider border transition-all flex items-center gap-1.5", filterCat === c.id ? "bg-slate-800 text-white border-slate-800" : "bg-white text-slate-500 border-slate-200 hover:border-slate-400")}>
-            <div className={cn("w-2 h-2 rounded-full", c.color)} />{c.label}
-          </button>
-        ))}
+      <div className="flex items-center gap-2">
+        <label htmlFor="category-filter-select" className="text-xs font-black text-slate-500 uppercase tracking-wider">Filter by Category:</label>
+        <select
+          id="category-filter-select"
+          value={filterCat || ''}
+          onChange={(e) => setFilterCat(e.target.value || null)}
+          className="text-xs font-black bg-white border border-slate-200 hover:border-slate-300 rounded-xl px-3 py-2 text-slate-700 outline-none cursor-pointer transition-all shadow-sm max-w-xs"
+        >
+          <option value="">All Categories</option>
+          {LEGEND_CATEGORIES.map(c => (
+            <option key={c.id} value={c.id}>
+              {c.label}
+            </option>
+          ))}
+        </select>
       </div>
 
 
