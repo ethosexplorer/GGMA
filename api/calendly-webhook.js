@@ -14,7 +14,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, query, where, getDocs, updateDoc } from 'firebase/firestore';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 // Initialize Firebase client SDK (server-side compatible)
@@ -146,9 +146,50 @@ export default async function handler(req, res) {
     // Write to Firebase Firestore (calendar_events collection)
     let firebaseId = null;
     try {
-      const docRef = await addDoc(collection(db, 'calendar_events'), calendarEvent);
-      firebaseId = docRef.id;
-      console.log(`   ✅ Firebase calendar_events: ${firebaseId}`);
+      if (calendarEvent.calendly_event_uri) {
+        let q = query(collection(db, 'calendar_events'), where('calendly_event_uri', '==', calendarEvent.calendly_event_uri));
+        let snap = await getDocs(q);
+        
+        if (snap.empty) {
+          // Fallback duplicate check by date and startTime
+          const q2 = query(
+            collection(db, 'calendar_events'),
+            where('date', '==', calendarEvent.date),
+            where('startTime', '==', calendarEvent.startTime)
+          );
+          const snap2 = await getDocs(q2);
+          
+          let matchedDoc = null;
+          for (const doc2 of snap2.docs) {
+            const d2 = doc2.data();
+            const sameEmail = calendarEvent.attendees && d2.attendees === calendarEvent.attendees;
+            const sameTitle = d2.title && d2.title.toLowerCase().includes((invitee.name || '').toLowerCase());
+            if (sameEmail || sameTitle) {
+              matchedDoc = doc2;
+              break;
+            }
+          }
+
+          if (matchedDoc) {
+            await updateDoc(matchedDoc.ref, calendarEvent);
+            firebaseId = matchedDoc.id;
+            console.log(`   ✅ Firebase calendar_events (updated duplicate by time/email): ${firebaseId}`);
+          } else {
+            const docRef = await addDoc(collection(db, 'calendar_events'), calendarEvent);
+            firebaseId = docRef.id;
+            console.log(`   ✅ Firebase calendar_events: ${firebaseId}`);
+          }
+        } else {
+          const docRef = snap.docs[0].ref;
+          await updateDoc(docRef, calendarEvent);
+          firebaseId = snap.docs[0].id;
+          console.log(`   ✅ Firebase calendar_events (updated existing): ${firebaseId}`);
+        }
+      } else {
+        const docRef = await addDoc(collection(db, 'calendar_events'), calendarEvent);
+        firebaseId = docRef.id;
+        console.log(`   ✅ Firebase calendar_events: ${firebaseId}`);
+      }
     } catch (fbErr) {
       console.error(`   ⚠️ Firebase write failed:`, fbErr.message);
     }

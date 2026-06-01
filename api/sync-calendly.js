@@ -165,23 +165,48 @@ export default async function handler(req, res) {
         };
 
         // Check if event already exists in Firestore by calendly_event_uri
-        const q = query(collection(db, 'calendar_events'), where('calendly_event_uri', '==', ev.uri));
-        const snap = await getDocs(q);
+        let q = query(collection(db, 'calendar_events'), where('calendly_event_uri', '==', ev.uri));
+        let snap = await getDocs(q);
 
         if (snap.empty) {
-          // Add new event
-          await addDoc(collection(db, 'calendar_events'), {
-            ...evPayload,
-            createdAt: new Date().toISOString()
-          });
-          newCount++;
+          // Fallback duplicate check by date and startTime
+          const q2 = query(
+            collection(db, 'calendar_events'),
+            where('date', '==', dateStr),
+            where('startTime', '==', startTimeStr)
+          );
+          const snap2 = await getDocs(q2);
+          
+          // Check if any matching date/time has the same email or title name
+          let matchedDoc = null;
+          for (const doc2 of snap2.docs) {
+            const d2 = doc2.data();
+            const sameEmail = inviteeEmail && d2.attendees === inviteeEmail;
+            const sameTitle = d2.title && d2.title.toLowerCase().includes((inviteeName || '').toLowerCase());
+            if (sameEmail || sameTitle) {
+              matchedDoc = doc2;
+              break;
+            }
+          }
+
+          if (matchedDoc) {
+            // Update the existing document to link it to Calendly
+            await updateDoc(matchedDoc.ref, evPayload);
+            updatedCount++;
+          } else {
+            // Add new event
+            await addDoc(collection(db, 'calendar_events'), {
+              ...evPayload,
+              createdAt: new Date().toISOString()
+            });
+            newCount++;
+          }
         } else {
           // Update existing event to ensure it stays in sync
           const docRef = snap.docs[0].ref;
           const currentData = snap.docs[0].data();
           
-          // Only update if critical fields changed (e.g. title or status)
-          if (currentData.title !== title || currentData.date !== dateStr || currentData.startTime !== startTimeStr) {
+          if (currentData.title !== title || currentData.date !== dateStr || currentData.startTime !== startTimeStr || currentData.description !== evPayload.description) {
             await updateDoc(docRef, evPayload);
             updatedCount++;
           }
