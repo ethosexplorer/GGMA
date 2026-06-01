@@ -105,8 +105,7 @@ export const MarketingHub = () => {
   const [selectedTier, setSelectedTier] = useState<'all' | 'top_grossing' | 'standard'>('all');
   const [renewalMode, setRenewalMode] = useState<'off' | 'month' | 'all_expired'>('off');
   const [renewalMonth, setRenewalMonth] = useState(() => {
-    const now = new Date();
-    return { year: now.getFullYear(), month: now.getMonth() }; // 0-indexed month
+    return { year: 2026, month: 3 }; // April 2026 (3 is 0-indexed April)
   });
   const [showStateDropdown, setShowStateDropdown] = useState(false);
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
@@ -336,6 +335,9 @@ export const MarketingHub = () => {
         if (activeStates.length > 0) {
           const statesList = getStatesSearchList(activeStates);
           q = query(q, where('jurisdiction', 'in', statesList.slice(0, 30)));
+          if (activeTypes.length === 1) {
+            q = query(q, where('type', '==', activeTypes[0]));
+          }
         } else if (activeTypes.length > 0) {
           q = query(q, where('type', 'in', activeTypes.slice(0, 30)));
         }
@@ -356,8 +358,10 @@ export const MarketingHub = () => {
         const countSnap = await getCountFromServer(q).catch(() => ({ data: () => ({ count: 150 }) }));
         const matchedCount = countSnap.data().count;
 
-        // 3. Fetch documents for actual campaign execution (up to 1,000)
-        const docsSnap = await getDocs(query(q, limit(1000)));
+        // 3. Fetch documents for actual campaign execution (up to 1,000 or 5,000 for renewals/patients)
+        const isRenewalOrPatient = renewalMode !== 'off' || activeTypes.includes('patient');
+        const fetchLimit = isRenewalOrPatient ? 5000 : 1000;
+        const docsSnap = await getDocs(query(q, limit(fetchLimit)));
         const fetchedDeals = docsSnap.docs.map(d => ({ id: d.id, ...d.data() } as any));
 
         // 4. Apply remaining filters client-side on the fetched subset
@@ -404,7 +408,11 @@ export const MarketingHub = () => {
 
         if (active) {
           setDeals(fetchedDeals);
-          setFilteredCount(matchedCount > 1000 ? matchedCount : finalFiltered.length);
+          setFilteredCount(
+            renewalMode !== 'off'
+              ? finalFiltered.length
+              : (matchedCount > fetchLimit ? matchedCount : finalFiltered.length)
+          );
           setFilteredAudience(finalFiltered);
           setLoadingAudience(false);
         }
@@ -788,6 +796,11 @@ export const MarketingHub = () => {
     }
   };
 
+  const isPatientRenewal = selectedTypes.includes('patient');
+  const renewalTypeLabel = isPatientRenewal ? 'Patient' : 'Business';
+  const renewalTypeLabelPlural = isPatientRenewal ? 'patients' : 'businesses';
+  const renewalCardOrLicense = isPatientRenewal ? 'cards' : 'licenses';
+
   return (
     <div className="h-full min-h-full flex flex-col bg-slate-900 text-slate-100 font-sans">
       {/* Header */}
@@ -1138,7 +1151,7 @@ export const MarketingHub = () => {
                 {/* Patient Renewal Filter */}
                 <div>
                   <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
-                    <CalendarDays size={12} /> Patient Renewal Filter
+                    <CalendarDays size={12} /> {renewalTypeLabel} Renewal Filter
                   </label>
                   <div className="grid grid-cols-3 gap-2 mb-3">
                     <button
@@ -1180,7 +1193,7 @@ export const MarketingHub = () => {
                           <p className="text-white font-black text-sm">
                             {new Date(renewalMonth.year, renewalMonth.month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                           </p>
-                          <p className="text-[9px] text-slate-500 font-bold mt-0.5">Patients expiring this month</p>
+                          <p className="text-[9px] text-slate-500 font-bold mt-0.5">{renewalTypeLabelPlural} expiring this month</p>
                         </div>
                         <button
                           onClick={() => setRenewalMonth(prev => {
@@ -1195,7 +1208,7 @@ export const MarketingHub = () => {
                       <div className="mt-3 pt-3 border-t border-slate-800">
                         <p className="text-[10px] text-emerald-400 font-bold flex items-center gap-1.5">
                           <CalendarDays size={12} />
-                          {filteredCount} patient{filteredCount !== 1 ? 's' : ''} with cards expiring in {new Date(renewalMonth.year, renewalMonth.month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                          {filteredCount} {filteredCount === 1 ? renewalTypeLabel.toLowerCase() : renewalTypeLabelPlural} with {renewalCardOrLicense} expiring in {new Date(renewalMonth.year, renewalMonth.month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                         </p>
                       </div>
                     </div>
@@ -1204,9 +1217,9 @@ export const MarketingHub = () => {
                   {renewalMode === 'all_expired' && (
                     <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 mt-1">
                       <p className="text-[10px] text-red-400 font-bold flex items-center gap-1.5">
-                        <CalendarDays size={12} /> Showing all patients with expired cards
+                        <CalendarDays size={12} /> Showing all {renewalTypeLabelPlural} with expired {renewalCardOrLicense}
                       </p>
-                      <p className="text-[9px] text-slate-500 mt-1">{filteredCount} patients past their renewal date</p>
+                      <p className="text-[9px] text-slate-500 mt-1">{filteredCount} {filteredCount === 1 ? renewalTypeLabel.toLowerCase() : renewalTypeLabelPlural} past their renewal date</p>
                     </div>
                   )}
                 </div>
@@ -1328,9 +1341,10 @@ export const MarketingHub = () => {
                         setMessage(`<div style="font-family: 'Inter', Arial, sans-serif; max-width: 640px; margin: 0 auto; padding: 32px 0;"><div style="background: linear-gradient(135deg, #061F15, #0A3D2A); padding: 40px 32px; border-radius: 16px; color: white; margin-bottom: 28px;"><p style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #D4AF77; font-weight: 800; margin: 0 0 16px;">Strategic Valuation Brief &mdash; Healthcare Providers</p><h1 style="font-size: 26px; font-weight: 900; margin: 0 0 8px; line-height: 1.2;">Global Green Hybrid Platform</h1><p style="color: rgba(255,255,255,0.5); font-size: 13px; margin: 0;">Automated patient intake and compliance infrastructure for clinics.</p></div><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">Doctor,</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">Your patients depend on timely medical card approvals, renewal reminders, and compliant physician coordination across state lines. The current system is manual, fragmented, and slow.</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;"><strong>GGHP-OS</strong> automates the entire patient intake lifecycle &mdash; from telehealth scheduling and physician matching to state registry submission and renewal alerts &mdash; across all 50 states and 26 languages.</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">The attached brief outlines how the platform's AI engine (Sylara) handles the majority of patient interactions without human escalation, and how providers like you gain real-time visibility into patient compliance status, renewal timelines, and cross-state reciprocity.</p><div style="background: #F0F9FF; border: 1px solid #BAE6FD; border-radius: 12px; padding: 16px 24px; margin: 24px 0;"><p style="font-size: 14px; color: #0C4A6E; line-height: 1.8; margin: 0;">We are scheduling provider onboarding calls this month. No obligation &mdash; just a walkthrough of what the platform does for your practice.</p></div><div style="text-align: center; margin: 32px 0;"><a href="https://globalgreenhp.com/GGHP_Agency_Valuation_Brief.html" style="display: inline-block; background: linear-gradient(135deg, #0A3D2A, #134D36); color: #E8D5B5; padding: 16px 44px; border-radius: 12px; font-weight: 800; text-decoration: none; font-size: 14px;">View the Full Valuation Brief</a></div><div style="border-top: 1px solid #E2E8F0; padding-top: 24px; margin-top: 32px;"><p style="font-size: 14px; color: #334155; margin: 0 0 4px;"><strong>Best,</strong></p><p style="font-size: 15px; color: #0A3D2A; font-weight: 800; margin: 0 0 4px;">Shantell Robinson</p><p style="font-size: 13px; color: #64748B; margin: 0 0 12px;">Founder and CEO, Global Green Enterprise Inc.</p><p style="font-size: 11px; color: #94A3B8; line-height: 1.8; margin: 0;">1-888-963-4447 | 645-246-8277<br>CAGE: 9KXZ2 | SAM.gov Active | BBB A+ Rated</p></div></div>`);
                       } else if (val === 'patient_renewal') {
                         setSelectedTypes(['patient']);
-                        setSelectedStates(['All']);
+                        setSelectedStates(['OK']);
                         setSelectedTier('all');
                         setRenewalMode('month');
+                        setRenewalMonth({ year: 2026, month: 3 }); // Set to April 2026 by default
                         setCampaignType('email');
                         setSendMode('broadcast');
                         setSubject('Action Required: Your Medical Cannabis Card is Expiring Soon');
