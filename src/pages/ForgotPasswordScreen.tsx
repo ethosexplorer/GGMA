@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import {
-  Shield, ArrowLeft, Mail, Loader2, CheckCircle, Leaf
+  Shield, ArrowLeft, Mail, Loader2, CheckCircle, Leaf, AlertCircle, Lock
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Button } from '../components/shared/Button';
+import { Input } from '../components/shared/Input';
 export const ForgotPasswordScreen = ({ onBack, onReset }: { onBack: () => void; onReset: (email: string) => Promise<void>; key?: string }) => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
@@ -43,7 +44,7 @@ export const ForgotPasswordScreen = ({ onBack, onReset }: { onBack: () => void; 
         {success ? (
           <div className="text-center space-y-6">
             <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-lg flex items-start gap-3 text-left">
-              <CircleCheck size={20} className="text-emerald-500 shrink-0 mt-0.5" />
+              <CheckCircle size={20} className="text-emerald-500 shrink-0 mt-0.5" />
               <p className="text-sm text-emerald-700">
                 Password reset email sent! Please check your inbox.
               </p>

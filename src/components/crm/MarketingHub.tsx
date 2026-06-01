@@ -359,20 +359,36 @@ export const MarketingHub = () => {
         const activeStates = selectedStates.filter(s => s !== 'All');
         const activeTypes = selectedTypes.filter(t => t !== 'All');
 
-        // 1. Build the server query (apply at most one 'in' operator to avoid Firestore errors)
-        if (activeStates.length > 0) {
-          const statesList = getStatesSearchList(activeStates);
-          q = query(q, where('jurisdiction', 'in', statesList.slice(0, 30)));
-          if (activeTypes.length === 1) {
-            q = query(q, where('type', '==', activeTypes[0]));
+        // 1. Build the server query (apply server range filters for renewals to prevent truncation issues)
+        if (renewalMode === 'month') {
+          const startYear = renewalMonth.year;
+          const startMonth = renewalMonth.month; // 0-indexed
+          const startDateStr = `${startYear}-${String(startMonth + 1).padStart(2, '0')}-01`;
+          const lastDay = new Date(startYear, startMonth + 1, 0).getDate();
+          const endDateStr = `${startYear}-${String(startMonth + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
+          
+          q = query(q, where('licenseExpiration', '>=', startDateStr), where('licenseExpiration', '<=', endDateStr));
+        } else if (renewalMode === 'all_expired') {
+          const today = new Date();
+          const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+          
+          q = query(q, where('licenseExpiration', '<', todayStr));
+        } else {
+          // Default: Build query with state/type/tier on server (apply at most one 'in' operator to avoid Firestore errors)
+          if (activeStates.length > 0) {
+            const statesList = getStatesSearchList(activeStates);
+            q = query(q, where('jurisdiction', 'in', statesList.slice(0, 30)));
+            if (activeTypes.length === 1) {
+              q = query(q, where('type', '==', activeTypes[0]));
+            }
+          } else if (activeTypes.length > 0) {
+            q = query(q, where('type', 'in', activeTypes.slice(0, 30)));
           }
-        } else if (activeTypes.length > 0) {
-          q = query(q, where('type', 'in', activeTypes.slice(0, 30)));
-        }
 
-        // Apply tier filter on server if possible
-        if (selectedTier === 'top_grossing') {
-          q = query(q, where('tier', '==', 'top_grossing'));
+          // Apply tier filter on server if possible
+          if (selectedTier === 'top_grossing') {
+            q = query(q, where('tier', '==', 'top_grossing'));
+          }
         }
 
         // 2. Fetch total count from server for stats (cheap, fast)
@@ -391,11 +407,15 @@ export const MarketingHub = () => {
           if (campaignType === 'email' && !d.email) return false;
           if (campaignType === 'sms' && !d.phone) return false;
 
-          // If we queried by state, filter by type client-side
-          if (activeStates.length > 0 && activeTypes.length > 0) {
+          // Apply state, type, tier filters client-side (to filter server-retrieved expiring records or as double check)
+          if (activeStates.length > 0) {
+            const code = getJurisdictionCode(d.jurisdiction);
+            if (!activeStates.includes(code)) return false;
+          }
+          if (activeTypes.length > 0) {
             if (!activeTypes.includes(d.type)) return false;
           }
-          
+          if (selectedTier === 'top_grossing' && d.tier !== 'top_grossing') return false;
           if (selectedTier === 'standard' && d.tier === 'top_grossing') return false;
           
           if (campaignType === 'email' && suppressedEmails.has((d.email || '').toLowerCase())) return false;
@@ -414,7 +434,7 @@ export const MarketingHub = () => {
             }
           }
 
-          // Renewal filter
+          // Renewal filter (double-check matching dates)
           if (renewalMode !== 'off') {
             const nominal = parseNominalDate(d.licenseExpiration);
             if (!nominal) return false;

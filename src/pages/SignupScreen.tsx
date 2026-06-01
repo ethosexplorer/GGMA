@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Shield, User, AlertCircle, Eye, EyeOff, Info, ChevronRight, ArrowLeft,
   Lock, Mail, Loader2, ArrowRight, Globe, MapPin, ChevronDown, ChevronUp,
   Send, Sparkles, Briefcase, Bot, Check, Leaf, CheckCircle,
-  Phone, Building2, GraduationCap
+  Phone, Building2, GraduationCap, Users, Stethoscope, HeartHandshake,
+  Activity, Plus, CircleCheck, Headphones, Clock, FileText
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Input } from '../components/shared/Input';

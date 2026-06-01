@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import {
-  Shield, Eye, EyeOff, LogIn, Loader2, Leaf, Lock, Mail, Globe
+  Shield, Eye, EyeOff, LogIn, Loader2, Leaf, Lock, Mail, Globe, AlertCircle
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Button } from '../components/shared/Button';
+import { Input } from '../components/shared/Input';
+import { StateWelcomeBanner } from '../components/shared/StateWelcomeBanner';
 export const LoginScreen = ({ onLogin, onSignUp, onForgotPassword, jurisdiction = 'Oklahoma' }: { onLogin: (email: string, pass: string) => Promise<void>; onSignUp: () => void; onForgotPassword: () => void; onBack?: () => void; initialRole?: any; key?: string; jurisdiction?: string }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
@@ -24,8 +26,6 @@ export const LoginScreen = ({ onLogin, onSignUp, onForgotPassword, jurisdiction 
       setLoading(false);
     }
   };
-
-  const samplePlans = getPlansForRole('business', 'cannabis', 'National').slice(0, 3); // Get 3 plans to showcase
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 pt-10 pb-10">

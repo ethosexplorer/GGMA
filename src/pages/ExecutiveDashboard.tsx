@@ -11,7 +11,7 @@ export const ExecutiveDashboard = () => (
   <div className="space-y-8">
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <StatCard label="Total Revenue" value="$2.4M" trend={15} icon={TrendingUp} color="bg-indigo-700" />
-      <StatCard label="Market Share" value="18.4%" trend={3} icon={BarChart3} color="bg-[#1a4731]" />
+      <StatCard label="Market Share" value="18.4%" trend={3} icon={BarChart2} color="bg-[#1a4731]" />
       <StatCard label="Active Users" value="45.2k" trend={22} icon={Users} color="bg-emerald-700" />
       <StatCard label="Compliance Index" value="99.4" icon={Shield} color="bg-slate-800" />
     </div>
