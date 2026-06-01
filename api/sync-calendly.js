@@ -106,13 +106,18 @@ export default async function handler(req, res) {
         // Fetch invitee details
         let inviteeName = '';
         let inviteeEmail = '';
+        let inviteePhone = '';
+        let inviteeQuestions = [];
         try {
           const invRes = await fetch(`${ev.uri}/invitees`, { headers: { Authorization: `Bearer ${CALENDLY_TOKEN}` } });
           if (invRes.ok) {
             const invData = await invRes.json();
             if (invData.collection?.length > 0) {
-              inviteeName = invData.collection[0].name || '';
-              inviteeEmail = invData.collection[0].email || '';
+              const invitee = invData.collection[0];
+              inviteeName = invitee.name || '';
+              inviteeEmail = invitee.email || '';
+              inviteePhone = invitee.text_reminder_number || '';
+              inviteeQuestions = invitee.questions_and_answers || [];
             }
           }
         } catch (invErr) {
@@ -138,10 +143,12 @@ export default async function handler(req, res) {
           category,
           color: isCanceled ? 'bg-slate-400' : color,
           description: [
-            `📅 ${ev.name}`,
-            inviteeName ? `👤 ${inviteeName}` : '',
-            inviteeEmail ? `📧 ${inviteeEmail}` : '',
-            `📍 ${ev.location?.location || 'Virtual'}`,
+            `📅 Event: ${ev.name}`,
+            inviteeName ? `👤 Invitee: ${inviteeName}` : '',
+            inviteeEmail ? `📧 Email: ${inviteeEmail}` : '',
+            inviteePhone ? `📱 Phone: ${inviteePhone}` : '',
+            `📍 Location: ${ev.location?.location || 'Virtual'}`,
+            ...inviteeQuestions.map(q => `💬 ${q.question}: ${q.answer}`),
             isCanceled ? '⚠️ CANCELED' : `✅ ${ev.status.toUpperCase()}`,
             `Source: Calendly`,
           ].filter(Boolean).join('\n'),

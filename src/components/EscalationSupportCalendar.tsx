@@ -23,6 +23,22 @@ const fmt = (d: Date) => d.toISOString().split('T')[0];
 const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
+const format12h = (timeStr: string) => {
+  if (!timeStr) return '';
+  if (timeStr.toLowerCase().includes('am') || timeStr.toLowerCase().includes('pm')) {
+    return timeStr;
+  }
+  const parts = timeStr.split(':');
+  if (parts.length < 2) return timeStr;
+  let hour = parseInt(parts[0], 10);
+  if (isNaN(hour)) return timeStr;
+  const min = parts[1];
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  hour = hour % 12;
+  hour = hour ? hour : 12;
+  return `${hour}:${min} ${ampm}`;
+};
+
 export const EscalationSupportCalendar = () => {
   const availableCategories = ESCALATION_CATEGORIES;
   
@@ -112,7 +128,7 @@ export const EscalationSupportCalendar = () => {
   const renderEventChip = (ev: CalEvent, compact = false) => (
     <div key={ev.id} className={cn("group rounded-lg px-2 py-1 text-white text-[10px] font-bold truncate cursor-pointer relative", ev.color, compact ? "mb-0.5" : "mb-1")}
       onClick={(e) => { e.stopPropagation(); setSelectedDate(ev.date); setView('day'); }}>
-      {!compact && <span className="opacity-80 mr-1">{ev.startTime}</span>}{ev.title}
+      {!compact && <span className="opacity-80 mr-1">{format12h(ev.startTime)}</span>}{ev.title}
       {ev.meetLink && <Video size={8} className="inline ml-1 opacity-70" />}
     </div>
   );
@@ -126,7 +142,7 @@ export const EscalationSupportCalendar = () => {
           <div className="min-w-0">
             <p className="font-black text-sm text-slate-800 truncate">{ev.title}</p>
             <div className="flex flex-wrap gap-3 mt-1 text-xs text-slate-500">
-              <span className="flex items-center gap-1"><Clock size={10} /> {ev.startTime} – {ev.endTime}</span>
+              <span className="flex items-center gap-1"><Clock size={10} /> {format12h(ev.startTime)} – {format12h(ev.endTime)}</span>
               {ev.attendees && <span className="flex items-center gap-1"><Users size={10} /> {ev.attendees}</span>}
               {ev.location && <span className="flex items-center gap-1"><MapPin size={10} /> {ev.location}</span>}
             </div>

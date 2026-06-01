@@ -36,6 +36,22 @@ const fmt = (d: Date) => d.toISOString().split('T')[0];
 const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
+const format12h = (timeStr: string) => {
+  if (!timeStr) return '';
+  if (timeStr.toLowerCase().includes('am') || timeStr.toLowerCase().includes('pm')) {
+    return timeStr;
+  }
+  const parts = timeStr.split(':');
+  if (parts.length < 2) return timeStr;
+  let hour = parseInt(parts[0], 10);
+  if (isNaN(hour)) return timeStr;
+  const min = parts[1];
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  hour = hour % 12;
+  hour = hour ? hour : 12;
+  return `${hour}:${min} ${ampm}`;
+};
+
 export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: string, subtitle?: string }) => {
   const emailLower = user?.email?.toLowerCase() || '';
   const isMonica = emailLower.includes('compliance.globalgreenhp') || emailLower.includes('monica') || user?.role === 'chief_compliance_director';
@@ -276,7 +292,7 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
   const renderEventChip = (ev: CalEvent, compact = false) => (
     <div key={ev.id} className={cn("group rounded-lg px-2 py-1 text-white text-[10px] font-bold truncate cursor-pointer relative", ev.color, compact ? "mb-0.5" : "mb-1")}
       onClick={(e) => { e.stopPropagation(); setSelectedEvent(ev); }}>
-      {!compact && <span className="opacity-80 mr-1">{ev.startTime}</span>}{ev.title}
+      {!compact && <span className="opacity-80 mr-1">{format12h(ev.startTime)}</span>}{ev.title}
       {ev.meetLink && <Video size={8} className="inline ml-1 opacity-70" />}
     </div>
   );
@@ -290,7 +306,7 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
           <div className="min-w-0">
             <p className="font-black text-sm text-slate-800 truncate">{ev.title}</p>
             <div className="flex flex-wrap gap-3 mt-1 text-xs text-slate-500">
-              <span className="flex items-center gap-1"><Clock size={10} /> {ev.startTime} – {ev.endTime}</span>
+              <span className="flex items-center gap-1"><Clock size={10} /> {format12h(ev.startTime)} – {format12h(ev.endTime)}</span>
               {ev.attendees && <span className="flex items-center gap-1"><Users size={10} /> {ev.attendees}</span>}
               {ev.location && <span className="flex items-center gap-1"><MapPin size={10} /> {ev.location}</span>}
             </div>
@@ -326,7 +342,7 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
             <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0"><Clock size={18} className="text-slate-500" /></div>
             <div>
               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Time</p>
-              <p className="text-sm font-bold">{selectedEvent.startTime} – {selectedEvent.endTime}</p>
+              <p className="text-sm font-bold">{format12h(selectedEvent.startTime)} – {format12h(selectedEvent.endTime)}</p>
             </div>
           </div>
           
