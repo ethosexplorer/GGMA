@@ -92,6 +92,34 @@ const getStatesSearchList = (codes: string[]) => {
   return Array.from(new Set(list));
 };
 
+const parseNominalDate = (dateStr: string) => {
+  if (!dateStr) return null;
+  const s = dateStr.trim();
+  let match = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if (match) {
+    return {
+      year: parseInt(match[1], 10),
+      month: parseInt(match[2], 10) - 1, // 0-indexed month
+      day: parseInt(match[3], 10)
+    };
+  }
+  match = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (match) {
+    return {
+      year: parseInt(match[3], 10),
+      month: parseInt(match[1], 10) - 1, // 0-indexed month
+      day: parseInt(match[2], 10)
+    };
+  }
+  const d = new Date(s);
+  if (isNaN(d.getTime())) return null;
+  if (s.includes('-') && !s.includes('/')) {
+    return { year: d.getUTCFullYear(), month: d.getUTCMonth(), day: d.getUTCDate() };
+  } else {
+    return { year: d.getFullYear(), month: d.getMonth(), day: d.getDate() };
+  }
+};
+
 export const MarketingHub = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState<'composer' | 'campaigns' | 'analytics'>('composer');
@@ -347,13 +375,6 @@ export const MarketingHub = () => {
           q = query(q, where('tier', '==', 'top_grossing'));
         }
 
-        // Apply email/phone presence on server to retrieve only contactable leads
-        if (campaignType === 'email') {
-          q = query(q, where('email', '!=', ''));
-        } else {
-          q = query(q, where('phone', '!=', ''));
-        }
-
         // 2. Fetch total count from server for stats (cheap, fast)
         const countSnap = await getCountFromServer(q).catch(() => ({ data: () => ({ count: 150 }) }));
         const matchedCount = countSnap.data().count;
@@ -366,6 +387,10 @@ export const MarketingHub = () => {
 
         // 4. Apply remaining filters client-side on the fetched subset
         const finalFiltered = fetchedDeals.filter(d => {
+          // Ensure contact info is present
+          if (campaignType === 'email' && !d.email) return false;
+          if (campaignType === 'sms' && !d.phone) return false;
+
           // If we queried by state, filter by type client-side
           if (activeStates.length > 0 && activeTypes.length > 0) {
             if (!activeTypes.includes(d.type)) return false;
@@ -391,16 +416,16 @@ export const MarketingHub = () => {
 
           // Renewal filter
           if (renewalMode !== 'off') {
-            if (!d.licenseExpiration) return false;
-            const expDate = new Date(d.licenseExpiration);
-            if (isNaN(expDate.getTime())) return false;
+            const nominal = parseNominalDate(d.licenseExpiration);
+            if (!nominal) return false;
             
             if (renewalMode === 'all_expired') {
               const today = new Date();
               today.setHours(0, 0, 0, 0);
-              if (expDate.getTime() >= today.getTime()) return false;
+              const expDateObj = new Date(nominal.year, nominal.month, nominal.day);
+              if (expDateObj.getTime() >= today.getTime()) return false;
             } else if (renewalMode === 'month') {
-              if (expDate.getFullYear() !== renewalMonth.year || expDate.getMonth() !== renewalMonth.month) return false;
+              if (nominal.year !== renewalMonth.year || nominal.month !== renewalMonth.month) return false;
             }
           }
           return true;
@@ -1381,6 +1406,7 @@ export const MarketingHub = () => {
                         setSelectedStates(['All']);
                         setSelectedTier('all');
                         setRenewalMode('month');
+                        setRenewalMonth({ year: 2026, month: 3 }); // Set to April 2026 by default
                         setCampaignType('email');
                         setSendMode('broadcast');
                         setSubject('Compliance Alert: Your Cannabis Business License is Expiring Soon');
