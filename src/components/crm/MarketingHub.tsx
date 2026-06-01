@@ -271,7 +271,7 @@ export const MarketingHub = () => {
         (selectedTier === 'top_grossing' && d.tier === 'top_grossing') ||
         (selectedTier === 'standard' && d.tier !== 'top_grossing');
 
-      if (campaignType === 'email' && (!d.email || d.emailVerified !== true)) return false;
+      if (campaignType === 'email' && !d.email) return false;
       if (campaignType === 'sms' && !d.phone) return false;
       if (campaignType === 'email' && suppressedEmails.has((d.email || '').toLowerCase())) return false;
       // Block fabricated emails (flagged by quarantine script or matching known fake patterns)
