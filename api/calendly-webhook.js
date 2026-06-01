@@ -54,12 +54,22 @@ const EVENT_CATEGORY_MAP = {
 };
 
 function categorizeEvent(eventUrl) {
+  const lower = (eventUrl || '').toLowerCase();
+  const isRenewal = lower.includes('renew') || lower.includes('renewal');
   for (const [slug, meta] of Object.entries(EVENT_CATEGORY_MAP)) {
     if (eventUrl && eventUrl.includes(slug)) {
-      return { category: 'ops', color: 'bg-emerald-600', label: meta.label };
+      return { 
+        category: isRenewal ? 'renewal' : 'ops', 
+        color: isRenewal ? 'bg-yellow-500' : 'bg-emerald-600', 
+        label: meta.label 
+      };
     }
   }
-  return { category: 'ops', color: 'bg-emerald-600', label: '📅 Calendly' };
+  return { 
+    category: isRenewal ? 'renewal' : 'ops', 
+    color: isRenewal ? 'bg-yellow-500' : 'bg-emerald-600', 
+    label: isRenewal ? '🔄 Renewal' : '📅 Calendly' 
+  };
 }
 
 export default async function handler(req, res) {

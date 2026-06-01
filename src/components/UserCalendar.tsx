@@ -9,7 +9,7 @@ type ViewMode = 'month' | 'week' | 'day';
 interface CalEvent {
   id: string; title: string; date: string; startTime: string; endTime: string;
   category: string; color: string; description?: string; attendees?: string;
-  location?: string; meetLink?: string;
+  location?: string; meetLink?: string; source?: string;
 }
 
 const ALL_CATEGORIES = [
@@ -154,7 +154,8 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
                 category: data.category || 'task',
                 color: 'bg-indigo-500',
                 description: `ASSIGNED BY FOUNDER: ${data.description || ''}`,
-                meetLink: data.meetLink || ''
+                meetLink: data.meetLink || '',
+                source: data.source || ''
               });
               changed = true;
             }
@@ -278,8 +279,16 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
   };
 
   const getEventColor = (ev: CalEvent) => {
-    if (ev.color === 'bg-indigo-500' && ev.title.startsWith('Renewal:')) {
+    const titleLower = (ev.title || '').toLowerCase();
+    const descLower = (ev.description || '').toLowerCase();
+    if (ev.color === 'bg-yellow-500' || ev.category === 'renewal' || titleLower.includes('renewal') || descLower.includes('renew')) {
       return 'bg-yellow-500';
+    }
+    if (ev.source === 'calendly' || ev.source === 'carepatron') {
+      if (titleLower.includes('❌') || descLower.includes('canceled')) {
+        return 'bg-slate-400';
+      }
+      return ev.color || 'bg-emerald-600'; // Money green
     }
     return ev.color || 'bg-blue-500';
   };

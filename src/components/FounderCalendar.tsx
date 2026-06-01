@@ -41,18 +41,22 @@ const LEGEND_CATEGORIES = [
 ];
 
 const getEventCategoryObj = (ev: CalEvent) => {
-  if (ev.category && ev.category !== 'task') {
-    const cat = LEGEND_CATEGORIES.find(c => c.id === ev.category);
-    if (cat) return cat;
-  }
-  if (ev.color === 'bg-yellow-500' || (ev.color === 'bg-indigo-500' && ev.title.startsWith('Renewal:'))) {
+  const titleLower = (ev.title || '').toLowerCase();
+  const descLower = (ev.description || '').toLowerCase();
+  const isRenewal = ev.category === 'renewal' || ev.color === 'bg-yellow-500' || titleLower.includes('renewal') || descLower.includes('renew');
+  
+  if (isRenewal) {
     return { id: 'renewal', label: 'License Renewal', color: 'bg-yellow-500' };
   }
-  if (ev.color === 'bg-slate-400' || ev.title.includes('❌') || ev.description?.includes('CANCELED')) {
+  if (ev.color === 'bg-slate-400' || ev.title.includes('❌') || descLower.includes('canceled')) {
     return { id: 'canceled', label: 'Canceled Booking', color: 'bg-slate-400' };
   }
   if (ev.source === 'calendly' || ev.source === 'carepatron') {
     return { id: 'booking', label: 'Scheduled Booking', color: 'bg-emerald-600' };
+  }
+  if (ev.category && ev.category !== 'task') {
+    const cat = LEGEND_CATEGORIES.find(c => c.id === ev.category);
+    if (cat) return cat;
   }
   const cat = ALL_CATEGORIES.find(c => c.color === ev.color) || ALL_CATEGORIES.find(c => c.id === ev.category);
   return cat || { id: 'task', label: 'Task', color: 'bg-blue-500' };

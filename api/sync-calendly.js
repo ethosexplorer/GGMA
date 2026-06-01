@@ -50,12 +50,21 @@ const CALENDLY_CAT_MAP = {
 
 const categorizeCalendly = (name) => {
   const lower = (name || '').toLowerCase();
+  const isRenewal = lower.includes('renew') || lower.includes('renewal');
   for (const [key, meta] of Object.entries(CALENDLY_CAT_MAP)) {
     if (lower.includes(key)) {
-      return { category: 'ops', color: 'bg-emerald-600', label: meta.label };
+      return { 
+        category: isRenewal ? 'renewal' : 'ops', 
+        color: isRenewal ? 'bg-yellow-500' : 'bg-emerald-600', 
+        label: meta.label 
+      };
     }
   }
-  return { category: 'ops', color: 'bg-emerald-600', label: '📅' };
+  return { 
+    category: isRenewal ? 'renewal' : 'ops', 
+    color: isRenewal ? 'bg-yellow-500' : 'bg-emerald-600', 
+    label: isRenewal ? '🔄 Renewal' : '📅' 
+  };
 };
 
 export default async function handler(req, res) {

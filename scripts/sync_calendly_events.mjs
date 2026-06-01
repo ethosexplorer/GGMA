@@ -41,10 +41,21 @@ const EVENT_MAP = {
 
 function categorize(name) {
   const lower = (name || '').toLowerCase();
+  const isRenewal = lower.includes('renew') || lower.includes('renewal');
   for (const [key, meta] of Object.entries(EVENT_MAP)) {
-    if (lower.includes(key)) return { ...meta, color: 'bg-emerald-600' };
+    if (lower.includes(key)) {
+      return { 
+        ...meta, 
+        category: isRenewal ? 'renewal' : meta.category, 
+        color: isRenewal ? 'bg-yellow-500' : 'bg-emerald-600' 
+      };
+    }
   }
-  return { category: 'ops', color: 'bg-emerald-600', label: '📅' };
+  return { 
+    category: isRenewal ? 'renewal' : 'ops', 
+    color: isRenewal ? 'bg-yellow-500' : 'bg-emerald-600', 
+    label: isRenewal ? '🔄 Renewal' : '📅' 
+  };
 }
 
 async function writeToFirestore(docData) {
