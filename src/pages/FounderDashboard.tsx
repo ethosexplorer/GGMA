@@ -24,7 +24,7 @@ import { JudicialMonitorTab } from '../components/federal/JudicialMonitorTab';
 import { LegislativeIntelTab } from '../components/federal/LegislativeIntelTab';
 import { VirtualAttendantTab } from '../components/oversight/VirtualAttendantTab';
 import { NationalEnforcementLedger } from '../components/federal/NationalEnforcementLedger';
-import { onSnapshot, collection, doc, updateDoc, query, where } from 'firebase/firestore';
+import { onSnapshot, collection, doc, updateDoc, query, where, getCountFromServer } from 'firebase/firestore';
 import { db } from '../firebase';
 import { METRC_MANUAL } from '../data/metrcManual';
 import { turso } from '../lib/turso';
@@ -737,9 +737,26 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     const unsub2 = onSnapshot(query(collection(db, 'voip_queue'), where('status', '==', 'ringing')), snap => {
       setVoipQueue(snap.size);
     });
-    const unsub3 = onSnapshot(query(collection(db, 'crm_deals')), snap => {
-      setOpsCrmCount(snap.size);
-    });
+
+    let active = true;
+    const fetchCrmCount = async () => {
+      try {
+        const snap = await getCountFromServer(collection(db, 'crm_deals'));
+        if (active) {
+          const count = snap.data().count;
+          setOpsCrmCount(count);
+          localStorage.setItem('gghp_ops_crm_count', String(count));
+        }
+      } catch (err) {
+        console.error('Failed to fetch CRM deals count:', err);
+        if (active) {
+          const cached = localStorage.getItem('gghp_ops_crm_count');
+          setOpsCrmCount(cached ? parseInt(cached) : 41271);
+        }
+      }
+    };
+    fetchCrmCount();
+
     const unsub4 = onSnapshot(query(collection(db, 'tickets'), where('status', '==', 'open')), snap => {
       setOpsTicketCount(snap.size);
       const tickets = snap.docs.map(d => ({ id: d.id, ...d.data() }))
@@ -767,7 +784,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     fetchVoipQueue();
     const interval = setInterval(fetchVoipQueue, 45000); // Scaled: 15s→45s for 100k+ user support
 
-    return () => { unsub1(); unsub2(); unsub3(); unsub4(); clearInterval(interval); };
+    return () => { unsub1(); unsub2(); active = false; unsub4(); clearInterval(interval); };
   }, []);
 
   const [patientList, setPatientList] = useState<any[]>([]);

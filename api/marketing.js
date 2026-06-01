@@ -285,7 +285,7 @@ export default async function handler(req, res) {
         const TRACK_BASE = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://www.ggp-os.com';
         
         // Official domain sender — trusted by .gov mail servers
-        const defaultFrom = `"Global Green Enterprise" <${process.env.SMTP_USER || 'marketing@ggp-os.com'}>`;
+        const defaultFrom = `"Global Green Enterprise" <marketing@ggp-os.com>`;
         
         // THROTTLED SEQUENTIAL SEND — 350ms between each email to avoid rate limits
         const THROTTLE_MS = 350;

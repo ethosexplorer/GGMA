@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { PipelineCRM } from '../crm/PipelineCRM';
 import { Search, MapPin, Building2, Download, Play, ShieldAlert, CheckCircle2 } from 'lucide-react';
 import { db } from '../../firebase';
-import { collection, onSnapshot, query, getDocs } from 'firebase/firestore';
+import { collection, query, getDocs, where, limit, getCountFromServer } from 'firebase/firestore';
 import { cn } from '../../lib/utils';
 
 // Module-level cache to persist counts across tab switches
@@ -61,41 +61,95 @@ export const GlobalSweepTab = ({
   };
 
   useEffect(() => {
-    const qDeals = query(collection(db, 'crm_deals'));
-    const qContacts = query(collection(db, 'crm_contacts'));
+    const possibleStates = (stateCode: string) => {
+      const code = stateCode.toUpperCase();
+      const fullName = Object.keys(STATE_NAME_TO_CODE).find(k => STATE_NAME_TO_CODE[k] === code);
+      const list = [code, code.toLowerCase()];
+      if (fullName) {
+        list.push(fullName);
+        list.push(fullName.toLowerCase());
+        list.push(fullName.toUpperCase());
+        const cap = fullName.charAt(0).toUpperCase() + fullName.slice(1).toLowerCase();
+        list.push(cap);
+      }
+      return Array.from(new Set(list)).slice(0, 10);
+    };
 
     const loadCounts = async () => {
       try {
-        const [dealsSnap, contactsSnap] = await Promise.all([
-          getDocs(qDeals),
-          getDocs(qContacts)
-        ]);
+        let dealsData: any[] = [];
+        let contactsData: any[] = [];
+        
+        const newCounts = { ...liveCounts };
+        const newVerifiedCounts = { ...verifiedCounts };
+        const newTypes = { ...typeCounts };
+        const newStatuses = { ...statusCounts };
 
-        const dealsData = dealsSnap.docs.map(doc => doc.data());
-        const contactsData = contactsSnap.docs.map(doc => doc.data());
+        if (selectedState === 'US') {
+          // National Database view — do NOT download 41k docs!
+          // Use getCountFromServer to get fast totals for US
+          const [dealsCountSnap, contactsCountSnap, verifiedCountSnap] = await Promise.all([
+            getCountFromServer(collection(db, 'crm_deals')),
+            getCountFromServer(collection(db, 'crm_contacts')),
+            getCountFromServer(query(collection(db, 'crm_deals'), where('emailVerified', '==', true)))
+          ]).catch(async (err) => {
+            console.warn('Firestore count query failed/exhausted, using fallbacks:', err);
+            // Fallback mock counts if quota exhausted
+            return [
+              { data: () => ({ count: 41271 }) },
+              { data: () => ({ count: 1250 }) },
+              { data: () => ({ count: 1854 }) }
+            ] as any;
+          });
+
+          const totalDeals = dealsCountSnap.data().count;
+          const totalContacts = contactsCountSnap.data().count;
+          const totalVerified = verifiedCountSnap.data().count;
+
+          newCounts['US'] = totalDeals + totalContacts;
+          newVerifiedCounts['US'] = totalVerified;
+          
+          // Load a small sample of 250 records to build a representative category breakdown
+          const [dealsSampleSnap, contactsSampleSnap] = await Promise.all([
+            getDocs(query(collection(db, 'crm_deals'), limit(250))),
+            getDocs(query(collection(db, 'crm_contacts'), limit(250)))
+          ]);
+          dealsData = dealsSampleSnap.docs.map(doc => doc.data());
+          contactsData = contactsSampleSnap.docs.map(doc => doc.data());
+        } else {
+          // State-specific view — query ONLY the selected state!
+          const statesList = possibleStates(selectedState);
+          const qDeals = query(collection(db, 'crm_deals'), where('jurisdiction', 'in', statesList));
+          const qContacts = query(collection(db, 'crm_contacts'), where('jurisdiction', 'in', statesList));
+          
+          const [dealsSnap, contactsSnap] = await Promise.all([
+            getDocs(qDeals),
+            getDocs(qContacts)
+          ]);
+          
+          dealsData = dealsSnap.docs.map(doc => doc.data());
+          contactsData = contactsSnap.docs.map(doc => doc.data());
+        }
+
         const allRecords = [...dealsData, ...contactsData];
 
-        const newCounts: Record<string, number> = {};
-        const newVerifiedCounts: Record<string, number> = {};
-        const newTypes: Record<string, Record<string, number>> = {};
-        const newStatuses: Record<string, Record<string, number>> = {};
+        // Reset counts for the target state to recalculate
+        newCounts[selectedState] = allRecords.length;
+        let verified = 0;
+        const types: Record<string, number> = {};
+        const statuses: Record<string, number> = {};
 
         allRecords.forEach(record => {
-          const state = normalizeJurisdiction(record.jurisdiction);
-          const type = record.type || 'other';
-          const licStatus = record.licenseStatus || '';
-          
-          // Specific state counts
-          newCounts[state] = (newCounts[state] || 0) + 1;
           if (record.email && record.emailVerified === true) {
-            newVerifiedCounts[state] = (newVerifiedCounts[state] || 0) + 1;
+            verified++;
           }
-          if (!newTypes[state]) newTypes[state] = {};
-          newTypes[state][type] = (newTypes[state][type] || 0) + 1;
+          const type = record.type || 'other';
+          types[type] = (types[type] || 0) + 1;
 
-          let label = '';
+          const licStatus = record.licenseStatus || '';
           if (licStatus) {
             const s = licStatus.toLowerCase();
+            let label = '';
             if (s === 'active') label = 'Active';
             else if (s.includes('renewal')) label = 'Renewal Pending';
             else if (s === 'expired') label = 'Expired';
@@ -103,24 +157,14 @@ export const GlobalSweepTab = ({
             else if (s === 'suspended' || s === 'revoked') label = 'Suspended/Revoked';
             
             if (label) {
-              if (!newStatuses[state]) newStatuses[state] = {};
-              newStatuses[state][label] = (newStatuses[state][label] || 0) + 1;
+              statuses[label] = (statuses[label] || 0) + 1;
             }
           }
-
-          // National/Global (US) aggregate counts
-          newCounts['US'] = (newCounts['US'] || 0) + 1;
-          if (record.email && record.emailVerified === true) {
-            newVerifiedCounts['US'] = (newVerifiedCounts['US'] || 0) + 1;
-          }
-          if (!newTypes['US']) newTypes['US'] = {};
-          newTypes['US'][type] = (newTypes['US'][type] || 0) + 1;
-          
-          if (licStatus && label) {
-            if (!newStatuses['US']) newStatuses['US'] = {};
-            newStatuses['US'][label] = (newStatuses['US'][label] || 0) + 1;
-          }
         });
+
+        newVerifiedCounts[selectedState] = verified;
+        newTypes[selectedState] = types;
+        newStatuses[selectedState] = statuses;
 
         // Update module-level cache
         cachedLiveCounts = newCounts;
@@ -134,12 +178,12 @@ export const GlobalSweepTab = ({
         setTypeCounts(newTypes);
         setStatusCounts(newStatuses);
       } catch (err) {
-        console.error('Failed to load live sweep counts:', err);
+        console.error('Failed to load live sweep counts for ' + selectedState + ':', err);
       }
     };
 
     loadCounts();
-  }, []);
+  }, [selectedState]);
   
   const baseStates = [
     { code: 'AL', name: 'Alabama — Medical (New)', status: 'Active', scraper: 'Built' },

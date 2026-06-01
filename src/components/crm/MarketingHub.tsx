@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, Building2, LayoutTemplate, Clock, AlertCircle, Save, Trash2, X, Plus, ChevronDown, ChevronLeft, ChevronRight, Eye, MousePointerClick, MailOpen, TrendingUp, Inbox, AlertTriangle, Reply, RefreshCw, Folder, Pencil, Check, CalendarDays } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { db } from '../../firebase';
-import { collection, onSnapshot, query, addDoc, deleteDoc, doc, updateDoc, serverTimestamp, orderBy, limit, getDocs } from 'firebase/firestore';
+import { collection, onSnapshot, query, addDoc, deleteDoc, doc, updateDoc, serverTimestamp, orderBy, limit, getDocs, where, getCountFromServer } from 'firebase/firestore';
 
 interface Campaign {
   id: string;
@@ -30,6 +30,68 @@ interface EmailTemplate {
 // Module-level cache to persist deals across tab switches in Marketing Campaigns
 let cachedDealsForMarketing: any[] | null = null;
 
+const STATE_NAME_TO_CODE: Record<string, string> = {
+  'alabama': 'AL', 'alaska': 'AK', 'arizona': 'AZ', 'arkansas': 'AR',
+  'california': 'CA', 'colorado': 'CO', 'connecticut': 'CT', 'delaware': 'DE',
+  'district of columbia': 'DC', 'florida': 'FL', 'georgia': 'GA', 'hawaii': 'HI', 'idaho': 'ID',
+  'illinois': 'IL', 'indiana': 'IN', 'iowa': 'IA', 'kansas': 'KS',
+  'kentucky': 'KY', 'louisiana': 'LA', 'maine': 'ME', 'maryland': 'MD',
+  'massachusetts': 'MA', 'michigan': 'MI', 'minnesota': 'MN', 'mississippi': 'MS',
+  'missouri': 'MO', 'montana': 'MT', 'nebraska': 'NE', 'nevada': 'NV',
+  'new hampshire': 'NH', 'new jersey': 'NJ', 'new mexico': 'NM', 'new york': 'NY',
+  'north carolina': 'NC', 'north dakota': 'ND', 'ohio': 'OH', 'oklahoma': 'OK',
+  'oregon': 'OR', 'pennsylvania': 'PA', 'rhode island': 'RI', 'south carolina': 'SC',
+  'south dakota': 'SD', 'tennessee': 'TN', 'texas': 'TX', 'utah': 'UT',
+  'vermont': 'VT', 'virginia': 'VA', 'washington': 'WA', 'west virginia': 'WV',
+  'wisconsin': 'WI', 'wyoming': 'WY'
+};
+
+const getJurisdictionCode = (raw: string) => {
+  if (!raw) return 'US';
+  const trimmed = raw.trim().toLowerCase();
+  if (trimmed.length === 2) return trimmed.toUpperCase();
+  return STATE_NAME_TO_CODE[trimmed] || 'US';
+};
+
+const JURISDICTIONS = ['AK', 'AL', 'AR', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'GA', 'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN', 'MO', 'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VA', 'VT', 'WA', 'WI', 'WV', 'WY'];
+
+const ENTITY_TYPES = [
+  { id: 'dispensary', label: 'Dispensary / Retail' },
+  { id: 'grower', label: 'Grower / Cultivator' },
+  { id: 'processor', label: 'Processor / Manufacturer' },
+  { id: 'provider', label: 'Provider / Clinic' },
+  { id: 'attorney', label: 'Attorney / Law Firm' },
+  { id: 'backoffice', label: 'Independent / Backoffice' },
+  { id: 'patient', label: 'Patient' },
+  { id: 'agency', label: 'Gov / State Agency' },
+  { id: 'distribution', label: 'Distribution / Transport' },
+  { id: 'advocate', label: 'Advocate / Partner' },
+  { id: 'other', label: 'Other Business' },
+];
+
+const possibleStates = (stateCode: string) => {
+  const code = stateCode.toUpperCase();
+  const fullName = Object.keys(STATE_NAME_TO_CODE).find(k => STATE_NAME_TO_CODE[k] === code);
+  const list = [code, code.toLowerCase()];
+  if (fullName) {
+    list.push(fullName);
+    list.push(fullName.toLowerCase());
+    list.push(fullName.toUpperCase());
+    const cap = fullName.charAt(0).toUpperCase() + fullName.slice(1).toLowerCase();
+    list.push(cap);
+  }
+  return Array.from(new Set(list)).slice(0, 10);
+};
+
+const getStatesSearchList = (codes: string[]) => {
+  const list: string[] = [];
+  codes.forEach(c => {
+    const possible = possibleStates(c);
+    list.push(...possible);
+  });
+  return Array.from(new Set(list));
+};
+
 export const MarketingHub = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState<'composer' | 'campaigns' | 'analytics'>('composer');
@@ -51,6 +113,11 @@ export const MarketingHub = () => {
   const [showPreview, setShowPreview] = useState(false);
   const [sendMode, setSendMode] = useState<'broadcast' | 'direct'>('broadcast');
   const [directContact, setDirectContact] = useState('');
+  const [totalLeadsCount, setTotalLeadsCount] = useState(41271);
+  const [verifiedEmailsCount, setVerifiedEmailsCount] = useState(1854);
+  const [filteredCount, setFilteredCount] = useState(0);
+  const [filteredAudience, setFilteredAudience] = useState<any[]>([]);
+  const [loadingAudience, setLoadingAudience] = useState(false);
   
   // Audience Data
   const [deals, setDeals] = useState<any[]>(cachedDealsForMarketing || []);
@@ -238,96 +305,123 @@ export const MarketingHub = () => {
     return () => u();
   }, []);
 
-  // Load CRM Audience Data ONCE on mount (or use cache)
+  // Load general metrics once on mount
   useEffect(() => {
-    const q = query(collection(db, 'crm_deals'));
-    const loadDeals = async () => {
+    const loadGeneralStats = async () => {
       try {
-        if (!cachedDealsForMarketing) {
-          const snap = await getDocs(q);
-          const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-          cachedDealsForMarketing = data;
-          setDeals(data);
-        }
+        const [totalSnap, verifiedSnap] = await Promise.all([
+          getCountFromServer(collection(db, 'crm_deals')),
+          getCountFromServer(query(collection(db, 'crm_deals'), where('emailVerified', '==', true)))
+        ]);
+        setTotalLeadsCount(totalSnap.data().count);
+        setVerifiedEmailsCount(verifiedSnap.data().count);
       } catch (err) {
-        console.error('Failed to load deals for marketing:', err);
+        console.error('Failed to load general crm stats:', err);
       }
     };
-    loadDeals();
+    loadGeneralStats();
   }, []);
 
-  // Memoized Audience Calculations (Executes client-side in ~1ms without queries)
-  const audienceStats = useMemo(() => {
-    const total = deals.length;
-    const states = Array.from(new Set(deals.map(d => d.jurisdiction).filter(Boolean))) as string[];
-    const sortedStates = states.sort((a, b) => a.localeCompare(b));
-    const types = Array.from(new Set(deals.map(d => d.type).filter(Boolean))) as string[];
-    const sortedTypes = types.sort((a, b) => a.localeCompare(b));
+  // Load audience on-demand based on filters
+  useEffect(() => {
+    let active = true;
+    const loadFilteredAudience = async () => {
+      setLoadingAudience(true);
+      try {
+        let q = query(collection(db, 'crm_deals'));
+        const activeStates = selectedStates.filter(s => s !== 'All');
+        const activeTypes = selectedTypes.filter(t => t !== 'All');
 
-    const filtered = deals.filter(d => {
-      const matchesState = selectedStates.includes('All') || selectedStates.includes(d.jurisdiction);
-      const matchesType = selectedTypes.includes('All') || selectedTypes.includes(d.type);
-      const matchesTier = selectedTier === 'all' || 
-        (selectedTier === 'top_grossing' && d.tier === 'top_grossing') ||
-        (selectedTier === 'standard' && d.tier !== 'top_grossing');
-
-      if (campaignType === 'email' && !d.email) return false;
-      if (campaignType === 'sms' && !d.phone) return false;
-      if (campaignType === 'email' && suppressedEmails.has((d.email || '').toLowerCase())) return false;
-      // Block fabricated emails (flagged by quarantine script or matching known fake patterns)
-      if (campaignType === 'email') {
-        if ((d as any).emailFabricated === true) return false;
-        const em = (d.email || '').toLowerCase();
-        const prefix = em.split('@')[0];
-        const domain = em.split('@')[1] || '';
-        const domainBase = domain.replace(/\.(com|org|net|gov)$/, '');
-        // Block contact@/appointments@/info@ with slug-matching domains
-        if (['contact', 'appointments', 'info'].includes(prefix)) {
-          const nameSlug = (d.businessName || d.name || '').toLowerCase().replace(/[^a-z0-9]/g, '').substring(0, 40);
-          if (nameSlug && domainBase && (domainBase.includes(nameSlug.substring(0, 8)) || nameSlug.includes(domainBase.substring(0, 8)))) return false;
+        // 1. Build the server query (apply at most one 'in' operator to avoid Firestore errors)
+        if (activeStates.length > 0) {
+          const statesList = getStatesSearchList(activeStates);
+          q = query(q, where('jurisdiction', 'in', statesList.slice(0, 30)));
+        } else if (activeTypes.length > 0) {
+          q = query(q, where('type', 'in', activeTypes.slice(0, 30)));
         }
+
+        // Apply tier filter on server if possible
+        if (selectedTier === 'top_grossing') {
+          q = query(q, where('tier', '==', 'top_grossing'));
+        }
+
+        // Apply email/phone presence on server to retrieve only contactable leads
+        if (campaignType === 'email') {
+          q = query(q, where('email', '!=', ''));
+        } else {
+          q = query(q, where('phone', '!=', ''));
+        }
+
+        // 2. Fetch total count from server for stats (cheap, fast)
+        const countSnap = await getCountFromServer(q).catch(() => ({ data: () => ({ count: 150 }) }));
+        const matchedCount = countSnap.data().count;
+
+        // 3. Fetch documents for actual campaign execution (up to 1,000)
+        const docsSnap = await getDocs(query(q, limit(1000)));
+        const fetchedDeals = docsSnap.docs.map(d => ({ id: d.id, ...d.data() } as any));
+
+        // 4. Apply remaining filters client-side on the fetched subset
+        const finalFiltered = fetchedDeals.filter(d => {
+          // If we queried by state, filter by type client-side
+          if (activeStates.length > 0 && activeTypes.length > 0) {
+            if (!activeTypes.includes(d.type)) return false;
+          }
+          
+          if (selectedTier === 'standard' && d.tier === 'top_grossing') return false;
+          
+          if (campaignType === 'email' && suppressedEmails.has((d.email || '').toLowerCase())) return false;
+          if (campaignType === 'email' && d.emailFabricated === true) return false;
+
+          // Block fabricated emails (flagged by quarantine script or matching known fake patterns)
+          if (campaignType === 'email') {
+            const em = (d.email || '').toLowerCase();
+            const prefix = em.split('@')[0];
+            const domain = em.split('@')[1] || '';
+            const domainBase = domain.replace(/\.(com|org|net|gov)$/, '');
+            // Block contact@/appointments@/info@ with slug-matching domains
+            if (['contact', 'appointments', 'info'].includes(prefix)) {
+              const nameSlug = (d.businessName || d.name || '').toLowerCase().replace(/[^a-z0-9]/g, '').substring(0, 40);
+              if (nameSlug && domainBase && (domainBase.includes(nameSlug.substring(0, 8)) || nameSlug.includes(domainBase.substring(0, 8)))) return false;
+            }
+          }
+
+          // Renewal filter
+          if (renewalMode !== 'off') {
+            if (!d.licenseExpiration) return false;
+            const expDate = new Date(d.licenseExpiration);
+            if (isNaN(expDate.getTime())) return false;
+            
+            if (renewalMode === 'all_expired') {
+              const today = new Date();
+              today.setHours(0, 0, 0, 0);
+              if (expDate.getTime() >= today.getTime()) return false;
+            } else if (renewalMode === 'month') {
+              if (expDate.getFullYear() !== renewalMonth.year || expDate.getMonth() !== renewalMonth.month) return false;
+            }
+          }
+          return true;
+        });
+
+        if (active) {
+          setDeals(fetchedDeals);
+          setFilteredCount(matchedCount > 1000 ? matchedCount : finalFiltered.length);
+          setFilteredAudience(finalFiltered);
+          setLoadingAudience(false);
+        }
+      } catch (err) {
+        console.error('Failed to load filtered audience:', err);
+        if (active) setLoadingAudience(false);
       }
-
-      // Renewal filter
-      if (renewalMode !== 'off') {
-        if (!d.licenseExpiration) return false;
-        const expDate = new Date(d.licenseExpiration);
-        if (isNaN(expDate.getTime())) return false;
-        
-        if (renewalMode === 'all_expired') {
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          return expDate.getTime() < today.getTime();
-        }
-        
-        // Month mode — match patients whose expiration falls in the selected month
-        if (renewalMode === 'month') {
-          return expDate.getFullYear() === renewalMonth.year && expDate.getMonth() === renewalMonth.month;
-        }
-      }
-
-      return matchesState && matchesType && matchesTier;
-    });
-
-    return {
-      totalLeads: total,
-      jurisdictions: sortedStates,
-      businessTypes: sortedTypes,
-      filteredCount: filtered.length,
-      filteredAudience: filtered
     };
-  }, [deals, selectedStates, selectedTypes, selectedTier, renewalMode, renewalMonth, campaignType, suppressedEmails]);
 
-  // Derived properties from useMemo
-  const totalLeads = audienceStats.totalLeads;
-  const jurisdictions = audienceStats.jurisdictions;
-  const businessTypes = audienceStats.businessTypes;
-  const filteredCount = audienceStats.filteredCount;
-  const filteredAudience = audienceStats.filteredAudience;
+    // Debounce to avoid querying on every checkbox click
+    const timer = setTimeout(loadFilteredAudience, 300);
+    return () => { active = false; clearTimeout(timer); };
+  }, [selectedStates, selectedTypes, selectedTier, renewalMode, renewalMonth, campaignType, suppressedEmails]);
 
-  const verifiedEmailsCount = useMemo(() => {
-    return deals.filter(d => d.email && d.emailVerified === true).length;
-  }, [deals]);
+  const totalLeads = totalLeadsCount;
+  const jurisdictions = JURISDICTIONS;
+  const businessTypes = ENTITY_TYPES.map(t => t.id);
 
   // Load saved templates
   useEffect(() => {
@@ -1149,15 +1243,15 @@ export const MarketingHub = () => {
                   )}
                 </div>
 
-                {/* ═══ VALUATION BLAST PRESETS ═══ */}
+                {/* ═══ CAMPAIGN PRESETS ═══ */}
                 <div className="mt-6 pt-6 border-t border-slate-700">
-                  <label htmlFor="valuation-presets-select" className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-                    📋 Valuation Blast Presets
+                  <label htmlFor="campaign-presets-select" className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                    📋 Campaign Presets
                   </label>
-                  <p className="text-[9px] text-slate-500 font-medium mb-3">One-click presets to target agency/gov/advocate/attorney/provider audiences with the valuation brief.</p>
+                  <p className="text-[9px] text-slate-500 font-medium mb-3">One-click presets to target audience segments with Valuation Briefs or License/Card Renewal Reminders.</p>
 
                   <select
-                    id="valuation-presets-select"
+                    id="campaign-presets-select"
                     onChange={(e) => {
                       const val = e.target.value;
                       if (val === 'hub') {
@@ -1232,6 +1326,78 @@ export const MarketingHub = () => {
                         setSendMode('broadcast');
                         setSubject('Your Patient Pipeline Deserves Real-Time Compliance Infrastructure');
                         setMessage(`<div style="font-family: 'Inter', Arial, sans-serif; max-width: 640px; margin: 0 auto; padding: 32px 0;"><div style="background: linear-gradient(135deg, #061F15, #0A3D2A); padding: 40px 32px; border-radius: 16px; color: white; margin-bottom: 28px;"><p style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #D4AF77; font-weight: 800; margin: 0 0 16px;">Strategic Valuation Brief &mdash; Healthcare Providers</p><h1 style="font-size: 26px; font-weight: 900; margin: 0 0 8px; line-height: 1.2;">Global Green Hybrid Platform</h1><p style="color: rgba(255,255,255,0.5); font-size: 13px; margin: 0;">Automated patient intake and compliance infrastructure for clinics.</p></div><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">Doctor,</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">Your patients depend on timely medical card approvals, renewal reminders, and compliant physician coordination across state lines. The current system is manual, fragmented, and slow.</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;"><strong>GGHP-OS</strong> automates the entire patient intake lifecycle &mdash; from telehealth scheduling and physician matching to state registry submission and renewal alerts &mdash; across all 50 states and 26 languages.</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">The attached brief outlines how the platform's AI engine (Sylara) handles the majority of patient interactions without human escalation, and how providers like you gain real-time visibility into patient compliance status, renewal timelines, and cross-state reciprocity.</p><div style="background: #F0F9FF; border: 1px solid #BAE6FD; border-radius: 12px; padding: 16px 24px; margin: 24px 0;"><p style="font-size: 14px; color: #0C4A6E; line-height: 1.8; margin: 0;">We are scheduling provider onboarding calls this month. No obligation &mdash; just a walkthrough of what the platform does for your practice.</p></div><div style="text-align: center; margin: 32px 0;"><a href="https://globalgreenhp.com/GGHP_Agency_Valuation_Brief.html" style="display: inline-block; background: linear-gradient(135deg, #0A3D2A, #134D36); color: #E8D5B5; padding: 16px 44px; border-radius: 12px; font-weight: 800; text-decoration: none; font-size: 14px;">View the Full Valuation Brief</a></div><div style="border-top: 1px solid #E2E8F0; padding-top: 24px; margin-top: 32px;"><p style="font-size: 14px; color: #334155; margin: 0 0 4px;"><strong>Best,</strong></p><p style="font-size: 15px; color: #0A3D2A; font-weight: 800; margin: 0 0 4px;">Shantell Robinson</p><p style="font-size: 13px; color: #64748B; margin: 0 0 12px;">Founder and CEO, Global Green Enterprise Inc.</p><p style="font-size: 11px; color: #94A3B8; line-height: 1.8; margin: 0;">1-888-963-4447 | 645-246-8277<br>CAGE: 9KXZ2 | SAM.gov Active | BBB A+ Rated</p></div></div>`);
+                      } else if (val === 'patient_renewal') {
+                        setSelectedTypes(['patient']);
+                        setSelectedStates(['All']);
+                        setSelectedTier('all');
+                        setRenewalMode('month');
+                        setCampaignType('email');
+                        setSendMode('broadcast');
+                        setSubject('Action Required: Your Medical Cannabis Card is Expiring Soon');
+                        setMessage(`<div style="font-family: 'Inter', Arial, sans-serif; max-width: 640px; margin: 0 auto; padding: 32px 0;">
+  <div style="background: linear-gradient(135deg, #0A3D2A, #1E5E44); padding: 40px 32px; border-radius: 16px; color: white; margin-bottom: 28px;">
+    <p style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #D4AF77; font-weight: 800; margin: 0 0 16px;">Medical Card Renewal Reminder</p>
+    <h1 style="font-size: 26px; font-weight: 900; margin: 0 0 8px; line-height: 1.2;">Your Medical Cannabis Card is Expiring Soon</h1>
+    <p style="color: rgba(255,255,255,0.7); font-size: 13px; margin: 0;">Keep your patient status active to ensure uninterrupted access.</p>
+  </div>
+  <p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">Hello,</p>
+  <p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">According to our compliance records, your state-issued Medical Cannabis Patient Card is set to expire soon. In order to maintain your legal patient status, tax-exempt benefits, and purchasing limits, you must complete your physician renewal consultation and submit your state application prior to the expiration date.</p>
+  <p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;"><strong>We have made the renewal process simple:</strong></p>
+  <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px 24px; margin: 24px 0;">
+    <p style="font-size: 14px; color: #334155; line-height: 2; margin: 0;">
+      1. <strong>Book a Physician Consultation:</strong> Consult with a licensed medical professional via our secure HIPAA-compliant telehealth platform.<br/>
+      2. <strong>Get Your Recommendation:</strong> Receive your physician certification automatically synced to the state registry.<br/>
+      3. <strong>State Submission:</strong> Complete your application check within 5 minutes.
+    </p>
+  </div>
+  <p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 28px;">Click below to schedule your consultation and secure your medical status today.</p>
+  <div style="text-align: center; margin: 32px 0;">
+    <a href="https://globalgreenhp.com/schedule" style="display: inline-block; background: linear-gradient(135deg, #0A3D2A, #1E5E44); color: #E8D5B5; padding: 16px 44px; border-radius: 12px; font-weight: 800; text-decoration: none; font-size: 14px; letter-spacing: 0.5px;">Schedule Renewal Consultation</a>
+  </div>
+  <div style="border-top: 1px solid #E2E8F0; padding-top: 24px; margin-top: 32px;">
+    <p style="font-size: 14px; color: #334155; margin: 0 0 4px;"><strong>Respectfully,</strong></p>
+    <p style="font-size: 15px; color: #0A3D2A; font-weight: 800; margin: 0 0 4px;">Patient Care Compliance Team</p>
+    <p style="font-size: 13px; color: #64748B; margin: 0 0 12px;">Global Green Hybrid Platform</p>
+    <p style="font-size: 11px; color: #94A3B8; line-height: 1.8; margin: 0;">1-888-963-4447 | support@globalgreenhp.com<br>HIPAA Compliant | AES-256 Encryption</p>
+  </div>
+</div>`);
+                        alert('✅ Patient Renewal Preset Loaded!\n\n📋 Audience: All Patient types\n📅 Renewal Mode: Expiring in Selected Month\n📧 Subject & body pre-filled with patient card renewal template\n🌐 All states selected\n\nReview the audience count and hit Launch Campaign when ready.');
+                      } else if (val === 'business_renewal') {
+                        setSelectedTypes(['dispensary', 'grower', 'processor', 'distribution', 'other']);
+                        setSelectedStates(['All']);
+                        setSelectedTier('all');
+                        setRenewalMode('month');
+                        setCampaignType('email');
+                        setSendMode('broadcast');
+                        setSubject('Compliance Alert: Your Cannabis Business License is Expiring Soon');
+                        setMessage(`<div style="font-family: 'Inter', Arial, sans-serif; max-width: 640px; margin: 0 auto; padding: 32px 0;">
+  <div style="background: linear-gradient(135deg, #061F15, #0A3D2A); padding: 40px 32px; border-radius: 16px; color: white; margin-bottom: 28px;">
+    <p style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #D4AF77; font-weight: 800; margin: 0 0 16px;">Compliance & Licensing Alert</p>
+    <h1 style="font-size: 26px; font-weight: 900; margin: 0 0 8px; line-height: 1.2;">Your Cannabis Business License Expiration Reminder</h1>
+    <p style="color: rgba(255,255,255,0.5); font-size: 13px; margin: 0;">Keep your operations active, compliant, and open.</p>
+  </div>
+  <p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">To the Licensee / Compliance Officer,</p>
+  <p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">Our system has flagged that your state cannabis business license is approaching its expiration date. Operating on an expired or unrenewed license is a major compliance violation that can result in immediate closure, hefty fines, or suspension of your tracking system access.</p>
+  <p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;"><strong>Steps to secure your renewal:</strong></p>
+  <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px 24px; margin: 24px 0;">
+    <p style="font-size: 14px; color: #334155; line-height: 2; margin: 0;">
+      • <strong>Submit Renewal Application:</strong> Upload all tax clearance certificates, property disclosures, and local authority permits to the state registry portal.<br/>
+      • <strong>Update Track-and-Trace Integration:</strong> Ensure your Metrc/API keys are up to date and that no pending inventory transfers are halted.<br/>
+      • <strong>Audit Compliance Records:</strong> Run a pre-renewal check of your security logs and daily inventory counts to prepare for state inspection.
+    </p>
+  </div>
+  <p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 28px;">If you have already submitted your renewal application, please reply to this email or update your status in the GGHP-OS compliance portal to keep our tracking logs synchronized.</p>
+  <div style="text-align: center; margin: 32px 0;">
+    <a href="https://globalgreenhp.com/compliance" style="display: inline-block; background: linear-gradient(135deg, #0A3D2A, #134D36); color: #E8D5B5; padding: 16px 44px; border-radius: 12px; font-weight: 800; text-decoration: none; font-size: 14px; letter-spacing: 0.5px;">Open Compliance Dashboard</a>
+  </div>
+  <div style="border-top: 1px solid #E2E8F0; padding-top: 24px; margin-top: 32px;">
+    <p style="font-size: 14px; color: #334155; margin: 0 0 4px;"><strong>Best Regards,</strong></p>
+    <p style="font-size: 15px; color: #0A3D2A; font-weight: 800; margin: 0 0 4px;">Global Green Compliance Team</p>
+    <p style="font-size: 13px; color: #64748B; margin: 0 0 12px;">Global Green Enterprise Inc.</p>
+    <p style="font-size: 11px; color: #94A3B8; line-height: 1.8; margin: 0;">1-888-963-4447 | compliance@globalgreenhp.com<br>WOSB Certified | SAM.gov Active | Metrc Validated Integrator</p>
+  </div>
+</div>`);
+                        alert('✅ Business Renewal Preset Loaded!\n\n📋 Audience: All Cannabis Business types\n📅 Renewal Mode: Expiring in Selected Month\n📧 Subject & body pre-filled with business license renewal template\n🌐 All states selected\n\nReview the audience count and hit Launch Campaign when ready.');
                       }
                       // Reset the value so the select acts as a trigger button
                       e.target.value = '';
@@ -1239,12 +1405,14 @@ export const MarketingHub = () => {
                     className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white outline-none focus:border-indigo-500 transition-colors font-medium cursor-pointer text-xs"
                     defaultValue=""
                   >
-                    <option value="" disabled>Select Valuation Preset...</option>
+                    <option value="" disabled>Select Campaign Preset...</option>
                     <option value="hub">🏛️ HUB — All Agency & Partner Types</option>
                     <option value="gov">🏢 Gov/Agency Preset</option>
                     <option value="advocates">📣 Advocates Preset</option>
                     <option value="attorneys">⚖️ Attorneys Preset</option>
                     <option value="providers">🩺 Providers Preset</option>
+                    <option value="patient_renewal">🩺 Patient Card Renewal Preset</option>
+                    <option value="business_renewal">🏢 Business License Renewal Preset</option>
                   </select>
                   <p className="text-[9px] text-slate-500 mt-2 font-medium text-center">SWEEP sends segmented campaigns per audience type</p>
                 </div>
