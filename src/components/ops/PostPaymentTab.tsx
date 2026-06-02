@@ -191,7 +191,7 @@ export const PostPaymentTab = () => {
           price: 'Varies',
           breakdown: 'Physician intake schedule with integrated PayPal checkout processing.',
           paypalId: '',
-          link: 'https://calendly.com/globalgreenhpmeet/payments/853392b3-e8c0-4a18-8687-d5719448d767'
+          link: 'https://calendly.com/globalgreenhpmeet/medical-card-recommendation-clone'
         };
     }
   };

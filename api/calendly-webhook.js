@@ -38,6 +38,7 @@ const auth = getAuth(app);
 
 // Map Calendly event slugs to platform categories + colors
 const EVENT_CATEGORY_MAP = {
+  'medical-card-recommendation-clone': { category: 'ops', color: 'bg-indigo-500', label: '🏥 Medical Card' },
   'medical-card-recommendation': { category: 'ops', color: 'bg-indigo-500', label: '🏥 Medical Card' },
   'general-patient-support':     { category: 'ops', color: 'bg-indigo-500', label: '🩺 Patient Support' },
   'health-wellness-consultation': { category: 'ops', color: 'bg-indigo-500', label: '💚 Health & Wellness' },
