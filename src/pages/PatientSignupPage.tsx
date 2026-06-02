@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import {
   Shield, ChevronRight, ArrowLeft, Lock, Upload, Leaf, CheckCircle, 
@@ -28,8 +28,135 @@ const PATIENT_STEPS = [
   'Application Review',
   'Confirmation'
 ];
+
+interface PayPalButtonProps {
+  hostedButtonId: string;
+  containerId: string;
+  key?: string;
+}
+
+const PayPalButton = ({ hostedButtonId, containerId }: PayPalButtonProps) => {
+  const [isRendered, setIsRendered] = useState(false);
+  const [loadError, setLoadError] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    
+    // Check if script is already in the document, if not append it
+    const scriptId = 'paypal-sdk-hosted-buttons';
+    let script = document.getElementById(scriptId) as HTMLScriptElement | null;
+    
+    const initializeButton = () => {
+      let attempts = 0;
+      const checkAndRender = () => {
+        if (!active) return;
+        const paypal = (window as any).paypal;
+        if (paypal && paypal.HostedButtons) {
+          try {
+            const container = document.getElementById(containerId);
+            if (container) {
+              container.innerHTML = ''; // Clear container to avoid duplicate buttons
+            }
+            paypal.HostedButtons({
+              hostedButtonId: hostedButtonId,
+            }).render(`#${containerId}`);
+            setIsRendered(true);
+          } catch (err) {
+            console.error('Error rendering PayPal Hosted Button:', err);
+            setLoadError(true);
+          }
+        } else {
+          attempts++;
+          if (attempts < 25) {
+            setTimeout(checkAndRender, 200);
+          } else {
+            setLoadError(true);
+          }
+        }
+      };
+      checkAndRender();
+    };
+
+    if (!script) {
+      script = document.createElement('script');
+      script.id = scriptId;
+      script.src = 'https://www.paypal.com/sdk/js?client-id=BAApZMT_akVrk09QmyOS0_2iMW0qbnqULY-vmI1tW59I2b0yM_v4wg6XrL2fN8Xvy0P4FwwsobAzoONHEI&components=hosted-buttons&enable-funding=venmo&currency=USD';
+      script.async = true;
+      script.onload = initializeButton;
+      script.onerror = () => {
+        if (active) setLoadError(true);
+      };
+      document.head.appendChild(script);
+    } else {
+      initializeButton();
+    }
+
+    return () => {
+      active = false;
+    };
+  }, [hostedButtonId, containerId]);
+
+  return (
+    <div className="flex flex-col items-center justify-center p-4 bg-slate-50 border border-slate-200/80 rounded-2xl w-full">
+      {/* Container where the iframe will mount */}
+      <div id={containerId} className="w-full min-h-[140px] flex items-center justify-center">
+        {!isRendered && !loadError && (
+          <div className="flex flex-col items-center gap-2.5 py-6">
+            <Loader2 className="animate-spin text-[#1a4731]" size={28} />
+            <span className="text-xs text-slate-500 font-semibold tracking-wide">Loading Secure PayPal Checkout...</span>
+          </div>
+        )}
+        {loadError && (
+          <div className="text-center py-4 text-slate-500">
+            <p className="text-xs text-red-600 font-bold mb-1">Interactive widget loading failed.</p>
+            <p className="text-[11px] text-slate-400">Please use the direct link button below to complete your payment.</p>
+          </div>
+        )}
+      </div>
+
+      {/* Fallback Checkout Link (renders if SDK fails or while loading as backup) */}
+      {(loadError || !isRendered) && (
+        <div className="mt-2 w-full text-center">
+          <style>{`
+            .pp-${hostedButtonId} {
+              text-align: center;
+              border: none;
+              border-radius: 0.5rem;
+              width: 100%;
+              max-width: 18rem;
+              height: 2.75rem;
+              font-weight: bold;
+              background-color: #FFD140;
+              color: #000000;
+              font-family: "Helvetica Neue", Arial, sans-serif;
+              font-size: 1rem;
+              line-height: 1.25rem;
+              cursor: pointer;
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              transition: background-color 0.2s;
+              box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            }
+            .pp-${hostedButtonId}:hover {
+              background-color: #ebd035;
+            }
+          `}</style>
+          <form action={`https://www.paypal.com/ncp/payment/${hostedButtonId}`} method="post" target="_blank" className="flex flex-col items-center gap-2">
+            <input className={`pp-${hostedButtonId}`} type="submit" value="Pay Now" />
+            <img src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg" alt="cards" className="h-6 mt-1" />
+            <section className="text-[10px] text-slate-400">
+              Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="paypal" className="h-3.5 inline-block align-middle ml-1" />
+            </section>
+          </form>
+        </div>
+      )}
+    </div>
+  );
+};
 export const PatientSignupPage = ({ onNavigate }: any) => {
   const [currentStep, setCurrentStep] = useState(0);
+  const [qualifiesForDiscount, setQualifiesForDiscount] = useState(false);
   const [showAuraError, setShowAuraError] = useState(false);
   const [auraErrorSource, setAuraErrorSource] = useState<'patient' | 'resident' | ''>('');
   const [formData, setFormData] = useState({
@@ -652,6 +779,88 @@ export const PatientSignupPage = ({ onNavigate }: any) => {
                 </div>
               </details>
             ))}
+
+            {/* Payment & Fees Section */}
+            <div className="border border-slate-200 rounded-lg overflow-hidden bg-white shadow-sm mt-6">
+              <div className="flex items-center gap-3 px-5 py-3.5 bg-slate-50 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200">
+                <span className="text-xs">💳</span>
+                <h3 className="text-sm font-bold text-[#16325c] tracking-wide">Secure Payment &amp; Application Fees</h3>
+              </div>
+              <div className="px-5 py-5 space-y-4">
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Your total fee includes the medical evaluation, processing fee, and state license application fee.
+                </p>
+                
+                {/* State Discount Option Selector */}
+                <div className="bg-emerald-50/50 border border-emerald-100/80 rounded-xl p-4 space-y-3">
+                  <div className="flex items-start gap-2.5">
+                    <Leaf className="text-emerald-700 shrink-0 mt-0.5" size={16} />
+                    <div>
+                      <p className="text-xs font-semibold text-emerald-950">OMMA State Fee Discount Eligibility</p>
+                      <p className="text-[11px] text-emerald-800 leading-relaxed mt-0.5">
+                        Do you qualify for the OMMA Reduced State Fee of $22.50? (Requires proof of SoonerCare/Medicaid, Medicare, or 100% Disabled Veteran status).
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-6 pl-6 pt-1">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input 
+                        type="radio" 
+                        name="qualifiesForDiscount" 
+                        checked={qualifiesForDiscount} 
+                        onChange={() => setQualifiesForDiscount(true)} 
+                        className="w-4 h-4 accent-[#1a4731]" 
+                      />
+                      <span className="text-xs text-slate-700 font-medium">Yes, I qualify ($112.50 total)</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input 
+                        type="radio" 
+                        name="qualifiesForDiscount" 
+                        checked={!qualifiesForDiscount} 
+                        onChange={() => setQualifiesForDiscount(false)} 
+                        className="w-4 h-4 accent-[#1a4731]" 
+                      />
+                      <span className="text-xs text-slate-700 font-medium">No, standard price ($194.30 total)</span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Price Summary Breakdown */}
+                <div className="bg-slate-50 rounded-xl p-4 border border-slate-200/60 space-y-2">
+                  <div className="flex justify-between text-xs text-slate-600 font-medium">
+                    <span>Medical Recommendation Fee:</span>
+                    <span>$40.00</span>
+                  </div>
+                  <div className="flex justify-between text-xs text-slate-600 font-medium">
+                    <span>GGHP Processing Fee:</span>
+                    <span>$50.00</span>
+                  </div>
+                  <div className="flex justify-between text-xs text-slate-600 font-medium pb-2 border-b border-slate-200">
+                    <span>OMMA State Application Fee:</span>
+                    <span>{qualifiesForDiscount ? '$22.50' : '$104.30'}</span>
+                  </div>
+                  <div className="flex justify-between text-sm font-bold text-slate-900 pt-1">
+                    <span>Total Due Now:</span>
+                    <span>{qualifiesForDiscount ? '$112.50' : '$194.30'}</span>
+                  </div>
+                </div>
+
+                {/* PayPal Integration Component */}
+                <div className="pt-2">
+                  <PayPalButton 
+                    key={qualifiesForDiscount ? 'discount' : 'standard'}
+                    hostedButtonId={qualifiesForDiscount ? 'EZSS8BUT44LBY' : 'Q4H5AW7NUB73Y'}
+                    containerId={qualifiesForDiscount ? 'paypal-container-EZSS8BUT44LBY' : 'paypal-container-Q4H5AW7NUB73Y'}
+                  />
+                </div>
+                
+                <p className="text-[10px] text-slate-400 text-center font-medium leading-relaxed mt-2">
+                  ⚠️ Note: After completing your payment on PayPal, please click the "Submit Application" button below to finalize your application in our system.
+                </p>
+              </div>
+            </div>
           </div>
         );
       }

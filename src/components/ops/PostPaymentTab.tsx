@@ -1,27 +1,155 @@
 import React, { useState, useEffect } from 'react';
-import { DollarSign, CreditCard, CheckCircle, User, FileText, Calendar, Shield, Loader2, AlertTriangle, Zap } from 'lucide-react';
+import { DollarSign, CheckCircle, User, FileText, Calendar, Loader2, Link, Copy, Check, ExternalLink, CalendarDays, CreditCard } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { turso } from '../../lib/turso';
-import { processCardPayment, isConfigured as authNetConfigured, getEnvironment, loadAcceptJs } from '../../lib/authorizeNet';
 
 const PAYMENT_TYPES = ['Processing Fee','Application Fee','Consultation Fee','Service Fee','Filing Fee','Late Fee','Renewal Fee','Licensing Fee','Document Fee','Other'];
-const PAYMENT_METHODS = ['Authorize.net (Card)','Chime','Cash App','Zelle','Venmo','Cash','Check','Wire Transfer','Credit Card (Manual)','Bank Transfer','Other'];
+const PAYMENT_METHODS = ['PayPal','Calendly','Chime','Cash App','Zelle','Venmo','Cash','Check','Wire Transfer','Credit Card (Manual)','Bank Transfer','Other'];
+
+interface PayPalButtonProps {
+  hostedButtonId: string;
+  containerId: string;
+  key?: string;
+}
+
+const PayPalButton = ({ hostedButtonId, containerId }: PayPalButtonProps) => {
+  const [isRendered, setIsRendered] = useState(false);
+  const [loadError, setLoadError] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    const scriptId = 'paypal-sdk-hosted-buttons';
+    let script = document.getElementById(scriptId) as HTMLScriptElement | null;
+    
+    const initializeButton = () => {
+      let attempts = 0;
+      const checkAndRender = () => {
+        if (!active) return;
+        const paypal = (window as any).paypal;
+        if (paypal && paypal.HostedButtons) {
+          try {
+            const container = document.getElementById(containerId);
+            if (container) {
+              container.innerHTML = '';
+            }
+            paypal.HostedButtons({
+              hostedButtonId: hostedButtonId,
+            }).render(`#${containerId}`);
+            setIsRendered(true);
+          } catch (err) {
+            console.error('Error rendering PayPal Hosted Button:', err);
+            setLoadError(true);
+          }
+        } else {
+          attempts++;
+          if (attempts < 25) {
+            setTimeout(checkAndRender, 200);
+          } else {
+            setLoadError(true);
+          }
+        }
+      };
+      checkAndRender();
+    };
+
+    if (!script) {
+      script = document.createElement('script');
+      script.id = scriptId;
+      script.src = 'https://www.paypal.com/sdk/js?client-id=BAApZMT_akVrk09QmyOS0_2iMW0qbnqULY-vmI1tW59I2b0yM_v4wg6XrL2fN8Xvy0P4FwwsobAzoONHEI&components=hosted-buttons&enable-funding=venmo&currency=USD';
+      script.async = true;
+      script.onload = initializeButton;
+      script.onerror = () => {
+        if (active) setLoadError(true);
+      };
+      document.head.appendChild(script);
+    } else {
+      initializeButton();
+    }
+
+    return () => {
+      active = false;
+    };
+  }, [hostedButtonId, containerId]);
+
+  return (
+    <div className="flex flex-col items-center justify-center p-4 bg-slate-50 border border-slate-200/80 rounded-2xl w-full">
+      <div id={containerId} className="w-full min-h-[140px] flex items-center justify-center">
+        {!isRendered && !loadError && (
+          <div className="flex flex-col items-center gap-2.5 py-6">
+            <Loader2 className="animate-spin text-indigo-600" size={28} />
+            <span className="text-xs text-slate-500 font-semibold tracking-wide">Loading Secure PayPal Checkout...</span>
+          </div>
+        )}
+        {loadError && (
+          <div className="text-center py-4 text-slate-500">
+            <p className="text-xs text-red-600 font-bold mb-1">Interactive widget loading failed.</p>
+            <p className="text-[11px] text-slate-400">Please use the direct link button below to complete your payment.</p>
+          </div>
+        )}
+      </div>
+
+      {(loadError || !isRendered) && (
+        <div className="mt-2 w-full text-center">
+          <style>{`
+            .pp-${hostedButtonId} {
+              text-align: center;
+              border: none;
+              border-radius: 0.5rem;
+              width: 100%;
+              max-width: 18rem;
+              height: 2.75rem;
+              font-weight: bold;
+              background-color: #FFD140;
+              color: #000000;
+              font-family: "Helvetica Neue", Arial, sans-serif;
+              font-size: 1rem;
+              line-height: 1.25rem;
+              cursor: pointer;
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              transition: background-color 0.2s;
+              box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            }
+            .pp-${hostedButtonId}:hover {
+              background-color: #ebd035;
+            }
+          `}</style>
+          <form action={`https://www.paypal.com/ncp/payment/${hostedButtonId}`} method="post" target="_blank" className="flex flex-col items-center gap-2">
+            <input className={`pp-${hostedButtonId}`} type="submit" value="Pay Now" />
+            <img src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg" alt="cards" className="h-6 mt-1" />
+            <section className="text-[10px] text-slate-400">
+              Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="paypal" className="h-3.5 inline-block align-middle ml-1" />
+            </section>
+          </form>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export const PostPaymentTab = () => {
-  const [mode, setMode] = useState<'manual' | 'card'>('card');
-  const [form, setForm] = useState({ clientName: '', amount: '', type: 'Processing Fee', method: 'Authorize.net (Card)', notes: '', date: new Date().toISOString().split('T')[0] });
-  const [cardForm, setCardForm] = useState({ cardNumber: '', expMonth: '', expYear: '', cvv: '', email: '' });
+  const [mode, setMode] = useState<'payment' | 'manual'>('payment');
+  const [product, setProduct] = useState<'standard' | 'discount' | 'calendly'>('standard');
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [form, setForm] = useState({ clientName: '', amount: '194.30', type: 'Processing Fee', method: 'PayPal', notes: '', date: new Date().toISOString().split('T')[0] });
   const [submitted, setSubmitted] = useState(false);
-  const [processing, setProcessing] = useState(false);
-  const [txResult, setTxResult] = useState<{ success: boolean; message: string; transactionId?: string } | null>(null);
   const [recentPayments, setRecentPayments] = useState<any[]>([]);
-  const authNetReady = authNetConfigured();
 
   useEffect(() => {
     turso.execute("SELECT * FROM founder_ledger ORDER BY created_at DESC LIMIT 20").then(res => setRecentPayments(res.rows)).catch(console.error);
   }, [submitted]);
 
-  useEffect(() => { if (authNetReady) loadAcceptJs().catch(console.error); }, []);
+  // Adjust pre-filled amounts when product changes
+  useEffect(() => {
+    if (product === 'standard') {
+      setForm(f => ({ ...f, amount: '194.30', method: 'PayPal' }));
+    } else if (product === 'discount') {
+      setForm(f => ({ ...f, amount: '112.50', method: 'PayPal' }));
+    } else if (product === 'calendly') {
+      setForm(f => ({ ...f, amount: '194.30', method: 'Calendly' })); // Calendly pays via PayPal
+    }
+  }, [product]);
 
   const postToLedger = async (entryName: string, formatted: string, methodLabel: string, txId?: string) => {
     await turso.execute({ sql: "INSERT INTO founder_ledger (id, origin_vector, type, gross_revenue, net_profit, status, color, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", args: ['pay-' + Math.random().toString(36).substr(2, 9), entryName, `${form.type} (${methodLabel})`, formatted, formatted, 'Settled', 'bg-emerald-600', new Date(form.date).toISOString()] });
@@ -35,33 +163,55 @@ export const PostPaymentTab = () => {
     try {
       await postToLedger(`${form.clientName} — ${form.type}`, formatted, form.method);
       setSubmitted(true);
-      setTimeout(() => { setSubmitted(false); setForm({ clientName: '', amount: '', type: 'Processing Fee', method: 'Chime', notes: '', date: new Date().toISOString().split('T')[0] }); }, 3000);
+      setTimeout(() => { setSubmitted(false); setForm({ clientName: '', amount: '194.30', type: 'Processing Fee', method: 'PayPal', notes: '', date: new Date().toISOString().split('T')[0] }); }, 3000);
     } catch (err) { console.error(err); alert('Error posting payment: ' + err); }
   };
 
-  const handleCardSubmit = async () => {
-    if (!form.clientName || !form.amount) { alert('Please enter the client name and amount.'); return; }
-    if (!cardForm.cardNumber || !cardForm.expMonth || !cardForm.expYear || !cardForm.cvv) { alert('Please fill in all card fields.'); return; }
-    setProcessing(true); setTxResult(null);
-    const cleanAmount = parseFloat(form.amount.replace(/[^0-9.]/g, '')).toFixed(2);
-    try {
-      const nameParts = form.clientName.split(' ');
-      const result = await processCardPayment(
-        { cardNumber: cardForm.cardNumber, expMonth: cardForm.expMonth, expYear: cardForm.expYear, cvv: cardForm.cvv },
-        cleanAmount,
-        { invoice: `GGP-${Date.now().toString(36).toUpperCase()}`, description: `${form.type} — ${form.clientName}`, customerEmail: cardForm.email || undefined, billTo: { firstName: nameParts[0] || '', lastName: nameParts.slice(1).join(' ') || '' } }
-      );
-      setTxResult(result);
-      if (result.success) {
-        await postToLedger(`${form.clientName} — ${form.type}`, '$' + cleanAmount, `Authorize.net Card (TX: ${result.transactionId})`, result.transactionId);
-        setSubmitted(true);
-        setTimeout(() => { setSubmitted(false); setTxResult(null); setCardForm({ cardNumber: '', expMonth: '', expYear: '', cvv: '', email: '' }); setForm({ clientName: '', amount: '', type: 'Processing Fee', method: 'Authorize.net (Card)', notes: '', date: new Date().toISOString().split('T')[0] }); }, 4000);
-      }
-    } catch (err: any) { setTxResult({ success: false, message: err.message || 'Payment processing failed' }); }
-    setProcessing(false);
+  const getProductDetails = () => {
+    switch (product) {
+      case 'standard':
+        return {
+          title: 'Standard Patient Application',
+          price: '$194.30',
+          breakdown: 'Doctor recommendation ($40.00) + GGP Processing ($50.00) + OMMA State Fee ($104.30)',
+          paypalId: 'Q4H5AW7NUB73Y',
+          link: 'https://www.paypal.com/ncp/payment/Q4H5AW7NUB73Y'
+        };
+      case 'discount':
+        return {
+          title: 'Discounted Patient Application',
+          price: '$112.50',
+          breakdown: 'Doctor recommendation ($40.00) + GGP Processing ($50.00) + OMMA Reduced State Fee ($22.50)',
+          paypalId: 'EZSS8BUT44LBY',
+          link: 'https://www.paypal.com/ncp/payment/EZSS8BUT44LBY'
+        };
+      case 'calendly':
+        return {
+          title: 'Calendly Appointment + Booking Fee',
+          price: 'Varies',
+          breakdown: 'Physician intake schedule with integrated PayPal checkout processing.',
+          paypalId: '',
+          link: 'https://calendly.com/globalgreenhpmeet/payments/853392b3-e8c0-4a18-8687-d5719448d767'
+        };
+    }
   };
 
-  const formatCardNumber = (v: string) => v.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim().substring(0, 19);
+  const currentDetails = getProductDetails();
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(currentDetails.link);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2000);
+  };
+
+  const handlePrepareManualLog = () => {
+    setForm(f => ({
+      ...f,
+      method: product === 'calendly' ? 'Calendly' : 'PayPal',
+      notes: `Payment collected via ${product === 'calendly' ? 'Calendly booking' : 'PayPal Hosted Button'} link.`
+    }));
+    setMode('manual');
+  };
 
   return (
     <div className="space-y-6">
@@ -70,20 +220,14 @@ export const PostPaymentTab = () => {
         <div className="absolute top-0 right-0 p-8 opacity-10"><DollarSign size={120} /></div>
         <div className="relative z-10">
           <h2 className="text-3xl font-black tracking-tight flex items-center gap-3"><DollarSign className="text-emerald-400" size={28} /> Post Payment</h2>
-          <p className="text-emerald-300 font-bold uppercase tracking-widest text-xs mt-2">Process card payments via Authorize.net or log manual payments → Accounting Ledger</p>
-          <div className="flex items-center gap-3 mt-4">
-            <div className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border", authNetReady ? "bg-emerald-500/20 border-emerald-400/30 text-emerald-300" : "bg-red-500/20 border-red-400/30 text-red-300")}>
-              <div className={cn("w-1.5 h-1.5 rounded-full", authNetReady ? "bg-emerald-400 animate-pulse" : "bg-red-400")} /> Authorize.net {authNetReady ? 'Connected' : 'Not Configured'}
-            </div>
-            {authNetReady && <span className="text-[10px] text-emerald-400/60 font-bold uppercase">{getEnvironment()} Mode</span>}
-          </div>
+          <p className="text-emerald-300 font-bold uppercase tracking-widest text-xs mt-2">Generate client payment links or log transactions to ledger</p>
         </div>
       </div>
 
       {/* Mode Toggle */}
       <div className="flex gap-2 bg-white border border-slate-200 rounded-2xl p-1.5 shadow-sm max-w-md">
-        <button onClick={() => setMode('card')} className={cn("flex-1 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2", mode === 'card' ? "bg-indigo-600 text-white shadow-lg" : "text-slate-500 hover:bg-slate-50")}>
-          <CreditCard size={14} /> Card Payment
+        <button onClick={() => setMode('payment')} className={cn("flex-1 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2", mode === 'payment' ? "bg-indigo-600 text-white shadow-lg" : "text-slate-500 hover:bg-slate-50")}>
+          <CreditCard size={14} /> PayPal / Calendly
         </button>
         <button onClick={() => setMode('manual')} className={cn("flex-1 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2", mode === 'manual' ? "bg-emerald-600 text-white shadow-lg" : "text-slate-500 hover:bg-slate-50")}>
           <DollarSign size={14} /> Manual Log
@@ -92,76 +236,164 @@ export const PostPaymentTab = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
-          {submitted ? (
-            <div className="flex flex-col items-center justify-center py-16 space-y-4 animate-in fade-in zoom-in duration-300">
-              <div className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center"><CheckCircle size={40} className="text-emerald-600" /></div>
-              <h3 className="text-xl font-black text-slate-800">Payment {mode === 'card' ? 'Processed' : 'Posted'}!</h3>
-              <p className="text-sm text-slate-500 font-medium">{txResult?.transactionId ? `Transaction ID: ${txResult.transactionId}` : 'Entry added to Accounting Ledger and audit log.'}</p>
+          
+          {/* ═══ MODE: PAYPAL & CALENDILY PAYMENTS ═══ */}
+          {mode === 'payment' && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-black text-slate-800 flex items-center gap-2">
+                  <CreditCard size={18} className="text-indigo-600" /> Payment &amp; Appointment Links
+                </h3>
+              </div>
+
+              {/* Product Selection Toggles */}
+              <div className="grid grid-cols-3 gap-3">
+                <button 
+                  onClick={() => setProduct('standard')} 
+                  className={cn("p-4 rounded-2xl border-2 text-left transition-all", product === 'standard' ? 'border-indigo-500 bg-indigo-50/40 shadow-sm' : 'border-slate-100 bg-slate-50 hover:bg-slate-100/70')}
+                >
+                  <span className="text-xs font-black text-slate-800 block mb-1">Standard Card Fee</span>
+                  <span className="text-lg font-black text-indigo-700 block">$194.30</span>
+                  <span className="text-[10px] text-slate-400 block mt-1 font-bold">Standard OMMA</span>
+                </button>
+
+                <button 
+                  onClick={() => setProduct('discount')} 
+                  className={cn("p-4 rounded-2xl border-2 text-left transition-all", product === 'discount' ? 'border-indigo-500 bg-indigo-50/40 shadow-sm' : 'border-slate-100 bg-slate-50 hover:bg-slate-100/70')}
+                >
+                  <span className="text-xs font-black text-slate-800 block mb-1">Discount Card Fee</span>
+                  <span className="text-lg font-black text-emerald-700 block">$112.50</span>
+                  <span className="text-[10px] text-slate-400 block mt-1 font-bold">SoonerCare / Vet</span>
+                </button>
+
+                <button 
+                  onClick={() => setProduct('calendly')} 
+                  className={cn("p-4 rounded-2xl border-2 text-left transition-all", product === 'calendly' ? 'border-indigo-500 bg-indigo-50/40 shadow-sm' : 'border-slate-100 bg-slate-50 hover:bg-slate-100/70')}
+                >
+                  <span className="text-xs font-black text-slate-800 block mb-1">Calendly Booking</span>
+                  <span className="text-lg font-black text-amber-700 block flex items-center gap-1"><CalendarDays size={16} /> Appointments</span>
+                  <span className="text-[10px] text-slate-400 block mt-1 font-bold">Integrated PayPal</span>
+                </button>
+              </div>
+
+              {/* Selected Product Information */}
+              <div className="bg-slate-50 border border-slate-200/60 rounded-2xl p-5 space-y-2">
+                <div className="flex justify-between items-center">
+                  <h4 className="text-sm font-bold text-slate-800">{currentDetails.title}</h4>
+                  <span className="text-sm font-black text-indigo-600">{currentDetails.price}</span>
+                </div>
+                <p className="text-xs text-slate-500 leading-relaxed font-medium">{currentDetails.breakdown}</p>
+              </div>
+
+              {/* Live Render or Calendly Info Card */}
+              {product === 'calendly' ? (
+                <div className="border border-slate-200 rounded-2xl p-6 bg-amber-50/20 border-amber-100 text-center space-y-4">
+                  <CalendarDays size={36} className="mx-auto text-amber-600" />
+                  <div>
+                    <h4 className="text-sm font-bold text-slate-800">Calendly Appointment Scheduling</h4>
+                    <p className="text-xs text-slate-500 mt-1 leading-relaxed max-w-md mx-auto font-medium">
+                      Booking collects the application intake payment automatically via PayPal. Direct the patient to schedule and pay using the booking link below.
+                    </p>
+                  </div>
+                  <a href={currentDetails.link} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-6 py-2.5 bg-amber-500 text-black font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-amber-600 transition-colors shadow-sm">
+                    Open Booking Page <ExternalLink size={12} />
+                  </a>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between px-1">
+                    <span className="text-xs font-bold text-slate-600">Secure Live Checkout Widget</span>
+                    <span className="text-[10px] font-bold text-slate-400">Merchant Client ID: BAApZMT...</span>
+                  </div>
+                  {currentDetails.paypalId && (
+                    <PayPalButton 
+                      key={currentDetails.paypalId}
+                      hostedButtonId={currentDetails.paypalId}
+                      containerId={`ops-paypal-container-${currentDetails.paypalId}`}
+                    />
+                  )}
+                </div>
+              )}
+
+              {/* Direct Actions: Copy Link or Open Checkout */}
+              <div className="bg-slate-50/70 border border-slate-200/80 rounded-2xl p-5 space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-600">Shareable Payment Link</span>
+                  <button 
+                    onClick={handleCopyLink} 
+                    className="flex items-center gap-1.5 px-3 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg text-xs font-bold text-slate-600 transition-all active:scale-95"
+                  >
+                    {copiedLink ? <><Check size={12} className="text-emerald-600" /> Copied!</> : <><Copy size={12} /> Copy Link</>}
+                  </button>
+                </div>
+                <div className="relative">
+                  <input 
+                    type="text" 
+                    readOnly 
+                    value={currentDetails.link} 
+                    className="w-full bg-white border border-slate-200 text-xs font-mono text-slate-500 px-3 py-3 rounded-xl outline-none" 
+                  />
+                </div>
+
+                <div className="flex items-center justify-between gap-4 pt-2">
+                  <a 
+                    href={currentDetails.link} 
+                    target="_blank" 
+                    rel="noreferrer" 
+                    className="flex-1 py-3 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md text-center flex items-center justify-center gap-2"
+                  >
+                    Open Link in New Tab <ExternalLink size={12} />
+                  </a>
+                  <button 
+                    onClick={handlePrepareManualLog}
+                    className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md text-center flex items-center justify-center gap-2"
+                  >
+                    Post to Ledger manually <DollarSign size={12} />
+                  </button>
+                </div>
+              </div>
             </div>
-          ) : (
+          )}
+
+          {/* ═══ MODE: MANUAL LEDGER LOGGING ═══ */}
+          {mode === 'manual' && (
             <div className="space-y-5">
-              <h3 className="text-lg font-black text-slate-800 flex items-center gap-2">
-                {mode === 'card' ? <><CreditCard size={18} className="text-indigo-600" /> Charge Card via Authorize.net</> : <><FileText size={18} className="text-emerald-600" /> Manual Payment Entry</>}
-              </h3>
+              {submitted ? (
+                <div className="flex flex-col items-center justify-center py-16 space-y-4 animate-in fade-in zoom-in duration-300">
+                  <div className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center"><CheckCircle size={40} className="text-emerald-600" /></div>
+                  <h3 className="text-xl font-black text-slate-800">Payment Posted!</h3>
+                  <p className="text-sm text-slate-500 font-medium">Entry added to Accounting Ledger and audit log.</p>
+                </div>
+              ) : (
+                <div className="space-y-5">
+                  <h3 className="text-lg font-black text-slate-800 flex items-center gap-2">
+                    <FileText size={18} className="text-emerald-600" /> Manual Payment Entry
+                  </h3>
 
-              {/* Transaction Result Banner */}
-              {txResult && !txResult.success && (
-                <div className="p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
-                  <AlertTriangle size={18} className="text-red-500 shrink-0 mt-0.5" />
-                  <div><p className="text-sm font-bold text-red-800">Transaction Declined</p><p className="text-xs text-red-600 mt-0.5">{txResult.message}</p></div>
-                </div>
-              )}
-
-              {/* Common: Client + Amount */}
-              <div><label className="block text-xs font-bold text-slate-600 mb-1.5">Client / Payer Name *</label>
-                <div className="relative"><User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                  <input type="text" value={form.clientName} onChange={(e) => setForm({ ...form, clientName: e.target.value })} placeholder="e.g. Jasmin Garrett" className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20 font-medium text-sm" />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div><label className="block text-xs font-bold text-slate-600 mb-1.5">Amount *</label>
-                  <div className="relative"><DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input type="text" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} placeholder="20.00" className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20 font-medium text-sm" />
-                  </div>
-                </div>
-                <div><label className="block text-xs font-bold text-slate-600 mb-1.5">Payment Type</label>
-                  <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} className="w-full px-3 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20 font-medium text-sm">
-                    {PAYMENT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-                  </select>
-                </div>
-              </div>
-
-              {/* Card Fields */}
-              {mode === 'card' && (
-                <div className="space-y-4 p-5 bg-indigo-50/50 border border-indigo-100 rounded-2xl">
-                  <div className="flex items-center gap-2 mb-1"><Shield size={14} className="text-indigo-600" /><span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest">Secure Card Entry (PCI via Accept.js)</span></div>
-                  <div><label className="block text-xs font-bold text-slate-600 mb-1.5">Card Number</label>
-                    <input type="text" value={cardForm.cardNumber} onChange={(e) => setCardForm({ ...cardForm, cardNumber: formatCardNumber(e.target.value) })} placeholder="4111 1111 1111 1111" maxLength={19} className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/20 font-mono text-sm tracking-wider" />
-                  </div>
-                  <div className="grid grid-cols-3 gap-3">
-                    <div><label className="block text-xs font-bold text-slate-600 mb-1.5">Month</label>
-                      <input type="text" value={cardForm.expMonth} onChange={(e) => setCardForm({ ...cardForm, expMonth: e.target.value.replace(/\D/g,'').substring(0,2) })} placeholder="MM" maxLength={2} className="w-full px-3 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/20 font-mono text-sm text-center" />
-                    </div>
-                    <div><label className="block text-xs font-bold text-slate-600 mb-1.5">Year</label>
-                      <input type="text" value={cardForm.expYear} onChange={(e) => setCardForm({ ...cardForm, expYear: e.target.value.replace(/\D/g,'').substring(0,4) })} placeholder="2028" maxLength={4} className="w-full px-3 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/20 font-mono text-sm text-center" />
-                    </div>
-                    <div><label className="block text-xs font-bold text-slate-600 mb-1.5">CVV</label>
-                      <input type="password" value={cardForm.cvv} onChange={(e) => setCardForm({ ...cardForm, cvv: e.target.value.replace(/\D/g,'').substring(0,4) })} placeholder="•••" maxLength={4} className="w-full px-3 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/20 font-mono text-sm text-center" />
+                  {/* Common: Client + Amount */}
+                  <div><label className="block text-xs font-bold text-slate-600 mb-1.5">Client / Payer Name *</label>
+                    <div className="relative"><User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                      <input type="text" value={form.clientName} onChange={(e) => setForm({ ...form, clientName: e.target.value })} placeholder="e.g. Jasmin Garrett" className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20 font-medium text-sm" />
                     </div>
                   </div>
-                  <div><label className="block text-xs font-bold text-slate-600 mb-1.5">Receipt Email (optional)</label>
-                    <input type="email" value={cardForm.email} onChange={(e) => setCardForm({ ...cardForm, email: e.target.value })} placeholder="client@example.com" className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/20 text-sm" />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div><label className="block text-xs font-bold text-slate-600 mb-1.5">Amount *</label>
+                      <div className="relative"><DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                        <input type="text" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} placeholder="20.00" className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20 font-medium text-sm" />
+                      </div>
+                    </div>
+                    <div><label className="block text-xs font-bold text-slate-600 mb-1.5">Payment Type</label>
+                      <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} className="w-full px-3 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20 font-medium text-sm">
+                        {PAYMENT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                      </select>
+                    </div>
                   </div>
-                </div>
-              )}
 
-              {/* Manual-only fields */}
-              {mode === 'manual' && (
-                <>
+                  {/* Manual-only fields */}
                   <div className="grid grid-cols-2 gap-4">
                     <div><label className="block text-xs font-bold text-slate-600 mb-1.5">Payment Method</label>
                       <select value={form.method} onChange={(e) => setForm({ ...form, method: e.target.value })} className="w-full px-3 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20 font-medium text-sm">
-                        {PAYMENT_METHODS.filter(m => m !== 'Authorize.net (Card)').map(m => <option key={m} value={m}>{m}</option>)}
+                        {PAYMENT_METHODS.map(m => <option key={m} value={m}>{m}</option>)}
                       </select>
                     </div>
                     <div><label className="block text-xs font-bold text-slate-600 mb-1.5">Date Received</label>
@@ -173,22 +405,22 @@ export const PostPaymentTab = () => {
                   <div><label className="block text-xs font-bold text-slate-600 mb-1.5">Notes (optional)</label>
                     <textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} placeholder="e.g. Patient application processing fee received via Chime" rows={2} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20 font-medium text-sm resize-none" />
                   </div>
-                </>
-              )}
 
-              {/* Submit */}
-              <button onClick={mode === 'card' ? handleCardSubmit : handleManualSubmit} disabled={processing}
-                className={cn("w-full py-3.5 text-white rounded-xl text-sm font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed", mode === 'card' ? "bg-indigo-600 hover:bg-indigo-700 shadow-indigo-600/20" : "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/20")}>
-                {processing ? <><Loader2 size={16} className="animate-spin" /> Processing...</> : mode === 'card' ? <><Zap size={16} /> Charge Card Now</> : <><DollarSign size={16} /> Post Payment to Ledger</>}
-              </button>
+                  {/* Submit */}
+                  <button onClick={handleManualSubmit}
+                    className="w-full py-3.5 text-white rounded-xl text-sm font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/20">
+                    <DollarSign size={16} /> Post Payment to Ledger
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
 
         {/* Recent Payments Sidebar */}
         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-          <h4 className="text-sm font-black text-slate-800 uppercase tracking-wide mb-4 flex items-center gap-2"><CreditCard size={14} className="text-emerald-600" /> Recent Ledger Entries</h4>
-          <div className="space-y-3 max-h-[500px] overflow-y-auto">
+          <h4 className="text-sm font-black text-slate-800 uppercase tracking-wide mb-4 flex items-center gap-2"><CheckCircle size={14} className="text-emerald-600" /> Recent Ledger Entries</h4>
+          <div className="space-y-3 max-h-[500px] overflow-y-auto font-sans">
             {recentPayments.length === 0 ? (
               <div className="p-6 text-center text-slate-400 text-sm font-bold">No entries yet</div>
             ) : recentPayments.map((p: any, i: number) => (

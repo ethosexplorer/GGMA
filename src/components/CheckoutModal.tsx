@@ -43,7 +43,6 @@ const getRoleFromCategory = (category?: string) => {
 const PAYMENT_OPTIONS = [
   { id: 'chime', label: 'Chime', sub: 'Cash App, Venmo & Zelle', icon: '🏦', color: 'emerald', disabled: false },
   { id: 'invoice', label: 'ACH Invoice', sub: 'Business Bank Invoices', icon: '📄', color: 'slate', disabled: false },
-  { id: 'authnet', label: 'Authorize.net', sub: 'Waiting for Approval', icon: '💳', color: 'orange', disabled: true },
 ] as const;
 
 type PayMethodId = typeof PAYMENT_OPTIONS[number]['id'];
@@ -81,7 +80,6 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
 
   const getMethodNotice = () => {
     switch (payMethod) {
-      case 'authnet': return 'PCI-compliant card tokenization via Accept.js. Card data is encrypted and never touches our servers. Visa, Mastercard, Amex, Discover accepted.';
       case 'chime': return 'Pay via Chime request-to-pay. Also accepts Cash App, Venmo, and Zelle transfers. Payment instructions will be sent to your email after submitting.';
       case 'invoice': return 'An ACH invoice with a secure payment link will be sent to your email. Click the link to pay via direct bank transfer. Net 30 terms available.';
       default: return '';
@@ -91,18 +89,17 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
   const getColorClasses = () => {
     const c = selectedPm.color;
     return {
-      bg: c === 'orange' ? 'bg-orange-50' : c === 'emerald' ? 'bg-emerald-50' : 'bg-slate-50',
-      border: c === 'orange' ? 'border-orange-200' : c === 'emerald' ? 'border-emerald-200' : 'border-slate-200',
-      icon: c === 'orange' ? 'text-orange-600' : c === 'emerald' ? 'text-emerald-600' : 'text-slate-600',
-      title: c === 'orange' ? 'text-orange-800' : c === 'emerald' ? 'text-emerald-800' : 'text-slate-800',
-      text: c === 'orange' ? 'text-orange-700' : c === 'emerald' ? 'text-emerald-700' : 'text-slate-700',
-      btn: c === 'orange' ? 'bg-orange-500 hover:bg-orange-600 shadow-orange-500/30' : c === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/30' : 'bg-slate-700 hover:bg-slate-800 shadow-slate-700/30',
+      bg: c === 'emerald' ? 'bg-emerald-50' : 'bg-slate-50',
+      border: c === 'emerald' ? 'border-emerald-200' : 'border-slate-200',
+      icon: c === 'emerald' ? 'text-emerald-600' : 'text-slate-600',
+      title: c === 'emerald' ? 'text-emerald-800' : 'text-slate-800',
+      text: c === 'emerald' ? 'text-emerald-700' : 'text-slate-700',
+      btn: c === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/30' : 'bg-slate-700 hover:bg-slate-800 shadow-slate-700/30',
     };
   };
 
   const getButtonLabel = () => {
     switch (payMethod) {
-      case 'authnet': return 'Pay with Authorize.net';
       case 'chime': return 'Submit — Pay via Chime';
       case 'invoice': return 'Request ACH Invoice';
       default: return 'Submit Order';
@@ -208,7 +205,7 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
 
   const handleClose = () => {
     setStep('info');
-    setPayMethod('authnet');
+    setPayMethod('chime');
     setForm({ fullName: '', email: '', phone: '', company: '', password: '', notes: '' });
     onClose();
   };
