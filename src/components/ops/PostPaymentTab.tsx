@@ -282,7 +282,17 @@ export const PostPaymentTab = () => {
               <div className="space-y-2">
                 <div className="flex items-center justify-between px-1">
                   <span className="text-xs font-bold text-slate-600">Secure Live Credit Card Terminal (via PayPal Checkout)</span>
-                  <span className="text-[10px] font-bold text-slate-400">Terminal ID: {currentDetails.paypalId}</span>
+                  <div className="flex items-center gap-3">
+                    <a 
+                      href="https://www.paypal.com/virtualterminal" 
+                      target="_blank" 
+                      rel="noreferrer" 
+                      className="text-[11px] font-black text-indigo-600 hover:text-indigo-500 hover:underline flex items-center gap-1"
+                    >
+                      Launch PayPal Virtual Terminal ↗
+                    </a>
+                    <span className="text-[10px] font-bold text-slate-400">| ID: {currentDetails.paypalId}</span>
+                  </div>
                 </div>
                 <PayPalButton 
                   key={currentDetails.paypalId}
