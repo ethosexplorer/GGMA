@@ -55,7 +55,7 @@ const PayPalButton = ({ hostedButtonId, containerId }: PayPalButtonProps) => {
     if (!script) {
       script = document.createElement('script');
       script.id = scriptId;
-      script.src = 'https://www.paypal.com/sdk/js?client-id=BAApZMT_akVrk09QmyOS0_2iMW0qbnqULY-vmI1tW59I2b0yM_v4wg6XrL2fN8Xvy0P4FwwsobAzoONHEI&components=hosted-buttons&enable-funding=venmo&currency=USD';
+      script.src = 'https://www.paypal.com/sdk/js?client-id=ASj0gWP419ODgJIKrIJ6N2rv77E1-k7lkw6PEahY5ENumILp23BQY1kx7QlPUpmCdggk-W0NW30KUK8j&components=hosted-buttons&enable-funding=venmo&currency=USD';
       script.async = true;
       script.onload = initializeButton;
       script.onerror = () => {
