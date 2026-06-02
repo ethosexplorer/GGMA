@@ -98,21 +98,24 @@ const PayPalButton = ({ hostedButtonId, containerId }: PayPalButtonProps) => {
 
   return (
     <div className="flex flex-col items-center justify-center p-4 bg-slate-50 border border-slate-200/80 rounded-2xl w-full">
-      {/* Container where the iframe will mount */}
-      <div id={containerId} className="w-full min-h-[140px] flex items-center justify-center">
-        {!isRendered && !loadError && (
-          <div className="flex flex-col items-center gap-2.5 py-6">
-            <Loader2 className="animate-spin text-[#1a4731]" size={28} />
-            <span className="text-xs text-slate-500 font-semibold tracking-wide">Loading Secure PayPal Checkout...</span>
-          </div>
-        )}
-        {loadError && (
-          <div className="text-center py-4 text-slate-500">
-            <p className="text-xs text-red-600 font-bold mb-1">Interactive widget loading failed.</p>
-            <p className="text-[11px] text-slate-400">Please use the direct link button below to complete your payment.</p>
-          </div>
-        )}
-      </div>
+      {!isRendered && !loadError && (
+        <div className="flex flex-col items-center gap-2.5 py-6">
+          <Loader2 className="animate-spin text-[#1a4731]" size={28} />
+          <span className="text-xs text-slate-500 font-semibold tracking-wide">Loading Secure PayPal Checkout...</span>
+        </div>
+      )}
+      {loadError && (
+        <div className="text-center py-4 text-slate-500">
+          <p className="text-xs text-red-600 font-bold mb-1">Interactive widget loading failed.</p>
+          <p className="text-[11px] text-slate-400">Please use the direct link button below to complete your payment.</p>
+        </div>
+      )}
+
+      {/* Container where the iframe will mount - must be separate from React-rendered children */}
+      <div 
+        id={containerId} 
+        className={cn("w-full flex items-center justify-center", (isRendered && !loadError) ? "min-h-[140px] block" : "hidden")} 
+      />
 
       {/* Fallback Checkout Link (renders if SDK fails or while loading as backup) */}
       {(loadError || !isRendered) && (
