@@ -29,6 +29,7 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 const CALENDLY_CAT_MAP = {
+  'medical card': { category: 'ops', color: 'bg-indigo-500', label: '🏥 Medical Card' },
   'medical-card': { category: 'ops', color: 'bg-indigo-500', label: '🏥 Medical Card' },
   'patient-support': { category: 'ops', color: 'bg-indigo-500', label: '🩺 Patient Support' },
   'health-wellness': { category: 'ops', color: 'bg-indigo-500', label: '💚 Health & Wellness' },

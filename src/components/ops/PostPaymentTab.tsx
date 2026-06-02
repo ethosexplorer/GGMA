@@ -130,8 +130,9 @@ const PayPalButton = ({ hostedButtonId, containerId }: PayPalButtonProps) => {
 
 export const PostPaymentTab = () => {
   const [mode, setMode] = useState<'payment' | 'manual'>('payment');
-  const [product, setProduct] = useState<'standard' | 'discount' | 'calendly'>('standard');
-  const [copiedLink, setCopiedLink] = useState(false);
+  const [product, setProduct] = useState<'standard' | 'discount'>('standard');
+  const [copiedPaypal, setCopiedPaypal] = useState(false);
+  const [copiedCalendly, setCopiedCalendly] = useState(false);
   const [form, setForm] = useState({ clientName: '', amount: '194.30', type: 'Processing Fee', method: 'PayPal', notes: '', date: new Date().toISOString().split('T')[0] });
   const [submitted, setSubmitted] = useState(false);
   const [recentPayments, setRecentPayments] = useState<any[]>([]);
@@ -146,8 +147,6 @@ export const PostPaymentTab = () => {
       setForm(f => ({ ...f, amount: '194.30', method: 'PayPal' }));
     } else if (product === 'discount') {
       setForm(f => ({ ...f, amount: '112.50', method: 'PayPal' }));
-    } else if (product === 'calendly') {
-      setForm(f => ({ ...f, amount: '194.30', method: 'Calendly' })); // Calendly pays via PayPal
     }
   }, [product]);
 
@@ -168,47 +167,46 @@ export const PostPaymentTab = () => {
   };
 
   const getProductDetails = () => {
-    switch (product) {
-      case 'standard':
-        return {
-          title: 'Standard Patient Application',
-          price: '$194.30',
-          breakdown: 'Doctor recommendation ($40.00) + GGP Processing ($50.00) + OMMA State Fee ($104.30)',
-          paypalId: 'Q4H5AW7NUB73Y',
-          link: 'https://www.paypal.com/ncp/payment/Q4H5AW7NUB73Y'
-        };
-      case 'discount':
-        return {
-          title: 'Discounted Patient Application',
-          price: '$112.50',
-          breakdown: 'Doctor recommendation ($40.00) + GGP Processing ($50.00) + OMMA Reduced State Fee ($22.50)',
-          paypalId: 'EZSS8BUT44LBY',
-          link: 'https://www.paypal.com/ncp/payment/EZSS8BUT44LBY'
-        };
-      case 'calendly':
-        return {
-          title: 'Calendly Appointment + Booking Fee',
-          price: 'Varies',
-          breakdown: 'Physician intake schedule with integrated PayPal checkout processing.',
-          paypalId: '',
-          link: 'https://calendly.com/globalgreenhpmeet/medical-card-recommendation-clone'
-        };
+    if (product === 'standard') {
+      return {
+        title: 'Standard Patient Application (No State Discount)',
+        price: '$194.30',
+        breakdown: 'Doctor recommendation ($40.00) + GGP Processing ($50.00) + OMMA State Fee ($104.30)',
+        paypalId: 'Q4H5AW7NUB73Y',
+        paypalLink: 'https://www.paypal.com/ncp/payment/Q4H5AW7NUB73Y',
+        calendlyLink: 'https://calendly.com/globalgreenhpmeet/medical-card-recommendation'
+      };
+    } else {
+      return {
+        title: 'Discounted Patient Application (With State Discount)',
+        price: '$112.50',
+        breakdown: 'Doctor recommendation ($40.00) + GGP Processing ($50.00) + OMMA Reduced State Fee ($22.50)',
+        paypalId: 'EZSS8BUT44LBY',
+        paypalLink: 'https://www.paypal.com/ncp/payment/EZSS8BUT44LBY',
+        calendlyLink: 'https://calendly.com/globalgreenhpmeet/medical-card-recommendation-clone'
+      };
     }
   };
 
   const currentDetails = getProductDetails();
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(currentDetails.link);
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2000);
+  const handleCopyPaypal = () => {
+    navigator.clipboard.writeText(currentDetails.paypalLink);
+    setCopiedPaypal(true);
+    setTimeout(() => setCopiedPaypal(false), 2000);
   };
 
-  const handlePrepareManualLog = () => {
+  const handleCopyCalendly = () => {
+    navigator.clipboard.writeText(currentDetails.calendlyLink);
+    setCopiedCalendly(true);
+    setTimeout(() => setCopiedCalendly(false), 2000);
+  };
+
+  const handlePrepareManualLog = (paymentMethod: 'PayPal' | 'Calendly') => {
     setForm(f => ({
       ...f,
-      method: product === 'calendly' ? 'Calendly' : 'PayPal',
-      notes: `Payment collected via ${product === 'calendly' ? 'Calendly booking' : 'PayPal Hosted Button'} link.`
+      method: paymentMethod,
+      notes: `Payment collected via ${paymentMethod === 'Calendly' ? 'Calendly booking' : 'PayPal Hosted Button'} link.`
     }));
     setMode('manual');
   };
@@ -247,32 +245,23 @@ export const PostPaymentTab = () => {
               </div>
 
               {/* Product Selection Toggles */}
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <button 
                   onClick={() => setProduct('standard')} 
-                  className={cn("p-4 rounded-2xl border-2 text-left transition-all", product === 'standard' ? 'border-indigo-500 bg-indigo-50/40 shadow-sm' : 'border-slate-100 bg-slate-50 hover:bg-slate-100/70')}
+                  className={cn("p-5 rounded-2xl border-2 text-left transition-all", product === 'standard' ? 'border-indigo-500 bg-indigo-50/40 shadow-sm' : 'border-slate-100 bg-slate-50 hover:bg-slate-100/70')}
                 >
-                  <span className="text-xs font-black text-slate-800 block mb-1">Standard Card Fee</span>
-                  <span className="text-lg font-black text-indigo-700 block">$194.30</span>
-                  <span className="text-[10px] text-slate-400 block mt-1 font-bold">Standard OMMA</span>
+                  <span className="text-xs font-black text-slate-800 block mb-1">Standard Patient Application</span>
+                  <span className="text-2xl font-black text-indigo-700 block">$194.30</span>
+                  <span className="text-[10px] text-slate-400 block mt-1 font-bold">No State Discount • Standard OMMA</span>
                 </button>
 
                 <button 
                   onClick={() => setProduct('discount')} 
-                  className={cn("p-4 rounded-2xl border-2 text-left transition-all", product === 'discount' ? 'border-indigo-500 bg-indigo-50/40 shadow-sm' : 'border-slate-100 bg-slate-50 hover:bg-slate-100/70')}
+                  className={cn("p-5 rounded-2xl border-2 text-left transition-all", product === 'discount' ? 'border-indigo-500 bg-indigo-50/40 shadow-sm' : 'border-slate-100 bg-slate-50 hover:bg-slate-100/70')}
                 >
-                  <span className="text-xs font-black text-slate-800 block mb-1">Discount Card Fee</span>
-                  <span className="text-lg font-black text-emerald-700 block">$112.50</span>
-                  <span className="text-[10px] text-slate-400 block mt-1 font-bold">SoonerCare / Vet</span>
-                </button>
-
-                <button 
-                  onClick={() => setProduct('calendly')} 
-                  className={cn("p-4 rounded-2xl border-2 text-left transition-all", product === 'calendly' ? 'border-indigo-500 bg-indigo-50/40 shadow-sm' : 'border-slate-100 bg-slate-50 hover:bg-slate-100/70')}
-                >
-                  <span className="text-xs font-black text-slate-800 block mb-1">Calendly Booking</span>
-                  <span className="text-lg font-black text-amber-700 block flex items-center gap-1"><CalendarDays size={16} /> Appointments</span>
-                  <span className="text-[10px] text-slate-400 block mt-1 font-bold">Integrated PayPal</span>
+                  <span className="text-xs font-black text-slate-800 block mb-1">Discounted Patient Application</span>
+                  <span className="text-2xl font-black text-emerald-700 block">$112.50</span>
+                  <span className="text-[10px] text-slate-400 block mt-1 font-bold">State Discount • SoonerCare/Medicare/Vet</span>
                 </button>
               </div>
 
@@ -285,73 +274,93 @@ export const PostPaymentTab = () => {
                 <p className="text-xs text-slate-500 leading-relaxed font-medium">{currentDetails.breakdown}</p>
               </div>
 
-              {/* Live Render or Calendly Info Card */}
-              {product === 'calendly' ? (
-                <div className="border border-slate-200 rounded-2xl p-6 bg-amber-50/20 border-amber-100 text-center space-y-4">
-                  <CalendarDays size={36} className="mx-auto text-amber-600" />
-                  <div>
-                    <h4 className="text-sm font-bold text-slate-800">Calendly Appointment Scheduling</h4>
-                    <p className="text-xs text-slate-500 mt-1 leading-relaxed max-w-md mx-auto font-medium">
-                      Booking collects the application intake payment automatically via PayPal. Direct the patient to schedule and pay using the booking link below.
-                    </p>
-                  </div>
-                  <a href={currentDetails.link} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-6 py-2.5 bg-amber-500 text-black font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-amber-600 transition-colors shadow-sm">
-                    Open Booking Page <ExternalLink size={12} />
-                  </a>
+              {/* Secure Payment Widget Section */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between px-1">
+                  <span className="text-xs font-bold text-slate-600">Secure Live Credit Card Terminal (via PayPal Checkout)</span>
+                  <span className="text-[10px] font-bold text-slate-400">Terminal ID: {currentDetails.paypalId}</span>
                 </div>
-              ) : (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between px-1">
-                    <span className="text-xs font-bold text-slate-600">Secure Live Checkout Widget</span>
-                    <span className="text-[10px] font-bold text-slate-400">Merchant Client ID: BAApZMT...</span>
-                  </div>
-                  {currentDetails.paypalId && (
-                    <PayPalButton 
-                      key={currentDetails.paypalId}
-                      hostedButtonId={currentDetails.paypalId}
-                      containerId={`ops-paypal-container-${currentDetails.paypalId}`}
-                    />
-                  )}
-                </div>
-              )}
+                <PayPalButton 
+                  key={currentDetails.paypalId}
+                  hostedButtonId={currentDetails.paypalId}
+                  containerId={`ops-paypal-container-${currentDetails.paypalId}`}
+                />
+              </div>
 
-              {/* Direct Actions: Copy Link or Open Checkout */}
-              <div className="bg-slate-50/70 border border-slate-200/80 rounded-2xl p-5 space-y-4">
+              {/* Sharing Panel: Calendly Link */}
+              <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-600">Shareable Payment Link</span>
+                  <span className="text-xs font-black text-slate-600 flex items-center gap-1.5"><CalendarDays size={14} className="text-amber-600" /> Shareable Calendly Scheduling &amp; Payment Link</span>
                   <button 
-                    onClick={handleCopyLink} 
-                    className="flex items-center gap-1.5 px-3 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg text-xs font-bold text-slate-600 transition-all active:scale-95"
+                    onClick={handleCopyCalendly} 
+                    className="flex items-center gap-1.5 px-3 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg text-xs font-bold text-slate-600 transition-all active:scale-95 animate-in fade-in duration-200"
                   >
-                    {copiedLink ? <><Check size={12} className="text-emerald-600" /> Copied!</> : <><Copy size={12} /> Copy Link</>}
+                    {copiedCalendly ? <><Check size={12} className="text-emerald-600" /> Copied!</> : <><Copy size={12} /> Copy Link</>}
                   </button>
                 </div>
                 <div className="relative">
                   <input 
                     type="text" 
                     readOnly 
-                    value={currentDetails.link} 
+                    value={currentDetails.calendlyLink} 
                     className="w-full bg-white border border-slate-200 text-xs font-mono text-slate-500 px-3 py-3 rounded-xl outline-none" 
                   />
                 </div>
-
-                <div className="flex items-center justify-between gap-4 pt-2">
+                <div className="flex justify-between gap-4 pt-1">
                   <a 
-                    href={currentDetails.link} 
+                    href={currentDetails.calendlyLink} 
                     target="_blank" 
                     rel="noreferrer" 
-                    className="flex-1 py-3 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md text-center flex items-center justify-center gap-2"
+                    className="flex-1 py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md text-center flex items-center justify-center gap-1.5"
                   >
-                    Open Link in New Tab <ExternalLink size={12} />
+                    Open Booking <ExternalLink size={12} />
                   </a>
                   <button 
-                    onClick={handlePrepareManualLog}
-                    className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md text-center flex items-center justify-center gap-2"
+                    onClick={() => handlePrepareManualLog('Calendly')}
+                    className="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md text-center flex items-center justify-center gap-1.5"
                   >
-                    Post to Ledger manually <DollarSign size={12} />
+                    Log to Ledger <DollarSign size={12} />
                   </button>
                 </div>
               </div>
+
+              {/* Sharing Panel: Direct PayPal Link */}
+              <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-black text-slate-600 flex items-center gap-1.5"><Link size={14} className="text-indigo-600" /> Shareable Direct PayPal Checkout Link</span>
+                  <button 
+                    onClick={handleCopyPaypal} 
+                    className="flex items-center gap-1.5 px-3 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg text-xs font-bold text-slate-600 transition-all active:scale-95 animate-in fade-in duration-200"
+                  >
+                    {copiedPaypal ? <><Check size={12} className="text-emerald-600" /> Copied!</> : <><Copy size={12} /> Copy Link</>}
+                  </button>
+                </div>
+                <div className="relative">
+                  <input 
+                    type="text" 
+                    readOnly 
+                    value={currentDetails.paypalLink} 
+                    className="w-full bg-white border border-slate-200 text-xs font-mono text-slate-500 px-3 py-3 rounded-xl outline-none" 
+                  />
+                </div>
+                <div className="flex justify-between gap-4 pt-1">
+                  <a 
+                    href={currentDetails.paypalLink} 
+                    target="_blank" 
+                    rel="noreferrer" 
+                    className="flex-1 py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md text-center flex items-center justify-center gap-1.5"
+                  >
+                    Open Checkout <ExternalLink size={12} />
+                  </a>
+                  <button 
+                    onClick={() => handlePrepareManualLog('PayPal')}
+                    className="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md text-center flex items-center justify-center gap-1.5"
+                  >
+                    Log to Ledger <DollarSign size={12} />
+                  </button>
+                </div>
+              </div>
+
             </div>
           )}
 

@@ -888,7 +888,8 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
             {[
-              { label: '🏥 Medical Card', url: 'https://calendly.com/globalgreenhpmeet/medical-card-recommendation-clone', src: 'Calendly' },
+              { label: '🏥 Medical Card (Std)', url: 'https://calendly.com/globalgreenhpmeet/medical-card-recommendation', src: 'Calendly' },
+              { label: '🏥 Medical Card (Disc)', url: 'https://calendly.com/globalgreenhpmeet/medical-card-recommendation-clone', src: 'Calendly' },
               { label: '🩺 Patient Support', url: 'https://calendly.com/globalgreenhpmeet/general-patient-support', src: 'Calendly' },
               { label: '💚 Health & Wellness', url: 'https://calendly.com/globalgreenhpmeet/health-wellness-consultation', src: 'Calendly' },
               { label: '🛠️ IT Support', url: 'https://calendly.com/globalgreenhpmeet/it-technical-support', src: 'Calendly' },

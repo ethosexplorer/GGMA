@@ -21,6 +21,7 @@ await signInWithEmailAndPassword(auth, 'globalgreenhp@gmail.com', 'Harlem2025!')
 console.log('✅ Firebase authenticated');
 
 const EVENT_MAP = {
+  'medical card': { category: 'ops', color: 'bg-indigo-500', label: '🏥 Medical Card' },
   'medical-card': { category: 'ops', color: 'bg-indigo-500', label: '🏥 Medical Card' },
   'patient-support': { category: 'ops', color: 'bg-indigo-500', label: '🩺 Patient Support' },
   'health-wellness': { category: 'ops', color: 'bg-indigo-500', label: '💚 Health & Wellness' },
