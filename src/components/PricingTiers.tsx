@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { CheckoutModal } from './CheckoutModal';
+import { openFreemiusCheckout } from '../lib/freemius';
+import { auth } from '../firebase';
 import { Check,
   Sparkles,
   Building2,
@@ -142,7 +144,7 @@ function formatPrice(plan: SubscriptionPlan, billing: 'monthly' | 'annual', addo
 }
 
 // ─── Plan Card ───
-const PlanCard = ({ plan, index, total, billing, selectedAddons, tabId, onCheckout }: { key?: string; plan: SubscriptionPlan; index: number; total: number; billing: 'monthly' | 'annual'; selectedAddons: AddOn[]; tabId: TabId; onCheckout: (items: any[], trialDays: number) => void }) => {
+const PlanCard = ({ plan, index, total, billing, selectedAddons, tabId, onCheckout, onNavigate }: { key?: string; plan: SubscriptionPlan; index: number; total: number; billing: 'monthly' | 'annual'; selectedAddons: AddOn[]; tabId: TabId; onCheckout: (items: any[], trialDays: number) => void; onNavigate?: (view: string) => void }) => {
   const isMid = total === 3 && index === 1;
   const isPopular = isMid || (total === 4 && index === 2);
   const addonTotal = selectedAddons.reduce((sum, addon) => sum + (typeof addon.price === 'number' ? addon.price : 0), 0);
@@ -191,7 +193,12 @@ const PlanCard = ({ plan, index, total, billing, selectedAddons, tabId, onChecko
             <span>{price}</span>
           </div>
           <button
-            onClick={() => onCheckout([{ name: plan.name, price: billing === 'monthly' ? plan.monthlyPrice : plan.annualPrice, type: 'plan', billing }, ...selectedAddons.map(a => ({ name: a.name, price: a.price, type: 'addon' as const, per: a.per }))], trialDays)}
+            onClick={() => openFreemiusCheckout({
+              planId: plan.id,
+              billing,
+              userEmail: auth.currentUser?.email || undefined,
+              userName: auth.currentUser?.displayName || undefined
+            })}
             className="w-full py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1 shadow-md"
           >
             Checkout <ArrowRight size={10} />
@@ -301,11 +308,15 @@ const PlanCard = ({ plan, index, total, billing, selectedAddons, tabId, onChecko
         onClick={() => {
           if (price === 'Custom') {
             window.open('https://calendly.com/globalgreenhpmeet/gghp-demo', '_blank');
+          } else if (price === 'Free') {
+            if (onNavigate) onNavigate('login');
           } else {
-            onCheckout(
-              [{ name: plan.name, price: billing === 'monthly' ? plan.monthlyPrice : plan.annualPrice, type: 'plan' as const, billing }, ...selectedAddons.map(a => ({ name: a.name, price: a.price, type: 'addon' as const, per: a.per }))],
-              trialDays
-            );
+            openFreemiusCheckout({
+              planId: plan.id,
+              billing,
+              userEmail: auth.currentUser?.email || undefined,
+              userName: auth.currentUser?.displayName || undefined
+            });
           }
         }}
         className={`w-full py-3.5 rounded-2xl font-black text-sm transition-all ${
@@ -553,7 +564,7 @@ export const PricingTiers = ({ onNavigate, defaultTab, onChatRole, allowedTabs }
               'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
             }`}>
               {plans.map((plan, i) => (
-                <PlanCard key={plan.id} plan={plan} index={i} total={plans.length} billing={billing} selectedAddons={selectedAddons} tabId={activeTab} onCheckout={openCheckout} />
+                <PlanCard key={plan.id} plan={plan} index={i} total={plans.length} billing={billing} selectedAddons={selectedAddons} tabId={activeTab} onCheckout={openCheckout} onNavigate={onNavigate} />
               ))}
             </div>
           </motion.div>
