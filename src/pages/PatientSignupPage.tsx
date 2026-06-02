@@ -80,7 +80,7 @@ const PayPalButton = ({ hostedButtonId, containerId }: PayPalButtonProps) => {
     if (!script) {
       script = document.createElement('script');
       script.id = scriptId;
-      script.src = 'https://www.paypal.com/sdk/js?client-id=ASj0gWP419ODgJIKrIJ6N2rv77E1-k7lkw6PEahY5ENumILp23BQY1kx7QlPUpmCdggk-W0NW30KUK8j&components=hosted-buttons&enable-funding=venmo&currency=USD';
+      script.src = 'https://www.paypal.com/sdk/js?client-id=BAAIDNhpETWl7JfygtjqBtoEXgmM2yhsn7sOmi2DG-vxS79t_27-enRKP-ohXHQ6nlBhaM-qRLswFj6z2U&components=hosted-buttons&enable-funding=venmo&currency=USD';
       script.async = true;
       script.onload = initializeButton;
       script.onerror = () => {
@@ -854,8 +854,8 @@ export const PatientSignupPage = ({ onNavigate }: any) => {
                 <div className="pt-2">
                   <PayPalButton 
                     key={qualifiesForDiscount ? 'discount' : 'standard'}
-                    hostedButtonId={qualifiesForDiscount ? 'EZSS8BUT44LBY' : 'Q4H5AW7NUB73Y'}
-                    containerId={qualifiesForDiscount ? 'paypal-container-EZSS8BUT44LBY' : 'paypal-container-Q4H5AW7NUB73Y'}
+                    hostedButtonId={qualifiesForDiscount ? 'M38VDT2RNX5VA' : 'Z7HAHYS45B3JN'}
+                    containerId={qualifiesForDiscount ? 'paypal-container-M38VDT2RNX5VA' : 'paypal-container-Z7HAHYS45B3JN'}
                   />
                 </div>
                 

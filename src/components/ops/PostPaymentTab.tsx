@@ -55,7 +55,7 @@ const PayPalButton = ({ hostedButtonId, containerId }: PayPalButtonProps) => {
     if (!script) {
       script = document.createElement('script');
       script.id = scriptId;
-      script.src = 'https://www.paypal.com/sdk/js?client-id=ASj0gWP419ODgJIKrIJ6N2rv77E1-k7lkw6PEahY5ENumILp23BQY1kx7QlPUpmCdggk-W0NW30KUK8j&components=hosted-buttons&enable-funding=venmo&currency=USD';
+      script.src = 'https://www.paypal.com/sdk/js?client-id=BAAIDNhpETWl7JfygtjqBtoEXgmM2yhsn7sOmi2DG-vxS79t_27-enRKP-ohXHQ6nlBhaM-qRLswFj6z2U&components=hosted-buttons&enable-funding=venmo&currency=USD';
       script.async = true;
       script.onload = initializeButton;
       script.onerror = () => {
@@ -176,8 +176,8 @@ export const PostPaymentTab = () => {
         title: 'Standard Patient Application (No State Discount)',
         price: '$194.30',
         breakdown: 'Doctor recommendation ($40.00) + GGP Processing ($50.00) + OMMA State Fee ($104.30)',
-        paypalId: 'Q4H5AW7NUB73Y',
-        paypalLink: 'https://www.paypal.com/ncp/payment/Q4H5AW7NUB73Y',
+        paypalId: 'Z7HAHYS45B3JN',
+        paypalLink: 'https://www.paypal.com/ncp/payment/Z7HAHYS45B3JN',
         calendlyLink: 'https://calendly.com/globalgreenhpmeet/medical-card-recommendation'
       };
     } else {
@@ -185,8 +185,8 @@ export const PostPaymentTab = () => {
         title: 'Discounted Patient Application (With State Discount)',
         price: '$112.50',
         breakdown: 'Doctor recommendation ($40.00) + GGP Processing ($50.00) + OMMA Reduced State Fee ($22.50)',
-        paypalId: 'EZSS8BUT44LBY',
-        paypalLink: 'https://www.paypal.com/ncp/payment/EZSS8BUT44LBY',
+        paypalId: 'M38VDT2RNX5VA',
+        paypalLink: 'https://www.paypal.com/ncp/payment/M38VDT2RNX5VA',
         calendlyLink: 'https://calendly.com/globalgreenhpmeet/medical-card-recommendation-clone'
       };
     }
