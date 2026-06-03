@@ -295,7 +295,10 @@ export const ExecutiveCRM = ({
     return STATE_NAME_TO_CODE[trimmed] || 'US';
   };
 
-  const uniqueJurisdictions = Array.from(new Set(deals.map(d => getJurisdictionCode(d.jurisdiction)).filter(Boolean))).sort();
+  const uniqueJurisdictions = Array.from(new Set([
+    ...Object.values(STATE_NAME_TO_CODE),
+    ...deals.map(d => getJurisdictionCode(d.jurisdiction)).filter(Boolean)
+  ])).sort();
 
   const emailLower = (currentUserEmail || auth.currentUser?.email || '').toLowerCase();
   
@@ -398,7 +401,7 @@ export const ExecutiveCRM = ({
             >
               <option value="All">All Types</option>
               {ENTITY_TYPES.map(t => (
-                <option key={t.id} value={t.id}>{t.label.split(' / ')[0]}</option>
+                <option key={t.id} value={t.id}>{t.id === 'agency' ? 'Agency' : t.label.split(' / ')[0]}</option>
               ))}
             </select>
             <div className="absolute right-3 pointer-events-none text-slate-400 font-black text-[10px]">▼</div>
