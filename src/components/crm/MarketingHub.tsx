@@ -751,6 +751,7 @@ export const MarketingHub = () => {
       for (let i = 0; i < batchAudience.length; i += BATCH_SIZE) batches.push(batchAudience.slice(i, i + BATCH_SIZE));
       
       const totalResults = { total: batchAudience.length, successful: 0, failed: 0 };
+      const successfulRecipients: string[] = [];
       
       for (let batchIdx = 0; batchIdx < batches.length; batchIdx++) {
         setSendProgress(`Sending batch ${batchIdx + 1}/${batches.length} (${totalResults.successful} delivered, ${totalResults.failed} failed) — throttled for reliability...`);
@@ -771,12 +772,22 @@ export const MarketingHub = () => {
           const data = await res.json();
           totalResults.successful += data.results?.successful || 0;
           totalResults.failed += data.results?.failed || 0;
+          
+          // Gather successful ones from this batch
+          const batchErrors = data.results?.errors || [];
+          const failedInBatch = new Set(batchErrors.map((e: any) => e.recipient?.email || e.recipient?.phone || ''));
+          for (const r of batches[batchIdx]) {
+            const key = r.email || r.phone || '';
+            if (key && !failedInBatch.has(key)) {
+              successfulRecipients.push(key);
+            }
+          }
         } catch { totalResults.failed += batches[batchIdx].length; }
       }
       
       // Track campaign in Firestore (broadcast only)
       if (sendMode === 'broadcast') {
-        const newSentEmails = [...Array.from(sentSet), ...batchAudience.map(r => r.email || r.phone || '')];
+        const newSentEmails = [...Array.from(sentSet), ...successfulRecipients];
         const firstChar = batchAudience[0]?.email?.charAt(0)?.toUpperCase() || '?';
         const lastChar = batchAudience[batchAudience.length - 1]?.email?.charAt(0)?.toUpperCase() || '?';
         const rangeLabel = `${firstChar}–${lastChar}`;
@@ -824,11 +835,11 @@ export const MarketingHub = () => {
       // Done
       setSendProgress('');
       setSendSuccess(true);
-      const remaining = sendMode === 'broadcast' ? finalAudience.length - (activeCampaign?.sentCount || 0) - batchAudience.length : 0;
+      const remaining = sendMode === 'broadcast' ? finalAudience.length - (activeCampaign?.sentCount || 0) - successfulRecipients.length : 0;
       alert(`✅ Batch Complete!\n\nSent: ${totalResults.successful.toLocaleString()}\nFailed: ${totalResults.failed.toLocaleString()}${sendMode === 'broadcast' ? `\nRemaining: ${remaining.toLocaleString()}` : ''}${remaining > 0 ? '\n\n📅 Next batch task added to calendar for tomorrow.' : sendMode === 'broadcast' ? '\n\n🎉 Campaign complete! All recipients reached.' : ''}`);
       
       import('../../lib/turso').then(({ turso }) => {
-        turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "Marketing_Campaign", "System", JSON.stringify({ type: campaignType, count: batchAudience.length, success: totalResults.successful, failed: totalResults.failed })] }).catch(console.error);
+        turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "Marketing_Campaign", "System", JSON.stringify({ type: campaignType, count: successfulRecipients.length, success: totalResults.successful, failed: totalResults.failed })] }).catch(console.error);
       });
       
       setTimeout(() => { setSendSuccess(false); }, 4000);
