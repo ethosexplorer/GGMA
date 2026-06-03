@@ -4,7 +4,7 @@ import {
   Send, Bot, User, Calendar, Clock, Phone, Mail, CheckCircle,
   Loader2, ChevronDown, Leaf, ArrowLeft, Sparkles, Mic, MicOff,
   Volume2, VolumeX, Zap, UserPlus, ClipboardList, DollarSign,
-  Shield, BarChart3, Activity, Paperclip, X, Image, FileText
+  Shield, BarChart3, Activity, Paperclip, X, Image, FileText, Sliders
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { addDoc, collection, serverTimestamp, onSnapshot, query, orderBy, limit, doc, setDoc, getDocs } from 'firebase/firestore';
@@ -136,6 +136,43 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
   const [isListening, setIsListening] = useState(false);
   const [autoSpeak, setAutoSpeak] = useState(false);
   const recognitionRef = useRef<any>(null);
+  const [voiceRate, setVoiceRate] = useState<number>(() => {
+    const saved = localStorage.getItem('sylara_voice_rate');
+    return saved ? parseFloat(saved) : 1.25;
+  });
+  const [voicePitch, setVoicePitch] = useState<number>(() => {
+    const saved = localStorage.getItem('sylara_voice_pitch');
+    return saved ? parseFloat(saved) : 1.05;
+  });
+  const [selectedVoiceName, setSelectedVoiceName] = useState<string>(() => {
+    return localStorage.getItem('sylara_voice_name') || '';
+  });
+  const [showVoiceSettings, setShowVoiceSettings] = useState<boolean>(false);
+  const speechStartRef = useRef('');
+  const voiceSettingsRef = useRef<HTMLDivElement>(null);
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+
+  useEffect(() => {
+    const updateVoices = () => {
+      setVoices(speechSynthesis.getVoices());
+    };
+    updateVoices();
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      window.speechSynthesis.onvoiceschanged = updateVoices;
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (voiceSettingsRef.current && !voiceSettingsRef.current.contains(e.target as Node)) {
+        setShowVoiceSettings(false);
+      }
+    };
+    if (showVoiceSettings) {
+      document.addEventListener('mousedown', handleOutsideClick);
+    }
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, [showVoiceSettings]);
 
   // ── Proactive Intelligence State ──
   const [lastSeenSignupCount, setLastSeenSignupCount] = useState<number | null>(null);
@@ -216,16 +253,30 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (SpeechRecognition) {
       const recognition = new SpeechRecognition();
-      recognition.continuous = false;
+      recognition.continuous = true;
       recognition.interimResults = false;
       recognition.lang = 'en-US';
+      
       recognition.onresult = (event: any) => {
-        const transcript = event.results[0][0].transcript;
-        setInputValue(transcript);
+        let fullTranscript = '';
+        for (let i = 0; i < event.results.length; i++) {
+          fullTranscript += event.results[i][0].transcript + ' ';
+        }
+        const base = speechStartRef.current;
+        setInputValue(base + (base ? ' ' : '') + fullTranscript.trim());
+      };
+      
+      recognition.onerror = (e: any) => {
+        console.error('Speech recognition error:', e);
+        if (e.error !== 'no-speech') {
+          setIsListening(false);
+        }
+      };
+      
+      recognition.onend = () => {
         setIsListening(false);
       };
-      recognition.onerror = () => setIsListening(false);
-      recognition.onend = () => setIsListening(false);
+      
       recognitionRef.current = recognition;
     }
   }, [isExecutive]);
@@ -236,25 +287,38 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       recognitionRef.current.stop();
       setIsListening(false);
     } else {
+      speechStartRef.current = inputValue;
       recognitionRef.current.start();
       setIsListening(true);
     }
   };
 
   const speakText = (text: string) => {
+    if (typeof window === 'undefined' || !window.speechSynthesis) return;
+    window.speechSynthesis.cancel(); // Cancel any ongoing speech first
+    
     const clean = text.replace(/\*\*/g, '').replace(/[#*_~`]/g, '');
     const utterance = new SpeechSynthesisUtterance(clean);
-    utterance.rate = 1.15;
-    utterance.pitch = 1.1;
-    utterance.volume = 0.85;
-    const voices = speechSynthesis.getVoices();
-    // Prioritize natural, professional female voices
-    const femaleVoice = voices.find(v => v.name.includes('Samantha')) 
-      || voices.find(v => v.name.includes('Google US English Female'))
-      || voices.find(v => v.name.includes('Zira'))
-      || voices.find(v => v.name.includes('Google US English'));
-    if (femaleVoice) utterance.voice = femaleVoice;
-    speechSynthesis.speak(utterance);
+    utterance.rate = voiceRate;
+    utterance.pitch = voicePitch;
+    utterance.volume = 0.9;
+    
+    const voicesList = window.speechSynthesis.getVoices();
+    let selectedVoice = voicesList.find(v => v.name === selectedVoiceName);
+    if (!selectedVoice) {
+      // Prioritize natural, professional female voices
+      selectedVoice = voicesList.find(v => v.name.includes('Natural') && v.lang.startsWith('en'))
+        || voicesList.find(v => v.name.includes('Google US English Female'))
+        || voicesList.find(v => v.name.includes('Google UK English Female'))
+        || voicesList.find(v => v.name.includes('Samantha'))
+        || voicesList.find(v => v.name.includes('Google US English'))
+        || voicesList.find(v => v.name.includes('Zira'))
+        || voicesList.find(v => v.lang.startsWith('en'));
+    }
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
+    }
+    window.speechSynthesis.speak(utterance);
   };
 
   // ═══ CHAT HISTORY PERSISTENCE (Firebase) ═══
@@ -685,13 +749,95 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         </div>
         <div className="ml-auto flex items-center gap-3">
           {isExecutive && (
-            <button
-              onClick={() => setAutoSpeak(!autoSpeak)}
-              className={cn("p-1.5 rounded-lg transition-all", autoSpeak ? "bg-white/20 text-white" : "text-white/40 hover:text-white/70")}
-              title={autoSpeak ? "Auto-speak ON" : "Auto-speak OFF"}
-            >
-              {autoSpeak ? <Volume2 size={16} /> : <VolumeX size={16} />}
-            </button>
+            <>
+              <button
+                onClick={() => setAutoSpeak(!autoSpeak)}
+                className={cn("p-1.5 rounded-lg transition-all", autoSpeak ? "bg-white/20 text-white" : "text-white/40 hover:text-white/70")}
+                title={autoSpeak ? "Auto-speak ON" : "Auto-speak OFF"}
+              >
+                {autoSpeak ? <Volume2 size={16} /> : <VolumeX size={16} />}
+              </button>
+              
+              <div className="relative" ref={voiceSettingsRef}>
+                <button
+                  onClick={() => setShowVoiceSettings(!showVoiceSettings)}
+                  className={cn("p-1.5 rounded-lg transition-all", showVoiceSettings ? "bg-white/20 text-white" : "text-white/40 hover:text-white/70")}
+                  title="Voice Settings"
+                >
+                  <Sliders size={16} />
+                </button>
+                
+                {showVoiceSettings && (
+                  <div className="absolute right-0 top-10 z-50 w-72 bg-[#1e293b] text-slate-100 border border-slate-700/80 rounded-xl p-4 shadow-2xl animate-in fade-in slide-in-from-top-2">
+                    <h4 className="text-xs font-black uppercase tracking-wider text-indigo-400 mb-3 flex items-center gap-1.5">
+                      <Volume2 size={14} /> Voice Settings (Sylara)
+                    </h4>
+                    
+                    {/* Voice Select */}
+                    <div className="mb-3">
+                      <label className="text-[10px] font-bold text-slate-400 block mb-1">Sylara's Voice</label>
+                      <select
+                        value={selectedVoiceName}
+                        onChange={(e) => {
+                          setSelectedVoiceName(e.target.value);
+                          localStorage.setItem('sylara_voice_name', e.target.value);
+                        }}
+                        className="w-full bg-slate-900 border border-slate-700 text-xs rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                      >
+                        <option value="">Default (Auto-select Natural)</option>
+                        {voices.map((v) => (
+                          <option key={v.name} value={v.name}>
+                            {v.name} ({v.lang})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    
+                    {/* Speed (Rate) */}
+                    <div className="mb-3">
+                      <div className="flex justify-between text-[10px] font-bold text-slate-400 mb-1">
+                        <span>Speaking Speed (Rate)</span>
+                        <span className="text-indigo-400 font-mono">{voiceRate.toFixed(2)}x</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0.8"
+                        max="2.0"
+                        step="0.05"
+                        value={voiceRate}
+                        onChange={(e) => {
+                          const val = parseFloat(e.target.value);
+                          setVoiceRate(val);
+                          localStorage.setItem('sylara_voice_rate', val.toString());
+                        }}
+                        className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                      />
+                    </div>
+                    
+                    {/* Pitch */}
+                    <div className="mb-1">
+                      <div className="flex justify-between text-[10px] font-bold text-slate-400 mb-1">
+                        <span>Voice Pitch</span>
+                        <span className="text-indigo-400 font-mono">{voicePitch.toFixed(2)}</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0.6"
+                        max="1.4"
+                        step="0.05"
+                        value={voicePitch}
+                        onChange={(e) => {
+                          const val = parseFloat(e.target.value);
+                          setVoicePitch(val);
+                          localStorage.setItem('sylara_voice_pitch', val.toString());
+                        }}
+                        className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </>
           )}
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
