@@ -4,17 +4,11 @@
 //  Run: node scripts/extract_valuation_audience.mjs
 // ═══════════════════════════════════════════════════════════════════════════════
 
+import fs from 'fs';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
 
-const firebaseConfig = {
-  apiKey: process.env.VITE_FIREBASE_API_KEY || "AIzaSyBJfRJnPLzDHXIwRSHE9jT2FA-2T07e05M",
-  authDomain: "global-green-platform.firebaseapp.com",
-  projectId: "global-green-platform",
-  storageBucket: "global-green-platform.firebasestorage.app",
-  messagingSenderId: "547279498476",
-  appId: "1:547279498476:web:3db6e94e02e8c3f2a4d48c"
-};
+const firebaseConfig = JSON.parse(fs.readFileSync('./firebase-applet-config.json', 'utf8'));
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);

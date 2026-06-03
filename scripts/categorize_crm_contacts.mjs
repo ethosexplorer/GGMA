@@ -21,6 +21,22 @@ const auth = getAuth(app);
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+async function runConcurrent(tasks, concurrency = 150) {
+  const executing = new Set();
+  const results = [];
+  for (const task of tasks) {
+    const p = Promise.resolve().then(() => task());
+    results.push(p);
+    executing.add(p);
+    const clean = () => executing.delete(p);
+    p.then(clean, clean);
+    if (executing.size >= concurrency) {
+      await Promise.race(executing);
+    }
+  }
+  return Promise.all(results);
+}
+
 // Slugify a business name the same way enrich_emails.mjs did
 function slugify(name) {
   return name
@@ -122,7 +138,7 @@ function isWholeContactFabricated(data) {
   if (email.includes('@example.com') || email.includes('@test.com') || email.includes('test@') || email.includes('example@')) return true;
   
   // Rule 5: Source indicates test or mock
-  if (source.includes('test') || source.includes('mock') || source.includes('seeder')) return true;
+  if (source.includes('test') || source.includes('mock')) return true;
 
   return false;
 }
@@ -216,7 +232,7 @@ async function categorize() {
     if (toSandbox.length > 0) {
       console.log(`⚡ Step 0: Migrating ${toSandbox.length} mock contacts to sandbox_${collectionName}...`);
       let sCount = 0;
-      for (const r of toSandbox) {
+      const tasks = toSandbox.map(r => async () => {
         try {
           await setDoc(doc(db, `sandbox_${collectionName}`, r.id), {
             ...r.data,
@@ -226,12 +242,11 @@ async function categorize() {
           await deleteDoc(doc(db, collectionName, r.id));
           sCount++;
           if (sCount % 100 === 0) console.log(`   ... ${sCount}/${toSandbox.length} migrated`);
-          await sleep(60);
         } catch (err) {
           console.error(`   ❌ migrate ${r.name}: ${err.message}`);
-          await sleep(1000);
         }
-      }
+      });
+      await runConcurrent(tasks, 150);
       console.log(`   ✅ ${sCount} mock contacts isolated to sandbox_${collectionName}\n`);
     }
 
@@ -239,20 +254,19 @@ async function categorize() {
     if (toVerify.length > 0) {
       console.log(`⚡ Step 1: Marking ${toVerify.length} real emails as verified...`);
       let v = 0;
-      for (const r of toVerify) {
+      const tasks = toVerify.map(r => async () => {
         try {
           await updateDoc(doc(db, collectionName, r.id), { 
             emailVerified: true,
             emailFabricated: false
           });
           v++;
-          if (v % 100 === 0) console.log(`   ... ${v}/${toVerify.length} verified`);
-          await sleep(60);
+          if (v % 500 === 0) console.log(`   ... ${v}/${toVerify.length} verified`);
         } catch (err) {
           console.error(`   ❌ verify ${r.name}: ${err.message}`);
-          await sleep(1000);
         }
-      }
+      });
+      await runConcurrent(tasks, 150);
       console.log(`   ✅ ${v} emails marked as verified\n`);
     }
 
@@ -260,7 +274,7 @@ async function categorize() {
     if (toKeep.length > 0) {
       console.log(`⚡ Step 2: Preserving ${toKeep.length} contacts with useful info (clearing email)...`);
       let k = 0;
-      for (const r of toKeep) {
+      const tasks = toKeep.map(r => async () => {
         try {
           await updateDoc(doc(db, collectionName, r.id), { 
             email: '',
@@ -271,13 +285,12 @@ async function categorize() {
             emailFlagReason: r.reason || ''
           });
           k++;
-          if (k % 100 === 0) console.log(`   ... ${k}/${toKeep.length} kept`);
-          await sleep(60);
+          if (k % 500 === 0) console.log(`   ... ${k}/${toKeep.length} kept`);
         } catch (err) {
           console.error(`   ❌ keep ${r.name}: ${err.message}`);
-          await sleep(1000);
         }
-      }
+      });
+      await runConcurrent(tasks, 150);
       console.log(`   ✅ ${k} contacts kept (phone/address/notes preserved, email cleared)\n`);
     }
 
@@ -285,19 +298,19 @@ async function categorize() {
     if (noEmailKeep.length > 0) {
       console.log(`⚡ Step 2b: Marking ${noEmailKeep.length} no-email contacts as unverified...`);
       let nk = 0;
-      for (const r of noEmailKeep) {
+      const tasks = noEmailKeep.map(r => async () => {
         try {
           await updateDoc(doc(db, collectionName, r.id), { 
             emailVerified: false,
             emailFabricated: false
           });
           nk++;
-          if (nk % 100 === 0) console.log(`   ... ${nk}/${noEmailKeep.length}`);
-          await sleep(60);
+          if (nk % 500 === 0) console.log(`   ... ${nk}/${noEmailKeep.length}`);
         } catch (err) {
-          await sleep(1000);
+          // ignore error
         }
-      }
+      });
+      await runConcurrent(tasks, 150);
       console.log(`   ✅ ${nk} no-email contacts marked\n`);
     }
 
@@ -305,17 +318,16 @@ async function categorize() {
     if (toDelete.length > 0) {
       console.log(`⚡ Step 3: Deleting ${toDelete.length} empty/useless records...`);
       let d2 = 0;
-      for (const r of toDelete) {
+      const tasks = toDelete.map(r => async () => {
         try {
           await deleteDoc(doc(db, collectionName, r.id));
           d2++;
-          if (d2 % 100 === 0) console.log(`   ... ${d2}/${toDelete.length} deleted`);
-          await sleep(60);
+          if (d2 % 500 === 0) console.log(`   ... ${d2}/${toDelete.length} deleted`);
         } catch (err) {
           console.error(`   ❌ delete ${r.name}: ${err.message}`);
-          await sleep(1000);
         }
-      }
+      });
+      await runConcurrent(tasks, 150);
       console.log(`   🗑️  ${d2} empty records deleted\n`);
     }
   }

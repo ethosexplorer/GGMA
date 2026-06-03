@@ -95,6 +95,16 @@ service cloud.firestore {
       allow read, write: if isAuthenticated();
     }
 
+    // Sandbox CRM Deals
+    match /sandbox_crm_deals/{dealId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // Sandbox CRM Contacts
+    match /sandbox_crm_contacts/{contactId} {
+      allow read, write: if isAuthenticated();
+    }
+
     // ===============================================================
     // Marketing Hub Collections
     // ===============================================================
