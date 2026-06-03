@@ -186,7 +186,7 @@ export const MarketingHub = () => {
   // Campaign Management State
   const [ccEmails, setCcEmails] = useState('');
   const [bccEmails, setBccEmails] = useState('');
-  const [dailyLimit, setDailyLimit] = useState(500);
+  const [dailyLimit, setDailyLimit] = useState(100);
   const [activeCampaign, setActiveCampaign] = useState<any>(null);
 
   // Template State
