@@ -31,23 +31,33 @@ function getAdminDb() {
 // ============================================================
 const TEXTBELT_API_KEY = process.env.TEXTBELT_API_KEY || '';
 
-const createTransporter = () => nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'smtp.gmail.com',
-  port: parseInt(process.env.SMTP_PORT || '587'),
-  secure: process.env.SMTP_SECURE === 'true',
-  auth: {
-    user: process.env.SMTP_USER || 'marketing@ggp-os.com',
-    pass: process.env.SMTP_PASS || process.env.GMAIL_MARKETING_APP_PASSWORD || '',
-  },
-  pool: true,
-  maxConnections: 3,
-  maxMessages: 100,
-  rateDelta: 1000,
-  rateLimit: 5,
-  connectionTimeout: 30000,
-  greetingTimeout: 15000,
-  socketTimeout: 60000,
-});
+const createTransporter = () => {
+  let user = process.env.SMTP_USER || 'marketing@ggp-os.com';
+  let pass = process.env.SMTP_PASS || process.env.GMAIL_MARKETING_APP_PASSWORD || '';
+
+  // Clean copy-paste artifacts (quotes and whitespace)
+  if (user.startsWith('"') && user.endsWith('"')) user = user.slice(1, -1);
+  if (user.startsWith("'") && user.endsWith("'")) user = user.slice(1, -1);
+  if (pass.startsWith('"') && pass.endsWith('"')) pass = pass.slice(1, -1);
+  if (pass.startsWith("'") && pass.endsWith("'")) pass = pass.slice(1, -1);
+  user = user.trim();
+  pass = pass.trim();
+
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port: parseInt(process.env.SMTP_PORT || '587'),
+    secure: process.env.SMTP_SECURE === 'true',
+    auth: { user, pass },
+    pool: true,
+    maxConnections: 3,
+    maxMessages: 100,
+    rateDelta: 1000,
+    rateLimit: 5,
+    connectionTimeout: 30000,
+    greetingTimeout: 15000,
+    socketTimeout: 60000,
+  });
+};
 
 // ============================================================
 // TRACKING PIXEL
