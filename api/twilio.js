@@ -107,6 +107,8 @@ export default async function handler(req, res) {
       return await handleSendSMS(req, res);
     } else if (endpoint === 'verify') {
       return handleVerify(req, res);
+    } else if (endpoint === 'recording') {
+      return await handleRecording(req, res);
     } else {
       return res.status(404).json({ error: 'Endpoint not found' });
     }
@@ -197,7 +199,7 @@ async function handleHistory(req, res) {
     sid: r.sid,
     callSid: r.callSid,
     duration: r.duration,
-    url: r.mediaUrl + '.mp3',
+    url: `/api/twilio/recording?sid=${r.sid}`,
     time: new Date(r.dateCreated).toLocaleString()
   }));
 
@@ -788,4 +790,45 @@ function handleVerify(req, res) {
     return res.status(200).json({ connected: false, error: 'Twilio account SID not configured on server.' });
   }
   return res.status(200).json({ connected: true, accountId: accountSid });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 7. RECORDING PROXY HANDLER — Streams Twilio recording files securely
+// ─────────────────────────────────────────────────────────────────────────────
+async function handleRecording(req, res) {
+  const accountSid = process.env.TWILIO_ACCOUNT_SID;
+  const authToken = process.env.TWILIO_AUTH_TOKEN;
+  const recordingSid = req.query.sid;
+
+  if (!accountSid || !authToken) {
+    return res.status(500).json({ error: 'Missing Twilio credentials' });
+  }
+  if (!recordingSid) {
+    return res.status(400).json({ error: 'Missing recording sid' });
+  }
+
+  const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Recordings/${recordingSid}.mp3`;
+  const authHeader = 'Basic ' + Buffer.from(`${accountSid}:${authToken}`).toString('base64');
+
+  try {
+    const response = await fetch(twilioUrl, {
+      headers: {
+        'Authorization': authHeader
+      }
+    });
+
+    if (!response.ok) {
+      return res.status(response.status).json({ error: 'Failed to fetch recording from Twilio' });
+    }
+
+    res.setHeader('Content-Type', 'audio/mpeg');
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+    
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    return res.send(buffer);
+  } catch (err) {
+    console.error('[Twilio Recording Proxy Error]:', err);
+    return res.status(500).json({ error: err.message });
+  }
 }

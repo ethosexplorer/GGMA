@@ -10,6 +10,7 @@ export const CallCenterCommandTab = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isOnHold, setIsOnHold] = useState(false);
+  const [activePlayingSid, setActivePlayingSid] = useState<string | null>(null);
   
   const [showForward, setShowForward] = useState(false);
   const [showTransfer, setShowTransfer] = useState(false);
@@ -280,9 +281,9 @@ export const CallCenterCommandTab = () => {
                 {voicemails.length === 0 ? (
                   <div className="text-center p-8 text-slate-400 font-bold text-sm">No new voicemails.</div>
                 ) : voicemails.map((vm, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+                  <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100 gap-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center shrink-0">
                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="5.5" cy="11.5" r="4.5"/><circle cx="18.5" cy="11.5" r="4.5"/><line x1="5.5" y1="16" x2="18.5" y2="16"/></svg>
                       </div>
                       <div>
@@ -290,9 +291,41 @@ export const CallCenterCommandTab = () => {
                         <p className="text-[10px] text-slate-500">{new Date(vm.time).toLocaleString()}</p>
                       </div>
                     </div>
-                    <a href={vm.url} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold transition-colors">
-                      Play
-                    </a>
+                    <div>
+                      {activePlayingSid === vm.sid ? (
+                        <div className="flex items-center gap-2 bg-purple-50 border border-purple-100 rounded-xl px-2 py-1">
+                          <audio 
+                            src={vm.url} 
+                            controls 
+                            autoPlay 
+                            className="h-8 max-w-[200px]" 
+                            onEnded={() => setActivePlayingSid(null)}
+                          />
+                          <button
+                            onClick={() => setActivePlayingSid(null)}
+                            className="text-purple-600 hover:text-purple-800 text-xs font-black uppercase"
+                          >
+                            Stop
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setActivePlayingSid(vm.sid);
+                            // Mark as read in local storage
+                            const readSids = JSON.parse(localStorage.getItem('read_voicemail_sids') || '[]');
+                            if (!readSids.includes(vm.sid)) {
+                              const newRead = [...readSids, vm.sid];
+                              localStorage.setItem('read_voicemail_sids', JSON.stringify(newRead));
+                              window.dispatchEvent(new Event('voicemails-updated'));
+                            }
+                          }}
+                          className="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold transition-colors"
+                        >
+                          Play Inline
+                        </button>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>

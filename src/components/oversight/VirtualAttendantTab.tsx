@@ -51,6 +51,8 @@ export const VirtualAttendantTab = () => {
   const [unreadVoicemails, setUnreadVoicemails] = useState(0);
   const [voicemailList, setVoicemailList] = useState<any[]>([]);
   const [showVoicemails, setShowVoicemails] = useState(false);
+  const [voicemailFilter, setVoicemailFilter] = useState<'unread' | 'all'>('unread');
+  const [activePlayingSid, setActivePlayingSid] = useState<string | null>(null);
   const [showStatsModal, setShowStatsModal] = useState(false);
   const [statsDept, setStatsDept] = useState<Department | null>(null);
   const [realTranscripts, setRealTranscripts] = useState<any[]>([]);
@@ -634,64 +636,141 @@ export const VirtualAttendantTab = () => {
             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
               <div>
                 <h3 className="text-lg font-black text-slate-800 tracking-tight">Voicemail Box</h3>
-                <p className="text-xs text-slate-500 font-medium">Unread recordings waiting for your review</p>
+                <p className="text-xs text-slate-500 font-medium">Listen and review incoming caller recordings</p>
               </div>
-              <button onClick={() => setShowVoicemails(false)} className="text-slate-400 hover:text-slate-600 text-sm font-bold uppercase py-1 px-3 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all">
+              <button onClick={() => { setShowVoicemails(false); setActivePlayingSid(null); }} className="text-slate-400 hover:text-slate-600 text-sm font-bold uppercase py-1 px-3 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all">
                 Close
               </button>
             </div>
             
+            <div className="px-6 py-2 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setVoicemailFilter('unread')}
+                  className={cn(
+                    "px-3 py-1.5 rounded-lg text-xs font-bold transition-all",
+                    voicemailFilter === 'unread' ? "bg-[#0A3D2A] text-white shadow-sm" : "text-slate-600 hover:bg-slate-100"
+                  )}
+                >
+                  Unread ({voicemailList.filter(v => !v.read).length})
+                </button>
+                <button
+                  onClick={() => setVoicemailFilter('all')}
+                  className={cn(
+                    "px-3 py-1.5 rounded-lg text-xs font-bold transition-all",
+                    voicemailFilter === 'all' ? "bg-[#0A3D2A] text-white shadow-sm" : "text-slate-600 hover:bg-slate-100"
+                  )}
+                >
+                  All Voicemails ({voicemailList.length})
+                </button>
+              </div>
+              {voicemailList.some(v => !v.read) && (
+                <button
+                  onClick={() => {
+                    const readSids = JSON.parse(localStorage.getItem('read_voicemail_sids') || '[]');
+                    const newRead = Array.from(new Set([...readSids, ...voicemailList.map(v => v.sid)]));
+                    localStorage.setItem('read_voicemail_sids', JSON.stringify(newRead));
+                    setVoicemailList(prev => prev.map(v => ({ ...v, read: true })));
+                    setUnreadVoicemails(0);
+                    window.dispatchEvent(new Event('voicemails-updated'));
+                  }}
+                  className="text-xs font-bold text-slate-500 hover:text-[#0A3D2A] transition-colors"
+                >
+                  Mark all as read
+                </button>
+              )}
+            </div>
+
             <div className="p-6 overflow-y-auto flex-1 space-y-4">
-              {voicemailList.filter(vm => !vm.read).length === 0 ? (
+              {((voicemailFilter === 'unread' ? voicemailList.filter(vm => !vm.read) : voicemailList)).length === 0 ? (
                 <div className="text-center py-12 text-slate-400 font-bold text-sm uppercase tracking-widest animate-pulse">
-                  No new voicemails.
+                  No voicemails found.
                 </div>
               ) : (
-                voicemailList.filter(vm => !vm.read).map((vm) => (
-                  <div key={vm.sid} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-[#D4AF77] hover:shadow-sm transition-all">
+                (voicemailFilter === 'unread' ? voicemailList.filter(vm => !vm.read) : voicemailList).map((vm) => (
+                  <div key={vm.sid} className={cn("flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl border transition-all gap-4", vm.read ? "bg-slate-50/50 border-slate-100 opacity-70" : "bg-slate-50 border-slate-100 hover:border-[#D4AF77] hover:shadow-sm")}>
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center">
+                      <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center shrink-0", vm.read ? "bg-slate-200 text-slate-500" : "bg-purple-100 text-purple-600")}>
                         <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="5.5" cy="11.5" r="4.5"/><circle cx="18.5" cy="11.5" r="4.5"/><line x1="5.5" y1="16" x2="18.5" y2="16"/></svg>
                       </div>
                       <div>
-                        <p className="text-sm font-black text-slate-800">Recording ({vm.duration}s)</p>
-                        <p className="text-[10px] text-slate-500 font-semibold">{new Date(vm.time).toLocaleString()}</p>
+                        <p className="text-sm font-black text-slate-800 flex items-center gap-2">
+                          Recording ({vm.duration}s)
+                          {!vm.read && <span className="w-2 h-2 rounded-full bg-purple-500" />}
+                        </p>
+                        <p className="text-[10px] text-slate-500 font-semibold">{vm.time}</p>
                       </div>
                     </div>
-                    <div className="flex gap-2">
-                      <a 
-                        href={vm.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
-                        onClick={() => {
-                          const readSids = JSON.parse(localStorage.getItem('read_voicemail_sids') || '[]');
-                          if (!readSids.includes(vm.sid)) {
-                            const newRead = [...readSids, vm.sid];
-                            localStorage.setItem('read_voicemail_sids', JSON.stringify(newRead));
-                            setVoicemailList(prev => prev.map(v => v.sid === vm.sid ? { ...v, read: true } : v));
-                            setUnreadVoicemails(prev => Math.max(0, prev - 1));
-                            window.dispatchEvent(new Event('voicemails-updated'));
-                          }
-                        }}
-                        className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-purple-900/20"
-                      >
-                        Play
-                      </a>
-                      <button 
-                        onClick={() => {
-                          const readSids = JSON.parse(localStorage.getItem('read_voicemail_sids') || '[]');
-                          if (!readSids.includes(vm.sid)) {
-                            const newRead = [...readSids, vm.sid];
-                            localStorage.setItem('read_voicemail_sids', JSON.stringify(newRead));
-                            setVoicemailList(prev => prev.map(v => v.sid === vm.sid ? { ...v, read: true } : v));
-                            setUnreadVoicemails(prev => Math.max(0, prev - 1));
-                            window.dispatchEvent(new Event('voicemails-updated'));
-                          }
-                        }}
-                        className="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold transition-all"
-                      >
-                        Dismiss
-                      </button>
+                    
+                    <div className="flex items-center gap-2 self-end sm:self-auto">
+                      {activePlayingSid === vm.sid ? (
+                        <div className="flex items-center gap-2 bg-purple-50 border border-purple-100 rounded-xl px-3 py-1.5">
+                          <audio 
+                            src={vm.url} 
+                            controls 
+                            autoPlay 
+                            className="h-8 max-w-[220px]" 
+                            onEnded={() => setActivePlayingSid(null)}
+                          />
+                          <button
+                            onClick={() => setActivePlayingSid(null)}
+                            className="text-purple-600 hover:text-purple-800 text-xs font-black uppercase"
+                          >
+                            Stop
+                          </button>
+                        </div>
+                      ) : (
+                        <>
+                          <button 
+                            onClick={() => {
+                              setActivePlayingSid(vm.sid);
+                              const readSids = JSON.parse(localStorage.getItem('read_voicemail_sids') || '[]');
+                              if (!readSids.includes(vm.sid)) {
+                                const newRead = [...readSids, vm.sid];
+                                localStorage.setItem('read_voicemail_sids', JSON.stringify(newRead));
+                                setVoicemailList(prev => prev.map(v => v.sid === vm.sid ? { ...v, read: true } : v));
+                                setUnreadVoicemails(prev => Math.max(0, prev - 1));
+                                window.dispatchEvent(new Event('voicemails-updated'));
+                              }
+                            }}
+                            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-purple-900/20"
+                          >
+                            Play Inline
+                          </button>
+                          
+                          {!vm.read ? (
+                            <button 
+                              onClick={() => {
+                                const readSids = JSON.parse(localStorage.getItem('read_voicemail_sids') || '[]');
+                                if (!readSids.includes(vm.sid)) {
+                                  const newRead = [...readSids, vm.sid];
+                                  localStorage.setItem('read_voicemail_sids', JSON.stringify(newRead));
+                                  setVoicemailList(prev => prev.map(v => v.sid === vm.sid ? { ...v, read: true } : v));
+                                  setUnreadVoicemails(prev => Math.max(0, prev - 1));
+                                  window.dispatchEvent(new Event('voicemails-updated'));
+                                }
+                              }}
+                              className="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold transition-all"
+                            >
+                              Dismiss
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => {
+                                const readSids = JSON.parse(localStorage.getItem('read_voicemail_sids') || '[]');
+                                const newRead = readSids.filter((id: string) => id !== vm.sid);
+                                localStorage.setItem('read_voicemail_sids', JSON.stringify(newRead));
+                                setVoicemailList(prev => prev.map(v => v.sid === vm.sid ? { ...v, read: false } : v));
+                                setUnreadVoicemails(prev => prev + 1);
+                                window.dispatchEvent(new Event('voicemails-updated'));
+                              }}
+                              className="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-500 rounded-xl text-xs font-bold transition-all"
+                            >
+                              Mark Unread
+                            </button>
+                          )}
+                        </>
+                      )}
                     </div>
                   </div>
                 ))
@@ -699,7 +778,7 @@ export const VirtualAttendantTab = () => {
             </div>
             
             <div className="p-6 border-t border-slate-100 bg-slate-50 flex justify-end">
-              <button onClick={() => setShowVoicemails(false)} className="px-5 py-2.5 bg-slate-800 text-white font-bold text-xs rounded-xl hover:bg-slate-700 transition-all uppercase">
+              <button onClick={() => { setShowVoicemails(false); setActivePlayingSid(null); }} className="px-5 py-2.5 bg-slate-800 text-white font-bold text-xs rounded-xl hover:bg-slate-700 transition-all uppercase">
                 Done
               </button>
             </div>
