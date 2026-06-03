@@ -442,7 +442,7 @@ export default async function handler(req, res) {
         const status = await client.status('INBOX', { messages: true, unseen: true });
         const total = status.messages || 0;
         const start = Math.max(1, total - limit + 1);
-        for await (const msg of client.fetch(`${start}:*`, { envelope: true, bodyStructure: true, flags: true, uid: true })) {
+        for await (const msg of client.fetch(`${start}:*`, { envelope: true, bodyStructure: true, flags: true })) {
           const attachments = extractAttachments(msg.bodyStructure);
           messages.push({
             id: msg.uid, seq: msg.seq, from: parseAddress(msg.envelope?.from),
@@ -467,7 +467,7 @@ export default async function handler(req, res) {
         }).catch(() => []);
         if (uids.length > 0) {
           const recentUids = uids.slice(-(parseInt(maxResults) || 20));
-          for await (const msg of client.fetch(recentUids, { envelope: true, source: { maxBytes: 5000 } }, { uid: true })) {
+          for await (const msg of client.fetch(recentUids, { envelope: true, source: { maxBytes: 5000 } })) {
             let bouncedEmail = '';
             if (msg.source) {
               const found = msg.source.toString().match(/[\w.+-]+@[\w-]+\.[\w.-]+/g) || [];
@@ -511,7 +511,7 @@ export default async function handler(req, res) {
         const allUids = [...new Set([...uids, ...recentUids])];
         const recentSlice = allUids.slice(-(parseInt(maxResults) || 20));
         if (recentSlice.length > 0) {
-          for await (const msg of client.fetch(recentSlice, { envelope: true, flags: true }, { uid: true })) {
+          for await (const msg of client.fetch(recentSlice, { envelope: true, flags: true })) {
             const fromAddr = parseAddress(msg.envelope?.from);
             if (fromAddr.includes('marketing.globalgreenhp')) continue;
             replies.push({ id: msg.uid, from: fromAddr, subject: msg.envelope?.subject || '', date: msg.envelope?.date?.toISOString() || '', isReply: !!msg.envelope?.inReplyTo, isRead: msg.flags?.has('\\Seen') || false });
@@ -528,7 +528,7 @@ export default async function handler(req, res) {
         const status = await client.status('[Gmail]/Sent Mail', { messages: true });
         const total = status.messages || 0;
         const start = Math.max(1, total - limit + 1);
-        for await (const msg of client.fetch(`${start}:*`, { envelope: true, bodyStructure: true, flags: true, uid: true })) {
+        for await (const msg of client.fetch(`${start}:*`, { envelope: true, bodyStructure: true, flags: true })) {
           sentList.push({
             id: msg.uid, seq: msg.seq, from: parseAddress(msg.envelope?.from),
             to: parseAddress(msg.envelope?.to), subject: msg.envelope?.subject || '(no subject)',
