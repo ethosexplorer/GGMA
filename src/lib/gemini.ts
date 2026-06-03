@@ -107,6 +107,37 @@ ${PERSONAL_JOURNEY}
 ================================================================================
 `;
 
+// Helper to clean up history and ensure first message is 'user' and roles alternate
+function cleanContentsForGemini(
+  contents: { role: string; parts: { text: string }[] }[]
+): { role: 'user' | 'model'; parts: { text: string }[] }[] {
+  const cleaned: { role: 'user' | 'model'; parts: { text: string }[] }[] = [];
+
+  for (const turn of contents) {
+    if (!turn || !turn.parts || turn.parts.length === 0) continue;
+    const text = turn.parts.map(p => p.text || '').join('\n').trim();
+    if (!text) continue;
+
+    const role = turn.role === 'model' || turn.role === 'bot' ? 'model' : 'user';
+    const last = cleaned[cleaned.length - 1];
+
+    if (last && last.role === role) {
+      last.parts[0].text = `${last.parts[0].text}\n\n${text}`;
+    } else {
+      cleaned.push({
+        role,
+        parts: [{ text }]
+      });
+    }
+  }
+
+  while (cleaned.length > 0 && cleaned[0].role === 'model') {
+    cleaned.shift();
+  }
+
+  return cleaned;
+}
+
 // ─── Internal fetch wrapper ─────────────────────────────────────────────────
 async function callGemini(
   systemInstruction: string,
@@ -145,15 +176,18 @@ async function callGemini(
     const key = API_KEY();
     if (key) {
       try {
+        const rawContents = [
+          ...(opts?.history ?? []),
+          { role: 'user', parts: [{ text: userPrompt }] },
+        ];
+        const cleanedContents = cleanContentsForGemini(rawContents);
+
         const res = await fetch(`${MODEL_ENDPOINT}?key=${key}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             systemInstruction: { parts: [{ text: systemInstruction }] },
-            contents: [
-              ...(opts?.history ?? []),
-              { role: 'user', parts: [{ text: userPrompt }] },
-            ],
+            contents: cleanedContents,
             generationConfig: {
               temperature: opts?.temperature ?? 0.7,
               maxOutputTokens: opts?.maxTokens ?? 500,
