@@ -722,6 +722,19 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     return () => clearInterval(iv);
   }, []);
 
+  useEffect(() => {
+    const handleNavigate = (e: any) => {
+      if (e.detail && e.detail.tab) {
+        const tabId = e.detail.tab;
+        const parent = findParentTab(tabId);
+        setSelectedParent(parent || tabId);
+        setActiveTab(tabId);
+      }
+    };
+    window.addEventListener('gghp-navigate', handleNavigate);
+    return () => window.removeEventListener('gghp-navigate', handleNavigate);
+  }, []);
+
   const [opsLiveTasks, setOpsLiveTasks] = useState<any[]>([]);
   const [opsTicketCount, setOpsTicketCount] = useState(0);
   const [opsCrmCount, setOpsCrmCount] = useState(0);

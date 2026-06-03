@@ -4,11 +4,12 @@ import {
   Send, Bot, User, Calendar, Clock, Phone, Mail, CheckCircle,
   Loader2, ChevronDown, Leaf, ArrowLeft, Sparkles, Mic, MicOff,
   Volume2, VolumeX, Zap, UserPlus, ClipboardList, DollarSign,
-  Shield, BarChart3, Activity
+  Shield, BarChart3, Activity, Paperclip, X, Image, FileText
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { addDoc, collection, serverTimestamp, onSnapshot, query, orderBy, limit, doc, setDoc, getDocs } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db, storage } from '../firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { streamGeminiResponse, EXECUTIVE_PROMPTS } from '../lib/gemini';
 
 // ── Notification chime (subtle, professional) ──
@@ -125,6 +126,11 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
   const [streamingText, setStreamingText] = useState('');
   const [contactData, setContactData] = useState({ name: '', phone: '', email: '', state: jurisdiction, reason: '', date: '', time: '' });
   const chatEndRef = useRef<HTMLDivElement>(null);
+  
+  // ── File Upload State & Refs ──
+  const [attachments, setAttachments] = useState<{ name: string; url: string; type: string }[]>([]);
+  const [isFileUploading, setIsFileUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // ── Voice I/O State ──
   const [isListening, setIsListening] = useState(false);
@@ -332,10 +338,52 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     ].join('\n');
   };
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !userProfile?.uid) return;
+
+    setIsFileUploading(true);
+    try {
+      const fileRef = ref(storage, `users/${userProfile.uid}/chat_uploads/${Date.now()}_${file.name}`);
+      await uploadBytes(fileRef, file);
+      const downloadUrl = await getDownloadURL(fileRef);
+      setAttachments(prev => [...prev, { name: file.name, url: downloadUrl, type: file.type }]);
+    } catch (err) {
+      console.error('File upload failed:', err);
+      alert('Failed to upload file. Please try again.');
+    } finally {
+      setIsFileUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
   // ═══ EXECUTIVE AI SEND (with streaming) ═══
-  const handleExecSend = async (text: string) => {
-    setMessages(prev => [...prev, { role: 'user', text, timestamp: Date.now() }]);
+  const handleExecSend = async (text: string, pendingFiles: typeof attachments = attachments) => {
+    let finalSendText = text;
+    let userMsgText = text;
+
+    if (pendingFiles.length > 0) {
+      const listStr = pendingFiles.map(a => `[Attachment: ${a.name}](${a.url})`).join('\n');
+      finalSendText = `${text}\n\n[Uploaded Files]:\n${pendingFiles.map(a => `• Name: ${a.name}, Type: ${a.type}, URL: ${a.url}`).join('\n')}`;
+      userMsgText = `${text}\n\n${listStr}`;
+      
+      // Auto-train directives permanently in Firestore so Sylara remembers the document history
+      for (const a of pendingFiles) {
+        try {
+          await addDoc(collection(db, 'users', userProfile.uid, 'ai_memory'), {
+            content: `Learn: User shared history document named "${a.name}" - View: ${a.url}`,
+            createdAt: serverTimestamp(),
+            createdBy: userProfile.displayName || userProfile.email || 'Executive',
+          });
+        } catch (err) {
+          console.error('Failed to save directive from attachment:', err);
+        }
+      }
+    }
+
+    setMessages(prev => [...prev, { role: 'user', text: userMsgText, timestamp: Date.now() }]);
     setInputValue('');
+    setAttachments([]);
     setIsStreaming(true);
     setStreamingText('');
 
@@ -372,7 +420,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     try {
       await streamGeminiResponse(
         fullPrompt,
-        text,
+        finalSendText,
         (chunk) => {
           accumulated += chunk;
           setStreamingText(accumulated);
@@ -423,7 +471,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
 
     // ── Executive AI chat ──
     if (isExecutive && step === 'greeting') {
-      handleExecSend(text);
+      handleExecSend(text, attachments);
       return;
     }
 
@@ -536,18 +584,78 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   };
 
-  // ── Render markdown-lite (bold) ──
+  // ── Render markdown-lite (bold, links, images) ──
   const renderText = (text: string) => {
-    return text.split('\n').map((line, i) => (
-      <span key={i}>
-        {line.split(/(\*\*.*?\*\*)/).map((part, j) =>
-          part.startsWith('**') && part.endsWith('**')
-            ? <strong key={j} className="font-bold">{part.slice(2, -2)}</strong>
-            : part
-        )}
-        {i < text.split('\n').length - 1 && <br />}
-      </span>
-    ));
+    return text.split('\n').map((line, i) => {
+      // Parse markdown links: [label](url)
+      const linkRegex = /\[(.*?)\]\((.*?)\)/g;
+      const parts = [];
+      let lastIndex = 0;
+      let match;
+      
+      while ((match = linkRegex.exec(line)) !== null) {
+        const textBefore = line.substring(lastIndex, match.index);
+        if (textBefore) parts.push(textBefore);
+        
+        const label = match[1];
+        const url = match[2];
+        parts.push({ type: 'link', label, url });
+        lastIndex = linkRegex.lastIndex;
+      }
+      
+      const textAfter = line.substring(lastIndex);
+      if (textAfter) parts.push(textAfter);
+
+      if (parts.length === 0) return <span key={i}><br /></span>;
+
+      return (
+        <span key={i} className="block min-w-0 break-words">
+          {parts.map((part, j) => {
+            if (typeof part === 'string') {
+              return part.split(/(\*\*.*?\*\*)/).map((subPart, k) =>
+                subPart.startsWith('**') && subPart.endsWith('**')
+                  ? <strong key={k} className="font-black text-slate-900">{subPart.slice(2, -2)}</strong>
+                  : subPart
+              );
+            } else if (part.type === 'link') {
+              const isImg = part.url.match(/\.(jpeg|jpg|gif|png|webp)/i) || part.label.match(/\.(jpeg|jpg|gif|png|webp)/i);
+              if (isImg) {
+                return (
+                  <span key={j} className="block my-2">
+                    <img 
+                      src={part.url} 
+                      alt={part.label} 
+                      className="max-w-xs max-h-48 rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:opacity-90 transition-opacity"
+                      onClick={() => window.open(part.url, '_blank')}
+                    />
+                    <a href={part.url} target="_blank" rel="noopener noreferrer" className="text-xs text-indigo-500 hover:underline block mt-1 font-bold">
+                      View Original
+                    </a>
+                  </span>
+                );
+              }
+              const isPdf = part.url.match(/\.pdf/i) || part.label.match(/\.pdf/i);
+              return (
+                <a 
+                  key={j} 
+                  href={part.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className={cn(
+                    "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold my-1 transition-all border",
+                    isPdf ? "bg-red-500/10 border-red-500/20 text-red-600 hover:bg-red-50" : "bg-indigo-500/10 border-indigo-500/20 text-indigo-600 hover:bg-indigo-50"
+                  )}
+                >
+                  <Paperclip size={12} />
+                  <span>{part.label}</span>
+                </a>
+              );
+            }
+            return null;
+          })}
+        </span>
+      );
+    });
   };
 
   const headerBg = isRyan
@@ -758,16 +866,53 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         <div ref={chatEndRef} />
       </div>
 
+      {/* Attachment Previews */}
+      {attachments.length > 0 && (
+        <div className="px-4 py-2 bg-slate-50 border-t border-slate-200 flex gap-2 flex-wrap shrink-0">
+          {attachments.map((file, idx) => (
+            <div key={idx} className="flex items-center gap-1.5 bg-white border border-slate-200 pl-3 pr-2 py-1 rounded-xl text-xs font-bold shadow-sm animate-in zoom-in-95">
+              {file.type.startsWith('image/') ? <Image size={14} className="text-emerald-500" /> : <FileText size={14} className="text-red-500" />}
+              <span className="max-w-[150px] truncate text-slate-700">{file.name}</span>
+              <button 
+                type="button" 
+                onClick={() => setAttachments(prev => prev.filter((_, i) => i !== idx))}
+                className="p-0.5 hover:bg-slate-100 text-slate-400 hover:text-slate-650 rounded-md bg-transparent border-none cursor-pointer"
+              >
+                <X size={12} />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Input Bar */}
       {step !== 'done' && step !== 'confirm' && step !== 'schedule_date' && step !== 'schedule_time' && (
-        <div className="border-t border-slate-200 bg-white px-4 py-3">
+        <div className="border-t border-slate-200 bg-white px-4 py-3 shrink-0">
           <form onSubmit={e => { e.preventDefault(); handleSend(); }} className="flex items-center gap-2">
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              onChange={handleFileChange} 
+              className="hidden" 
+              accept="image/*,application/pdf" 
+            />
+            {isExecutive && (
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isFileUploading}
+                className="w-10 h-10 rounded-full flex items-center justify-center transition-all bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-600 shrink-0 border-none cursor-pointer"
+                title="Attach image or PDF"
+              >
+                {isFileUploading ? <Loader2 size={18} className="animate-spin text-indigo-500" /> : <Paperclip size={18} />}
+              </button>
+            )}
             {isExecutive && (
               <button
                 type="button"
                 onClick={toggleListening}
                 className={cn(
-                  "w-10 h-10 rounded-full flex items-center justify-center transition-all shrink-0",
+                  "w-10 h-10 rounded-full flex items-center justify-center transition-all shrink-0 border-none cursor-pointer",
                   isListening
                     ? "bg-red-500 text-white animate-pulse shadow-lg shadow-red-500/30"
                     : "bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-600"
@@ -777,11 +922,17 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
                 {isListening ? <MicOff size={18} /> : <Mic size={18} />}
               </button>
             )}
-            <input
+            <textarea
               value={inputValue}
               onChange={e => setInputValue(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSend();
+                }
+              }}
               placeholder={
-                isExecutive ? `Talk to ${aiName}...` :
+                isExecutive ? `Talk to ${aiName}... (Shift+Enter for new line)` :
                 step === 'ask_name' ? 'Enter your full name...' :
                 step === 'ask_phone' ? 'Enter phone number...' :
                 step === 'ask_email' ? 'Enter email address...' :
@@ -789,16 +940,17 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
                 step === 'ask_reason' ? 'Describe what you need help with...' :
                 'Type a message...'
               }
-              className="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400"
+              rows={1}
+              className="flex-1 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-400 resize-none max-h-24 overflow-y-auto"
               disabled={isTyping || isStreaming}
               autoFocus
             />
             <button
               type="submit"
-              disabled={!inputValue.trim() || isTyping || isStreaming}
+              disabled={(!inputValue.trim() && attachments.length === 0) || isTyping || isStreaming}
               className={cn(
-                "w-10 h-10 rounded-full text-white flex items-center justify-center transition-all disabled:opacity-40 shadow-sm shrink-0",
-                isRyan ? "bg-indigo-900 hover:bg-indigo-800" : "bg-[#1a4731] hover:bg-[#153a28]"
+                "w-10 h-10 rounded-full text-white flex items-center justify-center transition-all disabled:opacity-40 shadow-sm shrink-0 border-none cursor-pointer",
+                isRyan ? "bg-indigo-900 hover:bg-indigo-850" : "bg-[#1a4731] hover:bg-[#153a28]"
               )}
             >
               <Send size={18} />

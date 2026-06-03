@@ -599,7 +599,27 @@ export const MarketingHub = () => {
     const u = onSnapshot(query(collection(db, 'marketing_campaigns')), snap => {
       const campaigns = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       setAllCampaigns(campaigns);
-      const active = campaigns.find((c: any) => c.status === 'active');
+      
+      const resumeId = sessionStorage.getItem('gghp_resume_campaign_id');
+      const resumeSubject = sessionStorage.getItem('gghp_resume_campaign_subject');
+      
+      let active = null;
+      if (resumeId) {
+        active = campaigns.find((c: any) => c.id === resumeId);
+      }
+      if (!active && resumeSubject) {
+        active = campaigns.find((c: any) => (c.subject || c.name || '').toLowerCase() === resumeSubject.toLowerCase());
+      }
+      if (!active) {
+        active = campaigns.find((c: any) => c.status === 'active');
+      }
+      
+      // Clear session values once loaded so it doesn't hijack future default selections
+      if (active && (active.id === resumeId || (active.subject || active.name || '').toLowerCase() === resumeSubject?.toLowerCase())) {
+        sessionStorage.removeItem('gghp_resume_campaign_id');
+        sessionStorage.removeItem('gghp_resume_campaign_subject');
+      }
+      
       setActiveCampaign(active || null);
     });
     return () => u();
@@ -939,6 +959,7 @@ export const MarketingHub = () => {
             status: 'pending',
             priority: 'high',
             category: 'marketing',
+            campaignId: campaignDoc?.id || null,
             createdAt: serverTimestamp(),
           });
         }
