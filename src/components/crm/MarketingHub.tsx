@@ -517,7 +517,7 @@ export const MarketingHub = () => {
           if (campaignType === 'email' && d.emailFabricated === true) return false;
 
           // Block fabricated emails (flagged by quarantine script or matching known fake patterns)
-          if (campaignType === 'email') {
+          if (campaignType === 'email' && d.type !== 'agency') {
             const em = (d.email || '').toLowerCase();
             const prefix = em.split('@')[0];
             const domain = em.split('@')[1] || '';
