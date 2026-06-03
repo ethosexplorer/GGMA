@@ -71,6 +71,30 @@ const ENTITY_TYPES = [
   { id: 'other', label: 'Other Business' },
 ];
 
+const AGENCY_SUB_TYPES = [
+  { id: 'gov_state', label: 'State Cannabis Regulators' },
+  { id: 'governor', label: 'Governor Offices' },
+  { id: 'senator', label: 'Senators / Legislative' },
+  { id: 'enforcement_state', label: 'State Police / Patrol' },
+  { id: 'dea', label: 'DEA Regional Divisions' },
+  { id: 'obn', label: 'OBN Narcotics Bureaus' },
+  { id: 'mayor', label: 'Mayors / Municipal' },
+  { id: 'other_agency', label: 'Other Gov Agencies' }
+];
+
+const getAgencySubtype = (rawType: string): string => {
+  if (!rawType) return 'other_agency';
+  const r = rawType.toLowerCase();
+  if (r === 'gov_state') return 'gov_state';
+  if (r === 'governor') return 'governor';
+  if (r === 'senator' || r === 'legislative' || r === 'political') return 'senator';
+  if (r === 'enforcement_state' || r === 'police' || r === 'enforcement') return 'enforcement_state';
+  if (r === 'dea') return 'dea';
+  if (r === 'obn') return 'obn';
+  if (r === 'mayor') return 'mayor';
+  return 'other_agency';
+};
+
 const possibleStates = (stateCode: string) => {
   const code = stateCode.toUpperCase();
   const fullName = Object.keys(STATE_NAME_TO_CODE).find(k => STATE_NAME_TO_CODE[k] === code);
@@ -132,6 +156,7 @@ export const MarketingHub = () => {
   const [message, setMessage] = useState('');
   const [selectedStates, setSelectedStates] = useState<string[]>(['All']);
   const [selectedTypes, setSelectedTypes] = useState<string[]>(['All']);
+  const [selectedAgencySubtypes, setSelectedAgencySubtypes] = useState<string[]>(['All']);
   const [selectedTier, setSelectedTier] = useState<'all' | 'top_grossing' | 'standard'>('all');
   const [renewalMode, setRenewalMode] = useState<'off' | 'month' | 'all_expired'>('off');
   const [renewalMonth, setRenewalMonth] = useState(() => {
@@ -360,6 +385,7 @@ export const MarketingHub = () => {
         let q = query(collection(db, 'crm_deals'));
         const activeStates = selectedStates.filter(s => s !== 'All');
         const activeTypes = selectedTypes.filter(t => t !== 'All');
+        const activeAgencySubtypes = selectedAgencySubtypes.filter(a => a !== 'All');
 
         // 1. Build the server query (apply server range filters for renewals to prevent truncation issues)
         if (renewalMode === 'month') {
@@ -412,7 +438,7 @@ export const MarketingHub = () => {
           const data = d.data();
           const rawType = data.type || 'other';
           const type = (rawType.startsWith('gov_') || rawType.startsWith('enforcement_') || rawType === 'enforcement' || ['police', 'dea', 'obn', 'mayor', 'governor', 'senator', 'legislative', 'political', 'attorney_general'].includes(rawType)) ? 'agency' : rawType;
-          return { id: d.id, ...data, type } as any;
+          return { id: d.id, ...data, type, rawType } as any;
         });
 
         // 3b. Load static government contacts to merge (guarantees completeness offline/under quota constraints)
@@ -420,7 +446,7 @@ export const MarketingHub = () => {
         const normalizedStatic = staticContacts.map(c => {
           const rawType = c.type;
           const type = (rawType.startsWith('gov_') || rawType.startsWith('enforcement_') || rawType === 'enforcement' || ['police', 'dea', 'obn', 'mayor', 'governor', 'senator', 'legislative', 'political', 'attorney_general'].includes(rawType)) ? 'agency' : rawType;
-          return { ...c, type };
+          return { ...c, type, rawType };
         });
 
         // Merge fetched and static contacts (by email or id to prevent duplicates)
@@ -450,6 +476,11 @@ export const MarketingHub = () => {
           }
           if (activeTypes.length > 0) {
             if (!activeTypes.includes(d.type)) return false;
+          }
+          // Filter by agency subtype if Gov / Enforcement Agency is active or if All is active (for contacts whose type is agency)
+          if (d.type === 'agency' && activeAgencySubtypes.length > 0) {
+            const sub = getAgencySubtype(d.rawType || d.type);
+            if (!activeAgencySubtypes.includes(sub)) return false;
           }
           if (selectedTier === 'top_grossing' && d.tier !== 'top_grossing') return false;
           if (selectedTier === 'standard' && d.tier === 'top_grossing') return false;
@@ -502,7 +533,7 @@ export const MarketingHub = () => {
     // Debounce to avoid querying on every checkbox click
     const timer = setTimeout(loadFilteredAudience, 300);
     return () => { active = false; clearTimeout(timer); };
-  }, [selectedStates, selectedTypes, selectedTier, renewalMode, renewalMonth, campaignType, suppressedEmails]);
+  }, [selectedStates, selectedTypes, selectedAgencySubtypes, selectedTier, renewalMode, renewalMonth, campaignType, suppressedEmails]);
 
   const totalLeads = totalLeadsCount;
   const jurisdictions = JURISDICTIONS;
@@ -618,6 +649,7 @@ export const MarketingHub = () => {
       setRenewalMode('off');
       setCampaignType('email');
       setSendMode('broadcast');
+      setSelectedAgencySubtypes(['All']);
     }
     setShowTemplates(false);
   };
@@ -1242,6 +1274,47 @@ export const MarketingHub = () => {
                   )}
                 </div>
 
+                {/* If Gov / Agency is selected, show Subtypes filter */}
+                {(selectedTypes.includes('All') || selectedTypes.includes('agency')) && (
+                  <div className="bg-slate-950/40 p-4 rounded-2xl border border-slate-800/80 space-y-2">
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
+                      <Filter size={10} className="text-indigo-400" /> Agency Sub-Types
+                    </label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <label className="flex items-center gap-2 p-1.5 hover:bg-slate-900 rounded-lg cursor-pointer col-span-2">
+                        <input 
+                          type="checkbox" 
+                          checked={selectedAgencySubtypes.includes('All')} 
+                          onChange={() => setSelectedAgencySubtypes(['All'])} 
+                          className="accent-indigo-500 w-3.5 h-3.5 rounded bg-slate-950 border-slate-700" 
+                        />
+                        <span className="text-xs font-bold text-white">All Agency Subtypes</span>
+                      </label>
+                      <div className="h-px bg-slate-800/80 col-span-2 my-0.5"></div>
+                      {AGENCY_SUB_TYPES.map(sub => (
+                        <label key={sub.id} className="flex items-center gap-2 p-1.5 hover:bg-slate-900 rounded-lg cursor-pointer">
+                          <input 
+                            type="checkbox" 
+                            checked={selectedAgencySubtypes.includes(sub.id) && !selectedAgencySubtypes.includes('All')}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedAgencySubtypes(prev => prev.includes('All') ? [sub.id] : [...prev, sub.id]);
+                              } else {
+                                setSelectedAgencySubtypes(prev => {
+                                  const next = prev.filter(x => x !== sub.id);
+                                  return next.length === 0 ? ['All'] : next;
+                                });
+                              }
+                            }}
+                            className="accent-indigo-500 w-3.5 h-3.5 rounded bg-slate-950 border-slate-700" 
+                          />
+                          <span className="text-xs text-slate-300 font-semibold">{sub.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Patient Renewal Filter */}
                 <div>
                   <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
@@ -1361,6 +1434,8 @@ export const MarketingHub = () => {
                     id="campaign-presets-select"
                     onChange={(e) => {
                       const val = e.target.value;
+                      if (!val) return;
+                      setSelectedAgencySubtypes(['All']);
                       if (val === 'hub') {
                         setSelectedTypes(['agency', 'advocate', 'attorney', 'provider', 'backoffice', 'distribution', 'other']);
                         setSelectedStates(['All']);
