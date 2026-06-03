@@ -952,7 +952,13 @@ export const MarketingHub = () => {
                 {campaignType === 'email' && (
                   <div className="flex items-center gap-3 bg-slate-900/50 border border-white/5 rounded-xl px-5 py-3">
                     <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest shrink-0">From</span>
-                    <span className="text-sm font-bold text-white">marketing@ggp-os.com</span>
+                    <span className="text-sm font-bold text-white">
+                      {(() => {
+                        const email = import.meta.env.VITE_SMTP_FROM_EMAIL || 'marketing@ggp-os.com';
+                        const match = email.match(/<([^>]+)>/);
+                        return match ? match[1] : email;
+                      })()}
+                    </span>
                     <span className="text-[8px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full font-black uppercase tracking-wider border border-emerald-500/30 shrink-0">Official Domain</span>
                   </div>
                 )}
