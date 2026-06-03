@@ -3,6 +3,8 @@ import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, 
 import { cn } from '../../lib/utils';
 import { db } from '../../firebase';
 import { collection, onSnapshot, query, addDoc, deleteDoc, doc, updateDoc, serverTimestamp, orderBy, limit, getDocs, where, getCountFromServer } from 'firebase/firestore';
+import { getStaticGovContacts } from '../../lib/govContacts';
+
 
 interface Campaign {
   id: string;
@@ -384,9 +386,13 @@ export const MarketingHub = () => {
           } else if (activeTypes.length > 0) {
             const expandedTypes = [...activeTypes];
             if (activeTypes.includes('agency')) {
-              expandedTypes.push('gov_state', 'gov_local', 'gov_federal', 'enforcement', 'enforcement_state', 'enforcement_local', 'enforcement_federal');
+              expandedTypes.push(
+                'gov_state', 'gov_local', 'gov_federal', 
+                'enforcement', 'enforcement_state', 'enforcement_local', 'enforcement_federal',
+                'police', 'dea', 'obn', 'mayor', 'governor', 'senator', 'legislative', 'political', 'attorney_general'
+              );
             }
-            q = query(q, where('type', 'in', expandedTypes.slice(0, 30)));
+            q = query(q, where('type', 'in', Array.from(new Set(expandedTypes)).slice(0, 30)));
           }
 
           // Apply tier filter on server if possible
@@ -405,12 +411,34 @@ export const MarketingHub = () => {
         const fetchedDeals = docsSnap.docs.map(d => {
           const data = d.data();
           const rawType = data.type || 'other';
-          const type = (rawType.startsWith('gov_') || rawType.startsWith('enforcement_') || rawType === 'enforcement') ? 'agency' : rawType;
+          const type = (rawType.startsWith('gov_') || rawType.startsWith('enforcement_') || rawType === 'enforcement' || ['police', 'dea', 'obn', 'mayor', 'governor', 'senator', 'legislative', 'political', 'attorney_general'].includes(rawType)) ? 'agency' : rawType;
           return { id: d.id, ...data, type } as any;
         });
 
+        // 3b. Load static government contacts to merge (guarantees completeness offline/under quota constraints)
+        const staticContacts = getStaticGovContacts();
+        const normalizedStatic = staticContacts.map(c => {
+          const rawType = c.type;
+          const type = (rawType.startsWith('gov_') || rawType.startsWith('enforcement_') || rawType === 'enforcement' || ['police', 'dea', 'obn', 'mayor', 'governor', 'senator', 'legislative', 'political', 'attorney_general'].includes(rawType)) ? 'agency' : rawType;
+          return { ...c, type };
+        });
+
+        // Merge fetched and static contacts (by email or id to prevent duplicates)
+        const allDealsMap = new Map();
+        normalizedStatic.forEach(c => {
+          if (c.email) allDealsMap.set(c.email.toLowerCase(), c);
+        });
+        fetchedDeals.forEach(d => {
+          if (d.email) {
+            allDealsMap.set(d.email.toLowerCase(), d);
+          } else {
+            allDealsMap.set(d.id, d);
+          }
+        });
+        const combinedDeals = Array.from(allDealsMap.values());
+
         // 4. Apply remaining filters client-side on the fetched subset
-        const finalFiltered = fetchedDeals.filter(d => {
+        const finalFiltered = combinedDeals.filter(d => {
           // Ensure contact info is present
           if (campaignType === 'email' && !d.email) return false;
           if (campaignType === 'sms' && !d.phone) return false;
@@ -460,12 +488,8 @@ export const MarketingHub = () => {
         });
 
         if (active) {
-          setDeals(fetchedDeals);
-          setFilteredCount(
-            renewalMode !== 'off'
-              ? finalFiltered.length
-              : (matchedCount > fetchLimit ? matchedCount : finalFiltered.length)
-          );
+          setDeals(combinedDeals);
+          setFilteredCount(finalFiltered.length);
           setFilteredAudience(finalFiltered);
           setLoadingAudience(false);
         }
