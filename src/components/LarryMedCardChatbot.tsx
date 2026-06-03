@@ -380,7 +380,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     try {
       const chatRef = doc(db, 'users', userProfile.uid, 'ai_chat_history', 'latest');
       await setDoc(chatRef, {
-        messages: msgs.slice(-50).map(m => ({ role: m.role, text: m.text, timestamp: m.timestamp || Date.now() })),
+        messages: msgs.slice(-10000).map(m => ({ role: m.role, text: m.text, timestamp: m.timestamp || Date.now() })),
         updatedAt: serverTimestamp(),
       });
     } catch (err) {
@@ -526,7 +526,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     // Build history for multi-turn context
     const historyForAI = messages
       .filter(m => m.role !== 'system')
-      .slice(-10)
+      .slice(-100)
       .map(m => ({
         role: m.role === 'bot' ? 'model' as const : 'user' as const,
         parts: [{ text: m.text }]

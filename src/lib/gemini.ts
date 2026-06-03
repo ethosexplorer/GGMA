@@ -3,8 +3,109 @@
 //  Handles: Chat, Intake Evaluation, Profile Summarization, Discrepancy Flagging
 // ═══════════════════════════════════════════════════════════════════════════════
 
+import { LARRY_LEGAL_KNOWLEDGE } from '../legalKnowledge';
+import { EXECUTIVE_KNOWLEDGE } from '../executiveKnowledge';
+import { DEA_KNOWLEDGE } from '../deaKnowledge';
+import { CORPORATE_ENTITIES } from '../entityKnowledge';
+import { RECIPROCITY_DATA } from '../reciprocityKnowledge';
+import { DETAILED_STATE_KNOWLEDGE } from '../stateDetailedKnowledge';
+import { PERSONAL_JOURNEY } from '../personalJourney';
+
 const API_KEY = () => import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
 const MODEL_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+
+const PLATFORM_HISTORICAL_VAULT = `
+================================================================================
+GGP-OS PLATFORM HISTORICAL VAULT (PERMANENT SYSTEM MEMORY)
+================================================================================
+GGP-OS (Global Green Hybrid Platform Operating System) is a production-grade
+RegTech and Telehealth SaaS platform live at www.ggp-os.com. Replacement value
+is estimated at $1.6M - $3M, consisting of 62,669 lines of code, 212 source files,
+and 37 role-based dashboards.
+
+CORE ENTERPRISE & BRANDS:
+- Parent Entity: Global Green Enterprise Inc.
+- Platform: GGP-OS™ (Global Green Hybrid Platform LLC)
+- CEO & Founder: Shantell Goodie (Shantell Robinson) — 35+ years corporate/deal-structuring experience, 8 years cannabis regulatory operations.
+- Brands/Divisions: CCardz™, GoHealthUSA™, Diversity Health & Wellness Network™, Omni Credit, @thebackoffice.com, National Cannabis Association Group.
+- Contact: Toll-Free 1-888-963-4447, SMS: 645-246-8277, Telehealth (405) 252-1178, CCardz (405) 492-7487.
+
+REGISTRATIONS & DEFENSIVE SHIELDS:
+- SAM.gov Federal Supplier: Active (CAGE: 9KXZ2, UEI: TY1BQ3XK3925).
+- SBA Certification: Certified Woman-Owned Small Business (WOSB).
+- State/Municipal Approvals: OMES Oklahoma State Vendor, BidNet Direct Municipal Procurement, OKC City & Trusts Approved.
+- Integrations: Metrc Validated Production API (Oklahoma), HIPAA Compliant, LOT Network Member (Patent Protection), BBB A+ Rated.
+
+PROPRIETARY IP & ALGORITHMS:
+- C³ Score (Cannabis Compassion Score): FICO-style compliance scoring (300-850) based on payments and regulatory history.
+- Care Wallet: Closed-loop stored-value credit/financial infrastructure.
+- Recency Index (RI): Impairment detection algorithm outperforming single cutoff immunoassay methods.
+- GGE Compassion Allocation: Closed-loop private label financial framework copyrighted in 2020-2021.
+
+TELEMEDICINE & SAAS SERVICE PRICING:
+- Patient Medical Card Recommendations: $194.30 (Standard) OR $107.50 (hardship/Medicaid/Medicare/VA discount).
+- Medical Card Renewals / Health Consultations: $99.00.
+- Legal Consultations: $199.00.
+- B2B Outpatient Clinic SaaS Subscriptions: $149.00 - $699.00/mo.
+- B2B Government/Agency Audit Dashboards: $4,999 - $24,999/mo.
+- Live volume peak reached $68,265/mo on a single line, with $192,131 lifetime verified processing history. Transitions to specialized processor (Nuvei) ongoing.
+
+KEY MILESTONES & BUILDING HISTORY (30-DAY ROADMAP):
+- November 2020: Commercial launching of payment processing.
+- May 18, 2026: Launch "Shock & Awe" Email campaign to all leads offering 30-day trial.
+- May 20, 2026: Monitor 30-day signups and early state conversions.
+- May 25, 2026: "Video Demo" automated compliance verification follow-ups.
+- June 1, 2026: Twilio Web Dialer VIP outbound outreach starts.
+- June 5, 2026: CRM conversion analysis.
+- June 8, 2026: Final "Beta Pricing" FOMO push.
+- June 13, 2026: Dial out to high-intent clickers who didn't checkout.
+- June 15, 2026: Close trials and lock in monthly recurring revenue.
+================================================================================
+`;
+
+const KNOWLEDGE_VAULT = `
+================================================================================
+INTEGRATED SYSTEM KNOWLEDGE VAULT (PERMANENT SYSTEM MEMORY)
+================================================================================
+
+${PLATFORM_HISTORICAL_VAULT}
+
+--------------------------------------------------------------------------------
+CORPORATE ENTITIES, UEI, CAGE, REGISTRATIONS, & BANKING
+--------------------------------------------------------------------------------
+${JSON.stringify(CORPORATE_ENTITIES, null, 2)}
+
+--------------------------------------------------------------------------------
+EXECUTIVE VALUATION, BUYOUT PLANS, STRATEGIC SCENARIOS & PARTNER ECONOMICS
+--------------------------------------------------------------------------------
+${EXECUTIVE_KNOWLEDGE}
+
+--------------------------------------------------------------------------------
+DEA CONTRACTING OPPORTUNITIES & VENDOR REGISTRATION
+--------------------------------------------------------------------------------
+${DEA_KNOWLEDGE}
+
+--------------------------------------------------------------------------------
+MEDICAL CANNABIS RECIPROCITY RULES BY STATE
+--------------------------------------------------------------------------------
+${JSON.stringify(RECIPROCITY_DATA, null, 2)}
+
+--------------------------------------------------------------------------------
+STATE REGULATORY RESOURCING, FORMS, & PORTALS
+--------------------------------------------------------------------------------
+${JSON.stringify(DETAILED_STATE_KNOWLEDGE, null, 2)}
+
+--------------------------------------------------------------------------------
+LARRY STATE COMPLIANCE BILL TRACKING & LEGISLATION
+--------------------------------------------------------------------------------
+${LARRY_LEGAL_KNOWLEDGE}
+
+--------------------------------------------------------------------------------
+SHANTELL ROBINSON'S PERSONAL JOURNEY, CIVIL CASE REBUTTAL & REHABILITATION HISTORY
+--------------------------------------------------------------------------------
+${PERSONAL_JOURNEY}
+================================================================================
+`;
 
 // ─── Internal fetch wrapper ─────────────────────────────────────────────────
 async function callGemini(
@@ -186,7 +287,7 @@ export const generateGeminiResponse = async (
   variant: 'med-card' | 'business' | 'general' | 'ggma' | 'rip' | 'sinc' = 'general',
   history: { role: string; text: string }[] = []
 ): Promise<string> => {
-  const systemInstruction = VARIANT_INSTRUCTIONS[variant] || VARIANT_INSTRUCTIONS.general;
+  const systemInstruction = (VARIANT_INSTRUCTIONS[variant] || VARIANT_INSTRUCTIONS.general) + `\n\n${KNOWLEDGE_VAULT}`;
 
   const formattedHistory = history
     .filter((m) => m.text && m.text.trim().length > 0)
@@ -268,60 +369,11 @@ YOUR ROLE:
 
 ${STATE_INTELLIGENCE}`;
 
-const PLATFORM_HISTORICAL_VAULT = `
-================================================================================
-GGP-OS PLATFORM HISTORICAL VAULT (PERMANENT SYSTEM MEMORY)
-================================================================================
-GGP-OS (Global Green Hybrid Platform Operating System) is a production-grade
-RegTech and Telehealth SaaS platform live at www.ggp-os.com. Replacement value
-is estimated at $1.6M - $3M, consisting of 62,669 lines of code, 212 source files,
-and 37 role-based dashboards.
-
-CORE ENTERPRISE & BRANDS:
-- Parent Entity: Global Green Enterprise Inc.
-- Platform: GGP-OS™ (Global Green Hybrid Platform LLC)
-- CEO & Founder: Shantell Goodie (Shantell Robinson) — 35+ years corporate/deal-structuring experience, 8 years cannabis regulatory operations.
-- Brands/Divisions: CCardz™, GoHealthUSA™, Diversity Health & Wellness Network™, Omni Credit, @thebackoffice.com, National Cannabis Association Group.
-- Contact: Toll-Free 1-888-963-4447, SMS: 645-246-8277, Telehealth (405) 252-1178, CCardz (405) 492-7487.
-
-REGISTRATIONS & DEFENSIVE SHIELDS:
-- SAM.gov Federal Supplier: Active (CAGE: 9KXZ2, UEI: TY1BQ3XK3925).
-- SBA Certification: Certified Woman-Owned Small Business (WOSB).
-- State/Municipal Approvals: OMES Oklahoma State Vendor, BidNet Direct Municipal Procurement, OKC City & Trusts Approved.
-- Integrations: Metrc Validated Production API (Oklahoma), HIPAA Compliant, LOT Network Member (Patent Protection), BBB A+ Rated.
-
-PROPRIETARY IP & ALGORITHMS:
-- C³ Score (Cannabis Compassion Score): FICO-style compliance scoring (300-850) based on payments and regulatory history.
-- Care Wallet: Closed-loop stored-value credit/financial infrastructure.
-- Recency Index (RI): Impairment detection algorithm outperforming single cutoff immunoassay methods.
-- GGE Compassion Allocation: Closed-loop private label financial framework copyrighted in 2020-2021.
-
-TELEMEDICINE & SAAS SERVICE PRICING:
-- Patient Medical Card Recommendations: $194.30 (Standard) OR $107.50 (hardship/Medicaid/Medicare/VA discount).
-- Medical Card Renewals / Health Consultations: $99.00.
-- Legal Consultations: $199.00.
-- B2B Outpatient Clinic SaaS Subscriptions: $149.00 - $699.00/mo.
-- B2B Government/Agency Audit Dashboards: $4,999 - $24,999/mo.
-- Live volume peak reached $68,265/mo on a single line, with $192,131 lifetime verified processing history. Transitions to specialized processor (Nuvei) ongoing.
-
-KEY MILESTONES & BUILDING HISTORY (30-DAY ROADMAP):
-- November 2020: Commercial launching of payment processing.
-- May 18, 2026: Launch "Shock & Awe" Email campaign to all leads offering 30-day trial.
-- May 20, 2026: Monitor 30-day signups and early state conversions.
-- May 25, 2026: "Video Demo" automated compliance verification follow-ups.
-- June 1, 2026: Twilio Web Dialer VIP outbound outreach starts.
-- June 5, 2026: CRM conversion analysis.
-- June 8, 2026: Final "Beta Pricing" FOMO push.
-- June 13, 2026: Dial out to high-intent clickers who didn't checkout.
-- June 15, 2026: Close trials and lock in monthly recurring revenue.
-================================================================================
-`;
-
 export const EXECUTIVE_PROMPTS: Record<string, string> = {
-  shantell: EXEC_PROMPT_SHANTELL + `\n\n${PLATFORM_HISTORICAL_VAULT}`,
-  ryan: EXEC_PROMPT_RYAN + `\n\n${PLATFORM_HISTORICAL_VAULT}`,
-  monica: EXEC_PROMPT_MONICA + `\n\n${PLATFORM_HISTORICAL_VAULT}`,
-  bob: EXEC_PROMPT_BOB + `\n\n${PLATFORM_HISTORICAL_VAULT}`,
+  shantell: EXEC_PROMPT_SHANTELL + `\n\n${KNOWLEDGE_VAULT}`,
+  ryan: EXEC_PROMPT_RYAN + `\n\n${KNOWLEDGE_VAULT}`,
+  monica: EXEC_PROMPT_MONICA + `\n\n${KNOWLEDGE_VAULT}`,
+  bob: EXEC_PROMPT_BOB + `\n\n${KNOWLEDGE_VAULT}`,
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
