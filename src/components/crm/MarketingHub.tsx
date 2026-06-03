@@ -63,7 +63,7 @@ const ENTITY_TYPES = [
   { id: 'attorney', label: 'Attorney / Law Firm' },
   { id: 'backoffice', label: 'Independent / Backoffice' },
   { id: 'patient', label: 'Patient' },
-  { id: 'agency', label: 'Gov / State Agency' },
+  { id: 'agency', label: 'Gov / Enforcement Agency' },
   { id: 'distribution', label: 'Distribution / Transport' },
   { id: 'advocate', label: 'Advocate / Partner' },
   { id: 'other', label: 'Other Business' },
@@ -399,7 +399,12 @@ export const MarketingHub = () => {
         const isRenewalOrPatient = renewalMode !== 'off' || activeTypes.includes('patient');
         const fetchLimit = isRenewalOrPatient ? 5000 : 1000;
         const docsSnap = await getDocs(query(q, limit(fetchLimit)));
-        const fetchedDeals = docsSnap.docs.map(d => ({ id: d.id, ...d.data() } as any));
+        const fetchedDeals = docsSnap.docs.map(d => {
+          const data = d.data();
+          const rawType = data.type || 'other';
+          const type = (rawType.startsWith('gov_') || rawType.startsWith('enforcement_') || rawType === 'enforcement') ? 'agency' : rawType;
+          return { id: d.id, ...data, type } as any;
+        });
 
         // 4. Apply remaining filters client-side on the fetched subset
         const finalFiltered = fetchedDeals.filter(d => {

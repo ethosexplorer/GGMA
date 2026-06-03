@@ -21,7 +21,7 @@ const ENTITY_TYPES = [
   { id: 'attorney', label: 'Attorney / Law Firm', color: 'bg-indigo-100 text-indigo-700 border-indigo-200', icon: Scale },
   { id: 'backoffice', label: 'Independent / Backoffice', color: 'bg-blue-100 text-blue-700 border-blue-200', icon: Briefcase },
   { id: 'patient', label: 'Patient', color: 'bg-purple-100 text-purple-700 border-purple-200', icon: User },
-  { id: 'agency', label: 'Gov / State Agency', color: 'bg-slate-100 text-slate-700 border-slate-300', icon: Landmark },
+  { id: 'agency', label: 'Gov / Enforcement Agency', color: 'bg-slate-100 text-slate-700 border-slate-300', icon: Landmark },
   { id: 'distribution', label: 'Distribution / Transport', color: 'bg-orange-100 text-orange-700 border-orange-200', icon: Truck },
   { id: 'advocate', label: 'Advocate / Partner', color: 'bg-pink-100 text-pink-700 border-pink-200', icon: HeartHandshake },
   { id: 'other', label: 'Other Business', color: 'bg-gray-100 text-gray-700 border-gray-200', icon: Building },
@@ -108,7 +108,9 @@ export const StaffCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: string
     const unsubDeals = onSnapshot(qDeals, (snapshot) => {
       dealsDataArr = snapshot.docs.map(doc => {
         const data = doc.data();
-        return { id: doc.id, collection: 'crm_deals', stage: data.stage || 'lead', ...data, name: data.name || data.businessName || 'Unnamed', contactName: data.contactName || '', phone: data.phone || '', email: data.email || '', value: data.value ?? 0, assignedTo: data.assignedTo || 'unassigned', type: data.type || 'other', jurisdiction: data.jurisdiction || data.state || '' } as any;
+        const rawType = data.type || 'other';
+        const type = (rawType.startsWith('gov_') || rawType.startsWith('enforcement_') || rawType === 'enforcement') ? 'agency' : rawType;
+        return { id: doc.id, collection: 'crm_deals', stage: data.stage || 'lead', ...data, name: data.name || data.businessName || 'Unnamed', contactName: data.contactName || '', phone: data.phone || '', email: data.email || '', value: data.value ?? 0, assignedTo: data.assignedTo || 'unassigned', type, jurisdiction: data.jurisdiction || data.state || '' } as any;
       });
       updateDeals();
     });
@@ -116,7 +118,9 @@ export const StaffCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: string
     const unsubContacts = onSnapshot(qContacts, (snapshot) => {
       contactsDataArr = snapshot.docs.map(doc => {
         const data = doc.data();
-        return { id: doc.id, collection: 'crm_contacts', stage: data.stage || 'lead', ...data, name: data.name || data.businessName || 'Unnamed', contactName: data.contactName || '', phone: data.phone || '', email: data.email || '', value: data.value ?? 0, assignedTo: data.assignedTo || 'unassigned', type: data.type || 'other', jurisdiction: data.jurisdiction || data.state || '' } as any;
+        const rawType = data.type || 'other';
+        const type = (rawType.startsWith('gov_') || rawType.startsWith('enforcement_') || rawType === 'enforcement') ? 'agency' : rawType;
+        return { id: doc.id, collection: 'crm_contacts', stage: data.stage || 'lead', ...data, name: data.name || data.businessName || 'Unnamed', contactName: data.contactName || '', phone: data.phone || '', email: data.email || '', value: data.value ?? 0, assignedTo: data.assignedTo || 'unassigned', type, jurisdiction: data.jurisdiction || data.state || '' } as any;
       });
       updateDeals();
     });
@@ -321,7 +325,7 @@ export const StaffCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: string
             >
               <option value="All">All Types</option>
               {ENTITY_TYPES.map(t => (
-                <option key={t.id} value={t.id}>{t.label.split(' / ')[0]}</option>
+                <option key={t.id} value={t.id}>{t.id === 'agency' ? 'Gov / Enforcement Agency' : t.label.split(' / ')[0]}</option>
               ))}
             </select>
             <div className="absolute right-3 pointer-events-none text-slate-400 font-black text-[10px]">▼</div>
