@@ -244,45 +244,6 @@ export default async function handler(req, res) {
 
   const route = req.query.route || '';
 
-  if (route === 'debug_smtp') {
-    const user = process.env.SMTP_USER || '';
-    const pass = process.env.SMTP_PASS || '';
-    
-    let cleanUser = user;
-    let cleanPass = pass;
-    if (cleanUser.startsWith('"') && cleanUser.endsWith('"')) cleanUser = cleanUser.slice(1, -1);
-    if (cleanUser.startsWith("'") && cleanUser.endsWith("'")) cleanUser = cleanUser.slice(1, -1);
-    if (cleanPass.startsWith('"') && cleanPass.endsWith('"')) cleanPass = cleanPass.slice(1, -1);
-    if (cleanPass.startsWith("'") && cleanPass.endsWith("'")) cleanPass = cleanPass.slice(1, -1);
-    cleanUser = cleanUser.trim();
-    cleanPass = cleanPass.trim();
-    
-    return res.json({
-      userRaw: {
-        length: user.length,
-        starts: user.substring(0, 3),
-        ends: user.substring(user.length - 3),
-        hasQuotes: (user.startsWith('"') && user.endsWith('"')) || (user.startsWith("'") && user.endsWith("'"))
-      },
-      userClean: {
-        length: cleanUser.length,
-        starts: cleanUser.substring(0, 3),
-        ends: cleanUser.substring(cleanUser.length - 3)
-      },
-      passRaw: {
-        length: pass.length,
-        starts: pass.substring(0, 3),
-        ends: pass.substring(pass.length - 3),
-        hasQuotes: (pass.startsWith('"') && pass.endsWith('"')) || (pass.startsWith("'") && pass.endsWith("'"))
-      },
-      passClean: {
-        length: cleanPass.length,
-        starts: cleanPass.substring(0, 3),
-        ends: cleanPass.substring(cleanPass.length - 3)
-      }
-    });
-  }
-
 // ---- ROUTE: SEND CAMPAIGN ----
   if (route === 'send') {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
