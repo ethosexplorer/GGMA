@@ -172,6 +172,7 @@ export const MarketingHub = () => {
   const [filteredCount, setFilteredCount] = useState(0);
   const [filteredAudience, setFilteredAudience] = useState<any[]>([]);
   const [loadingAudience, setLoadingAudience] = useState(false);
+  const [isOfflineMode, setIsOfflineMode] = useState(false);
   
   // Audience Data
   const [deals, setDeals] = useState<any[]>(cachedDealsForMarketing || []);
@@ -443,18 +444,30 @@ export const MarketingHub = () => {
         }
 
         // 2. Fetch total count from server for stats (cheap, fast)
-        const countSnap = await getCountFromServer(q).catch(() => ({ data: () => ({ count: 150 }) }));
-        const matchedCount = countSnap.data().count;
+        let matchedCount = 150;
+        try {
+          const countSnap = await getCountFromServer(q);
+          matchedCount = countSnap.data().count;
+        } catch (err) {
+          console.warn('[MarketingHub] Failed to fetch count from Firestore:', err);
+        }
 
         // 3. Fetch documents for actual campaign execution (up to 20,000 to cover all verified contacts)
         const fetchLimit = 20000;
-        const docsSnap = await getDocs(query(q, limit(fetchLimit)));
-        const fetchedDeals = docsSnap.docs.map(d => {
-          const data = d.data();
-          const rawType = data.type || 'other';
-          const type = (rawType.startsWith('gov_') || rawType.startsWith('enforcement_') || rawType === 'enforcement' || ['police', 'dea', 'obn', 'mayor', 'governor', 'senator', 'legislative', 'political', 'attorney_general'].includes(rawType)) ? 'agency' : rawType;
-          return { id: d.id, ...data, type, rawType } as any;
-        });
+        let fetchedDeals: any[] = [];
+        try {
+          const docsSnap = await getDocs(query(q, limit(fetchLimit)));
+          fetchedDeals = docsSnap.docs.map(d => {
+            const data = d.data();
+            const rawType = data.type || 'other';
+            const type = (rawType.startsWith('gov_') || rawType.startsWith('enforcement_') || rawType === 'enforcement' || ['police', 'dea', 'obn', 'mayor', 'governor', 'senator', 'legislative', 'political', 'attorney_general'].includes(rawType)) ? 'agency' : rawType;
+            return { id: d.id, ...data, type, rawType } as any;
+          });
+          setIsOfflineMode(false);
+        } catch (err) {
+          console.warn('[MarketingHub] Failed to fetch deals from Firestore (likely quota limits), falling back to local presets:', err);
+          setIsOfflineMode(true);
+        }
 
         // 3b. Load static government contacts to merge (guarantees completeness offline/under quota constraints)
         const staticContacts = getStaticGovContacts();
@@ -1727,6 +1740,15 @@ export const MarketingHub = () => {
                       <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">This Batch</p>
                       <p className="text-3xl font-black text-white">{thisBatch.toLocaleString()}</p>
                       <p className="text-xs text-slate-500 font-medium">of {filteredCount.toLocaleString()} total recipients ({sentInFilter > 0 ? `${sentInFilter} already sent` : 'none sent yet'})</p>
+                      
+                      {isOfflineMode && (
+                        <div className="p-2.5 bg-amber-500/10 border border-amber-500/20 rounded-xl mt-1">
+                          <p className="text-[10px] text-amber-400 font-bold flex items-center gap-1.5 leading-normal">
+                            <span className="inline-block w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse shrink-0 animate-duration-1000"></span>
+                            Offline Backup Active (Firestore Quota Exceeded)
+                          </p>
+                        </div>
+                      )}
                     
                       {/* Timeline */}
                       <div className="pt-3 border-t border-slate-800">
