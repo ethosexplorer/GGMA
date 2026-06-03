@@ -1718,7 +1718,7 @@ export const MarketingHub = () => {
                   <div>
                     <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Daily Send Limit</label>
                     <div className="grid grid-cols-4 gap-2">
-                      {[50, 100, 250, 500].map(lim => (
+                      {[10, 25, 50, 100].map(lim => (
                         <button key={lim} onClick={() => setDailyLimit(lim)} className={cn("py-2 rounded-lg text-xs font-black transition-all", dailyLimit === lim ? "bg-indigo-600 text-white shadow-sm" : "bg-slate-950 text-slate-500 border border-slate-700 hover:text-white")}>{lim}</button>
                       ))}
                     </div>
