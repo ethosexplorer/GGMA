@@ -378,11 +378,15 @@ export const MarketingHub = () => {
           if (activeStates.length > 0) {
             const statesList = getStatesSearchList(activeStates);
             q = query(q, where('jurisdiction', 'in', statesList.slice(0, 30)));
-            if (activeTypes.length === 1) {
+            if (activeTypes.length === 1 && activeTypes[0] !== 'agency' && activeTypes[0] !== 'advocate') {
               q = query(q, where('type', '==', activeTypes[0]));
             }
           } else if (activeTypes.length > 0) {
-            q = query(q, where('type', 'in', activeTypes.slice(0, 30)));
+            const expandedTypes = [...activeTypes];
+            if (activeTypes.includes('agency')) {
+              expandedTypes.push('gov_state', 'gov_local', 'gov_federal', 'enforcement', 'enforcement_state', 'enforcement_local', 'enforcement_federal');
+            }
+            q = query(q, where('type', 'in', expandedTypes.slice(0, 30)));
           }
 
           // Apply tier filter on server if possible
@@ -395,9 +399,8 @@ export const MarketingHub = () => {
         const countSnap = await getCountFromServer(q).catch(() => ({ data: () => ({ count: 150 }) }));
         const matchedCount = countSnap.data().count;
 
-        // 3. Fetch documents for actual campaign execution (up to 1,000 or 5,000 for renewals/patients)
-        const isRenewalOrPatient = renewalMode !== 'off' || activeTypes.includes('patient');
-        const fetchLimit = isRenewalOrPatient ? 5000 : 1000;
+        // 3. Fetch documents for actual campaign execution (up to 20,000 to cover all verified contacts)
+        const fetchLimit = 20000;
         const docsSnap = await getDocs(query(q, limit(fetchLimit)));
         const fetchedDeals = docsSnap.docs.map(d => {
           const data = d.data();
