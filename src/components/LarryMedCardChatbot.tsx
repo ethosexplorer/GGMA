@@ -133,9 +133,16 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // ── Voice I/O State ──
-  const [isListening, setIsListening] = useState(false);
+  const [isListening, setIsListeningState] = useState(false);
+  const isListeningRef = useRef(false);
+  const setIsListening = (val: boolean) => {
+    setIsListeningState(val);
+    isListeningRef.current = val;
+  };
   const [autoSpeak, setAutoSpeak] = useState(false);
   const recognitionRef = useRef<any>(null);
+  const silenceTimerRef = useRef<any>(null);
+  const handleSendRef = useRef<any>(null);
   const [voiceRate, setVoiceRate] = useState<number>(() => {
     const saved = localStorage.getItem('sylara_voice_rate');
     return saved ? parseFloat(saved) : 1.25;
@@ -173,6 +180,36 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     }
     return () => document.removeEventListener('mousedown', handleOutsideClick);
   }, [showVoiceSettings]);
+
+  const startSilenceTimer = useCallback(() => {
+    if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+    silenceTimerRef.current = setTimeout(() => {
+      if (isListeningRef.current) {
+        if (recognitionRef.current) {
+          try {
+            recognitionRef.current.stop();
+          } catch {}
+        }
+        setIsListening(false);
+        setInputValue(prev => {
+          const text = prev.trim();
+          if (text && handleSendRef.current) {
+            setTimeout(() => {
+              handleSendRef.current(text);
+            }, 100);
+          }
+          return '';
+        });
+      }
+    }, 15000);
+  }, []);
+
+
+  useEffect(() => {
+    return () => {
+      if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+    };
+  }, []);
 
   // ── Proactive Intelligence State ──
   const [lastSeenSignupCount, setLastSeenSignupCount] = useState<number | null>(null);
@@ -258,6 +295,9 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       recognition.lang = 'en-US';
       
       recognition.onresult = (event: any) => {
+        // Reset the 15-second silence timer because they spoke!
+        startSilenceTimer();
+        
         let fullTranscript = '';
         for (let i = 0; i < event.results.length; i++) {
           fullTranscript += event.results[i][0].transcript + ' ';
@@ -269,27 +309,40 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       recognition.onerror = (e: any) => {
         console.error('Speech recognition error:', e);
         if (e.error !== 'no-speech') {
+          if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
           setIsListening(false);
         }
       };
       
       recognition.onend = () => {
-        setIsListening(false);
+        // If isListening is still true, the user didn't stop it and the 15s timer didn't fire, so restart it!
+        if (isListeningRef.current) {
+          try {
+            recognition.start();
+          } catch (err) {
+            // Already running
+          }
+        } else {
+          if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+          setIsListening(false);
+        }
       };
       
       recognitionRef.current = recognition;
     }
-  }, [isExecutive]);
+  }, [isExecutive, startSilenceTimer]);
 
   const toggleListening = () => {
     if (!recognitionRef.current) return;
     if (isListening) {
+      if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
       recognitionRef.current.stop();
       setIsListening(false);
     } else {
       speechStartRef.current = inputValue;
       recognitionRef.current.start();
       setIsListening(true);
+      startSilenceTimer(); // Start the 15s silence countdown
     }
   };
 
@@ -575,6 +628,10 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         break;
     }
   };
+
+  useEffect(() => {
+    handleSendRef.current = handleSend;
+  }, [handleSend]);
 
   const handleDateSelect = (date: string) => {
     setContactData(prev => ({ ...prev, date }));
