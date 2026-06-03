@@ -158,10 +158,10 @@ export const MarketingHub = () => {
   const [selectedTypes, setSelectedTypes] = useState<string[]>(['All']);
   const [selectedAgencySubtypes, setSelectedAgencySubtypes] = useState<string[]>(['All']);
   const [selectedTier, setSelectedTier] = useState<'all' | 'top_grossing' | 'standard'>('all');
-  const [renewalMode, setRenewalMode] = useState<'off' | 'month' | 'all_expired'>('off');
-  const [renewalMonth, setRenewalMonth] = useState(() => {
-    return { year: 2026, month: 3 }; // April 2026 (3 is 0-indexed April)
-  });
+  const [patientRenewalMode, setPatientRenewalMode] = useState<'off' | 'month' | 'all_expired'>('off');
+  const [patientRenewalMonth, setPatientRenewalMonth] = useState(() => ({ year: 2026, month: 3 }));
+  const [businessRenewalMode, setBusinessRenewalMode] = useState<'off' | 'month' | 'all_expired'>('off');
+  const [businessRenewalMonth, setBusinessRenewalMonth] = useState(() => ({ year: 2026, month: 3 }));
   const [showStateDropdown, setShowStateDropdown] = useState(false);
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -388,15 +388,30 @@ export const MarketingHub = () => {
         const activeAgencySubtypes = selectedAgencySubtypes.filter(a => a !== 'All');
 
         // 1. Build the server query (apply server range filters for renewals to prevent truncation issues)
-        if (renewalMode === 'month') {
-          const startYear = renewalMonth.year;
-          const startMonth = renewalMonth.month; // 0-indexed
+        let isMonthFiltered = false;
+        let startYear = 2026, startMonth = 3;
+        
+        if (patientRenewalMode === 'month' && businessRenewalMode === 'off') {
+          isMonthFiltered = true;
+          startYear = patientRenewalMonth.year;
+          startMonth = patientRenewalMonth.month;
+        } else if (businessRenewalMode === 'month' && patientRenewalMode === 'off') {
+          isMonthFiltered = true;
+          startYear = businessRenewalMonth.year;
+          startMonth = businessRenewalMonth.month;
+        } else if (patientRenewalMode === 'month' && businessRenewalMode === 'month' && patientRenewalMonth.year === businessRenewalMonth.year && patientRenewalMonth.month === businessRenewalMonth.month) {
+          isMonthFiltered = true;
+          startYear = patientRenewalMonth.year;
+          startMonth = patientRenewalMonth.month;
+        }
+
+        if (isMonthFiltered) {
           const startDateStr = `${startYear}-${String(startMonth + 1).padStart(2, '0')}-01`;
           const lastDay = new Date(startYear, startMonth + 1, 0).getDate();
           const endDateStr = `${startYear}-${String(startMonth + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
           
           q = query(q, where('licenseExpiration', '>=', startDateStr), where('licenseExpiration', '<=', endDateStr));
-        } else if (renewalMode === 'all_expired') {
+        } else if (patientRenewalMode === 'all_expired' || businessRenewalMode === 'all_expired') {
           const today = new Date();
           const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
           
@@ -501,18 +516,37 @@ export const MarketingHub = () => {
             }
           }
 
-          // Renewal filter (double-check matching dates)
-          if (renewalMode !== 'off') {
-            const nominal = parseNominalDate(d.licenseExpiration);
-            if (!nominal) return false;
-            
-            if (renewalMode === 'all_expired') {
-              const today = new Date();
-              today.setHours(0, 0, 0, 0);
-              const expDateObj = new Date(nominal.year, nominal.month, nominal.day);
-              if (expDateObj.getTime() >= today.getTime()) return false;
-            } else if (renewalMode === 'month') {
-              if (nominal.year !== renewalMonth.year || nominal.month !== renewalMonth.month) return false;
+          // Apply Patient Card Renewal Filter client-side
+          if (d.type === 'patient') {
+            if (patientRenewalMode !== 'off') {
+              const nominal = parseNominalDate(d.licenseExpiration);
+              if (!nominal) return false;
+              
+              if (patientRenewalMode === 'all_expired') {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const expDateObj = new Date(nominal.year, nominal.month, nominal.day);
+                if (expDateObj.getTime() >= today.getTime()) return false;
+              } else if (patientRenewalMode === 'month') {
+                if (nominal.year !== patientRenewalMonth.year || nominal.month !== patientRenewalMonth.month) return false;
+              }
+            }
+          }
+
+          // Apply Business License Renewal Filter client-side
+          if (d.type !== 'patient') {
+            if (businessRenewalMode !== 'off') {
+              const nominal = parseNominalDate(d.licenseExpiration);
+              if (!nominal) return false;
+              
+              if (businessRenewalMode === 'all_expired') {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const expDateObj = new Date(nominal.year, nominal.month, nominal.day);
+                if (expDateObj.getTime() >= today.getTime()) return false;
+              } else if (businessRenewalMode === 'month') {
+                if (nominal.year !== businessRenewalMonth.year || nominal.month !== businessRenewalMonth.month) return false;
+              }
             }
           }
           return true;
@@ -533,7 +567,7 @@ export const MarketingHub = () => {
     // Debounce to avoid querying on every checkbox click
     const timer = setTimeout(loadFilteredAudience, 300);
     return () => { active = false; clearTimeout(timer); };
-  }, [selectedStates, selectedTypes, selectedAgencySubtypes, selectedTier, renewalMode, renewalMonth, campaignType, suppressedEmails]);
+  }, [selectedStates, selectedTypes, selectedAgencySubtypes, selectedTier, patientRenewalMode, patientRenewalMonth, businessRenewalMode, businessRenewalMonth, campaignType, suppressedEmails]);
 
   const totalLeads = totalLeadsCount;
   const jurisdictions = JURISDICTIONS;
@@ -646,7 +680,8 @@ export const MarketingHub = () => {
       setSelectedTypes(t.audienceTypes);
       setSelectedStates(['All']);
       setSelectedTier('all');
-      setRenewalMode('off');
+      setPatientRenewalMode('off');
+      setBusinessRenewalMode('off');
       setCampaignType('email');
       setSendMode('broadcast');
       setSelectedAgencySubtypes(['All']);
@@ -1315,81 +1350,148 @@ export const MarketingHub = () => {
                   </div>
                 )}
 
-                {/* Patient Renewal Filter */}
-                <div>
-                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
-                    <CalendarDays size={12} /> {renewalTypeLabel} Renewal Filter
-                  </label>
-                  <div className="grid grid-cols-3 gap-2 mb-3">
-                    <button
-                      onClick={() => setRenewalMode('off')}
-                      className={cn(
-                        "py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all",
-                        renewalMode === 'off' ? "bg-slate-600 text-white shadow-sm" : "bg-slate-950 text-slate-500 border border-slate-700 hover:text-white"
-                      )}
-                    >Off</button>
-                    <button
-                      onClick={() => setRenewalMode('month')}
-                      className={cn(
-                        "py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all",
-                        renewalMode === 'month' ? "bg-emerald-600 text-white shadow-sm shadow-emerald-500/30" : "bg-slate-950 text-slate-500 border border-slate-700 hover:text-white"
-                      )}
-                    >📅 By Month</button>
-                    <button
-                      onClick={() => setRenewalMode('all_expired')}
-                      className={cn(
-                        "py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all",
-                        renewalMode === 'all_expired' ? "bg-red-600 text-white shadow-sm shadow-red-500/30" : "bg-slate-950 text-slate-500 border border-slate-700 hover:text-white"
-                      )}
-                    >🔴 All Expired</button>
-                  </div>
+                {/* Patient Card Renewal Filter */}
+                {(selectedTypes.includes('All') || selectedTypes.includes('patient')) && (
+                  <div className="space-y-2">
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                      <CalendarDays size={12} className="text-cyan-400" /> Patient Card Renewal Filter
+                    </label>
+                    <div className="grid grid-cols-3 gap-2 mb-3">
+                      <button
+                        onClick={() => setPatientRenewalMode('off')}
+                        className={cn(
+                          "py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all",
+                          patientRenewalMode === 'off' ? "bg-slate-600 text-white shadow-sm" : "bg-slate-950 text-slate-500 border border-slate-700 hover:text-white"
+                        )}
+                      >Off</button>
+                      <button
+                        onClick={() => setPatientRenewalMode('month')}
+                        className={cn(
+                          "py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all",
+                          patientRenewalMode === 'month' ? "bg-emerald-600 text-white shadow-sm shadow-emerald-500/30" : "bg-slate-950 text-slate-500 border border-slate-700 hover:text-white"
+                        )}
+                      >📅 By Month</button>
+                      <button
+                        onClick={() => setPatientRenewalMode('all_expired')}
+                        className={cn(
+                          "py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all",
+                          patientRenewalMode === 'all_expired' ? "bg-red-600 text-white shadow-sm shadow-red-500/30" : "bg-slate-950 text-slate-500 border border-slate-700 hover:text-white"
+                        )}
+                      >🔴 All Expired</button>
+                    </div>
 
-                  {renewalMode === 'month' && (
-                    <div className="bg-slate-950 rounded-xl border border-slate-700 p-3">
-                      <div className="flex items-center justify-between">
-                        <button
-                          onClick={() => setRenewalMonth(prev => {
-                            const d = new Date(prev.year, prev.month - 1, 1);
-                            return { year: d.getFullYear(), month: d.getMonth() };
-                          })}
-                          className="p-2 hover:bg-slate-800 rounded-lg transition-colors text-slate-400 hover:text-white"
-                        >
-                          <ChevronLeft size={18} />
-                        </button>
-                        <div className="text-center">
-                          <p className="text-white font-black text-sm">
-                            {new Date(renewalMonth.year, renewalMonth.month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-                          </p>
-                          <p className="text-[9px] text-slate-500 font-bold mt-0.5">{renewalTypeLabelPlural} expiring this month</p>
+                    {patientRenewalMode === 'month' && (
+                      <div className="bg-slate-950 rounded-xl border border-slate-700 p-3">
+                        <div className="flex items-center justify-between">
+                          <button
+                            onClick={() => setPatientRenewalMonth(prev => {
+                              const d = new Date(prev.year, prev.month - 1, 1);
+                              return { year: d.getFullYear(), month: d.getMonth() };
+                            })}
+                            className="p-2 hover:bg-slate-800 rounded-lg transition-colors text-slate-400 hover:text-white"
+                          >
+                            <ChevronLeft size={18} />
+                          </button>
+                          <div className="text-center">
+                            <p className="text-white font-black text-sm">
+                              {new Date(patientRenewalMonth.year, patientRenewalMonth.month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                            </p>
+                            <p className="text-[9px] text-slate-500 font-bold mt-0.5">Patients expiring this month</p>
+                          </div>
+                          <button
+                            onClick={() => setPatientRenewalMonth(prev => {
+                              const d = new Date(prev.year, prev.month + 1, 1);
+                              return { year: d.getFullYear(), month: d.getMonth() };
+                            })}
+                            className="p-2 hover:bg-slate-800 rounded-lg transition-colors text-slate-400 hover:text-white"
+                          >
+                            <ChevronRight size={18} />
+                          </button>
                         </div>
-                        <button
-                          onClick={() => setRenewalMonth(prev => {
-                            const d = new Date(prev.year, prev.month + 1, 1);
-                            return { year: d.getFullYear(), month: d.getMonth() };
-                          })}
-                          className="p-2 hover:bg-slate-800 rounded-lg transition-colors text-slate-400 hover:text-white"
-                        >
-                          <ChevronRight size={18} />
-                        </button>
                       </div>
-                      <div className="mt-3 pt-3 border-t border-slate-800">
-                        <p className="text-[10px] text-emerald-400 font-bold flex items-center gap-1.5">
-                          <CalendarDays size={12} />
-                          {filteredCount} {filteredCount === 1 ? renewalTypeLabel.toLowerCase() : renewalTypeLabelPlural} with {renewalCardOrLicense} expiring in {new Date(renewalMonth.year, renewalMonth.month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                    )}
+
+                    {patientRenewalMode === 'all_expired' && (
+                      <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 mt-1">
+                        <p className="text-[10px] text-red-400 font-bold flex items-center gap-1.5">
+                          <CalendarDays size={12} /> Showing all patients with expired cards
                         </p>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
+                )}
 
-                  {renewalMode === 'all_expired' && (
-                    <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 mt-1">
-                      <p className="text-[10px] text-red-400 font-bold flex items-center gap-1.5">
-                        <CalendarDays size={12} /> Showing all {renewalTypeLabelPlural} with expired {renewalCardOrLicense}
-                      </p>
-                      <p className="text-[9px] text-slate-500 mt-1">{filteredCount} {filteredCount === 1 ? renewalTypeLabel.toLowerCase() : renewalTypeLabelPlural} past their renewal date</p>
+                {/* Business License Renewal Filter */}
+                {(selectedTypes.includes('All') || selectedTypes.some(t => t !== 'patient' && t !== 'All')) && (
+                  <div className="space-y-2">
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                      <CalendarDays size={12} className="text-amber-400" /> Business License Renewal Filter
+                    </label>
+                    <div className="grid grid-cols-3 gap-2 mb-3">
+                      <button
+                        onClick={() => setBusinessRenewalMode('off')}
+                        className={cn(
+                          "py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all",
+                          businessRenewalMode === 'off' ? "bg-slate-600 text-white shadow-sm" : "bg-slate-950 text-slate-500 border border-slate-700 hover:text-white"
+                        )}
+                      >Off</button>
+                      <button
+                        onClick={() => setBusinessRenewalMode('month')}
+                        className={cn(
+                          "py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all",
+                          businessRenewalMode === 'month' ? "bg-emerald-600 text-white shadow-sm shadow-emerald-500/30" : "bg-slate-950 text-slate-500 border border-slate-700 hover:text-white"
+                        )}
+                      >📅 By Month</button>
+                      <button
+                        onClick={() => setBusinessRenewalMode('all_expired')}
+                        className={cn(
+                          "py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all",
+                          businessRenewalMode === 'all_expired' ? "bg-red-600 text-white shadow-sm shadow-red-500/30" : "bg-slate-950 text-slate-500 border border-slate-700 hover:text-white"
+                        )}
+                      >🔴 All Expired</button>
                     </div>
-                  )}
-                </div>
+
+                    {businessRenewalMode === 'month' && (
+                      <div className="bg-slate-950 rounded-xl border border-slate-700 p-3">
+                        <div className="flex items-center justify-between">
+                          <button
+                            onClick={() => setBusinessRenewalMonth(prev => {
+                              const d = new Date(prev.year, prev.month - 1, 1);
+                              return { year: d.getFullYear(), month: d.getMonth() };
+                            })}
+                            className="p-2 hover:bg-slate-800 rounded-lg transition-colors text-slate-400 hover:text-white"
+                          >
+                            <ChevronLeft size={18} />
+                          </button>
+                          <div className="text-center">
+                            <p className="text-white font-black text-sm">
+                              {new Date(businessRenewalMonth.year, businessRenewalMonth.month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                            </p>
+                            <p className="text-[9px] text-slate-500 font-bold mt-0.5">Businesses expiring this month</p>
+                          </div>
+                          <button
+                            onClick={() => setBusinessRenewalMonth(prev => {
+                              const d = new Date(prev.year, prev.month + 1, 1);
+                              return { year: d.getFullYear(), month: d.getMonth() };
+                            })}
+                            className="p-2 hover:bg-slate-800 rounded-lg transition-colors text-slate-400 hover:text-white"
+                          >
+                            <ChevronRight size={18} />
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {businessRenewalMode === 'all_expired' && (
+                      <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 mt-1">
+                        <p className="text-[10px] text-red-400 font-bold flex items-center gap-1.5">
+                          <CalendarDays size={12} /> Showing all businesses with expired licenses
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
 
                 {/* Tier Filter */}
                 <div>
@@ -1436,11 +1538,12 @@ export const MarketingHub = () => {
                       const val = e.target.value;
                       if (!val) return;
                       setSelectedAgencySubtypes(['All']);
+                      setPatientRenewalMode('off');
+                      setBusinessRenewalMode('off');
                       if (val === 'hub') {
                         setSelectedTypes(['agency', 'advocate', 'attorney', 'provider', 'backoffice', 'distribution', 'other']);
                         setSelectedStates(['All']);
                         setSelectedTier('all');
-                        setRenewalMode('off');
                         setCampaignType('email');
                         setSendMode('broadcast');
                         setSubject('51 Jurisdictions. Zero Interoperability. Until Now.');
@@ -1476,7 +1579,6 @@ export const MarketingHub = () => {
                         setSelectedTypes(['agency']);
                         setSelectedStates(['All']);
                         setSelectedTier('all');
-                        setRenewalMode('off');
                         setCampaignType('email');
                         setSendMode('broadcast');
                         setSubject('Briefing: The First Compliance OS Registered at Every Level of Government');
@@ -1485,7 +1587,6 @@ export const MarketingHub = () => {
                         setSelectedTypes(['advocate']);
                         setSelectedStates(['All']);
                         setSelectedTier('all');
-                        setRenewalMode('off');
                         setCampaignType('email');
                         setSendMode('broadcast');
                         setSubject('The Data Your Advocacy Work Has Been Missing');
@@ -1494,7 +1595,6 @@ export const MarketingHub = () => {
                         setSelectedTypes(['attorney']);
                         setSelectedStates(['All']);
                         setSelectedTier('all');
-                        setRenewalMode('off');
                         setCampaignType('email');
                         setSendMode('broadcast');
                         setSubject("Your Clients' Compliance Records Should Be Court-Ready. They're Not.");
@@ -1503,7 +1603,6 @@ export const MarketingHub = () => {
                         setSelectedTypes(['provider']);
                         setSelectedStates(['All']);
                         setSelectedTier('all');
-                        setRenewalMode('off');
                         setCampaignType('email');
                         setSendMode('broadcast');
                         setSubject('Your Patient Pipeline Deserves Real-Time Compliance Infrastructure');
@@ -1512,8 +1611,8 @@ export const MarketingHub = () => {
                         setSelectedTypes(['patient']);
                         setSelectedStates(['OK']);
                         setSelectedTier('all');
-                        setRenewalMode('month');
-                        setRenewalMonth({ year: 2026, month: 3 }); // Set to April 2026 by default
+                        setPatientRenewalMode('month');
+                        setPatientRenewalMonth({ year: 2026, month: 3 }); // Set to April 2026 by default
                         setCampaignType('email');
                         setSendMode('broadcast');
                         setSubject('Action Required: Your Medical Cannabis Card is Expiring Soon');
@@ -1549,8 +1648,8 @@ export const MarketingHub = () => {
                         setSelectedTypes(['dispensary', 'grower', 'processor', 'distribution', 'other']);
                         setSelectedStates(['All']);
                         setSelectedTier('all');
-                        setRenewalMode('month');
-                        setRenewalMonth({ year: 2026, month: 3 }); // Set to April 2026 by default
+                        setBusinessRenewalMode('month');
+                        setBusinessRenewalMonth({ year: 2026, month: 3 }); // Set to April 2026 by default
                         setCampaignType('email');
                         setSendMode('broadcast');
                         setSubject('Compliance Alert: Your Cannabis Business License is Expiring Soon');
