@@ -32,8 +32,25 @@ function getAdminDb() {
 const TEXTBELT_API_KEY = process.env.TEXTBELT_API_KEY || '';
 
 const createTransporter = () => {
-  let user = process.env.SMTP_USER || 'marketing@ggp-os.com';
-  let pass = process.env.SMTP_PASS || process.env.GMAIL_MARKETING_APP_PASSWORD || '';
+  let host = process.env.SMTP_HOST;
+  let port = parseInt(process.env.SMTP_PORT || '587');
+  let secure = process.env.SMTP_SECURE === 'true';
+  let user = process.env.SMTP_USER;
+  let pass = process.env.SMTP_PASS;
+
+  // Smart fallback: if RESEND_API_KEY is available and SMTP_HOST is not explicitly configured
+  // or is set to Resend, default to Resend SMTP configuration settings.
+  if (process.env.RESEND_API_KEY && (!host || host === 'smtp.resend.com' || host === 'smtp.gmail.com')) {
+    host = 'smtp.resend.com';
+    port = 587;
+    secure = false;
+    user = 'resend';
+    pass = process.env.RESEND_API_KEY;
+  } else {
+    host = host || 'smtp.gmail.com';
+    user = user || 'marketing@ggp-os.com';
+    pass = pass || process.env.GMAIL_MARKETING_APP_PASSWORD || '';
+  }
 
   // Clean copy-paste artifacts (quotes and whitespace)
   if (user.startsWith('"') && user.endsWith('"')) user = user.slice(1, -1);
@@ -44,9 +61,9 @@ const createTransporter = () => {
   pass = pass.trim();
 
   return nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.SMTP_PORT || '587'),
-    secure: process.env.SMTP_SECURE === 'true',
+    host,
+    port,
+    secure,
     auth: { user, pass },
     pool: true,
     maxConnections: 3,
