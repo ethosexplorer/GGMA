@@ -48,7 +48,8 @@ const getEventCategoryObj = (ev: CalEvent) => {
   const isRenewal = ev.category === 'renewal' || ev.color === 'bg-yellow-500' || titleLower.includes('renewal') || descLower.includes('renew');
   
   if (isRenewal) {
-    if (ev.isBusiness) {
+    const isBiz = ev.isBusiness || descLower.includes('business') || titleLower.includes('llc') || titleLower.includes('l.l.c.') || titleLower.includes('inc.') || titleLower.includes('co.') || titleLower.includes('corp') || titleLower.includes('growery') || titleLower.includes('farm') || titleLower.includes('dispensary') || titleLower.includes('processor');
+    if (isBiz) {
       const todayStr = '2026-06-04';
       const isOverdue = ev.date < todayStr;
       if (isOverdue) {
