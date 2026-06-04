@@ -12,7 +12,7 @@ import { DETAILED_STATE_KNOWLEDGE } from '../stateDetailedKnowledge';
 import { PERSONAL_JOURNEY } from '../personalJourney';
 
 const API_KEY = () => import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
-const MODEL_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+const MODEL_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent';
 
 const PLATFORM_HISTORICAL_VAULT = `
 ================================================================================

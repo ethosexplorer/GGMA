@@ -10,7 +10,7 @@ const TEXTBELT_API_KEY = process.env.TEXTBELT_API_KEY || '';
 const TEXTBELT_URL = 'https://textbelt.com/text';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || '';
-const MODEL_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+const MODEL_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent';
 
 // Helper to log speech turns to Turso database
 async function logCallSpeech(callSid, role, text, department = null) {
