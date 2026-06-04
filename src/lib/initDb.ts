@@ -88,6 +88,35 @@ export const initDatabase = async () => {
           args: [item.n, item.t, item.g, item.net, item.s, item.c]
         });
       }
+    }
+
+    // 6.5. Founder Payables Table
+    await turso.execute(`
+      CREATE TABLE IF NOT EXISTS founder_payables (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        amount TEXT NOT NULL,
+        due_date TEXT NOT NULL,
+        status TEXT NOT NULL,
+        color TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Seed founder_payables if empty
+    const payablesCheck = await turso.execute('SELECT COUNT(*) as count FROM founder_payables');
+    if (payablesCheck.rows[0].count === 0) {
+      const seeds = [
+        { name: 'Metrc Monthly API License', amount: '$250.00', due_date: '2026-06-15', status: 'Unpaid', color: 'bg-amber-500' },
+        { name: 'Stripe Payment Processing Invoice', amount: '$1,200.00', due_date: '2026-06-10', status: 'Paid', color: 'bg-emerald-600' },
+        { name: 'Twilio Telephony & Voice Bundle', amount: '$450.00', due_date: '2026-06-20', status: 'Pending', color: 'bg-indigo-600' }
+      ];
+      for (const item of seeds) {
+        await turso.execute({
+          sql: 'INSERT INTO founder_payables (name, amount, due_date, status, color) VALUES (?, ?, ?, ?, ?)',
+          args: [item.name, item.amount, item.due_date, item.status, item.color]
+        });
+      }
     }    // 7. Platform Settings Table (Global News Ticker & Emergency Broadcasts)
     await turso.execute(`
       CREATE TABLE IF NOT EXISTS platform_settings (
