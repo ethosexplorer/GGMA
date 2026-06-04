@@ -50,7 +50,8 @@ const getEventCategoryObj = (ev: CalEvent) => {
   if (isRenewal) {
     const isBiz = ev.isBusiness || descLower.includes('business') || titleLower.includes('llc') || titleLower.includes('l.l.c.') || titleLower.includes('inc.') || titleLower.includes('co.') || titleLower.includes('corp') || titleLower.includes('growery') || titleLower.includes('farm') || titleLower.includes('dispensary') || titleLower.includes('processor');
     if (isBiz) {
-      const todayStr = '2026-06-04';
+      const now = new Date();
+      const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
       const isOverdue = ev.date < todayStr;
       if (isOverdue) {
         return { id: 'renewal_overdue_business', label: 'Overdue Business Renewal', color: 'bg-red-500' };

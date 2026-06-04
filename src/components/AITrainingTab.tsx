@@ -246,21 +246,36 @@ export const AITrainingTab = ({ userProfile, onNavigate }: { userProfile: any; o
     if (selectedTaskIds.length === 0) return;
     if (!confirm(`Are you sure you want to permanently delete the ${selectedTaskIds.length} selected tasks/events?`)) return;
     
+    // Capture the IDs to delete before clearing selection
+    const idsToDelete = [...selectedTaskIds];
+    
+    // Optimistically remove from local state immediately so items disappear
+    setCalEvents(prev => prev.filter(e => !idsToDelete.includes(e.id)));
+    setRealtimeTasks(prev => prev.filter(e => !idsToDelete.includes(e.id)));
+    setSelectedTaskIds([]);
+
     try {
-      const batch = writeBatch(db);
-      selectedTaskIds.forEach(id => {
-        if (id.startsWith('fb_')) {
-          const docId = id.replace('fb_', '');
-          batch.delete(doc(db, 'calendar_events', docId));
-        } else {
-          batch.delete(doc(db, 'realtime_tasks', id));
-        }
-      });
-      await batch.commit();
-      setSelectedTaskIds([]);
+      // Split into chunks of 400 (Firestore batch limit is 500)
+      const chunks: string[][] = [];
+      for (let i = 0; i < idsToDelete.length; i += 400) {
+        chunks.push(idsToDelete.slice(i, i + 400));
+      }
+
+      for (const chunk of chunks) {
+        const batch = writeBatch(db);
+        chunk.forEach(id => {
+          if (id.startsWith('fb_')) {
+            const docId = id.replace('fb_', '');
+            batch.delete(doc(db, 'calendar_events', docId));
+          } else {
+            batch.delete(doc(db, 'realtime_tasks', id));
+          }
+        });
+        await batch.commit();
+      }
     } catch (err) {
       console.error('Failed to delete selected tasks:', err);
-      alert('Failed to delete selected tasks.');
+      alert(`Failed to delete some tasks: ${(err as any)?.message || 'Unknown error'}. They may reappear on refresh.`);
     }
   };
 
@@ -926,12 +941,6 @@ export const AITrainingTab = ({ userProfile, onNavigate }: { userProfile: any; o
             }}
             className="mt-1.5 accent-indigo-500 w-3.5 h-3.5 shrink-0 cursor-pointer"
           />
-          <button 
-            onClick={() => handleToggleComplete(item)}
-            className="mt-1 text-slate-500 hover:text-white transition-colors bg-transparent border-none cursor-pointer p-0 shrink-0"
-          >
-            {isDone ? <CheckCircle2 size={18} className="text-emerald-500" /> : <Square size={18} className="text-slate-600 hover:text-slate-400" />}
-          </button>
           
           <div className="min-w-0">
             <p className={cn("text-xs font-bold leading-snug break-words", isDone ? "text-slate-500 line-through" : "text-white")}>
@@ -977,8 +986,19 @@ export const AITrainingTab = ({ userProfile, onNavigate }: { userProfile: any; o
               </p>
             )}
 
-            {/* Live CTA Button Row */}
+            {/* Live CTA Button Row — includes Mark Complete */}
             <div className="flex items-center gap-2 mt-2">
+              <button 
+                onClick={() => handleToggleComplete(item)}
+                className={cn(
+                  "px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider flex items-center gap-1 transition-all border-none cursor-pointer",
+                  isDone 
+                    ? "bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/35" 
+                    : "bg-indigo-500/20 hover:bg-indigo-500/35 text-indigo-300"
+                )}
+              >
+                {isDone ? <><CheckCircle2 size={10} /> Completed</> : <><CheckSquare size={10} /> Mark Complete</>}
+              </button>
               {isCampaign && !isDone && (
                 <button 
                   onClick={() => handleResumeCampaign(item)}
@@ -999,8 +1019,8 @@ export const AITrainingTab = ({ userProfile, onNavigate }: { userProfile: any; o
           </div>
         </div>
 
-        {/* Task Actions */}
-        <div className="flex gap-1 opacity-0 group-hover/card:opacity-100 transition-opacity shrink-0">
+        {/* Task Actions — always visible */}
+        <div className="flex gap-1 shrink-0">
           <button 
             onClick={() => setForwardingTask(item)}
             className="p-1.5 text-slate-500 hover:text-indigo-400 transition-colors bg-transparent border-none cursor-pointer"
