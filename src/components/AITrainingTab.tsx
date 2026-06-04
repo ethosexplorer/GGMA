@@ -36,6 +36,7 @@ interface TaskItem {
   status?: string;
   completed?: boolean;
   campaignId?: string;
+  createdAt?: any;
 }
 
 const CATEGORY_MAP: Record<string, { label: string; color: string }> = {
@@ -147,6 +148,7 @@ export const AITrainingTab = ({ userProfile, onNavigate }: { userProfile: any; o
           assignedTo: data.assignedTo || '',
           assignedBy: data.assignedBy || '',
           completed: !!data.completed,
+          createdAt: data.createdAt,
         } as TaskItem;
       });
       setCalEvents(items);
@@ -167,12 +169,15 @@ export const AITrainingTab = ({ userProfile, onNavigate }: { userProfile: any; o
           title: data.title || '',
           dueDate: data.dueDate || '',
           date: data.dueDate || '',
+          startTime: data.startTime || '',
+          endTime: data.endTime || '',
           status: data.status || 'pending',
           completed: data.status === 'completed',
           priority: data.priority || 'medium',
           category: data.category || 'general',
           description: data.description || '',
           campaignId: data.campaignId || '',
+          createdAt: data.createdAt,
         } as TaskItem;
       });
       setRealtimeTasks(items);
@@ -299,6 +304,8 @@ export const AITrainingTab = ({ userProfile, onNavigate }: { userProfile: any; o
         await addDoc(collection(db, 'realtime_tasks'), {
           title: form.title,
           dueDate: activeDate,
+          startTime: form.startTime,
+          endTime: form.endTime,
           status: 'pending',
           priority: 'medium',
           category: form.category,
@@ -694,28 +701,26 @@ export const AITrainingTab = ({ userProfile, onNavigate }: { userProfile: any; o
                 </div>
               </div>
 
-              {form.type === 'calendar' && (
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-1">Start Time</label>
-                    <input 
-                      type="time" 
-                      value={form.startTime}
-                      onChange={e => setForm(f => ({ ...f, startTime: e.target.value }))}
-                      className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-indigo-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-1">End Time</label>
-                    <input 
-                      type="time" 
-                      value={form.endTime}
-                      onChange={e => setForm(f => ({ ...f, endTime: e.target.value }))}
-                      className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-indigo-500"
-                    />
-                  </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-1">Start Time (Optional)</label>
+                  <input 
+                    type="time" 
+                    value={form.startTime}
+                    onChange={e => setForm(f => ({ ...f, startTime: e.target.value }))}
+                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-indigo-500"
+                  />
                 </div>
-              )}
+                <div>
+                  <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-1">End Time (Optional)</label>
+                  <input 
+                    type="time" 
+                    value={form.endTime}
+                    onChange={e => setForm(f => ({ ...f, endTime: e.target.value }))}
+                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
+              </div>
 
               <div className="grid grid-cols-1 gap-3">
                 <div>
@@ -862,9 +867,21 @@ export const AITrainingTab = ({ userProfile, onNavigate }: { userProfile: any; o
               </span>
               
               {/* Time indicator */}
-              {item.type === 'calendar' && item.startTime && (
+              {item.startTime && (
                 <span className="text-[9px] font-bold text-slate-500 flex items-center gap-1">
                   <Clock size={10} /> {item.startTime} – {item.endTime}
+                </span>
+              )}
+
+              {/* Created timestamp */}
+              {item.createdAt && (
+                <span className="text-[9px] font-bold text-slate-500 flex items-center gap-1">
+                  <CalIcon size={10} /> Created: {(() => {
+                    const date = item.createdAt.toDate ? item.createdAt.toDate() : new Date(item.createdAt);
+                    const dStr = date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' });
+                    const tStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                    return `${dStr} ${tStr}`;
+                  })()}
                 </span>
               )}
 
