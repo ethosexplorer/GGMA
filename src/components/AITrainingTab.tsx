@@ -95,6 +95,12 @@ export const AITrainingTab = ({ userProfile, onNavigate }: { userProfile: any; o
   const [realtimeTasks, setRealtimeTasks] = useState<TaskItem[]>([]);
   const [memories, setMemories] = useState<Memory[]>([]);
   const [isSynced, setIsSynced] = useState(false);
+  const [selectedTaskIds, setSelectedTaskIds] = useState<string[]>([]);
+  
+  // Reset selected tasks on date change
+  useEffect(() => {
+    setSelectedTaskIds([]);
+  }, [activeDate]);
   
   // Staff for Forwarding
   const STAFF_MEMBERS = [
@@ -236,6 +242,28 @@ export const AITrainingTab = ({ userProfile, onNavigate }: { userProfile: any; o
   }, [calEvents, realtimeTasks, activeDate, filterMode]);
 
   // Task CRUD Functions
+  const handleDeleteSelected = async () => {
+    if (selectedTaskIds.length === 0) return;
+    if (!confirm(`Are you sure you want to permanently delete the ${selectedTaskIds.length} selected tasks/events?`)) return;
+    
+    try {
+      const batch = writeBatch(db);
+      selectedTaskIds.forEach(id => {
+        if (id.startsWith('fb_')) {
+          const docId = id.replace('fb_', '');
+          batch.delete(doc(db, 'calendar_events', docId));
+        } else {
+          batch.delete(doc(db, 'realtime_tasks', id));
+        }
+      });
+      await batch.commit();
+      setSelectedTaskIds([]);
+    } catch (err) {
+      console.error('Failed to delete selected tasks:', err);
+      alert('Failed to delete selected tasks.');
+    }
+  };
+
   const handleToggleComplete = async (item: TaskItem) => {
     if (item.type === 'calendar') {
       const nextCompleted = !item.completed;
@@ -490,6 +518,40 @@ export const AITrainingTab = ({ userProfile, onNavigate }: { userProfile: any; o
           </div>
           <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{todayList.length} items for this day</span>
         </div>
+
+        {/* Multi-select Control Bar */}
+        {(todayList.length > 0 || overdueList.length > 0) && (
+          <div className="flex justify-between items-center bg-slate-950/40 rounded-xl px-4 py-2 border border-slate-800/40 mb-3 shrink-0">
+            <label className="flex items-center gap-2 cursor-pointer select-none">
+              <input 
+                type="checkbox"
+                checked={
+                  (todayList.length + overdueList.length) > 0 &&
+                  selectedTaskIds.length === (todayList.length + overdueList.length)
+                }
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    const allIds = [...todayList, ...overdueList].map(item => item.id);
+                    setSelectedTaskIds(allIds);
+                  } else {
+                    setSelectedTaskIds([]);
+                  }
+                }}
+                className="accent-indigo-500 w-3.5 h-3.5 cursor-pointer"
+              />
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Select All</span>
+            </label>
+            
+            {selectedTaskIds.length > 0 && (
+              <button
+                onClick={handleDeleteSelected}
+                className="px-3 py-1 bg-red-600/20 hover:bg-red-600 text-red-300 hover:text-white rounded-lg text-[9px] font-black uppercase tracking-wider transition-all border border-red-500/20 hover:border-red-500 cursor-pointer"
+              >
+                🗑️ Delete Selected ({selectedTaskIds.length})
+              </button>
+            )}
+          </div>
+        )}
 
         {/* Scrollable Tasks List */}
         <div className="flex-1 overflow-y-auto pr-1 space-y-4 mb-4 min-h-0">
@@ -852,6 +914,18 @@ export const AITrainingTab = ({ userProfile, onNavigate }: { userProfile: any; o
         )}
       >
         <div className="flex items-start gap-3 min-w-0">
+          <input 
+            type="checkbox"
+            checked={selectedTaskIds.includes(item.id)}
+            onChange={(e) => {
+              if (e.target.checked) {
+                setSelectedTaskIds(prev => [...prev, item.id]);
+              } else {
+                setSelectedTaskIds(prev => prev.filter(id => id !== item.id));
+              }
+            }}
+            className="mt-1.5 accent-indigo-500 w-3.5 h-3.5 shrink-0 cursor-pointer"
+          />
           <button 
             onClick={() => handleToggleComplete(item)}
             className="mt-1 text-slate-500 hover:text-white transition-colors bg-transparent border-none cursor-pointer p-0 shrink-0"
