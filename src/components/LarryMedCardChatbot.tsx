@@ -578,7 +578,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
             speakText(accumulated);
           }
         },
-        { history: historyForAI, temperature: 0.7, maxTokens: 1200 }
+        { history: historyForAI, temperature: 0.7, maxTokens: 4000 }
       );
     } catch (err) {
       setIsStreaming(false);
