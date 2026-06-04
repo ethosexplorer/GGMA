@@ -70,6 +70,9 @@ export const AITrainingTab = ({ userProfile, onNavigate }: { userProfile: any; o
   const [showMemoryDrawer, setShowMemoryDrawer] = useState(false);
   const [editingTask, setEditingTask] = useState<TaskItem | null>(null);
   const [forwardingTask, setForwardingTask] = useState<TaskItem | null>(null);
+  const [showAddNoteModal, setShowAddNoteModal] = useState(false);
+  const [newNoteContent, setNewNoteContent] = useState('');
+  const [isSavingNote, setIsSavingNote] = useState(false);
   
   // Dialer State
   const [dialNumber, setDialNumber] = useState('');
@@ -364,6 +367,27 @@ export const AITrainingTab = ({ userProfile, onNavigate }: { userProfile: any; o
     setActiveDate(`${yyyy}-${mm}-${dd}`);
   };
 
+  const handleSaveNote = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newNoteContent.trim() || !userProfile?.uid) return;
+
+    setIsSavingNote(true);
+    try {
+      await addDoc(collection(db, 'users', userProfile.uid, 'ai_memory'), {
+        content: newNoteContent.trim(),
+        createdAt: serverTimestamp(),
+        createdBy: userProfile.displayName || userProfile.email || 'Executive',
+      });
+      setNewNoteContent('');
+      setShowAddNoteModal(false);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to save note.');
+    } finally {
+      setIsSavingNote(false);
+    }
+  };
+
   const addManualDirective = async () => {
     const content = prompt('Enter a directive for Sylara to memorize:');
     if (!content?.trim() || !userProfile?.uid) return;
@@ -414,6 +438,12 @@ export const AITrainingTab = ({ userProfile, onNavigate }: { userProfile: any; o
               className="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all flex items-center gap-1.5 border-none cursor-pointer"
             >
               <Brain size={12} className="text-purple-400" /> Stored Directives
+            </button>
+            <button 
+              onClick={() => setShowAddNoteModal(true)}
+              className="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all flex items-center gap-1.5 border-none cursor-pointer"
+            >
+              <Plus size={12} className="text-purple-400" /> Add Note
             </button>
             <button 
               onClick={() => setShowAddForm(true)}
@@ -714,6 +744,47 @@ export const AITrainingTab = ({ userProfile, onNavigate }: { userProfile: any; o
                 className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl text-xs uppercase tracking-widest border-none cursor-pointer shadow-lg shadow-indigo-950/20"
               >
                 Create & Sync
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── MODAL: Add Note/Directive Form ── */}
+      {showAddNoteModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[9999] flex items-center justify-center animate-in fade-in duration-200">
+          <div className="bg-slate-950 border border-slate-800 rounded-3xl p-6 max-w-md w-full mx-4 shadow-2xl text-white relative animate-in zoom-in-95 duration-300">
+            <button 
+              onClick={() => setShowAddNoteModal(false)}
+              className="absolute top-4 right-4 p-1.5 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg transition-colors border-none cursor-pointer"
+            >
+              <X size={18} />
+            </button>
+            <h3 className="text-lg font-black italic uppercase mb-2 flex items-center gap-2">
+              <Brain size={18} className="text-purple-400" /> Add Stored Directive
+            </h3>
+            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-4">
+              Add permanent background knowledge, directives, or strategy notes for Sylara.
+            </p>
+            
+            <form onSubmit={handleSaveNote} className="space-y-4">
+              <div>
+                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-1">Note Content *</label>
+                <textarea 
+                  required
+                  placeholder="E.g., Learn: The primary medical clinic contact for California is DCC at (800) 555-0199..."
+                  value={newNoteContent}
+                  onChange={e => setNewNoteContent(e.target.value)}
+                  className="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500 h-36 resize-none leading-relaxed"
+                />
+              </div>
+
+              <button 
+                type="submit"
+                disabled={isSavingNote || !newNoteContent.trim()}
+                className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-black rounded-xl text-xs uppercase tracking-widest border-none cursor-pointer shadow-lg shadow-indigo-950/20 flex items-center justify-center gap-1.5"
+              >
+                {isSavingNote ? 'Saving to Vault...' : 'Commit to Sylara\'s Memory'}
               </button>
             </form>
           </div>
