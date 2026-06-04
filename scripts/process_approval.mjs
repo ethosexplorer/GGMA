@@ -143,8 +143,8 @@ async function main() {
     await addDoc(eventsRef, {
       title: `Renewal: ${nameParam}`,
       date: expiresParam,
-      startTime: '09:00',
-      endTime: '10:00',
+      startTime: '18:00',
+      endTime: '19:00',
       category: 'ops',
       color: 'bg-indigo-500',
       description: `Patient license renewal contact reminder for ${nameParam}.\nLicense Number: ${licenseParam}\nEmail: ${emailParam || 'N/A'}\nType: ${typeParam}`,

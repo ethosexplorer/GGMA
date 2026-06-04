@@ -90,8 +90,8 @@ async function main() {
     await addDoc(eventsRef, {
       title: 'Renewal: Jasmin Garrett',
       date: '2028-05-29',
-      startTime: '09:00',
-      endTime: '10:00',
+      startTime: '18:00',
+      endTime: '19:00',
       category: 'ops',
       color: 'bg-indigo-500',
       description: 'Patient license renewal contact reminder for Jasmin Garrett.\nLicense Number: AP-FTNE-0HNY-A3\nEmail: jasmingarrett.jg@gmail.com\nPhone: +1 405-698-4939\nJurisdiction: Oklahoma',

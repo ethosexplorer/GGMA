@@ -52,8 +52,8 @@ async function main() {
     toCreate.push({
       title: title,
       date: date,
-      startTime: '09:00',
-      endTime: '10:00',
+      startTime: '18:00',
+      endTime: '19:00',
       category: 'ops',
       color: 'bg-indigo-500',
       description: `Patient license renewal contact reminder for ${record.name}.\nPhone: ${record.phone || 'N/A'}\nEmail: ${record.email || 'N/A'}\nJurisdiction: ${record.jurisdiction || 'Oklahoma'}\nCRM ID: ${docSnap.id}`,
