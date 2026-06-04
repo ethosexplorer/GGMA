@@ -246,36 +246,41 @@ export const AITrainingTab = ({ userProfile, onNavigate }: { userProfile: any; o
     if (selectedTaskIds.length === 0) return;
     if (!confirm(`Are you sure you want to permanently delete the ${selectedTaskIds.length} selected tasks/events?`)) return;
     
-    // Capture the IDs to delete before clearing selection
+    // Capture IDs and clear selection immediately
     const idsToDelete = [...selectedTaskIds];
-    
-    // Optimistically remove from local state immediately so items disappear
-    setCalEvents(prev => prev.filter(e => !idsToDelete.includes(e.id)));
-    setRealtimeTasks(prev => prev.filter(e => !idsToDelete.includes(e.id)));
     setSelectedTaskIds([]);
 
-    try {
-      // Split into chunks of 400 (Firestore batch limit is 500)
-      const chunks: string[][] = [];
-      for (let i = 0; i < idsToDelete.length; i += 400) {
-        chunks.push(idsToDelete.slice(i, i + 400));
-      }
+    // Verify Firebase auth is active before attempting deletes
+    const { getAuth } = await import('firebase/auth');
+    const currentUser = getAuth().currentUser;
+    if (!currentUser) {
+      alert('Your session has expired. Please log out and log back in, then try again.');
+      return;
+    }
 
-      for (const chunk of chunks) {
-        const batch = writeBatch(db);
-        chunk.forEach(id => {
-          if (id.startsWith('fb_')) {
-            const docId = id.replace('fb_', '');
-            batch.delete(doc(db, 'calendar_events', docId));
-          } else {
-            batch.delete(doc(db, 'realtime_tasks', id));
-          }
-        });
-        await batch.commit();
+    // Delete each item individually using Promise.allSettled for resilience
+    const deletePromises = idsToDelete.map(async (id) => {
+      try {
+        if (id.startsWith('fb_')) {
+          const docId = id.replace('fb_', '');
+          await deleteDoc(doc(db, 'calendar_events', docId));
+        } else {
+          await deleteDoc(doc(db, 'realtime_tasks', id));
+        }
+        return { id, status: 'ok' as const };
+      } catch (err) {
+        console.error(`Failed to delete ${id}:`, err);
+        return { id, status: 'fail' as const, error: err };
       }
-    } catch (err) {
-      console.error('Failed to delete selected tasks:', err);
-      alert(`Failed to delete some tasks: ${(err as any)?.message || 'Unknown error'}. They may reappear on refresh.`);
+    });
+
+    const results = await Promise.allSettled(deletePromises);
+    const settled = results.map(r => r.status === 'fulfilled' ? r.value : { id: '?', status: 'fail' as const, error: r.reason });
+    const succeeded = settled.filter(r => r.status === 'ok').length;
+    const failed = settled.filter(r => r.status === 'fail').length;
+
+    if (failed > 0) {
+      alert(`Deleted ${succeeded} of ${idsToDelete.length} items. ${failed} failed — your session may have expired. Try logging out and back in.`);
     }
   };
 

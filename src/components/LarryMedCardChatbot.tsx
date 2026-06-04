@@ -583,16 +583,14 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       finalSendText = `${text}\n\n[Uploaded Files]:\n${attachmentDetails}`;
       userMsgText = `${text}\n\n${listStr}`;
       
-      // Auto-train directives permanently in Firestore so Sylara remembers the document history
-      for (const a of pendingFiles) {
-        try {
-          await addDoc(collection(db, 'users', userProfile.uid, 'ai_memory'), {
+      // Fire-and-forget: save directives to Firestore in background (don't block send)
+      if (userProfile?.uid) {
+        for (const a of pendingFiles) {
+          addDoc(collection(db, 'users', userProfile.uid, 'ai_memory'), {
             content: `Learn: User shared history document named "${a.name}" - View: ${a.url}`,
             createdAt: serverTimestamp(),
             createdBy: userProfile.displayName || userProfile.email || 'Executive',
-          });
-        } catch (err) {
-          console.error('Failed to save directive from attachment:', err);
+          }).catch(err => console.warn('Auto-train directive save skipped:', err));
         }
       }
     }
@@ -660,7 +658,9 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
 
   const handleSend = (overrideText?: string) => {
     const text = (overrideText || inputValue).trim();
-    if (!text) return;
+    // Allow sending if there are attachments even without text
+    if (!text && attachments.length === 0) return;
+    const sendText = text || `[Shared ${attachments.length} file(s): ${attachments.map(a => a.name).join(', ')}]`;
 
     // ── Check for training commands ──
     const trainMatch = text.match(/^(train|learn|remember):\s*(.+)/i);
@@ -687,7 +687,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
 
     // ── Executive AI chat ──
     if (isExecutive && step === 'greeting') {
-      handleExecSend(text, attachments);
+      handleExecSend(sendText, attachments);
       return;
     }
 
