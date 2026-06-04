@@ -487,33 +487,79 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     const file = e.target.files?.[0];
     if (!file || !userProfile?.uid) return;
 
+    // Enforce size limit (10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      alert('File too large. Maximum size is 10 MB.');
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
+
     setIsFileUploading(true);
     try {
-      const fileRef = ref(storage, `users/${userProfile.uid}/chat_uploads/${Date.now()}_${file.name}`);
-      await uploadBytes(fileRef, file);
-      const downloadUrl = await getDownloadURL(fileRef);
-      
       let content = '';
+      let localUrl = '';
       const lowerName = file.name.toLowerCase();
-      const isTextType = file.type.startsWith('text/') || 
-                         lowerName.endsWith('.csv') || 
-                         lowerName.endsWith('.json') || 
-                         lowerName.endsWith('.txt') || 
-                         lowerName.endsWith('.md') ||
-                         lowerName.endsWith('.xml');
-      
-      if (isTextType && file.size < 500 * 1024) { // Limit to 500KB
-        try {
-          content = await file.text();
-        } catch (readErr) {
-          console.warn('Failed to read file content text:', readErr);
+
+      // For images: create a local object URL for preview and read as base64 for AI context
+      if (file.type.startsWith('image/')) {
+        localUrl = URL.createObjectURL(file);
+        // Read a small description for AI context
+        content = `[Image file: ${file.name}, Size: ${(file.size / 1024).toFixed(1)}KB, Type: ${file.type}]`;
+      } 
+      // For text-based files: read content directly
+      else if (file.type.startsWith('text/') || 
+               lowerName.endsWith('.csv') || 
+               lowerName.endsWith('.json') || 
+               lowerName.endsWith('.txt') || 
+               lowerName.endsWith('.md') ||
+               lowerName.endsWith('.xml')) {
+        if (file.size < 500 * 1024) {
+          try {
+            content = await file.text();
+          } catch (readErr) {
+            console.warn('Failed to read file content:', readErr);
+            content = `[Text file: ${file.name}, Size: ${(file.size / 1024).toFixed(1)}KB — could not read content]`;
+          }
+        } else {
+          content = `[Text file: ${file.name}, Size: ${(file.size / 1024).toFixed(1)}KB — too large to read inline]`;
         }
+        localUrl = '';
+      } 
+      // For PDFs: read as text where possible
+      else if (lowerName.endsWith('.pdf')) {
+        content = `[PDF document: ${file.name}, Size: ${(file.size / 1024).toFixed(1)}KB. PDF content cannot be extracted in-browser — please describe what you need analyzed from this document.]`;
+        localUrl = URL.createObjectURL(file);
+      }
+      // Other file types
+      else {
+        content = `[File: ${file.name}, Size: ${(file.size / 1024).toFixed(1)}KB, Type: ${file.type}]`;
+        localUrl = '';
+      }
+
+      // Try uploading to Firebase Storage in background (non-blocking) for permanent storage
+      let permanentUrl = localUrl;
+      try {
+        const fileRef = ref(storage, `users/${userProfile.uid}/chat_uploads/${Date.now()}_${file.name}`);
+        await Promise.race([
+          uploadBytes(fileRef, file).then(async () => {
+            permanentUrl = await getDownloadURL(fileRef);
+          }),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Upload timeout')), 8000))
+        ]);
+      } catch (uploadErr) {
+        console.warn('Firebase Storage upload failed (using local preview):', uploadErr);
+        // Continue with local URL — file is still usable for AI analysis
       }
       
-      setAttachments(prev => [...prev, { name: file.name, url: downloadUrl, type: file.type, content }]);
+      setAttachments(prev => [...prev, { 
+        name: file.name, 
+        url: permanentUrl || localUrl || '#', 
+        type: file.type, 
+        content 
+      }]);
     } catch (err) {
-      console.error('File upload failed:', err);
-      alert('Failed to upload file. Please try again.');
+      console.error('File processing failed:', err);
+      alert('Failed to process file. Please try again.');
     } finally {
       setIsFileUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
