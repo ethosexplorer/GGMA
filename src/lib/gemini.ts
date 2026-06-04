@@ -414,39 +414,7 @@ export const EXECUTIVE_PROMPTS: Record<string, string> = {
 //  STREAMING GEMINI — Word-by-word SSE streaming for real-time chat
 // ═══════════════════════════════════════════════════════════════════════════════
 
-function cleanContentsForGemini(contents: any[]) {
-  if (!Array.isArray(contents) || contents.length === 0) {
-    return [];
-  }
 
-  const cleaned = [];
-
-  for (const turn of contents) {
-    if (!turn || !turn.parts || !Array.isArray(turn.parts) || turn.parts.length === 0) {
-      continue;
-    }
-    const text = turn.parts.map((p: any) => p.text || '').join('\n').trim();
-    if (!text) continue;
-
-    const role = turn.role === 'model' || turn.role === 'bot' ? 'model' : 'user';
-
-    const last = cleaned[cleaned.length - 1];
-    if (last && last.role === role) {
-      last.parts[0].text = `${last.parts[0].text}\n\n${text}`;
-    } else {
-      cleaned.push({
-        role,
-        parts: [{ text }]
-      });
-    }
-  }
-
-  while (cleaned.length > 0 && cleaned[0].role === 'model') {
-    cleaned.shift();
-  }
-
-  return cleaned;
-}
 
 export const streamGeminiResponse = async (
   systemInstruction: string,

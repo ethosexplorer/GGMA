@@ -128,7 +128,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
   const chatEndRef = useRef<HTMLDivElement>(null);
   
   // ── File Upload State & Refs ──
-  const [attachments, setAttachments] = useState<{ name: string; url: string; type: string }[]>([]);
+  const [attachments, setAttachments] = useState<{ name: string; url: string; type: string; content?: string }[]>([]);
   const [isFileUploading, setIsFileUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -492,7 +492,25 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
       const fileRef = ref(storage, `users/${userProfile.uid}/chat_uploads/${Date.now()}_${file.name}`);
       await uploadBytes(fileRef, file);
       const downloadUrl = await getDownloadURL(fileRef);
-      setAttachments(prev => [...prev, { name: file.name, url: downloadUrl, type: file.type }]);
+      
+      let content = '';
+      const lowerName = file.name.toLowerCase();
+      const isTextType = file.type.startsWith('text/') || 
+                         lowerName.endsWith('.csv') || 
+                         lowerName.endsWith('.json') || 
+                         lowerName.endsWith('.txt') || 
+                         lowerName.endsWith('.md') ||
+                         lowerName.endsWith('.xml');
+      
+      if (isTextType && file.size < 500 * 1024) { // Limit to 500KB
+        try {
+          content = await file.text();
+        } catch (readErr) {
+          console.warn('Failed to read file content text:', readErr);
+        }
+      }
+      
+      setAttachments(prev => [...prev, { name: file.name, url: downloadUrl, type: file.type, content }]);
     } catch (err) {
       console.error('File upload failed:', err);
       alert('Failed to upload file. Please try again.');
@@ -509,7 +527,14 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
 
     if (pendingFiles.length > 0) {
       const listStr = pendingFiles.map(a => `[Attachment: ${a.name}](${a.url})`).join('\n');
-      finalSendText = `${text}\n\n[Uploaded Files]:\n${pendingFiles.map(a => `• Name: ${a.name}, Type: ${a.type}, URL: ${a.url}`).join('\n')}`;
+      const attachmentDetails = pendingFiles.map(a => {
+        let meta = `• Name: ${a.name}, Type: ${a.type}, URL: ${a.url}`;
+        if (a.content) {
+          meta += `\n[FILE CONTENTS OF ${a.name}]:\n\`\`\`\n${a.content}\n\`\`\``;
+        }
+        return meta;
+      }).join('\n\n');
+      finalSendText = `${text}\n\n[Uploaded Files]:\n${attachmentDetails}`;
       userMsgText = `${text}\n\n${listStr}`;
       
       // Auto-train directives permanently in Firestore so Sylara remembers the document history
