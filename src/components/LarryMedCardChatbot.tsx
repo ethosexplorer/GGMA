@@ -4,7 +4,7 @@ import {
   Send, Bot, User, Calendar, Clock, Phone, Mail, CheckCircle,
   Loader2, ChevronDown, Leaf, ArrowLeft, Sparkles, Mic, MicOff,
   Volume2, VolumeX, Zap, UserPlus, ClipboardList, DollarSign,
-  Shield, BarChart3, Activity, Paperclip, X, Image, FileText, Sliders
+  Shield, BarChart3, Activity, Paperclip, X, Image, FileText, Sliders, Trash2
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { addDoc, collection, serverTimestamp, onSnapshot, query, orderBy, limit, doc, setDoc, getDocs } from 'firebase/firestore';
@@ -416,6 +416,34 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
     return () => clearTimeout(timeout);
   }, [messages, saveChatHistory, isExecutive]);
 
+  const handleClearHistory = async () => {
+    if (!confirm("Are you sure you want to clear the active conversation history?\n\nThis will reset the chat screen and make Sylara load/respond instantly, but all of your permanently stored directives and compliance files in memory will remain intact!")) {
+      return;
+    }
+    
+    try {
+      const defaultGreeting = {
+        role: 'bot' as const,
+        text: isExecutive ? (getExecGreeting() || getPublicGreeting()) : getPublicGreeting(),
+        timestamp: Date.now()
+      };
+      setMessages([defaultGreeting]);
+      
+      if (userProfile?.uid) {
+        const chatRef = doc(db, 'users', userProfile.uid, 'ai_chat_history', 'latest');
+        await setDoc(chatRef, {
+          messages: [defaultGreeting],
+          updatedAt: serverTimestamp(),
+        });
+      }
+      
+      alert("Active chat history cleared! Sylara's conversational context is now optimized and reset.");
+    } catch (err) {
+      console.error("Failed to clear chat history:", err);
+      alert("Failed to clear history. Please try again.");
+    }
+  };
+
   // ── Next available dates (next 7 business days) ──
   const getNextDates = () => {
     const dates: string[] = [];
@@ -807,6 +835,15 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         <div className="ml-auto flex items-center gap-3">
           {isExecutive && (
             <>
+              <button
+                onClick={handleClearHistory}
+                className="p-1.5 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-all flex items-center gap-1.5 text-xs font-bold"
+                title="Clear Active Chat History (Keeps Directives & Memory)"
+              >
+                <Trash2 size={15} />
+                <span className="hidden sm:inline">Clear Chat</span>
+              </button>
+
               <button
                 onClick={() => setAutoSpeak(!autoSpeak)}
                 className={cn("p-1.5 rounded-lg transition-all", autoSpeak ? "bg-white/20 text-white" : "text-white/40 hover:text-white/70")}
