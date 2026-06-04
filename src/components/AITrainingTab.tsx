@@ -201,7 +201,11 @@ export const AITrainingTab = ({ userProfile, onNavigate }: { userProfile: any; o
 
   // Process and Filter Tasks
   const { todayList, overdueList } = useMemo(() => {
-    const combined = [...calEvents, ...realtimeTasks];
+    const combined = [...calEvents, ...realtimeTasks].filter(item => {
+      const titleLower = (item.title || '').toLowerCase();
+      const isRenewal = titleLower.startsWith('renewal:') || item.category === 'renewal';
+      return !isRenewal;
+    });
     
     // Scheduled for active date
     const today = combined.filter(item => {

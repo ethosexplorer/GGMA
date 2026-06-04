@@ -8,7 +8,7 @@ type ViewMode = 'month' | 'week' | 'day';
 interface CalEvent {
   id: string; title: string; date: string; startTime: string; endTime: string;
   category: string; color: string; description?: string; attendees?: string;
-  location?: string; meetLink?: string; source?: string;
+  location?: string; meetLink?: string; source?: string; isBusiness?: boolean;
 }
 
 const ALL_CATEGORIES = [
@@ -27,7 +27,9 @@ const ALL_CATEGORIES = [
 const LEGEND_CATEGORIES = [
   { id: 'ops', label: 'Operations', color: 'bg-indigo-500' },
   { id: 'booking', label: 'Scheduled Booking', color: 'bg-emerald-600' },
-  { id: 'renewal', label: 'License Renewal', color: 'bg-yellow-500' },
+  { id: 'renewal', label: 'Patient Renewal', color: 'bg-yellow-500' },
+  { id: 'renewal_overdue_business', label: 'Overdue Business Renewal', color: 'bg-red-500' },
+  { id: 'renewal_active_business', label: 'Business Renewal', color: 'bg-sky-400' },
   { id: 'canceled', label: 'Canceled Booking', color: 'bg-slate-400' },
   { id: 'telehealth', label: 'Telehealth', color: 'bg-emerald-600' },
   { id: 'executive', label: 'Executive', color: 'bg-purple-500' },
@@ -46,7 +48,16 @@ const getEventCategoryObj = (ev: CalEvent) => {
   const isRenewal = ev.category === 'renewal' || ev.color === 'bg-yellow-500' || titleLower.includes('renewal') || descLower.includes('renew');
   
   if (isRenewal) {
-    return { id: 'renewal', label: 'License Renewal', color: 'bg-yellow-500' };
+    if (ev.isBusiness) {
+      const todayStr = '2026-06-04';
+      const isOverdue = ev.date < todayStr;
+      if (isOverdue) {
+        return { id: 'renewal_overdue_business', label: 'Overdue Business Renewal', color: 'bg-red-500' };
+      } else {
+        return { id: 'renewal_active_business', label: 'Business Renewal', color: 'bg-sky-400' };
+      }
+    }
+    return { id: 'renewal', label: 'Patient Renewal', color: 'bg-yellow-500' };
   }
   if (ev.color === 'bg-slate-400' || ev.title.includes('❌') || descLower.includes('canceled')) {
     return { id: 'canceled', label: 'Canceled Booking', color: 'bg-slate-400' };
@@ -228,7 +239,8 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
               attendees: data.attendees,
               location: data.location,
               meetLink: data.meetLink,
-              source: data.source || ''
+              source: data.source || '',
+              isBusiness: !!data.isBusiness
             };
             updated.push(newEv);
           });

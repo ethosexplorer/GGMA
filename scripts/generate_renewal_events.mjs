@@ -7,6 +7,25 @@ const firebaseConfig = JSON.parse(readFileSync('./firebase-applet-config.json', 
 const app = initializeApp(firebaseConfig, 'calendar-generator');
 const db = getFirestore(app);
 
+function normalizeDateStr(dateStr) {
+  if (!dateStr) return null;
+  const s = dateStr.trim();
+  let match = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if (match) {
+    return `${match[1]}-${String(match[2]).padStart(2, '0')}-${String(match[3]).padStart(2, '0')}`;
+  }
+  match = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (match) {
+    return `${match[3]}-${String(match[1]).padStart(2, '0')}-${String(match[2]).padStart(2, '0')}`;
+  }
+  const d = new Date(s);
+  if (isNaN(d.getTime())) return null;
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
 async function main() {
   console.log('🔄 Starting GGP-OS CRM License Renewal Event Generation...');
 
@@ -41,22 +60,32 @@ async function main() {
     if (!record.licenseExpiration) return;
 
     const title = `Renewal: ${record.name}`;
-    const date = record.licenseExpiration.trim();
-    const key = `${title.trim().toLowerCase()}_${date}`;
+    const normalizedDate = normalizeDateStr(record.licenseExpiration);
+    if (!normalizedDate) return;
+    const key = `${title.trim().toLowerCase()}_${normalizedDate}`;
 
     // Skip duplicate events
     if (existingEvents.has(key)) {
       return;
     }
 
+    const isBusiness = record.type !== 'patient';
+    const todayStr = '2026-06-04';
+    let desc = `${isBusiness ? 'Business' : 'Patient'} license renewal contact reminder for ${record.name}.\nPhone: ${record.phone || 'N/A'}\nEmail: ${record.email || 'N/A'}\nJurisdiction: ${record.jurisdiction || 'Oklahoma'}\nCRM ID: ${docSnap.id}`;
+    
+    if (isBusiness && normalizedDate < todayStr) {
+      desc = `[OVERDUE] This business license renewal is overdue (Expired on ${normalizedDate}).\n${desc}`;
+    }
+
     toCreate.push({
       title: title,
-      date: date,
+      date: normalizedDate,
       startTime: '18:00',
       endTime: '19:00',
-      category: 'ops',
+      category: 'renewal',
       color: 'bg-indigo-500',
-      description: `Patient license renewal contact reminder for ${record.name}.\nPhone: ${record.phone || 'N/A'}\nEmail: ${record.email || 'N/A'}\nJurisdiction: ${record.jurisdiction || 'Oklahoma'}\nCRM ID: ${docSnap.id}`,
+      isBusiness: isBusiness,
+      description: desc,
       assignedTo: 'Founder',
       assignedBy: 'System',
       createdAt: serverTimestamp()

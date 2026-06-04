@@ -158,9 +158,9 @@ export const MarketingHub = () => {
   const [selectedTypes, setSelectedTypes] = useState<string[]>(['All']);
   const [selectedAgencySubtypes, setSelectedAgencySubtypes] = useState<string[]>(['All']);
   const [selectedTier, setSelectedTier] = useState<'all' | 'top_grossing' | 'standard'>('all');
-  const [patientRenewalMode, setPatientRenewalMode] = useState<'off' | 'month' | 'all_expired'>('off');
+  const [patientRenewalMode, setPatientRenewalMode] = useState<'off' | 'month' | 'daily'>('off');
   const [patientRenewalMonth, setPatientRenewalMonth] = useState(() => ({ year: 2026, month: 3 }));
-  const [businessRenewalMode, setBusinessRenewalMode] = useState<'off' | 'month' | 'all_expired'>('off');
+  const [businessRenewalMode, setBusinessRenewalMode] = useState<'off' | 'month' | 'daily'>('off');
   const [businessRenewalMonth, setBusinessRenewalMonth] = useState(() => ({ year: 2026, month: 3 }));
   const [showStateDropdown, setShowStateDropdown] = useState(false);
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
@@ -412,11 +412,11 @@ export const MarketingHub = () => {
           const endDateStr = `${startYear}-${String(startMonth + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
           
           q = query(q, where('licenseExpiration', '>=', startDateStr), where('licenseExpiration', '<=', endDateStr));
-        } else if (patientRenewalMode === 'all_expired' || businessRenewalMode === 'all_expired') {
+        } else if (patientRenewalMode === 'daily' || businessRenewalMode === 'daily') {
           const today = new Date();
           const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
           
-          q = query(q, where('licenseExpiration', '<', todayStr));
+          q = query(q, where('licenseExpiration', '==', todayStr));
         } else {
           // Default: Build query with state/type/tier on server (apply at most one 'in' operator to avoid Firestore errors)
           if (activeStates.length > 0) {
@@ -535,11 +535,10 @@ export const MarketingHub = () => {
               const nominal = parseNominalDate(d.licenseExpiration);
               if (!nominal) return false;
               
-              if (patientRenewalMode === 'all_expired') {
+              if (patientRenewalMode === 'daily') {
                 const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                const expDateObj = new Date(nominal.year, nominal.month, nominal.day);
-                if (expDateObj.getTime() >= today.getTime()) return false;
+                const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+                if (d.licenseExpiration !== todayStr) return false;
               } else if (patientRenewalMode === 'month') {
                 if (nominal.year !== patientRenewalMonth.year || nominal.month !== patientRenewalMonth.month) return false;
               }
@@ -552,11 +551,10 @@ export const MarketingHub = () => {
               const nominal = parseNominalDate(d.licenseExpiration);
               if (!nominal) return false;
               
-              if (businessRenewalMode === 'all_expired') {
+              if (businessRenewalMode === 'daily') {
                 const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                const expDateObj = new Date(nominal.year, nominal.month, nominal.day);
-                if (expDateObj.getTime() >= today.getTime()) return false;
+                const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+                if (d.licenseExpiration !== todayStr) return false;
               } else if (businessRenewalMode === 'month') {
                 if (nominal.year !== businessRenewalMonth.year || nominal.month !== businessRenewalMonth.month) return false;
               }
@@ -1406,12 +1404,12 @@ export const MarketingHub = () => {
                         )}
                       >📅 By Month</button>
                       <button
-                        onClick={() => setPatientRenewalMode('all_expired')}
+                        onClick={() => setPatientRenewalMode('daily')}
                         className={cn(
                           "py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all",
-                          patientRenewalMode === 'all_expired' ? "bg-red-600 text-white shadow-sm shadow-red-500/30" : "bg-slate-950 text-slate-500 border border-slate-700 hover:text-white"
+                          patientRenewalMode === 'daily' ? "bg-red-600 text-white shadow-sm shadow-red-500/30" : "bg-slate-950 text-slate-500 border border-slate-700 hover:text-white"
                         )}
-                      >🔴 All Expired</button>
+                      >🔴 Daily</button>
                     </div>
 
                     {patientRenewalMode === 'month' && (
@@ -1445,10 +1443,10 @@ export const MarketingHub = () => {
                       </div>
                     )}
 
-                    {patientRenewalMode === 'all_expired' && (
+                    {patientRenewalMode === 'daily' && (
                       <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 mt-1">
                         <p className="text-[10px] text-red-400 font-bold flex items-center gap-1.5">
-                          <CalendarDays size={12} /> Showing all patients with expired cards
+                          <CalendarDays size={12} /> Showing all patients with card renewals today
                         </p>
                       </div>
                     )}
@@ -1477,12 +1475,12 @@ export const MarketingHub = () => {
                         )}
                       >📅 By Month</button>
                       <button
-                        onClick={() => setBusinessRenewalMode('all_expired')}
+                        onClick={() => setBusinessRenewalMode('daily')}
                         className={cn(
                           "py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all",
-                          businessRenewalMode === 'all_expired' ? "bg-red-600 text-white shadow-sm shadow-red-500/30" : "bg-slate-950 text-slate-500 border border-slate-700 hover:text-white"
+                          businessRenewalMode === 'daily' ? "bg-red-600 text-white shadow-sm shadow-red-500/30" : "bg-slate-950 text-slate-500 border border-slate-700 hover:text-white"
                         )}
-                      >🔴 All Expired</button>
+                      >🔴 Daily</button>
                     </div>
 
                     {businessRenewalMode === 'month' && (
@@ -1516,10 +1514,10 @@ export const MarketingHub = () => {
                       </div>
                     )}
 
-                    {businessRenewalMode === 'all_expired' && (
+                    {businessRenewalMode === 'daily' && (
                       <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 mt-1">
                         <p className="text-[10px] text-red-400 font-bold flex items-center gap-1.5">
-                          <CalendarDays size={12} /> Showing all businesses with expired licenses
+                          <CalendarDays size={12} /> Showing all businesses with license renewals today
                         </p>
                       </div>
                     )}
