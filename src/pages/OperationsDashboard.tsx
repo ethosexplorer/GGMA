@@ -64,6 +64,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
   useEffect(() => {
     let firebaseUsers: any[] = [];
     let tursoUsers: any[] = [];
+    let contactsUsers: any[] = [];
 
     const mergeData = () => {
       const mergedMap = new Map();
@@ -83,7 +84,28 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
         });
       });
 
-      // 2. Override with live Firebase real-time data
+      // 2. Load contacts from captureContact (phone intakes, online submissions)
+      contactsUsers.forEach(c => {
+        const key = (c.name || c.email || c.id || '').toLowerCase();
+        if (!key) return;
+        const existing = mergedMap.get(key) || {};
+        mergedMap.set(key, {
+          ...existing,
+          uid: c.id || existing.uid || `contact-${key}`,
+          fullName: c.name || existing.fullName || 'Unknown',
+          email: c.email || existing.email || '',
+          phone: c.phone || existing.phone || '',
+          state: c.state || c.jurisdiction || existing.state || 'Oklahoma',
+          applicationStatus: c.status || existing.applicationStatus || 'Pending Review',
+          createdAt: c.createdAt || existing.createdAt,
+          accountId: c.accountId || existing.accountId || '',
+          contactType: c.contactType || 'patient',
+          source: 'contacts',
+          payments: c.payments || [],
+        });
+      });
+
+      // 3. Override with live Firebase real-time data
       firebaseUsers.forEach(f => {
         // If this Firebase doc was created by saving a Turso legacy record,
         // its UID starts with "turso-". Merge it back with the original Turso entry.
@@ -121,8 +143,20 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
         mergeData();
       }).catch(console.error);
 
-    // Fetch Firebase (Live)
-    const unsub = onSnapshot(collection(db, 'users'), (snap) => {
+    // Fetch Firebase contacts (Phone Intakes & Online Submissions)
+    const unsubContacts = onSnapshot(collection(db, 'contacts'), (snap) => {
+      contactsUsers = snap.docs
+        .map(d => ({ id: d.id, ...d.data() }))
+        .filter((c: any) => {
+          // Only include patient-type contacts (not business leads)
+          const cType = (c.contactType || '').toLowerCase();
+          return cType === 'patient' || cType === '' || cType === 'intake';
+        });
+      mergeData();
+    });
+
+    // Fetch Firebase users (Live)
+    const unsubUsers = onSnapshot(collection(db, 'users'), (snap) => {
       const adminRoles = ['admin', 'founder', 'executive', 'president', 'chief_compliance_director', 
         'executive_advisor', 'advisor', 'executive_founder', 'internal_admin', 'compliance_director',
         'manager', 'team_lead', 'rep', 'ai_agent'];
@@ -138,7 +172,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
       mergeData();
     });
 
-    return () => unsub();
+    return () => { unsubUsers(); unsubContacts(); };
   }, []);
 
   // Draggable nav state with localStorage persistence
@@ -338,10 +372,16 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
                    </div>
                    <div>
                      <p className="text-sm font-bold text-slate-800 group-hover:text-indigo-700 transition-colors">{a.fullName || a.name || a.displayName || 'Unknown Patient'}</p>
-                     <p className="text-xs text-slate-500 font-medium">Patient Card Renewal • {a.state || a.jurisdiction || 'OK'}</p>
+                     <p className="text-xs text-slate-500 font-medium">
+                       {a.contactType === 'patient' ? 'Patient Application' : a.contactType || 'Patient Card Renewal'} • {a.state || a.jurisdiction || 'OK'}
+                       {a.email ? ` • ${a.email}` : ''}
+                     </p>
                    </div>
                 </div>
                 <div className="flex items-center gap-3">
+                  {a.accountId && (
+                    <span className="text-[9px] font-mono font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100">{a.accountId}</span>
+                  )}
                   <span className={cn("text-[9px] font-black uppercase px-2 py-0.5 rounded-full", a.applicationStatus && !isPend(a.applicationStatus) ? (isAppr(a.applicationStatus) ? 'text-emerald-600 bg-emerald-50 border border-emerald-200' : 'text-red-600 bg-red-50 border border-red-200') : 'text-amber-600 bg-amber-50 border border-amber-100')}>
                     {a.applicationStatus || 'Pending Review'}
                   </span>

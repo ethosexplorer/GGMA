@@ -461,6 +461,32 @@ export const AccountLookupTab = () => {
         ]
       });
 
+      // Save payment to the contact's Firestore doc for payment history
+      if (result.source === 'contacts' || result.source === 'crm_deals') {
+        try {
+          const colName = result.source === 'contacts' ? 'contacts' : 'crm_deals';
+          const contactRef = doc(db, colName, result.id);
+          const paymentRecord = {
+            amount: formatted,
+            type: paymentForm.type,
+            method: paymentForm.method,
+            notes: paymentForm.notes,
+            date: paymentForm.date,
+            postedAt: new Date().toISOString(),
+            postedBy: 'OPS_Agent',
+          };
+          // Use arrayUnion to append to payments array
+          const { arrayUnion } = await import('firebase/firestore');
+          await updateDoc(contactRef, {
+            payments: arrayUnion(paymentRecord),
+            lastPaymentDate: paymentForm.date,
+            lastPaymentAmount: formatted,
+          });
+        } catch (e) {
+          console.warn('Could not save payment to contact record:', e);
+        }
+      }
+
       setPaymentPosted(true);
     } catch (err: any) {
       console.error(err);
@@ -675,6 +701,29 @@ export const AccountLookupTab = () => {
                             {r.tags.map((t, i) => (
                               <span key={i} className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">{t}</span>
                             ))}
+                          </div>
+                        )}
+
+                        {/* Payment History */}
+                        {r.rawData?.payments && r.rawData.payments.length > 0 && (
+                          <div className="bg-emerald-50/50 border border-emerald-200 rounded-xl p-4 space-y-2">
+                            <p className="text-[10px] font-bold text-emerald-700 uppercase tracking-widest flex items-center gap-1">
+                              <DollarSign size={12} /> Payment History ({r.rawData.payments.length})
+                            </p>
+                            <div className="space-y-2">
+                              {r.rawData.payments.map((p: any, i: number) => (
+                                <div key={i} className="flex items-center justify-between bg-white rounded-lg p-2.5 border border-emerald-100">
+                                  <div>
+                                    <p className="text-xs font-bold text-slate-800">{p.type} — <span className="text-emerald-600">{p.amount}</span></p>
+                                    <p className="text-[10px] text-slate-500">{p.method} • {p.date ? new Date(p.date).toLocaleDateString() : '—'}</p>
+                                  </div>
+                                  <div className="text-right">
+                                    <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">Settled</span>
+                                    {p.postedAt && <p className="text-[9px] text-slate-400 mt-0.5">Posted {new Date(p.postedAt).toLocaleDateString()}</p>}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         )}
 
