@@ -40,6 +40,33 @@ interface SearchResult {
 const PAYMENT_TYPES = ['Processing Fee', 'Application Fee', 'Consultation Fee', 'Service Fee', 'Filing Fee', 'Late Fee', 'Renewal Fee', 'Licensing Fee', 'Document Fee', 'Other'];
 const PAYMENT_METHODS = ['Chime', 'Cash App', 'Zelle', 'Venmo', 'Cash', 'Check', 'Wire Transfer', 'Credit Card', 'Bank Transfer', 'PayPal', 'Other'];
 
+// ─── Moved OUTSIDE component to prevent React remount on every keystroke ───
+const EditField = ({ label, field, value, type = 'text', editData, setEditData }: { label: string; field: string; value: string; type?: string; editData: Record<string, any>; setEditData: React.Dispatch<React.SetStateAction<Record<string, any>>> }) => (
+  <div>
+    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1 block">{label}</label>
+    <input
+      type={type}
+      value={editData[field] !== undefined ? String(editData[field]) : value}
+      onChange={(e) => setEditData(prev => ({ ...prev, [field]: e.target.value }))}
+      className="w-full px-3 py-2 bg-white border border-indigo-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400"
+    />
+  </div>
+);
+
+const EditSelect = ({ label, field, value, options, editData, setEditData }: { label: string; field: string; value: string; options: string[]; editData: Record<string, any>; setEditData: React.Dispatch<React.SetStateAction<Record<string, any>>> }) => (
+  <div>
+    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1 block">{label}</label>
+    <select
+      value={editData[field] !== undefined ? String(editData[field]) : value}
+      onChange={(e) => setEditData(prev => ({ ...prev, [field]: e.target.value }))}
+      className="w-full px-3 py-2 bg-white border border-indigo-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500/20"
+    >
+      <option value="">— Select —</option>
+      {options.map(o => <option key={o} value={o}>{o}</option>)}
+    </select>
+  </div>
+);
+
 export const AccountLookupTab = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -401,9 +428,8 @@ export const AccountLookupTab = () => {
       const entryName = `${clientName} — ${paymentForm.type}`;
 
       await turso.execute({
-        sql: "INSERT INTO founder_ledger (id, origin_vector, type, gross_revenue, net_profit, status, color, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        sql: "INSERT INTO founder_ledger (origin_vector, type, gross_revenue, net_profit, status, color, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
         args: [
-          'pay-' + Math.random().toString(36).substr(2, 9),
           entryName,
           `${paymentForm.type} (${paymentForm.method})`,
           formatted,
@@ -465,31 +491,7 @@ export const AccountLookupTab = () => {
     }
   };
 
-  const EditField = ({ label, field, value, type = 'text' }: { label: string; field: string; value: string; type?: string }) => (
-    <div>
-      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1 block">{label}</label>
-      <input
-        type={type}
-        value={editData[field] !== undefined ? String(editData[field]) : value}
-        onChange={(e) => setEditData(prev => ({ ...prev, [field]: e.target.value }))}
-        className="w-full px-3 py-2 bg-white border border-indigo-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400"
-      />
-    </div>
-  );
-
-  const EditSelect = ({ label, field, value, options }: { label: string; field: string; value: string; options: string[] }) => (
-    <div>
-      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1 block">{label}</label>
-      <select
-        value={editData[field] !== undefined ? String(editData[field]) : value}
-        onChange={(e) => setEditData(prev => ({ ...prev, [field]: e.target.value }))}
-        className="w-full px-3 py-2 bg-white border border-indigo-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500/20"
-      >
-        <option value="">— Select —</option>
-        {options.map(o => <option key={o} value={o}>{o}</option>)}
-      </select>
-    </div>
-  );
+  // EditField and EditSelect are defined OUTSIDE the component (above) to prevent focus loss on re-render
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
@@ -786,14 +788,14 @@ export const AccountLookupTab = () => {
                         <div>
                           <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 flex items-center gap-1"><User size={10} /> Contact Information</p>
                           <div className="grid grid-cols-2 gap-4">
-                            <EditField label="Full Name" field="name" value={r.name} />
-                            <EditField label="Email" field="email" value={r.email} />
-                            <EditField label="Phone" field="phone" value={r.phone} />
-                            <EditField label="State" field="state" value={r.state} />
-                            <EditField label="Address" field="address" value={r.address || ''} />
-                            <EditField label="City" field="city" value={r.city || ''} />
-                            <EditField label="ZIP" field="zip" value={r.zip || ''} />
-                            <EditField label="Business Name" field="businessName" value={r.businessName || ''} />
+                            <EditField label="Full Name" field="name" value={r.name} editData={editData} setEditData={setEditData} />
+                            <EditField label="Email" field="email" value={r.email} editData={editData} setEditData={setEditData} />
+                            <EditField label="Phone" field="phone" value={r.phone} editData={editData} setEditData={setEditData} />
+                            <EditField label="State" field="state" value={r.state} editData={editData} setEditData={setEditData} />
+                            <EditField label="Address" field="address" value={r.address || ''} editData={editData} setEditData={setEditData} />
+                            <EditField label="City" field="city" value={r.city || ''} editData={editData} setEditData={setEditData} />
+                            <EditField label="ZIP" field="zip" value={r.zip || ''} editData={editData} setEditData={setEditData} />
+                            <EditField label="Business Name" field="businessName" value={r.businessName || ''} editData={editData} setEditData={setEditData} />
                           </div>
                         </div>
 
@@ -801,16 +803,16 @@ export const AccountLookupTab = () => {
                         <div className="border-t border-slate-200 pt-4">
                           <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mb-2 flex items-center gap-1"><HeartPulse size={10} /> Medical / Intake Details</p>
                           <div className="grid grid-cols-2 gap-4">
-                            <EditField label="Date of Birth" field="dob" value={r.dob || r.rawData?.dob || ''} type="date" />
-                            <EditField label="SSN (Encrypted)" field="ssn" value={r.ssn || r.rawData?.ssn || ''} />
-                            <EditField label="Conditions" field="conditions" value={r.conditions || r.rawData?.conditions || ''} />
-                            <EditField label="Allergies" field="allergies" value={r.allergies || r.rawData?.allergies || ''} />
-                            <EditField label="Insurance Name" field="insurance" value={r.insurance || r.rawData?.insuranceName || ''} />
-                            <EditField label="PCP Info" field="pcpInfo" value={r.pcpInfo || r.rawData?.pcpInfo || ''} />
-                            <EditSelect label="Appointment Type" field="appointmentType" value={r.appointmentType || r.rawData?.appointmentType || ''} options={['Phone', 'Video', 'In-Person']} />
-                            <EditSelect label="Application Type" field="appType" value={r.appType || r.rawData?.appType || ''} options={['New MMJ Card', 'Renewal', 'New Application', 'Transfer of Ownership']} />
-                            <EditSelect label="Portal Account" field="portalAccount" value={r.portalAccount || r.rawData?.hasPortalAccount || ''} options={['Yes', 'No']} />
-                            <EditField label="License Type" field="licenseType" value={r.licenseType || ''} />
+                            <EditField label="Date of Birth" field="dob" value={r.dob || r.rawData?.dob || ''} type="date" editData={editData} setEditData={setEditData} />
+                            <EditField label="SSN (Encrypted)" field="ssn" value={r.ssn || r.rawData?.ssn || ''} editData={editData} setEditData={setEditData} />
+                            <EditField label="Conditions" field="conditions" value={r.conditions || r.rawData?.conditions || ''} editData={editData} setEditData={setEditData} />
+                            <EditField label="Allergies" field="allergies" value={r.allergies || r.rawData?.allergies || ''} editData={editData} setEditData={setEditData} />
+                            <EditField label="Insurance Name" field="insurance" value={r.insurance || r.rawData?.insuranceName || ''} editData={editData} setEditData={setEditData} />
+                            <EditField label="PCP Info" field="pcpInfo" value={r.pcpInfo || r.rawData?.pcpInfo || ''} editData={editData} setEditData={setEditData} />
+                            <EditSelect label="Appointment Type" field="appointmentType" value={r.appointmentType || r.rawData?.appointmentType || ''} options={['Phone', 'Video', 'In-Person']} editData={editData} setEditData={setEditData} />
+                            <EditSelect label="Application Type" field="appType" value={r.appType || r.rawData?.appType || ''} options={['New MMJ Card', 'Renewal', 'New Application', 'Transfer of Ownership']} editData={editData} setEditData={setEditData} />
+                            <EditSelect label="Portal Account" field="portalAccount" value={r.portalAccount || r.rawData?.hasPortalAccount || ''} options={['Yes', 'No']} editData={editData} setEditData={setEditData} />
+                            <EditField label="License Type" field="licenseType" value={r.licenseType || ''} editData={editData} setEditData={setEditData} />
                           </div>
                         </div>
 
@@ -818,8 +820,8 @@ export const AccountLookupTab = () => {
                         <div className="border-t border-slate-200 pt-4">
                           <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 flex items-center gap-1"><Shield size={10} /> Status & Classification</p>
                           <div className="grid grid-cols-2 gap-4">
-                            <EditSelect label="Account Status" field="status" value={r.status} options={['active', 'Pending Review', 'State Approved', 'Doctor Recommendation Approved', 'State Mailed', 'State Rejected', 'Do Not Call', 'Incomplete']} />
-                            <EditField label="Account ID" field="accountId" value={r.accountId || ''} />
+                            <EditSelect label="Account Status" field="status" value={r.status} options={['active', 'Pending Review', 'State Approved', 'Doctor Recommendation Approved', 'State Mailed', 'State Rejected', 'Do Not Call', 'Incomplete']} editData={editData} setEditData={setEditData} />
+                            <EditField label="Account ID" field="accountId" value={r.accountId || ''} editData={editData} setEditData={setEditData} />
                           </div>
                         </div>
 
