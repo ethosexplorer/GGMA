@@ -190,6 +190,28 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
     return () => clearInterval(interval);
   }, []);
 
+  // LIVE FETCH: Trigger server-side Google Calendar sync
+  React.useEffect(() => {
+    const syncGCal = async () => {
+      try {
+        const res = await fetch('/api/sync-gcal');
+        if (res.ok) {
+          const data = await res.json();
+          console.log(`📆 Google Calendar sync: ${data.message}`);
+        } else {
+          console.warn('⚠️ Google Calendar sync returned:', res.status);
+        }
+      } catch (err) {
+        console.error('Google Calendar sync error:', err);
+      }
+    };
+
+    syncGCal();
+    // Refresh every 5 minutes
+    const gcalInterval = setInterval(syncGCal, 5 * 60 * 1000);
+    return () => clearInterval(gcalInterval);
+  }, []);
+
   React.useEffect(() => {
     let unsubscribeUsers: () => void;
     let unsubscribeEvents: () => void;
