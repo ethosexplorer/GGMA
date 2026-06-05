@@ -380,7 +380,7 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
 
   const addEvent = async () => {
     if (!form.title || !form.date) return;
-    const cat = availableCategories.find(c => c.id === form.category);
+    const cat = LEGEND_CATEGORIES.find(c => c.id === form.category) || availableCategories.find(c => c.id === form.category);
 
     // Close modal immediately for instant UI response
     setShowForm(false);
@@ -718,9 +718,40 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
           <div><label className="text-[10px] font-black text-slate-500 uppercase">Start</label><input type="time" className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm" value={form.startTime} onChange={e => setForm(f => ({ ...f, startTime: e.target.value }))} /></div>
           <div><label className="text-[10px] font-black text-slate-500 uppercase">End</label><input type="time" className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm" value={form.endTime} onChange={e => setForm(f => ({ ...f, endTime: e.target.value }))} /></div>
         </div>
-        <select className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm font-medium" value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>
-          {availableCategories.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
-        </select>
+        {/* Color Coordinator */}
+        <div className="space-y-2">
+          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Color Coordinator (Select Department/Color)</p>
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              { color: 'bg-indigo-500', label: 'Operations', category: 'ops' },
+              { color: 'bg-emerald-600', label: 'Scheduled Booking', category: 'booking' },
+              { color: 'bg-yellow-500', label: 'License Renewal', category: 'renewal' },
+              { color: 'bg-slate-400', label: 'Canceled Booking', category: 'canceled' },
+              { color: 'bg-emerald-600', label: 'Telehealth', category: 'telehealth' },
+              { color: 'bg-purple-500', label: 'Executive', category: 'executive' },
+              { color: 'bg-red-500', label: 'Federal', category: 'federal' },
+              { color: 'bg-amber-500', label: 'Compliance', category: 'compliance' },
+              { color: 'bg-cyan-500', label: 'State Authority', category: 'state' },
+              { color: 'bg-pink-500', label: 'Admin Support', category: 'admin_support' },
+              { color: 'bg-slate-500', label: 'Personal', category: 'personal' },
+              { color: 'bg-blue-500', label: 'Task', category: 'task' },
+              { color: 'bg-orange-500', label: 'Reminder', category: 'reminder' },
+            ].map(c => (
+              <button
+                key={c.category}
+                type="button"
+                onClick={() => setForm(f => ({ ...f, category: c.category }))}
+                className={cn(
+                  "flex items-center gap-2 px-3 py-2 rounded-xl border text-[11px] font-bold transition-all text-left hover:bg-slate-50 cursor-pointer",
+                  form.category === c.category ? "border-slate-800 bg-slate-50 shadow-sm" : "border-slate-200 bg-white text-slate-600"
+                )}
+              >
+                <div className={cn("w-3 h-3 rounded-full shrink-0 shadow-sm", c.color)} />
+                <span className="truncate">{c.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
         <input className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm" placeholder="Attendees (comma-separated)" value={form.attendees} onChange={e => setForm(f => ({ ...f, attendees: e.target.value }))} />
         <input className="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm" placeholder="Location" value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} />
         <div className="flex gap-2">
