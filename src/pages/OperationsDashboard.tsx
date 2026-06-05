@@ -19,11 +19,13 @@ import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 import { DocumentVaultTab } from '../components/ops/DocumentVaultTab';
 import { PostPaymentTab } from '../components/ops/PostPaymentTab';
 import { PatientCaseTracker } from '../components/patient/PatientCaseTracker';
+import { AccountLookupTab } from '../components/ops/AccountLookupTab';
 
 const NAV_ITEMS = [
   { section: 'CALL CENTER' },
   { id: 'call_center', label: 'Call Center Command', icon: Phone },
   { id: 'phone_intake', label: 'Phone Intake Form', icon: UserPlus },
+  { id: 'account_lookup', label: 'Account Lookup', icon: Search },
   { section: 'SUPPORT OPERATIONS' },
   { id: 'operations_calendar', label: 'Operations Calendar', icon: Calendar },
   { id: 'support', label: 'Active Support Tickets', icon: MessageSquare, badge: '0' },
@@ -521,6 +523,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
     switch (activeTab) {
       case 'call_center': return <CallCenterCommandTab />;
       case 'phone_intake': return <PhoneIntakeForm />;
+      case 'account_lookup': return <AccountLookupTab />;
       case 'operations_calendar': return <div className="h-full w-full -m-10"><FounderCalendar user={user} title="Operations Calendar" /></div>;
       case 'support': return renderSupport();
       case 'it_support': return renderITSupport();
