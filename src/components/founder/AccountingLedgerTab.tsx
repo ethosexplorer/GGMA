@@ -7,7 +7,9 @@ import { MasterBankingInfo } from '../MasterBankingInfo';
 
 export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string, liveStats: { totalUsers: string; netRevenue: string } }) => {
   const [isAddingLedgerEntry, setIsAddingLedgerEntry] = useState<'revenue' | 'payable' | null>(null);
-  const [ledgerForm, setLedgerForm] = useState({ name: '', amount: '', due_date: '', status: 'Unpaid' });
+  const [ledgerForm, setLedgerForm] = useState({ name: '', amount: '', net_profit: '', due_date: '', status: 'Unpaid' });
+  const [editingNetProfitId, setEditingNetProfitId] = useState<number | string | null>(null);
+  const [editNetProfitValue, setEditNetProfitValue] = useState('');
   const [founderLedger, setFounderLedger] = useState<any[]>([]);
   const [founderPayables, setFounderPayables] = useState<any[]>([]);
 
@@ -45,7 +47,9 @@ export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string,
 
   const handleSaveLedgerEntry = () => {
     if (isAddingLedgerEntry === 'revenue') {
-      const newEntry = { n: ledgerForm.name || 'Custom Revenue Stream', t: 'Manual Entry', g: ledgerForm.amount || '$0', net: ledgerForm.amount || '$0', s: 'Settled', c: 'bg-emerald-600' };
+      const grossAmt = ledgerForm.amount || '$0';
+      const netAmt = ledgerForm.net_profit || grossAmt;
+      const newEntry = { n: ledgerForm.name || 'Custom Revenue Stream', t: 'Manual Entry', g: grossAmt, net: netAmt, s: 'Settled', c: 'bg-emerald-600' };
       setFounderLedger([newEntry, ...founderLedger]);
       turso.execute({
         sql: "INSERT INTO founder_ledger (id, origin_vector, type, gross_revenue, net_profit, status, color, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
@@ -80,7 +84,7 @@ export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string,
       alert("Account payable added: " + newPayable.name + " — " + newPayable.amount + "\n\n[Live Production Transaction Logged]");
     }
     setIsAddingLedgerEntry(null);
-    setLedgerForm({ name: '', amount: '', due_date: '', status: 'Unpaid' });
+    setLedgerForm({ name: '', amount: '', net_profit: '', due_date: '', status: 'Unpaid' });
   };
 
   const handleTogglePayableStatus = (id: number, newStatus: 'Paid' | 'Unpaid') => {
@@ -140,15 +144,28 @@ export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string,
               />
             </div>
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-2">Amount</label>
+              <label className="block text-sm font-bold text-slate-700 mb-2">{isAddingLedgerEntry === 'revenue' ? 'Gross Amount' : 'Amount'}</label>
               <input
                 type="text"
-                placeholder="e.g. $20.00"
+                placeholder="e.g. $194.30"
                 value={ledgerForm.amount}
                 onChange={(e) => setLedgerForm({ ...ledgerForm, amount: e.target.value })}
                 className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20 font-medium"
               />
             </div>
+            {isAddingLedgerEntry === 'revenue' && (
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-2">Net Profit</label>
+                <input
+                  type="text"
+                  placeholder="e.g. $55.00 (leave blank to use gross)"
+                  value={ledgerForm.net_profit}
+                  onChange={(e) => setLedgerForm({ ...ledgerForm, net_profit: e.target.value })}
+                  className="w-full px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20 font-medium"
+                />
+                <p className="text-[10px] text-slate-400 mt-1 font-medium">The actual profit after costs. If blank, defaults to gross amount.</p>
+              </div>
+            )}
             {isAddingLedgerEntry === 'payable' && (
               <>
                 <div>
@@ -210,8 +227,8 @@ export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string,
             <div className="flex justify-between items-center mb-6">
               <h3 className="font-black text-slate-800 text-lg flex items-center gap-3"><Activity size={20} className="text-emerald-600" /> Accounts Receivable (Revenue Streams)</h3>
               <div className="flex gap-2">
-                <button onClick={() => { setIsAddingLedgerEntry('revenue'); setLedgerForm({ name: '', amount: '', due_date: '', status: 'Unpaid' }); }} className="px-4 py-2 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-100 transition-colors">+ Add Revenue Stream</button>
-                <button onClick={() => { setIsAddingLedgerEntry('revenue'); setLedgerForm({ name: '', amount: '', due_date: '', status: 'Unpaid' }); }} className="px-4 py-2 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-100 transition-colors">💵 Post Payment</button>
+                <button onClick={() => { setIsAddingLedgerEntry('revenue'); setLedgerForm({ name: '', amount: '', net_profit: '', due_date: '', status: 'Unpaid' }); }} className="px-4 py-2 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-100 transition-colors">+ Add Revenue Stream</button>
+                <button onClick={() => { setIsAddingLedgerEntry('revenue'); setLedgerForm({ name: '', amount: '', net_profit: '', due_date: '', status: 'Unpaid' }); }} className="px-4 py-2 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-100 transition-colors">💵 Post Payment</button>
                 <button onClick={() => {
                   import('../../lib/turso').then(({ turso }) => {
                     return turso.execute({
@@ -247,7 +264,47 @@ export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string,
                     </td>
                     <td className="px-6 py-5 text-xs font-bold text-slate-500">{u.type || u.t}</td>
                     <td className="px-6 py-5 font-mono font-bold text-slate-700">{u.gross_revenue || u.g}</td>
-                    <td className="px-6 py-5 font-mono font-black text-emerald-600">{u.net_profit || u.net}</td>
+                    <td className="px-6 py-5">
+                      {editingNetProfitId === (u.id || i) ? (
+                        <div className="flex items-center gap-1">
+                          <input
+                            autoFocus
+                            type="text"
+                            value={editNetProfitValue}
+                            onChange={e => setEditNetProfitValue(e.target.value)}
+                            onKeyDown={e => {
+                              if (e.key === 'Enter') {
+                                const newVal = editNetProfitValue;
+                                if (u.id && typeof u.id === 'number') {
+                                  turso.execute({ sql: 'UPDATE founder_ledger SET net_profit = ? WHERE id = ?', args: [newVal, u.id] })
+                                    .then(() => turso.execute('SELECT * FROM founder_ledger ORDER BY created_at DESC'))
+                                    .then(res => setFounderLedger(res.rows))
+                                    .catch(console.error);
+                                } else {
+                                  turso.execute({ sql: 'UPDATE founder_ledger SET net_profit = ? WHERE origin_vector = ?', args: [newVal, u.origin_vector || u.n] })
+                                    .then(() => turso.execute('SELECT * FROM founder_ledger ORDER BY created_at DESC'))
+                                    .then(res => setFounderLedger(res.rows))
+                                    .catch(console.error);
+                                }
+                                setEditingNetProfitId(null);
+                              } else if (e.key === 'Escape') {
+                                setEditingNetProfitId(null);
+                              }
+                            }}
+                            onBlur={() => setEditingNetProfitId(null)}
+                            className="w-24 px-2 py-1 border border-emerald-300 rounded-lg text-sm font-mono font-bold text-emerald-700 bg-emerald-50 focus:ring-2 focus:ring-emerald-500 outline-none"
+                          />
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => { setEditingNetProfitId(u.id || i); setEditNetProfitValue(u.net_profit || u.net || ''); }}
+                          className="font-mono font-black text-emerald-600 hover:bg-emerald-50 hover:text-emerald-800 px-2 py-1 rounded-lg transition-colors cursor-pointer border border-transparent hover:border-emerald-200"
+                          title="Click to edit net profit"
+                        >
+                          {u.net_profit || u.net}
+                        </button>
+                      )}
+                    </td>
                     <td className="px-6 py-5">
                       <span className={cn("text-[9px] font-black uppercase tracking-wider px-3 py-1 rounded-full text-white", u.color || u.c)}>{u.status || u.s}</span>
                     </td>
@@ -382,8 +439,8 @@ export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string,
               </div>
 
               <div className="mt-8 p-4 bg-white/5 rounded-2xl border border-white/10">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Available for Draw</p>
-                <p className="text-2xl font-black text-emerald-400">{liveStats.netRevenue}</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Available for Draw (Net Profit)</p>
+                <p className="text-2xl font-black text-emerald-400">{formatCurrency(founderLedger.reduce((sum, u) => sum + parseAmount(u.net_profit || u.net || u.gross_revenue || u.g || '0'), 0))}</p>
               </div>
               <button onClick={() => {
                 if (confirm('Authorize capital draw of $8.33M? This requires dual authentication.')) {
