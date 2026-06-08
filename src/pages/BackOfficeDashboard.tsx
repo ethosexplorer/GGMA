@@ -12,83 +12,54 @@ export const BackOfficeDashboard = ({ onLogout, user }: { onLogout?: () => void,
   const [activeTab, setActiveTab] = useState('core');
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] bg-slate-50 text-slate-800 font-sans">
-          
-
-      
-      {/* LEFT SIDEBAR */}
-      <div className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col hidden md:flex shrink-0">
-        <div className="p-5 pb-2">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded bg-blue-600/20 border border-blue-500/50 flex items-center justify-center text-blue-400">
-              <Building2 size={22} />
+    <div className="flex flex-col min-h-[calc(100vh-4rem)] bg-slate-50 text-slate-800 font-sans">
+      {/* TOP NAVIGATION BAR */}
+      <div className="bg-slate-900 border-b border-slate-700 shrink-0">
+        <div className="flex items-center gap-4 px-6 py-3">
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="w-8 h-8 rounded bg-blue-600/20 border border-blue-500/50 flex items-center justify-center text-blue-400">
+              <Building2 size={18} />
             </div>
             <div>
-              <h2 className="font-bold text-sm text-white leading-tight">Back Office</h2>
-              <p className="text-[10px] text-blue-400 font-bold uppercase tracking-wider">Operations Support</p>
+              <h2 className="font-bold text-xs text-white leading-tight">Back Office</h2>
+              <p className="text-[9px] text-blue-400 font-bold uppercase tracking-wider">Operations Support</p>
             </div>
           </div>
-        </div>
-
-        <div className="flex-1 overflow-y-auto px-3 space-y-1">
-          <button onClick={() => setActiveTab('core')} className={cn("w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left", activeTab === 'core' ? "bg-slate-800 text-white shadow-md border border-slate-700" : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200")}>
-            <Activity size={16} className={cn(activeTab === 'core' ? "text-blue-400" : "")} /> Core Operations
-          </button>
-          <button onClick={() => setActiveTab('callcenter')} className={cn("w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left", activeTab === 'callcenter' ? "bg-slate-800 text-white shadow-md border border-slate-700" : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200")}>
-            <PhoneCall size={16} className={cn(activeTab === 'callcenter' ? "text-blue-400" : "")} /> Call Center & Reception
-          </button>
-          <button onClick={() => setActiveTab('scheduling')} className={cn("w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left", activeTab === 'scheduling' ? "bg-slate-800 text-white shadow-md border border-slate-700" : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200")}>
-            <CalendarIcon size={16} className={cn(activeTab === 'scheduling' ? "text-blue-400" : "")} /> Appointments Engine
-          </button>
-          <button onClick={() => setActiveTab('itsupport')} className={cn("w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left", activeTab === 'itsupport' ? "bg-slate-800 text-white shadow-md border border-slate-700" : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200")}>
-            <Server size={16} className={cn(activeTab === 'itsupport' ? "text-blue-400" : "")} /> IT Support & Tickets
-          </button>
-          <button onClick={() => setActiveTab('crm')} className={cn("w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left", activeTab === 'crm' ? "bg-slate-800 text-white shadow-md border border-slate-700" : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200")}>
-            <Users size={16} className={cn(activeTab === 'crm' ? "text-blue-400" : "")} /> Client CRM
-          </button>
-          <button onClick={() => setActiveTab('multiloc')} className={cn("w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left", activeTab === 'multiloc' ? "bg-slate-800 text-white shadow-md border border-slate-700" : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200")}>
-            <Globe size={16} className={cn(activeTab === 'multiloc' ? "text-blue-400" : "")} /> Multi-Location
-          </button>
-
-          <div className="my-3 border-t border-slate-800"></div>
-
-          <button onClick={() => setActiveTab('sylara')} className={cn("w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-bold transition-all text-left border", activeTab === 'sylara' ? "bg-indigo-900/40 text-indigo-300 border-indigo-500/50 shadow-md" : "bg-slate-900 text-slate-400 border-transparent hover:bg-slate-800")}>
-            <span className="flex items-center gap-3"><Bot size={16} className="text-indigo-400" /> AI Guidance (Sylara)</span>
-          </button>
-          
-          <button onClick={() => setActiveTab('analytics')} className={cn("w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-bold transition-all text-left border", activeTab === 'analytics' ? "bg-slate-800 text-white border-slate-600 shadow-md" : "bg-slate-900 text-slate-400 border-transparent hover:bg-slate-800")}>
-            <span className="flex items-center gap-3"><TrendingUp size={16} className="text-slate-400" /> Advanced Analytics</span>
-          </button>
-
-          <button onClick={() => setActiveTab('addons')} className={cn("w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-bold transition-all text-left border mt-2", activeTab === 'addons' ? "bg-emerald-900/40 text-emerald-300 border-emerald-500/50 shadow-md" : "bg-slate-900 text-emerald-500/70 border-transparent hover:bg-slate-800")}>
-            <span className="flex items-center gap-3"><Shield size={16} className="text-emerald-500" /> Master Add-Ons List</span>
-          </button>
+          <div className="w-px h-8 bg-slate-700 shrink-0" />
+          <div className="flex-1 overflow-x-auto scrollbar-hide">
+            <div className="flex items-center gap-1 min-w-max">
+              {[
+                { id: 'core', label: 'Core Operations', icon: Activity },
+                { id: 'callcenter', label: 'Call Center', icon: PhoneCall },
+                { id: 'scheduling', label: 'Appointments', icon: CalendarIcon },
+                { id: 'itsupport', label: 'IT Support', icon: Server },
+                { id: 'crm', label: 'Client CRM', icon: Users },
+                { id: 'multiloc', label: 'Multi-Location', icon: Globe },
+                { id: 'sylara', label: 'AI Guidance', icon: Bot },
+                { id: 'analytics', label: 'Analytics', icon: TrendingUp },
+                { id: 'addons', label: 'Add-Ons', icon: Shield },
+              ].map((item) => (
+                <button key={item.id} onClick={() => setActiveTab(item.id)} className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap shrink-0", activeTab === item.id ? "bg-blue-600 text-white shadow-md" : "text-slate-400 hover:bg-slate-800 hover:text-slate-200")}>
+                  <item.icon size={13} /> {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
       {/* MAIN CONTENT AREA */}
       <div className="flex-1 flex flex-col h-[calc(100vh-4rem)] overflow-hidden bg-slate-50">
-        
         {/* HEADER */}
-        <div className="h-16 border-b border-slate-200 flex items-center justify-between px-6 bg-white shrink-0">
+        <div className="h-14 border-b border-slate-200 flex items-center justify-between px-6 bg-white shrink-0">
           <div className="flex items-center gap-4">
-            <h1 className="text-xl font-bold text-slate-800 tracking-tight">Operations Support Hub</h1>
-            <div className="h-4 w-px bg-slate-300"></div>
+            <h1 className="text-lg font-bold text-slate-800 tracking-tight">Operations Support Hub</h1>
             <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full">
               <span className="text-[10px] font-bold text-blue-700 uppercase tracking-wider">Enterprise Tier • 85% AI Automated</span>
             </div>
           </div>
           <div className="flex items-center gap-4">
             <NotificationDropdown />
-            <div className="flex items-center gap-3 border-l border-slate-200 pl-4">
-               <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center overflow-hidden">
-                 <img src="https://ui-avatars.com/api/?name=Support+Admin&background=0D8ABC&color=fff" alt="Admin" className="w-full h-full" />
-               </div>
-               <div className="hidden lg:block">
-                 <p className="text-xs font-bold text-slate-800">Support Operations</p>
-                 <p className="text-[10px] text-slate-500">Global Green Enterprise</p>
-               </div>
-            </div>
           </div>
         </div>
 
