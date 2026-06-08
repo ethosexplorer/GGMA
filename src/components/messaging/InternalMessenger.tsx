@@ -682,27 +682,27 @@ export const InternalMessenger = ({ currentUser }: Props) => {
         {/* Create Group Modal */}
         {showGroupCreate && (
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 animate-in fade-in duration-200">
-            <div className="bg-white rounded-2xl p-8 max-w-lg w-full mx-4 shadow-2xl animate-in zoom-in-95 duration-300">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-black text-slate-800 flex items-center gap-2">
-                  <Users size={22} className="text-indigo-600" /> New Group Message
+            <div className="bg-white rounded-2xl p-6 max-w-lg w-full mx-4 shadow-2xl animate-in zoom-in-95 duration-300 max-h-[80vh] flex flex-col">
+              <div className="flex items-center justify-between mb-4 shrink-0">
+                <h3 className="text-lg font-black text-slate-800 flex items-center gap-2">
+                  <Users size={20} className="text-indigo-600" /> New Group Message
                 </h3>
                 <button onClick={() => setShowGroupCreate(false)} className="p-2 hover:bg-slate-100 rounded-lg"><X size={20} /></button>
               </div>
-              <div className="space-y-4">
-                <div>
-                  <label className="text-xs font-black text-slate-500 uppercase tracking-widest block mb-2">Group Name</label>
+              <div className="space-y-3 flex-1 min-h-0 flex flex-col">
+                <div className="shrink-0">
+                  <label className="text-xs font-black text-slate-500 uppercase tracking-widest block mb-1.5">Group Name</label>
                   <input
                     type="text"
                     value={groupName}
                     onChange={(e) => setGroupName(e.target.value)}
                     placeholder="e.g. Leadership Team"
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-indigo-500 font-medium text-slate-700"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-indigo-500 font-medium text-slate-700 text-sm"
                   />
                 </div>
-                <div>
-                  <label className="text-xs font-black text-slate-500 uppercase tracking-widest block mb-2">Add Members</label>
-                  <div className="space-y-2">
+                <div className="flex-1 min-h-0 flex flex-col">
+                  <label className="text-xs font-black text-slate-500 uppercase tracking-widest block mb-1.5 shrink-0">Add Members</label>
+                  <div className="space-y-1.5 overflow-y-auto flex-1 pr-1" style={{ maxHeight: '40vh' }}>
                     {mappedUsers.filter(m => m.id !== currentUser.roleId).map(member => (
                       <button
                         key={member.id}
@@ -710,22 +710,22 @@ export const InternalMessenger = ({ currentUser }: Props) => {
                           prev.includes(member.id) ? prev.filter(id => id !== member.id) : [...prev, member.id]
                         )}
                         className={cn(
-                          "w-full flex items-center justify-between p-3 rounded-xl border transition-all",
+                          "w-full flex items-center justify-between p-2.5 rounded-xl border transition-all",
                           groupMembers.includes(member.id)
                             ? "bg-indigo-50 border-indigo-300 shadow-sm"
                             : "bg-slate-50 border-slate-200 hover:border-indigo-200"
                         )}
                       >
                         <div className="flex items-center gap-3">
-                          <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-black", member.color)}>
+                          <div className={cn("w-7 h-7 rounded-lg flex items-center justify-center text-white text-[10px] font-black", member.color)}>
                             {getInitials(member.name)}
                           </div>
                           <div className="text-left">
-                            <p className="text-sm font-bold text-slate-700">{member.name}</p>
+                            <p className="text-xs font-bold text-slate-700">{member.name}</p>
                             <p className="text-[10px] text-slate-400 font-medium capitalize">{member.role.replace(/_/g, ' ')}</p>
                           </div>
                         </div>
-                        {groupMembers.includes(member.id) && <Check size={18} className="text-indigo-600" />}
+                        {groupMembers.includes(member.id) && <Check size={16} className="text-indigo-600" />}
                       </button>
                     ))}
                   </div>
@@ -734,9 +734,9 @@ export const InternalMessenger = ({ currentUser }: Props) => {
               <button
                 onClick={handleCreateGroup}
                 disabled={!groupName.trim() || groupMembers.length === 0}
-                className="w-full mt-6 py-4 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-30 text-white rounded-xl font-black text-sm uppercase tracking-widest transition-colors shadow-xl shadow-indigo-600/20"
+                className="w-full mt-4 py-3.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-30 text-white rounded-xl font-black text-sm uppercase tracking-widest transition-colors shadow-xl shadow-indigo-600/20 shrink-0"
               >
-                Create Group
+                Create Group ({groupMembers.length} selected)
               </button>
             </div>
           </div>
