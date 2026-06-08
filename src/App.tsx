@@ -267,9 +267,40 @@ export default function App() {
     }
   };
 
+  // Map view names to URL paths
+  const viewToPath: Record<string, string> = {
+    'landing': '/',
+    'login': '/login',
+    'signup': '/signup',
+    'dashboard': '/dashboard',
+    'larry-chatbot': '/larry-chatbot',
+    'larry-business': '/larry-business',
+    'support': '/support',
+    'settings-mockup': '/settings-mockup',
+    'business-signup': '/business-signup',
+    'patient-signup': '/patient-signup',
+    'provider-signup': '/provider-signup',
+    'intake': '/intake',
+    'products-services': '/products-services',
+    'federal-state': '/federal-state',
+    'state-facts': '/state-facts',
+    'what-is-c3': '/what-is-c3',
+    'what-is-care-wallet': '/what-is-care-wallet',
+    'care-wallet-dashboard': '/care-wallet-dashboard',
+    'role-pricing': '/role-pricing',
+    'forgot-password': '/forgot-password',
+    'patient-portal': '/patient-portal',
+    'pin-verification': '/pin-verification',
+    'education': '/education',
+    'legal-advocacy': '/legal-advocacy',
+  };
+
   const handleNavigate = (newView: string, role?: string) => {
     setViewHistory(prev => [...prev, view]);
     setView(newView);
+    // Push URL so each browser tab can show a different view
+    const urlPath = viewToPath[newView] || '/' + newView;
+    window.history.pushState({ view: newView }, '', urlPath);
     if (role && newView === 'role-pricing') setSelectedPricingRole(role);
     if (role) setInitialRole(role as any);
   };
@@ -328,19 +359,48 @@ export default function App() {
     return () => window.removeEventListener('open-larry-modal', handleOpenLarry);
   }, [jurisdictionLocked, isStaff]);
 
-  // Sync view state with URL path for deep linking
+  // Sync view state with URL path for deep linking (supports multiple tabs)
   useEffect(() => {
     const path = location.pathname;
-    if (path === '/login') setView('login');
-    else if (path === '/signup') setView('signup');
-    else if (path.startsWith('/dashboard')) setView('dashboard');
-    else if (path === '/larry-chatbot') setView('larry-chatbot');
-    else if (path === '/support') setView('support');
-    else if (path === '/settings-mockup') setView('settings-mockup');
-    else if (path === '/business-signup') setView('business-signup');
-    else if (path === '/patient-signup') setView('patient-signup');
-    else if (path === '/intake') setView('intake');
+    const pathToView: Record<string, string> = {
+      '/login': 'login',
+      '/signup': 'signup',
+      '/dashboard': 'dashboard',
+      '/larry-chatbot': 'larry-chatbot',
+      '/larry-business': 'larry-business',
+      '/support': 'support',
+      '/settings-mockup': 'settings-mockup',
+      '/business-signup': 'business-signup',
+      '/patient-signup': 'patient-signup',
+      '/provider-signup': 'provider-signup',
+      '/intake': 'intake',
+      '/products-services': 'products-services',
+      '/federal-state': 'federal-state',
+      '/state-facts': 'state-facts',
+      '/what-is-c3': 'what-is-c3',
+      '/what-is-care-wallet': 'what-is-care-wallet',
+      '/care-wallet-dashboard': 'care-wallet-dashboard',
+      '/role-pricing': 'role-pricing',
+      '/forgot-password': 'forgot-password',
+      '/patient-portal': 'patient-portal',
+      '/pin-verification': 'pin-verification',
+      '/education': 'education',
+      '/legal-advocacy': 'legal-advocacy',
+    };
+    const matchedView = pathToView[path] || (path.startsWith('/dashboard') ? 'dashboard' : null);
+    if (matchedView) setView(matchedView);
   }, [location.pathname]);
+
+  // Handle browser back/forward buttons across tabs
+  useEffect(() => {
+    const handlePopState = (e: PopStateEvent) => {
+      if (e.state?.view) {
+        setView(e.state.view);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   // Real-Time Analytics Tracking
   useEffect(() => {
