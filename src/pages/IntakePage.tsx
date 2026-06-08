@@ -136,31 +136,31 @@ export default function IntakePage({ onBack }: IntakePageProps) {
             <p>
               In order to maintain a confidential, professional level of communication between GGP-OS and its clients, 
               the following standards will be followed in regard to text messaging and phone/email services. As our 
-              team members spend the day working with clients and collaborating with outside service providers to deliver 
+              providers, agents, assistants and representatives spend the day working with clients and collaborating with outside service providers to deliver 
               comprehensive services, it is expected that mutual respect for response times is adhered to from all parties. 
               For this reason, text messaging, voicemail, and email should be limited to an "as needed" basis and used 
-              in a manner that allows our team to respond in a reasonable time frame.
+              in a manner that allows our provider, agent, assistant or representative to respond in a reasonable time frame.
             </p>
 
             <div className="space-y-3">
               <div className="flex gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
                 <span className="text-emerald-600 font-black text-lg mt-0.5">•</span>
-                <p>Text messaging can be used to schedule, change, or cancel appointments. <span className="font-bold text-slate-800">(24-hour cancellation policy still applies, and the provider may charge for missed sessions and those not canceled prior to the 24-hour window)</span></p>
+                <p>Text messaging can be used to schedule, change, or cancel appointments. <span className="font-bold text-slate-800">(24-hour cancellation policy still applies, and the provider, agent, assistant or representative may charge for missed sessions and those not canceled prior to the 24-hour window)</span></p>
               </div>
 
               <div className="flex gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
                 <span className="text-emerald-600 font-black text-lg mt-0.5">•</span>
-                <p>Text messages regarding setting up or changes to appointment times will be responded to within <span className="font-bold text-slate-800">24 business hours</span>. Please note our team is working with other clients throughout the day, so an immediate response is not to be expected.</p>
+                <p>Text messages regarding setting up or changes to appointment times will be responded to within <span className="font-bold text-slate-800">24 business hours</span>. Please note our providers, agents, assistants and representatives are working with other clients throughout the day, so an immediate response is not to be expected.</p>
               </div>
 
               <div className="flex gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
                 <span className="text-emerald-600 font-black text-lg mt-0.5">•</span>
-                <p>If urgent matters need to be discussed, call and leave a message. If a text message is sent regarding service-related issues, it will be discussed via phone or at your next scheduled meeting, at the representative's discretion based on urgency and availability.</p>
+                <p>If urgent matters need to be discussed, call and leave a message. If a text message is sent regarding service-related issues, it will be discussed via phone or at your next scheduled meeting, at the provider, agent, assistant or representative's discretion based on urgency and availability.</p>
               </div>
 
               <div className="flex gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
                 <span className="text-emerald-600 font-black text-lg mt-0.5">•</span>
-                <p>Phone calls will be limited to <span className="font-bold text-slate-800">10 minutes</span>, at the representative's discretion. If additional consultation time is needed, a scheduled billable session may be recommended.</p>
+                <p>Phone calls will be limited to <span className="font-bold text-slate-800">10 minutes</span>, at the provider, agent, assistant or representative's discretion. If additional consultation time is needed, a scheduled billable session may be recommended.</p>
               </div>
 
               <div className="flex gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
@@ -180,7 +180,7 @@ export default function IntakePage({ onBack }: IntakePageProps) {
 
               <div className="flex gap-3 p-3 bg-blue-50 rounded-xl border border-blue-100">
                 <span className="text-blue-600 font-black text-lg mt-0.5">•</span>
-                <p>GGP-OS utilizes a secure Electronic Health Record and communication platform (<span className="font-bold text-blue-800">GGP-OS Medical</span>) which provides secure messaging for clients and providers. Clients may opt to use this service once they have set up and logged into their portal.</p>
+                <p>GGP-OS utilizes a secure Electronic Health Record and communication platform (<span className="font-bold text-blue-800">GGP-OS Medical</span>) which provides secure messaging for clients and providers, agents, assistants or representatives. Clients may opt to use this service once they have set up and logged into their portal.</p>
               </div>
             </div>
 
