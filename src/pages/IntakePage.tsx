@@ -122,6 +122,93 @@ export default function IntakePage({ onBack }: IntakePageProps) {
         </div>
       </div>
 
+      {/* Communication Standards & Policy */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-8 pb-8">
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="bg-gradient-to-r from-[#1a4731] to-emerald-800 px-6 py-4">
+            <h2 className="text-white font-black text-lg tracking-tight flex items-center gap-2">
+              <Shield size={18} className="text-emerald-300" />
+              Communication Standards &amp; Policy
+            </h2>
+            <p className="text-emerald-200/80 text-xs mt-1">GGP-OS Professional Communication Guidelines</p>
+          </div>
+          <div className="p-6 space-y-5 text-sm text-slate-700 leading-relaxed">
+            <p>
+              In order to maintain a confidential, professional level of communication between GGP-OS and its clients, 
+              the following standards will be followed in regard to text messaging and phone/email services. As our 
+              team members spend the day working with clients and collaborating with outside service providers to deliver 
+              comprehensive services, it is expected that mutual respect for response times is adhered to from all parties. 
+              For this reason, text messaging, voicemail, and email should be limited to an "as needed" basis and used 
+              in a manner that allows our team to respond in a reasonable time frame.
+            </p>
+
+            <div className="space-y-3">
+              <div className="flex gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <span className="text-emerald-600 font-black text-lg mt-0.5">•</span>
+                <p>Text messaging can be used to schedule, change, or cancel appointments. <span className="font-bold text-slate-800">(24-hour cancellation policy still applies, and the provider may charge for missed sessions and those not canceled prior to the 24-hour window)</span></p>
+              </div>
+
+              <div className="flex gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <span className="text-emerald-600 font-black text-lg mt-0.5">•</span>
+                <p>Text messages regarding setting up or changes to appointment times will be responded to within <span className="font-bold text-slate-800">24 business hours</span>. Please note our team is working with other clients throughout the day, so an immediate response is not to be expected.</p>
+              </div>
+
+              <div className="flex gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <span className="text-emerald-600 font-black text-lg mt-0.5">•</span>
+                <p>If urgent matters need to be discussed, call and leave a message. If a text message is sent regarding service-related issues, it will be discussed via phone or at your next scheduled meeting, at the representative's discretion based on urgency and availability.</p>
+              </div>
+
+              <div className="flex gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <span className="text-emerald-600 font-black text-lg mt-0.5">•</span>
+                <p>Phone calls will be limited to <span className="font-bold text-slate-800">10 minutes</span>, at the representative's discretion. If additional consultation time is needed, a scheduled billable session may be recommended.</p>
+              </div>
+
+              <div className="flex gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <span className="text-emerald-600 font-black text-lg mt-0.5">•</span>
+                <p>Emailing will be limited to making or changing appointment times and general inquiries. Note that this method of contact will be responded to within <span className="font-bold text-slate-800">48 business hours</span>. Detailed service consultations will not be addressed through email.</p>
+              </div>
+
+              <div className="flex gap-3 p-3 bg-red-50 rounded-xl border border-red-200">
+                <span className="text-red-600 font-black text-lg mt-0.5">⚠</span>
+                <p className="font-bold text-red-800">Text messaging SHOULD NOT be used if you are experiencing a medical emergency. Call 911.</p>
+              </div>
+
+              <div className="flex gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <span className="text-emerald-600 font-black text-lg mt-0.5">•</span>
+                <p>This practice does not charge for text messaging services, but standard rates may apply as provided by your wireless plan. Contact your carrier for information on pricing plans and details regarding text messaging.</p>
+              </div>
+
+              <div className="flex gap-3 p-3 bg-blue-50 rounded-xl border border-blue-100">
+                <span className="text-blue-600 font-black text-lg mt-0.5">•</span>
+                <p>GGP-OS utilizes a secure Electronic Health Record and communication platform (<span className="font-bold text-blue-800">GGP-OS Medical</span>) which provides secure messaging for clients and providers. Clients may opt to use this service once they have set up and logged into their portal.</p>
+              </div>
+            </div>
+
+            {/* HIPAA Compliance Notice */}
+            <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 mt-4">
+              <p className="text-xs font-black text-emerald-800 uppercase tracking-wider mb-2 flex items-center gap-2">
+                <Shield size={14} className="text-emerald-600" />
+                HIPAA Business Associate Addendum — Included Functionality
+              </p>
+              <p className="text-xs text-emerald-700 leading-relaxed">
+                As of July 21, 2020, the following functionality is included under the applicable HIPAA Business 
+                Associate Addendum: Gmail, Calendar, Drive (including Docs, Sheets, Slides, and Forms), Apps Script, 
+                Keep, Sites, Jamboard, Hangouts (chat messaging feature only), Google Chat, Google Meet, Google Voice 
+                (managed users only), Google Cloud Search, Cloud Identity Management, Google Groups, Google Tasks, 
+                and Vault (if applicable).
+              </p>
+            </div>
+
+            {/* Contact Bar */}
+            <div className="flex flex-wrap items-center justify-center gap-4 pt-2 text-xs font-bold text-slate-500">
+              <a href="https://ggp-os.com" target="_blank" rel="noopener noreferrer" className="text-emerald-700 hover:text-emerald-600 transition-colors">https://ggp-os.com</a>
+              <span>•</span>
+              <span>1-888-963-GGHP (4447)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Footer */}
       <div className="bg-slate-900 text-white py-8 mt-8">
         <div className="max-w-5xl mx-auto px-4 sm:px-8 text-center space-y-3">
