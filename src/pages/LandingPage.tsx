@@ -5,7 +5,7 @@ import {
   Map as MapIcon, MessageSquare, ChevronDown, Send, GraduationCap, Sparkles, Scale,
   Briefcase, Bot, BookOpen, Phone, Star, ArrowUpCircle, Home, Check, Wallet,
   HeartHandshake, HelpCircle, Building2, Leaf, Activity, Gavel, Headphones,
-  Users, ShoppingCart, PackageSearch, ClipboardList, Cpu, MessageCircle
+  Users, ShoppingCart, PackageSearch, ClipboardList, Cpu, MessageCircle, LayoutDashboard
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Button } from '../components/shared/Button';
@@ -16,7 +16,7 @@ import { StateWelcomeBanner } from '../components/shared/StateWelcomeBanner';
 import { fetchRegulatoryFeed, formatFeedDate, type RegulatoryUpdate } from '../lib/regulatoryFeed';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { turso } from '../lib/turso';
-export const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate: (view: 'what-is-care-wallet' | 'what-is-c3' | 'login' | 'signup' | 'patient-portal' | 'support' | 'larry-chatbot' | 'larry-business' | 'legal-advocacy' | 'intake', role?: string) => void, jurisdiction?: string, setJurisdiction?: (s: string) => void }) => {
+export const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction, userProfile, onDashboard }: { onNavigate: (view: 'what-is-care-wallet' | 'what-is-c3' | 'login' | 'signup' | 'patient-portal' | 'support' | 'larry-chatbot' | 'larry-business' | 'legal-advocacy' | 'intake', role?: string) => void, jurisdiction?: string, setJurisdiction?: (s: string) => void, userProfile?: any, onDashboard?: () => void }) => {
   const [liveFeed, setLiveFeed] = useState<RegulatoryUpdate[]>([]);
   const [feedLoading, setFeedLoading] = useState(true);
   
@@ -161,6 +161,15 @@ export const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onN
 
   return (
     <div className="min-h-screen bg-slate-50 overflow-x-hidden">
+      {/* Floating Back to Dashboard button when logged in */}
+      {userProfile && onDashboard && (
+        <button
+          onClick={onDashboard}
+          className="fixed bottom-6 right-6 z-[200] flex items-center gap-2 px-5 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm rounded-2xl shadow-2xl shadow-emerald-900/40 transition-all hover:scale-105 border-2 border-emerald-400/30 animate-in slide-in-from-bottom duration-500"
+        >
+          <LayoutDashboard size={18} /> Back to Dashboard
+        </button>
+      )}
       {/* URGENT PLATFORM ALERT TICKER */}
       <div className={`${
         alertTypeStyles[broadcastType] || 'bg-red-600 text-white border-b border-red-700'

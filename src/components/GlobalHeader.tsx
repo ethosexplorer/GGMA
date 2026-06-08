@@ -17,7 +17,8 @@ export const GlobalHeader = ({
   setRoleOverride,
   handleBack,
   canGoBack,
-  onLogout
+  onLogout,
+  onHome
 }: {
   userProfile: any,
   jurisdiction: string,
@@ -26,7 +27,8 @@ export const GlobalHeader = ({
   setRoleOverride: (r: string | null) => void,
   handleBack?: () => void,
   canGoBack?: boolean,
-  onLogout?: () => void
+  onLogout?: () => void,
+  onHome?: () => void
 }) => {
   const [searchQuery, setSearchQuery] = React.useState("");
   // Only show if logged in
@@ -108,7 +110,7 @@ export const GlobalHeader = ({
       {/* Right side actions */}
       <div className="flex items-center gap-3 ml-auto pl-4">
         <button
-          onClick={() => { window.history.pushState({}, '', '/'); window.location.reload(); }}
+          onClick={() => { if (onHome) onHome(); }}
           className="flex items-center gap-2 text-slate-400 hover:text-emerald-400 transition-colors bg-slate-800/50 hover:bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-transparent hover:border-emerald-500/30"
           title="Return to Landing Page"
         >

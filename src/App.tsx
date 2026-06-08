@@ -872,7 +872,7 @@ export default function App() {
       <div className="antialiased text-slate-900">
         <LiveToastContainer />
         <div data-action-bound="true">
-          <GlobalHeader userProfile={userProfile} jurisdiction={jurisdiction} setJurisdiction={setJurisdictionWithGate} roleOverride={roleOverride} setRoleOverride={setRoleOverride} handleBack={handleBack} canGoBack={viewHistory.length > 0 || hasBypassedSelector} onLogout={handleLogout} />
+          <GlobalHeader userProfile={userProfile} jurisdiction={jurisdiction} setJurisdiction={setJurisdictionWithGate} roleOverride={roleOverride} setRoleOverride={setRoleOverride} handleBack={handleBack} canGoBack={viewHistory.length > 0 || hasBypassedSelector} onLogout={handleLogout} onHome={() => { handleNavigate('landing'); }} />
         </div>
 
         {/* JURISDICTION GATE MODAL */}
@@ -1011,6 +1011,8 @@ export default function App() {
               }}
               jurisdiction={jurisdiction}
               setJurisdiction={setJurisdiction}
+              userProfile={userProfile}
+              onDashboard={() => handleNavigate('dashboard')}
             />
           )}
           {view === 'role-pricing' && (
