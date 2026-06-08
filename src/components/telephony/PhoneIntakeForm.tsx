@@ -95,6 +95,8 @@ export const PhoneIntakeForm = () => {
   // Custom step completion flags for patients
   const [scheduledAppt, setScheduledAppt] = useState(false);
   const [completedPortal, setCompletedPortal] = useState(false);
+  const [portalUsername, setPortalUsername] = useState('');
+  const [portalPassword, setPortalPassword] = useState('');
 
   const [paymentForm, setPaymentForm] = useState({
     amount: '',
@@ -269,7 +271,7 @@ export const PhoneIntakeForm = () => {
     setSubmitting(false);
   };
 
-  const reset = () => { setIntakeType(null); setStep(0); setData({...empty}); setSubmitted(false); setCallerId(''); setCallerNotes(''); setScheduledAppt(false); setCompletedPortal(false); setPaymentPosted(false); setPaymentForm({ amount: '', type: 'Processing Fee', method: 'Chime', notes: '', date: new Date().toISOString().split('T')[0] }); };
+  const reset = () => { setIntakeType(null); setStep(0); setData({...empty}); setSubmitted(false); setCallerId(''); setCallerNotes(''); setScheduledAppt(false); setCompletedPortal(false); setPortalUsername(''); setPortalPassword(''); setPaymentPosted(false); setPaymentForm({ amount: '', type: 'Processing Fee', method: 'Chime', notes: '', date: new Date().toISOString().split('T')[0] }); };
 
   const renderScript = () => {
     if (intakeType === null) {
@@ -317,7 +319,7 @@ export const PhoneIntakeForm = () => {
           <p><strong>Agent:</strong> "I'm opening the calendar now. Do you have a preferred day or time?"</p>
           <div className="mt-4 bg-[#0f291c] p-4 rounded-xl border border-emerald-800/50 shadow-inner">
             <p className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">Action Required</p>
-            <p className="text-xs text-emerald-100/70">Click 'Open Acuity Scheduling' and complete the booking for the patient. Check the box once confirmed.</p>
+            <p className="text-xs text-emerald-100/70">Click 'Schedule with Dr. Jiss Mathew' on RenewOklahomaCard.com and complete the booking for the patient. Check the box once confirmed.</p>
           </div>
         </div>
       );
@@ -607,12 +609,12 @@ export const PhoneIntakeForm = () => {
           <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-4 shadow-inner">
             <Calendar size={36} />
           </div>
-          <h3 className="text-2xl font-black text-slate-800">Schedule Telehealth Appointment</h3>
-          <p className="text-slate-500 max-w-md">The patient's initial intake is recorded. Next, proceed to the Acuity Scheduling system to book their Doctor visit.</p>
+          <h3 className="text-2xl font-black text-slate-800">Schedule with Dr. Jiss Mathew</h3>
+          <p className="text-slate-500 max-w-md">The patient's initial intake is recorded. Next, proceed to RenewOklahomaCard.com to book their Doctor recommendation appointment.</p>
           
-          <a href="https://www.renewoklahomacard.com/booking-calendar/renew-oklahoma-card?referral=service_list_widget" target="_blank" rel="noreferrer" 
+          <a href="https://www.renewoklahomacard.com/" target="_blank" rel="noreferrer" 
              className="px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black shadow-xl shadow-emerald-600/20 flex items-center justify-center gap-3 transition-transform hover:scale-105 active:scale-95 w-full max-w-sm mt-4">
-            <ExternalLink size={20} /> Open Acuity Scheduling
+            <ExternalLink size={20} /> Open Dr. Jiss Mathew — RenewOklahomaCard.com
           </a>
 
           <div className="mt-8 pt-6 border-t border-slate-200 w-full flex justify-center">
@@ -635,6 +637,24 @@ export const PhoneIntakeForm = () => {
              className="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-black shadow-xl shadow-indigo-600/20 flex items-center justify-center gap-3 transition-transform hover:scale-105 active:scale-95 w-full max-w-sm mt-4">
             <ExternalLink size={20} /> Open OK.gov Portal
           </a>
+
+          {/* State Portal Login Credentials */}
+          <div className="w-full max-w-sm mt-4 bg-indigo-50/50 border border-indigo-200 rounded-2xl p-5 space-y-3 text-left">
+            <p className="text-[10px] font-black text-indigo-600 uppercase tracking-widest flex items-center gap-1.5">
+              <Shield size={12} /> Patient's State Portal Login Info
+            </p>
+            <div>
+              <label className="block text-xs font-bold text-slate-600 mb-1">Portal Username / Email</label>
+              <input type="text" value={portalUsername} onChange={(e) => setPortalUsername(e.target.value)} placeholder="patient@email.com"
+                className="w-full px-4 py-2.5 bg-white border border-indigo-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 font-medium" />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-slate-600 mb-1">Portal Password</label>
+              <input type="text" value={portalPassword} onChange={(e) => setPortalPassword(e.target.value)} placeholder="Password set during registration"
+                className="w-full px-4 py-2.5 bg-white border border-indigo-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 font-medium" />
+            </div>
+            <p className="text-[10px] text-slate-400 font-medium">Record the login credentials created for the patient's state portal account.</p>
+          </div>
 
           <div className="mt-8 pt-6 border-t border-slate-200 w-full flex justify-center">
             <label className="flex items-center gap-3 cursor-pointer bg-slate-50 border border-slate-200 p-4 rounded-xl hover:bg-slate-100 transition-colors">
