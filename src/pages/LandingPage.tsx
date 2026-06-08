@@ -16,7 +16,7 @@ import { StateWelcomeBanner } from '../components/shared/StateWelcomeBanner';
 import { fetchRegulatoryFeed, formatFeedDate, type RegulatoryUpdate } from '../lib/regulatoryFeed';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { turso } from '../lib/turso';
-export const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate: (view: 'what-is-care-wallet' | 'what-is-c3' | 'login' | 'signup' | 'patient-portal' | 'support' | 'larry-chatbot' | 'larry-business' | 'legal-advocacy', role?: string) => void, jurisdiction?: string, setJurisdiction?: (s: string) => void }) => {
+export const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onNavigate: (view: 'what-is-care-wallet' | 'what-is-c3' | 'login' | 'signup' | 'patient-portal' | 'support' | 'larry-chatbot' | 'larry-business' | 'legal-advocacy' | 'intake', role?: string) => void, jurisdiction?: string, setJurisdiction?: (s: string) => void }) => {
   const [liveFeed, setLiveFeed] = useState<RegulatoryUpdate[]>([]);
   const [feedLoading, setFeedLoading] = useState(true);
   
@@ -328,6 +328,9 @@ export const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction }: { onN
           </div>
 
           <div className="flex flex-wrap justify-center gap-4 pt-6">
+            <button onClick={() => onNavigate('intake')} className="px-8 py-4 bg-white text-[#1a4731] rounded-2xl font-black hover:bg-emerald-50 transition-all shadow-xl shadow-black/10 flex items-center gap-2 border-2 border-white/80">
+              📋 GGP Intake Form
+            </button>
             <button onClick={() => onNavigate('larry-chatbot')} className="px-8 py-4 bg-emerald-500 text-[#0a1f14] rounded-2xl font-black hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-900/30 flex items-center gap-2">
               💬 Chat with Sylara AI
             </button>

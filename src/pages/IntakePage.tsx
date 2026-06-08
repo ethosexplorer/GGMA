@@ -62,11 +62,11 @@ export default function IntakePage({ onBack }: IntakePageProps) {
 
           <div className="text-center space-y-3">
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight">
-              Patient Intake Form
+              GGP Intake Form
             </h1>
             <p className="text-emerald-100 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-              Complete the form below to fast-track your appointment. Your information will be 
-              securely available to your provider at the time of your visit — no paperwork needed.
+              Complete the form below to fast-track your appointment or registration. Your information will be 
+              securely available to your assigned representative at the time of your visit — no paperwork needed.
             </p>
           </div>
         </div>
