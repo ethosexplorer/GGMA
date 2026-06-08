@@ -710,7 +710,18 @@ export const VirtualAttendantTab = () => {
                             controls 
                             autoPlay 
                             className="h-8 max-w-[220px]" 
-                            onEnded={() => setActivePlayingSid(null)}
+                            onEnded={() => {
+                              setActivePlayingSid(null);
+                              // Mark as read after playback finishes
+                              const readSids = JSON.parse(localStorage.getItem('read_voicemail_sids') || '[]');
+                              if (!readSids.includes(vm.sid)) {
+                                const newRead = [...readSids, vm.sid];
+                                localStorage.setItem('read_voicemail_sids', JSON.stringify(newRead));
+                                setVoicemailList(prev => prev.map(v => v.sid === vm.sid ? { ...v, read: true } : v));
+                                setUnreadVoicemails(prev => Math.max(0, prev - 1));
+                                window.dispatchEvent(new Event('voicemails-updated'));
+                              }
+                            }}
                           />
                           <button
                             onClick={() => setActivePlayingSid(null)}
@@ -724,14 +735,7 @@ export const VirtualAttendantTab = () => {
                           <button 
                             onClick={() => {
                               setActivePlayingSid(vm.sid);
-                              const readSids = JSON.parse(localStorage.getItem('read_voicemail_sids') || '[]');
-                              if (!readSids.includes(vm.sid)) {
-                                const newRead = [...readSids, vm.sid];
-                                localStorage.setItem('read_voicemail_sids', JSON.stringify(newRead));
-                                setVoicemailList(prev => prev.map(v => v.sid === vm.sid ? { ...v, read: true } : v));
-                                setUnreadVoicemails(prev => Math.max(0, prev - 1));
-                                window.dispatchEvent(new Event('voicemails-updated'));
-                              }
+                              // Don't mark as read yet — wait for playback to finish
                             }}
                             className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-purple-900/20"
                           >

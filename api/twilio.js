@@ -193,15 +193,25 @@ async function handleHistory(req, res) {
     id: m.sid
   }));
 
-  // Fetch Voicemail Recordings
-  const recordings = await client.recordings.list({ limit: 20 });
-  const formattedVoicemails = recordings.map(r => ({
-    sid: r.sid,
-    callSid: r.callSid,
-    duration: r.duration,
-    url: `/api/twilio/recording?sid=${r.sid}`,
-    time: new Date(r.dateCreated).toLocaleString()
-  }));
+  // Fetch Voicemail Recordings — INBOUND ONLY
+  const recordings = await client.recordings.list({ limit: 30 });
+  
+  // Build a Set of outbound call SIDs so we can exclude them
+  const outboundCallSids = new Set(
+    calls
+      .filter(c => c.direction === 'outbound-api' || c.direction === 'outbound-dial')
+      .map(c => c.sid)
+  );
+  
+  const formattedVoicemails = recordings
+    .filter(r => !outboundCallSids.has(r.callSid)) // Exclude outbound call recordings
+    .map(r => ({
+      sid: r.sid,
+      callSid: r.callSid,
+      duration: r.duration,
+      url: `/api/twilio/recording?sid=${r.sid}`,
+      time: new Date(r.dateCreated).toLocaleString()
+    }));
 
   return res.status(200).json({ 
     calls: formattedCalls,
