@@ -291,7 +291,7 @@ export const ProductsServicesManager = () => {
 
       {/* Products Table — Grouped by Product Title */}
       <div className="space-y-3">
-        {Object.entries(grouped).map(([groupKey, groupProducts]) => {
+        {Object.entries(grouped).map(([groupKey, groupProducts]: [string, Product[]]) => {
           const isExpanded = expandedGroups.has(groupKey) || groupProducts.length === 1;
           const first = groupProducts[0];
           const tierCount = groupProducts.length;
