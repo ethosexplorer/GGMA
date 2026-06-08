@@ -30,6 +30,30 @@ export const ProductsServicesPage = ({ onNavigate }: { onNavigate: (view: string
             <p className="text-slate-500 max-w-2xl mx-auto text-lg">Global Green Enterprise Inc provides SaaS compliance technology, telehealth coordination, AI-powered operational tools, and payment processing for the legal cannabis industry across all 50 U.S. states.</p>
           </div>
 
+          {/* FREE Account Banner */}
+          <div className="mb-16">
+            <div className="bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 rounded-2xl p-8 shadow-2xl shadow-emerald-900/20 border border-emerald-400/30 text-center">
+              <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-1.5 mb-4">
+                <span className="text-white text-xs font-black uppercase tracking-widest">No Cost to Get Started</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight mb-3">
+                Create Your Account for <span className="text-yellow-300">FREE</span>
+              </h2>
+              <p className="text-emerald-50 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed mb-4">
+                Self-serve your <span className="font-bold text-white">medical card applications</span>, <span className="font-bold text-white">business license applications</span>, 
+                and <span className="font-bold text-white">state portal registrations</span> — all at no charge. 
+                Your account gives you direct access to do it yourself.
+              </p>
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 max-w-xl mx-auto border border-white/20">
+                <p className="text-emerald-100 text-xs sm:text-sm leading-relaxed">
+                  <span className="font-black text-yellow-300">Subscriptions are optional</span> — only needed if you want our 
+                  providers, agents, or assistants to handle the process for you, or to unlock premium benefits 
+                  like telehealth, compliance tools, and dedicated support.
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* ─── CORE PLATFORM SUBSCRIPTIONS ─── */}
           <div className="mb-16">
             <div className="flex items-center gap-3 mb-8">
