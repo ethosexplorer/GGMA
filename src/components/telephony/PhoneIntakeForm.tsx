@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Phone, User, Building2, HeartPulse, FileText, CircleCheck, AlertCircle, Shield, MapPin, Mail, Calendar, CreditCard, Loader2, UserPlus, ExternalLink, PhoneIncoming, DollarSign } from 'lucide-react';
+import { Phone, User, Building2, HeartPulse, FileText, CircleCheck, AlertCircle, Shield, MapPin, Mail, Calendar, CreditCard, Loader2, UserPlus, ExternalLink, PhoneIncoming, DollarSign, ClipboardList } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { turso } from '../../lib/turso';
 import { db } from '../../lib/firebase';
@@ -467,6 +467,39 @@ export const PhoneIntakeForm = () => {
     if (isPatient) {
       if (step === 0) return (
         <div className="space-y-6">
+          {/* Quick Intake Form Link — Send to patient */}
+          <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+                <ClipboardList size={18} className="text-blue-600" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-black text-blue-900 mb-1">📋 Fast-Track: Send Digital Intake Form</p>
+                <p className="text-xs text-blue-700 mb-2">Send this link to the caller so they can pre-fill their info before the appointment. All data will be available at appointment time.</p>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText('https://ggma-five.vercel.app/intake');
+                      alert('Intake link copied to clipboard!');
+                    }}
+                    className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition-colors"
+                  >
+                    Copy Link
+                  </button>
+                  <a
+                    href="https://form.jotform.com/261585644243057"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1.5 bg-white border border-blue-200 hover:bg-blue-50 text-blue-700 text-xs font-bold rounded-lg transition-colors"
+                  >
+                    Open Form ↗
+                  </a>
+                  <span className="text-[10px] text-blue-500 font-mono self-center truncate">ggma-five.vercel.app/intake</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-sm text-emerald-800 font-medium">
             <strong>Qualifying Intake for Medical Card:</strong> 18 OR OLDER (if under 18 please have a parent or guardian schedule on your behalf). Fill info accurately.
           </div>

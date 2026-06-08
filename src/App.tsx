@@ -66,6 +66,7 @@ const ResourceCenter = React.lazy(() => import('./pages/ResourceCenter').then(m 
 const LoginPage = React.lazy(() => import('./pages/LoginPage'));
 const RolePricingPage = React.lazy(() => import('./pages/RolePricingPage').then(m => ({ default: m.RolePricingPage })));
 const StateFactsPage = React.lazy(() => import('./pages/StateFactsPage').then(m => ({ default: m.StateFactsPage })));
+const IntakePage = React.lazy(() => import('./pages/IntakePage'));
 
 // --- Eagerly loaded utilities (small, needed immediately) ---
 import { initDatabase } from './lib/initDb';
@@ -317,7 +318,7 @@ export default function App() {
     
     // Global Jurisdiction Gate trigger — staff bypass automatically
     // Also bypass if we are on the login screen to allow users to log in first
-    if (!jurisdictionLocked && !isStaff && view !== 'login') {
+    if (!jurisdictionLocked && !isStaff && view !== 'login' && view !== 'intake') {
       setTimeout(() => setShowJurisdictionGate(true), 0);
     } else if (!jurisdictionLocked && isStaff) {
       // Auto-lock jurisdiction for staff so they never see the gate
@@ -338,6 +339,7 @@ export default function App() {
     else if (path === '/settings-mockup') setView('settings-mockup');
     else if (path === '/business-signup') setView('business-signup');
     else if (path === '/patient-signup') setView('patient-signup');
+    else if (path === '/intake') setView('intake');
   }, [location.pathname]);
 
   // Real-Time Analytics Tracking
@@ -1051,6 +1053,10 @@ export default function App() {
                 setView('login');
               }} 
             />
+          )}
+
+          {view === 'intake' && (
+            <IntakePage onBack={handleBack} />
           )}
 
           {view === 'education' && (
