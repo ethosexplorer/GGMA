@@ -49,72 +49,40 @@ export const CareWalletDashboard = ({ onLogout, onNavigate, user }: { onLogout?:
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] bg-slate-50">
+    <div className="flex flex-col min-h-[calc(100vh-4rem)] bg-slate-50">
           
 
-      {/* LEFT SIDEBAR */}
-      <div className="w-64 bg-slate-900 border-r border-slate-800 text-slate-300 hidden md:flex flex-col">
-        <div className="p-6 pb-2">
-          <div className="flex items-center gap-3 text-white mb-6">
-            <div className="w-10 h-10 rounded-lg bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-center font-bold text-emerald-400 shadow-inner">
-              <Wallet size={24} />
+      {/* TOP NAVIGATION BAR */}
+      <div className="bg-slate-900 border-b border-slate-700 shrink-0">
+        <div className="flex items-center gap-4 px-6 py-3">
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-center text-emerald-400">
+              <Wallet size={18} />
             </div>
             <div>
-              <h2 className="font-black text-sm leading-tight tracking-tight text-white uppercase">Care Wallet</h2>
-              <p className="text-[10px] text-emerald-500/80 font-bold tracking-widest uppercase mt-0.5">Financial Core</p>
+              <h2 className="font-bold text-xs text-white leading-tight uppercase tracking-tight">Care Wallet</h2>
+              <p className="text-[9px] text-emerald-500/80 font-bold tracking-widest uppercase">Financial Core</p>
             </div>
           </div>
-          
-          <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700 mb-6 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-white font-bold border border-slate-600">
-              {user?.name ? user.name.charAt(0) : 'JD'}
-            </div>
-            <div>
-              <p className="font-bold text-white text-sm">{user?.name || 'Marcus Johnson'}</p>
-              <p className="text-[10px] text-slate-400">Care Builder Plus Tier</p>
+          <div className="w-px h-8 bg-slate-700 shrink-0" />
+          <div className="flex-1 overflow-x-auto scrollbar-hide">
+            <div className="flex items-center gap-1 min-w-max">
+              {[{id:'wallet',label:'Balance',icon:Wallet},{id:'credit',label:'C³ Score',icon:TrendingUp},{id:'cards',label:'Cards',icon:CreditCard},{id:'rewards',label:'Care Points',icon:Award}].map((item) => (
+                <button key={item.id} onClick={() => setActiveTab(item.id)} className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap shrink-0", activeTab === item.id ? "bg-emerald-600 text-white shadow-md" : "text-slate-400 hover:bg-slate-800 hover:text-slate-200")}>
+                  <item.icon size={13} /> {item.label}
+                </button>
+              ))}
+              {onNavigate && <button onClick={() => onNavigate('prose-legal')} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap shrink-0 text-amber-400 hover:bg-slate-800"><ShieldCheck size={13} /> Legal Intake</button>}
             </div>
           </div>
-        </div>
-
-        <div className="flex-1 overflow-y-auto px-4 space-y-1">
-          <button onClick={() => setActiveTab('wallet')} className={cn("w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left", activeTab === 'wallet' ? "bg-slate-800 text-white shadow-md border border-slate-700" : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200")}>
-            <Wallet size={16} className={cn(activeTab === 'wallet' ? "text-emerald-400" : "text-slate-500")} />
-            Compassion Balance
-          </button>
-          <button onClick={() => setActiveTab('credit')} className={cn("w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left", activeTab === 'credit' ? "bg-slate-800 text-white shadow-md border border-slate-700" : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200")}>
-            <TrendingUp size={16} className={cn(activeTab === 'credit' ? "text-blue-400" : "text-slate-500")} />
-            C³ Compassion Score
-          </button>
-          <button onClick={() => setActiveTab('cards')} className={cn("w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left", activeTab === 'cards' ? "bg-slate-800 text-white shadow-md border border-slate-700" : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200")}>
-            <CreditCard size={16} className={cn(activeTab === 'cards' ? "text-purple-400" : "text-slate-500")} />
-            Virtual Cards
-          </button>
-          <button onClick={() => onNavigate && onNavigate('prose-legal')} className={cn("w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left text-slate-400 hover:bg-slate-800/50 hover:text-slate-200")}>
-            <ShieldCheck size={16} className="text-amber-500" />
-            Legal Intake
-          </button>
-          <button onClick={() => setActiveTab('rewards')} className={cn("w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left", activeTab === 'rewards' ? "bg-slate-800 text-white shadow-md border border-slate-700" : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200")}>
-            <Award size={16} className={cn(activeTab === 'rewards' ? "text-amber-400" : "text-slate-500")} />
-            Care Points
-          </button>
-        </div>
-        
-        <div className="p-4 border-t border-slate-800 space-y-2">
-          {onNavigate && (
-            <button onClick={() => onNavigate('landing')} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-colors">
-              <ArrowDownLeft size={16} />
-              <span className="text-sm font-medium">Back to Home</span>
-            </button>
-          )}
-          
         </div>
       </div>
 
       {/* MAIN CONTENT */}
       <div className="flex-1 flex flex-col h-[calc(100vh-4rem)] overflow-hidden">
         {/* Header */}
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0 z-10">
-          <h1 className="text-xl font-bold text-slate-800 hidden sm:block">Financial Overview</h1>
+        <header className="h-14 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0 z-10">
+          <h1 className="text-lg font-bold text-slate-800">Financial Overview</h1>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 px-3 py-1 bg-slate-50 border border-slate-200 rounded-lg">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>

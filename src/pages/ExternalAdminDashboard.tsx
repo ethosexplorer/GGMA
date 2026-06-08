@@ -163,41 +163,31 @@ export const ExternalAdminDashboard = ({ onLogout, user }: { onLogout?: () => vo
   };
 
   return (
-    <div className="flex h-full min-h-0 overflow-hidden bg-slate-50 text-slate-800 font-sans relative">
+    <div className="flex flex-col h-full min-h-0 overflow-hidden bg-slate-50 text-slate-800 font-sans relative">
           
 
-      {/* SIDEBAR */}
-      <div className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col hidden md:flex shrink-0 transition-all duration-500">
-        <div className="p-5 pb-2">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300">
-              <Building2 size={22} />
+      {/* TOP NAVIGATION BAR */}
+      <div className="bg-slate-900 border-b border-slate-700 shrink-0">
+        <div className="flex items-center gap-4 px-6 py-3">
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="w-8 h-8 rounded bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300">
+              <Building2 size={18} />
             </div>
             <div>
-              <h2 className="font-bold text-sm text-white leading-tight">Admin Dashboard</h2>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">(GENERAL / EXTERNAL)</p>
+              <h2 className="font-bold text-xs text-white leading-tight">Admin Dashboard</h2>
+              <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">(GENERAL / EXTERNAL)</p>
             </div>
           </div>
-          <div className="p-2.5 rounded-lg bg-slate-800 border border-slate-700 flex items-center gap-3 mb-2">
-            <div className="w-8 h-8 rounded-full overflow-hidden border border-slate-600">
-              <img src="https://ui-avatars.com/api/?name=Op+Manager&background=0F172A&color=fff&size=32" alt="" className="w-full h-full" />
-            </div>
-            <div>
-              <p className="text-xs font-bold text-white">Operations Manager</p>
-              <p className="text-[10px] text-slate-400">{entityName}</p>
+          <div className="w-px h-8 bg-slate-700 shrink-0" />
+          <div className="flex-1 overflow-x-auto scrollbar-hide">
+            <div className="flex items-center gap-1 min-w-max">
+              {EXT_NAV.map(item => (
+                <button key={item.id} onClick={() => setActiveTab(item.id)} className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap shrink-0", activeTab === item.id ? "bg-emerald-600 text-white shadow-md" : "text-slate-400 hover:bg-slate-800 hover:text-slate-200")}>
+                  <item.icon size={13} /> {item.label}
+                </button>
+              ))}
             </div>
           </div>
-        </div>
-        <div className="flex-1 overflow-y-auto px-3 pb-4 space-y-0.5">
-          {EXT_NAV.map(item => (
-            <button key={item.id} onClick={() => setActiveTab(item.id)} className={cn("w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left", activeTab === item.id ? "bg-slate-800 text-white shadow-md border border-slate-700" : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200")}>
-              <item.icon size={16} className={cn(activeTab === item.id ? "text-emerald-400" : "")} /> {item.label}
-            </button>
-          ))}
-        </div>
-        {/* Restricted Access Notice */}
-        <div className="p-3 mx-3 mb-3 bg-slate-800/50 border border-slate-700 rounded-lg">
-          <p className="text-[10px] text-slate-500 leading-relaxed"><span className="text-slate-400 font-bold">🔒 Scoped Access:</span> You can only see data for {entityName}. System-wide data, enforcement logic, and financial backend are not accessible.</p>
         </div>
       </div>
 
