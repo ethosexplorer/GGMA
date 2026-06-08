@@ -8,7 +8,7 @@ import { Leaf, ArrowLeft, Phone, Mail, Shield } from 'lucide-react';
  * can fill out their information before their appointment.
  * 
  * Accessible at: /intake  (no login required)
- * Direct link:   https://ggma-five.vercel.app/intake
+ * Direct link:   https://ggp-os.com/intake
  */
 interface IntakePageProps {
   onBack?: () => void;

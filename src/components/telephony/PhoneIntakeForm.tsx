@@ -479,7 +479,7 @@ export const PhoneIntakeForm = () => {
                 <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => {
-                      navigator.clipboard.writeText('https://ggma-five.vercel.app/intake');
+                      navigator.clipboard.writeText('https://ggp-os.com/intake');
                       alert('Intake link copied to clipboard!');
                     }}
                     className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition-colors"
@@ -494,7 +494,7 @@ export const PhoneIntakeForm = () => {
                   >
                     Open Form ↗
                   </a>
-                  <span className="text-[10px] text-blue-500 font-mono self-center truncate">ggma-five.vercel.app/intake</span>
+                  <span className="text-[10px] text-blue-500 font-mono self-center truncate">ggp-os.com/intake</span>
                 </div>
               </div>
             </div>

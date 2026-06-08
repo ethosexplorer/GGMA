@@ -404,7 +404,7 @@ async function handleVoice(req, res) {
       });
       dial.number({
         statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'],
-        statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status',
+        statusCallback: 'https://ggp-os.com/api/twilio/call-status',
         statusCallbackMethod: 'POST',
       }, cleanNumber);
 
@@ -458,7 +458,7 @@ async function handleVoice(req, res) {
     }
 
     const dial = twiml.dial({ timeout: 20, answerOnBridge: true });
-    dial.client({ statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'], statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status', statusCallbackMethod: 'POST' }, 'GGMA_User');
+    dial.client({ statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'], statusCallback: 'https://ggp-os.com/api/twilio/call-status', statusCallbackMethod: 'POST' }, 'GGMA_User');
     
     twiml.say({ voice: 'Polly.Joanna-Neural' }, "The agent is currently unavailable. Please leave a message after the tone.");
     twiml.record({
@@ -577,7 +577,7 @@ async function handleVoice(req, res) {
       const dial = twiml.dial({ timeout: 20, answerOnBridge: true });
       dial.client({
         statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'],
-        statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status',
+        statusCallback: 'https://ggp-os.com/api/twilio/call-status',
         statusCallbackMethod: 'POST'
       }, 'GGMA_User');
       
@@ -615,7 +615,7 @@ async function handleVoice(req, res) {
       }
       
       const dial = twiml.dial({ timeout: 20, answerOnBridge: true });
-      dial.client({ statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'], statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status', statusCallbackMethod: 'POST' }, 'GGMA_User');
+      dial.client({ statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'], statusCallback: 'https://ggp-os.com/api/twilio/call-status', statusCallbackMethod: 'POST' }, 'GGMA_User');
       
       twiml.say({ voice: 'Polly.Joanna-Neural' }, "The agent is currently unavailable. Please leave a message after the tone.");
       twiml.record({
@@ -666,7 +666,7 @@ async function handleVoice(req, res) {
           await logCallSpeech(callSid, 'sylara', msg, 'OVERSIGHT');
         }
         const dial = twiml.dial({ timeout: 20, answerOnBridge: true });
-        dial.client({ statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'], statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status', statusCallbackMethod: 'POST' }, 'GGMA_User');
+        dial.client({ statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'], statusCallback: 'https://ggp-os.com/api/twilio/call-status', statusCallbackMethod: 'POST' }, 'GGMA_User');
         twiml.say({ voice: 'Polly.Joanna-Neural' }, "The agent is currently unavailable. Please leave a message after the tone.");
         twiml.record({
           action: '/api/twilio/voice?action=voicemail-completed',
@@ -699,7 +699,7 @@ async function handleVoice(req, res) {
       }
       
       const dial = twiml.dial({ timeout: 20, answerOnBridge: true });
-      dial.client({ statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'], statusCallback: 'https://ggma-five.vercel.app/api/twilio/call-status', statusCallbackMethod: 'POST' }, 'GGMA_User');
+      dial.client({ statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'], statusCallback: 'https://ggp-os.com/api/twilio/call-status', statusCallbackMethod: 'POST' }, 'GGMA_User');
       
       twiml.say({ voice: 'Polly.Joanna-Neural' }, "The agent is currently unavailable. Please leave a message after the tone.");
       twiml.record({
