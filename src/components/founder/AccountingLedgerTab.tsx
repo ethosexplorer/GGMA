@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Wallet, Activity } from 'lucide-react';
+import { ArrowLeft, Wallet, Activity, Pencil, Trash2, X, Check } from 'lucide-react';
 import { motion } from 'motion/react';
 import { cn } from '../../lib/utils';
 import { turso } from '../../lib/turso';
@@ -12,6 +12,14 @@ export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string,
   const [editNetProfitValue, setEditNetProfitValue] = useState('');
   const [founderLedger, setFounderLedger] = useState<any[]>([]);
   const [founderPayables, setFounderPayables] = useState<any[]>([]);
+
+  // Edit state for revenue entries
+  const [editingRevenueId, setEditingRevenueId] = useState<number | string | null>(null);
+  const [editRevenueForm, setEditRevenueForm] = useState({ origin_vector: '', type: '', gross_revenue: '', net_profit: '', status: '' });
+
+  // Edit state for payable entries
+  const [editingPayableId, setEditingPayableId] = useState<number | null>(null);
+  const [editPayableForm, setEditPayableForm] = useState({ name: '', amount: '', due_date: '', status: '' });
 
   useEffect(() => {
     // Purge old mock seed data from Turso (one-time cleanup)
@@ -39,11 +47,19 @@ export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string,
           created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
       `).then(() => {
-        turso.execute('SELECT * FROM founder_ledger ORDER BY created_at DESC').then(res => setFounderLedger(res.rows)).catch(console.error);
-        turso.execute('SELECT * FROM founder_payables ORDER BY due_date ASC').then(res => setFounderPayables(res.rows)).catch(console.error);
+        refreshLedger();
+        refreshPayables();
       }).catch(console.error);
     }).catch(console.error);
   }, []);
+
+  const refreshLedger = () => {
+    turso.execute('SELECT * FROM founder_ledger ORDER BY created_at DESC').then(res => setFounderLedger(res.rows)).catch(console.error);
+  };
+
+  const refreshPayables = () => {
+    turso.execute('SELECT * FROM founder_payables ORDER BY due_date ASC').then(res => setFounderPayables(res.rows)).catch(console.error);
+  };
 
   const handleSaveLedgerEntry = () => {
     if (isAddingLedgerEntry === 'revenue') {
@@ -52,9 +68,9 @@ export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string,
       const newEntry = { n: ledgerForm.name || 'Custom Revenue Stream', t: 'Manual Entry', g: grossAmt, net: netAmt, s: 'Settled', c: 'bg-emerald-600' };
       setFounderLedger([newEntry, ...founderLedger]);
       turso.execute({
-        sql: "INSERT INTO founder_ledger (id, origin_vector, type, gross_revenue, net_profit, status, color, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-        args: ['rev-' + Math.random().toString(36).substr(2, 9), newEntry.n, newEntry.t, newEntry.g, newEntry.net, newEntry.s, newEntry.c, new Date().toISOString()]
-      }).catch(console.error);
+        sql: "INSERT INTO founder_ledger (origin_vector, type, gross_revenue, net_profit, status, color, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        args: [newEntry.n, newEntry.t, newEntry.g, newEntry.net, newEntry.s, newEntry.c, new Date().toISOString()]
+      }).then(() => refreshLedger()).catch(console.error);
       turso.execute({
         sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)",
         args: ['log-' + Math.random().toString(36).substr(2, 9), "REVENUE_ENTRY", "Production_User", JSON.stringify({ detail: "New revenue entry: " + newEntry.n + " — " + newEntry.g })]
@@ -73,7 +89,7 @@ export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string,
         sql: "INSERT INTO founder_payables (name, amount, due_date, status, color) VALUES (?, ?, ?, ?, ?)",
         args: [newPayable.name, newPayable.amount, newPayable.due_date, newPayable.status, newPayable.color]
       }).then(() => {
-        turso.execute('SELECT * FROM founder_payables ORDER BY due_date ASC').then(res => setFounderPayables(res.rows)).catch(console.error);
+        refreshPayables();
       }).catch(console.error);
 
       turso.execute({
@@ -93,12 +109,99 @@ export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string,
       sql: "UPDATE founder_payables SET status = ?, color = ? WHERE id = ?",
       args: [newStatus, newColor, id]
     }).then(() => {
-      turso.execute('SELECT * FROM founder_payables ORDER BY due_date ASC').then(res => setFounderPayables(res.rows)).catch(console.error);
+      refreshPayables();
       turso.execute({
         sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)",
         args: ['log-' + Math.random().toString(36).substr(2, 9), "PAYABLE_STATUS_UPDATE", "Production_User", JSON.stringify({ detail: `Updated payable ID ${id} to ${newStatus}` })]
       }).catch(console.error);
     }).catch(console.error);
+  };
+
+  // --- EDIT / DELETE REVENUE ENTRIES ---
+  const handleStartEditRevenue = (entry: any) => {
+    setEditingRevenueId(entry.id);
+    setEditRevenueForm({
+      origin_vector: entry.origin_vector || entry.n || '',
+      type: entry.type || entry.t || '',
+      gross_revenue: entry.gross_revenue || entry.g || '',
+      net_profit: entry.net_profit || entry.net || '',
+      status: entry.status || entry.s || ''
+    });
+  };
+
+  const handleSaveEditRevenue = () => {
+    if (!editingRevenueId) return;
+    const colorMap: Record<string, string> = { 'Settled': 'bg-emerald-600', 'Pending': 'bg-amber-500', 'Refunded': 'bg-rose-500', 'Voided': 'bg-slate-500' };
+    const newColor = colorMap[editRevenueForm.status] || 'bg-emerald-600';
+    turso.execute({
+      sql: "UPDATE founder_ledger SET origin_vector = ?, type = ?, gross_revenue = ?, net_profit = ?, status = ?, color = ? WHERE id = ?",
+      args: [editRevenueForm.origin_vector, editRevenueForm.type, editRevenueForm.gross_revenue, editRevenueForm.net_profit, editRevenueForm.status, newColor, editingRevenueId]
+    }).then(() => {
+      turso.execute({
+        sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)",
+        args: ['log-' + Math.random().toString(36).substr(2, 9), "REVENUE_EDITED", "Production_User", JSON.stringify({ id: editingRevenueId, changes: editRevenueForm })]
+      }).catch(console.error);
+      refreshLedger();
+      setEditingRevenueId(null);
+    }).catch(err => { console.error(err); alert('Error saving edit: ' + err.message); });
+  };
+
+  const handleDeleteRevenue = (entry: any) => {
+    const name = entry.origin_vector || entry.n || 'this entry';
+    if (!confirm(`⚠️ Permanently delete revenue entry:\n\n"${name}"\n\nThis action is logged and cannot be undone.`)) return;
+    turso.execute({
+      sql: "DELETE FROM founder_ledger WHERE id = ?",
+      args: [entry.id]
+    }).then(() => {
+      turso.execute({
+        sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)",
+        args: ['log-' + Math.random().toString(36).substr(2, 9), "REVENUE_DELETED", "Production_User", JSON.stringify({ id: entry.id, origin_vector: name, gross_revenue: entry.gross_revenue || entry.g })]
+      }).catch(console.error);
+      refreshLedger();
+    }).catch(err => { console.error(err); alert('Error deleting entry: ' + err.message); });
+  };
+
+  // --- EDIT / DELETE PAYABLE ENTRIES ---
+  const handleStartEditPayable = (entry: any) => {
+    setEditingPayableId(entry.id);
+    setEditPayableForm({
+      name: entry.name || '',
+      amount: entry.amount || '',
+      due_date: entry.due_date || '',
+      status: entry.status || ''
+    });
+  };
+
+  const handleSaveEditPayable = () => {
+    if (!editingPayableId) return;
+    const colorMap: Record<string, string> = { 'Paid': 'bg-emerald-600', 'Pending': 'bg-indigo-600', 'Unpaid': 'bg-rose-500' };
+    const newColor = colorMap[editPayableForm.status] || 'bg-rose-500';
+    turso.execute({
+      sql: "UPDATE founder_payables SET name = ?, amount = ?, due_date = ?, status = ?, color = ? WHERE id = ?",
+      args: [editPayableForm.name, editPayableForm.amount, editPayableForm.due_date, editPayableForm.status, newColor, editingPayableId]
+    }).then(() => {
+      turso.execute({
+        sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)",
+        args: ['log-' + Math.random().toString(36).substr(2, 9), "PAYABLE_EDITED", "Production_User", JSON.stringify({ id: editingPayableId, changes: editPayableForm })]
+      }).catch(console.error);
+      refreshPayables();
+      setEditingPayableId(null);
+    }).catch(err => { console.error(err); alert('Error saving edit: ' + err.message); });
+  };
+
+  const handleDeletePayable = (entry: any) => {
+    const name = entry.name || 'this entry';
+    if (!confirm(`⚠️ Permanently delete payable entry:\n\n"${name}"\n\nThis action is logged and cannot be undone.`)) return;
+    turso.execute({
+      sql: "DELETE FROM founder_payables WHERE id = ?",
+      args: [entry.id]
+    }).then(() => {
+      turso.execute({
+        sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)",
+        args: ['log-' + Math.random().toString(36).substr(2, 9), "PAYABLE_DELETED", "Production_User", JSON.stringify({ id: entry.id, name, amount: entry.amount })]
+      }).catch(console.error);
+      refreshPayables();
+    }).catch(err => { console.error(err); alert('Error deleting entry: ' + err.message); });
   };
 
   const parseAmount = (amtStr: string): number => {
@@ -249,67 +352,126 @@ export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string,
                   <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest">Gross Revenue</th>
                   <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest">Net Profit</th>
                   <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest">Status</th>
+                  <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
                 {(founderLedger.length > 0 ? founderLedger : [
                   { n: 'Jasmin Garrett — Patient Application Processing Fee', t: 'Service Fee (Chime)', g: '$20.00', net: '$20.00', s: 'Settled', c: 'bg-emerald-600' }
-                ]).map((u: any, i: number) => (
-                  <tr key={i} className="hover:bg-slate-100 transition-colors group">
-                    <td className="px-6 py-5 font-black text-slate-800">
-                      <div className="flex items-center gap-3">
-                        <div className={cn("w-2 h-2 rounded-full shadow-sm", u.color || u.c)}></div>
-                        <span className="font-bold text-slate-700">{u.origin_vector || u.n}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-5 text-xs font-bold text-slate-500">{u.type || u.t}</td>
-                    <td className="px-6 py-5 font-mono font-bold text-slate-700">{u.gross_revenue || u.g}</td>
-                    <td className="px-6 py-5">
-                      {editingNetProfitId === (u.id || i) ? (
-                        <div className="flex items-center gap-1">
-                          <input
-                            autoFocus
-                            type="text"
-                            value={editNetProfitValue}
-                            onChange={e => setEditNetProfitValue(e.target.value)}
-                            onKeyDown={e => {
-                              if (e.key === 'Enter') {
-                                const newVal = editNetProfitValue;
-                                if (u.id && typeof u.id === 'number') {
-                                  turso.execute({ sql: 'UPDATE founder_ledger SET net_profit = ? WHERE id = ?', args: [newVal, u.id] })
-                                    .then(() => turso.execute('SELECT * FROM founder_ledger ORDER BY created_at DESC'))
-                                    .then(res => setFounderLedger(res.rows))
-                                    .catch(console.error);
-                                } else {
-                                  turso.execute({ sql: 'UPDATE founder_ledger SET net_profit = ? WHERE origin_vector = ?', args: [newVal, u.origin_vector || u.n] })
-                                    .then(() => turso.execute('SELECT * FROM founder_ledger ORDER BY created_at DESC'))
-                                    .then(res => setFounderLedger(res.rows))
-                                    .catch(console.error);
-                                }
-                                setEditingNetProfitId(null);
-                              } else if (e.key === 'Escape') {
-                                setEditingNetProfitId(null);
-                              }
-                            }}
-                            onBlur={() => setEditingNetProfitId(null)}
-                            className="w-24 px-2 py-1 border border-emerald-300 rounded-lg text-sm font-mono font-bold text-emerald-700 bg-emerald-50 focus:ring-2 focus:ring-emerald-500 outline-none"
-                          />
+                ]).map((u: any, i: number) => {
+                  const isEditing = editingRevenueId === u.id && u.id != null;
+
+                  if (isEditing) {
+                    return (
+                      <tr key={u.id || i} className="bg-indigo-50/50">
+                        <td className="px-4 py-3">
+                          <input type="text" value={editRevenueForm.origin_vector} onChange={e => setEditRevenueForm({ ...editRevenueForm, origin_vector: e.target.value })}
+                            className="w-full px-3 py-2 border border-indigo-300 rounded-lg text-sm font-bold bg-white focus:ring-2 focus:ring-indigo-500 outline-none" />
+                        </td>
+                        <td className="px-4 py-3">
+                          <input type="text" value={editRevenueForm.type} onChange={e => setEditRevenueForm({ ...editRevenueForm, type: e.target.value })}
+                            className="w-full px-3 py-2 border border-indigo-300 rounded-lg text-sm font-medium bg-white focus:ring-2 focus:ring-indigo-500 outline-none" />
+                        </td>
+                        <td className="px-4 py-3">
+                          <input type="text" value={editRevenueForm.gross_revenue} onChange={e => setEditRevenueForm({ ...editRevenueForm, gross_revenue: e.target.value })}
+                            className="w-28 px-3 py-2 border border-indigo-300 rounded-lg text-sm font-mono font-bold bg-white focus:ring-2 focus:ring-indigo-500 outline-none" />
+                        </td>
+                        <td className="px-4 py-3">
+                          <input type="text" value={editRevenueForm.net_profit} onChange={e => setEditRevenueForm({ ...editRevenueForm, net_profit: e.target.value })}
+                            className="w-28 px-3 py-2 border border-emerald-300 rounded-lg text-sm font-mono font-bold bg-emerald-50 focus:ring-2 focus:ring-emerald-500 outline-none" />
+                        </td>
+                        <td className="px-4 py-3">
+                          <select value={editRevenueForm.status} onChange={e => setEditRevenueForm({ ...editRevenueForm, status: e.target.value })}
+                            className="px-3 py-2 border border-indigo-300 rounded-lg text-xs font-bold bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                            <option value="Settled">Settled</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Refunded">Refunded</option>
+                            <option value="Voided">Voided</option>
+                          </select>
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          <div className="flex items-center justify-end gap-1.5">
+                            <button onClick={handleSaveEditRevenue} className="p-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-lg transition-colors" title="Save">
+                              <Check size={14} />
+                            </button>
+                            <button onClick={() => setEditingRevenueId(null)} className="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition-colors" title="Cancel">
+                              <X size={14} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  }
+
+                  return (
+                    <tr key={u.id || i} className="hover:bg-slate-100 transition-colors group">
+                      <td className="px-6 py-5 font-black text-slate-800">
+                        <div className="flex items-center gap-3">
+                          <div className={cn("w-2 h-2 rounded-full shadow-sm", u.color || u.c)}></div>
+                          <span className="font-bold text-slate-700">{u.origin_vector || u.n}</span>
                         </div>
-                      ) : (
-                        <button
-                          onClick={() => { setEditingNetProfitId(u.id || i); setEditNetProfitValue(u.net_profit || u.net || ''); }}
-                          className="font-mono font-black text-emerald-600 hover:bg-emerald-50 hover:text-emerald-800 px-2 py-1 rounded-lg transition-colors cursor-pointer border border-transparent hover:border-emerald-200"
-                          title="Click to edit net profit"
-                        >
-                          {u.net_profit || u.net}
-                        </button>
-                      )}
-                    </td>
-                    <td className="px-6 py-5">
-                      <span className={cn("text-[9px] font-black uppercase tracking-wider px-3 py-1 rounded-full text-white", u.color || u.c)}>{u.status || u.s}</span>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                      <td className="px-6 py-5 text-xs font-bold text-slate-500">{u.type || u.t}</td>
+                      <td className="px-6 py-5 font-mono font-bold text-slate-700">{u.gross_revenue || u.g}</td>
+                      <td className="px-6 py-5">
+                        {editingNetProfitId === (u.id || i) ? (
+                          <div className="flex items-center gap-1">
+                            <input
+                              autoFocus
+                              type="text"
+                              value={editNetProfitValue}
+                              onChange={e => setEditNetProfitValue(e.target.value)}
+                              onKeyDown={e => {
+                                if (e.key === 'Enter') {
+                                  const newVal = editNetProfitValue;
+                                  if (u.id && typeof u.id === 'number') {
+                                    turso.execute({ sql: 'UPDATE founder_ledger SET net_profit = ? WHERE id = ?', args: [newVal, u.id] })
+                                      .then(() => turso.execute('SELECT * FROM founder_ledger ORDER BY created_at DESC'))
+                                      .then(res => setFounderLedger(res.rows))
+                                      .catch(console.error);
+                                  } else {
+                                    turso.execute({ sql: 'UPDATE founder_ledger SET net_profit = ? WHERE origin_vector = ?', args: [newVal, u.origin_vector || u.n] })
+                                      .then(() => turso.execute('SELECT * FROM founder_ledger ORDER BY created_at DESC'))
+                                      .then(res => setFounderLedger(res.rows))
+                                      .catch(console.error);
+                                  }
+                                  setEditingNetProfitId(null);
+                                } else if (e.key === 'Escape') {
+                                  setEditingNetProfitId(null);
+                                }
+                              }}
+                              onBlur={() => setEditingNetProfitId(null)}
+                              className="w-24 px-2 py-1 border border-emerald-300 rounded-lg text-sm font-mono font-bold text-emerald-700 bg-emerald-50 focus:ring-2 focus:ring-emerald-500 outline-none"
+                            />
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => { setEditingNetProfitId(u.id || i); setEditNetProfitValue(u.net_profit || u.net || ''); }}
+                            className="font-mono font-black text-emerald-600 hover:bg-emerald-50 hover:text-emerald-800 px-2 py-1 rounded-lg transition-colors cursor-pointer border border-transparent hover:border-emerald-200"
+                            title="Click to edit net profit"
+                          >
+                            {u.net_profit || u.net}
+                          </button>
+                        )}
+                      </td>
+                      <td className="px-6 py-5">
+                        <span className={cn("text-[9px] font-black uppercase tracking-wider px-3 py-1 rounded-full text-white", u.color || u.c)}>{u.status || u.s}</span>
+                      </td>
+                      <td className="px-6 py-5 text-right">
+                        {u.id != null && (
+                          <div className="flex items-center justify-end gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onClick={() => handleStartEditRevenue(u)} className="p-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-lg transition-colors border border-indigo-200" title="Edit entry">
+                              <Pencil size={13} />
+                            </button>
+                            <button onClick={() => handleDeleteRevenue(u)} className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg transition-colors border border-rose-200" title="Delete entry">
+                              <Trash2 size={13} />
+                            </button>
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -365,40 +527,89 @@ export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string,
                       <td colSpan={5} className="px-6 py-8 text-center text-slate-400 font-medium">No payables registered. Click "+ Add Bill / Invoice" to create one.</td>
                     </tr>
                   ) : (
-                    founderPayables.map((p: any, i: number) => (
-                      <tr key={p.id || i} className="hover:bg-slate-100 transition-colors group">
-                        <td className="px-6 py-5 font-black text-slate-800">
-                          <div className="flex items-center gap-3">
-                            <div className={cn("w-2.5 h-2.5 rounded-full shadow-sm", p.color || p.c)}></div>
-                            <span className="font-bold text-slate-700">{p.name || p.n}</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-5 text-xs font-bold text-slate-500">{p.due_date || p.due}</td>
-                        <td className="px-6 py-5 font-mono font-bold text-slate-700">{p.amount}</td>
-                        <td className="px-6 py-5">
-                          <span className={cn("text-[9px] font-black uppercase tracking-wider px-3 py-1 rounded-full text-white", p.color || p.c)}>
-                            {p.status}
-                          </span>
-                        </td>
-                        <td className="px-6 py-5 text-right">
-                          {p.status !== 'Paid' ? (
-                            <button
-                              onClick={() => handleTogglePayableStatus(p.id, 'Paid')}
-                              className="px-3 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-[9px] font-black uppercase tracking-wider rounded-lg border border-emerald-200 transition-colors"
-                            >
-                              Mark Paid
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => handleTogglePayableStatus(p.id, 'Unpaid')}
-                              className="px-3 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 text-[9px] font-black uppercase tracking-wider rounded-lg border border-rose-200 transition-colors"
-                            >
-                              Mark Unpaid
-                            </button>
-                          )}
-                        </td>
-                      </tr>
-                    ))
+                    founderPayables.map((p: any, i: number) => {
+                      const isEditingP = editingPayableId === p.id;
+
+                      if (isEditingP) {
+                        return (
+                          <tr key={p.id || i} className="bg-indigo-50/50">
+                            <td className="px-4 py-3">
+                              <input type="text" value={editPayableForm.name} onChange={e => setEditPayableForm({ ...editPayableForm, name: e.target.value })}
+                                className="w-full px-3 py-2 border border-indigo-300 rounded-lg text-sm font-bold bg-white focus:ring-2 focus:ring-indigo-500 outline-none" />
+                            </td>
+                            <td className="px-4 py-3">
+                              <input type="date" value={editPayableForm.due_date} onChange={e => setEditPayableForm({ ...editPayableForm, due_date: e.target.value })}
+                                className="px-3 py-2 border border-indigo-300 rounded-lg text-sm font-medium bg-white focus:ring-2 focus:ring-indigo-500 outline-none" />
+                            </td>
+                            <td className="px-4 py-3">
+                              <input type="text" value={editPayableForm.amount} onChange={e => setEditPayableForm({ ...editPayableForm, amount: e.target.value })}
+                                className="w-28 px-3 py-2 border border-indigo-300 rounded-lg text-sm font-mono font-bold bg-white focus:ring-2 focus:ring-indigo-500 outline-none" />
+                            </td>
+                            <td className="px-4 py-3">
+                              <select value={editPayableForm.status} onChange={e => setEditPayableForm({ ...editPayableForm, status: e.target.value })}
+                                className="px-3 py-2 border border-indigo-300 rounded-lg text-xs font-bold bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                                <option value="Unpaid">Unpaid</option>
+                                <option value="Paid">Paid</option>
+                                <option value="Pending">Pending</option>
+                              </select>
+                            </td>
+                            <td className="px-4 py-3 text-right">
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button onClick={handleSaveEditPayable} className="p-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 rounded-lg transition-colors" title="Save">
+                                  <Check size={14} />
+                                </button>
+                                <button onClick={() => setEditingPayableId(null)} className="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition-colors" title="Cancel">
+                                  <X size={14} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      }
+
+                      return (
+                        <tr key={p.id || i} className="hover:bg-slate-100 transition-colors group">
+                          <td className="px-6 py-5 font-black text-slate-800">
+                            <div className="flex items-center gap-3">
+                              <div className={cn("w-2.5 h-2.5 rounded-full shadow-sm", p.color || p.c)}></div>
+                              <span className="font-bold text-slate-700">{p.name || p.n}</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-5 text-xs font-bold text-slate-500">{p.due_date || p.due}</td>
+                          <td className="px-6 py-5 font-mono font-bold text-slate-700">{p.amount}</td>
+                          <td className="px-6 py-5">
+                            <span className={cn("text-[9px] font-black uppercase tracking-wider px-3 py-1 rounded-full text-white", p.color || p.c)}>
+                              {p.status}
+                            </span>
+                          </td>
+                          <td className="px-6 py-5 text-right">
+                            <div className="flex items-center justify-end gap-1.5">
+                              {p.status !== 'Paid' ? (
+                                <button
+                                  onClick={() => handleTogglePayableStatus(p.id, 'Paid')}
+                                  className="px-3 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-[9px] font-black uppercase tracking-wider rounded-lg border border-emerald-200 transition-colors"
+                                >
+                                  Mark Paid
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() => handleTogglePayableStatus(p.id, 'Unpaid')}
+                                  className="px-3 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 text-[9px] font-black uppercase tracking-wider rounded-lg border border-rose-200 transition-colors"
+                                >
+                                  Mark Unpaid
+                                </button>
+                              )}
+                              <button onClick={() => handleStartEditPayable(p)} className="p-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-lg transition-colors border border-indigo-200 opacity-0 group-hover:opacity-100" title="Edit entry">
+                                <Pencil size={13} />
+                              </button>
+                              <button onClick={() => handleDeletePayable(p)} className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg transition-colors border border-rose-200 opacity-0 group-hover:opacity-100" title="Delete entry">
+                                <Trash2 size={13} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
                   )}
                 </tbody>
               </table>

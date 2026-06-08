@@ -155,7 +155,7 @@ export const PostPaymentTab = () => {
   }, [product]);
 
   const postToLedger = async (entryName: string, formatted: string, methodLabel: string, txId?: string) => {
-    await turso.execute({ sql: "INSERT INTO founder_ledger (id, origin_vector, type, gross_revenue, net_profit, status, color, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", args: ['pay-' + Math.random().toString(36).substr(2, 9), entryName, `${form.type} (${methodLabel})`, formatted, formatted, 'Settled', 'bg-emerald-600', new Date(form.date).toISOString()] });
+    await turso.execute({ sql: "INSERT INTO founder_ledger (origin_vector, type, gross_revenue, net_profit, status, color, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)", args: [entryName, `${form.type} (${methodLabel})`, formatted, formatted, 'Settled', 'bg-emerald-600', new Date(form.date).toISOString()] });
     await turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), 'PAYMENT_POSTED', 'Staff (Ops Center)', JSON.stringify({ client: form.clientName, amount: formatted, type: form.type, method: methodLabel, notes: form.notes, date: form.date, transactionId: txId || 'N/A' })] });
   };
 

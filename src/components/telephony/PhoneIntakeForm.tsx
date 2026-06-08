@@ -192,9 +192,8 @@ export const PhoneIntakeForm = () => {
       const entryName = `${clientName} — ${paymentForm.type} (Intake)`;
 
       await turso.execute({
-        sql: "INSERT INTO founder_ledger (id, origin_vector, type, gross_revenue, net_profit, status, color, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        sql: "INSERT INTO founder_ledger (origin_vector, type, gross_revenue, net_profit, status, color, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
         args: [
-          'pay-' + Math.random().toString(36).substr(2, 9),
           entryName,
           `${paymentForm.type} (${paymentForm.method})`,
           formatted,
