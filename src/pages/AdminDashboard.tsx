@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { turso } from '../lib/turso';
 import { db } from '../lib/firebase';
-import { collection, getDocs, onSnapshot } from 'firebase/firestore';
+import { collection, onSnapshot } from 'firebase/firestore';
 import { Building2, Users, FileText, Settings, Shield, Activity, Bell,
   Briefcase, HeartPulse, Scale, Gavel, FileCheck, Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
@@ -112,21 +112,14 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
       turso.execute('SELECT * FROM compliance_alerts ORDER BY created_at DESC LIMIT 10').then(res => setDbAlerts(res.rows)).catch(console.error);
     };
     fetchData();
-    const pollIv = setInterval(fetchData, 45000); // Scaled: 10s→45s for 100k+ user support
+    const pollIv = setInterval(fetchData, 45000);
     
-    // Fetch live users from Firebase
-    const fetchUsers = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, 'users'));
-        const usersList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setFbUsers(usersList);
-      } catch (err) {
-        console.error("Error fetching firebase users", err);
-      }
-    };
-    fetchUsers();
-    const fbIv = setInterval(fetchUsers, 60000); // Scaled: 15s→60s for 100k+ user support
-    return () => { clearInterval(pollIv); clearInterval(fbIv); };
+    // Real-time Firebase users listener (not polling)
+    const unsub = onSnapshot(collection(db, 'users'), (snap) => {
+      const usersList = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setFbUsers(usersList);
+    });
+    return () => { clearInterval(pollIv); unsub(); };
   }, []);
   const [regSearch, setRegSearch] = useState('');
   const [regCat, setRegCat] = useState<string | null>(null);
@@ -151,18 +144,28 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        {[
-          { label: 'Total Patients', value: fbUsers.filter(u => u.role === 'patient').length.toString(), trend: 'Live Data', color: 'blue' },
-          { label: 'Active Businesses', value: dbBusinesses.length.toString(), trend: 'Live Data', color: 'emerald' },
-          { label: 'Staff Efficiency', value: '98.5%', trend: 'Optimal', color: 'indigo' },
-          { label: 'System Alerts', value: dbAlerts.length.toString(), trend: 'Live Feed', color: 'indigo' },
-        ].map((stat, i) => (
+        {(() => {
+          const adminRoles = ['admin', 'founder', 'executive', 'president', 'chief_compliance_director',
+            'executive_advisor', 'advisor', 'executive_founder', 'internal_admin', 'compliance_director',
+            'manager', 'team_lead', 'rep', 'ai_agent'];
+          const patientCount = fbUsers.filter(u => {
+            const role = (u.role || '').toLowerCase().trim();
+            if (adminRoles.some(ar => role.includes(ar))) return false;
+            if (role === 'business' || role === 'provider' || role === 'attorney') return false;
+            return true;
+          }).length;
+          return [
+            { label: 'Total Patients', value: patientCount.toString(), trend: `Live • ${fbUsers.length} total users`, color: 'blue' },
+            { label: 'Active Businesses', value: dbBusinesses.length.toString(), trend: 'Live Data', color: 'emerald' },
+            { label: 'Staff Efficiency', value: '98.5%', trend: 'Optimal', color: 'indigo' },
+            { label: 'System Alerts', value: dbAlerts.length.toString(), trend: 'Live Feed', color: 'indigo' },
+          ];
+        })().map((stat, i) => (
           <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">{stat.label}</p>
             <div className="flex items-end justify-between">
               <h3 className="text-3xl font-black text-slate-800">{stat.value}</h3>
-              <span className={cn("text-[10px] font-bold px-2 py-1 rounded-lg", 
-                stat.trend.includes('+') || stat.trend === 'Optimal' ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600")}>
+              <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-emerald-50 text-emerald-600">
                 {stat.trend}
               </span>
             </div>
@@ -203,7 +206,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
                      <div className="h-full bg-amber-500" style={{ width: '8%' }}></div>
                   </div>
                </div>
-               <p className="text-xs text-slate-400 italic mt-6">"Sylara is currently managing 2,402 active support threads. No critical human interventions required at this moment."</p>
+               <p className="text-xs text-slate-400 italic mt-6">"Sylara is currently managing {fbUsers.length.toLocaleString()} active support threads. No critical human interventions required at this moment."</p>
             </div>
          </div>
       </div>
