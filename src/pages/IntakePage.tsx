@@ -160,7 +160,7 @@ export default function IntakePage({ onBack }: IntakePageProps) {
 
               <div className="flex gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
                 <span className="text-emerald-600 font-black text-lg mt-0.5">•</span>
-                <p>Phone calls will be limited to <span className="font-bold text-slate-800">10 minutes</span>, at the provider, agent, assistant or representative's discretion. If additional consultation time is needed, a scheduled billable session may be recommended.</p>
+                <p>Phone calls will be limited to <span className="font-bold text-slate-800">15 minutes</span>, at the provider, agent, assistant or representative's discretion. If additional time is needed, a follow-up appointment may be scheduled.</p>
               </div>
 
               <div className="flex gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
