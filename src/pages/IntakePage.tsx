@@ -135,17 +135,18 @@ export default function IntakePage({ onBack }: IntakePageProps) {
           <div className="p-6 space-y-5 text-sm text-slate-700 leading-relaxed">
             <p>
               In order to maintain a confidential, professional level of communication between GGP-OS and its clients, 
-              the following standards will be followed in regard to text messaging and phone/email services. As our 
-              providers, agents, assistants and representatives spend the day working with clients and collaborating with outside service providers to deliver 
-              comprehensive services, it is expected that mutual respect for response times is adhered to from all parties. 
-              For this reason, text messaging, voicemail, and email should be limited to an "as needed" basis and used 
-              in a manner that allows our provider, agent, assistant or representative to respond in a reasonable time frame.
+              the following standards will be followed in regard to text messaging, phone, and email services. As our 
+              providers, agents, assistants and representatives spend the day working with clients and collaborating 
+              with partners to deliver comprehensive services, it is expected that mutual respect for response times 
+              is adhered to from all parties. For this reason, text messaging, voicemail, and email should be limited 
+              to an &quot;as needed&quot; basis and used in a manner that allows our provider, agent, assistant or representative 
+              to respond in a reasonable time frame.
             </p>
 
             <div className="space-y-3">
               <div className="flex gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
                 <span className="text-emerald-600 font-black text-lg mt-0.5">•</span>
-                <p>Text messaging can be used to schedule, change, or cancel appointments. <span className="font-bold text-slate-800">(24-hour cancellation policy still applies, and the provider, agent, assistant or representative may charge for missed sessions and those not canceled prior to the 24-hour window)</span></p>
+                <p>Text messaging can be used to schedule, change, or cancel appointments or meetings. <span className="font-bold text-slate-800">(24-hour cancellation policy still applies, and the provider, agent, assistant or representative may charge for missed appointments and those not canceled prior to the 24-hour window)</span></p>
               </div>
 
               <div className="flex gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
@@ -155,7 +156,7 @@ export default function IntakePage({ onBack }: IntakePageProps) {
 
               <div className="flex gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
                 <span className="text-emerald-600 font-black text-lg mt-0.5">•</span>
-                <p>If urgent matters need to be discussed, call and leave a message. If a text message is sent regarding service-related issues, it will be discussed via phone or at your next scheduled meeting, at the provider, agent, assistant or representative's discretion based on urgency and availability.</p>
+                <p>If urgent matters need to be discussed, please call and leave a message. If a text message is sent regarding service-related issues, it will be addressed via phone or at your next scheduled appointment, at the provider, agent, assistant or representative's discretion based on urgency and availability.</p>
               </div>
 
               <div className="flex gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
@@ -165,37 +166,37 @@ export default function IntakePage({ onBack }: IntakePageProps) {
 
               <div className="flex gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
                 <span className="text-emerald-600 font-black text-lg mt-0.5">•</span>
-                <p>Emailing will be limited to making or changing appointment times and general inquiries. Note that this method of contact will be responded to within <span className="font-bold text-slate-800">48 business hours</span>. Detailed service consultations will not be addressed through email.</p>
+                <p>Emailing will be limited to scheduling, general inquiries, and document exchange. Note that this method of contact will be responded to within <span className="font-bold text-slate-800">48 business hours</span>. Detailed consultations will not be conducted through email.</p>
               </div>
 
-              <div className="flex gap-3 p-3 bg-red-50 rounded-xl border border-red-200">
-                <span className="text-red-600 font-black text-lg mt-0.5">⚠</span>
-                <p className="font-bold text-red-800">Text messaging SHOULD NOT be used if you are experiencing a medical emergency. Call 911.</p>
+              <div className="flex gap-3 p-3 bg-amber-50 rounded-xl border border-amber-200">
+                <span className="text-amber-600 font-black text-lg mt-0.5">⚠</span>
+                <p className="font-bold text-amber-800">Text messaging should not be used for time-sensitive emergencies. Please call your provider, agent, assistant or representative directly, or call 911 if it is a life-threatening emergency.</p>
               </div>
 
               <div className="flex gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
                 <span className="text-emerald-600 font-black text-lg mt-0.5">•</span>
-                <p>This practice does not charge for text messaging services, but standard rates may apply as provided by your wireless plan. Contact your carrier for information on pricing plans and details regarding text messaging.</p>
+                <p>GGP-OS does not charge for text messaging services, but standard carrier rates may apply. Contact your wireless carrier for details regarding text messaging on your plan.</p>
               </div>
 
               <div className="flex gap-3 p-3 bg-blue-50 rounded-xl border border-blue-100">
                 <span className="text-blue-600 font-black text-lg mt-0.5">•</span>
-                <p>GGP-OS utilizes a secure Electronic Health Record and communication platform (<span className="font-bold text-blue-800">GGP-OS Medical</span>) which provides secure messaging for clients and providers, agents, assistants or representatives. Clients may opt to use this service once they have set up and logged into their portal.</p>
+                <p>GGP-OS provides a secure communication platform (<span className="font-bold text-blue-800">GGP-OS Portal</span>) with encrypted messaging for all clients, providers, agents, assistants and representatives. Clients may use this service once they have set up and logged into their portal account.</p>
               </div>
             </div>
 
-            {/* HIPAA Compliance Notice */}
+            {/* Data Security Notice */}
             <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 mt-4">
               <p className="text-xs font-black text-emerald-800 uppercase tracking-wider mb-2 flex items-center gap-2">
                 <Shield size={14} className="text-emerald-600" />
-                HIPAA Business Associate Addendum — Included Functionality
+                Data Security &amp; Compliance
               </p>
               <p className="text-xs text-emerald-700 leading-relaxed">
-                As of July 21, 2020, the following functionality is included under the applicable HIPAA Business 
-                Associate Addendum: Gmail, Calendar, Drive (including Docs, Sheets, Slides, and Forms), Apps Script, 
-                Keep, Sites, Jamboard, Hangouts (chat messaging feature only), Google Chat, Google Meet, Google Voice 
-                (managed users only), Google Cloud Search, Cloud Identity Management, Google Groups, Google Tasks, 
-                and Vault (if applicable).
+                GGP-OS is built on a HIPAA-compliant infrastructure. All data is encrypted at rest and in transit. 
+                The following Google Workspace functionality is included under the applicable Business Associate 
+                Addendum (as of July 21, 2020): Gmail, Calendar, Drive (including Docs, Sheets, Slides, and Forms), 
+                Apps Script, Keep, Sites, Jamboard, Google Chat, Google Meet, Google Voice (managed users only), 
+                Google Cloud Search, Cloud Identity Management, Google Groups, Google Tasks, and Vault (if applicable).
               </p>
             </div>
 
@@ -217,8 +218,8 @@ export default function IntakePage({ onBack }: IntakePageProps) {
             <span className="font-black text-sm tracking-wide">Global Green Hybrid Platform</span>
           </div>
           <p className="text-xs text-slate-400 max-w-lg mx-auto">
-            GGP-OS is a HIPAA-compliant healthcare technology platform. All patient information
-            is encrypted at rest and in transit. Your data will only be shared with your assigned provider.
+            GGP-OS is a secure, compliant technology platform. All information
+            is encrypted at rest and in transit. Your data will only be shared with your assigned provider, agent, assistant or representative.
           </p>
           <div className="flex items-center justify-center gap-6 text-xs text-slate-500">
             <a href="https://ggp-os.com" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 transition-colors">ggp-os.com</a>
