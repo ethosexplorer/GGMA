@@ -585,89 +585,59 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
   };
 
   return (
-    <div className="flex h-full min-h-0 bg-slate-50 text-slate-800 font-sans">
-      <div className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col hidden md:flex shrink-0">
-        <div className="p-5 pb-2">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-indigo-900 border border-indigo-700 flex items-center justify-center text-white rounded-lg shadow-lg">
-               <Headphones size={22} />
+    <div className="flex flex-col h-full min-h-0 bg-slate-50 text-slate-800 font-sans">
+      {/* Top Navigation Bar (replaces left sidebar) */}
+      <div className="bg-slate-900 border-b border-slate-700 shrink-0">
+        <div className="flex items-center gap-4 px-6 py-3">
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="w-8 h-8 bg-indigo-900 border border-indigo-700 flex items-center justify-center text-white rounded-lg shadow-lg">
+               <Headphones size={18} />
             </div>
             <div>
-              <h2 className="font-bold text-sm text-white leading-tight uppercase tracking-tight">Ops Center</h2>
-              <p className="text-[10px] text-indigo-400 font-bold uppercase tracking-wider">Internal Operations</p>
+              <h2 className="font-bold text-xs text-white leading-tight uppercase tracking-tight">Ops Center</h2>
+              <p className="text-[9px] text-indigo-400 font-bold uppercase tracking-wider">Internal Operations</p>
+            </div>
+          </div>
+          <div className="w-px h-8 bg-slate-700 shrink-0" />
+          <div className="flex-1 overflow-x-auto scrollbar-hide">
+            <div className="flex items-center gap-1 min-w-max">
+              {opsNavItems.map((item, i) => {
+                if ('section' in item && item.section) {
+                  return (
+                    <span key={`ops-sec-${i}`} className="text-[9px] font-bold text-slate-500 uppercase tracking-wider px-2 shrink-0">
+                      {item.section}
+                    </span>
+                  );
+                }
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => setActiveTab(item.id!)}
+                    className={cn(
+                      "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap shrink-0",
+                      activeTab === item.id
+                        ? "bg-indigo-600 text-white shadow-md"
+                        : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
+                    )}
+                  >
+                    {item.icon && <item.icon size={13} />}
+                    {item.label}
+                    {(item.badge || (item.id === 'applications' && pendingAppsCount > 0)) && (
+                      <span className="text-[9px] bg-white/20 text-white px-1.5 py-0.5 rounded-full font-bold">
+                        {item.id === 'applications' ? pendingAppsCount : item.badge}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto px-3 pb-4 space-y-0.5">
-          {opsNavItems.map((item, i) => {
-            if ('section' in item && item.section) {
-              return (
-                <div
-                  key={`ops-sec-${i}`}
-                  draggable
-                  onDragStart={(e) => opsHandleDragStart(e, i)}
-                  onDragOver={(e) => opsHandleDragOver(e, i)}
-                  onDragEnd={() => setOpsDragIdx(null)}
-                  onDoubleClick={() => setOpsEditIdx(i)}
-                  className="pt-4 pb-1 px-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider cursor-grab active:cursor-grabbing flex items-center gap-1 hover:text-indigo-400 transition-colors group"
-                >
-                  <span className="opacity-0 group-hover:opacity-50 transition-opacity">⠿</span>
-                  {opsEditIdx === i ? (
-                    <input
-                      autoFocus
-                      defaultValue={item.section}
-                      className="bg-slate-800 text-white text-[10px] font-bold uppercase tracking-wider px-1 py-0.5 rounded border border-indigo-500 outline-none w-full"
-                      onBlur={(e) => {
-                        const updated = [...opsNavItems];
-                        updated[i] = { ...updated[i], section: e.target.value || item.section };
-                        setOpsNavItems(updated);
-                        setOpsEditIdx(null);
-                      }}
-                      onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
-                    />
-                  ) : item.section}
-                </div>
-              );
-            }
-            return (
-              <button
-                key={item.id}
-                draggable
-                onDragStart={(e) => opsHandleDragStart(e, i)}
-                onDragOver={(e) => opsHandleDragOver(e, i)}
-                onDragEnd={() => setOpsDragIdx(null)}
-                onClick={() => setActiveTab(item.id!)}
-                className={cn("w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all text-left cursor-grab active:cursor-grabbing", activeTab === item.id ? "bg-slate-800 text-white border border-slate-700" : "text-slate-400 hover:bg-slate-800/50", opsDragIdx === i && "opacity-50")}
-              >
-                <span className="flex items-center gap-3">{item.icon && <item.icon size={16} />} {item.label}</span>
-                {(item.badge || (item.id === 'applications' && pendingAppsCount > 0)) && (
-                  <span className="text-[10px] bg-indigo-500/20 text-indigo-400 px-1.5 py-0.5 rounded-full font-bold">
-                    {item.id === 'applications' ? pendingAppsCount : item.badge}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-          {/* New Group button */}
-          <button
-            onClick={() => {
-              const name = prompt('New section label name:');
-              if (name) {
-                const updated = [...opsNavItems, { section: name.toUpperCase() }];
-                setOpsNavItems(updated);
-                localStorage.setItem('gghp_ops_nav_order', JSON.stringify(updated.map((it, i) => it.id || `ops-section-${i}`)));
-              }
-            }}
-            className="w-full mt-3 flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-[10px] font-bold text-indigo-400 border border-dashed border-indigo-500/30 hover:bg-indigo-500/10 transition-colors uppercase tracking-widest"
-          >
-            + New Group
-          </button>
-        </div>
-        
       </div>
-      <div className="flex-1 flex flex-col h-full min-h-0 overflow-hidden">
-        <div className="h-16 border-b border-slate-200 flex items-center justify-between px-8 bg-white shrink-0">
-          <h1 className="text-xl font-bold text-slate-800 tracking-tight capitalize">{activeTab.replace(/_/g, ' ')}</h1>
+      {/* Content Area (full width) */}
+      <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+        <div className="h-14 border-b border-slate-200 flex items-center justify-between px-8 bg-white shrink-0">
+          <h1 className="text-lg font-bold text-slate-800 tracking-tight capitalize">{activeTab.replace(/_/g, ' ')}</h1>
           <div className="flex items-center gap-4">
              <div className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-100">Live Queue: Active</div>
              <Bell size={20} className="text-slate-400" />
