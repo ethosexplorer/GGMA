@@ -99,7 +99,7 @@ export default function IntakePage({ onBack }: IntakePageProps) {
             </div>
             <div>
               <p className="text-xs font-black text-slate-800 uppercase tracking-wide">Email Support</p>
-              <p className="text-[10px] text-slate-500">aastsupport@gmail.com</p>
+              <p className="text-[10px] text-slate-500">asstsupport@gmail.com</p>
             </div>
           </div>
         </div>
