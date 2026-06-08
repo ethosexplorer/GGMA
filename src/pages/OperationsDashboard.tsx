@@ -5,7 +5,7 @@ import { Calendar, Building2, Users, FileText, Settings, Shield, Activity, Bell,
   Briefcase, HeartPulse, Scale, Gavel, FileCheck, Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
   Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Headphones,
-  Phone, PhoneCall, PhoneOff, PhoneIncoming, PhoneOutgoing, UserPlus, Globe, Zap, Database, CircleCheck } from 'lucide-react';
+  Phone, PhoneCall, PhoneOff, PhoneIncoming, PhoneOutgoing, UserPlus, Globe, Zap, Database, CircleCheck, ShoppingCart } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { UserCalendar } from '../components/UserCalendar';
@@ -20,6 +20,7 @@ import { DocumentVaultTab } from '../components/ops/DocumentVaultTab';
 import { PostPaymentTab } from '../components/ops/PostPaymentTab';
 import { PatientCaseTracker } from '../components/patient/PatientCaseTracker';
 import { AccountLookupTab } from '../components/ops/AccountLookupTab';
+import { ProductsServicesManager } from '../components/ops/ProductsServicesManager';
 
 const NAV_ITEMS = [
   { section: 'CALL CENTER' },
@@ -41,6 +42,8 @@ const NAV_ITEMS = [
   { section: 'USER ASSISTANCE' },
   { id: 'patients', label: 'Patient Inquiries', icon: HeartPulse },
   { id: 'business', label: 'Business Inquiries', icon: Building2 },
+  { section: 'PRODUCTS' },
+  { id: 'products_services', label: 'Products & Services', icon: ShoppingCart },
 ];
 
 export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void | Promise<void>, user?: any }) => {
@@ -571,6 +574,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
       case 'applications': return renderApplicationsQueue();
       case 'document_vault': return <DocumentVaultTab />;
       case 'post_payment': return <PostPaymentTab />;
+      case 'products_services': return <ProductsServicesManager />;
       case 'personnel': return renderPersonnel();
       default: return (
         <div className="flex items-center justify-center h-[60vh]">

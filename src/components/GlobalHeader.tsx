@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, MapPin, ArrowLeft, Search, LogOut } from 'lucide-react';
+import { Shield, MapPin, ArrowLeft, Search, LogOut, Home } from 'lucide-react';
 
 const STATES = [
   'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia',
@@ -105,8 +105,15 @@ export const GlobalHeader = ({
         </div>
       )}
 
-      {/* Spacer for right side icons */}
-      <div className="flex items-center gap-4 ml-auto pl-4">
+      {/* Right side actions */}
+      <div className="flex items-center gap-3 ml-auto pl-4">
+        <button
+          onClick={() => { window.history.pushState({}, '', '/'); window.location.reload(); }}
+          className="flex items-center gap-2 text-slate-400 hover:text-emerald-400 transition-colors bg-slate-800/50 hover:bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-transparent hover:border-emerald-500/30"
+          title="Return to Landing Page"
+        >
+          <Home size={16} /> <span className="text-xs font-bold uppercase tracking-widest hidden sm:inline">Home</span>
+        </button>
         {onLogout && (
           <button
             onClick={() => {
