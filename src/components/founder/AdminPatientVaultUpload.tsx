@@ -71,7 +71,8 @@ export const AdminPatientVaultUpload = () => {
     if (!files) return;
     
     const newFiles: QueuedFile[] = [];
-    Array.from(files).forEach(file => {
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
       const preview = file.type.startsWith('image/') ? URL.createObjectURL(file) : undefined;
       newFiles.push({
         file,
@@ -79,7 +80,7 @@ export const AdminPatientVaultUpload = () => {
         category: guessCategory(file.name),
         preview,
       });
-    });
+    }
     setQueuedFiles(prev => [...prev, ...newFiles]);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
