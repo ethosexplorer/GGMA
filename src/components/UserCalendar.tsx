@@ -194,11 +194,19 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
   const eventsOn = (d: string) => filtered.filter(e => e.date === d);
 
   const navigate = (dir: number) => {
-    const d = new Date(current);
-    if (view === 'month') d.setMonth(d.getMonth() + dir);
-    else if (view === 'week') d.setDate(d.getDate() + dir * 7);
-    else d.setDate(d.getDate() + dir);
-    setCurrent(d);
+    if (view === 'day') {
+      // Navigate days using selectedDate directly
+      const d = new Date(selectedDate + 'T12:00:00');
+      d.setDate(d.getDate() + dir);
+      const newDate = fmt(d);
+      setSelectedDate(newDate);
+      setCurrent(d);
+    } else {
+      const d = new Date(current);
+      if (view === 'month') d.setMonth(d.getMonth() + dir);
+      else if (view === 'week') d.setDate(d.getDate() + dir * 7);
+      setCurrent(d);
+    }
   };
 
   const goToday = () => { setCurrent(new Date()); setSelectedDate(fmt(new Date())); };
