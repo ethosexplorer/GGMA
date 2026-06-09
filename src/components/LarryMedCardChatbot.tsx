@@ -620,14 +620,26 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
 
     const fullPrompt = systemPrompt + memoryDirectives;
 
-    // Build history for multi-turn context
+    // Build history for multi-turn context (limit to 30 to avoid token overflow)
     const historyForAI = messages
       .filter(m => m.role !== 'system')
-      .slice(-100)
-      .map(m => ({
-        role: m.role === 'bot' ? 'model' as const : 'user' as const,
-        parts: [{ text: m.text }]
-      }));
+      .slice(-30)
+      .map(m => {
+        // Strip blob: URLs, Firebase Storage URLs, and large file content blocks from history
+        // to prevent token overflow — only the current message needs full attachment detail
+        let cleanText = m.text
+          .replace(/blob:https?:\/\/[^\s)]+/g, '[local-file]')
+          .replace(/https:\/\/firebasestorage\.googleapis\.com\/[^\s)]+/g, '[uploaded-file]')
+          .replace(/\[FILE CONTENTS OF [^\]]+\]:[\s\S]*?```/g, '[file-content-omitted]');
+        // Truncate individual messages over 2000 chars in history
+        if (cleanText.length > 2000) {
+          cleanText = cleanText.substring(0, 2000) + '... [truncated]';
+        }
+        return {
+          role: m.role === 'bot' ? 'model' as const : 'user' as const,
+          parts: [{ text: cleanText }]
+        };
+      });
 
     let accumulated = '';
 
@@ -649,10 +661,12 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
         },
         { history: historyForAI, temperature: 0.7, maxTokens: 4000 }
       );
-    } catch (err) {
+    } catch (err: any) {
+      console.error('[Sylara AI Error]:', err);
       setIsStreaming(false);
       setStreamingText('');
-      setMessages(prev => [...prev, { role: 'bot', text: `I encountered an error processing your request. Please try again.`, timestamp: Date.now() }]);
+      const errMsg = err?.message || 'Unknown error';
+      setMessages(prev => [...prev, { role: 'bot', text: `⚠️ I encountered a processing error (${errMsg}). This may happen with large files or long conversations — try "Clear Chat" and resend your message.`, timestamp: Date.now() }]);
     }
   };
 

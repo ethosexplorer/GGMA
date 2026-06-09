@@ -92,7 +92,13 @@ export default async function handler(req, res) {
       if (!response.ok) {
         const err = await response.text();
         console.error('[Gemini Stream API Error]:', err);
-        res.write(`data: ${JSON.stringify({ error: 'AI processing error' })}\n\n`);
+        // Try to extract a useful error message
+        let errorMsg = 'AI processing error';
+        try {
+          const parsed = JSON.parse(err);
+          errorMsg = parsed?.error?.message || parsed?.error?.status || errorMsg;
+        } catch {}
+        res.write(`data: ${JSON.stringify({ error: errorMsg })}\n\n`);
         res.write('data: [DONE]\n\n');
         return res.end();
       }
