@@ -101,6 +101,8 @@ export function WebDialer() {
             setActiveCall(call);
             activeCallRef.current = call;
             startTimer();
+            // Auto-show DTMF keypad so user can press 1 for Google Voice forwarding
+            setShowDialer(true);
           });
 
           call.on('disconnect', () => {
@@ -335,55 +337,75 @@ export function WebDialer() {
         </div>
       </div>
 
-      {/* Outbound Dial Pad Overlay */}
-      {showDialer && !activeCall && !incomingCall && (
+      {/* Outbound Dial Pad / In-Call DTMF Keypad */}
+      {showDialer && !incomingCall && (
         <div className="fixed bottom-24 right-6 z-[150] bg-slate-900 border border-slate-700 p-5 rounded-3xl shadow-2xl w-72">
           <div className="flex justify-between items-center mb-4">
-            <span className="text-sm font-bold text-white">Make a Call</span>
+            <span className="text-sm font-bold text-white">{activeCall ? '📞 DTMF Keypad' : 'Make a Call'}</span>
             <button onClick={() => setShowDialer(false)} className="text-slate-500 hover:text-white bg-slate-800 p-1 rounded-lg">✕</button>
           </div>
           
-          <input 
-            type="text" 
-            value={dialNumber}
-            onChange={(e) => setDialNumber(e.target.value)}
-            placeholder="+1 (555) 555-5555" 
-            className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white text-xl text-center font-mono tracking-widest mb-4 focus:outline-none focus:border-emerald-500 transition-colors"
-          />
+          {activeCall && (
+            <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl px-3 py-2 mb-3 text-center">
+              <p className="text-[10px] font-black text-emerald-400 uppercase tracking-wider">Press digits to send tones</p>
+              <p className="text-xs text-emerald-300 mt-0.5">e.g. Press 1 to accept forwarded call</p>
+            </div>
+          )}
 
-          <div className="grid grid-cols-3 gap-3 mb-6">
+          {!activeCall && (
+            <input 
+              type="text" 
+              value={dialNumber}
+              onChange={(e) => setDialNumber(e.target.value)}
+              placeholder="+1 (555) 555-5555" 
+              className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white text-xl text-center font-mono tracking-widest mb-4 focus:outline-none focus:border-emerald-500 transition-colors"
+            />
+          )}
+
+          <div className="grid grid-cols-3 gap-3 mb-4">
             {['1','2','3','4','5','6','7','8','9','*','0','#'].map((key) => (
               <button 
                 key={key}
                 onClick={() => {
-                  setDialNumber(prev => prev + key);
                   if (activeCallRef.current) {
+                    // During active call: send DTMF tone immediately
+                    console.log('[WebDialer] Sending DTMF tone:', key);
                     activeCallRef.current.sendDigits(key);
+                  } else {
+                    // Pre-call: append to dial number
+                    setDialNumber(prev => prev + key);
                   }
                 }}
-                className="bg-slate-800 hover:bg-slate-700 text-white text-xl font-bold p-3 rounded-xl transition-colors shadow-sm"
+                className={cn(
+                  "text-white text-xl font-bold p-3 rounded-xl transition-all shadow-sm active:scale-95",
+                  activeCall 
+                    ? "bg-emerald-900/50 hover:bg-emerald-800/70 border border-emerald-500/20 hover:border-emerald-400/40" 
+                    : "bg-slate-800 hover:bg-slate-700"
+                )}
               >
                 {key}
               </button>
             ))}
           </div>
 
-          <div className="flex gap-3">
-            <button 
-              onClick={() => setDialNumber(prev => prev.slice(0, -1))}
-              disabled={!dialNumber}
-              className="w-16 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 text-slate-400 p-3 rounded-xl transition-colors flex items-center justify-center"
-            >
-              ⌫
-            </button>
-            <button 
-              onClick={handleDial}
-              disabled={!dialNumber || status !== 'ready'}
-              className="flex-1 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 text-white font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
-            >
-              <Phone size={20} /> Dial
-            </button>
-          </div>
+          {!activeCall && (
+            <div className="flex gap-3">
+              <button 
+                onClick={() => setDialNumber(prev => prev.slice(0, -1))}
+                disabled={!dialNumber}
+                className="w-16 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 text-slate-400 p-3 rounded-xl transition-colors flex items-center justify-center"
+              >
+                ⌫
+              </button>
+              <button 
+                onClick={handleDial}
+                disabled={!dialNumber || status !== 'ready'}
+                className="flex-1 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 text-white font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
+              >
+                <Phone size={20} /> Dial
+              </button>
+            </div>
+          )}
         </div>
       )}
 
