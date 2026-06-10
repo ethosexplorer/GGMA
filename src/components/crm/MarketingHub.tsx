@@ -464,9 +464,25 @@ export const MarketingHub = () => {
             return { id: d.id, ...data, type, rawType } as any;
           });
           setIsOfflineMode(false);
-        } catch (err) {
-          console.warn('[MarketingHub] Failed to fetch deals from Firestore (likely quota limits), falling back to local presets:', err);
-          setIsOfflineMode(true);
+          console.log(`[MarketingHub] ✅ Fetched ${fetchedDeals.length} contacts from Firestore`);
+        } catch (err: any) {
+          console.warn('[MarketingHub] First Firestore fetch failed, retrying in 2s:', err?.message || err);
+          // Retry once after a short delay (handles transient quota resets)
+          try {
+            await new Promise(r => setTimeout(r, 2000));
+            const retrySnap = await getDocs(query(q, limit(fetchLimit)));
+            fetchedDeals = retrySnap.docs.map(d => {
+              const data = d.data();
+              const rawType = data.type || 'other';
+              const type = (rawType.startsWith('gov_') || rawType.startsWith('enforcement_') || rawType === 'enforcement' || ['police', 'dea', 'obn', 'mayor', 'governor', 'senator', 'legislative', 'political', 'attorney_general'].includes(rawType)) ? 'agency' : rawType;
+              return { id: d.id, ...data, type, rawType } as any;
+            });
+            setIsOfflineMode(false);
+            console.log(`[MarketingHub] ✅ Retry succeeded — fetched ${fetchedDeals.length} contacts`);
+          } catch (retryErr: any) {
+            console.error('[MarketingHub] ❌ Firestore fetch failed after retry:', retryErr?.code, retryErr?.message || retryErr);
+            setIsOfflineMode(true);
+          }
         }
 
         // 3b. Load static government contacts to merge (guarantees completeness offline/under quota constraints)
