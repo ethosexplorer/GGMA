@@ -67,7 +67,7 @@ const createTransporter = () => {
     auth: { user, pass },
     pool: true,
     maxConnections: 3,
-    maxMessages: 100,
+    maxMessages: 500,
     rateDelta: 1000,
     rateLimit: 5,
     connectionTimeout: 30000,
