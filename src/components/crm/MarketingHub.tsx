@@ -1736,11 +1736,17 @@ export const MarketingHub = () => {
                   {/* Daily Send Limit */}
                   <div>
                     <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Daily Send Limit</label>
-                    <div className="grid grid-cols-4 gap-2">
+                    <div className="grid grid-cols-4 gap-2 mb-2">
                       {[10, 25, 50, 100].map(lim => (
                         <button key={lim} onClick={() => setDailyLimit(lim)} className={cn("py-2 rounded-lg text-xs font-black transition-all", dailyLimit === lim ? "bg-indigo-600 text-white shadow-sm" : "bg-slate-950 text-slate-500 border border-slate-700 hover:text-white")}>{lim}</button>
                       ))}
                     </div>
+                    <div className="grid grid-cols-4 gap-2">
+                      {[250, 500, 1000, 3000].map(lim => (
+                        <button key={lim} onClick={() => setDailyLimit(lim)} className={cn("py-2 rounded-lg text-xs font-black transition-all", dailyLimit === lim ? "bg-emerald-600 text-white shadow-sm shadow-emerald-500/30" : "bg-slate-950 text-slate-500 border border-slate-700 hover:text-white")}>{lim >= 1000 ? `${lim/1000}K` : lim}</button>
+                      ))}
+                    </div>
+                    <p className="text-[9px] text-slate-500 mt-1.5 font-medium">Resend Free: 3,000/mo • Pro: 50K/mo</p>
                   </div>
 
                   {/* Campaign Stats */}
