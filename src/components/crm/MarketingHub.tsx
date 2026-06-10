@@ -331,7 +331,7 @@ export const MarketingHub = () => {
         safeFetch('/api/marketing?route=gmail&action=inbox&maxResults=15&account=marketing'),
         safeFetch('/api/marketing?route=gmail&action=bounces&maxResults=10&account=marketing'),
         safeFetch('/api/marketing?route=gmail&action=replies&maxResults=10&account=marketing'),
-        safeFetch('/api/marketing?route=gmail&action=sent&maxResults=15&account=marketing'),
+        safeFetch('/api/marketing?route=gmail&action=sent&maxResults=1000&account=marketing'),
         safeFetch('/api/marketing?route=gmail&action=profile&account=marketing'),
       ]);
       if (inboxRes.error) throw new Error(inboxRes.error);

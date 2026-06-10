@@ -541,7 +541,7 @@ export default async function handler(req, res) {
       if (action === 'sent') {
         await client.mailboxOpen('[Gmail]/Sent Mail');
         const sentList = [];
-        const limit = Math.min(parseInt(maxResults) || 20, 50);
+        const limit = Math.min(parseInt(maxResults) || 20, 1000);
         const status = await client.status('[Gmail]/Sent Mail', { messages: true });
         const total = status.messages || 0;
         const start = Math.max(1, total - limit + 1);
