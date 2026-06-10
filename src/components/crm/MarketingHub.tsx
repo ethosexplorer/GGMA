@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, Building2, LayoutTemplate, Clock, AlertCircle, Save, Trash2, X, Plus, ChevronDown, ChevronLeft, ChevronRight, Eye, MousePointerClick, MailOpen, TrendingUp, Inbox, AlertTriangle, Reply, RefreshCw, Folder, Pencil, Check, CalendarDays } from 'lucide-react';
+import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, Building2, LayoutTemplate, Clock, AlertCircle, Save, Trash2, X, Plus, ChevronDown, ChevronLeft, ChevronRight, Eye, MousePointerClick, MailOpen, TrendingUp, Inbox, AlertTriangle, Reply, RefreshCw, Folder, Pencil, Check, CalendarDays, CheckSquare } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { db } from '../../firebase';
 import { collection, onSnapshot, query, addDoc, deleteDoc, doc, updateDoc, serverTimestamp, orderBy, limit, getDocs, where, getCountFromServer } from 'firebase/firestore';
@@ -2021,18 +2021,45 @@ export const MarketingHub = () => {
                 </div>
               )}
 
-              {/* Batch Actions Bar */}
-              {checkedEmailIds.size > 0 && (
-                <div className="flex gap-2 mb-3 bg-slate-800/80 p-2.5 rounded-xl border border-white/5 animate-in fade-in duration-200">
-                  <span className="text-[10px] text-slate-400 font-bold self-center ml-2">{checkedEmailIds.size} selected</span>
-                  <button onClick={handleDeleteSelected} className="ml-auto flex items-center gap-1 text-[10px] font-black uppercase tracking-wider px-3 py-1.5 bg-red-600/20 text-red-400 border border-red-500/20 hover:bg-red-600 hover:text-white rounded-lg transition-all">
-                    <Trash2 size={10} /> Delete
-                  </button>
-                  <button onClick={() => setShowMoveModal(true)} className="flex items-center gap-1 text-[10px] font-black uppercase tracking-wider px-3 py-1.5 bg-indigo-500/20 text-indigo-400 border border-indigo-500/20 hover:bg-indigo-600 hover:text-white rounded-lg transition-all">
-                    <Folder size={10} /> Move To Folder
-                  </button>
-                </div>
-              )}
+              {/* Select All / Batch Actions Bar */}
+              {(() => {
+                const currentList = gmailTab === 'inbox' ? gmailInbox : gmailTab === 'sent' ? gmailSent : gmailTab === 'bounces' ? gmailBounces : gmailReplies;
+                const allIds = new Set(currentList.map(m => String(m.id)));
+                const allSelected = allIds.size > 0 && [...allIds].every(id => checkedEmailIds.has(id));
+                return (
+                  <div className="flex gap-2 mb-3 bg-slate-800/80 p-2.5 rounded-xl border border-white/5">
+                    <button
+                      onClick={() => {
+                        if (allSelected) {
+                          setCheckedEmailIds(new Set());
+                        } else {
+                          setCheckedEmailIds(allIds);
+                        }
+                      }}
+                      className={cn(
+                        "flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-lg transition-all",
+                        allSelected
+                          ? "bg-indigo-600 text-white"
+                          : "bg-slate-950 text-slate-400 border border-slate-700 hover:text-white hover:border-indigo-500"
+                      )}
+                    >
+                      <CheckSquare size={10} />
+                      {allSelected ? `Deselect All (${allIds.size})` : `Select All (${allIds.size})`}
+                    </button>
+                    {checkedEmailIds.size > 0 && (
+                      <>
+                        <span className="text-[10px] text-slate-400 font-bold self-center ml-1">{checkedEmailIds.size} selected</span>
+                        <button onClick={handleDeleteSelected} className="ml-auto flex items-center gap-1 text-[10px] font-black uppercase tracking-wider px-3 py-1.5 bg-red-600/20 text-red-400 border border-red-500/20 hover:bg-red-600 hover:text-white rounded-lg transition-all">
+                          <Trash2 size={10} /> Delete
+                        </button>
+                        <button onClick={() => setShowMoveModal(true)} className="flex items-center gap-1 text-[10px] font-black uppercase tracking-wider px-3 py-1.5 bg-indigo-500/20 text-indigo-400 border border-indigo-500/20 hover:bg-indigo-600 hover:text-white rounded-lg transition-all">
+                          <Folder size={10} /> Move
+                        </button>
+                      </>
+                    )}
+                  </div>
+                );
+              })()}
 
               {/* Gmail Content */}
               <div className="space-y-2 max-h-64 overflow-y-auto">
