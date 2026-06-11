@@ -63,13 +63,49 @@ export const DocumentVaultTab = () => {
     `).catch(console.error);
   }, []);
 
-  // Search users from Turso patients + businesses
+  // Search users from Turso patients + businesses + Firestore CRM contacts/deals
   useEffect(() => {
     const fetchUsers = async () => {
       try {
+        // Turso patients + businesses
         const pRes = await turso.execute('SELECT id, name, email, status, "Patient" as type, state FROM patients');
         const bRes = await turso.execute('SELECT id, business_name as name, license_type as email, status, "Business" as type, "" as state FROM businesses');
-        setAllUsers([...pRes.rows, ...bRes.rows]);
+        const tursoUsers = [...pRes.rows, ...bRes.rows];
+
+        // Firestore CRM contacts + deals (for contacts like Merl Wood that aren't in Turso)
+        let firestoreUsers: any[] = [];
+        try {
+          const { collection: fbCollection, getDocs: fbGetDocs } = await import('firebase/firestore');
+          const { db: fbDb } = await import('../../firebase');
+          const [contactsSnap, dealsSnap] = await Promise.all([
+            fbGetDocs(fbCollection(fbDb, 'crm_contacts')),
+            fbGetDocs(fbCollection(fbDb, 'crm_deals')),
+          ]);
+          const contactsList = contactsSnap.docs.map(d => {
+            const data = d.data();
+            return { id: d.id, name: data.name || data.displayName || '', email: data.email || '', status: data.status || 'active', type: 'CRM Contact', state: data.state || '' };
+          });
+          const dealsList = dealsSnap.docs.map(d => {
+            const data = d.data();
+            return { id: d.id, name: data.name || data.contact || data.company || '', email: data.email || '', status: data.status || data.stage || 'active', type: 'CRM Deal', state: data.state || '' };
+          });
+          firestoreUsers = [...contactsList, ...dealsList];
+        } catch (fsErr) {
+          console.warn('[Vault] Firestore CRM fetch skipped:', fsErr);
+        }
+
+        // Merge and deduplicate by email (prefer Turso entries)
+        const seen = new Set<string>();
+        const merged: any[] = [];
+        for (const u of tursoUsers) {
+          const key = String(u.email || '').toLowerCase() || String(u.id);
+          if (!seen.has(key)) { seen.add(key); merged.push(u); }
+        }
+        for (const u of firestoreUsers) {
+          const key = String(u.email || '').toLowerCase() || String(u.id);
+          if (key && !seen.has(key) && u.name) { seen.add(key); merged.push(u); }
+        }
+        setAllUsers(merged);
       } catch (err) {
         console.error('Error fetching users:', err);
       }
