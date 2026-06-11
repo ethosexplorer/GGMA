@@ -78,7 +78,7 @@ export const DocumentVaultTab = () => {
           const { collection: fbCollection, getDocs: fbGetDocs } = await import('firebase/firestore');
           const { db: fbDb } = await import('../../firebase');
           const [contactsSnap, dealsSnap] = await Promise.all([
-            fbGetDocs(fbCollection(fbDb, 'crm_contacts')),
+            fbGetDocs(fbCollection(fbDb, 'contacts')),
             fbGetDocs(fbCollection(fbDb, 'crm_deals')),
           ]);
           const contactsList = contactsSnap.docs.map(d => {
