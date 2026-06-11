@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Search, Upload, FileText, FolderLock, Trash2, Download, Eye, X, AlertTriangle, Clock, CheckCircle, User } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { turso } from '../../lib/turso';
@@ -34,7 +34,7 @@ const DOC_CATEGORIES = [
 
 export const DocumentVaultTab = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [allUsers, setAllUsers] = useState<any[]>([]);
+
   const [selectedUser, setSelectedUser] = useState<any | null>(null);
   const [userDocuments, setUserDocuments] = useState<VaultDocument[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -63,55 +63,95 @@ export const DocumentVaultTab = () => {
     `).catch(console.error);
   }, []);
 
-  // Search users from Turso patients + businesses + Firestore CRM contacts/deals
+  // Load Turso patients + businesses on mount (always works)
+  const [tursoUsers, setTursoUsers] = useState<any[]>([]);
+  const [firestoreResults, setFirestoreResults] = useState<any[]>([]);
+  const [fsSearching, setFsSearching] = useState(false);
+
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchTurso = async () => {
       try {
-        // Turso patients + businesses
         const pRes = await turso.execute('SELECT id, name, email, status, "Patient" as type, state FROM patients');
         const bRes = await turso.execute('SELECT id, business_name as name, license_type as email, status, "Business" as type, "" as state FROM businesses');
-        const tursoUsers = [...pRes.rows, ...bRes.rows];
-
-        // Firestore CRM contacts + deals (for contacts like Merl Wood that aren't in Turso)
-        let firestoreUsers: any[] = [];
-        try {
-          const { collection: fbCollection, getDocs: fbGetDocs } = await import('firebase/firestore');
-          const { db: fbDb } = await import('../../firebase');
-          const [contactsSnap, dealsSnap] = await Promise.all([
-            fbGetDocs(fbCollection(fbDb, 'contacts')),
-            fbGetDocs(fbCollection(fbDb, 'crm_deals')),
-          ]);
-          const contactsList = contactsSnap.docs.map(d => {
-            const data = d.data();
-            return { id: d.id, name: data.name || data.displayName || '', email: data.email || '', status: data.status || 'active', type: 'CRM Contact', state: data.state || '' };
-          });
-          const dealsList = dealsSnap.docs.map(d => {
-            const data = d.data();
-            return { id: d.id, name: data.name || data.contact || data.company || '', email: data.email || '', status: data.status || data.stage || 'active', type: 'CRM Deal', state: data.state || '' };
-          });
-          firestoreUsers = [...contactsList, ...dealsList];
-        } catch (fsErr) {
-          console.warn('[Vault] Firestore CRM fetch skipped:', fsErr);
-        }
-
-        // Merge and deduplicate by email (prefer Turso entries)
-        const seen = new Set<string>();
-        const merged: any[] = [];
-        for (const u of tursoUsers) {
-          const key = String(u.email || '').toLowerCase() || String(u.id);
-          if (!seen.has(key)) { seen.add(key); merged.push(u); }
-        }
-        for (const u of firestoreUsers) {
-          const key = String(u.email || '').toLowerCase() || String(u.id);
-          if (key && !seen.has(key) && u.name) { seen.add(key); merged.push(u); }
-        }
-        setAllUsers(merged);
+        setTursoUsers([...pRes.rows, ...bRes.rows]);
       } catch (err) {
-        console.error('Error fetching users:', err);
+        console.error('Error fetching Turso users:', err);
       }
     };
-    fetchUsers();
+    fetchTurso();
   }, []);
+
+  // On-demand Firestore search when user types (debounced)
+  useEffect(() => {
+    if (searchQuery.length < 2) { setFirestoreResults([]); return; }
+    const timer = setTimeout(async () => {
+      setFsSearching(true);
+      try {
+        const { collection: fbCollection, getDocs: fbGetDocs } = await import('firebase/firestore');
+        const { db: fbDb } = await import('../../firebase');
+        const qLower = searchQuery.toLowerCase();
+        const results: any[] = [];
+
+        // Search Firestore 'contacts' collection (where Account Lookup finds Merl Wood)
+        try {
+          const contactsSnap = await fbGetDocs(fbCollection(fbDb, 'contacts'));
+          contactsSnap.docs.forEach(d => {
+            const data = d.data();
+            const name = data.name || data.displayName || '';
+            const email = data.email || '';
+            if (name.toLowerCase().includes(qLower) || email.toLowerCase().includes(qLower)) {
+              results.push({ id: d.id, name, email, phone: data.phone || '', status: data.status || 'active', type: 'CRM Contact', state: data.state || '' });
+            }
+          });
+        } catch (e) { console.warn('[Vault] contacts search error:', e); }
+
+        // Search Firestore 'crm_deals' collection
+        try {
+          const dealsSnap = await fbGetDocs(fbCollection(fbDb, 'crm_deals'));
+          dealsSnap.docs.forEach(d => {
+            const data = d.data();
+            const name = data.name || data.contact || data.company || '';
+            const email = data.email || '';
+            if (name.toLowerCase().includes(qLower) || email.toLowerCase().includes(qLower)) {
+              if (!results.find(r => r.email && r.email.toLowerCase() === email.toLowerCase())) {
+                results.push({ id: d.id, name, email, phone: data.phone || '', status: data.status || data.stage || 'active', type: 'CRM Deal', state: data.state || '' });
+              }
+            }
+          });
+        } catch (e) { console.warn('[Vault] crm_deals search error:', e); }
+
+        setFirestoreResults(results);
+      } catch (err) {
+        console.warn('[Vault] Firestore search failed:', err);
+      } finally {
+        setFsSearching(false);
+      }
+    }, 400); // 400ms debounce
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Combine Turso + Firestore results, deduplicated
+  const allUsers = useMemo(() => {
+    const seen = new Set<string>();
+    const merged: any[] = [];
+    for (const u of tursoUsers) {
+      const key = String(u.email || '').toLowerCase() || String(u.id);
+      if (!seen.has(key)) { seen.add(key); merged.push(u); }
+    }
+    for (const u of firestoreResults) {
+      const key = String(u.email || '').toLowerCase() || String(u.id);
+      if (key && !seen.has(key) && u.name) { seen.add(key); merged.push(u); }
+    }
+    return merged;
+  }, [tursoUsers, firestoreResults]);
+
+  const filteredUsers = allUsers.filter(u => {
+    const q = searchQuery.toLowerCase();
+    return (
+      String(u.name || '').toLowerCase().includes(q) ||
+      String(u.email || '').toLowerCase().includes(q)
+    );
+  });
 
   // Fetch documents for selected user
   const fetchDocuments = useCallback(async (userId: string) => {
@@ -131,14 +171,6 @@ export const DocumentVaultTab = () => {
       fetchDocuments(String(selectedUser.id));
     }
   }, [selectedUser, fetchDocuments]);
-
-  const filteredUsers = allUsers.filter(u => {
-    const q = searchQuery.toLowerCase();
-    return (
-      String(u.name || '').toLowerCase().includes(q) ||
-      String(u.email || '').toLowerCase().includes(q)
-    );
-  });
 
   const handleFileUpload = async (files: FileList | null) => {
     if (!files || files.length === 0 || !selectedUser) return;
@@ -254,7 +286,13 @@ export const DocumentVaultTab = () => {
 
           {searchQuery.length > 0 && (
             <div className="divide-y divide-slate-100 max-h-[400px] overflow-y-auto">
-              {filteredUsers.length === 0 ? (
+              {fsSearching && (
+                <div className="p-4 text-center text-indigo-500 text-xs font-bold flex items-center justify-center gap-2">
+                  <div className="w-3 h-3 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+                  Searching CRM contacts...
+                </div>
+              )}
+              {filteredUsers.length === 0 && !fsSearching ? (
                 <div className="p-8 text-center text-slate-500 font-bold">No users found matching "{searchQuery}"</div>
               ) : (
                 filteredUsers.map((u, i) => (
