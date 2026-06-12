@@ -384,48 +384,6 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Invalid campaign type. Must be "email" or "sms".' });
       }
 
-      // ── Auto-quarantine failed email addresses ──
-      if (results.failed > 0 && results.errors.length > 0) {
-        try {
-          const db = getAdminDb();
-          const batch = db.batch();
-          const failedEmails = results.errors
-            .map(e => (e.recipient?.email || '').toLowerCase())
-            .filter(Boolean);
-          
-          for (const email of failedEmails) {
-            // 1. Add to suppressed_emails collection
-            const docRef = db.collection('suppressed_emails').doc(email.replace(/[^a-z0-9@._-]/g, '_'));
-            batch.set(docRef, {
-              email,
-              reason: 'send_failure',
-              detectedAt: new Date().toISOString(),
-              source: 'auto_campaign_quarantine'
-            }, { merge: true });
-          }
-          await batch.commit();
-          
-          // 2. Flag emailFabricated on crm_deals docs (in smaller batches to avoid Firestore limits)
-          const QUARANTINE_BATCH = 450;
-          for (let i = 0; i < failedEmails.length; i += QUARANTINE_BATCH) {
-            const chunk = failedEmails.slice(i, i + QUARANTINE_BATCH);
-            const qBatch = db.batch();
-            for (const email of chunk) {
-              const snap = await db.collection('crm_deals').where('email', '==', email).limit(1).get();
-              snap.docs.forEach(d => {
-                qBatch.update(d.ref, { emailFabricated: true, emailFlagReason: 'Campaign send failure', email_original: email, email: '' });
-              });
-            }
-            await qBatch.commit();
-          }
-          
-          console.log(`[Auto-Quarantine] ✅ Quarantined ${failedEmails.length} failed emails`);
-          results.quarantined = failedEmails.length;
-        } catch (qErr) {
-          console.error('[Auto-Quarantine] Failed:', qErr.message);
-        }
-      }
-
       return res.json({ success: true, message: `Campaign completed. Sent: ${results.successful}, Failed: ${results.failed}`, results });
     } catch (error) {
       console.error('Marketing Send Error:', error);
