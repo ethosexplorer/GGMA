@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Mail, MessageSquare, Send, Users, Filter, BarChart2, Activity, MapPin, Building2, LayoutTemplate, Clock, AlertCircle, Save, Trash2, X, Plus, ChevronDown, ChevronLeft, ChevronRight, Eye, MousePointerClick, MailOpen, TrendingUp, Inbox, AlertTriangle, Reply, RefreshCw, Folder, Pencil, Check, CalendarDays, CheckSquare } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { db } from '../../firebase';
-import { collection, onSnapshot, query, addDoc, deleteDoc, doc, updateDoc, serverTimestamp, orderBy, limit, getDocs, where, getCountFromServer } from 'firebase/firestore';
+import { collection, onSnapshot, query, addDoc, deleteDoc, doc, updateDoc, serverTimestamp, orderBy, limit, getDocs, where, getCountFromServer, startAfter } from 'firebase/firestore';
 import { getStaticGovContacts } from '../../lib/govContacts';
 
 
@@ -398,25 +398,37 @@ export const MarketingHub = () => {
           console.warn('[MarketingHub] Failed to fetch count from Firestore:', err);
         }
 
-        // 3. Fetch documents for actual campaign execution (up to 20,000 to cover all verified contacts)
-        const fetchLimit = 20000;
+        // 3. Fetch documents in batches (Firestore max limit is 10,000 per query)
+        const BATCH_SIZE = 10000;
         let fetchedDeals: any[] = [];
         try {
-          const docsSnap = await getDocs(query(q, limit(fetchLimit)));
-          fetchedDeals = docsSnap.docs.map(d => {
-            const data = d.data();
-            const rawType = data.type || 'other';
-            const type = (rawType.startsWith('gov_') || rawType.startsWith('enforcement_') || rawType === 'enforcement' || ['police', 'dea', 'obn', 'mayor', 'governor', 'senator', 'legislative', 'political', 'attorney_general'].includes(rawType)) ? 'agency' : rawType;
-            return { id: d.id, ...data, type, rawType } as any;
-          });
+          let lastDoc: any = null;
+          let batchNum = 0;
+          while (true) {
+            batchNum++;
+            const batchQuery = lastDoc
+              ? query(q, limit(BATCH_SIZE), startAfter(lastDoc))
+              : query(q, limit(BATCH_SIZE));
+            const docsSnap = await getDocs(batchQuery);
+            const batchDeals = docsSnap.docs.map(d => {
+              const data = d.data();
+              const rawType = data.type || 'other';
+              const type = (rawType.startsWith('gov_') || rawType.startsWith('enforcement_') || rawType === 'enforcement' || ['police', 'dea', 'obn', 'mayor', 'governor', 'senator', 'legislative', 'political', 'attorney_general'].includes(rawType)) ? 'agency' : rawType;
+              return { id: d.id, ...data, type, rawType } as any;
+            });
+            fetchedDeals.push(...batchDeals);
+            console.log(`[MarketingHub] ✅ Batch ${batchNum}: fetched ${batchDeals.length} contacts (total: ${fetchedDeals.length})`);
+            if (docsSnap.docs.length < BATCH_SIZE) break; // last batch
+            lastDoc = docsSnap.docs[docsSnap.docs.length - 1];
+          }
           setIsOfflineMode(false);
-          console.log(`[MarketingHub] ✅ Fetched ${fetchedDeals.length} contacts from Firestore`);
+          console.log(`[MarketingHub] ✅ Total fetched ${fetchedDeals.length} contacts from Firestore`);
         } catch (err: any) {
           console.warn('[MarketingHub] First Firestore fetch failed, retrying in 2s:', err?.message || err);
           // Retry once after a short delay (handles transient quota resets)
           try {
             await new Promise(r => setTimeout(r, 2000));
-            const retrySnap = await getDocs(query(q, limit(fetchLimit)));
+            const retrySnap = await getDocs(query(q, limit(BATCH_SIZE)));
             fetchedDeals = retrySnap.docs.map(d => {
               const data = d.data();
               const rawType = data.type || 'other';
