@@ -385,6 +385,9 @@ export const MarketingHub = () => {
       try {
         // 1. Simple fetch — all filtering done client-side to avoid Firestore composite index requirements
         let q = query(collection(db, 'crm_deals'));
+        const activeStates = selectedStates.filter(s => s !== 'All');
+        const activeTypes = selectedTypes.filter(t => t !== 'All');
+        const activeAgencySubtypes = selectedAgencySubtypes.filter(a => a !== 'All');
 
         // 2. Fetch total count from server for stats (cheap, fast)
         let matchedCount = 150;
