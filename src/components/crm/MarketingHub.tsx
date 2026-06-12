@@ -383,65 +383,8 @@ export const MarketingHub = () => {
     const loadFilteredAudience = async () => {
       setLoadingAudience(true);
       try {
+        // 1. Simple fetch — all filtering done client-side to avoid Firestore composite index requirements
         let q = query(collection(db, 'crm_deals'));
-        const activeStates = selectedStates.filter(s => s !== 'All');
-        const activeTypes = selectedTypes.filter(t => t !== 'All');
-        const activeAgencySubtypes = selectedAgencySubtypes.filter(a => a !== 'All');
-
-        // 1. Build the server query (apply server range filters for renewals to prevent truncation issues)
-        let isMonthFiltered = false;
-        let startYear = 2026, startMonth = 3;
-        
-        if (patientRenewalMode === 'month' && businessRenewalMode === 'off') {
-          isMonthFiltered = true;
-          startYear = patientRenewalMonth.year;
-          startMonth = patientRenewalMonth.month;
-        } else if (businessRenewalMode === 'month' && patientRenewalMode === 'off') {
-          isMonthFiltered = true;
-          startYear = businessRenewalMonth.year;
-          startMonth = businessRenewalMonth.month;
-        } else if (patientRenewalMode === 'month' && businessRenewalMode === 'month' && patientRenewalMonth.year === businessRenewalMonth.year && patientRenewalMonth.month === businessRenewalMonth.month) {
-          isMonthFiltered = true;
-          startYear = patientRenewalMonth.year;
-          startMonth = patientRenewalMonth.month;
-        }
-
-        if (isMonthFiltered) {
-          const startDateStr = `${startYear}-${String(startMonth + 1).padStart(2, '0')}-01`;
-          const lastDay = new Date(startYear, startMonth + 1, 0).getDate();
-          const endDateStr = `${startYear}-${String(startMonth + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
-          
-          q = query(q, where('licenseExpiration', '>=', startDateStr), where('licenseExpiration', '<=', endDateStr));
-        } else if (patientRenewalMode === 'daily' || businessRenewalMode === 'daily') {
-          const today = new Date();
-          const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-          
-          q = query(q, where('licenseExpiration', '==', todayStr));
-        } else {
-          // Default: Build query with state/type/tier on server (apply at most one 'in' operator to avoid Firestore errors)
-          if (activeStates.length > 0) {
-            const statesList = getStatesSearchList(activeStates);
-            q = query(q, where('jurisdiction', 'in', statesList.slice(0, 30)));
-            if (activeTypes.length === 1 && activeTypes[0] !== 'agency' && activeTypes[0] !== 'advocate') {
-              q = query(q, where('type', '==', activeTypes[0]));
-            }
-          } else if (activeTypes.length > 0) {
-            const expandedTypes = [...activeTypes];
-            if (activeTypes.includes('agency')) {
-              expandedTypes.push(
-                'gov_state', 'gov_local', 'gov_federal', 
-                'enforcement', 'enforcement_state', 'enforcement_local', 'enforcement_federal',
-                'police', 'dea', 'obn', 'mayor', 'governor', 'senator', 'legislative', 'political', 'attorney_general'
-              );
-            }
-            q = query(q, where('type', 'in', Array.from(new Set(expandedTypes)).slice(0, 30)));
-          }
-
-          // Apply tier filter on server if possible
-          if (selectedTier === 'top_grossing') {
-            q = query(q, where('tier', '==', 'top_grossing'));
-          }
-        }
 
         // 2. Fetch total count from server for stats (cheap, fast)
         let matchedCount = 150;
