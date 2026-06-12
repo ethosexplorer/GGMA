@@ -352,6 +352,43 @@ export default async function handler(req, res) {
             results.failed++;
             results.errors.push({ recipient, error: err.message });
             console.error(`[SMTP] Failed after retries: ${recipient.email} — ${err.message}`);
+            
+            // Real-time bounce quarantine: flag permanent SMTP failures (not rate limits)
+            const errMsg = (err.message || '').toLowerCase();
+            const errCode = err.responseCode || err.code || 0;
+            const isPermanentBounce = 
+              [550, 551, 552, 553, 554].includes(errCode) ||
+              errMsg.includes('not exist') || errMsg.includes('invalid') ||
+              errMsg.includes('unknown user') || errMsg.includes('no such user') ||
+              errMsg.includes('mailbox not found') || errMsg.includes('rejected') ||
+              errMsg.includes('undeliverable') || errMsg.includes('does not exist');
+            const isRateLimit = errMsg.includes('rate') || errMsg.includes('quota') || 
+              errMsg.includes('limit') || errMsg.includes('too many') || errCode === 429;
+            
+            if (isPermanentBounce && !isRateLimit && recipient.email) {
+              try {
+                const adminDb = getAdminDb();
+                const emailKey = recipient.email.toLowerCase().replace(/[^a-z0-9@._-]/g, '_');
+                await adminDb.collection('suppressed_emails').doc(emailKey).set({
+                  email: recipient.email.toLowerCase(),
+                  reason: 'permanent_bounce',
+                  smtpError: err.message,
+                  smtpCode: errCode,
+                  detectedAt: new Date().toISOString(),
+                  source: 'realtime_send_quarantine'
+                }, { merge: true });
+                // Also flag in crm_deals
+                const snap = await adminDb.collection('crm_deals').where('email', '==', recipient.email).limit(1).get();
+                for (const d of snap.docs) {
+                  await d.ref.update({ emailFabricated: true, email_original: recipient.email, email: '', emailFlagReason: `SMTP bounce: ${err.message}` });
+                }
+                console.log(`[Bounce] 🚫 Auto-quarantined: ${recipient.email} (${errCode})`);
+                if (!results.quarantined) results.quarantined = 0;
+                results.quarantined++;
+              } catch (qErr) {
+                console.error(`[Bounce] Failed to quarantine ${recipient.email}:`, qErr.message);
+              }
+            }
           }
 
           // Throttle: wait between sends (skip delay on last email)
