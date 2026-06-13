@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, GripVertical, Phone, Mail, Clock, ShieldCheck, Building2, User, Landmark, Building, Briefcase, Scale, HeartHandshake, Truck, Search, X, Upload, Store, Sprout, Factory } from 'lucide-react';
+import { Plus, GripVertical, Phone, Mail, Clock, ShieldCheck, Building2, User, Landmark, Building, Briefcase, Scale, HeartHandshake, Truck, Search, X, Upload, Store, Sprout, Factory, Copy } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { db } from '../../firebase';
+import { db, auth } from '../../firebase';
 import { collection, addDoc, onSnapshot, query, serverTimestamp, doc, updateDoc, deleteDoc, where, limit } from 'firebase/firestore';
 
 const STAGES = [
@@ -210,14 +210,7 @@ export const PipelineCRM = ({
         name: deal.name || '', contactName: deal.contactName || '', type: deal.type || 'other',
         stage: deal.stage || 'lead', value: (deal.value ?? 0).toString(), assignedTo: deal.assignedTo || 'unassigned',
         phone: deal.phone || '', email: deal.email || '', emailVerified: deal.emailVerified || false, licenseNumber: deal.licenseNumber || '', jurisdiction: deal.jurisdiction || '', notes: deal.notes || '',
-        ggpLoginEmail: (deal as any).ggpLoginEmail || deal.email || '',
-        ggpLoginPassword: (deal as any).ggpLoginPassword || ((deal.jurisdiction || 'Oklahoma').replace(/^[a-z]/, c => c.toUpperCase()) + '1'),
-        statePortalLogin: (deal as any).statePortalLogin || '',
-        statePortalPassword: (deal as any).statePortalPassword || ((deal.jurisdiction || 'Oklahoma').replace(/^[a-z]/, c => c.toUpperCase()) + '1'),
       });
-      setShowGgpPassword(false);
-      setShowStatePassword(false);
-      setResetSent(false);
     } else {
       setEditingDeal(null);
       setFormData({
@@ -225,12 +218,7 @@ export const PipelineCRM = ({
         value: '', assignedTo: 'unassigned', phone: '', email: '',
         emailVerified: false,
         licenseNumber: '', jurisdiction: '', notes: '',
-        ggpLoginEmail: '', ggpLoginPassword: '',
-        statePortalLogin: '', statePortalPassword: '',
       });
-      setShowGgpPassword(false);
-      setShowStatePassword(false);
-      setResetSent(false);
     }
     setIsModalOpen(true);
   };
