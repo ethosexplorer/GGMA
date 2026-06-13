@@ -111,6 +111,7 @@ export const PipelineCRM = ({
   const [showStatePassword, setShowStatePassword] = useState(false);
   const [resetSending, setResetSending] = useState(false);
   const [resetSent, setResetSent] = useState(false);
+  const [welcomeCopied, setWelcomeCopied] = useState(false);
 
   useEffect(() => {
     // UNIFIED CRM — Pull from ALL collections into one dashboard, dedup by name
@@ -962,6 +963,82 @@ export const PipelineCRM = ({
                           </button>
                         </div>
                       </div>
+                    </div>
+                  </div>
+
+                  {/* Copy Welcome Email */}
+                  <div className="mt-4 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200/60 rounded-xl p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-[10px] font-black text-emerald-700 uppercase tracking-widest flex items-center gap-1.5">&#128231; Welcome Letter</p>
+                        <p className="text-[10px] text-slate-400 font-medium mt-0.5">Copy a personalized welcome email with their login credentials</p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const name = formData.contactName || formData.name || 'Valued Client';
+                          const firstName = name.split(' ')[0];
+                          const jurisdiction = formData.jurisdiction || 'your state';
+                          const welcomeEmail = [
+                            'Subject: Welcome to Global Green Hybrid Platform — Your Account Is Ready!',
+                            '',
+                            'Dear ' + firstName + ',',
+                            '',
+                            'Welcome to Global Green Hybrid Platform (GGP-OS)! We are thrilled to have you on board. Your account has been approved and is now fully active.',
+                            '',
+                            'Below you will find your login credentials for both the GGP Platform and the ' + jurisdiction + ' State Portal. Please keep this information in a safe place.',
+                            '',
+                            '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+                            '🌐 GGP PLATFORM LOGIN',
+                            '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+                            'Website: https://globalgreenhp.com',
+                            'Email: ' + (formData.ggpLoginEmail || formData.email || '(not set)'),
+                            'Password: ' + (formData.ggpLoginPassword || '(not set)'),
+                            '',
+                            '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+                            '🏛️ STATE PORTAL LOGIN (' + jurisdiction.toUpperCase() + ')',
+                            '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+                            'Username: ' + (formData.statePortalLogin || '(pending — will be provided after state approval)'),
+                            'Password: ' + (formData.statePortalPassword || '(pending)'),
+                            '',
+                            '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+                            '',
+                            'IMPORTANT — PLEASE READ:',
+                            '',
+                            '• We strongly recommend changing your password upon first login.',
+                            '• To change your GGP password, click "Forgot Password" on the login page or contact us.',
+                            '• Your state portal credentials will be issued once your application is approved by the ' + jurisdiction + ' regulatory authority.',
+                            '• All data on our platform is HIPAA-compliant, AES-256 encrypted, and court-admissible.',
+                            '',
+                            'If you have any questions or need help logging in, please don\'t hesitate to reach out:',
+                            '',
+                            '📞 Phone: 1-888-963-4447',
+                            '📱 Text: 645-246-8277',
+                            '📧 Email: globalgreenhp@gmail.com',
+                            '',
+                            'Thank you for choosing Global Green. We are honored to support your journey.',
+                            '',
+                            'Warm regards,',
+                            '',
+                            'Shantell Robinson',
+                            'Founder & CEO',
+                            'Global Green Enterprise Inc.',
+                            'CAGE: 9KXZ2 | UEI: TY1BQ3XK3925',
+                            'SAM.gov Active | BBB A+ Rated | WOSB Certified',
+                          ].join('\n');
+                          navigator.clipboard.writeText(welcomeEmail);
+                          setWelcomeCopied(true);
+                          setTimeout(() => setWelcomeCopied(false), 3000);
+                        }}
+                        className={cn(
+                          "flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-all border shadow-sm",
+                          welcomeCopied
+                            ? "bg-emerald-600 border-emerald-600 text-white"
+                            : "bg-white border-emerald-300 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-400"
+                        )}
+                      >
+                        {welcomeCopied ? <><Check size={13} /> Copied to Clipboard!</> : <><Copy size={13} /> Copy Welcome Email</>}
+                      </button>
                     </div>
                   </div>
                 </div>
