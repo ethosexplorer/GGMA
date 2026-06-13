@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, GripVertical, Phone, Mail, Clock, ShieldCheck, Building2, User, Landmark, Building, Briefcase, Scale, HeartHandshake, Truck, Search, X, Upload, Store, Sprout, Factory, Copy, Check } from 'lucide-react';
+import { Plus, GripVertical, Phone, Mail, Clock, ShieldCheck, Building2, User, Landmark, Building, Briefcase, Scale, HeartHandshake, Truck, Search, X, Upload, Store, Sprout, Factory, Copy, Check, Key, RotateCcw, Eye, EyeOff } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { db, auth } from '../../firebase';
 import { collection, addDoc, onSnapshot, query, serverTimestamp, doc, updateDoc, deleteDoc, where, limit } from 'firebase/firestore';
+import { sendPasswordResetEmail } from 'firebase/auth';
 
 const STAGES = [
   { id: 'lead', title: 'Lead / Prospect', color: 'border-slate-300', bg: 'bg-slate-50' },
@@ -101,8 +102,15 @@ export const PipelineCRM = ({
     name: '', contactName: '', type: 'dispensary', stage: 'lead',
     value: '', assignedTo: 'unassigned', phone: '', email: '',
     emailVerified: false,
-    licenseNumber: '', jurisdiction: '', notes: ''
+    licenseNumber: '', jurisdiction: '', notes: '',
+    // Login Credentials (for Welcome Letters & phone support)
+    ggpLoginEmail: '', ggpLoginPassword: '',
+    statePortalLogin: '', statePortalPassword: '',
   });
+  const [showGgpPassword, setShowGgpPassword] = useState(false);
+  const [showStatePassword, setShowStatePassword] = useState(false);
+  const [resetSending, setResetSending] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
 
   useEffect(() => {
     // UNIFIED CRM — Pull from ALL collections into one dashboard, dedup by name
@@ -209,16 +217,28 @@ export const PipelineCRM = ({
       setFormData({
         name: deal.name || '', contactName: deal.contactName || '', type: deal.type || 'other',
         stage: deal.stage || 'lead', value: (deal.value ?? 0).toString(), assignedTo: deal.assignedTo || 'unassigned',
-        phone: deal.phone || '', email: deal.email || '', emailVerified: deal.emailVerified || false, licenseNumber: deal.licenseNumber || '', jurisdiction: deal.jurisdiction || '', notes: deal.notes || ''
+        phone: deal.phone || '', email: deal.email || '', emailVerified: deal.emailVerified || false, licenseNumber: deal.licenseNumber || '', jurisdiction: deal.jurisdiction || '', notes: deal.notes || '',
+        ggpLoginEmail: (deal as any).ggpLoginEmail || deal.email || '',
+        ggpLoginPassword: (deal as any).ggpLoginPassword || ((deal.jurisdiction || 'Oklahoma').replace(/^[a-z]/, c => c.toUpperCase()) + '1'),
+        statePortalLogin: (deal as any).statePortalLogin || '',
+        statePortalPassword: (deal as any).statePortalPassword || ((deal.jurisdiction || 'Oklahoma').replace(/^[a-z]/, c => c.toUpperCase()) + '1'),
       });
+      setShowGgpPassword(false);
+      setShowStatePassword(false);
+      setResetSent(false);
     } else {
       setEditingDeal(null);
       setFormData({
         name: '', contactName: '', type: 'dispensary', stage: 'lead',
         value: '', assignedTo: 'unassigned', phone: '', email: '',
         emailVerified: false,
-        licenseNumber: '', jurisdiction: '', notes: ''
+        licenseNumber: '', jurisdiction: '', notes: '',
+        ggpLoginEmail: '', ggpLoginPassword: '',
+        statePortalLogin: '', statePortalPassword: '',
       });
+      setShowGgpPassword(false);
+      setShowStatePassword(false);
+      setResetSent(false);
     }
     setIsModalOpen(true);
   };
@@ -238,6 +258,11 @@ export const PipelineCRM = ({
         licenseNumber: formData.licenseNumber,
         jurisdiction: formData.jurisdiction,
         notes: formData.notes,
+        // Login Credentials
+        ggpLoginEmail: formData.ggpLoginEmail,
+        ggpLoginPassword: formData.ggpLoginPassword,
+        statePortalLogin: formData.statePortalLogin,
+        statePortalPassword: formData.statePortalPassword,
         updatedAt: serverTimestamp()
       };
 
@@ -820,6 +845,125 @@ export const PipelineCRM = ({
                     className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-800 outline-none focus:border-indigo-500"
                     placeholder="e.g. Oklahoma or All States"
                   />
+                </div>
+
+                {/* ═══ LOGIN CREDENTIALS SECTION ═══ */}
+                <div className="col-span-2 border-t border-slate-200 pt-5 mt-2">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center"><Key size={14} /></div>
+                    <div>
+                      <h4 className="text-xs font-black text-slate-800 uppercase tracking-widest">Login Credentials</h4>
+                      <p className="text-[10px] text-slate-400 font-medium">For Welcome Letters & phone support password resets</p>
+                    </div>
+                  </div>
+
+                  {/* GGP Platform Login */}
+                  <div className="bg-gradient-to-r from-indigo-50 to-slate-50 border border-indigo-200/60 rounded-xl p-4 mb-3">
+                    <p className="text-[10px] font-black text-indigo-600 uppercase tracking-widest mb-3 flex items-center gap-1.5">🌐 GGP Platform Login</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[10px] font-bold text-slate-500 block mb-1">Email / Username</label>
+                        <input
+                          type="text"
+                          value={formData.ggpLoginEmail}
+                          onChange={e => setFormData({ ...formData, ggpLoginEmail: e.target.value })}
+                          className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-800 outline-none focus:border-indigo-500 bg-white"
+                          placeholder="patient@email.com"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-bold text-slate-500 block mb-1">Password</label>
+                        <div className="relative">
+                          <input
+                            type={showGgpPassword ? 'text' : 'password'}
+                            value={formData.ggpLoginPassword}
+                            onChange={e => setFormData({ ...formData, ggpLoginPassword: e.target.value })}
+                            className="w-full px-3 py-2 pr-9 border border-slate-200 rounded-lg text-sm font-medium text-slate-800 outline-none focus:border-indigo-500 bg-white font-mono"
+                            placeholder="••••••••"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowGgpPassword(!showGgpPassword)}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-600 transition-colors"
+                          >
+                            {showGgpPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    {/* Reset Password Button */}
+                    <div className="mt-3 flex items-center gap-3">
+                      <button
+                        type="button"
+                        disabled={resetSending || !formData.ggpLoginEmail}
+                        onClick={async () => {
+                          if (!formData.ggpLoginEmail) { alert('No email address available for this contact.'); return; }
+                          if (!confirm(`Send a password reset email to:\n${formData.ggpLoginEmail}?`)) return;
+                          setResetSending(true);
+                          try {
+                            await sendPasswordResetEmail(auth, formData.ggpLoginEmail);
+                            setResetSent(true);
+                            setTimeout(() => setResetSent(false), 5000);
+                          } catch (err: any) {
+                            if (err.code === 'auth/user-not-found') {
+                              alert('No GGP account found with this email. The patient may not have signed up yet.');
+                            } else {
+                              alert('Failed to send reset: ' + (err.message || err));
+                            }
+                          } finally {
+                            setResetSending(false);
+                          }
+                        }}
+                        className={cn(
+                          "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all border",
+                          resetSent
+                            ? "bg-emerald-50 border-emerald-200 text-emerald-700"
+                            : "bg-white border-indigo-200 text-indigo-700 hover:bg-indigo-50 hover:border-indigo-300",
+                          (resetSending || !formData.ggpLoginEmail) && "opacity-50 cursor-not-allowed"
+                        )}
+                      >
+                        {resetSending ? <RotateCcw size={12} className="animate-spin" /> : resetSent ? <Check size={12} /> : <RotateCcw size={12} />}
+                        {resetSending ? 'Sending...' : resetSent ? 'Reset Email Sent ✓' : 'Send Password Reset'}
+                      </button>
+                      {resetSent && <span className="text-[10px] text-emerald-600 font-medium">Check {formData.ggpLoginEmail} inbox</span>}
+                    </div>
+                  </div>
+
+                  {/* State Portal Login */}
+                  <div className="bg-gradient-to-r from-amber-50 to-slate-50 border border-amber-200/60 rounded-xl p-4">
+                    <p className="text-[10px] font-black text-amber-700 uppercase tracking-widest mb-3 flex items-center gap-1.5">🏛️ State Portal Login (OMMA / State Registry)</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[10px] font-bold text-slate-500 block mb-1">Username / Login ID</label>
+                        <input
+                          type="text"
+                          value={formData.statePortalLogin}
+                          onChange={e => setFormData({ ...formData, statePortalLogin: e.target.value })}
+                          className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-800 outline-none focus:border-amber-500 bg-white"
+                          placeholder="State portal username"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-bold text-slate-500 block mb-1">Password</label>
+                        <div className="relative">
+                          <input
+                            type={showStatePassword ? 'text' : 'password'}
+                            value={formData.statePortalPassword}
+                            onChange={e => setFormData({ ...formData, statePortalPassword: e.target.value })}
+                            className="w-full px-3 py-2 pr-9 border border-slate-200 rounded-lg text-sm font-medium text-slate-800 outline-none focus:border-amber-500 bg-white font-mono"
+                            placeholder="••••••••"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowStatePassword(!showStatePassword)}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-amber-600 transition-colors"
+                          >
+                            {showStatePassword ? <EyeOff size={14} /> : <Eye size={14} />}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="col-span-2">
