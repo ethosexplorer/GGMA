@@ -406,7 +406,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     };
 
     fetchAnalytics();
-    const analyticsInterval = setInterval(fetchAnalytics, 60000); // Scaled: 15s→60s for 100k+ user support
+    const analyticsInterval = setInterval(fetchAnalytics, 15000); // Auto-refresh every 15s for real-time matrix updates
 
     // 2. Universal Button Interceptor for "Live" Action Logs
     const handleClick = async (e: MouseEvent) => {

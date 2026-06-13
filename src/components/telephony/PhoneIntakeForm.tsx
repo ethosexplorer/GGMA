@@ -148,7 +148,7 @@ export const PhoneIntakeForm = () => {
         })
       ]});
 
-      // 3. UNIVERSAL CONTACT CAPTURE — writes to BOTH `contacts` (company directory) AND `crm_deals` (pipeline)
+      // 3. UNIVERSAL CONTACT CAPTURE — writes to `contacts`, `crm_deals`, AND Turso `patients`/`businesses` tables
       try {
         const isPatientIntake = intakeType === 'patient_card';
         await captureContact({
@@ -157,14 +157,14 @@ export const PhoneIntakeForm = () => {
           phone: data.phone,
           address: data.street ? `${data.street}, ${data.city}, ${stateAbbrev} ${data.zip}` : '',
           city: data.city,
-          state: stateAbbrev,
+          state: data.state, // Full state name (e.g. "Oklahoma") for Jurisdiction Performance Matrix grouping
           zip: data.zip,
           contactType: isPatientIntake ? 'patient' : 'business_owner',
           source: isPatientIntake ? 'phone_intake_patient' : 'phone_intake_business',
           businessName: isPatientIntake ? '' : data.businessName,
           licenseType: isPatientIntake ? (data.appType || 'Patient Card') : (data.businessType || 'Business License'),
           ein: data.einNumber || '',
-          jurisdiction: data.state,
+          jurisdiction: data.state, // Full state name for consistency
           tags: ['phone-intake', intakeType || '', stateAbbrev.toLowerCase()],
           notes: `Account: ${accountId} | App: ${appId} | ${isPatientIntake ? 'Conditions: ' + data.conditions.join(', ') : 'EIN: ' + data.einNumber} | ${callerNotes}`,
           emailOptIn: true,

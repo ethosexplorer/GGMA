@@ -187,6 +187,52 @@ export const captureContact = async (contact: UniversalContact): Promise<string 
       console.error('[CRM Deal sync error]:', crmErr);
     }
 
+    // 4. SYNC TO TURSO — Write to patients/businesses tables so Jurisdiction Performance Matrix auto-updates
+    try {
+      const { turso } = await import('./turso');
+      const isPatientType = contact.contactType === 'patient' || contact.source === 'patient_signup' || contact.source === 'phone_intake_patient';
+      const isBusinessType = contact.contactType === 'business_owner' || contact.contactType === 'dispensary' || contact.contactType === 'grower' || contact.contactType === 'processor' || contact.source === 'business_signup' || contact.source === 'phone_intake_business' || contact.source === 'business_registration';
+
+      if (isPatientType && contact.name && contact.email) {
+        // Insert into patients table (IGNORE on conflict to avoid duplicates)
+        await turso.execute({
+          sql: `INSERT INTO patients (name, email, phone, medical_condition, state, status, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(email) DO UPDATE SET
+                  name = excluded.name,
+                  phone = COALESCE(excluded.phone, patients.phone),
+                  state = COALESCE(excluded.state, patients.state),
+                  status = excluded.status`,
+          args: [
+            contact.name,
+            (contact.email || '').trim().toLowerCase(),
+            contact.phone || null,
+            contact.notes || null,
+            contact.state || contact.jurisdiction || null,
+            'pending',
+            now
+          ]
+        });
+      } else if (isBusinessType && (contact.businessName || contact.name) && contact.email) {
+        // Insert into businesses table
+        await turso.execute({
+          sql: `INSERT INTO businesses (business_name, license_type, state, status, created_at)
+                SELECT ?, ?, ?, ?, ?
+                WHERE NOT EXISTS (SELECT 1 FROM businesses WHERE business_name = ?)`,
+          args: [
+            contact.businessName || contact.name,
+            contact.licenseType || 'General',
+            contact.state || contact.jurisdiction || null,
+            'pending',
+            now,
+            contact.businessName || contact.name
+          ]
+        });
+      }
+    } catch (tursoErr) {
+      console.error('[Turso sync error (non-blocking)]:', tursoErr);
+    }
+
     return contactDoc.id;
   } catch (err) {
     console.error('[Contact Capture Error]:', err);

@@ -8,11 +8,17 @@ export const initDatabase = async () => {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL,
+        phone TEXT,
         medical_condition TEXT,
+        state TEXT,
         status TEXT DEFAULT 'pending',
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    // Ensure state/phone columns exist on older databases
+    try { await turso.execute('ALTER TABLE patients ADD COLUMN state TEXT'); } catch (e) { /* already exists */ }
+    try { await turso.execute('ALTER TABLE patients ADD COLUMN phone TEXT'); } catch (e) { /* already exists */ }
 
     // 2. Business Dashboard Table
     await turso.execute(`
@@ -20,11 +26,15 @@ export const initDatabase = async () => {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         business_name TEXT NOT NULL,
         license_type TEXT NOT NULL,
+        state TEXT,
         status TEXT DEFAULT 'pending',
         compliance_score INTEGER DEFAULT 100,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    // Ensure state column exists on older databases
+    try { await turso.execute('ALTER TABLE businesses ADD COLUMN state TEXT'); } catch (e) { /* already exists */ }
 
     // 3. Provider Dashboard Table
     await turso.execute(`

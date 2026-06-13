@@ -772,7 +772,7 @@ export default function BusinessRegistrationPage({ onNavigate, onComplete }: { o
            email: formData.email,
            phone: formData.phone || formData.ppocPhone || '',
            address: formData.physicalAddress || '',
-           state: stateAbbrev,
+           state: formData.jurisdiction, // Full state name for Jurisdiction Performance Matrix grouping
            contactType: bizType as any,
            source: 'business_registration',
            businessName: formData.entityName,
