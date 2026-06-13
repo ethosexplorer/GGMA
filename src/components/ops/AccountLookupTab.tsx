@@ -72,6 +72,7 @@ export const AccountLookupTab = () => {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const [searchErrors, setSearchErrors] = useState<string[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editData, setEditData] = useState<Record<string, any>>({});
@@ -154,6 +155,7 @@ export const AccountLookupTab = () => {
     setEditingId(null);
     setPaymentFormFor(null);
     setPaymentPosted(false);
+    const errors: string[] = [];
 
     const allResults: SearchResult[] = [];
     const qLower = q.toLowerCase();
@@ -227,6 +229,7 @@ export const AccountLookupTab = () => {
       }
     } catch (err) {
       console.error('Contacts search error:', err);
+      errors.push('Firestore Contacts (may be quota-limited)');
     }
 
     // 2. Search Firestore `users` collection
@@ -262,6 +265,7 @@ export const AccountLookupTab = () => {
       });
     } catch (err) {
       console.error('Users search error:', err);
+      errors.push('Platform Users');
     }
 
     // 3. Search Firestore `crm_deals` collection
@@ -296,6 +300,7 @@ export const AccountLookupTab = () => {
       });
     } catch (err) {
       console.error('CRM deals search error:', err);
+      errors.push('CRM Deals');
     }
 
     // 4. Search Turso `patients` table
@@ -323,6 +328,7 @@ export const AccountLookupTab = () => {
       });
     } catch (err) {
       console.error('Turso patients search error:', err);
+      errors.push('Turso Patients');
     }
 
     // 5. Search Turso `audit_logs` for phone intake records
@@ -361,9 +367,11 @@ export const AccountLookupTab = () => {
       });
     } catch (err) {
       console.error('Turso audit search error:', err);
+      errors.push('Phone Intake Logs');
     }
 
     setResults(deduplicateResults(allResults));
+    setSearchErrors(errors);
     setIsSearching(false);
   }, [searchQuery]);
 
@@ -575,12 +583,24 @@ export const AccountLookupTab = () => {
         </div>
       )}
 
+      {!isSearching && hasSearched && searchErrors.length > 0 && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+          <AlertTriangle size={18} className="text-amber-500 shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-bold text-amber-800">Some data sources failed to respond</p>
+            <p className="text-xs text-amber-600 mt-1">The following could not be searched (Firestore quota or network issue): <strong>{searchErrors.join(', ')}</strong></p>
+            <p className="text-xs text-amber-600 mt-0.5">Results may be incomplete. Try again in a few seconds.</p>
+          </div>
+        </div>
+      )}
+
       {!isSearching && hasSearched && results.length === 0 && (
         <div className="flex items-center justify-center py-16">
           <div className="text-center space-y-3">
             <AlertTriangle size={32} className="text-amber-400 mx-auto" />
             <p className="text-lg font-bold text-slate-700">No results found</p>
             <p className="text-sm text-slate-500">Try a different name, email, phone, or Account ID.</p>
+            {searchErrors.length > 0 && <p className="text-sm text-red-500 font-bold">⚠️ {searchErrors.length} data source(s) failed — results may be missing. Try again.</p>}
           </div>
         </div>
       )}

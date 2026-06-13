@@ -346,6 +346,62 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           }))
         });
 
+        // ── SYNC Firebase contacts/users → Turso patients so Jurisdiction Matrix is always up-to-date ──
+        try {
+          const { getDocs: gd, collection: fc } = await import('firebase/firestore');
+          // Pull patient-type contacts from Firebase
+          const contactsSnap = await gd(fc(db, 'contacts'));
+          const usersSnap = await gd(fc(db, 'users'));
+          const allFirebasePatients: { name: string; email: string; phone: string; state: string }[] = [];
+
+          contactsSnap.docs.forEach(d => {
+            const data = d.data();
+            const ct = (data.contactType || '').toLowerCase();
+            if (ct === 'patient' || data.source?.includes('patient') || data.tags?.includes('patient')) {
+              allFirebasePatients.push({
+                name: data.name || '',
+                email: (data.email || '').toLowerCase().trim(),
+                phone: data.phone || '',
+                state: data.state || data.jurisdiction || '',
+              });
+            }
+          });
+
+          usersSnap.docs.forEach(d => {
+            const data = d.data();
+            const role = (data.role || '').toLowerCase();
+            if (role === 'patient' || role === 'user' || role === '') {
+              const email = (data.email || '').toLowerCase().trim();
+              if (email && !allFirebasePatients.some(p => p.email === email)) {
+                allFirebasePatients.push({
+                  name: data.fullName || data.displayName || data.name || data.email?.split('@')[0] || '',
+                  email,
+                  phone: data.phone || data.textPhone || '',
+                  state: data.state || data.jurisdiction || '',
+                });
+              }
+            }
+          });
+
+          // Upsert all Firebase patients into Turso
+          for (const p of allFirebasePatients) {
+            if (!p.email || !p.name) continue;
+            try {
+              await turso.execute({
+                sql: `INSERT INTO patients (name, email, phone, state, status, created_at)
+                      VALUES (?, ?, ?, ?, ?, ?)
+                      ON CONFLICT(email) DO UPDATE SET
+                        name = COALESCE(NULLIF(excluded.name, ''), patients.name),
+                        phone = COALESCE(NULLIF(excluded.phone, ''), patients.phone),
+                        state = COALESCE(NULLIF(excluded.state, ''), patients.state)`,
+                args: [p.name, p.email, p.phone || null, p.state || null, 'active', new Date().toISOString()]
+              });
+            } catch (e) { /* individual upsert may fail on duplicates, skip */ }
+          }
+        } catch (syncErr) {
+          console.warn('[Matrix Sync] Firebase→Turso patient sync failed (non-blocking):', syncErr);
+        }
+
         const jPatients = await turso.execute('SELECT state, COUNT(*) as c FROM patients GROUP BY state');
         const jBiz = await turso.execute('SELECT state, COUNT(*) as c FROM businesses GROUP BY state');
 
