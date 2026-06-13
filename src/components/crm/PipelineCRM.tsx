@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, GripVertical, Phone, Mail, Clock, ShieldCheck, Building2, User, Landmark, Building, Briefcase, Scale, HeartHandshake, Truck, Search, X, Upload, Store, Sprout, Factory, Copy, Check, Key, RotateCcw, Eye, EyeOff } from 'lucide-react';
+import { Plus, GripVertical, Phone, Mail, Clock, ShieldCheck, Building2, User, Landmark, Building, Briefcase, Scale, HeartHandshake, Truck, Search, X, Upload, Store, Sprout, Factory } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { db, auth } from '../../firebase';
+import { db } from '../../firebase';
 import { collection, addDoc, onSnapshot, query, serverTimestamp, doc, updateDoc, deleteDoc, where, limit } from 'firebase/firestore';
-import { sendPasswordResetEmail } from 'firebase/auth';
 
 const STAGES = [
   { id: 'lead', title: 'Lead / Prospect', color: 'border-slate-300', bg: 'bg-slate-50' },
@@ -103,15 +102,7 @@ export const PipelineCRM = ({
     value: '', assignedTo: 'unassigned', phone: '', email: '',
     emailVerified: false,
     licenseNumber: '', jurisdiction: '', notes: '',
-    // Login Credentials (for Welcome Letters & phone support)
-    ggpLoginEmail: '', ggpLoginPassword: '',
-    statePortalLogin: '', statePortalPassword: '',
   });
-  const [showGgpPassword, setShowGgpPassword] = useState(false);
-  const [showStatePassword, setShowStatePassword] = useState(false);
-  const [resetSending, setResetSending] = useState(false);
-  const [resetSent, setResetSent] = useState(false);
-  const [welcomeCopied, setWelcomeCopied] = useState(false);
 
   useEffect(() => {
     // UNIFIED CRM — Pull from ALL collections into one dashboard, dedup by name
@@ -848,200 +839,7 @@ export const PipelineCRM = ({
                   />
                 </div>
 
-                {/* ═══ LOGIN CREDENTIALS SECTION ═══ */}
-                <div className="col-span-2 border-t border-slate-200 pt-5 mt-2">
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center"><Key size={14} /></div>
-                    <div>
-                      <h4 className="text-xs font-black text-slate-800 uppercase tracking-widest">Login Credentials</h4>
-                      <p className="text-[10px] text-slate-400 font-medium">For Welcome Letters & phone support password resets</p>
-                    </div>
-                  </div>
 
-                  {/* GGP Platform Login */}
-                  <div className="bg-gradient-to-r from-indigo-50 to-slate-50 border border-indigo-200/60 rounded-xl p-4 mb-3">
-                    <p className="text-[10px] font-black text-indigo-600 uppercase tracking-widest mb-3 flex items-center gap-1.5">🌐 GGP Platform Login</p>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className="text-[10px] font-bold text-slate-500 block mb-1">Email / Username</label>
-                        <input
-                          type="text"
-                          value={formData.ggpLoginEmail}
-                          onChange={e => setFormData({ ...formData, ggpLoginEmail: e.target.value })}
-                          className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-800 outline-none focus:border-indigo-500 bg-white"
-                          placeholder="patient@email.com"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-[10px] font-bold text-slate-500 block mb-1">Password</label>
-                        <div className="relative">
-                          <input
-                            type={showGgpPassword ? 'text' : 'password'}
-                            value={formData.ggpLoginPassword}
-                            onChange={e => setFormData({ ...formData, ggpLoginPassword: e.target.value })}
-                            className="w-full px-3 py-2 pr-9 border border-slate-200 rounded-lg text-sm font-medium text-slate-800 outline-none focus:border-indigo-500 bg-white font-mono"
-                            placeholder="••••••••"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setShowGgpPassword(!showGgpPassword)}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-indigo-600 transition-colors"
-                          >
-                            {showGgpPassword ? <EyeOff size={14} /> : <Eye size={14} />}
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                    {/* Reset Password Button */}
-                    <div className="mt-3 flex items-center gap-3">
-                      <button
-                        type="button"
-                        disabled={resetSending || !formData.ggpLoginEmail}
-                        onClick={async () => {
-                          if (!formData.ggpLoginEmail) { alert('No email address available for this contact.'); return; }
-                          if (!confirm(`Send a password reset email to:\n${formData.ggpLoginEmail}?`)) return;
-                          setResetSending(true);
-                          try {
-                            await sendPasswordResetEmail(auth, formData.ggpLoginEmail);
-                            setResetSent(true);
-                            setTimeout(() => setResetSent(false), 5000);
-                          } catch (err: any) {
-                            if (err.code === 'auth/user-not-found') {
-                              alert('No GGP account found with this email. The patient may not have signed up yet.');
-                            } else {
-                              alert('Failed to send reset: ' + (err.message || err));
-                            }
-                          } finally {
-                            setResetSending(false);
-                          }
-                        }}
-                        className={cn(
-                          "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all border",
-                          resetSent
-                            ? "bg-emerald-50 border-emerald-200 text-emerald-700"
-                            : "bg-white border-indigo-200 text-indigo-700 hover:bg-indigo-50 hover:border-indigo-300",
-                          (resetSending || !formData.ggpLoginEmail) && "opacity-50 cursor-not-allowed"
-                        )}
-                      >
-                        {resetSending ? <RotateCcw size={12} className="animate-spin" /> : resetSent ? <Check size={12} /> : <RotateCcw size={12} />}
-                        {resetSending ? 'Sending...' : resetSent ? 'Reset Email Sent ✓' : 'Send Password Reset'}
-                      </button>
-                      {resetSent && <span className="text-[10px] text-emerald-600 font-medium">Check {formData.ggpLoginEmail} inbox</span>}
-                    </div>
-                  </div>
-
-                  {/* State Portal Login */}
-                  <div className="bg-gradient-to-r from-amber-50 to-slate-50 border border-amber-200/60 rounded-xl p-4">
-                    <p className="text-[10px] font-black text-amber-700 uppercase tracking-widest mb-3 flex items-center gap-1.5">🏛️ State Portal Login (OMMA / State Registry)</p>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className="text-[10px] font-bold text-slate-500 block mb-1">Username / Login ID</label>
-                        <input
-                          type="text"
-                          value={formData.statePortalLogin}
-                          onChange={e => setFormData({ ...formData, statePortalLogin: e.target.value })}
-                          className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-800 outline-none focus:border-amber-500 bg-white"
-                          placeholder="State portal username"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-[10px] font-bold text-slate-500 block mb-1">Password</label>
-                        <div className="relative">
-                          <input
-                            type={showStatePassword ? 'text' : 'password'}
-                            value={formData.statePortalPassword}
-                            onChange={e => setFormData({ ...formData, statePortalPassword: e.target.value })}
-                            className="w-full px-3 py-2 pr-9 border border-slate-200 rounded-lg text-sm font-medium text-slate-800 outline-none focus:border-amber-500 bg-white font-mono"
-                            placeholder="••••••••"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setShowStatePassword(!showStatePassword)}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-amber-600 transition-colors"
-                          >
-                            {showStatePassword ? <EyeOff size={14} /> : <Eye size={14} />}
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Copy Welcome Email */}
-                  <div className="mt-4 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200/60 rounded-xl p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-[10px] font-black text-emerald-700 uppercase tracking-widest flex items-center gap-1.5">&#128231; Welcome Letter</p>
-                        <p className="text-[10px] text-slate-400 font-medium mt-0.5">Copy a personalized welcome email with their login credentials</p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const name = formData.contactName || formData.name || 'Valued Client';
-                          const firstName = name.split(' ')[0];
-                          const jurisdiction = formData.jurisdiction || 'your state';
-                          const welcomeEmail = [
-                            'Subject: Welcome to Global Green Hybrid Platform — Your Account Is Ready!',
-                            '',
-                            'Dear ' + firstName + ',',
-                            '',
-                            'Welcome to Global Green Hybrid Platform (GGP-OS)! We are thrilled to have you on board. Your account has been approved and is now fully active.',
-                            '',
-                            'Below you will find your login credentials for both the GGP Platform and the ' + jurisdiction + ' State Portal. Please keep this information in a safe place.',
-                            '',
-                            '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
-                            '🌐 GGP PLATFORM LOGIN',
-                            '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
-                            'Website: https://globalgreenhp.com',
-                            'Email: ' + (formData.ggpLoginEmail || formData.email || '(not set)'),
-                            'Password: ' + (formData.ggpLoginPassword || '(not set)'),
-                            '',
-                            '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
-                            '🏛️ STATE PORTAL LOGIN (' + jurisdiction.toUpperCase() + ')',
-                            '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
-                            'Username: ' + (formData.statePortalLogin || '(pending — will be provided after state approval)'),
-                            'Password: ' + (formData.statePortalPassword || '(pending)'),
-                            '',
-                            '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
-                            '',
-                            'IMPORTANT — PLEASE READ:',
-                            '',
-                            '• We strongly recommend changing your password upon first login.',
-                            '• To change your GGP password, click "Forgot Password" on the login page or contact us.',
-                            '• Your state portal credentials will be issued once your application is approved by the ' + jurisdiction + ' regulatory authority.',
-                            '• All data on our platform is HIPAA-compliant, AES-256 encrypted, and court-admissible.',
-                            '',
-                            'If you have any questions or need help logging in, please don\'t hesitate to reach out:',
-                            '',
-                            '📞 Phone: 1-888-963-4447',
-                            '📱 Text: 645-246-8277',
-                            '📧 Email: globalgreenhp@gmail.com',
-                            '',
-                            'Thank you for choosing Global Green. We are honored to support your journey.',
-                            '',
-                            'Warm regards,',
-                            '',
-                            'Shantell Robinson',
-                            'Founder & CEO',
-                            'Global Green Enterprise Inc.',
-                            'CAGE: 9KXZ2 | UEI: TY1BQ3XK3925',
-                            'SAM.gov Active | BBB A+ Rated | WOSB Certified',
-                          ].join('\n');
-                          navigator.clipboard.writeText(welcomeEmail);
-                          setWelcomeCopied(true);
-                          setTimeout(() => setWelcomeCopied(false), 3000);
-                        }}
-                        className={cn(
-                          "flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-all border shadow-sm",
-                          welcomeCopied
-                            ? "bg-emerald-600 border-emerald-600 text-white"
-                            : "bg-white border-emerald-300 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-400"
-                        )}
-                      >
-                        {welcomeCopied ? <><Check size={13} /> Copied to Clipboard!</> : <><Copy size={13} /> Copy Welcome Email</>}
-                      </button>
-                    </div>
-                  </div>
-                </div>
 
                 <div className="col-span-2">
                   <label className="text-xs font-black text-slate-500 uppercase tracking-widest block mb-2">Internal Notes</label>
