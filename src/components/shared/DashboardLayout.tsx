@@ -10,6 +10,7 @@ import {
   Leaf, ShoppingCart, PackageSearch, ClipboardList
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
+
 export const DashboardLayout = ({ children, role, onLogout, userProfile, onOpenConcierge }: { children: React.ReactNode, role: string, onLogout: () => void, userProfile: any, onOpenConcierge?: () => void }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [activeSection, setActiveSection] = useState('Overview');
@@ -87,7 +88,7 @@ export const DashboardLayout = ({ children, role, onLogout, userProfile, onOpenC
   const currentTheme = roleColors[normalizedRole as keyof typeof roleColors] || roleColors.patient;
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="h-screen bg-slate-50 flex overflow-hidden">
       {/* Sidebar */}
       <aside className={cn(
         "bg-white border-r border-slate-200 transition-all duration-300 flex flex-col",
@@ -141,8 +142,8 @@ export const DashboardLayout = ({ children, role, onLogout, userProfile, onOpenC
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8">
+      <div className="flex-1 flex flex-col min-h-0">
+        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
           <div className="flex items-center gap-4">
             <h2 className="text-lg font-semibold text-slate-800 capitalize">
               {activeSection !== 'Overview' ? activeSection : `${role} Dashboard`}
@@ -198,17 +199,17 @@ export const DashboardLayout = ({ children, role, onLogout, userProfile, onOpenC
             <div className="flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-800 rounded-full border border-emerald-200 shadow-sm mr-2"><span className="font-bold text-xs uppercase tracking-wider">Care Wallet:</span><span className="font-black text-sm">0 Tokens</span><button onClick={() => { import('../../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="ml-2 px-2 py-0.5 bg-[#1a4731] text-white rounded text-xs font-bold hover:bg-[#153a28] transition-colors">Buy</button></div>
             <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
               <div className="text-right hidden sm:block">
-                <p className="text-sm font-medium text-slate-900">Jane Doe</p>
+                <p className="text-sm font-medium text-slate-900">{userProfile?.displayName || userProfile?.email?.split('@')[0] || 'User'}</p>
                 <p className="text-xs text-slate-500 capitalize">{role}</p>
               </div>
-              <div className="w-9 h-9 rounded-full bg-slate-200 border border-slate-300 overflow-hidden">
-                <img src="https://picsum.photos/seed/jane/100/100" alt="Profile" className="w-full h-full object-cover" />
+              <div className="w-9 h-9 rounded-full bg-emerald-600 border border-emerald-700 overflow-hidden flex items-center justify-center">
+                <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(userProfile?.displayName || 'User')}&background=1a4731&color=fff&bold=true`} alt="Profile" className="w-full h-full object-cover" />
               </div>
             </div>
           </div>
         </header>
 
-        <main className="flex-1 p-0 overflow-auto">
+        <main className="flex-1 overflow-y-auto">
           <div className="p-8">{children}</div>
         </main>
       </div>
