@@ -63,6 +63,49 @@ const getFullStateName = (s: string): string => {
   return s.replace(/^[a-z]/, c => c.toUpperCase());
 };
 
+// State medical marijuana patient portal URLs
+const STATE_PORTALS: Record<string, string> = {
+  'Oklahoma': 'https://oklahoma.gov/omma/omma-medportal.html',
+  'California': 'https://mmic.cannabis.ca.gov/',
+  'Colorado': 'https://www.colorado.gov/pacific/cdphe/medicalmarijuana',
+  'Florida': 'https://knowthefactsmmj.com/patients/',
+  'Illinois': 'https://medicalcannabispatients.illinois.gov/',
+  'Michigan': 'https://mrtma.michigan.gov/',
+  'Missouri': 'https://health.mo.gov/safety/cannabis/',
+  'Montana': 'https://mtrevenue.gov/cannabis/',
+  'Nevada': 'https://ccb.nv.gov/',
+  'New Jersey': 'https://njmmp.nj.gov/',
+  'New Mexico': 'https://nmpcs.rld.nm.gov/',
+  'New York': 'https://cannabis.ny.gov/',
+  'Ohio': 'https://www.medicalmarijuana.ohio.gov/',
+  'Oregon': 'https://www.oregon.gov/oha/PH/DISEASESCONDITIONS/CHRONICDISEASE/MEDICALMARIJUANAPROGRAM/',
+  'Pennsylvania': 'https://padohmmp.custhelp.com/',
+  'Arizona': 'https://azdhs.gov/licensing/medical-marijuana/',
+  'Arkansas': 'https://www.healthy.arkansas.gov/programs-services/topics/medical-marijuana-patient-information',
+  'Connecticut': 'https://portal.ct.gov/DCP/Medical-Marijuana-Program/',
+  'Maryland': 'https://mmcc.maryland.gov/',
+  'Massachusetts': 'https://masscannabiscontrol.com/',
+  'Minnesota': 'https://www.health.state.mn.us/people/cannabis/',
+  'Mississippi': 'https://msdh.ms.gov/msdhsite/_static/30,0,399,976.html',
+  'Utah': 'https://medicalcannabis.utah.gov/',
+  'Virginia': 'https://www.cannabis.virginia.gov/',
+  'West Virginia': 'https://dhhr.wv.gov/bph/Pages/Medical-Cannabis.aspx',
+  'Louisiana': 'https://ldh.la.gov/page/medical-marijuana',
+  'Hawaii': 'https://health.hawaii.gov/medicalcannabis/',
+  'Delaware': 'https://dhss.delaware.gov/dhss/dph/hsp/medmarhome.html',
+  'Maine': 'https://www.maine.gov/dafs/omp/',
+  'Rhode Island': 'https://health.ri.gov/programs/medicalmarijuana/',
+  'Vermont': 'https://medicalmarijuana.vermont.gov/',
+  'Washington': 'https://lcb.wa.gov/mjlicense/medical-marijuana',
+  'Alaska': 'https://www.commerce.alaska.gov/web/amco/',
+  'North Dakota': 'https://www.health.nd.gov/mm',
+  'South Dakota': 'https://doh.sd.gov/cannabis/',
+};
+const getStatePortalUrl = (state: string): string => {
+  const full = getFullStateName(state);
+  return STATE_PORTALS[full] || '';
+};
+
 // ─── Moved OUTSIDE component to prevent React remount on every keystroke ───
 const EditField = ({ label, field, value, type = 'text', editData, setEditData }: { label: string; field: string; value: string; type?: string; editData: Record<string, any>; setEditData: React.Dispatch<React.SetStateAction<Record<string, any>>> }) => (
   <div>
@@ -987,7 +1030,7 @@ export const AccountLookupTab = () => {
                                 <p className="text-[9px] font-black text-emerald-700 uppercase tracking-widest">{String.fromCodePoint(0x1F4E7)} Welcome Letter</p>
                                 <p className="text-[9px] text-slate-400 font-medium">Copy personalized welcome email with login info</p>
                               </div>
-                              <button type="button" onClick={(e) => { e.stopPropagation(); const name = r.name || 'Valued Client'; const firstName = name.split(' ')[0]; const state = r.state || 'Oklahoma'; const fullState = getFullStateName(state); const ggpEmail = editData.ggpLoginEmail !== undefined ? editData.ggpLoginEmail : (r.rawData?.ggpLoginEmail || r.email || ''); const ggpPw = editData.ggpLoginPassword !== undefined ? editData.ggpLoginPassword : (r.rawData?.ggpLoginPassword || (fullState + '1')); const stLogin = editData.statePortalLogin !== undefined ? editData.statePortalLogin : (r.rawData?.statePortalLogin || ''); const stPw = editData.statePortalPassword !== undefined ? editData.statePortalPassword : (r.rawData?.statePortalPassword || (fullState + '1')); const text = ['Subject: Welcome to Global Green Hybrid Platform \u2014 Your Account Is Ready!', '', 'Dear ' + firstName + ',', '', 'Welcome to Global Green Hybrid Platform (GGP-OS)! Your account has been approved and is now fully active.', '', '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501', '\uD83C\uDF10 GGP PLATFORM LOGIN', '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501', 'Website: https://ggp-os.com', 'Email: ' + ggpEmail, 'Password: ' + ggpPw, '', '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501', '\uD83C\uDFDB\uFE0F STATE PORTAL LOGIN (' + fullState.toUpperCase() + ')', '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501', 'Username: ' + (stLogin || '(pending)'), 'Password: ' + (stPw || '(pending)'), '', 'IMPORTANT:', '\u2022 Change your password upon first login.', '\u2022 All data is HIPAA-compliant, AES-256 encrypted.', '', '\uD83D\uDCDE 1-888-963-4447 | \uD83D\uDCF1 645-246-8277 | \uD83D\uDCE7 globalgreenhp@gmail.com', '', 'Warm regards,', 'Shantell Robinson', 'Founder & CEO, Global Green Enterprise Inc.'].join('\n'); navigator.clipboard.writeText(text); setWelcomeCopied(true); setTimeout(() => setWelcomeCopied(false), 3000); }} className={cn('flex items-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all border shadow-sm', welcomeCopied ? 'bg-emerald-600 border-emerald-600 text-white' : 'bg-white border-emerald-300 text-emerald-700 hover:bg-emerald-50')}>
+                              <button type="button" onClick={(e) => { e.stopPropagation(); const name = r.name || 'Valued Client'; const firstName = name.split(' ')[0]; const state = r.state || 'Oklahoma'; const fullState = getFullStateName(state); const portalUrl = getStatePortalUrl(state); const ggpEmail = editData.ggpLoginEmail !== undefined ? editData.ggpLoginEmail : (r.rawData?.ggpLoginEmail || r.email || ''); const ggpPw = editData.ggpLoginPassword !== undefined ? editData.ggpLoginPassword : (r.rawData?.ggpLoginPassword || (fullState + '1')); const stLogin = editData.statePortalLogin !== undefined ? editData.statePortalLogin : (r.rawData?.statePortalLogin || ''); const stPw = editData.statePortalPassword !== undefined ? editData.statePortalPassword : (r.rawData?.statePortalPassword || (fullState + '1')); const stateSection = ['\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501', '\uD83C\uDFDB\uFE0F STATE PORTAL LOGIN (' + fullState.toUpperCase() + ')', '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501']; if (portalUrl) stateSection.push('Portal: ' + portalUrl); stateSection.push('Username: ' + (stLogin || '(pending)'), 'Password: ' + (stPw || '(pending)')); const text = ['Subject: Welcome to Global Green Hybrid Platform \u2014 Your Account Is Ready!', '', 'Dear ' + firstName + ',', '', 'Welcome to Global Green Hybrid Platform (GGP-OS)! Your account has been approved and is now fully active.', '', '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501', '\uD83C\uDF10 GGP PLATFORM LOGIN', '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501', 'Website: https://ggp-os.com', 'Email: ' + ggpEmail, 'Password: ' + ggpPw, '', ...stateSection, '', 'IMPORTANT:', '\u2022 Change your password upon first login.', '\u2022 All data is HIPAA-compliant, AES-256 encrypted.', '', '\uD83D\uDCDE 1-888-963-4447 | \uD83D\uDCF1 645-246-8277 | \uD83D\uDCE7 globalgreenhp@gmail.com', '', 'Warm regards,', 'Shantell Robinson', 'Founder & CEO, Global Green Enterprise Inc.'].join('\n'); navigator.clipboard.writeText(text); setWelcomeCopied(true); setTimeout(() => setWelcomeCopied(false), 3000); }} className={cn('flex items-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all border shadow-sm', welcomeCopied ? 'bg-emerald-600 border-emerald-600 text-white' : 'bg-white border-emerald-300 text-emerald-700 hover:bg-emerald-50')}>
                                 {welcomeCopied ? <><Check size={12} /> Copied!</> : <><Copy size={12} /> Copy Welcome Email</>}
                               </button>
                             </div>
