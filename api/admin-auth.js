@@ -7,14 +7,26 @@
 
 import { initializeApp, cert, getApps } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
+import { getFirestore } from 'firebase-admin/firestore';
 
-// Firebase Admin init
-function getAdminAuth() {
-  if (!getApps().length) {
-    const sa = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT || '{}');
-    initializeApp({ credential: cert(sa) });
+// Firebase Admin init — same pattern as marketing.js
+let adminApp;
+function ensureAdmin() {
+  if (adminApp) return adminApp;
+  if (getApps().length) {
+    adminApp = getApps()[0];
+    return adminApp;
   }
-  return getAuth();
+  const raw = process.env.FIREBASE_SERVICE_ACCOUNT || '';
+  if (!raw || raw === '{}') {
+    throw new Error('FIREBASE_SERVICE_ACCOUNT env var is not set. Please add it in Vercel → Settings → Environment Variables.');
+  }
+  const sa = JSON.parse(raw);
+  if (!sa.project_id) {
+    throw new Error('FIREBASE_SERVICE_ACCOUNT is missing project_id. Please re-paste the full service account JSON in Vercel.');
+  }
+  adminApp = initializeApp({ credential: cert(sa) });
+  return adminApp;
 }
 
 export default async function handler(req, res) {
@@ -36,7 +48,8 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Password must be at least 6 characters.' });
       }
 
-      const adminAuth = getAdminAuth();
+      ensureAdmin();
+      const adminAuth = getAuth();
 
       // Look up user by email
       const userRecord = await adminAuth.getUserByEmail(email);
