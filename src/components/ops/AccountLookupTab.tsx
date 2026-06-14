@@ -1025,46 +1025,104 @@ export const AccountLookupTab = () => {
 
                           {/* Copy Welcome Email */}
                           <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200/60 rounded-xl p-3">
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <p className="text-[9px] font-black text-emerald-700 uppercase tracking-widest">{String.fromCodePoint(0x1F4E7)} Welcome Letter</p>
-                                <p className="text-[9px] text-slate-400 font-medium">Copy personalized welcome email with login info</p>
+                            <div className="flex flex-col gap-2">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <p className="text-[9px] font-black text-emerald-700 uppercase tracking-widest">{String.fromCodePoint(0x1F4E7)} Welcome Letter</p>
+                                  <p className="text-[9px] text-slate-400 font-medium">Select account type & copy personalized welcome email</p>
+                                </div>
                               </div>
-                              <button type="button" onClick={(e) => {
-                                e.stopPropagation();
-                                const name = r.name || 'Valued Client';
-                                const firstName = name.split(' ')[0];
-                                const state = r.state || 'Oklahoma';
-                                const fullState = getFullStateName(state);
-                                const portalUrl = getStatePortalUrl(state);
-                                const ggpEmail = editData.ggpLoginEmail !== undefined ? editData.ggpLoginEmail : (r.rawData?.ggpLoginEmail || r.email || '');
-                                const ggpPw = editData.ggpLoginPassword !== undefined ? editData.ggpLoginPassword : (r.rawData?.ggpLoginPassword || (fullState + '1'));
-                                const stLogin = editData.statePortalLogin !== undefined ? editData.statePortalLogin : (r.rawData?.statePortalLogin || r.email || '');
-                                const stPw = editData.statePortalPassword !== undefined ? editData.statePortalPassword : (r.rawData?.statePortalPassword || (fullState + '1'));
-                                const sep = '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501';
-                                const stateLines = [sep, '\uD83C\uDFDB\uFE0F STATE PORTAL LOGIN (' + fullState.toUpperCase() + ') (PENDING APPROVAL)', sep];
-                                if (portalUrl) stateLines.push('State Portal: ' + portalUrl);
-                                stateLines.push('Username: ' + (stLogin || '(pending)'), 'Password: ' + (stPw || '(pending)'));
-                                const emailLines = [
-                                  'Subject: Welcome to Global Green Hybrid Platform \u2014 Your Account Is Ready!', '',
-                                  'Dear ' + firstName + ',', '',
-                                  'Welcome to Global Green Hybrid Platform (GGP-OS)! Your account has been approved and is now fully active on our platform with amazing benefits you can utilize such as our Care Wallet, Telehealth Provider Network, Legal & Attorney Marketplace, Personal Assisting AI and our amazing C3 credit scoring tools.', '',
-                                  sep, '\uD83C\uDF10 GGP PLATFORM LOGIN (APPROVED)', sep,
-                                  'Website: https://ggp-os.com', 'Email: ' + ggpEmail, 'Password: ' + ggpPw, '',
-                                  ...stateLines, '',
-                                  'IMPORTANT:', '\u2022 Change your password upon first login.', '\u2022 All data is HIPAA-compliant, AES-256 encrypted.', '',
-                                  '\uD83D\uDCDE 1-888-963-4447 | \uD83D\uDCF1 645-246-8277 | \uD83D\uDCE7 asstsupport@gmail.com', '',
-                                  'Warm regards,', 'Shantell Robinson', 'Founder & CEO, Global Green Enterprise Inc.',
-                                ];
-                                navigator.clipboard.writeText(emailLines.join('\n'));
-                                setWelcomeCopied(true);
-                                setTimeout(() => setWelcomeCopied(false), 3000);
-                              }} className={cn('flex items-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all border shadow-sm', welcomeCopied ? 'bg-emerald-600 border-emerald-600 text-white' : 'bg-white border-emerald-300 text-emerald-700 hover:bg-emerald-50')}>
-                                {welcomeCopied ? <><Check size={12} /> Copied!</> : <><Copy size={12} /> Copy Welcome Email</>}
-                              </button>
+                              <div className="flex items-center gap-2">
+                                <select
+                                  value={editData._welcomeType || (() => {
+                                    const ct = (r.contactType || r.rawData?.contactType || '').toLowerCase();
+                                    const lt = (r.licenseType || r.rawData?.licenseType || '').toLowerCase();
+                                    if (ct.includes('attorney') || ct.includes('legal') || lt.includes('attorney')) return 'attorney';
+                                    if (ct.includes('provider') || ct.includes('doctor') || ct.includes('telehealth') || lt.includes('provider')) return 'provider';
+                                    if (ct.includes('federal')) return 'federal';
+                                    if (ct.includes('state') && ct.includes('gov')) return 'state_gov';
+                                    if (ct.includes('local') || ct.includes('city') || ct.includes('county')) return 'local_gov';
+                                    if (ct.includes('whitelabel') || ct.includes('white label') || ct.includes('leasing')) return 'whitelabel';
+                                    if (ct.includes('backoffice') || ct.includes('back office')) return 'backoffice';
+                                    if (ct.includes('business') || ct.includes('dispensary') || r.businessName) return 'business';
+                                    return 'patient';
+                                  })()}
+                                  onChange={(e) => setEditData(prev => ({ ...prev, _welcomeType: e.target.value }))}
+                                  className="flex-1 px-2 py-1.5 border border-emerald-200 rounded-lg text-[10px] font-bold text-slate-700 bg-white outline-none focus:border-emerald-500"
+                                >
+                                  <option value="patient">{String.fromCodePoint(0x1F9D1, 0x200D, 0x2695, 0xFE0F)} Patient / Individual</option>
+                                  <option value="business">{String.fromCodePoint(0x1F3E2)} Business / Dispensary</option>
+                                  <option value="provider">{String.fromCodePoint(0x2695, 0xFE0F)} Telehealth Provider</option>
+                                  <option value="attorney">{String.fromCodePoint(0x2696, 0xFE0F)} Attorney / Legal</option>
+                                  <option value="local_gov">{String.fromCodePoint(0x1F3D8, 0xFE0F)} Local Government</option>
+                                  <option value="state_gov">{String.fromCodePoint(0x1F3DB, 0xFE0F)} State Government</option>
+                                  <option value="federal">{String.fromCodePoint(0x1F1FA, 0x1F1F8)} Federal Government</option>
+                                  <option value="backoffice">{String.fromCodePoint(0x1F4BC)} Back Office Leasing</option>
+                                  <option value="whitelabel">{String.fromCodePoint(0x1F680)} Platform Whitelabel Leasing</option>
+                                </select>
+                                <button type="button" onClick={(e) => {
+                                  e.stopPropagation();
+                                  const wType = editData._welcomeType || 'patient';
+                                  const name = r.name || 'Valued Client';
+                                  const firstName = name.split(' ')[0];
+                                  const biz = r.businessName || name;
+                                  const state = r.state || 'Oklahoma';
+                                  const fullState = getFullStateName(state);
+                                  const portalUrl = getStatePortalUrl(state);
+                                  const ggpEmail = editData.ggpLoginEmail !== undefined ? editData.ggpLoginEmail : (r.rawData?.ggpLoginEmail || r.email || '');
+                                  const ggpPw = editData.ggpLoginPassword !== undefined ? editData.ggpLoginPassword : (r.rawData?.ggpLoginPassword || (fullState + '1'));
+                                  const stLogin = editData.statePortalLogin !== undefined ? editData.statePortalLogin : (r.rawData?.statePortalLogin || r.email || '');
+                                  const stPw = editData.statePortalPassword !== undefined ? editData.statePortalPassword : (r.rawData?.statePortalPassword || (fullState + '1'));
+                                  const sep = '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501';
+
+                                  const benefits: Record<string, string> = {
+                                    patient: 'Your account has been approved and is now fully active on our platform with amazing benefits you can utilize such as our Care Wallet, Telehealth Provider Network, Legal & Attorney Marketplace, Personal Assisting AI and our amazing C3 credit scoring tools.',
+                                    business: 'Your business account for ' + biz + ' has been approved and is now fully active on our platform. You now have access to our Business Dashboard, Compliance Tracking, Patient Management Suite, Inventory Analytics, and Revenue Optimization tools.',
+                                    provider: 'Your provider account has been approved and is now fully active on our platform. You now have access to our Telehealth Dashboard, Patient Scheduling, Secure Messaging, Digital Prescribing Tools, and HIPAA-compliant Video Consultations.',
+                                    attorney: 'Your legal professional account has been approved and is now fully active on our platform. You now have access to our Legal & Attorney Marketplace, Case Management Dashboard, Client Intake Tools, Compliance Resources, and Secure Document Portal.',
+                                    local_gov: 'Your local government account has been approved and is now fully active on our platform. You now have access to our Government Compliance Dashboard, Licensing Oversight Tools, Community Impact Analytics, and Regulatory Reporting Suite.',
+                                    state_gov: 'Your state government account has been approved and is now fully active on our platform. You now have access to our State Regulatory Dashboard, Multi-Jurisdiction Compliance Tools, Policy Analytics, and Statewide Licensing Oversight.',
+                                    federal: 'Your federal government account has been approved and is now fully active on our platform. You now have access to our Federal Compliance Dashboard, Cross-State Analytics, Regulatory Intelligence Tools, and National Policy Oversight Suite.',
+                                    backoffice: 'Your back office leasing account has been approved and is now fully active. You now have access to our Operations Dashboard, Staff Management, Financial Reporting, Compliance Tracking, and Administrative Tools Suite.',
+                                    whitelabel: 'Your platform whitelabel leasing account has been approved and is now fully active. You now have access to our full GGP-OS Platform with custom branding, your own Admin Dashboard, User Management, Revenue Analytics, and White-Glove Onboarding Support.',
+                                  };
+
+                                  const greeting = (wType === 'business') ? biz : firstName;
+                                  const includeStatePortal = (wType === 'patient' || wType === 'business');
+
+                                  const emailLines: string[] = [
+                                    'Subject: Welcome to Global Green Hybrid Platform \u2014 Your Account Is Ready!', '',
+                                    'Dear ' + greeting + ',', '',
+                                    'Welcome to Global Green Hybrid Platform (GGP-OS)! ' + (benefits[wType] || benefits.patient), '',
+                                    sep, '\uD83C\uDF10 GGP PLATFORM LOGIN (APPROVED)', sep,
+                                    'Website: https://ggp-os.com', 'Email: ' + ggpEmail, 'Password: ' + ggpPw, '',
+                                  ];
+
+                                  if (includeStatePortal) {
+                                    emailLines.push(sep, '\uD83C\uDFDB\uFE0F STATE PORTAL LOGIN (' + fullState.toUpperCase() + ') (PENDING APPROVAL)', sep);
+                                    if (portalUrl) emailLines.push('State Portal: ' + portalUrl);
+                                    emailLines.push('Username: ' + (stLogin || '(pending)'), 'Password: ' + (stPw || '(pending)'), '');
+                                  }
+
+                                  emailLines.push(
+                                    'IMPORTANT:',
+                                    '\u2022 Change your password upon first login.',
+                                    '\u2022 All data is HIPAA-compliant, AES-256 encrypted.', '',
+                                    '\uD83D\uDCDE 1-888-963-4447 | \uD83D\uDCF1 645-246-8277 | \uD83D\uDCE7 asstsupport@gmail.com', '',
+                                    'Warm regards,', 'Shantell Robinson', 'Founder & CEO, Global Green Enterprise Inc.',
+                                  );
+
+                                  navigator.clipboard.writeText(emailLines.join('\n'));
+                                  setWelcomeCopied(true);
+                                  setTimeout(() => setWelcomeCopied(false), 3000);
+                                }} className={cn('flex items-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all border shadow-sm whitespace-nowrap', welcomeCopied ? 'bg-emerald-600 border-emerald-600 text-white' : 'bg-white border-emerald-300 text-emerald-700 hover:bg-emerald-50')}>
+                                  {welcomeCopied ? <><Check size={12} /> Copied!</> : <><Copy size={12} /> Copy Welcome Email</>}
+                                </button>
+                              </div>
                             </div>
                           </div>
-                        </div>
+
+
 
                         {/* Notes */}
                         <div className="border-t border-slate-200 pt-4">
