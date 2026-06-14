@@ -1002,6 +1002,25 @@ export const AccountLookupTab = () => {
                                 {resetSending ? 'Sending...' : resetSent ? 'Reset Sent!' : 'Reset Password'}
                               </button>
                               {resetSent && <span className="text-[9px] text-emerald-600 font-medium">Check inbox</span>}
+                              <button type="button" onClick={async (e) => {
+                                e.stopPropagation();
+                                const email = editData.ggpLoginEmail !== undefined ? editData.ggpLoginEmail : (r.rawData?.ggpLoginEmail || r.email);
+                                const pw = editData.ggpLoginPassword !== undefined ? editData.ggpLoginPassword : (r.rawData?.ggpLoginPassword || '');
+                                if (!email) { alert('No email address.'); return; }
+                                if (!pw || pw.length < 6) { alert('Enter a password (min 6 chars) in the Password field above first.'); return; }
+                                if (!confirm('Set password for:\n' + email + '\n\nNew password: ' + pw + '\n\nThis will change their login password immediately.')) return;
+                                try {
+                                  const resp = await fetch('/api/admin-auth?action=changePassword', {
+                                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ email, newPassword: pw }),
+                                  });
+                                  const data = await resp.json();
+                                  if (resp.ok) { alert('\u2705 Password set successfully for ' + email); }
+                                  else { alert('\u274C ' + (data.error || 'Failed to set password')); }
+                                } catch (err: any) { alert('Network error: ' + (err.message || err)); }
+                              }} className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition-all border bg-white border-amber-200 text-amber-700 hover:bg-amber-50">
+                                <Key size={11} /> Set Password
+                              </button>
                             </div>
                           </div>
 
