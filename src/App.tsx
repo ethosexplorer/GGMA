@@ -720,6 +720,60 @@ export default function App() {
         }
         setUserProfile(profile);
         setView('dashboard');
+      } else {
+        // No users doc — user was likely onboarded via CRM/intake, not self-signup
+        // Look up their CRM record and create a users profile from it
+        console.log('[App.handleLogin] No users doc found for', firebaseUser.uid, '— checking CRM...');
+        try {
+          const { collection: col, query: q, where, getDocs: gd, setDoc: sd } = await import('firebase/firestore');
+          const crmSnap = await gd(q(col(db, 'crm_deals'), where('email', '==', email)));
+          let profile: any = {
+            uid: firebaseUser.uid,
+            email: firebaseUser.email || email,
+            role: 'user',
+            status: 'Active',
+            displayName: email.split('@')[0],
+            createdAt: new Date().toISOString(),
+          };
+          if (!crmSnap.empty) {
+            const crm = crmSnap.docs[0].data();
+            profile = {
+              ...profile,
+              displayName: crm.name || crm.firstName && crm.lastName ? `${crm.firstName} ${crm.lastName}` : profile.displayName,
+              firstName: crm.firstName || (crm.name || '').split(' ')[0] || '',
+              lastName: crm.lastName || (crm.name || '').split(' ').slice(1).join(' ') || '',
+              phone: crm.phone || crm.textPhone || '',
+              state: crm.state || crm.jurisdiction || '',
+              address: crm.address || crm.physicalAddress || '',
+              city: crm.city || '',
+              zip: crm.zip || '',
+              businessName: crm.businessName || '',
+              contactType: crm.contactType || 'patient',
+              licenseType: crm.licenseType || '',
+              role: crm.contactType === 'business_owner' ? 'business' : crm.contactType === 'provider' ? 'provider' : crm.contactType === 'attorney' ? 'attorney' : 'user',
+            };
+            console.log('[App.handleLogin] CRM profile found:', { name: profile.displayName, role: profile.role });
+          }
+          // Save the users doc so future logins have it
+          await setDoc(doc(db, 'users', firebaseUser.uid), profile);
+          console.log('[App.handleLogin] Created users doc from CRM data for', firebaseUser.uid);
+          setUserProfile(profile);
+          setView('dashboard');
+        } catch (crmErr) {
+          console.error('[App.handleLogin] CRM lookup error:', crmErr);
+          // Fallback: create a minimal profile so they at least get in
+          const fallbackProfile = {
+            uid: firebaseUser.uid,
+            email: firebaseUser.email || email,
+            role: 'user',
+            status: 'Active',
+            displayName: email.split('@')[0],
+            createdAt: new Date().toISOString(),
+          };
+          await setDoc(doc(db, 'users', firebaseUser.uid), fallbackProfile);
+          setUserProfile(fallbackProfile);
+          setView('dashboard');
+        }
       }
     } catch (error: any) {
       console.error('[App.handleLogin] Firebase Auth Error:', error.code, error.message);
