@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+﻿import React, { useState, useCallback } from 'react';
 import { Search, User, Phone, Mail, MapPin, Building2, Tag, Calendar, Edit2, Save, X, Loader2, AlertTriangle, FileText, Hash, ChevronDown, ChevronUp, DollarSign, CircleCheck, HeartPulse, Shield, CreditCard, Key, RotateCcw, Eye, EyeOff, Copy, Check } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
@@ -41,7 +41,7 @@ interface SearchResult {
 const PAYMENT_TYPES = ['Processing Fee', 'Application Fee', 'Consultation Fee', 'Service Fee', 'Filing Fee', 'Late Fee', 'Renewal Fee', 'Licensing Fee', 'Document Fee', 'Other'];
 const PAYMENT_METHODS = ['Chime', 'Cash App', 'Zelle', 'Venmo', 'Cash', 'Check', 'Wire Transfer', 'Credit Card', 'Bank Transfer', 'PayPal', 'Other'];
 
-// State abbreviation → full name map for default passwords (rule: State + "1")
+// State abbreviation â†’ full name map for default passwords (rule: State + "1")
 const STATE_FULL: Record<string, string> = {
   'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas', 'CA': 'California',
   'CO': 'Colorado', 'CT': 'Connecticut', 'DE': 'Delaware', 'FL': 'Florida', 'GA': 'Georgia',
@@ -59,7 +59,7 @@ const getFullStateName = (s: string): string => {
   if (!s) return 'Oklahoma';
   const upper = s.trim().toUpperCase();
   if (STATE_FULL[upper]) return STATE_FULL[upper];
-  // Already a full name — just capitalize first letter
+  // Already a full name â€” just capitalize first letter
   return s.replace(/^[a-z]/, c => c.toUpperCase());
 };
 
@@ -106,7 +106,7 @@ const getStatePortalUrl = (state: string): string => {
   return STATE_PORTALS[full] || '';
 };
 
-// ─── Moved OUTSIDE component to prevent React remount on every keystroke ───
+// â”€â”€â”€ Moved OUTSIDE component to prevent React remount on every keystroke â”€â”€â”€
 const EditField = ({ label, field, value, type = 'text', editData, setEditData }: { label: string; field: string; value: string; type?: string; editData: Record<string, any>; setEditData: React.Dispatch<React.SetStateAction<Record<string, any>>> }) => (
   <div>
     <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1 block">{label}</label>
@@ -127,7 +127,7 @@ const EditSelect = ({ label, field, value, options, editData, setEditData }: { l
       onChange={(e) => setEditData(prev => ({ ...prev, [field]: e.target.value }))}
       className="w-full px-3 py-2 bg-white border border-indigo-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500/20"
     >
-      <option value="">— Select —</option>
+      <option value="">â€” Select â€”</option>
       {options.map(o => <option key={o} value={o}>{o}</option>)}
     </select>
   </div>
@@ -509,7 +509,7 @@ export const AccountLookupTab = () => {
       const clientName = result.name || result.businessName || 'Unknown Client';
       const cleanAmount = paymentForm.amount.replace(/[^0-9.]/g, '');
       const formatted = '$' + parseFloat(cleanAmount).toFixed(2);
-      const entryName = `${clientName} — ${paymentForm.type}`;
+      const entryName = `${clientName} â€” ${paymentForm.type}`;
 
       await turso.execute({
         sql: "INSERT INTO founder_ledger (origin_vector, type, gross_revenue, net_profit, status, color, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
@@ -676,7 +676,7 @@ export const AccountLookupTab = () => {
             <AlertTriangle size={32} className="text-amber-400 mx-auto" />
             <p className="text-lg font-bold text-slate-700">No results found</p>
             <p className="text-sm text-slate-500">Try a different name, email, phone, or Account ID.</p>
-            {searchErrors.length > 0 && <p className="text-sm text-red-500 font-bold">⚠️ {searchErrors.length} data source(s) failed — results may be missing. Try again.</p>}
+            {searchErrors.length > 0 && <p className="text-sm text-red-500 font-bold">âš ï¸ {searchErrors.length} data source(s) failed â€” results may be missing. Try again.</p>}
           </div>
         </div>
       )}
@@ -737,17 +737,17 @@ export const AccountLookupTab = () => {
                             { l: 'Email', v: r.email, icon: Mail },
                             { l: 'Phone', v: r.phone, icon: Phone },
                             { l: 'State', v: r.state, icon: MapPin },
-                            { l: 'Account ID', v: r.accountId || '—', icon: Hash },
+                            { l: 'Account ID', v: r.accountId || 'â€”', icon: Hash },
                             { l: 'Type', v: r.contactType, icon: Tag },
                             { l: 'Status', v: r.status, icon: FileText },
-                            { l: 'Created', v: r.createdAt ? new Date(r.createdAt).toLocaleDateString() : '—', icon: Calendar },
-                            { l: 'Business', v: r.businessName || '—', icon: Building2 },
+                            { l: 'Created', v: r.createdAt ? new Date(r.createdAt).toLocaleDateString() : 'â€”', icon: Calendar },
+                            { l: 'Business', v: r.businessName || 'â€”', icon: Building2 },
                           ].map((f, i) => (
                             <div key={i}>
                               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 flex items-center gap-1">
                                 <f.icon size={10} /> {f.l}
                               </p>
-                              <p className="text-sm font-medium text-slate-700">{f.v || '—'}</p>
+                              <p className="text-sm font-medium text-slate-700">{f.v || 'â€”'}</p>
                             </div>
                           ))}
                         </div>
@@ -760,15 +760,15 @@ export const AccountLookupTab = () => {
                             </p>
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                               {[
-                                { l: 'DOB', v: r.dob || r.rawData?.dob || '—' },
-                                { l: 'App Type', v: r.appType || r.rawData?.appType || '—' },
-                                { l: 'Conditions', v: r.conditions || r.rawData?.conditions || '—' },
-                                { l: 'Allergies', v: r.allergies || r.rawData?.allergies || '—' },
-                                { l: 'Insurance', v: r.insurance || r.rawData?.insuranceName || '—' },
-                                { l: 'Appointment', v: r.appointmentType || r.rawData?.appointmentType || '—' },
-                                { l: 'PCP Info', v: r.pcpInfo || r.rawData?.pcpInfo || '—' },
-                                { l: 'Portal Account', v: r.portalAccount || r.rawData?.hasPortalAccount || '—' },
-                                { l: 'License Type', v: r.licenseType || '—' },
+                                { l: 'DOB', v: r.dob || r.rawData?.dob || 'â€”' },
+                                { l: 'App Type', v: r.appType || r.rawData?.appType || 'â€”' },
+                                { l: 'Conditions', v: r.conditions || r.rawData?.conditions || 'â€”' },
+                                { l: 'Allergies', v: r.allergies || r.rawData?.allergies || 'â€”' },
+                                { l: 'Insurance', v: r.insurance || r.rawData?.insuranceName || 'â€”' },
+                                { l: 'Appointment', v: r.appointmentType || r.rawData?.appointmentType || 'â€”' },
+                                { l: 'PCP Info', v: r.pcpInfo || r.rawData?.pcpInfo || 'â€”' },
+                                { l: 'Portal Account', v: r.portalAccount || r.rawData?.hasPortalAccount || 'â€”' },
+                                { l: 'License Type', v: r.licenseType || 'â€”' },
                               ].map((f, i) => (
                                 <div key={i}>
                                   <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mb-0.5">{f.l}</p>
@@ -810,8 +810,8 @@ export const AccountLookupTab = () => {
                               {r.rawData.payments.map((p: any, i: number) => (
                                 <div key={i} className="flex items-center justify-between bg-white rounded-lg p-2.5 border border-emerald-100">
                                   <div>
-                                    <p className="text-xs font-bold text-slate-800">{p.type} — <span className="text-emerald-600">{p.amount}</span></p>
-                                    <p className="text-[10px] text-slate-500">{p.method} • {p.date ? new Date(p.date).toLocaleDateString() : '—'}</p>
+                                    <p className="text-xs font-bold text-slate-800">{p.type} â€” <span className="text-emerald-600">{p.amount}</span></p>
+                                    <p className="text-[10px] text-slate-500">{p.method} â€¢ {p.date ? new Date(p.date).toLocaleDateString() : 'â€”'}</p>
                                   </div>
                                   <div className="text-right">
                                     <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">Settled</span>
@@ -849,7 +849,7 @@ export const AccountLookupTab = () => {
                             <DollarSign size={14} /> {showPayment ? 'Hide Payment' : 'Post Payment'}
                           </button>
                           {(r.source === 'turso_patients' || r.source === 'turso_audit') && (
-                            <span className="text-xs text-slate-400 italic">Legacy record — contact info is read-only. Payment can still be posted.</span>
+                            <span className="text-xs text-slate-400 italic">Legacy record â€” contact info is read-only. Payment can still be posted.</span>
                           )}
                         </div>
 
@@ -926,7 +926,7 @@ export const AccountLookupTab = () => {
                       <div className="space-y-4">
                         <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-3 flex items-center gap-2">
                           <Edit2 size={14} className="text-indigo-600" />
-                          <span className="text-xs font-bold text-indigo-700">Editing — changes save directly to Firestore</span>
+                          <span className="text-xs font-bold text-indigo-700">Editing â€” changes save directly to Firestore</span>
                         </div>
 
                         {/* Core Contact Info */}
@@ -970,7 +970,7 @@ export const AccountLookupTab = () => {
                           </div>
                         </div>
 
-                        {/* ═══ LOGIN CREDENTIALS ═══ */}
+                        {/* â•â•â• LOGIN CREDENTIALS â•â•â• */}
                         <div className="border-t border-slate-200 pt-4">
                           <div className="flex items-center gap-2 mb-3">
                             <div className="w-6 h-6 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center"><Key size={12} /></div>
@@ -1030,7 +1030,36 @@ export const AccountLookupTab = () => {
                                 <p className="text-[9px] font-black text-emerald-700 uppercase tracking-widest">{String.fromCodePoint(0x1F4E7)} Welcome Letter</p>
                                 <p className="text-[9px] text-slate-400 font-medium">Copy personalized welcome email with login info</p>
                               </div>
-                              <button type="button" onClick={(e) => { e.stopPropagation(); const name = r.name || 'Valued Client'; const firstName = name.split(' ')[0]; const state = r.state || 'Oklahoma'; const fullState = getFullStateName(state); const portalUrl = getStatePortalUrl(state); const ggpEmail = editData.ggpLoginEmail !== undefined ? editData.ggpLoginEmail : (r.rawData?.ggpLoginEmail || r.email || ''); const ggpPw = editData.ggpLoginPassword !== undefined ? editData.ggpLoginPassword : (r.rawData?.ggpLoginPassword || (fullState + '1')); const stLogin = editData.statePortalLogin !== undefined ? editData.statePortalLogin : (r.rawData?.statePortalLogin || r.email || ''); const stPw = editData.statePortalPassword !== undefined ? editData.statePortalPassword : (r.rawData?.statePortalPassword || (fullState + '1')); const stateSection = ['\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501', '\uD83C\uDFDB\uFE0F STATE PORTAL LOGIN (' + fullState.toUpperCase() + ')', '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501']; if (portalUrl) stateSection.push('Portal: ' + portalUrl); stateSection.push('Username: ' + (stLogin || '(pending)'), 'Password: ' + (stPw || '(pending)')); const text = ['Subject: Welcome to Global Green Hybrid Platform \u2014 Your Account Is Ready!', '', 'Dear ' + firstName + ',', '', 'Welcome to Global Green Hybrid Platform (GGP-OS)! Your account has been approved and is now fully active.', '', '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501', '\uD83C\uDF10 GGP PLATFORM LOGIN', '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501', 'Website: https://ggp-os.com', 'Email: ' + ggpEmail, 'Password: ' + ggpPw, '', ...stateSection, '', 'IMPORTANT:', '\u2022 Change your password upon first login.', '\u2022 All data is HIPAA-compliant, AES-256 encrypted.', '', '\uD83D\uDCDE 1-888-963-4447 | \uD83D\uDCF1 645-246-8277 | \uD83D\uDCE7 asstsupport@gmail.com', '', 'Warm regards,', 'Shantell Robinson', 'Founder & CEO, Global Green Enterprise Inc.'].join('\n'); navigator.clipboard.writeText(text); setWelcomeCopied(true); setTimeout(() => setWelcomeCopied(false), 3000); }} className={cn('flex items-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all border shadow-sm', welcomeCopied ? 'bg-emerald-600 border-emerald-600 text-white' : 'bg-white border-emerald-300 text-emerald-700 hover:bg-emerald-50')}>
+                              <button type="button" onClick={(e) => {
+                                e.stopPropagation();
+                                const name = r.name || 'Valued Client';
+                                const firstName = name.split(' ')[0];
+                                const state = r.state || 'Oklahoma';
+                                const fullState = getFullStateName(state);
+                                const portalUrl = getStatePortalUrl(state);
+                                const ggpEmail = editData.ggpLoginEmail !== undefined ? editData.ggpLoginEmail : (r.rawData?.ggpLoginEmail || r.email || '');
+                                const ggpPw = editData.ggpLoginPassword !== undefined ? editData.ggpLoginPassword : (r.rawData?.ggpLoginPassword || (fullState + '1'));
+                                const stLogin = editData.statePortalLogin !== undefined ? editData.statePortalLogin : (r.rawData?.statePortalLogin || r.email || '');
+                                const stPw = editData.statePortalPassword !== undefined ? editData.statePortalPassword : (r.rawData?.statePortalPassword || (fullState + '1'));
+                                const sep = '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501';
+                                const stateLines = [sep, '\uD83C\uDFDB\uFE0F STATE PORTAL LOGIN (' + fullState.toUpperCase() + ')', sep];
+                                if (portalUrl) stateLines.push('State Portal: ' + portalUrl);
+                                stateLines.push('Username: ' + (stLogin || '(pending)'), 'Password: ' + (stPw || '(pending)'));
+                                const emailLines = [
+                                  'Subject: Welcome to Global Green Hybrid Platform \u2014 Your Account Is Ready!', '',
+                                  'Dear ' + firstName + ',', '',
+                                  'Welcome to Global Green Hybrid Platform (GGP-OS)! Your account has been approved and is now fully active on our platform with amazing benefits you can utilize such as our Care Wallet, Telehealth Provider Network, Legal & Attorney Marketplace, Personal Assisting AI and our amazing C3 credit scoring tools.', '',
+                                  sep, '\uD83C\uDF10 GGP PLATFORM LOGIN', sep,
+                                  'Website: https://ggp-os.com', 'Email: ' + ggpEmail, 'Password: ' + ggpPw, '',
+                                  ...stateLines, '',
+                                  'IMPORTANT:', '\u2022 Change your password upon first login.', '\u2022 All data is HIPAA-compliant, AES-256 encrypted.', '',
+                                  '\uD83D\uDCDE 1-888-963-4447 | \uD83D\uDCF1 645-246-8277 | \uD83D\uDCE7 asstsupport@gmail.com', '',
+                                  'Warm regards,', 'Shantell Robinson', 'Founder & CEO, Global Green Enterprise Inc.',
+                                ];
+                                navigator.clipboard.writeText(emailLines.join('\n'));
+                                setWelcomeCopied(true);
+                                setTimeout(() => setWelcomeCopied(false), 3000);
+                              }} className={cn('flex items-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all border shadow-sm', welcomeCopied ? 'bg-emerald-600 border-emerald-600 text-white' : 'bg-white border-emerald-300 text-emerald-700 hover:bg-emerald-50')}>
                                 {welcomeCopied ? <><Check size={12} /> Copied!</> : <><Copy size={12} /> Copy Welcome Email</>}
                               </button>
                             </div>
