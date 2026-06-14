@@ -1,4 +1,4 @@
-﻿import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Search, User, Phone, Mail, MapPin, Building2, Tag, Calendar, Edit2, Save, X, Loader2, AlertTriangle, FileText, Hash, ChevronDown, ChevronUp, DollarSign, CircleCheck, HeartPulse, Shield, CreditCard, Key, RotateCcw, Eye, EyeOff, Copy, Check } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
@@ -1042,14 +1042,14 @@ export const AccountLookupTab = () => {
                                 const stLogin = editData.statePortalLogin !== undefined ? editData.statePortalLogin : (r.rawData?.statePortalLogin || r.email || '');
                                 const stPw = editData.statePortalPassword !== undefined ? editData.statePortalPassword : (r.rawData?.statePortalPassword || (fullState + '1'));
                                 const sep = '\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501';
-                                const stateLines = [sep, '\uD83C\uDFDB\uFE0F STATE PORTAL LOGIN (' + fullState.toUpperCase() + ')', sep];
+                                const stateLines = [sep, '\uD83C\uDFDB\uFE0F STATE PORTAL LOGIN (' + fullState.toUpperCase() + ') (PENDING APPROVAL)', sep];
                                 if (portalUrl) stateLines.push('State Portal: ' + portalUrl);
                                 stateLines.push('Username: ' + (stLogin || '(pending)'), 'Password: ' + (stPw || '(pending)'));
                                 const emailLines = [
                                   'Subject: Welcome to Global Green Hybrid Platform \u2014 Your Account Is Ready!', '',
                                   'Dear ' + firstName + ',', '',
                                   'Welcome to Global Green Hybrid Platform (GGP-OS)! Your account has been approved and is now fully active on our platform with amazing benefits you can utilize such as our Care Wallet, Telehealth Provider Network, Legal & Attorney Marketplace, Personal Assisting AI and our amazing C3 credit scoring tools.', '',
-                                  sep, '\uD83C\uDF10 GGP PLATFORM LOGIN', sep,
+                                  sep, '\uD83C\uDF10 GGP PLATFORM LOGIN (APPROVED)', sep,
                                   'Website: https://ggp-os.com', 'Email: ' + ggpEmail, 'Password: ' + ggpPw, '',
                                   ...stateLines, '',
                                   'IMPORTANT:', '\u2022 Change your password upon first login.', '\u2022 All data is HIPAA-compliant, AES-256 encrypted.', '',
