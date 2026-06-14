@@ -1034,7 +1034,7 @@ export const AccountLookupTab = () => {
                               </div>
                               <div className="flex items-center gap-2">
                                 <select
-                                  value={editData._welcomeType || (() => {
+                                  value={editData['_welcomeType'] || (() => {
                                     const ct = (r.contactType || r.rawData?.contactType || '').toLowerCase();
                                     const lt = (r.licenseType || r.rawData?.licenseType || '').toLowerCase();
                                     if (ct.includes('attorney') || ct.includes('legal') || lt.includes('attorney')) return 'attorney';
@@ -1062,7 +1062,7 @@ export const AccountLookupTab = () => {
                                 </select>
                                 <button type="button" onClick={(e) => {
                                   e.stopPropagation();
-                                  const wType = editData._welcomeType || 'patient';
+                                  const wType = editData['_welcomeType'] || 'patient';
                                   const name = r.name || 'Valued Client';
                                   const firstName = name.split(' ')[0];
                                   const biz = r.businessName || name;
@@ -1121,7 +1121,7 @@ export const AccountLookupTab = () => {
                               </div>
                             </div>
                           </div>
-
+                        </div>
 
 
                         {/* Notes */}
