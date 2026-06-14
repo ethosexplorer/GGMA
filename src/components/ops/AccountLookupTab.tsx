@@ -1042,6 +1042,10 @@ export const AccountLookupTab = () => {
                                     if (ct.includes('federal')) return 'federal';
                                     if (ct.includes('state') && ct.includes('gov')) return 'state_gov';
                                     if (ct.includes('local') || ct.includes('city') || ct.includes('county')) return 'local_gov';
+                                    if (ct.includes('political') || ct.includes('gov office') || ct.includes('elected')) return 'gov_office';
+                                    if (ct.includes('advocate') || ct.includes('advocacy')) return 'advocate';
+                                    if (ct.includes('distribut')) return 'distribution';
+                                    if (ct.includes('investor') || ct.includes('invest')) return 'investor';
                                     if (ct.includes('whitelabel') || ct.includes('white label') || ct.includes('leasing')) return 'whitelabel';
                                     if (ct.includes('backoffice') || ct.includes('back office')) return 'backoffice';
                                     if (ct.includes('business') || ct.includes('dispensary') || r.businessName) return 'business';
@@ -1057,6 +1061,10 @@ export const AccountLookupTab = () => {
                                   <option value="local_gov">{String.fromCodePoint(0x1F3D8, 0xFE0F)} Local Government</option>
                                   <option value="state_gov">{String.fromCodePoint(0x1F3DB, 0xFE0F)} State Government</option>
                                   <option value="federal">{String.fromCodePoint(0x1F1FA, 0x1F1F8)} Federal Government</option>
+                                  <option value="gov_office">{String.fromCodePoint(0x1F3DB, 0xFE0F)} Gov Office / Political</option>
+                                  <option value="advocate">{String.fromCodePoint(0x1F4E3)} Advocate</option>
+                                  <option value="distribution">{String.fromCodePoint(0x1F69A)} Distribution</option>
+                                  <option value="investor">{String.fromCodePoint(0x1F4B0)} Investor</option>
                                   <option value="backoffice">{String.fromCodePoint(0x1F4BC)} Back Office Leasing</option>
                                   <option value="whitelabel">{String.fromCodePoint(0x1F680)} Platform Whitelabel Leasing</option>
                                 </select>
@@ -1083,6 +1091,10 @@ export const AccountLookupTab = () => {
                                     local_gov: 'Your local government account has been approved and is now fully active on our platform. You now have access to our Government Compliance Dashboard, Licensing Oversight Tools, Community Impact Analytics, and Regulatory Reporting Suite.',
                                     state_gov: 'Your state government account has been approved and is now fully active on our platform. You now have access to our State Regulatory Dashboard, Multi-Jurisdiction Compliance Tools, Policy Analytics, and Statewide Licensing Oversight.',
                                     federal: 'Your federal government account has been approved and is now fully active on our platform. You now have access to our Federal Compliance Dashboard, Cross-State Analytics, Regulatory Intelligence Tools, and National Policy Oversight Suite.',
+                                    gov_office: 'Your government office account has been approved and is now fully active on our platform. You now have access to our Policy & Legislative Dashboard, Constituent Services Tools, Regulatory Oversight Analytics, Public Health Compliance Reports, and Inter-Agency Communication Portal.',
+                                    advocate: 'Your advocate account has been approved and is now fully active on our platform. You now have access to our Advocacy Dashboard, Campaign Management Tools, Community Outreach Resources, Legislative Tracking, and Patient Rights Support Center.',
+                                    distribution: 'Your distribution account has been approved and is now fully active on our platform. You now have access to our Distribution Management Dashboard, Supply Chain Analytics, Inventory Tracking, Route Optimization Tools, and Compliance Documentation Suite.',
+                                    investor: 'Your investor account has been approved and is now fully active on our platform. You now have access to our Investor Dashboard, Portfolio Analytics, Revenue & Growth Reports, Market Intelligence Tools, and Quarterly Performance Summaries.',
                                     backoffice: 'Your back office leasing account has been approved and is now fully active. You now have access to our Operations Dashboard, Staff Management, Financial Reporting, Compliance Tracking, and Administrative Tools Suite.',
                                     whitelabel: 'Your platform whitelabel leasing account has been approved and is now fully active. You now have access to our full GGP-OS Platform with custom branding, your own Admin Dashboard, User Management, Revenue Analytics, and White-Glove Onboarding Support.',
                                   };
