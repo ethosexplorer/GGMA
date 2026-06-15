@@ -91,6 +91,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
           phone: t.phone || '',
           state: t.state || t.jurisdiction || 'Oklahoma',
           applicationStatus: t.status === 'Pending' ? 'Pending Review' : (t.status || 'Pending Review'),
+          applicationType: t.applicationType || 'renewal',
           createdAt: t.created_at,
           contactType: 'patient',
           source: 'turso'
@@ -110,6 +111,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
           phone: c.phone || existing.phone || '',
           state: c.state || c.jurisdiction || existing.state || 'Oklahoma',
           applicationStatus: c.status || existing.applicationStatus || 'Pending Review',
+          applicationType: c.applicationType || existing.applicationType || 'renewal',
           createdAt: c.createdAt || existing.createdAt,
           accountId: c.accountId || existing.accountId || '',
           contactType: c.contactType || existing.contactType || 'patient',
@@ -141,6 +143,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
           phone: f.phone || f.textPhone || existing.phone || '',
           state: f.state || f.jurisdiction || existing.state || 'Oklahoma',
           applicationStatus: f.applicationStatus || existing.applicationStatus || 'Pending Review',
+          applicationType: f.applicationType || existing.applicationType || (f.applicationStatus ? 'renewal' : 'new_card'),
           createdAt: f.createdAt || existing.createdAt,
           contactType: existing.contactType || 'patient',
           source: 'firebase'
@@ -387,7 +390,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
                    <div>
                      <p className="text-sm font-bold text-slate-800 group-hover:text-indigo-700 transition-colors">{a.fullName || a.name || a.displayName || 'Unknown Patient'}</p>
                      <p className="text-xs text-slate-500 font-medium">
-                       {a.contactType === 'patient' ? 'Patient Application' : a.contactType || 'Patient Application'} • {a.state || a.jurisdiction || 'OK'}
+                       {a.applicationType === 'new_card' ? 'Patient New Card' : 'Patient Renewal'} • {a.state || a.jurisdiction || 'OK'}
                        {a.email ? ` • ${a.email}` : ''}
                      </p>
                    </div>

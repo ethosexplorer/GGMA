@@ -862,7 +862,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       const adminRoles = ['admin', 'founder', 'executive', 'president', 'chief_compliance_director',
         'executive_advisor', 'advisor', 'executive_founder', 'internal_admin', 'compliance_director',
         'manager', 'team_lead', 'rep', 'ai_agent'];
-      const patients = snap.docs
+      const raw = snap.docs
         .map(d => ({ uid: d.id, ...d.data() }))
         .filter((u: any) => {
           const role = (u.role || '').toLowerCase().trim();
@@ -870,7 +870,13 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           if (role === 'business' || role === 'provider' || role === 'attorney') return false;
           return true;
         });
-      setPatientList(patients);
+      // Deduplicate by email to prevent inflated analytics
+      const dedupMap = new Map();
+      raw.forEach((p: any) => {
+        const key = (p.email || '').toLowerCase().trim() || p.uid;
+        if (!dedupMap.has(key)) dedupMap.set(key, p);
+      });
+      setPatientList(Array.from(dedupMap.values()));
     });
     return () => unsub();
   }, []);

@@ -112,10 +112,18 @@ export const LivePatientsOversight = () => {
     const unsub = onSnapshot(collection(db, 'users'), (snap) => {
       const patientRoles = ['patient', 'patient_portal', 'user', 'care_wallet', 'patient_care'];
       const all: any[] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      const filtered: any[] = all.filter((u: any) => {
+      const raw: any[] = all.filter((u: any) => {
         const role = (u.role || '').toLowerCase();
         return patientRoles.includes(role) || role.includes('patient') || role.includes('care') || role === 'user';
       });
+      
+      // Deduplicate by email to prevent inflated analytics
+      const dedupMap = new Map();
+      raw.forEach(p => {
+        const key = (p.email || '').toLowerCase().trim() || p.id;
+        if (!dedupMap.has(key)) dedupMap.set(key, p);
+      });
+      const filtered = Array.from(dedupMap.values());
       
       // Ensure Jasmin Garrett is always visible for demo/testing
       if (!filtered.find(u => (u.displayName || u.fullName || '').toLowerCase().includes('jasmin'))) {
