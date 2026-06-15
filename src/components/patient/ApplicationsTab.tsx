@@ -24,6 +24,9 @@ export const ApplicationsTab = ({ user, onStartApplication, jurisdiction = 'Okla
   const medicalStatus = stateData.medicalStatus || 'Unknown';
   const hasNoProgram = medicalStatus === 'No comprehensive program' || medicalStatus === 'No';
   const hasIntakeData = !!(user?.ssn || user?.qualifyingCondition || user?.idNumber);
+  // Build real application from user's CRM/profile data
+  const hasRealApplication = !!(user?.state || user?.contactType || user?.firstName);
+  const submittedDate = user?.createdAt ? new Date(typeof user.createdAt === 'object' && user.createdAt?.seconds ? user.createdAt.seconds * 1000 : user.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
 
   const activeApplications = [
     ...(hasIntakeData ? [{
@@ -33,6 +36,13 @@ export const ApplicationsTab = ({ user, onStartApplication, jurisdiction = 'Okla
       status: 'Ready for Review',
       progress: 85,
       isSync: true
+    }] : []),
+    ...(hasRealApplication && !hasIntakeData ? [{
+      id: `APP-${new Date().getFullYear()}-${String(user?.uid || '').slice(-4) || '0001'}`,
+      type: 'New Medical Card',
+      submitted: submittedDate || 'Pending',
+      status: 'Under Review',
+      progress: 65,
     }] : []),
   ];
 
