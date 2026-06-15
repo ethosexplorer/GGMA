@@ -1,23 +1,25 @@
-import React, { useState } from 'react';
-import { Upload, FileText, Image, Shield, Trash2, Eye, Download, FolderOpen, Lock } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Upload, FileText, Image, Shield, Trash2, Eye, Download, FolderOpen, Lock, Loader2 } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { turso } from '../../lib/turso';
 
-const initialDocs: any[] = [];
-
-export let globalDocuments = initialDocs;
-
-try {
-  const saved = localStorage.getItem('vault_docs');
-  if (saved) {
-    globalDocuments = JSON.parse(saved);
-  }
-} catch (e) {}
+export let globalDocuments: any[] = [];
 
 export const setGlobalDocuments = (docs: any[]) => {
   globalDocuments = docs;
-  try {
-    localStorage.setItem('vault_docs', JSON.stringify(docs));
-  } catch (e) {}
+};
+
+const categoryMap: Record<string, string> = {
+  'Medical Card Application': 'medical',
+  'State ID / Driver License': 'identification',
+  'Physician Recommendation': 'medical',
+  'Proof of Residency': 'identification',
+  'Business License': 'cards',
+  'Insurance Document': 'insurance',
+  'Legal / Court Document': 'medical',
+  'Tax Document (280E)': 'medical',
+  'Correspondence': 'medical',
+  'Other': 'medical',
 };
 
 const baseCategories = [
@@ -34,9 +36,67 @@ export const DocumentVaultTab = ({ user }: { user?: any }) => {
   const [dragOver, setDragOver] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const [localDocs, setLocalDocsState] = useState(globalDocuments);
-  
-  // Show REAL documents from user's profile (uploaded during intake or from Firebase Storage)
+  const [vaultDocs, setVaultDocs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Pull REAL documents from the system vault (Turso vault_documents table)
+  useEffect(() => {
+    const fetchVaultDocs = async () => {
+      if (!user) { setLoading(false); return; }
+      try {
+        // Search by user ID, email, or name
+        const userId = user.uid || user.id || '';
+        const userEmail = user.email || '';
+        const userName = user.displayName || `${user.firstName || ''} ${user.lastName || ''}`.trim();
+
+        const results: any[] = [];
+
+        // Try by user_id (exact match)
+        if (userId) {
+          const res = await turso.execute({ sql: 'SELECT * FROM vault_documents WHERE user_id = ? ORDER BY created_at DESC', args: [userId] });
+          res.rows.forEach((r: any) => results.push(r));
+        }
+
+        // Also try by user_name (for docs uploaded via ops center using name as key)
+        if (userName && results.length === 0) {
+          const res = await turso.execute({ sql: 'SELECT * FROM vault_documents WHERE LOWER(user_name) LIKE ? ORDER BY created_at DESC', args: [`%${userName.toLowerCase()}%`] });
+          res.rows.forEach((r: any) => {
+            if (!results.find(x => x.id === r.id)) results.push(r);
+          });
+        }
+
+        // Also try by email in user_id field
+        if (userEmail && results.length === 0) {
+          const res = await turso.execute({ sql: 'SELECT * FROM vault_documents WHERE user_id = ? ORDER BY created_at DESC', args: [userEmail] });
+          res.rows.forEach((r: any) => {
+            if (!results.find(x => x.id === r.id)) results.push(r);
+          });
+        }
+
+        const mapped = results.map((doc: any) => ({
+          id: doc.id,
+          name: doc.file_name,
+          type: doc.category || 'General',
+          format: (doc.file_type || '').includes('pdf') ? 'PDF' : (doc.file_type || '').includes('image') ? 'JPG' : (doc.file_name || '').split('.').pop()?.toUpperCase() || 'PDF',
+          size: doc.file_size ? (doc.file_size > 1048576 ? (doc.file_size / 1048576).toFixed(1) + ' MB' : (doc.file_size / 1024).toFixed(0) + ' KB') : '--',
+          uploaded: doc.created_at ? new Date(doc.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '--',
+          status: 'Verified',
+          category: categoryMap[doc.category] || 'medical',
+          url: doc.file_url,
+        }));
+
+        setVaultDocs(mapped);
+        setGlobalDocuments(mapped);
+      } catch (err) {
+        console.error('[Vault] Error loading documents:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchVaultDocs();
+  }, [user]);
+
+  // Show documents from Firebase profile (uploaded during intake)
   const liveUserDocs = user?.uploadedDocuments ? Object.entries(user.uploadedDocuments).map(([name, url], idx) => ({
     id: `user-doc-${idx}`,
     name,
@@ -49,15 +109,15 @@ export const DocumentVaultTab = ({ user }: { user?: any }) => {
     url
   })) : [];
 
-  const allDocs = [...liveUserDocs, ...localDocs];
-  
-  const setLocalDocs = (updateFn: any) => {
-    setLocalDocsState((prev: any) => {
-      const nextDocs = typeof updateFn === 'function' ? updateFn(prev) : updateFn;
-      setGlobalDocuments(nextDocs);
-      return nextDocs;
-    });
-  };
+  const allDocs = [...liveUserDocs, ...vaultDocs];
+
+  // Get user initials and full name for document identification
+  const userFullName = user?.displayName || `${user?.firstName || ''} ${user?.lastName || ''}`.trim() || 'Unknown';
+  const userInitials = (() => {
+    const first = (user?.firstName || user?.displayName?.split(' ')[0] || '').charAt(0).toUpperCase();
+    const last = (user?.lastName || user?.displayName?.split(' ').slice(-1)[0] || '').charAt(0).toUpperCase();
+    return first && last && first !== last ? `${first}${last}` : first || '?';
+  })();
 
   const filtered = selectedCategory === 'all' ? allDocs : allDocs.filter(d => d.category === selectedCategory);
 
@@ -78,7 +138,7 @@ export const DocumentVaultTab = ({ user }: { user?: any }) => {
     setIsUploading(true);
     setTimeout(() => {
       setIsUploading(false);
-      setLocalDocs(prev => [{
+      setVaultDocs(prev => [{
         id: Date.now(),
         name: fileName,
         type: 'General',
@@ -192,16 +252,16 @@ export const DocumentVaultTab = ({ user }: { user?: any }) => {
                 <div key={doc.id} className="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors">
                   <div className="flex items-center gap-3">
                     <div className={cn(
-                      "w-10 h-10 rounded-lg flex items-center justify-center",
-                      doc.format === 'PDF' ? "bg-red-50 text-red-500" :
-                      doc.format === 'JPG' || doc.format === 'PNG' ? "bg-blue-50 text-blue-500" :
-                      "bg-slate-100 text-slate-500"
+                      "w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm",
+                      doc.format === 'PDF' ? "bg-red-50 text-red-600" :
+                      doc.format === 'JPG' || doc.format === 'PNG' ? "bg-blue-50 text-blue-600" :
+                      "bg-emerald-50 text-emerald-600"
                     )}>
-                      {doc.format === 'PDF' ? <FileText size={18} /> : <Image size={18} />}
+                      {userInitials}
                     </div>
                     <div>
                       <p className="font-semibold text-slate-900 text-sm">{doc.name}</p>
-                      <p className="text-xs text-slate-500">{doc.format} • {doc.size} • {doc.uploaded}</p>
+                      <p className="text-xs text-slate-500">{userFullName} • {doc.format} • {doc.size} • {doc.uploaded}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
