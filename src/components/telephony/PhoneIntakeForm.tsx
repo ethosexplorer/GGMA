@@ -173,6 +173,26 @@ export const PhoneIntakeForm = () => {
         console.error('Contact capture error (non-blocking):', crmErr);
       }
 
+      // 4. AUTO-CREATE Firebase Auth account so patient can log in immediately
+      if (data.email) {
+        try {
+          const defaultPassword = (data.state || 'State').split(' ')[0] + 'Name1'; // e.g. "OklahomaName1"
+          const res = await fetch('/api/admin-auth?action=changePassword', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: data.email, newPassword: defaultPassword }),
+          });
+          const result = await res.json();
+          if (result.success) {
+            console.log(`[PhoneIntake] Firebase account ${result.created ? 'created' : 'updated'} for ${data.email}`);
+          } else {
+            console.warn('[PhoneIntake] Account creation warning:', result.error);
+          }
+        } catch (authErr) {
+          console.error('[PhoneIntake] Auto-create account error (non-blocking):', authErr);
+        }
+      }
+
       setCallerId(accountId);
       setSubmitted(true);
     } catch (e) { console.error(e); alert('Submission error. Check console.'); }
