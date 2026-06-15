@@ -34,7 +34,6 @@ export const ApplicationsTab = ({ user, onStartApplication, jurisdiction = 'Okla
       progress: 85,
       isSync: true
     }] : []),
-    { id: 'APP-2026-4421', type: 'New Medical Card', submitted: 'Apr 14, 2026', status: 'Under Review', progress: 65 },
   ];
 
   const applicationSteps = [
