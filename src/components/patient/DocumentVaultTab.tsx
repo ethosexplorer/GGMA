@@ -9,17 +9,34 @@ export const setGlobalDocuments = (docs: any[]) => {
   globalDocuments = docs;
 };
 
-const categoryMap: Record<string, string> = {
-  'Medical Card Application': 'medical',
-  'State ID / Driver License': 'identification',
-  'Physician Recommendation': 'medical',
-  'Proof of Residency': 'identification',
-  'Business License': 'cards',
-  'Insurance Document': 'insurance',
-  'Legal / Court Document': 'medical',
-  'Tax Document (280E)': 'medical',
-  'Correspondence': 'medical',
-  'Other': 'medical',
+// Smart auto-categorization based on file name keywords
+const autoCategory = (fileName: string, opsCategory?: string): string => {
+  const f = (fileName || '').toLowerCase();
+  // Identification: DL, ID, selfie, passport, driver, residency, proof
+  if (/\b(dl|driver|license front|license back|front dl|back dl|selfie|passport|state id|proof of residency|residency)\b/i.test(f) || f.includes('dl.') || f.includes('dl ') || f.includes(' dl') || f.includes('selfie') || f.includes('front') || f.includes('back')) {
+    // But not OMMA license
+    if (!f.includes('omma') && !f.includes('adult') && !f.includes('apply') && !f.includes('ins')) return 'identification';
+  }
+  // Insurance: INS, insurance, soonercare
+  if (f.includes('ins') && !f.includes('inspect')) return 'insurance';
+  if (f.includes('insurance') || f.includes('soonercare')) return 'insurance';
+  // Cards & Licenses: OMMA, license, card, apply
+  if (f.includes('omma') || f.includes('apply') || f.includes('adult patient') || f.includes('card') || (f.includes('license') && !f.includes('driver'))) return 'cards';
+  // Lab Results: lab, cbc, panel, blood, test result
+  if (f.includes('lab') || f.includes('cbc') || f.includes('panel') || f.includes('blood') || f.includes('test result')) return 'lab';
+  // Medical Records: recommendation, doctor, dr., medical, physician, rec
+  if (f.includes('rec') || f.includes('doctor') || f.includes('dr.') || f.includes('physician') || f.includes('medical')) return 'medical';
+  // Fallback to ops category mapping
+  const opsMap: Record<string, string> = {
+    'Medical Card Application': 'cards',
+    'State ID / Driver License': 'identification',
+    'Physician Recommendation': 'medical',
+    'Proof of Residency': 'identification',
+    'Business License': 'cards',
+    'Insurance Document': 'insurance',
+  };
+  if (opsCategory && opsMap[opsCategory]) return opsMap[opsCategory];
+  return 'medical';
 };
 
 const baseCategories = [
@@ -81,7 +98,7 @@ export const DocumentVaultTab = ({ user }: { user?: any }) => {
           size: doc.file_size ? (doc.file_size > 1048576 ? (doc.file_size / 1048576).toFixed(1) + ' MB' : (doc.file_size / 1024).toFixed(0) + ' KB') : '--',
           uploaded: doc.created_at ? new Date(doc.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '--',
           status: 'Verified',
-          category: categoryMap[doc.category] || 'medical',
+          category: autoCategory(doc.file_name, doc.category),
           url: doc.file_url,
         }));
 
