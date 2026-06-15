@@ -1,7 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Upload, FileText, Image, Shield, Trash2, Eye, Download, FolderOpen, Lock, Loader2 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { turso } from '../../lib/turso';
+import { storage } from '../../firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+
+// Clear any old localStorage mock data from previous code
+try { localStorage.removeItem('vault_docs'); } catch (e) {}
 
 export let globalDocuments: any[] = [];
 
@@ -140,33 +145,93 @@ export const DocumentVaultTab = ({ user }: { user?: any }) => {
 
   const getCategoryCount = (catId: string) => catId === 'all' ? allDocs.length : allDocs.filter(d => d.category === catId).length;
 
-  const handleUpload = (e?: React.ChangeEvent<HTMLInputElement> | React.DragEvent) => {
-    let file;
+  // Re-fetch documents from database
+  const refreshDocs = useCallback(async () => {
+    if (!user) return;
+    try {
+      const userId = user.uid || user.id || '';
+      const userName = user.displayName || `${user.firstName || ''} ${user.lastName || ''}`.trim();
+      const userEmail = user.email || '';
+      const results: any[] = [];
+
+      if (userId) {
+        const res = await turso.execute({ sql: 'SELECT * FROM vault_documents WHERE user_id = ? ORDER BY created_at DESC', args: [userId] });
+        res.rows.forEach((r: any) => results.push(r));
+      }
+      if (userName && results.length === 0) {
+        const res = await turso.execute({ sql: 'SELECT * FROM vault_documents WHERE LOWER(user_name) LIKE ? ORDER BY created_at DESC', args: [`%${userName.toLowerCase()}%`] });
+        res.rows.forEach((r: any) => { if (!results.find(x => x.id === r.id)) results.push(r); });
+      }
+      if (userEmail && results.length === 0) {
+        const res = await turso.execute({ sql: 'SELECT * FROM vault_documents WHERE user_id = ? ORDER BY created_at DESC', args: [userEmail] });
+        res.rows.forEach((r: any) => { if (!results.find(x => x.id === r.id)) results.push(r); });
+      }
+
+      const mapped = results.map((doc: any) => ({
+        id: doc.id,
+        name: doc.file_name,
+        type: doc.category || 'General',
+        format: (doc.file_type || '').includes('pdf') ? 'PDF' : (doc.file_type || '').includes('image') ? 'JPG' : (doc.file_name || '').split('.').pop()?.toUpperCase() || 'PDF',
+        size: doc.file_size ? (doc.file_size > 1048576 ? (doc.file_size / 1048576).toFixed(1) + ' MB' : (doc.file_size / 1024).toFixed(0) + ' KB') : '--',
+        uploaded: doc.created_at ? new Date(doc.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '--',
+        status: 'Verified',
+        category: autoCategory(doc.file_name, doc.category),
+        url: doc.file_url,
+      }));
+      setVaultDocs(mapped);
+    } catch (err) {
+      console.error('[Vault] Refresh error:', err);
+    }
+  }, [user]);
+
+  const handleUpload = async (e?: React.ChangeEvent<HTMLInputElement> | React.DragEvent) => {
+    let file: File | undefined;
     if (e && 'dataTransfer' in e && e.dataTransfer) {
        file = e.dataTransfer.files[0];
     } else if (e && 'target' in e && (e.target as HTMLInputElement).files) {
        file = (e.target as HTMLInputElement).files?.[0];
     }
-    
-    const fileName = file ? file.name : 'New_Scanned_Document.pdf';
-    const fileSize = file ? (file.size / 1024 / 1024).toFixed(1) + ' MB' : '1.2 MB';
-    const fileFormat = file ? fileName.split('.').pop()?.toUpperCase() || 'PDF' : 'PDF';
+    if (!file || !user) return;
 
     setIsUploading(true);
-    setTimeout(() => {
+    try {
+      const userId = user.uid || user.id || 'unknown';
+      const userName = userFullName;
+
+      // 1. Upload to Firebase Storage
+      const storageRef = ref(storage, `vault/${userId}/${Date.now()}_${file.name}`);
+      await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(storageRef);
+
+      // 2. Save metadata to Turso vault_documents table
+      const docId = 'doc-' + Math.random().toString(36).substr(2, 9);
+      const detectedCategory = autoCategory(file.name);
+      const opsCategoryLabel = detectedCategory === 'identification' ? 'State ID / Driver License' :
+        detectedCategory === 'insurance' ? 'Insurance Document' :
+        detectedCategory === 'cards' ? 'Medical Card Application' :
+        detectedCategory === 'lab' ? 'Other' :
+        detectedCategory === 'medical' ? 'Physician Recommendation' : 'Other';
+
+      await turso.execute({
+        sql: 'INSERT INTO vault_documents (id, user_id, user_name, file_name, file_type, file_size, file_url, category, notes, uploaded_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        args: [
+          docId, userId, userName, file.name,
+          file.type || 'application/octet-stream', file.size,
+          downloadURL, opsCategoryLabel, '',
+          'Patient Upload', new Date().toISOString()
+        ]
+      });
+
+      // 3. Refresh docs from database
+      await refreshDocs();
+
+      alert(`✅ "${file.name}" securely uploaded to your Vault.`);
+    } catch (err) {
+      console.error('[Vault] Upload error:', err);
+      alert(`Upload failed: ${err}`);
+    } finally {
       setIsUploading(false);
-      setVaultDocs(prev => [{
-        id: Date.now(),
-        name: fileName,
-        type: 'General',
-        format: fileFormat,
-        size: fileSize,
-        uploaded: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-        status: 'Active',
-        category: selectedCategory === 'all' ? 'medical' : selectedCategory
-      }, ...prev]);
-      (() => { import('../../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Document securely uploaded to your Vault and synced with the Master Administrative Vault." })] }).catch(console.error) ); alert("Document securely uploaded to your Vault and synced with the Master Administrative Vault.\n\n[Live Production Transaction Logged]"); })();
-    }, 1500);
+    }
   };
 
   return (
