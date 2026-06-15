@@ -598,62 +598,61 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
 
   const renderEventDetailsModal = () => selectedEvent && (
     <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setSelectedEvent(null)}>
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 overflow-hidden relative" onClick={e => e.stopPropagation()}>
-        <div className={cn("absolute top-0 left-0 w-full h-3", getEventColor(selectedEvent))} />
-        <div className="flex justify-between items-start mb-6 mt-2">
-          <div>
-            <h3 className="text-2xl font-black text-slate-800 tracking-tight">{selectedEvent.title}</h3>
-            <div className="flex items-center gap-2 mt-2">
-              <span className={cn("inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider text-white shadow-sm", getEventCategoryObj(selectedEvent).color)}>
-                <span className="w-1.5 h-1.5 rounded-full bg-white shrink-0" />
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-5 max-h-[85vh] overflow-y-auto relative" onClick={e => e.stopPropagation()}>
+        <div className={cn("absolute top-0 left-0 w-full h-2 rounded-t-2xl", getEventColor(selectedEvent))} />
+        <div className="flex justify-between items-start mb-3 mt-1">
+          <div className="min-w-0 pr-2">
+            <h3 className="text-lg font-black text-slate-800 tracking-tight leading-tight">{selectedEvent.title}</h3>
+            <div className="flex items-center gap-2 mt-1.5">
+              <span className={cn("inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider text-white shadow-sm", getEventCategoryObj(selectedEvent).color)}>
+                <span className="w-1 h-1 rounded-full bg-white shrink-0" />
                 {getEventCategoryObj(selectedEvent).label}
               </span>
             </div>
-            <p className="text-sm font-bold text-slate-500 mt-2">{new Date(selectedEvent.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
+            <p className="text-xs font-bold text-slate-500 mt-1.5">{new Date(selectedEvent.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
           </div>
-
-          <button onClick={() => setSelectedEvent(null)} className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full transition-colors"><X size={16} /></button>
+          <button onClick={() => setSelectedEvent(null)} className="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full transition-colors shrink-0"><X size={14} /></button>
         </div>
         
-        <div className="space-y-5">
-          <div className="flex items-center gap-3 text-slate-700">
-            <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0"><Clock size={18} className="text-slate-500" /></div>
+        <div className="space-y-3">
+          <div className="flex items-center gap-2.5 text-slate-700">
+            <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0"><Clock size={14} className="text-slate-500" /></div>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Time</p>
-              <p className="text-sm font-bold">{format12h(selectedEvent.startTime)} – {format12h(selectedEvent.endTime)}</p>
+              <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Time</p>
+              <p className="text-xs font-bold">{format12h(selectedEvent.startTime)} – {format12h(selectedEvent.endTime)}</p>
             </div>
           </div>
           
           {selectedEvent.attendees && (
-            <div className="flex items-center gap-3 text-slate-700">
-              <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0"><Users size={18} className="text-slate-500" /></div>
+            <div className="flex items-center gap-2.5 text-slate-700">
+              <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0"><Users size={14} className="text-slate-500" /></div>
               <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Attendees</p>
-                <p className="text-sm font-bold">{selectedEvent.attendees}</p>
+                <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Attendees</p>
+                <p className="text-xs font-bold">{selectedEvent.attendees}</p>
               </div>
             </div>
           )}
           
           {selectedEvent.location && (
-            <div className="flex items-center gap-3 text-slate-700">
-              <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0"><MapPin size={18} className="text-slate-500" /></div>
+            <div className="flex items-center gap-2.5 text-slate-700">
+              <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0"><MapPin size={14} className="text-slate-500" /></div>
               <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Location</p>
-                <p className="text-sm font-bold">{selectedEvent.location}</p>
+                <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Location</p>
+                <p className="text-xs font-bold">{selectedEvent.location}</p>
               </div>
             </div>
           )}
           
           {selectedEvent.description && (
-            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-              <p className="text-sm text-slate-600 whitespace-pre-wrap">{selectedEvent.description}</p>
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+              <p className="text-xs text-slate-600 whitespace-pre-wrap leading-relaxed">{selectedEvent.description}</p>
             </div>
           )}
 
           {/* Color Coordinator */}
-          <div className="space-y-2 pt-2 border-t border-slate-100">
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Color Coordinator (Click to change department/color)</p>
-            <div className="grid grid-cols-2 gap-2">
+          <div className="space-y-1.5 pt-2 border-t border-slate-100">
+            <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Color Coordinator (Click to change department/color)</p>
+            <div className="grid grid-cols-2 gap-1.5">
               {[
                 { color: 'bg-indigo-500', label: 'Operations', category: 'ops' },
                 { color: 'bg-emerald-600', label: 'Scheduled Booking', category: 'booking' },
@@ -673,11 +672,11 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
                   key={c.category}
                   onClick={() => changeEventColorAndCategory(selectedEvent.id, c.color, c.category)}
                   className={cn(
-                    "flex items-center gap-2 px-3 py-2 rounded-xl border text-[11px] font-bold transition-all text-left hover:bg-slate-50 cursor-pointer",
+                    "flex items-center gap-1.5 px-2 py-1.5 rounded-lg border text-[10px] font-bold transition-all text-left hover:bg-slate-50 cursor-pointer",
                     getEventCategoryObj(selectedEvent).id === c.category ? "border-slate-800 bg-slate-50 shadow-sm" : "border-slate-200 bg-white text-slate-600"
                   )}
                 >
-                  <div className={cn("w-3 h-3 rounded-full shrink-0 shadow-sm", c.color)} />
+                  <div className={cn("w-2.5 h-2.5 rounded-full shrink-0 shadow-sm", c.color)} />
                   <span className="truncate">{c.label}</span>
                 </button>
               ))}
@@ -685,26 +684,26 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
             </div>
           </div>
           
-          <div className="pt-4 flex flex-col gap-3">
+          <div className="pt-3 flex flex-col gap-2">
             {selectedEvent.meetLink && (
-              <a href={selectedEvent.meetLink} target="_blank" rel="noopener noreferrer" className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-colors shadow-lg shadow-blue-500/20">
-                <Video size={18} /> Join Google Meet
+              <a href={selectedEvent.meetLink} target="_blank" rel="noopener noreferrer" className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-colors shadow-lg shadow-blue-500/20">
+                <Video size={14} /> Join Google Meet
               </a>
             )}
-            <div className="flex gap-3">
-              <a href={buildGCalUrl(selectedEvent)} target="_blank" rel="noopener noreferrer" className="flex-1 py-3 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-colors">
-                <CalIcon size={14} /> Add to GCal
+            <div className="flex gap-2">
+              <a href={buildGCalUrl(selectedEvent)} target="_blank" rel="noopener noreferrer" className="flex-1 py-2.5 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-[10px] font-black uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors">
+                <CalIcon size={12} /> Add to GCal
               </a>
               <button onClick={() => { 
                 setForm({ title: selectedEvent.title, date: selectedEvent.date, startTime: selectedEvent.startTime, endTime: selectedEvent.endTime, category: selectedEvent.category, description: selectedEvent.description || '', attendees: selectedEvent.attendees || '', location: selectedEvent.location || '', meetLink: selectedEvent.meetLink || '' });
                 setEditingEventId(selectedEvent.id);
                 setSelectedEvent(null);
                 setShowForm(true);
-              }} className="px-5 py-3 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-colors">
+              }} className="px-4 py-2.5 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-[10px] font-black uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors">
                 Edit
               </button>
-              <button onClick={() => { deleteEvent(selectedEvent.id); setSelectedEvent(null); }} className="px-5 py-3 border border-red-200 hover:bg-red-50 text-red-600 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-colors">
-                <Trash2 size={14} />
+              <button onClick={() => { deleteEvent(selectedEvent.id); setSelectedEvent(null); }} className="px-4 py-2.5 border border-red-200 hover:bg-red-50 text-red-600 rounded-xl text-[10px] font-black uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors">
+                <Trash2 size={12} />
               </button>
             </div>
           </div>
