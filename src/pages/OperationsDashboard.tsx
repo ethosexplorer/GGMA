@@ -72,10 +72,19 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
     const mergeData = () => {
       const mergedMap = new Map();
       
+      // Helper: get dedup key — prefer email, fall back to lowercase name
+      const getKey = (entry: any) => {
+        const email = (entry.email || '').toLowerCase().trim();
+        if (email) return email;
+        const name = (entry.name || entry.fullName || entry.displayName || entry.id || '').toLowerCase().trim();
+        return name;
+      };
+      
       // 1. Load legacy Turso data first
       tursoUsers.forEach(t => {
         const safeName = typeof t.name === 'string' ? t.name : String(t.name || t.id);
-        mergedMap.set(safeName.toLowerCase(), {
+        const key = getKey(t) || safeName.toLowerCase();
+        mergedMap.set(key, {
           uid: String(t.id || t.uid || `turso-${safeName}`),
           fullName: t.name || t.fullName || 'Unknown Patient',
           email: t.email || '',
@@ -83,13 +92,14 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
           state: t.state || t.jurisdiction || 'Oklahoma',
           applicationStatus: t.status === 'Pending' ? 'Pending Review' : (t.status || 'Pending Review'),
           createdAt: t.created_at,
+          contactType: 'patient',
           source: 'turso'
         });
       });
 
       // 2. Load contacts from captureContact (phone intakes, online submissions)
       contactsUsers.forEach(c => {
-        const key = (c.name || c.email || c.id || '').toLowerCase();
+        const key = getKey(c);
         if (!key) return;
         const existing = mergedMap.get(key) || {};
         mergedMap.set(key, {
@@ -102,7 +112,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
           applicationStatus: c.status || existing.applicationStatus || 'Pending Review',
           createdAt: c.createdAt || existing.createdAt,
           accountId: c.accountId || existing.accountId || '',
-          contactType: c.contactType || 'patient',
+          contactType: c.contactType || existing.contactType || 'patient',
           source: 'contacts',
           payments: c.payments || [],
         });
@@ -110,9 +120,9 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
 
       // 3. Override with live Firebase real-time data
       firebaseUsers.forEach(f => {
-        // If this Firebase doc was created by saving a Turso legacy record,
-        // its UID starts with "turso-". Merge it back with the original Turso entry.
-        let key = f.fullName?.toLowerCase() || f.name?.toLowerCase() || f.displayName?.toLowerCase() || '';
+        // Use email as primary key for dedup
+        const email = (f.email || '').toLowerCase().trim();
+        let key = email || f.fullName?.toLowerCase() || f.name?.toLowerCase() || f.displayName?.toLowerCase() || '';
         
         // For turso-prefixed UIDs, extract the name from the UID to find the original entry
         if (!key && typeof f.uid === 'string' && f.uid.startsWith('turso-')) {
@@ -132,6 +142,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
           state: f.state || f.jurisdiction || existing.state || 'Oklahoma',
           applicationStatus: f.applicationStatus || existing.applicationStatus || 'Pending Review',
           createdAt: f.createdAt || existing.createdAt,
+          contactType: existing.contactType || 'patient',
           source: 'firebase'
         });
       });
@@ -376,7 +387,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
                    <div>
                      <p className="text-sm font-bold text-slate-800 group-hover:text-indigo-700 transition-colors">{a.fullName || a.name || a.displayName || 'Unknown Patient'}</p>
                      <p className="text-xs text-slate-500 font-medium">
-                       {a.contactType === 'patient' ? 'Patient Application' : a.contactType || 'Patient Card Renewal'} • {a.state || a.jurisdiction || 'OK'}
+                       {a.contactType === 'patient' ? 'Patient Application' : a.contactType || 'Patient Application'} • {a.state || a.jurisdiction || 'OK'}
                        {a.email ? ` • ${a.email}` : ''}
                      </p>
                    </div>
