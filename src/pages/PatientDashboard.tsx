@@ -162,12 +162,12 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
                 activeTab === tab.id
                   ? tab.id === 'subscription' ? "bg-amber-500 bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md" : "bg-slate-100 text-[#1a4731]"
                   : "text-slate-500 hover:bg-slate-50 hover:text-slate-700",
-                !isSubscribed && tab.id !== 'applications' && tab.id !== 'subscription' && "opacity-70"
+                !isSubscribed && tab.id !== 'applications' && tab.id !== 'subscription' && tab.id !== 'documents' && "opacity-70"
               )}
             >
               <tab.icon size={16} />
               <span className="hidden lg:inline">{tab.label}</span>
-              {!isSubscribed && tab.id !== 'applications' && tab.id !== 'subscription' && (
+              {!isSubscribed && tab.id !== 'applications' && tab.id !== 'subscription' && tab.id !== 'documents' && (
                 <Lock size={10} className="text-slate-400" />
               )}
             </button>
@@ -600,7 +600,7 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
         )}
 
         {/* ─── LOCKED TABS ─── */}
-        {(activeTab === 'cards' || activeTab === 'wallet' || activeTab === 'c3score' || activeTab === 'attorneys' || activeTab === 'documents') && !isSubscribed && (
+        {(activeTab === 'cards' || activeTab === 'wallet' || activeTab === 'c3score' || activeTab === 'attorneys') && !isSubscribed && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative min-h-[600px]">
              <ShadowOverlay 
                 title={`${tabs.find(t => t.id === activeTab)?.label} Locked`} 
@@ -630,7 +630,7 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
         )}
 
         {/* ─── DOCUMENTS TAB ─── */}
-        {activeTab === 'documents' && isSubscribed && <DocumentVaultTab user={user} />}
+        {activeTab === 'documents' && <DocumentVaultTab user={user} />}
 
 
         {/* ─── REGULATORY INTELLIGENCE TAB ─── */}
