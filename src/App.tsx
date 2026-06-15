@@ -735,6 +735,7 @@ export default function App() {
               contactType: crm.contactType || baseProfile.contactType || 'patient',
               licenseType: crm.licenseType || baseProfile.licenseType || '',
               status: baseProfile.status || 'Active',
+              applicationSubmittedAt: crm.createdAt || crm.dateAdded || crm.submittedAt || baseProfile.applicationSubmittedAt || baseProfile.createdAt || '',
             };
             // Set role from CRM contactType if not already admin/founder
             if (!['executive_founder', 'admin_internal', 'executive_ceo'].includes(enriched.role)) {
