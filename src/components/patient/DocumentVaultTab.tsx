@@ -2,13 +2,7 @@ import React, { useState } from 'react';
 import { Upload, FileText, Image, Shield, Trash2, Eye, Download, FolderOpen, Lock } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
-const initialDocs: any[] = [
-  { id: 1, name: 'Oklahoma State ID — Front', type: 'ID', format: 'JPG', size: '2.1 MB', uploaded: 'Jan 15, 2026', status: 'Verified', category: 'identification' },
-  { id: 2, name: 'Oklahoma State ID — Back', type: 'ID', format: 'JPG', size: '1.8 MB', uploaded: 'Jan 15, 2026', status: 'Verified', category: 'identification' },
-  { id: 4, name: 'Lab Results — CBC Panel', type: 'Lab', format: 'PDF', size: '890 KB', uploaded: 'Mar 22, 2026', status: 'Verified', category: 'lab' },
-  { id: 5, name: 'Insurance Card — SoonerCare', type: 'Insurance', format: 'JPG', size: '1.2 MB', uploaded: 'Jan 15, 2026', status: 'Verified', category: 'insurance' },
-  { id: 6, name: 'OMMA Card — Digital Copy', type: 'Card', format: 'PNG', size: '560 KB', uploaded: 'Jan 20, 2026', status: 'Active', category: 'cards' },
-];
+const initialDocs: any[] = [];
 
 export let globalDocuments = initialDocs;
 
