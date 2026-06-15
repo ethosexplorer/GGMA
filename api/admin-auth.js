@@ -68,5 +68,33 @@ export default async function handler(req, res) {
     }
   }
 
-  return res.status(400).json({ error: 'Invalid action', validActions: ['changePassword'] });
+  if (action === 'updateProfile') {
+    try {
+      const { email, fields } = req.body;
+      if (!email || !fields || typeof fields !== 'object') {
+        return res.status(400).json({ error: 'Email and fields object are required.' });
+      }
+
+      ensureAdmin();
+      const adminAuth = getAuth();
+      const db = getFirestore();
+
+      // Look up user by email
+      const userRecord = await adminAuth.getUserByEmail(email);
+      
+      // Update Firestore users doc
+      await db.collection('users').doc(userRecord.uid).update(fields);
+
+      console.log(`[Admin Auth] Profile updated for ${email} (uid: ${userRecord.uid}):`, Object.keys(fields));
+      return res.json({ success: true, message: `Profile updated for ${email}`, updatedFields: Object.keys(fields) });
+    } catch (err) {
+      console.error('[Admin Auth] updateProfile error:', err);
+      if (err.code === 'auth/user-not-found') {
+        return res.status(404).json({ error: 'No Firebase Auth account found with this email.' });
+      }
+      return res.status(500).json({ error: err.message || 'Failed to update profile' });
+    }
+  }
+
+  return res.status(400).json({ error: 'Invalid action', validActions: ['changePassword', 'updateProfile'] });
 }
