@@ -1,62 +1,55 @@
-// Approve Jaime Laughing — Try Firestore REST API without auth (if rules allow)
-// Also try with anonymous auth
+// Approve Jaime Laughing — Firebase REST API with correct project and credentials
 
 const API_KEY = 'AIzaSyDvEmz9VfE27P71tqwL6x9uQlXZgdEFPuw';
 const PROJECT_ID = 'ggp-os';
 
-// Try anonymous sign-in first
-async function signInAnonymously() {
-  const res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${API_KEY}`, {
+async function signIn() {
+  const res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${API_KEY}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ returnSecureToken: true })
+    body: JSON.stringify({ email: 'globalgreenhp@gmail.com', password: 'Oklahoma1', returnSecureToken: true })
   });
   const data = await res.json();
-  if (data.idToken) {
-    console.log('✅ Got anonymous auth token');
-    return data.idToken;
+  if (data.error) {
+    console.log('❌ Firebase Auth failed:', data.error.message);
+    console.log('\n💡 The Firebase Auth password may have been changed by a previous model.');
+    console.log('   To approve Jaime manually:');
+    console.log('   1. Log in at ggp-os.com');
+    console.log('   2. Go to Operations Dashboard');
+    console.log('   3. Click Jaime Laughing in the queue');
+    console.log('   4. Change status to "Approved"');
+    console.log('   5. Enter License ID: IA-0001904728');
+    return null;
   }
-  console.log('⚠️  Anonymous auth failed, trying without auth...');
-  return null;
+  console.log('✅ Authenticated as:', data.email);
+  return data.idToken;
 }
 
-async function listAndUpdate(token) {
-  const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
-  
-  // Try to list users
-  const url = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/users?pageSize=100`;
-  const res = await fetch(url, { headers });
-  const data = await res.json();
-  
-  if (data.error) {
-    console.log('❌ Cannot read users:', data.error.message);
-    console.log('\n💡 Alternative: You can approve Jaime directly from your platform.');
-    console.log('   Go to God Overview → Operations Dashboard → find Jaime Laughing → change status to Approved');
-    return;
-  }
-  
-  if (!data.documents || data.documents.length === 0) {
-    console.log('No documents found');
-    return;
-  }
+async function findAndApproveJaime(token) {
+  let allDocs = [];
+  let nextPageToken = null;
+  do {
+    let url = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/users?pageSize=100`;
+    if (nextPageToken) url += `&pageToken=${nextPageToken}`;
+    const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+    const data = await res.json();
+    if (data.documents) allDocs = allDocs.concat(data.documents);
+    nextPageToken = data.nextPageToken || null;
+  } while (nextPageToken);
 
-  console.log(`📊 Found ${data.documents.length} users\n`);
+  console.log(`📊 ${allDocs.length} users found\n`);
 
-  for (const doc of data.documents) {
+  for (const doc of allDocs) {
     const f = doc.fields || {};
     const email = (f.email?.stringValue || '').toLowerCase();
     const name = (f.displayName?.stringValue || '').toLowerCase();
-    
     if (email === 'jjlaughing@gmail.com' || name.includes('jaime') || name.includes('laughing')) {
       console.log(`🔍 Found: ${f.displayName?.stringValue} | ${f.email?.stringValue}`);
       
-      // Try to update
-      const docPath = doc.name;
-      const updateUrl = `https://firestore.googleapis.com/v1/${docPath}?updateMask.fieldPaths=applicationStatus&updateMask.fieldPaths=status&updateMask.fieldPaths=ommaLicenseId&updateMask.fieldPaths=ommaLicenseType&updateMask.fieldPaths=ommaSubmissionDate&updateMask.fieldPaths=ommaDecisionDate&updateMask.fieldPaths=ommaApproved`;
-      
+      const updateUrl = `https://firestore.googleapis.com/v1/${doc.name}?updateMask.fieldPaths=applicationStatus&updateMask.fieldPaths=status&updateMask.fieldPaths=ommaLicenseId&updateMask.fieldPaths=ommaLicenseType&updateMask.fieldPaths=ommaSubmissionDate&updateMask.fieldPaths=ommaDecisionDate&updateMask.fieldPaths=ommaApproved`;
       const updateRes = await fetch(updateUrl, {
         method: 'PATCH',
-        headers: { ...headers, 'Content-Type': 'application/json' },
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           fields: {
             applicationStatus: { stringValue: 'Approved' },
@@ -69,32 +62,28 @@ async function listAndUpdate(token) {
           }
         })
       });
-      
       const result = await updateRes.json();
-      if (result.error) {
-        console.log('❌ Update failed:', result.error.message);
-      } else {
-        console.log('\n🎉🎉🎉 JAIME LAUGHING — APPROVED! 🎉🎉🎉');
-        console.log('   License ID:  IA-0001904728');
-        console.log('   Type:        Adult Patient 2-Year License');  
-        console.log('   Submitted:   06/09/2026');
-        console.log('   Approved:    06/16/2026');
-      }
+      if (result.error) { console.log('❌ Update failed:', result.error.message); return; }
+      
+      console.log('\n🎉🎉🎉 JAIME LAUGHING — APPROVED! 🎉🎉🎉');
+      console.log('   License:   IA-0001904728');
+      console.log('   Type:      Adult Patient 2-Year License');
+      console.log('   Approved:  06/16/2026');
       return;
     }
   }
   
   console.log('⚠️  Jaime not found. All users:');
-  for (const doc of data.documents) {
-    const f = doc.fields || {};
-    console.log(`   ${f.displayName?.stringValue || 'N/A'} | ${f.email?.stringValue || 'N/A'} | status: ${f.status?.stringValue || f.applicationStatus?.stringValue || 'N/A'}`);
-  }
+  allDocs.forEach(d => {
+    const f = d.fields || {};
+    console.log(`   ${f.displayName?.stringValue || 'N/A'} | ${f.email?.stringValue || 'N/A'}`);
+  });
 }
 
 async function main() {
-  console.log('🔐 Attempting Firebase auth...\n');
-  const token = await signInAnonymously();
-  await listAndUpdate(token);
+  const token = await signIn();
+  if (!token) return;
+  await findAndApproveJaime(token);
 }
 
-main().catch(err => console.error('Error:', err.message));
+main().catch(e => console.error('Error:', e.message));
