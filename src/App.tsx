@@ -653,17 +653,21 @@ export default function App() {
         return;
       } catch (fbErr: any) {
         console.log('[App.handleLogin] Firebase Auth failed for privileged user, falling back to local override:', fbErr.code);
-        // If wrong password, block immediately UNLESS it's Bob or Ryan who have local override passwords
+        // If wrong password, block immediately UNLESS it's a privileged user with a local override password
         if (fbErr.code === 'auth/wrong-password' || fbErr.code === 'auth/invalid-credential') {
-          if (lowerEmail !== ADVISOR_EMAIL && lowerEmail !== 'ceo.globalgreenhp@gmail.com') {
+          if (lowerEmail !== ADVISOR_EMAIL && lowerEmail !== 'ceo.globalgreenhp@gmail.com' && lowerEmail !== FOUNDER_EMAIL && lowerEmail !== FOUNDER_EMAIL_2) {
             alert('Invalid credentials. Please check your password.');
             return;
           }
         }
-        // For other errors (user-not-found, network), or if Bob/Ryan, fall through to local override
+        // For other errors (user-not-found, network), or if privileged user, fall through to local override
       }
 
-      // Local override fallback (when Firebase Auth isn't available)
+      // Local override fallback (when Firebase Auth isn't available or password mismatch)
+      if ((lowerEmail === FOUNDER_EMAIL || lowerEmail === FOUNDER_EMAIL_2) && pass !== 'Oklahoma1') {
+        (() => { import('./lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Invalid credentials." })] }).catch(console.error) ); alert("Invalid credentials.\n\n[Live Production Transaction Logged]"); })();
+        return;
+      }
       if (lowerEmail === ADVISOR_EMAIL && pass !== 'Globalgreen4') {
         (() => { import('./lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Invalid credentials." })] }).catch(console.error) ); alert("Invalid credentials.\n\n[Live Production Transaction Logged]"); })();
         return;
