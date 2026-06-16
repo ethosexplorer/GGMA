@@ -171,6 +171,82 @@ export const OverviewTab = ({
   // Fetch on initial mount
   useEffect(() => { fetchClickStreamByRange('today'); }, []);
 
+  // ── SEARCH ANALYTICS TIME RANGE STATE ──
+  const [searchAnalyticsRange, setSearchAnalyticsRange] = useState<'today' | 'week' | 'month' | 'year' | 'all'>('all');
+  const [searchAnalyticsData, setSearchAnalyticsData] = useState({
+    totalClicks: liveAnalytics.clicks || 0,
+    conversions: liveAnalytics.conversions || 0,
+    clicksByPath: liveAnalytics.clicksByPath || {} as Record<string, number>,
+    clicksByUserType: liveAnalytics.clicksByUserType || {} as Record<string, number>
+  });
+
+  const searchAnalyticsRangeLabels: Record<string, string> = {
+    today: 'Today',
+    week: 'This Week',
+    month: 'This Month',
+    year: 'This Year',
+    all: 'All Time'
+  };
+
+  const fetchSearchAnalytics = async (range: string) => {
+    try {
+      let sinceDate: string;
+      const now = new Date();
+      switch (range) {
+        case 'today': {
+          const start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+          sinceDate = start.toISOString();
+          break;
+        }
+        case 'week':
+          sinceDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+          break;
+        case 'month':
+          sinceDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+          break;
+        case 'year':
+          sinceDate = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString();
+          break;
+        default:
+          sinceDate = '2020-01-01T00:00:00Z';
+      }
+
+      const [clickRes, convRes, pathRes, utRes] = await Promise.all([
+        turso.execute({ sql: 'SELECT COUNT(*) as c FROM analytics_events WHERE created_at >= ?', args: [sinceDate] }),
+        turso.execute({ sql: "SELECT COUNT(*) as c FROM analytics_events WHERE created_at >= ? AND path != '/' AND path != ''", args: [sinceDate] }),
+        turso.execute({ sql: 'SELECT path, COUNT(*) as c FROM analytics_events WHERE created_at >= ? GROUP BY path ORDER BY c DESC LIMIT 10', args: [sinceDate] }),
+        turso.execute({ sql: 'SELECT user_type, COUNT(*) as c FROM analytics_events WHERE created_at >= ? GROUP BY user_type ORDER BY c DESC', args: [sinceDate] })
+      ]);
+
+      const clicksByPath: Record<string, number> = {};
+      pathRes.rows.forEach((r: any) => { clicksByPath[String(r.path)] = Number(r.c); });
+
+      const clicksByUserType: Record<string, number> = {};
+      utRes.rows.forEach((r: any) => { clicksByUserType[String(r.user_type)] = Number(r.c); });
+
+      setSearchAnalyticsData({
+        totalClicks: Number(clickRes.rows[0]?.c || 0),
+        conversions: Number(convRes.rows[0]?.c || 0),
+        clicksByPath,
+        clicksByUserType
+      });
+    } catch (e) {
+      console.error('Error fetching search analytics:', e);
+    }
+  };
+
+  // Sync with parent liveAnalytics when range is 'all' (default)
+  useEffect(() => {
+    if (searchAnalyticsRange === 'all') {
+      setSearchAnalyticsData({
+        totalClicks: liveAnalytics.clicks || 0,
+        conversions: liveAnalytics.conversions || 0,
+        clicksByPath: liveAnalytics.clicksByPath || {},
+        clicksByUserType: liveAnalytics.clicksByUserType || {}
+      });
+    }
+  }, [liveAnalytics.clicks, liveAnalytics.conversions, liveAnalytics.clicksByPath, liveAnalytics.clicksByUserType]);
+
   // ── LIVE ACCOUNT ACTIVITY FEED ──────────────────────────────────────────
   const [allAccounts, setAllAccounts] = useState<any[]>([]);
   const [accountCounts, setAccountCounts] = useState({ total: 0, today: 0, thisWeek: 0, thisMonth: 0, thisYear: 0 });
@@ -939,17 +1015,34 @@ export const OverviewTab = ({
             <div className="w-10 h-10 bg-blue-500 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg"><Search size={20} /></div>
             Global Search Analytics
           </h3>
-          <span className="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-bold rounded-full border border-blue-100 uppercase tracking-widest flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
-            Real-Time Query Sync
-          </span>
+          <div className="flex items-center gap-3">
+            <select
+              value={searchAnalyticsRange}
+              onChange={e => {
+                const val = e.target.value as any;
+                setSearchAnalyticsRange(val);
+                fetchSearchAnalytics(val);
+              }}
+              className="bg-white border border-slate-300 text-slate-700 text-xs font-bold rounded-lg px-3 py-1.5 outline-none cursor-pointer hover:border-blue-400 transition-colors"
+            >
+              <option value="today">Today</option>
+              <option value="week">This Week</option>
+              <option value="month">This Month</option>
+              <option value="year">This Year</option>
+              <option value="all">All Time</option>
+            </select>
+            <span className="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-bold rounded-full border border-blue-100 uppercase tracking-widest flex items-center gap-2">
+              <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></div>
+              Real-Time Query Sync
+            </span>
+          </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           {[
-            { label: 'Total Page Views (14d)', value: liveAnalytics.clicks.toLocaleString(), trend: 'All tracked sessions', color: 'text-blue-600' },
-            { label: 'Unique User Types', value: Object.keys(liveAnalytics.clicksByUserType || {}).length.toString(), trend: 'Distinct roles', color: 'text-emerald-600' },
-            { label: 'Unique Pages Visited', value: Object.keys(liveAnalytics.clicksByPath || {}).length.toString(), trend: 'Distinct routes', color: 'text-indigo-600' },
-            { label: 'Deep Navigation Rate', value: liveAnalytics.clicks > 0 ? ((liveAnalytics.conversions / liveAnalytics.clicks) * 100).toFixed(1) + '%' : '0%', trend: 'Non-landing clicks', color: 'text-amber-600' },
+            { label: `Total Page Views (${searchAnalyticsRangeLabels[searchAnalyticsRange]})`, value: searchAnalyticsData.totalClicks.toLocaleString(), trend: 'All tracked sessions', color: 'text-blue-600' },
+            { label: 'Unique User Types', value: Object.keys(searchAnalyticsData.clicksByUserType).length.toString(), trend: 'Distinct roles', color: 'text-emerald-600' },
+            { label: 'Unique Pages Visited', value: Object.keys(searchAnalyticsData.clicksByPath).length.toString(), trend: 'Distinct routes', color: 'text-indigo-600' },
+            { label: 'Deep Navigation Rate', value: searchAnalyticsData.totalClicks > 0 ? ((searchAnalyticsData.conversions / searchAnalyticsData.totalClicks) * 100).toFixed(1) + '%' : '0%', trend: 'Non-landing clicks', color: 'text-amber-600' },
           ].map((s, i) => (
             <div key={i} className="p-4 bg-slate-100 rounded-2xl border border-slate-200">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{s.label}</p>
@@ -960,9 +1053,9 @@ export const OverviewTab = ({
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div className="border border-slate-200 rounded-2xl p-4 bg-white">
-            <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2"><Globe size={14} className="text-blue-500" /> Top Pages (14d)</h4>
+            <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2"><Globe size={14} className="text-blue-500" /> Top Pages ({searchAnalyticsRangeLabels[searchAnalyticsRange]})</h4>
             <div className="space-y-3">
-              {Object.entries(liveAnalytics.clicksByPath || {}).slice(0, 5).map(([path, count]: any, i: number) => (
+              {Object.entries(searchAnalyticsData.clicksByPath).slice(0, 5).map(([path, count]: any, i: number) => (
                 <div key={i} className="flex items-center gap-3">
                   <span className="text-xs font-black text-slate-300 w-5">{i + 1}</span>
                   <div className="flex-1 min-w-0">
@@ -973,8 +1066,8 @@ export const OverviewTab = ({
                   </div>
                 </div>
               ))}
-              {Object.keys(liveAnalytics.clicksByPath || {}).length === 0 && (
-                <p className="text-sm text-slate-400 italic text-center py-4">No page views in the last 14 days</p>
+              {Object.keys(searchAnalyticsData.clicksByPath).length === 0 && (
+                <p className="text-sm text-slate-400 italic text-center py-4">No page views in this time range</p>
               )}
             </div>
           </div>
@@ -982,11 +1075,11 @@ export const OverviewTab = ({
             <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2"><Activity size={14} className="text-emerald-500" /> Traffic by User Type</h4>
             <div className="space-y-4">
               {(() => {
-                const entries = Object.entries(liveAnalytics.clicksByUserType || {});
+                const entries = Object.entries(searchAnalyticsData.clicksByUserType);
                 const totalUT = entries.reduce((a, [, v]) => a + Number(v), 0);
                 const colors = ['text-emerald-600', 'text-blue-600', 'text-amber-600', 'text-indigo-600', 'text-red-500', 'text-purple-600'];
                 const barColors = ['bg-emerald-500', 'bg-blue-500', 'bg-amber-500', 'bg-indigo-500', 'bg-red-500', 'bg-purple-500'];
-                if (entries.length === 0) return <p className="text-sm text-slate-400 italic text-center py-4">No traffic data yet</p>;
+                if (entries.length === 0) return <p className="text-sm text-slate-400 italic text-center py-4">No traffic data in this time range</p>;
                 return entries.slice(0, 6).map(([userType, count], i) => {
                   const pct = totalUT > 0 ? Math.round((Number(count) / totalUT) * 100) : 0;
                   return (
