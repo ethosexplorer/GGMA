@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Scale, Search, ExternalLink, Shield, TrendingUp, AlertTriangle, Clock, MapPin, Gavel, Users, BookOpen, Database, Activity, Printer, CircleCheck } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Scale, Search, ExternalLink, Shield, TrendingUp, AlertTriangle, Clock, MapPin, Gavel, Users, BookOpen, Database, Activity, Printer, CircleCheck, Wifi, Loader2, RefreshCw } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 const LANDMARK_CASES = [
@@ -267,7 +267,65 @@ const ACTIVE_CASES = [
 
 export const JudicialMonitorTab = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeSection, setActiveSection] = useState<'cases' | 'judges' | 'active' | 'evidence'>('cases');
+  const [activeSection, setActiveSection] = useState<'cases' | 'judges' | 'active' | 'evidence'>('active');
+  const [liveCases, setLiveCases] = useState<any[]>([]);
+  const [liveLoading, setLiveLoading] = useState(false);
+  const [liveError, setLiveError] = useState<string | null>(null);
+  const [lastRefreshed, setLastRefreshed] = useState<string | null>(null);
+
+  // Fetch live cannabis case data from CourtListener (free API)
+  const fetchLiveCases = async () => {
+    setLiveLoading(true);
+    setLiveError(null);
+    try {
+      // Search for recent cannabis/marijuana court opinions
+      const queries = ['cannabis', 'marijuana regulation', 'OMMA cannabis'];
+      const allResults: any[] = [];
+
+      for (const q of queries) {
+        try {
+          const res = await fetch(`https://www.courtlistener.com/api/rest/v4/search/?q=${encodeURIComponent(q)}&type=o&order_by=dateFiled+desc&page_size=5`, {
+            headers: { 'Accept': 'application/json' }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.results) {
+              data.results.forEach((r: any) => {
+                // Avoid duplicates
+                if (!allResults.find(existing => existing.id === r.id)) {
+                  allResults.push({
+                    id: r.id,
+                    title: r.caseName || r.case_name || 'Untitled Case',
+                    court: r.court || r.court_citation_string || 'Federal Court',
+                    date: r.dateFiled || r.date_filed || '',
+                    status: r.status || 'Filed',
+                    summary: r.snippet ? r.snippet.replace(/<\/?mark>/g, '') : (r.suitNature || 'Cannabis-related federal case.'),
+                    url: r.absolute_url ? `https://www.courtlistener.com${r.absolute_url}` : null,
+                    source: 'courtlistener',
+                  });
+                }
+              });
+            }
+          }
+        } catch (e) {
+          // Individual query failure is non-fatal
+        }
+      }
+
+      setLiveCases(allResults.slice(0, 15)); // Cap at 15 live results
+      setLastRefreshed(new Date().toLocaleTimeString());
+    } catch (err: any) {
+      setLiveError('Live feed temporarily unavailable');
+    }
+    setLiveLoading(false);
+  };
+
+  useEffect(() => {
+    fetchLiveCases();
+    // Refresh every 10 minutes
+    const interval = setInterval(fetchLiveCases, 10 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const filteredCases = LANDMARK_CASES.filter(c =>
     c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -280,6 +338,19 @@ export const JudicialMonitorTab = () => {
     j.court.toLowerCase().includes(searchQuery.toLowerCase()) ||
     j.note.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Always pin Robinson v. Oglala first, then other active cases
+  const pinnedCase = ACTIVE_CASES[0]; // Robinson v. Oglala Sioux Tribe
+  const otherActiveCases = ACTIVE_CASES.slice(1);
+
+  // Dynamic stats
+  const totalLandmark = LANDMARK_CASES.length + liveCases.filter(c => c.summary?.length > 100).length;
+  const totalActive = ACTIVE_CASES.length + liveCases.length;
+  const totalJudges = JUDICIAL_PROFILES.length;
+  const totalStates = new Set([
+    ...ACTIVE_CASES.map(c => c.court),
+    ...liveCases.map(c => c.court)
+  ]).size;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
@@ -302,20 +373,39 @@ export const JudicialMonitorTab = () => {
               <p className="text-blue-300/50 text-xs font-bold uppercase tracking-widest">Cannabis Court Cases • Judicial Profiles • Legal Precedent Tracker</p>
             </div>
           </div>
-          <p className="text-blue-200/60 text-sm max-w-2xl leading-relaxed">
-            Track landmark rulings, active litigation, and judicial sentiment across federal and state courts.
-            Identify judges who support reform, advocate for patients, and shape cannabis policy through the bench.
-          </p>
+          <div className="flex items-center justify-between">
+            <p className="text-blue-200/60 text-sm max-w-2xl leading-relaxed">
+              Track landmark rulings, active litigation, and judicial sentiment across federal and state courts.
+              Identify judges who support reform, advocate for patients, and shape cannabis policy through the bench.
+            </p>
+            <div className="flex items-center gap-3">
+              {lastRefreshed && (
+                <div className="flex items-center gap-2 bg-emerald-900/30 border border-emerald-800/30 rounded-lg px-3 py-1.5">
+                  <Wifi size={12} className="text-emerald-400 animate-pulse" />
+                  <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">LIVE DATA</span>
+                  <span className="text-[9px] font-bold text-emerald-300/50">{lastRefreshed}</span>
+                </div>
+              )}
+              <button
+                onClick={fetchLiveCases}
+                disabled={liveLoading}
+                className="flex items-center gap-1.5 bg-blue-900/30 border border-blue-800/30 rounded-lg px-3 py-1.5 text-[9px] font-black text-blue-400 uppercase tracking-widest hover:bg-blue-800/30 transition-colors disabled:opacity-50"
+              >
+                {liveLoading ? <Loader2 size={12} className="animate-spin" /> : <RefreshCw size={12} />}
+                Refresh
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Stats Row */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[
-          { label: 'Landmark Rulings Tracked', value: '142', icon: Scale, color: 'text-blue-400', bg: 'bg-blue-900/30' },
-          { label: 'Active Cases Monitored', value: '38', icon: Clock, color: 'text-amber-400', bg: 'bg-amber-900/30' },
-          { label: 'Reform-Leaning Judges', value: '24', icon: Users, color: 'text-emerald-400', bg: 'bg-emerald-900/30' },
-          { label: 'States with Active Litigation', value: '31', icon: MapPin, color: 'text-purple-400', bg: 'bg-purple-900/30' },
+          { label: 'Landmark Rulings Tracked', value: String(totalLandmark), icon: Scale, color: 'text-blue-400', bg: 'bg-blue-900/30' },
+          { label: 'Active Cases Monitored', value: String(totalActive), icon: Clock, color: 'text-amber-400', bg: 'bg-amber-900/30' },
+          { label: 'Reform-Leaning Judges', value: String(totalJudges), icon: Users, color: 'text-emerald-400', bg: 'bg-emerald-900/30' },
+          { label: 'Courts Tracked', value: String(totalStates), icon: MapPin, color: 'text-purple-400', bg: 'bg-purple-900/30' },
         ].map((stat, i) => (
           <div key={i} className="bg-[#0b1525] border border-blue-900/20 rounded-2xl p-5">
             <div className="flex items-center justify-between mb-3">
@@ -455,8 +545,36 @@ export const JudicialMonitorTab = () => {
       {/* Active Litigation */}
       {activeSection === 'active' && (
         <div className="space-y-4">
-          {ACTIVE_CASES.map((c, i) => (
-            <div key={i} className="bg-[#0b1525] border border-blue-900/20 rounded-2xl p-6 hover:border-blue-700/30 transition-all group">
+          {/* PINNED: Robinson v. Oglala - Always first */}
+          <div className="bg-gradient-to-r from-[#1a1a0a] via-[#1a180b] to-[#0b1525] border-2 border-amber-600/40 rounded-2xl p-6 hover:border-amber-500/50 transition-all group relative overflow-hidden shadow-xl shadow-amber-900/10">
+            <div className="absolute top-0 right-0 p-4 opacity-5"><Gavel size={80} /></div>
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="px-2 py-0.5 bg-amber-900/50 text-amber-300 border border-amber-700/50 rounded text-[9px] font-black uppercase tracking-widest animate-pulse">📌 Pinned — Founder's Case</span>
+              </div>
+              <div className="flex flex-col md:flex-row justify-between gap-4 mb-3">
+                <div>
+                  <h3 className="text-base font-black text-amber-100 group-hover:text-amber-200 transition-colors">{pinnedCase.title}</h3>
+                  <p className="text-[10px] font-bold text-amber-300/50 uppercase tracking-widest mt-1">{pinnedCase.court} • {pinnedCase.type}</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-amber-900/40 text-amber-300 border border-amber-700/40">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full mr-1.5 bg-amber-400 animate-pulse"></span>
+                    {pinnedCase.status}
+                  </span>
+                  <div className="bg-[#111f36] border border-amber-900/30 rounded-lg px-3 py-1.5">
+                    <p className="text-[9px] font-bold text-amber-300/40 uppercase tracking-widest">Next Hearing</p>
+                    <p className="text-xs font-black text-white">{pinnedCase.nextHearing}</p>
+                  </div>
+                </div>
+              </div>
+              <p className="text-xs text-amber-200/60 leading-relaxed">{pinnedCase.summary}</p>
+            </div>
+          </div>
+
+          {/* Other curated active cases */}
+          {otherActiveCases.map((c, i) => (
+            <div key={`curated-${i}`} className="bg-[#0b1525] border border-blue-900/20 rounded-2xl p-6 hover:border-blue-700/30 transition-all group">
               <div className="flex flex-col md:flex-row justify-between gap-4 mb-3">
                 <div>
                   <h3 className="text-sm font-black text-white group-hover:text-blue-300 transition-colors">{c.title}</h3>
@@ -481,6 +599,53 @@ export const JudicialMonitorTab = () => {
               <p className="text-xs text-blue-200/60 leading-relaxed">{c.summary}</p>
             </div>
           ))}
+
+          {/* Live feed from CourtListener */}
+          {liveCases.length > 0 && (
+            <>
+              <div className="flex items-center gap-3 pt-4">
+                <div className="h-px flex-1 bg-blue-900/30"></div>
+                <div className="flex items-center gap-2 px-3 py-1 bg-emerald-900/20 border border-emerald-800/20 rounded-full">
+                  <Wifi size={10} className="text-emerald-400 animate-pulse" />
+                  <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest">Live Court Feed — CourtListener</span>
+                </div>
+                <div className="h-px flex-1 bg-blue-900/30"></div>
+              </div>
+
+              {liveCases.map((c, i) => (
+                <div key={`live-${i}`} className="bg-[#0b1525] border border-emerald-900/20 rounded-2xl p-5 hover:border-emerald-700/20 transition-all group">
+                  <div className="flex flex-col md:flex-row justify-between gap-3 mb-2">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="px-1.5 py-0.5 bg-emerald-900/30 text-emerald-400 border border-emerald-800/30 rounded text-[8px] font-black uppercase tracking-wider">LIVE</span>
+                        <h3 className="text-sm font-bold text-white group-hover:text-emerald-300 transition-colors">{c.title}</h3>
+                      </div>
+                      <p className="text-[10px] font-bold text-blue-300/40 uppercase tracking-widest">{c.court} {c.date ? `• ${c.date}` : ''}</p>
+                    </div>
+                    {c.url && (
+                      <a href={c.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 px-3 py-1 bg-blue-900/30 border border-blue-800/30 rounded-lg text-[9px] font-black text-blue-400 uppercase tracking-widest hover:bg-blue-800/30 transition-colors shrink-0 self-start">
+                        View on CourtListener <ExternalLink size={10} />
+                      </a>
+                    )}
+                  </div>
+                  <p className="text-xs text-blue-200/50 leading-relaxed">{c.summary}</p>
+                </div>
+              ))}
+            </>
+          )}
+
+          {liveLoading && liveCases.length === 0 && (
+            <div className="text-center py-8 text-blue-300/30 flex items-center justify-center gap-3">
+              <Loader2 size={16} className="animate-spin" />
+              <span className="text-sm font-bold">Loading live court data...</span>
+            </div>
+          )}
+
+          {liveError && (
+            <div className="text-center py-4 text-amber-400/60 text-xs font-bold bg-amber-900/10 border border-amber-900/20 rounded-xl px-4">
+              ⚠️ {liveError} — Showing curated cases only
+            </div>
+          )}
         </div>
       )}
 
