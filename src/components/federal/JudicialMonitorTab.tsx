@@ -208,12 +208,13 @@ const JUDICIAL_PROFILES = [
 
 const ACTIVE_CASES = [
   {
-    title: 'Robinson v. Oglala Sioux Tribe et al. (Appellate Case No. 25-6143)',
-    court: '10th Circuit Court of Appeals (Origin: W.D. Oklahoma)',
+    title: 'Robinson v. Oglala Sioux Tribe et al.',
+    court: '10th Circuit Court of Appeals (Appeal No. 25-6143) • Origin: W.D. Oklahoma (Case No. 5:25-cv-00289)',
     type: 'IP Theft / Sovereign Immunity Appeal',
     status: 'Active / Briefing Closed',
     nextHearing: 'Waiting on Panel (Briefing Closed Jan 6, 2026)',
-    summary: 'Plaintiff Shantell Robinson appeals the dismissal of an IP infringement case regarding the "Omi Credit" platform. The district court dismissed via tribal sovereign immunity. Plaintiff\'s reply brief was submitted early on Dec 17, 2025. The panel closed briefing on Jan 6, 2026. On Jan 14, 2026, defendants were ordered to submit paper copies. The 10th Circuit is currently reviewing the appeal for a final panel decision.',
+    summary: 'Plaintiff Shantell Robinson appeals the dismissal of an IP infringement case regarding the "Omi Credit" platform. The district court (W.D. Oklahoma, Case No. 5:25-cv-00289) dismissed via tribal sovereign immunity. Plaintiff\'s reply brief was submitted early on Dec 17, 2025. The panel closed briefing on Jan 6, 2026. On Jan 14, 2026, defendants were ordered to submit paper copies. The 10th Circuit (Appeal No. 25-6143) is currently reviewing the appeal for a final panel decision.',
+    url: 'https://www.pacermonitor.com/public/case/57141546/Robinson_v_Oglala_Sioux_Tribe_et_al',
   },
   {
     title: 'Canna Provisions v. DEA',
@@ -569,6 +570,11 @@ export const JudicialMonitorTab = () => {
                 </div>
               </div>
               <p className="text-xs text-amber-200/60 leading-relaxed">{pinnedCase.summary}</p>
+              {pinnedCase.url && (
+                <a href={pinnedCase.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-amber-900/30 border border-amber-700/40 rounded-xl text-[10px] font-black text-amber-300 uppercase tracking-widest hover:bg-amber-800/30 transition-colors">
+                  <ExternalLink size={12} /> View on PACER Monitor
+                </a>
+              )}
             </div>
           </div>
 
