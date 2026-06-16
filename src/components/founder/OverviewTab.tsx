@@ -68,8 +68,9 @@ export const OverviewTab = ({
   const [hideAlertQueue, setHideAlertQueue] = useState(() => localStorage.getItem('gghp_alert_queue_dismissed') === 'true');
 
   // ── LIVE ACCOUNT ACTIVITY FEED ──────────────────────────────────────────
-  const [recentAccounts, setRecentAccounts] = useState<any[]>([]);
-  const [accountCounts, setAccountCounts] = useState({ total: 0, today: 0, thisWeek: 0, thisMonth: 0 });
+  const [allAccounts, setAllAccounts] = useState<any[]>([]);
+  const [accountCounts, setAccountCounts] = useState({ total: 0, today: 0, thisWeek: 0, thisMonth: 0, thisYear: 0 });
+  const [activityRange, setActivityRange] = useState<'today' | 'week' | 'month' | 'year' | 'all'>('month');
 
   useEffect(() => {
     const unsub = onSnapshot(collection(db, 'users'), (snap) => {
@@ -77,10 +78,12 @@ export const OverviewTab = ({
       const todayStr = now.toISOString().split('T')[0];
       const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
       const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      const yearAgo = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
 
       let today = 0;
       let thisWeek = 0;
       let thisMonth = 0;
+      let thisYear = 0;
 
       const allUsers = snap.docs.map(d => {
         const data = d.data();
@@ -96,6 +99,7 @@ export const OverviewTab = ({
           if (cStr === todayStr) today++;
           if (createdDate >= weekAgo) thisWeek++;
           if (createdDate >= monthAgo) thisMonth++;
+          if (createdDate >= yearAgo) thisYear++;
         }
 
         return {
@@ -116,11 +120,29 @@ export const OverviewTab = ({
         return b.createdAt.getTime() - a.createdAt.getTime();
       });
 
-      setRecentAccounts(allUsers.slice(0, 15));
-      setAccountCounts({ total: snap.size, today, thisWeek, thisMonth });
+      setAllAccounts(allUsers);
+      setAccountCounts({ total: snap.size, today, thisWeek, thisMonth, thisYear });
     });
     return () => unsub();
   }, []);
+
+  // Filter accounts based on selected time range
+  const filteredAccounts = allAccounts.filter(acct => {
+    if (activityRange === 'all') return true;
+    if (!acct.createdAt) return false;
+    const now = new Date();
+    const diff = now.getTime() - acct.createdAt.getTime();
+    switch (activityRange) {
+      case 'today': return diff < 24 * 60 * 60 * 1000;
+      case 'week': return diff < 7 * 24 * 60 * 60 * 1000;
+      case 'month': return diff < 30 * 24 * 60 * 60 * 1000;
+      case 'year': return diff < 365 * 24 * 60 * 60 * 1000;
+      default: return true;
+    }
+  });
+
+  const rangeLabel = { today: 'Today', week: 'This Week', month: 'This Month', year: 'This Year', all: 'All Time' };
+  const rangeCount = { today: accountCounts.today, week: accountCounts.thisWeek, month: accountCounts.thisMonth, year: accountCounts.thisYear, all: accountCounts.total };
 
   const [broadcastMsg, setBroadcastMsg] = useState('🚨 SYSTEM NOTICE: NATIONWIDE COMPLIANCE AUDIT IN PROGRESS • GLOBAL GREEN HYBRID PLATFORM (GGHP) • ALL SECTORS (GGMA/RIP/SINC) OPERATIONAL');
   const [broadcastType, setBroadcastType] = useState('Urgent Alert (Red)');
@@ -448,21 +470,40 @@ export const OverviewTab = ({
               <h3 className="font-black text-lg flex items-center gap-2"><UserPlus size={20} className="text-emerald-400" /> Live Account Activity</h3>
               <p className="text-xs text-slate-400 mt-1">Real-time Firebase user registrations • Who's creating accounts on your platform right now</p>
             </div>
-            <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-full">
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-              <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Live Firebase Sync</span>
+            <div className="flex items-center gap-3">
+              <select
+                value={activityRange}
+                onChange={e => setActivityRange(e.target.value as any)}
+                className="bg-slate-800 border border-slate-600 text-white text-xs font-bold rounded-xl px-3 py-2 outline-none cursor-pointer hover:border-emerald-500/50 transition-colors"
+              >
+                <option value="today">Today</option>
+                <option value="week">This Week</option>
+                <option value="month">This Month</option>
+                <option value="year">This Year</option>
+                <option value="all">All Time</option>
+              </select>
+              <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-full">
+                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Live Firebase Sync</span>
+              </div>
             </div>
           </div>
 
           {/* Account Stats Row */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             {[
-              { label: 'Total Accounts', value: accountCounts.total.toLocaleString(), icon: '👥', color: 'text-white' },
-              { label: 'Joined Today', value: accountCounts.today.toString(), icon: '🟢', color: accountCounts.today > 0 ? 'text-emerald-400' : 'text-slate-400' },
-              { label: 'This Week', value: accountCounts.thisWeek.toString(), icon: '📅', color: accountCounts.thisWeek > 0 ? 'text-cyan-400' : 'text-slate-400' },
-              { label: 'This Month', value: accountCounts.thisMonth.toString(), icon: '📊', color: accountCounts.thisMonth > 0 ? 'text-indigo-400' : 'text-slate-400' },
+              { label: 'Total Accounts', value: accountCounts.total.toLocaleString(), icon: '👥', color: 'text-white', active: activityRange === 'all' },
+              { label: 'Joined Today', value: accountCounts.today.toString(), icon: '🟢', color: accountCounts.today > 0 ? 'text-emerald-400' : 'text-slate-400', active: activityRange === 'today' },
+              { label: 'This Week', value: accountCounts.thisWeek.toString(), icon: '📅', color: accountCounts.thisWeek > 0 ? 'text-cyan-400' : 'text-slate-400', active: activityRange === 'week' },
+              { label: 'This Month', value: accountCounts.thisMonth.toString(), icon: '📊', color: accountCounts.thisMonth > 0 ? 'text-indigo-400' : 'text-slate-400', active: activityRange === 'month' },
             ].map((stat, i) => (
-              <div key={i} className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
+              <div key={i} className={cn("p-4 rounded-xl border transition-all cursor-pointer hover:border-emerald-500/40",
+                stat.active ? 'bg-emerald-500/10 border-emerald-500/30 ring-1 ring-emerald-500/20' : 'bg-slate-800/50 border-slate-700/50')}
+                onClick={() => {
+                  const ranges: Record<number, typeof activityRange> = { 0: 'all', 1: 'today', 2: 'week', 3: 'month' };
+                  setActivityRange(ranges[i]);
+                }}
+              >
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{stat.label}</p>
                   <span className="text-sm">{stat.icon}</span>
@@ -475,11 +516,11 @@ export const OverviewTab = ({
           {/* Recent Account Activity Feed */}
           <div className="bg-slate-800/30 rounded-2xl border border-slate-700/50 overflow-hidden">
             <div className="px-5 py-3 border-b border-slate-700/50 flex items-center justify-between">
-              <h4 className="text-sm font-black text-white flex items-center gap-2"><LogIn size={14} className="text-emerald-400" /> Recent Signups & Accounts</h4>
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{recentAccounts.length} most recent</span>
+              <h4 className="text-sm font-black text-white flex items-center gap-2"><LogIn size={14} className="text-emerald-400" /> {rangeLabel[activityRange]} Signups</h4>
+              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{filteredAccounts.length} {activityRange === 'all' ? 'total' : `in ${rangeLabel[activityRange].toLowerCase()}`}</span>
             </div>
-            <div className="divide-y divide-slate-800/50 max-h-[400px] overflow-y-auto">
-              {recentAccounts.length > 0 ? recentAccounts.map((acct, i) => {
+            <div className="divide-y divide-slate-800/50 max-h-[320px] overflow-y-auto">
+              {filteredAccounts.length > 0 ? filteredAccounts.map((acct, i) => {
                 const roleColors: Record<string, string> = {
                   'user': 'bg-blue-500/20 text-blue-300 border-blue-500/30',
                   'patient': 'bg-blue-500/20 text-blue-300 border-blue-500/30',
@@ -532,7 +573,7 @@ export const OverviewTab = ({
                   </div>
                 );
               }) : (
-                <div className="px-5 py-8 text-center text-sm text-slate-500 italic">No accounts found in Firebase</div>
+                <div className="px-5 py-8 text-center text-sm text-slate-500 italic">No signups {activityRange === 'all' ? 'found' : rangeLabel[activityRange].toLowerCase()}</div>
               )}
             </div>
           </div>
