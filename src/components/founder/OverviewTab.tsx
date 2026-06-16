@@ -67,6 +67,110 @@ export const OverviewTab = ({
   const [hideSystemFreeze, setHideSystemFreeze] = useState(() => localStorage.getItem('gghp_system_freeze_dismissed') === 'true');
   const [hideAlertQueue, setHideAlertQueue] = useState(() => localStorage.getItem('gghp_alert_queue_dismissed') === 'true');
 
+  // ── ACTIVE USERS PANEL STATE ──
+  const [showActiveUsersPanel, setShowActiveUsersPanel] = useState(false);
+  const [activePresenceUsers, setActivePresenceUsers] = useState<{ displayName: string; email: string; role: string; status: string }[]>([]);
+
+  // ── CLICK STREAM TIME RANGE STATE ──
+  const [clickStreamRange, setClickStreamRange] = useState<'today' | 'week' | 'month' | 'year' | 'all'>('today');
+  const [clickStreamEvents, setClickStreamEvents] = useState<{ time: string; user: string; action: string }[]>(liveAnalytics.events || []);
+  const [clickStreamLoading, setClickStreamLoading] = useState(false);
+
+  const clickStreamRangeLabels: Record<string, string> = {
+    today: 'Today',
+    week: 'This Week',
+    month: 'This Month',
+    year: 'This Year',
+    all: 'All Time'
+  };
+
+  // Fetch active presence users from Firebase when panel opens
+  useEffect(() => {
+    if (!showActiveUsersPanel) return;
+    const fetchPresence = async () => {
+      try {
+        const { getDocs, collection: fbColl, query: fbQuery, where: fbWhere } = await import('firebase/firestore');
+        const presSnap = await getDocs(fbQuery(fbColl(db, 'presence'), fbWhere('status', 'in', ['online', 'away'])));
+        const users = presSnap.docs.map(d => {
+          const data = d.data();
+          return {
+            displayName: data.displayName || data.name || '',
+            email: data.email || d.id || '',
+            role: data.role || data.userType || 'user',
+            status: data.status || 'online'
+          };
+        });
+        setActivePresenceUsers(users);
+      } catch (e) {
+        console.error('Error fetching presence:', e);
+        setActivePresenceUsers([]);
+      }
+    };
+    fetchPresence();
+  }, [showActiveUsersPanel]);
+
+  // Fetch click stream events by time range
+  const fetchClickStreamByRange = async (range: string) => {
+    setClickStreamLoading(true);
+    try {
+      let sinceDate: string;
+      const now = new Date();
+      switch (range) {
+        case 'today': {
+          const start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+          sinceDate = start.toISOString();
+          break;
+        }
+        case 'week':
+          sinceDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+          break;
+        case 'month':
+          sinceDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+          break;
+        case 'year':
+          sinceDate = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString();
+          break;
+        default:
+          sinceDate = '2020-01-01T00:00:00Z';
+      }
+      const res = await turso.execute({
+        sql: 'SELECT * FROM analytics_events WHERE created_at >= ? ORDER BY created_at DESC LIMIT 50',
+        args: [sinceDate]
+      });
+      const mapped = res.rows.map((r: any, i: number) => {
+        const dateStr = r.created_at + (String(r.created_at).endsWith('Z') ? '' : 'Z');
+        const date = new Date(dateStr);
+        const diffSecs = Math.max(0, Math.floor((Date.now() - date.getTime()) / 1000));
+        let timeStr: string;
+        if (diffSecs < 60) timeStr = `${diffSecs}s ago`;
+        else if (diffSecs < 3600) timeStr = `${Math.floor(diffSecs / 60)}m ago`;
+        else if (diffSecs < 86400) timeStr = `${Math.floor(diffSecs / 3600)}h ago`;
+        else timeStr = `${Math.floor(diffSecs / 86400)}d ago`;
+        if (i === 0 && diffSecs < 10) timeStr = 'Just now';
+        return {
+          time: timeStr,
+          user: String(r.user_type || 'unknown'),
+          action: String(r.details || r.path || 'Page view')
+        };
+      });
+      setClickStreamEvents(mapped);
+    } catch (e) {
+      console.error('Error fetching click stream:', e);
+    } finally {
+      setClickStreamLoading(false);
+    }
+  };
+
+  // Initial load + sync with liveAnalytics events
+  useEffect(() => {
+    if (liveAnalytics.events && liveAnalytics.events.length > 0 && clickStreamRange === 'today') {
+      setClickStreamEvents(liveAnalytics.events);
+    }
+  }, [liveAnalytics.events]);
+
+  // Fetch on initial mount
+  useEffect(() => { fetchClickStreamByRange('today'); }, []);
+
   // ── LIVE ACCOUNT ACTIVITY FEED ──────────────────────────────────────────
   const [allAccounts, setAllAccounts] = useState<any[]>([]);
   const [accountCounts, setAccountCounts] = useState({ total: 0, today: 0, thisWeek: 0, thisMonth: 0, thisYear: 0 });
@@ -273,12 +377,16 @@ export const OverviewTab = ({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+            <div 
+              className={cn("p-4 rounded-xl border cursor-pointer transition-all hover:border-blue-500/40", showActiveUsersPanel ? "bg-blue-500/10 border-blue-500/30 ring-1 ring-blue-500/20" : "bg-slate-800/50 border-slate-700/50")}
+              onClick={() => setShowActiveUsersPanel(!showActiveUsersPanel)}
+            >
               <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Current Active Users</p>
               <div className="flex items-end gap-2">
                 <span className="text-3xl font-black text-white">{liveAnalytics.users.toLocaleString()}</span>
                 <span className="text-[10px] text-emerald-400 font-bold mb-1.5">Right now</span>
               </div>
+              <p className="text-[9px] text-blue-400 font-bold mt-1">Click to {showActiveUsersPanel ? 'hide' : 'view'} active users →</p>
             </div>
             <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
               <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Total App Clicks (14d)</p>
@@ -295,6 +403,39 @@ export const OverviewTab = ({
               </div>
             </div>
           </div>
+
+          {/* Active Users Panel — Expandable */}
+          {showActiveUsersPanel && (
+            <div className="mb-8 bg-slate-800/30 rounded-2xl border border-blue-500/20 overflow-hidden">
+              <div className="px-5 py-3 border-b border-slate-700/50 flex items-center justify-between">
+                <h4 className="text-sm font-black text-white flex items-center gap-2"><Eye size={14} className="text-blue-400" /> Active Users Right Now</h4>
+                <button onClick={() => setShowActiveUsersPanel(false)} className="text-slate-500 hover:text-white transition-colors"><X size={14} /></button>
+              </div>
+              <div className="divide-y divide-slate-800/50 max-h-[200px] overflow-y-auto">
+                {activePresenceUsers.length > 0 ? activePresenceUsers.map((u, i) => (
+                  <div key={i} className="flex items-center gap-4 px-5 py-3">
+                    <div className="relative">
+                      <div className="w-8 h-8 bg-blue-500/20 text-blue-300 rounded-full flex items-center justify-center text-xs font-black uppercase">
+                        {(u.displayName || u.email || '?').charAt(0)}
+                      </div>
+                      <div className={cn("absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-slate-900", u.status === 'online' ? 'bg-emerald-500' : 'bg-amber-500')}></div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-bold text-white truncate">{u.displayName || u.email || 'Anonymous'}</p>
+                      <p className="text-[10px] text-slate-400 truncate">{u.email || 'No email'} • {u.role || 'user'}</p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <span className={cn("text-[9px] font-black uppercase px-2 py-0.5 rounded-full", u.status === 'online' ? 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/20' : 'text-amber-400 bg-amber-500/10 border border-amber-500/20')}>
+                        {u.status === 'online' ? '🟢 Online' : '🟡 Away'}
+                      </span>
+                    </div>
+                  </div>
+                )) : (
+                  <div className="px-5 py-8 text-center text-sm text-slate-500 italic">No active users detected. Firebase presence collection may need initialization.</div>
+                )}
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div>
@@ -320,21 +461,46 @@ export const OverviewTab = ({
             </div>
 
             <div>
-              <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-1.5"><Search size={12} /> Live Click Stream</h4>
-              <div className="bg-slate-800/30 rounded-xl border border-slate-700/50 p-3 h-40 overflow-hidden relative">
-                <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-slate-900 to-transparent z-10 pointer-events-none"></div>
-                <div className="space-y-3 animate-pulse">
-                  {liveAnalytics.events.map((log: any, i: number) => (
-                    <div key={i} className="flex gap-3 items-start">
-                      <span className="text-[9px] text-slate-500 font-bold shrink-0 mt-0.5">{log.time}</span>
-                      <div>
-                        <p className="text-[10px] font-bold text-blue-300">{log.user}</p>
-                        <p className="text-xs text-slate-300">{log.action}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5"><Search size={12} /> Live Click Stream</h4>
+                <select
+                  value={clickStreamRange}
+                  onChange={e => {
+                    setClickStreamRange(e.target.value as any);
+                    fetchClickStreamByRange(e.target.value);
+                  }}
+                  className="bg-slate-800 border border-slate-600 text-white text-[10px] font-bold rounded-lg px-2 py-1 outline-none cursor-pointer hover:border-blue-500/50 transition-colors"
+                >
+                  <option value="today">Today</option>
+                  <option value="week">This Week</option>
+                  <option value="month">This Month</option>
+                  <option value="year">This Year</option>
+                  <option value="all">All Time</option>
+                </select>
               </div>
+              <div className="bg-slate-800/30 rounded-xl border border-slate-700/50 p-3 max-h-[280px] overflow-y-auto relative">
+                {clickStreamLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                    <span className="text-xs text-slate-400 ml-2">Loading events...</span>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {clickStreamEvents.length > 0 ? clickStreamEvents.map((log: any, i: number) => (
+                      <div key={i} className="flex gap-3 items-start hover:bg-slate-700/20 rounded-lg px-2 py-1.5 transition-colors">
+                        <span className="text-[9px] text-slate-500 font-bold shrink-0 mt-0.5 w-14 text-right">{log.time}</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[10px] font-bold text-blue-300 truncate">{log.user}</p>
+                          <p className="text-xs text-slate-300 truncate">{log.action}</p>
+                        </div>
+                      </div>
+                    )) : (
+                      <div className="text-center py-6 text-sm text-slate-500 italic">No click events in this time range</div>
+                    )}
+                  </div>
+                )}
+              </div>
+              <p className="text-[9px] text-slate-500 font-bold mt-2 text-right">{clickStreamEvents.length} events • {clickStreamRangeLabels[clickStreamRange]}</p>
             </div>
           </div>
         </div>
