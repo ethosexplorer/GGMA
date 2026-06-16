@@ -496,8 +496,13 @@ export default function App() {
             
             // All executives go through PIN verification:
             // Founder (Shantell)=0000, Monica=1234, Ryan=1234, Bob=0331
+            // Skip PIN if already verified this session (survives refresh, clears on browser close)
             if (isFounder || isComplianceDirector || isPresident || isAdvisor) {
-               setView('pin-verification');
+               if (sessionStorage.getItem('ggp_pin_verified') === 'true') {
+                 setView('dashboard');
+               } else {
+                 setView('pin-verification');
+               }
             } else {
                // Don't navigate away if user is in the middle of a signup flow
                setView(prev => (prev === 'larry-chatbot' || prev === 'business-signup' || prev === 'patient-signup') ? prev : 'dashboard');
@@ -518,7 +523,11 @@ export default function App() {
                await setDoc(docRef, privilegedProfile);
                setUserProfile(privilegedProfile);
                if (lowerEmail === FOUNDER_EMAIL || lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp') || lowerEmail === ADVISOR_EMAIL) {
-                 setView('pin-verification');
+                 if (sessionStorage.getItem('ggp_pin_verified') === 'true') {
+                   setView('dashboard');
+                 } else {
+                   setView('pin-verification');
+                 }
                } else {
                  setView('dashboard');
                }
@@ -908,6 +917,8 @@ export default function App() {
   const handleLogout = async () => {
     sessionStorage.removeItem('gghp_jurisdiction');
     sessionStorage.removeItem('gghp_jurisdiction_locked');
+    sessionStorage.removeItem('ggp_pin_verified');
+    sessionStorage.removeItem('ggp_founder_unlocked');
     await signOut(auth);
     window.location.href = '/login';
   };
@@ -1170,8 +1181,12 @@ export default function App() {
           {view === 'pin-verification' && (
             <PinVerificationScreen 
               userProfile={userProfile} 
-              onVerify={() => setView('dashboard')} 
+              onVerify={() => {
+                sessionStorage.setItem('ggp_pin_verified', 'true');
+                setView('dashboard');
+              }} 
               onBack={() => {
+                sessionStorage.removeItem('ggp_pin_verified');
                 handleLogout();
                 setView('login');
               }} 
