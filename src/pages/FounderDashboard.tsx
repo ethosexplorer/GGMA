@@ -405,13 +405,37 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         const jPatients = await turso.execute('SELECT state, COUNT(*) as c FROM patients GROUP BY state');
         const jBiz = await turso.execute('SELECT state, COUNT(*) as c FROM businesses GROUP BY state');
 
+        // Normalize state names to 2-letter abbreviations to prevent duplicates (e.g., "Oklahoma" → "OK")
+        const stateNameToAbbr: Record<string, string> = {
+          'alabama': 'AL', 'alaska': 'AK', 'arizona': 'AZ', 'arkansas': 'AR', 'california': 'CA',
+          'colorado': 'CO', 'connecticut': 'CT', 'delaware': 'DE', 'florida': 'FL', 'georgia': 'GA',
+          'hawaii': 'HI', 'idaho': 'ID', 'illinois': 'IL', 'indiana': 'IN', 'iowa': 'IA',
+          'kansas': 'KS', 'kentucky': 'KY', 'louisiana': 'LA', 'maine': 'ME', 'maryland': 'MD',
+          'massachusetts': 'MA', 'michigan': 'MI', 'minnesota': 'MN', 'mississippi': 'MS', 'missouri': 'MO',
+          'montana': 'MT', 'nebraska': 'NE', 'nevada': 'NV', 'new hampshire': 'NH', 'new jersey': 'NJ',
+          'new mexico': 'NM', 'new york': 'NY', 'north carolina': 'NC', 'north dakota': 'ND', 'ohio': 'OH',
+          'oklahoma': 'OK', 'oregon': 'OR', 'pennsylvania': 'PA', 'rhode island': 'RI', 'south carolina': 'SC',
+          'south dakota': 'SD', 'tennessee': 'TN', 'texas': 'TX', 'utah': 'UT', 'vermont': 'VT',
+          'virginia': 'VA', 'washington': 'WA', 'west virginia': 'WV', 'wisconsin': 'WI', 'wyoming': 'WY',
+          'district of columbia': 'DC'
+        };
+        const normalizeState = (raw: string): string => {
+          const trimmed = (raw || '').trim();
+          if (!trimmed) return '';
+          // Already a 2-letter abbreviation
+          if (trimmed.length === 2 && trimmed === trimmed.toUpperCase()) return trimmed;
+          // Look up full name
+          const abbr = stateNameToAbbr[trimmed.toLowerCase()];
+          return abbr || trimmed.toUpperCase();
+        };
+
         const stateMap: Record<string, any> = {};
         let stateRevenue: Record<string, number> = {};
         try {
           const allLedger = await turso.execute("SELECT origin_vector, CAST(REPLACE(REPLACE(gross_revenue, '$', ''), ',', '') AS REAL) as rev FROM founder_ledger");
           const allPatients = await turso.execute("SELECT name, state FROM patients");
           const patientStateMap: Record<string, string> = {};
-          allPatients.rows.forEach(p => { if (p.name && p.state) patientStateMap[String(p.name).toLowerCase()] = String(p.state); });
+          allPatients.rows.forEach(p => { if (p.name && p.state) patientStateMap[String(p.name).toLowerCase()] = normalizeState(String(p.state)); });
 
           allLedger.rows.forEach(r => {
             const origin = String(r.origin_vector || '').toLowerCase();
@@ -429,29 +453,41 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         let stateCompliance: Record<string, number> = {};
         try {
           const compRes = await turso.execute('SELECT state, AVG(compliance_score) as avg_score FROM businesses WHERE state IS NOT NULL GROUP BY state');
-          compRes.rows.forEach(r => { if (r.state) stateCompliance[String(r.state)] = Math.round(Number(r.avg_score) || 100); });
+          compRes.rows.forEach(r => { if (r.state) stateCompliance[normalizeState(String(r.state))] = Math.round(Number(r.avg_score) || 100); });
         } catch (e) { /* compliance_score column may not exist */ }
         try {
           const alertRes = await turso.execute('SELECT e.state, COUNT(*) as cnt FROM compliance_alerts ca JOIN entities e ON ca.entity_id = e.id WHERE ca.is_resolved = 0 GROUP BY e.state');
           alertRes.rows.forEach(r => {
-            const st = String(r.state);
+            const st = normalizeState(String(r.state));
             const penalty = Math.min(Number(r.cnt) * 5, 30);
             stateCompliance[st] = Math.max(0, (stateCompliance[st] || 100) - penalty);
           });
         } catch (e) { /* compliance_alerts join may fail */ }
 
         jPatients.rows.forEach(r => {
-          const st = String(r.state);
+          const st = normalizeState(String(r.state));
+          if (!st) return;
           const rev = stateRevenue[st] || 0;
           const comp = stateCompliance[st] ?? 100;
-          stateMap[st] = { s: st, p: Number(r.c), d: 0, c: comp, rev: rev, r: rev > 0 ? '$' + rev.toLocaleString() : '$0', up: rev > 0 };
+          if (stateMap[st]) {
+            stateMap[st].p += Number(r.c);
+          } else {
+            stateMap[st] = { s: st, p: Number(r.c), d: 0, c: comp, rev: rev, r: rev > 0 ? '$' + rev.toLocaleString() : '$0', up: rev > 0 };
+          }
         });
         jBiz.rows.forEach(r => {
-          const st = String(r.state);
+          const st = normalizeState(String(r.state));
+          if (!st) return;
           const comp = stateCompliance[st] ?? 100;
           if (!stateMap[st]) stateMap[st] = { s: st, p: 0, d: 0, c: comp, rev: stateRevenue[st] || 0, r: (stateRevenue[st] || 0) > 0 ? '$' + (stateRevenue[st] || 0).toLocaleString() : '$0', up: (stateRevenue[st] || 0) > 0 };
-          stateMap[st].d = Number(r.c);
+          stateMap[st].d += Number(r.c);
           if (!stateMap[st].c) stateMap[st].c = comp;
+        });
+        // Recalculate revenue strings after merging
+        Object.values(stateMap).forEach((entry: any) => {
+          entry.rev = stateRevenue[entry.s] || entry.rev || 0;
+          entry.r = entry.rev > 0 ? '$' + entry.rev.toLocaleString() : '$0';
+          entry.up = entry.rev > 0;
         });
 
         setJurisdictionStats(Object.values(stateMap).sort((a, b) => (b.p + b.d) - (a.p + a.d)));
