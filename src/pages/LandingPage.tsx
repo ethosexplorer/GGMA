@@ -609,7 +609,7 @@ export const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction, userPro
               <div className="flex flex-col gap-2 relative z-10">
                 <div className="text-[9px] font-black text-emerald-500/70 uppercase tracking-widest pl-1">Platform Affiliates</div>
                 <div className="flex gap-2 flex-wrap">
-                  {['Global Green Enterprise Inc', 'National Cannabis Association Group', 'CCardz', '@thebackoffice.com', 'Diversity Health and Wellness', 'Diversity Health Network', 'Omni Credit'].map((dba, i) => (
+                  {['Global Green Enterprise Inc', 'National Cannabis Association Group', 'GGP Administrative Services', '@thebackoffice.com', 'Diversity Health and Wellness', 'Diversity Health Network', 'Omni Credit'].map((dba, i) => (
                     <span key={i} className={cn("px-3 py-1 rounded-full text-[10px] font-bold border transition-colors cursor-default", i === 0 ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" : "bg-white/5 text-emerald-100/70 border-white/10 hover:bg-white/10")}>
                       {dba}
                     </span>
@@ -731,7 +731,7 @@ export const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction, userPro
               <div className="mt-4 max-w-2xl">
                 <p className="text-slate-500 font-bold text-[11px] md:text-xs leading-relaxed uppercase tracking-wider">
                   Since 2020 through our affiliate{' '}
-                  <span className="text-emerald-800 font-black">Chronic Cardz (CCardz) Administrative Services</span>
+                  <span className="text-emerald-800 font-black">GGP Administrative Services (formerly CCardz)</span>
                 </p>
                 <p className="text-slate-400 font-medium text-[9px] uppercase tracking-widest mt-1">
                   Secure Intake • State Regulatory Compliance • HIPAA Audited

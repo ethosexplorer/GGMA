@@ -120,13 +120,13 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
 
   const OPS_EMAILS = [
     'asstsupport@gmail.com',
-    'chroniccardz@gmail.com',
+    'globalgreenhp@gmail.com',
     'thebackoffice.com@gmail.com'
   ];
   const [selectedOpsEmail, setSelectedOpsEmail] = useState('asstsupport@gmail.com');
 
   const getOpsCalendlyUrl = (email: string) => {
-    if (email === 'chroniccardz@gmail.com') return 'https://calendly.com/chroniccardz';
+    if (email === 'globalgreenhp@gmail.com') return 'https://calendly.com/chroniccardz';
     if (email === 'thebackoffice.com@gmail.com') return 'https://calendly.com/thebackoffice';
     return 'https://calendly.com/asstsupport';
   };
