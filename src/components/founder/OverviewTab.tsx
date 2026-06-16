@@ -437,6 +437,172 @@ export const OverviewTab = ({
         </div>
       </div>
 
+      {/* EMERGENCY BROADCAST COMMAND */}
+      <div className="bg-red-50 border-2 border-red-200 rounded-3xl p-8 shadow-xl relative overflow-hidden group">
+        <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 transition-transform duration-700 text-red-600"><Shield size={120} /></div>
+        <div className="relative z-10">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 bg-red-600 text-white rounded-xl flex items-center justify-center animate-pulse shadow-lg shadow-red-600/30">
+              <Bell size={20} />
+            </div>
+            <h3 className="text-xl font-black text-red-900 tracking-tight">Executive Emergency Broadcast</h3>
+          </div>
+
+          <div className="flex flex-col md:flex-row gap-6 items-end">
+            <div className="flex-1 space-y-2 w-full">
+              <div className="flex items-center justify-between">
+                <label className="text-[10px] font-black text-red-700 uppercase tracking-widest">Active Alert Message (Pushed to Landing Page & All Portals)</label>
+                <div className="flex items-center gap-1">
+                  {['🚨', '📢', '⚠️', 'ℹ️', '🎉', '🟢', '🔴', '🌿', '⚕️', '⚖️', '🏢'].map(emoji => (
+                    <button
+                      key={emoji}
+                      type="button"
+                      onClick={() => insertEmoji('emergency-broadcast-input', emoji, broadcastMsg, setBroadcastMsg)}
+                      className="px-1.5 py-0.5 bg-white hover:bg-red-50 border border-red-100 hover:border-red-300 rounded text-xs transition-all active:scale-90"
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <textarea
+                id="emergency-broadcast-input"
+                value={broadcastMsg}
+                onChange={(e) => setBroadcastMsg(e.target.value)}
+                placeholder="E.g., SYSTEM NOTICE: NATIONWIDE COMPLIANCE AUDIT IN PROGRESS..."
+                rows={3}
+                className="w-full px-6 py-4 bg-white border-2 border-red-100 rounded-2xl outline-none focus:border-red-500 font-bold text-red-900 shadow-inner resize-none"
+              />
+            </div>
+            <div className="flex gap-3">
+              <div className="flex flex-col space-y-1">
+                <label className="text-[10px] font-black text-red-700 uppercase tracking-widest px-2">Scroll Speed</label>
+                <select
+                  value={localBroadcastSpeed}
+                  onChange={(e) => setLocalBroadcastSpeed(e.target.value)}
+                  className="px-6 py-3.5 bg-white border-2 border-red-100 rounded-2xl font-bold text-slate-700 outline-none h-14"
+                >
+                  <option value="pause">Pause</option>
+                  <option value="slow">Slow</option>
+                  <option value="medium">Medium</option>
+                  <option value="fast">Fast</option>
+                </select>
+              </div>
+              <div className="flex flex-col space-y-1">
+                <label className="text-[10px] font-black text-red-700 uppercase tracking-widest px-2">Alert Type</label>
+                <select
+                  value={broadcastType}
+                  onChange={(e) => setBroadcastType(e.target.value)}
+                  className="px-6 py-3.5 bg-white border-2 border-red-100 rounded-2xl font-bold text-slate-700 outline-none h-14"
+                >
+                  <option>Urgent Alert (Red)</option>
+                  <option>Caution (Yellow)</option>
+                  <option>Warning (Orange)</option>
+                  <option>Notice (Pink)</option>
+                  <option>Info Ticker (Blue)</option>
+                  <option>Special Announcement (Purple)</option>
+                  <option>Info Ticker (Green)</option>
+                  <option>Success Blast (Emerald)</option>
+                </select>
+              </div>
+              <button
+                onClick={handleBroadcast}
+                className="px-10 py-4 bg-red-600 text-white rounded-2xl font-black hover:bg-red-700 transition-all shadow-xl shadow-red-600/20 active:scale-95 h-14 self-end"
+              >
+                BROADCAST LIVE
+              </button>
+            </div>
+          </div>
+          <div className="mt-6 flex items-center gap-6">
+            <div className="flex items-center gap-2 text-[10px] font-black text-red-600">
+              <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></div>
+              SYSTEM BROADCAST ACTIVE
+            </div>
+            <div className="text-[10px] font-black text-slate-400">LAST UPDATED: 2M AGO BY FOUNDER</div>
+          </div>
+        </div>
+
+        {/* Green Scroll / Marquee Editor */}
+        <div className="bg-emerald-50 border-2 border-emerald-100 rounded-[2rem] p-8 shadow-inner mt-6 w-full">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 bg-emerald-600 text-white rounded-xl flex items-center justify-center shadow-lg shadow-emerald-600/30">
+              <Activity size={20} />
+            </div>
+            <h3 className="text-xl font-black text-emerald-900 tracking-tight">"In The Know" News Ticker</h3>
+          </div>
+
+          <div className="flex flex-col md:flex-row gap-6 items-end">
+            <div className="flex-1 space-y-2 w-full">
+              <div className="flex items-center justify-between">
+                <label className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Active Scrolling Message (Use | to separate)</label>
+                <div className="flex items-center gap-1">
+                  {['🔴', '🟢', '⚖️', '🚨', '💰', '🔬', '📈', '⚠️', '🌿', '📊', '💬'].map(emoji => (
+                    <button
+                      key={emoji}
+                      type="button"
+                      onClick={() => insertEmoji('marquee-news-input', emoji, marqueeNewsText, setMarqueeNewsText)}
+                      className="px-1.5 py-0.5 bg-white hover:bg-emerald-50 border border-emerald-100 hover:border-emerald-300 rounded text-xs transition-all active:scale-90"
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <textarea
+                id="marquee-news-input"
+                value={marqueeNewsText}
+                onChange={(e) => setMarqueeNewsText(e.target.value)}
+                placeholder="E.g., BREAKING NEWS | SYLARA AI SCANNED..."
+                rows={3}
+                className="w-full px-6 py-4 bg-white border-2 border-emerald-200 rounded-2xl outline-none focus:border-emerald-500 font-bold text-emerald-900 shadow-sm resize-none"
+              />
+            </div>
+            <div className="flex gap-3">
+              <div className="flex flex-col space-y-1">
+                <label className="text-[10px] font-black text-emerald-700 uppercase tracking-widest px-2">Scroll Speed</label>
+                <select
+                  value={localMarqueeSpeed}
+                  onChange={(e) => setLocalMarqueeSpeed(e.target.value)}
+                  className="px-6 py-3.5 bg-white border-2 border-emerald-200 rounded-2xl font-bold text-slate-700 outline-none h-14"
+                >
+                  <option value="pause">Pause</option>
+                  <option value="slow">Slow</option>
+                  <option value="medium">Medium</option>
+                  <option value="fast">Fast</option>
+                </select>
+              </div>
+              <button
+                onClick={() => {
+                  localStorage.setItem('gghp_marquee_news', JSON.stringify(marqueeNewsText.split('|').map(s => s.trim())));
+                  localStorage.setItem('gghp_marquee_speed', localMarqueeSpeed);
+                  window.dispatchEvent(new Event('storage'));
+
+                  turso.execute({
+                    sql: "INSERT INTO platform_settings (key, value) VALUES ('gghp_marquee_news', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+                    args: [marqueeNewsText]
+                  }).catch(console.error);
+
+                  turso.execute({
+                    sql: "INSERT INTO platform_settings (key, value) VALUES ('gghp_marquee_speed', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+                    args: [localMarqueeSpeed]
+                  }).catch(console.error);
+
+                  turso.execute({
+                    sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)",
+                    args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Green Scroll Ticker Updated Globally!" })]
+                  }).then(() => {
+                    alert("Green Scroll Ticker Updated Globally!\n\n[Live Production Transaction Logged]");
+                  }).catch(console.error);
+                }}
+                className="px-8 py-4 bg-emerald-600 text-white rounded-2xl font-black hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-600/20 active:scale-95 h-14 self-end"
+              >
+                UPDATE SCROLL
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* 🌐 GLOBAL REAL-TIME APP TRAFFIC — Founder Only */}
       <div className="bg-slate-900 border border-slate-700 rounded-3xl shadow-xl overflow-hidden text-white relative">
         <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
@@ -822,7 +988,6 @@ export const OverviewTab = ({
         </div>
       </div>
 
-      {/* EMERGENCY BROADCAST COMMAND */}
       <div className="bg-red-50 border-2 border-red-200 rounded-3xl p-8 shadow-xl relative overflow-hidden group">
         <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:scale-110 transition-transform duration-700 text-red-600"><Shield size={120} /></div>
         <div className="relative z-10">
