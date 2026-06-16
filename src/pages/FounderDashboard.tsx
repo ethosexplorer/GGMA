@@ -280,18 +280,18 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           activeUsers = presSnap.size;
         } catch (e) { /* presence query may fail */ }
 
-        const since14d = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
-        const clickRes = await turso.execute({ sql: 'SELECT COUNT(*) as c FROM analytics_events WHERE created_at >= ?', args: [since14d] });
+        const sinceAllTime = '2020-01-01T00:00:00Z';
+        const clickRes = await turso.execute({ sql: 'SELECT COUNT(*) as c FROM analytics_events WHERE created_at >= ?', args: [sinceAllTime] });
         const totalClicks = Number(clickRes.rows[0]?.c || 0);
 
-        const convRes = await turso.execute({ sql: "SELECT COUNT(*) as c FROM analytics_events WHERE created_at >= ? AND path != '/' AND path != ''", args: [since14d] });
+        const convRes = await turso.execute({ sql: "SELECT COUNT(*) as c FROM analytics_events WHERE created_at >= ? AND path != '/' AND path != ''", args: [sinceAllTime] });
         const totalConversions = Number(convRes.rows[0]?.c || 0);
 
-        const pathRes = await turso.execute({ sql: 'SELECT path, COUNT(*) as c FROM analytics_events WHERE created_at >= ? GROUP BY path ORDER BY c DESC LIMIT 10', args: [since14d] });
+        const pathRes = await turso.execute({ sql: 'SELECT path, COUNT(*) as c FROM analytics_events WHERE created_at >= ? GROUP BY path ORDER BY c DESC LIMIT 10', args: [sinceAllTime] });
         const clicksByPath: Record<string, number> = {};
         pathRes.rows.forEach(r => { clicksByPath[String(r.path)] = Number(r.c); });
 
-        const utRes = await turso.execute({ sql: 'SELECT user_type, COUNT(*) as c FROM analytics_events WHERE created_at >= ? GROUP BY user_type ORDER BY c DESC', args: [since14d] });
+        const utRes = await turso.execute({ sql: 'SELECT user_type, COUNT(*) as c FROM analytics_events WHERE created_at >= ? GROUP BY user_type ORDER BY c DESC', args: [sinceAllTime] });
         const clicksByUserType: Record<string, number> = {};
         utRes.rows.forEach(r => { clicksByUserType[String(r.user_type)] = Number(r.c); });
 

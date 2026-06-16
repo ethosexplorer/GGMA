@@ -465,10 +465,10 @@ export const OverviewTab = ({
               <p className="text-[9px] text-blue-400 font-bold mt-1">Click to {showActiveUsersPanel ? 'hide' : 'view'} active users →</p>
             </div>
             <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Total App Clicks (14d)</p>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1">Total App Clicks</p>
               <div className="flex items-end gap-2">
                 <span className="text-3xl font-black text-indigo-400">{liveAnalytics.clicks.toLocaleString()}</span>
-                <span className="text-[10px] text-slate-400 font-bold mb-1.5">14d total</span>
+                <span className="text-[10px] text-slate-400 font-bold mb-1.5">All time</span>
               </div>
             </div>
             <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
