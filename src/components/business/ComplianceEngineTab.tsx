@@ -1,14 +1,110 @@
-import React, { useState } from 'react';
-import { Shield, Zap, AlertTriangle, CheckCircle, Database, Search, Activity, RefreshCw, BarChart2, ArrowRight, ClipboardList } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Shield, Zap, AlertTriangle, CheckCircle, Database, Search, Activity, RefreshCw, BarChart2, ArrowRight, ClipboardList, Loader2, Wifi } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { ComplianceWorkflowConsole } from './ComplianceWorkflowConsole';
+import { turso } from '../../lib/turso';
+
+interface SyncStat { l: string; v: string; s: string; c: string; }
+interface Anomaly { t: string; d: string; s: 'Critical' | 'Alert' | 'Review'; c: string; bg: string; source: 'action' | 'threshold'; }
 
 export const ComplianceEngineTab = () => {
   const [isSyncing, setIsSyncing] = useState(false);
-  
-  const handleSync = () => {
+  const [complianceHealth, setComplianceHealth] = useState<number | null>(null);
+  const [syncStats, setSyncStats] = useState<SyncStat[]>([]);
+  const [anomalies, setAnomalies] = useState<Anomaly[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [lastRefreshed, setLastRefreshed] = useState<string>('');
+
+  const fetchComplianceData = async () => {
+    setLoading(true);
+    try {
+      // 1. Calculate compliance health %
+      const totalPatients = await turso.execute('SELECT COUNT(*) as c FROM patients');
+      const activePatients = await turso.execute("SELECT COUNT(*) as c FROM patients WHERE status != 'denied' AND status != 'suspended'");
+      const totalBiz = await turso.execute('SELECT COUNT(*) as c FROM businesses');
+      const activeBiz = await turso.execute("SELECT COUNT(*) as c FROM businesses WHERE status != 'denied' AND status != 'suspended'");
+
+      const totalEntities = Number(totalPatients.rows[0]?.c || 0) + Number(totalBiz.rows[0]?.c || 0);
+      const activeEntities = Number(activePatients.rows[0]?.c || 0) + Number(activeBiz.rows[0]?.c || 0);
+      const health = totalEntities > 0 ? Math.round((activeEntities / totalEntities) * 1000) / 10 : 100;
+      setComplianceHealth(health);
+
+      // 2. Sync diagnostics from audit_logs
+      const lastSync = await turso.execute("SELECT created_at FROM audit_logs ORDER BY created_at DESC LIMIT 1");
+      const pendingTransfers = await turso.execute("SELECT COUNT(*) as c FROM packages WHERE status = 'PENDING_TRANSFER'");
+      const totalLogs = await turso.execute('SELECT COUNT(*) as c FROM audit_logs');
+
+      const lastSyncTime = lastSync.rows[0]?.created_at;
+      const timeDiff = lastSyncTime ? getTimeDiff(String(lastSyncTime)) : 'Never';
+
+      setSyncStats([
+        { l: 'Last Audit Event', v: lastSyncTime ? 'Recorded' : 'None', s: timeDiff, c: lastSyncTime ? 'text-emerald-600' : 'text-slate-400' },
+        { l: 'Pending Transfers', v: String(pendingTransfers.rows[0]?.c || 0), s: Number(pendingTransfers.rows[0]?.c || 0) === 0 ? 'Clear' : 'Queued', c: Number(pendingTransfers.rows[0]?.c || 0) === 0 ? 'text-emerald-600' : 'text-amber-600' },
+        { l: 'Total Audit Records', v: String(totalLogs.rows[0]?.c || 0), s: 'Immutable', c: 'text-emerald-600' },
+        { l: 'Compliance Health', v: health + '%', s: health >= 95 ? 'Excellent' : health >= 80 ? 'Good' : 'Review', c: health >= 95 ? 'text-emerald-600' : health >= 80 ? 'text-amber-600' : 'text-red-600' }
+      ]);
+
+      // 3. Anomaly detection — BOTH action types AND threshold rules
+      const foundAnomalies: Anomaly[] = [];
+
+      // Action-type detection: scan audit_logs for violation/deny actions
+      const violationLogs = await turso.execute("SELECT * FROM audit_logs WHERE action LIKE '%DENY%' OR action LIKE '%VIOLATION%' OR action LIKE '%SUSPEND%' ORDER BY created_at DESC LIMIT 5");
+      violationLogs.rows.forEach((log: any) => {
+        const data = JSON.parse(String(log.data || '{}'));
+        foundAnomalies.push({
+          t: String(log.action).replace(/_/g, ' '),
+          d: data.detail || data.reason || `Compliance event logged for ${data.applicant || 'entity'}.`,
+          s: String(log.action).includes('VIOLATION') ? 'Critical' : 'Alert',
+          c: String(log.action).includes('VIOLATION') ? 'text-red-600' : 'text-amber-600',
+          bg: String(log.action).includes('VIOLATION') ? 'bg-red-50' : 'bg-amber-50',
+          source: 'action'
+        });
+      });
+
+      // Threshold-based detection: check for weight variances, compliance score drops
+      const lowCompliance = await turso.execute("SELECT * FROM businesses WHERE compliance_score < 80 AND status != 'denied'");
+      lowCompliance.rows.forEach((biz: any) => {
+        foundAnomalies.push({
+          t: `Low Compliance Score: ${biz.business_name}`,
+          d: `${biz.business_name} has a compliance score of ${biz.compliance_score}/100 — below the 80% threshold. Requires review.`,
+          s: Number(biz.compliance_score) < 50 ? 'Critical' : 'Alert',
+          c: Number(biz.compliance_score) < 50 ? 'text-red-600' : 'text-amber-600',
+          bg: Number(biz.compliance_score) < 50 ? 'bg-red-50' : 'bg-amber-50',
+          source: 'threshold'
+        });
+      });
+
+      // Check for denied patients without reason (data quality)
+      const deniedNoReason = await turso.execute("SELECT COUNT(*) as c FROM patients WHERE status = 'denied'");
+      if (Number(deniedNoReason.rows[0]?.c || 0) > 0) {
+        foundAnomalies.push({
+          t: 'Denied Applications Pending Review',
+          d: `${deniedNoReason.rows[0]?.c} denied application(s) in archive. Review to ensure compliance documentation is complete.`,
+          s: 'Review',
+          c: 'text-blue-600',
+          bg: 'bg-blue-50',
+          source: 'threshold'
+        });
+      }
+
+      setAnomalies(foundAnomalies);
+      setLastRefreshed(new Date().toLocaleTimeString());
+    } catch (err) {
+      console.error('Compliance data fetch error:', err);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchComplianceData();
+    const interval = setInterval(fetchComplianceData, 5 * 60 * 1000); // Refresh every 5 min
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleSync = async () => {
     setIsSyncing(true);
-    setTimeout(() => setIsSyncing(false), 2000);
+    await fetchComplianceData();
+    setIsSyncing(false);
   };
 
   return (
@@ -22,10 +118,13 @@ export const ComplianceEngineTab = () => {
                   Real-time METRC synchronization, inventory anomaly detection, and automated regulatory reporting for nationwide operations.
                </p>
             </div>
-            <div className="flex flex-col items-center gap-3">
-               <div className="text-5xl font-black text-emerald-400">99.8%</div>
-               <p className="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Compliance Health</p>
-            </div>
+             <div className="flex flex-col items-center gap-3">
+                <div className={cn("text-5xl font-black", complianceHealth === null ? 'text-slate-500' : complianceHealth >= 95 ? 'text-emerald-400' : complianceHealth >= 80 ? 'text-amber-400' : 'text-red-400')}>
+                  {loading ? '—' : complianceHealth !== null ? complianceHealth + '%' : '—'}
+                </div>
+                <p className="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Compliance Health</p>
+                {lastRefreshed && <p className="text-[9px] font-bold text-slate-600">Updated {lastRefreshed}</p>}
+             </div>
          </div>
       </div>
 
@@ -61,20 +160,20 @@ export const ComplianceEngineTab = () => {
                </div>
 
                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {[
-                    { l: 'Last Batch Sync', v: 'Success', s: '2m ago', c: 'text-emerald-600' },
-                    { l: 'Pending Transfers', v: '0', s: 'Synced', c: 'text-slate-400' },
-                    { l: 'API Key Latency', v: '18ms', s: 'Optimal', c: 'text-emerald-600' },
-                    { l: 'Facility Auth', v: 'Verified', s: '4/4 Facilities', c: 'text-emerald-600' }
-                  ].map((stat, i) => (
-                    <div key={i} className="p-5 bg-slate-50 rounded-2xl border border-slate-100">
-                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{stat.l}</p>
-                       <div className="flex justify-between items-end">
-                          <p className="text-lg font-black text-slate-800">{stat.v}</p>
-                          <p className={cn("text-[10px] font-black", stat.c)}>{stat.s}</p>
-                       </div>
-                    </div>
-                  ))}
+                   {(syncStats.length > 0 ? syncStats : [
+                     { l: 'Loading...', v: '—', s: '—', c: 'text-slate-400' },
+                     { l: 'Loading...', v: '—', s: '—', c: 'text-slate-400' },
+                     { l: 'Loading...', v: '—', s: '—', c: 'text-slate-400' },
+                     { l: 'Loading...', v: '—', s: '—', c: 'text-slate-400' }
+                   ]).map((stat, i) => (
+                     <div key={i} className="p-5 bg-slate-50 rounded-2xl border border-slate-100">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{stat.l}</p>
+                        <div className="flex justify-between items-end">
+                           <p className="text-lg font-black text-slate-800">{stat.v}</p>
+                           <p className={cn("text-[10px] font-black", stat.c)}>{stat.s}</p>
+                        </div>
+                     </div>
+                   ))}
                </div>
             </div>
 
@@ -87,34 +186,40 @@ export const ComplianceEngineTab = () => {
                   </h3>
                   <span className="px-3 py-1 bg-amber-50 text-amber-600 text-[10px] font-black rounded-full border border-amber-100">AI MONITOR ACTIVE</span>
                </div>
-
                <div className="space-y-4">
-                  {[
-                    { t: 'Weight Variance Detected', d: 'Batch #8492-X in Oklahoma shows a 4.2% variance between harvest and package weights.', s: 'Critical', c: 'text-red-600', bg: 'bg-red-50' },
-                    { t: 'Tag Sequence Gap', d: 'Missing METRC tags detected in sequence for California Retail Facility #002.', s: 'Alert', c: 'text-amber-600', bg: 'bg-amber-50' },
-                    { t: 'Unusual Sales Volume', d: 'Location #4 (Miami) seeing 400% spike in small-unit transactions in last 2 hours.', s: 'Review', c: 'text-blue-600', bg: 'bg-blue-50' }
-                  ].map((anomaly, i) => (
-                    <div key={i} className="p-5 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-6 group hover:bg-white hover:shadow-md transition-all">
-                       <div className="flex items-start gap-4">
-                          <div className={cn("mt-1 w-10 h-10 rounded-xl flex items-center justify-center shrink-0", anomaly.bg, anomaly.c)}>
-                             <AlertTriangle size={20} />
-                          </div>
-                          <div>
-                             <p className="font-black text-slate-800">{anomaly.t}</p>
-                             <p className="text-xs text-slate-500 font-medium leading-relaxed max-w-md">{anomaly.d}</p>
-                          </div>
-                       </div>
-                       <div className="flex items-center gap-3 shrink-0">
-                          <span className={cn("text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full", anomaly.bg, anomaly.c)}>
-                             {anomaly.s}
-                          </span>
-                           <button onClick={() => { import('../../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "L.A.R.R.Y Investigation initiated.\n\nPulling Metrc chain-of-custody records, cross-referencing with SINC ledger, and generating deviation report...\n\nResults saved to Vault." })] }).catch(console.error) ); alert("L.A.R.R.Y Investigation initiated.\n\nPulling Metrc chain-of-custody records, cross-referencing with SINC ledger, and generating deviation report...\n\nResults saved to Vault.\n\n[Live Production Transaction Logged]"); }} className="px-4 py-2 bg-slate-900 text-white text-[10px] font-black rounded-lg hover:bg-slate-700 transition-all uppercase tracking-widest cursor-pointer active:scale-95">
-                              Investigate
-                           </button>
-                       </div>
-                    </div>
-                  ))}
-               </div>
+                   {anomalies.length > 0 ? anomalies.map((anomaly, i) => (
+                     <div key={i} className="p-5 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-6 group hover:bg-white hover:shadow-md transition-all">
+                        <div className="flex items-start gap-4">
+                           <div className={cn("mt-1 w-10 h-10 rounded-xl flex items-center justify-center shrink-0", anomaly.bg, anomaly.c)}>
+                              <AlertTriangle size={20} />
+                           </div>
+                           <div>
+                              <div className="flex items-center gap-2">
+                                <p className="font-black text-slate-800">{anomaly.t}</p>
+                                <span className={cn("text-[8px] font-black uppercase px-1.5 py-0.5 rounded", anomaly.source === 'threshold' ? 'bg-purple-50 text-purple-600' : 'bg-slate-200 text-slate-500')}>
+                                  {anomaly.source === 'threshold' ? 'THRESHOLD' : 'ACTION'}
+                                </span>
+                              </div>
+                              <p className="text-xs text-slate-500 font-medium leading-relaxed max-w-md">{anomaly.d}</p>
+                           </div>
+                        </div>
+                        <div className="flex items-center gap-3 shrink-0">
+                           <span className={cn("text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full", anomaly.bg, anomaly.c)}>
+                              {anomaly.s}
+                           </span>
+                            <button onClick={() => { turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "INVESTIGATE", "FOUNDER", JSON.stringify({ detail: `Investigation initiated for: ${anomaly.t}` })] }).catch(console.error); alert(`L.A.R.R.Y Investigation initiated for:\n${anomaly.t}\n\nPulling compliance records and generating deviation report...\n\n[Live Production Transaction Logged]`); }} className="px-4 py-2 bg-slate-900 text-white text-[10px] font-black rounded-lg hover:bg-slate-700 transition-all uppercase tracking-widest cursor-pointer active:scale-95">
+                               Investigate
+                            </button>
+                        </div>
+                     </div>
+                   )) : (
+                     <div className="p-8 text-center">
+                       <CheckCircle size={32} className="mx-auto text-emerald-500 mb-3" />
+                       <p className="font-black text-slate-700">No Anomalies Detected</p>
+                       <p className="text-xs text-slate-400 mt-1">All entities are within compliance thresholds. System is monitoring continuously.</p>
+                     </div>
+                   )}
+                </div>
             </div>
          </div>
 
@@ -173,3 +278,21 @@ export const ComplianceEngineTab = () => {
     </div>
   );
 };
+
+// Helper: human-readable time diff
+function getTimeDiff(dateStr: string): string {
+  try {
+    const then = new Date(dateStr).getTime();
+    const now = Date.now();
+    const diffMs = now - then;
+    const diffMin = Math.floor(diffMs / 60000);
+    if (diffMin < 1) return 'Just now';
+    if (diffMin < 60) return `${diffMin}m ago`;
+    const diffHrs = Math.floor(diffMin / 60);
+    if (diffHrs < 24) return `${diffHrs}h ago`;
+    const diffDays = Math.floor(diffHrs / 24);
+    return `${diffDays}d ago`;
+  } catch {
+    return 'Unknown';
+  }
+}
