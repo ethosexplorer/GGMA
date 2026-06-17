@@ -232,6 +232,74 @@ export const initDatabase = async () => {
       }
     }
 
+    // 9. Platform Alerts / Important Updates Table (real-time advisories)
+    await turso.execute(`
+      CREATE TABLE IF NOT EXISTS platform_alerts (
+        id TEXT PRIMARY KEY,
+        category TEXT NOT NULL DEFAULT 'federal',
+        title TEXT NOT NULL,
+        date_label TEXT NOT NULL DEFAULT 'Recent Update',
+        summary TEXT NOT NULL,
+        full_text TEXT NOT NULL,
+        link TEXT,
+        icon_type TEXT NOT NULL DEFAULT 'shield',
+        color_class TEXT NOT NULL DEFAULT 'text-blue-600 bg-blue-50 border-blue-200',
+        is_active INTEGER DEFAULT 1,
+        sort_order INTEGER DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Seed platform alerts if empty
+    const alertsCheck = await turso.execute('SELECT COUNT(*) as count FROM platform_alerts');
+    if (Number(alertsCheck.rows[0]?.count || 0) === 0) {
+      const seedAlerts = [
+        {
+          id: 'omma-dea-reschedule',
+          category: 'federal',
+          title: 'OMMA Monitors DEA Rescheduling Status & Lawsuit',
+          date_label: 'Recent Update',
+          summary: 'The DEA has released instructions for dispensaries, but OMMA has NOT issued emergency rules for Oklahoma. State laws remain unchanged at this time.',
+          full_text: `As the federal landscape for medical marijuana continues to shift, OMMA is closely monitoring the DEA's final rescheduling rule and the recent petition filed by SAM and NDASA with the U.S. Court of Appeals.\n\n"These announcements have created a lot of questions, but very few answers have been received. OMMA will continue to relay information as released by the DEA and federal government, but, ultimately, we encourage licensees to seek professional counsel as they determine the best decisions for their business," said OMMA Executive Director Adria Berry.\n\nOMMA FAQ Highlight:\nAt this time, OMMA's regulatory and licensing requirements and rules remain unchanged. The federal rule does not, by itself, amend Oklahoma law or automatically require rule changes. OMMA-licensed businesses must continue to adhere to existing state regulatory requirements.`,
+          link: 'https://oklahoma.gov/omma/about/news/2026/update-omma-monitors-dea-rescheduling-status-shares-recently-filed-lawsuit.html',
+          icon_type: 'shield_alert',
+          color_class: 'text-blue-600 bg-blue-50 border-blue-200',
+          sort_order: 1,
+        },
+        {
+          id: 'omma-lockbox',
+          category: 'state',
+          title: 'Free OMMA Medication Lockboxes & Legal Protection',
+          date_label: 'Active Program',
+          summary: 'Law enforcement generally requires a warrant to search a locked container. Request your free medication lockbox today to protect your rights.',
+          full_text: `Attention Patients: The Oklahoma Medical Marijuana Authority (OMMA) partners with the Oklahoma Department of Mental Health and Substance Abuse Services (ODMHSAS) to provide free medication lockboxes.\n\nKeeping cannabis in a locked box provides an additional layer of legal protection, as law enforcement generally requires a warrant to open and search a locked container, even during a routine traffic stop. This is a critical piece of legal knowledge for patient protection and compliance.`,
+          link: 'https://oklahoma.gov/odmhsas/prevention/request-medication-lockbox.html',
+          icon_type: 'lock',
+          color_class: 'text-emerald-600 bg-emerald-50 border-emerald-200',
+          sort_order: 2,
+        },
+        {
+          id: 'federal-hemp-compliance',
+          category: 'compliance',
+          title: 'Hemp-Derived Intoxicating Cannabinoid Regulations',
+          date_label: 'Ongoing Review',
+          summary: 'Several states are reviewing legislation to restrict or regulate hemp-derived intoxicating cannabinoids (like Delta-8 and Delta-9 THC) and apply age/packaging restrictions.',
+          full_text: `States like Wisconsin and Washington have introduced bills to tightly regulate intoxicating hemp products, aiming to prohibit sales to individuals under 21, mandate child-resistant packaging, and require strict laboratory testing. Businesses operating across state lines should be prepared for varying degrees of compliance enforcement on hemp-derived cannabinoids, separate from adult-use and medical marijuana frameworks.`,
+          icon_type: 'scale',
+          color_class: 'text-amber-600 bg-amber-50 border-amber-200',
+          sort_order: 3,
+        },
+      ];
+
+      for (const alert of seedAlerts) {
+        await turso.execute({
+          sql: `INSERT INTO platform_alerts (id, category, title, date_label, summary, full_text, link, icon_type, color_class, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          args: [alert.id, alert.category, alert.title, alert.date_label, alert.summary, alert.full_text, alert.link || null, alert.icon_type, alert.color_class, alert.sort_order]
+        });
+      }
+    }
+
     console.log("✅ Turso Database initialized: Created tables for all major modules.");
   } catch (error) {
     console.error("❌ Failed to initialize Turso tables:", error);
