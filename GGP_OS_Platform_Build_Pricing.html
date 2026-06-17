@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GGP-OS — Platform Build Pricing & Tech Stack Guide</title>
-  <meta name="description" content="Complete technology stack, operating costs, and pricing tiers for building enterprise-grade platforms based on the GGP-OS architecture.">
+  <title>Global Green Enterprise — Platform Development Services & Pricing</title>
+  <meta name="description" content="Enterprise-grade platform development services from Global Green Enterprise. Custom dashboards, AI integration, compliance systems, and full-stack web applications.">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -249,6 +249,41 @@
       margin-bottom: 12px;
     }
 
+    /* ═══ INDUSTRY GRID ═══ */
+    .problem-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .problem-card {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      padding: 24px;
+      transition: all 0.2s;
+    }
+    .problem-card:hover {
+      border-color: var(--gold);
+      box-shadow: 0 4px 20px rgba(212,175,119,0.12);
+    }
+    .problem-card .icon {
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+    .problem-card h4 {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--slate-800);
+      margin-bottom: 6px;
+    }
+    .problem-card p {
+      font-size: 13px;
+      color: var(--slate-500);
+      line-height: 1.6;
+      margin: 0;
+    }
+
     /* ═══ COST GRID ═══ */
     .cost-grid {
       display: grid;
@@ -461,23 +496,6 @@
       margin: 0;
     }
 
-    /* ═══ BADGE ROW ═══ */
-    .badge-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin: 16px 0;
-    }
-    .badge-pill {
-      font-size: 10px;
-      font-weight: 700;
-      padding: 6px 14px;
-      border-radius: 100px;
-      background: rgba(10,61,42,0.06);
-      color: var(--forest);
-      border: 1px solid rgba(10,61,42,0.12);
-    }
-
     /* ═══ SCOPE GRID ═══ */
     .scope-grid {
       display: grid;
@@ -508,6 +526,23 @@
       font-size: 10px;
       color: var(--slate-400);
       font-weight: 600;
+    }
+
+    /* ═══ BADGE ROW ═══ */
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 16px 0;
+    }
+    .badge-pill {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 100px;
+      background: rgba(10,61,42,0.06);
+      color: var(--forest);
+      border: 1px solid rgba(10,61,42,0.12);
     }
 
     /* ═══ DIVIDER ═══ */
@@ -566,15 +601,15 @@
       body { background: white; }
       .cover { padding: 40px; }
       .content { padding: 30px 20px; }
-      .cost-grid, .tier-card, .scope-grid { gap: 8px; }
-      .cost-card:hover, .tier-card:hover { transform: none; box-shadow: none; }
+      .cost-grid, .tier-card, .scope-grid, .problem-grid { gap: 8px; }
+      .cost-card:hover, .tier-card:hover, .problem-card:hover { transform: none; box-shadow: none; }
     }
     @media (max-width: 768px) {
       .cover { padding: 40px 24px; }
       .cover h1 { font-size: 28px; }
       .cover-stats { grid-template-columns: 1fr 1fr; }
       .content { padding: 40px 20px; }
-      .cost-grid { grid-template-columns: 1fr; }
+      .cost-grid, .problem-grid { grid-template-columns: 1fr; }
       .tier-features { grid-template-columns: 1fr; }
       .scope-grid { grid-template-columns: 1fr 1fr; }
       .contact-bar { padding: 32px 24px; flex-direction: column; text-align: center; }
@@ -588,25 +623,21 @@
   <header class="cover">
     <div class="badge">
       <span class="dot"></span>
-      Internal Reference — Confidential
+      Platform Development Services — Pricing Guide
     </div>
-    <h1>Platform Build<br><span>Tech Stack & Pricing Guide</span></h1>
-    <p class="subtitle">Complete breakdown of the technology, infrastructure, and pricing tiers used to build the GGP-OS enterprise platform — ready to scope and price client builds.</p>
+    <h1>Custom Platform<br><span>Development & Pricing</span></h1>
+    <p class="subtitle">Enterprise-grade web applications, dashboards, and compliance platforms — built from the ground up by the team that engineered a 73,000+ line production operating system.</p>
     <div class="cover-meta">
-      <span><strong>Prepared by:</strong> Global Green Enterprise Inc.</span>
+      <span><strong>Provider:</strong> Global Green Enterprise Inc.</span>
       <span><strong>Date:</strong> June 2026</span>
       <span><strong>CAGE:</strong> 9KXZ2</span>
-      <span><strong>Classification:</strong> Internal Pricing Reference</span>
+      <span><strong>SAM.gov:</strong> Active</span>
     </div>
 
     <div class="cover-stats">
       <div class="cover-stat">
         <div class="num">73K+</div>
-        <div class="label">Lines of Code</div>
-      </div>
-      <div class="cover-stat">
-        <div class="num">249</div>
-        <div class="label">Source Files</div>
+        <div class="label">Lines Shipped</div>
       </div>
       <div class="cover-stat">
         <div class="num">45</div>
@@ -614,7 +645,11 @@
       </div>
       <div class="cover-stat">
         <div class="num">15+</div>
-        <div class="label">Role Dashboards</div>
+        <div class="label">Dashboard Types</div>
+      </div>
+      <div class="cover-stat">
+        <div class="num">8</div>
+        <div class="label">Live Integrations</div>
       </div>
     </div>
   </header>
@@ -622,104 +657,111 @@
   <!-- ═══ CONTENT ═══ -->
   <main class="content">
 
-    <!-- ═══ SECTION 1: WHAT YOU BUILT ═══ -->
+    <!-- ═══ SECTION 1: WHO WE BUILD FOR ═══ -->
     <div class="section">
-      <div class="section-label">◆ Platform Inventory</div>
-      <h2>What GGP-OS Contains</h2>
-      <p class="lead">A complete audit of every component, integration, and data layer in the production GGP-OS platform.</p>
+      <div class="section-label">◆ Industries We Serve</div>
+      <h2>We Build Platforms for Any Industry</h2>
+      <p class="lead">Our architecture is industry-agnostic. The same enterprise-grade infrastructure that powers compliance platforms, healthcare systems, and government tools can be adapted to any business vertical.</p>
 
-      <div class="scope-grid">
-        <div class="scope-item">
-          <div class="scope-value">249</div>
-          <div class="scope-label">Source Files</div>
-          <div class="scope-sub">4.17 MB Total</div>
+      <div class="problem-grid">
+        <div class="problem-card">
+          <div class="icon">🏥</div>
+          <h4>Healthcare & Telehealth</h4>
+          <p>Patient portals, provider dashboards, appointment scheduling, HIPAA-compliant records</p>
         </div>
-        <div class="scope-item">
-          <div class="scope-value">45</div>
-          <div class="scope-label">Pages & Dashboards</div>
-          <div class="scope-sub">Full Role Coverage</div>
+        <div class="problem-card">
+          <div class="icon">🏛️</div>
+          <h4>Government & Regulatory</h4>
+          <p>Oversight dashboards, licensing portals, compliance tracking, multi-jurisdiction views</p>
         </div>
-        <div class="scope-item">
-          <div class="scope-value">150+</div>
-          <div class="scope-label">Reusable Components</div>
-          <div class="scope-sub">15 Component Dirs</div>
+        <div class="problem-card">
+          <div class="icon">🏪</div>
+          <h4>Retail & E-Commerce</h4>
+          <p>Inventory management, POS dashboards, customer portals, subscription billing</p>
         </div>
-        <div class="scope-item">
-          <div class="scope-value">12</div>
-          <div class="scope-label">Serverless API Routes</div>
-          <div class="scope-sub">Vercel Edge Functions</div>
+        <div class="problem-card">
+          <div class="icon">⚖️</div>
+          <h4>Legal & Compliance</h4>
+          <p>Case management, document vaults, audit trails, court-admissible records</p>
         </div>
-        <div class="scope-item">
-          <div class="scope-value">10+</div>
-          <div class="scope-label">Database Tables</div>
-          <div class="scope-sub">Turso + Firestore</div>
+        <div class="problem-card">
+          <div class="icon">🏗️</div>
+          <h4>Construction & Trades</h4>
+          <p>Project dashboards, permit tracking, contractor management, invoice portals</p>
         </div>
-        <div class="scope-item">
-          <div class="scope-value">8</div>
-          <div class="scope-label">Third-Party Integrations</div>
-          <div class="scope-sub">All Production</div>
+        <div class="problem-card">
+          <div class="icon">🎓</div>
+          <h4>Education & Training</h4>
+          <p>Student portals, course management, certification tracking, LMS dashboards</p>
+        </div>
+        <div class="problem-card">
+          <div class="icon">🏠</div>
+          <h4>Real Estate & Property</h4>
+          <p>Property management, tenant portals, maintenance requests, lease tracking</p>
+        </div>
+        <div class="problem-card">
+          <div class="icon">🚛</div>
+          <h4>Logistics & Supply Chain</h4>
+          <p>Fleet tracking, warehouse management, delivery scheduling, vendor portals</p>
         </div>
       </div>
     </div>
 
     <div class="divider"></div>
 
-    <!-- ═══ SECTION 2: CORE FRAMEWORK ═══ -->
+    <!-- ═══ SECTION 2: WHAT WE BUILD WITH ═══ -->
     <div class="section">
-      <div class="section-label">◆ Core Framework</div>
-      <h2>Open-Source Technologies (Free)</h2>
-      <p class="lead">The foundation of every platform build. Zero licensing cost.</p>
+      <div class="section-label">◆ Technology Stack</div>
+      <h2>What Every Platform Is Built On</h2>
+      <p class="lead">Modern, production-proven technologies with zero licensing costs. Enterprise performance at startup prices.</p>
 
       <table class="comparison-table">
         <thead>
-          <tr><th>Technology</th><th>Purpose</th><th>Cost</th></tr>
+          <tr><th>Technology</th><th>What It Does</th><th>License Cost</th></tr>
         </thead>
         <tbody>
-          <tr><td class="col-tech">React 19</td><td class="col-purpose">UI framework — components, state, rendering</td><td class="col-free">Free</td></tr>
-          <tr><td class="col-tech">TypeScript 5.8</td><td class="col-purpose">Type-safe JavaScript for production reliability</td><td class="col-free">Free</td></tr>
-          <tr><td class="col-tech">Vite 6</td><td class="col-purpose">Build tool & lightning-fast dev server</td><td class="col-free">Free</td></tr>
-          <tr><td class="col-tech">TailwindCSS 4</td><td class="col-purpose">Utility-first styling system</td><td class="col-free">Free</td></tr>
-          <tr><td class="col-tech">React Router 7</td><td class="col-purpose">Page navigation & URL routing</td><td class="col-free">Free</td></tr>
-          <tr><td class="col-tech">Lucide React</td><td class="col-purpose">1,500+ premium SVG icons</td><td class="col-free">Free</td></tr>
-          <tr><td class="col-tech">Motion (Framer)</td><td class="col-purpose">Animations & micro-interactions</td><td class="col-free">Free</td></tr>
-          <tr><td class="col-tech">Zod + React Hook Form</td><td class="col-purpose">Schema validation & form state</td><td class="col-free">Free</td></tr>
-          <tr><td class="col-tech">D3.js / React Simple Maps</td><td class="col-purpose">Interactive data visualizations & maps</td><td class="col-free">Free</td></tr>
-          <tr><td class="col-tech">pdf-lib / DOMPurify</td><td class="col-purpose">PDF generation & HTML security</td><td class="col-free">Free</td></tr>
+          <tr><td class="col-tech">React 19</td><td class="col-purpose">User interface framework — fast, responsive, component-based</td><td class="col-free">Free</td></tr>
+          <tr><td class="col-tech">TypeScript</td><td class="col-purpose">Type-safe code that prevents bugs before they ship</td><td class="col-free">Free</td></tr>
+          <tr><td class="col-tech">TailwindCSS</td><td class="col-purpose">Premium design system — modern, consistent styling</td><td class="col-free">Free</td></tr>
+          <tr><td class="col-tech">Vite</td><td class="col-purpose">Lightning-fast build tool — instant development feedback</td><td class="col-free">Free</td></tr>
+          <tr><td class="col-tech">Motion (Framer)</td><td class="col-purpose">Smooth animations and micro-interactions</td><td class="col-free">Free</td></tr>
+          <tr><td class="col-tech">Lucide Icons</td><td class="col-purpose">1,500+ premium SVG icons — professional polish</td><td class="col-free">Free</td></tr>
         </tbody>
       </table>
     </div>
 
     <div class="divider"></div>
 
-    <!-- ═══ SECTION 3: PAID SERVICES ═══ -->
+    <!-- ═══ SECTION 3: SERVICES ═══ -->
     <div class="section">
-      <div class="section-label">◆ Paid Services</div>
-      <h2>Monthly Infrastructure (Client Pays)</h2>
-      <p class="lead">Cloud services that power the platform. Costs scale with usage.</p>
+      <div class="section-label">◆ Cloud Services</div>
+      <h2>Infrastructure & Integrations</h2>
+      <p class="lead">Every platform needs hosting, a database, and integrations. Here's what's available and what it costs to run monthly.</p>
 
       <table class="comparison-table">
         <thead>
-          <tr><th>Service</th><th>Purpose</th><th>Monthly Cost</th></tr>
+          <tr><th>Service</th><th>What It Powers</th><th>Monthly Cost</th></tr>
         </thead>
         <tbody>
-          <tr><td class="col-tech">Vercel</td><td class="col-purpose">Frontend hosting + serverless API endpoints</td><td class="col-cost">$0 – $20</td></tr>
-          <tr><td class="col-tech">Firebase Auth + Firestore</td><td class="col-purpose">User authentication, real-time database, profiles</td><td class="col-cost">$0 – $25</td></tr>
-          <tr><td class="col-tech">Turso (LibSQL)</td><td class="col-purpose">Structured data — patients, businesses, audit logs</td><td class="col-cost">$0 – $29</td></tr>
-          <tr><td class="col-tech">Stripe</td><td class="col-purpose">Payment processing, subscriptions, invoicing</td><td class="col-cost">2.9% + $0.30/txn</td></tr>
-          <tr><td class="col-tech">Twilio</td><td class="col-purpose">Web dialer, call routing, SMS notifications</td><td class="col-cost">$20 – $100</td></tr>
-          <tr><td class="col-tech">Google Gemini API</td><td class="col-purpose">AI chatbot, document analysis, recommendations</td><td class="col-cost">$0 – $50</td></tr>
-          <tr><td class="col-tech">Resend SMTP</td><td class="col-purpose">Transactional & marketing emails</td><td class="col-cost">$0 – $20</td></tr>
-          <tr><td class="col-tech">Domain + SSL</td><td class="col-purpose">Custom domain name & security certificate</td><td class="col-cost">$12 – $20/yr</td></tr>
+          <tr><td class="col-tech">Vercel Hosting</td><td class="col-purpose">Global CDN hosting with serverless API endpoints — zero devops</td><td class="col-cost">$0 – $20</td></tr>
+          <tr><td class="col-tech">Firebase Auth</td><td class="col-purpose">User login, registration, password reset, role management</td><td class="col-cost">$0 – $25</td></tr>
+          <tr><td class="col-tech">Turso Database</td><td class="col-purpose">Fast, distributed SQL database for all structured data</td><td class="col-cost">$0 – $29</td></tr>
+          <tr><td class="col-tech">Stripe Payments</td><td class="col-purpose">Credit cards, subscriptions, invoicing, refunds</td><td class="col-cost">2.9% + $0.30/txn</td></tr>
+          <tr><td class="col-tech">Twilio</td><td class="col-purpose">Phone calls, SMS, web dialer, call routing</td><td class="col-cost">$20 – $100</td></tr>
+          <tr><td class="col-tech">Google Gemini AI</td><td class="col-purpose">AI chatbot, document analysis, smart recommendations</td><td class="col-cost">$0 – $50</td></tr>
+          <tr><td class="col-tech">Email (SMTP)</td><td class="col-purpose">Transactional emails, notifications, marketing campaigns</td><td class="col-cost">$0 – $20</td></tr>
+          <tr><td class="col-tech">Domain + SSL</td><td class="col-purpose">Custom domain name with security certificate</td><td class="col-cost">$12 – $20/yr</td></tr>
         </tbody>
       </table>
 
       <div class="highlight-box">
-        <h3>Optional Premium Integrations</h3>
-        <p><strong>Calendly API</strong> — Appointment scheduling sync ($0 – $16/mo)</p>
-        <p><strong>Metrc API</strong> — Seed-to-sale cannabis tracking ($250/mo license fee)</p>
-        <p><strong>Authorize.net</strong> — Alternative payment gateway ($25/mo + $0.10/txn)</p>
-        <p><strong>PayPal Business</strong> — Additional payment option (2.9% + $0.30/txn)</p>
-        <p><strong>SendBlue</strong> — iMessage API for Apple devices ($29/mo)</p>
+        <h3>Additional Integrations (As Needed)</h3>
+        <p><strong>Calendly / Acuity</strong> — Appointment scheduling ($0 – $49/mo)</p>
+        <p><strong>PayPal / Authorize.net</strong> — Additional payment gateways (per-transaction fees)</p>
+        <p><strong>SendBlue</strong> — iMessage & Apple Business Chat ($29/mo)</p>
+        <p><strong>Metrc / BioTrack</strong> — Industry-specific tracking APIs (varies by state)</p>
+        <p><strong>Puppeteer / pdf-lib</strong> — PDF report generation & document automation (Free)</p>
+        <p style="margin-bottom:0;"><strong>Google Maps / Mapbox</strong> — Interactive maps & geolocation (Free – $200/mo)</p>
       </div>
     </div>
 
@@ -728,8 +770,8 @@
     <!-- ═══ SECTION 4: OPERATING COSTS ═══ -->
     <div class="section">
       <div class="section-label">◆ Operating Costs</div>
-      <h2>Monthly Cost by Growth Phase</h2>
-      <p class="lead">Clients can launch for under $2/month. Costs grow incrementally with users — no surprise jumps.</p>
+      <h2>What It Costs to Run (Monthly)</h2>
+      <p class="lead">Your platform can launch for under $2/month. Costs grow incrementally as your user base scales — never a surprise jump.</p>
 
       <div class="cost-grid">
         <div class="cost-card">
@@ -739,9 +781,9 @@
           <div class="total">~$2/mo</div>
           <div class="total-label">Total Operating Cost</div>
           <div class="breakdown">
-            <div class="breakdown-item"><span>Vercel Free</span><span>$0</span></div>
-            <div class="breakdown-item"><span>Firebase Free</span><span>$0</span></div>
-            <div class="breakdown-item"><span>Turso Free</span><span>$0</span></div>
+            <div class="breakdown-item"><span>Hosting</span><span>$0</span></div>
+            <div class="breakdown-item"><span>Database</span><span>$0</span></div>
+            <div class="breakdown-item"><span>Auth</span><span>$0</span></div>
             <div class="breakdown-item"><span>Domain</span><span>~$1.50</span></div>
           </div>
         </div>
@@ -752,10 +794,10 @@
           <div class="total">~$125/mo</div>
           <div class="total-label">Total Operating Cost</div>
           <div class="breakdown">
-            <div class="breakdown-item"><span>Vercel Pro</span><span>$20</span></div>
-            <div class="breakdown-item"><span>Firebase Blaze</span><span>~$25</span></div>
-            <div class="breakdown-item"><span>Turso Pro</span><span>$29</span></div>
-            <div class="breakdown-item"><span>Twilio</span><span>~$50</span></div>
+            <div class="breakdown-item"><span>Hosting Pro</span><span>$20</span></div>
+            <div class="breakdown-item"><span>Database Pro</span><span>$29</span></div>
+            <div class="breakdown-item"><span>Auth + DB</span><span>~$25</span></div>
+            <div class="breakdown-item"><span>Phone/SMS</span><span>~$50</span></div>
           </div>
         </div>
         <div class="cost-card">
@@ -765,10 +807,10 @@
           <div class="total">~$435/mo</div>
           <div class="total-label">Total Operating Cost</div>
           <div class="breakdown">
-            <div class="breakdown-item"><span>Vercel Pro</span><span>$20</span></div>
-            <div class="breakdown-item"><span>Firebase</span><span>~$100</span></div>
-            <div class="breakdown-item"><span>Turso Scale</span><span>$49</span></div>
-            <div class="breakdown-item"><span>Twilio + AI</span><span>~$265</span></div>
+            <div class="breakdown-item"><span>Hosting Pro</span><span>$20</span></div>
+            <div class="breakdown-item"><span>Database Scale</span><span>$49</span></div>
+            <div class="breakdown-item"><span>Auth + DB</span><span>~$100</span></div>
+            <div class="breakdown-item"><span>AI + Phone</span><span>~$265</span></div>
           </div>
         </div>
       </div>
@@ -778,9 +820,9 @@
 
     <!-- ═══ SECTION 5: PRICING TIERS ═══ -->
     <div class="section">
-      <div class="section-label">◆ Client Pricing</div>
-      <h2>Platform Build Pricing Tiers</h2>
-      <p class="lead">Your rates to charge clients. Your actual costs are the monthly operating fees above.</p>
+      <div class="section-label">◆ Pricing</div>
+      <h2>Platform Development Pricing</h2>
+      <p class="lead">Select the tier that matches your vision. Every build includes source code ownership, responsive design, and post-launch support.</p>
 
       <div class="tier-grid">
         <div class="tier-card">
@@ -788,11 +830,12 @@
             <div><div class="tier-name">Tier 1 — Landing Page & Branding</div></div>
             <div class="tier-price-block"><div class="tier-price">$3,000 – $5,000</div><div class="tier-timeline">1 – 2 Weeks</div></div>
           </div>
+          <div class="tier-desc">A premium, mobile-responsive website that establishes your online presence.</div>
           <ul class="tier-features">
             <li>Custom responsive landing page</li>
-            <li>Mobile-first design with animations</li>
+            <li>Mobile-first with animations</li>
             <li>SEO optimization</li>
-            <li>Contact form + email notifications</li>
+            <li>Contact form & email alerts</li>
             <li>Social media integration</li>
             <li>Hosting & domain setup</li>
           </ul>
@@ -803,13 +846,14 @@
             <div><div class="tier-name">Tier 2 — Business Dashboard</div></div>
             <div class="tier-price-block"><div class="tier-price">$8,000 – $15,000</div><div class="tier-timeline">3 – 4 Weeks</div></div>
           </div>
+          <div class="tier-desc">A single-role dashboard with user authentication and a real database behind it.</div>
           <ul class="tier-features">
             <li>Everything in Tier 1</li>
             <li>One role-specific dashboard</li>
-            <li>User registration & auth (Firebase)</li>
-            <li>Database setup (Turso)</li>
-            <li>Full audit logging</li>
+            <li>User registration & login</li>
+            <li>Database with audit logging</li>
             <li>Basic analytics & reporting</li>
+            <li>Admin data views</li>
           </ul>
         </div>
 
@@ -818,12 +862,13 @@
             <div><div class="tier-name">Tier 3 — Multi-Role Platform</div></div>
             <div class="tier-price-block"><div class="tier-price">$20,000 – $35,000</div><div class="tier-timeline">6 – 8 Weeks</div></div>
           </div>
+          <div class="tier-desc">Multiple user types with permissions, payments, and real-time data.</div>
           <ul class="tier-features">
             <li>Everything in Tier 2</li>
             <li>3–5 role-based dashboards</li>
             <li>Admin panel & user management</li>
-            <li>Real-time data (Firestore)</li>
-            <li>Stripe payments & subscriptions</li>
+            <li>Real-time data updates</li>
+            <li>Stripe payments & billing</li>
             <li>Email notifications</li>
           </ul>
         </div>
@@ -833,15 +878,15 @@
             <div><div class="tier-name">⭐ Tier 4 — Full Enterprise Suite</div></div>
             <div class="tier-price-block"><div class="tier-price">$50,000 – $80,000</div><div class="tier-timeline">10 – 14 Weeks</div></div>
           </div>
-          <div class="tier-desc">The most popular tier. Includes every major feature category in GGP-OS.</div>
+          <div class="tier-desc">Our most popular tier. A full-featured platform with AI, CRM, telephony, and advanced compliance.</div>
           <ul class="tier-features">
             <li>Everything in Tier 3</li>
             <li>8+ role-based dashboards</li>
-            <li>AI chatbot (Google Gemini)</li>
-            <li>CRM with pipeline management</li>
-            <li>Telephony — Twilio web dialer</li>
-            <li>Compliance & regulatory modules</li>
-            <li>Community features (polls, voting)</li>
+            <li>AI chatbot integration</li>
+            <li>CRM & pipeline management</li>
+            <li>Phone & SMS (Twilio)</li>
+            <li>Compliance & audit modules</li>
+            <li>Community features</li>
             <li>PDF document generation</li>
           </ul>
         </div>
@@ -851,26 +896,28 @@
             <div><div class="tier-name">Tier 5 — Government & Regulatory</div></div>
             <div class="tier-price-block"><div class="tier-price">$100,000 – $150,000</div><div class="tier-timeline">16 – 24 Weeks</div></div>
           </div>
+          <div class="tier-desc">Multi-jurisdiction platforms built for government agencies, regulators, and oversight bodies.</div>
           <ul class="tier-features">
             <li>Everything in Tier 4</li>
             <li>Multi-jurisdiction support</li>
-            <li>Enforcement & oversight dashboards</li>
-            <li>Judicial monitoring & court tracking</li>
-            <li>Seed-to-sale integration (Metrc)</li>
-            <li>Public health dashboards</li>
-            <li>Subscription portal with tiers</li>
-            <li>State/federal compliance views</li>
+            <li>Enforcement & oversight views</li>
+            <li>Court & judicial tracking</li>
+            <li>Industry-specific API integrations</li>
+            <li>Public-facing dashboards</li>
+            <li>Tiered subscription portal</li>
+            <li>Federal/state compliance views</li>
           </ul>
         </div>
 
         <div class="tier-card">
           <div class="tier-header">
-            <div><div class="tier-name">Tier 6 — Full White Label</div></div>
+            <div><div class="tier-name">Tier 6 — Full Enterprise White Label</div></div>
             <div class="tier-price-block"><div class="tier-price">$150,000 – $250,000</div><div class="tier-timeline">20 – 30 Weeks</div></div>
           </div>
+          <div class="tier-desc">A complete, production-ready platform cloned from our 73,000-line architecture, fully rebranded for your organization.</div>
           <ul class="tier-features">
-            <li>Complete GGP-OS white-label</li>
-            <li>All 45 pages, 150+ components</li>
+            <li>Full platform white-label</li>
+            <li>All pages & components</li>
             <li>All integrations included</li>
             <li>Custom branding & domain</li>
             <li>Training & documentation</li>
@@ -883,13 +930,14 @@
             <div><div class="tier-name">Tier 7 — Ongoing Retainer</div></div>
             <div class="tier-price-block"><div class="tier-price">$2,500 – $10,000/mo</div><div class="tier-timeline">Monthly</div></div>
           </div>
+          <div class="tier-desc">Continuous development, maintenance, and support after your platform launches.</div>
           <ul class="tier-features">
             <li>Monthly feature development</li>
             <li>Bug fixes & security patches</li>
             <li>Database management</li>
-            <li>Performance monitoring</li>
+            <li>Performance optimization</li>
             <li>Priority 24–48h support</li>
-            <li>Ongoing optimization</li>
+            <li>Ongoing consultation</li>
           </ul>
         </div>
       </div>
@@ -899,108 +947,111 @@
 
     <!-- ═══ SECTION 6: PROPOSAL TEMPLATE ═══ -->
     <div class="section">
-      <div class="section-label">◆ Proposal Template</div>
-      <h2>Client Proposal Structure</h2>
-      <p class="lead">Copy and customize this for each new client engagement.</p>
+      <div class="section-label">◆ Engagement Structure</div>
+      <h2>How We Work Together</h2>
+      <p class="lead">Every project follows this structure. Clear milestones, transparent pricing, no surprises.</p>
 
       <div class="proposal-box">
-        <h3>Standard Client Proposal</h3>
-        <pre>PROJECT: [Client Name] Platform Build
-SCOPE: Tier [X] — [Description]
-TIMELINE: [X] weeks
-TOTAL INVESTMENT: $[Amount]
+        <h3>Standard Project Agreement</h3>
+        <pre>
+PROJECT:    [Your Platform Name]
+SCOPE:      Tier [X] — [Description]
+TIMELINE:   [X] weeks
+INVESTMENT: $[Total Amount]
 
-PAYMENT SCHEDULE:
-  30% upfront ($X) — Project kickoff
-  30% at mid-milestone ($X) — Core features complete
-  30% at delivery ($X) — Launch ready
-  10% held for 30-day warranty ($X)
+PAYMENT SCHEDULE
+  30%  Upfront — Project kickoff & design phase
+  30%  Mid-milestone — Core features delivered
+  30%  At delivery — Launch-ready review
+  10%  Held 30 days — Post-launch warranty period
 
-MONTHLY OPERATING COSTS (client pays directly):
-  Hosting: $X/mo
-  Database: $X/mo
-  Third-party services: $X/mo
+WHAT'S INCLUDED
+  ✓  Custom design & development per selected tier
+  ✓  [X] rounds of design revisions
+  ✓  Full source code ownership (you own everything)
+  ✓  Hosting setup & deployment
+  ✓  30-day post-launch support
 
-WHAT'S INCLUDED:
-  [Feature list from selected tier]
-  [X] rounds of design revisions
-  Full source code ownership
-  30-day post-launch support
+MONTHLY OPERATING COSTS (client pays directly)
+  Hosting .......................... $X/mo
+  Database ......................... $X/mo
+  Third-party services ............. $X/mo
 
-WHAT'S NOT INCLUDED:
-  Content creation (copywriting, images)
-  Third-party subscription fees
-  Native mobile app development
-  Ongoing maintenance (see retainer)</pre>
+WHAT'S NOT INCLUDED
+  ✗  Content creation (copywriting, photography)
+  ✗  Third-party subscription fees
+  ✗  Native mobile app development
+  ✗  Ongoing maintenance (see retainer pricing)</pre>
       </div>
     </div>
 
     <div class="divider"></div>
 
-    <!-- ═══ SECTION 7: DISCOVERY QUESTIONS ═══ -->
+    <!-- ═══ SECTION 7: DISCOVERY ═══ -->
     <div class="section">
-      <div class="section-label">◆ Client Discovery</div>
-      <h2>Scoping Questions for New Projects</h2>
-      <p class="lead">Ask these before quoting any project to scope accurately.</p>
+      <div class="section-label">◆ Getting Started</div>
+      <h2>Project Discovery Questions</h2>
+      <p class="lead">Every project begins with a 30-minute discovery call. Here's what we'll discuss:</p>
 
       <div class="reasons-list">
         <div class="reason-item">
           <div class="reason-num">1</div>
-          <div><h4>What does your business do?</h4><p>Industry, company size, current revenue, and growth trajectory</p></div>
+          <div><h4>What does your business do?</h4><p>Your industry, size, revenue, and who your customers are</p></div>
         </div>
         <div class="reason-item">
           <div class="reason-num">2</div>
-          <div><h4>How many user roles do you need?</h4><p>Admin, customer, vendor, partner, regulator, etc.</p></div>
+          <div><h4>How many user types do you need?</h4><p>Admin, customer, vendor, staff, partner — each gets their own dashboard</p></div>
         </div>
         <div class="reason-item">
           <div class="reason-num">3</div>
-          <div><h4>Do you need payment processing?</h4><p>One-time purchases, subscriptions, marketplace splits, invoicing</p></div>
+          <div><h4>Do you need to accept payments?</h4><p>One-time, subscriptions, marketplace splits, invoicing, or a combination</p></div>
         </div>
         <div class="reason-item">
           <div class="reason-num">4</div>
-          <div><h4>Do you need AI features?</h4><p>Chatbot, document analysis, smart recommendations, auto-classification</p></div>
+          <div><h4>Do you need AI capabilities?</h4><p>Smart chatbot, document analysis, recommendations, auto-classification</p></div>
         </div>
         <div class="reason-item">
           <div class="reason-num">5</div>
-          <div><h4>Do you need phone/SMS capabilities?</h4><p>Call routing, IVR, SMS notifications, two-factor verification</p></div>
+          <div><h4>Do you need phone or SMS?</h4><p>Web-based phone system, call routing, text notifications, 2FA</p></div>
         </div>
         <div class="reason-item">
           <div class="reason-num">6</div>
-          <div><h4>Do you need compliance features?</h4><p>Audit trails, regulatory reporting, approval workflows</p></div>
+          <div><h4>Do you need compliance or audit features?</h4><p>Approval workflows, audit trails, regulatory reporting, document vaults</p></div>
         </div>
         <div class="reason-item">
           <div class="reason-num">7</div>
-          <div><h4>What's your timeline?</h4><p>Standard timeline or rush delivery? Rush = 1.5x multiplier</p></div>
+          <div><h4>What's your timeline?</h4><p>Standard delivery or rush? Rush projects are available at 1.5x</p></div>
         </div>
         <div class="reason-item">
           <div class="reason-num">8</div>
-          <div><h4>Do you have existing branding?</h4><p>Logo, brand colors, typography, style guide, design system</p></div>
+          <div><h4>Do you have existing branding?</h4><p>Logo, colors, fonts, style guide — or do you need us to create it?</p></div>
         </div>
         <div class="reason-item">
           <div class="reason-num">9</div>
-          <div><h4>Do you need mobile support?</h4><p>Responsive web (included) vs. native iOS/Android app (separate)</p></div>
+          <div><h4>Do you need a mobile app?</h4><p>Every build is mobile-responsive. Native iOS/Android is a separate scope</p></div>
         </div>
         <div class="reason-item">
           <div class="reason-num">10</div>
-          <div><h4>What's your budget range?</h4><p>Helps scope the appropriate tier and prioritize features</p></div>
+          <div><h4>What's your budget range?</h4><p>Helps us recommend the right tier and prioritize what matters most to you</p></div>
         </div>
       </div>
     </div>
 
     <div class="divider"></div>
 
-    <!-- ═══ COMPETITIVE ADVANTAGE ═══ -->
+    <!-- ═══ WHY US ═══ -->
     <div class="section">
       <div class="highlight-box">
-        <h3>Your Competitive Advantage</h3>
-        <p>You are not selling websites. You are selling a <strong style="color:white;">production-proven, enterprise-grade platform architecture</strong> with 73,000+ lines of battle-tested code, AI integration, compliance infrastructure, and real-time data pipelines.</p>
-        <p>That is what justifies premium pricing. No other solo founder has built this.</p>
+        <h3>Why Global Green Enterprise</h3>
+        <p>We don't build templates. We build <strong style="color:white;">production-grade enterprise platforms</strong> — the same architecture behind a 73,000-line operating system currently serving healthcare, government, legal, and compliance sectors across multiple states.</p>
+        <p>Every platform we deliver ships with the same infrastructure standards: real-time data, AI integration, compliance-grade audit trails, and role-based access control. We build once and it scales.</p>
         <div class="badge-row" style="margin-top:20px;">
           <span class="badge-pill" style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.2);color:var(--gold-light);">WOSB Certified</span>
           <span class="badge-pill" style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.2);color:var(--gold-light);">Minority-Owned</span>
           <span class="badge-pill" style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.2);color:var(--gold-light);">SAM.gov Registered</span>
           <span class="badge-pill" style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.2);color:var(--gold-light);">BBB A+ Rated</span>
-          <span class="badge-pill" style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.2);color:var(--gold-light);">Metrc Validated</span>
+          <span class="badge-pill" style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.2);color:var(--gold-light);">CAGE: 9KXZ2</span>
+          <span class="badge-pill" style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.2);color:var(--gold-light);">73K+ Lines Shipped</span>
         </div>
       </div>
     </div>
@@ -1010,8 +1061,8 @@ WHAT'S NOT INCLUDED:
   <!-- ═══ CONTACT ═══ -->
   <div class="contact-bar">
     <div>
-      <h3>Global Green Enterprise Inc.</h3>
-      <p>Shantell Robinson — Founder & CEO</p>
+      <h3>Ready to Build?</h3>
+      <p>Schedule a free 30-minute discovery call to scope your project.</p>
     </div>
     <div class="contact-methods">
       <a href="tel:+18889634447">1-888-963-4447</a>
@@ -1021,8 +1072,9 @@ WHAT'S NOT INCLUDED:
   </div>
 
   <div class="legal-footer">
+    <strong>Global Green Enterprise Inc.</strong> · Shantell Robinson, Founder & CEO<br>
     <strong>CAGE: 9KXZ2</strong> · SAM.gov Active · WOSB & Minority-Owned Certified<br>
-    This document is proprietary to Global Green Enterprise Inc. Do not distribute without authorization.
+    © 2026 Global Green Enterprise Inc. All rights reserved. Pricing subject to project scope.
   </div>
 
 </body>
