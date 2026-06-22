@@ -1015,86 +1015,103 @@ async function handleIMessageInbox(req, res) {
     // ── Step 1: Poll SendBlue API for recent messages (fallback for free tier) ──
     if (creds) {
       try {
-        // Fetch recent messages from SendBlue (v2 API)
-        const sbRes = await fetch(`https://api.sendblue.com/api/v2/messages?limit=50&order_by=createdAt&order_direction=desc`, {
-          method: 'GET',
-          headers: {
-            'sb-api-key-id': creds.apiKey,
-            'sb-api-secret-key': creds.apiSecret,
-          },
-        });
+        // Use AbortController for timeout (8s max to avoid Vercel function timeout)
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 8000);
 
-        if (sbRes.ok) {
-          const sbData = await sbRes.json();
-          const sbMessages = sbData.messages || sbData || [];
-
-          if (Array.isArray(sbMessages) && sbMessages.length > 0) {
-            // Get existing message handles to avoid duplicates
-            const existingResult = await turso.execute({
-              sql: `SELECT data FROM audit_logs WHERE action IN ('IMESSAGE_RECEIVED', 'IMESSAGE_SENT') ORDER BY rowid DESC LIMIT 200`,
-              args: []
+        // Try v2 first, fall back to v1
+        let sbRes;
+        try {
+          sbRes = await fetch(`https://api.sendblue.com/api/v2/messages?limit=50&order_by=createdAt&order_direction=desc`, {
+            method: 'GET',
+            headers: { 'sb-api-key-id': creds.apiKey, 'sb-api-secret-key': creds.apiSecret },
+            signal: controller.signal,
+          });
+        } catch (v2Err) {
+          // v2 failed, try v1
+          try {
+            sbRes = await fetch(`https://api.sendblue.co/api/messages?limit=50`, {
+              method: 'GET',
+              headers: { 'sb-api-key-id': creds.apiKey, 'sb-api-secret-key': creds.apiSecret },
+              signal: controller.signal,
             });
-            const existingHandles = new Set();
-            const existingContents = new Set();
-            existingResult.rows.forEach(row => {
-              try {
-                const d = JSON.parse(row.data);
-                if (d.messageHandle) existingHandles.add(d.messageHandle);
-                // Also track content+timestamp combos to avoid dupes
-                existingContents.add(`${d.content || ''}|${d.dateSent || d.timestamp || ''}`);
-              } catch {}
-            });
+          } catch { sbRes = null; }
+        }
+        clearTimeout(timeout);
 
-            let newCount = 0;
-            for (const msg of sbMessages) {
-              const handle = msg.message_handle || msg.messageHandle || '';
-              const content = msg.content || msg.body || '';
-              const dateSent = msg.date_sent || msg.dateSent || msg.created_at || '';
-              const contentKey = `${content}|${dateSent}`;
+        if (sbRes && sbRes.ok) {
+          let sbData;
+          try { sbData = await sbRes.json(); } catch { sbData = null; }
+          
+          if (sbData) {
+            const sbMessages = Array.isArray(sbData) ? sbData : (sbData.messages || sbData.data || []);
 
-              // Skip if already stored
-              if (handle && existingHandles.has(handle)) continue;
-              if (existingContents.has(contentKey)) continue;
-              if (!content) continue;
-
-              const isOutbound = msg.is_outbound === true;
-              const fromNumber = msg.from_number || msg.number || '';
-              const toNumber = msg.to_number || '';
-              const msgId = isOutbound
-                ? `imsg-out-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`
-                : `imsg-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
-
-              await turso.execute({
-                sql: `INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)`,
-                args: [
-                  msgId,
-                  isOutbound ? 'IMESSAGE_SENT' : 'IMESSAGE_RECEIVED',
-                  isOutbound ? (toNumber || 'unknown') : (fromNumber || 'unknown'),
-                  JSON.stringify({
-                    from: isOutbound ? '+16452468277' : fromNumber,
-                    to: isOutbound ? toNumber : '+16452468277',
-                    content,
-                    mediaUrl: msg.media_url || null,
-                    wasDowngraded: msg.was_downgraded || false,
-                    status: msg.status || 'delivered',
-                    messageHandle: handle,
-                    dateSent: dateSent || new Date().toISOString(),
-                    dateUpdated: msg.date_updated || null,
-                    messageType: msg.message_type || 'message',
-                    syncedFromApi: true,
-                  })
-                ]
+            if (Array.isArray(sbMessages) && sbMessages.length > 0) {
+              // Get existing message handles to avoid duplicates
+              const existingResult = await turso.execute({
+                sql: `SELECT data FROM audit_logs WHERE action IN ('IMESSAGE_RECEIVED', 'IMESSAGE_SENT') ORDER BY rowid DESC LIMIT 200`,
+                args: []
               });
-              newCount++;
+              const existingHandles = new Set();
+              const existingContents = new Set();
+              existingResult.rows.forEach(row => {
+                try {
+                  const d = JSON.parse(row.data);
+                  if (d.messageHandle) existingHandles.add(d.messageHandle);
+                  existingContents.add(`${d.content || ''}|${d.dateSent || d.timestamp || ''}`);
+                } catch {}
+              });
+
+              let newCount = 0;
+              for (const msg of sbMessages) {
+                const handle = msg.message_handle || msg.messageHandle || '';
+                const content = msg.content || msg.body || '';
+                const dateSent = msg.date_sent || msg.dateSent || msg.created_at || '';
+                const contentKey = `${content}|${dateSent}`;
+
+                if (handle && existingHandles.has(handle)) continue;
+                if (existingContents.has(contentKey)) continue;
+                if (!content) continue;
+
+                const isOutbound = msg.is_outbound === true;
+                const fromNumber = msg.from_number || msg.number || '';
+                const toNumber = msg.to_number || '';
+                const msgId = isOutbound
+                  ? `imsg-out-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`
+                  : `imsg-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
+
+                await turso.execute({
+                  sql: `INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)`,
+                  args: [
+                    msgId,
+                    isOutbound ? 'IMESSAGE_SENT' : 'IMESSAGE_RECEIVED',
+                    isOutbound ? (toNumber || 'unknown') : (fromNumber || 'unknown'),
+                    JSON.stringify({
+                      from: isOutbound ? '+16452468277' : fromNumber,
+                      to: isOutbound ? toNumber : '+16452468277',
+                      content,
+                      mediaUrl: msg.media_url || null,
+                      wasDowngraded: msg.was_downgraded || false,
+                      status: msg.status || 'delivered',
+                      messageHandle: handle,
+                      dateSent: dateSent || new Date().toISOString(),
+                      dateUpdated: msg.date_updated || null,
+                      messageType: msg.message_type || 'message',
+                      syncedFromApi: true,
+                    })
+                  ]
+                });
+                newCount++;
+              }
+              if (newCount > 0) console.log(`[SendBlue Sync] ✅ Synced ${newCount} new messages from SendBlue API`);
             }
-            if (newCount > 0) console.log(`[SendBlue Sync] ✅ Synced ${newCount} new messages from SendBlue API`);
           }
-        } else {
+        } else if (sbRes) {
           console.log(`[SendBlue Sync] API returned ${sbRes.status} — skipping sync`);
         }
       } catch (syncErr) {
         // Don't fail the whole request if sync fails — just return what's in DB
-        console.error('[SendBlue Sync] Error polling API:', syncErr.message);
+        console.error('[SendBlue Sync] Error polling API:', syncErr.message || syncErr);
       }
     }
 
