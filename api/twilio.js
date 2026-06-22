@@ -10,6 +10,13 @@ const TEXTBELT_API_KEY = process.env.TEXTBELT_API_KEY || '';
 const TEXTBELT_URL = 'https://textbelt.com/text';
 const SENDBLUE_API = 'https://api.sendblue.co/api';
 
+function getSendBlueCredentials() {
+  const apiKey = process.env.SENDBLUE_API_KEY || process.env.VITE_SENDBLUE_API_KEY || '';
+  const apiSecret = process.env.SENDBLUE_API_SECRET || process.env.VITE_SENDBLUE_API_SECRET || '';
+  if (!apiKey || !apiSecret) return null;
+  return { apiKey, apiSecret };
+}
+
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || '';
 const MODEL_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent';
 
@@ -993,15 +1000,105 @@ async function handleIMessageWebhook(req, res) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 10. SENDBLUE INBOX — Fetch stored incoming iMessages
+// 10. SENDBLUE INBOX — Poll SendBlue API + return stored iMessages
+//     On free tier, webhooks are unreliable so we poll the API directly.
 // ─────────────────────────────────────────────────────────────────────────────
 async function handleIMessageInbox(req, res) {
   try {
-    const url = process.env.VITE_TURSO_DATABASE_URL || "libsql://gghp-gghp.aws-us-east-2.turso.io";
+    const dbUrl = process.env.VITE_TURSO_DATABASE_URL || "libsql://gghp-gghp.aws-us-east-2.turso.io";
     const authToken = process.env.VITE_TURSO_AUTH_TOKEN;
     if (!authToken) return res.json({ messages: [], error: 'Database not configured' });
 
-    const turso = createClient({ url, authToken });
+    const turso = createClient({ url: dbUrl, authToken });
+    const creds = getSendBlueCredentials();
+
+    // ── Step 1: Poll SendBlue API for recent messages (fallback for free tier) ──
+    if (creds) {
+      try {
+        // Fetch recent messages from SendBlue
+        const sbRes = await fetch(`${SENDBLUE_API}/messages`, {
+          method: 'GET',
+          headers: {
+            'sb-api-key-id': creds.apiKey,
+            'sb-api-secret-key': creds.apiSecret,
+          },
+        });
+
+        if (sbRes.ok) {
+          const sbData = await sbRes.json();
+          const sbMessages = sbData.messages || sbData || [];
+
+          if (Array.isArray(sbMessages) && sbMessages.length > 0) {
+            // Get existing message handles to avoid duplicates
+            const existingResult = await turso.execute({
+              sql: `SELECT data FROM audit_logs WHERE action IN ('IMESSAGE_RECEIVED', 'IMESSAGE_SENT') ORDER BY rowid DESC LIMIT 200`,
+              args: []
+            });
+            const existingHandles = new Set();
+            const existingContents = new Set();
+            existingResult.rows.forEach(row => {
+              try {
+                const d = JSON.parse(row.data);
+                if (d.messageHandle) existingHandles.add(d.messageHandle);
+                // Also track content+timestamp combos to avoid dupes
+                existingContents.add(`${d.content || ''}|${d.dateSent || d.timestamp || ''}`);
+              } catch {}
+            });
+
+            let newCount = 0;
+            for (const msg of sbMessages) {
+              const handle = msg.message_handle || msg.messageHandle || '';
+              const content = msg.content || msg.body || '';
+              const dateSent = msg.date_sent || msg.dateSent || msg.created_at || '';
+              const contentKey = `${content}|${dateSent}`;
+
+              // Skip if already stored
+              if (handle && existingHandles.has(handle)) continue;
+              if (existingContents.has(contentKey)) continue;
+              if (!content) continue;
+
+              const isOutbound = msg.is_outbound === true;
+              const fromNumber = msg.from_number || msg.number || '';
+              const toNumber = msg.to_number || '';
+              const msgId = isOutbound
+                ? `imsg-out-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`
+                : `imsg-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
+
+              await turso.execute({
+                sql: `INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)`,
+                args: [
+                  msgId,
+                  isOutbound ? 'IMESSAGE_SENT' : 'IMESSAGE_RECEIVED',
+                  isOutbound ? (toNumber || 'unknown') : (fromNumber || 'unknown'),
+                  JSON.stringify({
+                    from: isOutbound ? '+16452468277' : fromNumber,
+                    to: isOutbound ? toNumber : '+16452468277',
+                    content,
+                    mediaUrl: msg.media_url || null,
+                    wasDowngraded: msg.was_downgraded || false,
+                    status: msg.status || 'delivered',
+                    messageHandle: handle,
+                    dateSent: dateSent || new Date().toISOString(),
+                    dateUpdated: msg.date_updated || null,
+                    messageType: msg.message_type || 'message',
+                    syncedFromApi: true,
+                  })
+                ]
+              });
+              newCount++;
+            }
+            if (newCount > 0) console.log(`[SendBlue Sync] ✅ Synced ${newCount} new messages from SendBlue API`);
+          }
+        } else {
+          console.log(`[SendBlue Sync] API returned ${sbRes.status} — skipping sync`);
+        }
+      } catch (syncErr) {
+        // Don't fail the whole request if sync fails — just return what's in DB
+        console.error('[SendBlue Sync] Error polling API:', syncErr.message);
+      }
+    }
+
+    // ── Step 2: Return all stored messages from Turso ──
     const limit = Math.min(parseInt(req.query.limit || '50'), 200);
     const result = await turso.execute({
       sql: `SELECT id, user_id, data, created_at FROM audit_logs 
