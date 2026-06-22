@@ -1015,8 +1015,8 @@ async function handleIMessageInbox(req, res) {
     // ── Step 1: Poll SendBlue API for recent messages (fallback for free tier) ──
     if (creds) {
       try {
-        // Fetch recent messages from SendBlue
-        const sbRes = await fetch(`${SENDBLUE_API}/messages`, {
+        // Fetch recent messages from SendBlue (v2 API)
+        const sbRes = await fetch(`https://api.sendblue.com/api/v2/messages?limit=50&order_by=createdAt&order_direction=desc`, {
           method: 'GET',
           headers: {
             'sb-api-key-id': creds.apiKey,
