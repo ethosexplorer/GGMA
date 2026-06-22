@@ -8,6 +8,7 @@ const VoiceResponse = twilio.twiml.VoiceResponse;
 
 const TEXTBELT_API_KEY = process.env.TEXTBELT_API_KEY || '';
 const TEXTBELT_URL = 'https://textbelt.com/text';
+const SENDBLUE_API = 'https://api.sendblue.co/api';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || '';
 const MODEL_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent';
@@ -109,6 +110,14 @@ export default async function handler(req, res) {
       return handleVerify(req, res);
     } else if (endpoint === 'recording') {
       return await handleRecording(req, res);
+    } else if (endpoint === 'send-imessage') {
+      return await handleSendIMessage(req, res);
+    } else if (endpoint === 'imessage-webhook') {
+      return await handleIMessageWebhook(req, res);
+    } else if (endpoint === 'imessage-inbox') {
+      return await handleIMessageInbox(req, res);
+    } else if (endpoint === 'imessage-status') {
+      return handleIMessageStatus(req, res);
     } else {
       return res.status(404).json({ error: 'Endpoint not found' });
     }
@@ -841,4 +850,190 @@ async function handleRecording(req, res) {
     console.error('[Twilio Recording Proxy Error]:', err);
     return res.status(500).json({ error: err.message });
   }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 8. SENDBLUE iMESSAGE — Send outgoing iMessage/SMS from 645-246-8277
+// ─────────────────────────────────────────────────────────────────────────────
+function getSendBlueCredentials() {
+  const apiKey = process.env.SENDBLUE_API_KEY;
+  const apiSecret = process.env.SENDBLUE_API_SECRET;
+  if (!apiKey || !apiSecret) return null;
+  return { apiKey, apiSecret };
+}
+
+async function handleSendIMessage(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'POST required for sending messages' });
+  }
+
+  const creds = getSendBlueCredentials();
+  if (!creds) {
+    return res.status(503).json({ 
+      success: false, 
+      error: 'SendBlue credentials not configured. Add SENDBLUE_API_KEY and SENDBLUE_API_SECRET to environment variables.' 
+    });
+  }
+
+  const { phone, message, mediaUrl, number, content } = req.body;
+  const targetPhone = phone || number;
+  const targetMessage = message || content;
+
+  if (!targetPhone || !targetMessage) {
+    return res.status(400).json({ success: false, error: 'Missing phone/number or message/content' });
+  }
+
+  let cleanNumber = targetPhone.replace(/[\s\-\(\)]/g, '');
+  if (!cleanNumber.startsWith('+')) {
+    cleanNumber = cleanNumber.startsWith('1') ? '+' + cleanNumber : '+1' + cleanNumber;
+  }
+
+  try {
+    const response = await fetch(`${SENDBLUE_API}/send-message`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'sb-api-key-id': creds.apiKey,
+        'sb-api-secret-key': creds.apiSecret,
+      },
+      body: JSON.stringify({
+        number: cleanNumber,
+        content: targetMessage,
+        ...(mediaUrl ? { media_url: mediaUrl } : {}),
+        from_number: '+16452468277',
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok && data.status !== 'ERROR') {
+      console.log(`[SendBlue] ✅ Message sent to ${cleanNumber}`);
+
+      // Log outgoing message to Turso
+      try {
+        const url = process.env.VITE_TURSO_DATABASE_URL || "libsql://gghp-gghp.aws-us-east-2.turso.io";
+        const authToken = process.env.VITE_TURSO_AUTH_TOKEN;
+        if (authToken) {
+          const turso = createClient({ url, authToken });
+          await turso.execute({
+            sql: `INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)`,
+            args: [
+              `imsg-out-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
+              'IMESSAGE_SENT',
+              cleanNumber,
+              JSON.stringify({
+                to: cleanNumber, from: '+16452468277', content: targetMessage,
+                mediaUrl: mediaUrl || null, service: data.is_outbound !== false ? 'iMessage' : 'SMS',
+                messageHandle: data.message_handle || null, status: data.status || 'QUEUED',
+                timestamp: new Date().toISOString(),
+              })
+            ]
+          });
+        }
+      } catch (logErr) { console.error('[SendBlue] Log error:', logErr); }
+
+      return res.json({
+        success: true, messageId: data.message_handle,
+        status: data.status, service: data.is_outbound !== false ? 'iMessage' : 'SMS',
+      });
+    } else {
+      console.error('[SendBlue] ❌ API Error:', data);
+      return res.json({ success: false, error: data.error_message || data.message || 'SendBlue API Error', status: data.status });
+    }
+  } catch (err) {
+    console.error('[SendBlue] Network error:', err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 9. SENDBLUE WEBHOOK — Receive incoming iMessages to 645-246-8277
+// ─────────────────────────────────────────────────────────────────────────────
+async function handleIMessageWebhook(req, res) {
+  if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' });
+
+  try {
+    const { content, is_outbound, number, from_number, to_number, status,
+            message_handle, date_sent, date_updated, was_downgraded, media_url, message_type } = req.body;
+
+    console.log(`[SendBlue Webhook] ${is_outbound ? 'OUT' : 'IN'} | From: ${number || from_number} | "${(content || '').substring(0, 50)}"`);
+
+    if (!is_outbound) {
+      try {
+        const url = process.env.VITE_TURSO_DATABASE_URL || "libsql://gghp-gghp.aws-us-east-2.turso.io";
+        const authToken = process.env.VITE_TURSO_AUTH_TOKEN;
+        if (authToken) {
+          const turso = createClient({ url, authToken });
+          await turso.execute({
+            sql: `INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)`,
+            args: [
+              `imsg-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
+              'IMESSAGE_RECEIVED',
+              number || from_number || 'unknown',
+              JSON.stringify({
+                from: number || from_number, to: to_number || '+16452468277',
+                content: content || '', mediaUrl: media_url || null,
+                wasDowngraded: was_downgraded || false, status: status || 'delivered',
+                messageHandle: message_handle || null,
+                dateSent: date_sent || new Date().toISOString(),
+                dateUpdated: date_updated || null, messageType: message_type || 'message',
+              })
+            ]
+          });
+          console.log(`[SendBlue Webhook] ✅ Stored incoming message from ${number || from_number}`);
+        }
+      } catch (dbErr) { console.error('[SendBlue Webhook] DB error:', dbErr); }
+    }
+
+    return res.status(200).json({ success: true });
+  } catch (err) {
+    console.error('[SendBlue Webhook] Error:', err);
+    return res.status(200).json({ success: true });
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 10. SENDBLUE INBOX — Fetch stored incoming iMessages
+// ─────────────────────────────────────────────────────────────────────────────
+async function handleIMessageInbox(req, res) {
+  try {
+    const url = process.env.VITE_TURSO_DATABASE_URL || "libsql://gghp-gghp.aws-us-east-2.turso.io";
+    const authToken = process.env.VITE_TURSO_AUTH_TOKEN;
+    if (!authToken) return res.json({ messages: [], error: 'Database not configured' });
+
+    const turso = createClient({ url, authToken });
+    const limit = Math.min(parseInt(req.query.limit || '50'), 200);
+    const result = await turso.execute({
+      sql: `SELECT id, user_id, data, created_at FROM audit_logs 
+            WHERE action IN ('IMESSAGE_RECEIVED', 'IMESSAGE_SENT') 
+            ORDER BY rowid DESC LIMIT ?`,
+      args: [limit]
+    });
+
+    const messages = result.rows.map(row => {
+      let parsed = {};
+      try { parsed = JSON.parse(row.data); } catch {}
+      return {
+        id: row.id, from: parsed.from || row.user_id, to: parsed.to || '',
+        content: parsed.content || '', mediaUrl: parsed.mediaUrl || null,
+        direction: row.id.startsWith('imsg-out') ? 'outbound' : 'inbound',
+        wasDowngraded: parsed.wasDowngraded || false,
+        timestamp: parsed.dateSent || parsed.timestamp || row.created_at,
+        status: parsed.status || 'delivered',
+      };
+    });
+
+    return res.json({ messages, total: messages.length });
+  } catch (err) {
+    console.error('[SendBlue Inbox] Error:', err);
+    return res.status(500).json({ error: err.message });
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 11. SENDBLUE STATUS — Check if SendBlue is configured
+// ─────────────────────────────────────────────────────────────────────────────
+function handleIMessageStatus(req, res) {
+  const creds = getSendBlueCredentials();
+  return res.json({ configured: !!creds, fromNumber: '+16452468277', service: 'SendBlue iMessage' });
 }

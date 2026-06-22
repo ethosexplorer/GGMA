@@ -10,7 +10,7 @@
  *   await sendPatientUpdate(patient, 'Your OMMA card is ready for pickup.');
  */
 
-const API_ENDPOINT = '/api/send-imessage';
+const API_ENDPOINT = '/api/twilio/send-imessage';
 
 interface SendResult {
   success: boolean;
