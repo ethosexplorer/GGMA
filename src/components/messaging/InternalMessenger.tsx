@@ -5,6 +5,7 @@ import { db } from '../../firebase';
 import { collection, addDoc, query, limit, onSnapshot, serverTimestamp, where, Timestamp, getDocs, doc, setDoc, updateDoc } from 'firebase/firestore';
 import { voip800 } from '../../lib/voip800';
 import { sendSMS } from '../../lib/textbelt';
+import { sendIMessage } from '../../lib/sendblue';
 
 interface Message {
   id: string;
@@ -22,6 +23,7 @@ const CHANNELS = [
   { id: 'it-ops', label: 'IT & Operations', description: 'System issues, deployments' },
   { id: 'founder-directives', label: 'Founder Directives', description: 'Direct orders from leadership' },
   { id: 'external-push', label: 'External Push (Global)', description: 'Team-visible SMS push notifications' },
+  { id: 'imessage', label: 'iMessage (645)', description: 'SendBlue iMessage inbox — 645-246-8277' },
   { id: 'private-sms', label: 'Private SMS', description: 'Send SMS privately (Only you see this log)' },
 ];
 
@@ -57,6 +59,8 @@ export const InternalMessenger = ({ currentUser }: Props) => {
   const isFounder = currentUser.role === 'executive_founder' || currentUser.roleId === 'founder';
   const currentView = activeDM || (activeChannel === 'private-sms' ? `private-sms-${currentUser.roleId}` : activeChannel);
   const [msgError, setMsgError] = useState<string | null>(null);
+  const [iMessages, setIMessages] = useState<any[]>([]);
+  const [iMessageLoading, setIMessageLoading] = useState(false);
 
   const [presence, setPresence] = useState<Record<string, { status: string; lastSeen: Date | null }>>({});
   const [simulatedPresence, setSimulatedPresence] = useState<Record<string, 'online' | 'away' | 'offline'>>({
@@ -267,6 +271,29 @@ export const InternalMessenger = ({ currentUser }: Props) => {
     return () => unsubscribe();
   }, [currentView]);
 
+  // Fetch iMessages when that channel is active
+  useEffect(() => {
+    if (activeChannel !== 'imessage' || activeDM) return;
+    let cancelled = false;
+    const fetchIMessages = async () => {
+      setIMessageLoading(true);
+      try {
+        const res = await fetch('/api/twilio/imessage-inbox?limit=50');
+        if (res.ok) {
+          const data = await res.json();
+          if (!cancelled) setIMessages(data.messages || []);
+        }
+      } catch (err) {
+        console.error('[iMessage] Fetch error:', err);
+      } finally {
+        if (!cancelled) setIMessageLoading(false);
+      }
+    };
+    fetchIMessages();
+    const interval = setInterval(fetchIMessages, 15000); // Poll every 15s
+    return () => { cancelled = true; clearInterval(interval); };
+  }, [activeChannel, activeDM]);
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -317,6 +344,35 @@ export const InternalMessenger = ({ currentUser }: Props) => {
       } catch (err) {
         console.error(err);
         (() => { import('../../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Failed to send Push Notification" })] }).catch(console.error) ); alert("Failed to send Push Notification\n\n[Live Production Transaction Logged]"); })();
+      }
+      return;
+    }
+
+    // iMessage channel — send via SendBlue
+    if (activeChannel === 'imessage' && !activeDM) {
+      if (!externalPhone.trim()) { alert('Enter a phone number to send an iMessage'); return; }
+      try {
+        const result = await sendIMessage(externalPhone, messageText);
+        if (result.success) {
+          // Add locally so user sees it immediately
+          setIMessages(prev => [{
+            id: `imsg-out-${Date.now()}`,
+            from: '+16452468277',
+            to: externalPhone,
+            content: messageText,
+            direction: 'outbound',
+            timestamp: new Date().toISOString(),
+            status: 'sent',
+            service: result.service || 'iMessage',
+          }, ...prev]);
+          setMessageText('');
+          inputRef.current?.focus();
+        } else {
+          alert(`❌ iMessage failed: ${result.error || 'Unknown error'}`);
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Failed to send iMessage');
       }
       return;
     }
@@ -566,12 +622,58 @@ export const InternalMessenger = ({ currentUser }: Props) => {
               <p className="text-[10px] text-red-400 mt-2">Check browser console for details. You may need to create a Firestore index.</p>
             </div>
           )}
-          {messages.length === 0 && !msgError && (
+          {messages.length === 0 && !msgError && activeChannel !== 'imessage' && (
             <div className="flex flex-col items-center justify-center h-full text-slate-300">
               <MessageSquare size={48} className="mb-4 opacity-50" />
               <p className="font-bold text-sm">No messages yet</p>
               <p className="text-xs text-slate-400 mt-1">Start the conversation</p>
             </div>
+          )}
+
+          {/* iMessage Channel — render from iMessages state */}
+          {activeChannel === 'imessage' && !activeDM && (
+            <>
+              {iMessageLoading && iMessages.length === 0 && (
+                <div className="flex flex-col items-center justify-center h-full text-slate-300">
+                  <div className="animate-spin w-8 h-8 border-2 border-blue-400 border-t-transparent rounded-full mb-4"></div>
+                  <p className="font-bold text-sm">Loading iMessages...</p>
+                </div>
+              )}
+              {!iMessageLoading && iMessages.length === 0 && (
+                <div className="flex flex-col items-center justify-center h-full text-slate-300">
+                  <MessageSquare size={48} className="mb-4 opacity-50" />
+                  <p className="font-bold text-sm">No iMessages yet</p>
+                  <p className="text-xs text-slate-400 mt-1">Send a message or wait for incoming texts to 645-246-8277</p>
+                </div>
+              )}
+              {[...iMessages].reverse().map((msg) => {
+                const isOutbound = msg.direction === 'outbound';
+                const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+                const date = msg.timestamp ? new Date(msg.timestamp).toLocaleDateString() : '';
+                return (
+                  <div key={msg.id} className={cn("flex gap-3", isOutbound && "flex-row-reverse")}>
+                    <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center text-white text-xs font-black shrink-0", isOutbound ? "bg-blue-500" : "bg-emerald-500")}>
+                      {isOutbound ? '📤' : '📥'}
+                    </div>
+                    <div className={cn("max-w-[70%]", isOutbound && "text-right")}>
+                      <div className={cn("flex items-baseline gap-2 mb-1", isOutbound && "flex-row-reverse")}>
+                        <span className="text-xs font-black text-slate-700">{isOutbound ? 'You (645-246-8277)' : (msg.from || 'Unknown')}</span>
+                        <span className="text-[9px] text-slate-400 font-bold">{time} · {date}</span>
+                        {msg.wasDowngraded && <span className="text-[8px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full font-black">SMS fallback</span>}
+                      </div>
+                      <div className={cn(
+                        "px-4 py-3 rounded-2xl text-sm font-medium leading-relaxed",
+                        isOutbound
+                          ? "bg-blue-500 text-white rounded-tr-sm"
+                          : "bg-white border border-slate-200 text-slate-700 rounded-tl-sm shadow-sm"
+                      )}>
+                        {msg.content}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </>
           )}
 
           {messages.map((msg) => {
@@ -617,10 +719,10 @@ export const InternalMessenger = ({ currentUser }: Props) => {
 
         {/* Input */}
         <div className="p-4 border-t border-slate-100 bg-white">
-          {!activeDM && (activeChannel === 'external-push' || activeChannel === 'private-sms') && (
+          {!activeDM && (activeChannel === 'external-push' || activeChannel === 'private-sms' || activeChannel === 'imessage') && (
             <div className="mb-3">
               <label className="text-[10px] font-black text-emerald-600 uppercase tracking-widest block mb-1">
-                {activeChannel === 'private-sms' ? 'Private Phone Number (Dialer)' : 'External Phone Number (Dialer)'}
+                {activeChannel === 'imessage' ? 'iMessage Recipient Phone Number' : activeChannel === 'private-sms' ? 'Private Phone Number (Dialer)' : 'External Phone Number (Dialer)'}
               </label>
               <input
                 type="tel"
