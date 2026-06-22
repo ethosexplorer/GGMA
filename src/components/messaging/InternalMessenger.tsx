@@ -348,12 +348,12 @@ export const InternalMessenger = ({ currentUser }: Props) => {
       return;
     }
 
-    // iMessage channel — send via SendBlue
+    // iMessage channel — incoming only via SendBlue, outgoing via TextBelt (cheaper)
     if (activeChannel === 'imessage' && !activeDM) {
-      if (!externalPhone.trim()) { alert('Enter a phone number to send an iMessage'); return; }
+      if (!externalPhone.trim()) { alert('Enter a phone number to send a text'); return; }
       try {
-        const result = await sendIMessage(externalPhone, messageText);
-        if (result.success) {
+        const smsResult = await sendSMS(externalPhone, messageText);
+        if (smsResult.success) {
           // Add locally so user sees it immediately
           setIMessages(prev => [{
             id: `imsg-out-${Date.now()}`,
@@ -363,16 +363,16 @@ export const InternalMessenger = ({ currentUser }: Props) => {
             direction: 'outbound',
             timestamp: new Date().toISOString(),
             status: 'sent',
-            service: result.service || 'iMessage',
+            service: 'SMS (TextBelt)',
           }, ...prev]);
           setMessageText('');
           inputRef.current?.focus();
         } else {
-          alert(`❌ iMessage failed: ${result.error || 'Unknown error'}`);
+          alert(`❌ SMS failed: ${smsResult.error || smsResult.message || 'Unknown error'}`);
         }
       } catch (err) {
         console.error(err);
-        alert('Failed to send iMessage');
+        alert('Failed to send SMS');
       }
       return;
     }
