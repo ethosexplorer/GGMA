@@ -1685,34 +1685,40 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     guide: "https://cca.virginia.gov/faqs",
     resources: "https://www.mpp.org/states/virginia/?state=VA",
     abbreviation: "VA",
-    adultUseStatus: "Legal to possess/grow (No Retail Sales yet)",
+    adultUseStatus: "Yes — Budget bill passed June 22, 2026. Retail sales begin July 1, 2027",
     medicalStatus: "Yes",
     regulator: "Virginia Cannabis Control Authority (CCA)",
     compliancePage: "https://cca.virginia.gov/laws-and-regulations",
-    checklistItems: ["CCA Pharmaceutical Processor License","Practitioner certification required","Product testing","Inventory tracking"],
+    checklistItems: ["CCA Retail License (up to 350 statewide)","Pharmaceutical Processor License","Practitioner certification","Product testing","Inventory tracking","6% excise tax compliance","Local tax compliance (1%-3.5%)"],
     complianceSource: "https://www.ncsl.org/health/state-medical-cannabis-laws",
     conditions: ["Any condition or symptom diagnosed by a registered practitioner (No specific list)"],
     contactPhone: "(804) 688-6112",
     contactEmail: "info@cca.virginia.gov",
     trackingSystem: "State mandated tracking",
-    licenseCaps: "Yes. Highly restricted number of pharmaceutical processors (dispensaries).",
+    licenseCaps: "Up to 350 retail cannabis stores statewide. Licensing framework to be established by CCA ahead of July 1, 2027 launch.",
     intakeNotes: [
-      "⚕️ MEDICAL SALES ONLY: While adult-use possession and home grow are legal, there are NO adult-use retail stores open.",
+      "🎉 NEWLY LEGALIZED ADULT-USE: Virginia legislature passed budget language on June 22, 2026 legalizing adult-use cannabis retail sales.",
+      "⏰ RETAIL LAUNCH: Legal retail sales begin July 1, 2027. Medical sales continue through existing pharmaceutical processors.",
       "Regulator: Virginia Cannabis Control Authority (CCA).",
-      "Conditions: Virginia does not have a strict list of qualifying conditions. Any registered practitioner can certify a patient for any condition.",
-      "Tax: Medical cannabis purchases are generally exempt from special cannabis excise taxes, subject only to standard sales tax.",
+      "📊 TAX: 6% state excise tax (increases to 8% on July 1, 2029) + 1%-3.5% local option tax.",
+      "🏪 LICENSES: Up to 350 retail stores to be licensed statewide.",
+      "📦 POSSESSION: 2 ounces (increased from 1 oz under new law).",
+      "🏡 HOME GROW: Up to 4 plants per household for adults 21+.",
+      "Conditions: Virginia does not have a strict list of qualifying conditions for medical. Any registered practitioner can certify a patient.",
       "Reciprocity: NONE. Virginia does not accept out-of-state medical cards.",
-      "Home grow is legal: Up to 4 plants per household for adults 21+."
+      "⚖️ PUBLIC CONSUMPTION: Civil fine of $250 for public consumption of cannabis."
     ],
     intakeForms: [
       { name: "CCA Patient Info", url: "https://cca.virginia.gov/medicalcannabis/patients" },
       { name: "Practitioner Registry", url: "https://cca.virginia.gov/medicalcannabis/practitioners" }
     ],
     intakeFAQ: [
-      { q: "Are recreational dispensaries open in VA?", a: "NO. You can legally possess and grow cannabis, but there is no legal retail market for adult-use yet." },
-      { q: "What conditions qualify for a medical card?", a: "Any condition. It is entirely up to the clinical judgment of a registered practitioner." },
-      { q: "Can I use an out-of-state medical card?", a: "NO. Virginia has no reciprocity." },
-      { q: "How much can I buy?", a: "A registered patient can purchase up to a 90-day supply of cannabis products." }
+      { q: "When do adult-use retail sales begin in VA?", a: "July 1, 2027. The Virginia legislature passed budget language on June 22, 2026 authorizing a regulated adult-use retail market." },
+      { q: "How many retail stores will there be?", a: "Up to 350 retail cannabis stores will be licensed statewide by the CCA." },
+      { q: "What is the tax rate?", a: "6% state excise tax (increases to 8% in 2029) plus a local option tax of 1% to 3.5%." },
+      { q: "How much can I possess?", a: "Adults 21+ can possess up to 2 ounces of cannabis (increased from 1 oz under the new law)." },
+      { q: "Can I grow my own?", a: "Yes, adults 21+ can grow up to 4 plants per household." },
+      { q: "Can I use an out-of-state medical card?", a: "NO. Virginia has no reciprocity." }
     ]
   },
   "Washington": {

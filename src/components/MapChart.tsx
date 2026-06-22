@@ -61,7 +61,7 @@ const data: StateData[] = [
   { id: "48", state: "Texas", status: "mixed", dispensaries: 3, note: "Very limited medical (Compassionate Use)" },
   { id: "49", state: "Utah", status: "medical_only", dispensaries: 15, note: "Medical cannabis legal since 2018" },
   { id: "50", state: "Vermont", status: "fully_legal", dispensaries: 55, note: "Recreational & medical legal" },
-  { id: "51", state: "Virginia", status: "fully_legal", dispensaries: 30, note: "Recreational & medical legal" },
+  { id: "51", state: "Virginia", status: "fully_legal", dispensaries: 30, note: "Adult-use retail legalized June 2026. Sales begin July 1, 2027. Up to 350 stores" },
   { id: "53", state: "Washington", status: "fully_legal", dispensaries: 510, note: "Recreational & medical legal" },
   { id: "54", state: "West Virginia", status: "medical_only", dispensaries: 12, note: "Medical cannabis legal since 2017" },
   { id: "55", state: "Wisconsin", status: "illegal", dispensaries: 0, note: "Cannabis illegal" },

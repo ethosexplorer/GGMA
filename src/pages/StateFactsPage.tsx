@@ -57,7 +57,7 @@ const STATE_STATUS_MAP: Record<string, string> = {
   "Texas": "Limited Medical",
   "Utah": "Medical Only (Limited)",
   "Vermont": "Full Recreational & Medical",
-  "Virginia": "Medical & Limited Retail",
+  "Virginia": "Newly Legalized Adult-Use (June 2026)",
   "Washington": "Full Recreational & Medical",
   "West Virginia": "Medical Only",
   "Wisconsin": "Newly Legalized (March 2026)",

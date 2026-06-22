@@ -242,7 +242,7 @@ DUAL-USE STATES (Medical + Adult-Use):
 • OH: Ohio (DCC). Tax: 10% excise. Issue 2 (2023). Dual-use. Metrc. Home grow: 6 plants.
 • OR: Oregon (OLCC/OHA). Tax: 17% state + 3% local. Measure 91 (2014). OMMP. Metrc. Oversupply.
 • RI: Rhode Island (CCC). Tax: 10% excise + 3% local + 7% sales = 20%. Dual-use 2022.
-• VA: Virginia (CCA). Tax: 21% excise (planned). Legalized 2021. Sales delayed. Home grow: 4 plants.
+• VA: Virginia (CCA). Tax: 6% excise (→8% in 2029) + 1-3.5% local. Budget bill passed June 22, 2026. Retail sales begin July 1, 2027. Up to 350 stores. 2oz possession. Home grow: 4 plants.
 • VT: Vermont (CCB). Tax: 14% excise + 6% sales. Act 164 (2020). Small-batch focus.
 • WA: Washington (LCB). Tax: 37% excise. I-502 (2012). ~$1.5B market. Leaf Data. No home grow.
 
