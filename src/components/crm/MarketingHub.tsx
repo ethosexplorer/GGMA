@@ -55,6 +55,30 @@ const getJurisdictionCode = (raw: string) => {
   return STATE_NAME_TO_CODE[trimmed] || 'US';
 };
 
+/** Strip HTML tags and decode entities for plain-text SMS */
+const htmlToPlainText = (html: string): string => {
+  if (!html) return '';
+  // Strip tags
+  let text = html.replace(/<br\s*\/?>/gi, '\n');
+  text = text.replace(/<\/p>/gi, '\n\n');
+  text = text.replace(/<\/div>/gi, '\n');
+  text = text.replace(/<\/li>/gi, '\n');
+  text = text.replace(/<li[^>]*>/gi, '• ');
+  text = text.replace(/<[^>]+>/g, '');
+  // Decode common entities
+  text = text.replace(/&mdash;/g, '—');
+  text = text.replace(/&ndash;/g, '–');
+  text = text.replace(/&amp;/g, '&');
+  text = text.replace(/&lt;/g, '<');
+  text = text.replace(/&gt;/g, '>');
+  text = text.replace(/&quot;/g, '"');
+  text = text.replace(/&#39;/g, "'");
+  text = text.replace(/&nbsp;/g, ' ');
+  // Collapse multiple newlines and trim
+  text = text.replace(/\n{3,}/g, '\n\n').trim();
+  return text;
+};
+
 const JURISDICTIONS = ['AK', 'AL', 'AR', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'GA', 'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN', 'MO', 'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VA', 'VT', 'WA', 'WI', 'WV', 'WY'];
 
 const ENTITY_TYPES = [
@@ -814,8 +838,8 @@ export const MarketingHub = () => {
     setSendProgress('Preparing campaign...');
     
     try {
-      // Compress images
-      let apiMessage = message;
+      // For SMS: strip HTML to plain text before sending
+      let apiMessage = campaignType === 'sms' ? htmlToPlainText(message) : message;
       const attachments: { filename: string; content: string; contentType: string; cid: string }[] = [];
       const compressImage = (dataUrl: string): Promise<string> => new Promise((resolve) => {
         const img = new Image();
@@ -1687,6 +1711,28 @@ export const MarketingHub = () => {
   </div>
 </div>`);
                         alert('✅ Business Renewal Preset Loaded!\n\n📋 Audience: All Cannabis Business types\n📅 Renewal Mode: Expiring in Selected Month\n📧 Subject & body pre-filled with business license renewal template\n🌐 All states selected\n\nReview the audience count and hit Launch Campaign when ready.');
+                      } else if (val === 'sms_patient_renewal') {
+                        setSelectedTypes(['patient']);
+                        setSelectedStates(['OK']);
+                        setSelectedTier('all');
+                        setPatientRenewalMode('month');
+                        setPatientRenewalMonth({ year: 2026, month: 3 });
+                        setCampaignType('sms');
+                        setSendMode('broadcast');
+                        setSubject('Med Card Renewal');
+                        setMessage(`Hi, this is Global Green & Chronic Cardz. Your Oklahoma medical cannabis card is expiring soon. To keep your patient status active, schedule your renewal consultation now at globalgreenhp.com/schedule or call 1-405-492-7487. Don't lose access — renew today!`);
+                        alert('✅ SMS Patient Renewal Preset Loaded!\n\n📱 Mode: SMS (TextBelt)\n📋 Audience: Patients with expiring cards\n📅 Renewal Month filter active\n\nReview audience count and hit Launch.');
+                      } else if (val === 'sms_business_renewal') {
+                        setSelectedTypes(['dispensary', 'grower', 'processor', 'distribution', 'other']);
+                        setSelectedStates(['All']);
+                        setSelectedTier('all');
+                        setBusinessRenewalMode('month');
+                        setBusinessRenewalMonth({ year: 2026, month: 3 });
+                        setCampaignType('sms');
+                        setSendMode('broadcast');
+                        setSubject('License Renewal Alert');
+                        setMessage(`COMPLIANCE ALERT: Your cannabis business license is expiring soon. Renew now to avoid suspension. Visit globalgreenhp.com/compliance or call 1-888-963-4447 for assistance. — Global Green Enterprise`);
+                        alert('✅ SMS Business Renewal Preset Loaded!\n\n📱 Mode: SMS (TextBelt)\n📋 Audience: Businesses with expiring licenses\n📅 Renewal Month filter active');
                       }
                       // Reset the value so the select acts as a trigger button
                       e.target.value = '';
@@ -1695,13 +1741,19 @@ export const MarketingHub = () => {
                     defaultValue=""
                   >
                     <option value="" disabled>Select Campaign Preset...</option>
-                    <option value="hub">🏛️ HUB — All Agency & Partner Types</option>
-                    <option value="gov">🏢 Gov/Agency Preset</option>
-                    <option value="advocates">📣 Advocates Preset</option>
-                    <option value="attorneys">⚖️ Attorneys Preset</option>
-                    <option value="providers">🩺 Providers Preset</option>
-                    <option value="patient_renewal">🩺 Patient Card Renewal Preset</option>
-                    <option value="business_renewal">🏢 Business License Renewal Preset</option>
+                    <optgroup label="📧 Email Presets">
+                      <option value="hub">🏛️ HUB — All Agency & Partner Types</option>
+                      <option value="gov">🏢 Gov/Agency Preset</option>
+                      <option value="advocates">📣 Advocates Preset</option>
+                      <option value="attorneys">⚖️ Attorneys Preset</option>
+                      <option value="providers">🩺 Providers Preset</option>
+                      <option value="patient_renewal">🩺 Patient Card Renewal (Email)</option>
+                      <option value="business_renewal">🏢 Business License Renewal (Email)</option>
+                    </optgroup>
+                    <optgroup label="📱 SMS Presets">
+                      <option value="sms_patient_renewal">📱 Patient Card Renewal (SMS)</option>
+                      <option value="sms_business_renewal">📱 Business License Renewal (SMS)</option>
+                    </optgroup>
                   </select>
                   <p className="text-[9px] text-slate-500 mt-2 font-medium text-center">SWEEP sends segmented campaigns per audience type</p>
                 </div>
@@ -2380,7 +2432,7 @@ export const MarketingHub = () => {
                   <div className="max-w-sm mx-auto bg-slate-100 rounded-3xl p-4 border-4 border-slate-200 shadow-xl relative">
                     <div className="w-16 h-1 bg-slate-300 rounded-full mx-auto mb-6"></div>
                     <div className="bg-emerald-500 text-white p-4 rounded-2xl rounded-br-sm shadow-md mb-2 relative left-4 w-[90%]">
-                      <p className="whitespace-pre-wrap text-sm">{message}</p>
+                      <p className="whitespace-pre-wrap text-sm">{htmlToPlainText(message)}</p>
                     </div>
                   </div>
                 )}
