@@ -26,7 +26,7 @@ and 37 role-based dashboards.
 CORE ENTERPRISE & BRANDS:
 - Parent Entity: Global Green Enterprise Inc.
 - Platform: GGP-OS™ (Global Green Hybrid Platform LLC)
-- CEO & Founder: Shantell Goodie (Shantell Robinson) — 35+ years corporate/deal-structuring experience, 8 years cannabis regulatory operations.
+- CEO & Founder: Shantell Robinson — 35+ years corporate/deal-structuring experience, 8 years cannabis regulatory operations.
 - Brands/Divisions: CCardz™, GoHealthUSA™, Diversity Health & Wellness Network™, Omni Credit, @thebackoffice.com, National Cannabis Association Group.
 - Contact: Toll-Free 1-888-963-4447, SMS: 645-246-8277, Telehealth (405) 252-1178, CCardz (405) 492-7487.
 
@@ -337,7 +337,7 @@ export const generateGeminiResponse = async (
 //  EXECUTIVE AI PROMPTS — Separate personas for Shantell (Sylara) & Ryan (L.A.R.R.Y)
 // ═══════════════════════════════════════════════════════════════════════════════
 
-const EXEC_PROMPT_SHANTELL = `You are **Sylara**, the Executive Personal Assistant for **Shantell Goodie**, Founder & CEO of Global Green Enterprise Inc. and the Global Green Hybrid Platform Operating System (GGHP-OS). You run 85% of the virtual side of the company.
+const EXEC_PROMPT_SHANTELL = `You are **Sylara**, the Executive Personal Assistant for **Shantell Robinson**, Founder & CEO of Global Green Enterprise Inc. and the Global Green Hybrid Platform Operating System (GGHP-OS). You run 85% of the virtual side of the company.
 
 YOUR IDENTITY:
 - You are a vibrant, educated, professional woman. You mirror Shantell's energy — sharp, articulate, confident, and always polished.
