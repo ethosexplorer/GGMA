@@ -287,7 +287,7 @@ export const ProductsServicesPage = ({ onNavigate }: { onNavigate: (view: string
                   <div className="text-3xl mb-3">🔬</div>
                   <h4 className="text-lg font-black mb-1">Dual-Channel Rapid Testing Device</h4>
                   <p className="text-blue-300 text-xs font-bold mb-3">Recency Index (RI) Field Test</p>
-                  <p className="text-slate-400 text-xs leading-relaxed mb-4">Proprietary dual-channel immunoassay that measures THC presence AND recency of consumption (0–9.99 RI scale). Differentiates active impairment from residual metabolites — the distinction traditional tests can't make. Designed for law enforcement roadside stops, employer workplace safety programs, third-party testing sites, and clinical health screenings.</p>
+                  <p className="text-slate-400 text-xs leading-relaxed mb-4">Proprietary dual-channel breath analysis device that measures THC presence AND recency of consumption (0–9.99 RI scale) in real time. Differentiates active impairment from residual metabolites — the distinction traditional tests can't make. Instant results like an alcohol breathalyzer. Designed for law enforcement roadside stops, employer workplace safety programs, third-party testing sites, and clinical health screenings.</p>
                   <div className="grid grid-cols-2 gap-2 mb-4">
                     <div className="bg-white/5 rounded-lg p-2 border border-white/10">
                       <p className="text-[9px] font-bold text-blue-400 uppercase tracking-widest">Recency Scale</p>
@@ -295,7 +295,7 @@ export const ProductsServicesPage = ({ onNavigate }: { onNavigate: (view: string
                     </div>
                     <div className="bg-white/5 rounded-lg p-2 border border-white/10">
                       <p className="text-[9px] font-bold text-blue-400 uppercase tracking-widest">Result Time</p>
-                      <p className="text-xs font-black text-white">&lt; 10 Minutes</p>
+                      <p className="text-xs font-black text-white">Instant (Breathalyzer)</p>
                     </div>
                   </div>
                   <button onClick={() => onNavigate('larry-chatbot')} className="w-full py-2.5 bg-yellow-500 text-slate-900 font-bold text-xs rounded-xl hover:bg-yellow-400 transition-colors uppercase tracking-wider">Join Waitlist</button>
