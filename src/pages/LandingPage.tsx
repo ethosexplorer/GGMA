@@ -314,8 +314,9 @@ export const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction, userPro
                 { label: 'Business', icon: '🏢', desc: 'Compliance & Licensing', tier: 'business' },
                 { label: 'Patient', icon: '🏥', desc: 'Telehealth & Cards', tier: 'patient' },
                 { label: 'Provider', icon: '🩺', desc: 'Consultations & Care', tier: 'provider' },
-                { label: 'Attorney', icon: '⚖️', desc: 'Cases & Regulatory', tier: 'attorney' },
-                { label: 'Agency', icon: '🛡️', desc: 'Oversight & Enforcement', tier: 'agency' },
+                { label: 'Attorney', icon: '\u2696\uFE0F', desc: 'Cases & Regulatory', tier: 'attorney' },
+                { label: 'Lab & Public Health', icon: '\u{1F52C}', desc: 'Testing & Safety', tier: 'health_lab' },
+                { label: 'Agency', icon: '\u{1F6E1}\uFE0F', desc: 'Oversight & Enforcement', tier: 'agency' },
                 { label: 'Gov Office', icon: '🏛️', desc: 'Policy & Economy', tier: 'political_executive' },
                 { label: 'Advocate', icon: '🤝', desc: 'Health & Impact', tier: 'advocacy_research' },
               ].map(role => (
@@ -439,6 +440,110 @@ export const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction, userPro
               <div style={{ backgroundColor: 'rgba(59, 130, 246, 0.2)' }} className="absolute inset-0 blur-[60px] rounded-full scale-50 group-hover:scale-75 transition-transform duration-1000 opacity-50"></div>
               <Wallet size={80} className="text-blue-400 relative" />
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ PUBLIC HEALTH & LABORATORY INTELLIGENCE SECTION ═══ */}
+      <section style={{ background: 'linear-gradient(to bottom right, #1a0a2e, #0f172a, #0a2e1a)' }} className="py-20 px-6 text-white relative overflow-hidden border-t border-white/10">
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 30% 50%, rgba(168,85,247,0.3), transparent 50%), radial-gradient(circle at 70% 80%, rgba(16,185,129,0.3), transparent 50%)' }} />
+        <div className="max-w-6xl mx-auto relative z-10">
+          {/* Section Header */}
+          <div className="text-center mb-16 space-y-4">
+            <div style={{ backgroundColor: 'rgba(168, 85, 247, 0.2)' }} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-purple-400/30 text-purple-300 text-xs font-black uppercase tracking-widest">
+              {'\u{1F52C}'} Public Health & Laboratory Intelligence
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-tight">
+              The Dashboard That <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-emerald-400">Protects Communities</span>
+            </h2>
+            <p className="text-lg text-slate-300/80 max-w-3xl mx-auto leading-relaxed font-medium">
+              COA management, contamination monitoring, outbreak detection, Recency Index impairment science, and recall coordination &mdash; all in one compliance-grade platform built for the entities that need it most.
+            </p>
+          </div>
+
+          {/* Dashboard Feature Preview Cards */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
+            {[
+              { icon: '\u{1F9EA}', label: 'Lab Standards Engine', desc: 'Auto-validates COAs against state limits via L.A.R.R.Y.', color: 'from-purple-500/20 to-purple-900/20', border: 'border-purple-500/30' },
+              { icon: '\u26A0\uFE0F', label: 'Recall Management', desc: 'One-click recall broadcast to all affected retailers & patients', color: 'from-red-500/20 to-red-900/20', border: 'border-red-500/30' },
+              { icon: '\u{1F4CA}', label: 'Recency Index (RI)', desc: 'Proprietary impairment detection algorithm (0-9.99 scale)', color: 'from-blue-500/20 to-blue-900/20', border: 'border-blue-500/30' },
+              { icon: '\u{1F30D}', label: 'Exposure Mapping', desc: 'GIS-powered contamination tracking across jurisdictions', color: 'from-emerald-500/20 to-emerald-900/20', border: 'border-emerald-500/30' },
+            ].map((feat, i) => (
+              <div key={i} className={`bg-gradient-to-br ${feat.color} backdrop-blur-md border ${feat.border} rounded-2xl p-5 text-center hover:scale-[1.03] transition-all duration-300`}>
+                <div className="text-3xl mb-3">{feat.icon}</div>
+                <h4 className="text-white font-black text-sm mb-1">{feat.label}</h4>
+                <p className="text-slate-400 text-[11px] leading-relaxed">{feat.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* WHO SUBSCRIBES — Two-Tier Layout */}
+          <div className="space-y-8">
+            <div className="text-center">
+              <h3 className="text-2xl font-black text-white tracking-tight mb-2">Who Uses This Dashboard?</h3>
+              <p className="text-sm text-slate-400">12 entity types across government, healthcare, research, and industry</p>
+            </div>
+
+            {/* Tier A — Primary Subscribers */}
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Tier A</span>
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Primary Subscribers</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {[
+                  { entity: 'Cannabis Testing Labs', why: 'COA management, accreditation tracking, contaminant monitoring', market: '~1,200 licensed labs', icon: '\u{1F9EA}' },
+                  { entity: 'State Health Departments', why: 'Statewide contamination monitoring, outbreak detection, recall management', market: '38+ state agencies', icon: '\u{1F3E5}' },
+                  { entity: 'State Cannabis Regulators', why: 'Lab compliance oversight, testing standard enforcement', market: '38+ regulatory agencies', icon: '\u{1F6E1}\uFE0F' },
+                  { entity: 'Hospital Systems', why: 'Patient cannabis interaction data, drug interaction monitoring', market: '~6,000+ hospitals', icon: '\u{1F3E5}' },
+                  { entity: 'Universities & Research', why: 'Contamination research, patient outcome analytics, clinical trials', market: '~200+ programs', icon: '\u{1F393}' },
+                ].map((sub, i) => (
+                  <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 hover:border-emerald-500/30 transition-all group">
+                    <div className="flex items-start gap-3">
+                      <span className="text-xl shrink-0">{sub.icon}</span>
+                      <div>
+                        <h4 className="text-white font-bold text-sm group-hover:text-emerald-300 transition-colors">{sub.entity}</h4>
+                        <p className="text-slate-400 text-[11px] mt-1 leading-relaxed">{sub.why}</p>
+                        <span className="text-emerald-400/70 text-[10px] font-bold uppercase tracking-wider mt-2 inline-block">{sub.market}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Tier B — Secondary Subscribers */}
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-purple-500/20 text-purple-300 border border-purple-500/30">Tier B</span>
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">High-Value Secondary Subscribers</span>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                {[
+                  { entity: 'Pharmaceutical Companies', icon: '\u{1F48A}', market: '20+ active' },
+                  { entity: 'Insurance Companies', icon: '\u{1F4C4}', market: 'Major insurers' },
+                  { entity: 'Cultivators & Processors', icon: '\u{1F33F}', market: '~15,000+ licensed' },
+                  { entity: 'Multi-State Operators', icon: '\u{1F310}', market: '~75 MSOs' },
+                  { entity: 'Patient Advocacy Groups', icon: '\u{2764}\uFE0F', market: 'NORML, ASA, etc.' },
+                  { entity: 'Epidemiologists', icon: '\u{1F4CA}', market: 'CDC, NIH-funded' },
+                  { entity: 'Defense / DUI Attorneys', icon: '\u2696\uFE0F', market: '~5,000+ attorneys' },
+                ].map((sub, i) => (
+                  <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-3 text-center hover:bg-white/10 hover:border-purple-500/30 transition-all">
+                    <span className="text-xl">{sub.icon}</span>
+                    <h4 className="text-white font-bold text-xs mt-1">{sub.entity}</h4>
+                    <span className="text-purple-300/60 text-[9px] font-bold uppercase tracking-wider">{sub.market}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* CTA */}
+          <div className="text-center mt-12">
+            <button onClick={() => onNavigate('larry-chatbot' as any, 'health_lab')} className="px-8 py-4 bg-gradient-to-r from-purple-500 to-emerald-500 text-white rounded-2xl font-black hover:from-purple-400 hover:to-emerald-400 transition-all shadow-xl shadow-purple-900/30 text-lg">
+              {'\u{1F52C}'} Explore the Lab Dashboard
+            </button>
+            <p className="text-slate-500 text-xs mt-3 font-bold">Starting at $149/mo &bull; 3 tiers available &bull; 30-day free trial</p>
           </div>
         </div>
       </section>
