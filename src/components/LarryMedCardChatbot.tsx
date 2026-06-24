@@ -45,6 +45,7 @@ const SECTOR_LABELS: Record<string, { emoji: string; label: string; desc: string
   'political_executive': { emoji: '🏛️', label: 'Government Office', desc: 'Economic impact & policy tools' },
   'advocate':     { emoji: '🤝', label: 'Advocacy & Health',  desc: 'Social equity & community resources' },
   'advocacy_research': { emoji: '🤝', label: 'Advocacy & Research', desc: 'Health impact & policy research' },
+  'health_lab':   { emoji: '🔬', label: 'Lab & Public Health',  desc: 'Testing, contamination monitoring & compliance' },
   'general':      { emoji: '🌿', label: 'General Intake',     desc: 'Platform onboarding & support' },
 };
 
