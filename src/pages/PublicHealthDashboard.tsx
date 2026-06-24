@@ -156,11 +156,11 @@ export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => voi
       </div>
 
       {/* MAIN CONTENT */}
-      <div className="flex-1 flex flex-col h-[calc(100vh-4rem)] overflow-hidden">
+      <div className="flex-1 flex flex-col min-h-0">
         <header className="h-14 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0 z-10">
           <h1 className="text-lg font-bold text-slate-800">Public Health & Labs Dashboard</h1>
           <div className="flex items-center gap-4">
-            <NotificationDropdown />
+            <NotificationDropdown onNavigate={(tab) => setActiveTab(tab)} />
             <div className="w-px h-6 bg-slate-200" />
             <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Generating Public Health Report... Compiling statewide lab data." })] }).catch(console.error) ); alert("Generating Public Health Report... Compiling statewide lab data.\n\n[Live Production Transaction Logged]"); }} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 text-slate-700 text-sm font-bold border border-slate-200 hover:bg-slate-200 transition-colors">
               <Download size={16} /> Generate Report
