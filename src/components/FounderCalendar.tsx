@@ -45,8 +45,25 @@ const LEGEND_CATEGORIES = [
 const getEventCategoryObj = (ev: CalEvent) => {
   const titleLower = (ev.title || '').toLowerCase();
   const descLower = (ev.description || '').toLowerCase();
-  const isRenewal = ev.category === 'renewal' || ev.color === 'bg-yellow-500' || titleLower.includes('renewal') || descLower.includes('renew');
-  
+
+  // 1. Canceled events always show as canceled
+  if (ev.color === 'bg-slate-400' || ev.title.includes('❌') || descLower.includes('canceled')) {
+    return { id: 'canceled', label: 'Canceled Booking', color: 'bg-slate-400' };
+  }
+
+  // 2. If user explicitly set category to 'booking' (Scheduled Booking = green), RESPECT IT.
+  //    This prevents renewal auto-detection from overriding a manually chosen green status.
+  if (ev.category === 'booking') {
+    return { id: 'booking', label: 'Scheduled Booking', color: 'bg-emerald-600' };
+  }
+
+  // 3. Check for renewal (yellow) — only when category is 'renewal' OR when category is
+  //    a generic/ops type and the title/description hints at renewal
+  const isExplicitRenewal = ev.category === 'renewal' || ev.color === 'bg-yellow-500';
+  const hasRenewalHint = titleLower.includes('renewal') || descLower.includes('renew');
+  const isGenericCategory = !ev.category || ev.category === 'ops' || ev.category === 'task';
+  const isRenewal = isExplicitRenewal || (hasRenewalHint && isGenericCategory);
+
   if (isRenewal) {
     const isBiz = ev.isBusiness || descLower.includes('business') || titleLower.includes('llc') || titleLower.includes('l.l.c.') || titleLower.includes('inc.') || titleLower.includes('co.') || titleLower.includes('corp') || titleLower.includes('growery') || titleLower.includes('farm') || titleLower.includes('dispensary') || titleLower.includes('processor');
     if (isBiz) {
@@ -61,12 +78,13 @@ const getEventCategoryObj = (ev: CalEvent) => {
     }
     return { id: 'renewal', label: 'Patient Renewal', color: 'bg-yellow-500' };
   }
-  if (ev.color === 'bg-slate-400' || ev.title.includes('❌') || descLower.includes('canceled')) {
-    return { id: 'canceled', label: 'Canceled Booking', color: 'bg-slate-400' };
-  }
+
+  // 4. Calendly/Carepatron source → Scheduled Booking (green)
   if (ev.source === 'calendly' || ev.source === 'carepatron') {
     return { id: 'booking', label: 'Scheduled Booking', color: 'bg-emerald-600' };
   }
+
+  // 5. Match known categories
   if (ev.category && ev.category !== 'task') {
     const cat = LEGEND_CATEGORIES.find(c => c.id === ev.category);
     if (cat) return cat;

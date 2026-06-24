@@ -52,19 +52,40 @@ const CALENDLY_CAT_MAP = {
 const categorizeCalendly = (name) => {
   const lower = (name || '').toLowerCase();
   const isRenewal = lower.includes('renew') || lower.includes('renewal');
+  
+  // Find a matching category from the map
+  let matched = null;
   for (const [key, meta] of Object.entries(CALENDLY_CAT_MAP)) {
     if (lower.includes(key)) {
-      return { 
-        category: isRenewal ? 'renewal' : 'ops', 
-        color: isRenewal ? 'bg-yellow-500' : 'bg-emerald-600', 
-        label: meta.label 
-      };
+      matched = meta;
+      break;
     }
   }
+
+  // If it's a renewal, mark as renewal (yellow) — the calendar will auto-detect
+  // but the user can override to 'booking' (green) when they schedule it
+  if (isRenewal) {
+    return { 
+      category: 'renewal', 
+      color: 'bg-yellow-500', 
+      label: matched?.label || '🔄 Renewal' 
+    };
+  }
+  
+  // Non-renewal: use the matched category's actual color, or default to emerald (booking)
+  if (matched) {
+    return { 
+      category: matched.category, 
+      color: matched.color, 
+      label: matched.label 
+    };
+  }
+  
+  // Default: scheduled booking (green)
   return { 
-    category: isRenewal ? 'renewal' : 'ops', 
-    color: isRenewal ? 'bg-yellow-500' : 'bg-emerald-600', 
-    label: isRenewal ? '🔄 Renewal' : '📅' 
+    category: 'ops', 
+    color: 'bg-emerald-600', 
+    label: '📅' 
   };
 };
 

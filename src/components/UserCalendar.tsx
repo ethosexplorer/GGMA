@@ -289,15 +289,30 @@ export const UserCalendar = ({ user, title, subtitle }: { user?: any, title?: st
   const getEventColor = (ev: CalEvent) => {
     const titleLower = (ev.title || '').toLowerCase();
     const descLower = (ev.description || '').toLowerCase();
-    if (ev.color === 'bg-yellow-500' || ev.category === 'renewal' || titleLower.includes('renewal') || descLower.includes('renew')) {
+
+    // Canceled always gray
+    if (titleLower.includes('❌') || descLower.includes('canceled')) {
+      return 'bg-slate-400';
+    }
+
+    // If category is explicitly set to 'booking', respect it (green = scheduled)
+    if (ev.category === 'booking') {
+      return 'bg-emerald-600';
+    }
+
+    // Renewal detection: only when category is explicitly 'renewal' or is generic (ops/task/empty)
+    const isExplicitRenewal = ev.category === 'renewal' || ev.color === 'bg-yellow-500';
+    const hasRenewalHint = titleLower.includes('renewal') || descLower.includes('renew');
+    const isGenericCategory = !ev.category || ev.category === 'ops' || ev.category === 'task';
+    if (isExplicitRenewal || (hasRenewalHint && isGenericCategory)) {
       return 'bg-yellow-500';
     }
+
+    // Calendly/Carepatron source → use stored color
     if (ev.source === 'calendly' || ev.source === 'carepatron') {
-      if (titleLower.includes('❌') || descLower.includes('canceled')) {
-        return 'bg-slate-400';
-      }
-      return ev.color || 'bg-emerald-600'; // Money green
+      return ev.color || 'bg-emerald-600';
     }
+
     return ev.color || 'bg-blue-500';
   };
 
