@@ -1697,8 +1697,9 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
     trackingSystem: "State mandated tracking",
     licenseCaps: "Up to 350 retail cannabis stores statewide. Licensing framework to be established by CCA ahead of July 1, 2027 launch.",
     intakeNotes: [
-      "🎉 NEWLY LEGALIZED ADULT-USE: Virginia legislature passed budget language on June 22, 2026 legalizing adult-use cannabis retail sales.",
+      "🎉 NEWLY LEGALIZED ADULT-USE: Virginia legislature passed adult-use retail through budget language on June 22, 2026 — after Governor vetoed the standalone cannabis sales bill in May 2026. Legislature embedded retail provisions in the budget to bypass the veto.",
       "⏰ RETAIL LAUNCH: Legal retail sales begin July 1, 2027. Medical sales continue through existing pharmaceutical processors.",
+      "📋 LEGISLATIVE HISTORY: Governor vetoed standalone HB/SB cannabis retail bill (May 2026) citing concerns over regulatory readiness. Legislature responded by embedding adult-use retail provisions into the state budget bill, which passed June 22, 2026.",
       "Regulator: Virginia Cannabis Control Authority (CCA).",
       "📊 TAX: 6% state excise tax (increases to 8% on July 1, 2029) + 1%-3.5% local option tax.",
       "🏪 LICENSES: Up to 350 retail stores to be licensed statewide.",
@@ -1713,7 +1714,8 @@ export const STATE_RESOURCES: Record<string, StateResource> = {
       { name: "Practitioner Registry", url: "https://cca.virginia.gov/medicalcannabis/practitioners" }
     ],
     intakeFAQ: [
-      { q: "When do adult-use retail sales begin in VA?", a: "July 1, 2027. The Virginia legislature passed budget language on June 22, 2026 authorizing a regulated adult-use retail market." },
+      { q: "When do adult-use retail sales begin in VA?", a: "July 1, 2027. The Governor vetoed the standalone cannabis sales bill in May 2026, but the Virginia legislature embedded adult-use retail provisions into the state budget, which passed June 22, 2026." },
+      { q: "Why did the Governor veto the original bill?", a: "Governor cited concerns over regulatory readiness. The legislature responded by embedding the retail cannabis provisions into the budget bill, which cannot be line-item vetoed in the same way. The budget passed with bipartisan support on June 22, 2026." },
       { q: "How many retail stores will there be?", a: "Up to 350 retail cannabis stores will be licensed statewide by the CCA." },
       { q: "What is the tax rate?", a: "6% state excise tax (increases to 8% in 2029) plus a local option tax of 1% to 3.5%." },
       { q: "How much can I possess?", a: "Adults 21+ can possess up to 2 ounces of cannabis (increased from 1 oz under the new law)." },
