@@ -119,7 +119,7 @@ export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => voi
   };
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-4rem)] bg-slate-50">
+    <div className="flex flex-col h-[calc(100vh-4rem)] bg-slate-50">
       {/* TOP NAVIGATION BAR */}
       <div className="bg-slate-900 border-b border-slate-700 shrink-0">
         <div className="flex items-center gap-4 px-6 py-3">
