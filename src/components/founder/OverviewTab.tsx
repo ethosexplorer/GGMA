@@ -869,6 +869,140 @@ export const OverviewTab = ({
         </div>
       </div>
 
+      {/* 🔬 LAB & PUBLIC HEALTH INTELLIGENCE COMMAND */}
+      <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden relative">
+        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-blue-500"></div>
+        <div className="p-8">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h3 className="font-black text-lg text-slate-800 flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center text-white shadow-lg">🔬</div>
+                Lab & Public Health Intelligence
+              </h3>
+              <p className="text-xs text-slate-500 mt-1">Contamination monitoring, accreditation tracking, facility compliance & Recency Index</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <button onClick={() => setActiveTab('public_health')} className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-black hover:bg-emerald-500 transition-all shadow-md">
+                Open Full Dashboard →
+              </button>
+              <span className="px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-bold rounded-full border border-emerald-100 uppercase tracking-widest flex items-center gap-1.5">
+                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
+                Monitoring
+              </span>
+            </div>
+          </div>
+
+          {/* KPI Cards Row */}
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+            {[
+              { label: 'Contamination Events', value: '3', sub: '+2 this month', color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-200', icon: '⚠️' },
+              { label: 'Active Recalls', value: '1', sub: 'Batch #882 — Microbial', color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200', icon: '🚨' },
+              { label: 'Pending COA Uploads', value: '18', sub: 'Awaiting Larry validation', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200', icon: '📄' },
+              { label: 'Statewide Pass Rate', value: '90.6%', sub: '+1.2% vs last quarter', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200', icon: '✅' },
+              { label: 'Avg Recency Index', value: '4.2', sub: 'Normal (340 samples)', color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-200', icon: '🧪' },
+            ].map((kpi, i) => (
+              <div key={i} className={cn("p-4 rounded-2xl border", kpi.bg, kpi.border)}>
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{kpi.label}</p>
+                  <span className="text-sm">{kpi.icon}</span>
+                </div>
+                <p className={cn("text-2xl font-black", kpi.color)}>{kpi.value}</p>
+                <p className="text-[10px] font-bold text-slate-500 mt-0.5">{kpi.sub}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Facility Compliance Snapshot */}
+            <div className="lg:col-span-2 border border-slate-200 rounded-2xl overflow-hidden">
+              <div className="px-5 py-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+                <h4 className="text-xs font-black text-slate-600 uppercase tracking-wider flex items-center gap-2">🏢 Facility Compliance Scorecards</h4>
+                <span className="text-[9px] font-bold text-slate-400">5 facilities monitored</span>
+              </div>
+              <div className="divide-y divide-slate-100">
+                {[
+                  { name: 'GreenLeaf Testing', state: 'OK', rate: 94, grade: 'A', trend: '↑', trendColor: 'text-emerald-500' },
+                  { name: 'PureTech Labs', state: 'OK', rate: 89, grade: 'B+', trend: '↓', trendColor: 'text-red-500' },
+                  { name: 'SafeHarvest Analytics', state: 'CO', rate: 97, grade: 'A+', trend: '↑', trendColor: 'text-emerald-500' },
+                  { name: 'CannaCheck Inc.', state: 'CA', rate: 82, grade: 'B-', trend: '↓', trendColor: 'text-red-500' },
+                  { name: 'Tribal Health Labs', state: 'OK', rate: 91, grade: 'A-', trend: '↑', trendColor: 'text-emerald-500' },
+                ].map((f, i) => (
+                  <div key={i} className="px-5 py-3 flex items-center gap-4 hover:bg-slate-50 transition-colors">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-bold text-slate-800 truncate">{f.name}</p>
+                      <p className="text-[10px] text-slate-400 font-bold">{f.state}</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-16 h-1.5 bg-slate-100 rounded-full">
+                          <div className={cn("h-1.5 rounded-full", f.rate >= 95 ? 'bg-emerald-500' : f.rate >= 88 ? 'bg-amber-500' : 'bg-red-500')} style={{ width: `${f.rate}%` }}></div>
+                        </div>
+                        <span className="text-xs font-black text-slate-700 w-10 text-right">{f.rate}%</span>
+                      </div>
+                      <span className={cn("text-sm font-black", f.trendColor)}>{f.trend}</span>
+                      <span className={cn("text-[10px] font-black px-2 py-0.5 rounded-full",
+                        f.grade.startsWith('A') ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
+                      )}>{f.grade}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Accreditation Alerts */}
+            <div className="border border-slate-200 rounded-2xl overflow-hidden">
+              <div className="px-5 py-3 bg-slate-50 border-b border-slate-100">
+                <h4 className="text-xs font-black text-slate-600 uppercase tracking-wider flex items-center gap-2">🏆 Accreditation Status</h4>
+              </div>
+              <div className="divide-y divide-slate-100">
+                {[
+                  { lab: 'GreenLeaf', cert: 'ISO 17025', days: 267, status: 'active' },
+                  { lab: 'PureTech', cert: 'DEA Sched I', days: 42, status: 'renewal' },
+                  { lab: 'SafeHarvest', cert: 'State #4421', days: 195, status: 'active' },
+                  { lab: 'CannaCheck', cert: 'ISO 17025', days: -28, status: 'expired' },
+                  { lab: 'Tribal Health', cert: 'Compact THL-09', days: 540, status: 'active' },
+                ].map((a, i) => (
+                  <div key={i} className="px-5 py-3 flex items-center justify-between">
+                    <div className="min-w-0">
+                      <p className="text-sm font-bold text-slate-800 truncate">{a.lab}</p>
+                      <p className="text-[10px] text-slate-400 font-bold">{a.cert}</p>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className={cn("text-[10px] font-black",
+                        a.days > 180 ? 'text-emerald-500' : a.days > 60 ? 'text-amber-500' : a.days > 0 ? 'text-red-500' : 'text-red-700'
+                      )}>
+                        {a.days > 0 ? `${a.days}d` : `EXPIRED`}
+                      </span>
+                      <span className={cn("text-[9px] font-black uppercase px-2 py-0.5 rounded-full border",
+                        a.status === 'active' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                        a.status === 'renewal' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-red-50 text-red-700 border-red-200'
+                      )}>
+                        {a.status === 'active' ? 'Active' : a.status === 'renewal' ? 'Renew' : 'Expired'}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Active Recall Alert Banner */}
+          <div className="mt-6 bg-slate-900 rounded-2xl p-5 text-white">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center shrink-0 animate-pulse">🚨</div>
+              <div className="flex-1">
+                <h4 className="font-bold text-sm">Active Recall: Batch #882 — TYM Microbial Exceedance (18,400 CFU/g)</h4>
+                <p className="text-xs text-slate-400 mt-1">4 zones affected • 240 patients exposed • 198 notified via Care Wallet • Source: MedExtract Co. (processor stage)</p>
+                <div className="flex gap-2 mt-3">
+                  <button onClick={() => setActiveTab('public_health')} className="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition-colors">View Recall Details</button>
+                  <button onClick={() => setActiveTab('public_health')} className="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition-colors border border-white/10">Exposure Map</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* 👁️ LIVE ACCOUNT ACTIVITY FEED — God's Eye on Signups & Logins */}
       <div className="bg-slate-900 border border-slate-700 rounded-3xl shadow-xl overflow-hidden text-white relative">
         <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500"></div>
