@@ -1141,6 +1141,8 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
             />
           </div>
         );
+      case 'public_health':
+        return <div className="h-full w-full -m-10" data-action-bound="true"><PublicHealthDashboard onLogout={onLogout} user={user} /></div>;
       case 'accounting_ledger':
         return <div data-action-bound="true"><AccountingLedgerTab fullName={fullName} liveStats={liveStats} /></div>;
       case 'launch_script':
