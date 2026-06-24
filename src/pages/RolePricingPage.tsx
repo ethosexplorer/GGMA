@@ -45,6 +45,12 @@ const ROLE_CONFIG: Record<string, { title: string; subtitle: string; tabs: strin
     tabs: ['public_health'],
     gradient: 'from-emerald-600 to-teal-800',
   },
+  health_lab: {
+    title: 'Lab & Public Health',
+    subtitle: 'COA management, contamination monitoring, Recency Index impairment testing, and recall coordination.',
+    tabs: ['public_health'],
+    gradient: 'from-purple-700 to-emerald-900',
+  },
 };
 
 export const RolePricingPage = ({
@@ -123,6 +129,12 @@ export const RolePricingPage = ({
                 <>
                   <h3 className="text-xl font-bold text-white mb-2">Advocate Portal (GGMA)</h3>
                   <p className="text-white/70 text-xs mb-4">Public Health, Researchers, Advocates</p>
+                </>
+              )}
+              {role === 'health_lab' && (
+                <>
+                  <h3 className="text-xl font-bold text-white mb-2">Lab & Public Health Portal</h3>
+                  <p className="text-white/70 text-xs mb-4">Testing Labs, Health Depts, Hospitals, Regulators</p>
                 </>
               )}
             </div>
