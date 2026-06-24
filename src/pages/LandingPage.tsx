@@ -325,6 +325,8 @@ export const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction, userPro
                       onNavigate('larry-chatbot' as any, 'ggma-patient');
                     } else if (role.tier === 'agency') {
                       onNavigate('larry-chatbot' as any, 'rip');
+                    } else if (role.tier === 'health_lab') {
+                      onNavigate('role-pricing' as any, 'health_lab');
                     } else {
                       onNavigate('larry-chatbot' as any, role.tier);
                     }
@@ -540,7 +542,7 @@ export const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction, userPro
 
           {/* CTA */}
           <div className="text-center mt-12">
-            <button onClick={() => onNavigate('larry-chatbot' as any, 'health_lab')} className="px-8 py-4 bg-gradient-to-r from-purple-500 to-emerald-500 text-white rounded-2xl font-black hover:from-purple-400 hover:to-emerald-400 transition-all shadow-xl shadow-purple-900/30 text-lg">
+            <button onClick={() => onNavigate('role-pricing' as any, 'health_lab')} className="px-8 py-4 bg-gradient-to-r from-purple-500 to-emerald-500 text-white rounded-2xl font-black hover:from-purple-400 hover:to-emerald-400 transition-all shadow-xl shadow-purple-900/30 text-lg">
               {'\u{1F52C}'} Explore the Lab Dashboard
             </button>
             <p className="text-slate-500 text-xs mt-3 font-bold">Starting at $149/mo &bull; 3 tiers available &bull; 30-day free trial</p>
