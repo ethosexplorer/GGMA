@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShoppingCart, Cpu, CheckCircle, Stethoscope, Wallet, Building2, ArrowLeft } from 'lucide-react';
+import { ShoppingCart, Cpu, CheckCircle, Stethoscope, Wallet, Building2, ArrowLeft, Smartphone, GraduationCap, BookOpen } from 'lucide-react';
 
 export const ProductsServicesPage = ({ onNavigate }: { onNavigate: (view: string) => void }) => {
   return (
@@ -27,7 +27,7 @@ export const ProductsServicesPage = ({ onNavigate }: { onNavigate: (view: string
               <ShoppingCart size={12} /> Our Products & Services
             </div>
             <h1 className="text-4xl font-black text-slate-900 tracking-tight">Products &amp; Services</h1>
-            <p className="text-slate-500 max-w-2xl mx-auto text-lg">Global Green Enterprise Inc provides SaaS compliance technology, telehealth coordination, AI-powered operational tools, and payment processing for the legal cannabis industry across all 50 U.S. states.</p>
+            <p className="text-slate-500 max-w-2xl mx-auto text-lg">Global Green Enterprise Inc provides SaaS compliance technology, telehealth coordination, AI-powered operational tools, public health monitoring, and payment processing for the legal cannabis industry across all 50 U.S. states and tribal nations.</p>
           </div>
 
           {/* FREE Account Banner */}
@@ -63,12 +63,13 @@ export const ProductsServicesPage = ({ onNavigate }: { onNavigate: (view: string
                 <p className="text-sm text-slate-500">Monthly & annual SaaS subscriptions for compliance, licensing, and AI-powered operations</p>
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
               {[
                 { title: 'Patient / Consumer', icon: '🏥', price: '$49.99', period: '/mo', desc: 'Telehealth coordination, medical card management, Care Wallet, AI guidance via Sylara', features: ['Medical card application sync', 'Telehealth scheduling', 'Care Wallet stored value', 'Sylara AI personal assistant', 'Document vault & compliance tracker'], color: 'emerald' },
                 { title: 'Business / Dispensary', icon: '🏢', price: '$199', period: '/mo', desc: 'Full compliance OS with POS, Metrc sync, inventory, and Larry enforcement AI', features: ['SINC POS system (card-ready)', 'Real-time Metrc seed-to-sale sync', 'Inventory & barcode tracking', 'Larry AI compliance monitoring', 'Automated state reporting'], color: 'blue' },
                 { title: 'Provider / Physician', icon: '🩺', price: '$99', period: '/mo', desc: 'Patient management, telehealth consultations, recommendation workflows, and AI tools', features: ['Patient roster management', 'Telehealth consultation tools', 'Recommendation workflow', 'Sylara AI clinical guidance', 'Compliance & licensing tracker'], color: 'violet' },
                 { title: 'Attorney / Legal', icon: '⚖️', price: '$149', period: '/mo', desc: 'Cannabis & general legal case management, client leads, regulatory AI, and Larry enforcement', features: ['Legal marketplace & lead access', 'Case management dashboard', 'Regulatory intelligence feeds', 'Larry AI legal compliance', 'Client billing & invoicing'], color: 'amber' },
+                { title: 'Advocacy & Research', icon: '📊', price: '$79', period: '/mo', desc: 'Health demographic trends, safety reporting, anonymized research data, and policy analysis tools', features: ['Anonymized health demographic data', 'Safety & outcome reporting tools', 'Policy impact analysis dashboards', 'Research data export (CSV/API)', 'Community engagement analytics'], color: 'rose' },
               ].map((product, i) => (
                 <div key={i} className="bg-white rounded-2xl border-2 border-slate-100 hover:border-emerald-300 p-6 shadow-sm hover:shadow-xl transition-all group flex flex-col">
                   <div className="text-3xl mb-3">{product.icon}</div>
@@ -115,6 +116,241 @@ export const ProductsServicesPage = ({ onNavigate }: { onNavigate: (view: string
                   <h4 className="font-black text-slate-900 mb-1">{svc.title}</h4>
                   <p className="text-xl font-black text-emerald-700 mb-3">{svc.price}</p>
                   <p className="text-xs text-slate-500 leading-relaxed">{svc.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ─── LAB & PUBLIC HEALTH SUBSCRIPTIONS ─── */}
+          <div className="mb-16">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center text-teal-700">🔬</div>
+              <div>
+                <h3 className="text-xl font-black text-slate-900">Lab & Public Health Subscriptions</h3>
+                <p className="text-sm text-slate-500">COA management, contamination monitoring, accreditation tracking, and compliance dashboards</p>
+              </div>
+            </div>
+            <div className="mb-6 bg-gradient-to-r from-teal-50 to-emerald-50 border border-teal-200/60 rounded-xl p-4">
+              <p className="text-xs text-teal-800 leading-relaxed">
+                <span className="font-black">NEW:</span> Purpose-built for cannabis testing laboratories, state health departments, tribal health authorities, and hospital systems.
+                Includes real-time contamination zone mapping, patient outcome analytics, recall management, and Recency Index field testing integration.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                {
+                  title: 'Independent Lab',
+                  icon: '🧪',
+                  price: '$499',
+                  period: '/mo',
+                  tag: 'MOST POPULAR',
+                  tagColor: 'emerald',
+                  desc: 'Full COA management, accreditation tracking, contaminant monitoring, and multi-state compliance for licensed testing labs',
+                  features: [
+                    'COA upload, validation & auto-scan',
+                    'Accreditation tracking (ISO 17025, DEA)',
+                    'Contaminant flagging & recall alerts',
+                    'Statewide pass rate analytics',
+                    'Recency Index field test integration',
+                    'Larry AI compliance monitoring',
+                  ],
+                  color: 'teal'
+                },
+                {
+                  title: 'Regional Lab Network',
+                  icon: '🏗️',
+                  price: '$1,499',
+                  period: '/mo',
+                  tag: 'MULTI-SITE',
+                  tagColor: 'blue',
+                  desc: 'Multi-location lab network management with centralized compliance oversight and cross-facility contamination tracking',
+                  features: [
+                    'Everything in Independent Lab',
+                    'Multi-facility dashboard (up to 10 labs)',
+                    'Cross-facility contamination correlation',
+                    'Centralized accreditation management',
+                    'Network-wide pass rate benchmarking',
+                    'Priority API access & data exports',
+                  ],
+                  color: 'blue'
+                },
+                {
+                  title: 'State Health Department',
+                  icon: '🏛️',
+                  price: '$4,999',
+                  period: '/mo',
+                  tag: 'GOVERNMENT',
+                  tagColor: 'purple',
+                  desc: 'Statewide contamination monitoring, patient outcome tracking, outbreak detection, and recall management for state health agencies',
+                  features: [
+                    'GIS contamination zone mapping',
+                    'Patient exposure tracking & notifications',
+                    'Statewide lab compliance scorecards',
+                    'Automated recall broadcast system',
+                    'Source chain tracing (seed-to-sale)',
+                    'Sylara Public Health AI assistant',
+                  ],
+                  color: 'purple'
+                },
+                {
+                  title: 'Tribal Health Authority',
+                  icon: '🪶',
+                  price: '$2,499',
+                  period: '/mo',
+                  tag: 'TRIBAL SOVEREIGNTY',
+                  tagColor: 'amber',
+                  desc: 'Dual-jurisdiction compliance for tribal nations with federal-tribal bridge protocols and culturally integrated health data',
+                  features: [
+                    'Tribal compact compliance tracking',
+                    'Federal-tribal bridge protocols',
+                    'Sovereign health data management',
+                    'Community exposure monitoring',
+                    'Cultural wellness integration',
+                    'Tribal-federal reporting automation',
+                  ],
+                  color: 'amber'
+                },
+              ].map((product, i) => (
+                <div key={i} className="bg-white rounded-2xl border-2 border-slate-100 hover:border-teal-300 p-6 shadow-sm hover:shadow-xl transition-all group flex flex-col relative">
+                  {product.tag && (
+                    <div className={`absolute -top-3 right-4 px-3 py-1 bg-${product.tagColor}-600 text-white text-[9px] font-black uppercase tracking-widest rounded-full shadow-lg`}>
+                      {product.tag}
+                    </div>
+                  )}
+                  <div className="text-3xl mb-3">{product.icon}</div>
+                  <h4 className="text-lg font-black text-slate-900 mb-1">{product.title}</h4>
+                  <div className="flex items-baseline gap-1 mb-3">
+                    <span className="text-2xl font-black text-teal-700">{product.price}</span>
+                    <span className="text-xs font-bold text-slate-400">{product.period}</span>
+                  </div>
+                  <p className="text-xs text-slate-500 mb-4 leading-relaxed">{product.desc}</p>
+                  <ul className="space-y-2 text-xs text-slate-600 flex-1">
+                    {product.features.map((f, j) => (
+                      <li key={j} className="flex items-start gap-2"><CheckCircle size={12} className="text-teal-500 shrink-0 mt-0.5" />{f}</li>
+                    ))}
+                  </ul>
+                  <div className="mt-5 flex gap-2">
+                    <button onClick={() => onNavigate('larry-chatbot')} className="flex-1 py-2.5 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl hover:bg-teal-50 hover:text-teal-700 transition-colors uppercase tracking-wider">Get Started</button>
+                    <button onClick={() => window.open('https://calendly.com/globalgreenhpmeet/gghp-demo', '_blank')} className="flex-1 py-2.5 bg-teal-600 text-white font-bold text-xs rounded-xl hover:bg-teal-500 transition-colors uppercase tracking-wider">Book Demo</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ─── PUBLIC HEALTH PROFESSIONAL SERVICES ─── */}
+          <div className="mb-16">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-10 h-10 bg-rose-100 rounded-xl flex items-center justify-center text-rose-700">🏥</div>
+              <div>
+                <h3 className="text-xl font-black text-slate-900">Public Health Add-On Services</h3>
+                <p className="text-sm text-slate-500">Specialized modules for hospitals, health networks, and research institutions</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                { title: 'COA Validation & Auto-Scan Engine', price: '$299/mo', type: 'Add-On Module', desc: 'Upload COAs in PDF or XML format and Larry auto-validates against state limits for heavy metals, pesticide residue, microbial pathogens, and residual solvents. Includes dual-channel rapid testing device pairing for Recency Index field tests.', icon: '📊' },
+                { title: 'Contamination Response System', price: '$799/mo', type: 'Add-On Module', desc: 'Real-time GIS exposure mapping, automated patient notification via Care Wallet, source chain analysis (cultivator → processor → lab → retailer), and coordinated recall broadcast to affected zones. Includes Sylara Public Health AI assistant.', icon: '🚨' },
+                { title: 'Accreditation & Compliance Tracking', price: '$199/mo', type: 'Add-On Module', desc: 'Track ISO 17025, DEA Schedule I, state licenses, and tribal compacts across all facilities. Auto-renewal alerts 90 days before expiration. Compliance scorecard with trend analysis and facility benchmarking.', icon: '🏅' },
+              ].map((svc, i) => (
+                <div key={i} className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-lg transition-all">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-2xl">{svc.icon}</span>
+                    <span className="px-3 py-1 bg-rose-50 text-rose-700 text-[10px] font-black uppercase tracking-widest rounded-full border border-rose-100">{svc.type}</span>
+                  </div>
+                  <h4 className="font-black text-slate-900 mb-1">{svc.title}</h4>
+                  <p className="text-xl font-black text-teal-700 mb-3">{svc.price}</p>
+                  <p className="text-xs text-slate-500 leading-relaxed">{svc.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ─── RAPID TESTING & HARDWARE ─── */}
+          <div className="mb-16">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-blue-700"><Smartphone size={20} /></div>
+              <div>
+                <h3 className="text-xl font-black text-slate-900">Rapid Testing & Hardware Products</h3>
+                <p className="text-sm text-slate-500">Field-deployable impairment and contamination testing devices</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-gradient-to-br from-slate-900 to-blue-950 rounded-2xl p-8 text-white border border-blue-800 hover:border-blue-500 transition-all relative overflow-hidden">
+                <div className="absolute top-4 right-4 px-3 py-1 bg-blue-500 text-white text-[9px] font-black uppercase tracking-widest rounded-full">Patent Pending</div>
+                <div className="text-4xl mb-4">🔬</div>
+                <h4 className="text-xl font-black mb-1">Dual-Channel Rapid Testing Device</h4>
+                <p className="text-blue-300 text-sm font-bold mb-4">Recency Index (RI) Field Test</p>
+                <p className="text-slate-300 text-xs leading-relaxed mb-6">Proprietary dual-channel immunoassay device that measures both THC presence AND recency of consumption (0–9.99 RI scale). Differentiates between active impairment and residual metabolites — the critical distinction that traditional drug tests cannot make. Routes results directly to enforcement, patient, and compliance dashboards.</p>
+                <div className="grid grid-cols-2 gap-3 mb-6">
+                  <div className="bg-white/10 rounded-xl p-3 border border-white/10">
+                    <p className="text-[10px] font-bold text-blue-300 uppercase tracking-widest">Recency Differentiation</p>
+                    <p className="text-sm font-black text-emerald-400">Excellent (0–9.99)</p>
+                  </div>
+                  <div className="bg-white/10 rounded-xl p-3 border border-white/10">
+                    <p className="text-[10px] font-bold text-blue-300 uppercase tracking-widest">Sensitivity Short Post-Use</p>
+                    <p className="text-sm font-black text-emerald-400">High (Parent Splice)</p>
+                  </div>
+                  <div className="bg-white/10 rounded-xl p-3 border border-white/10">
+                    <p className="text-[10px] font-bold text-blue-300 uppercase tracking-widest">Result Time</p>
+                    <p className="text-sm font-black text-white">Under 10 Minutes</p>
+                  </div>
+                  <div className="bg-white/10 rounded-xl p-3 border border-white/10">
+                    <p className="text-[10px] font-bold text-blue-300 uppercase tracking-widest">Ecosystem Flow</p>
+                    <p className="text-sm font-black text-emerald-400">Auto-Routes to Dashboard</p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <button onClick={() => window.open('https://calendly.com/globalgreenhpmeet/gghp-demo', '_blank')} className="px-6 py-3 bg-blue-600 text-white font-bold text-xs rounded-xl hover:bg-blue-500 transition-colors uppercase tracking-wider">Request Device Demo</button>
+                  <button onClick={() => onNavigate('larry-chatbot')} className="px-6 py-3 bg-white/10 border border-white/20 text-white font-bold text-xs rounded-xl hover:bg-white/20 transition-colors uppercase tracking-wider">Learn More</button>
+                </div>
+              </div>
+              <div className="flex flex-col gap-6">
+                <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-lg transition-all flex-1">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-2xl">🧫</span>
+                    <span className="px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-black uppercase tracking-widest rounded-full border border-emerald-100">Per Unit</span>
+                  </div>
+                  <h4 className="font-black text-slate-900 mb-1">RI Test Strip Cartridges</h4>
+                  <p className="text-xl font-black text-emerald-700 mb-3">$8.99/unit <span className="text-xs font-bold text-slate-400">(bulk pricing available)</span></p>
+                  <p className="text-xs text-slate-500 leading-relaxed">Replacement dual-channel cartridges for the Rapid Testing Device. Each cartridge performs one Recency Index field test. Bulk orders (500+) available at wholesale pricing. Shelf life: 18 months.</p>
+                </div>
+                <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-lg transition-all flex-1">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-2xl">📱</span>
+                    <span className="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] font-black uppercase tracking-widest rounded-full border border-blue-100">Monthly</span>
+                  </div>
+                  <h4 className="font-black text-slate-900 mb-1">Device Cloud Connectivity</h4>
+                  <p className="text-xl font-black text-emerald-700 mb-3">$29/mo <span className="text-xs font-bold text-slate-400">per device</span></p>
+                  <p className="text-xs text-slate-500 leading-relaxed">Bluetooth pairing, cloud sync, and auto-routing of RI test results to enforcement, lab, and patient dashboards. Includes firmware updates and device health monitoring.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ─── EDUCATION & CERTIFICATION ─── */}
+          <div className="mb-16">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center text-amber-700"><GraduationCap size={20} /></div>
+              <div>
+                <h3 className="text-xl font-black text-slate-900">Education & Certification</h3>
+                <p className="text-sm text-slate-500">Training programs, compliance certifications, and continuing education for industry professionals</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                { title: 'Compliance Officer Certification', price: '$299', type: 'One-Time', desc: 'Comprehensive training on state-by-state cannabis regulations, Metrc compliance, OMMA licensing requirements, and federal scheduling implications. Includes certificate of completion recognized by state agencies.', icon: '🎓' },
+                { title: 'Budtender & Staff Training', price: '$49/seat', type: 'Per Employee', desc: 'Online course covering product knowledge, patient interaction protocols, seed-to-sale tracking, POS operation, and state-specific compliance requirements. Includes quiz-based certification.', icon: '📚' },
+                { title: 'Continuing Education Portal', price: '$19/mo', type: 'Subscription', desc: 'Monthly updated courses on regulatory changes, DEA scheduling updates, new state legalization frameworks, and best practices. Required CE credits for compliance maintenance.', icon: '📖' },
+              ].map((edu, i) => (
+                <div key={i} className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-lg transition-all">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-2xl">{edu.icon}</span>
+                    <span className="px-3 py-1 bg-amber-50 text-amber-700 text-[10px] font-black uppercase tracking-widest rounded-full border border-amber-100">{edu.type}</span>
+                  </div>
+                  <h4 className="font-black text-slate-900 mb-1">{edu.title}</h4>
+                  <p className="text-xl font-black text-emerald-700 mb-3">{edu.price}</p>
+                  <p className="text-xs text-slate-500 leading-relaxed">{edu.desc}</p>
                 </div>
               ))}
             </div>
@@ -183,7 +419,7 @@ export const ProductsServicesPage = ({ onNavigate }: { onNavigate: (view: string
           {/* ─── LEGAL DISCLOSURE ─── */}
           <div className="mt-8 text-center">
             <p className="text-[10px] text-slate-400 max-w-3xl mx-auto leading-relaxed">
-              All products and services are provided by Global Green Enterprise Inc, a registered Oklahoma corporation. SaaS subscriptions auto-renew at the listed rate. All plans include a 30-day free trial; after trial, invoicing begins via ACH or card. State application fees are set by individual state authorities and are separate from GGP-OS subscription costs. Telehealth services are facilitated through licensed healthcare providers. Care Wallet is a closed-loop stored value product, not a bank account. FDIC insurance does not apply to Care Wallet balances. Pricing is subject to change. For questions, contact us at 1-888-963-4447.
+              All products and services are provided by Global Green Enterprise Inc, a registered Oklahoma corporation. SaaS subscriptions auto-renew at the listed rate. All plans include a 30-day free trial; after trial, invoicing begins via ACH or card. State application fees are set by individual state authorities and are separate from GGP-OS subscription costs. Telehealth services are facilitated through licensed healthcare providers. Lab & Public Health subscriptions require verified laboratory or health authority credentials. The Dual-Channel Rapid Testing Device and Recency Index technology are patent-pending proprietary products of Global Green Enterprise Inc. Care Wallet is a closed-loop stored value product, not a bank account. FDIC insurance does not apply to Care Wallet balances. Pricing is subject to change. For questions, contact us at 1-888-963-4447.
             </p>
           </div>
         </div>
