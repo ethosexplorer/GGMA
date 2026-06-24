@@ -266,67 +266,6 @@ export const ProductsServicesPage = ({ onNavigate }: { onNavigate: (view: string
             </div>
           </div>
 
-          {/* ─── RAPID TESTING & HARDWARE ─── */}
-          <div className="mb-16">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-blue-700"><Smartphone size={20} /></div>
-              <div>
-                <h3 className="text-xl font-black text-slate-900">Rapid Testing & Hardware Products</h3>
-                <p className="text-sm text-slate-500">Field-deployable impairment and contamination testing devices</p>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-gradient-to-br from-slate-900 to-blue-950 rounded-2xl p-8 text-white border border-blue-800 hover:border-blue-500 transition-all relative overflow-hidden">
-                <div className="absolute top-4 right-4 px-3 py-1 bg-blue-500 text-white text-[9px] font-black uppercase tracking-widest rounded-full">Patent Pending</div>
-                <div className="text-4xl mb-4">🔬</div>
-                <h4 className="text-xl font-black mb-1">Dual-Channel Rapid Testing Device</h4>
-                <p className="text-blue-300 text-sm font-bold mb-4">Recency Index (RI) Field Test</p>
-                <p className="text-slate-300 text-xs leading-relaxed mb-6">Proprietary dual-channel immunoassay device that measures both THC presence AND recency of consumption (0–9.99 RI scale). Differentiates between active impairment and residual metabolites — the critical distinction that traditional drug tests cannot make. Routes results directly to enforcement, patient, and compliance dashboards.</p>
-                <div className="grid grid-cols-2 gap-3 mb-6">
-                  <div className="bg-white/10 rounded-xl p-3 border border-white/10">
-                    <p className="text-[10px] font-bold text-blue-300 uppercase tracking-widest">Recency Differentiation</p>
-                    <p className="text-sm font-black text-emerald-400">Excellent (0–9.99)</p>
-                  </div>
-                  <div className="bg-white/10 rounded-xl p-3 border border-white/10">
-                    <p className="text-[10px] font-bold text-blue-300 uppercase tracking-widest">Sensitivity Short Post-Use</p>
-                    <p className="text-sm font-black text-emerald-400">High (Parent Splice)</p>
-                  </div>
-                  <div className="bg-white/10 rounded-xl p-3 border border-white/10">
-                    <p className="text-[10px] font-bold text-blue-300 uppercase tracking-widest">Result Time</p>
-                    <p className="text-sm font-black text-white">Under 10 Minutes</p>
-                  </div>
-                  <div className="bg-white/10 rounded-xl p-3 border border-white/10">
-                    <p className="text-[10px] font-bold text-blue-300 uppercase tracking-widest">Ecosystem Flow</p>
-                    <p className="text-sm font-black text-emerald-400">Auto-Routes to Dashboard</p>
-                  </div>
-                </div>
-                <div className="flex gap-3">
-                  <button onClick={() => window.open('https://calendly.com/globalgreenhpmeet/gghp-demo', '_blank')} className="px-6 py-3 bg-blue-600 text-white font-bold text-xs rounded-xl hover:bg-blue-500 transition-colors uppercase tracking-wider">Request Device Demo</button>
-                  <button onClick={() => onNavigate('larry-chatbot')} className="px-6 py-3 bg-white/10 border border-white/20 text-white font-bold text-xs rounded-xl hover:bg-white/20 transition-colors uppercase tracking-wider">Learn More</button>
-                </div>
-              </div>
-              <div className="flex flex-col gap-6">
-                <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-lg transition-all flex-1">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-2xl">🧫</span>
-                    <span className="px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-black uppercase tracking-widest rounded-full border border-emerald-100">Per Unit</span>
-                  </div>
-                  <h4 className="font-black text-slate-900 mb-1">RI Test Strip Cartridges</h4>
-                  <p className="text-xl font-black text-emerald-700 mb-3">$8.99/unit <span className="text-xs font-bold text-slate-400">(bulk pricing available)</span></p>
-                  <p className="text-xs text-slate-500 leading-relaxed">Replacement dual-channel cartridges for the Rapid Testing Device. Each cartridge performs one Recency Index field test. Bulk orders (500+) available at wholesale pricing. Shelf life: 18 months.</p>
-                </div>
-                <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-lg transition-all flex-1">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-2xl">📱</span>
-                    <span className="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] font-black uppercase tracking-widest rounded-full border border-blue-100">Monthly</span>
-                  </div>
-                  <h4 className="font-black text-slate-900 mb-1">Device Cloud Connectivity</h4>
-                  <p className="text-xl font-black text-emerald-700 mb-3">$29/mo <span className="text-xs font-bold text-slate-400">per device</span></p>
-                  <p className="text-xs text-slate-500 leading-relaxed">Bluetooth pairing, cloud sync, and auto-routing of RI test results to enforcement, lab, and patient dashboards. Includes firmware updates and device health monitoring.</p>
-                </div>
-              </div>
-            </div>
-          </div>
 
           {/* ─── EDUCATION & CERTIFICATION ─── */}
           <div className="mb-16">
@@ -419,7 +358,7 @@ export const ProductsServicesPage = ({ onNavigate }: { onNavigate: (view: string
           {/* ─── LEGAL DISCLOSURE ─── */}
           <div className="mt-8 text-center">
             <p className="text-[10px] text-slate-400 max-w-3xl mx-auto leading-relaxed">
-              All products and services are provided by Global Green Enterprise Inc, a registered Oklahoma corporation. SaaS subscriptions auto-renew at the listed rate. All plans include a 30-day free trial; after trial, invoicing begins via ACH or card. State application fees are set by individual state authorities and are separate from GGP-OS subscription costs. Telehealth services are facilitated through licensed healthcare providers. Lab & Public Health subscriptions require verified laboratory or health authority credentials. The Dual-Channel Rapid Testing Device and Recency Index technology are patent-pending proprietary products of Global Green Enterprise Inc. Care Wallet is a closed-loop stored value product, not a bank account. FDIC insurance does not apply to Care Wallet balances. Pricing is subject to change. For questions, contact us at 1-888-963-4447.
+              All products and services are provided by Global Green Enterprise Inc, a registered Oklahoma corporation. SaaS subscriptions auto-renew at the listed rate. All plans include a 30-day free trial; after trial, invoicing begins via ACH or card. State application fees are set by individual state authorities and are separate from GGP-OS subscription costs. Telehealth services are facilitated through licensed healthcare providers. Lab & Public Health subscriptions require verified laboratory or health authority credentials. Care Wallet is a closed-loop stored value product, not a bank account. FDIC insurance does not apply to Care Wallet balances. Pricing is subject to change. For questions, contact us at 1-888-963-4447.
             </p>
           </div>
         </div>
