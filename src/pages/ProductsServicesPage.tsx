@@ -1,11 +1,112 @@
-import React from 'react';
-import { ShoppingCart, Cpu, CheckCircle, Stethoscope, Wallet, Building2, ArrowLeft, Smartphone, GraduationCap, BookOpen } from 'lucide-react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
+import { ShoppingCart, Cpu, CheckCircle, Stethoscope, Wallet, Building2, ArrowLeft, Smartphone, GraduationCap, BookOpen, ChevronLeft, ChevronRight } from 'lucide-react';
+
+const SECTIONS = [
+  { id: 'platform', label: 'Platform Subscriptions', icon: '⚙️' },
+  { id: 'professional', label: 'Professional Services', icon: '🩺' },
+  { id: 'lab_health', label: 'Lab & Public Health', icon: '🔬' },
+  { id: 'health_addons', label: 'Health Add-Ons', icon: '🏥' },
+  { id: 'rapid_testing', label: 'Rapid Testing', icon: '📱' },
+  { id: 'education', label: 'Education', icon: '🎓' },
+  { id: 'care_wallet', label: 'Care Wallet', icon: '💳' },
+  { id: 'government', label: 'Government', icon: '🏛️' },
+];
+
+/* ── comprehensive plan details table ────────────── */
+const PlanDetailsTable = ({ tiers }: { tiers: { name: string; setup: string; training: string; goLive: string; monthly: string; quarterly: string; annual: string; savings?: string }[] }) => (
+  <div className="mt-6 overflow-x-auto rounded-xl border border-slate-200 bg-white">
+    <table className="w-full text-xs">
+      <thead>
+        <tr className="bg-slate-50 border-b border-slate-200">
+          <th className="text-left px-4 py-3 font-black text-slate-700 uppercase tracking-widest text-[10px] sticky left-0 bg-slate-50 z-10">Plan</th>
+          <th className="text-center px-3 py-3 font-black text-blue-700 uppercase tracking-widest text-[10px] border-l border-slate-200" colSpan={3}>
+            ⏱️ Implementation Timeline
+          </th>
+          <th className="text-center px-3 py-3 font-black text-emerald-700 uppercase tracking-widest text-[10px] border-l border-slate-200" colSpan={3}>
+            💰 Billing Cycles
+          </th>
+        </tr>
+        <tr className="bg-slate-100/60 border-b border-slate-200">
+          <th className="text-left px-4 py-2 font-bold text-slate-500 text-[9px] uppercase tracking-widest sticky left-0 bg-slate-100/60 z-10"></th>
+          <th className="text-center px-3 py-2 font-bold text-slate-500 text-[9px] uppercase tracking-widest border-l border-slate-200">Setup & Build</th>
+          <th className="text-center px-3 py-2 font-bold text-slate-500 text-[9px] uppercase tracking-widest">Training</th>
+          <th className="text-center px-3 py-2 font-bold text-slate-500 text-[9px] uppercase tracking-widest">Go-Live</th>
+          <th className="text-center px-3 py-2 font-bold text-slate-500 text-[9px] uppercase tracking-widest border-l border-slate-200">Monthly</th>
+          <th className="text-center px-3 py-2 font-bold text-slate-500 text-[9px] uppercase tracking-widest">Quarterly</th>
+          <th className="text-center px-3 py-2 font-bold text-emerald-600 text-[9px] uppercase tracking-widest">Annual ✨</th>
+        </tr>
+      </thead>
+      <tbody>
+        {tiers.map((t, i) => (
+          <tr key={i} className={`border-b border-slate-100 ${i % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'} hover:bg-emerald-50/30 transition-colors`}>
+            <td className="px-4 py-3 font-bold text-slate-800 sticky left-0 bg-inherit z-10 whitespace-nowrap">{t.name}</td>
+            <td className="px-3 py-3 text-center font-bold text-blue-600 border-l border-slate-100">{t.setup}</td>
+            <td className="px-3 py-3 text-center font-bold text-blue-600">{t.training}</td>
+            <td className="px-3 py-3 text-center">
+              <span className="font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full text-[10px]">{t.goLive}</span>
+            </td>
+            <td className="px-3 py-3 text-center font-bold text-slate-600 border-l border-slate-100">{t.monthly}</td>
+            <td className="px-3 py-3 text-center font-bold text-blue-700">{t.quarterly}</td>
+            <td className="px-3 py-3 text-center">
+              <span className="font-black text-emerald-700">{t.annual}</span>
+              {t.savings && <span className="ml-1 text-[9px] font-bold text-emerald-500 bg-emerald-50 px-1.5 py-0.5 rounded-full">Save {t.savings}</span>}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+);
 
 export const ProductsServicesPage = ({ onNavigate }: { onNavigate: (view: string) => void }) => {
+  const [activeSection, setActiveSection] = useState('platform');
+  const navRef = useRef<HTMLDivElement>(null);
+  const isDragging = useRef(false);
+  const startX = useRef(0);
+  const scrollLeft = useRef(0);
+
+  /* ── drag-to-scroll for section nav ── */
+  const onMouseDown = (e: React.MouseEvent) => {
+    isDragging.current = true;
+    startX.current = e.pageX - (navRef.current?.offsetLeft || 0);
+    scrollLeft.current = navRef.current?.scrollLeft || 0;
+  };
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging.current) return;
+    e.preventDefault();
+    const x = e.pageX - (navRef.current?.offsetLeft || 0);
+    const walk = (x - startX.current) * 2;
+    if (navRef.current) navRef.current.scrollLeft = scrollLeft.current - walk;
+  };
+  const onMouseUp = () => { isDragging.current = false; };
+
+  const scrollNav = (dir: 'left' | 'right') => {
+    if (navRef.current) navRef.current.scrollBy({ left: dir === 'left' ? -200 : 200, behavior: 'smooth' });
+  };
+
+  /* ── intersection observer for active section highlighting ── */
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) setActiveSection(entry.target.id);
+      });
+    }, { rootMargin: '-120px 0px -60% 0px', threshold: 0.1 });
+    SECTIONS.forEach(s => {
+      const el = document.getElementById(s.id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  const scrollTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setActiveSection(id);
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <nav className="bg-white border-b border-slate-200 px-6 h-16 flex items-center justify-between sticky top-0 z-40 shadow-sm">
+      <nav className="bg-white border-b border-slate-200 px-6 h-16 flex items-center justify-between sticky top-0 z-50 shadow-sm">
         <div className="flex items-center gap-3">
           <img src="/gghp-logo.png" alt="GGHP" className="h-10 w-auto object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
           <div className="w-px h-6 bg-slate-300" />
@@ -18,8 +119,44 @@ export const ProductsServicesPage = ({ onNavigate }: { onNavigate: (view: string
         </div>
       </nav>
 
-      {/* Main Content (Copied from Landing Page) */}
-      <section className="py-24 px-6 bg-gradient-to-b from-white via-slate-50 to-white">
+      {/* ── STICKY SECTION NAV BAR ── */}
+      <div className="sticky top-16 z-40 bg-white/95 backdrop-blur-sm border-b border-slate-200 shadow-sm">
+        <div className="max-w-6xl mx-auto flex items-center gap-1 px-2">
+          <button onClick={() => scrollNav('left')} className="shrink-0 p-1.5 text-slate-400 hover:text-slate-700 transition-colors">
+            <ChevronLeft size={16} />
+          </button>
+          <div
+            ref={navRef}
+            className="flex-1 flex items-center gap-1 overflow-x-auto py-2 scrollbar-hide cursor-grab active:cursor-grabbing select-none"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            onMouseDown={onMouseDown}
+            onMouseMove={onMouseMove}
+            onMouseUp={onMouseUp}
+            onMouseLeave={onMouseUp}
+          >
+            {SECTIONS.map(s => (
+              <button
+                key={s.id}
+                onClick={() => scrollTo(s.id)}
+                className={`shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                  activeSection === s.id
+                    ? 'bg-emerald-600 text-white shadow-md shadow-emerald-900/20'
+                    : 'bg-slate-100 text-slate-600 hover:bg-emerald-50 hover:text-emerald-700'
+                }`}
+              >
+                <span>{s.icon}</span>
+                {s.label}
+              </button>
+            ))}
+          </div>
+          <button onClick={() => scrollNav('right')} className="shrink-0 p-1.5 text-slate-400 hover:text-slate-700 transition-colors">
+            <ChevronRight size={16} />
+          </button>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <section className="py-16 px-6 bg-gradient-to-b from-white via-slate-50 to-white">
         <div className="max-w-6xl mx-auto">
           {/* Section Header */}
           <div className="text-center mb-16 space-y-4">
@@ -55,12 +192,12 @@ export const ProductsServicesPage = ({ onNavigate }: { onNavigate: (view: string
           </div>
 
           {/* ─── CORE PLATFORM SUBSCRIPTIONS ─── */}
-          <div className="mb-16">
+          <div id="platform" className="mb-16 scroll-mt-36">
             <div className="flex items-center gap-3 mb-8">
               <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-700"><Cpu size={20} /></div>
               <div>
                 <h3 className="text-xl font-black text-slate-900">GGP-OS Platform Subscriptions</h3>
-                <p className="text-sm text-slate-500">Monthly & annual SaaS subscriptions for compliance, licensing, and AI-powered operations</p>
+                <p className="text-sm text-slate-500">Monthly, quarterly & annual SaaS subscriptions for compliance, licensing, and AI-powered operations</p>
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
@@ -91,10 +228,17 @@ export const ProductsServicesPage = ({ onNavigate }: { onNavigate: (view: string
                 </div>
               ))}
             </div>
+            <PlanDetailsTable tiers={[
+              { name: 'Patient / Consumer', setup: 'Instant', training: 'Self-serve', goLive: 'Same Day', monthly: '$49.99/mo', quarterly: '$134.97/qtr', annual: '$479.88/yr', savings: '20%' },
+              { name: 'Business / Dispensary', setup: '1–2 Weeks', training: '3–5 Days', goLive: '2–3 Weeks', monthly: '$199/mo', quarterly: '$537.30/qtr', annual: '$1,910.40/yr', savings: '20%' },
+              { name: 'Provider / Physician', setup: '2–3 Days', training: '1–2 Days', goLive: '1 Week', monthly: '$99/mo', quarterly: '$267.30/qtr', annual: '$950.40/yr', savings: '20%' },
+              { name: 'Attorney / Legal', setup: '2–3 Days', training: '1–2 Days', goLive: '1 Week', monthly: '$149/mo', quarterly: '$402.30/qtr', annual: '$1,430.40/yr', savings: '20%' },
+              { name: 'Advocacy & Research', setup: 'Instant', training: 'Self-serve', goLive: 'Same Day', monthly: '$79/mo', quarterly: '$213.30/qtr', annual: '$758.40/yr', savings: '20%' },
+            ]} />
           </div>
 
           {/* ─── PROFESSIONAL SERVICES ─── */}
-          <div className="mb-16">
+          <div id="professional" className="mb-16 scroll-mt-36">
             <div className="flex items-center gap-3 mb-8">
               <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-blue-700"><Stethoscope size={20} /></div>
               <div>
@@ -119,10 +263,15 @@ export const ProductsServicesPage = ({ onNavigate }: { onNavigate: (view: string
                 </div>
               ))}
             </div>
+            <PlanDetailsTable tiers={[
+              { name: 'Telehealth Evaluation', setup: 'N/A', training: 'N/A', goLive: 'Per Visit', monthly: 'Per Visit', quarterly: 'N/A', annual: 'N/A' },
+              { name: 'AI Virtual Attendant', setup: '3–5 Days', training: '2–3 Days', goLive: '1–2 Weeks', monthly: '$149/mo', quarterly: '$402.30/qtr', annual: '$1,430.40/yr', savings: '20%' },
+              { name: 'State App Processing', setup: 'N/A', training: 'N/A', goLive: 'Per App', monthly: '$10/app', quarterly: 'N/A', annual: 'N/A' },
+            ]} />
           </div>
 
           {/* ─── LAB & PUBLIC HEALTH SUBSCRIPTIONS ─── */}
-          <div className="mb-16">
+          <div id="lab_health" className="mb-16 scroll-mt-36">
             <div className="flex items-center gap-3 mb-3">
               <div className="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center text-teal-700">🔬</div>
               <div>
@@ -138,78 +287,10 @@ export const ProductsServicesPage = ({ onNavigate }: { onNavigate: (view: string
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
-                {
-                  title: 'Independent Lab',
-                  icon: '🧪',
-                  price: '$499',
-                  period: '/mo',
-                  tag: 'MOST POPULAR',
-                  tagColor: 'emerald',
-                  desc: 'Full COA management, accreditation tracking, contaminant monitoring, and multi-state compliance for licensed testing labs',
-                  features: [
-                    'COA upload, validation & auto-scan',
-                    'Accreditation tracking (ISO 17025, DEA)',
-                    'Contaminant flagging & recall alerts',
-                    'Statewide pass rate analytics',
-                    'Recency Index field test integration',
-                    'Larry AI compliance monitoring',
-                  ],
-                  color: 'teal'
-                },
-                {
-                  title: 'Regional Lab Network',
-                  icon: '🏗️',
-                  price: '$1,499',
-                  period: '/mo',
-                  tag: 'MULTI-SITE',
-                  tagColor: 'blue',
-                  desc: 'Multi-location lab network management with centralized compliance oversight and cross-facility contamination tracking',
-                  features: [
-                    'Everything in Independent Lab',
-                    'Multi-facility dashboard (up to 10 labs)',
-                    'Cross-facility contamination correlation',
-                    'Centralized accreditation management',
-                    'Network-wide pass rate benchmarking',
-                    'Priority API access & data exports',
-                  ],
-                  color: 'blue'
-                },
-                {
-                  title: 'State Health Department',
-                  icon: '🏛️',
-                  price: '$4,999',
-                  period: '/mo',
-                  tag: 'GOVERNMENT',
-                  tagColor: 'purple',
-                  desc: 'Statewide contamination monitoring, patient outcome tracking, outbreak detection, and recall management for state health agencies',
-                  features: [
-                    'GIS contamination zone mapping',
-                    'Patient exposure tracking & notifications',
-                    'Statewide lab compliance scorecards',
-                    'Automated recall broadcast system',
-                    'Source chain tracing (seed-to-sale)',
-                    'Sylara Public Health AI assistant',
-                  ],
-                  color: 'purple'
-                },
-                {
-                  title: 'Tribal Health Authority',
-                  icon: '🪶',
-                  price: '$2,499',
-                  period: '/mo',
-                  tag: 'TRIBAL SOVEREIGNTY',
-                  tagColor: 'amber',
-                  desc: 'Dual-jurisdiction compliance for tribal nations with federal-tribal bridge protocols and culturally integrated health data',
-                  features: [
-                    'Tribal compact compliance tracking',
-                    'Federal-tribal bridge protocols',
-                    'Sovereign health data management',
-                    'Community exposure monitoring',
-                    'Cultural wellness integration',
-                    'Tribal-federal reporting automation',
-                  ],
-                  color: 'amber'
-                },
+                { title: 'Independent Lab', icon: '🧪', price: '$499', period: '/mo', tag: 'MOST POPULAR', tagColor: 'emerald', desc: 'Full COA management, accreditation tracking, contaminant monitoring, and multi-state compliance for licensed testing labs', features: ['COA upload, validation & auto-scan', 'Accreditation tracking (ISO 17025, DEA)', 'Contaminant flagging & recall alerts', 'Statewide pass rate analytics', 'Recency Index field test integration', 'Larry AI compliance monitoring'], color: 'teal' },
+                { title: 'Regional Lab Network', icon: '🏗️', price: '$1,499', period: '/mo', tag: 'MULTI-SITE', tagColor: 'blue', desc: 'Multi-location lab network management with centralized compliance oversight and cross-facility contamination tracking', features: ['Everything in Independent Lab', 'Multi-facility dashboard (up to 10 labs)', 'Cross-facility contamination correlation', 'Centralized accreditation management', 'Network-wide pass rate benchmarking', 'Priority API access & data exports'], color: 'blue' },
+                { title: 'State Health Department', icon: '🏛️', price: '$4,999', period: '/mo', tag: 'GOVERNMENT', tagColor: 'purple', desc: 'Statewide contamination monitoring, patient outcome tracking, outbreak detection, and recall management for state health agencies', features: ['GIS contamination zone mapping', 'Patient exposure tracking & notifications', 'Statewide lab compliance scorecards', 'Automated recall broadcast system', 'Source chain tracing (seed-to-sale)', 'Sylara Public Health AI assistant'], color: 'purple' },
+                { title: 'Tribal Health Authority', icon: '🪶', price: '$2,499', period: '/mo', tag: 'TRIBAL SOVEREIGNTY', tagColor: 'amber', desc: 'Dual-jurisdiction compliance for tribal nations with federal-tribal bridge protocols and culturally integrated health data', features: ['Tribal compact compliance tracking', 'Federal-tribal bridge protocols', 'Sovereign health data management', 'Community exposure monitoring', 'Cultural wellness integration', 'Tribal-federal reporting automation'], color: 'amber' },
               ].map((product, i) => (
                 <div key={i} className="bg-white rounded-2xl border-2 border-slate-100 hover:border-teal-300 p-6 shadow-sm hover:shadow-xl transition-all group flex flex-col relative">
                   {product.tag && (
@@ -236,10 +317,16 @@ export const ProductsServicesPage = ({ onNavigate }: { onNavigate: (view: string
                 </div>
               ))}
             </div>
+            <PlanDetailsTable tiers={[
+              { name: 'Independent Lab', setup: '2–4 Weeks', training: '1 Week', goLive: '4–6 Weeks', monthly: '$499/mo', quarterly: '$1,347.30/qtr', annual: '$4,790.40/yr', savings: '20%' },
+              { name: 'Regional Lab Network', setup: '4–6 Weeks', training: '2 Weeks', goLive: '6–8 Weeks', monthly: '$1,499/mo', quarterly: '$4,047.30/qtr', annual: '$14,390.40/yr', savings: '20%' },
+              { name: 'State Health Dept', setup: '6–10 Weeks', training: '2–4 Weeks', goLive: '10–14 Weeks', monthly: '$4,999/mo', quarterly: '$13,497.30/qtr', annual: '$47,990.40/yr', savings: '20%' },
+              { name: 'Tribal Health Authority', setup: '4–8 Weeks', training: '2–3 Weeks', goLive: '8–12 Weeks', monthly: '$2,499/mo', quarterly: '$6,747.30/qtr', annual: '$23,990.40/yr', savings: '20%' },
+            ]} />
           </div>
 
           {/* ─── PUBLIC HEALTH PROFESSIONAL SERVICES ─── */}
-          <div className="mb-16">
+          <div id="health_addons" className="mb-16 scroll-mt-36">
             <div className="flex items-center gap-3 mb-8">
               <div className="w-10 h-10 bg-rose-100 rounded-xl flex items-center justify-center text-rose-700">🏥</div>
               <div>
@@ -264,11 +351,15 @@ export const ProductsServicesPage = ({ onNavigate }: { onNavigate: (view: string
                 </div>
               ))}
             </div>
+            <PlanDetailsTable tiers={[
+              { name: 'COA Validation Engine', setup: '1–2 Weeks', training: '2–3 Days', goLive: '2–3 Weeks', monthly: '$299/mo', quarterly: '$807.30/qtr', annual: '$2,870.40/yr', savings: '20%' },
+              { name: 'Contamination Response', setup: '2–4 Weeks', training: '1 Week', goLive: '4–6 Weeks', monthly: '$799/mo', quarterly: '$2,157.30/qtr', annual: '$7,670.40/yr', savings: '20%' },
+              { name: 'Accreditation Tracking', setup: '1 Week', training: '1–2 Days', goLive: '1–2 Weeks', monthly: '$199/mo', quarterly: '$537.30/qtr', annual: '$1,910.40/yr', savings: '20%' },
+            ]} />
           </div>
 
-
           {/* ─── RAPID TESTING & HARDWARE — COMING SOON ─── */}
-          <div className="mb-16 relative">
+          <div id="rapid_testing" className="mb-16 scroll-mt-36 relative">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-black uppercase tracking-[0.2em] rounded-full shadow-xl shadow-blue-900/30 border border-blue-400/30 flex items-center gap-2">
               <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" />
               Coming Soon — Seeking Investment Partners
@@ -322,7 +413,7 @@ export const ProductsServicesPage = ({ onNavigate }: { onNavigate: (view: string
           </div>
 
           {/* ─── EDUCATION & CERTIFICATION ─── */}
-          <div className="mb-16">
+          <div id="education" className="mb-16 scroll-mt-36">
             <div className="flex items-center gap-3 mb-8">
               <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center text-amber-700"><GraduationCap size={20} /></div>
               <div>
@@ -347,10 +438,15 @@ export const ProductsServicesPage = ({ onNavigate }: { onNavigate: (view: string
                 </div>
               ))}
             </div>
+            <PlanDetailsTable tiers={[
+              { name: 'Compliance Officer Cert', setup: 'Instant', training: '40 Hours', goLive: '1–2 Weeks', monthly: '$299 (one-time)', quarterly: 'N/A', annual: 'N/A' },
+              { name: 'Budtender Training', setup: 'Instant', training: '8–12 Hours', goLive: '2–3 Days', monthly: '$49/seat', quarterly: 'N/A', annual: 'N/A' },
+              { name: 'CE Portal', setup: 'Instant', training: 'Self-paced', goLive: 'Same Day', monthly: '$19/mo', quarterly: '$51.30/qtr', annual: '$182.40/yr', savings: '20%' },
+            ]} />
           </div>
 
           {/* ─── CARE WALLET & PAYMENT PROCESSING ─── */}
-          <div className="mb-16">
+          <div id="care_wallet" className="mb-16 scroll-mt-36">
             <div className="flex items-center gap-3 mb-8">
               <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-700"><Wallet size={20} /></div>
               <div>
@@ -372,10 +468,16 @@ export const ProductsServicesPage = ({ onNavigate }: { onNavigate: (view: string
                 </div>
               ))}
             </div>
+            <PlanDetailsTable tiers={[
+              { name: 'Bronze', setup: 'Instant', training: 'Self-serve', goLive: 'Same Day', monthly: 'Free', quarterly: 'Free', annual: 'Free' },
+              { name: 'Silver', setup: 'Instant', training: 'Self-serve', goLive: 'Same Day', monthly: '$19/mo', quarterly: '$51.30/qtr', annual: '$182.40/yr', savings: '20%' },
+              { name: 'Gold', setup: 'Instant', training: '1 Hour', goLive: 'Same Day', monthly: '$49/mo', quarterly: '$132.30/qtr', annual: '$470.40/yr', savings: '20%' },
+              { name: 'Platinum', setup: '1–2 Days', training: '2–3 Hours', goLive: '1–3 Days', monthly: '$99/mo', quarterly: '$267.30/qtr', annual: '$950.40/yr', savings: '20%' },
+            ]} />
           </div>
 
           {/* ─── GOVERNMENT & ENTERPRISE ─── */}
-          <div className="mb-16">
+          <div id="government" className="mb-16 scroll-mt-36">
             <div className="flex items-center gap-3 mb-8">
               <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center text-purple-700"><Building2 size={20} /></div>
               <div>
@@ -396,6 +498,11 @@ export const ProductsServicesPage = ({ onNavigate }: { onNavigate: (view: string
                 </div>
               ))}
             </div>
+            <PlanDetailsTable tiers={[
+              { name: 'State Authority', setup: '8–12 Weeks', training: '4–6 Weeks', goLive: '12–16 Weeks', monthly: 'From $4,999/mo', quarterly: 'From $13,497/qtr', annual: 'From $47,990/yr', savings: '20%' },
+              { name: 'Law Enforcement', setup: '4–8 Weeks', training: '2–4 Weeks', goLive: '8–12 Weeks', monthly: 'From $999/mo', quarterly: 'From $2,697/qtr', annual: 'From $9,590/yr', savings: '20%' },
+              { name: 'Federal Agency', setup: '12–20 Weeks', training: '6–10 Weeks', goLive: '20–30 Weeks', monthly: 'From $9,999/mo', quarterly: 'From $26,997/qtr', annual: 'From $95,990/yr', savings: '20%' },
+            ]} />
           </div>
 
           {/* ─── ACCEPTED PAYMENT METHODS ─── */}
@@ -412,7 +519,7 @@ export const ProductsServicesPage = ({ onNavigate }: { onNavigate: (view: string
           {/* ─── LEGAL DISCLOSURE ─── */}
           <div className="mt-8 text-center">
             <p className="text-[10px] text-slate-400 max-w-3xl mx-auto leading-relaxed">
-              All products and services are provided by Global Green Enterprise Inc, a registered Oklahoma corporation. SaaS subscriptions auto-renew at the listed rate. All plans include a 30-day free trial; after trial, invoicing begins via ACH or card. State application fees are set by individual state authorities and are separate from GGP-OS subscription costs. Telehealth services are facilitated through licensed healthcare providers. Lab & Public Health subscriptions require verified laboratory or health authority credentials. Care Wallet is a closed-loop stored value product, not a bank account. FDIC insurance does not apply to Care Wallet balances. Pricing is subject to change. For questions, contact us at 1-888-963-4447.
+              All products and services are provided by Global Green Enterprise Inc, a registered Oklahoma corporation. SaaS subscriptions auto-renew at the listed rate. All plans include a 30-day free trial; after trial, invoicing begins via ACH or card. Quarterly billing saves 10%; annual billing saves 20%. State application fees are set by individual state authorities and are separate from GGP-OS subscription costs. Telehealth services are facilitated through licensed healthcare providers. Lab & Public Health subscriptions require verified laboratory or health authority credentials. Care Wallet is a closed-loop stored value product, not a bank account. FDIC insurance does not apply to Care Wallet balances. Pricing is subject to change. For questions, contact us at 1-888-963-4447.
             </p>
           </div>
         </div>
