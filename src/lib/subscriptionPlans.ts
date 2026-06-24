@@ -340,7 +340,39 @@ export const B2C_PLANS: SubscriptionPlan[] = [
 ];
 
 export const PUBLIC_HEALTH_PLANS: SubscriptionPlan[] = [
-  { id: 'ph_core', name: 'Core Public Health & Lab Dashboard', monthlyPrice: 149, annualPrice: 1499, aiLevel: 'Basic Workflow & Accreditation', bestFor: 'Labs & public health depts' }
+  {
+    id: 'ph_core',
+    name: 'Core Lab Dashboard',
+    monthlyPrice: 149,
+    annualPrice: 1499,
+    aiLevel: 'Basic Sylara + Accreditation Alerts',
+    bestFor: 'Independent testing labs & small health depts',
+    trialDays: 30,
+    trialPrice: 0,
+    tokensMonth: '500,000 tokens/mo',
+  },
+  {
+    id: 'ph_professional',
+    name: 'Professional Lab & Health',
+    monthlyPrice: 499,
+    annualPrice: 4999,
+    aiLevel: 'Full Sylara + Larry Lab Mode + Recency Index',
+    bestFor: 'Multi-state labs, hospitals & state regulators',
+    trialDays: 30,
+    trialPrice: 0,
+    tokensMonth: '2,000,000 tokens/mo',
+  },
+  {
+    id: 'ph_enterprise',
+    name: 'Enterprise Public Health',
+    monthlyPrice: 999,
+    annualPrice: 9999,
+    aiLevel: 'Unlimited AI + Exposure Mapping + Recall Broadcast',
+    bestFor: 'State health depts, university research & MSOs',
+    trialDays: 30,
+    trialPrice: 0,
+    tokensMonth: 'Unlimited tokens/mo',
+  },
 ];
 
 export const PUBLIC_HEALTH_ADDONS: AddOn[] = [
