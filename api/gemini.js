@@ -3,8 +3,8 @@
 // Handles both standard JSON responses and Server-Sent Events (SSE) streaming.
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
-const MODEL_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent';
-const STREAM_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:streamGenerateContent';
+const MODEL_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+const STREAM_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent';
 
 function cleanContentsForGemini(contents) {
   if (!Array.isArray(contents) || contents.length === 0) {

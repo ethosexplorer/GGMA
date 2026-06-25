@@ -12,7 +12,7 @@ import { DETAILED_STATE_KNOWLEDGE } from '../stateDetailedKnowledge';
 import { PERSONAL_JOURNEY } from '../personalJourney';
 
 const API_KEY = () => import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
-const MODEL_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent';
+const MODEL_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
 const PLATFORM_HISTORICAL_VAULT = `
 ================================================================================
@@ -435,7 +435,7 @@ export const streamGeminiResponse = async (
       ];
       const cleanedContents = cleanContentsForGemini(rawContents);
       
-      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:streamGenerateContent?alt=sse&key=${key}`;
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse&key=${key}`;
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
