@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Device, Call } from '@twilio/voice-sdk';
-import { Phone, PhoneCall, PhoneOff, Mic, MicOff } from 'lucide-react';
+import { Phone, PhoneCall, PhoneOff, Mic, MicOff, MessageSquare, Calendar, ChevronDown, Save, X, ClipboardCheck, Clock, User } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 export function WebDialer() {
@@ -14,6 +14,24 @@ export function WebDialer() {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const deviceRef = useRef<Device | null>(null);
   const activeCallRef = useRef<Call | null>(null);
+
+  // Call Disposition Card State
+  const [showDisposition, setShowDisposition] = useState(false);
+  const [dispositionData, setDispositionData] = useState({
+    callNumber: '',
+    callDirection: '' as 'inbound' | 'outbound' | '',
+    callDurationFinal: 0,
+    outcome: '' as '' | 'connected' | 'voicemail' | 'no_answer' | 'busy' | 'wrong_number' | 'callback_requested' | 'disconnected',
+    summary: '',
+    notes: '',
+    followUpDate: '',
+    pipelineStage: '',
+    contactName: '',
+  });
+  const [dispositionSaving, setDispositionSaving] = useState(false);
+  const [dispositionSaved, setDispositionSaved] = useState(false);
+  const lastCallNumberRef = useRef('');
+  const lastCallDirectionRef = useRef<'inbound' | 'outbound'>('outbound');
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -107,7 +125,12 @@ export function WebDialer() {
 
           call.on('disconnect', () => {
             console.log('[WebDialer] Call disconnected');
+            // Trigger disposition card for inbound calls
+            const callerNum = call.parameters?.From || 'Unknown';
+            lastCallNumberRef.current = callerNum;
+            lastCallDirectionRef.current = 'inbound';
             cleanup();
+            triggerDisposition(callerNum, 'inbound');
           });
 
           call.on('reject', () => {
@@ -234,8 +257,8 @@ export function WebDialer() {
         setCallDuration(0);
         timerRef.current = setInterval(() => setCallDuration(prev => prev + 1), 1000);
       };
-      call.on('accept', () => { console.log('[WebDialer] Outbound call connected'); startCallTimer(); });
-      call.on('disconnect', () => { console.log('[WebDialer] Outbound call ended'); setActiveCall(null); activeCallRef.current = null; setIsMuted(false); setCallDuration(0); if (timerRef.current) clearInterval(timerRef.current); setStatus('ready'); });
+      call.on('accept', () => { console.log('[WebDialer] Outbound call connected'); startCallTimer(); lastCallNumberRef.current = dialNumber; lastCallDirectionRef.current = 'outbound'; });
+      call.on('disconnect', () => { console.log('[WebDialer] Outbound call ended'); const finalDur = callDuration; setActiveCall(null); activeCallRef.current = null; setIsMuted(false); setCallDuration(0); if (timerRef.current) clearInterval(timerRef.current); setStatus('ready'); triggerDisposition(dialNumber, 'outbound', finalDur); });
       call.on('error', (err: any) => { console.error('[WebDialer] Call error:', err); setError(err.message || 'Call failed'); setActiveCall(null); activeCallRef.current = null; setStatus('ready'); });
     } catch (err: any) {
       console.error('[WebDialer] Failed to dial:', err);
@@ -303,6 +326,62 @@ export function WebDialer() {
       topic: topics[(sum * 7) % topics.length]
     };
   };
+
+  const triggerDisposition = (number: string, direction: 'inbound' | 'outbound', duration?: number) => {
+    setDispositionData({
+      callNumber: number,
+      callDirection: direction,
+      callDurationFinal: duration || callDuration,
+      outcome: '',
+      summary: '',
+      notes: '',
+      followUpDate: '',
+      pipelineStage: '',
+      contactName: '',
+    });
+    setDispositionSaved(false);
+    setShowDisposition(true);
+  };
+
+  const handleSaveDisposition = async () => {
+    setDispositionSaving(true);
+    try {
+      const { turso } = await import('../../lib/turso');
+      const logId = 'call-disp-' + Math.random().toString(36).substr(2, 9);
+      await turso.execute({
+        sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)',
+        args: [
+          logId,
+          'CALL_DISPOSITION',
+          'Production_User',
+          JSON.stringify({
+            ...dispositionData,
+            savedAt: new Date().toISOString(),
+          })
+        ]
+      });
+      // Broadcast disposition to CRM and Call Center
+      window.dispatchEvent(new CustomEvent('call-disposition-saved', {
+        detail: { ...dispositionData, logId }
+      }));
+    } catch (e) { console.error('Failed to save disposition:', e); }
+    setDispositionSaving(false);
+    setDispositionSaved(true);
+    setTimeout(() => {
+      setShowDisposition(false);
+      setDispositionSaved(false);
+    }, 1500);
+  };
+
+  const OUTCOME_OPTIONS = [
+    { value: 'connected', label: 'Connected — Spoke with Contact', color: 'emerald', emoji: '✅' },
+    { value: 'voicemail', label: 'Left Voicemail', color: 'blue', emoji: '📩' },
+    { value: 'no_answer', label: 'No Answer / Rang Out', color: 'amber', emoji: '📵' },
+    { value: 'busy', label: 'Busy / Line Engaged', color: 'orange', emoji: '🔴' },
+    { value: 'wrong_number', label: 'Wrong Number / Invalid', color: 'red', emoji: '❌' },
+    { value: 'callback_requested', label: 'Callback Requested', color: 'purple', emoji: '🔄' },
+    { value: 'disconnected', label: 'Disconnected / Dropped', color: 'slate', emoji: '⚡' },
+  ];
 
   return (
     <>
@@ -490,6 +569,164 @@ export function WebDialer() {
             >
               <PhoneOff size={18} />
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Call Disposition Card */}
+      {showDisposition && (
+        <div className="fixed bottom-6 right-80 z-[200] w-[420px] animate-in slide-in-from-bottom-6 fade-in duration-300">
+          <div className="bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden" style={{ boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.03)' }}>
+            {/* Header */}
+            <div className={cn(
+              "p-5 text-white relative overflow-hidden",
+              dispositionData.callDirection === 'inbound'
+                ? 'bg-gradient-to-r from-blue-600 to-indigo-700'
+                : 'bg-gradient-to-r from-emerald-600 to-teal-700'
+            )}>
+              <button onClick={() => setShowDisposition(false)} className="absolute top-3 right-3 p-1.5 bg-white/20 hover:bg-white/30 rounded-lg transition-colors">
+                <X size={14} />
+              </button>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                  <ClipboardCheck size={20} />
+                </div>
+                <div>
+                  <h3 className="font-black text-sm uppercase tracking-wider">Call Disposition</h3>
+                  <p className="text-white/70 text-xs font-medium">
+                    {dispositionData.callDirection === 'inbound' ? '📞 Inbound' : '📱 Outbound'} • {dispositionData.callNumber}
+                    {dispositionData.callDurationFinal > 0 && ` • ${Math.floor(dispositionData.callDurationFinal / 60)}:${(dispositionData.callDurationFinal % 60).toString().padStart(2, '0')}`}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {dispositionSaved ? (
+              <div className="p-8 text-center">
+                <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <ClipboardCheck size={32} />
+                </div>
+                <p className="font-black text-slate-800 text-lg">Disposition Saved!</p>
+                <p className="text-xs text-slate-500 mt-1">Call log has been updated in the CRM.</p>
+              </div>
+            ) : (
+              <div className="p-5 space-y-4 max-h-[60vh] overflow-y-auto">
+                {/* Contact Name */}
+                <div>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Contact Name</label>
+                  <div className="relative">
+                    <User size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <input
+                      type="text"
+                      value={dispositionData.contactName}
+                      onChange={e => setDispositionData(p => ({ ...p, contactName: e.target.value }))}
+                      placeholder="Who did you speak with?"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2.5 text-sm outline-none focus:border-indigo-500 transition-colors"
+                    />
+                  </div>
+                </div>
+
+                {/* Call Outcome */}
+                <div>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Call Outcome *</label>
+                  <div className="grid grid-cols-1 gap-1.5">
+                    {OUTCOME_OPTIONS.map(opt => (
+                      <button
+                        key={opt.value}
+                        onClick={() => setDispositionData(p => ({ ...p, outcome: opt.value as any }))}
+                        className={cn(
+                          "w-full px-3 py-2.5 rounded-xl text-left text-xs font-bold transition-all flex items-center gap-2 border",
+                          dispositionData.outcome === opt.value
+                            ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-500/20'
+                            : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50'
+                        )}
+                      >
+                        <span className="text-sm">{opt.emoji}</span>
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Call Summary */}
+                <div>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Call Summary</label>
+                  <input
+                    type="text"
+                    value={dispositionData.summary}
+                    onChange={e => setDispositionData(p => ({ ...p, summary: e.target.value }))}
+                    placeholder="Brief summary: e.g. 'Discussed med card renewal, needs docs'"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-500 transition-colors"
+                  />
+                </div>
+
+                {/* Notes */}
+                <div>
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Detailed Notes</label>
+                  <textarea
+                    value={dispositionData.notes}
+                    onChange={e => setDispositionData(p => ({ ...p, notes: e.target.value }))}
+                    placeholder="Any additional details, action items, or context..."
+                    rows={3}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-500 resize-none transition-colors"
+                  />
+                </div>
+
+                {/* Follow-up & Pipeline */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-1"><Calendar size={10} /> Follow-Up Date</label>
+                    <input
+                      type="date"
+                      value={dispositionData.followUpDate}
+                      onChange={e => setDispositionData(p => ({ ...p, followUpDate: e.target.value }))}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs outline-none focus:border-indigo-500 transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Pipeline Stage</label>
+                    <select
+                      value={dispositionData.pipelineStage}
+                      onChange={e => setDispositionData(p => ({ ...p, pipelineStage: e.target.value }))}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs outline-none focus:border-indigo-500 transition-colors"
+                    >
+                      <option value="">No Change</option>
+                      <option value="new_lead">New Lead</option>
+                      <option value="contacted">Contacted</option>
+                      <option value="qualified">Qualified</option>
+                      <option value="demo">Demo / Consult</option>
+                      <option value="proposal">Proposal Sent</option>
+                      <option value="closed_won">Closed Won ✅</option>
+                      <option value="closed_lost">Closed Lost</option>
+                      <option value="nurture">Nurture / Long-term</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Footer Actions */}
+            {!dispositionSaved && (
+              <div className="p-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
+                <button
+                  onClick={() => setShowDisposition(false)}
+                  className="px-4 py-2 text-xs font-bold text-slate-500 hover:text-slate-700 transition-colors uppercase"
+                >
+                  Skip
+                </button>
+                <button
+                  onClick={handleSaveDisposition}
+                  disabled={!dispositionData.outcome || dispositionSaving}
+                  className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-xs rounded-xl shadow-lg transition-all uppercase flex items-center gap-2"
+                >
+                  {dispositionSaving ? (
+                    <><div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Saving...</>
+                  ) : (
+                    <><Save size={14} /> Save Disposition</>
+                  )}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
