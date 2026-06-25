@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GGP-OS Admin Platform Guide — Global Green Enterprise Inc.</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; color: #1a1a2e; background: #fff; max-width: 900px; margin: 0 auto; padding: 40px 50px; line-height: 1.7; font-size: 13px; }
+  
+  /* Cover Page */
+  .cover { page-break-after: always; text-align: center; padding: 120px 40px 80px; position: relative; }
+  .cover-badge { display: inline-block; background: #0d3b2e; color: white; padding: 8px 24px; border-radius: 30px; font-size: 10px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 40px; }
+  .cover h1 { font-size: 36px; font-weight: 900; color: #0d3b2e; margin-bottom: 8px; letter-spacing: -1px; }
+  .cover h2 { font-size: 18px; font-weight: 500; color: #555; margin-bottom: 6px; }
+  .cover h3 { font-size: 13px; font-weight: 400; color: #888; margin-bottom: 40px; }
+  .cover-meta { margin-top: 60px; font-size: 11px; color: #999; }
+  .cover-meta strong { color: #0d3b2e; }
+  .cover-divider { width: 80px; height: 4px; background: #0d3b2e; margin: 30px auto; border-radius: 2px; }
+  .cover-territory { display: inline-flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 20px; }
+  .cover-territory span { background: #f0faf6; border: 1px solid #c8e6c9; color: #0d3b2e; padding: 4px 14px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* Content Styles */
+  h1.section-number { font-size: 11px; font-weight: 800; color: #0d3b2e; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 4px; }
+  .section-title { font-size: 20px; font-weight: 900; color: #0d3b2e; border-bottom: 3px solid #0d3b2e; padding-bottom: 8px; margin: 35px 0 18px; }
+  .sub-title { font-size: 14px; font-weight: 700; color: #1a1a2e; margin: 22px 0 10px; }
+  .sub-sub { font-size: 12px; font-weight: 600; color: #444; margin: 14px 0 6px; }
+  
+  p { margin: 8px 0; font-size: 12.5px; }
+  
+  .callout { background: #f0faf6; border-left: 4px solid #0d3b2e; padding: 14px 18px; margin: 16px 0; font-size: 12px; border-radius: 0 8px 8px 0; }
+  .callout strong { color: #0d3b2e; }
+  .warning { background: #fef3cd; border-left: 4px solid #e6a800; padding: 14px 18px; margin: 16px 0; font-size: 12px; border-radius: 0 8px 8px 0; }
+  .tip { background: #e3f2fd; border-left: 4px solid #1976d2; padding: 14px 18px; margin: 16px 0; font-size: 12px; border-radius: 0 8px 8px 0; }
+  .highlight { background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-left: 4px solid #1b5e20; padding: 16px 20px; margin: 18px 0; font-size: 13px; border-radius: 0 8px 8px 0; }
+  
+  table { width: 100%; border-collapse: collapse; margin: 12px 0 18px; font-size: 11.5px; }
+  th { background: #0d3b2e; color: white; padding: 10px 12px; text-align: left; font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
+  td { padding: 8px 12px; border-bottom: 1px solid #e0e0e0; }
+  tr:nth-child(even) { background: #f8faf9; }
+  
+  ul, ol { margin: 8px 0 12px 24px; }
+  li { margin: 5px 0; font-size: 12px; }
+  li strong { color: #0d3b2e; }
+  
+  hr { border: none; border-top: 1px solid #e0e0e0; margin: 30px 0; }
+  
+  .step-box { background: #fafbfc; border: 1px solid #e8e8e8; border-radius: 12px; padding: 16px 20px; margin: 10px 0; }
+  .step-num { display: inline-block; background: #0d3b2e; color: white; width: 24px; height: 24px; border-radius: 50%; text-align: center; line-height: 24px; font-size: 11px; font-weight: 800; margin-right: 10px; }
+  
+  .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+  .feature-card { background: #fafbfc; border: 1px solid #e8e8e8; border-radius: 10px; padding: 14px; }
+  .feature-card h4 { font-size: 12px; font-weight: 800; color: #0d3b2e; margin-bottom: 4px; }
+  .feature-card p { font-size: 11px; color: #555; margin: 0; }
+  
+  .toc { background: #fafbfc; border: 1px solid #e0e0e0; border-radius: 12px; padding: 24px 30px; margin: 20px 0; }
+  .toc h3 { font-size: 14px; font-weight: 800; color: #0d3b2e; margin-bottom: 12px; }
+  .toc ol { margin: 0; padding-left: 20px; }
+  .toc li { margin: 6px 0; font-size: 12px; font-weight: 500; }
+  .toc li strong { color: #1a1a2e; }
+  
+  .footer { margin-top: 40px; padding-top: 20px; border-top: 3px solid #0d3b2e; font-size: 11px; color: #666; }
+  .footer strong { color: #0d3b2e; }
+  
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+  .badge-green { background: #e8f5e9; color: #2e7d32; }
+  .badge-blue { background: #e3f2fd; color: #1565c0; }
+  .badge-amber { background: #fff8e1; color: #e65100; }
+  .badge-red { background: #fce4ec; color: #c62828; }
+  
+  @media print {
+    body { padding: 20px 30px; }
+    .cover { page-break-after: always; }
+    .section-title { break-after: avoid; }
+    table { break-inside: avoid; }
+    .step-box { break-inside: avoid; }
+    .feature-grid { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  COVER PAGE                                                       -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-badge">Confidential • Internal Training Document</div>
+  <h1>GGP-OS Platform Guide</h1>
+  <h2>Admin Onboarding & Operations Manual</h2>
+  <h3>Frontend Dashboard Navigation & Feature Reference</h3>
+  <div class="cover-divider"></div>
+  <div class="cover-territory">
+    <span>🏛 Mississippi (Primary)</span>
+    <span>Alabama</span>
+    <span>Arkansas</span>
+    <span>Louisiana</span>
+    <span>Tennessee</span>
+  </div>
+  <div class="cover-meta">
+    <p><strong>Platform:</strong> GGP-OS™ — Global Green Hybrid Platform Operating System</p>
+    <p><strong>URL:</strong> www.ggp-os.com</p>
+    <p><strong>Parent Company:</strong> Global Green Enterprise Inc.</p>
+    <p><strong>Document Version:</strong> 1.0 — June 2026</p>
+    <p><strong>Prepared for:</strong> Regional Admin Onboarding — Deep South Territory</p>
+    <p style="margin-top: 20px;"><strong>Toll-Free:</strong> 1-888-963-4447 (GGHP) | <strong>SMS:</strong> 645-246-8277</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  TABLE OF CONTENTS                                                 -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div class="toc">
+  <h3>📋 Table of Contents</h3>
+  <ol>
+    <li><strong>Platform Overview</strong> — What GGP-OS Is & How It Works</li>
+    <li><strong>Getting Started</strong> — Account Setup, Login & First Steps</li>
+    <li><strong>Admin Dashboard Deep Dive</strong> — Every Tab & Feature Explained</li>
+    <li><strong>Your Territory: State Regulatory Intelligence</strong> — MS, AL, AR, LA, TN</li>
+    <li><strong>CRM & Pipeline Management</strong> — Working Your Contacts & Leads</li>
+    <li><strong>Patient Intake & Medical Card Processing</strong> — End-to-End Flow</li>
+    <li><strong>Business Licensing & Compliance</strong> — Tracking, Metrc, BioTrack</li>
+    <li><strong>Sylara AI Assistant</strong> — Your 24/7 Digital Partner</li>
+    <li><strong>Communication Tools</strong> — Phone System, SMS, iMessage, Email</li>
+    <li><strong>Support & Troubleshooting</strong> — Where to Get Help</li>
+    <li><strong>Quick Reference Cards</strong> — Cheat Sheets & Shortcuts</li>
+  </ol>
+</div>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  SECTION 1: PLATFORM OVERVIEW                                      -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h1 class="section-number">Section 1</h1>
+<div class="section-title">Platform Overview — What GGP-OS Is</div>
+
+<p><strong>GGP-OS</strong> (Global Green Hybrid Platform — Operating System) is a production-grade RegTech and Telehealth SaaS platform that serves the cannabis industry across all 50 US states + DC. It is a live, revenue-generating enterprise system currently at <strong>www.ggp-os.com</strong>.</p>
+
+<div class="callout">
+  <strong>Think of GGP-OS as:</strong> A Salesforce + Zendesk + Compliance Engine built specifically for the cannabis industry. It handles patient intake, medical card processing, business licensing, CRM, billing, compliance monitoring, and AI-assisted support — all from one unified dashboard.
+</div>
+
+<div class="sub-title">Platform at a Glance</div>
+<table>
+  <tr><th>Metric</th><th>Value</th></tr>
+  <tr><td><strong>Total Dashboards</strong></td><td>37 role-based dashboards</td></tr>
+  <tr><td><strong>CRM Database</strong></td><td>24,900+ contacts across all 51 jurisdictions</td></tr>
+  <tr><td><strong>AI Assistants</strong></td><td>Sylara (Intake & Support) + L.A.R.R.Y. (Compliance Enforcement)</td></tr>
+  <tr><td><strong>Phone System</strong></td><td>Built-in Web Dialer (Twilio) — call directly from the browser</td></tr>
+  <tr><td><strong>Proven Revenue</strong></td><td>$192,131.70 lifetime (single product line, no marketing)</td></tr>
+  <tr><td><strong>Subscription Plans</strong></td><td>12 categories, 40+ plans, 70+ add-ons</td></tr>
+  <tr><td><strong>Tracking Systems</strong></td><td>Metrc (validated), BioTrack, MJ Freeway, Leaf Data</td></tr>
+  <tr><td><strong>Certifications</strong></td><td>SAM.gov Federal Supplier, SBA WOSB, HIPAA Compliant, BBB A+</td></tr>
+</table>
+
+<div class="sub-title">Key Integrations You'll Use</div>
+<div class="feature-grid">
+  <div class="feature-card">
+    <h4>🔥 Firebase</h4>
+    <p>User authentication, real-time database. All user accounts and sessions managed here.</p>
+  </div>
+  <div class="feature-card">
+    <h4>📊 Turso (LibSQL)</h4>
+    <p>Compliance audit trails, CRM data, call history. The backend brain for structured data.</p>
+  </div>
+  <div class="feature-card">
+    <h4>📞 Twilio</h4>
+    <p>VoIP calling, SMS, toll-free number. You can call clients right from your browser.</p>
+  </div>
+  <div class="feature-card">
+    <h4>💳 Stripe</h4>
+    <p>Payment processing. All patient fees, subscriptions, and business licenses processed here.</p>
+  </div>
+  <div class="feature-card">
+    <h4>📅 Calendly</h4>
+    <p>13 booking event types for patient consultations, business intakes, and legal referrals.</p>
+  </div>
+  <div class="feature-card">
+    <h4>🤖 Google Gemini AI</h4>
+    <p>Powers Sylara and L.A.R.R.Y. with real-time intelligence across all 50 states.</p>
+  </div>
+</div>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  SECTION 2: GETTING STARTED                                        -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h1 class="section-number">Section 2</h1>
+<div class="section-title">Getting Started — Account Setup & First Login</div>
+
+<div class="sub-title">Step-by-Step: Your First Login</div>
+
+<div class="step-box">
+  <span class="step-num">1</span><strong>Navigate to the Platform</strong>
+  <p>Open your browser and go to <strong>www.ggp-os.com</strong>. You'll see the GGP-OS landing page with company information, pricing, and login options.</p>
+</div>
+
+<div class="step-box">
+  <span class="step-num">2</span><strong>Create Your Account / Log In</strong>
+  <p>Click <strong>"Login / Register"</strong> in the top navigation bar. You can sign up with email/password or use Google Sign-In. During onboarding, your account will be assigned the <strong>Admin</strong> role by the Founder.</p>
+</div>
+
+<div class="step-box">
+  <span class="step-num">3</span><strong>Set Your Jurisdiction</strong>
+  <p>Once logged in, you'll see a <strong>Jurisdiction selector</strong> at the top of the dashboard (shows the state name with a dropdown). Set this to <strong>Mississippi</strong> as your primary. You can switch between states anytime for your surrounding territory (AL, AR, LA, TN).</p>
+</div>
+
+<div class="step-box">
+  <span class="step-num">4</span><strong>Explore Your Dashboard</strong>
+  <p>The left sidebar contains all your navigation sections. As an Admin, you have access to: Admin Overview, Staffing Intelligence, User Directory, Patient Registry, Commercial Nodes, CRM Pipeline, Compliance Monitor, AI Monitoring, Support Hub, and Settings.</p>
+</div>
+
+<div class="tip">
+  <strong>💡 Pro Tip:</strong> Your sidebar navigation is <strong>drag-and-drop customizable</strong>. You can reorder the menu items to match your workflow. Your arrangement is saved automatically.
+</div>
+
+<div class="sub-title">Understanding Roles</div>
+<p>GGP-OS has role-based access control. Here are the roles you'll encounter:</p>
+<table>
+  <tr><th>Role</th><th>Access Level</th><th>Description</th></tr>
+  <tr><td><strong>Founder/CEO</strong></td><td>God View</td><td>Full platform control, all dashboards, God Settings</td></tr>
+  <tr><td><strong>Admin</strong></td><td>Internal Command</td><td>User management, patient registry, CRM, compliance, support</td></tr>
+  <tr><td><strong>Rep</strong></td><td>Territory Sales</td><td>CRM pipeline, outbound calls, lead management</td></tr>
+  <tr><td><strong>Provider</strong></td><td>Clinical</td><td>Patient consultations, medical recommendations</td></tr>
+  <tr><td><strong>Patient</strong></td><td>Self-Service</td><td>Medical card applications, document vault, scheduling</td></tr>
+  <tr><td><strong>Business</strong></td><td>B2B Portal</td><td>Licensing, compliance tracking, Metrc/BioTrack data</td></tr>
+  <tr><td><strong>Attorney</strong></td><td>Legal</td><td>Legal consultations, compliance review, regulatory library</td></tr>
+</table>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  SECTION 3: ADMIN DASHBOARD                                        -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h1 class="section-number">Section 3</h1>
+<div class="section-title">Admin Dashboard — Your Command Center</div>
+
+<p>As an Admin, your dashboard is your primary workspace. Here's every tab and what it does:</p>
+
+<div class="sub-title">3.1 Admin Overview</div>
+<p>Your landing page. Shows real-time stats including:</p>
+<ul>
+  <li><strong>Total Patients</strong> — Live count from Firebase (all registered patients)</li>
+  <li><strong>Active Businesses</strong> — Commercial entities in the Turso database</li>
+  <li><strong>Staff Efficiency</strong> — AI-calculated performance metric</li>
+  <li><strong>System Alerts</strong> — Active compliance alerts requiring attention</li>
+  <li><strong>Operational Throughput</strong> — Visual bar chart of system activity</li>
+  <li><strong>AI Guardian Status</strong> — Sylara's auto-resolution rate and handover requests</li>
+</ul>
+
+<div class="sub-title">3.2 Staffing Intelligence</div>
+<p>Monitor all staff in real-time. See clock-in times, efficiency ratings, and current task assignments. You can:</p>
+<ul>
+  <li>Search staff by name</li>
+  <li>View efficiency percentages per employee</li>
+  <li>See their current task assignment</li>
+  <li>Audit or intercept underperforming staff</li>
+</ul>
+
+<div class="sub-title">3.3 Negligence Intercept</div>
+<p>Critical performance monitoring. This tab flags:</p>
+<ul>
+  <li><strong>Idle tasks</strong> — Staff who haven't acted on assigned tasks beyond the threshold (default: 30 minutes)</li>
+  <li><strong>Pattern divergences</strong> — Unusual throughput patterns flagged by AI</li>
+  <li><strong>Direct Intercept</strong> — Override a staff member's session in real-time</li>
+  <li><strong>Issue Warning</strong> — Send an official compliance warning to their account</li>
+</ul>
+
+<div class="sub-title">3.4 User Directory</div>
+<p>Complete list of all registered users (non-patient accounts). You can:</p>
+<ul>
+  <li>Filter by role: All Accounts, State Staff, Compliance Agent, Business Admin, Patient</li>
+  <li>Edit user profiles and role assignments</li>
+  <li>Suspend accounts (emergency suspension severs all API keys and portal access)</li>
+  <li>Create staff invitations</li>
+</ul>
+
+<div class="sub-title">3.5 Patient Registry & Case Management</div>
+<p>All registered patients with case management capabilities. Click any patient to open their full case file:</p>
+<ul>
+  <li>Patient contact info, state, role</li>
+  <li>Case notes and history</li>
+  <li>Medical card application status</li>
+  <li>Document vault access</li>
+  <li>Communication log</li>
+</ul>
+
+<div class="sub-title">3.6 Commercial Nodes</div>
+<p>Business entities in the compliance database. Shows:</p>
+<ul>
+  <li>Business name and type (dispensary, cultivator, processor, etc.)</li>
+  <li>Metrc/BioTrack sync status</li>
+  <li>License numbers</li>
+  <li>Audit trail access</li>
+</ul>
+
+<div class="sub-title">3.7 Global CRM Pipeline</div>
+<p>Your 24,900+ contact database. This is where you manage leads, track deals, and monitor your sales pipeline. See <strong>Section 5</strong> for detailed CRM training.</p>
+
+<div class="sub-title">3.8 Agency Approvals</div>
+<p>Internal pre-screening queue. Applications flow here before being transmitted to state agencies (OMMA, MMCP, etc.). You can approve, reject, or flag for manual review.</p>
+
+<div class="sub-title">3.9 Compliance Monitor</div>
+<p>Real-time compliance alerts from across the platform. Severity levels: Low, Medium, High, Critical. Each alert includes the affected entity, the violation type, and recommended action.</p>
+
+<div class="sub-title">3.10 AI Monitoring</div>
+<p>Monitor Sylara and L.A.R.R.Y.'s performance. See how many queries they're handling, their resolution rates, and any escalations to human agents.</p>
+
+<div class="sub-title">3.11 Regulatory Library</div>
+<p>Searchable database of Metrc User Guide sections, state laws, SOPs, and compliance rules. Filter by category: Overview, Operations, Admin, Inventory, Compliance.</p>
+
+<div class="sub-title">3.12 Support Hub</div>
+<p>Live support monitoring with call center metrics: average wait time, active agents, resolution rate. View and take over active escalations.</p>
+
+<div class="sub-title">3.13 Operations Calendar</div>
+<p>Shared calendar integrated with Google Calendar and Calendly. View all appointments, training sessions, and compliance deadlines.</p>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  SECTION 4: STATE REGULATORY INTELLIGENCE                          -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h1 class="section-number">Section 4</h1>
+<div class="section-title">Your Territory — State Regulatory Intelligence</div>
+
+<div class="highlight">
+  <strong>Your Coverage Area:</strong> You'll be primarily working <strong>Mississippi</strong> but also managing leads and contacts in the surrounding states: Alabama, Arkansas, Louisiana, and Tennessee. Each state has dramatically different cannabis laws — this section is your regulatory bible.
+</div>
+
+<div class="sub-title">4.1 Mississippi (Primary) <span class="badge badge-green">MEDICAL</span></div>
+<table>
+  <tr><th>Detail</th><th>Value</th></tr>
+  <tr><td><strong>Program Type</strong></td><td>Medical Cannabis Only</td></tr>
+  <tr><td><strong>Governing Authority</strong></td><td>MMCP — Mississippi Medical Cannabis Programs (under MSDH)</td></tr>
+  <tr><td><strong>Enabling Legislation</strong></td><td>SB 2095 (Mississippi Medical Cannabis Act, signed Feb 2022)</td></tr>
+  <tr><td><strong>Tracking System</strong></td><td><strong>BioTrack</strong> (NOT Metrc)</td></tr>
+  <tr><td><strong>Dispensaries</strong></td><td>200+ licensed</td></tr>
+  <tr><td><strong>Patient Monthly Limit</strong></td><td>3 ounces per month</td></tr>
+  <tr><td><strong>Home Grow</strong></td><td>Not permitted</td></tr>
+  <tr><td><strong>Qualifying Conditions</strong></td><td>Cancer, epilepsy, PTSD, chronic pain, multiple sclerosis, Parkinson's, Crohn's, sickle cell, HIV/AIDS, spastic quadriplegia, ALS, and more (22 qualifying conditions)</td></tr>
+  <tr><td><strong>Patient Card Fee</strong></td><td>$25 (state fee) + physician recommendation</td></tr>
+  <tr><td><strong>Key Contacts</strong></td><td>MSDH Medical Cannabis Program: (601) 206-1500</td></tr>
+  <tr><td><strong>Patient Portal</strong></td><td>medicalcannabis.ms.gov</td></tr>
+</table>
+
+<div class="callout">
+  <strong>Mississippi Specifics:</strong> Mississippi uses <strong>BioTrack</strong> (not Metrc) for seed-to-sale tracking. The program launched in 2022 under SB 2095. There are 22 qualifying medical conditions. Patients must see a Mississippi-licensed physician. Out-of-state reciprocity is <strong>NOT currently available</strong>. The state allows dispensaries, cultivators, processors, testing labs, transporters, disposal entities, and research facilities.
+</div>
+
+<div class="sub-title">4.2 Alabama <span class="badge badge-amber">MEDICAL — VERY RESTRICTIVE</span></div>
+<table>
+  <tr><th>Detail</th><th>Value</th></tr>
+  <tr><td><strong>Program Type</strong></td><td>Medical Only — NO FLOWER/SMOKABLE PRODUCTS</td></tr>
+  <tr><td><strong>Governing Authority</strong></td><td>AMCC — Alabama Medical Cannabis Commission</td></tr>
+  <tr><td><strong>Enabling Legislation</strong></td><td>SB 46 (Darren Wesley 'Ato' Hall Compassion Act, 2021)</td></tr>
+  <tr><td><strong>Allowed Forms</strong></td><td>Tablets, capsules, tinctures, topicals, suppositories, nebulizers, patches ONLY</td></tr>
+  <tr><td><strong>Program Status</strong></td><td>Delayed — licensing challenges and lawsuits</td></tr>
+  <tr><td><strong>Key Note</strong></td><td>One of the most restrictive medical programs in the US</td></tr>
+</table>
+
+<div class="warning">
+  <strong>⚠️ Alabama Warning:</strong> NO smokable/flower cannabis is permitted. Only processed forms (tablets, capsules, tinctures, topicals). The program has faced significant delays and litigation. Manage expectations with Alabama contacts — the market is extremely limited and still launching.
+</div>
+
+<div class="sub-title">4.3 Arkansas <span class="badge badge-green">MEDICAL</span></div>
+<table>
+  <tr><th>Detail</th><th>Value</th></tr>
+  <tr><td><strong>Program Type</strong></td><td>Medical Cannabis</td></tr>
+  <tr><td><strong>Governing Authority</strong></td><td>AMMC — Arkansas Medical Marijuana Commission + ABC (Alcoholic Beverage Control)</td></tr>
+  <tr><td><strong>Enabling Legislation</strong></td><td>Amendment 98 (Arkansas Medical Marijuana Amendment, 2016)</td></tr>
+  <tr><td><strong>Tracking System</strong></td><td><strong>BioTrack</strong></td></tr>
+  <tr><td><strong>Dispensaries</strong></td><td>40 licensed dispensaries</td></tr>
+  <tr><td><strong>Cultivators</strong></td><td>5 licensed cultivators (limited license)</td></tr>
+  <tr><td><strong>Patient Limit</strong></td><td>2.5 ounces per 14-day period</td></tr>
+  <tr><td><strong>Reciprocity</strong></td><td>YES — accepts out-of-state cards (30-day temporary)</td></tr>
+</table>
+
+<div class="sub-title">4.4 Louisiana <span class="badge badge-green">MEDICAL</span></div>
+<table>
+  <tr><th>Detail</th><th>Value</th></tr>
+  <tr><td><strong>Program Type</strong></td><td>Medical Cannabis — Any physician can recommend</td></tr>
+  <tr><td><strong>Governing Authority</strong></td><td>LDH — Louisiana Department of Health</td></tr>
+  <tr><td><strong>Tracking System</strong></td><td><strong>BioTrack</strong></td></tr>
+  <tr><td><strong>Dispensaries</strong></td><td>10 retail pharmacy permits</td></tr>
+  <tr><td><strong>Key Advantage</strong></td><td>ANY licensed physician can recommend cannabis (no special certification needed)</td></tr>
+  <tr><td><strong>Forms Available</strong></td><td>Flower, edibles, tinctures, topicals, metered-dose inhalers</td></tr>
+  <tr><td><strong>Reciprocity</strong></td><td>Limited — case-by-case basis</td></tr>
+</table>
+
+<div class="sub-title">4.5 Tennessee <span class="badge badge-red">FULLY ILLEGAL / CBD ONLY</span></div>
+<table>
+  <tr><th>Detail</th><th>Value</th></tr>
+  <tr><td><strong>Program Type</strong></td><td>NO cannabis program — CBD/Hemp only</td></tr>
+  <tr><td><strong>Cannabis Status</strong></td><td>Fully illegal (recreational and medical)</td></tr>
+  <tr><td><strong>CBD/Hemp</strong></td><td>Legal (Farm Bill compliant, &lt;0.3% THC)</td></tr>
+  <tr><td><strong>Opportunity</strong></td><td>CBD/Hemp businesses, advocacy contacts, legislative tracking</td></tr>
+</table>
+
+<div class="warning">
+  <strong>⚠️ Tennessee:</strong> Cannabis is fully illegal. Do NOT process medical card applications for Tennessee residents. Tennessee contacts should be categorized as <strong>advocacy/legislative</strong> in the CRM, or served under CBD/hemp compliance only. Track legislative bills that could change the law.
+</div>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  SECTION 5: CRM & PIPELINE                                        -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h1 class="section-number">Section 5</h1>
+<div class="section-title">CRM & Pipeline Management</div>
+
+<p>The GGP-OS CRM contains <strong>24,900+ contacts</strong> across all 51 jurisdictions. As an admin working the Deep South territory, you'll primarily work contacts in MS, AL, AR, LA, and TN.</p>
+
+<div class="sub-title">5.1 Contact Types in the CRM</div>
+<table>
+  <tr><th>Entity Type</th><th>Description</th><th>Your Territory Count</th></tr>
+  <tr><td><strong>Dispensary</strong></td><td>Licensed retail cannabis outlets</td><td>MS: 200+ | AR: 40 | LA: 10</td></tr>
+  <tr><td><strong>Grower/Cultivator</strong></td><td>Licensed cultivation facilities</td><td>AR: 5 | LA: varies</td></tr>
+  <tr><td><strong>Provider</strong></td><td>Physicians who recommend cannabis</td><td>Active across MS, AR, LA</td></tr>
+  <tr><td><strong>Attorney</strong></td><td>Cannabis law attorneys</td><td>All states</td></tr>
+  <tr><td><strong>Patient</strong></td><td>Individual medical card holders</td><td>MS, AR, LA</td></tr>
+  <tr><td><strong>Advocate</strong></td><td>Legislative/policy advocates</td><td>All states (esp. TN)</td></tr>
+  <tr><td><strong>Gov/State</strong></td><td>State regulatory officials</td><td>All states</td></tr>
+</table>
+
+<div class="sub-title">5.2 Working the CRM</div>
+<ul>
+  <li><strong>Filter by State:</strong> Use the jurisdiction dropdown to filter to your territory states</li>
+  <li><strong>Color-Coded Status:</strong> Green = Active/Converted | Yellow = Follow-Up Needed | Red = Inactive/Issue</li>
+  <li><strong>Click-to-Call:</strong> Use the Web Dialer (bottom-right green button) to call any contact directly from the CRM</li>
+  <li><strong>Add Notes:</strong> Every contact interaction should be logged with notes (date, outcome, next steps)</li>
+  <li><strong>Pipeline Stages:</strong> New Lead → Contacted → Qualified → Demo/Consult → Proposal → Closed Won/Lost</li>
+</ul>
+
+<div class="tip">
+  <strong>💡 Best Practice:</strong> After every outbound call, add a note to the contact with: what was discussed, their interest level (1-5), and the next scheduled follow-up date. This builds your territory intelligence.
+</div>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  SECTION 6: PATIENT INTAKE                                         -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h1 class="section-number">Section 6</h1>
+<div class="section-title">Patient Intake & Medical Card Processing</div>
+
+<div class="sub-title">6.1 How Patient Intake Works</div>
+<p>The patient journey through GGP-OS follows this flow:</p>
+
+<div class="step-box">
+  <span class="step-num">1</span><strong>Patient Registers</strong>
+  <p>Patient creates an account at www.ggp-os.com. They're automatically assigned the "Patient" role. Account syncs to Firebase + Turso CRM.</p>
+</div>
+
+<div class="step-box">
+  <span class="step-num">2</span><strong>Sylara Intake</strong>
+  <p>Sylara (AI assistant) greets the patient and asks: What state are you in? Based on the answer, Sylara pulls the correct program info, qualifying conditions, fees, and step-by-step instructions for that state.</p>
+</div>
+
+<div class="step-box">
+  <span class="step-num">3</span><strong>Physician Consultation</strong>
+  <p>Patient books a consultation via Calendly. The physician evaluates qualifying conditions and issues a recommendation.</p>
+</div>
+
+<div class="step-box">
+  <span class="step-num">4</span><strong>Payment Processing</strong>
+  <p>Patient pays via Stripe. Pricing is state-specific (see pricing table below).</p>
+</div>
+
+<div class="step-box">
+  <span class="step-num">5</span><strong>State Submission</strong>
+  <p>Application is submitted to the state portal (e.g., medicalcannabis.ms.gov for Mississippi). The patient's case status is updated in the admin dashboard.</p>
+</div>
+
+<div class="sub-title">6.2 Pricing for Your Territory States</div>
+<table>
+  <tr><th>State</th><th>Doctor Fee</th><th>GGP Processing</th><th>State Application</th><th>Total Estimate</th></tr>
+  <tr><td><strong>Mississippi</strong></td><td>~$150</td><td>$55</td><td>$25</td><td><strong>~$230</strong> (cost could vary)</td></tr>
+  <tr><td><strong>Arkansas</strong></td><td>~$200</td><td>$55</td><td>$50</td><td><strong>~$305</strong> (cost could vary)</td></tr>
+  <tr><td><strong>Louisiana</strong></td><td>~$150</td><td>$50</td><td>$0</td><td><strong>~$200</strong> (cost could vary)</td></tr>
+  <tr><td><strong>Alabama</strong></td><td>~$200</td><td>$60</td><td>$65</td><td><strong>~$325</strong> (cost could vary)</td></tr>
+  <tr><td><strong>Tennessee</strong></td><td colspan="4" style="text-align:center; color: #c62828; font-weight: 700;">N/A — No medical cannabis program</td></tr>
+</table>
+
+<div class="callout">
+  <strong>Important:</strong> ALWAYS say "(cost could vary)" after quoting any price. Prices are estimates and may change based on the physician's rates and state fee adjustments. GGP offers a <strong>hardship discount of up to $20 off</strong> the processing fee for patients who mention they can't afford it, are on Medicaid/Medicare, or are veterans.
+</div>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  SECTION 7: COMPLIANCE                                             -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h1 class="section-number">Section 7</h1>
+<div class="section-title">Business Licensing & Compliance</div>
+
+<div class="sub-title">7.1 Tracking Systems by State</div>
+<table>
+  <tr><th>State</th><th>Tracking System</th><th>License Types Available</th></tr>
+  <tr><td><strong>Mississippi</strong></td><td>BioTrack</td><td>Dispensary, Cultivator, Processor, Testing Lab, Transporter, Disposal, Research</td></tr>
+  <tr><td><strong>Arkansas</strong></td><td>BioTrack</td><td>Dispensary (40), Cultivator (5)</td></tr>
+  <tr><td><strong>Louisiana</strong></td><td>BioTrack</td><td>Retail Pharmacy Permit (10)</td></tr>
+  <tr><td><strong>Alabama</strong></td><td>TBD (launching)</td><td>Cultivator, Processor, Dispensary, Transporter, Testing Lab</td></tr>
+  <tr><td><strong>Tennessee</strong></td><td>N/A</td><td>No cannabis licensing</td></tr>
+</table>
+
+<div class="sub-title">7.2 GGP Business Licensing Fees</div>
+<table>
+  <tr><th>Complexity</th><th>GGP Processing Fee</th><th>Typical Use</th></tr>
+  <tr><td><strong>Simple</strong></td><td>$249</td><td>Single-license dispensary, straightforward applications</td></tr>
+  <tr><td><strong>Medium</strong></td><td>$349</td><td>Multi-license operations, cultivation + processing</td></tr>
+  <tr><td><strong>High</strong></td><td>$449</td><td>Complex vertically integrated operations</td></tr>
+</table>
+
+<div class="sub-title">7.3 Compliance Monitoring</div>
+<p>The Admin Dashboard's Compliance Monitor tracks:</p>
+<ul>
+  <li><strong>License renewal dates</strong> — alerts 90/60/30 days before expiration</li>
+  <li><strong>BioTrack sync status</strong> — ensures seed-to-sale data is current</li>
+  <li><strong>Inventory discrepancies</strong> — flags mismatches between reported and actual inventory</li>
+  <li><strong>Regulatory changes</strong> — alerts when state laws or rules change</li>
+  <li><strong>Audit readiness</strong> — ensures all documentation is current for state inspections</li>
+</ul>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  SECTION 8: SYLARA AI                                              -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h1 class="section-number">Section 8</h1>
+<div class="section-title">Sylara AI Assistant — Your 24/7 Digital Partner</div>
+
+<p><strong>Sylara</strong> is your AI-powered assistant built into every dashboard. She has deep knowledge of all 50 states' cannabis programs, pricing, regulations, and compliance requirements.</p>
+
+<div class="sub-title">8.1 What Sylara Can Do</div>
+<ul>
+  <li><strong>Answer state-specific questions</strong> — "What are the qualifying conditions in Mississippi?" → Sylara gives exact MS data</li>
+  <li><strong>Guide patient intake</strong> — Walk patients through the application process step by step</li>
+  <li><strong>Check pricing</strong> — "What does a medical card cost in Arkansas?" → Sylara breaks down all fees</li>
+  <li><strong>Compliance checks</strong> — "Is there reciprocity between Mississippi and Louisiana?" → Accurate answer</li>
+  <li><strong>Business licensing guidance</strong> — "How do I apply for a dispensary license in Mississippi?" → Full process</li>
+  <li><strong>Daily briefings</strong> — Click "Daily Brief" quick button for a summary of new signups, revenue, and alerts</li>
+</ul>
+
+<div class="sub-title">8.2 Quick Action Buttons</div>
+<p>At the top of Sylara's chat, you'll see quick action buttons:</p>
+<table>
+  <tr><th>Button</th><th>What It Does</th></tr>
+  <tr><td><strong>📊 Daily Brief</strong></td><td>Get a summary of today's activity, new signups, revenue, and pending tasks</td></tr>
+  <tr><td><strong>👤 New Signups</strong></td><td>See the latest user registrations and their states</td></tr>
+  <tr><td><strong>📞 Call Queue</strong></td><td>Review pending follow-up calls and outreach tasks</td></tr>
+  <tr><td><strong>💰 Revenue</strong></td><td>Current revenue status and pipeline forecast</td></tr>
+</table>
+
+<div class="tip">
+  <strong>💡 Pro Tip:</strong> Sylara streams responses word-by-word in real-time. She responds with state-specific data — never generic advice. If she doesn't have data for something, she'll say so rather than guessing.
+</div>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  SECTION 9: COMMUNICATION TOOLS                                    -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h1 class="section-number">Section 9</h1>
+<div class="section-title">Communication Tools</div>
+
+<div class="sub-title">9.1 Web Dialer (Built-in Phone)</div>
+<p>Look for the green <strong>"WEB DIALER • Ready (Click to Dial)"</strong> button in the bottom-right corner of your screen. This is a full VoIP phone system powered by Twilio.</p>
+<ul>
+  <li><strong>Caller ID:</strong> All outbound calls show <strong>1-888-963-4447</strong> (your toll-free number)</li>
+  <li><strong>Inbound Calls:</strong> When someone calls the toll-free number, Sylara answers with an IVR menu. The caller can reach you directly by selecting the appropriate department.</li>
+  <li><strong>Call History:</strong> All calls are logged automatically in the Turso database with date, duration, direction, and notes</li>
+  <li><strong>Voicemail:</strong> If you don't answer, callers can leave a voicemail. You'll be notified via the dashboard.</li>
+</ul>
+
+<div class="sub-title">9.2 How to Make an Outbound Call</div>
+<div class="step-box">
+  <span class="step-num">1</span> Click the green <strong>Web Dialer</strong> button (bottom-right corner)
+</div>
+<div class="step-box">
+  <span class="step-num">2</span> Type or paste the phone number (10-digit US format)
+</div>
+<div class="step-box">
+  <span class="step-num">3</span> Click the <strong>green call button</strong> to dial
+</div>
+<div class="step-box">
+  <span class="step-num">4</span> The call connects through your browser — use your computer's microphone and speakers (or headset)
+</div>
+
+<div class="sub-title">9.3 SMS & iMessage</div>
+<p>The platform has SMS (via Twilio, from 888-963-4447) and iMessage capability (via SendBlue, from 645-246-8277). Messages are accessible from the Support & Comms section.</p>
+
+<div class="sub-title">9.4 Internal Messenger</div>
+<p>Team members can send internal messages to each other through the platform. Access via the "Support & Comms" sidebar item.</p>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  SECTION 10: SUPPORT                                               -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h1 class="section-number">Section 10</h1>
+<div class="section-title">Support & Troubleshooting</div>
+
+<div class="sub-title">10.1 Getting Help</div>
+<table>
+  <tr><th>Channel</th><th>Contact</th><th>Use For</th></tr>
+  <tr><td><strong>Toll-Free</strong></td><td>1-888-963-4447</td><td>General inquiries, platform support</td></tr>
+  <tr><td><strong>SMS / iMessage</strong></td><td>645-246-8277</td><td>Quick questions, status updates</td></tr>
+  <tr><td><strong>Email (Support)</strong></td><td>asstsupport@gmail.com</td><td>Technical issues, account problems</td></tr>
+  <tr><td><strong>Email (General)</strong></td><td>globalgreenhp@gmail.com</td><td>Business inquiries, partnerships</td></tr>
+  <tr><td><strong>Sylara AI</strong></td><td>Built into dashboard</td><td>State-specific questions, platform guidance</td></tr>
+</table>
+
+<div class="sub-title">10.2 Common Issues & Solutions</div>
+<table>
+  <tr><th>Issue</th><th>Solution</th></tr>
+  <tr><td>Web Dialer shows "Token fetch failed"</td><td>Refresh the page. If persistent, clear browser cache and log in again.</td></tr>
+  <tr><td>Sylara not responding</td><td>Check internet connection. Try clicking "Clear Chat" and ask again.</td></tr>
+  <tr><td>CRM contacts not loading</td><td>Check your jurisdiction filter — it may be set to a state with no contacts.</td></tr>
+  <tr><td>Can't see certain dashboard tabs</td><td>Your role may not have access. Contact the Founder for role upgrade.</td></tr>
+  <tr><td>Payment not processing</td><td>Check Stripe dashboard for the specific error. Common: card declined, incorrect zip.</td></tr>
+</table>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  SECTION 11: QUICK REFERENCE                                       -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h1 class="section-number">Section 11</h1>
+<div class="section-title">Quick Reference Cards</div>
+
+<div class="sub-title">📋 Daily Workflow Checklist</div>
+<div class="step-box">
+  <p>☐ Log into <strong>www.ggp-os.com</strong> → Check Admin Overview for overnight alerts</p>
+  <p>☐ Ask Sylara for <strong>"Daily Brief"</strong> → Review new signups and pending tasks</p>
+  <p>☐ Check <strong>Patient Registry</strong> → Follow up on any pending applications</p>
+  <p>☐ Review <strong>CRM Pipeline</strong> → Call your top 5 follow-ups for the day</p>
+  <p>☐ Check <strong>Compliance Monitor</strong> → Resolve any active alerts</p>
+  <p>☐ Check <strong>Agency Approvals</strong> → Process any pending submissions</p>
+  <p>☐ Review <strong>Support Hub</strong> → Handle any escalated tickets</p>
+  <p>☐ End of day: Log notes on all calls made, update contact statuses</p>
+</div>
+
+<div class="sub-title">📞 Key Phone Numbers</div>
+<table>
+  <tr><th>Line</th><th>Number</th><th>Purpose</th></tr>
+  <tr><td><strong>Toll-Free (Main)</strong></td><td>1-888-963-4447</td><td>Primary business line, IVR, inbound</td></tr>
+  <tr><td><strong>SMS / iMessage</strong></td><td>645-246-8277</td><td>Text communications</td></tr>
+  <tr><td><strong>Telehealth Line</strong></td><td>(405) 252-1178</td><td>Patient consultations</td></tr>
+  <tr><td><strong>CCardz (Med Cards)</strong></td><td>(405) 492-7487</td><td>Medical card & business licensing</td></tr>
+  <tr><td><strong>MS MMCP Helpline</strong></td><td>(601) 206-1500</td><td>Mississippi state program inquiries</td></tr>
+</table>
+
+<div class="sub-title">🌐 Key Website Links</div>
+<table>
+  <tr><th>Resource</th><th>URL</th></tr>
+  <tr><td><strong>GGP-OS Platform</strong></td><td>www.ggp-os.com</td></tr>
+  <tr><td><strong>MS Patient Portal</strong></td><td>medicalcannabis.ms.gov</td></tr>
+  <tr><td><strong>AR AMMC Portal</strong></td><td>www.dfa.arkansas.gov/medical-marijuana-commission</td></tr>
+  <tr><td><strong>LA LDH Cannabis</strong></td><td>ldh.la.gov/page/medical-marijuana</td></tr>
+  <tr><td><strong>AL AMCC Portal</strong></td><td>amcc.alabama.gov</td></tr>
+</table>
+
+<div class="sub-title">🎯 Subscription Plans to Sell (B2B)</div>
+<table>
+  <tr><th>Plan</th><th>Monthly</th><th>Target</th></tr>
+  <tr><td>Cannabis B2B Starter</td><td><strong>$199/mo</strong></td><td>Single dispensary, basic compliance</td></tr>
+  <tr><td>Cannabis B2B Professional</td><td><strong>$249/mo</strong></td><td>Multi-location, full compliance + AI</td></tr>
+  <tr><td>Cannabis B2B Enterprise</td><td><strong>$499/mo</strong></td><td>MSOs, vertically integrated operations</td></tr>
+  <tr><td>Provider Basic</td><td><strong>$99/mo</strong></td><td>Individual physicians</td></tr>
+  <tr><td>Provider Full AI</td><td><strong>$499/mo</strong></td><td>Clinics with multiple providers</td></tr>
+  <tr><td>Attorney Basic</td><td><strong>$149/mo</strong></td><td>Solo cannabis attorneys</td></tr>
+</table>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  FOOTER                                                            -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div class="footer">
+  <p><em>This document is proprietary and confidential. It contains internal operational procedures and is intended solely for authorized GGP-OS personnel.</em></p>
+  <br>
+  <p><strong>Prepared by:</strong> Global Green Enterprise Inc. — Executive Division</p>
+  <p><strong>Document:</strong> GGP-OS Admin Platform Guide v1.0</p>
+  <p><strong>Date:</strong> June 25, 2026</p>
+  <p><strong>Territory:</strong> Deep South — Mississippi (Primary), Alabama, Arkansas, Louisiana, Tennessee</p>
+  <br>
+  <p>Toll-Free: 1-888-963-4447 (GGHP) | SMS: 645-246-8277 | Telehealth: (405) 252-1178 | CCardz: (405) 492-7487</p>
+  <p><strong>www.ggp-os.com</strong> — <strong>Confidential</strong></p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GGP-OS Backend Admin Training Manual — Global Green Enterprise Inc.</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; color: #1a1a2e; background: #fff; max-width: 900px; margin: 0 auto; padding: 40px 50px; line-height: 1.7; font-size: 13px; }
+  .cover { page-break-after: always; text-align: center; padding: 100px 40px 60px; }
+  .cover-badge { display: inline-block; background: #1a1a2e; color: white; padding: 8px 24px; border-radius: 30px; font-size: 10px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 40px; }
+  .cover h1 { font-size: 34px; font-weight: 900; color: #1a1a2e; margin-bottom: 8px; letter-spacing: -1px; }
+  .cover h2 { font-size: 18px; font-weight: 500; color: #555; margin-bottom: 6px; }
+  .cover h3 { font-size: 13px; font-weight: 400; color: #888; margin-bottom: 40px; }
+  .cover-divider { width: 80px; height: 4px; background: #0d3b2e; margin: 30px auto; border-radius: 2px; }
+  .cover-meta { margin-top: 40px; font-size: 11px; color: #999; }
+  .cover-meta strong { color: #0d3b2e; }
+  .section-title { font-size: 20px; font-weight: 900; color: #1a1a2e; border-bottom: 3px solid #0d3b2e; padding-bottom: 8px; margin: 35px 0 18px; }
+  h1.section-number { font-size: 11px; font-weight: 800; color: #0d3b2e; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 4px; }
+  .sub-title { font-size: 14px; font-weight: 700; color: #1a1a2e; margin: 22px 0 10px; }
+  p { margin: 8px 0; font-size: 12.5px; }
+  .callout { background: #f0faf6; border-left: 4px solid #0d3b2e; padding: 14px 18px; margin: 16px 0; font-size: 12px; border-radius: 0 8px 8px 0; }
+  .warning { background: #fef3cd; border-left: 4px solid #e6a800; padding: 14px 18px; margin: 16px 0; font-size: 12px; border-radius: 0 8px 8px 0; }
+  .tip { background: #e3f2fd; border-left: 4px solid #1976d2; padding: 14px 18px; margin: 16px 0; font-size: 12px; border-radius: 0 8px 8px 0; }
+  .critical { background: #fce4ec; border-left: 4px solid #c62828; padding: 14px 18px; margin: 16px 0; font-size: 12px; border-radius: 0 8px 8px 0; }
+  .highlight { background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-left: 4px solid #1b5e20; padding: 16px 20px; margin: 18px 0; font-size: 13px; border-radius: 0 8px 8px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0 18px; font-size: 11.5px; }
+  th { background: #1a1a2e; color: white; padding: 10px 12px; text-align: left; font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
+  td { padding: 8px 12px; border-bottom: 1px solid #e0e0e0; }
+  tr:nth-child(even) { background: #f8faf9; }
+  ul, ol { margin: 8px 0 12px 24px; }
+  li { margin: 5px 0; font-size: 12px; }
+  li strong { color: #0d3b2e; }
+  hr { border: none; border-top: 1px solid #e0e0e0; margin: 30px 0; }
+  .step-box { background: #fafbfc; border: 1px solid #e8e8e8; border-radius: 12px; padding: 16px 20px; margin: 10px 0; }
+  .step-num { display: inline-block; background: #1a1a2e; color: white; width: 24px; height: 24px; border-radius: 50%; text-align: center; line-height: 24px; font-size: 11px; font-weight: 800; margin-right: 10px; }
+  .cmd-box { background: #1a1a2e; color: #a5d6a7; padding: 14px 18px; border-radius: 8px; font-family: 'Consolas', 'Monaco', monospace; font-size: 11px; margin: 10px 0; overflow-x: auto; }
+  .cmd-label { color: #78909c; font-size: 10px; font-weight: 600; margin-bottom: 4px; display: block; }
+  .nav-path { background: #f5f5f5; border: 1px solid #e0e0e0; padding: 8px 14px; border-radius: 8px; font-family: 'Consolas', monospace; font-size: 11px; margin: 8px 0; color: #0d3b2e; }
+  .footer { margin-top: 40px; padding-top: 20px; border-top: 3px solid #1a1a2e; font-size: 11px; color: #666; }
+  .toc { background: #fafbfc; border: 1px solid #e0e0e0; border-radius: 12px; padding: 24px 30px; margin: 20px 0; }
+  .toc h3 { font-size: 14px; font-weight: 800; color: #1a1a2e; margin-bottom: 12px; }
+  .toc ol { margin: 0; padding-left: 20px; }
+  .toc li { margin: 6px 0; font-size: 12px; font-weight: 500; }
+  .agenda-block { background: #f8f9fa; border: 2px solid #0d3b2e; border-radius: 12px; padding: 20px; margin: 16px 0; }
+  .agenda-block h4 { color: #0d3b2e; font-size: 13px; font-weight: 800; margin-bottom: 8px; }
+  @media print { body { padding: 20px 30px; } .cover { page-break-after: always; } .section-title { break-after: avoid; } table { break-inside: avoid; } .step-box { break-inside: avoid; } }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  COVER PAGE                                                       -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-badge">Confidential • Backend Operations</div>
+  <h1>GGP-OS Backend<br>Training Manual</h1>
+  <h2>Admin Operations, System Configuration & Onboarding Procedures</h2>
+  <h3>Saturday Training Session Companion Guide</h3>
+  <div class="cover-divider"></div>
+  <div class="cover-meta">
+    <p><strong>Training Date:</strong> Saturday, June 28, 2026 — 10:00 AM CT</p>
+    <p><strong>Trainer:</strong> Shantell Robinson, Founder & CEO</p>
+    <p><strong>Platform:</strong> GGP-OS™ — www.ggp-os.com</p>
+    <p><strong>Document Version:</strong> 1.0 — June 2026</p>
+    <br>
+    <p><strong>Toll-Free:</strong> 1-888-963-4447 | <strong>SMS:</strong> 645-246-8277</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  TABLE OF CONTENTS                                                 -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div class="toc">
+  <h3>📋 Table of Contents</h3>
+  <ol>
+    <li><strong>Saturday Training Agenda</strong> — Session Timeline & Goals</li>
+    <li><strong>Account & User Onboarding</strong> — Creating Accounts, Assigning Roles</li>
+    <li><strong>Jurisdiction Configuration</strong> — Setting Up Mississippi & Surrounding States</li>
+    <li><strong>CRM Backend Operations</strong> — Managing 24,900+ Contacts</li>
+    <li><strong>Patient Intake Processing</strong> — Backend Workflow End-to-End</li>
+    <li><strong>Business Registration Backend</strong> — License Processing & Compliance</li>
+    <li><strong>Twilio Phone System Admin</strong> — Call Center Configuration</li>
+    <li><strong>Billing & Subscriptions</strong> — Stripe, Plans & Revenue Tracking</li>
+    <li><strong>AI System Management</strong> — Sylara & L.A.R.R.Y. Configuration</li>
+    <li><strong>Security & Compliance Protocols</strong> — HIPAA, Audit Trails, Access Control</li>
+    <li><strong>Reporting & Analytics</strong> — Dashboards, Exports & KPIs</li>
+    <li><strong>Emergency Procedures</strong> — System Escalation & Recovery</li>
+  </ol>
+</div>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  SECTION 1: TRAINING AGENDA                                        -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h1 class="section-number">Section 1</h1>
+<div class="section-title">Saturday Training Agenda — June 28, 2026</div>
+
+<div class="highlight">
+  <strong>Session Goal:</strong> By the end of this training, you will be able to independently manage your Mississippi territory using GGP-OS — including onboarding patients, processing applications, managing the CRM, using the phone system, and handling day-to-day admin operations.
+</div>
+
+<div class="agenda-block">
+  <h4>⏰ 10:00 AM — Welcome & Platform Overview (30 min)</h4>
+  <ul>
+    <li>Platform tour: Landing page → Login → Dashboard navigation</li>
+    <li>Role-based access: What you see vs. what patients/businesses see</li>
+    <li>Jurisdiction selector: Setting Mississippi as your primary state</li>
+    <li>Quick demo: Sylara AI interaction</li>
+  </ul>
+</div>
+
+<div class="agenda-block">
+  <h4>⏰ 10:30 AM — Account Setup & User Management (30 min)</h4>
+  <ul>
+    <li>Your account configuration: profile, settings, notification preferences</li>
+    <li>Creating new user accounts for your territory</li>
+    <li>Understanding role assignments and permissions</li>
+    <li>Practice: Create a test patient account and walk through their experience</li>
+  </ul>
+</div>
+
+<div class="agenda-block">
+  <h4>⏰ 11:00 AM — CRM Deep Dive & Territory Management (45 min)</h4>
+  <ul>
+    <li>Navigating the 24,900+ contact database</li>
+    <li>Filtering contacts by your territory states (MS, AL, AR, LA, TN)</li>
+    <li>Contact status management (color coding, pipeline stages)</li>
+    <li>Adding notes, scheduling follow-ups</li>
+    <li>Practice: Find and call 3 Mississippi contacts using the Web Dialer</li>
+  </ul>
+</div>
+
+<div class="agenda-block">
+  <h4>⏰ 11:45 AM — Break (15 min)</h4>
+</div>
+
+<div class="agenda-block">
+  <h4>⏰ 12:00 PM — Patient Intake & Medical Card Processing (45 min)</h4>
+  <ul>
+    <li>End-to-end patient flow: Registration → Intake → Consultation → Payment → State Submission</li>
+    <li>Mississippi-specific process: MMCP, qualifying conditions, BioTrack</li>
+    <li>Pricing walkthrough: Doctor fee + GGP processing + State fee</li>
+    <li>Practice: Process a simulated Mississippi patient intake</li>
+  </ul>
+</div>
+
+<div class="agenda-block">
+  <h4>⏰ 12:45 PM — Phone System & Communications (30 min)</h4>
+  <ul>
+    <li>Web Dialer hands-on: Making/receiving calls</li>
+    <li>Voicemail management</li>
+    <li>SMS and iMessage capabilities</li>
+    <li>Call logging and note-taking best practices</li>
+  </ul>
+</div>
+
+<div class="agenda-block">
+  <h4>⏰ 1:15 PM — Compliance, Billing & Wrap-Up (30 min)</h4>
+  <ul>
+    <li>Compliance monitor walkthrough</li>
+    <li>Subscription plans: What to sell, how to quote</li>
+    <li>Daily workflow review: Your daily checklist</li>
+    <li>Q&A and next steps</li>
+  </ul>
+</div>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  SECTION 2: USER ONBOARDING                                       -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h1 class="section-number">Section 2</h1>
+<div class="section-title">Account & User Onboarding</div>
+
+<div class="sub-title">2.1 Creating a New User Account</div>
+<p>There are two ways users join GGP-OS:</p>
+
+<div class="step-box">
+  <span class="step-num">A</span><strong>Self-Registration (Patient/Business)</strong>
+  <p>Users go to www.ggp-os.com → Click "Login/Register" → Create account with email/password or Google. They're automatically assigned a default role based on their registration type.</p>
+</div>
+
+<div class="step-box">
+  <span class="step-num">B</span><strong>Admin-Created Account (Staff/Internal)</strong>
+  <p>From your Admin Dashboard → User Directory → Click <strong>"Create Staff Invite"</strong>. Enter the new user's email, assign their role, and set their jurisdiction. They'll receive an invitation to create their account.</p>
+</div>
+
+<div class="sub-title">2.2 Role Assignment Matrix</div>
+<table>
+  <tr><th>Role</th><th>Can See</th><th>Can Do</th><th>Assign When</th></tr>
+  <tr><td><strong>admin</strong></td><td>Admin Dashboard, CRM, all patients</td><td>Create users, manage patients, process applications, run compliance</td><td>Territory managers, office admins</td></tr>
+  <tr><td><strong>rep</strong></td><td>Rep Dashboard, CRM subset</td><td>Outbound calls, lead management, pipeline updates</td><td>Sales reps, territory reps</td></tr>
+  <tr><td><strong>provider</strong></td><td>Provider Dashboard</td><td>Patient consultations, medical recommendations</td><td>Licensed physicians</td></tr>
+  <tr><td><strong>patient</strong></td><td>Patient Dashboard</td><td>Apply for med card, upload docs, schedule appointments</td><td>End-user patients (auto-assigned)</td></tr>
+  <tr><td><strong>business</strong></td><td>Business Dashboard</td><td>License tracking, compliance docs, BioTrack sync</td><td>Dispensary/cultivator/processor operators</td></tr>
+  <tr><td><strong>attorney</strong></td><td>Attorney Dashboard</td><td>Legal consultations, compliance review, regulatory library</td><td>Licensed cannabis/general attorneys</td></tr>
+  <tr><td><strong>internal_admin</strong></td><td>Admin + back-office tools</td><td>Same as admin + internal operations</td><td>Trusted internal team members</td></tr>
+</table>
+
+<div class="sub-title">2.3 Modifying User Roles</div>
+<div class="nav-path">Admin Dashboard → User Directory → Hover over user → Click "Edit" → Change role dropdown → Save</div>
+
+<div class="warning">
+  <strong>⚠️ Role Change Impact:</strong> Changing a user's role immediately changes what dashboard they see on their next login. It also updates their data access permissions. Always confirm with the Founder before promoting to admin-level roles.
+</div>
+
+<div class="sub-title">2.4 Suspending/Deactivating Accounts</div>
+<p>If you need to immediately revoke access:</p>
+<div class="nav-path">Admin Dashboard → User Directory → Hover over user → Click "Suspend"</div>
+<p>This triggers an <strong>Emergency Suspension</strong> which:</p>
+<ul>
+  <li>Severs all active API keys</li>
+  <li>Locks portal access immediately</li>
+  <li>Logs the action in the immutable audit trail</li>
+  <li>Sends notification to the Founder</li>
+</ul>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  SECTION 3: JURISDICTION                                           -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h1 class="section-number">Section 3</h1>
+<div class="section-title">Jurisdiction Configuration</div>
+
+<div class="sub-title">3.1 Setting Your Primary Jurisdiction</div>
+<p>The jurisdiction selector is at the top of every dashboard. It controls which state-specific data you see, which CRM contacts are filtered, and which regulatory rules apply.</p>
+
+<div class="step-box">
+  <span class="step-num">1</span><strong>Click the Jurisdiction dropdown</strong> at the top of the dashboard (shows current state name)
+</div>
+<div class="step-box">
+  <span class="step-num">2</span><strong>Select "Mississippi"</strong> as your primary jurisdiction
+</div>
+<div class="step-box">
+  <span class="step-num">3</span><strong>The dashboard reloads</strong> with Mississippi-specific data, contacts, and regulatory info
+</div>
+
+<div class="tip">
+  <strong>💡 Switching States:</strong> You can switch jurisdictions anytime without losing data. When working Alabama contacts, switch to Alabama. When calling Louisiana leads, switch to Louisiana. The CRM automatically filters to show contacts for the selected state.
+</div>
+
+<div class="sub-title">3.2 Multi-State Operations</div>
+<p>Your territory covers 5 states. Here's how to manage them efficiently:</p>
+<table>
+  <tr><th>State</th><th>Use Jurisdiction For</th><th>Frequency</th></tr>
+  <tr><td><strong>Mississippi</strong></td><td>Primary daily operations, patient intake, compliance</td><td>Daily — default setting</td></tr>
+  <tr><td><strong>Arkansas</strong></td><td>CRM outreach, provider recruitment, patient referrals</td><td>2-3x per week</td></tr>
+  <tr><td><strong>Louisiana</strong></td><td>CRM outreach, pharmacy permit contacts</td><td>2-3x per week</td></tr>
+  <tr><td><strong>Alabama</strong></td><td>Advocacy contacts, legislative tracking (program still launching)</td><td>Weekly monitoring</td></tr>
+  <tr><td><strong>Tennessee</strong></td><td>CBD/hemp contacts, advocacy, legislative tracking only</td><td>As needed</td></tr>
+</table>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  SECTION 4: CRM BACKEND                                           -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h1 class="section-number">Section 4</h1>
+<div class="section-title">CRM Backend Operations</div>
+
+<div class="sub-title">4.1 CRM Database Architecture</div>
+<p>The CRM is powered by <strong>Turso (LibSQL)</strong> — a serverless SQL database. All contacts, deals, and interaction logs are stored here with full audit trails.</p>
+<table>
+  <tr><th>Table</th><th>Purpose</th><th>Record Count</th></tr>
+  <tr><td><strong>crm_contacts</strong></td><td>All 24,900+ contacts: name, email, phone, state, entity type</td><td>24,900+</td></tr>
+  <tr><td><strong>crm_deals</strong></td><td>Pipeline deals: stage, value, assigned rep, last activity</td><td>Active pipeline</td></tr>
+  <tr><td><strong>crm_interactions</strong></td><td>Call logs, notes, emails, meeting records</td><td>Growing</td></tr>
+  <tr><td><strong>compliance_alerts</strong></td><td>System-generated compliance warnings</td><td>Rolling</td></tr>
+  <tr><td><strong>call_history</strong></td><td>All phone calls: caller, callee, duration, recording URL</td><td>Growing</td></tr>
+</table>
+
+<div class="sub-title">4.2 CRM Contact Management</div>
+
+<p><strong>Adding a New Contact:</strong></p>
+<div class="nav-path">Admin Dashboard → Global CRM Pipeline → Click "+ Add Contact" → Fill in details → Save</div>
+<p>Required fields: Name, Email or Phone, State, Entity Type (dispensary, grower, provider, etc.)</p>
+
+<p><strong>Editing a Contact:</strong></p>
+<div class="nav-path">Click on any contact row → Edit fields inline → Changes save automatically</div>
+
+<p><strong>Adding Interaction Notes:</strong></p>
+<div class="nav-path">Click contact → "Add Note" → Enter date, type (call/email/meeting), outcome, next steps → Save</div>
+
+<div class="sub-title">4.3 Pipeline Stages</div>
+<table>
+  <tr><th>Stage</th><th>Color</th><th>Description</th><th>Action Required</th></tr>
+  <tr><td><strong>New Lead</strong></td><td>🔵 Blue</td><td>Just entered the system</td><td>Initial outreach within 48 hours</td></tr>
+  <tr><td><strong>Contacted</strong></td><td>🟡 Yellow</td><td>First contact made</td><td>Schedule follow-up, qualify interest</td></tr>
+  <tr><td><strong>Qualified</strong></td><td>🟠 Orange</td><td>Confirmed interest, fits criteria</td><td>Send pricing, schedule demo</td></tr>
+  <tr><td><strong>Demo/Consult</strong></td><td>🟣 Purple</td><td>Demo or consultation completed</td><td>Send proposal, handle objections</td></tr>
+  <tr><td><strong>Proposal</strong></td><td>🔴 Red</td><td>Formal proposal sent</td><td>Follow up within 3 days</td></tr>
+  <tr><td><strong>Closed Won</strong></td><td>🟢 Green</td><td>Deal closed, subscription active</td><td>Begin onboarding</td></tr>
+  <tr><td><strong>Closed Lost</strong></td><td>⚫ Gray</td><td>Deal did not close</td><td>Log reason, add to nurture list</td></tr>
+</table>
+
+<div class="sub-title">4.4 Territory CRM Workflow</div>
+<div class="step-box">
+  <span class="step-num">1</span><strong>Morning: Filter CRM to your territory</strong>
+  <p>Set jurisdiction to Mississippi → Review all contacts needing follow-up today</p>
+</div>
+<div class="step-box">
+  <span class="step-num">2</span><strong>Outreach Block: Make calls (10 AM - 12 PM)</strong>
+  <p>Use Web Dialer to call top priority contacts. Log every call with notes.</p>
+</div>
+<div class="step-box">
+  <span class="step-num">3</span><strong>Afternoon: Process applications & follow up</strong>
+  <p>Check Patient Registry for new applications. Process Agency Approvals. Send follow-up emails.</p>
+</div>
+<div class="step-box">
+  <span class="step-num">4</span><strong>End of Day: Update pipeline & plan tomorrow</strong>
+  <p>Move contacts to correct pipeline stages. Schedule tomorrow's call list. Log any compliance items.</p>
+</div>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  SECTION 5: PATIENT INTAKE BACKEND                                 -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h1 class="section-number">Section 5</h1>
+<div class="section-title">Patient Intake Processing — Backend</div>
+
+<div class="sub-title">5.1 Backend Intake Flow</div>
+<p>When a patient completes intake, here's what happens behind the scenes and what you need to do:</p>
+
+<table>
+  <tr><th>Step</th><th>System Action</th><th>Your Action</th></tr>
+  <tr><td><strong>1. Registration</strong></td><td>Firebase creates auth account. User doc added to Firestore 'users' collection.</td><td>None — automatic. Shows up in your Patient Registry.</td></tr>
+  <tr><td><strong>2. Sylara Intake</strong></td><td>AI collects state, condition, preferences. Data stored in user profile.</td><td>Review intake data for completeness.</td></tr>
+  <tr><td><strong>3. Booking</strong></td><td>Calendly event created. Linked to patient record.</td><td>Ensure provider is available for the time slot.</td></tr>
+  <tr><td><strong>4. Consultation</strong></td><td>Provider marks recommendation in system.</td><td>Verify recommendation is recorded correctly.</td></tr>
+  <tr><td><strong>5. Payment</strong></td><td>Stripe processes payment. Receipt emailed. Revenue logged.</td><td>Check for failed payments. Follow up on declines.</td></tr>
+  <tr><td><strong>6. Application</strong></td><td>Patient submits documents to state portal.</td><td>Guide patient through state portal if needed. Track submission status.</td></tr>
+  <tr><td><strong>7. Approval</strong></td><td>State approves/denies. Status updated in system.</td><td>Notify patient of approval. Update their record status.</td></tr>
+</table>
+
+<div class="sub-title">5.2 Mississippi-Specific Backend Steps</div>
+<div class="callout">
+  <strong>Mississippi MMCP Process:</strong>
+  <ol>
+    <li>Patient sees Mississippi-licensed physician who is registered with MMCP</li>
+    <li>Physician enters recommendation into MMCP's practitioner portal</li>
+    <li>Patient goes to <strong>medicalcannabis.ms.gov</strong> and creates a patient account</li>
+    <li>Patient uploads: physician recommendation, photo ID, proof of MS residency</li>
+    <li>Patient pays $25 state application fee online</li>
+    <li>MSDH reviews and approves (typically 15-30 business days)</li>
+    <li>Patient receives digital medical cannabis card</li>
+    <li>Card valid for 1 year from issuance date</li>
+  </ol>
+</div>
+
+<div class="sub-title">5.3 Handling Failed Payments</div>
+<div class="nav-path">Admin Dashboard → Check Stripe dashboard (dashboard.stripe.com) → Filter by "Failed" → Contact patient</div>
+<p>Common failure reasons:</p>
+<ul>
+  <li><strong>Card declined:</strong> Ask patient to try a different card or contact their bank</li>
+  <li><strong>Incorrect billing zip:</strong> Patient entered wrong zip code for their card</li>
+  <li><strong>Insufficient funds:</strong> Suggest they try again later or use a different payment method</li>
+  <li><strong>3D Secure failed:</strong> Patient needs to complete bank authentication</li>
+</ul>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  SECTION 6: BUSINESS REGISTRATION                                  -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h1 class="section-number">Section 6</h1>
+<div class="section-title">Business Registration Backend</div>
+
+<div class="sub-title">6.1 Business Onboarding Flow</div>
+<table>
+  <tr><th>Step</th><th>System</th><th>Your Action</th></tr>
+  <tr><td><strong>1. Registration</strong></td><td>Business creates account, selects "Business" role</td><td>Review registration for completeness</td></tr>
+  <tr><td><strong>2. License Type Selection</strong></td><td>Business selects: Dispensary, Cultivator, Processor, etc.</td><td>Verify license type is available in their state</td></tr>
+  <tr><td><strong>3. Document Upload</strong></td><td>Business uploads: articles of incorporation, background checks, site plans</td><td>Review documents for state-specific requirements</td></tr>
+  <tr><td><strong>4. Compliance Check</strong></td><td>L.A.R.R.Y. AI runs automated compliance evaluation</td><td>Review AI findings, flag any issues</td></tr>
+  <tr><td><strong>5. Payment</strong></td><td>Stripe processes GGP licensing fee ($249-$449)</td><td>Confirm payment received</td></tr>
+  <tr><td><strong>6. State Submission</strong></td><td>Application packaged for state agency submission</td><td>Submit to appropriate state agency (MMCP for MS)</td></tr>
+  <tr><td><strong>7. Subscription Activation</strong></td><td>Business subscription plan activated</td><td>Ensure correct plan tier is assigned</td></tr>
+</table>
+
+<div class="sub-title">6.2 BioTrack Integration (MS, AR, LA)</div>
+<p>Mississippi, Arkansas, and Louisiana all use <strong>BioTrack</strong> for seed-to-sale tracking. When a business is onboarded:</p>
+<ul>
+  <li>Their BioTrack credentials are linked to their GGP-OS account</li>
+  <li>Inventory data syncs to the Compliance Monitor</li>
+  <li>Discrepancies between BioTrack records and GGP-OS are flagged automatically</li>
+  <li>All sync events are logged in the immutable audit trail</li>
+</ul>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  SECTION 7: PHONE SYSTEM                                          -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h1 class="section-number">Section 7</h1>
+<div class="section-title">Twilio Phone System Administration</div>
+
+<div class="sub-title">7.1 System Architecture</div>
+<table>
+  <tr><th>Component</th><th>Purpose</th><th>Details</th></tr>
+  <tr><td><strong>Toll-Free Number</strong></td><td>Primary business line</td><td>1-888-963-4447 (GGHP)</td></tr>
+  <tr><td><strong>SMS Number</strong></td><td>Text messaging</td><td>645-246-8277</td></tr>
+  <tr><td><strong>Web Dialer</strong></td><td>Browser-based softphone</td><td>Bottom-right corner of dashboard</td></tr>
+  <tr><td><strong>IVR</strong></td><td>Automated attendant</td><td>Sylara greets callers, routes to departments</td></tr>
+  <tr><td><strong>Call Recording</strong></td><td>Compliance recording</td><td>All calls recorded for quality assurance</td></tr>
+  <tr><td><strong>Voicemail</strong></td><td>After-hours/missed calls</td><td>Voicemail transcripts emailed to admin</td></tr>
+</table>
+
+<div class="sub-title">7.2 Call Handling Best Practices</div>
+<ul>
+  <li><strong>Answer within 3 rings</strong> when the Web Dialer shows an incoming call</li>
+  <li><strong>Identify yourself:</strong> "Thank you for calling GGP-OS, this is [Name], how can I help you?"</li>
+  <li><strong>Log every call:</strong> After hanging up, immediately add notes to the contact's CRM record</li>
+  <li><strong>Transfer correctly:</strong> If you can't help, note the caller's info and have the right person call back</li>
+  <li><strong>Voicemail follow-up:</strong> Check voicemails at least 3x per day (morning, after lunch, end of day)</li>
+</ul>
+
+<div class="sub-title">7.3 Call History & Reporting</div>
+<p>All calls are automatically logged in the Turso database with:</p>
+<ul>
+  <li>Call SID (unique identifier)</li>
+  <li>From/To numbers</li>
+  <li>Direction (inbound/outbound)</li>
+  <li>Duration</li>
+  <li>Recording URL (if applicable)</li>
+  <li>Timestamp</li>
+  <li>Department routed to</li>
+</ul>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  SECTION 8: BILLING                                                -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h1 class="section-number">Section 8</h1>
+<div class="section-title">Billing & Subscriptions</div>
+
+<div class="sub-title">8.1 Payment Processing</div>
+<p>GGP-OS uses <strong>Stripe</strong> as the primary payment processor. All transactions are PCI-compliant.</p>
+<table>
+  <tr><th>Payment Type</th><th>Processor</th><th>Revenue Split</th></tr>
+  <tr><td><strong>Patient Medical Cards</strong></td><td>Stripe</td><td>GGP processing fee retained</td></tr>
+  <tr><td><strong>Business Licensing</strong></td><td>Stripe</td><td>GGP licensing fee ($249-$449) retained</td></tr>
+  <tr><td><strong>Monthly Subscriptions</strong></td><td>Stripe (recurring)</td><td>Full subscription amount</td></tr>
+  <tr><td><strong>One-time Services</strong></td><td>Stripe</td><td>Full service fee</td></tr>
+  <tr><td><strong>Backup Processing</strong></td><td>Authorize.net</td><td>Used when Stripe is unavailable</td></tr>
+</table>
+
+<div class="sub-title">8.2 Subscription Plan Management</div>
+<p>When onboarding a business to a paid plan:</p>
+<div class="step-box">
+  <span class="step-num">1</span><strong>Determine the correct plan tier</strong> based on their needs (Starter/Professional/Enterprise)
+</div>
+<div class="step-box">
+  <span class="step-num">2</span><strong>Quote the price</strong> — always mention "(cost could vary)" and the 30-day free trial
+</div>
+<div class="step-box">
+  <span class="step-num">3</span><strong>Send payment link</strong> through the platform or direct Stripe checkout
+</div>
+<div class="step-box">
+  <span class="step-num">4</span><strong>Confirm subscription activated</strong> — check Stripe dashboard for successful charge
+</div>
+<div class="step-box">
+  <span class="step-num">5</span><strong>Update CRM</strong> — move contact to "Closed Won" stage with subscription details in notes
+</div>
+
+<div class="sub-title">8.3 Revenue Tracking</div>
+<p>Revenue is tracked at multiple levels:</p>
+<ul>
+  <li><strong>Stripe Dashboard:</strong> Real-time payment data, refunds, disputes</li>
+  <li><strong>GGP-OS Founder Dashboard:</strong> Revenue overview, stream breakdown, forecast</li>
+  <li><strong>Sylara AI:</strong> Ask "Revenue update" for an instant summary</li>
+</ul>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  SECTION 9: AI MANAGEMENT                                         -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h1 class="section-number">Section 9</h1>
+<div class="section-title">AI System Management</div>
+
+<div class="sub-title">9.1 Sylara — Intake & Support AI</div>
+<table>
+  <tr><th>Variant</th><th>Used In</th><th>Personality</th></tr>
+  <tr><td><strong>General</strong></td><td>Public-facing chat, landing page</td><td>Professional, warm, compliance-focused</td></tr>
+  <tr><td><strong>Med-Card</strong></td><td>Patient intake flow</td><td>Patient-friendly, step-by-step guidance</td></tr>
+  <tr><td><strong>GGMA</strong></td><td>Sector intake agent</td><td>Regulatory onboarding specialist</td></tr>
+  <tr><td><strong>Business</strong></td><td>Business dashboard</td><td>Compliance enforcement, professional</td></tr>
+  <tr><td><strong>Executive</strong></td><td>Founder/CEO dashboard</td><td>Vibrant, decisive, executive-level</td></tr>
+</table>
+
+<div class="sub-title">9.2 L.A.R.R.Y. — Compliance Enforcement AI</div>
+<p>L.A.R.R.Y. (Licensing Authority & Regulatory Review sYstem) handles:</p>
+<ul>
+  <li><strong>Intake evaluation:</strong> Screens all new applications for red flags</li>
+  <li><strong>Discrepancy flagging:</strong> Analyzes compliance records for anomalies</li>
+  <li><strong>Risk assessment:</strong> Assigns risk levels (LOW / MEDIUM / HIGH / CRITICAL)</li>
+  <li><strong>Enforcement recommendations:</strong> Suggests specific actions for each flagged item</li>
+</ul>
+
+<div class="sub-title">9.3 AI Monitoring</div>
+<div class="nav-path">Admin Dashboard → AI Monitoring tab → View auto-resolution rate, handover requests, active threads</div>
+<p>Key metrics to watch:</p>
+<ul>
+  <li><strong>Auto-Resolution Rate:</strong> Should stay above 85%. If it drops, Sylara may need updated knowledge.</li>
+  <li><strong>Human Handover Rate:</strong> Should stay below 15%. High rates indicate complex queries Sylara can't handle.</li>
+  <li><strong>Response Quality:</strong> Spot-check Sylara's responses periodically for accuracy.</li>
+</ul>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  SECTION 10: SECURITY                                              -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h1 class="section-number">Section 10</h1>
+<div class="section-title">Security & Compliance Protocols</div>
+
+<div class="sub-title">10.1 HIPAA Compliance</div>
+<p>GGP-OS handles protected health information (PHI). You must:</p>
+<ul>
+  <li><strong>Never share patient data</strong> outside the platform</li>
+  <li><strong>Never screenshot</strong> patient records for personal use</li>
+  <li><strong>Always use secure channels</strong> (platform messaging, not personal email)</li>
+  <li><strong>Log out when away</strong> from your computer</li>
+  <li><strong>Use strong passwords</strong> and enable 2FA if available</li>
+</ul>
+
+<div class="critical">
+  <strong>🔴 HIPAA Violation Warning:</strong> Sharing patient medical information through unsecured channels (personal email, text, social media) is a federal offense. All communication about patient records must happen through the GGP-OS platform or encrypted channels.
+</div>
+
+<div class="sub-title">10.2 Immutable Audit Trail</div>
+<p>Every action in the system is logged and cannot be deleted or modified. The audit trail records:</p>
+<ul>
+  <li>Who made the change (user ID, role, email)</li>
+  <li>What was changed (field, old value, new value)</li>
+  <li>When (timestamp with timezone)</li>
+  <li>Why (action type: manual edit, AI decision, system auto)</li>
+</ul>
+
+<div class="sub-title">10.3 Data Access Rules</div>
+<table>
+  <tr><th>Data Type</th><th>Who Can Access</th><th>Restriction</th></tr>
+  <tr><td><strong>Patient Records</strong></td><td>Admin, Provider, Founder</td><td>Read-only for reps</td></tr>
+  <tr><td><strong>Financial Data</strong></td><td>Admin, Founder</td><td>No rep access</td></tr>
+  <tr><td><strong>CRM Contacts</strong></td><td>Admin, Rep, Founder</td><td>Reps see their territory only</td></tr>
+  <tr><td><strong>Compliance Alerts</strong></td><td>Admin, Founder, Compliance Dir.</td><td>No patient/business access</td></tr>
+  <tr><td><strong>Call Recordings</strong></td><td>Admin, Founder</td><td>Quality assurance only</td></tr>
+  <tr><td><strong>God Settings</strong></td><td>Founder only</td><td>PIN-protected access</td></tr>
+</table>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  SECTION 11: REPORTING                                             -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h1 class="section-number">Section 11</h1>
+<div class="section-title">Reporting & Analytics</div>
+
+<div class="sub-title">11.1 Key Performance Indicators (KPIs)</div>
+<table>
+  <tr><th>KPI</th><th>Target</th><th>Where to Find</th></tr>
+  <tr><td><strong>Daily Outbound Calls</strong></td><td>20+ calls per day</td><td>Call History in Admin Dashboard</td></tr>
+  <tr><td><strong>Contact Conversion Rate</strong></td><td>10-15% of contacted → qualified</td><td>CRM Pipeline Analytics</td></tr>
+  <tr><td><strong>Patient Intake Completion</strong></td><td>80%+ of started intakes completed</td><td>Patient Registry</td></tr>
+  <tr><td><strong>First Response Time</strong></td><td>Under 2 hours for new leads</td><td>CRM interaction timestamps</td></tr>
+  <tr><td><strong>Revenue per Territory</strong></td><td>Track monthly growth</td><td>Stripe + Founder Dashboard</td></tr>
+  <tr><td><strong>Compliance Resolution</strong></td><td>100% within 24 hours</td><td>Compliance Monitor</td></tr>
+</table>
+
+<div class="sub-title">11.2 Generating Reports</div>
+<p>Reports can be generated through several channels:</p>
+<ul>
+  <li><strong>Sylara AI:</strong> Ask "Give me a territory report for Mississippi" — instant analysis</li>
+  <li><strong>Admin Overview:</strong> Real-time stats dashboard with visual charts</li>
+  <li><strong>Stripe Dashboard:</strong> Financial reports, revenue breakdowns, payment analytics</li>
+  <li><strong>Export:</strong> CRM data can be exported for offline analysis when needed</li>
+</ul>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  SECTION 12: EMERGENCY                                             -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h1 class="section-number">Section 12</h1>
+<div class="section-title">Emergency Procedures</div>
+
+<div class="sub-title">12.1 Escalation Matrix</div>
+<table>
+  <tr><th>Situation</th><th>Severity</th><th>Escalate To</th><th>Timeline</th></tr>
+  <tr><td>Platform is down / unreachable</td><td>🔴 Critical</td><td>Founder (Shantell)</td><td>Immediately</td></tr>
+  <tr><td>Suspected data breach / hack</td><td>🔴 Critical</td><td>Founder + Legal</td><td>Immediately</td></tr>
+  <tr><td>Patient complaint about billing</td><td>🟡 Medium</td><td>Handle yourself, log in CRM</td><td>Within 2 hours</td></tr>
+  <tr><td>Regulatory inspection notice</td><td>🔴 Critical</td><td>Founder + Compliance</td><td>Immediately</td></tr>
+  <tr><td>Staff performance issue</td><td>🟡 Medium</td><td>Document, report weekly</td><td>End of day</td></tr>
+  <tr><td>AI giving wrong information</td><td>🟠 High</td><td>Founder (for AI update)</td><td>Within 1 hour</td></tr>
+  <tr><td>Payment processor down</td><td>🟠 High</td><td>Founder, switch to Authorize.net</td><td>Within 30 min</td></tr>
+</table>
+
+<div class="sub-title">12.2 Emergency Contact Numbers</div>
+<table>
+  <tr><th>Contact</th><th>Number / Email</th><th>Role</th></tr>
+  <tr><td><strong>Shantell Robinson</strong></td><td>Via platform or toll-free</td><td>Founder / CEO — Final escalation</td></tr>
+  <tr><td><strong>Platform Support</strong></td><td>asstsupport@gmail.com</td><td>Technical issues</td></tr>
+  <tr><td><strong>Toll-Free Hotline</strong></td><td>1-888-963-4447</td><td>General support</td></tr>
+</table>
+
+<div class="highlight">
+  <strong>Remember:</strong> When in doubt, escalate. It's always better to ask for guidance than to make an incorrect decision that affects a patient's application or a business's compliance status.
+</div>
+
+<hr>
+
+<!-- FOOTER -->
+<div class="footer">
+  <p><em>This document is proprietary and confidential. It contains internal backend operational procedures and is intended solely for authorized GGP-OS personnel.</em></p>
+  <br>
+  <p><strong>Prepared by:</strong> Global Green Enterprise Inc. — Executive Division</p>
+  <p><strong>Document:</strong> GGP-OS Backend Admin Training Manual v1.0</p>
+  <p><strong>Date:</strong> June 25, 2026</p>
+  <p><strong>Training Session:</strong> Saturday, June 28, 2026 — 10:00 AM CT</p>
+  <br>
+  <p>Toll-Free: 1-888-963-4447 (GGHP) | SMS: 645-246-8277 | Telehealth: (405) 252-1178</p>
+  <p><strong>www.ggp-os.com</strong> — <strong>Confidential</strong></p>
+</div>
+
+</body>
+</html>

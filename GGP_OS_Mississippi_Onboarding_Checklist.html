@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mississippi Admin Onboarding Checklist — GGP-OS</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; color: #1a1a2e; background: #fff; max-width: 850px; margin: 0 auto; padding: 30px 40px; line-height: 1.6; font-size: 12px; }
+  
+  .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #0d3b2e; padding-bottom: 16px; margin-bottom: 24px; }
+  .header-left h1 { font-size: 22px; font-weight: 900; color: #0d3b2e; letter-spacing: -0.5px; }
+  .header-left p { font-size: 11px; color: #666; font-weight: 500; }
+  .header-right { text-align: right; font-size: 10px; color: #888; }
+  .header-right strong { color: #0d3b2e; display: block; font-size: 11px; }
+  
+  .section-header { background: #0d3b2e; color: white; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin: 20px 0 12px; display: flex; justify-content: space-between; align-items: center; }
+  .section-header span { font-size: 10px; font-weight: 600; letter-spacing: 0; text-transform: none; opacity: 0.8; }
+  
+  .checklist { list-style: none; margin: 0; padding: 0; }
+  .checklist li { display: flex; align-items: flex-start; gap: 10px; padding: 7px 0; border-bottom: 1px solid #f0f0f0; font-size: 11.5px; }
+  .checklist li:last-child { border-bottom: none; }
+  .checkbox { width: 16px; height: 16px; border: 2px solid #0d3b2e; border-radius: 3px; flex-shrink: 0; margin-top: 1px; }
+  .checklist li strong { color: #0d3b2e; }
+  
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  
+  .info-box { background: #f0faf6; border: 1px solid #c8e6c9; border-radius: 8px; padding: 12px 16px; margin: 12px 0; font-size: 11px; }
+  .info-box strong { color: #0d3b2e; }
+  
+  .warning-box { background: #fef3cd; border: 1px solid #f0d080; border-radius: 8px; padding: 10px 14px; margin: 12px 0; font-size: 10px; font-weight: 600; color: #856404; }
+  
+  .contact-strip { background: #1a1a2e; color: white; padding: 12px 20px; border-radius: 8px; margin-top: 20px; display: flex; justify-content: space-between; align-items: center; font-size: 10px; }
+  .contact-strip strong { color: #a5d6a7; }
+  
+  .notes-area { border: 2px dashed #d0d0d0; border-radius: 8px; padding: 14px; margin-top: 16px; min-height: 80px; }
+  .notes-area p { font-size: 10px; color: #999; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+  
+  .quick-ref { background: #fafbfc; border: 1px solid #e8e8e8; border-radius: 8px; padding: 12px 16px; margin: 8px 0; }
+  .quick-ref h4 { font-size: 11px; font-weight: 800; color: #0d3b2e; margin-bottom: 6px; }
+  .quick-ref table { width: 100%; font-size: 10px; }
+  .quick-ref td { padding: 3px 6px; border: none; }
+  .quick-ref td:first-child { font-weight: 700; color: #555; width: 35%; }
+  
+  @media print {
+    body { padding: 15px 25px; }
+    .checkbox { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <h1>🏛 Mississippi Admin Onboarding Checklist</h1>
+    <p>GGP-OS Territory Setup — Deep South Region (MS, AL, AR, LA, TN)</p>
+  </div>
+  <div class="header-right">
+    <strong>Saturday, June 28, 2026</strong>
+    Training: 10:00 AM CT<br>
+    Trainer: Shantell Robinson<br>
+    www.ggp-os.com
+  </div>
+</div>
+
+<!-- PRE-SESSION -->
+<div class="section-header">
+  ☐ Pre-Session Setup (Before Saturday)
+  <span>Complete before training</span>
+</div>
+<ul class="checklist">
+  <li><div class="checkbox"></div><strong>Read Frontend Guide:</strong> Review the "GGP-OS Admin Platform Guide" PDF sent by Shantell</li>
+  <li><div class="checkbox"></div><strong>Create GGP-OS Account:</strong> Go to www.ggp-os.com → Register with your email → Confirm email</li>
+  <li><div class="checkbox"></div><strong>Equipment Check:</strong> Computer with Chrome/Edge browser, headset or earbuds with mic (for Web Dialer), stable internet</li>
+  <li><div class="checkbox"></div><strong>Note Mississippi credentials:</strong> Be familiar with MMCP (medicalcannabis.ms.gov), SB 2095, BioTrack</li>
+</ul>
+
+<!-- ACCOUNT SETUP -->
+<div class="section-header">
+  ☐ Account & Role Configuration
+  <span>Done during training session</span>
+</div>
+<ul class="checklist">
+  <li><div class="checkbox"></div><strong>Role assigned:</strong> Founder promotes your account to <strong>Admin</strong> role</li>
+  <li><div class="checkbox"></div><strong>Jurisdiction set:</strong> Set primary jurisdiction to <strong>Mississippi</strong> (top dropdown)</li>
+  <li><div class="checkbox"></div><strong>Profile completed:</strong> Full name, phone, email, profile settings saved</li>
+  <li><div class="checkbox"></div><strong>Web Dialer tested:</strong> Green "Ready" indicator visible → make a test call</li>
+  <li><div class="checkbox"></div><strong>Sylara tested:</strong> Open Sylara chat → Ask "What are the qualifying conditions in Mississippi?"</li>
+  <li><div class="checkbox"></div><strong>Sidebar customized:</strong> Drag-and-drop nav items to your preferred order</li>
+</ul>
+
+<!-- TERRITORY SETUP -->
+<div class="section-header">
+  ☐ Territory Configuration
+  <span>5 states to manage</span>
+</div>
+
+<div class="two-col">
+  <div>
+    <ul class="checklist">
+      <li><div class="checkbox"></div><strong>Mississippi (Primary):</strong> Set as default jurisdiction. MMCP/MSDH, BioTrack, 200+ dispensaries</li>
+      <li><div class="checkbox"></div><strong>Arkansas:</strong> AMMC, BioTrack, 40 dispensaries, 5 cultivators. Reciprocity: YES</li>
+      <li><div class="checkbox"></div><strong>Louisiana:</strong> LDH, BioTrack, 10 pharmacy permits. Any physician can recommend</li>
+    </ul>
+  </div>
+  <div>
+    <ul class="checklist">
+      <li><div class="checkbox"></div><strong>Alabama:</strong> AMCC, delayed program. NO flower allowed — tablets/capsules/topicals only</li>
+      <li><div class="checkbox"></div><strong>Tennessee:</strong> FULLY ILLEGAL — CBD/hemp only. Advocacy contacts and legislative tracking only</li>
+    </ul>
+    <div class="warning-box">⚠️ Never process medical card applications for Tennessee residents</div>
+  </div>
+</div>
+
+<!-- CRM & PIPELINE -->
+<div class="section-header">
+  ☐ CRM & Pipeline Activation
+  <span>Your contact database</span>
+</div>
+<ul class="checklist">
+  <li><div class="checkbox"></div><strong>Navigate to CRM:</strong> Admin Dashboard → Global CRM Pipeline</li>
+  <li><div class="checkbox"></div><strong>Filter by territory:</strong> Switch jurisdiction to each state, note contact counts</li>
+  <li><div class="checkbox"></div><strong>Identify top contacts:</strong> Find 10 high-priority Mississippi contacts for first-week outreach</li>
+  <li><div class="checkbox"></div><strong>Test click-to-call:</strong> Use Web Dialer to call a test number from the CRM</li>
+  <li><div class="checkbox"></div><strong>Practice adding notes:</strong> Click any contact → Add a test interaction note → Save</li>
+  <li><div class="checkbox"></div><strong>Understand pipeline stages:</strong> New Lead → Contacted → Qualified → Demo → Proposal → Closed</li>
+</ul>
+
+<!-- PATIENT INTAKE -->
+<div class="section-header">
+  ☐ Patient Intake Readiness
+  <span>Mississippi medical card flow</span>
+</div>
+<ul class="checklist">
+  <li><div class="checkbox"></div><strong>Know the pricing:</strong> Doctor ~$150 + GGP $55 + State $25 = ~$230 (cost could vary)</li>
+  <li><div class="checkbox"></div><strong>Know the process:</strong> Physician → MMCP Portal → $25 fee → 15-30 days → Digital card</li>
+  <li><div class="checkbox"></div><strong>Know qualifying conditions:</strong> 22 conditions (cancer, epilepsy, PTSD, chronic pain, MS, etc.)</li>
+  <li><div class="checkbox"></div><strong>Know the state portal:</strong> medicalcannabis.ms.gov (patient registration)</li>
+  <li><div class="checkbox"></div><strong>Hardship discount:</strong> Up to $20 off GGP fee for Medicaid/Medicare/VA/financial hardship</li>
+  <li><div class="checkbox"></div><strong>Test Calendly booking:</strong> Verify you can see booking events in the Operations Calendar</li>
+</ul>
+
+<!-- COMPLIANCE -->
+<div class="section-header">
+  ☐ Compliance & Security
+  <span>Critical protocols</span>
+</div>
+<ul class="checklist">
+  <li><div class="checkbox"></div><strong>HIPAA acknowledged:</strong> Never share patient data outside the platform</li>
+  <li><div class="checkbox"></div><strong>Audit trail understood:</strong> Every action is logged and immutable</li>
+  <li><div class="checkbox"></div><strong>Compliance Monitor reviewed:</strong> Navigate to tab, understand alert severity levels</li>
+  <li><div class="checkbox"></div><strong>Escalation matrix known:</strong> Critical → Founder immediately | Medium → Handle + log | Low → Daily review</li>
+</ul>
+
+<!-- QUICK REFERENCE -->
+<div class="section-header">
+  ☐ Quick Reference
+  <span>Key info at a glance</span>
+</div>
+
+<div class="two-col">
+  <div class="quick-ref">
+    <h4>📞 Phone Numbers</h4>
+    <table>
+      <tr><td>Toll-Free:</td><td><strong>1-888-963-4447</strong></td></tr>
+      <tr><td>SMS/iMessage:</td><td><strong>645-246-8277</strong></td></tr>
+      <tr><td>Telehealth:</td><td>(405) 252-1178</td></tr>
+      <tr><td>CCardz:</td><td>(405) 492-7487</td></tr>
+      <tr><td>MS MMCP:</td><td>(601) 206-1500</td></tr>
+    </table>
+  </div>
+  <div class="quick-ref">
+    <h4>🌐 Key Links</h4>
+    <table>
+      <tr><td>GGP-OS:</td><td>www.ggp-os.com</td></tr>
+      <tr><td>MS Portal:</td><td>medicalcannabis.ms.gov</td></tr>
+      <tr><td>AR AMMC:</td><td>dfa.arkansas.gov</td></tr>
+      <tr><td>LA LDH:</td><td>ldh.la.gov</td></tr>
+      <tr><td>Support:</td><td>asstsupport@gmail.com</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="info-box">
+  <strong>🎯 First Week Goals:</strong> Complete 50+ outbound calls to Mississippi contacts. Process at least 3 patient inquiries through the full intake flow. Familiarize yourself with all Admin Dashboard tabs. Switch through all 5 territory states and review contact counts for each.
+</div>
+
+<!-- FIRST WEEK DAILY SCHEDULE -->
+<div class="section-header">
+  ☐ Your Daily Routine (Week 1)
+  <span>Recommended workflow</span>
+</div>
+<ul class="checklist">
+  <li><div class="checkbox"></div><strong>9:00 AM:</strong> Log in → Admin Overview → Ask Sylara for "Daily Brief"</li>
+  <li><div class="checkbox"></div><strong>9:15 AM:</strong> Check Patient Registry for new applications → Process any pending</li>
+  <li><div class="checkbox"></div><strong>9:30 AM:</strong> Review Compliance Monitor → Resolve any active alerts</li>
+  <li><div class="checkbox"></div><strong>10:00 AM – 12:00 PM:</strong> CRM Outreach Block — Make 15-20 outbound calls, log all notes</li>
+  <li><div class="checkbox"></div><strong>12:00 PM:</strong> Lunch break</li>
+  <li><div class="checkbox"></div><strong>1:00 PM – 3:00 PM:</strong> Follow-ups, application processing, support tickets</li>
+  <li><div class="checkbox"></div><strong>3:00 PM – 4:00 PM:</strong> CRM updates, pipeline stage moves, plan tomorrow's call list</li>
+  <li><div class="checkbox"></div><strong>4:00 PM:</strong> End-of-day report to Founder (quick Sylara summary or message)</li>
+</ul>
+
+<!-- NOTES -->
+<div class="notes-area">
+  <p>📝 Training Session Notes</p>
+</div>
+
+<!-- CONTACT STRIP -->
+<div class="contact-strip">
+  <div><strong>GGP-OS™</strong> — Global Green Enterprise Inc.</div>
+  <div>Toll-Free: <strong>1-888-963-4447</strong> | SMS: <strong>645-246-8277</strong> | www.ggp-os.com</div>
+</div>
+
+</body>
+</html>
