@@ -861,14 +861,8 @@ async function handleRecording(req, res) {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 8. SENDBLUE iMESSAGE — Send outgoing iMessage/SMS from 645-246-8277
+//    (getSendBlueCredentials is defined at file top-level)
 // ─────────────────────────────────────────────────────────────────────────────
-function getSendBlueCredentials() {
-  const apiKey = process.env.SENDBLUE_API_KEY;
-  const apiSecret = process.env.SENDBLUE_API_SECRET;
-  if (!apiKey || !apiSecret) return null;
-  return { apiKey, apiSecret };
-}
-
 async function handleSendIMessage(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'POST required for sending messages' });
