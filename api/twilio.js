@@ -416,7 +416,6 @@ async function handleVoice(req, res) {
         callerId: '+18889634447',
         timeout: 45,
         answerOnBridge: true,
-        action: '/api/twilio/call-status',
       });
       dial.number({
         statusCallbackEvent: ['initiated', 'ringing', 'answered', 'completed'],
