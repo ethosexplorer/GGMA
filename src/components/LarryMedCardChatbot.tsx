@@ -660,7 +660,7 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
             speakText(accumulated);
           }
         },
-        { history: historyForAI, temperature: 0.7, maxTokens: 4000 }
+        { history: historyForAI, temperature: 0.7, maxTokens: 2000 }
       );
     } catch (err: any) {
       console.error('[Sylara AI Error]:', err);

@@ -3,8 +3,8 @@
 // Handles both standard JSON responses and Server-Sent Events (SSE) streaming.
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
-const MODEL_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
-const STREAM_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent';
+const MODEL_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent';
+const STREAM_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:streamGenerateContent';
 
 function cleanContentsForGemini(contents) {
   if (!Array.isArray(contents) || contents.length === 0) {
@@ -84,7 +84,7 @@ export default async function handler(req, res) {
           contents: cleanedContents,
           generationConfig: {
             temperature: opts?.temperature ?? 0.7,
-            maxOutputTokens: opts?.maxTokens ?? 4000,
+            maxOutputTokens: opts?.maxTokens ?? 2000,
           },
         }),
       });
@@ -158,7 +158,7 @@ export default async function handler(req, res) {
           contents: cleanedContents,
           generationConfig: {
             temperature: opts?.temperature ?? 0.7,
-            maxOutputTokens: opts?.maxTokens ?? 500,
+            maxOutputTokens: opts?.maxTokens ?? 300,
           },
         }),
       });

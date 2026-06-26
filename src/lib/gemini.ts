@@ -12,7 +12,7 @@ import { DETAILED_STATE_KNOWLEDGE } from '../stateDetailedKnowledge';
 import { PERSONAL_JOURNEY } from '../personalJourney';
 
 const API_KEY = () => import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
-const MODEL_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+const MODEL_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent';
 
 const PLATFORM_HISTORICAL_VAULT = `
 ================================================================================
@@ -106,6 +106,59 @@ SHANTELL ROBINSON'S PERSONAL JOURNEY, CIVIL CASE REBUTTAL & REHABILITATION HISTO
 ${PERSONAL_JOURNEY}
 ================================================================================
 `;
+
+function getModularKnowledgeVault(key: string): string {
+  const parts: string[] = [];
+  
+  const needsPlatform = ['general', 'ggma', 'shantell'].includes(key);
+  const needsCorporate = ['general', 'ggma', 'business', 'sinc', 'shantell', 'ryan'].includes(key);
+  const needsExecutive = ['shantell', 'ryan', 'bob'].includes(key);
+  const needsDea = ['general', 'ggma', 'shantell'].includes(key);
+  const needsReciprocity = ['med-card', 'general', 'ggma'].includes(key);
+  const needsStateDetailed = ['general', 'ggma', 'med-card', 'business', 'monica'].includes(key);
+  const needsLarryLegal = ['business', 'rip', 'sinc', 'ryan'].includes(key);
+  const needsPersonal = ['shantell'].includes(key);
+
+  parts.push('================================================================================');
+  parts.push('SYSTEM MEMORY CONTEXT (MODULAR VAULT)');
+  parts.push('================================================================================');
+
+  if (needsPlatform) {
+    parts.push('\n--- PLATFORM HISTORICAL VAULT ---');
+    parts.push(PLATFORM_HISTORICAL_VAULT);
+  }
+  if (needsCorporate) {
+    parts.push('\n--- CORPORATE ENTITIES, UEI, CAGE, REGISTRATIONS, & BANKING ---');
+    parts.push(JSON.stringify(CORPORATE_ENTITIES, null, 2));
+  }
+  if (needsExecutive) {
+    parts.push('\n--- EXECUTIVE STRATEGIC & BUYOUT ECONOMICS ---');
+    parts.push(EXECUTIVE_KNOWLEDGE);
+  }
+  if (needsDea) {
+    parts.push('\n--- DEA CONTRACTING OPPORTUNITIES & VENDOR REGISTRATION ---');
+    parts.push(DEA_KNOWLEDGE);
+  }
+  if (needsReciprocity) {
+    parts.push('\n--- MEDICAL CANNABIS RECIPROCITY RULES BY STATE ---');
+    parts.push(JSON.stringify(RECIPROCITY_DATA, null, 2));
+  }
+  if (needsStateDetailed) {
+    parts.push('\n--- STATE REGULATORY RESOURCING, FORMS, & PORTALS ---');
+    parts.push(JSON.stringify(DETAILED_STATE_KNOWLEDGE, null, 2));
+  }
+  if (needsLarryLegal) {
+    parts.push('\n--- LARRY STATE COMPLIANCE BILL TRACKING & LEGISLATION ---');
+    parts.push(LARRY_LEGAL_KNOWLEDGE);
+  }
+  if (needsPersonal) {
+    parts.push('\n--- SHANTELL ROBINSON\'S PERSONAL JOURNEY & CIVIL REBUTTAL ---');
+    parts.push(PERSONAL_JOURNEY);
+  }
+
+  parts.push('\n================================================================================');
+  return parts.join('\n');
+}
 
 // Helper to clean up history and ensure first message is 'user' and roles alternate
 function cleanContentsForGemini(
@@ -321,7 +374,7 @@ export const generateGeminiResponse = async (
   variant: 'med-card' | 'business' | 'general' | 'ggma' | 'rip' | 'sinc' = 'general',
   history: { role: string; text: string }[] = []
 ): Promise<string> => {
-  const systemInstruction = (VARIANT_INSTRUCTIONS[variant] || VARIANT_INSTRUCTIONS.general) + `\n\n${KNOWLEDGE_VAULT}`;
+  const systemInstruction = (VARIANT_INSTRUCTIONS[variant] || VARIANT_INSTRUCTIONS.general) + `\n\n${getModularKnowledgeVault(variant)}`;
 
   const formattedHistory = history
     .filter((m) => m.text && m.text.trim().length > 0)
@@ -404,10 +457,10 @@ YOUR ROLE:
 ${STATE_INTELLIGENCE}`;
 
 export const EXECUTIVE_PROMPTS: Record<string, string> = {
-  shantell: EXEC_PROMPT_SHANTELL + `\n\n${KNOWLEDGE_VAULT}`,
-  ryan: EXEC_PROMPT_RYAN + `\n\n${KNOWLEDGE_VAULT}`,
-  monica: EXEC_PROMPT_MONICA + `\n\n${KNOWLEDGE_VAULT}`,
-  bob: EXEC_PROMPT_BOB + `\n\n${KNOWLEDGE_VAULT}`,
+  shantell: EXEC_PROMPT_SHANTELL + `\n\n${getModularKnowledgeVault('shantell')}`,
+  ryan: EXEC_PROMPT_RYAN + `\n\n${getModularKnowledgeVault('ryan')}`,
+  monica: EXEC_PROMPT_MONICA + `\n\n${getModularKnowledgeVault('monica')}`,
+  bob: EXEC_PROMPT_BOB + `\n\n${getModularKnowledgeVault('bob')}`,
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -435,7 +488,7 @@ export const streamGeminiResponse = async (
       ];
       const cleanedContents = cleanContentsForGemini(rawContents);
       
-      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse&key=${key}`;
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:streamGenerateContent?alt=sse&key=${key}`;
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -444,7 +497,7 @@ export const streamGeminiResponse = async (
           contents: cleanedContents,
           generationConfig: {
             temperature: opts?.temperature ?? 0.7,
-            maxOutputTokens: opts?.maxTokens ?? 4000,
+            maxOutputTokens: opts?.maxTokens ?? 2000,
           }
         })
       });
@@ -495,7 +548,7 @@ export const streamGeminiResponse = async (
         opts: {
           history: opts?.history,
           temperature: opts?.temperature ?? 0.7,
-          maxTokens: opts?.maxTokens ?? 4000,
+          maxTokens: opts?.maxTokens ?? 2000,
         },
       }),
     });
