@@ -404,8 +404,9 @@ async function handleVoice(req, res) {
     (req.body?.To && !req.body.To.startsWith('AP') ? req.body.To : '') || 
     (req.query?.To && !req.query.To.startsWith('AP') ? req.query.To : '') || 
     '';
-  const direction = req.body?.Direction || '';
-  const fromClient = req.body?.From?.startsWith?.('client:') || false;
+  const direction = req.body?.Direction || req.query?.Direction || '';
+  const from = req.body?.From || req.query?.From || '';
+  const fromClient = from.startsWith('client:');
   const callSid = req.body?.CallSid || req.query?.CallSid || '';
 
   // Log incoming parameters for debugging voice routing loop
@@ -473,8 +474,9 @@ async function handleVoice(req, res) {
     
     if (callSid) {
       await logCallSpeech(callSid, 'sylara', speechMsg, 'VOICEMAIL');
-      if (req.body.RecordingUrl) {
-        await logCallSpeech(callSid, 'user', `[Left a voicemail recording: ${req.body.RecordingUrl}]`, 'VOICEMAIL');
+      const recordingUrl = req.body?.RecordingUrl || req.query?.RecordingUrl || '';
+      if (recordingUrl) {
+        await logCallSpeech(callSid, 'user', `[Left a voicemail recording: ${recordingUrl}]`, 'VOICEMAIL');
       }
     }
     
@@ -524,11 +526,12 @@ async function handleVoice(req, res) {
   }
 
   if (req.query.action === 'respond') {
-    const userSpeech = (req.body && req.body.SpeechResult) ? req.body.SpeechResult.toLowerCase() : '';
+    const speechResult = req.body?.SpeechResult || req.query?.SpeechResult || '';
+    const userSpeech = speechResult.toLowerCase();
     console.log('Sylara heard:', userSpeech);
 
     if (callSid && userSpeech) {
-      await logCallSpeech(callSid, 'user', req.body.SpeechResult, 'GENERAL');
+      await logCallSpeech(callSid, 'user', speechResult, 'GENERAL');
     }
 
     if (userSpeech.includes('sale') || userSpeech.includes('rep') || userSpeech.includes('buy') || userSpeech.includes('subscrib') || userSpeech.includes('upgrad') || userSpeech.includes('price') || userSpeech.includes('cost')) {
@@ -652,10 +655,11 @@ async function handleVoice(req, res) {
 
   } else if (req.query.action && req.query.action.toString().startsWith('escalate_')) {
     const dept = req.query.action.toString().replace('escalate_', '').toUpperCase();
-    const userSpeech = (req.body && req.body.SpeechResult) ? req.body.SpeechResult.toLowerCase() : '';
+    const speechResult = req.body?.SpeechResult || req.query?.SpeechResult || '';
+    const userSpeech = speechResult.toLowerCase();
 
     if (callSid && userSpeech) {
-      await logCallSpeech(callSid, 'user', req.body.SpeechResult, dept);
+      await logCallSpeech(callSid, 'user', speechResult, dept);
     }
 
     if (userSpeech.includes('human') || userSpeech.includes('operator') || userSpeech.includes('agent') || userSpeech.includes('help')) {
@@ -735,11 +739,12 @@ async function handleVoice(req, res) {
       }
     }
   } else if (req.query.action && req.query.action.toString().startsWith('finish_')) {
-    const userSpeech = (req.body && req.body.SpeechResult) ? req.body.SpeechResult.toLowerCase() : '';
+    const speechResult = req.body?.SpeechResult || req.query?.SpeechResult || '';
+    const userSpeech = speechResult.toLowerCase();
     const dept = req.query.action.toString().replace('finish_', '').toUpperCase();
 
     if (callSid && userSpeech) {
-      await logCallSpeech(callSid, 'user', req.body.SpeechResult, dept);
+      await logCallSpeech(callSid, 'user', speechResult, dept);
     }
 
     if (userSpeech.includes('human') || userSpeech.includes('operator') || userSpeech.includes('agent') || userSpeech.includes('compliance')) {
