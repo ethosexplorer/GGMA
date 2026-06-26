@@ -394,10 +394,47 @@ async function handleCallStatus(req, res) {
 async function handleVoice(req, res) {
   const twiml = new VoiceResponse();
 
-  const toNumber = req.body?.dialNumber || req.query?.dialNumber || req.body?.To || req.query?.To || '';
+  const toNumber = 
+    req.body?.['params[To]'] || 
+    req.query?.['params[To]'] || 
+    req.body?.['params[dialNumber]'] || 
+    req.query?.['params[dialNumber]'] || 
+    req.body?.dialNumber || 
+    req.query?.dialNumber || 
+    (req.body?.To && !req.body.To.startsWith('AP') ? req.body.To : '') || 
+    (req.query?.To && !req.query.To.startsWith('AP') ? req.query.To : '') || 
+    '';
   const direction = req.body?.Direction || '';
   const fromClient = req.body?.From?.startsWith?.('client:') || false;
   const callSid = req.body?.CallSid || req.query?.CallSid || '';
+
+  // Log incoming parameters for debugging voice routing loop
+  try {
+    const url = process.env.VITE_TURSO_DATABASE_URL || "libsql://gghp-gghp.aws-us-east-2.turso.io";
+    const authToken = process.env.VITE_TURSO_AUTH_TOKEN;
+    if (authToken) {
+      const turso = createClient({ url, authToken });
+      await turso.execute({
+        sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)",
+        args: [
+          `voice-debug-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+          "DEBUG_VOICE_REQUEST",
+          callSid || "unknown_call",
+          JSON.stringify({
+            toNumber,
+            direction,
+            fromClient,
+            From: req.body?.From || req.query?.From || '',
+            To: req.body?.To || req.query?.To || '',
+            body: req.body || {},
+            query: req.query || {},
+          })
+        ]
+      });
+    }
+  } catch (dbErr) {
+    console.error("Failed to log DEBUG_VOICE_REQUEST:", dbErr);
+  }
 
   // Intercept Outbound calls from WebDialer
   if (fromClient && toNumber) {

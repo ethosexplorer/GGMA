@@ -180,10 +180,18 @@ export const FounderCalendar = ({ user, title, subtitle }: { user?: any, title?:
 
   const categorizeCalendly = (name: string) => {
     const lower = (name || '').toLowerCase();
+    let matched = null;
     for (const [key, meta] of Object.entries(CALENDLY_CAT_MAP)) {
-      if (lower.includes(key)) return meta;
+      if (lower.includes(key)) {
+        matched = meta;
+        break;
+      }
     }
-    return { category: 'ops', color: 'bg-indigo-500', label: '📅' };
+    return { 
+      category: 'booking', 
+      color: 'bg-emerald-600', 
+      label: matched?.label || '📅' 
+    };
   };
 
   // LIVE FETCH: Trigger server-side Calendly sync
