@@ -107,6 +107,45 @@ const getStatePortalUrl = (state: string): string => {
   return STATE_PORTALS[full] || '';
 };
 
+const isCleanValue = (val: string | undefined | null) => {
+  if (!val) return false;
+  const clean = val.trim().toLowerCase();
+  if (clean === '' || clean === 'â€“' || clean === '–' || clean === '—' || clean === 'n/a' || clean === 'unknown') return false;
+  return true;
+};
+
+const areRecordsMatching = (a: SearchResult, b: SearchResult): boolean => {
+  if (a.id === b.id && a.source === b.source) return true;
+  
+  if (isCleanValue(a.accountId) && isCleanValue(b.accountId)) {
+    if (a.accountId.trim().toUpperCase() === b.accountId.trim().toUpperCase()) {
+      return true;
+    }
+  }
+  
+  if (isCleanValue(a.email) && isCleanValue(b.email)) {
+    if (a.email.trim().toLowerCase() === b.email.trim().toLowerCase()) {
+      return true;
+    }
+  }
+  
+  if (isCleanValue(a.phone) && isCleanValue(b.phone)) {
+    const pA = a.phone.replace(/\D/g, '');
+    const pB = b.phone.replace(/\D/g, '');
+    if (pA && pB && pA === pB) {
+      return true;
+    }
+  }
+  
+  if (isCleanValue(a.name) && isCleanValue(b.name)) {
+    if (a.name.trim().toLowerCase() === b.name.trim().toLowerCase()) {
+      return true;
+    }
+  }
+  
+  return false;
+};
+
 // â”€â”€â”€ Moved OUTSIDE component to prevent React remount on every keystroke â”€â”€â”€
 const EditField = ({ label, field, value, type = 'text', editData, setEditData }: { label: string; field: string; value: string; type?: string; editData: Record<string, any>; setEditData: React.Dispatch<React.SetStateAction<Record<string, any>>> }) => (
   <div>
@@ -454,112 +493,173 @@ export const AccountLookupTab = () => {
   const handleSave = async (result: SearchResult) => {
     setSaving(true);
     try {
-      // Build the save payload from editData
-      const payload: any = { updatedAt: new Date().toISOString() };
-      
-      // Map all standard fields
-      if (editData.name !== undefined) payload.name = editData.name;
-      if (editData.email !== undefined) payload.email = editData.email;
-      if (editData.phone !== undefined) payload.phone = editData.phone;
-      if (editData.state !== undefined) payload.state = editData.state;
-      if (editData.address !== undefined) payload.address = editData.address;
-      if (editData.city !== undefined) payload.city = editData.city;
-      if (editData.zip !== undefined) payload.zip = editData.zip;
-      if (editData.businessName !== undefined) payload.businessName = editData.businessName;
-      if (editData.notes !== undefined) payload.notes = editData.notes;
-      if (editData.licenseType !== undefined) payload.licenseType = editData.licenseType;
-      if (editData.status !== undefined) payload.status = editData.status;
-      
-      // Extended intake fields
-      if (editData.dob !== undefined) payload.dob = editData.dob;
-      if (editData.ssn !== undefined) payload.ssn = editData.ssn;
-      if (editData.conditions !== undefined) payload.conditions = editData.conditions;
-      if (editData.allergies !== undefined) payload.allergies = editData.allergies;
-      if (editData.insurance !== undefined) payload.insuranceName = editData.insurance;
-      if (editData.appointmentType !== undefined) payload.appointmentType = editData.appointmentType;
-      if (editData.appType !== undefined) payload.appType = editData.appType;
-      if (editData.pcpInfo !== undefined) payload.pcpInfo = editData.pcpInfo;
-      if (editData.portalAccount !== undefined) payload.hasPortalAccount = editData.portalAccount;
-      // Login credentials
-      if (editData.ggpLoginEmail !== undefined) payload.ggpLoginEmail = editData.ggpLoginEmail;
-      if (editData.ggpLoginPassword !== undefined) payload.ggpLoginPassword = editData.ggpLoginPassword;
-      if (editData.statePortalLogin !== undefined) payload.statePortalLogin = editData.statePortalLogin;
-      if (editData.statePortalPassword !== undefined) payload.statePortalPassword = editData.statePortalPassword;
+      // Find all matching records in the results
+      const matchingRecs = results.filter(r => areRecordsMatching(result, r));
 
-      if (result.source === 'contacts') {
-        await updateDoc(doc(db, 'contacts', result.id), payload);
-      } else if (result.source === 'users') {
-        if (payload.name) { payload.fullName = payload.name; delete payload.name; }
-        await updateDoc(doc(db, 'users', result.id), payload);
-      } else if (result.source === 'crm_deals') {
-        if (payload.name) { payload.contactName = payload.name; }
-        await updateDoc(doc(db, 'crm_deals', result.id), payload);
-      } else if (result.source === 'turso_audit') {
-        const currentData = { ...(result.rawData || {}) };
+      // Loop through all matching records and update them in their respective databases
+      for (const rec of matchingRecs) {
+        // Build the save payload from editData for this record
+        const payload: any = { updatedAt: new Date().toISOString() };
         
-        // Merge the edited fields
-        if (editData.name !== undefined) {
-          currentData.name = editData.name;
-          currentData.applicant = editData.name;
-        }
-        if (editData.email !== undefined) currentData.email = editData.email;
-        if (editData.phone !== undefined) currentData.phone = editData.phone;
-        if (editData.state !== undefined) currentData.state = editData.state;
-        if (editData.notes !== undefined) currentData.callerNotes = editData.notes;
-        if (editData.status !== undefined) currentData.status = editData.status;
-        if (editData.dob !== undefined) currentData.dob = editData.dob;
-        if (editData.ssn !== undefined) currentData.ssn = editData.ssn;
-        if (editData.conditions !== undefined) currentData.conditions = editData.conditions;
-        if (editData.allergies !== undefined) currentData.allergies = editData.allergies;
-        if (editData.insurance !== undefined) currentData.insuranceName = editData.insurance;
-        if (editData.appointmentType !== undefined) currentData.appointmentType = editData.appointmentType;
-        if (editData.appType !== undefined) currentData.appType = editData.appType;
-        if (editData.pcpInfo !== undefined) currentData.pcpInfo = editData.pcpInfo;
-        if (editData.portalAccount !== undefined) currentData.hasPortalAccount = editData.portalAccount;
-        if (editData.licenseType !== undefined) currentData.licenseType = editData.licenseType;
-        if (editData.accountId !== undefined) currentData.accountId = editData.accountId;
+        // Map all standard fields
+        if (editData.name !== undefined) payload.name = editData.name;
+        if (editData.email !== undefined) payload.email = editData.email;
+        if (editData.phone !== undefined) payload.phone = editData.phone;
+        if (editData.state !== undefined) payload.state = editData.state;
+        if (editData.address !== undefined) payload.address = editData.address;
+        if (editData.city !== undefined) payload.city = editData.city;
+        if (editData.zip !== undefined) payload.zip = editData.zip;
+        if (editData.businessName !== undefined) payload.businessName = editData.businessName;
+        if (editData.notes !== undefined) payload.notes = editData.notes;
+        if (editData.licenseType !== undefined) payload.licenseType = editData.licenseType;
+        if (editData.status !== undefined) payload.status = editData.status;
         
+        // Extended intake fields
+        if (editData.dob !== undefined) payload.dob = editData.dob;
+        if (editData.ssn !== undefined) payload.ssn = editData.ssn;
+        if (editData.conditions !== undefined) payload.conditions = editData.conditions;
+        if (editData.allergies !== undefined) payload.allergies = editData.allergies;
+        if (editData.insurance !== undefined) payload.insuranceName = editData.insurance;
+        if (editData.appointmentType !== undefined) payload.appointmentType = editData.appointmentType;
+        if (editData.appType !== undefined) payload.appType = editData.appType;
+        if (editData.pcpInfo !== undefined) payload.pcpInfo = editData.pcpInfo;
+        if (editData.portalAccount !== undefined) payload.hasPortalAccount = editData.portalAccount;
         // Login credentials
-        if (editData.ggpLoginEmail !== undefined) currentData.ggpLoginEmail = editData.ggpLoginEmail;
-        if (editData.ggpLoginPassword !== undefined) currentData.ggpLoginPassword = editData.ggpLoginPassword;
-        if (editData.statePortalLogin !== undefined) currentData.statePortalLogin = editData.statePortalLogin;
-        if (editData.statePortalPassword !== undefined) currentData.statePortalPassword = editData.statePortalPassword;
+        if (editData.ggpLoginEmail !== undefined) payload.ggpLoginEmail = editData.ggpLoginEmail;
+        if (editData.ggpLoginPassword !== undefined) payload.ggpLoginPassword = editData.ggpLoginPassword;
+        if (editData.statePortalLogin !== undefined) payload.statePortalLogin = editData.statePortalLogin;
+        if (editData.statePortalPassword !== undefined) payload.statePortalPassword = editData.statePortalPassword;
 
-        await turso.execute({
-          sql: "UPDATE audit_logs SET data = ? WHERE id = ?",
-          args: [JSON.stringify(currentData), result.id]
-        });
-
-        // Also sync/update or create in Firestore using captureContact
-        try {
-          const isPatientIntake = (currentData.type || currentData.intakeType || '') === 'patient_card' || result.contactType === 'patient' || result.contactType === 'intake';
-          const fullName = currentData.name || currentData.applicant || '';
+        if (rec.source === 'contacts') {
+          await updateDoc(doc(db, 'contacts', rec.id), payload);
+        } else if (rec.source === 'users') {
+          if (payload.name) { payload.fullName = payload.name; delete payload.name; }
+          await updateDoc(doc(db, 'users', rec.id), payload);
+        } else if (rec.source === 'crm_deals') {
+          if (payload.name) { payload.contactName = payload.name; }
+          await updateDoc(doc(db, 'crm_deals', rec.id), payload);
+        } else if (rec.source === 'turso_audit') {
+          const currentData = { ...(rec.rawData || {}) };
           
-          await captureContact({
-            name: fullName,
-            email: currentData.email || '',
-            phone: currentData.phone || '',
-            address: currentData.address || '',
-            city: currentData.city || '',
-            state: currentData.state || '',
-            zip: currentData.zip || '',
-            contactType: isPatientIntake ? 'patient' : 'business_owner',
-            source: isPatientIntake ? 'phone_intake_patient' : 'phone_intake_business',
-            businessName: isPatientIntake ? '' : (currentData.businessName || ''),
-            licenseType: isPatientIntake ? (currentData.appType || 'Patient Card') : (currentData.businessType || 'Business License'),
-            ein: currentData.ein || currentData.einNumber || '',
-            jurisdiction: currentData.state || '',
-            tags: ['phone-intake', 'updated', isPatientIntake ? 'patient' : 'business'],
-            notes: `Updated from Account Lookup | Account: ${currentData.accountId || ''} | ${isPatientIntake ? 'Conditions: ' + (currentData.conditions || '') : 'EIN: ' + (currentData.ein || '')} | ${currentData.callerNotes || ''}`,
-            emailOptIn: true,
+          // Merge the edited fields
+          if (editData.name !== undefined) {
+            currentData.name = editData.name;
+            currentData.applicant = editData.name;
+          }
+          if (editData.email !== undefined) currentData.email = editData.email;
+          if (editData.phone !== undefined) currentData.phone = editData.phone;
+          if (editData.state !== undefined) currentData.state = editData.state;
+          if (editData.notes !== undefined) currentData.callerNotes = editData.notes;
+          if (editData.status !== undefined) currentData.status = editData.status;
+          if (editData.dob !== undefined) currentData.dob = editData.dob;
+          if (editData.ssn !== undefined) currentData.ssn = editData.ssn;
+          if (editData.conditions !== undefined) currentData.conditions = editData.conditions;
+          if (editData.allergies !== undefined) currentData.allergies = editData.allergies;
+          if (editData.insurance !== undefined) currentData.insuranceName = editData.insurance;
+          if (editData.appointmentType !== undefined) currentData.appointmentType = editData.appointmentType;
+          if (editData.appType !== undefined) currentData.appType = editData.appType;
+          if (editData.pcpInfo !== undefined) currentData.pcpInfo = editData.pcpInfo;
+          if (editData.portalAccount !== undefined) currentData.hasPortalAccount = editData.portalAccount;
+          if (editData.licenseType !== undefined) currentData.licenseType = editData.licenseType;
+          if (editData.accountId !== undefined) currentData.accountId = editData.accountId;
+          
+          // Login credentials
+          if (editData.ggpLoginEmail !== undefined) currentData.ggpLoginEmail = editData.ggpLoginEmail;
+          if (editData.ggpLoginPassword !== undefined) currentData.ggpLoginPassword = editData.ggpLoginPassword;
+          if (editData.statePortalLogin !== undefined) currentData.statePortalLogin = editData.statePortalLogin;
+          if (editData.statePortalPassword !== undefined) currentData.statePortalPassword = editData.statePortalPassword;
+
+          await turso.execute({
+            sql: "UPDATE audit_logs SET data = ? WHERE id = ?",
+            args: [JSON.stringify(currentData), rec.id]
           });
-        } catch (crmErr) {
-          console.error('Firestore contact capture error (non-blocking) during audit edit:', crmErr);
+
+          // Also sync/update or create in Firestore using captureContact
+          try {
+            const isPatientIntake = (currentData.type || currentData.intakeType || '') === 'patient_card' || rec.contactType === 'patient' || rec.contactType === 'intake';
+            const fullName = currentData.name || currentData.applicant || '';
+            
+            await captureContact({
+              name: fullName,
+              email: currentData.email || '',
+              phone: currentData.phone || '',
+              address: currentData.address || '',
+              city: currentData.city || '',
+              state: currentData.state || '',
+              zip: currentData.zip || '',
+              contactType: isPatientIntake ? 'patient' : 'business_owner',
+              source: isPatientIntake ? 'phone_intake_patient' : 'phone_intake_business',
+              businessName: isPatientIntake ? '' : (currentData.businessName || ''),
+              licenseType: isPatientIntake ? (currentData.appType || 'Patient Card') : (currentData.businessType || 'Business License'),
+              ein: currentData.ein || currentData.einNumber || '',
+              jurisdiction: currentData.state || '',
+              tags: ['phone-intake', 'updated', isPatientIntake ? 'patient' : 'business'],
+              notes: `Updated from Account Lookup | Account: ${currentData.accountId || ''} | ${isPatientIntake ? 'Conditions: ' + (currentData.conditions || '') : 'EIN: ' + (currentData.ein || '')} | ${currentData.callerNotes || ''}`,
+              emailOptIn: true,
+            });
+          } catch (crmErr) {
+            console.error('Firestore contact capture error (non-blocking) during audit edit:', crmErr);
+          }
         }
       }
 
-      // Update local state
-      setResults(prev => prev.map(r => r.id === result.id ? { ...r, ...editData, rawData: result.source === 'turso_audit' ? { ...r.rawData, ...editData } : r.rawData } : r));
+      // Update local state for all matching records
+      setResults(prev => prev.map(r => {
+        if (matchingRecs.some(m => m.id === r.id && m.source === r.source)) {
+          const updatedRawData = { ...(r.rawData || {}) };
+          if (editData.name !== undefined) {
+            updatedRawData.name = editData.name;
+            updatedRawData.applicant = editData.name;
+            updatedRawData.fullName = editData.name;
+            updatedRawData.contactName = editData.name;
+          }
+          if (editData.email !== undefined) updatedRawData.email = editData.email;
+          if (editData.phone !== undefined) updatedRawData.phone = editData.phone;
+          if (editData.state !== undefined) updatedRawData.state = editData.state;
+          if (editData.notes !== undefined) {
+            updatedRawData.notes = editData.notes;
+            updatedRawData.callerNotes = editData.notes;
+          }
+          if (editData.status !== undefined) updatedRawData.status = editData.status;
+          if (editData.dob !== undefined) updatedRawData.dob = editData.dob;
+          if (editData.ssn !== undefined) updatedRawData.ssn = editData.ssn;
+          if (editData.conditions !== undefined) updatedRawData.conditions = editData.conditions;
+          if (editData.allergies !== undefined) updatedRawData.allergies = editData.allergies;
+          if (editData.insurance !== undefined) updatedRawData.insuranceName = editData.insurance;
+          if (editData.appointmentType !== undefined) updatedRawData.appointmentType = editData.appointmentType;
+          if (editData.appType !== undefined) updatedRawData.appType = editData.appType;
+          if (editData.pcpInfo !== undefined) updatedRawData.pcpInfo = editData.pcpInfo;
+          if (editData.portalAccount !== undefined) updatedRawData.hasPortalAccount = editData.portalAccount;
+          if (editData.licenseType !== undefined) updatedRawData.licenseType = editData.licenseType;
+          if (editData.accountId !== undefined) updatedRawData.accountId = editData.accountId;
+
+          if (editData.ggpLoginEmail !== undefined) updatedRawData.ggpLoginEmail = editData.ggpLoginEmail;
+          if (editData.ggpLoginPassword !== undefined) updatedRawData.ggpLoginPassword = editData.ggpLoginPassword;
+          if (editData.statePortalLogin !== undefined) updatedRawData.statePortalLogin = editData.statePortalLogin;
+          if (editData.statePortalPassword !== undefined) updatedRawData.statePortalPassword = editData.statePortalPassword;
+
+          const updatedResult: SearchResult = {
+            ...r,
+            ...editData,
+            rawData: updatedRawData
+          };
+
+          if (editData.dob !== undefined) updatedResult.dob = editData.dob;
+          if (editData.ssn !== undefined) updatedResult.ssn = editData.ssn;
+          if (editData.conditions !== undefined) updatedResult.conditions = editData.conditions;
+          if (editData.allergies !== undefined) updatedResult.allergies = editData.allergies;
+          if (editData.insurance !== undefined) updatedResult.insurance = editData.insurance;
+          if (editData.appointmentType !== undefined) updatedResult.appointmentType = editData.appointmentType;
+          if (editData.appType !== undefined) updatedResult.appType = editData.appType;
+          if (editData.pcpInfo !== undefined) updatedResult.pcpInfo = editData.pcpInfo;
+          if (editData.portalAccount !== undefined) updatedResult.portalAccount = editData.portalAccount;
+          if (editData.accountId !== undefined) updatedResult.accountId = editData.accountId;
+
+          return updatedResult;
+        }
+        return r;
+      }));
+
       setEditingId(null);
       setEditData({});
     } catch (err) {
