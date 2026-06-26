@@ -250,7 +250,7 @@ export function WebDialer() {
     try {
       setStatus('busy');
       setShowDialer(false);
-      const call = await device.connect({ params: { To: dialNumber } });
+      const call = await device.connect({ params: { To: dialNumber, dialNumber: dialNumber } });
       setActiveCall(call);
       activeCallRef.current = call;
       const startCallTimer = () => {

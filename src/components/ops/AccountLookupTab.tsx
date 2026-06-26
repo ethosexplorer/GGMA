@@ -5,6 +5,7 @@ import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/fire
 import { db, auth } from '../../firebase';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { turso } from '../../lib/turso';
+import { captureContact } from '../../lib/contactCapture';
 
 interface SearchResult {
   id: string;
@@ -148,6 +149,7 @@ export const AccountLookupTab = () => {
   const [resetSending, setResetSending] = useState(false);
   const [resetSent, setResetSent] = useState(false);
   const [welcomeCopied, setWelcomeCopied] = useState(false);
+  const [welcomeFormFor, setWelcomeFormFor] = useState<string | null>(null);
 
   // Payment state per-record
   const [paymentFormFor, setPaymentFormFor] = useState<string | null>(null);
@@ -175,6 +177,9 @@ export const AccountLookupTab = () => {
         if (priority.indexOf(item.source) < priority.indexOf(existing.source)) {
           map.set(key, { ...existing, ...item, notes: item.notes || existing.notes, tags: [...(existing.tags || []), ...(item.tags || [])] });
         } else {
+          const mergedRaw = (item.source === 'turso_audit' && existing.source === 'turso_audit')
+            ? { ...(existing.rawData || {}), ...(item.rawData || {}) }
+            : existing.rawData;
           map.set(key, {
             ...existing,
             phone: existing.phone || item.phone,
@@ -182,15 +187,16 @@ export const AccountLookupTab = () => {
             city: existing.city || item.city,
             state: existing.state || item.state,
             accountId: existing.accountId || item.accountId,
-            notes: existing.notes || item.notes,
-            dob: existing.dob || item.dob,
-            ssn: existing.ssn || item.ssn,
-            conditions: existing.conditions || item.conditions,
-            allergies: existing.allergies || item.allergies,
-            insurance: existing.insurance || item.insurance,
-            appointmentType: existing.appointmentType || item.appointmentType,
-            appType: existing.appType || item.appType,
-            pcpInfo: existing.pcpInfo || item.pcpInfo,
+            notes: existing.notes || item.notes || mergedRaw?.callerNotes,
+            dob: existing.dob || item.dob || mergedRaw?.dob,
+            ssn: existing.ssn || item.ssn || mergedRaw?.ssn,
+            conditions: existing.conditions || item.conditions || mergedRaw?.conditions,
+            allergies: existing.allergies || item.allergies || mergedRaw?.allergies,
+            insurance: existing.insurance || item.insurance || mergedRaw?.insuranceName,
+            appointmentType: existing.appointmentType || item.appointmentType || mergedRaw?.appointmentType,
+            appType: existing.appType || item.appType || mergedRaw?.appType,
+            pcpInfo: existing.pcpInfo || item.pcpInfo || mergedRaw?.pcpInfo,
+            rawData: mergedRaw
           });
         }
       } else {
@@ -405,7 +411,7 @@ export const AccountLookupTab = () => {
     // 5. Search Turso `audit_logs` for phone intake records
     try {
       const tursoResult = await turso.execute(
-        "SELECT * FROM audit_logs WHERE action IN ('PHONE_INTAKE_ACCOUNT_CREATE', 'PHONE_INTAKE_APPLICATION') ORDER BY rowid DESC LIMIT 500"
+        "SELECT * FROM audit_logs WHERE action IN ('PHONE_INTAKE_ACCOUNT_CREATE', 'PHONE_INTAKE_APPLICATION', 'PHONE_INTAKE_PARTIAL_SAVE') ORDER BY rowid DESC LIMIT 500"
       );
       tursoResult.rows.forEach((row: any) => {
         try {
@@ -430,8 +436,7 @@ export const AccountLookupTab = () => {
               createdAt: row.created_at || '',
               notes: data.callerNotes || '',
               rawData: data,
-              conditions: data.conditions || '',
-              appType: data.appType || data.intakeType || '',
+              ...extractIntakeFields(data),
             });
           }
         } catch {}
@@ -489,10 +494,72 @@ export const AccountLookupTab = () => {
       } else if (result.source === 'crm_deals') {
         if (payload.name) { payload.contactName = payload.name; }
         await updateDoc(doc(db, 'crm_deals', result.id), payload);
+      } else if (result.source === 'turso_audit') {
+        const currentData = { ...(result.rawData || {}) };
+        
+        // Merge the edited fields
+        if (editData.name !== undefined) {
+          currentData.name = editData.name;
+          currentData.applicant = editData.name;
+        }
+        if (editData.email !== undefined) currentData.email = editData.email;
+        if (editData.phone !== undefined) currentData.phone = editData.phone;
+        if (editData.state !== undefined) currentData.state = editData.state;
+        if (editData.notes !== undefined) currentData.callerNotes = editData.notes;
+        if (editData.status !== undefined) currentData.status = editData.status;
+        if (editData.dob !== undefined) currentData.dob = editData.dob;
+        if (editData.ssn !== undefined) currentData.ssn = editData.ssn;
+        if (editData.conditions !== undefined) currentData.conditions = editData.conditions;
+        if (editData.allergies !== undefined) currentData.allergies = editData.allergies;
+        if (editData.insurance !== undefined) currentData.insuranceName = editData.insurance;
+        if (editData.appointmentType !== undefined) currentData.appointmentType = editData.appointmentType;
+        if (editData.appType !== undefined) currentData.appType = editData.appType;
+        if (editData.pcpInfo !== undefined) currentData.pcpInfo = editData.pcpInfo;
+        if (editData.portalAccount !== undefined) currentData.hasPortalAccount = editData.portalAccount;
+        if (editData.licenseType !== undefined) currentData.licenseType = editData.licenseType;
+        if (editData.accountId !== undefined) currentData.accountId = editData.accountId;
+        
+        // Login credentials
+        if (editData.ggpLoginEmail !== undefined) currentData.ggpLoginEmail = editData.ggpLoginEmail;
+        if (editData.ggpLoginPassword !== undefined) currentData.ggpLoginPassword = editData.ggpLoginPassword;
+        if (editData.statePortalLogin !== undefined) currentData.statePortalLogin = editData.statePortalLogin;
+        if (editData.statePortalPassword !== undefined) currentData.statePortalPassword = editData.statePortalPassword;
+
+        await turso.execute({
+          sql: "UPDATE audit_logs SET data = ? WHERE id = ?",
+          args: [JSON.stringify(currentData), result.id]
+        });
+
+        // Also sync/update or create in Firestore using captureContact
+        try {
+          const isPatientIntake = (currentData.type || currentData.intakeType || '') === 'patient_card' || result.contactType === 'patient' || result.contactType === 'intake';
+          const fullName = currentData.name || currentData.applicant || '';
+          
+          await captureContact({
+            name: fullName,
+            email: currentData.email || '',
+            phone: currentData.phone || '',
+            address: currentData.address || '',
+            city: currentData.city || '',
+            state: currentData.state || '',
+            zip: currentData.zip || '',
+            contactType: isPatientIntake ? 'patient' : 'business_owner',
+            source: isPatientIntake ? 'phone_intake_patient' : 'phone_intake_business',
+            businessName: isPatientIntake ? '' : (currentData.businessName || ''),
+            licenseType: isPatientIntake ? (currentData.appType || 'Patient Card') : (currentData.businessType || 'Business License'),
+            ein: currentData.ein || currentData.einNumber || '',
+            jurisdiction: currentData.state || '',
+            tags: ['phone-intake', 'updated', isPatientIntake ? 'patient' : 'business'],
+            notes: `Updated from Account Lookup | Account: ${currentData.accountId || ''} | ${isPatientIntake ? 'Conditions: ' + (currentData.conditions || '') : 'EIN: ' + (currentData.ein || '')} | ${currentData.callerNotes || ''}`,
+            emailOptIn: true,
+          });
+        } catch (crmErr) {
+          console.error('Firestore contact capture error (non-blocking) during audit edit:', crmErr);
+        }
       }
 
       // Update local state
-      setResults(prev => prev.map(r => r.id === result.id ? { ...r, ...editData } : r));
+      setResults(prev => prev.map(r => r.id === result.id ? { ...r, ...editData, rawData: result.source === 'turso_audit' ? { ...r.rawData, ...editData } : r.rawData } : r));
       setEditingId(null);
       setEditData({});
     } catch (err) {
@@ -691,6 +758,7 @@ export const AccountLookupTab = () => {
             const isExpanded = expandedId === r.id;
             const isEditing = editingId === r.id;
             const showPayment = paymentFormFor === r.id;
+            const showWelcome = welcomeFormFor === r.id;
 
             return (
               <div key={`${r.source}-${r.id}`} className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden transition-all hover:shadow-md">
@@ -825,7 +893,7 @@ export const AccountLookupTab = () => {
 
                         {/* Action Buttons */}
                         <div className="flex items-center gap-3 flex-wrap pt-2 border-t border-slate-200">
-                          {(r.source === 'contacts' || r.source === 'users' || r.source === 'crm_deals') && (
+                          {(r.source === 'contacts' || r.source === 'users' || r.source === 'crm_deals' || r.source === 'turso_audit') && (
                             <button
                               onClick={(e) => { e.stopPropagation(); setEditingId(r.id); setEditData({}); }}
                               className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 transition-all shadow-md"
@@ -840,6 +908,7 @@ export const AccountLookupTab = () => {
                                 setPaymentFormFor(null);
                               } else {
                                 setPaymentFormFor(r.id);
+                                setWelcomeFormFor(null);
                                 setPaymentPosted(false);
                                 setPaymentForm({ amount: '', type: 'Processing Fee', method: 'Chime', notes: '', date: new Date().toISOString().split('T')[0] });
                               }
@@ -848,7 +917,42 @@ export const AccountLookupTab = () => {
                           >
                             <DollarSign size={14} /> {showPayment ? 'Hide Payment' : 'Post Payment'}
                           </button>
-                          {(r.source === 'turso_patients' || r.source === 'turso_audit') && (
+                          {(r.source === 'contacts' || r.source === 'users' || r.source === 'crm_deals' || r.source === 'turso_audit') && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (showWelcome) {
+                                  setWelcomeFormFor(null);
+                                } else {
+                                  setWelcomeFormFor(r.id);
+                                  setPaymentFormFor(null);
+                                  setWelcomeCopied(false);
+                                  
+                                  const ct = (r.contactType || r.rawData?.contactType || '').toLowerCase();
+                                  const lt = (r.licenseType || r.rawData?.licenseType || '').toLowerCase();
+                                  let defaultType = 'patient';
+                                  if (ct.includes('attorney') || ct.includes('legal') || lt.includes('attorney')) defaultType = 'attorney';
+                                  else if (ct.includes('provider') || ct.includes('doctor') || ct.includes('telehealth') || lt.includes('provider')) defaultType = 'provider';
+                                  else if (ct.includes('federal')) defaultType = 'federal';
+                                  else if (ct.includes('state') && ct.includes('gov')) defaultType = 'state_gov';
+                                  else if (ct.includes('local') || ct.includes('city') || ct.includes('county')) defaultType = 'local_gov';
+                                  else if (ct.includes('political') || ct.includes('gov office') || ct.includes('elected')) defaultType = 'gov_office';
+                                  else if (ct.includes('advocate') || ct.includes('advocacy')) defaultType = 'advocate';
+                                  else if (ct.includes('distribut')) defaultType = 'distribution';
+                                  else if (ct.includes('investor') || ct.includes('invest')) defaultType = 'investor';
+                                  else if (ct.includes('whitelabel') || ct.includes('white label') || ct.includes('leasing')) defaultType = 'whitelabel';
+                                  else if (ct.includes('backoffice') || ct.includes('back office')) defaultType = 'backoffice';
+                                  else if (ct.includes('business') || ct.includes('dispensary') || r.businessName) defaultType = 'business';
+                                  
+                                  setEditData(prev => ({ ...prev, _welcomeType: defaultType }));
+                                }
+                              }}
+                              className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 transition-all shadow-md"
+                            >
+                              <Mail size={14} /> {showWelcome ? 'Hide Welcome Letter' : 'Welcome Letter'}
+                            </button>
+                          )}
+                          {r.source === 'turso_patients' && (
                             <span className="text-xs text-slate-400 italic">Legacy record â€” contact info is read-only. Payment can still be posted.</span>
                           )}
                         </div>
@@ -918,6 +1022,107 @@ export const AccountLookupTab = () => {
                                 </button>
                               </>
                             )}
+                          </div>
+                        )}
+
+                        {showWelcome && (
+                          <div className="bg-white border-2 border-blue-200 rounded-2xl p-5 space-y-4 mt-4 animate-in slide-in-from-top-2 duration-200">
+                            <div className="flex items-center gap-2 mb-2">
+                              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <Mail size={16} className="text-blue-600" />
+                              </div>
+                              <div>
+                                <h4 className="text-sm font-black text-slate-800">Generate Welcome Letter for {r.name}</h4>
+                                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Personalize and Copy to Clipboard</p>
+                              </div>
+                            </div>
+
+                            <div className="flex flex-col gap-2">
+                              <label className="text-xs font-bold text-slate-600">Select Account Type</label>
+                              <div className="flex items-center gap-2">
+                                <select
+                                  value={editData['_welcomeType'] || 'patient'}
+                                  onChange={(e) => setEditData(prev => ({ ...prev, _welcomeType: e.target.value }))}
+                                  className="flex-1 px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-500/20 font-medium text-slate-700"
+                                >
+                                  <option value="patient">{String.fromCodePoint(0x1F9D1, 0x200D, 0x2695, 0xFE0F)} Patient / Individual</option>
+                                  <option value="business">{String.fromCodePoint(0x1F3E2)} Business / Dispensary</option>
+                                  <option value="provider">{String.fromCodePoint(0x2695, 0xFE0F)} Telehealth Provider</option>
+                                  <option value="attorney">{String.fromCodePoint(0x2696, 0xFE0F)} Attorney / Legal</option>
+                                  <option value="local_gov">{String.fromCodePoint(0x1F3D8, 0xFE0F)} Local Government</option>
+                                  <option value="state_gov">{String.fromCodePoint(0x1F3DB, 0xFE0F)} State Government</option>
+                                  <option value="federal">{String.fromCodePoint(0x1F1FA, 0x1F1F8)} Federal Government</option>
+                                  <option value="gov_office">{String.fromCodePoint(0x1F3DB, 0xFE0F)} Gov Office / Political</option>
+                                  <option value="advocate">{String.fromCodePoint(0x1F4E3)} Advocate</option>
+                                  <option value="distribution">{String.fromCodePoint(0x1F69A)} Distribution</option>
+                                  <option value="investor">{String.fromCodePoint(0x1F4B0)} Investor</option>
+                                  <option value="backoffice">{String.fromCodePoint(0x1F4BC)} Back Office Leasing</option>
+                                  <option value="whitelabel">{String.fromCodePoint(0x1F680)} Platform Whitelabel Leasing</option>
+                                </select>
+                                <button type="button" onClick={(e) => {
+                                  e.stopPropagation();
+                                  const wType = editData['_welcomeType'] || 'patient';
+                                  const name = r.name || 'Valued Client';
+                                  const firstName = name.split(' ')[0];
+                                  const biz = r.businessName || name;
+                                  const state = r.state || 'Oklahoma';
+                                  const fullState = getFullStateName(state);
+                                  const portalUrl = getStatePortalUrl(state);
+                                  const ggpEmail = editData.ggpLoginEmail !== undefined ? editData.ggpLoginEmail : (r.rawData?.ggpLoginEmail || r.email || '');
+                                  const ggpPw = editData.ggpLoginPassword !== undefined ? editData.ggpLoginPassword : (r.rawData?.ggpLoginPassword || (fullState + '1'));
+                                  const stLogin = editData.statePortalLogin !== undefined ? editData.statePortalLogin : (r.rawData?.statePortalLogin || r.email || '');
+                                  const stPw = editData.statePortalPassword !== undefined ? editData.statePortalPassword : (r.rawData?.statePortalPassword || (fullState + '1'));
+                                  const sep = '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━';
+
+                                  const benefits: Record<string, string> = {
+                                    patient: 'Your account has been approved and is now fully active on our platform with amazing benefits you can utilize such as our Care Wallet, Telehealth Provider Network, Legal & Attorney Marketplace, Personal Assisting AI and our amazing C3 credit scoring tools.',
+                                    business: 'Your business account for ' + biz + ' has been approved and is now fully active on our platform. You now have access to our Business Dashboard, Compliance Tracking, Patient Management Suite, Inventory Analytics, and Revenue Optimization tools.',
+                                    provider: 'Your provider account has been approved and is now fully active on our platform. You now have access to our Telehealth Dashboard, Patient Scheduling, Secure Messaging, Digital Prescribing Tools, and HIPAA-compliant Video Consultations.',
+                                    attorney: 'Your legal professional account has been approved and is now fully active on our platform. You now have access to our Legal & Attorney Marketplace, Case Management Dashboard, Client Intake Tools, Compliance Resources, and Secure Document Portal.',
+                                    local_gov: 'Your local government account has been approved and is now fully active on our platform. You now have access to our Government Compliance Dashboard, Licensing Oversight Tools, Community Impact Analytics, and Regulatory Reporting Suite.',
+                                    state_gov: 'Your state government account has been approved and is now fully active on our platform. You now have access to our State Regulatory Dashboard, Multi-Jurisdiction Compliance Tools, Policy Analytics, and Statewide Licensing Oversight.',
+                                    federal: 'Your federal government account has been approved and is now fully active on our platform. You now have access to our Federal Compliance Dashboard, Cross-State Analytics, Regulatory Intelligence Tools, and National Policy Oversight Suite.',
+                                    gov_office: 'Your government office account has been approved and is now fully active on our platform. You now have access to our Policy & Legislative Dashboard, Constituent Services Tools, Regulatory Oversight Analytics, Public Health Compliance Reports, and Inter-Agency Communication Portal.',
+                                    advocate: 'Your advocate account has been approved and is now fully active on our platform. You now have access to our Advocacy Dashboard, Campaign Management Tools, Community Outreach Resources, Legislative Tracking, and Patient Rights Support Center.',
+                                    distribution: 'Your distribution account has been approved and is now fully active on our platform. You now have access to our Distribution Management Dashboard, Supply Chain Analytics, Inventory Tracking, Route Optimization Tools, and Compliance Documentation Suite.',
+                                    investor: 'Your investor account has been approved and is now fully active on our platform. You now have access to our Investor Dashboard, Portfolio Analytics, Revenue & Growth Reports, Market Intelligence Tools, and Quarterly Performance Summaries.',
+                                    backoffice: 'Your back office leasing account has been approved and is now fully active. You now have access to our Operations Dashboard, Staff Management, Financial Reporting, Compliance Tracking, and Administrative Tools Suite.',
+                                    whitelabel: 'Your platform whitelabel leasing account has been approved and is now fully active. You now have access to our full GGP-OS Platform with custom branding, your own Admin Dashboard, User Management, Revenue Analytics, and White-Glove Onboarding Support.',
+                                  };
+
+                                  const greeting = (wType === 'business') ? biz : firstName;
+                                  const includeStatePortal = (wType === 'patient' || wType === 'business');
+
+                                  const emailLines: string[] = [
+                                    'Subject: Welcome to Global Green Hybrid Platform ─ Your Account Is Ready!', '',
+                                    'Dear ' + greeting + ',', '',
+                                    'Welcome to Global Green Hybrid Platform (GGP-OS)! ' + (benefits[wType] || benefits.patient), '',
+                                    sep, '🌐 GGP PLATFORM LOGIN (APPROVED)', sep,
+                                    'Website: https://ggp-os.com', 'Email: ' + ggpEmail, 'Password: ' + ggpPw, '',
+                                  ];
+
+                                  if (includeStatePortal) {
+                                    emailLines.push(sep, '🏛️ State Portal Login (' + fullState.toUpperCase() + ') (PENDING APPROVAL)', sep);
+                                    if (portalUrl) emailLines.push('State Portal: ' + portalUrl);
+                                    emailLines.push('Username: ' + (stLogin || '(pending)'), 'Password: ' + (stPw || '(pending)'), '');
+                                  }
+
+                                  emailLines.push(
+                                    'IMPORTANT:',
+                                    '• Change your password upon first login.',
+                                    '• All data is HIPAA-compliant, AES-256 encrypted.', '',
+                                    '📞 1-888-963-4447 | 📱 645-246-8277 | ✉️ asstsupport@gmail.com', '',
+                                    'Warm regards,', 'Shantell Robinson', 'Founder & CEO, Global Green Enterprise Inc.'
+                                  );
+
+                                  navigator.clipboard.writeText(emailLines.join('\n'));
+                                  setWelcomeCopied(true);
+                                  setTimeout(() => setWelcomeCopied(false), 3000);
+                                }} className={cn('flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all border shadow-md whitespace-nowrap', welcomeCopied ? 'bg-emerald-600 border-emerald-600 text-white' : 'bg-white border-blue-300 text-blue-700 hover:bg-blue-50')}>
+                                  {welcomeCopied ? <><Check size={12} /> Copied!</> : <><Copy size={12} /> Copy Welcome Email</>}
+                                </button>
+                              </div>
+                            </div>
                           </div>
                         )}
                       </>

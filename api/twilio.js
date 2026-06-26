@@ -394,7 +394,7 @@ async function handleCallStatus(req, res) {
 async function handleVoice(req, res) {
   const twiml = new VoiceResponse();
 
-  const toNumber = req.body?.To || req.query?.To || '';
+  const toNumber = req.body?.dialNumber || req.query?.dialNumber || req.body?.To || req.query?.To || '';
   const direction = req.body?.Direction || '';
   const fromClient = req.body?.From?.startsWith?.('client:') || false;
   const callSid = req.body?.CallSid || req.query?.CallSid || '';

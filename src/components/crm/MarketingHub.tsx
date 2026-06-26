@@ -1664,7 +1664,7 @@ export const MarketingHub = () => {
   </div>
   <p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 28px;">Click below to schedule your consultation and secure your medical status today.</p>
   <div style="text-align: center; margin: 32px 0;">
-    <a href="https://globalgreenhp.com/schedule" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: linear-gradient(135deg, #0A3D2A, #1E5E44); color: #E8D5B5; padding: 16px 44px; border-radius: 12px; font-weight: 800; text-decoration: none; font-size: 14px; letter-spacing: 0.5px;">Schedule Renewal Consultation</a>
+    <a href="https://calendly.com/globalgreenhpmeet/medical-card-recommendation-clone" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: linear-gradient(135deg, #0A3D2A, #1E5E44); color: #E8D5B5; padding: 16px 44px; border-radius: 12px; font-weight: 800; text-decoration: none; font-size: 14px; letter-spacing: 0.5px;">Schedule Renewal Consultation</a>
   </div>
   <div style="border-top: 1px solid #E2E8F0; padding-top: 24px; margin-top: 32px;">
     <p style="font-size: 14px; color: #334155; margin: 0 0 4px;"><strong>Respectfully,</strong></p>
@@ -1720,7 +1720,7 @@ export const MarketingHub = () => {
                         setCampaignType('sms');
                         setSendMode('broadcast');
                         setSubject('Med Card Renewal');
-                        setMessage(`Hi, this is Global Green & Chronic Cardz. Your Oklahoma medical cannabis card is expiring soon. To keep your patient status active, schedule your renewal consultation now at globalgreenhp.com/schedule or call 1-405-492-7487. Don't lose access — renew today!`);
+                        setMessage(`Hi, this is Global Green & Chronic Cardz. Your Oklahoma medical cannabis card is expiring soon. To keep your patient status active, schedule your renewal consultation now at calendly.com/globalgreenhpmeet/medical-card-recommendation-clone or call 1-405-492-7487. Don't lose access — renew today!`);
                         alert('✅ SMS Patient Renewal Preset Loaded!\n\n📱 Mode: SMS (TextBelt)\n📋 Audience: Patients with expiring cards\n📅 Renewal Month filter active\n\nReview audience count and hit Launch.');
                       } else if (val === 'sms_business_renewal') {
                         setSelectedTypes(['dispensary', 'grower', 'processor', 'distribution', 'other']);

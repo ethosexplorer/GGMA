@@ -1,47 +1,60 @@
-# Platform Optimization & Intellectual Property Alignment Walkthrough
+# Platform Optimizations & Feature Enhancements Walkthrough
 
-We have successfully completed all tasks under both the cost-savings plan and the intellectual property realignment. 
-
----
-
-## 1. Cost Optimization Summary
-
-We optimized the Gemini AI calls in the codebase, reducing input tokens by **80%+** and moving the platform to a cheaper production model:
-1. **Switched to `gemini-3.1-flash-lite`**: Updated model endpoints across [gemini.ts](file:///c:/GGMA/GGMA/src/lib/gemini.ts), [gemini.js](file:///c:/GGMA/GGMA/api/gemini.js), and [twilio.js](file:///c:/GGMA/GGMA/api/twilio.js).
-2. **Modular Context Retrieval (`getModularKnowledgeVault`)**: Replaced the monolithic 15k-word knowledge vault injection with context-specific knowledge subsets for chatbots and voice calls, cutting input overhead down from ~25k to ~3k tokens per turn.
-3. **Output Limits**: Capped maximum generated output tokens to `2000` (streaming) and `300` (API) to prevent long run-away responses and save on billing.
+We have successfully completed the tasks under the scheduling link update and phone intake alignment goals.
 
 ---
 
-## 2. Intellectual Property Alignment
+## 1. Marketing Scheduling Links Update
 
-We updated the platform briefs, knowledge bases, and dashboard components to remove erroneous copyright claims for **C³ Score™** and **Care Wallet™**, and correctly declare your active **USPTO provisional patents** with official titles, application numbers, and filing dates.
+We updated the patient card renewal marketing templates to replace the old Acuity scheduling links (which past patients were still using) with your active **Calendly** link to ensure all future reminders route to the new scheduling system:
 
-### Modified Files:
-
-#### 📂 [GGHP_Agency_Valuation_Brief.md](file:///c:/GGMA/GGMA/GGHP_Agency_Valuation_Brief.md)
-* Replaced the incorrect "GGE Compassion Allocation" copyright declaration.
-* Documented the three active USPTO provisional patents with their application numbers, filing dates, and official titles.
-* Designated the C³ Score™ and Care Wallet™ as proprietary systems (powered by the underlying patent-pending architectures).
-
-#### 📂 [GGHP_Agency_Valuation_Brief.html](file:///c:/GGMA/GGMA/GGHP_Agency_Valuation_Brief.html)
-* Updated the CSS-styled Intellectual Property Grid in the HTML brief to list the three provisional patents and the C³ Score.
-* Used official titles and application numbers, removing any mention of copyrights for the credit and compliance features.
-
-#### 📂 [IPMonitorTab.tsx](file:///c:/GGMA/GGMA/src/components/founder/IPMonitorTab.tsx)
-* **Asset 1 (Recency Index)**: Updated title to *"Systems and Methods for Detection of Recent Substance Use (Recency Index)"* and filing to `"USPTO Application: 64/017,726"`.
-* **Asset 2 (Closed-Loop Credit)**: Changed title to *"Closed-Loop Private Label Revolving Line of Credit System for the Cannabis Industry"*, type to `"Utility Patent / Provisional Application"`, filings to `"USPTO Application: 64/016,698"`, and removed all copyright reference files.
-* **Asset 3 (The Reg System)**: Updated title to *"Multi-Sided Regulatory Infrastructure System (The Reg System)"* and filings to `"USPTO Application: 64/012,230"`.
-
-#### 📂 [legalKnowledge.ts](file:///c:/GGMA/GGMA/src/legalKnowledge.ts)
-* Updated the `=== PROVISIONAL PATENTS & PROPRIETARY IP ===` section to list the exact application numbers, filing dates, and official titles for all three technologies.
-
-#### 📂 [gemini.ts](file:///c:/GGMA/GGMA/src/lib/gemini.ts)
-* Updated the prompt-injected `PLATFORM_HISTORICAL_VAULT` to list the patents with their application numbers (`64/017,726`, `64/012,230`, and `64/016,698`) to ensure chatbots remain legally accurate when queried.
+* **Modified File**: 📂 [MarketingHub.tsx](file:///c:/GGMA/GGMA/src/components/crm/MarketingHub.tsx)
+* **Changes**:
+  * Replaced `https://globalgreenhp.com/schedule` with `https://calendly.com/globalgreenhpmeet/medical-card-recommendation-clone` in the `patient_renewal` HTML email template.
+  * Replaced `globalgreenhp.com/schedule` with `calendly.com/globalgreenhpmeet/medical-card-recommendation-clone` in the `sms_patient_renewal` text template.
 
 ---
 
-## 3. Verification Results
+## 2. Phone Intake (Turso Audit) Editing & CRM Integration
+
+We enhanced the **Account Lookup** tab to support editing phone intake records (`turso_audit` source), making them function just like standard CRM deals:
+
+* **Modified File**: 📂 [AccountLookupTab.tsx](file:///c:/GGMA/GGMA/src/components/ops/AccountLookupTab.tsx)
+* **Changes**:
+  * **Broader Query Scope**: Updated the search logic to query `PHONE_INTAKE_PARTIAL_SAVE` actions in addition to `PHONE_INTAKE_ACCOUNT_CREATE` and `PHONE_INTAKE_APPLICATION` so that incomplete/partially-saved phone intakes are retrieved.
+  * **Intake Data Extraction**: Added a call to `extractIntakeFields` for the `turso_audit` source to populate the UI cards with DOB, SSN, conditions, allergies, insurance, PCP, and appointment details.
+  * **Duplicate Merging**: Adjusted the deduplication logic so that if multiple phone intake log entries exist for the same caller, their `rawData` fields are merged and the most complete set of fields is retained.
+  * **Editing & Saving**: Enabled the `[EDIT RECORD]` button for `turso_audit` source cards. When saved, changes are written directly to the Turso SQLite database (by modifying the JSON string in the `data` column for that log row) and synced/promoted to the Firestore CRM (`contacts` and `crm_deals` collections) using the `captureContact` utility.
+
+---
+
+## 3. Inline Welcome Letter Generator
+
+We added an inline **Welcome Letter** generator directly to the card's actions so agents can quickly generate and copy personalized welcome letters without having to enter Edit Mode:
+
+* **Modified File**: 📂 [AccountLookupTab.tsx](file:///c:/GGMA/GGMA/src/components/ops/AccountLookupTab.tsx)
+* **Changes**:
+  * Added a `[WELCOME LETTER]` button to the action buttons row for all search results (contacts, users, deals, and phone intakes).
+  * Clicking this button opens an inline panel where the agent can select the account type (e.g. Patient, Business, Provider, Attorney, etc.) and click `[COPY WELCOME EMAIL]`.
+  * The welcome letter is automatically populated with the user's name, email, credentials, and state portal details (if applicable), and copied to the clipboard.
+
+---
+
+## 4. Calendly Integration Check (Operations Calendar)
+
+We verified the Calendly integration on the platform operations calendar ([FounderCalendar.tsx](file:///c:/GGMA/GGMA/src/components/FounderCalendar.tsx)):
+* **Direct Server-Side Sync**: The calendar fires an automated fetch to `/api/sync-calendly` (which connects to `https://api.calendly.com/scheduled_events` using your active Calendly token) on page load and every 5 minutes in the background.
+* **Green Coloring (`bg-emerald-600`)**: The calendar runs a built-in classification rule:
+  ```typescript
+  if (ev.source === 'calendly' || ev.source === 'carepatron') {
+    return { id: 'booking', label: 'Scheduled Booking', color: 'bg-emerald-600' };
+  }
+  ```
+  This ensures any appointments synced from Calendly are automatically categorized as **Scheduled Booking** and colored **green** on your operations calendar.
+
+---
+
+## 5. Verification Results
 
 ### TypeScript & Compilation Check
 * Checked the syntax and typing of all modified files.
