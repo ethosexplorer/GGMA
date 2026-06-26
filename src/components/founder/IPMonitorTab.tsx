@@ -90,11 +90,11 @@ export const IPMonitorTab = ({ fullName, userTitle }: { fullName: string, userTi
         {[
           {
             id: 1,
-            title: "Tiered Threshold Forensic Oral Fluid Screening System for Δ9-THC",
-            type: "Provisional + Utility Patent Application",
+            title: "Systems and Methods for Detection of Recent Substance Use (Recency Index)",
+            type: "Utility Patent / Provisional Application",
             date: "March 26, 2026",
             status: "Active",
-            filings: "5 USPTO submissions",
+            filings: "USPTO Application: 64/017,726",
             description: "Multi-channel microfluidic lateral flow device with tiered 2/5/10 ng/mL thresholds and ratio-based temporal recency modeling.",
             files: [
               { name: "Full Utility Patent Application.pdf" },
@@ -105,26 +105,25 @@ export const IPMonitorTab = ({ fullName, userTitle }: { fullName: string, userTi
           },
           {
             id: 2,
-            title: "Closed-Loop Private Label Revolving Line of Credit for the Cannabis Industry",
-            type: "Provisional Application + Copyright",
-            date: "December 2024",
-            status: "Registered",
-            filings: "Copyright TXu 2-461-818",
+            title: "Closed-Loop Private Label Revolving Line of Credit System for the Cannabis Industry",
+            type: "Utility Patent / Provisional Application",
+            date: "March 26, 2026",
+            status: "Active",
+            filings: "USPTO Application: 64/016,698",
             description: "Full closed-loop credit architecture, merchant processing, compliance engine, and jurisdiction-aware lending system.",
             files: [
               { name: "Provisional Patent.pdf" },
               { name: "Drawings.pdf" },
-              { name: "Copyright Registration.pdf" },
             ]
           },
           {
             id: 3,
-            title: "Multi-Sided Regulatory Infrastructure System with AI-Driven Cross-Module Routing",
-            type: "Provisional Application",
-            date: "2026",
+            title: "Multi-Sided Regulatory Infrastructure System (The Reg System)",
+            type: "Utility Patent / Provisional Application",
+            date: "March 19, 2026",
             status: "Filed",
-            filings: "GGP-OS backbone",
-            description: "Unified AI routing platform integrating healthcare, legal, compliance, and business modules.",
+            filings: "USPTO Application: 64/012,230",
+            description: "Unified AI routing platform with cross-module routing, artificial intelligence intake, and unified role-based access control.",
             files: [
               { name: "Provisional Application.pdf" },
             ]

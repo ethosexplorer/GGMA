@@ -129,12 +129,12 @@ Woman-Owned Business • WOSB • Minority-Owned Business • Black American Own
 
 ## Intellectual Property & Proprietary Systems
 
-GGHP-OS contains multiple proprietary systems that are not available from any other vendor:
+GGHP-OS contains multiple proprietary systems and patent-pending technologies that are not available from any other vendor:
 
-- **C³ Score (Cannabis Compassion Score)** — The industry's first behavioral compliance scoring system, modeled on FICO scoring conventions (300–850 range), measuring payment discipline, regulatory adherence, ecosystem engagement, and risk structure
-- **Care Wallet** — A closed-loop stored-value financial infrastructure designed for the cannabis ecosystem, with full audit trail capability for alternative credit bureau reporting
-- **Recency Index (RI)** — A proprietary dual-channel formula for impairment detection that outperforms existing single-immunoassay cutoff methods used by current market leaders
-- **GGE Compassion Allocation** — A copyrighted closed-loop private label financial framework (origin: 2020–2021, timestamped and documented)
+- **Recency Index (RI)** — *Systems and Methods for Detection of Recent Substance Use* (USPTO Utility/Provisional Patent Application No. **64/017,726**, Filed March 26, 2026). A proprietary dual-channel formula and ratio-based temporal modeling system for impairment detection that outperforms existing single-immunoassay cutoff methods.
+- **The Reg System (Registration System)** — *Multi-Sided Regulatory Infrastructure System with Cross-Module Routing, Artificial Intelligence Intake, and Unified Role-Based Access Control* (USPTO Utility/Provisional Patent Application No. **64/012,230**, Filed March 19, 2026). A multi-sided onboarding, verification, and real-time state compliance routing system.
+- **Closed-Loop Credit System** — *Closed-Loop Private Label Revolving Line of Credit System for the Cannabis Industry with Integrated Merchant Processing, Automated Compliance Architecture, and Regulated Industry Framework* (USPTO Utility/Provisional Patent Application No. **64/016,698**, Filed March 26, 2026). A proprietary stored-value credit and financial allocation infrastructure (powering **Care Wallet™**).
+- **C³ Score™ (Cannabis Compassion Score)** — A proprietary behavioral compliance scoring system (300–850 range) measuring payment discipline, regulatory adherence, and risk structure.
 
 ---
 

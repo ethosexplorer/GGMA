@@ -39,8 +39,7 @@ REGISTRATIONS & DEFENSIVE SHIELDS:
 PROPRIETARY IP & ALGORITHMS:
 - C³ Score (Cannabis Compassion Score): FICO-style compliance scoring (300-850) based on payments and regulatory history.
 - Care Wallet: Closed-loop stored-value credit/financial infrastructure.
-- Recency Index (RI): Impairment detection algorithm outperforming single cutoff immunoassay methods.
-- GGE Compassion Allocation: Closed-loop private label financial framework copyrighted in 2020-2021.
+- Provisional Patents: Active provisional patents on the Recency Index (RI) (USPTO Application No. 64/017,726), the Registration System (The Reg System) (USPTO Application No. 64/012,230), and the Closed-Loop Credit system (USPTO Application No. 64/016,698).
 
 TELEMEDICINE & SAAS SERVICE PRICING:
 - Patient Medical Card Recommendations: $194.30 (Standard) OR $107.50 (hardship/Medicaid/Medicare/VA discount).

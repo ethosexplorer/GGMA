@@ -678,18 +678,12 @@ RECENCY INDEX FORMULA (RAPID TESTING)
 R = [Δ9-THC] / ([11-OH-THC] + [THCCOOH] + ε)
 This dual-channel formula feeds directly into Larry's predictive models as a leading indicator for enforcement and public health risks.
 
-=== GGE COMPASSION ALLOCATION™ PRIVATE LABEL PROVISION (INTELLECTUAL PROPERTY & COPYRIGHT) ===
+=== PROVISIONAL PATENTS & PROPRIETARY IP ===
 
-TITLE OF WORK: Closed-Loop Private Label Compassion Allocation for the Cannabis Industry (Seed-to-Patient Financial Framework)
-COPYRIGHT HOLDER: Shantell Robinson, Founder/Trust Executor
-ORIGIN DATE: 2020 (Vision), 2021 (Active Development)
-EVIDENCE OF ORIGINALITY: 
-- Timestamped business plan drafts and system diagrams (2021–2023).
-- Documented communications with investors and developers (May 2023).
-- Witness testimony from initial development collaborators.
-
-DESCRIPTION:
-This proprietary framework establishes a financial stabilizing system for the cannabis industry, providing a "domino effect" of support from cultivation to patient care. It integrates e-wallet and private-label allocation functionalities (e.g., GGE Compassion Allocation) to manage utilization for medical cannabis and related longevity services (healthcare, retirement, insurance).
+PATENT PENDING TECHNOLOGIES:
+1. Recency Index (RI) — Systems and Methods for Detection of Recent Substance Use (USPTO Utility/Provisional Patent Application No. 64/017,726, Filed March 26, 2026).
+2. The Registration System (The Reg System) — Multi-Sided Regulatory Infrastructure System with Cross-Module Routing, Artificial Intelligence Intake, and Unified Role-Based Access Control (USPTO Utility/Provisional Patent Application No. 64/012,230, Filed March 19, 2026).
+3. Closed-Loop Credit — Closed-Loop Private Label Revolving Line of Credit System for the Cannabis Industry (USPTO Utility/Provisional Patent Application No. 64/016,698, Filed March 26, 2026).
 
 AUTHORIZED ENTITIES:
 - Global Green Enterprise Inc.
@@ -697,7 +691,6 @@ AUTHORIZED ENTITIES:
 - Global Green Marijuana Authority (GGMA)
 - Research & Intelligence Protocol (RIP)
 - Secure Intelligence & Network Compliance (SINC)
-- GGE Compassion Allocation
 - Global Green Platform Trust
 
 === CARE WALLET SYSTEM (CLOSED-LOOP FINANCIAL INFRASTRUCTURE) ===
