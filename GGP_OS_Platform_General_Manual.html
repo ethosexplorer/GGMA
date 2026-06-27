@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GGP-OS Platform General Manual — Global Green Enterprise Inc.</title>
+<title>GGP-OS General Front-End & Platform Manual — Global Green Enterprise Inc.</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
   
@@ -58,7 +58,7 @@
   }
   .cover h1 { 
     font-family: 'Outfit', sans-serif;
-    font-size: 42px; 
+    font-size: 38px; 
     font-weight: 900; 
     color: white; 
     margin-bottom: 12px; 
@@ -66,7 +66,7 @@
     line-height: 1.2;
   }
   .cover h2 { 
-    font-size: 20px; 
+    font-size: 18px; 
     font-weight: 500; 
     color: var(--emerald); 
     margin-bottom: 30px; 
@@ -123,12 +123,25 @@
   }
   .callout strong { color: var(--primary-dark); }
   
-  .highlight-card { 
+  .step-box { 
     background: var(--slate-light); 
     border: 1px solid var(--border); 
-    padding: 24px; 
-    margin: 24px 0; 
-    border-radius: 20px; 
+    border-radius: 16px; 
+    padding: 20px; 
+    margin: 16px 0; 
+  }
+  .step-num { 
+    display: inline-block; 
+    background: var(--primary); 
+    color: white; 
+    width: 28px; 
+    height: 28px; 
+    border-radius: 50%; 
+    text-align: center; 
+    line-height: 28px; 
+    font-size: 12px; 
+    font-weight: 800; 
+    margin-right: 12px; 
   }
 
   /* Table styling */
@@ -208,29 +221,21 @@
     color: #64748b; 
     text-align: center;
   }
-  
-  @media print {
-    body { padding: 20px 30px; }
-    .cover { page-break-after: always; }
-    table { break-inside: avoid; }
-    .feature-card { break-inside: avoid; }
-  }
 </style>
 </head>
 <body>
 
-<!--  COVER PAGE -->
+<!-- COVER PAGE -->
 <div class="cover">
-  <div class="cover-badge">General Presentation & Platform Reference</div>
-  <h1>GGP-OS General Manual</h1>
-  <h2>Platform Capability, Architecture & Business Overview</h2>
+  <div class="cover-badge">General Front-End & Staff Manual</div>
+  <h1>GGP-OS General Front-End Manual</h1>
+  <h2>Platform Overview, User Portals & Outreach Talking Points</h2>
   <div class="cover-divider"></div>
   <div class="cover-meta">
-    <p><strong>Platform:</strong> GGP-OS™ — Global Green Hybrid Platform Operating System</p>
-    <p><strong>Public URL:</strong> www.ggp-os.com</p>
-    <p><strong>Parent Entity:</strong> Global Green Enterprise Inc.</p>
-    <p><strong>Accreditation:</strong> SAM.gov Federal Supplier | SBA WOSB | HIPAA Certified</p>
-    <p style="margin-top: 20px;">Toll-Free: 1-888-963-4447 | Support: asstsupport@gmail.com</p>
+    <p><strong>Audience:</strong> GGP-OS Sales Representatives, General Staff & Workspace Users</p>
+    <p><strong>Core Platform URL:</strong> www.ggp-os.com</p>
+    <p><strong>Parent Company:</strong> Global Green Enterprise Inc.</p>
+    <p><strong>Prepared for:</strong> Onboarding and Platform Training Reference</p>
   </div>
 </div>
 
@@ -238,12 +243,11 @@
 <div class="toc">
   <h3>📋 Table of Contents</h3>
   <ol>
-    <li><strong>Platform Mission & Market Context</strong> — GGP-OS as Industry Infrastructure</li>
-    <li><strong>Dual-Testing screening: SINC & IMMAD</strong> — Saliva Chemical & Visual Latency Mechanics</li>
-    <li><strong>The AI Layer: Sylara & L.A.R.R.Y.</strong> — Automated Onboarding and Compliance Audits</li>
-    <li><strong>IP & Provisional Patents</strong> — Core Credit Protocols & Impairment Detection</li>
-    <li><strong>Value Propositions by Industry Segment</strong> — MSOs, Health Providers, Regulators, and Patients</li>
-    <li><strong>Pricing Models & Revenue Tracks</strong> — Subscription tiers, card processing fees</li>
+    <li><strong>What is GGP-OS & The "Front-End"?</strong> — Understanding User Interfaces</li>
+    <li><strong>General User Portals & Dashboard Views</strong> — Patient, Provider, and Business Screens</li>
+    <li><strong>Staff Front-End Communication Tools</strong> — The Click-to-Dial Web Dialer & Outbound Calls</li>
+    <li><strong>State Simulator Interface</strong> — Searching State Laws & Creating Direct Bypass Links</li>
+    <li><strong>Core Client Talking Points</strong> — Dual-Testing (SINC/IMMAD), Pricing & Hardship Discounts</li>
   </ol>
 </div>
 
@@ -251,161 +255,101 @@
 
 <!-- SECTION 1 -->
 <h1 class="section-number">Section 1</h1>
-<div class="section-title">Platform Mission & Market Context</div>
-<p><strong>GGP-OS</strong> (Global Green Hybrid Platform Operating System) is the private-sector infrastructure layer built specifically for the highly regulated cannabis industry. Unlike simple point-of-sale systems, GGP-OS coordinates compliance, medical intakes, business registrations, legal audits, and safety screening into a single, unified environment.</p>
+<div class="section-title">What is GGP-OS & The "Front-End"?</div>
+<p><strong>GGP-OS</strong> (Global Green Hybrid Platform Operating System) is a cloud-based software system that manages medical recommendations, business licensing, and regulatory compliance for the cannabis industry. It serves users in all 50 states.</p>
+
+<p>When we talk about the <strong>"Front-End"</strong>, we mean the actual visual website and dashboard screens that users look at, click on, and type into. The front-end includes the login pages, the dashboards for patients and doctors, the buttons, the charts, and the interactive chatbot. The front-end is designed to be clean, fast, and simple to use.</p>
 
 <div class="callout">
-  <strong>Key Accomplishments & Credentials:</strong>
+  <strong>Key Platform Facts to Share:</strong>
   <ul>
-    <li><strong>Proven Traction:</strong> Generated over <strong>$192,131.70</strong> in software/service revenue through organic onboarding.</li>
-    <li><strong>Federal Accreditations:</strong> Fully registered Federal Supplier in SAM.gov and certified as an SBA Women-Owned Small Business (WOSB).</li>
-    <li><strong>Legal Rigor:</strong> HIPAA compliant for medical record encryption, boasting an A+ rating with the Better Business Bureau.</li>
+    <li><strong>Credibility:</strong> Registered Federal Supplier in SAM.gov and certified as an SBA Women-Owned Small Business (WOSB).</li>
+    <li><strong>Quality & Privacy:</strong> Fully HIPAA-compliant for medical record security, boasting an A+ rating with the Better Business Bureau (BBB).</li>
+    <li><strong>Traction:</strong> Has generated over <strong>$192,131.70</strong> in revenue from organic user signups.</li>
   </ul>
 </div>
-
-<p>Operating nationwide across all 50 states, GGP-OS resolves the friction between patients seeking access, physicians requiring clinical verification, businesses demanding liability protection, and state regulators enforcing compliance.</p>
 
 <hr>
 
 <!-- SECTION 2 -->
 <h1 class="section-number">Section 2</h1>
-<div class="section-title">Dual-Testing Screening: SINC & IMMAD</div>
-<p>One of the largest bottlenecks in workplace and public safety is the determination of active impairment. Standard THC tests measure metabolites that remain in the body for weeks, failing to differentiate between historical consumption and active impairment. GGP-OS integrates a patented <strong>Dual-Testing Screening Protocol</strong> to create a legally defensible recency standard:</p>
+<div class="section-title">Core User Portals & Dashboard Views</div>
+<p>Staff and representatives should understand the different frontend dashboard views that clients experience when they log into the system:</p>
 
-<div class="highlight-card">
-  <div class="sub-title">1. Saliva Chemical Screening (SINC cassettes)</div>
-  <p>Uses oral fluid rapid-solution cassettes that read active Delta-9 THC levels. It detects presence in nanograms, proving the user has consumed cannabis within the last 1-4 hours.</p>
-
-  <div class="sub-title">2. Visual Ocular Latency (IMMAD camera integration)</div>
-  <p>Measures visual saccades, pupil response speed, and motor delay through a camera scan. If a user has chemical presence in their saliva AND exhibits measurable ocular latency delays compared to their baseline, impairment is objectively flagged.</p>
+<div class="feature-grid">
+  <div class="feature-card">
+    <h4>👤 Patient Portal (Care Wallet)</h4>
+    <p>Patients use this to upload their ID, complete HIPAA questionnaires, and see their recommendation status. It includes a <strong>"Driver Safety" self-check simulator</strong> where patients can verify their cognitive driving readiness privately.</p>
+  </div>
+  <div class="feature-card">
+    <h4>🩺 Healthcare Provider Portal</h4>
+    <p>Registered doctors use this to review patient intake details, log clinical evaluations, track quantitative visual reaction delays (ocular baselines), and enter medical recommendations.</p>
+  </div>
+  <div class="feature-card">
+    <h4>🏢 Business Operator Portal</h4>
+    <p>Businesses (dispensaries, growers) use this to monitor license renewal dates, track solutions strip inventory, review active staff pre-shift checks, and configure automated vehicle dispatch lockouts for impaired drivers.</p>
+  </div>
+  <div class="feature-card">
+    <h4>📞 Representative / Staff Portal</h4>
+    <p>Your workspace dashboard. It lists CRM contacts and gives you call lists and communication interfaces to talk to leads.</p>
+  </div>
 </div>
-
-<p>This dual-channel approach gives commercial operators (fleet dispatchers, heavy machinery managers) and law enforcement officers an objective, court-ready screening result.</p>
 
 <hr>
 
 <!-- SECTION 3 -->
 <h1 class="section-number">Section 3</h1>
-<div class="section-title">The AI Layer: Sylara & L.A.R.R.Y.</div>
-<p>GGP-OS operates on a highly efficient **85% AI / 15% Human** operational design, minimizing overhead while maximizing processing accuracy.</p>
+<div class="section-title">Staff Front-End Communication Tools</div>
+<p>GGP-OS has communication tools built directly into the staff and rep dashboards so you can interact with clients instantly:</p>
 
-<div class="feature-grid">
-  <div class="feature-card">
-    <h4>🤖 Sylara AI (Intake & Support)</h4>
-    <p>Sylara manages patient onboarding, guides them through complex state laws, answers pricing questions, and schedules doctor appointments. Her profile updates dynamically based on the state the patient resides in.</p>
-  </div>
-  <div class="feature-card">
-    <h4>🔎 L.A.R.R.Y. AI (Compliance Audit)</h4>
-    <p>L.A.R.R.Y. reviews business license applications, seed-to-sale inventories (METRC / BioTrack), and alerts admins of potential regulatory infractions before state audits occur.</p>
-  </div>
+<div class="step-box">
+  <span class="step-num">1</span><strong>The Web Dialer (VoIP Softphone)</strong>
+  <p>In the bottom-right corner of the dashboard screen is a green button labeled <strong>"WEB DIALER • Ready."</strong> Clicking this opens a phone keypad. You can call any contact in your list directly from your browser. Your outbound caller ID is always masked as the company's toll-free line: <strong>1-888-963-4447</strong>.</p>
+</div>
+
+<div class="step-box">
+  <span class="step-num">2</span><strong>SMS & iMessage Interface</strong>
+  <p>The messaging center allows you to text clients or send pre-built SMS templates (e.g. application submission notices, appointment reminders). Text messages go out from the company's active text line: <strong>645-246-8277</strong>.</p>
 </div>
 
 <hr>
 
 <!-- SECTION 4 -->
 <h1 class="section-number">Section 4</h1>
-<div class="section-title">Provisional Patent Portfolio</div>
-<p>The GGP-OS platform is anchored by three major provisional patents filed with the United States Patent and Trademark Office (USPTO):</p>
-
-<table>
-  <thead>
-    <tr>
-      <th>USPTO Application No.</th>
-      <th>Filing Date</th>
-      <th>Official Innovation Title</th>
-      <th>Operational Impact</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td class="font-mono">64/017,726</td>
-      <td>March 26, 2026</td>
-      <td><strong>Recency Index (RI) Substance Detection</strong></td>
-      <td>Combines rapid chemical saliva cassettes with visual ocular response timing to calculate active impairment.</td>
-    </tr>
-    <tr>
-      <td class="font-mono">64/016,698</td>
-      <td>March 26, 2026</td>
-      <td><strong>Closed-Loop Private Credit System</strong></td>
-      <td>Establishes a revolving line of credit system directly linking vendor sales to their live compliance status.</td>
-    </tr>
-    <tr>
-      <td class="font-mono">64/012,230</td>
-      <td>March 19, 2026</td>
-      <td><strong>Multi-Sided Compliance Routing Node</strong></td>
-      <td>Enables secure, real-time routing of client records and tracking logs from POS terminals directly to State regulators.</td>
-    </tr>
-  </tbody>
-</table>
+<div class="section-title">State Simulator Interface</div>
+<p>As a rep or staff member, you do not need to memorize the laws of all 50 states. You can use the **State Compliance Simulator** tool in your dashboard to find state details in seconds:</p>
+<ul>
+  <li><strong>Dropdown State Lookup:</strong> Choose any state (like Mississippi, Florida, or Oklahoma) to dynamically display its regulatory agency (like MSDH/MMCP), state fee cost, local licensing caps, and active tracking systems (METRC or BioTrack).</li>
+  <li><strong>Qualifying Conditions List:</strong> Instantly displays the official qualifying medical conditions for the chosen state so you can tell patients if they qualify.</li>
+  <li><strong>Direct State Bypass Links:</strong> Generate custom demo links (e.g., `/demo?state=California`) to send to prospects. When they click the link, the demo automatically locks to that state's regulatory rules.</li>
+</ul>
 
 <hr>
 
 <!-- SECTION 5 -->
 <h1 class="section-number">Section 5</h1>
-<div class="section-title">Value Propositions by Segment</div>
-<div class="feature-grid">
-  <div class="feature-card">
-    <h4>🏢 Multi-State Operators (MSOs)</h4>
-    <p>Automated pre-shift screening flags impaired staff. Reduces workplace liability premiums and protects heavy machinery operations.</p>
-  </div>
-  <div class="feature-card">
-    <h4>🩺 Healthcare Providers</h4>
-    <p>Quantitative baseline tracking charts patient response to specific medical dosages over time, replacing subjective self-reporting.</p>
-  </div>
-  <div class="feature-card">
-    <h4>🏛 State Regulators & Law Enforcement</h4>
-    <p>Roadside visual scans coupled with saliva screening create objective, court-defensible metrics, lowering DUI litigation dismissals.</p>
-  </div>
-  <div class="feature-card">
-    <h4>👤 Consumers & Patients</h4>
-    <p>Provides a self-check module to verify driving readiness privately, logging safe driving streaks for insurance discounts.</p>
-  </div>
+<div class="section-title">Core Talking Points & Script Guidelines</div>
+<p>When speaking with prospective patients, doctors, or businesses, use these standardized guidelines:</p>
+
+<div class="highlight-card">
+  <h4 class="sub-title">1. SINC & IMMAD Dual-Testing (The Safety Pitch)</h4>
+  <p>Explain that GGHP uses a **Dual-Testing Protocol** to detect active impairment. It combines chemical fluid cassettes (measuring saliva Delta-9 THC levels) with visual ocular latency tracking (pupil reaction speed scans). This separates historic cannabis use from active impairment, protecting businesses from liability and drivers from unfair charges.</p>
 </div>
 
-<hr>
+<div class="highlight-card">
+  <h4 class="sub-title">2. Pricing Guidelines</h4>
+  <p>When quoting recommendation processing costs, always include estimated physician fees and state card fees, followed by the phrase **"(cost could vary)"**:</p>
+  <ul>
+    <li><strong>Mississippi:</strong> ~$150 doctor fee (cost could vary) + $55 GGP processing + $25 state fee.</li>
+    <li><strong>Arkansas:</strong> ~$200 doctor fee (cost could vary) + $55 GGP processing + $50 state fee.</li>
+    <li><strong>Louisiana:</strong> ~$150 doctor fee (cost could vary) + $50 GGP processing.</li>
+  </ul>
+</div>
 
-<!-- SECTION 6 -->
-<h1 class="section-number">Section 6</h1>
-<div class="section-title">Pricing Models & Subscription Tiers</div>
-<p>GGP-OS drives revenue through both direct consumer processing fees and B2B subscription options:</p>
-
-<div class="sub-title">B2B Business Subscription Packages</div>
-<table>
-  <thead>
-    <tr>
-      <th>Subscription Tier</th>
-      <th>Price (USD)</th>
-      <th>Target Operator</th>
-      <th>Core Features</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><strong>Cannabis Starter</strong></td>
-      <td>$199 / mo</td>
-      <td>Boutique dispensaries</td>
-      <td>Basic seed-to-sale tracking integration, compliance monitoring.</td>
-    </tr>
-    <tr>
-      <td><strong>Cannabis Professional</strong></td>
-      <td>$249 / mo</td>
-      <td>Multi-location dispensaries</td>
-      <td>Dual-testing SINC hardware support, pre-shift employee logs, dispatcher integration.</td>
-    </tr>
-    <tr>
-      <td><strong>Cannabis Enterprise</strong></td>
-      <td>$499 / mo</td>
-      <td>Multi-State Operators (MSOs)</td>
-      <td>Full custom routing nodes, unlimited driver dispatch lockouts, dedicated account executive.</td>
-    </tr>
-  </tbody>
-</table>
-
-<div class="sub-title">Medical Recommendation Processing</div>
-<ul>
-  <li><strong>Patient Recommendation Intake:</strong> ~$150 - $200 physician fee (cost could vary) + $50 - $60 GGP platform processing fee.</li>
-  <li><strong>Business Licensing Application Support:</strong> $249 - $449 processing fee based on complexity.</li>
-</ul>
+<div class="highlight-card">
+  <h4 class="sub-title">3. Hardship & Veteran Discounts</h4>
+  <p>To ensure access, GGP offers a **hardship discount of up to $20 off** the platform processing fee. Share this with patients who are veterans, on Medicaid/Medicare, or express financial difficulty.</p>
+</div>
 
 <!-- FOOTER -->
 <div class="footer">
