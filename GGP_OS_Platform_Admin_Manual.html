@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GGP-OS Platform Admin Manual — Global Green Enterprise Inc.</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+  
+  :root {
+    --primary: #1e293b;
+    --primary-accent: #0f172a;
+    --emerald: #10b981;
+    --emerald-light: #ecfdf5;
+    --border: #e2e8f0;
+    --text-main: #334155;
+    --text-dark: #0f172a;
+    --slate-light: #f8fafc;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+    color: var(--text-main); 
+    background: #fff; 
+    max-width: 900px; 
+    margin: 0 auto; 
+    padding: 60px 50px; 
+    line-height: 1.8; 
+    font-size: 14px; 
+  }
+  
+  /* Cover Page */
+  .cover { 
+    page-break-after: always; 
+    text-align: center; 
+    padding: 100px 40px 60px; 
+    border: 1px solid var(--border);
+    border-radius: 32px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-accent) 100%);
+    color: white;
+    margin-bottom: 80px;
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.1);
+  }
+  .cover-badge { 
+    display: inline-block; 
+    background: rgba(16, 185, 129, 0.2); 
+    color: var(--emerald); 
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    padding: 8px 24px; 
+    border-radius: 30px; 
+    font-size: 11px; 
+    font-weight: 800; 
+    letter-spacing: 2px; 
+    text-transform: uppercase; 
+    margin-bottom: 40px; 
+  }
+  .cover h1 { 
+    font-family: 'Outfit', sans-serif;
+    font-size: 42px; 
+    font-weight: 900; 
+    color: white; 
+    margin-bottom: 12px; 
+    letter-spacing: -1px; 
+    line-height: 1.2;
+  }
+  .cover h2 { 
+    font-size: 20px; 
+    font-weight: 500; 
+    color: var(--emerald); 
+    margin-bottom: 30px; 
+  }
+  .cover-divider { 
+    width: 80px; 
+    height: 4px; 
+    background: var(--emerald); 
+    margin: 30px auto; 
+    border-radius: 2px; 
+  }
+  .cover-meta { 
+    margin-top: 50px; 
+    font-size: 12px; 
+    color: #94a3b8; 
+  }
+  .cover-meta strong { color: white; }
+
+  /* Heading Styles */
+  h1.section-number { 
+    font-size: 12px; 
+    font-weight: 800; 
+    color: var(--emerald); 
+    text-transform: uppercase; 
+    letter-spacing: 3px; 
+    margin-bottom: 6px; 
+  }
+  .section-title { 
+    font-family: 'Outfit', sans-serif;
+    font-size: 24px; 
+    font-weight: 900; 
+    color: var(--primary-accent); 
+    border-bottom: 2px solid var(--border); 
+    padding-bottom: 12px; 
+    margin: 40px 0 20px; 
+  }
+  .sub-title { 
+    font-size: 16px; 
+    font-weight: 700; 
+    color: var(--primary-accent); 
+    margin: 26px 0 12px; 
+  }
+  
+  p { margin: 10px 0; }
+  
+  /* Callouts & Highlights */
+  .callout { 
+    background: var(--emerald-light); 
+    border-left: 4px solid var(--emerald); 
+    padding: 18px 22px; 
+    margin: 20px 0; 
+    font-size: 13.5px; 
+    border-radius: 0 16px 16px 0; 
+  }
+  .callout strong { color: var(--primary-accent); }
+  
+  .step-box { 
+    background: var(--slate-light); 
+    border: 1px solid var(--border); 
+    border-radius: 16px; 
+    padding: 20px; 
+    margin: 16px 0; 
+  }
+  .step-num { 
+    display: inline-block; 
+    background: var(--emerald); 
+    color: white; 
+    width: 28px; 
+    height: 28px; 
+    border-radius: 50%; 
+    text-align: center; 
+    line-height: 28px; 
+    font-size: 12px; 
+    font-weight: 800; 
+    margin-right: 12px; 
+  }
+
+  /* Table styling */
+  table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin: 20px 0; 
+    font-size: 13px; 
+  }
+  th { 
+    background: var(--primary-accent); 
+    color: white; 
+    padding: 12px 16px; 
+    text-align: left; 
+    font-weight: 700; 
+    font-size: 11px; 
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+  }
+  td { 
+    padding: 12px 16px; 
+    border-bottom: 1px solid var(--border); 
+  }
+  tr:nth-child(even) { background: var(--slate-light); }
+  
+  ul, ol { margin: 10px 0 16px 24px; }
+  li { margin: 6px 0; }
+  li strong { color: var(--primary-accent); }
+  
+  hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+  
+  .feature-grid { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 16px; 
+    margin: 20px 0; 
+  }
+  .feature-card { 
+    background: var(--slate-light); 
+    border: 1px solid var(--border); 
+    border-radius: 16px; 
+    padding: 18px; 
+  }
+  .feature-card h4 { 
+    font-size: 13.5px; 
+    font-weight: 800; 
+    color: var(--primary-accent); 
+    margin-bottom: 6px; 
+  }
+  .feature-card p { 
+    font-size: 12.5px; 
+    color: var(--text-main); 
+    margin: 0; 
+  }
+  
+  .toc { 
+    background: var(--slate-light); 
+    border: 1px solid var(--border); 
+    border-radius: 24px; 
+    padding: 30px 40px; 
+    margin: 30px 0; 
+  }
+  .toc h3 { 
+    font-size: 16px; 
+    font-weight: 800; 
+    color: var(--primary-accent); 
+    margin-bottom: 16px; 
+  }
+  .toc ol { margin: 0; padding-left: 20px; }
+  .toc li { margin: 8px 0; font-weight: 500; }
+  
+  .footer { 
+    margin-top: 60px; 
+    padding-top: 30px; 
+    border-top: 2px solid var(--border); 
+    font-size: 11px; 
+    color: #64748b; 
+    text-align: center;
+  }
+  
+  @media print {
+    body { padding: 20px 30px; }
+    .cover { page-break-after: always; }
+    table { break-inside: avoid; }
+    .step-box { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover">
+  <div class="cover-badge">Admin Operations & Front-End Reference</div>
+  <h1>GGP-OS Admin Manual</h1>
+  <h2>Dashboard Navigation, CRM Pipeline & Compliance Administration</h2>
+  <div class="cover-divider"></div>
+  <div class="cover-meta">
+    <p><strong>Platform:</strong> GGP-OS™ — Global Green Hybrid Platform Operating System</p>
+    <p><strong>Portal URL:</strong> www.ggp-os.com/dashboard</p>
+    <p><strong>Prepared for:</strong> Regional Admins, Intake Directors & Lead Officers</p>
+    <p><strong>Security Level:</strong> Internal Only — HIPAA Compliant Protocols</p>
+    <p style="margin-top: 20px;">Toll-Free Support: 1-888-963-4447 | SMS & Call Logs: 645-246-8277</p>
+  </div>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<div class="toc">
+  <h3>📋 Table of Contents</h3>
+  <ol>
+    <li><strong>Front-End Dashboard Navigation</strong> — Layout, Custom Sidebar & Core Modules</li>
+    <li><strong>Role-Based Access Matrix</strong> — The 37 Dashboard Variants</li>
+    <li><strong>CRM Pipeline Administration</strong> — Navigating 24,900+ Contacts & Web Dialer</li>
+    <li><strong>State Compliance Simulator</strong> — Dynamically Loading State Registry Rules & Share Links</li>
+    <li><strong>Patient Case & Medical Intake Management</strong> — Telehealth Booking & Document Uploads</li>
+    <li><strong>Business Compliance & Dispatch Lockouts</strong> — METRC/BioTrack sync, Solutions Cassettes</li>
+    <li><strong>System Audits & Security Protocols</strong> — Immutable Audit Logs, HIPAA Controls</li>
+  </ol>
+</div>
+
+<hr>
+
+<!-- SECTION 1 -->
+<h1 class="section-number">Section 1</h1>
+<div class="section-title">Front-End Dashboard Navigation</div>
+<p>The GGP-OS dashboard layout is designed to serve as a command center for regional admins. The interface is composed of three core parts:</p>
+
+<div class="step-box">
+  <span class="step-num">1</span><strong>Top Header Bar</strong>
+  <p>Contains the **Jurisdiction selector** (allowing you to change state context instantly) and your active user profile settings.</p>
+</div>
+
+<div class="step-box">
+  <span class="step-num">2</span><strong>Left Sidebar Navigation</strong>
+  <p>Houses all your active workspace modules (Overview, CRM, Patients, Compliance, AI Monitor, Support, and Settings). Admins can **drag and reorder** sidebar tabs to match their specific daily workflow; selections are persisted automatically to their local session profile.</p>
+</div>
+
+<div class="step-box">
+  <span class="step-num">3</span><strong>Primary Workspace Pane</strong>
+  <p>Where tabs, charts, lists, and forms load. Displays real-time counts of total patients, alerts, and system throughput indicators.</p>
+</div>
+
+<hr>
+
+<!-- SECTION 2 -->
+<h1 class="section-number">Section 2</h1>
+<div class="section-title">Role-Based Access & Dashboards</div>
+<p>The platform dynamic loading engine supports **37 role-based dashboard configurations**. Here are the primary profiles you will configure or manage:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>User Role</th>
+      <th>Key Dashboard Tabs Visible</th>
+      <th>Operational Role</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Executive Founder</strong></td>
+      <td>God Overview, LARRY, Accounting, IP Monitor, Billing, God Settings</td>
+      <td>Full platform access, database override controls, and master sandbox controls.</td>
+    </tr>
+    <tr>
+      <td><strong>Admin</strong></td>
+      <td>Overview, User Directory, Patient Registry, Commercial Nodes, CRM, Compliance Monitor</td>
+      <td>Manages patient files, pre-screens applications, processes licensing, reviews active alerts.</td>
+    </tr>
+    <tr>
+      <td><strong>Representative</strong></td>
+      <td>CRM Pipeline, Call Queue, Outreach Status</td>
+      <td>Dedicated CRM access for outbound calls, follow-ups, and lead conversion.</td>
+    </tr>
+    <tr>
+      <td><strong>Healthcare Provider</strong></td>
+      <td>Patient Consultations Queue, Ocular Baseline Calibration</td>
+      <td>Registered doctors checking intake files, conducting evaluations, and issuing recommendations.</td>
+    </tr>
+    <tr>
+      <td><strong>Business Operator</strong></td>
+      <td>Licensing Status, Solutions Strips, Workplace Impairment, Dispatch status</td>
+      <td>Commercial dispensaries, growers, and processors managing compliance and employee tests.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<!-- SECTION 3 -->
+<h1 class="section-number">Section 3</h1>
+<div class="section-title">CRM Pipeline Administration</div>
+<p>The GGP-OS CRM holds over **24,900+ active contacts** across all US jurisdictions. As an administrator, you are responsible for maintaining data integrity and routing leads.</p>
+
+<div class="highlight-card">
+  <div class="sub-title">📞 Click-to-Dial Web Dialer</div>
+  <p>Every CRM contact card features an integrated green phone icon. Clicking this icon opens the **Web Dialer** (powered by Twilio) in the bottom-right corner. Admins dial out directly through their browser. Outbound caller ID is automatically masked as the toll-free hotline: **1-888-963-4447**.</p>
+  
+  <div class="sub-title">📝 Inbound Call Routing & Logging</div>
+  <p>Inbound calls to the toll-free hotline are received by Sylara's IVR menu. When routed to an active administrator, the Web Dialer will ring. Call duration, direction (inbound/outbound), and audio recording links are automatically logged to the contact's audit card inside the Turso SQL database.</p>
+</div>
+
+<hr>
+
+<!-- SECTION 4 -->
+<h1 class="section-number">Section 4</h1>
+<div class="section-title">State Compliance Simulator</div>
+<p>To support multi-state expansion, the GGP-OS dashboard features an interactive **State Compliance Simulator** page inside the Education tab. This page eliminates the need to build separate sites for each state:</p>
+
+<div class="step-box">
+  <p><strong>1. Dynamic Dropdown Selection:</strong> Select any U.S. state (e.g. Mississippi, Oklahoma, California) from the control panel. The simulator instantly pulls state-specific regulations from `STATE_RESOURCES`.</p>
+</div>
+<div class="step-box">
+  <p><strong>2. Guidelines & Limits:</strong> Displays the governing state agency (e.g. MSDH/MMCP for Mississippi), local license caps, tracking systems (BioTrack/Metrc), and direct phone contacts.</p>
+</div>
+<div class="step-box">
+  <p><strong>3. Official Portals & Qualifying Conditions:</strong> Renders active links to that state's licensing and patient registry pages, alongside its qualifying medical conditions list.</p>
+</div>
+<div class="step-box">
+  <p><strong>4. Share Link Generator (State Lock Bypass):</strong> Includes a button to copy a direct bypass demo URL (e.g., `/demo?state=Mississippi`). Sending this URL to a prospect will automatically set and lock the entire dashboard demo state to that specific jurisdiction on load.</p>
+</div>
+
+<hr>
+
+<!-- SECTION 5 -->
+<h1 class="section-number">Section 5</h1>
+<div class="section-title">Patient Case & Intake Management</div>
+<p>Admins handle the intake pipeline when patients register for a medical recommendation:</p>
+<ol>
+  <li><strong>Intake Review:</strong> Open the **Patient Registry** to view submitted intake questionnaires, photo IDs, and residential documentation.</li>
+  <li><strong>Telehealth Booking:</strong> Coordinate with doctors' Calendly links to schedule video evaluations.</li>
+  <li><strong>Recommendation Verification:</strong> Once the physician enters a recommendation, verify that status updates to "Recommended."</li>
+  <li><strong>State Portal Submission:</strong> Help the patient upload their doctor certification to their local state licensing agency (e.g., MSDH MMCP for Mississippi, OMMA for Oklahoma).</li>
+</ol>
+
+<hr>
+
+<!-- SECTION 6 -->
+<h1 class="section-number">Section 6</h1>
+<div class="section-title">Business Compliance & Dispatch Lockouts</div>
+<p>Admins oversee commercial operators using the B2B dashboard features:</p>
+<ul>
+  <li><strong>Seed-to-Sale Tracking:</strong> Verify that active businesses show successful sync signals with BioTrack or Metrc systems.</li>
+  <li><strong>SINC Cassette Inventory:</strong> Track solutions strip inventory levels for dispensary clients.</li>
+  <li><strong>Workplace Safety Logs:</strong> Review active staff pre-shift visual screening statuses.</li>
+  <li><strong>Dispatcher Lockout Status:</strong> Verify that employees who fail visual/chemical screening are flagged as 'Unavailable' in real-time, locking out delivery driver dispatch.</li>
+</ul>
+
+<hr>
+
+<!-- SECTION 7 -->
+<h1 class="section-number">Section 7</h1>
+<div class="section-title">System Audits & Security Protocols</div>
+<div class="callout">
+  <strong>HIPAA Regulatory Standards:</strong>
+  <p>All client documents (Recommendations, Identification files) uploaded to the platform are encrypted inside firestore storage nodes. Admins must never retrieve or copy documentation onto unsecured external storage media.</p>
+</div>
+
+<p><strong>Immutable Audit Trail:</strong> Every record action (profile modifications, status updates, client calls) is permanently compiled on the blockchain-backed Turso audit logs database, tracking the administrator's ID, change timestamps, action tags, and geolocated GPS coordinates. Audit logs can be reviewed from the **Compliance Monitor** tab by executive roles.</p>
+
+<!-- FOOTER -->
+<div class="footer">
+  <p>© 2026 Global Green Enterprise Inc. All rights reserved.</p>
+  <p>GGP-OS Admin Operations Manual v1.0.</p>
+</div>
+
+</body>
+</html>

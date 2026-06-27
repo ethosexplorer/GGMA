@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GGP-OS Platform General Manual — Global Green Enterprise Inc.</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+  
+  :root {
+    --primary: #1a4731;
+    --primary-dark: #0d281a;
+    --emerald: #10b981;
+    --emerald-light: #ecfdf5;
+    --slate-dark: #0f172a;
+    --slate-light: #f8fafc;
+    --border: #e2e8f0;
+    --text-main: #334155;
+    --text-dark: #0f172a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+    color: var(--text-main); 
+    background: #fff; 
+    max-width: 900px; 
+    margin: 0 auto; 
+    padding: 60px 50px; 
+    line-height: 1.8; 
+    font-size: 14px; 
+  }
+  
+  /* Cover Page */
+  .cover { 
+    page-break-after: always; 
+    text-align: center; 
+    padding: 100px 40px 60px; 
+    border: 1px solid var(--border);
+    border-radius: 32px;
+    background: linear-gradient(135deg, var(--slate-dark) 0%, var(--primary-dark) 100%);
+    color: white;
+    margin-bottom: 80px;
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.1);
+  }
+  .cover-badge { 
+    display: inline-block; 
+    background: rgba(16, 185, 129, 0.2); 
+    color: var(--emerald); 
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    padding: 8px 24px; 
+    border-radius: 30px; 
+    font-size: 11px; 
+    font-weight: 800; 
+    letter-spacing: 2px; 
+    text-transform: uppercase; 
+    margin-bottom: 40px; 
+  }
+  .cover h1 { 
+    font-family: 'Outfit', sans-serif;
+    font-size: 42px; 
+    font-weight: 900; 
+    color: white; 
+    margin-bottom: 12px; 
+    letter-spacing: -1px; 
+    line-height: 1.2;
+  }
+  .cover h2 { 
+    font-size: 20px; 
+    font-weight: 500; 
+    color: var(--emerald); 
+    margin-bottom: 30px; 
+  }
+  .cover-divider { 
+    width: 80px; 
+    height: 4px; 
+    background: var(--emerald); 
+    margin: 30px auto; 
+    border-radius: 2px; 
+  }
+  .cover-meta { 
+    margin-top: 50px; 
+    font-size: 12px; 
+    color: #94a3b8; 
+  }
+  .cover-meta strong { color: white; }
+
+  /* Heading Styles */
+  h1.section-number { 
+    font-size: 12px; 
+    font-weight: 800; 
+    color: var(--emerald); 
+    text-transform: uppercase; 
+    letter-spacing: 3px; 
+    margin-bottom: 6px; 
+  }
+  .section-title { 
+    font-family: 'Outfit', sans-serif;
+    font-size: 24px; 
+    font-weight: 900; 
+    color: var(--primary-dark); 
+    border-bottom: 2px solid var(--border); 
+    padding-bottom: 12px; 
+    margin: 40px 0 20px; 
+  }
+  .sub-title { 
+    font-size: 16px; 
+    font-weight: 700; 
+    color: var(--primary-dark); 
+    margin: 26px 0 12px; 
+  }
+  
+  p { margin: 10px 0; }
+  
+  /* Callouts & Highlights */
+  .callout { 
+    background: var(--emerald-light); 
+    border-left: 4px solid var(--emerald); 
+    padding: 18px 22px; 
+    margin: 20px 0; 
+    font-size: 13.5px; 
+    border-radius: 0 16px 16px 0; 
+  }
+  .callout strong { color: var(--primary-dark); }
+  
+  .highlight-card { 
+    background: var(--slate-light); 
+    border: 1px solid var(--border); 
+    padding: 24px; 
+    margin: 24px 0; 
+    border-radius: 20px; 
+  }
+
+  /* Table styling */
+  table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin: 20px 0; 
+    font-size: 13px; 
+  }
+  th { 
+    background: var(--primary-dark); 
+    color: white; 
+    padding: 12px 16px; 
+    text-align: left; 
+    font-weight: 700; 
+    font-size: 11px; 
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+  }
+  td { 
+    padding: 12px 16px; 
+    border-bottom: 1px solid var(--border); 
+  }
+  tr:nth-child(even) { background: var(--slate-light); }
+  
+  ul, ol { margin: 10px 0 16px 24px; }
+  li { margin: 6px 0; }
+  li strong { color: var(--primary-dark); }
+  
+  hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+  
+  .feature-grid { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 16px; 
+    margin: 20px 0; 
+  }
+  .feature-card { 
+    background: var(--slate-light); 
+    border: 1px solid var(--border); 
+    border-radius: 16px; 
+    padding: 18px; 
+  }
+  .feature-card h4 { 
+    font-size: 13.5px; 
+    font-weight: 800; 
+    color: var(--primary-dark); 
+    margin-bottom: 6px; 
+  }
+  .feature-card p { 
+    font-size: 12.5px; 
+    color: var(--text-main); 
+    margin: 0; 
+  }
+  
+  .toc { 
+    background: var(--slate-light); 
+    border: 1px solid var(--border); 
+    border-radius: 24px; 
+    padding: 30px 40px; 
+    margin: 30px 0; 
+  }
+  .toc h3 { 
+    font-size: 16px; 
+    font-weight: 800; 
+    color: var(--primary-dark); 
+    margin-bottom: 16px; 
+  }
+  .toc ol { margin: 0; padding-left: 20px; }
+  .toc li { margin: 8px 0; font-weight: 500; }
+  
+  .footer { 
+    margin-top: 60px; 
+    padding-top: 30px; 
+    border-top: 2px solid var(--border); 
+    font-size: 11px; 
+    color: #64748b; 
+    text-align: center;
+  }
+  
+  @media print {
+    body { padding: 20px 30px; }
+    .cover { page-break-after: always; }
+    table { break-inside: avoid; }
+    .feature-card { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!--  COVER PAGE -->
+<div class="cover">
+  <div class="cover-badge">General Presentation & Platform Reference</div>
+  <h1>GGP-OS General Manual</h1>
+  <h2>Platform Capability, Architecture & Business Overview</h2>
+  <div class="cover-divider"></div>
+  <div class="cover-meta">
+    <p><strong>Platform:</strong> GGP-OS™ — Global Green Hybrid Platform Operating System</p>
+    <p><strong>Public URL:</strong> www.ggp-os.com</p>
+    <p><strong>Parent Entity:</strong> Global Green Enterprise Inc.</p>
+    <p><strong>Accreditation:</strong> SAM.gov Federal Supplier | SBA WOSB | HIPAA Certified</p>
+    <p style="margin-top: 20px;">Toll-Free: 1-888-963-4447 | Support: asstsupport@gmail.com</p>
+  </div>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<div class="toc">
+  <h3>📋 Table of Contents</h3>
+  <ol>
+    <li><strong>Platform Mission & Market Context</strong> — GGP-OS as Industry Infrastructure</li>
+    <li><strong>Dual-Testing screening: SINC & IMMAD</strong> — Saliva Chemical & Visual Latency Mechanics</li>
+    <li><strong>The AI Layer: Sylara & L.A.R.R.Y.</strong> — Automated Onboarding and Compliance Audits</li>
+    <li><strong>IP & Provisional Patents</strong> — Core Credit Protocols & Impairment Detection</li>
+    <li><strong>Value Propositions by Industry Segment</strong> — MSOs, Health Providers, Regulators, and Patients</li>
+    <li><strong>Pricing Models & Revenue Tracks</strong> — Subscription tiers, card processing fees</li>
+  </ol>
+</div>
+
+<hr>
+
+<!-- SECTION 1 -->
+<h1 class="section-number">Section 1</h1>
+<div class="section-title">Platform Mission & Market Context</div>
+<p><strong>GGP-OS</strong> (Global Green Hybrid Platform Operating System) is the private-sector infrastructure layer built specifically for the highly regulated cannabis industry. Unlike simple point-of-sale systems, GGP-OS coordinates compliance, medical intakes, business registrations, legal audits, and safety screening into a single, unified environment.</p>
+
+<div class="callout">
+  <strong>Key Accomplishments & Credentials:</strong>
+  <ul>
+    <li><strong>Proven Traction:</strong> Generated over <strong>$192,131.70</strong> in software/service revenue through organic onboarding.</li>
+    <li><strong>Federal Accreditations:</strong> Fully registered Federal Supplier in SAM.gov and certified as an SBA Women-Owned Small Business (WOSB).</li>
+    <li><strong>Legal Rigor:</strong> HIPAA compliant for medical record encryption, boasting an A+ rating with the Better Business Bureau.</li>
+  </ul>
+</div>
+
+<p>Operating nationwide across all 50 states, GGP-OS resolves the friction between patients seeking access, physicians requiring clinical verification, businesses demanding liability protection, and state regulators enforcing compliance.</p>
+
+<hr>
+
+<!-- SECTION 2 -->
+<h1 class="section-number">Section 2</h1>
+<div class="section-title">Dual-Testing Screening: SINC & IMMAD</div>
+<p>One of the largest bottlenecks in workplace and public safety is the determination of active impairment. Standard THC tests measure metabolites that remain in the body for weeks, failing to differentiate between historical consumption and active impairment. GGP-OS integrates a patented <strong>Dual-Testing Screening Protocol</strong> to create a legally defensible recency standard:</p>
+
+<div class="highlight-card">
+  <div class="sub-title">1. Saliva Chemical Screening (SINC cassettes)</div>
+  <p>Uses oral fluid rapid-solution cassettes that read active Delta-9 THC levels. It detects presence in nanograms, proving the user has consumed cannabis within the last 1-4 hours.</p>
+
+  <div class="sub-title">2. Visual Ocular Latency (IMMAD camera integration)</div>
+  <p>Measures visual saccades, pupil response speed, and motor delay through a camera scan. If a user has chemical presence in their saliva AND exhibits measurable ocular latency delays compared to their baseline, impairment is objectively flagged.</p>
+</div>
+
+<p>This dual-channel approach gives commercial operators (fleet dispatchers, heavy machinery managers) and law enforcement officers an objective, court-ready screening result.</p>
+
+<hr>
+
+<!-- SECTION 3 -->
+<h1 class="section-number">Section 3</h1>
+<div class="section-title">The AI Layer: Sylara & L.A.R.R.Y.</div>
+<p>GGP-OS operates on a highly efficient **85% AI / 15% Human** operational design, minimizing overhead while maximizing processing accuracy.</p>
+
+<div class="feature-grid">
+  <div class="feature-card">
+    <h4>🤖 Sylara AI (Intake & Support)</h4>
+    <p>Sylara manages patient onboarding, guides them through complex state laws, answers pricing questions, and schedules doctor appointments. Her profile updates dynamically based on the state the patient resides in.</p>
+  </div>
+  <div class="feature-card">
+    <h4>🔎 L.A.R.R.Y. AI (Compliance Audit)</h4>
+    <p>L.A.R.R.Y. reviews business license applications, seed-to-sale inventories (METRC / BioTrack), and alerts admins of potential regulatory infractions before state audits occur.</p>
+  </div>
+</div>
+
+<hr>
+
+<!-- SECTION 4 -->
+<h1 class="section-number">Section 4</h1>
+<div class="section-title">Provisional Patent Portfolio</div>
+<p>The GGP-OS platform is anchored by three major provisional patents filed with the United States Patent and Trademark Office (USPTO):</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>USPTO Application No.</th>
+      <th>Filing Date</th>
+      <th>Official Innovation Title</th>
+      <th>Operational Impact</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="font-mono">64/017,726</td>
+      <td>March 26, 2026</td>
+      <td><strong>Recency Index (RI) Substance Detection</strong></td>
+      <td>Combines rapid chemical saliva cassettes with visual ocular response timing to calculate active impairment.</td>
+    </tr>
+    <tr>
+      <td class="font-mono">64/016,698</td>
+      <td>March 26, 2026</td>
+      <td><strong>Closed-Loop Private Credit System</strong></td>
+      <td>Establishes a revolving line of credit system directly linking vendor sales to their live compliance status.</td>
+    </tr>
+    <tr>
+      <td class="font-mono">64/012,230</td>
+      <td>March 19, 2026</td>
+      <td><strong>Multi-Sided Compliance Routing Node</strong></td>
+      <td>Enables secure, real-time routing of client records and tracking logs from POS terminals directly to State regulators.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<!-- SECTION 5 -->
+<h1 class="section-number">Section 5</h1>
+<div class="section-title">Value Propositions by Segment</div>
+<div class="feature-grid">
+  <div class="feature-card">
+    <h4>🏢 Multi-State Operators (MSOs)</h4>
+    <p>Automated pre-shift screening flags impaired staff. Reduces workplace liability premiums and protects heavy machinery operations.</p>
+  </div>
+  <div class="feature-card">
+    <h4>🩺 Healthcare Providers</h4>
+    <p>Quantitative baseline tracking charts patient response to specific medical dosages over time, replacing subjective self-reporting.</p>
+  </div>
+  <div class="feature-card">
+    <h4>🏛 State Regulators & Law Enforcement</h4>
+    <p>Roadside visual scans coupled with saliva screening create objective, court-defensible metrics, lowering DUI litigation dismissals.</p>
+  </div>
+  <div class="feature-card">
+    <h4>👤 Consumers & Patients</h4>
+    <p>Provides a self-check module to verify driving readiness privately, logging safe driving streaks for insurance discounts.</p>
+  </div>
+</div>
+
+<hr>
+
+<!-- SECTION 6 -->
+<h1 class="section-number">Section 6</h1>
+<div class="section-title">Pricing Models & Subscription Tiers</div>
+<p>GGP-OS drives revenue through both direct consumer processing fees and B2B subscription options:</p>
+
+<div class="sub-title">B2B Business Subscription Packages</div>
+<table>
+  <thead>
+    <tr>
+      <th>Subscription Tier</th>
+      <th>Price (USD)</th>
+      <th>Target Operator</th>
+      <th>Core Features</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Cannabis Starter</strong></td>
+      <td>$199 / mo</td>
+      <td>Boutique dispensaries</td>
+      <td>Basic seed-to-sale tracking integration, compliance monitoring.</td>
+    </tr>
+    <tr>
+      <td><strong>Cannabis Professional</strong></td>
+      <td>$249 / mo</td>
+      <td>Multi-location dispensaries</td>
+      <td>Dual-testing SINC hardware support, pre-shift employee logs, dispatcher integration.</td>
+    </tr>
+    <tr>
+      <td><strong>Cannabis Enterprise</strong></td>
+      <td>$499 / mo</td>
+      <td>Multi-State Operators (MSOs)</td>
+      <td>Full custom routing nodes, unlimited driver dispatch lockouts, dedicated account executive.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="sub-title">Medical Recommendation Processing</div>
+<ul>
+  <li><strong>Patient Recommendation Intake:</strong> ~$150 - $200 physician fee (cost could vary) + $50 - $60 GGP platform processing fee.</li>
+  <li><strong>Business Licensing Application Support:</strong> $249 - $449 processing fee based on complexity.</li>
+</ul>
+
+<!-- FOOTER -->
+<div class="footer">
+  <p>© 2026 Global Green Enterprise Inc. All rights reserved.</p>
+  <p>GGP-OS and SINC are trademarks of Global Green Enterprise Inc.</p>
+</div>
+
+</body>
+</html>
