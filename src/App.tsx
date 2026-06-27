@@ -25,6 +25,7 @@ import { doc, getDoc, setDoc, serverTimestamp, collection, addDoc } from 'fireba
 import { auth, db, storage } from './firebase';
 import { usePresence } from './hooks/usePresence';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { InvestorSandboxTab } from './components/founder/InvestorSandboxTab';
 
 // --- Lazy-loaded Dashboards (Code Splitting) ---
 // Each dashboard is loaded on-demand instead of upfront, dramatically reducing initial bundle size.
@@ -293,6 +294,8 @@ export default function App() {
     'pin-verification': '/pin-verification',
     'education': '/education',
     'legal-advocacy': '/legal-advocacy',
+    'sandbox': '/sandbox',
+    'demo': '/demo',
   };
 
   const handleNavigate = (newView: string, role?: string) => {
@@ -386,6 +389,8 @@ export default function App() {
       '/pin-verification': 'pin-verification',
       '/education': 'education',
       '/legal-advocacy': 'legal-advocacy',
+      '/sandbox': 'sandbox',
+      '/demo': 'sandbox',
     };
     const matchedView = pathToView[path] || (path.startsWith('/dashboard') ? 'dashboard' : null);
     if (matchedView) setView(matchedView);
@@ -444,6 +449,7 @@ export default function App() {
     const OVERSIGHT_EMAILS = ["ceo.globalgreenhp@gmail.com", ADVISOR_EMAIL];
     
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      const isSandboxPath = window.location.pathname === '/sandbox' || window.location.pathname === '/demo';
       if (firebaseUser) {
         setUser(firebaseUser);
         try {
@@ -499,13 +505,13 @@ export default function App() {
             // Skip PIN if already verified this session (survives refresh, clears on browser close)
             if (isFounder || isComplianceDirector || isPresident || isAdvisor) {
                if (sessionStorage.getItem('ggp_pin_verified') === 'true') {
-                 setView('dashboard');
+                 if (!isSandboxPath) setView('dashboard');
                } else {
-                 setView('pin-verification');
+                 if (!isSandboxPath) setView('pin-verification');
                }
             } else {
                // Don't navigate away if user is in the middle of a signup flow
-               setView(prev => (prev === 'larry-chatbot' || prev === 'business-signup' || prev === 'patient-signup') ? prev : 'dashboard');
+               if (!isSandboxPath) setView(prev => (prev === 'larry-chatbot' || prev === 'business-signup' || prev === 'patient-signup' || prev === 'sandbox') ? prev : 'dashboard');
             }
           } else {
             // Auto-provision privileged profiles
@@ -524,16 +530,16 @@ export default function App() {
                setUserProfile(privilegedProfile);
                if (lowerEmail === FOUNDER_EMAIL || lowerEmail === FOUNDER_EMAIL_2 || lowerEmail.includes('compliance.globalgreenhp') || lowerEmail.includes('monica') || lowerEmail.includes('ceo.globalgreenhp') || lowerEmail === ADVISOR_EMAIL) {
                  if (sessionStorage.getItem('ggp_pin_verified') === 'true') {
-                   setView('dashboard');
+                   if (!isSandboxPath) setView('dashboard');
                  } else {
-                   setView('pin-verification');
+                   if (!isSandboxPath) setView('pin-verification');
                  }
                } else {
-                 setView('dashboard');
+                 if (!isSandboxPath) setView('dashboard');
                }
             } else {
               setUserProfile(null);
-              setView('login');
+              if (!isSandboxPath) setView('login');
             }
           }
         } catch (error) {
@@ -1206,6 +1212,14 @@ export default function App() {
               onBack={handleBack} 
               onComplete={() => setView('landing')} 
             />
+          )}
+
+          {view === 'sandbox' && (
+            <div className="w-full min-h-screen bg-slate-50 pt-20 px-8 pb-12 overflow-x-hidden">
+              <div className="max-w-6xl mx-auto">
+                <InvestorSandboxTab />
+              </div>
+            </div>
           )}
 
           {view === 'dashboard' && userProfile && (
