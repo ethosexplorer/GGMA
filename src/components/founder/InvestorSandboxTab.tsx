@@ -8,11 +8,46 @@ import { FederalDashboard } from '../../pages/FederalDashboard';
 import { EnforcementDashboard } from '../../pages/EnforcementDashboard';
 import { BackOfficeDashboard } from '../../pages/BackOfficeDashboard';
 import { EducationPortal } from '../../pages/EducationPortal';
-import { MonitorPlay, Building2, HeartPulse, ShieldAlert, Stethoscope, Scale, Gavel, Globe, Shield, PhoneCall, GraduationCap } from 'lucide-react';
+import { sendSMS } from '../../lib/textbelt';
+import { MonitorPlay, Building2, HeartPulse, ShieldAlert, Stethoscope, Scale, Gavel, Globe, Shield, PhoneCall, GraduationCap, Mail, MessageSquare, Copy, Send, Check, Phone } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
-export const InvestorSandboxTab = () => {
+export const InvestorSandboxTab = ({ isMaster = false }: { isMaster?: boolean }) => {
   const [activeMock, setActiveMock] = useState<'patient' | 'business' | 'provider' | 'attorney' | 'oversight' | 'federal' | 'enforcement' | 'back_office' | 'education' | 'none'>('none');
+  const [recipientName, setRecipientName] = useState('Investor Partner');
+  const [recipientPhone, setRecipientPhone] = useState('');
+  const [recipientEmail, setRecipientEmail] = useState('');
+  const [smsSent, setSmsSent] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [copiedSMS, setCopiedSMS] = useState(false);
+  const [copiedEmail, setCopiedEmail] = useState(false);
+
+  const getSMSMessage = (name: string, link: string) => {
+    return `Hi ${name}, here is your direct, password-free link to the GGHP-OS Platform Sandbox. Explore the Patient, Business, and Provider portals with SINC & IMMAD compliance: ${link}`;
+  };
+
+  const getEmailMessage = (name: string, link: string) => {
+    return `Subject: Interactive GGHP-OS Platform Demo & Sandbox Link
+
+Hi ${name},
+
+Thank you for your interest in the Global Green Hybrid Platform (GGHP-OS).
+
+As requested, here is your direct, password-free link to our interactive sandbox:
+${link}
+
+In this demo environment, you will find:
+1. GGP Academy & Pitch Hub: Walk through our weekly roadmaps, patent registrations, and funding requests.
+2. Business Portal: Explore daily pre-shift visual screening and SINC rapid testing logs.
+3. Patient Portal: Perform camera-based driver safety self-checks.
+4. Provider Network: View quantitative ocular response latencies and calibrate dosages.
+
+Please let me know if you have any questions.
+
+Best regards,
+Shantell Robinson
+Founder & CEO, Global Green Hybrid Platform`;
+  };
 
   if (activeMock === 'education') {
     return (
@@ -142,6 +177,132 @@ export const InvestorSandboxTab = () => {
             <p className="text-slate-400 font-medium">Safe environment loaded with mock data for investor pitches. Real production data is protected.</p>
          </div>
       </div>
+
+      {isMaster && (
+        <div className="bg-white rounded-[2.5rem] border border-emerald-900/20 shadow-md p-8 space-y-6">
+          <div className="flex justify-between items-center border-b border-slate-100 pb-4">
+            <div>
+              <h3 className="text-xl font-black text-slate-800 flex items-center gap-2">
+                <Send size={20} className="text-[#1a4731]" />
+                Master Share Panel
+              </h3>
+              <p className="text-xs text-slate-500 mt-1">Send or copy demo sandboxes to investors and underwriters instantly.</p>
+            </div>
+            <span className="text-[10px] font-black text-[#1a4731] bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full uppercase tracking-wider">Master Access Only</span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="text-[10px] font-black text-slate-500 uppercase block mb-1">Recipient Name</label>
+              <input 
+                type="text" 
+                value={recipientName}
+                onChange={e => setRecipientName(e.target.value)}
+                className="w-full border border-slate-200 p-2.5 rounded-xl text-sm focus:border-[#1a4731] outline-none" 
+                placeholder="e.g. Denise Valenti" 
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-black text-slate-500 uppercase block mb-1">Phone Number (SMS)</label>
+              <input 
+                type="text" 
+                value={recipientPhone}
+                onChange={e => setRecipientPhone(e.target.value)}
+                className="w-full border border-slate-200 p-2.5 rounded-xl text-sm focus:border-[#1a4731] outline-none" 
+                placeholder="e.g. 4055551234" 
+              />
+            </div>
+            <div>
+              <label className="text-[10px] font-black text-slate-500 uppercase block mb-1">Email Address</label>
+              <input 
+                type="text" 
+                value={recipientEmail}
+                onChange={e => setRecipientEmail(e.target.value)}
+                className="w-full border border-slate-200 p-2.5 rounded-xl text-sm focus:border-[#1a4731] outline-none" 
+                placeholder="e.g. investor@example.com" 
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-3 pt-2">
+            <button 
+              onClick={() => {
+                navigator.clipboard.writeText(`${window.location.origin}/demo`);
+                setCopiedLink(true);
+                setTimeout(() => setCopiedLink(false), 2000);
+              }}
+              className={cn(
+                "px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 border transition-all shadow-sm",
+                copiedLink ? "bg-emerald-600 border-emerald-600 text-white" : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+              )}
+            >
+              {copiedLink ? <Check size={14} /> : <Copy size={14} />}
+              {copiedLink ? "Link Copied!" : "Copy Demo Link"}
+            </button>
+
+            <button 
+              onClick={() => {
+                navigator.clipboard.writeText(getSMSMessage(recipientName, `${window.location.origin}/demo`));
+                setCopiedSMS(true);
+                setTimeout(() => setCopiedSMS(false), 2000);
+              }}
+              className={cn(
+                "px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 border transition-all shadow-sm",
+                copiedSMS ? "bg-emerald-600 border-emerald-600 text-white" : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+              )}
+            >
+              {copiedSMS ? <Check size={14} /> : <MessageSquare size={14} />}
+              {copiedSMS ? "SMS Copied!" : "Copy SMS Pitch"}
+            </button>
+
+            <button 
+              onClick={() => {
+                navigator.clipboard.writeText(getEmailMessage(recipientName, `${window.location.origin}/demo`));
+                setCopiedEmail(true);
+                setTimeout(() => setCopiedEmail(false), 2000);
+              }}
+              className={cn(
+                "px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 border transition-all shadow-sm",
+                copiedEmail ? "bg-emerald-600 border-emerald-600 text-white" : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+              )}
+            >
+              {copiedEmail ? <Check size={14} /> : <Mail size={14} />}
+              {copiedEmail ? "Email Copied!" : "Copy Email Pitch"}
+            </button>
+
+            {recipientPhone && (
+              <button 
+                onClick={async () => {
+                  setSmsSent(true);
+                  const msg = getSMSMessage(recipientName, `${window.location.origin}/demo`);
+                  const res = await sendSMS(recipientPhone, msg);
+                  if (res.success) {
+                    alert(`Demo link sent successfully to ${recipientPhone}!`);
+                  } else {
+                    alert(`Failed to send SMS: ${res.message || res.error}`);
+                  }
+                  setSmsSent(false);
+                }}
+                disabled={smsSent}
+                className="px-4 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 hover:bg-emerald-700 transition-all shadow-sm disabled:opacity-50"
+              >
+                <Send size={14} />
+                {smsSent ? "Sending..." : "Send SMS via Twilio"}
+              </button>
+            )}
+
+            {recipientEmail && (
+              <a 
+                href={`mailto:${recipientEmail}?subject=Interactive%20GGHP-OS%20Platform%20Demo%20%26%20Sandbox%20Link&body=${encodeURIComponent(getEmailMessage(recipientName, `${window.location.origin}/demo`).split('\n\n').slice(1).join('\n\n'))}`}
+                className="px-4 py-2.5 bg-[#1a4731] text-white rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 hover:bg-[#153a28] transition-all shadow-sm"
+              >
+                <Mail size={14} />
+                Send Email (Mailto)
+              </a>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <button 
