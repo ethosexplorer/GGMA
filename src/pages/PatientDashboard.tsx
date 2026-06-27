@@ -42,6 +42,7 @@ const DEFAULT_TABS = [
   { id: 'cards', label: 'My Cards', icon: CreditCard },
   { id: 'wallet', label: 'Care Wallet', icon: Wallet },
   { id: 'c3score', label: 'C³ Score', icon: Award },
+  { id: 'driversafety', label: 'Driver Safety', icon: Shield },
   { id: 'attorneys', label: 'Legal Counsel', icon: Briefcase },
   { id: 'documents', label: 'Vault', icon: FolderOpen },
   { id: 'regulatory', label: 'Law Updates', icon: Bell },
@@ -600,7 +601,7 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
         )}
 
         {/* ─── LOCKED TABS ─── */}
-        {(activeTab === 'cards' || activeTab === 'wallet' || activeTab === 'c3score' || activeTab === 'attorneys') && !isSubscribed && (
+        {(activeTab === 'cards' || activeTab === 'wallet' || activeTab === 'c3score' || activeTab === 'driversafety' || activeTab === 'attorneys') && !isSubscribed && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative min-h-[600px]">
              <ShadowOverlay 
                 title={`${tabs.find(t => t.id === activeTab)?.label} Locked`} 
@@ -621,6 +622,58 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
 
         {/* ─── C³ SCORE TAB ─── */}
         {activeTab === 'c3score' && isSubscribed && <CreditScoreTab />}
+
+        {/* ─── DRIVER SAFETY TAB ─── */}
+        {activeTab === 'driversafety' && isSubscribed && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+            <div className="bg-white rounded-[2rem] border border-slate-200 shadow-sm p-8">
+              <h2 className="text-2xl font-black text-slate-800 tracking-tight flex items-center gap-3">
+                 <Shield size={28} className="text-[#1a4731]" />
+                 Driver Safety & Impairment Self-Check
+              </h2>
+              <p className="text-slate-500 text-sm mt-2 leading-relaxed max-w-2xl">
+                Perform a quick visual/cognitive self-assessment test before driving. This test uses standard eye-tracking algorithms to confirm active cognitive readiness.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-slate-900 bg-gradient-to-br from-slate-900 to-[#10271b] rounded-[2rem] p-8 text-white flex flex-col justify-between min-h-[300px]">
+                <div>
+                  <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest block mb-2">Device Integration</span>
+                  <h3 className="text-xl font-black">Pre-Drive Mobile Check-In</h3>
+                  <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                    Open your GGP Care Wallet app on your mobile device, connect the SINC Breathalyzer, or use your front-facing camera for the ocular saccadic tracking check-in.
+                  </p>
+                </div>
+                <button onClick={() => alert("Simulating eye-tracking scan... Scanning completed. Status: Safe to Drive (98/100). Logged to Care Wallet.")} className="mt-8 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-sm transition-all">Start Ocular Scan</button>
+              </div>
+
+              <div className="bg-white rounded-[2rem] border border-slate-200 shadow-sm p-8 flex flex-col justify-between">
+                <div>
+                  <h4 className="font-bold text-slate-800 text-md flex items-center gap-2 mb-4">
+                    <Award size={18} className="text-[#1a4731]" /> Insurance Discount Program
+                  </h4>
+                  <p className="text-xs text-slate-500 leading-relaxed mb-6">
+                    Participate in the Safe Driver Program. By sharing your passing pre-drive logs with participating auto insurers, you can earn up to a 10% premium discount.
+                  </p>
+                  
+                  <div className="space-y-3">
+                     <div className="flex justify-between items-center p-3 bg-slate-50 rounded-xl">
+                       <span className="text-xs text-slate-500 font-bold">Checks Completed (30 Days)</span>
+                       <span className="text-xs font-black text-slate-800">12 / 12 (100% Pass)</span>
+                     </div>
+                     <div className="flex justify-between items-center p-3 bg-slate-50 rounded-xl">
+                       <span className="text-xs text-slate-500 font-bold">Discount Tier</span>
+                       <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">Silver (10% Off)</span>
+                     </div>
+                  </div>
+                </div>
+                
+                <button onClick={() => alert("Exporting Safe Driving certificate to your secure Vault.")} className="mt-6 w-full py-3 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl hover:bg-slate-50 transition-colors">Export Safe Driving Certificate</button>
+              </div>
+            </div>
+          </motion.div>
+        )}
 
         {/* ─── FIND ATTORNEYS TAB ─── */}
         {activeTab === 'attorneys' && isSubscribed && (

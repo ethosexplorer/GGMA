@@ -64,7 +64,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
   const [demoUnlocked, setDemoUnlocked] = useState(isExecutive);
   const isSubscribed = user?.subscriptionStatus === 'Active' || user?.planId || demoUnlocked;
   const [previousTab, setPreviousTab] = useState<string>('home');
-  const [activeTab, setActiveTab] = useState<'home' | 'analytics' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'insurance' | 'documents' | 'subscription' | 'integrations' | 'staff' | 'traceability' | 'readiness' | 'dea' | 'wallet' | 'attorneys' | 'reporting' | 'applications' | 'regulatory'>(isSubscribed ? (initialTab || 'analytics') : 'subscription');
+  const [activeTab, setActiveTab] = useState<'home' | 'analytics' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'safety' | 'insurance' | 'documents' | 'subscription' | 'integrations' | 'staff' | 'traceability' | 'readiness' | 'dea' | 'wallet' | 'attorneys' | 'reporting' | 'applications' | 'regulatory'>(isSubscribed ? (initialTab || 'analytics') : 'subscription');
   const [localUser, setLocalUser] = useState(user || {});
   
   React.useEffect(() => {
@@ -105,6 +105,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
     { id: 'inventory', label: 'Inventory (SINC)', icon: PackageSearch },
     { id: 'locations', label: user?.role === 'compliance_service' ? 'Managed Clients' : 'Locations', icon: user?.role === 'compliance_service' ? Users : MapPin },
     { id: 'compliance', label: 'Compliance', icon: Shield },
+    { id: 'safety', label: 'Workplace Safety', icon: FolderLock },
     { id: 'staff', label: 'Staff', icon: ClipboardList },
     { id: 'traceability', label: 'Traceability', icon: Database },
     { id: 'readiness', label: 'OMMA Ready', icon: CheckSquare },
@@ -1081,6 +1082,93 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
               </tbody>
             </table>
           </div>
+      </div>
+    )}
+
+    {activeTab === 'safety' && (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h3 className="text-xl font-bold text-slate-800">Workplace Safety & Impairment Screening</h3>
+            <p className="text-sm text-slate-500">Manage daily pre-shift visual and chemical screening checks for safety-sensitive roles.</p>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={() => { import('../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "SAFETY_AUDIT", "Production_User", JSON.stringify({ detail: "Running bulk compliance health check on active drivers..." })] }).catch(console.error) ); alert("Running bulk compliance health check on active drivers...\n\n[Live Production Transaction Logged]"); }} className="px-4 py-2 bg-[#1a4731] hover:bg-[#153a28] text-white text-xs font-bold rounded-xl shadow-sm transition-all flex items-center gap-2">
+               <Shield size={14} /> Run Bulk Audit
+            </button>
+          </div>
+        </div>
+
+        {/* Fleet Roster Status */}
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+            <h4 className="font-bold text-slate-800">Fleet Driver Roster & Screening Logs</h4>
+            <span className="text-xs font-bold bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full">SINC Integrated</span>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-100">
+                <tr>
+                  <th className="p-4">Employee</th>
+                  <th className="p-4">Role</th>
+                  <th className="p-4">Oral Fluid Strip</th>
+                  <th className="p-4">IMMAD Ocular Score</th>
+                  <th className="p-4">Vehicle Dispatch Lockout</th>
+                  <th className="p-4">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                <tr className="hover:bg-slate-50 transition-colors">
+                  <td className="p-4 font-bold text-slate-800">Sarah Lee</td>
+                  <td className="p-4 text-slate-600">Lead Delivery Driver</td>
+                  <td className="p-4"><span className="px-2.5 py-0.5 bg-emerald-50 text-emerald-600 rounded text-[10px] font-bold">PASS (0.0 ng/mL)</span></td>
+                  <td className="p-4 text-slate-600 font-mono">98/100 (Normal)</td>
+                  <td className="p-4"><span className="px-2.5 py-0.5 bg-emerald-50 text-emerald-600 rounded text-[10px] font-bold">UNLOCKED</span></td>
+                  <td className="p-4">
+                    <button onClick={() => alert("Pre-shift log verified. Sarah Lee is approved for dispatch.")} className="text-xs text-[#1a4731] font-bold hover:underline">Verify Log</button>
+                  </td>
+                </tr>
+                <tr className="hover:bg-slate-50 transition-colors">
+                  <td className="p-4 font-bold text-slate-800">James Ortiz</td>
+                  <td className="p-4 text-slate-600">Forklift Operator</td>
+                  <td className="p-4"><span className="px-2.5 py-0.5 bg-red-50 text-red-600 rounded text-[10px] font-bold">FAIL (8.4 ng/mL)</span></td>
+                  <td className="p-4 text-red-500 font-mono font-bold">64/100 (Impaired)</td>
+                  <td className="p-4"><span className="px-2.5 py-0.5 bg-red-50 text-red-600 rounded text-[10px] font-bold">LOCKOUT ACTIVE</span></td>
+                  <td className="p-4">
+                    <button onClick={() => alert("James Ortiz is locked out of dashboard and fleet dispatch key. Alert sent to HR.")} className="text-xs text-red-600 font-bold hover:underline">Manage Incident</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Consumables Inventory */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+            <h4 className="font-bold text-slate-800 mb-4">SINC Consumables & Solution Strips</h4>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center p-3 bg-slate-50 rounded-xl">
+                <span className="text-xs text-slate-500 font-bold">Saliva Cassettes (In Stock)</span>
+                <span className="text-xs font-black text-slate-800">142 units</span>
+              </div>
+              <div className="flex justify-between items-center p-3 bg-slate-50 rounded-xl">
+                <span className="text-xs text-slate-500 font-bold">Breathalyzer Mouthpieces</span>
+                <span className="text-xs font-black text-slate-800">280 units</span>
+              </div>
+              <button onClick={() => alert("Reorder placed for 500 Saliva Cassettes. Charged to Business Care Wallet.")} className="w-full mt-4 py-2.5 bg-[#1a4731] hover:bg-[#153a28] text-white rounded-xl text-xs font-black transition-all">Order Consumables</button>
+            </div>
+          </div>
+          
+          <div className="bg-[#0f291c] bg-gradient-to-br from-[#0f291c] to-[#1a4731] rounded-2xl p-6 text-white flex flex-col justify-between">
+            <div>
+              <p className="text-[10px] font-black text-emerald-300 uppercase tracking-wider mb-2">Liability discount status</p>
+              <h4 className="text-lg font-black leading-tight">15% Insurance Savings Active</h4>
+              <p className="text-xs text-emerald-100/80 mt-2 leading-relaxed">Your monthly liability insurance policy receives a 15% discount because pre-shift SINC logs show 100% daily compliance participation.</p>
+            </div>
+            <button onClick={() => alert("Compliance report shared with Liberty Mutual.")} className="mt-4 w-full py-2.5 bg-white text-[#1a4731] rounded-xl text-xs font-black hover:bg-slate-100 transition-all">Share Report with Insurer</button>
+          </div>
+        </div>
       </div>
     )}
 

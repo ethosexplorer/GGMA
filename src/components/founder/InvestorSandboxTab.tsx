@@ -7,11 +7,27 @@ import { StateAuthorityDashboard } from '../../pages/StateAuthorityDashboard';
 import { FederalDashboard } from '../../pages/FederalDashboard';
 import { EnforcementDashboard } from '../../pages/EnforcementDashboard';
 import { BackOfficeDashboard } from '../../pages/BackOfficeDashboard';
-import { MonitorPlay, Building2, HeartPulse, ShieldAlert, Stethoscope, Scale, Gavel, Globe, Shield, PhoneCall } from 'lucide-react';
+import { EducationPortal } from '../../pages/EducationPortal';
+import { MonitorPlay, Building2, HeartPulse, ShieldAlert, Stethoscope, Scale, Gavel, Globe, Shield, PhoneCall, GraduationCap } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 export const InvestorSandboxTab = () => {
-  const [activeMock, setActiveMock] = useState<'patient' | 'business' | 'provider' | 'attorney' | 'oversight' | 'federal' | 'enforcement' | 'back_office' | 'none'>('none');
+  const [activeMock, setActiveMock] = useState<'patient' | 'business' | 'provider' | 'attorney' | 'oversight' | 'federal' | 'enforcement' | 'back_office' | 'education' | 'none'>('none');
+
+  if (activeMock === 'education') {
+    return (
+      <div className="fixed inset-0 z-[9999] bg-slate-100 overflow-y-auto">
+        <div className="fixed top-2 left-1/2 -translate-x-1/2 bg-emerald-950/90 backdrop-blur-md text-white py-1.5 px-4 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-4 shadow-xl z-[10000] border border-emerald-500/30">
+          <span className="flex items-center gap-2"><MonitorPlay size={14} className="text-emerald-400" /> INVESTOR DEMO: PRESENTATION & PITCH HUB</span>
+          <div className="w-px h-3 bg-white/20"></div>
+          <button onClick={() => setActiveMock('none')} className="hover:text-emerald-300 transition-colors">Exit Sandbox ✕</button>
+        </div>
+        <div className="pt-12 min-h-screen bg-slate-50">
+          <EducationPortal onBack={() => setActiveMock('none')} />
+        </div>
+      </div>
+    );
+  }
 
   if (activeMock === 'patient') {
     return (
@@ -128,6 +144,21 @@ export const InvestorSandboxTab = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <button 
+          onClick={() => setActiveMock('education')}
+          className="bg-[#0f291c] bg-gradient-to-br from-[#0f291c] to-[#1a4731] p-8 rounded-3xl border border-emerald-900/30 shadow-sm hover:shadow-xl hover:border-emerald-400 transition-all group text-left relative overflow-hidden flex flex-col text-white"
+        >
+          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-bl-full -mr-16 -mt-16 transition-transform group-hover:scale-150"></div>
+          <div className="w-16 h-16 bg-emerald-500/20 text-emerald-300 rounded-2xl flex items-center justify-center mb-6 shadow-inner shrink-0 border border-emerald-500/30">
+            <GraduationCap size={32} />
+          </div>
+          <h3 className="text-xl font-black mb-2">Academy & Pitch Hub</h3>
+          <p className="text-emerald-100/80 font-medium text-sm flex-1">Launch the interactive briefing deck, funding ask scenarios, 3-year vision roadmap, and intellectual property registries.</p>
+          <div className="mt-8 flex items-center gap-2 text-emerald-400 font-black text-xs uppercase tracking-widest animate-pulse">
+            Launch Sandbox &rarr;
+          </div>
+        </button>
+
         <button 
           onClick={() => setActiveMock('patient')}
           className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-indigo-400 transition-all group text-left relative overflow-hidden flex flex-col"

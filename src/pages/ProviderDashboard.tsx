@@ -17,8 +17,7 @@ const DEFAULT_SIDEBAR_ITEMS = [
   { id: 'telehealth', label: 'Telehealth Visits', icon: Video },
   { id: 'traditional', label: 'Traditional Visits', icon: MapPin },
   { id: 'certifications', label: 'Certifications', icon: FileText },
-  
-  
+  { id: 'impairment', label: 'Ocular Metrics (SINC)', icon: Zap },
   { id: 'billing', label: 'Billing & Insurance', icon: CreditCard },
   { id: 'reports', label: 'Reports', icon: BarChart },
   { id: 'vault', label: 'Secure Vault', icon: FolderLock },
@@ -390,6 +389,69 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
                           </div>
                         ))
                       )}
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'impairment' && (
+                  <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 space-y-6">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
+                          <Zap className="text-blue-600" /> Patient Ocular & Impairment Metrics
+                        </h2>
+                        <p className="text-sm text-slate-500">Track visual reaction times and pupil response data synced from IMMAD roadside or clinical devices.</p>
+                      </div>
+                      <button onClick={() => alert("Re-syncing clinical screening databases...")} className="px-4 py-2 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl hover:bg-slate-50">Sync Data</button>
+                    </div>
+
+                    {/* Roster & Metrics */}
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-sm">
+                        <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-100">
+                          <tr>
+                            <th className="p-4">Patient</th>
+                            <th className="p-4">Ocular Latency</th>
+                            <th className="p-4">Saccadic Tracking</th>
+                            <th className="p-4">Active Impairment Rating</th>
+                            <th className="p-4">State Compliance status</th>
+                            <th className="p-4">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                          <tr className="hover:bg-slate-50 transition-colors">
+                            <td className="p-4 font-bold text-slate-800">Michael Chen<br/><span className="text-xs text-slate-400 font-normal">PT-9942</span></td>
+                            <td className="p-4 font-mono text-xs">240ms (Normal)</td>
+                            <td className="p-4 text-emerald-600 font-bold">Stable (96%)</td>
+                            <td className="p-4"><span className="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">Pass (Safe)</span></td>
+                            <td className="p-4"><span className="text-emerald-600 font-bold flex items-center gap-1"><CircleCheck size={12}/> Compliant</span></td>
+                            <td className="p-4"><button onClick={() => alert("Calibrating dosage to 10mg THC oral daily based on 98% cognitive baseline stability.")} className="text-blue-600 hover:underline font-bold text-xs">Calibrate Dosage</button></td>
+                          </tr>
+                          <tr className="hover:bg-slate-50 transition-colors">
+                            <td className="p-4 font-bold text-slate-800">Sarah Jenkins<br/><span className="text-xs text-slate-400 font-normal">PT-8812</span></td>
+                            <td className="p-4 font-mono text-xs text-amber-600 font-bold">380ms (Delayed)</td>
+                            <td className="p-4 text-amber-600 font-bold">Unstable (72%)</td>
+                            <td className="p-4"><span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full">Moderate Impairment</span></td>
+                            <td className="p-4"><span className="text-amber-600 font-bold flex items-center gap-1"><AlertTriangle size={12}/> Review Advised</span></td>
+                            <td className="p-4"><button onClick={() => alert("Dosage safety review triggered. Contacting Sarah Jenkins...")} className="text-amber-600 hover:underline font-bold text-xs">Trigger Review</button></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Chart / Analytical Widget */}
+                    <div className="bg-slate-50 rounded-2xl border border-slate-200 p-6 flex flex-col md:flex-row items-center justify-between gap-6">
+                      <div className="space-y-2">
+                        <h4 className="font-bold text-slate-800 text-md">Clinical Screening Standard (IMMAD Alignment)</h4>
+                        <p className="text-xs text-slate-500 leading-relaxed max-w-xl">
+                          Active cognitive impairment is measured through ophthalmic pupillary reflex delay and visual tracking latency. By recording these baseline values during telehealth reviews, providers can verify that the patient's prescribed medical marijuana dosage is not causing chronic motor or visual impairment.
+                        </p>
+                      </div>
+                      <div className="p-4 bg-white border border-slate-200 rounded-2xl text-center shadow-sm shrink-0 w-full md:w-56">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Average Latency</p>
+                        <p className="text-3xl font-black text-slate-900">260ms</p>
+                        <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider mt-1">Within normal bounds</p>
+                      </div>
                     </div>
                   </div>
                 )}
