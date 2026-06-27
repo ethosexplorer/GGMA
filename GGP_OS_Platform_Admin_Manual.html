@@ -222,10 +222,49 @@
   }
   
   @media print {
-    body { padding: 20px 30px; }
-    .cover { page-break-after: always; }
-    table { break-inside: avoid; }
-    .step-box { break-inside: avoid; }
+    html, body {
+      background: #fff !important;
+      color: #000 !important;
+      max-width: 100% !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      height: auto !important;
+      overflow: visible !important;
+    }
+    .cover {
+      page-break-after: always !important;
+      break-after: page !important;
+      height: auto !important;
+      padding: 80px 40px !important;
+      box-shadow: none !important;
+      border: 1px solid #ccc !important;
+      background: #0f172a !important;
+      color: #fff !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .cover h1, .cover h2, .cover-badge, .cover-divider, .cover-meta, .cover-meta p, .cover-meta strong {
+      color: #fff !important;
+    }
+    .toc, .step-box, .highlight-card, .callout, .feature-card {
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+    }
+    .feature-grid {
+      display: block !important;
+    }
+    .feature-card {
+      width: 100% !important;
+      margin-bottom: 16px !important;
+    }
+    table {
+      page-break-inside: auto !important;
+    }
+    tr {
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+    }
   }
 </style>
 </head>
