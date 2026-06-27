@@ -7,3 +7,4 @@ coverage/
 .env*
 !.env.example
 scratch/
+env_config_visible.txt
