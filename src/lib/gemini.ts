@@ -479,7 +479,8 @@ export const streamGeminiResponse = async (
 
   // 1. If key is present, stream DIRECTLY from the browser to Google.
   // This completely bypasses Vercel's 10-second serverless execution limits.
-  if (key) {
+  // Restricted to DEV mode to prevent exposing API keys in production bundles.
+  if (key && import.meta.env.DEV) {
     try {
       const rawContents = [
         ...(opts?.history ?? []),
