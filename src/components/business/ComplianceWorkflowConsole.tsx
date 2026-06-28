@@ -103,6 +103,22 @@ export const ComplianceWorkflowConsole = () => {
       try {
         const parsed = JSON.parse(saved);
         setMetrcConfig(parsed);
+        if (parsed.integratorApiKey && parsed.userApiKey) {
+          const autoSync = async () => {
+            try {
+              const connector = new MetrcConnector(parsed);
+              const facilities = await connector.getFacilitiesV2();
+              setMetrcFacilities(facilities);
+              setMetrcStatus('connected');
+              if (facilities.length > 0) {
+                setSelectedFacility(facilities[0].LicenseNumber);
+              }
+            } catch (err) {
+              console.warn('Auto Metrc connection failed:', err);
+            }
+          };
+          autoSync();
+        }
       } catch (e) {}
     }
   }, []);
