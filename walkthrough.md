@@ -60,3 +60,21 @@ We verified the Calendly integration on the platform operations calendar ([Found
 * Checked the syntax and typing of all modified files.
 * Ran: `npm run lint` (`tsc --noEmit`)
 * Result: **Successful compilation** with zero errors or warnings.
+
+---
+
+## 6. Metrc API Bulletin 243: Original Package Sizes
+
+To comply with the Metrc Bulletin 243 requirements regarding package sizes, we successfully integrated initial package quantity and unit tracking across the database, package creation logic, and UI console:
+
+* **Database Migrations**: 
+  * **Modified File**: 📂 [tursoMigrations.ts](file:///c:/GGMA/GGMA/src/lib/tursoMigrations.ts)
+  * **Changes**: Added `original_quantity` (REAL), `original_unit_of_measure_name` (TEXT), and `original_unit_of_measure_abbreviation` (TEXT) to the `packages` table definition. Implemented direct `ALTER TABLE` migrations inside `initializeDatabase()` to update existing databases, and updated initial seed records.
+* **Metrc Engine Logic**:
+  * **Modified File**: 📂 [MetrcEngine.ts](file:///c:/GGMA/GGMA/src/lib/metrc/MetrcEngine.ts)
+  * **Changes**: Updated the `createPackage` database insert statement to automatically save `original_quantity` (split weight), `original_unit_of_measure_name` ("Grams"), and `original_unit_of_measure_abbreviation` ("g") at package creation time.
+* **Compliance UI Console**:
+  * **Modified File**: 📂 [ComplianceWorkflowConsole.tsx](file:///c:/GGMA/GGMA/src/components/business/ComplianceWorkflowConsole.tsx)
+  * **Changes**: Enhanced the Inventory Packages tab table row to display both the current package weight and the Metrc-compliant original package size:
+    `{pkg.weight} Grams (Original: {pkg.original_quantity || pkg.weight} {pkg.original_unit_of_measure_abbreviation || 'g'})`
+

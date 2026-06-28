@@ -87,3 +87,45 @@ We will update the permanent memory profiles to include the application numbers 
 
 ### Manual Verification
 - Verify the layout and readability of both the markdown and HTML briefs.
+
+---
+
+# Metrc API Bulletin 243: Viewing Original Package Sizes
+
+To comply with the latest Metrc Bulletin 243 ("Viewing Original Package Sizes"), we will integrate three new fields into the GGP-OS compliance database and user interface. These fields track the initial package quantity and unit details at the time of creation.
+
+## Proposed Changes
+
+### 1. Database Schema
+We will update the database definition and run migrations to add fields tracking original package sizes to the `packages` table:
+* `original_quantity` (REAL)
+* `original_unit_of_measure_name` (TEXT)
+* `original_unit_of_measure_abbreviation` (TEXT)
+
+#### [MODIFY] [tursoMigrations.ts](file:///c:/GGMA/GGMA/src/lib/tursoMigrations.ts)
+* Update `CREATE TABLE IF NOT EXISTS packages` to include these three new columns.
+* Append migration statements to `ALTER TABLE packages ADD COLUMN ...` inside `initializeDatabase()` with `try-catch` blocks to seamlessly migrate existing schemas.
+* Update initial seed records to specify default original sizes for demo packages.
+
+### 2. Metrc Engine Logic
+We will ensure that when new packages are created, their initial quantities and units of measure are recorded as the original sizes.
+
+#### [MODIFY] [MetrcEngine.ts](file:///c:/GGMA/GGMA/src/lib/metrc/MetrcEngine.ts)
+* In `createPackage()`, save `original_quantity` (matching the creation split weight), `original_unit_of_measure_name` ("Grams"), and `original_unit_of_measure_abbreviation` ("g") in the insert query.
+
+### 3. Compliance Console UI
+We will display the original size in the Inventory Packages tab next to the current package weight to provide complete compliance traceability.
+
+#### [MODIFY] [ComplianceWorkflowConsole.tsx](file:///c:/GGMA/GGMA/src/components/business/ComplianceWorkflowConsole.tsx)
+* In the packages grid table body, update the weight column to render both the current weight and the original package size:
+  `{pkg.weight} Grams (Original: {pkg.original_quantity || pkg.weight} {pkg.original_unit_of_measure_abbreviation || 'g'})`
+
+## Verification Plan
+
+### Automated Tests
+- Run `npm run build` to confirm the typescript builds successfully.
+
+### Manual Verification
+- Open the SINC Inventory (Compliance & Regulatory -> Inventory Packages) tab in the UI.
+- Verify that packages display both their current weight and their original package size.
+
