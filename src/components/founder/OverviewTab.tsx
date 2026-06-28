@@ -251,6 +251,7 @@ export const OverviewTab = ({
   const [allAccounts, setAllAccounts] = useState<any[]>([]);
   const [accountCounts, setAccountCounts] = useState({ total: 0, today: 0, thisWeek: 0, thisMonth: 0, thisYear: 0 });
   const [activityRange, setActivityRange] = useState<'today' | 'week' | 'month' | 'year' | 'all'>('month');
+  const [selectedActivityUser, setSelectedActivityUser] = useState<any>(null);
 
   useEffect(() => {
     const unsub = onSnapshot(collection(db, 'users'), (snap) => {
@@ -1092,7 +1093,11 @@ export const OverviewTab = ({
                 }
 
                 return (
-                  <div key={acct.uid || i} className="px-5 py-3.5 flex items-center gap-4 hover:bg-slate-800/30 transition-colors group">
+                  <div 
+                    key={acct.uid || i} 
+                    className="px-5 py-3.5 flex items-center gap-4 hover:bg-slate-800/30 transition-colors group cursor-pointer"
+                    onClick={() => setSelectedActivityUser(acct)}
+                  >
                     <div className="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-500/30 to-cyan-500/30 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
                       <UserPlus size={14} />
                     </div>
@@ -1411,6 +1416,81 @@ export const OverviewTab = ({
 
       {/* 🛡️ REGULATORY SWEEP COMMAND CENTER */}
       <RegulatoryCommandCenter />
+
+      {/* ── USER DETAIL MODAL OVERLAY ── */}
+      {selectedActivityUser && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-700 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-in fade-in-50 zoom-in-95 duration-200">
+            {/* Header */}
+            <div className="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-slate-950/40">
+              <h4 className="font-black text-white flex items-center gap-2">
+                <UserPlus size={18} className="text-emerald-400" />
+                User Signup Details
+              </h4>
+              <button 
+                onClick={() => setSelectedActivityUser(null)} 
+                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            
+            {/* Body */}
+            <div className="p-6 space-y-4 text-sm text-slate-300">
+              <div className="flex items-center gap-4 bg-slate-800/30 p-4 rounded-2xl border border-slate-800">
+                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-full flex items-center justify-center text-white font-black text-lg">
+                  {(selectedActivityUser.displayName || '?').charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-white text-base">{selectedActivityUser.displayName}</h3>
+                  <p className="text-xs text-slate-400">UID: <span className="font-mono text-indigo-300 select-all">{selectedActivityUser.uid}</span></p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-slate-805 p-3.5 rounded-xl border border-slate-800">
+                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">Email Address</span>
+                  <span className="font-bold text-white truncate block">{selectedActivityUser.email}</span>
+                </div>
+                <div className="bg-slate-805 p-3.5 rounded-xl border border-slate-800">
+                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">User Role</span>
+                  <span className="font-bold text-emerald-400 capitalize">{selectedActivityUser.role?.replace(/_/g, ' ')}</span>
+                </div>
+                <div className="bg-slate-805 p-3.5 rounded-xl border border-slate-800">
+                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">Jurisdiction</span>
+                  <span className="font-bold text-white">{selectedActivityUser.state || 'N/A'}</span>
+                </div>
+                <div className="bg-slate-805 p-3.5 rounded-xl border border-slate-800">
+                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">Account Status</span>
+                  <span className="font-bold text-cyan-400">{selectedActivityUser.status}</span>
+                </div>
+              </div>
+
+              <div className="bg-slate-805 p-3.5 rounded-xl border border-slate-800">
+                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-1">Created At</span>
+                <span className="font-bold text-white">
+                  {selectedActivityUser.createdAt ? selectedActivityUser.createdAt.toLocaleString() : 'Unknown'}
+                </span>
+              </div>
+
+              <div className="bg-slate-950/40 p-4 rounded-2xl border border-slate-850 text-xs text-slate-400 space-y-1.5">
+                <p className="font-bold text-slate-300">ℹ️ Firestore Data Integrity Reference</p>
+                <p>This document is stored live in your Firebase Project under the <span className="font-mono text-emerald-400">users</span> collection. All profile changes, roles, and registrations sync instantly across all devices.</p>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="px-6 py-4 bg-slate-950/40 border-t border-slate-800 flex justify-end gap-2">
+              <button 
+                onClick={() => setSelectedActivityUser(null)} 
+                className="px-4 py-2 bg-slate-80 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl transition-all"
+              >
+                Close Details
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
