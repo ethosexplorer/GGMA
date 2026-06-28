@@ -74,7 +74,14 @@ export const ComplianceWorkflowConsole = () => {
   };
 
   const handleMetrcSync = async () => {
-    if (!metrcConfig.integratorApiKey || !metrcConfig.userApiKey) {
+    // If sandbox mode is selected, we can bypass empty key checks or use mock values
+    const configToSync = { ...metrcConfig };
+    if (configToSync.environment === 'sandbox') {
+      configToSync.userApiKey = configToSync.userApiKey || 'USR_SANDBOX_DEMO_KEY';
+      configToSync.licenseNumber = configToSync.licenseNumber || '123-OK-SANDBOX';
+    }
+
+    if (!configToSync.integratorApiKey || !configToSync.userApiKey) {
       setShowMetrcConfig(true);
       return;
     }
@@ -82,13 +89,22 @@ export const ComplianceWorkflowConsole = () => {
     setIsLoading(true);
     setMetrcStatus('disconnected');
     try {
-      const connector = new MetrcConnector(metrcConfig);
-      const facilities = await connector.getFacilitiesV2();
-      setMetrcFacilities(facilities);
-      setMetrcStatus('connected');
-      setShowMetrcConfig(false);
-      // Persist config for demo
-      localStorage.setItem('metrc_production_config', JSON.stringify(metrcConfig));
+      if (configToSync.environment === 'production') {
+        const connector = new MetrcConnector(configToSync);
+        const facilities = await connector.getFacilitiesV2();
+        setMetrcFacilities(facilities);
+        setMetrcStatus('connected');
+        setShowMetrcConfig(false);
+      } else {
+        // Mock connection in sandbox mode
+        setMetrcStatus('connected');
+        setMetrcFacilities([
+          { Name: 'Green Valley Cultivation (Sandbox)', LicenseNumber: '456-OK-GROW' }
+        ]);
+        setSelectedFacility('456-OK-GROW');
+        setShowMetrcConfig(false);
+      }
+      localStorage.setItem('metrc_production_config', JSON.stringify(configToSync));
     } catch (err) {
       console.error('Metrc Sync Error:', err);
       setMetrcStatus('error');
@@ -106,15 +122,25 @@ export const ComplianceWorkflowConsole = () => {
         if (parsed.integratorApiKey && parsed.userApiKey) {
           const autoSync = async () => {
             try {
-              const connector = new MetrcConnector(parsed);
-              const facilities = await connector.getFacilitiesV2();
-              setMetrcFacilities(facilities);
-              setMetrcStatus('connected');
-              if (facilities.length > 0) {
-                setSelectedFacility(facilities[0].LicenseNumber);
+              if (parsed.environment === 'production') {
+                const connector = new MetrcConnector(parsed);
+                const facilities = await connector.getFacilitiesV2();
+                setMetrcFacilities(facilities);
+                setMetrcStatus('connected');
+                if (facilities.length > 0) {
+                  setSelectedFacility(facilities[0].LicenseNumber);
+                }
+              } else {
+                // Sandbox simulation
+                setMetrcStatus('connected');
+                setMetrcFacilities([
+                  { Name: 'Green Valley Cultivation (Sandbox)', LicenseNumber: '456-OK-GROW' }
+                ]);
+                setSelectedFacility('456-OK-GROW');
               }
             } catch (err) {
               console.warn('Auto Metrc connection failed:', err);
+              setMetrcStatus('error');
             }
           };
           autoSync();
@@ -483,6 +509,17 @@ export const ComplianceWorkflowConsole = () => {
 
             <div className="space-y-4">
               <div>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">Connection Environment</label>
+                <select 
+                  value={metrcConfig.environment}
+                  onChange={e => setMetrcConfig({...metrcConfig, environment: e.target.value as 'production' | 'sandbox'})}
+                  className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold focus:ring-2 ring-emerald-500/20 outline-none bg-white text-slate-700"
+                >
+                  <option value="production">Live Production (Real Oklahoma API)</option>
+                  <option value="sandbox">Sandbox (Simulated / Pitch Mode)</option>
+                </select>
+              </div>
+              <div>
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">Integrator API Key (GGP-OS)</label>
                 <input 
                   type="password"
@@ -500,7 +537,7 @@ export const ComplianceWorkflowConsole = () => {
                   value={metrcConfig.userApiKey}
                   onChange={e => setMetrcConfig({...metrcConfig, userApiKey: e.target.value})}
                   className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm font-mono focus:ring-2 ring-blue-500/20 outline-none"
-                  placeholder="Facility operator's Metrc user key..."
+                  placeholder={metrcConfig.environment === 'production' ? "Facility operator's Metrc user key..." : "Optional in Sandbox mode..."}
                 />
               </div>
               <div>
@@ -510,14 +547,18 @@ export const ComplianceWorkflowConsole = () => {
                   value={metrcConfig.licenseNumber}
                   onChange={e => setMetrcConfig({...metrcConfig, licenseNumber: e.target.value})}
                   className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm font-mono focus:ring-2 ring-blue-500/20 outline-none"
-                  placeholder="e.g. DAAA-XXXX-XXXX"
+                  placeholder={metrcConfig.environment === 'production' ? "e.g. DAAA-XXXX-XXXX" : "Optional in Sandbox mode..."}
                 />
               </div>
               <div className="p-4 bg-blue-50 border border-blue-100 rounded-2xl">
                 <div className="flex items-start gap-3">
                   <Database className="text-blue-500 shrink-0 mt-0.5" size={18} />
                   <p className="text-xs text-blue-700 font-medium leading-relaxed">
-                    <strong>Production Mode:</strong> This will authenticate against the live Oklahoma Metrc API using <strong>GET /facilities/v2</strong> to retrieve all licensed facilities.
+                    {metrcConfig.environment === 'production' ? (
+                      <span><strong>Production Mode:</strong> This will authenticate against the live Oklahoma Metrc API using <strong>GET /facilities/v2</strong> to retrieve all licensed facilities.</span>
+                    ) : (
+                      <span><strong>Sandbox Mode:</strong> This will bypass live API checks and automatically simulate a green connected state with mock facility data.</span>
+                    )}
                   </p>
                 </div>
               </div>
@@ -527,7 +568,7 @@ export const ComplianceWorkflowConsole = () => {
                 className="w-full py-4 bg-[#1a4731] text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-emerald-900/20 flex items-center justify-center gap-2"
               >
                 {isLoading ? <Loader2 className="animate-spin" size={18} /> : <Database size={18} />}
-                Authenticate & Sync Production
+                {metrcConfig.environment === 'production' ? 'Authenticate & Sync Production' : 'Connect Sandbox'}
               </button>
             </div>
           </div>
