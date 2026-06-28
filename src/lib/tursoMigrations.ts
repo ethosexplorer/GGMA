@@ -119,6 +119,17 @@ export async function initializeDatabase() {
       await turso.execute(`ALTER TABLE entities ADD COLUMN metrc_license_number TEXT`);
     } catch (e) {}
 
+    // Add Metrc original package size columns if missing
+    try {
+      await turso.execute(`ALTER TABLE packages ADD COLUMN original_quantity REAL`);
+    } catch (e) {}
+    try {
+      await turso.execute(`ALTER TABLE packages ADD COLUMN original_unit_of_measure_name TEXT`);
+    } catch (e) {}
+    try {
+      await turso.execute(`ALTER TABLE packages ADD COLUMN original_unit_of_measure_abbreviation TEXT`);
+    } catch (e) {}
+
     // --- Metrc Compliance & Care OS Tables ---
 
     await turso.execute(`
@@ -165,6 +176,9 @@ export async function initializeDatabase() {
         weight REAL NOT NULL,
         status TEXT NOT NULL,
         facility_id TEXT NOT NULL,
+        original_quantity REAL,
+        original_unit_of_measure_name TEXT,
+        original_unit_of_measure_abbreviation TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY(facility_id) REFERENCES entities(id)
       )
@@ -254,9 +268,9 @@ export async function initializeDatabase() {
       `);
 
       await turso.execute(`
-        INSERT INTO packages (id, source_type, source_id, tag_id, weight, status, facility_id) VALUES 
-        ('pkg-1', 'harvest', 'h-1', '1A4FF0100000022000002001', 500.0, 'ACTIVE', 'ent-2'),
-        ('pkg-2', 'package', 'pkg-1', '1A4FF0100000022000002002', 100.0, 'IN_TRANSIT', 'ent-2')
+        INSERT INTO packages (id, source_type, source_id, tag_id, weight, status, facility_id, original_quantity, original_unit_of_measure_name, original_unit_of_measure_abbreviation) VALUES 
+        ('pkg-1', 'harvest', 'h-1', '1A4FF0100000022000002001', 500.0, 'ACTIVE', 'ent-2', 500.0, 'Grams', 'g'),
+        ('pkg-2', 'package', 'pkg-1', '1A4FF0100000022000002002', 100.0, 'IN_TRANSIT', 'ent-2', 100.0, 'Grams', 'g')
       `);
 
       await turso.execute(`

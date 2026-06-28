@@ -329,6 +329,9 @@ export const ComplianceWorkflowConsole = () => {
                       </td>
                       <td className="px-6 py-4">
                         <p className="text-sm font-black text-slate-700">{pkg.weight} Grams</p>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase">
+                          Original: {pkg.original_quantity || pkg.weight} {pkg.original_unit_of_measure_abbreviation || 'g'}
+                        </p>
                       </td>
                       <td className="px-6 py-4">
                         <span className={cn("px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest", 

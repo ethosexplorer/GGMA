@@ -167,7 +167,7 @@ export class MetrcEngine {
 
     for (const split of splits) {
       await turso.execute({
-        sql: 'INSERT INTO packages (id, source_type, source_id, tag_id, weight, status, facility_id) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        sql: 'INSERT INTO packages (id, source_type, source_id, tag_id, weight, status, facility_id, original_quantity, original_unit_of_measure_name, original_unit_of_measure_abbreviation) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
         args: [
           crypto.randomUUID(),
           'harvest',
@@ -175,7 +175,10 @@ export class MetrcEngine {
           split.tagId,
           split.weight,
           'ACTIVE',
-          facilityId
+          facilityId,
+          split.weight,
+          'Grams',
+          'g'
         ]
       });
     }
