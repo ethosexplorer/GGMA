@@ -659,7 +659,7 @@ export const MarketingHub = () => {
             name: 'Valuation Brief - Advocates',
             subject: 'The Data Your Advocacy Work Has Been Missing',
             audienceTypes: ['advocate'],
-            body: wrap(header('Strategic Valuation Brief &mdash; Advocacy and Research') + '<p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">Good afternoon,</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">Evidence-based cannabis policy requires data that does not exist in any public system today &mdash; anonymized health outcomes, social equity metrics, community impact measurements, and compliance trends across jurisdictions.</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;"><strong>GGHP-OS</strong> is the first platform that aggregates this data across all 50 states into a single, auditable infrastructure. For advocacy and research organizations, this means access to the intelligence layer that turns position papers into policy.</p><div style="background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 12px; padding: 16px 24px; margin: 24px 0;"><p style="font-size: 14px; color: #166534; line-height: 1.8; margin: 0;">We are a certified <strong>Woman-Owned, Minority-Owned, Black American-Owned, and American Indian-Owned</strong> small business. This platform was built by someone who understands the communities your organization serves.</p></div><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 28px;">I would welcome a brief conversation about how we can support your work.</p>' + cta + footer),
+            body: wrap(header('Strategic Valuation Brief &mdash; Advocacy and Research') + '<p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">Good afternoon,</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">Evidence-based cannabis policy requires data that does not exist in any public system today &mdash; anonymized health outcomes, social equity metrics, community impact measurements, and compliance trends across jurisdictions.</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;"><strong>GGHP-OS</strong> is the first platform that aggregates this data across all 50 states into a single, auditable infrastructure. For advocacy and research organizations, this means access to the intelligence layer that turns position papers into policy.</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">The attached brief outlines the platform\'s architecture, its proprietary scoring systems (including the C3 Cannabis Compassion Score), and how advocacy organizations fit into the stakeholder ecosystem.</p><div style="background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 12px; padding: 16px 24px; margin: 24px 0;"><p style="font-size: 14px; color: #166534; line-height: 1.8; margin: 0;">We are a certified <strong>Woman-Owned, Minority-Owned, Black American-Owned, and American Indian-Owned</strong> small business. This platform was built by someone who understands the communities your organization serves.</p></div><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 28px;">I would welcome a brief conversation about how we can support your work.</p>' + cta + footer),
           },
           {
             name: 'Valuation Brief - Attorneys',
@@ -673,14 +673,22 @@ export const MarketingHub = () => {
             audienceTypes: ['provider'],
             body: wrap(header('Strategic Valuation Brief &mdash; Healthcare Providers') + '<p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">Doctor,</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">Your patients depend on timely medical card approvals, renewal reminders, and compliant physician coordination across state lines. The current system is manual, fragmented, and slow.</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;"><strong>GGHP-OS</strong> automates the entire patient intake lifecycle &mdash; from telehealth scheduling and physician matching to state registry submission and renewal alerts &mdash; across all 50 states and 26 languages.</p><div style="background: #F0F9FF; border: 1px solid #BAE6FD; border-radius: 12px; padding: 16px 24px; margin: 24px 0;"><p style="font-size: 14px; color: #0C4A6E; line-height: 1.8; margin: 0;">We are scheduling provider onboarding calls this month. No obligation &mdash; just a walkthrough of what the platform does for your practice.</p></div>' + cta + footer),
           },
+          {
+            name: 'Valuation Brief - Cannabis Businesses',
+            subject: 'Cut Your Metrc Risk & Access Closed-Loop Credit — Strategic Briefing',
+            audienceTypes: ['dispensary', 'grower', 'processor', 'distribution'],
+            attachment: 'https://globalgreenhp.com/GGMA_Valuation_Brief.html',
+            attachmentName: 'GGMA_Valuation_Brief.html',
+            body: wrap(header('Strategic Valuation Brief &mdash; Cannabis Operators') + '<p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">To the Owner / Compliance Director,</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">Operating a regulated cannabis business means carrying constant license risk. An administrative mistake in Metrc can halt your operations overnight. Meanwhile, cash constraints limit average transaction sizes and invite security issues.</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;"><strong>GGHP-OS solves this.</strong> It is the first unified compliance operating system that connects state regulators, law enforcement, attorneys, providers, and operators on a single backbone.</p><div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px 24px; margin: 24px 0;"><p style="font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #94A3B8; font-weight: 800; margin: 0 0 12px;">What This Platform Delivers For Operators</p><p style="font-size: 14px; color: #334155; line-height: 2; margin: 0;">• <strong>L.A.R.R.Y AI Compliance Scan:</strong> Auto-flags Metrc errors up to 90 days in advance.<br/>• <strong>Care Wallet™ Integration:</strong> Patented closed-loop private line of credit to boost retail tickets by 40%.<br/>• <strong>Sylara AI Virtual Attendant:</strong> Automates patient intake and telehealth physician booking.<br/>• <strong>Recency Index temporal protection:</strong> Protects logistics teams and drivers from false-positives.</p></div><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 28px;">The attached Strategic Valuation Brief details how the platform insulates your operations and supports your growth.</p>' + '<div style="text-align: center; margin: 32px 0;"><a href="https://globalgreenhp.com/GGMA_Valuation_Brief.html" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: linear-gradient(135deg, #0A3D2A, #134D36); color: #E8D5B5; padding: 16px 44px; border-radius: 12px; font-weight: 800; text-decoration: none; font-size: 14px;">View the Full Valuation Brief</a></div>' + footer),
+          },
         ];
 
         for (const preset of presets) {
           if (!existing.includes(preset.name)) {
             await addDoc(collection(db, 'marketing_templates'), {
               ...preset,
-              attachment: VALUATION_URL,
-              attachmentName: ATTACHMENT_NAME,
+              attachment: preset.attachment || VALUATION_URL,
+              attachmentName: preset.attachmentName || ATTACHMENT_NAME,
               isValuation: true,
               createdAt: serverTimestamp(),
             });
@@ -1637,6 +1645,43 @@ export const MarketingHub = () => {
                         setSendMode('broadcast');
                         setSubject('Your Patient Pipeline Deserves Real-Time Compliance Infrastructure');
                         setMessage(`<div style="font-family: 'Inter', Arial, sans-serif; max-width: 640px; margin: 0 auto; padding: 32px 0;"><div style="background: linear-gradient(135deg, #061F15, #0A3D2A); padding: 40px 32px; border-radius: 16px; color: white; margin-bottom: 28px;"><p style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #D4AF77; font-weight: 800; margin: 0 0 16px;">Strategic Valuation Brief &mdash; Healthcare Providers</p><h1 style="font-size: 26px; font-weight: 900; margin: 0 0 8px; line-height: 1.2;">Global Green Hybrid Platform</h1><p style="color: rgba(255,255,255,0.5); font-size: 13px; margin: 0;">Automated patient intake and compliance infrastructure for clinics.</p></div><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">Doctor,</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">Your patients depend on timely medical card approvals, renewal reminders, and compliant physician coordination across state lines. The current system is manual, fragmented, and slow.</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;"><strong>GGHP-OS</strong> automates the entire patient intake lifecycle &mdash; from telehealth scheduling and physician matching to state registry submission and renewal alerts &mdash; across all 50 states and 26 languages.</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">The attached brief outlines how the platform's AI engine (Sylara) handles the majority of patient interactions without human escalation, and how providers like you gain real-time visibility into patient compliance status, renewal timelines, and cross-state reciprocity.</p><div style="background: #F0F9FF; border: 1px solid #BAE6FD; border-radius: 12px; padding: 16px 24px; margin: 24px 0;"><p style="font-size: 14px; color: #0C4A6E; line-height: 1.8; margin: 0;">We are scheduling provider onboarding calls this month. No obligation &mdash; just a walkthrough of what the platform does for your practice.</p></div><div style="text-align: center; margin: 32px 0;"><a href="https://globalgreenhp.com/GGHP_Agency_Valuation_Brief.html" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: linear-gradient(135deg, #0A3D2A, #134D36); color: #E8D5B5; padding: 16px 44px; border-radius: 12px; font-weight: 800; text-decoration: none; font-size: 14px;">View the Full Valuation Brief</a></div><div style="border-top: 1px solid #E2E8F0; padding-top: 24px; margin-top: 32px;"><p style="font-size: 14px; color: #334155; margin: 0 0 4px;"><strong>Best,</strong></p><p style="font-size: 15px; color: #0A3D2A; font-weight: 800; margin: 0 0 4px;">Shantell Robinson</p><p style="font-size: 13px; color: #64748B; margin: 0 0 12px;">Founder and CEO, Global Green Enterprise Inc.</p><p style="font-size: 11px; color: #94A3B8; line-height: 1.8; margin: 0;">1-888-963-4447 | 645-246-8277<br>CAGE: 9KXZ2 | SAM.gov Active | BBB A+ Rated</p></div></div>`);
+                      } else if (val === 'cannabis_businesses') {
+                        setSelectedTypes(['dispensary', 'grower', 'processor', 'distribution']);
+                        setSelectedStates(['All']);
+                        setSelectedTier('all');
+                        setCampaignType('email');
+                        setSendMode('broadcast');
+                        setSubject('Cut Your Metrc Risk & Access Closed-Loop Credit — Strategic Briefing');
+                        setMessage(`<div style="font-family: 'Inter', Arial, sans-serif; max-width: 640px; margin: 0 auto; padding: 32px 0;">
+  <div style="background: linear-gradient(135deg, #061F15, #0A3D2A); padding: 40px 32px; border-radius: 16px; color: white; margin-bottom: 28px;">
+    <p style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #D4AF77; font-weight: 800; margin: 0 0 16px;">Strategic Valuation Brief &mdash; Cannabis Operators</p>
+    <h1 style="font-size: 26px; font-weight: 900; margin: 0 0 8px; line-height: 1.2;">Global Green Hybrid Platform</h1>
+    <p style="color: rgba(255,255,255,0.5); font-size: 13px; margin: 0;">Evidentiary compliance and financial infrastructure for licensed operators.</p>
+  </div>
+  <p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">To the Owner / Compliance Director,</p>
+  <p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">Operating a regulated cannabis business means carrying constant license risk. An administrative mistake in Metrc can halt your operations overnight. Meanwhile, cash constraints limit average transaction sizes and invite security issues.</p>
+  <p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;"><strong>GGHP-OS solves this.</strong> It is the first unified compliance operating system that connects state regulators, law enforcement, attorneys, providers, and operators on a single backbone.</p>
+  <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px 24px; margin: 24px 0;">
+    <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #94A3B8; font-weight: 800; margin: 0 0 12px;">What This Platform Delivers For Operators</p>
+    <p style="font-size: 14px; color: #334155; line-height: 2; margin: 0;">
+      • <strong>L.A.R.R.Y AI Compliance Scan:</strong> Auto-flags Metrc errors up to 90 days in advance.<br/>
+      • <strong>Care Wallet™ Integration:</strong> Patented closed-loop private line of credit to boost retail tickets by 40%.<br/>
+      • <strong>Sylara AI Virtual Attendant:</strong> Automates patient intake and telehealth physician booking.<br/>
+      • <strong>Recency Index temporal protection:</strong> Protects logistics teams and drivers from false-positives.
+    </p>
+  </div>
+  <p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 28px;">The attached Strategic Valuation Brief details how the platform insulates your operations and supports your growth. Available for a briefing at your convenience.</p>
+  <div style="text-align: center; margin: 32px 0;">
+    <a href="https://globalgreenhp.com/GGMA_Valuation_Brief.html" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: linear-gradient(135deg, #0A3D2A, #134D36); color: #E8D5B5; padding: 16px 44px; border-radius: 12px; font-weight: 800; text-decoration: none; font-size: 14px; letter-spacing: 0.5px;">View the Full Valuation Brief</a>
+  </div>
+  <div style="border-top: 1px solid #E2E8F0; padding-top: 24px; margin-top: 32px;">
+    <p style="font-size: 14px; color: #334155; margin: 0 0 4px;"><strong>Best Regards,</strong></p>
+    <p style="font-size: 15px; color: #0A3D2A; font-weight: 800; margin: 0 0 4px;">Shantell Robinson</p>
+    <p style="font-size: 13px; color: #64748B; margin: 0 0 12px;">Founder and CEO, Global Green Enterprise Inc.</p>
+    <p style="font-size: 11px; color: #94A3B8; line-height: 1.8; margin: 0;">1-888-963-4447 | 645-246-8277<br>CAGE: 9KXZ2 | SAM.gov Active | BBB A+ Rated</p>
+  </div>
+</div>`);
+                        alert('✅ Cannabis Business Preset Loaded!\n\n📋 Audience: Dispensary, Grower, Processor, Distribution\n📧 Subject & body pre-filled with cannabis valuation brief\n🌐 All states selected\n\nReview the audience count and hit Launch Campaign when ready.');
                       } else if (val === 'patient_renewal') {
                         setSelectedTypes(['patient']);
                         setSelectedStates(['OK']);
@@ -1747,6 +1792,7 @@ export const MarketingHub = () => {
                       <option value="advocates">📣 Advocates Preset</option>
                       <option value="attorneys">⚖️ Attorneys Preset</option>
                       <option value="providers">🩺 Providers Preset</option>
+                      <option value="cannabis_businesses">🏢 Cannabis Operators Preset</option>
                       <option value="patient_renewal">🩺 Patient Card Renewal (Email)</option>
                       <option value="business_renewal">🏢 Business License Renewal (Email)</option>
                     </optgroup>

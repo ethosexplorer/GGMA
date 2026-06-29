@@ -42,6 +42,8 @@ async function run() {
   // List of files to load and seed
   const filesToSeed = [
     { name: 'GGHP_Agency_Valuation_Brief.md', path: './GGHP_Agency_Valuation_Brief.md', label: 'GGHP Agency Valuation Brief' },
+    { name: 'GGHP_Cannabis_Business_Valuation_Brief.md', path: './GGHP_Cannabis_Business_Valuation_Brief.md', label: 'GGHP Cannabis Business Valuation Brief' },
+    { name: 'GGMA_Valuation_Brief.md', path: './GGMA_Valuation_Brief.md', label: 'GGMA Valuation Brief' },
     { name: 'GGP_OS_Platform_Valuation.md', path: './GGP_OS_Platform_Valuation.md', label: 'GGP-OS Platform Valuation & Architecture' },
     { name: 'Nuvei_Merchant_Application_Answers.txt', path: './Nuvei_Merchant_Application_Answers.txt', label: 'Nuvei Merchant Application History & Answers' },
     { name: 'thirty_day_tasks_full.txt', path: './thirty_day_tasks_full.txt', label: '30-Day Platform Building Task Roadmap History' }
