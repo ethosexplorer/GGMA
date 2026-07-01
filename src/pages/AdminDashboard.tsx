@@ -15,6 +15,7 @@ import { FounderCalendar } from '../components/FounderCalendar';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 import { PatientCaseTracker } from '../components/patient/PatientCaseTracker';
 import { StaffCRM } from '../components/crm/StaffCRM';
+import { ProductsServicesManager } from '../components/ops/ProductsServicesManager';
 
 const NAV_ITEMS = [
   { section: 'INTERNAL COMMAND' },
@@ -26,6 +27,7 @@ const NAV_ITEMS = [
   { id: 'patients', label: 'Patient Registry', icon: HeartPulse },
   { id: 'business', label: 'Commercial Nodes', icon: Building2 },
   { id: 'b2b_crm', label: 'Global CRM Pipeline', icon: Briefcase },
+  { id: 'products_services', label: 'Products & Services', icon: ShoppingCart },
   { section: 'OPS & COMPLIANCE' },
   { id: 'approvals', label: 'Agency Approvals', icon: UserCheck },
   { id: 'applications', label: 'Applications Queue', icon: FileText, badge: '1' },
@@ -812,6 +814,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
       case 'patients': return renderPatients();
       case 'business': return renderBusiness();
       case 'b2b_crm': return <div className="h-full w-full -m-10 bg-[#080e1a] min-h-screen overflow-auto"><StaffCRM /></div>;
+      case 'products_services': return <ProductsServicesManager />;
       case 'approvals': return renderApprovals();
       case 'applications': return renderApplications();
       case 'compliance': return renderCompliance();

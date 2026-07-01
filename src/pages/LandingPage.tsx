@@ -582,7 +582,7 @@ export const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction, userPro
             </div>
             <div className="flex gap-4 pt-2">
               <button 
-                onClick={() => onNavigate('login')}
+                onClick={() => onNavigate('role-pricing' as any, 'agency')}
                 className="px-8 py-3 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl font-black transition-all shadow-lg shadow-cyan-600/20"
               >
                 Request CEYE Access
