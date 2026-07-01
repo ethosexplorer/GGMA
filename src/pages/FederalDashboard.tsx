@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, LayoutDashboard, Globe, Activity, Shield, DollarSign, Scale, Sparkles, FileText, BookOpen, Lock, CreditCard, Gavel, AlertTriangle, CircleCheck, Search, Edit2, X } from 'lucide-react';
+import { Calendar, LayoutDashboard, Globe, Activity, Shield, DollarSign, Scale, Sparkles, FileText, BookOpen, Lock, CreditCard, Gavel, AlertTriangle, CircleCheck, Search, Edit2, X, Eye } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { FederalOverviewTab } from '../components/federal/FederalOverviewTab';
 import { InterstateMonitoringTab } from '../components/federal/InterstateMonitoringTab';
@@ -16,6 +16,7 @@ import { LegislativeIntelTab } from '../components/federal/LegislativeIntelTab';
 import { JudicialMonitorTab } from '../components/federal/JudicialMonitorTab';
 import { UserCalendar } from '../components/UserCalendar';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
+import { CEYECommandCenter } from '../components/ceye/CEYECommandCenter';
 const tabs = [
   { id: 'overview', label: 'Nationwide Overview', icon: LayoutDashboard, tier: 'basic' },
   { id: 'intel', label: 'Legislative Intel', icon: BookOpen, tier: 'basic' },
@@ -29,6 +30,7 @@ const tabs = [
   { id: 'sam', label: 'Rules & SAM.gov', icon: BookOpen, tier: 'basic' },
   { id: 'audit', label: 'Lease & Audit Logs', icon: Lock, tier: 'custom' },
   { id: 'judicial', label: 'Judicial Monitor', icon: Gavel, tier: 'custom' },
+  { id: 'ceye', label: 'CEYE Command', icon: Eye, tier: 'custom' },
   { id: 'subscription', label: 'Subscription', icon: CreditCard, tier: 'basic' },
 ];
 
@@ -172,6 +174,7 @@ export const FederalDashboard = ({ onLogout, user }: { onLogout?: () => void, us
                 {activeTab === 'sam' && <SAMGovRulesTab />}
                 {activeTab === 'audit' && <LeaseAuditTab />}
                 {activeTab === 'judicial' && <JudicialMonitorTab />}
+                {activeTab === 'ceye' && <div className="h-full w-full -m-6 min-h-screen overflow-auto bg-[#060a14]"><CEYECommandCenter role="federal" /></div>}
                 {activeTab === 'subscription' && <SubscriptionPortal userRole="regulator" initialPlanId={`fed_${tier}`} />}
               </>
             );

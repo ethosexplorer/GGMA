@@ -5,7 +5,7 @@ import {
   Map as MapIcon, MessageSquare, ChevronDown, Send, GraduationCap, Sparkles, Scale,
   Briefcase, Bot, BookOpen, Phone, Star, ArrowUpCircle, Home, Check, Wallet,
   HeartHandshake, HelpCircle, Building2, Leaf, Activity, Gavel, Headphones,
-  Users, ShoppingCart, PackageSearch, ClipboardList, Cpu, MessageCircle, LayoutDashboard
+  Users, ShoppingCart, PackageSearch, ClipboardList, Cpu, MessageCircle, LayoutDashboard, Eye
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Button } from '../components/shared/Button';
@@ -546,6 +546,70 @@ export const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction, userPro
               {'\u{1F52C}'} Explore the Lab Dashboard
             </button>
             <p className="text-slate-500 text-xs mt-3 font-bold">Starting at $149/mo &bull; 3 tiers available &bull; 30-day free trial</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ CEYE COMMAND TEASER SECTION ═══ */}
+      <section style={{ background: 'linear-gradient(to bottom right, #050b14, #081220, #0a1f33)' }} className="py-20 px-6 text-white relative overflow-hidden border-t border-white/10">
+        <div className="absolute inset-0 opacity-10" style={{
+          backgroundImage: 'linear-gradient(rgba(6,182,212,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(6,182,212,0.15) 1px, transparent 1px)',
+          backgroundSize: '30px 30px'
+        }} />
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12 relative z-10">
+          <div className="md:w-2/3 space-y-6">
+            <div style={{ backgroundColor: 'rgba(6, 182, 212, 0.2)' }} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-cyan-400/30 text-cyan-300 text-xs font-black uppercase tracking-widest">
+              <Eye size={14} /> CEYE Command Enforcement Yield Ecosystem
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-tight">
+              See Everything, Understand More, <span className="text-cyan-400">Decide Better</span>
+            </h2>
+            <p className="text-lg text-cyan-50/80 leading-relaxed font-medium">
+              CEYE is our cutting-edge sensor fusion and universal compliance tracking platform. By integrating real-time telemetry, automated transport route verification, and instant cryptographic weight reconciliation, CEYE establishes a new paradigm in multi-jurisdictional transparency.
+            </p>
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { title: 'Sensor Fusion Map', desc: 'Real-time geographic facility status and transport tracking.' },
+                { title: 'Scale & Route Audit', desc: 'Automated weight verification and route corridor enforcement.' },
+                { title: 'L.A.R.R.Y. Alert Feed', desc: 'Instant AI alerts routed straight to cryptographic evidence vaults.' },
+                { title: 'Universal Ingestion', desc: 'Cross-industry integration with zero manual entry required.' }
+              ].map((item, i) => (
+                <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4">
+                  <h4 className="font-extrabold text-cyan-400 text-sm mb-1">{item.title}</h4>
+                  <p className="text-slate-400 text-xs leading-normal">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+            <div className="flex gap-4 pt-2">
+              <button 
+                onClick={() => onNavigate('login')}
+                className="px-8 py-3 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl font-black transition-all shadow-lg shadow-cyan-600/20"
+              >
+                Request CEYE Access
+              </button>
+            </div>
+          </div>
+          <div className="md:w-1/3 flex justify-center w-full">
+            <div className="w-full max-w-[320px] aspect-square bg-[#060a14] rounded-3xl border border-cyan-500/20 shadow-2xl p-6 relative group overflow-hidden flex flex-col justify-between">
+              {/* Map grid overlay inside preview */}
+              <div className="absolute inset-0 opacity-10" style={{
+                backgroundImage: 'linear-gradient(rgba(6,182,212,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(6,182,212,0.3) 1px, transparent 1px)',
+                backgroundSize: '20px 20px'
+              }} />
+              <div className="flex items-center justify-between z-10">
+                <span className="text-[10px] font-black text-cyan-400 tracking-widest uppercase">CEYE LIVE MAP</span>
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              </div>
+              <div className="flex-1 flex items-center justify-center relative">
+                <Eye size={64} className="text-cyan-500/40 relative z-10 animate-pulse" />
+                <div className="absolute w-20 h-20 bg-cyan-500/10 blur-xl rounded-full scale-125"></div>
+              </div>
+              <div className="bg-slate-900/80 border border-slate-800 rounded-xl p-3 z-10 font-mono text-[9px] text-slate-400 space-y-1">
+                <p className="font-bold text-white flex items-center justify-between"><span>OKC PROCESSOR</span> <span className="text-emerald-400 font-black">94% OK</span></p>
+                <p>Alerts: 0 active anomalies</p>
+                <p>Scale: manifest MAN-88712 verified</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>

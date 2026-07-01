@@ -82,15 +82,18 @@ import { LaunchScriptTab } from '../components/founder/LaunchScriptTab';
 import { ApprovalsTab } from '../components/founder/ApprovalsTab';
 import { ApplicationsTab } from '../components/founder/ApplicationsTab';
 import { LarryIntelligenceMonitor } from '../components/founder/LarryIntelligenceMonitor';
+import { CEYECommandCenter } from '../components/ceye/CEYECommandCenter';
+
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
-const NAV_VERSION = 31; // Bumped: Added LARRY Intelligence Monitor tab
+const NAV_VERSION = 32; // Bumped: Added CEYE Command tab
 
 const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'overview', label: 'God Overview', icon: Activity },
   { id: 'larry_monitor', label: 'LARRY Intelligence', icon: Shield },
   { id: 'ai_training', label: 'My Asst AI', icon: Bot },
+  { id: 'ceye_command', label: 'CEYE Command', icon: Eye },
   { id: 'pipeline_revenue', label: 'Pipeline & Revenue', icon: Briefcase },
   { id: 'finance_analytics', label: 'Finance & Analytics', icon: TrendingUp },
   { id: 'command_hub', label: 'Command Hub', icon: Cpu },
@@ -154,6 +157,7 @@ const MERGED_SUB_TABS: Record<string, { id: string, label: string, icon: any }[]
     { id: 'ip_monitor', label: 'IP / Patent Monitor', icon: Shield },
     { id: 'rapid_testing', label: 'Rapid Testing Hub', icon: FlaskConical },
     { id: 'law_enforcement', label: 'Law Enforcement (RIP)', icon: Shield },
+    { id: 'sinc_ceye', label: 'SINC (CEYE)', icon: Eye },
     { id: 'metrc_state', label: 'Metrc & State Info', icon: Database },
   ],
   god_settings: [
@@ -1108,7 +1112,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       case 'vault':
         return <div data-action-bound="true"><VaultTab /></div>;
       case 'larry_monitor':
-        return <div className="h-full w-full -m-10 min-h-screen overflow-auto" data-action-bound="true"><LarryIntelligenceMonitor /></div>;
+        return <div className="h-full w-full -m-10 min-h-screen overflow-auto" data-action-bound="true"><LarryIntelligenceMonitor setActiveTab={setActiveTab} /></div>;
       case 'overview':
         return (
           <div data-action-bound="true">
@@ -1212,6 +1216,9 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
             </div>
           </div>
         );
+      case 'ceye_command':
+      case 'sinc_ceye':
+        return <div className="h-full w-full -m-10 min-h-screen overflow-auto bg-[#060a14]" data-action-bound="true"><CEYECommandCenter role="founder" /></div>;
       case 'support_tickets':
         return <div data-action-bound="true"><SupportTicketsTab patientList={patientList} setActiveTab={setActiveTab} /></div>;
       case 'internal_scheduler':

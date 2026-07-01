@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { ShadowOverlay } from '../components/shared/ShadowOverlay';
 import { turso } from '../lib/turso';
-import { ShieldAlert, Map, Search, FileText, Activity, MapPin, XCircle, AlertTriangle, AlertCircle, Fingerprint, Zap, Crosshair, HelpCircle, Download, Bot, CreditCard, Shield, Clock, Wind, Car, User, Wifi, Lock, Globe, CircleCheck, X, Edit2 } from 'lucide-react';
+import { ShieldAlert, Map, Search, FileText, Activity, MapPin, XCircle, AlertTriangle, AlertCircle, Fingerprint, Zap, Crosshair, HelpCircle, Download, Bot, CreditCard, Shield, Clock, Wind, Car, User, Wifi, Lock, Globe, CircleCheck, X, Edit2, Eye } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { EnforcementIntelTab } from '../components/federal/EnforcementIntelTab';
 import { UserCalendar } from '../components/UserCalendar';
 import { SubscriptionPortal } from '../components/SubscriptionPortal';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
+import { CEYECommandCenter } from '../components/ceye/CEYECommandCenter';
 
 const flags = [
   { id: 1, type: 'volume', title: 'Suspicious Volume Anomaly', entity: 'Apex Health LLC', time: 'Just now', severity: 'high', desc: 'Exceeding daily sales limits.' },
@@ -152,6 +153,7 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
                 { id: 'intel', label: 'Intel', icon: Globe, tier: 'custom', accent: 'purple' },
                 { id: 'reports', label: 'Reports', icon: FileText, tier: 'basic', accent: '' },
                 { id: 'audit', label: 'Audit', icon: Activity, tier: 'pro', accent: '' },
+                { id: 'ceye', label: 'CEYE', icon: Eye, tier: 'custom', accent: 'cyan' },
                 { id: 'subscription', label: 'Sub', icon: CreditCard, tier: 'basic', accent: '' },
               ].map(t => {
                 const allowed = hasAccess(t.tier);
@@ -182,6 +184,7 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
             { id: 'intel', label: 'National Intel', tier: 'custom' },
             { id: 'reports', label: 'Field Reports', tier: 'basic' },
             { id: 'audit', label: 'Audit Log', tier: 'pro' },
+            { id: 'ceye', label: 'CEYE Command', tier: 'custom' },
             { id: 'subscription', label: 'Subscription', tier: 'basic' }
           ];
           const currentTab = allTabs.find(t => t.id === activeTab);
@@ -768,6 +771,13 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
         {activeTab === 'subscription' && (
            <div className="flex-1 p-8 overflow-y-auto bg-[#0a0f18]">
               <SubscriptionPortal userRole="enforcement" initialPlanId={`police_${tier}`} />
+           </div>
+        )}
+
+        {/* CEYE Command Tab */}
+        {activeTab === 'ceye' && (
+           <div className="flex-1 overflow-y-auto bg-[#060a14]">
+              <CEYECommandCenter role="enforcement" />
            </div>
         )}
         </>

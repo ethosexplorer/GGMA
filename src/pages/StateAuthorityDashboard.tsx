@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { ShadowOverlay } from '../components/shared/ShadowOverlay';
 import { Calendar, Building2, ShieldCheck, Landmark, FileCheck, DollarSign, Activity, 
   Map as MapIcon, Settings, Download, Search, AlertCircle, FileText, XCircle,
-  TrendingUp, Users, ShieldAlert, Bot, HelpCircle, Gavel, Scale, Clock, LogOut, Lock, CircleCheck, Sparkles, CreditCard } from 'lucide-react';
+  TrendingUp, Users, ShieldAlert, Bot, HelpCircle, Gavel, Scale, Clock, LogOut, Lock, CircleCheck, Sparkles, CreditCard, Eye } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { UserCalendar } from '../components/UserCalendar';
 import { PublicHealthDashboard } from './PublicHealthDashboard';
 import { SubscriptionPortal } from '../components/SubscriptionPortal';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
+import { CEYECommandCenter } from '../components/ceye/CEYECommandCenter';
 
 export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
   const [activeTab, setActiveTab] = useState('legal_oversight');
@@ -266,6 +267,7 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
             { id: 'health_labs', label: 'Health & Labs', icon: ShieldCheck, tier: 'basic' },
             { id: 'metrc_state', label: 'State Revenue & Tax', icon: DollarSign, tier: 'pro' },
             { id: 'jurisdiction_trend', label: 'Jurisdictional Trend Engine', icon: Sparkles, tier: 'custom' },
+            { id: 'ceye', label: 'CEYE Command', icon: Eye, tier: 'custom' },
             { id: 'subscription', label: 'Subscription', icon: CreditCard, tier: 'basic' },
           ].map((item) => {
             const allowed = hasAccess(item.tier);
@@ -314,6 +316,7 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
                 { id: 'health_labs', label: 'Health & Labs', icon: ShieldCheck, tier: 'basic' },
                 { id: 'metrc_state', label: 'State Revenue & Tax', icon: DollarSign, tier: 'pro' },
                 { id: 'jurisdiction_trend', label: 'Jurisdictional Trend Engine', icon: Sparkles, tier: 'custom' },
+                { id: 'ceye', label: 'CEYE Command', icon: Eye, tier: 'custom' },
                 { id: 'subscription', label: 'Subscription', icon: CreditCard, tier: 'basic' },
              ];
              const currentTab = allTabs.find(t => t.id === activeTab);
@@ -343,6 +346,7 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
                  {activeTab === 'health_labs' && <div className="h-full w-full -m-10"><PublicHealthDashboard /></div>}
                  {activeTab === 'metrc_state' && <div className="text-center py-40 text-slate-400 font-bold uppercase tracking-widest italic">Live Tax & Revenue Sync Active...</div>}
                  {activeTab === 'jurisdiction_trend' && <div className="text-center py-40 text-slate-400 font-bold uppercase tracking-widest italic">AI Trend Engine Generating Forecasts...</div>}
+                 {activeTab === 'ceye' && <div className="h-full w-full -m-10 min-h-screen overflow-auto bg-[#060a14]"><CEYECommandCenter role="state_authority" /></div>}
                  {activeTab === 'subscription' && <SubscriptionPortal userRole="regulator" initialPlanId={`state_${tier}`} />}
                </>
              );

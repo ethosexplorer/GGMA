@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Shield, Activity, Users, Database, Globe, Bot, MessageSquare, Clock, HeartPulse, Building2, 
   FileCheck, BookOpen, Gavel, Zap, FlaskConical, BarChart3, LogOut, ArrowLeft, Edit2, Trash2, Plus, CircleCheck,
-  Phone, Scale, Megaphone, FileText, Clipboard, Bell, ArrowUpRight, Sliders
+  Phone, Scale, Megaphone, FileText, Clipboard, Bell, ArrowUpRight, Sliders, Eye
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
@@ -34,6 +34,7 @@ import { LegislativeIntelTab } from '../components/federal/LegislativeIntelTab';
 import { CallCenterCommandTab } from '../components/telephony/CallCenterCommandTab';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 import { ExecutiveCRM } from '../components/crm/ExecutiveCRM';
+import { CEYECommandCenter } from '../components/ceye/CEYECommandCenter';
 import { VirtualAttendantTab } from '../components/oversight/VirtualAttendantTab';
 import { GlobalDirectoryTab } from '../components/founder/GlobalDirectoryTab';
 import { PatientCaseTracker } from '../components/patient/PatientCaseTracker';
@@ -65,6 +66,7 @@ const INTERNAL_NAV_ITEMS: NavItem[] = [
   { id: 'compliance', label: 'Compliance Monitor', icon: FileCheck },
   { id: 'regulatory_library', label: 'Regulatory Library', icon: BookOpen },
   { id: 'judicial', label: 'Judicial Monitor', icon: Scale },
+  { id: 'ceye_command', label: 'CEYE Command', icon: Eye },
   { id: '_sec_oversight', section: 'OVERSIGHT HUB' },
   { id: 'virtual_attendant', label: 'GGE World Call Center', icon: Phone },
   { id: 'internal_admin', label: 'Internal Team (GGE Call Center)', icon: Shield },
@@ -533,6 +535,7 @@ const PresidentDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => v
                 
                 {activeTab === 'compliance' && <LiveComplianceMonitor />}
                 {activeTab === 'regulatory_library' && <LiveRegulatoryLibrary />}
+                {activeTab === 'ceye_command' && <div className="h-full w-full -m-8 min-h-screen overflow-auto bg-[#060a14]"><CEYECommandCenter role="president" /></div>}
                 
                 {activeTab === 'internal_admin' && <div className="bg-white rounded-3xl overflow-hidden h-full"><ExternalAdminDashboard /></div>}
                 {activeTab === 'law_enforcement' && <LiveLawEnforcement />}

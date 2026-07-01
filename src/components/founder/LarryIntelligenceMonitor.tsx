@@ -220,9 +220,7 @@ const SECURITY_ZONES = [
   { zone: 'Oklahoma City (Local)', ip: 'VPN-Masked (ExpressVPN, PureVPN)', type: 'Commercial VPN', threat: 'HIGH', target: 'Auth endpoints, Twilio API, Legal Intake', blocked: true, color: 'red', breachCount: 3, description: 'Credential stuffing, API exploitation attempt on Twilio outbound, and legal page probing. All VPN-masked. Timing correlates with court business hours.' },
   { zone: 'Netherlands / Tor Network', ip: '185.220.x.x (Tor Exit)', type: 'Anonymization Network', threat: 'HIGH', target: 'ProSeLegalIntake, AttorneyDashboard', blocked: true, color: 'red', breachCount: 1, description: 'Tor exit node targeting authenticated legal pages. Timing pattern correlates with SD-origin attempts — likely same actor using layered anonymization.' },
   { zone: 'Internet-Wide (Automated)', ip: '94.102.x.x, 167.248.x.x', type: 'Shodan/Censys Scanners', threat: 'LOW', target: 'Infrastructure ports (22, 443, 5432)', blocked: true, color: 'amber', breachCount: 1, description: 'Routine internet-wide infrastructure scanning. Not targeted. No credential or data attempts.' },
-];
-
-export const LarryIntelligenceMonitor = () => {
+];export const LarryIntelligenceMonitor = ({ setActiveTab }: { setActiveTab?: (tabId: string) => void }) => {
   const [scanLogs, setScanLogs] = useState<any[]>([]);
   const [isScanning, setIsScanning] = useState(false);
   const [lastScanTime, setLastScanTime] = useState(new Date().toISOString());
@@ -1385,6 +1383,76 @@ export const LarryIntelligenceMonitor = () => {
                 <p><strong className="text-white">SINC Evidence is Unimpeachable.</strong> 7 files, SHA-256 verified, timestamped, chain of custody intact since initial deposit. Admissibility rating: 98.7% under FRE 901(b)(9). The defendants cannot challenge the integrity of this evidence — it's mathematically verifiable.</p>
                 <p><strong className="text-white">Platform Security Logs Are Exhibits.</strong> The 10 breach attempts documented in Section III (BA-001 through BA-010) — especially the SD-origin reconnaissance, the OKC credential stuffing, and the Tor exit node probing — are potentially admissible to show ongoing hostile surveillance by defendant-adjacent actors. SINC timestamps and IP correlation make these exhibits, not allegations.</p>
               </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ═══ SECTION VIII: CEYE COMMAND FEED ═══ */}
+      <div className="bg-[#0c1020] border border-cyan-900/40 rounded-3xl overflow-hidden mb-6">
+        <button onClick={() => toggleSection('ceye_feed')} className="w-full p-6 flex items-center justify-between hover:bg-white/5 transition-colors">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-cyan-600/20 border border-cyan-500/30 rounded-xl flex items-center justify-center">
+              <Eye size={24} className="text-cyan-400" />
+            </div>
+            <div className="text-left">
+              <h2 className="text-xl font-black tracking-tight flex items-center gap-2">
+                SECTION VIII: CEYE Command & Sensor Fusion Feed
+                <span className="px-2 py-0.5 bg-cyan-500/20 text-cyan-400 text-[9px] font-black uppercase rounded-full">Telemetry Active</span>
+              </h2>
+              <p className="text-xs text-slate-500">Real-time facility tracking, transport logs, and cryptographic weight/route anomalies</p>
+            </div>
+          </div>
+          {expandedSection === 'ceye_feed' ? <ChevronUp size={20} className="text-slate-500" /> : <ChevronDown size={20} className="text-slate-500" />}
+        </button>
+
+        {expandedSection === 'ceye_feed' && (
+          <div className="px-6 pb-6 space-y-4">
+            <div className="grid grid-cols-4 gap-4">
+              <div className="bg-cyan-950/20 border border-cyan-800/30 rounded-2xl p-4 text-center">
+                <p className="text-[9px] font-black text-cyan-400 uppercase tracking-widest mb-1">CEYE Status</p>
+                <p className="text-lg font-black text-white">15 Facilities Monitored</p>
+                <p className="text-[9px] text-slate-500 mt-0.5 font-bold">Average Compliance: 89%</p>
+              </div>
+              <div className="bg-cyan-950/20 border border-cyan-800/30 rounded-2xl p-4 text-center">
+                <p className="text-[9px] font-black text-cyan-400 uppercase tracking-widest mb-1">Camera Network</p>
+                <p className="text-lg font-black text-white">10/12 Online</p>
+                <p className="text-[9px] text-slate-500 mt-0.5 font-bold">2 Offline (Pure Extract Co)</p>
+              </div>
+              <div className="bg-cyan-950/20 border border-cyan-800/30 rounded-2xl p-4 text-center">
+                <p className="text-[9px] font-black text-cyan-400 uppercase tracking-widest mb-1">Transports</p>
+                <p className="text-lg font-black text-white">5 Active Manifests</p>
+                <p className="text-[9px] text-slate-500 mt-0.5 font-bold">1 active corridor deviation</p>
+              </div>
+              <div className="bg-cyan-950/20 border border-cyan-800/30 rounded-2xl p-4 text-center">
+                <p className="text-[9px] font-black text-cyan-400 uppercase tracking-widest mb-1">Alerts</p>
+                <p className="text-lg font-black text-red-400">3 Critical Alerts</p>
+                <p className="text-[9px] text-slate-500 mt-0.5 font-bold">Auto-routing to SINC locker</p>
+              </div>
+            </div>
+
+            <div className="bg-black/20 rounded-xl p-4 border border-white/5 space-y-2">
+              <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Active CEYE Transports Map Grid</h4>
+              <div className="h-32 bg-slate-950 rounded-lg relative overflow-hidden border border-slate-800 flex items-center justify-center">
+                <div className="absolute inset-0 opacity-10" style={{
+                  backgroundImage: 'linear-gradient(rgba(6,182,212,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(6,182,212,0.3) 1px, transparent 1px)',
+                  backgroundSize: '20px 20px'
+                }} />
+                <span className="text-slate-500 text-[10px] uppercase font-black tracking-widest flex items-center gap-1"><Eye size={12} /> CEYE Map telemetry active</span>
+                <span className="absolute top-2 right-2 text-[8px] bg-cyan-950 border border-cyan-800 text-cyan-400 px-1.5 py-0.5 rounded font-mono font-bold">103.23°W 35.47°N</span>
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center bg-cyan-950/10 border border-cyan-800/20 p-4 rounded-xl">
+              <span className="text-xs font-bold text-cyan-300">Access the full CEYE Dashboard with Map, Cameras, Transports, and Evidence Builder</span>
+              {setActiveTab && (
+                <button
+                  onClick={() => setActiveTab('ceye_command')}
+                  className="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all cursor-pointer border-none"
+                >
+                  Open CEYE Command Center
+                </button>
+              )}
             </div>
           </div>
         )}

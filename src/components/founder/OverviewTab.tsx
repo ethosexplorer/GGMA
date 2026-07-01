@@ -1314,8 +1314,87 @@ export const OverviewTab = ({
         </div>
       </div>
 
+      {/* CEYE Command Intelligence Analytics */}
+      <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h3 className="text-lg font-bold text-slate-800 flex items-center gap-3">
+              <Eye size={22} className="text-cyan-500" /> CEYE Command Analytics
+            </h3>
+            <p className="text-xs text-slate-500 mt-1">Cross-jurisdictional sensor fusion and operational compliance metrics</p>
+          </div>
+          <span className="px-3 py-1 bg-cyan-50 text-cyan-600 text-[10px] font-black rounded-full border border-cyan-100 uppercase tracking-widest animate-pulse flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-ping"></span> Real-time Telemetry
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          {[
+            { label: 'CEYE Avg Compliance', value: '89%', sub: 'Target: 95%', color: 'text-emerald-600', bg: 'bg-emerald-50 border-emerald-100' },
+            { label: 'Monitored Facilities', value: '15 Active', sub: 'OK, AZ, CO, MN, OR', color: 'text-cyan-600', bg: 'bg-cyan-50 border-cyan-100' },
+            { label: 'Camera Network', value: '10/12 Online', sub: '2 signal loss (Pure Extract)', color: 'text-amber-600', bg: 'bg-amber-50 border-amber-100' },
+            { label: 'Active Transports', value: '5 in Transit', sub: '1 route deviation alert', color: 'text-red-600', bg: 'bg-red-50 border-red-100' },
+          ].map((stat, i) => (
+            <div key={i} className={cn("p-4 rounded-2xl border", stat.bg)}>
+              <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{stat.label}</p>
+              <p className={cn("text-2xl font-black mt-1", stat.color)}>{stat.value}</p>
+              <p className="text-[10px] text-slate-400 mt-0.5 font-medium">{stat.sub}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Mini Charts & Feeds for Overview */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Facility Risk Analysis */}
+          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+            <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">Risk Category Share</h4>
+            <div className="space-y-3">
+              {[
+                { label: 'Low Risk (Compliant)', pct: 60, color: 'bg-emerald-500', textColor: 'text-emerald-600' },
+                { label: 'Medium Risk (Monitored)', pct: 27, color: 'bg-amber-500', textColor: 'text-amber-600' },
+                { label: 'High Risk (Flagged)', pct: 13, color: 'bg-red-500', textColor: 'text-red-600' },
+              ].map((risk, i) => (
+                <div key={i}>
+                  <div className="flex items-center justify-between text-xs font-bold mb-1">
+                    <span className="text-slate-600">{risk.label}</span>
+                    <span className={risk.textColor}>{risk.pct}%</span>
+                  </div>
+                  <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
+                    <div className={cn("h-full rounded-full", risk.color)} style={{ width: `${risk.pct}%` }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Active Sensor Alerts */}
+          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 lg:col-span-2">
+            <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">Critical CEYE Sensor Alerts</h4>
+            <div className="space-y-2 max-h-[140px] overflow-y-auto pr-1">
+              {[
+                { time: 'Just now', type: 'ROUTE', msg: 'Transport TRN-4403 deviated 2.4 miles from approved corridor on I-44 W', severity: 'CRITICAL', color: 'text-red-600 bg-red-100 border-red-200' },
+                { time: '4m ago', type: 'WEIGHT', msg: 'Weight discrepancy detected: Manifest MAN-88714 shows 22.1 lbs, scale reads 21.3 lbs', severity: 'HIGH', color: 'text-amber-600 bg-amber-100 border-amber-200' },
+                { time: '12m ago', type: 'CAMERA', msg: 'Grow Room 3 camera at Desert Bloom offline - signal lost', severity: 'MEDIUM', color: 'text-yellow-600 bg-yellow-100 border-yellow-200' },
+              ].map((alert, i) => (
+                <div key={i} className={cn("p-3 rounded-xl border flex items-start justify-between text-xs gap-3", alert.color)}>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-black tracking-wider uppercase text-[9px]">{alert.type}</span>
+                      <span className="text-[9px] opacity-75">{alert.time}</span>
+                    </div>
+                    <p className="font-medium text-slate-700 leading-normal">{alert.msg}</p>
+                  </div>
+                  <span className="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider bg-white/60 border border-current">{alert.severity}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-lg font-bold text-slate-800 flex items-center gap-3"><Globe size={22} className="text-indigo-500" /> Jurisdiction Performance Matrix</h3>
             <div className="flex gap-2">
