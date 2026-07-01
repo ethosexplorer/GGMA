@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GGP-OS General Front-End & Platform Manual — Global Green Enterprise Inc.</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+  
+  :root {
+    --primary: #1a4731;
+    --primary-dark: #0d281a;
+    --emerald: #10b981;
+    --emerald-light: #ecfdf5;
+    --slate-dark: #0f172a;
+    --slate-light: #f8fafc;
+    --border: #e2e8f0;
+    --text-main: #334155;
+    --text-dark: #0f172a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+    color: var(--text-main); 
+    background: #fff; 
+    max-width: 900px; 
+    margin: 0 auto; 
+    padding: 60px 50px; 
+    line-height: 1.8; 
+    font-size: 14px; 
+  }
+  
+  /* Cover Page */
+  .cover { 
+    page-break-after: always; 
+    text-align: center; 
+    padding: 100px 40px 60px; 
+    border: 1px solid var(--border);
+    border-radius: 32px;
+    background: linear-gradient(135deg, var(--slate-dark) 0%, var(--primary-dark) 100%);
+    color: white;
+    margin-bottom: 80px;
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.1);
+  }
+  .cover-badge { 
+    display: inline-block; 
+    background: rgba(16, 185, 129, 0.2); 
+    color: var(--emerald); 
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    padding: 8px 24px; 
+    border-radius: 30px; 
+    font-size: 11px; 
+    font-weight: 800; 
+    letter-spacing: 2px; 
+    text-transform: uppercase; 
+    margin-bottom: 40px; 
+  }
+  .cover h1 { 
+    font-family: 'Outfit', sans-serif;
+    font-size: 38px; 
+    font-weight: 900; 
+    color: white; 
+    margin-bottom: 12px; 
+    letter-spacing: -1px; 
+    line-height: 1.2;
+  }
+  .cover h2 { 
+    font-size: 18px; 
+    font-weight: 500; 
+    color: var(--emerald); 
+    margin-bottom: 30px; 
+  }
+  .cover-divider { 
+    width: 80px; 
+    height: 4px; 
+    background: var(--emerald); 
+    margin: 30px auto; 
+    border-radius: 2px; 
+  }
+  .cover-meta { 
+    margin-top: 50px; 
+    font-size: 12px; 
+    color: #94a3b8; 
+  }
+  .cover-meta strong { color: white; }
+
+  /* Heading Styles */
+  h1.section-number { 
+    font-size: 12px; 
+    font-weight: 800; 
+    color: var(--emerald); 
+    text-transform: uppercase; 
+    letter-spacing: 3px; 
+    margin-bottom: 6px; 
+  }
+  .section-title { 
+    font-family: 'Outfit', sans-serif;
+    font-size: 24px; 
+    font-weight: 900; 
+    color: var(--primary-dark); 
+    border-bottom: 2px solid var(--border); 
+    padding-bottom: 12px; 
+    margin: 40px 0 20px; 
+  }
+  .sub-title { 
+    font-size: 16px; 
+    font-weight: 700; 
+    color: var(--primary-dark); 
+    margin: 26px 0 12px; 
+  }
+  
+  p { margin: 10px 0; }
+  
+  /* Callouts & Highlights */
+  .callout { 
+    background: var(--emerald-light); 
+    border-left: 4px solid var(--emerald); 
+    padding: 18px 22px; 
+    margin: 20px 0; 
+    font-size: 13.5px; 
+    border-radius: 0 16px 16px 0; 
+  }
+  .callout strong { color: var(--primary-dark); }
+  
+  .step-box { 
+    background: var(--slate-light); 
+    border: 1px solid var(--border); 
+    border-radius: 16px; 
+    padding: 20px; 
+    margin: 16px 0; 
+  }
+  .step-num { 
+    display: inline-block; 
+    background: var(--primary); 
+    color: white; 
+    width: 28px; 
+    height: 28px; 
+    border-radius: 50%; 
+    text-align: center; 
+    line-height: 28px; 
+    font-size: 12px; 
+    font-weight: 800; 
+    margin-right: 12px; 
+  }
+
+  /* Table styling */
+  table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin: 20px 0; 
+    font-size: 13px; 
+  }
+  th { 
+    background: var(--primary-dark); 
+    color: white; 
+    padding: 12px 16px; 
+    text-align: left; 
+    font-weight: 700; 
+    font-size: 11px; 
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+  }
+  td { 
+    padding: 12px 16px; 
+    border-bottom: 1px solid var(--border); 
+  }
+  tr:nth-child(even) { background: var(--slate-light); }
+  
+  ul, ol { margin: 10px 0 16px 24px; }
+  li { margin: 6px 0; }
+  li strong { color: var(--primary-dark); }
+  
+  hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+  
+  .feature-grid { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 16px; 
+    margin: 20px 0; 
+  }
+  .feature-card { 
+    background: var(--slate-light); 
+    border: 1px solid var(--border); 
+    border-radius: 16px; 
+    padding: 18px; 
+  }
+  .feature-card h4 { 
+    font-size: 13.5px; 
+    font-weight: 800; 
+    color: var(--primary-dark); 
+    margin-bottom: 6px; 
+  }
+  .feature-card p { 
+    font-size: 12.5px; 
+    color: var(--text-main); 
+    margin: 0; 
+  }
+  
+  .toc { 
+    background: var(--slate-light); 
+    border: 1px solid var(--border); 
+    border-radius: 24px; 
+    padding: 30px 40px; 
+    margin: 30px 0; 
+  }
+  .toc h3 { 
+    font-size: 16px; 
+    font-weight: 800; 
+    color: var(--primary-dark); 
+    margin-bottom: 16px; 
+  }
+  .toc ol { margin: 0; padding-left: 20px; }
+  .toc li { margin: 8px 0; font-weight: 500; }
+  
+  .footer { 
+    margin-top: 60px; 
+    padding-top: 30px; 
+    border-top: 2px solid var(--border); 
+    font-size: 11px; 
+    color: #64748b; 
+    text-align: center;
+  }
+  @media print {
+    html, body {
+      background: #fff !important;
+      color: #000 !important;
+      max-width: 100% !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      height: auto !important;
+      overflow: visible !important;
+    }
+    .cover {
+      page-break-after: always !important;
+      break-after: page !important;
+      height: auto !important;
+      padding: 80px 40px !important;
+      box-shadow: none !important;
+      border: 1px solid #ccc !important;
+      background: #0d281a !important;
+      color: #fff !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .cover h1, .cover h2, .cover-badge, .cover-divider, .cover-meta, .cover-meta p, .cover-meta strong {
+      color: #fff !important;
+    }
+    .toc, .step-box, .highlight-card, .callout, .feature-card {
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+    }
+    .feature-grid {
+      display: block !important;
+    }
+    .feature-card {
+      width: 100% !important;
+      margin-bottom: 16px !important;
+    }
+    table {
+      page-break-inside: auto !important;
+    }
+    tr {
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover">
+  <div class="cover-badge">General Front-End & Staff Manual</div>
+  <h1>GGP-OS General Front-End Manual</h1>
+  <h2>Platform Overview, User Portals & Outreach Talking Points</h2>
+  <div class="cover-divider"></div>
+  <div class="cover-meta">
+    <p><strong>Audience:</strong> GGP-OS Sales Representatives, General Staff & Workspace Users</p>
+    <p><strong>Core Platform URL:</strong> www.ggp-os.com</p>
+    <p><strong>Parent Company:</strong> Global Green Enterprise Inc.</p>
+    <p><strong>Prepared for:</strong> Onboarding and Platform Training Reference</p>
+  </div>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<div class="toc">
+  <h3>📋 Table of Contents</h3>
+  <ol>
+    <li><strong>What is GGP-OS & The "Front-End"?</strong> — Understanding User Interfaces</li>
+    <li><strong>General User Portals & Dashboard Views</strong> — Patient, Provider, and Business Screens</li>
+    <li><strong>Staff Front-End Communication Tools</strong> — The Click-to-Dial Web Dialer & Outbound Calls</li>
+    <li><strong>State Simulator Interface</strong> — Searching State Laws & Creating Direct Bypass Links</li>
+    <li><strong>Core Client Talking Points</strong> — Dual-Testing (SINC/IMMAD), Pricing & Hardship Discounts</li>
+  </ol>
+</div>
+
+<hr>
+
+<!-- SECTION 1 -->
+<h1 class="section-number">Section 1</h1>
+<div class="section-title">What is GGP-OS & The "Front-End"?</div>
+<p><strong>GGP-OS</strong> (Global Green Hybrid Platform Operating System) is a cloud-based software system that manages medical recommendations, business licensing, and regulatory compliance for the cannabis industry. It serves users in all 50 states.</p>
+
+<p>When we talk about the <strong>"Front-End"</strong>, we mean the actual visual website and dashboard screens that users look at, click on, and type into. The front-end includes the login pages, the dashboards for patients and doctors, the buttons, the charts, and the interactive chatbot. The front-end is designed to be clean, fast, and simple to use.</p>
+
+<div class="callout">
+  <strong>Key Platform Facts to Share:</strong>
+  <ul>
+    <li><strong>Credibility:</strong> Registered Federal Supplier in SAM.gov and certified as an SBA Women-Owned Small Business (WOSB).</li>
+    <li><strong>Quality & Privacy:</strong> Fully HIPAA-compliant for medical record security, boasting an A+ rating with the Better Business Bureau (BBB).</li>
+    <li><strong>Traction:</strong> Has generated over <strong>$192,131.70</strong> in revenue from organic user signups.</li>
+  </ul>
+</div>
+
+<hr>
+
+<!-- SECTION 2 -->
+<h1 class="section-number">Section 2</h1>
+<div class="section-title">Core User Portals & Dashboard Views</div>
+<p>Staff and representatives should understand the different frontend dashboard views that clients experience when they log into the system:</p>
+
+<div class="feature-grid">
+  <div class="feature-card">
+    <h4>👤 Patient Portal (Care Wallet)</h4>
+    <p>Patients use this to upload their ID, complete HIPAA questionnaires, and see their recommendation status. It includes a <strong>"Driver Safety" self-check simulator</strong> where patients can verify their cognitive driving readiness privately.</p>
+  </div>
+  <div class="feature-card">
+    <h4>🩺 Healthcare Provider Portal</h4>
+    <p>Registered doctors use this to review patient intake details, log clinical evaluations, track quantitative visual reaction delays (ocular baselines), and enter medical recommendations.</p>
+  </div>
+  <div class="feature-card">
+    <h4>🏢 Business Operator Portal</h4>
+    <p>Businesses (dispensaries, growers) use this to monitor license renewal dates, track solutions strip inventory, review active staff pre-shift checks, and configure automated vehicle dispatch lockouts for impaired drivers.</p>
+  </div>
+  <div class="feature-card">
+    <h4>📞 Representative / Staff Portal</h4>
+    <p>Your workspace dashboard. It lists CRM contacts and gives you call lists and communication interfaces to talk to leads.</p>
+  </div>
+</div>
+
+<hr>
+
+<!-- SECTION 3 -->
+<h1 class="section-number">Section 3</h1>
+<div class="section-title">Staff Front-End Communication Tools</div>
+<p>GGP-OS has communication tools built directly into the staff and rep dashboards so you can interact with clients instantly:</p>
+
+<div class="step-box">
+  <span class="step-num">1</span><strong>The Web Dialer (VoIP Softphone)</strong>
+  <p>In the bottom-right corner of the dashboard screen is a green button labeled <strong>"WEB DIALER • Ready."</strong> Clicking this opens a phone keypad. You can call any contact in your list directly from your browser. Your outbound caller ID is always masked as the company's toll-free line: <strong>1-888-963-4447</strong>.</p>
+</div>
+
+<div class="step-box">
+  <span class="step-num">2</span><strong>SMS & iMessage Interface</strong>
+  <p>The messaging center allows you to text clients or send pre-built SMS templates (e.g. application submission notices, appointment reminders). Text messages go out from the company's active text line: <strong>645-246-8277</strong>.</p>
+</div>
+
+<hr>
+
+<!-- SECTION 4 -->
+<h1 class="section-number">Section 4</h1>
+<div class="section-title">State Simulator Interface</div>
+<p>As a rep or staff member, you do not need to memorize the laws of all 50 states. You can use the **State Compliance Simulator** tool in your dashboard to find state details in seconds:</p>
+<ul>
+  <li><strong>Dropdown State Lookup:</strong> Choose any state (like Mississippi, Florida, or Oklahoma) to dynamically display its regulatory agency (like MSDH/MMCP), state fee cost, local licensing caps, and active tracking systems (METRC or BioTrack).</li>
+  <li><strong>Qualifying Conditions List:</strong> Instantly displays the official qualifying medical conditions for the chosen state so you can tell patients if they qualify.</li>
+  <li><strong>Direct State Bypass Links:</strong> Generate custom demo links (e.g., `/demo?state=California`) to send to prospects. When they click the link, the demo automatically locks to that state's regulatory rules.</li>
+</ul>
+
+<hr>
+
+<!-- SECTION 5 -->
+<h1 class="section-number">Section 5</h1>
+<div class="section-title">Core Talking Points & Script Guidelines</div>
+<p>When speaking with prospective patients, doctors, or businesses, use these standardized guidelines:</p>
+
+<div class="highlight-card">
+  <h4 class="sub-title">1. SINC & IMMAD Dual-Testing (The Safety Pitch)</h4>
+  <p>Explain that GGHP uses a **Dual-Testing Protocol** to detect active impairment. It combines chemical fluid cassettes (measuring saliva Delta-9 THC levels) with visual ocular latency tracking (pupil reaction speed scans). This separates historic cannabis use from active impairment, protecting businesses from liability and drivers from unfair charges.</p>
+</div>
+
+<div class="highlight-card">
+  <h4 class="sub-title">2. Pricing Guidelines</h4>
+  <p>When quoting recommendation processing costs, always include estimated physician fees and state card fees, followed by the phrase **"(cost could vary)"**:</p>
+  <ul>
+    <li><strong>Mississippi:</strong> ~$150 doctor fee (cost could vary) + $55 GGP processing + $25 state fee.</li>
+    <li><strong>Arkansas:</strong> ~$200 doctor fee (cost could vary) + $55 GGP processing + $50 state fee.</li>
+    <li><strong>Louisiana:</strong> ~$150 doctor fee (cost could vary) + $50 GGP processing.</li>
+  </ul>
+</div>
+
+<div class="highlight-card">
+  <h4 class="sub-title">3. Hardship & Veteran Discounts</h4>
+  <p>To ensure access, GGP offers a **hardship discount of up to $20 off** the platform processing fee. Share this with patients who are veterans, on Medicaid/Medicare, or express financial difficulty.</p>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <p>© 2026 Global Green Enterprise Inc. All rights reserved.</p>
+  <p>GGP-OS and SINC are trademarks of Global Green Enterprise Inc.</p>
+</div>
+
+</body>
+</html>

@@ -13,6 +13,21 @@
     { "source": "/api/calendly-webhook", "destination": "/api/webhook.js?type=calendly" },
     { "source": "/api/freemius-webhook", "destination": "/api/webhook.js?type=freemius" },
     { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/GGHP_Agency_Valuation_Brief.html", "destination": "/GGHP_Agency_Valuation_Brief.html" },
+    { "source": "/GGHP_Cannabis_Business_Valuation_Brief.html", "destination": "/GGHP_Cannabis_Business_Valuation_Brief.html" },
+    { "source": "/GGHP_Investor_Brief.html", "destination": "/GGHP_Investor_Brief.html" },
+    { "source": "/GGHP_Eagle_Eye_Expansion_Brief.html", "destination": "/GGHP_Eagle_Eye_Expansion_Brief.html" },
+    { "source": "/GGMA_Valuation_Brief.html", "destination": "/GGMA_Valuation_Brief.html" },
+    { "source": "/GGP_OS_Platform_Valuation.html", "destination": "/GGP_OS_Platform_Valuation.html" },
+    { "source": "/Investor_New_Valuation.html", "destination": "/Investor_New_Valuation.html" },
+    { "source": "/GGP_OS_Admin_Platform_Guide.html", "destination": "/GGP_OS_Admin_Platform_Guide.html" },
+    { "source": "/GGP_OS_Backend_Training_Manual.html", "destination": "/GGP_OS_Backend_Training_Manual.html" },
+    { "source": "/GGP_OS_Platform_Admin_Manual.html", "destination": "/GGP_OS_Platform_Admin_Manual.html" },
+    { "source": "/GGP_OS_Platform_General_Manual.html", "destination": "/GGP_OS_Platform_General_Manual.html" },
+    { "source": "/GGP_OS_Platform_Build_Pricing.html", "destination": "/GGP_OS_Platform_Build_Pricing.html" },
+    { "source": "/GGP_OS_Mississippi_Onboarding_Checklist.html", "destination": "/GGP_OS_Mississippi_Onboarding_Checklist.html" },
+    { "source": "/Nuvei_Merchant_Application_Answers.html", "destination": "/Nuvei_Merchant_Application_Answers.html" },
+    { "source": "/ePL_Fulfillment_Agreement.html", "destination": "/ePL_Fulfillment_Agreement.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
