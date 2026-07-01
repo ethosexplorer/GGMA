@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GGHP-OS — Investor Capital Raise Valuation ($5M Seed / Pre-Series A)</title>
+  <meta name="description" content="Global Green Hybrid Platform Operating System — $5M capital raise breakdown, allocation, milestones, and investor talking points.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --forest: #0A3D2A;
+      --forest-deep: #061F15;
+      --gold: #D4AF77;
+      --gold-light: #E8D5B5;
+      --emerald: #10B981;
+      --slate-50: #F8FAFC;
+      --slate-100: #F1F5F9;
+      --slate-200: #E2E8F0;
+      --slate-300: #CBD5E1;
+      --slate-400: #94A3B8;
+      --slate-500: #64748B;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-800: #1E293B;
+      --slate-900: #0F172A;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--slate-50);
+      color: var(--slate-700);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ═══ COVER HEADER ═══ */
+    .cover {
+      background: linear-gradient(135deg, var(--forest-deep) 0%, var(--forest) 40%, #134D36 100%);
+      color: white;
+      padding: 80px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cover::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(212,175,119,0.08) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .cover::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--gold), var(--emerald), var(--gold));
+    }
+    .cover .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 100px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      margin-bottom: 24px;
+    }
+    .cover .badge .dot {
+      width: 6px;
+      height: 6px;
+      background: var(--emerald);
+      border-radius: 50%;
+    }
+    .cover h1 {
+      font-size: 42px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+    .cover h1 span { color: var(--gold); }
+    .cover .subtitle {
+      font-size: 18px;
+      color: rgba(255,255,255,0.6);
+      font-weight: 500;
+      max-width: 600px;
+      margin-bottom: 40px;
+    }
+    .cover-meta {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.4);
+    }
+    .cover-meta strong { color: var(--gold-light); }
+
+    /* ═══ CONTENT AREA ═══ */
+    .content {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 60px 40px 80px;
+    }
+
+    /* ═══ SECTIONS ═══ */
+    .section { margin-bottom: 56px; }
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--forest);
+      background: rgba(10,61,42,0.06);
+      border: 1px solid rgba(10,61,42,0.12);
+      padding: 4px 14px;
+      border-radius: 100px;
+      margin-bottom: 16px;
+    }
+    .section h2 {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--slate-900);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .section .lead {
+      font-size: 16px;
+      color: var(--slate-500);
+      font-weight: 500;
+      max-width: 680px;
+      margin-bottom: 24px;
+    }
+    .section p {
+      font-size: 15px;
+      color: var(--slate-600);
+      margin-bottom: 16px;
+      line-height: 1.8;
+    }
+
+    /* ═══ HIGHLIGHT BOX ═══ */
+    .highlight-box {
+      background: linear-gradient(135deg, var(--forest-deep), var(--forest));
+      color: white;
+      border-radius: 20px;
+      padding: 40px;
+      margin: 32px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .highlight-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(212,175,119,0.1), transparent);
+      border-radius: 50%;
+    }
+    .highlight-box h3 {
+      font-size: 22px;
+      font-weight: 900;
+      margin-bottom: 16px;
+      color: var(--gold);
+    }
+    .highlight-box p {
+      color: rgba(255,255,255,0.75);
+      font-size: 15px;
+      line-height: 1.8;
+      margin-bottom: 12px;
+    }
+    .highlight-box .raise-number {
+      font-size: 48px;
+      font-weight: 900;
+      color: var(--gold);
+      letter-spacing: -0.02em;
+      margin: 16px 0 8px;
+    }
+    .highlight-box .raise-type {
+      font-size: 14px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+    }
+
+    /* ═══ COMPARISON TABLE ═══ */
+    .comparison-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin: 24px 0;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--slate-200);
+    }
+    .comparison-table thead th {
+      background: var(--forest);
+      color: var(--gold-light);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      padding: 16px 20px;
+      text-align: left;
+    }
+    .comparison-table tbody td {
+      padding: 14px 20px;
+      font-size: 13px;
+      border-bottom: 1px solid var(--slate-100);
+      vertical-align: top;
+    }
+    .comparison-table tbody tr:last-child td { border-bottom: none; }
+    .comparison-table tbody tr:hover { background: rgba(10,61,42,0.02); }
+    .comparison-table .col-label {
+      color: var(--slate-700);
+      font-weight: 700;
+    }
+    .comparison-table .col-value {
+      color: var(--forest);
+      font-weight: 700;
+    }
+    .comparison-table .col-muted {
+      color: var(--slate-500);
+      font-weight: 500;
+    }
+
+    /* ═══ ALLOCATION BARS ═══ */
+    .alloc-grid {
+      margin: 24px 0;
+    }
+    .alloc-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--slate-100);
+    }
+    .alloc-item:last-child { border-bottom: none; }
+    .alloc-label {
+      width: 200px;
+      flex-shrink: 0;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--slate-800);
+    }
+    .alloc-bar-wrap {
+      flex: 1;
+      height: 28px;
+      background: var(--slate-100);
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+    }
+    .alloc-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--forest), #134D36);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 12px;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--gold-light);
+      letter-spacing: 0.05em;
+    }
+    .alloc-amount {
+      width: 80px;
+      text-align: right;
+      flex-shrink: 0;
+      font-size: 14px;
+      font-weight: 900;
+      color: var(--forest);
+    }
+
+    /* ═══ REGISTRATION TABLE ═══ */
+    .reg-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin: 24px 0;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--slate-200);
+    }
+    .reg-table thead th {
+      background: var(--slate-800);
+      color: white;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      padding: 14px 20px;
+      text-align: left;
+    }
+    .reg-table tbody td {
+      padding: 12px 20px;
+      font-size: 13px;
+      border-bottom: 1px solid var(--slate-100);
+      font-weight: 600;
+      color: var(--slate-700);
+    }
+    .reg-table tbody tr:last-child td { border-bottom: none; }
+    .reg-table tbody tr:hover { background: rgba(16,185,129,0.03); }
+    .reg-table .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #059669;
+      background: #ECFDF5;
+      padding: 4px 12px;
+      border-radius: 100px;
+    }
+
+    /* ═══ IP CARDS ═══ */
+    .ip-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .ip-card {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      padding: 24px;
+      transition: all 0.2s;
+    }
+    .ip-card:hover {
+      border-color: var(--gold);
+      box-shadow: 0 4px 20px rgba(212,175,119,0.12);
+    }
+    .ip-card h4 {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--forest);
+      margin-bottom: 8px;
+    }
+    .ip-card p {
+      font-size: 12px;
+      color: var(--slate-500);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* ═══ MILESTONE CARDS ═══ */
+    .milestone-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .milestone-card {
+      background: white;
+      border: 2px solid var(--slate-200);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .milestone-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    }
+    .milestone-card .ms-month {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+    .milestone-card h4 {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--slate-800);
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .milestone-card .ms-revenue {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--forest);
+    }
+    .milestone-card .ms-sub {
+      font-size: 10px;
+      color: var(--slate-400);
+      font-weight: 600;
+    }
+
+    /* ═══ SCOPE TABLE ═══ */
+    .scope-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 24px 0;
+    }
+    .scope-item {
+      text-align: center;
+      padding: 24px 16px;
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+    }
+    .scope-item .scope-value {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--forest);
+      margin-bottom: 4px;
+    }
+    .scope-item .scope-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--slate-700);
+      margin-bottom: 2px;
+    }
+    .scope-item .scope-sub {
+      font-size: 10px;
+      color: var(--slate-400);
+      font-weight: 600;
+    }
+
+    /* ═══ SOCIO-ECONOMIC BADGES ═══ */
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 16px 0;
+    }
+    .badge-pill {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 100px;
+      background: rgba(10,61,42,0.06);
+      color: var(--forest);
+      border: 1px solid rgba(10,61,42,0.12);
+    }
+
+    /* ═══ TALKING POINTS ═══ */
+    .talk-list {
+      counter-reset: talk;
+      margin: 24px 0;
+    }
+    .talk-item {
+      display: flex;
+      gap: 16px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--slate-200);
+    }
+    .talk-item:last-child { border-bottom: none; }
+    .talk-num {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      background: var(--forest);
+      color: var(--gold);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 900;
+    }
+    .talk-item p {
+      font-size: 14px;
+      color: var(--slate-600);
+      line-height: 1.7;
+      margin: 0;
+    }
+    .talk-item p strong {
+      color: var(--slate-900);
+    }
+
+    /* ═══ CONTACT FOOTER ═══ */
+    .contact-bar {
+      background: var(--forest);
+      color: white;
+      padding: 48px 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+    .contact-bar h3 {
+      font-size: 20px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+    .contact-bar p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+    }
+    .contact-methods {
+      display: flex;
+      gap: 24px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .contact-methods a {
+      color: var(--gold-light);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .contact-methods a:hover { color: white; }
+
+    /* ═══ LEGAL FOOTER ═══ */
+    .legal-footer {
+      background: var(--forest-deep);
+      color: rgba(255,255,255,0.3);
+      padding: 24px 60px;
+      font-size: 11px;
+      text-align: center;
+      line-height: 1.8;
+    }
+    .legal-footer strong { color: var(--gold); font-weight: 700; }
+
+    /* ═══ DIVIDER ═══ */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--slate-200), transparent);
+      margin: 48px 0;
+    }
+
+    @media print {
+      body { background: white; }
+      .cover { padding: 40px; }
+      .content { padding: 30px 20px; }
+      .ip-grid, .milestone-grid, .scope-grid { gap: 8px; }
+      .milestone-card:hover, .ip-card:hover { transform: none; box-shadow: none; }
+    }
+
+    @media (max-width: 768px) {
+      .cover { padding: 40px 24px; }
+      .cover h1 { font-size: 28px; }
+      .content { padding: 40px 20px; }
+      .ip-grid { grid-template-columns: 1fr; }
+      .milestone-grid { grid-template-columns: 1fr; }
+      .scope-grid { grid-template-columns: 1fr 1fr; }
+      .alloc-label { width: 140px; }
+      .contact-bar { padding: 32px 24px; flex-direction: column; text-align: center; }
+      .contact-methods { flex-direction: column; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ COVER ═══ -->
+  <header class="cover">
+    <div class="badge">
+      <span class="dot"></span>
+      Investor Capital Raise Brief — Confidential
+    </div>
+    <h1>Global Green Hybrid Platform<br><span>$5M Seed / Pre-Series A Capital Raise</span></h1>
+    <p class="subtitle">Defensible raise number backed by $1.6M–$3M of already-built infrastructure, 3 USPTO patent applications, federal supplier registration, and a validated Metrc Production API integration.</p>
+    <div class="cover-meta">
+      <span><strong>Prepared for:</strong> Shantell Robinson, Founder &amp; CEO</span>
+      <span><strong>Date:</strong> July 1, 2026</span>
+      <span><strong>CAGE:</strong> 9KXZ2</span>
+      <span><strong>Classification:</strong> Internal / Investor Use Only</span>
+    </div>
+  </header>
+
+  <!-- ═══ CONTENT ═══ -->
+  <main class="content">
+
+    <!-- RECOMMENDED RAISE -->
+    <div class="highlight-box">
+      <h3>Recommended Capital Raise</h3>
+      <div class="raise-number">$5,000,000</div>
+      <div class="raise-type">Seed / Pre-Series A Round</div>
+      <p style="margin-top: 20px;">This number is defensible, credible, and strategically positioned. It reflects what has already been built ($1.6M–$3M replacement value), what's needed to reach full operational scale, and gives 18–24 months of runway to hit profitability milestones before needing additional capital.</p>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- WHY $5M -->
+    <div class="section">
+      <div class="section-label">◆ Strategic Rationale</div>
+      <h2>Why $5M — Not $2M, Not $10M</h2>
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Range</th>
+            <th>Reasoning</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="col-label">Too Low ($500K–$2M)</td>
+            <td class="col-muted">Barely covers patent prosecution + 2–3 hires. Burns through in 6 months. Makes the platform look small.</td>
+          </tr>
+          <tr>
+            <td class="col-label" style="color: var(--forest);">Sweet Spot ($5M) ✅</td>
+            <td class="col-value">Fully staffs the company, prosecutes all 3 patents, launches in 10+ states, builds the mobile app, and reaches $3M+ ARR within 18 months.</td>
+          </tr>
+          <tr>
+            <td class="col-label">Too High ($10M+)</td>
+            <td class="col-muted">At pre-revenue stage, requires institutional VC with board seats. Gives up significant equity and control for capital not yet needed.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- BUILT EQUITY -->
+    <div class="section">
+      <div class="section-label">◆ Built Equity</div>
+      <h2>What Has Already Been Built (Not Asking For)</h2>
+      <p class="lead">This raise is on top of $1.6M–$3M of already-built infrastructure created by a solo founder with zero outside capital.</p>
+
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Asset</th>
+            <th>Replacement Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="col-label">62,669 lines of production code (live at ggp-os.com)</td>
+            <td class="col-value">$940K–$1.57M</td>
+          </tr>
+          <tr>
+            <td class="col-label">37 role-based dashboards</td>
+            <td class="col-value">$296K–$555K</td>
+          </tr>
+          <tr>
+            <td class="col-label">Sylara AI + L.A.R.R.Y AI engines</td>
+            <td class="col-value">$150K–$300K</td>
+          </tr>
+          <tr>
+            <td class="col-label">Metrc Production API integration (approved Oklahoma)</td>
+            <td class="col-value">$75K–$150K</td>
+          </tr>
+          <tr>
+            <td class="col-label">15 live third-party integrations</td>
+            <td class="col-value">$75K–$225K</td>
+          </tr>
+          <tr>
+            <td class="col-label">9 serverless API endpoints</td>
+            <td class="col-value">$27K–$72K</td>
+          </tr>
+          <tr>
+            <td class="col-label">Premium UI/UX design system</td>
+            <td class="col-value">$50K–$100K</td>
+          </tr>
+          <tr>
+            <td class="col-label">DevOps + CI/CD pipeline</td>
+            <td class="col-value">$30K–$60K</td>
+          </tr>
+          <tr style="background: rgba(10,61,42,0.04);">
+            <td class="col-label" style="font-size: 14px;"><strong>Total Built Equity</strong></td>
+            <td class="col-value" style="font-size: 16px;"><strong>$1.64M–$3.03M</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- INTELLECTUAL PROPERTY -->
+    <div class="section">
+      <div class="section-label">◆ Intellectual Property</div>
+      <h2>3 Active USPTO Patent Applications</h2>
+
+      <div class="ip-grid">
+        <div class="ip-card">
+          <h4>Recency Index (RI)</h4>
+          <p style="margin-bottom: 8px;"><strong>USPTO No. 64/017,726</strong></p>
+          <p>Systems and Methods for Detection of Recent Substance Use — dual-channel temporal modeling for impairment detection.</p>
+        </div>
+        <div class="ip-card">
+          <h4>The Reg System</h4>
+          <p style="margin-bottom: 8px;"><strong>USPTO No. 64/012,230</strong></p>
+          <p>Multi-Sided Regulatory Infrastructure with Cross-Module Routing, AI Intake, and Role-Based Access Control.</p>
+        </div>
+        <div class="ip-card">
+          <h4>Closed-Loop Credit</h4>
+          <p style="margin-bottom: 8px;"><strong>USPTO No. 64/016,698</strong></p>
+          <p>Closed-Loop Private Label Revolving Line of Credit System powering Care Wallet™ consumer credit.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ALLOCATION -->
+    <div class="section">
+      <div class="section-label">◆ Capital Allocation</div>
+      <h2>Where the $5M Goes</h2>
+      <p class="lead">Every dollar mapped to a specific function with clear timelines and expected outcomes.</p>
+
+      <div class="alloc-grid">
+        <div class="alloc-item">
+          <div class="alloc-label">Engineering &amp; Tech</div>
+          <div class="alloc-bar-wrap">
+            <div class="alloc-bar" style="width: 28%;">28%</div>
+          </div>
+          <div class="alloc-amount">$1.4M</div>
+        </div>
+        <div class="alloc-item">
+          <div class="alloc-label">Sales &amp; Revenue</div>
+          <div class="alloc-bar-wrap">
+            <div class="alloc-bar" style="width: 24%;">24%</div>
+          </div>
+          <div class="alloc-amount">$1.2M</div>
+        </div>
+        <div class="alloc-item">
+          <div class="alloc-label">Marketing &amp; Brand</div>
+          <div class="alloc-bar-wrap">
+            <div class="alloc-bar" style="width: 16%;">16%</div>
+          </div>
+          <div class="alloc-amount">$800K</div>
+        </div>
+        <div class="alloc-item">
+          <div class="alloc-label">Operations &amp; Call Ctr</div>
+          <div class="alloc-bar-wrap">
+            <div class="alloc-bar" style="width: 12%;">12%</div>
+          </div>
+          <div class="alloc-amount">$600K</div>
+        </div>
+        <div class="alloc-item">
+          <div class="alloc-label">Working Capital</div>
+          <div class="alloc-bar-wrap">
+            <div class="alloc-bar" style="width: 12%;">12%</div>
+          </div>
+          <div class="alloc-amount">$600K</div>
+        </div>
+        <div class="alloc-item">
+          <div class="alloc-label">Legal &amp; IP</div>
+          <div class="alloc-bar-wrap">
+            <div class="alloc-bar" style="width: 8%;">8%</div>
+          </div>
+          <div class="alloc-amount">$400K</div>
+        </div>
+      </div>
+
+      <!-- Detailed tables -->
+      <h3 style="font-size: 16px; font-weight: 800; color: var(--slate-800); margin: 32px 0 12px;">Engineering &amp; Technology — $1,400,000</h3>
+      <table class="reg-table">
+        <thead><tr><th>Item</th><th>Cost</th><th>Timeline</th></tr></thead>
+        <tbody>
+          <tr><td>CTO / Lead Engineer hire</td><td>$200K/yr</td><td>Immediate</td></tr>
+          <tr><td>2 Senior Full-Stack Engineers</td><td>$340K/yr</td><td>Month 1–2</td></tr>
+          <tr><td>Mobile App (iOS + Android)</td><td>$250K</td><td>Month 2–8</td></tr>
+          <tr><td>Additional state tracking integrations</td><td>$200K</td><td>Month 1–12</td></tr>
+          <tr><td>Security audit + SOC 2 Type II</td><td>$150K</td><td>Month 3–6</td></tr>
+          <tr><td>Infrastructure scaling</td><td>$150K</td><td>Month 1–6</td></tr>
+          <tr><td>QA automation + load testing</td><td>$110K</td><td>Month 2–8</td></tr>
+        </tbody>
+      </table>
+
+      <h3 style="font-size: 16px; font-weight: 800; color: var(--slate-800); margin: 32px 0 12px;">Sales &amp; Revenue Operations — $1,200,000</h3>
+      <table class="reg-table">
+        <thead><tr><th>Item</th><th>Cost</th><th>Timeline</th></tr></thead>
+        <tbody>
+          <tr><td>VP of Sales</td><td>$180K/yr</td><td>Month 1</td></tr>
+          <tr><td>4 State-Level Sales Representatives</td><td>$400K/yr</td><td>Month 2–4</td></tr>
+          <tr><td>Enterprise Sales Director (gov contracts)</td><td>$200K/yr</td><td>Month 2</td></tr>
+          <tr><td>Customer Success Managers (2)</td><td>$240K/yr</td><td>Month 3</td></tr>
+          <tr><td>Sales enablement tools + CRM</td><td>$80K</td><td>Month 1</td></tr>
+          <tr><td>Travel for state demos and MSO pitches</td><td>$100K</td><td>Ongoing</td></tr>
+        </tbody>
+      </table>
+
+      <h3 style="font-size: 16px; font-weight: 800; color: var(--slate-800); margin: 32px 0 12px;">Marketing &amp; Brand — $800,000</h3>
+      <table class="reg-table">
+        <thead><tr><th>Item</th><th>Cost</th><th>Timeline</th></tr></thead>
+        <tbody>
+          <tr><td>Digital marketing (Google, LinkedIn, Meta)</td><td>$250K</td><td>Month 1–18</td></tr>
+          <tr><td>Trade shows (MJBizCon, CANNRA, NCIA)</td><td>$200K</td><td>Ongoing</td></tr>
+          <tr><td>PR agency (earned media, thought leadership)</td><td>$150K/yr</td><td>Month 1</td></tr>
+          <tr><td>Content production (video, case studies)</td><td>$100K</td><td>Month 2–8</td></tr>
+          <tr><td>Brand refresh + professional collateral</td><td>$100K</td><td>Month 1–3</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- MILESTONES -->
+    <div class="section">
+      <div class="section-label">◆ Milestones</div>
+      <h2>What $5M Unlocks — 18-Month Roadmap</h2>
+
+      <div class="milestone-grid">
+        <div class="milestone-card">
+          <div class="ms-month">Month 3</div>
+          <h4>Full engineering team hired, mobile dev underway</h4>
+          <div class="ms-revenue">—</div>
+          <div class="ms-sub">Foundation</div>
+        </div>
+        <div class="milestone-card">
+          <div class="ms-month">Month 6</div>
+          <h4>5 states live, SOC 2 started</h4>
+          <div class="ms-revenue">$50K MRR</div>
+          <div class="ms-sub">OK, AR, MI, FL, CA</div>
+        </div>
+        <div class="milestone-card">
+          <div class="ms-month">Month 9</div>
+          <h4>Mobile app launched, 2 MSO contracts</h4>
+          <div class="ms-revenue">$150K MRR</div>
+          <div class="ms-sub">Enterprise Traction</div>
+        </div>
+        <div class="milestone-card">
+          <div class="ms-month">Month 12</div>
+          <h4>10+ states live, 1 gov contract, Care Wallet active</h4>
+          <div class="ms-revenue">$250K MRR</div>
+          <div class="ms-sub">$3M ARR</div>
+        </div>
+        <div class="milestone-card">
+          <div class="ms-month">Month 15</div>
+          <h4>Patents prosecuted, pharma pilot started</h4>
+          <div class="ms-revenue">$350K MRR</div>
+          <div class="ms-sub">Vertical Expansion</div>
+        </div>
+        <div class="milestone-card">
+          <div class="ms-month">Month 18</div>
+          <h4>Series A ready at $30M–$50M pre-money</h4>
+          <div class="ms-revenue">$500K MRR</div>
+          <div class="ms-sub">$6M ARR</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- PLATFORM SCOPE -->
+    <div class="section">
+      <div class="section-label">◆ At a Glance</div>
+      <h2>Platform Scope (Live Today)</h2>
+
+      <div class="scope-grid">
+        <div class="scope-item">
+          <div class="scope-value">62K+</div>
+          <div class="scope-label">Lines of Code</div>
+          <div class="scope-sub">Production · Live</div>
+        </div>
+        <div class="scope-item">
+          <div class="scope-value">37</div>
+          <div class="scope-label">Dashboards</div>
+          <div class="scope-sub">Role-Based Access</div>
+        </div>
+        <div class="scope-item">
+          <div class="scope-value">15</div>
+          <div class="scope-label">Integrations</div>
+          <div class="scope-sub">All Connected &amp; Active</div>
+        </div>
+        <div class="scope-item">
+          <div class="scope-value">3</div>
+          <div class="scope-label">USPTO Patents</div>
+          <div class="scope-sub">Filed March 2026</div>
+        </div>
+        <div class="scope-item">
+          <div class="scope-value">50+</div>
+          <div class="scope-label">Jurisdictions</div>
+          <div class="scope-sub">All States + DC</div>
+        </div>
+        <div class="scope-item">
+          <div class="scope-value">26</div>
+          <div class="scope-label">Languages</div>
+          <div class="scope-sub">Sylara AI Multilingual</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- REGISTRATIONS -->
+    <div class="section">
+      <div class="section-label">◆ Credentials</div>
+      <h2>Registrations &amp; Certifications</h2>
+
+      <table class="reg-table">
+        <thead><tr><th>Registration</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td><strong>SAM.gov</strong> — Federal Supplier</td><td><span class="status">✅ Active (CAGE: 9KXZ2)</span></td></tr>
+          <tr><td><strong>OMES</strong> — Oklahoma State Vendor</td><td><span class="status">✅ Registered</span></td></tr>
+          <tr><td><strong>BidNet Direct</strong> — Municipal Procurement</td><td><span class="status">✅ Active</span></td></tr>
+          <tr><td><strong>Metrc</strong> — Validated Integrator (Oklahoma)</td><td><span class="status">✅ Full Production API</span></td></tr>
+          <tr><td><strong>WOSB</strong> — Woman-Owned Small Business</td><td><span class="status">✅ Certified</span></td></tr>
+          <tr><td><strong>LOT Network</strong> — Defensive Patent Protection</td><td><span class="status">✅ Member</span></td></tr>
+          <tr><td><strong>BBB</strong> — Better Business Bureau</td><td><span class="status">✅ A+ Rated (Since 2018)</span></td></tr>
+          <tr><td><strong>HIPAA Compliant</strong> · <strong>AES-256 Encryption</strong></td><td><span class="status">✅ Active</span></td></tr>
+        </tbody>
+      </table>
+
+      <h3 style="font-size:14px; font-weight:800; color:var(--slate-800); margin:24px 0 12px;">Socio-Economic Designations</h3>
+      <div class="badge-row">
+        <span class="badge-pill">Woman-Owned Business</span>
+        <span class="badge-pill">WOSB</span>
+        <span class="badge-pill">Minority-Owned Business</span>
+        <span class="badge-pill">Black American Owned</span>
+        <span class="badge-pill">American Indian Owned</span>
+        <span class="badge-pill">Self-Certified SDB</span>
+        <span class="badge-pill">Labor Surplus Area Firm</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- TALKING POINTS -->
+    <div class="section">
+      <div class="section-label">◆ Call Preparation</div>
+      <h2>Key Talking Points</h2>
+
+      <div class="talk-list">
+        <div class="talk-item">
+          <div class="talk-num">1</div>
+          <p><strong>"We're raising $5M in a Seed round."</strong> — Clean, confident, specific. No hedging.</p>
+        </div>
+        <div class="talk-item">
+          <div class="talk-num">2</div>
+          <p><strong>"The platform is already built and live."</strong> — This is go-to-market capital, not R&amp;D money. The product exists at ggp-os.com.</p>
+        </div>
+        <div class="talk-item">
+          <div class="talk-num">3</div>
+          <p><strong>"Replacement value of what's live today is $1.6M–$3M."</strong> — Created with zero outside capital. Extraordinary capital efficiency.</p>
+        </div>
+        <div class="talk-item">
+          <div class="talk-num">4</div>
+          <p><strong>"We have 3 patents filed, Metrc Production API approval, and federal supplier registration."</strong> — These are moats, not features.</p>
+        </div>
+        <div class="talk-item">
+          <div class="talk-num">5</div>
+          <p><strong>"This capital gets us to $3M ARR in 12 months and positions us for a $30M+ Series A."</strong> — Clear return thesis for investors.</p>
+        </div>
+        <div class="talk-item">
+          <div class="talk-num">6</div>
+          <p><strong>"Our total addressable market is $33B+ across cannabis compliance, patient management, and regulated credit."</strong> — Show scale.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENTERPRISE BOX -->
+    <div class="highlight-box">
+      <h3>The Enterprise Behind the Platform</h3>
+      <p><strong>Global Green Enterprise Inc.</strong> is led by a founder with over 30 years of corporate administration experience and 8 years in cannabis regulatory operations. The company operates as a certified Woman-Owned Small Business (WOSB) and Minority-Owned Business, and is registered as an active federal supplier through SAM.gov.</p>
+      <p style="margin-top:16px; font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold);">
+        Affiliated Entities: Global Green Enterprise Inc. · National Cannabis Association Group · CCardz · @thebackoffice.com · Diversity Health and Wellness · Diversity Health Network · Omni Credit
+      </p>
+    </div>
+
+    <!-- DISCLAIMER -->
+    <p style="font-size:12px; color:var(--slate-400); font-style:italic; text-align:center; margin-top:48px; line-height:1.8;">This document is intended for internal strategic use and investor preparation. Equity terms and valuation details should only be discussed during formal term sheet negotiations with qualified investors.</p>
+
+  </main>
+
+  <!-- ═══ CONTACT BAR ═══ -->
+  <div class="contact-bar">
+    <div>
+      <h3>Schedule an Investor Briefing</h3>
+      <p>Available for discovery calls, platform demos, and due diligence walkthroughs.</p>
+    </div>
+    <div class="contact-methods">
+      <a href="tel:18889634447">📞 1-888-963-4447</a>
+      <a href="sms:+16452468277">📱 645-246-8277</a>
+      <a href="mailto:founder@ggp-os.com">✉️ founder@ggp-os.com</a>
+    </div>
+  </div>
+
+  <!-- ═══ LEGAL FOOTER ═══ -->
+  <footer class="legal-footer">
+    <strong>© 2026 Global Green Enterprise Inc. All rights reserved.</strong><br>
+    CAGE: 9KXZ2 &nbsp;|&nbsp; UEI: TY1BQ3XK3925 &nbsp;|&nbsp; WOSB Certified &nbsp;|&nbsp; SAM.gov Active &nbsp;|&nbsp; BBB A+ Rated
+  </footer>
+
+</body>
+</html>

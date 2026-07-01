@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GGHP-OS — Investor Brief | $5M Seed Round</title>
+  <meta name="description" content="Global Green Hybrid Platform — $5M Seed capital raise brief for qualified investors. Unified cannabis compliance operating system with 3 patents, validated Metrc API, and $1.6M–$3M built equity.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --forest: #0A3D2A;
+      --forest-deep: #061F15;
+      --gold: #D4AF77;
+      --gold-light: #E8D5B5;
+      --emerald: #10B981;
+      --slate-50: #F8FAFC;
+      --slate-100: #F1F5F9;
+      --slate-200: #E2E8F0;
+      --slate-300: #CBD5E1;
+      --slate-400: #94A3B8;
+      --slate-500: #64748B;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-800: #1E293B;
+      --slate-900: #0F172A;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--slate-50);
+      color: var(--slate-700);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ═══ COVER ═══ */
+    .cover {
+      background: linear-gradient(135deg, var(--forest-deep) 0%, var(--forest) 40%, #134D36 100%);
+      color: white;
+      padding: 80px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cover::before {
+      content: '';
+      position: absolute;
+      top: -50%; right: -20%;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(212,175,119,0.08) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .cover::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--gold), var(--emerald), var(--gold));
+    }
+    .cover .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 16px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 100px;
+      font-size: 10px; font-weight: 800;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--gold-light); margin-bottom: 24px;
+    }
+    .cover .badge .dot { width: 6px; height: 6px; background: var(--emerald); border-radius: 50%; }
+    .cover h1 { font-size: 42px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 12px; }
+    .cover h1 span { color: var(--gold); }
+    .cover .subtitle { font-size: 18px; color: rgba(255,255,255,0.6); font-weight: 500; max-width: 620px; margin-bottom: 40px; }
+    .cover-meta {
+      display: flex; gap: 32px; flex-wrap: wrap;
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.15em; color: rgba(255,255,255,0.4);
+    }
+    .cover-meta strong { color: var(--gold-light); }
+
+    /* ═══ CONTENT ═══ */
+    .content { max-width: 860px; margin: 0 auto; padding: 60px 40px 80px; }
+    .section { margin-bottom: 56px; }
+    .section-label {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 10px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.2em; color: var(--forest);
+      background: rgba(10,61,42,0.06); border: 1px solid rgba(10,61,42,0.12);
+      padding: 4px 14px; border-radius: 100px; margin-bottom: 16px;
+    }
+    .section h2 { font-size: 28px; font-weight: 900; color: var(--slate-900); letter-spacing: -0.02em; margin-bottom: 8px; }
+    .section .lead { font-size: 16px; color: var(--slate-500); font-weight: 500; max-width: 680px; margin-bottom: 24px; }
+    .section p { font-size: 15px; color: var(--slate-600); margin-bottom: 16px; line-height: 1.8; }
+
+    /* ═══ HIGHLIGHT BOX ═══ */
+    .highlight-box {
+      background: linear-gradient(135deg, var(--forest-deep), var(--forest));
+      color: white; border-radius: 20px; padding: 40px; margin: 32px 0;
+      position: relative; overflow: hidden;
+    }
+    .highlight-box::before {
+      content: ''; position: absolute; top: 0; right: 0;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(212,175,119,0.1), transparent);
+      border-radius: 50%;
+    }
+    .highlight-box h3 { font-size: 22px; font-weight: 900; margin-bottom: 16px; color: var(--gold); }
+    .highlight-box p { color: rgba(255,255,255,0.75); font-size: 15px; line-height: 1.8; margin-bottom: 12px; }
+
+    /* ═══ STAT ROW ═══ */
+    .stat-row {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 32px 0;
+    }
+    .stat-card {
+      text-align: center; padding: 28px 16px;
+      background: white; border: 2px solid var(--slate-200); border-radius: 16px;
+      transition: all 0.2s;
+    }
+    .stat-card:hover { border-color: var(--gold); box-shadow: 0 4px 20px rgba(212,175,119,0.12); }
+    .stat-card .stat-value { font-size: 32px; font-weight: 900; color: var(--forest); margin-bottom: 4px; }
+    .stat-card .stat-label { font-size: 12px; font-weight: 700; color: var(--slate-700); margin-bottom: 2px; }
+    .stat-card .stat-sub { font-size: 10px; color: var(--slate-400); font-weight: 600; }
+
+    /* ═══ TABLES ═══ */
+    .data-table {
+      width: 100%; border-collapse: separate; border-spacing: 0;
+      margin: 24px 0; border-radius: 16px; overflow: hidden;
+      border: 1px solid var(--slate-200);
+    }
+    .data-table thead th {
+      background: var(--forest); color: var(--gold-light);
+      font-size: 11px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.15em; padding: 16px 20px; text-align: left;
+    }
+    .data-table tbody td {
+      padding: 14px 20px; font-size: 13px;
+      border-bottom: 1px solid var(--slate-100); vertical-align: top;
+    }
+    .data-table tbody tr:last-child td { border-bottom: none; }
+    .data-table tbody tr:hover { background: rgba(10,61,42,0.02); }
+    .td-label { color: var(--slate-700); font-weight: 700; }
+    .td-value { color: var(--forest); font-weight: 700; }
+    .td-muted { color: var(--slate-500); font-weight: 500; }
+
+    .reg-table {
+      width: 100%; border-collapse: separate; border-spacing: 0;
+      margin: 24px 0; border-radius: 16px; overflow: hidden;
+      border: 1px solid var(--slate-200);
+    }
+    .reg-table thead th {
+      background: var(--slate-800); color: white;
+      font-size: 11px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.15em; padding: 14px 20px; text-align: left;
+    }
+    .reg-table tbody td {
+      padding: 12px 20px; font-size: 13px;
+      border-bottom: 1px solid var(--slate-100);
+      font-weight: 600; color: var(--slate-700);
+    }
+    .reg-table tbody tr:last-child td { border-bottom: none; }
+    .reg-table tbody tr:hover { background: rgba(16,185,129,0.03); }
+    .status {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 800; color: #059669;
+      background: #ECFDF5; padding: 4px 12px; border-radius: 100px;
+    }
+
+    /* ═══ CARDS ═══ */
+    .card-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 24px 0; }
+    .card-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 24px 0; }
+    .card {
+      background: white; border: 1px solid var(--slate-200);
+      border-radius: 16px; padding: 24px; transition: all 0.2s;
+    }
+    .card:hover { border-color: var(--gold); box-shadow: 0 4px 20px rgba(212,175,119,0.12); }
+    .card h4 { font-size: 14px; font-weight: 800; color: var(--forest); margin-bottom: 8px; }
+    .card p { font-size: 12px; color: var(--slate-500); line-height: 1.6; margin: 0; }
+    .card .card-tag { font-size: 10px; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+
+    /* ═══ ALLOCATION BARS ═══ */
+    .alloc-grid { margin: 24px 0; }
+    .alloc-item { display: flex; align-items: center; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--slate-100); }
+    .alloc-item:last-child { border-bottom: none; }
+    .alloc-label { width: 200px; flex-shrink: 0; font-size: 13px; font-weight: 700; color: var(--slate-800); }
+    .alloc-bar-wrap { flex: 1; height: 28px; background: var(--slate-100); border-radius: 8px; overflow: hidden; }
+    .alloc-bar {
+      height: 100%; background: linear-gradient(90deg, var(--forest), #134D36);
+      border-radius: 8px; display: flex; align-items: center;
+      justify-content: flex-end; padding-right: 12px;
+      font-size: 11px; font-weight: 800; color: var(--gold-light); letter-spacing: 0.05em;
+    }
+    .alloc-amount { width: 80px; text-align: right; flex-shrink: 0; font-size: 14px; font-weight: 900; color: var(--forest); }
+
+    /* ═══ MILESTONES ═══ */
+    .ms-card {
+      background: white; border: 2px solid var(--slate-200);
+      border-radius: 16px; padding: 24px; text-align: center;
+      transition: all 0.3s;
+    }
+    .ms-card:hover { border-color: var(--gold); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+    .ms-month { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; color: var(--gold); margin-bottom: 8px; }
+    .ms-card h4 { font-size: 14px; font-weight: 800; color: var(--slate-800); margin-bottom: 8px; line-height: 1.4; }
+    .ms-revenue { font-size: 18px; font-weight: 900; color: var(--forest); }
+    .ms-sub { font-size: 10px; color: var(--slate-400); font-weight: 600; }
+
+    /* ═══ SECTOR CARDS ═══ */
+    .sector-card {
+      background: white; border: 2px solid var(--slate-200);
+      border-radius: 20px; padding: 28px; text-align: center;
+      transition: all 0.3s;
+    }
+    .sector-card:hover { border-color: var(--gold); transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+    .sector-icon {
+      width: 56px; height: 56px; border-radius: 16px;
+      background: var(--forest); color: var(--gold);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; font-weight: 900; margin: 0 auto 16px;
+    }
+    .sector-card h4 { font-size: 16px; font-weight: 900; color: var(--slate-900); margin-bottom: 4px; }
+    .sector-full { font-size: 10px; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 12px; }
+    .sector-card p { font-size: 13px; color: var(--slate-500); line-height: 1.6; margin: 0; }
+
+    /* ═══ AI ENGINE CARDS ═══ */
+    .ai-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 24px 0; }
+    .ai-card { border-radius: 20px; padding: 32px; position: relative; overflow: hidden; }
+    .ai-card.sylara { background: linear-gradient(135deg, #134D36, #0A3D2A); color: white; }
+    .ai-card.larry { background: linear-gradient(135deg, #0F172A, #1E293B); color: white; }
+    .ai-card h4 { font-size: 20px; font-weight: 900; margin-bottom: 4px; }
+    .ai-card .ai-role { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; opacity: 0.5; margin-bottom: 16px; }
+    .ai-card p { font-size: 13px; line-height: 1.7; opacity: 0.8; margin: 0; }
+
+    /* ═══ BADGES ═══ */
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+    .badge-pill {
+      font-size: 10px; font-weight: 700; padding: 6px 14px;
+      border-radius: 100px; background: rgba(10,61,42,0.06);
+      color: var(--forest); border: 1px solid rgba(10,61,42,0.12);
+    }
+
+    /* ═══ FOOTER ═══ */
+    .contact-bar {
+      background: var(--forest); color: white; padding: 48px 60px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 24px;
+    }
+    .contact-bar h3 { font-size: 20px; font-weight: 900; margin-bottom: 4px; }
+    .contact-bar p { font-size: 13px; color: rgba(255,255,255,0.5); }
+    .contact-methods { display: flex; gap: 24px; font-size: 14px; font-weight: 700; }
+    .contact-methods a { color: var(--gold-light); text-decoration: none; transition: color 0.2s; }
+    .contact-methods a:hover { color: white; }
+    .legal-footer {
+      background: var(--forest-deep); color: rgba(255,255,255,0.3);
+      padding: 24px 60px; font-size: 11px; text-align: center; line-height: 1.8;
+    }
+    .legal-footer strong { color: var(--gold); font-weight: 700; }
+
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--slate-200), transparent); margin: 48px 0; }
+
+    @media print {
+      body { background: white; }
+      .cover { padding: 40px; }
+      .content { padding: 30px 20px; }
+      .stat-row, .card-grid-3, .card-grid-2, .ai-grid { gap: 8px; }
+      .ms-card:hover, .card:hover, .stat-card:hover, .sector-card:hover { transform: none; box-shadow: none; }
+    }
+    @media (max-width: 768px) {
+      .cover { padding: 40px 24px; }
+      .cover h1 { font-size: 28px; }
+      .content { padding: 40px 20px; }
+      .stat-row { grid-template-columns: 1fr 1fr; }
+      .card-grid-3, .ai-grid { grid-template-columns: 1fr; }
+      .alloc-label { width: 140px; }
+      .contact-bar { padding: 32px 24px; flex-direction: column; text-align: center; }
+      .contact-methods { flex-direction: column; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ COVER ═══ -->
+  <header class="cover">
+    <div class="badge"><span class="dot"></span> Investor Brief — Confidential</div>
+    <h1>Global Green Hybrid Platform<br><span>Seed Round Capital Raise — $5,000,000</span></h1>
+    <p class="subtitle">The first unified compliance operating system for the regulated cannabis industry. Already built, live, and protected by 3 USPTO patent applications. Seeking $5M to scale from validated product to national market leader.</p>
+    <div class="cover-meta">
+      <span><strong>Entity:</strong> Global Green Enterprise Inc.</span>
+      <span><strong>Date:</strong> July 2026</span>
+      <span><strong>CAGE:</strong> 9KXZ2</span>
+      <span><strong>UEI:</strong> TY1BQ3XK3925</span>
+    </div>
+  </header>
+
+  <main class="content">
+
+    <!-- THE OPPORTUNITY -->
+    <div class="section">
+      <div class="section-label">◆ The Opportunity</div>
+      <h2>A $33B+ Market with No Operating System</h2>
+      <p>The U.S. cannabis industry generates over $33 billion annually across 40+ legal-use states, yet operates on disconnected point-of-sale systems, manual compliance workflows, and cash-only transactions. No platform connects dispensaries, growers, processors, transporters, physicians, patients, attorneys, law enforcement, and state regulators on a single backbone.</p>
+      <p><strong>GGHP-OS is that platform.</strong> It is a full-spectrum regulatory operating system — already built, live in production, and protected by three active patent applications. This raise funds the go-to-market engine to capture the market we've already architected for.</p>
+    </div>
+
+    <!-- KEY METRICS -->
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-value">$5M</div>
+        <div class="stat-label">Raising</div>
+        <div class="stat-sub">Seed / Pre-Series A</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">$1.6–3M</div>
+        <div class="stat-label">Built Equity</div>
+        <div class="stat-sub">Replacement Value</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">3</div>
+        <div class="stat-label">Patents Filed</div>
+        <div class="stat-sub">USPTO 2026</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">$0</div>
+        <div class="stat-label">Outside Capital</div>
+        <div class="stat-sub">100% Bootstrapped</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- WHAT'S BUILT -->
+    <div class="section">
+      <div class="section-label">◆ What's Already Built</div>
+      <h2>Production Platform — Live at ggp-os.com</h2>
+      <p class="lead">Everything below is deployed, functional, and auditable today. Built by a solo founder with zero outside funding — demonstrating extraordinary capital efficiency.</p>
+
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="stat-value">62K+</div>
+          <div class="stat-label">Lines of Code</div>
+          <div class="stat-sub">Production · Live</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">37</div>
+          <div class="stat-label">Dashboards</div>
+          <div class="stat-sub">Role-Based Access</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">15</div>
+          <div class="stat-label">Integrations</div>
+          <div class="stat-sub">All Active</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">26</div>
+          <div class="stat-label">Languages</div>
+          <div class="stat-sub">Sylara AI</div>
+        </div>
+      </div>
+
+      <table class="data-table">
+        <thead><tr><th>Built Asset</th><th>Replacement Value</th></tr></thead>
+        <tbody>
+          <tr><td class="td-label">62,669 lines of production code</td><td class="td-value">$940K–$1.57M</td></tr>
+          <tr><td class="td-label">37 role-based dashboards (Founder, Business, Provider, Patient, Attorney, Enforcement, etc.)</td><td class="td-value">$296K–$555K</td></tr>
+          <tr><td class="td-label">Sylara AI + L.A.R.R.Y AI proprietary engines</td><td class="td-value">$150K–$300K</td></tr>
+          <tr><td class="td-label">Metrc Production API integration (approved, Oklahoma)</td><td class="td-value">$75K–$150K</td></tr>
+          <tr><td class="td-label">15 third-party integrations (Stripe, Twilio, Firebase, Calendly, etc.)</td><td class="td-value">$75K–$225K</td></tr>
+          <tr><td class="td-label">9 serverless API endpoints, premium UI/UX, CI/CD pipeline</td><td class="td-value">$107K–$232K</td></tr>
+          <tr style="background: rgba(10,61,42,0.04);"><td class="td-label" style="font-size:14px;"><strong>Total Replacement Value</strong></td><td class="td-value" style="font-size:16px;"><strong>$1.64M–$3.03M</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ARCHITECTURE -->
+    <div class="section">
+      <div class="section-label">◆ Platform Architecture</div>
+      <h2>Three Operating Sectors</h2>
+      <p class="lead">GGHP-OS is organized into three purpose-built sectors serving every stakeholder in the cannabis regulatory ecosystem.</p>
+
+      <div class="card-grid-3">
+        <div class="sector-card">
+          <div class="sector-icon">G</div>
+          <h4>GGMA</h4>
+          <div class="sector-full">Global Green Marijuana Authority</div>
+          <p>Patient and business intake. Medical card applications, physician coordination, state registry submissions, telehealth scheduling, and licensing workflows across all 50 states.</p>
+        </div>
+        <div class="sector-card">
+          <div class="sector-icon">R</div>
+          <h4>RIP</h4>
+          <div class="sector-full">Real-time Intelligence &amp; Policing</div>
+          <p>Enforcement and oversight. Real-time field verification, roadside impairment screening protection, transport chain-of-custody logs, and law enforcement coordination.</p>
+        </div>
+        <div class="sector-card">
+          <div class="sector-icon">S</div>
+          <h4>SINC</h4>
+          <div class="sector-full">Secure Intelligence &amp; Network Compliance</div>
+          <p>Data integrity and audit. Encrypted audit trails, seed-to-sale synchronization, network integrity verification, and regulatory reporting across all jurisdictions.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- AI ENGINES -->
+    <div class="section">
+      <div class="section-label">◆ Intelligence Layer</div>
+      <h2>Two Proprietary AI Engines</h2>
+      <div class="ai-grid">
+        <div class="ai-card sylara">
+          <h4>Sylara</h4>
+          <div class="ai-role">Virtual Attendant &amp; Operations AI</div>
+          <p>Patient intake processing, call center routing, appointment scheduling, compliance checks, and multilingual support across 26 languages. Handles 80%+ of inbound interactions without human escalation.</p>
+        </div>
+        <div class="ai-card larry">
+          <h4>L.A.R.R.Y</h4>
+          <div class="ai-role">Licensing Authority &amp; Regulatory Review System</div>
+          <p>Continuously scans every transaction, license, test result, and compliance event. Assigns dynamic risk scores, detects discrepancies, and predicts compliance failures up to 90 days in advance.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- INTELLECTUAL PROPERTY -->
+    <div class="section">
+      <div class="section-label">◆ Intellectual Property</div>
+      <h2>3 Active USPTO Patent Applications</h2>
+      <p class="lead">Proprietary systems creating defensible competitive moats in regulated compliance and financial infrastructure.</p>
+      <div class="card-grid-3">
+        <div class="card">
+          <div class="card-tag">USPTO No. 64/017,726</div>
+          <h4>Recency Index (RI)</h4>
+          <p><em>Systems and Methods for Detection of Recent Substance Use</em> — dual-channel temporal modeling that distinguishes recent impairment from historical exposure. Protects transport workers and employees from false-positive drug tests.</p>
+        </div>
+        <div class="card">
+          <div class="card-tag">USPTO No. 64/012,230</div>
+          <h4>The Reg System</h4>
+          <p><em>Multi-Sided Regulatory Infrastructure System</em> — cross-module routing, AI intake, and unified role-based access control connecting businesses, patients, doctors, and regulators on a single platform.</p>
+        </div>
+        <div class="card">
+          <div class="card-tag">USPTO No. 64/016,698</div>
+          <h4>Closed-Loop Credit</h4>
+          <p><em>Closed-Loop Private Label Revolving Line of Credit System</em> — stored-value credit infrastructure (Care Wallet™) that bypasses traditional banking barriers and increases retail ticket sizes by up to 40%.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- USE OF FUNDS -->
+    <div class="section">
+      <div class="section-label">◆ Use of Funds</div>
+      <h2>Capital Allocation — $5,000,000</h2>
+      <p class="lead">Every dollar mapped to a specific function with clear timelines and measurable outcomes.</p>
+
+      <div class="alloc-grid">
+        <div class="alloc-item">
+          <div class="alloc-label">Engineering &amp; Tech</div>
+          <div class="alloc-bar-wrap"><div class="alloc-bar" style="width:28%;">28%</div></div>
+          <div class="alloc-amount">$1.4M</div>
+        </div>
+        <div class="alloc-item">
+          <div class="alloc-label">Sales &amp; Revenue</div>
+          <div class="alloc-bar-wrap"><div class="alloc-bar" style="width:24%;">24%</div></div>
+          <div class="alloc-amount">$1.2M</div>
+        </div>
+        <div class="alloc-item">
+          <div class="alloc-label">Marketing &amp; Brand</div>
+          <div class="alloc-bar-wrap"><div class="alloc-bar" style="width:16%;">16%</div></div>
+          <div class="alloc-amount">$800K</div>
+        </div>
+        <div class="alloc-item">
+          <div class="alloc-label">Operations &amp; Call Ctr</div>
+          <div class="alloc-bar-wrap"><div class="alloc-bar" style="width:12%;">12%</div></div>
+          <div class="alloc-amount">$600K</div>
+        </div>
+        <div class="alloc-item">
+          <div class="alloc-label">Working Capital</div>
+          <div class="alloc-bar-wrap"><div class="alloc-bar" style="width:12%;">12%</div></div>
+          <div class="alloc-amount">$600K</div>
+        </div>
+        <div class="alloc-item">
+          <div class="alloc-label">Legal &amp; IP</div>
+          <div class="alloc-bar-wrap"><div class="alloc-bar" style="width:8%;">8%</div></div>
+          <div class="alloc-amount">$400K</div>
+        </div>
+      </div>
+
+      <div class="card-grid-2" style="margin-top: 32px;">
+        <div class="card">
+          <h4>Engineering — $1.4M</h4>
+          <p>CTO hire, 2 senior engineers, mobile app (iOS + Android), multi-state tracking integrations (Metrc, BioTrack, Leaf Data), SOC 2 Type II certification, infrastructure scaling, QA automation.</p>
+        </div>
+        <div class="card">
+          <h4>Sales &amp; Revenue — $1.2M</h4>
+          <p>VP of Sales, 4 state-level sales representatives, enterprise sales director for government contracts, 2 customer success managers, CRM tooling, and travel for state demos.</p>
+        </div>
+        <div class="card">
+          <h4>Marketing &amp; Brand — $800K</h4>
+          <p>Digital campaigns (Google, LinkedIn, Meta), trade shows (MJBizCon, CANNRA, NCIA), PR agency, content production (video demos, case studies), and brand collateral.</p>
+        </div>
+        <div class="card">
+          <h4>Legal, Ops &amp; Capital — $1.6M</h4>
+          <p>Patent prosecution (3 provisionals → utility), corporate counsel, D&amp;O/E&amp;O insurance, call center staff, compliance officers, OKC headquarters, and 6-month operating reserve.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- MILESTONES -->
+    <div class="section">
+      <div class="section-label">◆ Projected Milestones</div>
+      <h2>18-Month Roadmap</h2>
+      <div class="card-grid-3">
+        <div class="ms-card">
+          <div class="ms-month">Month 3</div>
+          <h4>Full team hired, mobile dev underway</h4>
+          <div class="ms-revenue">Foundation</div>
+          <div class="ms-sub">Engineering &amp; Sales Team Complete</div>
+        </div>
+        <div class="ms-card">
+          <div class="ms-month">Month 6</div>
+          <h4>5 states live, SOC 2 started</h4>
+          <div class="ms-revenue">$50K MRR</div>
+          <div class="ms-sub">OK · AR · MI · FL · CA</div>
+        </div>
+        <div class="ms-card">
+          <div class="ms-month">Month 9</div>
+          <h4>Mobile launched, 2 MSO contracts</h4>
+          <div class="ms-revenue">$150K MRR</div>
+          <div class="ms-sub">Enterprise Traction</div>
+        </div>
+        <div class="ms-card">
+          <div class="ms-month">Month 12</div>
+          <h4>10+ states, 1 gov contract, Care Wallet live</h4>
+          <div class="ms-revenue">$250K MRR</div>
+          <div class="ms-sub">$3M ARR</div>
+        </div>
+        <div class="ms-card">
+          <div class="ms-month">Month 15</div>
+          <h4>Patents prosecuted, pharma pilot</h4>
+          <div class="ms-revenue">$350K MRR</div>
+          <div class="ms-sub">Vertical Expansion</div>
+        </div>
+        <div class="ms-card">
+          <div class="ms-month">Month 18</div>
+          <h4>Series A ready</h4>
+          <div class="ms-revenue">$500K MRR</div>
+          <div class="ms-sub">$6M ARR · $30–50M Pre-Money</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- REGISTRATIONS -->
+    <div class="section">
+      <div class="section-label">◆ Credentials</div>
+      <h2>Registrations &amp; Certifications</h2>
+      <table class="reg-table">
+        <thead><tr><th>Registration</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td><strong>SAM.gov</strong> — Federal Supplier (CAGE: 9KXZ2 · UEI: TY1BQ3XK3925)</td><td><span class="status">✅ Active</span></td></tr>
+          <tr><td><strong>OMES</strong> — Oklahoma State Vendor</td><td><span class="status">✅ Registered</span></td></tr>
+          <tr><td><strong>BidNet Direct</strong> — Municipal Procurement</td><td><span class="status">✅ Active</span></td></tr>
+          <tr><td><strong>OKC City &amp; Trusts</strong> — Municipal Approved</td><td><span class="status">✅ Approved</span></td></tr>
+          <tr><td><strong>Metrc</strong> — Validated Integrator (Oklahoma Production API)</td><td><span class="status">✅ Full Access</span></td></tr>
+          <tr><td><strong>WOSB</strong> — SBA Woman-Owned Small Business</td><td><span class="status">✅ Certified</span></td></tr>
+          <tr><td><strong>LOT Network</strong> — Defensive Patent Protection</td><td><span class="status">✅ Member</span></td></tr>
+          <tr><td><strong>BBB</strong> — Better Business Bureau</td><td><span class="status">✅ A+ Rated (Since 2018)</span></td></tr>
+          <tr><td><strong>HIPAA Compliant</strong> · <strong>AES-256 Encryption</strong></td><td><span class="status">✅ Active</span></td></tr>
+        </tbody>
+      </table>
+      <h3 style="font-size:14px; font-weight:800; color:var(--slate-800); margin:24px 0 12px;">Socio-Economic Designations</h3>
+      <div class="badge-row">
+        <span class="badge-pill">Woman-Owned Business</span>
+        <span class="badge-pill">WOSB</span>
+        <span class="badge-pill">Minority-Owned Business</span>
+        <span class="badge-pill">Black American Owned</span>
+        <span class="badge-pill">American Indian Owned</span>
+        <span class="badge-pill">Self-Certified SDB</span>
+        <span class="badge-pill">Labor Surplus Area Firm</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- FOUNDER -->
+    <div class="highlight-box">
+      <h3>Leadership</h3>
+      <p><strong>Shantell Robinson — Founder &amp; CEO</strong></p>
+      <p>Over 30 years of corporate administration experience, business valuation, deal structuring, and M&amp;A. 8 years in active cannabis regulatory operations. Sole architect of the GGHP-OS platform — delivering a $1.6M–$3M replacement-value product with zero outside capital.</p>
+      <p style="margin-top:16px; font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold);">
+        Affiliated Entities: Global Green Enterprise Inc. · National Cannabis Association Group · CCardz · @thebackoffice.com · Diversity Health and Wellness · Diversity Health Network · Omni Credit
+      </p>
+    </div>
+
+    <p style="font-size:12px; color:var(--slate-400); font-style:italic; text-align:center; margin-top:48px; line-height:1.8;">This document is provided for informational purposes to qualified investors. It does not constitute an offer to sell or a solicitation of an offer to buy any securities. Terms and valuation are subject to negotiation.</p>
+
+  </main>
+
+  <!-- ═══ CONTACT ═══ -->
+  <div class="contact-bar">
+    <div>
+      <h3>Schedule a Discovery Call</h3>
+      <p>Available for platform demos, due diligence walkthroughs, and term discussions.</p>
+    </div>
+    <div class="contact-methods">
+      <a href="tel:18889634447">📞 1-888-963-4447</a>
+      <a href="tel:14054927297">📱 (405) 492-7297</a>
+      <a href="mailto:founder@ggp-os.com">✉️ founder@ggp-os.com</a>
+    </div>
+  </div>
+
+  <footer class="legal-footer">
+    <strong>© 2026 Global Green Enterprise Inc. All rights reserved.</strong><br>
+    CAGE: 9KXZ2 &nbsp;|&nbsp; UEI: TY1BQ3XK3925 &nbsp;|&nbsp; WOSB Certified &nbsp;|&nbsp; SAM.gov Active &nbsp;|&nbsp; BBB A+ Rated
+  </footer>
+
+</body>
+</html>
