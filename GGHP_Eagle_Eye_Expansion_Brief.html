@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GGHP-OS Eagle Eye — Universal Situational Awareness & Sensor Fusion Platform</title>
+  <meta name="description" content="Product expansion brief for GGHP-OS Eagle Eye — a universal, enterprise-grade situational awareness and sensor fusion platform for regulated industry compliance enforcement with open-source input monitoring and hybrid industry expansion.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --forest: #0A3D2A;
+      --forest-deep: #061F15;
+      --gold: #D4AF77;
+      --gold-light: #E8D5B5;
+      --emerald: #10B981;
+      --navy: #0F172A;
+      --navy-mid: #1E293B;
+      --cyan: #06B6D4;
+      --amber: #F59E0B;
+      --slate-50: #F8FAFC;
+      --slate-100: #F1F5F9;
+      --slate-200: #E2E8F0;
+      --slate-300: #CBD5E1;
+      --slate-400: #94A3B8;
+      --slate-500: #64748B;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-800: #1E293B;
+      --slate-900: #0F172A;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--slate-50);
+      color: var(--slate-700);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ═══ COVER ═══ */
+    .cover {
+      background: linear-gradient(135deg, var(--navy) 0%, #0C2340 40%, #112D4E 100%);
+      color: white;
+      padding: 80px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cover::before {
+      content: '';
+      position: absolute;
+      top: -40%; right: -15%;
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(6,182,212,0.06) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .cover::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--cyan), var(--emerald), var(--gold), var(--cyan));
+    }
+    .cover .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 16px;
+      background: rgba(6,182,212,0.1);
+      border: 1px solid rgba(6,182,212,0.25);
+      border-radius: 100px;
+      font-size: 10px; font-weight: 800;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--cyan); margin-bottom: 24px;
+    }
+    .cover .badge .dot { width: 6px; height: 6px; background: var(--cyan); border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .cover h1 { font-size: 44px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 12px; }
+    .cover h1 .eagle { color: var(--cyan); }
+    .cover h1 .sub { color: var(--gold); font-size: 28px; display: block; margin-top: 4px; }
+    .cover .subtitle { font-size: 17px; color: rgba(255,255,255,0.55); font-weight: 500; max-width: 660px; margin-bottom: 40px; line-height: 1.8; }
+    .cover-meta {
+      display: flex; gap: 32px; flex-wrap: wrap;
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.15em; color: rgba(255,255,255,0.35);
+    }
+    .cover-meta strong { color: var(--gold-light); }
+
+    /* ═══ CONTENT ═══ */
+    .content { max-width: 880px; margin: 0 auto; padding: 60px 40px 80px; }
+    .section { margin-bottom: 56px; }
+    .section-label {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 10px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.2em; color: var(--navy);
+      background: rgba(15,23,42,0.06); border: 1px solid rgba(15,23,42,0.12);
+      padding: 4px 14px; border-radius: 100px; margin-bottom: 16px;
+    }
+    .section h2 { font-size: 28px; font-weight: 900; color: var(--slate-900); letter-spacing: -0.02em; margin-bottom: 8px; }
+    .section .lead { font-size: 16px; color: var(--slate-500); font-weight: 500; max-width: 700px; margin-bottom: 24px; }
+    .section p { font-size: 15px; color: var(--slate-600); margin-bottom: 16px; line-height: 1.8; }
+
+    /* ═══ HIGHLIGHT BOXES ═══ */
+    .navy-box {
+      background: linear-gradient(135deg, var(--navy), #112D4E);
+      color: white; border-radius: 20px; padding: 40px; margin: 32px 0;
+      position: relative; overflow: hidden;
+    }
+    .navy-box::before {
+      content: ''; position: absolute; top: -50px; right: -50px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(6,182,212,0.12), transparent);
+      border-radius: 50%;
+    }
+    .navy-box h3 { font-size: 22px; font-weight: 900; margin-bottom: 16px; color: var(--cyan); }
+    .navy-box p { color: rgba(255,255,255,0.7); font-size: 15px; line-height: 1.8; margin-bottom: 12px; }
+
+    .forest-box {
+      background: linear-gradient(135deg, var(--forest-deep), var(--forest));
+      color: white; border-radius: 20px; padding: 40px; margin: 32px 0;
+      position: relative; overflow: hidden;
+    }
+    .forest-box h3 { font-size: 22px; font-weight: 900; margin-bottom: 16px; color: var(--gold); }
+    .forest-box p { color: rgba(255,255,255,0.7); font-size: 15px; line-height: 1.8; margin-bottom: 12px; }
+
+    /* ═══ STAT ROW ═══ */
+    .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 32px 0; }
+    .stat-card {
+      text-align: center; padding: 28px 16px;
+      background: white; border: 2px solid var(--slate-200); border-radius: 16px;
+      transition: all 0.2s;
+    }
+    .stat-card:hover { border-color: var(--cyan); box-shadow: 0 4px 20px rgba(6,182,212,0.12); }
+    .stat-card .sv { font-size: 28px; font-weight: 900; color: var(--navy); margin-bottom: 4px; }
+    .stat-card .sl { font-size: 12px; font-weight: 700; color: var(--slate-700); margin-bottom: 2px; }
+    .stat-card .ss { font-size: 10px; color: var(--slate-400); font-weight: 600; }
+
+    /* ═══ TABLES ═══ */
+    .data-table {
+      width: 100%; border-collapse: separate; border-spacing: 0;
+      margin: 24px 0; border-radius: 16px; overflow: hidden;
+      border: 1px solid var(--slate-200);
+    }
+    .data-table thead th {
+      background: var(--navy); color: var(--cyan);
+      font-size: 11px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.15em; padding: 16px 20px; text-align: left;
+    }
+    .data-table tbody td {
+      padding: 14px 20px; font-size: 13px;
+      border-bottom: 1px solid var(--slate-100); vertical-align: top;
+    }
+    .data-table tbody tr:last-child td { border-bottom: none; }
+    .data-table tbody tr:hover { background: rgba(6,182,212,0.02); }
+    .td-label { color: var(--slate-700); font-weight: 700; }
+    .td-value { color: var(--navy); font-weight: 700; }
+    .td-muted { color: var(--slate-500); font-weight: 500; }
+    .td-money { color: #059669; font-weight: 800; }
+
+    .green-table thead th {
+      background: var(--forest) !important; color: var(--gold-light) !important;
+    }
+
+    /* ═══ CARDS ═══ */
+    .card-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 24px 0; }
+    .card-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 24px 0; }
+    .card-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 24px 0; }
+    .card {
+      background: white; border: 1px solid var(--slate-200);
+      border-radius: 16px; padding: 24px; transition: all 0.2s;
+    }
+    .card:hover { border-color: var(--cyan); box-shadow: 0 4px 20px rgba(6,182,212,0.1); }
+    .card h4 { font-size: 14px; font-weight: 800; color: var(--navy); margin-bottom: 8px; }
+    .card p { font-size: 12px; color: var(--slate-500); line-height: 1.6; margin: 0; }
+    .card .tag { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+    .tag-cyan { color: var(--cyan); }
+    .tag-gold { color: var(--gold); }
+    .tag-emerald { color: var(--emerald); }
+    .tag-amber { color: var(--amber); }
+
+    /* ═══ TIER CARDS ═══ */
+    .tier-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 24px 0; }
+    .tier-card {
+      background: white; border: 2px solid var(--slate-200);
+      border-radius: 20px; padding: 32px 24px; text-align: center;
+      transition: all 0.3s; position: relative;
+    }
+    .tier-card:hover { border-color: var(--cyan); transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+    .tier-card.featured { border-color: var(--cyan); background: linear-gradient(180deg, rgba(6,182,212,0.03), white); }
+    .tier-card.featured::before {
+      content: 'MOST POPULAR';
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      background: var(--cyan); color: white;
+      font-size: 9px; font-weight: 800; letter-spacing: 0.15em;
+      padding: 4px 16px; border-radius: 100px;
+    }
+    .tier-name { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; color: var(--cyan); margin-bottom: 8px; }
+    .tier-price { font-size: 36px; font-weight: 900; color: var(--navy); margin-bottom: 4px; }
+    .tier-price span { font-size: 14px; font-weight: 600; color: var(--slate-400); }
+    .tier-desc { font-size: 13px; color: var(--slate-500); margin-bottom: 20px; line-height: 1.6; }
+    .tier-features { list-style: none; text-align: left; }
+    .tier-features li {
+      font-size: 12px; color: var(--slate-600); padding: 8px 0;
+      border-bottom: 1px solid var(--slate-100);
+      display: flex; align-items: flex-start; gap: 8px;
+    }
+    .tier-features li:last-child { border-bottom: none; }
+    .tier-features .check { color: var(--emerald); font-weight: 700; flex-shrink: 0; }
+
+    /* ═══ LAYER CARDS ═══ */
+    .layer-card {
+      border-radius: 20px; padding: 32px; position: relative; overflow: hidden; margin-bottom: 20px;
+    }
+    .layer-card.intake { background: linear-gradient(135deg, #134D36, var(--forest)); color: white; }
+    .layer-card.fusion { background: linear-gradient(135deg, var(--navy), #112D4E); color: white; }
+    .layer-card.visual { background: linear-gradient(135deg, #44403C, #292524); color: white; }
+    .layer-card.audit { background: linear-gradient(135deg, #581C87, #3B0764); color: white; }
+    .layer-card h4 { font-size: 18px; font-weight: 900; margin-bottom: 4px; }
+    .layer-card .layer-tag {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.15em; opacity: 0.5; margin-bottom: 16px;
+    }
+    .layer-card p { font-size: 13px; line-height: 1.7; opacity: 0.8; }
+    .layer-card ul { list-style: none; margin-top: 12px; }
+    .layer-card ul li { font-size: 12px; opacity: 0.8; padding: 4px 0; }
+    .layer-card ul li::before { content: '→ '; opacity: 0.5; }
+
+    /* ═══ FLOW DIAGRAM ═══ */
+    .flow-box {
+      background: var(--navy); color: white; border-radius: 20px;
+      padding: 40px; margin: 32px 0; font-family: 'Inter', monospace;
+    }
+    .flow-box pre {
+      font-size: 11px; line-height: 1.6; color: rgba(255,255,255,0.7);
+      overflow-x: auto; white-space: pre;
+    }
+    .flow-box .flow-title {
+      font-size: 10px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.2em; color: var(--cyan); margin-bottom: 16px;
+    }
+
+    /* ═══ BADGES ═══ */
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+    .badge-pill {
+      font-size: 10px; font-weight: 700; padding: 6px 14px;
+      border-radius: 100px; border: 1px solid;
+    }
+    .bp-cyan { background: rgba(6,182,212,0.06); color: #0891B2; border-color: rgba(6,182,212,0.2); }
+    .bp-gold { background: rgba(212,175,119,0.08); color: #92672D; border-color: rgba(212,175,119,0.25); }
+    .bp-emerald { background: rgba(16,185,129,0.06); color: #059669; border-color: rgba(16,185,129,0.2); }
+
+    /* ═══ FOOTER ═══ */
+    .contact-bar {
+      background: var(--navy); color: white; padding: 48px 60px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 24px;
+    }
+    .contact-bar h3 { font-size: 20px; font-weight: 900; margin-bottom: 4px; }
+    .contact-bar p { font-size: 13px; color: rgba(255,255,255,0.5); }
+    .contact-methods { display: flex; gap: 24px; font-size: 14px; font-weight: 700; }
+    .contact-methods a { color: var(--cyan); text-decoration: none; transition: color 0.2s; }
+    .contact-methods a:hover { color: white; }
+    .legal-footer {
+      background: #050A14; color: rgba(255,255,255,0.3);
+      padding: 24px 60px; font-size: 11px; text-align: center; line-height: 1.8;
+    }
+    .legal-footer strong { color: var(--cyan); font-weight: 700; }
+
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--slate-200), transparent); margin: 48px 0; }
+
+    @media print { body { background: white; } .cover { padding: 40px; } .content { padding: 30px 20px; } }
+    @media (max-width: 768px) {
+      .cover { padding: 40px 24px; } .cover h1 { font-size: 28px; }
+      .content { padding: 40px 20px; }
+      .stat-row, .card-grid-3, .card-grid-4, .tier-grid { grid-template-columns: 1fr; }
+      .card-grid-2 { grid-template-columns: 1fr; }
+      .contact-bar { padding: 32px 24px; flex-direction: column; text-align: center; }
+      .contact-methods { flex-direction: column; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ COVER ═══ -->
+  <header class="cover">
+    <div class="badge"><span class="dot"></span> Product Expansion Brief — Confidential</div>
+    <h1>
+      <span class="eagle">Eagle Eye</span><br>
+      <span class="sub">Situational Awareness &amp; Sensor Fusion Platform</span>
+    </h1>
+    <p class="subtitle">A lawful, enterprise-grade situational awareness engine built on a universal open-source ingestion framework. Monitors any authorized data feed — cameras, GPS, GIS, OSINT, sensors, IoT, APIs, public records — and correlates them through AI-powered sensor fusion. Starts with cannabis. Expands into every regulated industry.</p>
+    <div class="cover-meta">
+      <span><strong>Parent Platform:</strong> GGHP-OS (The Reg System™)</span>
+      <span><strong>Date:</strong> July 2026</span>
+      <span><strong>Patent Coverage:</strong> 3 Active USPTO Applications</span>
+      <span><strong>Classification:</strong> Strategic Expansion Brief</span>
+    </div>
+  </header>
+
+  <main class="content">
+
+    <!-- EXECUTIVE SUMMARY -->
+    <div class="section">
+      <div class="section-label">◆ Executive Summary</div>
+      <h2>The $33B Industry with No Eyes</h2>
+      <p>The U.S. cannabis industry operates under the strictest surveillance requirements of any legal business sector. Every licensed facility must maintain 24/7 camera coverage. Every transport vehicle must log GPS routes. Every gram must be tracked from seed to sale. Every lab result must be cryptographically verified.</p>
+      <p>Yet no platform exists to <strong>correlate</strong> these mandated data streams into a unified operational picture. State regulators check cameras one facility at a time. Transport manifests are cross-referenced manually. Weight discrepancies are discovered weeks after the fact. Diversion goes undetected until audits surface it months later.</p>
+      <p><strong>Eagle Eye</strong> is the answer — a lawful, consent-based, enterprise-grade situational awareness platform that fuses every legally mandated data source into a single AI-correlated intelligence layer. It transforms L.A.R.R.Y from a compliance scanning engine into a full-spectrum sensor fusion AI.</p>
+    </div>
+
+    <!-- KEY STATS -->
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="sv">$33B+</div>
+        <div class="sl">Cannabis TAM</div>
+        <div class="ss">U.S. Annual Revenue</div>
+      </div>
+      <div class="stat-card">
+        <div class="sv">40+</div>
+        <div class="sl">Legal States</div>
+        <div class="ss">All Require Surveillance</div>
+      </div>
+      <div class="stat-card">
+        <div class="sv">$4.7B</div>
+        <div class="sl">Compliance Market</div>
+        <div class="ss">Cannabis RegTech</div>
+      </div>
+      <div class="stat-card">
+        <div class="sv">0</div>
+        <div class="sl">Competitors</div>
+        <div class="ss">No Unified Platform Exists</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- WHY THIS IS LEGAL -->
+    <div class="section">
+      <div class="section-label">◆ Legal Foundation</div>
+      <h2>Why Cannabis Is the Only Industry Where This Works</h2>
+      <p class="lead">Unlike general surveillance systems that require opt-in consent for every data source, cannabis licensees have already consented to comprehensive monitoring as a condition of their license.</p>
+
+      <table class="data-table">
+        <thead><tr><th>Data Source</th><th>Other Industries</th><th>Cannabis Industry</th></tr></thead>
+        <tbody>
+          <tr><td class="td-label">Facility security cameras</td><td class="td-muted">Voluntary / business decision</td><td class="td-value">State-mandated 24/7 coverage with retention requirements</td></tr>
+          <tr><td class="td-label">Vehicle GPS tracking</td><td class="td-muted">Requires employee consent or fleet agreement</td><td class="td-value">Required on every transport manifest — vehicle, driver, route logged</td></tr>
+          <tr><td class="td-label">Product chain of custody</td><td class="td-muted">Optional in most sectors</td><td class="td-value">Legally required — Metrc/BioTrack tracks every gram seed-to-sale</td></tr>
+          <tr><td class="td-label">License plate / vehicle ID</td><td class="td-muted">Requires LEO authorization</td><td class="td-value">Already documented on transport manifests — public regulatory record</td></tr>
+          <tr><td class="td-label">Facility geolocation</td><td class="td-muted">Public records (varies)</td><td class="td-value">Every licensed facility geolocated in state registry</td></tr>
+          <tr><td class="td-label">Lab testing results</td><td class="td-muted">Industry-specific</td><td class="td-value">Mandatory pre-sale testing — potency, pesticides, heavy metals</td></tr>
+          <tr><td class="td-label">Financial transactions</td><td class="td-muted">Banking regulations (SAR reporting)</td><td class="td-value">Cash-intensive industry under heightened scrutiny — ideal for pattern analysis</td></tr>
+          <tr><td class="td-label">Employee background checks</td><td class="td-muted">Employer discretion</td><td class="td-value">State-mandated agent cards with fingerprinting and criminal history review</td></tr>
+        </tbody>
+      </table>
+
+      <div class="navy-box">
+        <h3>The Consent Framework Is Built Into Licensure</h3>
+        <p>When a dispensary, grow operation, processor, or transporter receives a state license, they sign agreements consenting to: facility inspections, camera access, inventory audits, GPS tracking, financial review, and regulatory reporting. <strong>Eagle Eye doesn't surveil anyone — it correlates data that licensees are already legally required to produce.</strong></p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ARCHITECTURE -->
+    <div class="section">
+      <div class="section-label">◆ Platform Architecture</div>
+      <h2>Four-Layer Intelligence Stack</h2>
+      <p class="lead">Eagle Eye operates as four distinct layers within the existing GGHP-OS infrastructure, each with its own data sources, processing logic, and access controls.</p>
+
+      <div class="layer-card intake">
+        <div class="layer-tag">Layer 1 — Universal Data Ingestion</div>
+        <h4>Open Source &amp; Authorized Sensor Connectors</h4>
+        <p>A universal ingestion framework that accepts <strong>any open-source or authorized data input</strong> — not limited to cannabis. The connector architecture is plug-and-play: if a data source has an API, feed, stream, or file export, Eagle Eye can ingest it.</p>
+        <ul>
+          <li><strong>Regulatory APIs</strong> — Metrc, BioTrack, Leaf Data, ABCC (alcohol), DEA ARCOS, FDA REMS, TTB (tobacco)</li>
+          <li><strong>Camera Feeds</strong> — RTSP/ONVIF/HLS from facility cameras, municipal traffic cameras, body cams, dashcams</li>
+          <li><strong>GPS / AVL / IoT Telemetry</strong> — fleet vehicles, asset trackers, cold chain sensors, environmental monitors</li>
+          <li><strong>GIS / Geospatial</strong> — facility locations, grow boundaries, exclusion zones, parcel data, zoning overlays</li>
+          <li><strong>Lab &amp; Testing</strong> — COA feeds, potency/purity results, batch linkage, environmental testing</li>
+          <li><strong>License / Registry</strong> — state license databases, federal registrations, professional credentials, SEC filings</li>
+          <li><strong>OSINT / Public Records</strong> — business filings, court records, news feeds, social media, regulatory actions, patent filings</li>
+          <li><strong>LPR / Vehicle ID</strong> — license plate recognition at checkpoints, weigh stations, facility entry/exit</li>
+          <li><strong>Aerial / Satellite</strong> — drone imagery, satellite overlays, agricultural compliance imagery</li>
+          <li><strong>Traffic / DOT Feeds</strong> — authorized municipal camera networks, highway patrol, corridor monitoring</li>
+          <li><strong>Financial Streams</strong> — POS transactions, Care Wallet closed-loop data, SAR patterns, cash flow analytics</li>
+          <li><strong>Custom REST / Webhook / MQTT / Kafka</strong> — any system with an API or data export can be connected</li>
+        </ul>
+      </div>
+
+      <div class="layer-card fusion">
+        <div class="layer-tag">Layer 2 — Correlation Engine (L.A.R.R.Y Enhanced)</div>
+        <h4>AI-Powered Sensor Fusion &amp; Pattern Recognition</h4>
+        <p>L.A.R.R.Y evolves from a compliance scanner into a full-spectrum correlation AI that links events across time, space, and data sources.</p>
+        <ul>
+          <li>Cross-source event matching — "Transport left Facility A at 2:14 PM but didn't arrive at Facility B until 6:42 PM on a 45-minute route"</li>
+          <li>Temporal correlation (Recency Index patent) — when did events happen relative to each other?</li>
+          <li>Geospatial anomaly detection — route deviations, unauthorized stops, exclusion zone violations</li>
+          <li>Weight/volume discrepancy analysis — "Manifest says 50 lbs left, Metrc says 47 lbs arrived"</li>
+          <li>Financial pattern recognition — unusual transaction patterns, cash flow anomalies</li>
+          <li>Camera AI — motion detection, occupancy counting, after-hours activity alerting</li>
+          <li>Predictive risk scoring — 90-day lookahead on compliance failures, license renewals, violation trends</li>
+        </ul>
+      </div>
+
+      <div class="layer-card visual">
+        <div class="layer-tag">Layer 3 — Visualization &amp; Command</div>
+        <h4>Role-Based Situational Awareness Dashboards</h4>
+        <p>Every stakeholder sees exactly what they're authorized to see — nothing more, nothing less. Built on the existing GGHP-OS role-based access control system.</p>
+        <ul>
+          <li>State Authority Dashboard — statewide compliance heatmap, facility status, active alerts</li>
+          <li>Enforcement Dashboard — live transport tracking, investigation tools, field verification</li>
+          <li>Founder/CEO Command Center — full operational picture with revenue + compliance overlay</li>
+          <li>Public Health Dashboard — product safety trends, contamination tracking, recall coordination</li>
+          <li>Municipal Traffic Dashboard — transport corridor monitoring, route compliance</li>
+          <li>Federal/DEA Dashboard — anonymized aggregate analytics respecting state sovereignty</li>
+        </ul>
+      </div>
+
+      <div class="layer-card audit">
+        <div class="layer-tag">Layer 4 — Audit &amp; Integrity (SINC)</div>
+        <h4>Immutable Evidence Chain</h4>
+        <p>Every query, every correlation, every alert, every access event is cryptographically logged. Court-admissible by design.</p>
+        <ul>
+          <li>Cryptographic audit trails — tamper-evident, timestamped, hash-chained</li>
+          <li>Chain-of-custody documentation — from sensor to screen to courtroom</li>
+          <li>Access logging — who saw what, when, why, and under what authorization</li>
+          <li>Zero-knowledge compliance proofs — verify compliance without exposing raw data</li>
+          <li>Data retention policies — aligned with state regulatory requirements per jurisdiction</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- REVENUE STREAMS -->
+    <div class="section">
+      <div class="section-label">◆ Revenue Model</div>
+      <h2>Five Revenue Streams — Tiered by Customer</h2>
+      <p class="lead">Eagle Eye generates revenue from every level of the regulatory ecosystem, from individual operators to federal agencies.</p>
+
+      <table class="data-table green-table">
+        <thead><tr><th>Revenue Stream</th><th>Customer</th><th>Pricing Model</th><th>Annual Revenue Potential</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="td-label">1. Compliance Enforcement Add-On</td>
+            <td class="td-muted">State cannabis regulators (OMMA, CCC, BCC, etc.)</td>
+            <td class="td-muted">Annual state contract — $250K–$1.5M/state</td>
+            <td class="td-money">$2.5M–$15M (10–15 states)</td>
+          </tr>
+          <tr>
+            <td class="td-label">2. MSO Enterprise Platform</td>
+            <td class="td-muted">Multi-State Operators (Curaleaf, Trulieve, Green Thumb, etc.)</td>
+            <td class="td-muted">Per-facility license — $2K–$8K/mo per location</td>
+            <td class="td-money">$5M–$20M (50–200 facilities)</td>
+          </tr>
+          <tr>
+            <td class="td-label">3. Traffic Surveillance Module</td>
+            <td class="td-muted">Municipal DOTs, city traffic departments, highway patrol</td>
+            <td class="td-muted">Municipal contract — $100K–$500K/jurisdiction</td>
+            <td class="td-money">$2M–$10M (20–40 jurisdictions)</td>
+          </tr>
+          <tr>
+            <td class="td-label">4. Federal Intelligence Feed</td>
+            <td class="td-muted">DEA, ATF, FBI (anonymized aggregate data only)</td>
+            <td class="td-muted">Federal contract (SAM.gov registered — CAGE: 9KXZ2)</td>
+            <td class="td-money">$1M–$5M</td>
+          </tr>
+          <tr>
+            <td class="td-label">5. Insurance Risk Analytics</td>
+            <td class="td-muted">Cannabis insurance underwriters, Lloyd's syndicates</td>
+            <td class="td-muted">Data licensing — per-query or annual subscription</td>
+            <td class="td-money">$1M–$3M</td>
+          </tr>
+          <tr style="background: rgba(6,182,212,0.04);">
+            <td class="td-label" style="font-size:14px;"><strong>Total Addressable Revenue</strong></td>
+            <td colspan="2"></td>
+            <td class="td-money" style="font-size:16px;"><strong>$11.5M–$53M annually</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- PRICING TIERS -->
+    <div class="section">
+      <div class="section-label">◆ Pricing Structure</div>
+      <h2>Enforcement &amp; Compliance Tiers</h2>
+
+      <div class="tier-grid">
+        <div class="tier-card">
+          <div class="tier-name">Municipal</div>
+          <div class="tier-price">$8K<span>/mo</span></div>
+          <div class="tier-desc">City-level enforcement for local cannabis compliance departments and traffic monitoring.</div>
+          <ul class="tier-features">
+            <li><span class="check">✓</span> Facility compliance monitoring (up to 50 licenses)</li>
+            <li><span class="check">✓</span> Transport route verification</li>
+            <li><span class="check">✓</span> GIS mapping &amp; facility heatmap</li>
+            <li><span class="check">✓</span> Basic traffic corridor monitoring</li>
+            <li><span class="check">✓</span> Monthly compliance reports</li>
+            <li><span class="check">✓</span> L.A.R.R.Y risk scoring</li>
+          </ul>
+        </div>
+        <div class="tier-card featured">
+          <div class="tier-name">State Authority</div>
+          <div class="tier-price">$45K<span>/mo</span></div>
+          <div class="tier-desc">Full state-level situational awareness for cannabis regulatory agencies.</div>
+          <ul class="tier-features">
+            <li><span class="check">✓</span> Unlimited facility monitoring</li>
+            <li><span class="check">✓</span> Real-time transport tracking statewide</li>
+            <li><span class="check">✓</span> Camera feed integration (RTSP/ONVIF)</li>
+            <li><span class="check">✓</span> LPR at facility checkpoints</li>
+            <li><span class="check">✓</span> Drone imagery ingestion</li>
+            <li><span class="check">✓</span> Full L.A.R.R.Y sensor fusion</li>
+            <li><span class="check">✓</span> Predictive risk modeling</li>
+            <li><span class="check">✓</span> Court-admissible evidence chain</li>
+            <li><span class="check">✓</span> Dedicated compliance analyst</li>
+          </ul>
+        </div>
+        <div class="tier-card">
+          <div class="tier-name">Federal</div>
+          <div class="tier-price">Custom</div>
+          <div class="tier-desc">Multi-state, anonymized intelligence for federal agencies and task forces.</div>
+          <ul class="tier-features">
+            <li><span class="check">✓</span> Cross-state correlation engine</li>
+            <li><span class="check">✓</span> Anonymized aggregate analytics</li>
+            <li><span class="check">✓</span> Diversion detection algorithms</li>
+            <li><span class="check">✓</span> Interstate trafficking pattern analysis</li>
+            <li><span class="check">✓</span> Zero-knowledge compliance proofs</li>
+            <li><span class="check">✓</span> FedRAMP-aligned security</li>
+            <li><span class="check">✓</span> SAM.gov procurement ready</li>
+            <li><span class="check">✓</span> Classified data handling</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- TRAFFIC SURVEILLANCE MODULE -->
+    <div class="section">
+      <div class="section-label">◆ Expansion Module</div>
+      <h2>Traffic Surveillance &amp; Transport Intelligence</h2>
+      <p class="lead">A standalone revenue stream that extends Eagle Eye beyond cannabis into general public safety infrastructure.</p>
+
+      <div class="card-grid-2">
+        <div class="card">
+          <div class="tag tag-cyan">Transport Corridor Monitoring</div>
+          <h4>Route Compliance &amp; Deviation Alerting</h4>
+          <p>Monitors licensed cannabis transport vehicles in real-time against approved routes. Detects unauthorized stops, route deviations, extended travel times, and exclusion zone violations. Alerts enforcement immediately upon anomaly detection.</p>
+        </div>
+        <div class="card">
+          <div class="tag tag-cyan">Municipal Traffic Integration</div>
+          <h4>City DOT Camera Feed Ingestion</h4>
+          <p>Integrates with authorized municipal traffic camera networks to monitor transport corridors. Provides traffic-aware routing recommendations, congestion impact on delivery windows, and visual verification of vehicle location at intersections.</p>
+        </div>
+        <div class="card">
+          <div class="tag tag-amber">License Plate Recognition</div>
+          <h4>Fleet Vehicle Identification</h4>
+          <p>LPR cameras at facility entry/exit points automatically verify that arriving vehicles match the transport manifest. Flags unknown vehicles, expired registrations, and vehicles not associated with any active license.</p>
+        </div>
+        <div class="card">
+          <div class="tag tag-amber">Incident &amp; Accident Correlation</div>
+          <h4>Event Response Intelligence</h4>
+          <p>When a transport vehicle is involved in an accident, theft, or diversion event, Eagle Eye automatically correlates: camera feeds near the incident, GPS track history, manifest contents, driver credentials, and chain-of-custody status. Generates a court-ready incident package within minutes.</p>
+        </div>
+      </div>
+
+      <div class="navy-box">
+        <h3>Revenue Opportunity — Traffic Module</h3>
+        <p>The traffic surveillance module sells independently to <strong>municipal DOTs, highway patrol divisions, and city traffic departments</strong> — customers who have no interest in cannabis but need sensor fusion for general traffic intelligence. This expands Eagle Eye's addressable market beyond cannabis into the <strong>$18B+ public safety technology market</strong>.</p>
+        <p style="margin-top: 12px;"><strong>Pricing:</strong> $100K–$500K per jurisdiction annually, or $8K–$25K/month per corridor monitored.</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- UNIVERSAL OPEN SOURCE INGESTION -->
+    <div class="section">
+      <div class="section-label">◆ Universal Ingestion Framework</div>
+      <h2>Monitor Any Open Source Input</h2>
+      <p class="lead">Eagle Eye is not locked to cannabis data sources. Its universal connector architecture ingests any authorized, open-source, or publicly available data stream — making it expandable to any regulated industry or public safety use case.</p>
+
+      <div class="card-grid-3">
+        <div class="card">
+          <div class="tag tag-cyan">Public Records</div>
+          <h4>Government &amp; Regulatory Databases</h4>
+          <p>Automated ingestion of public business filings (Secretary of State), court records (PACER, OSCN), professional license databases, property records, UCC filings, SEC/EDGAR filings, and federal register notices.</p>
+        </div>
+        <div class="card">
+          <div class="tag tag-cyan">News &amp; Media Feeds</div>
+          <h4>Real-Time Media Monitoring</h4>
+          <p>RSS feeds, news APIs, press release wires, industry publications. L.A.R.R.Y correlates news events ("Dispensary raided in Tulsa") with internal data ("That facility had a risk score of 94 last week").</p>
+        </div>
+        <div class="card">
+          <div class="tag tag-cyan">Social &amp; OSINT</div>
+          <h4>Open Source Intelligence</h4>
+          <p>Public social media posts, business review sites, forum discussions, job postings ("dispensary hiring armed security" = risk signal). All public, all legal, all correlated.</p>
+        </div>
+        <div class="card">
+          <div class="tag tag-amber">Weather &amp; Environmental</div>
+          <h4>Climate &amp; Conditions Data</h4>
+          <p>NOAA weather feeds, air quality indexes, UV exposure data, soil moisture sensors. Critical for outdoor grow compliance, harvest timing verification, and environmental impact monitoring.</p>
+        </div>
+        <div class="card">
+          <div class="tag tag-amber">IoT &amp; Sensor Networks</div>
+          <h4>Connected Device Ingestion</h4>
+          <p>MQTT/Kafka streams from facility environmental sensors (temperature, humidity, CO2), cold chain monitors during transport, smart lock access logs, and energy consumption patterns.</p>
+        </div>
+        <div class="card">
+          <div class="tag tag-amber">Custom API / Webhook</div>
+          <h4>Bring Your Own Data Source</h4>
+          <p>Any system with a REST API, webhook, file export (CSV/JSON/XML), or streaming protocol can be connected. Clients and government agencies add their own data sources through a self-service connector builder.</p>
+        </div>
+      </div>
+
+      <div class="navy-box">
+        <h3>Why Universal Ingestion Matters</h3>
+        <p>A platform locked to one industry's data sources is a product. A platform that can ingest <strong>any authorized data stream</strong> and correlate it through AI is an <strong>operating system</strong>. Eagle Eye's universal ingestion framework means:</p>
+        <p>→ State agencies can add their own cameras, sensors, and databases without custom development<br>
+        → Federal agencies can pipe in classified sources through secure connectors<br>
+        → MSOs can integrate their existing POS, ERP, and security systems<br>
+        → Municipal governments can connect traffic, zoning, and public safety feeds<br>
+        → New regulated industries (alcohol, pharma, hemp, firearms) can onboard without rebuilding the platform</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- HYBRID INDUSTRY EXPANSION -->
+    <div class="section">
+      <div class="section-label">◆ Hybrid Expansion Roadmap</div>
+      <h2>Beyond Cannabis — Regulated Industry Expansion</h2>
+      <p class="lead">The Eagle Eye architecture is industry-agnostic. Every regulated industry with mandated surveillance, tracking, and compliance requirements is a natural expansion target. The same sensor fusion engine, the same audit trails, the same role-based access — different data sources.</p>
+
+      <div class="card-grid-2">
+        <div class="card" style="border-left: 4px solid #8B5CF6;">
+          <div class="tag" style="color: #8B5CF6;">Phase 4 — Months 18–24</div>
+          <h4>Alcohol &amp; Spirits</h4>
+          <p>State ABC (Alcoholic Beverage Control) boards face identical problems: license tracking, facility surveillance, transport monitoring, age verification, tax compliance. Eagle Eye replaces manual audits with real-time correlation. <strong>TAM: $12B+ U.S. alcohol compliance.</strong></p>
+        </div>
+        <div class="card" style="border-left: 4px solid #EC4899;">
+          <div class="tag" style="color: #EC4899;">Phase 4 — Months 18–24</div>
+          <h4>Pharmaceutical &amp; Controlled Substances</h4>
+          <p>DEA ARCOS reporting, Schedule II–V tracking, pharmacy diversion detection, cold chain monitoring for biologics, REMS compliance. Eagle Eye becomes the intelligence layer between DEA, state pharmacy boards, and hospitals. <strong>TAM: $8B+ pharma compliance.</strong></p>
+        </div>
+        <div class="card" style="border-left: 4px solid #F59E0B;">
+          <div class="tag" style="color: #F59E0B;">Phase 5 — Months 24–36</div>
+          <h4>Hemp &amp; Agricultural Compliance</h4>
+          <p>USDA hemp program monitoring, THC level compliance, crop boundary verification via satellite/drone, interstate transport tracking, and lab testing correlation. Shares 80% of cannabis infrastructure. <strong>TAM: $4B+ hemp compliance.</strong></p>
+        </div>
+        <div class="card" style="border-left: 4px solid #EF4444;">
+          <div class="tag" style="color: #EF4444;">Phase 5 — Months 24–36</div>
+          <h4>Tobacco &amp; Vaping</h4>
+          <p>TTB compliance, age verification at POS, PACT Act interstate shipping tracking, counterfeit detection, and FDA PMTA (Pre-Market Tobacco Application) monitoring. <strong>TAM: $6B+ tobacco regulatory.</strong></p>
+        </div>
+        <div class="card" style="border-left: 4px solid #64748B;">
+          <div class="tag" style="color: #64748B;">Phase 6 — Months 36+</div>
+          <h4>Firearms &amp; FFL Compliance</h4>
+          <p>ATF Form 4473 digitization, FFL license monitoring, stolen weapon databases, transport tracking, and dealer compliance scoring. Politically sensitive but massive federal demand. <strong>TAM: $3B+ firearms compliance.</strong></p>
+        </div>
+        <div class="card" style="border-left: 4px solid #06B6D4;">
+          <div class="tag" style="color: #06B6D4;">Phase 6 — Months 36+</div>
+          <h4>Gaming &amp; Casino Compliance</h4>
+          <p>State gaming commission surveillance integration, cash transaction reporting (CTR), patron exclusion list monitoring, and machine integrity verification. <strong>TAM: $5B+ gaming compliance.</strong></p>
+        </div>
+      </div>
+
+      <div class="forest-box">
+        <h3>Total Hybrid Expansion TAM: $71B+</h3>
+        <p>By building Eagle Eye on a <strong>universal ingestion framework</strong> rather than hardcoding it to cannabis-only data sources, the platform becomes expandable into every regulated industry that requires surveillance, tracking, compliance monitoring, and enforcement coordination.</p>
+        <p style="margin-top: 16px;"><strong>The competitive advantage:</strong> while competitors would need to build a new platform for each industry, Eagle Eye just needs new data source connectors. The correlation engine, audit trails, dashboards, AI, and role-based access are all industry-agnostic and already built.</p>
+        <table style="width:100%; margin-top:20px; border-collapse:collapse;">
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.1);">
+            <td style="padding:8px 0; font-size:13px; font-weight:700; color:var(--gold);">Cannabis + Traffic (Core)</td>
+            <td style="padding:8px 0; font-size:13px; color:rgba(255,255,255,0.7); text-align:right;">$33B + $18B</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.1);">
+            <td style="padding:8px 0; font-size:13px; font-weight:700; color:var(--gold);">Alcohol + Pharma (Phase 4)</td>
+            <td style="padding:8px 0; font-size:13px; color:rgba(255,255,255,0.7); text-align:right;">$12B + $8B</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.1);">
+            <td style="padding:8px 0; font-size:13px; font-weight:700; color:var(--gold);">Hemp + Tobacco (Phase 5)</td>
+            <td style="padding:8px 0; font-size:13px; color:rgba(255,255,255,0.7); text-align:right;">$4B + $6B</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.1);">
+            <td style="padding:8px 0; font-size:13px; font-weight:700; color:var(--gold);">Firearms + Gaming (Phase 6)</td>
+            <td style="padding:8px 0; font-size:13px; color:rgba(255,255,255,0.7); text-align:right;">$3B + $5B</td>
+          </tr>
+          <tr>
+            <td style="padding:12px 0; font-size:16px; font-weight:900; color:white;">Total Addressable Market</td>
+            <td style="padding:12px 0; font-size:18px; font-weight:900; color:var(--gold); text-align:right;">$89B+</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- EXISTING INFRASTRUCTURE -->
+    <div class="section">
+      <div class="section-label">◆ Built Infrastructure</div>
+      <h2>What's Already Built in GGHP-OS That Eagle Eye Leverages</h2>
+      <p class="lead">Eagle Eye is not a new platform — it's an expansion of existing infrastructure. Here's what's already operational.</p>
+
+      <div class="card-grid-3">
+        <div class="card">
+          <div class="tag tag-emerald">AI Engine</div>
+          <h4>L.A.R.R.Y</h4>
+          <p>Real-time compliance scanning, dynamic risk scoring, 90-day predictive alerting. Becomes the sensor fusion core for Eagle Eye.</p>
+        </div>
+        <div class="card">
+          <div class="tag tag-emerald">API Integration</div>
+          <h4>Metrc Production API</h4>
+          <p>Approved Oklahoma integrator. Bi-directional seed-to-sale tracking. The primary chain-of-custody data source.</p>
+        </div>
+        <div class="card">
+          <div class="tag tag-emerald">Dashboard</div>
+          <h4>Enforcement Dashboard</h4>
+          <p>Already built with field verification, transport tracking, and law enforcement coordination tools.</p>
+        </div>
+        <div class="card">
+          <div class="tag tag-emerald">Dashboard</div>
+          <h4>State Authority Dashboard</h4>
+          <p>Statewide regulatory view with license management, compliance monitoring, and policy enforcement.</p>
+        </div>
+        <div class="card">
+          <div class="tag tag-emerald">Patent</div>
+          <h4>The Reg System</h4>
+          <p>USPTO 64/012,230 — multi-sided regulatory infrastructure connecting all stakeholders. The architectural patent for Eagle Eye.</p>
+        </div>
+        <div class="card">
+          <div class="tag tag-emerald">Patent</div>
+          <h4>Recency Index</h4>
+          <p>USPTO 64/017,726 — temporal detection and correlation. Powers the "when did events happen relative to each other" analysis.</p>
+        </div>
+        <div class="card">
+          <div class="tag tag-emerald">Registration</div>
+          <h4>SAM.gov Active</h4>
+          <p>CAGE: 9KXZ2 — federal supplier registration enabling direct government contracts without intermediaries.</p>
+        </div>
+        <div class="card">
+          <div class="tag tag-emerald">Registration</div>
+          <h4>OMES State Vendor</h4>
+          <p>Oklahoma state procurement registered. Ready for direct state agency contract awards.</p>
+        </div>
+        <div class="card">
+          <div class="tag tag-emerald">Infrastructure</div>
+          <h4>37 Dashboards</h4>
+          <p>Role-based access control serving founders, businesses, providers, patients, attorneys, enforcement, regulators, and federal agencies.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- COMPETITIVE LANDSCAPE -->
+    <div class="section">
+      <div class="section-label">◆ Competitive Positioning</div>
+      <h2>No One Else Is Doing This</h2>
+
+      <table class="data-table">
+        <thead><tr><th>Competitor</th><th>What They Do</th><th>What They Don't Do</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="td-label">Metrc / BioTrack / Leaf Data</td>
+            <td class="td-muted">Seed-to-sale tracking (single data source)</td>
+            <td class="td-value">No camera integration, no GPS correlation, no AI fusion, no multi-source correlation</td>
+          </tr>
+          <tr>
+            <td class="td-label">Palantir</td>
+            <td class="td-muted">Enterprise intelligence for DoD/IC</td>
+            <td class="td-value">No cannabis domain expertise, no Metrc integration, no patient privacy compliance, pricing excludes state agencies</td>
+          </tr>
+          <tr>
+            <td class="td-label">Flock Safety / Motorola</td>
+            <td class="td-muted">LPR cameras and traffic surveillance</td>
+            <td class="td-value">No regulatory compliance layer, no seed-to-sale, no cannabis-specific intelligence</td>
+          </tr>
+          <tr>
+            <td class="td-label">Dutchie / Treez / Jane</td>
+            <td class="td-muted">Cannabis POS and e-commerce</td>
+            <td class="td-value">No enforcement tools, no camera feeds, no transport tracking, no sensor fusion</td>
+          </tr>
+          <tr style="background: rgba(6,182,212,0.04);">
+            <td class="td-label" style="font-size:14px;"><strong>GGHP-OS Eagle Eye</strong></td>
+            <td class="td-value" colspan="2">The only platform that combines seed-to-sale + camera feeds + GPS tracking + GIS mapping + LPR + lab data + financial monitoring + OSINT into a single AI-correlated intelligence layer with court-admissible audit trails.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- DEVELOPMENT ROADMAP -->
+    <div class="section">
+      <div class="section-label">◆ Development Roadmap</div>
+      <h2>Three-Phase Build Plan</h2>
+
+      <div class="card-grid-3">
+        <div class="card" style="border-top: 3px solid var(--cyan);">
+          <div class="tag tag-cyan">Phase 1 — Months 1–6</div>
+          <h4>Foundation &amp; First State</h4>
+          <p style="margin-top: 8px;">
+            • Camera feed ingestion (RTSP/ONVIF)<br>
+            • Fleet GPS/AVL connector<br>
+            • GIS mapping layer with facility overlay<br>
+            • L.A.R.R.Y correlation engine v2<br>
+            • Enhanced Enforcement Dashboard<br>
+            • First state pilot (Oklahoma)
+          </p>
+        </div>
+        <div class="card" style="border-top: 3px solid var(--emerald);">
+          <div class="tag tag-emerald">Phase 2 — Months 6–12</div>
+          <h4>Multi-State &amp; Traffic Module</h4>
+          <p style="margin-top: 8px;">
+            • LPR integration at facility checkpoints<br>
+            • Traffic camera feed connector<br>
+            • Drone imagery ingestion pipeline<br>
+            • OSINT aggregation engine<br>
+            • Cross-state correlation<br>
+            • Traffic Surveillance module launch<br>
+            • 5 state deployments
+          </p>
+        </div>
+        <div class="card" style="border-top: 3px solid var(--gold);">
+          <div class="tag tag-gold">Phase 3 — Months 12–18</div>
+          <h4>Federal &amp; Enterprise Scale</h4>
+          <p style="margin-top: 8px;">
+            • Federal anonymized intelligence feed<br>
+            • Zero-knowledge compliance proofs<br>
+            • Insurance risk analytics API<br>
+            • Predictive diversion modeling<br>
+            • FedRAMP pathway<br>
+            • National scale (10+ states)<br>
+            • $10M+ ARR target
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- PATENT PROTECTION -->
+    <div class="section">
+      <div class="section-label">◆ Defensibility</div>
+      <h2>Patent-Protected Competitive Moats</h2>
+      <p class="lead">Three interlocking patents create a defensive IP fortress around Eagle Eye's core capabilities.</p>
+
+      <div class="card-grid-3">
+        <div class="card">
+          <div class="tag tag-gold">USPTO 64/012,230</div>
+          <h4>The Reg System</h4>
+          <p>Protects the multi-sided regulatory infrastructure that connects all stakeholders. This IS the Eagle Eye architecture patent — the legal framework for correlating data across operator, regulator, enforcement, and federal roles.</p>
+        </div>
+        <div class="card">
+          <div class="tag tag-gold">USPTO 64/017,726</div>
+          <h4>Recency Index</h4>
+          <p>Protects temporal correlation — the ability to determine when events happened relative to each other. Critical for transport timeline analysis, weight discrepancy timing, and "was the driver impaired at the time of the deviation?" questions.</p>
+        </div>
+        <div class="card">
+          <div class="tag tag-gold">USPTO 64/016,698</div>
+          <h4>Closed-Loop Credit</h4>
+          <p>Protects the financial tracking layer. Care Wallet transactions create a closed-loop financial data stream that reveals transaction patterns no open banking system can see — the financial intelligence layer of Eagle Eye.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLOSING -->
+    <div class="forest-box" style="margin-top: 48px;">
+      <h3>The Platform Is Already Built. Eagle Eye Is the Next Evolution.</h3>
+      <p>GGHP-OS has 62,669 lines of production code, 37 role-based dashboards, 15 live integrations, validated Metrc Production API access, and 3 patent applications protecting the core architecture. Eagle Eye doesn't require building a new platform — it requires expanding the sensor inputs and enhancing the correlation engine that already exists.</p>
+      <p>This is the <strong>Palantir of cannabis</strong> — but purpose-built, legally grounded, consent-based, and accessible to state agencies at a fraction of the cost.</p>
+      <p style="margin-top: 16px; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold);">
+        Global Green Enterprise Inc. · SAM.gov Active (CAGE: 9KXZ2) · WOSB Certified · BBB A+ · Metrc Validated Integrator · LOT Network Member
+      </p>
+    </div>
+
+    <p style="font-size:12px; color:var(--slate-400); font-style:italic; text-align:center; margin-top:48px; line-height:1.8;">This document is a strategic product expansion brief intended for internal planning and qualified investor review. It does not constitute an offer to sell or solicitation of securities.</p>
+
+  </main>
+
+  <!-- ═══ CONTACT ═══ -->
+  <div class="contact-bar">
+    <div>
+      <h3>Schedule a Platform Briefing</h3>
+      <p>Available for demos, architecture walkthroughs, and partnership discussions.</p>
+    </div>
+    <div class="contact-methods">
+      <a href="tel:18889634447">📞 1-888-963-4447</a>
+      <a href="tel:14054927297">📱 (405) 492-7297</a>
+      <a href="mailto:founder@ggp-os.com">✉️ founder@ggp-os.com</a>
+    </div>
+  </div>
+
+  <footer class="legal-footer">
+    <strong>© 2026 Global Green Enterprise Inc. All rights reserved.</strong><br>
+    CAGE: 9KXZ2 &nbsp;|&nbsp; UEI: TY1BQ3XK3925 &nbsp;|&nbsp; WOSB Certified &nbsp;|&nbsp; SAM.gov Active &nbsp;|&nbsp; BBB A+ Rated &nbsp;|&nbsp; LOT Network Member
+  </footer>
+
+</body>
+</html>
