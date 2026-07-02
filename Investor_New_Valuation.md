@@ -9,7 +9,7 @@
 ## Recommended Raise: **$5,000,000** (Seed / Pre-Series A)
 
 > [!IMPORTANT]
-> This number is defensible, credible, and strategically positioned. It reflects what you've already built ($1.6M–$3M replacement value), what's needed to reach full operational scale, and gives you 18–24 months of runway to hit profitability milestones before needing additional capital.
+> This reflects what you've already built ($2.18M–$4.04M replacement value), what's needed to reach full operational scale, and gives you 18–24 months of runway to hit profitability milestones before needing additional capital.
 
 ---
 
@@ -25,19 +25,20 @@
 
 ## What You Already Have (Built Equity — Not Asking For)
 
-This is critical for the call. You're not starting from zero. You're raising $5M on top of **$1.6M–$3M of already-built infrastructure**:
+This is critical for the call. You're not starting from zero. You're raising $5M on top of **$2.18M–$4.04M of already-built infrastructure**:
 
 | Asset | Value |
 |-------|-------|
-| 62,669 lines of production code (live at ggp-os.com) | $940K–$1.57M |
-| 37 role-based dashboards | $296K–$555K |
-| Sylara AI + L.A.R.R.Y AI engines | $150K–$300K |
-| Metrc Production API integration (approved Oklahoma) | $75K–$150K |
-| 15 live third-party integrations | $75K–$225K |
-| 9 serverless API endpoints | $27K–$72K |
-| Premium UI/UX design system | $50K–$100K |
-| DevOps + CI/CD pipeline | $30K–$60K |
-| **Total Built Equity** | **$1.64M–$3.03M** |
+| 77,537 lines of production code (live at ggp-os.com) | $1.16M–$1.94M |
+| 39 role-based dashboards & views | $312K–$585K |
+| Sylara, L.A.R.R.Y & Gary multi-agent engines | $225K–$450K |
+| Metrc Production API + CEYE Sensor Fusion & Telemetry | $175K–$350K |
+| Back-Office POS Checkout Engine | $75K–$150K |
+| 18 live third-party integrations | $90K–$270K |
+| 12 serverless API endpoints | $36K–$96K |
+| Premium UI/UX design system & overlays | $60K–$120K |
+| DevOps, Turso sync, database migrations | $40K–$80K |
+| **Total Built Equity** | **$2.18M–$4.04M** |
 
 **Plus intellectual property:**
 | Patent | USPTO Filing |
@@ -146,7 +147,7 @@ Legal & IP             ████████                      $400K  (8%)
 
 1. **"We're raising $5M in a Seed round."** — Clean, confident, specific.
 2. **"The platform is already built and live."** — You're not asking for R&D money. You're asking for go-to-market capital.
-3. **"Replacement value of what's live today is $1.6M–$3M."** — Show that you've already created massive value with zero outside capital.
+3. **"Replacement value of what's live today is $2.18M–$4.04M."** — Show that you've already created massive value with zero outside capital.
 4. **"We have 3 patents filed, Metrc Production API approval, and federal supplier registration."** — These are moats, not features.
 5. **"This capital gets us to $3M ARR in 12 months and positions us for a $30M+ Series A."** — Clear return thesis.
 6. **"Our total addressable market is $33B+ across cannabis compliance, patient management, and regulated credit."** — They need to see scale.

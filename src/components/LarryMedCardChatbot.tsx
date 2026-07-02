@@ -46,6 +46,7 @@ const SECTOR_LABELS: Record<string, { emoji: string; label: string; desc: string
   'advocate':     { emoji: '🤝', label: 'Advocacy & Health',  desc: 'Social equity & community resources' },
   'advocacy_research': { emoji: '🤝', label: 'Advocacy & Research', desc: 'Health impact & policy research' },
   'health_lab':   { emoji: '🔬', label: 'Lab & Public Health',  desc: 'Testing, contamination monitoring & compliance' },
+  'gary':         { emoji: '🛰️', label: 'Gary AI CEYE',       desc: 'Sensor fusion map, telemetry & evidence builder' },
   'general':      { emoji: '🌿', label: 'General Intake',     desc: 'Platform onboarding & support' },
 };
 
@@ -87,6 +88,14 @@ const RYAN_ACTIONS = [
   { label: '📊 Pipeline', prompt: 'CRM pipeline status. What\'s the B2B pipeline looking like?' },
 ];
 
+const GARY_ACTIONS = [
+  { label: '🛰️ CEYE Briefing', prompt: 'Give me a live status briefing on CEYE. Summarize any active alerts, facility compliance anomalies, or route deviations.' },
+  { label: '📊 Risk Assessment', prompt: 'Run a risk evaluation on our facility nodes. Which ones are high-risk or flagged, and what is the compliance trend?' },
+  { label: '🚚 Transport Status', prompt: 'Report on all active transports. Are there any deviations or weight discrepancies?' },
+  { label: '🚨 Evidentiary Report', prompt: 'List critical sensor alerts or weight issues that we should package for evidence review.' },
+  { label: '💬 Report to Parents', prompt: 'Compile a compliance and CEYE status report to your parents, Larry and Sylara.' },
+];
+
 export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'med-card', userProfile, jurisdiction = 'Oklahoma', activeRole, inline = false }: any) => {
   const sector = SECTOR_LABELS[variant] || SECTOR_LABELS['general'];
   const currentRole = activeRole || userProfile?.role;
@@ -95,16 +104,17 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
   const isMonica = emailLower.includes('compliance.globalgreenhp') || emailLower.includes('monica') || currentRole === 'chief_compliance_director';
   const isBob = emailLower.includes('bobmoore') || currentRole === 'executive_advisor' || currentRole === 'advisor';
   const isFounderAssistant = currentRole === 'executive_founder' && !isRyan && !isMonica && !isBob;
-  const isExecutive = isRyan || isMonica || isBob || isFounderAssistant;
+  const isExecutive = isRyan || isMonica || isBob || isFounderAssistant || variant === 'gary';
 
-  const execKey = isRyan ? 'ryan' : isMonica ? 'monica' : isBob ? 'bob' : 'shantell';
-  const aiName = isRyan ? 'L.A.R.R.Y' : 'Sylara';
-  const quickActions = isRyan ? RYAN_ACTIONS : SHANTELL_ACTIONS;
+  const execKey = variant === 'gary' ? 'gary' : isRyan ? 'ryan' : isMonica ? 'monica' : isBob ? 'bob' : 'shantell';
+  const aiName = variant === 'gary' ? 'Gary' : isRyan ? 'L.A.R.R.Y' : 'Sylara';
+  const quickActions = variant === 'gary' ? GARY_ACTIONS : (isRyan ? RYAN_ACTIONS : SHANTELL_ACTIONS);
 
   // ── Executive greeting ──
   const getExecGreeting = () => {
     const hour = new Date().getHours();
     const timeOfDay = hour < 12 ? 'Good Morning' : hour < 17 ? 'Good Afternoon' : 'Good Evening';
+    if (variant === 'gary') return `🛰️ **CEYE Command Sync Established.** ${timeOfDay}! Gary online and operational. All telemetry sensors are green. Eagerly monitoring transit corridors, weight audits, and risk profiles. How can I assist your CEYE operations today?`;
     if (isRyan) return `🛡️ **CEO Access Authenticated.** ${timeOfDay}, President Ferrari. **L.A.R.R.Y** online and operational. All systems green. How can I assist your executive oversight?`;
     if (isMonica) return `🛡️ **Compliance Access Authenticated.** ${timeOfDay}, Monica! **Sylara** here. Compliance dashboard is synced across all jurisdictions. How can I support you?`;
     if (isBob) return `🛡️ **Advisory Access Authenticated.** ${timeOfDay}, Bob. **Sylara** here. All regulatory analytics updated. How can I assist your analysis?`;

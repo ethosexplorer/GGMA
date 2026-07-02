@@ -3,9 +3,10 @@ import {
   Eye, Shield, AlertTriangle, Building2, Truck, Camera, FileCheck, BarChart3,
   MapPin, Bell, Clock, Users, Zap, Radio, Target, Lock, Wifi, Activity,
   ChevronRight, ExternalLink, Search, Filter, Download, RefreshCw,
-  CheckCircle2, XCircle, TrendingUp, TrendingDown, ArrowUpRight, Layers
+  CheckCircle2, XCircle, TrendingUp, TrendingDown, ArrowUpRight, Layers, Bot
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { LarryMedCardChatbot } from '../LarryMedCardChatbot';
 
 // ═══════════════════════════════════════════════════
 // CEYE — Command Enforcement Yield Ecosystem
@@ -86,6 +87,7 @@ const CEYE_TABS = [
   { id: 'cameras', label: 'Cameras', icon: Camera },
   { id: 'evidence', label: 'Evidence', icon: FileCheck },
   { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+  { id: 'gary', label: 'Gary AI', icon: Bot },
 ];
 
 export const CEYECommandCenter: React.FC<CEYEProps> = ({ role = 'founder', compact = false }) => {
@@ -805,6 +807,11 @@ export const CEYECommandCenter: React.FC<CEYEProps> = ({ role = 'founder', compa
         {activeTab === 'cameras' && renderCameras()}
         {activeTab === 'evidence' && renderEvidence()}
         {activeTab === 'analytics' && renderAnalytics()}
+        {activeTab === 'gary' && (
+          <div className="bg-[#0b1324] rounded-3xl border border-cyan-900/30 overflow-hidden shadow-2xl max-w-4xl mx-auto" style={{ height: '650px' }}>
+            <LarryMedCardChatbot variant="gary" inline={true} activeRole={role} />
+          </div>
+        )}
       </div>
     </div>
   );
