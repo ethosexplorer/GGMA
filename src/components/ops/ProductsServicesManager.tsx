@@ -848,7 +848,6 @@ export const ProductsServicesManager = () => {
                           {/* Expanded Details Breakdown */}
                           {expandedDetail === product.id && (() => {
                             const relevantAddons = getRelevantAddons(product);
-                            const totalAddonCount = relevantAddons.reduce((s, g) => s + g.addons.length, 0);
 
                             // Elevator pitch generator
                             const getElevatorPitch = (): string => {
@@ -903,22 +902,17 @@ export const ProductsServicesManager = () => {
                                   {/* Add-ons */}
                                   {relevantAddons.length > 0 && (
                                     <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm mb-4">
-                                      <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-3">Available Add-ons / Modules ({totalAddonCount})</p>
-                                      {relevantAddons.map((group, gi) => (
-                                        <div key={gi} className={gi > 0 ? 'mt-3 pt-3 border-t border-slate-100' : ''}>
-                                          <p className="text-[10px] font-black text-indigo-600 uppercase mb-2">{group.label}</p>
-                                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                            {group.addons.map(addon => (
-                                              <div key={addon.id} className="flex justify-between items-center bg-slate-50 rounded-lg px-3 py-1.5 border border-slate-100">
-                                                <span className="text-xs text-slate-700 font-medium">{addon.name}</span>
-                                                <span className="text-xs font-bold text-slate-800 whitespace-nowrap ml-2">
-                                                  {addon.price === 'Custom' ? 'Custom' : addon.price === 0 ? 'FREE' : `$${addon.price}`}{addon.per ? `/${addon.per}` : '/mo'}
-                                                </span>
-                                              </div>
-                                            ))}
+                                      <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-3">Available Add-ons / Modules ({relevantAddons.length})</p>
+                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                        {relevantAddons.map(addon => (
+                                          <div key={addon.id} className="flex justify-between items-center bg-slate-50 rounded-lg px-3 py-1.5 border border-slate-100">
+                                            <span className="text-xs text-slate-700 font-medium">{addon.name}</span>
+                                            <span className="text-xs font-bold text-slate-800 whitespace-nowrap ml-2">
+                                              {addon.price === 'Custom' ? 'Custom' : addon.price === 0 ? 'FREE' : `$${addon.price}`}{addon.per ? `/${addon.per}` : '/mo'}
+                                            </span>
                                           </div>
-                                        </div>
-                                      ))}
+                                        ))}
+                                      </div>
                                     </div>
                                   )}
 

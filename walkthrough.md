@@ -78,3 +78,28 @@ To comply with the Metrc Bulletin 243 requirements regarding package sizes, we s
   * **Changes**: Enhanced the Inventory Packages tab table row to display both the current package weight and the Metrc-compliant original package size:
     `{pkg.weight} Grams (Original: {pkg.original_quantity || pkg.weight} {pkg.original_unit_of_measure_abbreviation || 'g'})`
 
+---
+
+## 7. B2B/B2C Estimate Calculator, Phone POS Checkout & Products & Services Dashboard
+
+We successfully integrated a comprehensive **B2B/B2C Estimate Calculator** and **Phone POS Checkout** flow, rendered within the **Products & Services** tab in both the **Admin Dashboard** and **Operations Dashboard**:
+
+* **Modified Files**:
+  * 📂 [AdminDashboard.tsx](file:///c:/GGMA/GGMA/src/pages/AdminDashboard.tsx)
+  * 📂 [OperationsDashboard.tsx](file:///c:/GGMA/GGMA/src/pages/OperationsDashboard.tsx)
+  * 📂 [ProductsServicesManager.tsx](file:///c:/GGMA/GGMA/src/components/ops/ProductsServicesManager.tsx)
+* **Features & Integration**:
+  * **Unified Product Catalog**: Displays all GGP-OS product categories, subscription plans, tiers, and add-ons sourced dynamically from `subscriptionPlans.ts`.
+  * **Interactive Estimate Builder**: Selecting a plan loads the interactive calculator on the right, allowing real-time adjustment of custom plan prices, billing cycle toggle (monthly/annual), and auto-filtering relevant add-ons/modules based on user type.
+  * **B2B Discount Automation**: Dynamically applies a 30% first-month introductory discount to B2B/Business plan base prices when on a monthly cycle.
+  * **Phone POS Checkout**: Reps can enter customer billing info and key in card data over the phone. Executing the order writes transaction details to the Turso SQLite database and automatically provisions active subscriber accounts inside Firebase Auth and Firestore with appropriate roles.
+  * **Sales Scripts & Memorandums**: Generates copyable scripts for call center reps and comprehensive editable service contracts (Memorandums of Agreement) for client review.
+
+---
+
+## 8. TypeScript & Compilation Verification
+
+* Checked the syntax and typing of all modified files.
+* Ran: `npx tsc --noEmit`
+* Result: **Successful compilation** with zero errors or warnings.
+
