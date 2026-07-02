@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, LayoutDashboard, Globe, Activity, Shield, DollarSign, Scale, Sparkles, FileText, BookOpen, Lock, CreditCard, Gavel, AlertTriangle, CircleCheck, Search, Edit2, X, Eye } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { FederalOverviewTab } from '../components/federal/FederalOverviewTab';
@@ -17,6 +17,7 @@ import { JudicialMonitorTab } from '../components/federal/JudicialMonitorTab';
 import { UserCalendar } from '../components/UserCalendar';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 import { CEYECommandCenter } from '../components/ceye/CEYECommandCenter';
+import { StateJurisdictionSelector } from '../components/shared/StateJurisdictionSelector';
 const tabs = [
   { id: 'overview', label: 'Nationwide Overview', icon: LayoutDashboard, tier: 'basic' },
   { id: 'intel', label: 'Legislative Intel', icon: BookOpen, tier: 'basic' },
@@ -40,6 +41,11 @@ export const FederalDashboard = ({ onLogout, user }: { onLogout?: () => void, us
   const [pin, setPin] = useState('');
   const [tier, setTier] = useState<'basic' | 'pro' | 'custom'>('custom');
   const [liveAction, setLiveAction] = useState<any>(null);
+  const [fedJurisdiction, setFedJurisdiction] = useState(() => localStorage.getItem('federal_jurisdiction') || 'All States Active');
+
+  useEffect(() => {
+    localStorage.setItem('federal_jurisdiction', fedJurisdiction);
+  }, [fedJurisdiction]);
 
   React.useEffect(() => {
     const handleLiveAction = async (e: any) => {
@@ -94,6 +100,14 @@ export const FederalDashboard = ({ onLogout, user }: { onLogout?: () => void, us
             <option value="pro">Pro Tier</option>
             <option value="custom">Custom Tier</option>
           </select>
+          <StateJurisdictionSelector
+            value={fedJurisdiction}
+            onChange={setFedJurisdiction}
+            variant="dark"
+            showMetadata={false}
+            compact={true}
+            label="Filter"
+          />
           
           <div className="flex items-center gap-3">
           <span className="text-[10px] font-bold text-emerald-400 bg-emerald-900/30 px-2.5 py-1 rounded-full border border-emerald-800/30 flex items-center gap-1">

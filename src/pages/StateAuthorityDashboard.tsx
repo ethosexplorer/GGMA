@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShadowOverlay } from '../components/shared/ShadowOverlay';
 import { Calendar, Building2, ShieldCheck, Landmark, FileCheck, DollarSign, Activity, 
   Map as MapIcon, Settings, Download, Search, AlertCircle, FileText, XCircle,
@@ -10,6 +10,8 @@ import { PublicHealthDashboard } from './PublicHealthDashboard';
 import { SubscriptionPortal } from '../components/SubscriptionPortal';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 import { CEYECommandCenter } from '../components/ceye/CEYECommandCenter';
+import { StateJurisdictionSelector } from '../components/shared/StateJurisdictionSelector';
+import { STATE_REGULATORY_MAP } from '../lib/stateRegulatory';
 
 export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
   const [activeTab, setActiveTab] = useState('legal_oversight');
@@ -17,12 +19,19 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
   const [isUnlocked, setIsUnlocked] = useState(true);
   const [pin, setPin] = useState('');
   const [tier, setTier] = useState<'basic' | 'pro' | 'custom'>('pro');
+  const [stateJurisdiction, setStateJurisdiction] = useState(() => localStorage.getItem('state_authority_jurisdiction') || 'Oklahoma');
+
+  useEffect(() => {
+    localStorage.setItem('state_authority_jurisdiction', stateJurisdiction);
+  }, [stateJurisdiction]);
+
+  const stateData = stateJurisdiction !== 'All States Active' ? STATE_REGULATORY_MAP[stateJurisdiction] : null;
 
   const tierLevels = { basic: 1, pro: 2, custom: 3 };
   const hasAccess = (requiredTier: string) => tierLevels[tier] >= tierLevels[requiredTier as keyof typeof tierLevels];
   
   const getRoleTitle = () => user?.role === 'regulator_state' ? 'Marijuana Authority' : 'Regulator Authority';
-  const getJurisdiction = () => 'STATE JURISDICTION';
+  const getJurisdiction = () => stateData ? `${stateData.abbr} — ${stateData.licensingAuthority}` : 'ALL JURISDICTIONS';
 
   const renderLegalOversight = () => (
     <div className="space-y-6 animate-in fade-in duration-500">
@@ -250,6 +259,14 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
               <p className="text-[10px] text-indigo-400 font-black uppercase tracking-widest">{getJurisdiction()}</p>
             </div>
           </div>
+          <StateJurisdictionSelector
+            value={stateJurisdiction}
+            onChange={setStateJurisdiction}
+            variant="dark"
+            showMetadata={true}
+            compact={true}
+            label="State"
+          />
           <select value={tier} onChange={(e) => setTier(e.target.value as any)} className="w-full mt-4 bg-slate-900 border border-slate-700 text-slate-300 text-xs px-3 py-2 rounded-xl outline-none">
             <option value="basic">Basic Tier</option>
             <option value="pro">Pro Tier</option>

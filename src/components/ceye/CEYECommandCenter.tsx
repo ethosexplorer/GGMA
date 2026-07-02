@@ -7,6 +7,8 @@ import {
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { LarryMedCardChatbot } from '../LarryMedCardChatbot';
+import { StateJurisdictionSelector } from '../shared/StateJurisdictionSelector';
+import { STATE_REGULATORY_MAP, getTraceabilityBadgeColor } from '../../lib/stateRegulatory';
 
 // ═══════════════════════════════════════════════════
 // CEYE — Command Enforcement Yield Ecosystem
@@ -97,7 +99,22 @@ export const CEYECommandCenter: React.FC<CEYEProps> = ({ role = 'founder', compa
   const [selectedEvidence, setSelectedEvidence] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
   const [mapPulse, setMapPulse] = useState(0);
+  const [activeJurisdiction, setActiveJurisdiction] = useState(() => localStorage.getItem('ceye_jurisdiction') || 'All States Active');
   const alertIntervalRef = useRef<any>(null);
+
+  // Persist jurisdiction selection
+  useEffect(() => {
+    localStorage.setItem('ceye_jurisdiction', activeJurisdiction);
+  }, [activeJurisdiction]);
+
+  // Filter facilities by selected state
+  const stateData = activeJurisdiction !== 'All States Active' ? STATE_REGULATORY_MAP[activeJurisdiction] : null;
+  const filteredFacilities = activeJurisdiction === 'All States Active'
+    ? FACILITIES
+    : FACILITIES.filter(f => f.state === (stateData?.abbr || ''));
+  const filteredTransports = activeJurisdiction === 'All States Active'
+    ? TRANSPORTS
+    : TRANSPORTS; // Transports shown for all (cross-state logistics)
 
   // Generate rolling alerts
   useEffect(() => {
@@ -749,6 +766,15 @@ export const CEYECommandCenter: React.FC<CEYEProps> = ({ role = 'founder', compa
               </div>
             </div>
             <div className="flex items-center gap-3">
+              {/* ═══ STATE JURISDICTION SELECTOR ═══ */}
+              <StateJurisdictionSelector
+                value={activeJurisdiction}
+                onChange={setActiveJurisdiction}
+                variant="dark"
+                showMetadata={false}
+                compact={false}
+                label="Jurisdiction"
+              />
               <div className="text-right mr-2">
                 <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">View Mode</p>
                 <p className="text-xs font-bold text-white capitalize">{role.replace('_', ' ')}</p>
@@ -767,6 +793,25 @@ export const CEYECommandCenter: React.FC<CEYEProps> = ({ role = 'founder', compa
               </div>
             </div>
           </div>
+
+          {/* ═══ ACTIVE JURISDICTION METADATA BAR ═══ */}
+          {stateData && (
+            <div className="flex items-center gap-3 mt-3 px-1">
+              <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Active:</span>
+              <span className={cn('px-2 py-0.5 rounded-lg border text-[9px] font-black uppercase tracking-wider', getTraceabilityBadgeColor(stateData.traceabilitySystem))}>
+                {stateData.traceabilitySystem}
+              </span>
+              <span className="text-[10px] font-bold text-slate-400">{stateData.licensingAuthority}</span>
+              <span className="text-slate-700">•</span>
+              <span className="text-[10px] font-bold text-slate-500">Tax: {stateData.taxRate}</span>
+              <span className="text-slate-700">•</span>
+              <div className="flex items-center gap-1.5">
+                {stateData.activeVerticals.map((v, i) => (
+                  <span key={i} className="px-1.5 py-0.5 rounded-md bg-white/5 border border-white/10 text-[8px] font-black text-slate-400 uppercase tracking-wider">{v}</span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -809,7 +854,7 @@ export const CEYECommandCenter: React.FC<CEYEProps> = ({ role = 'founder', compa
         {activeTab === 'analytics' && renderAnalytics()}
         {activeTab === 'gary' && (
           <div className="bg-[#0b1324] rounded-3xl border border-cyan-900/30 overflow-hidden shadow-2xl max-w-4xl mx-auto" style={{ height: '650px' }}>
-            <LarryMedCardChatbot variant="gary" inline={true} activeRole={role} />
+            <LarryMedCardChatbot variant="gary" inline={true} activeRole={role} jurisdiction={activeJurisdiction} />
           </div>
         )}
       </div>

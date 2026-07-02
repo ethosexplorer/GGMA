@@ -4,6 +4,8 @@ import { cn } from '../../lib/utils';
 import { turso } from '../../lib/turso';
 import { getSweepFreshness } from '../../lib/regSweep';
 import { ImportantUpdates } from '../ImportantUpdates';
+import { StateJurisdictionSelector } from '../shared/StateJurisdictionSelector';
+import { STATE_REGULATORY_MAP, getTraceabilityBadgeColor, getCannabisStatusColor } from '../../lib/stateRegulatory';
 import { NationalEnforcementLedger } from '../federal/NationalEnforcementLedger';
 import { RegulatoryCommandCenter } from './RegulatoryCommandCenter';
 import { collection, onSnapshot, query, orderBy, limit } from 'firebase/firestore';
@@ -66,6 +68,14 @@ export const OverviewTab = ({
   const [isSystemFreezeExpanded, setIsSystemFreezeExpanded] = useState(false);
   const [hideSystemFreeze, setHideSystemFreeze] = useState(() => localStorage.getItem('gghp_system_freeze_dismissed') === 'true');
   const [hideAlertQueue, setHideAlertQueue] = useState(() => localStorage.getItem('gghp_alert_queue_dismissed') === 'true');
+  const [overviewJurisdiction, setOverviewJurisdiction] = useState(() => localStorage.getItem('overview_jurisdiction') || 'All States Active');
+
+  // Persist jurisdiction
+  useEffect(() => {
+    localStorage.setItem('overview_jurisdiction', overviewJurisdiction);
+  }, [overviewJurisdiction]);
+
+  const overviewStateData = overviewJurisdiction !== 'All States Active' ? STATE_REGULATORY_MAP[overviewJurisdiction] : null;
 
   // ── ACTIVE USERS PANEL STATE ──
   const [showActiveUsersPanel, setShowActiveUsersPanel] = useState(false);
@@ -428,6 +438,14 @@ export const OverviewTab = ({
             <p className="text-indigo-200 font-medium">Platform state: <span className="text-emerald-400 font-bold">Operational</span> • Registered Trade Name: <span className="text-white font-bold">GLOBAL GREEN HYBRID PLATFORM OPERATING SYSTEM (GGHP-OS)</span></p>
           </div>
           <div className="flex gap-4">
+            <StateJurisdictionSelector
+              value={overviewJurisdiction}
+              onChange={setOverviewJurisdiction}
+              variant="dark"
+              showMetadata={false}
+              compact={false}
+              label="Jurisdiction"
+            />
             <div className={cn("text-center px-6", !isExecutive && "border-r border-white/10")}>
               <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-1">Total Users</p>
               <p className="text-2xl font-black">{liveStats.totalUsers}</p>
@@ -437,6 +455,66 @@ export const OverviewTab = ({
           </div>
         </div>
       </div>
+
+      {/* ═══ MULTI-INDUSTRY JURISDICTION STATUS BAR ═══ */}
+      {overviewStateData && (
+        <div className="bg-gradient-to-r from-slate-900 via-[#0e1a2f] to-slate-900 border border-slate-700/50 rounded-2xl p-5 shadow-xl">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3">
+              <Globe size={16} className="text-indigo-400" />
+              <span className="text-xs font-black text-white uppercase tracking-widest">
+                {overviewStateData.abbr} — {overviewJurisdiction} Regulatory Profile
+              </span>
+            </div>
+            <span className={cn('text-xs font-black', getCannabisStatusColor(overviewStateData.cannabisStatus))}>
+              Cannabis: {overviewStateData.cannabisStatus}
+            </span>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+            <div className="bg-white/5 rounded-xl p-3 border border-white/10">
+              <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Traceability</p>
+              <span className={cn('px-2 py-0.5 rounded-lg border text-[10px] font-black uppercase', getTraceabilityBadgeColor(overviewStateData.traceabilitySystem))}>
+                {overviewStateData.traceabilitySystem}
+              </span>
+            </div>
+            <div className="bg-white/5 rounded-xl p-3 border border-white/10">
+              <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">License Auth</p>
+              <p className="text-xs font-bold text-white">{overviewStateData.licensingAuthority}</p>
+            </div>
+            <div className="bg-white/5 rounded-xl p-3 border border-white/10">
+              <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Tax Rate</p>
+              <p className="text-xs font-bold text-emerald-400">{overviewStateData.taxRate}</p>
+            </div>
+            <div className="bg-white/5 rounded-xl p-3 border border-white/10">
+              <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Alcohol Auth</p>
+              <p className="text-xs font-bold text-amber-400">{overviewStateData.alcoholAuthority}</p>
+            </div>
+            <div className="bg-white/5 rounded-xl p-3 border border-white/10">
+              <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Pharma Board</p>
+              <p className="text-xs font-bold text-cyan-400">{overviewStateData.pharmaBoard}</p>
+            </div>
+            <div className="bg-white/5 rounded-xl p-3 border border-white/10">
+              <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Industry Verticals</p>
+              <div className="flex flex-wrap gap-1">
+                {overviewStateData.activeVerticals.map((v, i) => (
+                  <span key={i} className="px-1.5 py-0.5 rounded-md bg-indigo-500/15 text-indigo-400 border border-indigo-500/20 text-[8px] font-black uppercase">{v}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-4 mt-3 pt-3 border-t border-white/10">
+            <span className={cn('text-[10px] font-bold', overviewStateData.medicalQualifying ? 'text-emerald-400' : 'text-slate-600')}>
+              {overviewStateData.medicalQualifying ? '✅ Medical Program' : '❌ No Medical Program'}
+            </span>
+            <span className={cn('text-[10px] font-bold', overviewStateData.reciprocity ? 'text-cyan-400' : 'text-slate-600')}>
+              {overviewStateData.reciprocity ? '✅ Reciprocity' : '❌ No Reciprocity'}
+            </span>
+            <span className={cn('text-[10px] font-bold', overviewStateData.hempProgram ? 'text-emerald-400' : 'text-slate-600')}>
+              {overviewStateData.hempProgram ? '✅ Hemp Program' : '❌ No Hemp Program'}
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* EMERGENCY BROADCAST COMMAND */}
       <div className="bg-red-50 border-2 border-red-200 rounded-3xl p-8 shadow-xl relative overflow-hidden group">

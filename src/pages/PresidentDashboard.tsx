@@ -35,6 +35,7 @@ import { CallCenterCommandTab } from '../components/telephony/CallCenterCommandT
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 import { ExecutiveCRM } from '../components/crm/ExecutiveCRM';
 import { CEYECommandCenter } from '../components/ceye/CEYECommandCenter';
+import { StateJurisdictionSelector } from '../components/shared/StateJurisdictionSelector';
 import { VirtualAttendantTab } from '../components/oversight/VirtualAttendantTab';
 import { GlobalDirectoryTab } from '../components/founder/GlobalDirectoryTab';
 import { PatientCaseTracker } from '../components/patient/PatientCaseTracker';
@@ -87,6 +88,11 @@ const INTERNAL_NAV_ITEMS: NavItem[] = [
 
 const PresidentDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => void }) => {
   const [activeTab, setActiveTab] = useState('system_health');
+  const [presJurisdiction, setPresJurisdiction] = useState(() => localStorage.getItem('president_jurisdiction') || 'All States Active');
+
+  useEffect(() => {
+    localStorage.setItem('president_jurisdiction', presJurisdiction);
+  }, [presJurisdiction]);
 
   const [showNotifPanel, setShowNotifPanel] = useState(false);
   const INITIAL_NOTIFICATIONS = [
@@ -446,6 +452,14 @@ const PresidentDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => v
             <span className="px-3 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
                <Bot size={12} /> Larry AI Online
             </span>
+            <StateJurisdictionSelector
+              value={presJurisdiction}
+              onChange={setPresJurisdiction}
+              variant="dark"
+              showMetadata={false}
+              compact={true}
+              label="Jurisdiction"
+            />
             <div className="flex items-center gap-2 mr-2">
               <button data-action-bound="true" onClick={(e) => {
                 e.stopPropagation();

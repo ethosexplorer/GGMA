@@ -43,6 +43,7 @@ import { GGEProcessorTab } from '../components/oversight/GGEProcessorTab';
 import { LaunchScriptTab } from '../components/oversight/LaunchScriptTab';
 import { SupportIntelligenceTab } from '../components/oversight/SupportIntelligenceTab';
 import { RapidRevenueTab } from '../components/crm/RapidRevenueTab';
+import { StateJurisdictionSelector } from '../components/shared/StateJurisdictionSelector';
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
@@ -84,6 +85,11 @@ const INTERNAL_NAV_ITEMS: NavItem[] = [
 
 const ChiefComplianceDirectorDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => void }) => {
   const [activeTab, setActiveTab] = useState('system_health');
+  const [ccJurisdiction, setCcJurisdiction] = useState(() => localStorage.getItem('compliance_jurisdiction') || 'All States Active');
+
+  useEffect(() => {
+    localStorage.setItem('compliance_jurisdiction', ccJurisdiction);
+  }, [ccJurisdiction]);
 
   const [showNotifPanel, setShowNotifPanel] = useState(false);
   const INITIAL_NOTIFICATIONS = [
@@ -441,6 +447,14 @@ const ChiefComplianceDirectorDashboard = ({ user, onLogout }: { user?: any, onLo
             <span className="px-3 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
                <Bot size={12} /> Larry AI Online
             </span>
+            <StateJurisdictionSelector
+              value={ccJurisdiction}
+              onChange={setCcJurisdiction}
+              variant="dark"
+              showMetadata={false}
+              compact={true}
+              label="Jurisdiction"
+            />
             <div className="flex items-center gap-2 mr-2">
               <button data-action-bound="true" onClick={(e) => {
                 e.stopPropagation();

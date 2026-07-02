@@ -9,6 +9,7 @@ import { UserCalendar } from '../components/UserCalendar';
 import { SubscriptionPortal } from '../components/SubscriptionPortal';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 import { CEYECommandCenter } from '../components/ceye/CEYECommandCenter';
+import { StateJurisdictionSelector } from '../components/shared/StateJurisdictionSelector';
 
 const flags = [
   { id: 1, type: 'volume', title: 'Suspicious Volume Anomaly', entity: 'Apex Health LLC', time: 'Just now', severity: 'high', desc: 'Exceeding daily sales limits.' },
@@ -31,6 +32,11 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
   const [isUnlocked, setIsUnlocked] = useState(true);
   const [pin, setPin] = useState('');
   const [tier, setTier] = useState<'basic' | 'pro' | 'custom'>('pro');
+  const [enfJurisdiction, setEnfJurisdiction] = useState(() => localStorage.getItem('enforcement_jurisdiction') || 'All States Active');
+
+  useEffect(() => {
+    localStorage.setItem('enforcement_jurisdiction', enfJurisdiction);
+  }, [enfJurisdiction]);
 
   const tierLevels = { basic: 1, pro: 2, custom: 3 };
   const hasAccess = (requiredTier: string) => tierLevels[tier] >= tierLevels[requiredTier as keyof typeof tierLevels];
@@ -140,6 +146,15 @@ export const EnforcementDashboard = ({ onLogout, user }: { onLogout?: () => void
             <option value="pro">Pro</option>
             <option value="custom">Custom</option>
           </select>
+          <div className="w-px h-8 bg-slate-700 shrink-0" />
+          <StateJurisdictionSelector
+            value={enfJurisdiction}
+            onChange={setEnfJurisdiction}
+            variant="dark"
+            showMetadata={false}
+            compact={true}
+            label="Jurisdiction"
+          />
           <div className="w-px h-8 bg-slate-700 shrink-0" />
           <div className="flex-1 overflow-x-auto scrollbar-hide">
             <div className="flex items-center gap-1 min-w-max">

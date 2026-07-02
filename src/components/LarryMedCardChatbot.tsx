@@ -485,13 +485,34 @@ export const LarryMedCardChatbot = ({ onNavigate, onProfileCreated, variant = 'm
   // ═══ BUILD PLATFORM CONTEXT for AI ═══
   const buildPlatformContext = (): string => {
     const now = new Date();
-    return [
+    const activeState = jurisdiction || 'Oklahoma';
+    const lines = [
       `Current Time: ${now.toLocaleString('en-US', { timeZone: 'America/Chicago' })} CST`,
       `Platform: Global Green Hybrid Platform Operating System (GGHP-OS)`,
       `CRM Records: 24,900+ across 51 jurisdictions`,
       `User making request: ${userProfile?.displayName || userProfile?.email || 'Executive'}`,
       `User role: ${currentRole}`,
-    ].join('\n');
+      `Active Jurisdiction: ${activeState}`,
+    ];
+
+    // Add state-specific regulatory context
+    try {
+      const { STATE_REGULATORY_MAP } = require('../lib/stateRegulatory');
+      const stateData = STATE_REGULATORY_MAP[activeState];
+      if (stateData) {
+        lines.push(`State Cannabis Status: ${stateData.cannabisStatus}`);
+        lines.push(`Traceability System: ${stateData.traceabilitySystem}`);
+        lines.push(`Licensing Authority: ${stateData.licensingAuthority}`);
+        lines.push(`Tax Rate: ${stateData.taxRate}`);
+        lines.push(`Reciprocity: ${stateData.reciprocity ? 'Yes' : 'No'}`);
+        lines.push(`Hemp Program: ${stateData.hempProgram ? 'Active' : 'Inactive'}`);
+        lines.push(`Alcohol Authority: ${stateData.alcoholAuthority}`);
+        lines.push(`Pharmacy Board: ${stateData.pharmaBoard}`);
+        lines.push(`Active Industry Verticals: ${stateData.activeVerticals.join(', ')}`);
+      }
+    } catch {}
+
+    return lines.join('\n');
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
