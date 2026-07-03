@@ -377,9 +377,9 @@
   },
   "partner_affiliate": {
     "freemiusPlanId": "55037",
-    "freemiusPricingId": null,
+    "freemiusPricingId": "72587",
     "title": "Brand Ambassador",
-    "monthly": 0.99,
+    "monthly": 99,
     "annual": 499.9,
     "status": "created"
   },
