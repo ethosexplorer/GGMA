@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Phone, User, Building2, HeartPulse, FileText, CircleCheck, AlertCircle, Shield, MapPin, Mail, Calendar, CreditCard, Loader2, UserPlus, ExternalLink, PhoneIncoming, DollarSign, ClipboardList } from 'lucide-react';
+import { Phone, User, Building2, HeartPulse, FileText, CircleCheck, AlertCircle, Shield, MapPin, Mail, Calendar, CreditCard, Loader2, UserPlus, ExternalLink, PhoneIncoming, DollarSign, ClipboardList, Send } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { turso } from '../../lib/turso';
 import { db } from '../../lib/firebase';
@@ -653,6 +653,34 @@ export const PhoneIntakeForm = () => {
               <button onClick={handlePostPayment} disabled={submitting} className={cn("w-full py-3.5 text-white rounded-xl text-sm font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 mt-4", isPatient ? "bg-emerald-600 hover:bg-emerald-700" : "bg-indigo-600 hover:bg-indigo-700")}>
                 <DollarSign size={16} /> Post Payment to Ledger
               </button>
+
+              {/* Quick Dispatch via Found */}
+              {data.email && (
+                <div className="flex gap-2 mt-3 pt-3 border-t border-slate-200">
+                  <button
+                    onClick={() => {
+                      const clientName = data.firstName ? `${data.firstName} ${data.lastName}` : 'Client';
+                      const amount = paymentForm.amount ? `$${parseFloat(paymentForm.amount.replace(/[^0-9.]/g, '')).toFixed(2)}` : '$102.50';
+                      navigator.clipboard.writeText(`${clientName} — ${data.email} — ${amount} — Medical Card ${data.appType || 'Application'}`);
+                      window.open('https://app.found.com/invoices', '_blank');
+                    }}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-black rounded-xl border border-blue-200 transition-colors"
+                  >
+                    <Send size={14} /> Send Invoice
+                  </button>
+                  <button
+                    onClick={() => {
+                      const clientName = data.firstName ? `${data.firstName} ${data.lastName}` : 'Client';
+                      const amount = paymentForm.amount ? `$${parseFloat(paymentForm.amount.replace(/[^0-9.]/g, '')).toFixed(2)}` : '$102.50';
+                      navigator.clipboard.writeText(`${clientName} — ${data.email} — ${amount} — Medical Card ${data.appType || 'Application'}`);
+                      window.open('https://app.found.com/invoices', '_blank');
+                    }}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-black rounded-xl border border-emerald-200 transition-colors"
+                  >
+                    <DollarSign size={14} /> Request for Pay
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -862,6 +890,34 @@ export const PhoneIntakeForm = () => {
               <button onClick={handlePostPayment} disabled={submitting} className={cn("w-full py-3.5 text-white rounded-xl text-sm font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 mt-4", isPatient ? "bg-emerald-600 hover:bg-emerald-700" : "bg-indigo-600 hover:bg-indigo-700")}>
                 <DollarSign size={16} /> Post Payment to Ledger
               </button>
+
+              {/* Quick Dispatch via Found */}
+              {data.email && (
+                <div className="flex gap-2 mt-3 pt-3 border-t border-slate-200">
+                  <button
+                    onClick={() => {
+                      const clientName = data.businessName || `${data.firstName} ${data.lastName}`;
+                      const amount = paymentForm.amount ? `$${parseFloat(paymentForm.amount.replace(/[^0-9.]/g, '')).toFixed(2)}` : '$249.00';
+                      navigator.clipboard.writeText(`${clientName} — ${data.email} — ${amount} — ${data.businessType || 'Business'} License`);
+                      window.open('https://app.found.com/invoices', '_blank');
+                    }}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-black rounded-xl border border-blue-200 transition-colors"
+                  >
+                    <Send size={14} /> Send Invoice
+                  </button>
+                  <button
+                    onClick={() => {
+                      const clientName = data.businessName || `${data.firstName} ${data.lastName}`;
+                      const amount = paymentForm.amount ? `$${parseFloat(paymentForm.amount.replace(/[^0-9.]/g, '')).toFixed(2)}` : '$249.00';
+                      navigator.clipboard.writeText(`${clientName} — ${data.email} — ${amount} — ${data.businessType || 'Business'} License`);
+                      window.open('https://app.found.com/invoices', '_blank');
+                    }}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-black rounded-xl border border-emerald-200 transition-colors"
+                  >
+                    <DollarSign size={14} /> Request for Pay
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>

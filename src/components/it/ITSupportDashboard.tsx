@@ -95,7 +95,7 @@ export const ITSupportDashboard = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {[
-            { id: 1, name: 'Authorize.net Payments Processing', active: true, desc: 'Controls whether users can buy tokens or subscribe.' },
+            { id: 1, name: 'Found Invoice & Freemius Payments', active: true, desc: 'Controls whether users can buy tokens or subscribe.' },
             { id: 2, name: 'Native Browser PDF Generation', active: true, desc: 'If false, disables form submissions globally.' },
             { id: 3, name: 'Metrc Production Syncing', active: true, desc: 'Controls automatic syncing of inventory logs to Metrc.' },
             { id: 4, name: 'L.A.R.R.Y AI Overrides', active: false, desc: 'Experimental: allows AI to automatically resolve compliance flags.' },

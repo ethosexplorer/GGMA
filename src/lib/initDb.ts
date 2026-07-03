@@ -118,7 +118,7 @@ export const initDatabase = async () => {
     if (payablesCheck.rows[0].count === 0) {
       const seeds = [
         { name: 'Metrc Monthly API License', amount: '$250.00', due_date: '2026-06-15', status: 'Unpaid', color: 'bg-amber-500' },
-        { name: 'Stripe Payment Processing Invoice', amount: '$1,200.00', due_date: '2026-06-10', status: 'Paid', color: 'bg-emerald-600' },
+        { name: 'Found Invoice Payment Processing', amount: '$1,200.00', due_date: '2026-06-10', status: 'Paid', color: 'bg-emerald-600' },
         { name: 'Twilio Telephony & Voice Bundle', amount: '$450.00', due_date: '2026-06-20', status: 'Pending', color: 'bg-indigo-600' }
       ];
       for (const item of seeds) {

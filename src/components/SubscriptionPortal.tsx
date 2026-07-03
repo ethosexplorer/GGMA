@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-// Stripe removed — using Authorize.net
+ï»¿import React, { useState } from 'react';
+// Stripe removed ï¿½ using Authorize.net
 import { CreditCard, Shield, Settings, Zap, FileText, Plus, Sparkles, ArrowRight, Check, ChevronDown, ChevronUp, CircleCheck, X, AlertTriangle, Search, Edit2 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { getAllPlansForLookup, getAllAddonsForLookup, AddOn, getAddOnsForRole } from '../lib/subscriptionPlans';
@@ -178,7 +178,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
                          <p className="text-xs text-slate-500">Visa ending in 4242</p>
                        </div>
                      </div>
-                     <button onClick={() => { const newCard = prompt('Enter new 16-digit card number (Authorize.net Checkout Simulation):'); if(newCard && newCard.length > 10) triggerLiveAction('Payment Method Updated', 'Your card ending in ' + newCard.slice(-4) + ' has been securely validated and tokenized via Authorize.net.', 'success'); }} className="text-[#1a4731] text-sm font-bold cursor-pointer hover:underline">Update</button>
+                     <button onClick={() => { const newCard = prompt('Enter new 16-digit card number (Found Invoice Portal):'); if(newCard && newCard.length > 10) triggerLiveAction('Payment Method Updated', 'Your card ending in ' + newCard.slice(-4) + ' has been securely validated and recorded via Found Invoice.', 'success'); }} className="text-[#1a4731] text-sm font-bold cursor-pointer hover:underline">Update</button>
                   </div>
                   
                   <div className="flex items-center justify-between p-4 border border-slate-100 rounded-xl hover:bg-slate-50 transition-colors">
@@ -273,7 +273,7 @@ export const SubscriptionPortal = ({ userRole = 'user', initialPlanId = 'b2bc_ba
               <button 
                 onClick={() => {
                   const selectedItems = currentAddonsList.filter(a => activeAddOns.includes(a.id));
-                  triggerLiveAction('Secure Checkout Initiated', `Processing payment for ${selectedItems.length} item(s) totaling ${selectedItems.reduce((sum, a) => sum + (typeof a.price === 'number' ? a.price : 0), 0).toFixed(2)}. Redirecting to Authorize.net gateway...`, 'process');
+                  triggerLiveAction('Secure Checkout Initiated', `Processing payment for ${selectedItems.length} item(s) totaling ${selectedItems.reduce((sum, a) => sum + (typeof a.price === 'number' ? a.price : 0), 0).toFixed(2)}. Generating Found Invoice...`, 'process');
                 }}
                 className="flex items-center gap-2 px-6 py-2 bg-emerald-600 text-white rounded-xl text-sm font-black hover:bg-emerald-700 transition-all shadow-md"
               >

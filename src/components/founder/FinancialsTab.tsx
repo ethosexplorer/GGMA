@@ -208,7 +208,7 @@ export const FinancialsTab = ({
             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-700"><Activity size={64} /></div>
             <h4 className="font-black text-sm uppercase tracking-widest mb-2">Network Reserves</h4>
             <p className="text-4xl font-black mb-1">{liveStats.netRevenue}</p>
-            <p className="text-[10px] font-bold text-indigo-200 mb-6 uppercase tracking-widest">LIVE TRANSACTIONS (AUTHORIZE.NET / KURV)</p>
+            <p className="text-[10px] font-bold text-indigo-200 mb-6 uppercase tracking-widest">LIVE TRANSACTIONS (FOUND INVOICE / KURV)</p>
             <button onClick={() => setActiveTab('accounting_ledger')} className="w-full py-3 bg-white text-indigo-600 rounded-xl font-bold transition-all shadow-lg text-sm hover:bg-indigo-50">View Master Ledger</button>
           </div>
         </div>

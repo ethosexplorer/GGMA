@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, GripVertical, Phone, Mail, Clock, ShieldCheck, Building2, User, Landmark, Building, Briefcase, Scale, HeartHandshake, Truck, Search, X, Upload, Store, Sprout, Factory } from 'lucide-react';
+import { Plus, GripVertical, Phone, Mail, Clock, ShieldCheck, Building2, User, Landmark, Building, Briefcase, Scale, HeartHandshake, Truck, Search, X, Upload, Store, Sprout, Factory, Send, DollarSign } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { db } from '../../firebase';
 import { collection, addDoc, onSnapshot, query, serverTimestamp, doc, updateDoc, deleteDoc, where } from 'firebase/firestore';
@@ -439,6 +439,36 @@ export const StaffCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: string
                           {deal.value > 0 ? `$${deal.value.toLocaleString()}` : '-'}
                         </div>
                       </div>
+
+                      {/* Quick Pay Actions — via Found */}
+                      {deal.email && (
+                        <div className="flex gap-1.5 pt-2 border-t border-slate-100 mt-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const info = `${deal.contactName || deal.name} — ${deal.email}${deal.value > 0 ? ` — $${deal.value.toLocaleString()}` : ''}`;
+                              navigator.clipboard.writeText(info);
+                              window.open('https://app.found.com/invoices', '_blank');
+                            }}
+                            className="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-[10px] font-black rounded-lg border border-blue-200 transition-colors uppercase tracking-wider"
+                            title="Open Found → Create Invoice (contact info copied)"
+                          >
+                            <Send size={10} /> Invoice
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const info = `${deal.contactName || deal.name} — ${deal.email}${deal.value > 0 ? ` — $${deal.value.toLocaleString()}` : ''}`;
+                              navigator.clipboard.writeText(info);
+                              window.open('https://app.found.com/invoices', '_blank');
+                            }}
+                            className="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-[10px] font-black rounded-lg border border-emerald-200 transition-colors uppercase tracking-wider"
+                            title="Open Found → Payment Request (contact info copied)"
+                          >
+                            <DollarSign size={10} /> Pay Req
+                          </button>
+                        </div>
+                      )}
                     </div>
                   );
                 })}
@@ -603,29 +633,56 @@ export const StaffCRM = ({ defaultJurisdiction }: { defaultJurisdiction?: string
               </div>
             </div>
             
-            <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-between bg-slate-50 rounded-b-2xl shrink-0">
-              {editingDeal ? (
-                <button 
-                  onClick={handleDelete}
-                  className="px-4 py-2 text-red-600 hover:bg-red-50 font-bold text-sm rounded-lg transition-colors"
-                >
-                  Delete Record
-                </button>
-              ) : <div></div>}
-              <div className="flex gap-3">
-                <button 
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-5 py-2 text-slate-600 font-bold text-sm hover:bg-slate-200 rounded-lg transition-colors"
-                >
-                  Cancel
-                </button>
-                <button 
-                  onClick={handleSave}
-                  disabled={!formData.name.trim()}
-                  className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold text-sm rounded-lg shadow-lg shadow-indigo-600/20 transition-colors"
-                >
-                  Save Record
-                </button>
+            <div className="px-6 py-4 border-t border-slate-100 flex flex-col gap-3 bg-slate-50 rounded-b-2xl shrink-0">
+              {/* Quick Pay Actions — via Found */}
+              {editingDeal && formData.email && (
+                <div className="flex gap-2 w-full">
+                  <button
+                    onClick={() => {
+                      const info = `${formData.contactName || formData.name} — ${formData.email}${Number(formData.value) > 0 ? ` — $${Number(formData.value).toLocaleString()}` : ''}`;
+                      navigator.clipboard.writeText(info);
+                      window.open('https://app.found.com/invoices', '_blank');
+                    }}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-black rounded-xl border border-blue-200 transition-colors"
+                  >
+                    <Send size={14} /> Send Invoice
+                  </button>
+                  <button
+                    onClick={() => {
+                      const info = `${formData.contactName || formData.name} — ${formData.email}${Number(formData.value) > 0 ? ` — $${Number(formData.value).toLocaleString()}` : ''}`;
+                      navigator.clipboard.writeText(info);
+                      window.open('https://app.found.com/invoices', '_blank');
+                    }}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-black rounded-xl border border-emerald-200 transition-colors"
+                  >
+                    <DollarSign size={14} /> Request for Pay
+                  </button>
+                </div>
+              )}
+              <div className="flex items-center justify-between">
+                {editingDeal ? (
+                  <button 
+                    onClick={handleDelete}
+                    className="px-4 py-2 text-red-600 hover:bg-red-50 font-bold text-sm rounded-lg transition-colors"
+                  >
+                    Delete Record
+                  </button>
+                ) : <div></div>}
+                <div className="flex gap-3">
+                  <button 
+                    onClick={() => setIsModalOpen(false)}
+                    className="px-5 py-2 text-slate-600 font-bold text-sm hover:bg-slate-200 rounded-lg transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    onClick={handleSave}
+                    disabled={!formData.name.trim()}
+                    className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold text-sm rounded-lg shadow-lg shadow-indigo-600/20 transition-colors"
+                  >
+                    Save Record
+                  </button>
+                </div>
               </div>
             </div>
           </div>

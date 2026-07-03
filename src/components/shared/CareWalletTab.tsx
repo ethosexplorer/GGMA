@@ -161,7 +161,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
             </div>
           </div>
           <p className="text-[10px] text-slate-500 leading-tight">
-            <strong>Authorize.net Processing:</strong> Connected via secure Authorize.net Payment Rail. Direct bank-to-ecosystem bridge active.
+            <strong>Found Invoice Processing:</strong> Connected via secure Found Invoice Payment Rail. Direct bank-to-ecosystem bridge active.
           </p>
         </div>
 
@@ -481,7 +481,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
             <div className="bg-blue-900 bg-gradient-to-br from-blue-900 to-indigo-900 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-10"><Database size={80} /></div>
               <h4 className="font-bold mb-2 flex items-center gap-2 text-blue-300"><Zap size={18} /> B2B Batch Settlement</h4>
-              <p className="text-sm text-blue-100/80 mb-6">Settling B2B invoices via Authorize.net reduces transaction costs by 85% compared to traditional banking.</p>
+              <p className="text-sm text-blue-100/80 mb-6">Settling B2B invoices via Found Invoice reduces transaction costs by 85% compared to traditional banking.</p>
               <div className="bg-white/10 rounded-xl p-4 border border-white/20 mb-6">
                  <div className="flex justify-between items-center text-xs mb-2">
                    <span className="opacity-70 font-medium">Daily Settlement Limit</span>

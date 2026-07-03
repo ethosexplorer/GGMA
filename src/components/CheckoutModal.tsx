@@ -384,7 +384,7 @@ export const CheckoutModal = ({ isOpen, onClose, items, billing, trialDays, plan
                   <CreditCard size={18} className={`shrink-0 mt-0.5 ${colors.icon}`} />
                   <div>
                     <p className={`text-sm font-bold ${colors.title}`}>
-                      {payMethod === 'authnet' ? 'Secure Processing via Authorize.net' : `Payment via ${selectedPm.label}`}
+                      Payment via {selectedPm.label}
                     </p>
                     <p className={`text-xs mt-0.5 ${colors.text}`}>{getMethodNotice()}</p>
                   </div>

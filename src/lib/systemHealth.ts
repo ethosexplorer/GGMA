@@ -181,33 +181,6 @@ async function checkVoIP(): Promise<ServiceHealth> {
   }
 }
 
-async function checkAuthNet(): Promise<ServiceHealth> {
-  const start = Date.now();
-  try {
-    const res = await Promise.race([
-      fetch('https://api.authorize.net/', { method: 'HEAD', mode: 'no-cors' }),
-      new Promise<never>((_, reject) => setTimeout(() => reject(new Error('Timeout')), 10000))
-    ]);
-    const latency = Date.now() - start;
-    return {
-      name: 'Authorize.net Payments',
-      status: latency > LATENCY_CRITICAL_MS ? 'degraded' : (latency > LATENCY_WARN_MS ? 'degraded' : 'online'),
-      latencyMs: latency,
-      lastChecked: new Date().toISOString(),
-      details: `Payment processing in ${latency}ms`
-    };
-  } catch (err: any) {
-    return {
-      name: 'Authorize.net Payments',
-      status: 'offline',
-      latencyMs: Date.now() - start,
-      lastChecked: new Date().toISOString(),
-      error: err.message || 'Unreachable',
-      details: 'Payment processing unreachable'
-    };
-  }
-}
-
 /**
  * Run a full health check across all services
  * Returns structured report with freeze detection
@@ -218,8 +191,7 @@ export async function runHealthCheck(): Promise<SystemHealthReport> {
     checkFirestore(),
     checkVercelEdge(),
     checkTextBelt(),
-    checkVoIP(),
-    checkAuthNet()
+    checkVoIP()
   ]);
 
   const results: ServiceHealth[] = services.map(s => 
