@@ -77,23 +77,11 @@ export const FREEMIUS_PLAN_MAP: Record<string, number> = {
   'combo_pro': 55028, // Combined Pro
   'combo_enterprise': 55029, // Combined Enterprise
 
-  // State Authority Plans
-  'state_basic': 55030, // State Authority Basic
-  'state_pro': 55031, // State Authority Pro
-  'state_enterprise': 55032, // State Authority Enterprise
-
-  // Federal Plans
-  'fed_basic': 55033, // Federal Dashboard Basic
-  'fed_pro': 55034, // Federal Dashboard Pro
-  'fed_enterprise': 55035, // Federal Dashboard Enterprise
-
-  // External Admin
-  'admin_core': 55036, // Core Admin Dashboard
-
-  // Partner Plans
-  'partner_affiliate': 55037, // Brand Ambassador
-  'partner_reseller': 55038, // Authorized Reseller
-  'partner_strategic': 55039, // Strategic Distribution Partner
+  // ─── Custom Pricing (NOT in Freemius) ───────────────────────
+  // State Authority, Federal, External Admin, and Partner plans
+  // are handled via custom/contact-us pricing and invoicing
+  // through Found Invoice, not through Freemius checkout.
+  // See: StaffCRM.tsx → "Request for Pay" / "Send Invoice"
 };
 
 interface OpenFreemiusCheckoutOptions {
