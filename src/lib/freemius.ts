@@ -77,11 +77,17 @@ export const FREEMIUS_PLAN_MAP: Record<string, number> = {
   'combo_pro': 55028, // Combined Pro
   'combo_enterprise': 55029, // Combined Enterprise
 
-  // ─── Custom Pricing (NOT in Freemius) ───────────────────────
-  // State Authority, Federal, External Admin, and Partner plans
-  // are handled via custom/contact-us pricing and invoicing
-  // through Found Invoice, not through Freemius checkout.
-  // See: StaffCRM.tsx → "Request for Pay" / "Send Invoice"
+  // State Authority — single plan with multi-license pricing tiers inside:
+  //   1 license = Basic ($4,999/mo), 5 licenses = Pro ($12,999/mo), 25 licenses = Enterprise ($24,999/mo)
+  'state_authority': 55049,
+
+  // Federal Dashboard — single plan with multi-license pricing tiers inside:
+  //   1 license = Basic ($9,999/mo), 5 licenses = Pro ($24,999/mo), 25 licenses = Enterprise ($49,999/mo)
+  'federal_dashboard': 55050,
+
+  // ─── NOT in Freemius ────────────────────────────────────────
+  // Core Admin Dashboard — handled via direct invoicing (Freemius plan limit)
+  // Partner plans (Ambassador, Reseller, Strategic) — removed per business decision
 };
 
 interface OpenFreemiusCheckoutOptions {
