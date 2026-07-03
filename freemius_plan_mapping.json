@@ -1,0 +1,402 @@
+{
+  "b2c_basic": {
+    "freemiusPlanId": "54990",
+    "freemiusPricingId": "72545",
+    "title": "B2C Basic",
+    "monthly": 49.99,
+    "annual": 499,
+    "status": "created"
+  },
+  "b2c_med": {
+    "freemiusPlanId": "54991",
+    "freemiusPricingId": "72546",
+    "title": "B2C Medium",
+    "monthly": 99,
+    "annual": 1009,
+    "status": "created"
+  },
+  "b2c_full": {
+    "freemiusPlanId": "54992",
+    "freemiusPricingId": "72547",
+    "title": "B2C Full AI",
+    "monthly": 199,
+    "annual": 2029,
+    "status": "created"
+  },
+  "cw_bronze": {
+    "freemiusPlanId": "54993",
+    "freemiusPricingId": null,
+    "title": "Care Wallet Bronze",
+    "monthly": 0,
+    "annual": 0,
+    "status": "created"
+  },
+  "cw_silver": {
+    "freemiusPlanId": "54994",
+    "freemiusPricingId": "72548",
+    "title": "Care Wallet Silver",
+    "monthly": 19,
+    "annual": 190,
+    "status": "created"
+  },
+  "cw_gold": {
+    "freemiusPlanId": "54995",
+    "freemiusPricingId": "72549",
+    "title": "Care Wallet Gold",
+    "monthly": 49,
+    "annual": 490,
+    "status": "created"
+  },
+  "cw_platinum": {
+    "freemiusPlanId": "54996",
+    "freemiusPricingId": "72550",
+    "title": "Care Wallet Platinum",
+    "monthly": 99,
+    "annual": 990,
+    "status": "created"
+  },
+  "b2bc_starter": {
+    "freemiusPlanId": "54997",
+    "freemiusPricingId": "72551",
+    "title": "Cannabis B2B Starter",
+    "monthly": 199,
+    "annual": 1990,
+    "status": "created"
+  },
+  "b2bc_pro": {
+    "freemiusPlanId": "54998",
+    "freemiusPricingId": "72552",
+    "title": "Cannabis B2B Professional",
+    "monthly": 249,
+    "annual": 2490,
+    "status": "created"
+  },
+  "b2bc_enterprise": {
+    "freemiusPlanId": "54999",
+    "freemiusPricingId": "72553",
+    "title": "Cannabis B2B Enterprise",
+    "monthly": 499,
+    "annual": 4990,
+    "status": "created"
+  },
+  "b2bt_basic": {
+    "freemiusPlanId": "55000",
+    "freemiusPricingId": "72554",
+    "title": "Traditional B2B Basic",
+    "monthly": 99,
+    "annual": 1009,
+    "status": "created"
+  },
+  "b2bt_medium": {
+    "freemiusPlanId": "55001",
+    "freemiusPricingId": "72555",
+    "title": "Traditional B2B Medium",
+    "monthly": 299,
+    "annual": 3059,
+    "status": "created"
+  },
+  "b2bt_full": {
+    "freemiusPlanId": "55002",
+    "freemiusPricingId": "72556",
+    "title": "Traditional B2B Full AI",
+    "monthly": 599,
+    "annual": 6119,
+    "status": "created"
+  },
+  "cannabis_basic": {
+    "freemiusPlanId": "55003",
+    "freemiusPricingId": "72557",
+    "title": "Cannabis Backoffice Basic",
+    "monthly": 199,
+    "annual": 2029,
+    "status": "created"
+  },
+  "cannabis_pro": {
+    "freemiusPlanId": "55004",
+    "freemiusPricingId": "72558",
+    "title": "Cannabis Backoffice Pro",
+    "monthly": 499,
+    "annual": 5090,
+    "status": "created"
+  },
+  "cannabis_enterprise": {
+    "freemiusPlanId": "55005",
+    "freemiusPricingId": "72559",
+    "title": "Cannabis Backoffice Enterprise",
+    "monthly": 999,
+    "annual": 10190,
+    "status": "created"
+  },
+  "non_cannabis_basic": {
+    "freemiusPlanId": "55006",
+    "freemiusPricingId": "72560",
+    "title": "General Backoffice Basic",
+    "monthly": 149,
+    "annual": 1519,
+    "status": "created"
+  },
+  "non_cannabis_pro": {
+    "freemiusPlanId": "55007",
+    "freemiusPricingId": "72561",
+    "title": "General Backoffice Pro",
+    "monthly": 399,
+    "annual": 4069,
+    "status": "created"
+  },
+  "non_cannabis_enterprise": {
+    "freemiusPlanId": "55008",
+    "freemiusPricingId": "72562",
+    "title": "General Backoffice Enterprise",
+    "monthly": 799,
+    "annual": 8149,
+    "status": "created"
+  },
+  "prov_basic": {
+    "freemiusPlanId": "55009",
+    "freemiusPricingId": "72563",
+    "title": "Provider Basic",
+    "monthly": 99,
+    "annual": 1009,
+    "status": "created"
+  },
+  "prov_med": {
+    "freemiusPlanId": "55010",
+    "freemiusPricingId": "72564",
+    "title": "Provider Medium",
+    "monthly": 249,
+    "annual": 2539,
+    "status": "created"
+  },
+  "prov_full": {
+    "freemiusPlanId": "55011",
+    "freemiusPricingId": "72565",
+    "title": "Provider Full AI",
+    "monthly": 499,
+    "annual": 5090,
+    "status": "created"
+  },
+  "cann_att_basic": {
+    "freemiusPlanId": "55012",
+    "freemiusPricingId": "72566",
+    "title": "Cannabis Attorney Basic",
+    "monthly": 149,
+    "annual": 1519,
+    "status": "created"
+  },
+  "cann_att_med": {
+    "freemiusPlanId": "55013",
+    "freemiusPricingId": "72567",
+    "title": "Cannabis Attorney Medium",
+    "monthly": 349,
+    "annual": 3559,
+    "status": "created"
+  },
+  "cann_att_full": {
+    "freemiusPlanId": "55014",
+    "freemiusPricingId": "72568",
+    "title": "Cannabis Attorney Full AI",
+    "monthly": 699,
+    "annual": 7129,
+    "status": "created"
+  },
+  "gen_att_basic": {
+    "freemiusPlanId": "55015",
+    "freemiusPricingId": "72569",
+    "title": "General Attorney Basic",
+    "monthly": 149,
+    "annual": 1519,
+    "status": "created"
+  },
+  "gen_att_med": {
+    "freemiusPlanId": "55016",
+    "freemiusPricingId": "72570",
+    "title": "General Attorney Medium",
+    "monthly": 349,
+    "annual": 3559,
+    "status": "created"
+  },
+  "gen_att_full": {
+    "freemiusPlanId": "55017",
+    "freemiusPricingId": "72571",
+    "title": "General Attorney Full AI",
+    "monthly": 699,
+    "annual": 7129,
+    "status": "created"
+  },
+  "ph_core": {
+    "freemiusPlanId": "55018",
+    "freemiusPricingId": "72572",
+    "title": "Lab Essentials",
+    "monthly": 149,
+    "annual": 1499,
+    "status": "created"
+  },
+  "ph_professional": {
+    "freemiusPlanId": "55019",
+    "freemiusPricingId": "72573",
+    "title": "Lab Intelligence",
+    "monthly": 499,
+    "annual": 4999,
+    "status": "created"
+  },
+  "ph_enterprise": {
+    "freemiusPlanId": "55020",
+    "freemiusPricingId": "72574",
+    "title": "Lab Command Center",
+    "monthly": 999,
+    "annual": 9999,
+    "status": "created"
+  },
+  "enf_basic": {
+    "freemiusPlanId": "55021",
+    "freemiusPricingId": "72575",
+    "title": "Enforcement Basic",
+    "monthly": 999,
+    "annual": 10190,
+    "status": "created"
+  },
+  "enf_pro": {
+    "freemiusPlanId": "55022",
+    "freemiusPricingId": "72576",
+    "title": "Enforcement Pro",
+    "monthly": 2999,
+    "annual": 30590,
+    "status": "created"
+  },
+  "enf_enterprise": {
+    "freemiusPlanId": "55023",
+    "freemiusPricingId": null,
+    "title": "Enforcement Enterprise",
+    "monthly": null,
+    "annual": null,
+    "status": "created"
+  },
+  "fin_basic": {
+    "freemiusPlanId": "55024",
+    "freemiusPricingId": "72577",
+    "title": "Finance AI Basic",
+    "monthly": 1499,
+    "annual": 15290,
+    "status": "created"
+  },
+  "fin_pro": {
+    "freemiusPlanId": "55025",
+    "freemiusPricingId": "72578",
+    "title": "Finance AI Pro",
+    "monthly": 4999,
+    "annual": 50990,
+    "status": "created"
+  },
+  "fin_enterprise": {
+    "freemiusPlanId": "55026",
+    "freemiusPricingId": null,
+    "title": "Finance AI Enterprise",
+    "monthly": null,
+    "annual": null,
+    "status": "created"
+  },
+  "combo_basic": {
+    "freemiusPlanId": "55027",
+    "freemiusPricingId": "72579",
+    "title": "Combined Enforcement + Finance Basic",
+    "monthly": 2299,
+    "annual": 23450,
+    "status": "created"
+  },
+  "combo_pro": {
+    "freemiusPlanId": "55028",
+    "freemiusPricingId": "72580",
+    "title": "Combined Enforcement + Finance Pro",
+    "monthly": 6999,
+    "annual": 71390,
+    "status": "created"
+  },
+  "combo_enterprise": {
+    "freemiusPlanId": "55029",
+    "freemiusPricingId": null,
+    "title": "Combined Enterprise",
+    "monthly": null,
+    "annual": null,
+    "status": "created"
+  },
+  "state_basic": {
+    "freemiusPlanId": "55030",
+    "freemiusPricingId": "72581",
+    "title": "State Authority Basic",
+    "monthly": 4999,
+    "annual": 50990,
+    "status": "created"
+  },
+  "state_pro": {
+    "freemiusPlanId": "55031",
+    "freemiusPricingId": "72582",
+    "title": "State Authority Pro",
+    "monthly": 12999,
+    "annual": 132590,
+    "status": "created"
+  },
+  "state_enterprise": {
+    "freemiusPlanId": "55032",
+    "freemiusPricingId": null,
+    "title": "State Authority Enterprise",
+    "monthly": null,
+    "annual": null,
+    "status": "created"
+  },
+  "fed_basic": {
+    "freemiusPlanId": "55033",
+    "freemiusPricingId": "72583",
+    "title": "Federal Dashboard Basic",
+    "monthly": 9999,
+    "annual": 101990,
+    "status": "created"
+  },
+  "fed_pro": {
+    "freemiusPlanId": "55034",
+    "freemiusPricingId": "72584",
+    "title": "Federal Dashboard Pro",
+    "monthly": 24999,
+    "annual": 254990,
+    "status": "created"
+  },
+  "fed_enterprise": {
+    "freemiusPlanId": "55035",
+    "freemiusPricingId": null,
+    "title": "Federal Dashboard Enterprise",
+    "monthly": null,
+    "annual": null,
+    "status": "created"
+  },
+  "admin_core": {
+    "freemiusPlanId": "55036",
+    "freemiusPricingId": "72585",
+    "title": "Core Admin Dashboard",
+    "monthly": 79,
+    "annual": 799,
+    "status": "created"
+  },
+  "partner_affiliate": {
+    "freemiusPlanId": "55037",
+    "freemiusPricingId": null,
+    "title": "Brand Ambassador",
+    "monthly": 0.99,
+    "annual": 499.9,
+    "status": "created"
+  },
+  "partner_reseller": {
+    "freemiusPlanId": "55038",
+    "freemiusPricingId": "72586",
+    "title": "Authorized Reseller",
+    "monthly": 149,
+    "annual": 1490,
+    "status": "created"
+  },
+  "partner_strategic": {
+    "freemiusPlanId": "55039",
+    "freemiusPricingId": null,
+    "title": "Strategic Distribution Partner",
+    "monthly": null,
+    "annual": null,
+    "status": "created"
+  }
+}

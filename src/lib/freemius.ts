@@ -12,61 +12,88 @@ export const FREEMIUS_PUBLIC_KEY = import.meta.env.VITE_FREEMIUS_PUBLIC_KEY || '
 // Replace these numeric placeholders with the exact Plan IDs from your Freemius Developer Dashboard.
 export const FREEMIUS_PLAN_MAP: Record<string, number> = {
   // Patient (B2C) Plans
-  'b2c_basic': 30101,
-  'b2c_med': 30102,
-  'b2c_full': 30103,
-
-  // Cannabis B2B Plans
-  'b2bc_starter': 30201,
-  'b2bc_pro': 30202,
-  'b2bc_enterprise': 30203,
-
-  // Traditional B2B Plans
-  'b2bt_basic': 30301,
-  'b2bt_medium': 30302,
-  'b2bt_full': 30303,
-
-  // Providers Plans
-  'prov_basic': 30401,
-  'prov_med': 30402,
-  'prov_full': 30403,
-
-  // Attorneys Plans
-  'cann_att_basic': 30501,
-  'cann_att_med': 30502,
-  'cann_att_full': 30503,
-  'gen_att_basic': 30504,
-  'gen_att_med': 30505,
-  'gen_att_full': 30506,
-
-  // Back Office Plans
-  'cannabis_basic': 30601,
-  'cannabis_pro': 30602,
-  'cannabis_enterprise': 30603,
-  'non_cannabis_basic': 30604,
-  'non_cannabis_pro': 30605,
-  'non_cannabis_enterprise': 30606,
+  'b2c_basic': 54990, // B2C Basic
+  'b2c_med': 54991, // B2C Medium
+  'b2c_full': 54992, // B2C Full AI
 
   // Care Wallet Plans
-  'cw_bronze': 30701,
-  'cw_silver': 30702,
-  'cw_gold': 30703,
-  'cw_platinum': 30704,
+  'cw_bronze': 54993, // Care Wallet Bronze (free tier)
+  'cw_silver': 54994, // Care Wallet Silver
+  'cw_gold': 54995, // Care Wallet Gold
+  'cw_platinum': 54996, // Care Wallet Platinum
+
+  // Cannabis B2B Plans
+  'b2bc_starter': 54997, // Cannabis B2B Starter
+  'b2bc_pro': 54998, // Cannabis B2B Professional
+  'b2bc_enterprise': 54999, // Cannabis B2B Enterprise
+
+  // Traditional B2B Plans
+  'b2bt_basic': 55000, // Traditional B2B Basic
+  'b2bt_medium': 55001, // Traditional B2B Medium
+  'b2bt_full': 55002, // Traditional B2B Full AI
+
+  // Cannabis Backoffice Plans
+  'cannabis_basic': 55003, // Cannabis Backoffice Basic
+  'cannabis_pro': 55004, // Cannabis Backoffice Pro
+  'cannabis_enterprise': 55005, // Cannabis Backoffice Enterprise
+
+  // General Backoffice Plans
+  'non_cannabis_basic': 55006, // General Backoffice Basic
+  'non_cannabis_pro': 55007, // General Backoffice Pro
+  'non_cannabis_enterprise': 55008, // General Backoffice Enterprise
+
+  // Provider Plans
+  'prov_basic': 55009, // Provider Basic
+  'prov_med': 55010, // Provider Medium
+  'prov_full': 55011, // Provider Full AI
+
+  // Cannabis Attorney Plans
+  'cann_att_basic': 55012, // Cannabis Attorney Basic
+  'cann_att_med': 55013, // Cannabis Attorney Medium
+  'cann_att_full': 55014, // Cannabis Attorney Full AI
+
+  // General Attorney Plans
+  'gen_att_basic': 55015, // General Attorney Basic
+  'gen_att_med': 55016, // General Attorney Medium
+  'gen_att_full': 55017, // General Attorney Full AI
+
+  // Public Health / Lab Plans
+  'ph_core': 55018, // Lab Essentials
+  'ph_professional': 55019, // Lab Intelligence
+  'ph_enterprise': 55020, // Lab Command Center
+
+  // Enforcement Plans
+  'enf_basic': 55021, // Enforcement Basic
+  'enf_pro': 55022, // Enforcement Pro
+  'enf_enterprise': 55023, // Enforcement Enterprise
+
+  // Finance AI Plans
+  'fin_basic': 55024, // Finance AI Basic
+  'fin_pro': 55025, // Finance AI Pro
+  'fin_enterprise': 55026, // Finance AI Enterprise
+
+  // Combined Enforcement + Finance Plans
+  'combo_basic': 55027, // Combined Basic
+  'combo_pro': 55028, // Combined Pro
+  'combo_enterprise': 55029, // Combined Enterprise
 
   // State Authority Plans
-  'state_basic': 30801,
-  'state_pro': 30802,
-  'state_enterprise': 30803,
+  'state_basic': 55030, // State Authority Basic
+  'state_pro': 55031, // State Authority Pro
+  'state_enterprise': 55032, // State Authority Enterprise
 
   // Federal Plans
-  'fed_basic': 30901,
-  'fed_pro': 30902,
-  'fed_enterprise': 30903,
+  'fed_basic': 55033, // Federal Dashboard Basic
+  'fed_pro': 55034, // Federal Dashboard Pro
+  'fed_enterprise': 55035, // Federal Dashboard Enterprise
 
-  // Partners Plans
-  'partner_affiliate': 31001,
-  'partner_reseller': 31002,
-  'partner_strategic': 31003,
+  // External Admin
+  'admin_core': 55036, // Core Admin Dashboard
+
+  // Partner Plans
+  'partner_affiliate': 55037, // Brand Ambassador
+  'partner_reseller': 55038, // Authorized Reseller
+  'partner_strategic': 55039, // Strategic Distribution Partner
 };
 
 interface OpenFreemiusCheckoutOptions {
