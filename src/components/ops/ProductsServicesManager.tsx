@@ -805,7 +805,7 @@ export const ProductsServicesManager = () => {
                             <th className="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-wider">Best For</th>
                             <th className="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-wider">Monthly</th>
                             <th className="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-wider">Annual</th>
-                            <th className="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-wider w-32 text-right">Actions</th>
+                            <th className="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-wider w-40 text-right">Actions</th>
                           </tr>
                         </thead>
                       )}
@@ -906,7 +906,7 @@ export const ProductsServicesManager = () => {
 
                             return (
                             <tr>
-                              <td colSpan={tierCount > 1 ? 7 : 6} className="p-0">
+                              <td colSpan={tierCount > 1 ? 6 : 5} className="p-0">
                                 <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="bg-gradient-to-br from-slate-50 via-indigo-50/20 to-slate-50 border-t border-indigo-200 px-6 py-5">
                                   {/* Header */}
                                   <div className="flex items-center gap-2 mb-3">
