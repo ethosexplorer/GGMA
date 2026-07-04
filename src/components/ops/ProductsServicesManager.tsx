@@ -133,10 +133,44 @@ const buildProductsFromPlans = (): Product[] => {
     { id: 'svc_stateapp', category: 'Professional Services', title: 'State Application Processing', tier: '—', icon: '📄', price: `$${STATE_APPLICATION_FEES.withoutStateInsurance.total} standard / $${STATE_APPLICATION_FEES.withStateInsurance.total} insured`, period: 'Per App', desc: `State fees + GGE processing. ${STATE_APPLICATION_FEES.note}`, features: ['State fee varies', 'GGE processing fee included', 'Multi-state support'], source: 'manual' },
   );
 
+  // Add-ons
+  const addAddons = (addons: AddOn[], groupTitle: string) => {
+    addons.forEach(addon => {
+      products.push({
+        id: addon.id,
+        category: 'Add-Ons & Modules',
+        title: groupTitle,
+        tier: addon.name,
+        icon: '🔌',
+        price: addon.price === 'Custom' ? 'Custom' : addon.price === 0 ? 'FREE' : `$${addon.price}/mo`,
+        period: addon.per ? `per ${addon.per}` : 'Monthly',
+        desc: `Modular add-on: ${addon.name}`,
+        features: [],
+        source: 'subscriptionPlans',
+        monthlyRaw: typeof addon.price === 'number' ? addon.price : 0,
+        annualRaw: addon.price === 'Custom' ? 'Custom' : (typeof addon.price === 'number' ? addon.price * 12 : 0)
+      });
+    });
+  };
+
+  addAddons(PATIENT_ADDONS, 'Patient / Consumer Add-ons');
+  addAddons(COMMON_B2B_ADDONS, 'Common B2B Add-ons');
+  addAddons(CANNABIS_ADDONS, 'Cannabis B2B Add-ons');
+  addAddons(ATTORNEY_ADDONS, 'Attorney Add-ons');
+  addAddons(PROVIDER_ADDONS, 'Provider Add-ons');
+  addAddons(FEDERAL_ADDONS, 'Federal Add-ons');
+  addAddons(PUBLIC_HEALTH_ADDONS, 'Public Health / Lab Add-ons');
+  addAddons(STATE_ADDONS, 'State Authority Add-ons');
+  addAddons(BACKOFFICE_ADDONS, 'Backoffice Add-ons');
+  addAddons(ADMIN_ADDONS, 'Admin Add-ons');
+  addAddons(CROSS_DASHBOARD_ADDONS, 'Cross-Dashboard Add-ons');
+  addAddons(CARE_BUILDER_ADDONS, 'Care Builder Add-ons');
+  addAddons(PARTNER_ADDONS, 'Partner Add-ons');
+
   return products;
 };
 
-const CATEGORIES = ['All', 'Platform Subscriptions', 'BackOffice Plans', 'Professional Services', 'Care Wallet Tiers', 'Government & Enterprise', 'Partner Programs'];
+const CATEGORIES = ['All', 'Platform Subscriptions', 'BackOffice Plans', 'Professional Services', 'Care Wallet Tiers', 'Government & Enterprise', 'Partner Programs', 'Add-Ons & Modules'];
 
 const getRoleFromCategory = (category?: string) => {
   switch (category) {
@@ -189,6 +223,7 @@ const getTierColor = (tier: string) => {
 };
 
 const getRelevantAddons = (product: Product): AddOn[] => {
+  if (product.category === 'Add-Ons & Modules') return [];
   const id = product.id;
   if (id.startsWith('b2c_') || id.includes('patient')) return PATIENT_ADDONS;
   if (id.startsWith('b2bc_') || id.includes('cannabis_b2b')) return [...COMMON_B2B_ADDONS, ...CANNABIS_ADDONS];
