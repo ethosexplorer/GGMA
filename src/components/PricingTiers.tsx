@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { CheckoutModal } from './CheckoutModal';
-import { openFreemiusCheckout } from '../lib/freemius';
+import { openFreemiusCheckout, type FreemiusCheckoutResponse } from '../lib/freemius';
 import { auth } from '../firebase';
 import { Check,
   Sparkles,
@@ -196,8 +196,10 @@ const PlanCard = ({ plan, index, total, billing, selectedAddons, tabId, onChecko
             onClick={() => openFreemiusCheckout({
               planId: plan.id,
               billing,
+              trial: showTrial,
               userEmail: auth.currentUser?.email || undefined,
-              userName: auth.currentUser?.displayName || undefined
+              userFirstName: auth.currentUser?.displayName?.split(' ')[0] || undefined,
+              userLastName: auth.currentUser?.displayName?.split(' ').slice(1).join(' ') || undefined,
             })}
             className="w-full py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1 shadow-md"
           >
@@ -314,8 +316,10 @@ const PlanCard = ({ plan, index, total, billing, selectedAddons, tabId, onChecko
             openFreemiusCheckout({
               planId: plan.id,
               billing,
+              trial: showTrial,
               userEmail: auth.currentUser?.email || undefined,
-              userName: auth.currentUser?.displayName || undefined
+              userFirstName: auth.currentUser?.displayName?.split(' ')[0] || undefined,
+              userLastName: auth.currentUser?.displayName?.split(' ').slice(1).join(' ') || undefined,
             });
           }
         }}

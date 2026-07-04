@@ -3,13 +3,13 @@
 // 
 // Maps platform plan IDs to Freemius numeric Plan IDs and 
 // exposes helper functions to open the native Freemius overlay checkout.
+// Uses the modern FS.Checkout constructor + open() API.
 // ============================================================
 
-export const FREEMIUS_PLUGIN_ID = import.meta.env.VITE_FREEMIUS_PLUGIN_ID || '12345';
-export const FREEMIUS_PUBLIC_KEY = import.meta.env.VITE_FREEMIUS_PUBLIC_KEY || 'pk_placeholder';
+export const FREEMIUS_PLUGIN_ID = import.meta.env.VITE_FREEMIUS_PLUGIN_ID || '31063';
+export const FREEMIUS_PUBLIC_KEY = import.meta.env.VITE_FREEMIUS_PUBLIC_KEY || 'pk_dee2d9c1cae1d0c192ed4d277fc57';
 
 // Map platform Plan IDs (defined in subscriptionPlans.ts) to Freemius numeric Plan IDs.
-// Replace these numeric placeholders with the exact Plan IDs from your Freemius Developer Dashboard.
 export const FREEMIUS_PLAN_MAP: Record<string, number> = {
   // Patient (B2C) Plans
   'b2c_basic': 54990, // B2C Basic
@@ -96,26 +96,80 @@ export const FREEMIUS_PLAN_MAP: Record<string, number> = {
   // Partner plans (Ambassador/Reseller/Strategic) — removed
 };
 
+// Reverse lookup: Freemius plan ID → platform plan key
+export const FREEMIUS_PLAN_REVERSE: Record<number, string> = Object.fromEntries(
+  Object.entries(FREEMIUS_PLAN_MAP).map(([key, val]) => [val, key])
+);
+
+// Plan ID → user role mapping for webhook processing
+export const PLAN_TO_ROLE: Record<string, string> = {
+  'b2c_basic': 'user', 'b2c_med': 'user', 'b2c_full': 'user',
+  'cw_bronze': 'user', 'cw_silver': 'user', 'cw_gold': 'user', 'cw_platinum': 'user',
+  'b2bc_starter': 'business', 'b2bc_pro': 'business', 'b2bc_enterprise': 'business',
+  'b2bt_basic': 'business', 'b2bt_medium': 'business', 'b2bt_full': 'business',
+  'cannabis_basic': 'business', 'cannabis_pro': 'business', 'cannabis_enterprise': 'business',
+  'non_cannabis_basic': 'business', 'non_cannabis_pro': 'business', 'non_cannabis_enterprise': 'business',
+  'prov_basic': 'provider', 'prov_med': 'provider', 'prov_full': 'provider',
+  'cannabis_attorney': 'attorney', 'general_attorney': 'attorney',
+  'ph_core': 'public_health', 'ph_professional': 'public_health', 'ph_enterprise': 'public_health',
+  'enf_basic': 'regulator_state', 'enf_pro': 'regulator_state', 'enf_enterprise': 'regulator_state',
+  'fin_basic': 'business', 'fin_pro': 'business', 'fin_enterprise': 'business',
+  'combo_basic': 'regulator_state', 'combo_pro': 'regulator_state', 'combo_enterprise': 'regulator_state',
+  'state_authority': 'regulator_state', 'federal_dashboard': 'regulator_federal',
+  'gov_office': 'political_executive', 'advocate': 'advocate',
+};
+
 interface OpenFreemiusCheckoutOptions {
   planId: string;
   billing: 'monthly' | 'annual';
+  licenses?: number;
   userEmail?: string;
-  userName?: string;
-  onSuccess?: (response: any) => void;
+  userFirstName?: string;
+  userLastName?: string;
+  userName?: string; // Legacy — will be split into first/last
+  trial?: boolean;
+  coupon?: string;
+  onSuccess?: (response: FreemiusCheckoutResponse) => void;
   onCancel?: () => void;
+  onTrack?: (event: string, data: any) => void;
+}
+
+export interface FreemiusCheckoutResponse {
+  user: {
+    id: string;
+    email: string;
+    first: string;
+    last: string;
+  };
+  purchase: {
+    plan_id: string;
+    license_id: string;
+    subscription_id?: string;
+    billing_cycle?: string;
+  };
+  trial?: {
+    license_id: string;
+    trial_ends_at: string;
+  };
 }
 
 /**
- * Dynamically opens the Freemius Checkout modal overlay.
- * Falls back to direct hosted checkout URL if the script fails to load.
+ * Opens the Freemius Checkout overlay using the modern FS.Checkout constructor API.
+ * Falls back to hosted checkout URL if the JS SDK isn't loaded.
  */
 export const openFreemiusCheckout = ({
   planId,
   billing,
+  licenses = 1,
   userEmail = '',
+  userFirstName = '',
+  userLastName = '',
   userName = '',
+  trial = false,
+  coupon,
   onSuccess,
-  onCancel
+  onCancel,
+  onTrack,
 }: OpenFreemiusCheckoutOptions) => {
   const freemiusPlanId = FREEMIUS_PLAN_MAP[planId];
   if (!freemiusPlanId) {
@@ -124,23 +178,93 @@ export const openFreemiusCheckout = ({
     return;
   }
 
-  const pluginId = import.meta.env.VITE_FREEMIUS_PLUGIN_ID || FREEMIUS_PLUGIN_ID;
-  const publicKey = import.meta.env.VITE_FREEMIUS_PUBLIC_KEY || FREEMIUS_PUBLIC_KEY;
+  const productId = import.meta.env.VITE_FREEMIUS_PLUGIN_ID || FREEMIUS_PLUGIN_ID;
 
-  if ((window as any).FS) {
+  // Split legacy userName into first/last if separate names aren't provided
+  let firstName = userFirstName;
+  let lastName = userLastName;
+  if (!firstName && userName) {
+    const parts = userName.trim().split(/\s+/);
+    firstName = parts[0] || '';
+    lastName = parts.slice(1).join(' ') || '';
+  }
+
+  const hasUser = !!userEmail;
+
+  // ── Modern FS.Checkout API ──
+  if ((window as any).FS?.Checkout) {
+    try {
+      const checkout = new (window as any).FS.Checkout({
+        product_id: productId,
+        plan_id: freemiusPlanId,
+        image: 'https://ggma-ggma.vercel.app/logo.png',
+        billing_cycle: billing === 'annual' ? 'annual' : 'monthly',
+        language: 'auto',
+        show_refund_badge: true,
+        show_reviews: true,
+        annual_discount: true,
+      });
+
+      checkout.open({
+        licenses,
+        trial: trial ? 'free' : false,
+        ...(coupon ? { coupon, hide_coupon: true } : {}),
+        ...(userEmail ? { user_email: userEmail } : {}),
+        ...(firstName ? { user_firstname: firstName } : {}),
+        ...(lastName ? { user_lastname: lastName } : {}),
+        ...(hasUser ? { readonly_user: true } : {}),
+
+        // ── Callbacks ──
+        purchaseCompleted: (data: FreemiusCheckoutResponse) => {
+          console.log('✅ Freemius purchase completed:', data);
+
+          if (onSuccess) {
+            onSuccess(data);
+          } else {
+            // Default: show success and reload to pick up new subscription state
+            alert(
+              `🎉 Subscription activated!\n\n` +
+              `Plan: ${planId}\n` +
+              `Email: ${data.user?.email || userEmail}\n\n` +
+              `Your dashboard is being updated...`
+            );
+            window.location.reload();
+          }
+        },
+
+        cancel: () => {
+          console.log('❌ Freemius checkout cancelled by user');
+          if (onCancel) onCancel();
+        },
+
+        track: (event: string, data: any) => {
+          console.log(`📊 Freemius checkout event: ${event}`, data);
+          if (onTrack) onTrack(event, data);
+        },
+      });
+
+      return; // Overlay opened successfully
+    } catch (err) {
+      console.error('Error opening Freemius Checkout overlay:', err);
+      // Fall through to hosted checkout
+    }
+  }
+
+  // ── Fallback: Legacy FS.Checkout.configure (pre-2025 SDK) ──
+  if ((window as any).FS?.Checkout?.configure) {
     try {
       const handler = (window as any).FS.Checkout.configure({
-        plugin_id: pluginId,
-        public_key: publicKey,
+        plugin_id: productId,
+        public_key: FREEMIUS_PUBLIC_KEY,
         plan_id: freemiusPlanId,
         billing_cycle: billing === 'annual' ? 'annual' : 'monthly',
       });
 
       handler.open({
         email: userEmail,
-        name: userName,
-        success: function (response: any) {
-          console.log('Freemius checkout success:', response);
+        name: userName || `${firstName} ${lastName}`.trim(),
+        success: (response: any) => {
+          console.log('✅ Freemius checkout success (legacy):', response);
           if (onSuccess) {
             onSuccess(response);
           } else {
@@ -148,19 +272,31 @@ export const openFreemiusCheckout = ({
             window.location.reload();
           }
         },
-        cancel: function () {
-          console.log('Freemius checkout cancelled');
+        cancel: () => {
+          console.log('❌ Freemius checkout cancelled');
           if (onCancel) onCancel();
         }
       });
+
+      return;
     } catch (err) {
-      console.error('Error opening Freemius Native Checkout:', err);
-      // Fallback
-      window.open(`https://checkout.freemius.com/plugins/${pluginId}/checkout.html?plan_id=${freemiusPlanId}&billing_cycle=${billing}`, '_blank');
+      console.error('Error opening legacy Freemius Checkout:', err);
     }
-  } else {
-    // If the external script is blocked or failed to load, open in a new tab
-    console.warn('Freemius JS SDK not found on window. Opening direct checkout page...');
-    window.open(`https://checkout.freemius.com/plugins/${pluginId}/checkout.html?plan_id=${freemiusPlanId}&billing_cycle=${billing}`, '_blank');
   }
+
+  // ── Final Fallback: Redirect to hosted checkout page ──
+  console.warn('Freemius JS SDK not loaded. Opening hosted checkout...');
+  const params = new URLSearchParams({
+    plan_id: String(freemiusPlanId),
+    billing_cycle: billing,
+    ...(licenses > 1 ? { licenses: String(licenses) } : {}),
+    ...(userEmail ? { user_email: userEmail } : {}),
+    ...(firstName ? { user_firstname: firstName } : {}),
+    ...(lastName ? { user_lastname: lastName } : {}),
+    ...(coupon ? { coupon } : {}),
+  });
+  window.open(
+    `https://checkout.freemius.com/mode/dialog/product/${productId}/plan/${freemiusPlanId}/?${params.toString()}`,
+    '_blank'
+  );
 };

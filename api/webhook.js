@@ -539,62 +539,103 @@ export default async function handler(req, res) {
       const user = objects.user || {};
       const subscription = objects.subscription || {};
       const plan = objects.plan || {};
+      const install = objects.install || {};
+      const license = objects.license || {};
 
-      console.log(`💳 Freemius Webhook Event Received: "${eventType}" for user: ${user.email || 'N/A'}`);
+      console.log(`💳 Freemius Webhook Event: "${eventType}" | User: ${user.email || 'N/A'} | Plan: ${plan.name || plan.id || 'N/A'}`);
 
       if (!user.email) {
         return res.status(200).json({ status: 'ignored', reason: 'No user email in payload' });
       }
 
-      const planName = plan.name || plan.id || subscription.plan_id || 'Standard Plan';
-      const lowerPlan = planName.toLowerCase();
-      let computedRole = 'business';
-      if (lowerPlan.includes('patient') || lowerPlan.includes('b2c')) {
+      // ── Comprehensive plan-name → role mapping (covers all 41 plans) ──
+      const planName = plan.name || plan.title || plan.id || subscription.plan_id || 'unknown';
+      const lower = (typeof planName === 'string' ? planName : String(planName)).toLowerCase();
+
+      let computedRole = 'business'; // Default
+      if (lower.includes('b2c') || lower.includes('patient') || lower.includes('care_wallet') || lower.includes('cw_')) {
         computedRole = 'user';
-      } else if (lowerPlan.includes('provider') || lowerPlan.includes('doctor')) {
+      } else if (lower.includes('provider') || lower.includes('prov_') || lower.includes('doctor') || lower.includes('telehealth')) {
         computedRole = 'provider';
-      } else if (lowerPlan.includes('attorney') || lowerPlan.includes('legal')) {
+      } else if (lower.includes('attorney') || lower.includes('legal') || lower.includes('att_')) {
         computedRole = 'attorney';
-      } else if (lowerPlan.includes('compliance') || lowerPlan.includes('regulator')) {
+      } else if (lower.includes('public_health') || lower.includes('ph_') || lower.includes('lab')) {
+        computedRole = 'public_health';
+      } else if (lower.includes('enforcement') || lower.includes('enf_') || lower.includes('combo_')) {
         computedRole = 'regulator_state';
+      } else if (lower.includes('state_authority') || lower.includes('state')) {
+        computedRole = 'regulator_state';
+      } else if (lower.includes('federal') || lower.includes('fed_')) {
+        computedRole = 'regulator_federal';
+      } else if (lower.includes('gov_office') || lower.includes('political') || lower.includes('policy')) {
+        computedRole = 'political_executive';
+      } else if (lower.includes('advocate') || lower.includes('advocacy') || lower.includes('research')) {
+        computedRole = 'advocate';
+      } else if (lower.includes('backoffice') || lower.includes('cannabis_basic') || lower.includes('cannabis_pro') || lower.includes('cannabis_enterprise') || lower.includes('non_cannabis')) {
+        computedRole = 'business';
+      } else if (lower.includes('b2b') || lower.includes('finance') || lower.includes('fin_')) {
+        computedRole = 'business';
       }
 
+      // Determine subscription tier from plan name
+      let subscriptionTier = 'basic';
+      if (lower.includes('enterprise') || lower.includes('full') || lower.includes('platinum') || lower.includes('command')) {
+        subscriptionTier = 'enterprise';
+      } else if (lower.includes('pro') || lower.includes('med') || lower.includes('gold') || lower.includes('intelligence') || lower.includes('silver')) {
+        subscriptionTier = 'pro';
+      }
+
+      // ── Determine event category ──
+      const isDeactivation = eventType.includes('cancelled') || eventType.includes('expired') || eventType.includes('deactivated');
+      const isTrial = eventType.includes('trial') || (subscription.trial_days && subscription.trial_days > 0);
+      const isPayment = eventType.includes('payment') || eventType.includes('charge');
+      const newSubscriptionStatus = isDeactivation ? 'Cancelled' : isTrial ? 'Trial' : 'Active';
+      const newUserStatus = isDeactivation ? 'Pending' : 'Active';
+
+      // ── Update or create Firestore user ──
       const usersRef = collection(db, 'users');
       const q = query(usersRef, where('email', '==', user.email));
       const snap = await getDocs(q);
 
       let firebaseUserId = null;
-      const isDeactivation = eventType.includes('cancelled') || eventType.includes('expired') || eventType.includes('deactivated');
-      const newSubscriptionStatus = isDeactivation ? 'Cancelled' : 'Active';
-      const newUserStatus = isDeactivation ? 'Pending' : 'Active';
+      const updateData = {
+        subscriptionStatus: newSubscriptionStatus,
+        status: newUserStatus,
+        planId: plan.id || planName,
+        planName: planName,
+        subscriptionTier,
+        freemiusInstallId: install.id || subscription.install_id || null,
+        freemiusLicenseKey: license.secret_key || null,
+        freemiusUserId: user.id || null,
+        trialDays: subscription.trial_days || 0,
+        trialEndsAt: subscription.trial_ends || null,
+        updatedAt: new Date().toISOString(),
+      };
 
       if (!snap.empty) {
         const docSnap = snap.docs[0];
         firebaseUserId = docSnap.id;
-        await updateDoc(docSnap.ref, {
-          subscriptionStatus: newSubscriptionStatus,
-          status: newUserStatus,
-          planId: plan.id || planName,
-          trialDays: subscription.trial_days || 0,
-          updatedAt: new Date().toISOString()
-        });
-        console.log(`   ... Updated existing Firestore user: ${user.email}`);
+        // Don't overwrite role if user already has one set — unless it's the default 'business'
+        const existingData = docSnap.data();
+        const shouldUpdateRole = !existingData.role || existingData.role === 'business' || existingData.role === 'pending';
+        if (shouldUpdateRole) {
+          updateData.role = computedRole;
+        }
+        await updateDoc(docSnap.ref, updateData);
+        console.log(`   ✅ Updated Firestore user: ${user.email} → ${newSubscriptionStatus} (${subscriptionTier})`);
       } else {
         const newDoc = await addDoc(collection(db, 'users'), {
           email: user.email,
           role: computedRole,
-          status: newUserStatus,
-          subscriptionStatus: newSubscriptionStatus,
-          planId: plan.id || planName,
-          trialDays: subscription.trial_days || 0,
           displayName: user.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : 'Subscriber',
           createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
+          ...updateData,
         });
         firebaseUserId = newDoc.id;
-        console.log(`   ... Created placeholder Firestore user: ${user.email}`);
+        console.log(`   ✅ Created Firestore user: ${user.email} → ${computedRole} (${subscriptionTier})`);
       }
 
+      // ── Log payment to Turso Financial Ledger ──
       const turso = getTursoClient();
       const amount = payload.amount || objects.charge?.amount || subscription.gross_revenue || 0;
       const formattedAmount = '$' + parseFloat(amount).toFixed(2);
@@ -602,49 +643,96 @@ export default async function handler(req, res) {
       if (amount > 0 && !isDeactivation) {
         try {
           const payId = 'freemius-' + Date.now();
+          const netProfit = (parseFloat(amount) * 0.93).toFixed(2); // Freemius takes ~7%
           await turso.execute({
             sql: "INSERT INTO founder_ledger (id, origin_vector, type, gross_revenue, net_profit, status, color, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
             args: [
               payId,
-              `${user.email} — GGP-OS Subscription`,
-              `Subscription (Freemius)`,
+              `${user.first_name || ''} ${user.last_name || ''} (${user.email})`.trim(),
+              `${planName} Subscription (Freemius)`,
               formattedAmount,
-              formattedAmount,
+              '$' + netProfit,
               'Settled',
               'bg-emerald-600',
               new Date().toISOString()
             ]
           });
-          console.log(`   📝 Logged payment to Turso Financial Ledger`);
+          console.log(`   💰 Ledger entry: ${formattedAmount} (Net: $${netProfit})`);
         } catch (ledgerErr) {
-          console.error('   ⚠️ Failed to log payment to ledger:', ledgerErr.message);
+          console.error('   ⚠️ Ledger write failed:', ledgerErr.message);
         }
       }
 
-      // Audit Log
+      // ── Audit Log ──
       try {
         await turso.execute({
           sql: `INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)`,
           args: [
             `freemius_${Date.now()}`,
-            isDeactivation ? 'FREEMIUS_SUBSCRIPTION_DEACTIVATED' : 'FREEMIUS_SUBSCRIPTION_ACTIVE',
+            isDeactivation ? 'FREEMIUS_SUBSCRIPTION_DEACTIVATED' : isTrial ? 'FREEMIUS_TRIAL_STARTED' : 'FREEMIUS_SUBSCRIPTION_ACTIVE',
             user.email,
             JSON.stringify({
               event: eventType,
               userId: user.id,
               planName,
+              planId: plan.id,
+              subscriptionTier,
+              computedRole,
               amount: formattedAmount,
               isDeactivation,
-              firebaseId: firebaseUserId
+              isTrial,
+              firebaseId: firebaseUserId,
+              installId: install.id,
             })
           ]
         });
-        console.log(`   📝 Turso audit log created`);
+        console.log(`   📝 Audit log recorded`);
       } catch (auditErr) {
-        console.error('   ⚠️ Failed to log audit trail:', auditErr.message);
+        console.error('   ⚠️ Audit log failed:', auditErr.message);
       }
 
-      return res.status(200).json({ status: 'success', event: eventType, email: user.email });
+      // ── Create Real-Time Notification in Firestore ──
+      try {
+        const notifTitle = isDeactivation
+          ? `❌ Subscription Cancelled: ${user.first_name || user.email}`
+          : isTrial
+          ? `🆓 Free Trial Started: ${user.first_name || user.email}`
+          : isPayment
+          ? `💳 Payment Received: ${formattedAmount}`
+          : `🎉 New Subscription: ${user.first_name || user.email}`;
+
+        const notifMessage = isDeactivation
+          ? `${planName} subscription cancelled for ${user.email}`
+          : `${planName} (${subscriptionTier}) — ${user.email}`;
+
+        await addDoc(collection(db, 'notifications'), {
+          type: isDeactivation ? 'subscription_cancelled' : 'subscription_created',
+          title: notifTitle,
+          message: notifMessage,
+          body: `Plan: ${planName} | Tier: ${subscriptionTier} | Role: ${computedRole}\nAmount: ${formattedAmount}`,
+          email: user.email,
+          read: false,
+          createdAt: new Date().toISOString(),
+          metadata: {
+            freemiusEvent: eventType,
+            planName,
+            subscriptionTier,
+            computedRole,
+            firebaseUserId,
+          }
+        });
+        console.log(`   🔔 Real-time notification created`);
+      } catch (notifErr) {
+        console.error('   ⚠️ Notification failed:', notifErr.message);
+      }
+
+      return res.status(200).json({
+        status: 'success',
+        event: eventType,
+        email: user.email,
+        role: computedRole,
+        tier: subscriptionTier,
+      });
 
     } catch (err) {
       console.error('❌ Freemius webhook execution failed:', err);
