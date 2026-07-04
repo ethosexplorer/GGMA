@@ -800,12 +800,12 @@ export const ProductsServicesManager = () => {
                       {tierCount > 1 && (
                         <thead className="bg-slate-50/50 border-b border-slate-100">
                           <tr>
-                            <th className="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-wider w-10"></th>
-                            <th className="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-wider">Tier</th>
-                            <th className="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-wider">Best For</th>
-                            <th className="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-wider">Monthly</th>
-                            <th className="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-wider">Annual</th>
-                            <th className="px-4 py-2 text-[10px] font-black text-slate-400 uppercase tracking-wider w-40 text-right">Actions</th>
+                            <th className="px-2 py-2 text-[10px] font-black text-slate-400 uppercase tracking-wider w-10"></th>
+                            <th className="px-2 py-2 text-[10px] font-black text-slate-400 uppercase tracking-wider">Tier</th>
+                            <th className="px-2 py-2 text-[10px] font-black text-slate-400 uppercase tracking-wider">Best For</th>
+                            <th className="px-2 py-2 text-[10px] font-black text-slate-400 uppercase tracking-wider">Monthly</th>
+                            <th className="px-2 py-2 text-[10px] font-black text-slate-400 uppercase tracking-wider">Annual</th>
+                            <th className="px-2 py-2 text-[10px] font-black text-slate-400 uppercase tracking-wider w-36 text-right">Actions</th>
                           </tr>
                         </thead>
                       )}
@@ -813,8 +813,8 @@ export const ProductsServicesManager = () => {
                         {groupProducts.map(product => (
                           <React.Fragment key={product.id}>
                           <tr className={cn("hover:bg-slate-50/80 transition-colors", editingId === product.id && "bg-emerald-50", expandedDetail === product.id && "bg-indigo-50/50")}>
-                            {tierCount > 1 && <td className="px-4 py-3 text-lg">{product.icon}</td>}
-                            <td className="px-4 py-3">
+                            {tierCount > 1 && <td className="px-2 py-2.5 text-lg">{product.icon}</td>}
+                            <td className="px-2 py-2.5">
                               {editingId === product.id ? (
                                 <div className="space-y-1">
                                   <input value={editForm.tier || ''} onChange={e => setEditForm(f => ({...f, tier: e.target.value}))} className="w-full px-2 py-1 border border-slate-200 rounded text-sm font-bold" placeholder="Tier name" />
@@ -826,26 +826,26 @@ export const ProductsServicesManager = () => {
                                 </div>
                               )}
                             </td>
-                            <td className="px-4 py-3">
+                            <td className="px-2 py-2.5">
                               {editingId === product.id ? null : (
                                 <p className="text-xs text-slate-500 max-w-[220px] truncate">{product.desc}</p>
                               )}
                             </td>
-                            <td className="px-4 py-3">
+                            <td className="px-2 py-2.5">
                               {editingId === product.id ? (
                                 <input value={editForm.price || ''} onChange={e => setEditForm(f => ({...f, price: e.target.value}))} className="w-28 px-2 py-1 border border-slate-200 rounded text-sm" />
                               ) : (
                                 <span className="font-bold text-sm text-emerald-700">{product.price}</span>
                               )}
                             </td>
-                            <td className="px-4 py-3">
+                            <td className="px-2 py-2.5">
                               {editingId === product.id ? (
                                 <input value={editForm.period || ''} onChange={e => setEditForm(f => ({...f, period: e.target.value}))} className="w-28 px-2 py-1 border border-slate-200 rounded text-xs" />
                               ) : (
                                 <span className="text-xs text-slate-400 font-bold">{product.period}</span>
                               )}
                             </td>
-                            <td className="px-4 py-3 text-right">
+                            <td className="px-2 py-2.5 text-right">
                               {editingId === product.id ? (
                                 <div className="flex items-center justify-end gap-1">
                                   <button onClick={saveEdit} className="p-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-500" title="Save"><Check size={14} /></button>
