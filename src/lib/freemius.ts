@@ -47,15 +47,13 @@ export const FREEMIUS_PLAN_MAP: Record<string, number> = {
   'prov_med': 55010, // Provider Medium
   'prov_full': 55011, // Provider Full AI
 
-  // Cannabis Attorney Plans
-  'cann_att_basic': 55012, // Cannabis Attorney Basic
-  'cann_att_med': 55013, // Cannabis Attorney Medium
-  'cann_att_full': 55014, // Cannabis Attorney Full AI
+  // Cannabis Attorney — single plan, multi-license tiers:
+  //   1 license = Basic ($149/mo), 5 licenses = Medium ($349/mo), 25 licenses = Full AI ($699/mo)
+  'cannabis_attorney': 55053,
 
-  // General Attorney Plans
-  'gen_att_basic': 55015, // General Attorney Basic
-  'gen_att_med': 55016, // General Attorney Medium
-  'gen_att_full': 55017, // General Attorney Full AI
+  // General Attorney — single plan, multi-license tiers:
+  //   1 license = Basic ($149/mo), 5 licenses = Medium ($349/mo), 25 licenses = Full AI ($699/mo)
+  'general_attorney': 55054,
 
   // Public Health / Lab Plans
   'ph_core': 55018, // Lab Essentials
@@ -77,17 +75,25 @@ export const FREEMIUS_PLAN_MAP: Record<string, number> = {
   'combo_pro': 55028, // Combined Pro
   'combo_enterprise': 55029, // Combined Enterprise
 
-  // State Authority — single plan with multi-license pricing tiers inside:
+  // State Authority — single plan, multi-license tiers:
   //   1 license = Basic ($4,999/mo), 5 licenses = Pro ($12,999/mo), 25 licenses = Enterprise ($24,999/mo)
   'state_authority': 55049,
 
-  // Federal Dashboard — single plan with multi-license pricing tiers inside:
+  // Federal Dashboard — single plan, multi-license tiers:
   //   1 license = Basic ($9,999/mo), 5 licenses = Pro ($24,999/mo), 25 licenses = Enterprise ($49,999/mo)
   'federal_dashboard': 55050,
 
-  // ─── NOT in Freemius ────────────────────────────────────────
-  // Core Admin Dashboard — handled via direct invoicing (Freemius plan limit)
-  // Partner plans (Ambassador, Reseller, Strategic) — removed per business decision
+  // Gov Office — single plan, multi-license tiers:
+  //   1 license = Basic ($299/mo), 5 licenses = Pro ($799/mo), 25 licenses = Enterprise ($1,999/mo)
+  'gov_office': 55055,
+
+  // Advocate — single plan, multi-license tiers:
+  //   1 license = Basic ($79/mo), 5 licenses = Pro ($199/mo), 25 licenses = Enterprise ($499/mo)
+  'advocate': 55056,
+
+  // ─── NOT in Freemius (direct invoicing) ─────────────────────
+  // Core Admin Dashboard — Freemius plan limit, use Found Invoice
+  // Partner plans (Ambassador/Reseller/Strategic) — removed
 };
 
 interface OpenFreemiusCheckoutOptions {
