@@ -334,9 +334,69 @@ export const GENERAL_ATTORNEY_PLANS: SubscriptionPlan[] = [
 ];
 
 export const B2C_PLANS: SubscriptionPlan[] = [
-  { id: 'b2c_basic', name: 'B2C Basic', monthlyPrice: 49.99, annualPrice: 499, aiLevel: 'Gemini Flash + Basic Sylara', tokensMonth: '500,000', trialDays: 30, trialPrice: 0 },
-  { id: 'b2c_med', name: 'B2C Medium', monthlyPrice: 99, annualPrice: 1009, aiLevel: 'Gemini Flash + Enhanced Sylara', tokensMonth: '1,500,000', trialDays: 30, trialPrice: 0 },
-  { id: 'b2c_full', name: 'B2C Full AI', monthlyPrice: 199, annualPrice: 2029, aiLevel: 'Full Sylara + Larry', tokensMonth: 'Unlimited', trialDays: 30, trialPrice: 0 }
+  {
+    id: 'b2c_basic',
+    name: 'B2C Basic',
+    monthlyPrice: 49.99,
+    annualPrice: 499,
+    aiLevel: 'Gemini Flash + Basic Sylara',
+    tokensMonth: '500,000',
+    trialDays: 30,
+    trialPrice: 0,
+    bestFor: 'New patients exploring medical cannabis access',
+    features: [
+      'Patient registration & ID verification',
+      'Condition-based strain matching',
+      'Basic Sylara AI chat assistant',
+      'Appointment scheduling with providers',
+      'Digital medical card storage',
+      'Dispensary locator & menu browsing',
+      '🎁 Care Wallet Bronze included (stored value card)',
+    ],
+  },
+  {
+    id: 'b2c_med',
+    name: 'B2C Medium',
+    monthlyPrice: 99,
+    annualPrice: 1009,
+    aiLevel: 'Gemini Flash + Enhanced Sylara',
+    tokensMonth: '1,500,000',
+    trialDays: 30,
+    trialPrice: 0,
+    bestFor: 'Active patients managing ongoing treatment plans',
+    features: [
+      'Everything in B2C Basic',
+      'Enhanced Sylara AI with treatment insights',
+      'Telehealth consultation access',
+      'Dosage tracking & reminders',
+      'Lab result viewer (COA reports)',
+      'Caregiver account linking',
+      'Priority support',
+      '🎁 Care Wallet Bronze included (stored value card)',
+    ],
+  },
+  {
+    id: 'b2c_full',
+    name: 'B2C Full AI',
+    monthlyPrice: 199,
+    annualPrice: 2029,
+    aiLevel: 'Full Sylara + Larry',
+    tokensMonth: 'Unlimited',
+    trialDays: 30,
+    trialPrice: 0,
+    bestFor: 'Power users who want full AI-driven health management',
+    features: [
+      'Everything in B2C Medium',
+      'Full Sylara + L.A.R.R.Y. AI suite',
+      'Personalized treatment analytics',
+      'Multi-state compliance tracking',
+      'Health journal with AI-generated insights',
+      'Provider network recommendations',
+      'Family account management (up to 5)',
+      'Unlimited AI tokens',
+      '🎁 Care Wallet Bronze included (stored value card)',
+    ],
+  },
 ];
 
 export const PUBLIC_HEALTH_PLANS: SubscriptionPlan[] = [
