@@ -8,3 +8,6 @@ coverage/
 !.env.example
 scratch/
 env_config_visible.txt
+
+.vercel
+.env*
