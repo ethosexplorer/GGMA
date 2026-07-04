@@ -43,6 +43,162 @@ interface Product {
   annualRaw?: number | 'Custom';
 }
 
+// Detailed mapping of add-on metadata, features, and sales pitches for telephone/chat agents
+export const ADDON_DETAILS: Record<string, { desc: string; features: string[]; pitch?: string }> = {
+  // Patient Add-ons
+  'addon_pt_provider': {
+    desc: 'Bypasses wait times by pairing patients directly with state-certified medical practitioners for virtual evaluations and consultations.',
+    features: ['Direct messaging with physicians', 'Integrated telehealth scheduler', 'Auto-upload of certifications to state registration portal'],
+    pitch: '"Let\'s include the Provider Connection module — it connects you directly with a doctor in our network to renew your recommendation and automatically syncs it with the state portal."'
+  },
+  'addon_pt_legal': {
+    desc: 'Grants secure, encrypted access to designated attorneys or legal advisors to audit records and track sovereignty claims.',
+    features: ['Encrypted legal folder sharing', 'Direct secure chat with legal counsel', 'Tribal/sovereignty compliance audit logs'],
+    pitch: '"The Legal Record Access add-on grants your lawyer encrypted access to your consumption and compliance data, making defense coordination seamless."'
+  },
+  'addon_pt_ai': {
+    desc: 'Upgrades the personal Sylara AI assistant with unlimited conversation tokens, treatment logs, and dosage predictive algorithms.',
+    features: ['Unlimited AI conversation tokens', 'Treatment trend analysis & guidance', 'Custom strain and dosage recommendations'],
+    pitch: '"Sylara Personal Premium unlocks unlimited tokens, giving you continuous dosage guidance, strain matching, and warnings based on lab COA reports."'
+  },
+  'addon_pt_insights': {
+    desc: 'Visual dashboard highlighting patient health metrics, purchase tracking, spending trends, and renewal reminders.',
+    features: ['Interactive consumption charts', 'Expenditure trends & metrics', 'Automatic compliance threshold flags'],
+    pitch: '"Personal Insights visualizes your spending, matches your consumption patterns to your wellness goals, and warns you before your state license expires."'
+  },
+  'addon_pt_disposable_card': {
+    desc: 'Generates single-use secure virtual checkout cards powered by NomadCash to mask primary credentials.',
+    features: ['Single-use payment tokens', 'NomadCash network integration', 'Instant self-destruction after transaction completes'],
+    pitch: '"We can issue a single-use virtual card via NomadCash for $1.99. It masks your primary banking details to guarantee absolute transaction privacy."'
+  },
+  'addon_pt_physical_card': {
+    desc: 'NFC-enabled physical smart card printed and mailed directly to the user for physical store checkouts.',
+    features: ['Contactless NFC tap-to-pay', 'High-quality matte plastic design', 'NomadCash stored-value verification'],
+    pitch: '"For a one-time $9.99, we will mail you a physical NFC smart card. You can load it online and tap it directly at any partner store to check out."'
+  },
+  'addon_pt_ai_agent': {
+    desc: 'Autonomous personal coordinator that handles booking appointments, renewal notices, and billing alerts.',
+    features: ['Automated appointment scheduling', 'Autonomous state registration filing', 'Smart renewal notifications'],
+    pitch: '"This provisions an autonomous AI agent that manages your scheduler, routes your renewals, and handles filings for you without manual effort."'
+  },
+
+  // Cannabis B2B Add-ons
+  'addon_multi_state': {
+    desc: 'Expands platform systems to synchronize inventory, Metrc compliance regulations, and state taxes across multiple boundaries.',
+    features: ['Multi-state Metrc sync engine', 'Cross-border tax calculator', 'Unified multi-location compliance metrics'],
+    pitch: '"The Multi-State Expansion pack syncs inventory tracking and Metrc compliance rules across all your state operations into a single dashboard."'
+  },
+  'addon_whitelabel_pos': {
+    desc: 'Fully custom-branded customer checkout screen featuring your store logos, style colors, and white-label checkout domain.',
+    features: ['White-label domain registration', 'Custom theme layout configuration', 'Branded client receipts & transactional emails'],
+    pitch: '"We can white-label the POS checkout terminal with your store logo, themes, and receipts to look exactly like your own proprietary system."'
+  },
+  'addon_payment_processing': {
+    desc: 'Advanced card processing integration using NomadCash and Blue Sky Bank networks for closed-loop settlements.',
+    features: ['Zero monthly fees (revenue-share model)', 'High-volume transaction gateway', 'Real-time settlement ledger'],
+    pitch: '"Let\'s hook up NomadCash card processing. There are no monthly fees — you only pay a small transaction share, and settlements post in real time."'
+  },
+  'addon_care_wallet': {
+    desc: 'Ecosystem customer loyalty builder implementing stored-value credits and rewards to drive customer retention.',
+    features: ['Ecosystem loyalty engine', 'Custom cash-back structures', 'Retention analytics dashboard'],
+    pitch: '"The Care Wallet integration lets you reward returning patients with stored-value cash-back credits, directly increasing repeat customer visits."'
+  },
+  'addon_onsite_training': {
+    desc: 'On-site hardware and software deployment check and training workshop led by a GGP compliance technician.',
+    features: ['Physical terminal setup audit', 'Staff POS walkthrough & testing', 'State audit readiness mock review'],
+    pitch: '"We will send a GGP compliance specialist to your store to train staff, calibrate scales, and run a mock state compliance audit before going live."'
+  },
+  'addon_analytics_pro': {
+    desc: 'Predictive sales analytics utilizing Sylara AI to forecast customer demand and optimize inventory stocking.',
+    features: ['Sales demand predictive modeling', 'Inventory turnover indicators', 'Automated purchase order alerts'],
+    pitch: '"Analytics Pro leverages Sylara AI to predict which strains sell fastest, alerting you to restock before you run out and lose sales."'
+  },
+  'addon_delivery': {
+    desc: 'Driver dispatch, route optimization, and live GPS compliance manifest tracking for home deliveries.',
+    features: ['Dynamic route optimizer', 'Real-time GPS tracker & manifest sync', 'SMS customer dispatch alerts'],
+    pitch: '"This adds delivery management with route optimization, automated customer SMS alerts, and real-time compliance manifest generation for drivers."'
+  },
+  'addon_loyalty': {
+    desc: 'Patient relationship management suite including automated SMS campaigns, gift cards, and rewards tracking.',
+    features: ['Automated text & email campaigns', 'Digital gift card generator', 'Customer segment analytics'],
+    pitch: '"The Loyalty Engine automates text/email campaigns, tracks customer segments, and issues gift cards to boost your retention rate."'
+  },
+
+  // Backoffice Add-ons
+  'addon_attendant': {
+    desc: 'Custom virtual front desk assistant powered by Sylara AI. Manages incoming phone calls, answers questions, and logs messages.',
+    features: ['Custom call routing logic', 'AI-assisted message transcripts', 'Direct calendar booking integration'],
+    pitch: '"We can deploy a custom virtual assistant at @TheBackOffice.com. It answers phone calls, books appointments, and logs inquiries 24/7."'
+  },
+  'addon_success_mgr': {
+    desc: 'Dedicated support manager providing direct consulting, custom AI agent training, and monthly account compliance reviews.',
+    features: ['Custom AI agent fine-tuning', 'Priority onboarding support', 'Monthly compliance check-in calls'],
+    pitch: '"This pairs you with a dedicated success manager who will train and fine-tune your internal AI agents to handle specialized workflows."'
+  },
+  'addon_integrations': {
+    desc: 'Syncs platform ledgers directly with external tools including QuickBooks, payroll systems, and standard business bank accounts.',
+    features: ['QuickBooks payroll syncing', 'ADP employee database hooks', 'Bank transaction auto-reconciliation'],
+    pitch: '"This syncs GGP-OS with your external tools like QuickBooks, ADP payroll, and business banking to automate bookkeeping."'
+  },
+  'addon_phone_support': {
+    desc: 'Upgraded customer care contract featuring direct phone lines and guaranteed under-1-hour service level response agreement.',
+    features: ['24/7 priority support access', '< 1 hour initial response time SLA', 'Dedicated technical support liaison'],
+    pitch: '"This upgrades your support contract to 24/7 priority phone access with a guaranteed response time of under one hour."'
+  },
+  'addon_prov_bo_basic': {
+    desc: 'Standard medical clinic office assistance including automated patient intake routing and standard calendar sync.',
+    features: ['Patient intake routing', 'Google/Outlook calendar sync', 'Basic phone message log'],
+    pitch: '"Provider Backoffice Basic automates patient scheduling and routes intake documents directly to your queue."'
+  },
+  'addon_prov_bo_pro': {
+    desc: 'Enhanced medical clinic backoffice operations with insurance tracker integrations, priority phone triage, and custom intake forms.',
+    features: ['Insurance eligibility check sync', 'Priority phone triage log', 'Custom electronic intake forms'],
+    pitch: '"The Pro backoffice adds real-time insurance verification and custom digital intake forms for your telemedicine patients."'
+  },
+  'addon_prov_bo_ent': {
+    desc: 'Comprehensive clinic backoffice operations with dedicated medical billing agents, white-label client portal, and custom EHR integrations.',
+    features: ['Dedicated medical billing team', 'White-label patient portal', 'Custom EHR integration hooks'],
+    pitch: '"The Enterprise backoffice provides a dedicated medical billing team and custom EHR connections to streamline clinic operations."'
+  },
+
+  // Attorney Add-ons
+  'addon_att_basic': {
+    desc: 'Essential administrative assistant for law practices including standard intake forms and template document cabinets.',
+    features: ['Document template libraries', 'Standard calendar synchronization', 'Secure client onboarding files'],
+    pitch: '"Attorney Backoffice Basic provides document template libraries and secure client file management to organize your practice."'
+  },
+  'addon_att_pro': {
+    desc: 'Smarter law office workflows with automated case document generation, billing ledger syncing, and custom client booking links.',
+    features: ['Automated case document compilation', 'Billing ledger sync helper', 'Custom client booking forms'],
+    pitch: '"The Pro tier automates case file creation, syncs client billing ledgers, and provides personalized booking links."'
+  },
+  'addon_att_ent': {
+    desc: 'Full virtual assistant suite for law firms — dedicated receptionist, trust account reconciliation checks, and custom API connections.',
+    features: ['Dedicated receptionist dispatcher', 'Trust account reconciliation helper', 'Custom API integration hooks'],
+    pitch: '"Enterprise backoffice provides a dedicated receptionist and automated trust account audits to handle all administrative tasks."'
+  },
+
+  // Public Health / Lab Add-ons
+  'ph_add_inventory': {
+    desc: 'Allows testing laboratories to sync and view product test results directly with connected licensed cultivators and processors.',
+    features: ['Automated COA (Certificate of Analysis) sync', 'Connected cultivator portal integration', 'Real-time test tracking alerts'],
+    pitch: '"This syncs lab test results directly with connected growers, automating COA generation and verification."'
+  },
+  'ph_add_health_data': {
+    desc: 'Grants research labs and public health entities access to de-identified patient dosage logs and efficacy trends.',
+    features: ['De-identified HIPAA health registry access', 'Efficacy statistical reports', 'Medical condition trend charts'],
+    pitch: '"Grants compliance and research staff secure access to patient dosage telemetry for public health mapping."'
+  },
+
+  // State Authority Add-ons
+  'addon_state_metrc': {
+    desc: 'Real-time integration syncing state Metrc inventory data with the GGP-OS licensing validation engine.',
+    features: ['Real-time seed-to-sale validation', 'Automatic license verification logs', 'Immediate compliance breach flags'],
+    pitch: '"This synchronizes your dashboard directly with Metrc seed-to-sale logs to automate license auditing and verification."'
+  },
+};
+
+
 // Helper to format price
 const fmtPrice = (p: number | 'Custom') => p === 'Custom' ? 'Custom' : `$${p.toLocaleString()}`;
 
@@ -136,6 +292,7 @@ const buildProductsFromPlans = (): Product[] => {
   // Add-ons
   const addAddons = (addons: AddOn[], groupTitle: string) => {
     addons.forEach(addon => {
+      const details = ADDON_DETAILS[addon.id] || {};
       products.push({
         id: addon.id,
         category: 'Add-Ons & Modules',
@@ -144,8 +301,8 @@ const buildProductsFromPlans = (): Product[] => {
         icon: '🔌',
         price: addon.price === 'Custom' ? 'Custom' : addon.price === 0 ? 'FREE' : `$${addon.price}/mo`,
         period: addon.per ? `per ${addon.per}` : 'Monthly',
-        desc: `Modular add-on: ${addon.name}`,
-        features: [],
+        desc: details.desc || `Modular add-on: ${addon.name}`,
+        features: details.features || [],
         source: 'subscriptionPlans',
         monthlyRaw: typeof addon.price === 'number' ? addon.price : 0,
         annualRaw: addon.price === 'Custom' ? 'Custom' : (typeof addon.price === 'number' ? addon.price * 12 : 0)
@@ -886,6 +1043,9 @@ export const ProductsServicesManager = () => {
 
                             // Elevator pitch generator
                             const getElevatorPitch = (): string => {
+                              const details = ADDON_DETAILS[product.id];
+                              if (details?.pitch) return details.pitch;
+
                               const t = product.title.toLowerCase();
                               if (t.includes('patient') || t.includes('b2c')) return `"Everything you need to manage your medical cannabis journey — card applications, telehealth, prescriptions, legal access, and AI guidance — all in one secure, HIPAA-compliant platform. Starting at just ${product.price}."`;
                               if (t.includes('dispensary') || t.includes('cannabis') && t.includes('business')) return `"Replace your POS, Metrc admin, and compliance tools with one platform — save $140+/mo while getting real-time seed-to-sale sync, AI compliance monitoring, and revenue analytics. Starting at ${product.price}."`;
