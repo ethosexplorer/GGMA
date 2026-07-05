@@ -100,6 +100,48 @@ export const FREEMIUS_PLAN_MAP: Record<string, number> = {
 export const FREEMIUS_ADDON_MAP: Record<string, { productId: number; planId: number }> = {
   'addon_pt_provider': { productId: 55256, planId: 72873 },
   'addon_pt_legal': { productId: 55261, planId: 72877 },
+  'addon_pt_ai': { productId: 55263, planId: 72879 },
+  'addon_pt_insights': { productId: 55264, planId: 72881 },
+  'addon_pt_disposable_card': { productId: 55265, planId: 72882 },
+  'addon_pt_physical_card': { productId: 55266, planId: 72883 },
+  'addon_pt_ai_agent': { productId: 55269, planId: 72886 },
+  
+  // Backoffice - Virtual Attendant
+  'addon_attendant': { productId: 55273, planId: 72890 },
+  'bo_add_virtual': { productId: 55273, planId: 72890 },
+  
+  // Backoffice - Success Manager
+  'addon_success_mgr': { productId: 55274, planId: 72891 },
+  'bo_add_manager': { productId: 55274, planId: 72891 },
+  
+  // Backoffice - Integrations
+  'addon_integrations': { productId: 55275, planId: 72892 },
+  'bo_add_integrations': { productId: 55275, planId: 72892 },
+  
+  // Backoffice - Support
+  'addon_phone_support': { productId: 55276, planId: 72893 },
+  'bo_add_support': { productId: 55276, planId: 72893 },
+  
+  // Backoffice - Multi-state
+  'addon_multi_state': { productId: 55277, planId: 72894 },
+  'bo_add_multistate': { productId: 55277, planId: 72894 },
+  
+  'addon_whitelabel_pos': { productId: 55278, planId: 72895 },
+  'addon_care_wallet': { productId: 55279, planId: 72896 },
+  'addon_onsite_training': { productId: 55280, planId: 72897 },
+  'addon_analytics_pro': { productId: 55281, planId: 72898 },
+  'addon_delivery': { productId: 55282, planId: 72899 },
+  'addon_loyalty': { productId: 55283, planId: 72900 },
+  
+  // Attorney Backoffice
+  'addon_att_basic': { productId: 55284, planId: 72901 },
+  'addon_att_pro': { productId: 55286, planId: 72902 },
+  'addon_att_ent': { productId: 55287, planId: 72903 },
+  
+  // Provider Backoffice
+  'addon_prov_bo_basic': { productId: 55288, planId: 72905 },
+  'addon_prov_bo_pro': { productId: 55289, planId: 72906 },
+  'addon_prov_bo_ent': { productId: 52290, planId: 72907 },
 };
 
 // Reverse lookup: Freemius plan ID → platform plan key
