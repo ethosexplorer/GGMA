@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { collection, onSnapshot } from 'firebase/firestore';
+import { collection, onSnapshot, doc, setDoc, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { Calendar, Building2, Users, FileText, Settings, Shield, Activity, Bell,
   Briefcase, HeartPulse, Scale, Gavel, FileCheck, Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
@@ -64,6 +63,63 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
   };
   const isPend = (s: string) => !isAppr(s) && !isFlag(s);
 
+  const updateApplicationStatus = async (
+    patientUid: string,
+    patientName: string,
+    patientEmail: string,
+    patientState: string,
+    patientPhone: string,
+    newStatus: string
+  ) => {
+    try {
+      const staffName = user?.displayName || user?.name || 'Staff User';
+
+      // 1. Update case_data main document in Firestore
+      const caseRef = doc(db, 'users', patientUid, 'case_data', 'main');
+      await setDoc(caseRef, {
+        applicationStatus: newStatus,
+        updatedAt: serverTimestamp(),
+        updatedBy: staffName,
+      }, { merge: true });
+
+      // 2. Update users root document in Firestore
+      const userRef = doc(db, 'users', patientUid);
+      await setDoc(userRef, {
+        applicationStatus: newStatus,
+        fullName: patientName,
+        name: patientName,
+        email: patientEmail,
+        phone: patientPhone,
+        state: patientState,
+        updatedAt: serverTimestamp(),
+      }, { merge: true });
+
+      // 3. Add to status_checks subcollection
+      const checksRef = collection(db, 'users', patientUid, 'status_checks');
+      await addDoc(checksRef, {
+        checkedBy: staffName,
+        checkedAt: serverTimestamp(),
+        status: newStatus,
+        notes: `🔄 Status updated directly in Operations applications queue.`,
+      });
+
+      // 4. Update local state immediately
+      setLiveApplications(prev => prev.map(app => {
+        if (app.uid === patientUid) {
+          return {
+            ...app,
+            applicationStatus: newStatus
+          };
+        }
+        return app;
+      }));
+
+    } catch (err: any) {
+      console.error('Error updating status:', err);
+      alert('Failed to update status: ' + err.message);
+    }
+  };
+
   const pendingAppsCount = liveApplications.filter(p => isPend(p.applicationStatus)).length;
 
   useEffect(() => {
@@ -72,21 +128,58 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
     let contactsUsers: any[] = [];
 
     const mergeData = () => {
-      const mergedMap = new Map();
-      
-      // Helper: get dedup key — prefer email, fall back to lowercase name
-      const getKey = (entry: any) => {
-        const email = (entry.email || '').toLowerCase().trim();
-        if (email) return email;
-        const name = (entry.name || entry.fullName || entry.displayName || entry.id || '').toLowerCase().trim();
-        return name;
+      const list: any[] = [];
+
+      const addOrMerge = (item: any) => {
+        // Skip test records
+        const emailLower = (item.email || '').toLowerCase().trim();
+        const nameLower = (item.fullName || item.name || '').toLowerCase().trim();
+        if (emailLower.includes('testagent') || emailLower.includes('test_agent') || nameLower.includes('test agent') || nameLower === 'test agent') {
+          return; // Skip test records!
+        }
+
+        const phoneClean = (item.phone || '').replace(/\D/g, '');
+
+        // Find if there is any existing item in list that matches email, phone, or name
+        const existingIdx = list.findIndex(x => {
+          const xEmail = (x.email || '').toLowerCase().trim();
+          const xPhone = (x.phone || '').replace(/\D/g, '');
+          const xName = (x.fullName || '').toLowerCase().trim();
+
+          if (emailLower && xEmail && emailLower === xEmail) return true;
+          if (phoneClean && xPhone && phoneClean === xPhone) return true;
+          if (nameLower && xName && nameLower === xName) return true;
+          return false;
+        });
+
+        if (existingIdx >= 0) {
+          // Merge fields, prioritizing non-empty values
+          const existing = list[existingIdx];
+          list[existingIdx] = {
+            ...existing,
+            ...item,
+            uid: item.uid || existing.uid,
+            fullName: item.fullName || existing.fullName,
+            email: item.email || existing.email,
+            phone: item.phone || existing.phone,
+            state: item.state || existing.state,
+            applicationStatus: item.applicationStatus || existing.applicationStatus,
+            applicationType: item.applicationType || existing.applicationType,
+            createdAt: item.createdAt || existing.createdAt,
+            accountId: item.accountId || existing.accountId,
+            contactType: item.contactType || existing.contactType,
+            source: existing.source === 'firebase' ? 'firebase' : item.source,
+            payments: [...(existing.payments || []), ...(item.payments || [])]
+          };
+        } else {
+          list.push(item);
+        }
       };
-      
+
       // 1. Load legacy Turso data first
       tursoUsers.forEach(t => {
         const safeName = typeof t.name === 'string' ? t.name : String(t.name || t.id);
-        const key = getKey(t) || safeName.toLowerCase();
-        mergedMap.set(key, {
+        addOrMerge({
           uid: String(t.id || t.uid || `turso-${safeName}`),
           fullName: t.name || t.fullName || 'Unknown Patient',
           email: t.email || '',
@@ -102,21 +195,17 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
 
       // 2. Load contacts from captureContact (phone intakes, online submissions)
       contactsUsers.forEach(c => {
-        const key = getKey(c);
-        if (!key) return;
-        const existing = mergedMap.get(key) || {};
-        mergedMap.set(key, {
-          ...existing,
-          uid: c.id || existing.uid || `contact-${key}`,
-          fullName: c.name || existing.fullName || 'Unknown',
-          email: c.email || existing.email || '',
-          phone: c.phone || existing.phone || '',
-          state: c.state || c.jurisdiction || existing.state || 'Oklahoma',
-          applicationStatus: c.status || existing.applicationStatus || 'Pending Review',
-          applicationType: c.applicationType || existing.applicationType || 'renewal',
-          createdAt: c.createdAt || existing.createdAt,
-          accountId: c.accountId || existing.accountId || '',
-          contactType: c.contactType || existing.contactType || 'patient',
+        addOrMerge({
+          uid: c.id || `contact-${c.email || c.name}`,
+          fullName: c.name || 'Unknown',
+          email: c.email || '',
+          phone: c.phone || '',
+          state: c.state || c.jurisdiction || 'Oklahoma',
+          applicationStatus: c.status || 'Pending Review',
+          applicationType: c.applicationType || 'renewal',
+          createdAt: c.createdAt,
+          accountId: c.accountId || '',
+          contactType: c.contactType || 'patient',
           source: 'contacts',
           payments: c.payments || [],
         });
@@ -124,35 +213,21 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
 
       // 3. Override with live Firebase real-time data
       firebaseUsers.forEach(f => {
-        // Use email as primary key for dedup
-        const email = (f.email || '').toLowerCase().trim();
-        let key = email || f.fullName?.toLowerCase() || f.name?.toLowerCase() || f.displayName?.toLowerCase() || '';
-        
-        // For turso-prefixed UIDs, extract the name from the UID to find the original entry
-        if (!key && typeof f.uid === 'string' && f.uid.startsWith('turso-')) {
-          key = f.uid.replace('turso-', '').toLowerCase();
-        }
-        
-        // Last resort: use UID as key
-        if (!key) key = f.uid;
-        
-        const existing = mergedMap.get(key) || {};
-        mergedMap.set(key, {
-          ...existing,
+        addOrMerge({
           uid: f.uid,
-          fullName: f.fullName || f.name || f.displayName || existing.fullName || 'Unknown Patient',
-          email: f.email || existing.email || '',
-          phone: f.phone || f.textPhone || existing.phone || '',
-          state: f.state || f.jurisdiction || existing.state || 'Oklahoma',
-          applicationStatus: f.applicationStatus || existing.applicationStatus || 'Pending Review',
-          applicationType: f.applicationType || existing.applicationType || (f.applicationStatus ? 'renewal' : 'new_card'),
-          createdAt: f.createdAt || existing.createdAt,
-          contactType: existing.contactType || 'patient',
+          fullName: f.fullName || f.name || f.displayName || 'Unknown Patient',
+          email: f.email || '',
+          phone: f.phone || f.textPhone || '',
+          state: f.state || f.jurisdiction || 'Oklahoma',
+          applicationStatus: f.applicationStatus || 'Pending Review',
+          applicationType: f.applicationType || 'renewal',
+          createdAt: f.createdAt,
+          contactType: 'patient',
           source: 'firebase'
         });
       });
 
-      setLiveApplications(Array.from(mergedMap.values()));
+      setLiveApplications(list);
     };
 
     // Fetch Turso (Legacy)
@@ -397,13 +472,47 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
                      </p>
                    </div>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
                   {a.accountId && (
                     <span className="text-[9px] font-mono font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100">{a.accountId}</span>
                   )}
-                  <span className={cn("text-[9px] font-black uppercase px-2 py-0.5 rounded-full", a.applicationStatus && !isPend(a.applicationStatus) ? (isAppr(a.applicationStatus) ? 'text-emerald-600 bg-emerald-50 border border-emerald-200' : 'text-red-600 bg-red-50 border border-red-200') : 'text-amber-600 bg-amber-50 border border-amber-100')}>
-                    {a.applicationStatus || 'Pending Review'}
-                  </span>
+                  <select
+                    value={a.applicationStatus || 'Lead'}
+                    onChange={async (e) => {
+                      const newStatus = e.target.value;
+                      await updateApplicationStatus(
+                        a.uid,
+                        a.fullName || a.name || a.displayName || '',
+                        a.email || '',
+                        a.state || 'Oklahoma',
+                        a.phone || '',
+                        newStatus
+                      );
+                    }}
+                    className={cn(
+                      "text-[10px] font-black uppercase px-2.5 py-1 rounded-xl border outline-none cursor-pointer transition-all",
+                      a.applicationStatus && !isPend(a.applicationStatus)
+                        ? (isAppr(a.applicationStatus) ? 'text-emerald-700 bg-emerald-50 border-emerald-200 hover:bg-emerald-100/50' : 'text-red-700 bg-red-50 border-red-200 hover:bg-red-100/50')
+                        : 'text-amber-700 bg-amber-50 border-amber-200 hover:bg-amber-100/50'
+                    )}
+                  >
+                    <option value="Lead">Lead</option>
+                    <option value="Do not call">Do not call</option>
+                    <option value="GGP account created">GGP account created</option>
+                    <option value="State account created/access given">State account created/access given</option>
+                    <option value="application appointment rescheduled">appointment rescheduled</option>
+                    <option value="doctor appointment set">doctor appointment set</option>
+                    <option value="Doctor recommendation appointment completed">rec completed</option>
+                    <option value="doctor recommendation approved">rec approved</option>
+                    <option value="Incomplete">Incomplete</option>
+                    <option value="docs needed">docs needed</option>
+                    <option value="admin Review">admin Review</option>
+                    <option value="state application submitted">state application submitted</option>
+                    <option value="state application pending">state application pending</option>
+                    <option value="state rejected">state rejected</option>
+                    <option value="state approved">state approved</option>
+                    <option value="state mailed">state mailed</option>
+                  </select>
                 </div>
               </div>
             ))}
