@@ -99,6 +99,7 @@ export const FREEMIUS_PLAN_MAP: Record<string, number> = {
 // Map platform Add-on IDs to their Freemius Product ID and Pricing ID
 export const FREEMIUS_ADDON_MAP: Record<string, { productId: number; planId: number }> = {
   'addon_pt_provider': { productId: 55256, planId: 72873 },
+  'addon_pt_legal': { productId: 55261, planId: 72877 },
 };
 
 // Reverse lookup: Freemius plan ID → platform plan key
