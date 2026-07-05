@@ -201,6 +201,30 @@ export const AccountLookupTab = () => {
   });
   const [paymentPosted, setPaymentPosted] = useState(false);
   const [postingPayment, setPostingPayment] = useState(false);
+  const [copiedReceiptId, setCopiedReceiptId] = useState<string | null>(null);
+
+  const handleCopyReceiptText = (clientName: string, p: any, uniqueId: string) => {
+    const formattedDate = p.date ? new Date(p.date).toLocaleDateString('en-US', { dateStyle: 'medium' }) : 'N/A';
+    const receiptText = `=======================================
+GLOBAL GREEN HYBRID PLATFORM RECEIPT
+=======================================
+Client Name    : ${clientName}
+Payment Type   : ${p.type}
+Method         : ${p.method}
+Amount Paid    : ${p.amount}
+Status         : Settled
+Date           : ${formattedDate}
+Transaction ID : ${uniqueId.toUpperCase()}
+=======================================
+Thank you for supporting GGP-OS!
+For inquiries or refunds, contact GGE Billing
+Phone: 1-888-963-4447 | Email: asstsupport@gmail.com
+=======================================`;
+
+    navigator.clipboard.writeText(receiptText);
+    setCopiedReceiptId(uniqueId);
+    setTimeout(() => setCopiedReceiptId(null), 2500);
+  };
 
   const deduplicateResults = (items: SearchResult[]): SearchResult[] => {
     const map = new Map<string, SearchResult>();
@@ -975,18 +999,37 @@ export const AccountLookupTab = () => {
                               <DollarSign size={12} /> Payment History ({r.rawData.payments.length})
                             </p>
                             <div className="space-y-2">
-                              {r.rawData.payments.map((p: any, i: number) => (
-                                <div key={i} className="flex items-center justify-between bg-white rounded-lg p-2.5 border border-emerald-100">
-                                  <div>
-                                    <p className="text-xs font-bold text-slate-800">{p.type} â€” <span className="text-emerald-600">{p.amount}</span></p>
-                                    <p className="text-[10px] text-slate-500">{p.method} â€¢ {p.date ? new Date(p.date).toLocaleDateString() : 'â€”'}</p>
+                              {r.rawData.payments.map((p: any, i: number) => {
+                                const payId = p.postedAt || `pay-${i}`;
+                                return (
+                                  <div key={i} className="flex items-center justify-between bg-white rounded-lg p-2.5 border border-emerald-100">
+                                    <div>
+                                      <p className="text-xs font-bold text-slate-800">{p.type} — <span className="text-emerald-600">{p.amount}</span></p>
+                                      <p className="text-[10px] text-slate-500">{p.method} • {p.date ? new Date(p.date).toLocaleDateString() : '—'}</p>
+                                    </div>
+                                    <div className="flex items-center gap-3 shrink-0">
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleCopyReceiptText(r.name || 'Valued Client', p, payId);
+                                        }}
+                                        className={cn("p-1.5 rounded-lg border transition-all active:scale-95",
+                                          copiedReceiptId === payId
+                                            ? "bg-emerald-600 border-emerald-600 text-white"
+                                            : "bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+                                        )}
+                                        title="Copy Text Receipt"
+                                      >
+                                        {copiedReceiptId === payId ? <Check size={12} /> : <Copy size={12} />}
+                                      </button>
+                                      <div className="text-right">
+                                        <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">Settled</span>
+                                        {p.postedAt && <p className="text-[9px] text-slate-400 mt-0.5">Posted {new Date(p.postedAt).toLocaleDateString()}</p>}
+                                      </div>
+                                    </div>
                                   </div>
-                                  <div className="text-right">
-                                    <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">Settled</span>
-                                    {p.postedAt && <p className="text-[9px] text-slate-400 mt-0.5">Posted {new Date(p.postedAt).toLocaleDateString()}</p>}
-                                  </div>
-                                </div>
-                              ))}
+                                );
+                              })}
                             </div>
                           </div>
                         )}
@@ -1077,7 +1120,30 @@ export const AccountLookupTab = () => {
                                 </div>
                                 <h3 className="text-lg font-black text-slate-800">Payment Posted!</h3>
                                 <p className="text-sm text-slate-500 font-medium">Entry added to Accounting Ledger.</p>
-                                <button onClick={(e) => { e.stopPropagation(); setPaymentFormFor(null); setPaymentPosted(false); }} className="text-xs font-bold text-indigo-600 hover:text-indigo-700">Dismiss</button>
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      const clientName = r.name || r.businessName || 'Valued Client';
+                                      const cleanAmount = paymentForm.amount.replace(/[^0-9.]/g, '');
+                                      const formatted = '$' + parseFloat(cleanAmount).toFixed(2);
+                                      handleCopyReceiptText(clientName, {
+                                        type: paymentForm.type,
+                                        method: paymentForm.method,
+                                        amount: formatted,
+                                        date: paymentForm.date
+                                      }, 'NEW-POST');
+                                    }}
+                                    className={cn("px-4 py-2 text-xs font-black uppercase tracking-wider rounded-xl flex items-center gap-1.5 transition-all border shadow-sm",
+                                      copiedReceiptId === 'NEW-POST'
+                                        ? 'bg-emerald-600 border-emerald-600 text-white'
+                                        : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                                    )}
+                                  >
+                                    {copiedReceiptId === 'NEW-POST' ? <><Check size={12} /> Copied!</> : <><Copy size={12} /> Copy Receipt</>}
+                                  </button>
+                                  <button onClick={(e) => { e.stopPropagation(); setPaymentFormFor(null); setPaymentPosted(false); }} className="px-4 py-2 text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl transition-all">Dismiss</button>
+                                </div>
                               </div>
                             ) : (
                               <>

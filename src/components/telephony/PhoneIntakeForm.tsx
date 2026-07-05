@@ -106,6 +106,35 @@ export const PhoneIntakeForm = () => {
     date: new Date().toISOString().split('T')[0],
   });
   const [paymentPosted, setPaymentPosted] = useState(false);
+  const [copiedReceipt, setCopiedReceipt] = useState(false);
+
+  const handleCopyReceiptText = () => {
+    const clientName = intakeType === 'patient_card' ? `${data.firstName} ${data.lastName}` : data.businessName;
+    const cleanAmount = paymentForm.amount.replace(/[^0-9.]/g, '') || (intakeType === 'patient_card' ? '102.50' : '249.00');
+    const formatted = '$' + parseFloat(cleanAmount).toFixed(2);
+    const formattedDate = paymentForm.date ? new Date(paymentForm.date).toLocaleDateString('en-US', { dateStyle: 'medium' }) : 'N/A';
+    const txId = 'INTAKE-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+
+    const receiptText = `=======================================
+GLOBAL GREEN HYBRID PLATFORM RECEIPT
+=======================================
+Client Name    : ${clientName || 'Valued Client'}
+Payment Type   : ${paymentForm.type}
+Method         : ${paymentForm.method}
+Amount Paid    : ${formatted}
+Status         : Settled
+Date           : ${formattedDate}
+Transaction ID : ${txId}
+=======================================
+Thank you for supporting GGP-OS!
+For inquiries or refunds, contact GGE Billing
+Phone: 1-888-963-4447 | Email: asstsupport@gmail.com
+=======================================`;
+
+    navigator.clipboard.writeText(receiptText);
+    setCopiedReceipt(true);
+    setTimeout(() => setCopiedReceipt(false), 2500);
+  };
 
   const set = (k: keyof IntakeData, v: any) => setData(p => ({...p, [k]: v}));
   const toggleCondition = (c: string) => {
@@ -612,7 +641,17 @@ export const PhoneIntakeForm = () => {
                 <CircleCheck size={32} className="text-emerald-600" />
               </div>
               <h3 className="text-lg font-black text-slate-800">Payment Posted!</h3>
-              <p className="text-sm text-slate-500 font-medium">Entry added to Accounting Ledger.</p>
+              <p className="text-sm text-slate-500 font-medium mb-2">Entry added to Accounting Ledger.</p>
+              <button
+                onClick={(e) => { e.stopPropagation(); handleCopyReceiptText(); }}
+                className={cn("px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all border flex items-center gap-1.5 shadow-sm", 
+                  copiedReceipt 
+                    ? "bg-emerald-600 border-emerald-600 text-white" 
+                    : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+                )}
+              >
+                {copiedReceipt ? <><Check size={12} /> Copied!</> : <><Copy size={12} /> Copy Receipt</>}
+              </button>
             </div>
           ) : (
             <div className="space-y-4 bg-slate-50 border border-slate-200 rounded-2xl p-5">
@@ -849,7 +888,17 @@ export const PhoneIntakeForm = () => {
                 <CircleCheck size={32} className="text-indigo-600" />
               </div>
               <h3 className="text-lg font-black text-slate-800">Payment Posted!</h3>
-              <p className="text-sm text-slate-500 font-medium">Entry added to Accounting Ledger.</p>
+              <p className="text-sm text-slate-500 font-medium mb-2">Entry added to Accounting Ledger.</p>
+              <button
+                onClick={(e) => { e.stopPropagation(); handleCopyReceiptText(); }}
+                className={cn("px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all border flex items-center gap-1.5 shadow-sm", 
+                  copiedReceipt 
+                    ? "bg-indigo-600 border-indigo-600 text-white" 
+                    : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+                )}
+              >
+                {copiedReceipt ? <><Check size={12} /> Copied!</> : <><Copy size={12} /> Copy Receipt</>}
+              </button>
             </div>
           ) : (
             <div className="space-y-4 bg-slate-50 border border-slate-200 rounded-2xl p-5">
