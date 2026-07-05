@@ -112,11 +112,11 @@ export const FREEMIUS_ADDON_MAP: Record<string, { productId: number; planId: num
   
   // Backoffice - Success Manager
   'addon_success_mgr': { productId: 55274, planId: 72891 },
-  'bo_add_manager': { productId: 55274, planId: 72891 },
+  'bo_add_manager': { productId: 55329, planId: 72948 },
   
   // Backoffice - Integrations
   'addon_integrations': { productId: 55275, planId: 72892 },
-  'bo_add_integrations': { productId: 55275, planId: 72892 },
+  'bo_add_integrations': { productId: 55330, planId: 72949 },
   
   // Backoffice - Support
   'addon_phone_support': { productId: 55276, planId: 72893 },
@@ -142,6 +142,49 @@ export const FREEMIUS_ADDON_MAP: Record<string, { productId: number; planId: num
   'addon_prov_bo_basic': { productId: 55288, planId: 72905 },
   'addon_prov_bo_pro': { productId: 55289, planId: 72906 },
   'addon_prov_bo_ent': { productId: 52290, planId: 72907 },
+
+  // Remaining Shared Backoffice Add-ons
+  'bo_add_callcenter': { productId: 55291, planId: 72908 },
+  'bo_add_scheduling': { productId: 55292, planId: 72909 },
+  'bo_add_it': { productId: 55295, planId: 72914 },
+  'bo_add_crm': { productId: 55296, planId: 72915 },
+  'bo_add_reporting': { productId: 55297, planId: 72916 },
+
+  // Federal Add-ons
+  'addon_fed_interstate': { productId: 52298, planId: 72918 },
+  'addon_fed_research': { productId: 55299, planId: 72919 },
+  'addon_fed_enforcement': { productId: 55300, planId: 72920 },
+  'addon_fed_economic': { productId: 55301, planId: 72921 },
+  'addon_fed_policy': { productId: 55302, planId: 72922 },
+  'addon_fed_sylara': { productId: 55303, planId: 72923 },
+  'addon_fed_reporting': { productId: 55304, planId: 72924 },
+  'addon_fed_state_sync': { productId: 55305, planId: 72925 },
+  'addon_fed_samgov': { productId: 55306, planId: 72926 },
+
+  // Public Health Add-ons
+  'ph_add_inventory': { productId: 55307, planId: 72927 },
+  'ph_add_health_data': { productId: 55308, planId: 72928 },
+  'ph_add_risk_monitor': { productId: 55309, planId: 72929 },
+  'ph_add_research': { productId: 55310, planId: 72930 },
+  'ph_add_multi_lab': { productId: 55311, planId: 72931 },
+  'ph_add_ai_safety': { productId: 55312, planId: 72932 },
+  'ph_add_reporting': { productId: 55313, planId: 72933 },
+  'ph_add_recency': { productId: 55314, planId: 72934 },
+  'ph_add_outbreak': { productId: 55315, planId: 72935 },
+  'ph_add_lims': { productId: 55316, planId: 72936 },
+
+  // State Authority Add-ons
+  'state_add_inventory': { productId: 55317, planId: 72937 },
+  'state_add_patient': { productId: 55318, planId: 72938 },
+  'state_add_risk': { productId: 55319, planId: 72939 },
+  'state_add_revenue': { productId: 55320, planId: 72940 },
+  'state_add_multi': { productId: 55321, planId: 72941 },
+  'state_add_ai': { productId: 55322, planId: 72942 },
+  'state_add_reports': { productId: 55324, planId: 72943 },
+  'state_add_interstate': { productId: 55325, planId: 72944 },
+  'state_add_fed_sync': { productId: 55326, planId: 72945 },
+  'state_add_lab': { productId: 55327, planId: 72946 },
+  'state_add_training': { productId: 55328, planId: 72947 },
 };
 
 // Reverse lookup: Freemius plan ID → platform plan key
