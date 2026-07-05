@@ -5,7 +5,7 @@ import { Calendar, Building2, Users, FileText, Settings, Shield, Activity, Bell,
   Briefcase, HeartPulse, Scale, Gavel, FileCheck, Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
   Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Headphones,
-  Phone, PhoneCall, PhoneOff, PhoneIncoming, PhoneOutgoing, UserPlus, Globe, Zap, Database, CircleCheck, ShoppingCart, CreditCard, Check, Copy, Save, Edit, FileEdit } from 'lucide-react';
+  Phone, PhoneCall, PhoneOff, PhoneIncoming, PhoneOutgoing, UserPlus, Globe, Zap, Database, CircleCheck, ShoppingCart, CreditCard, Check, Copy, Save, Edit, FileEdit, ChevronDown, ChevronUp, Store, Sprout, User, Mail } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { UserCalendar } from '../components/UserCalendar';
