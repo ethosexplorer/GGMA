@@ -70,6 +70,14 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
   };
   const isPend = (s: string) => !isAppr(s) && !isFlag(s);
 
+  const isMaster = user?.role === 'founder' || 
+                   user?.role === 'executive_founder' || 
+                   user?.role === 'executive' || 
+                   user?.role === 'president' ||
+                   user?.roleId === 'founder' ||
+                   (user?.displayName || user?.name || '').toLowerCase().includes('founder') ||
+                   (user?.displayName || user?.name || '').toLowerCase().includes('shantell');
+
   const updateApplicationStatus = async (
     patientUid: string,
     patientName: string,
@@ -1155,6 +1163,16 @@ Notes: ${c.notes || 'No notes'}`;
     );
   };
 
+  const renderAccessRestricted = () => (
+    <div className="flex flex-col items-center justify-center h-[60vh] text-center p-8 bg-white border border-slate-200 rounded-3xl max-w-md mx-auto shadow-sm animate-in fade-in zoom-in duration-300">
+      <Shield size={48} className="text-red-500 mb-4 animate-bounce" />
+      <h3 className="text-lg font-black text-slate-800 uppercase tracking-wider">Access Restricted</h3>
+      <p className="text-slate-500 text-xs mt-2 leading-relaxed">
+        This module contains sensitive business intelligence and full contact databases. It is restricted to Platform Administrators and Executive Oversight roles only.
+      </p>
+    </div>
+  );
+
   const getContent = () => {
     switch (activeTab) {
       case 'call_center': return <CallCenterCommandTab />;
@@ -1170,8 +1188,12 @@ Notes: ${c.notes || 'No notes'}`;
       case 'post_payment': return <PostPaymentTab />;
       case 'products_services': return <ProductsServicesManager />;
       case 'personnel': return renderPersonnel();
-      case 'patients': return renderPatientInquiries();
-      case 'business': return renderBusinessInquiries();
+      case 'patients': 
+        if (!isMaster) return renderAccessRestricted();
+        return renderPatientInquiries();
+      case 'business': 
+        if (!isMaster) return renderAccessRestricted();
+        return renderBusinessInquiries();
       default: return (
         <div className="flex items-center justify-center h-[60vh]">
           <div className="text-center space-y-4 max-w-sm">
@@ -1201,7 +1223,14 @@ Notes: ${c.notes || 'No notes'}`;
           <div className="w-px h-8 bg-slate-700 shrink-0" />
           <div className="flex-1 overflow-x-auto scrollbar-hide">
             <div className="flex items-center gap-1 min-w-max">
-              {opsNavItems.map((item, i) => {
+              {opsNavItems
+                .filter(item => {
+                  if (item.id === 'patients' || item.id === 'business') {
+                    return isMaster;
+                  }
+                  return true;
+                })
+                .map((item, i) => {
                 if ('section' in item && item.section) {
                   return (
                     <span key={`ops-sec-${i}`} className="text-[9px] font-bold text-slate-500 uppercase tracking-wider px-2 shrink-0">
