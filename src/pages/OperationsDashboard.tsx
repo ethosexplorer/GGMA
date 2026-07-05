@@ -5,7 +5,7 @@ import { Calendar, Building2, Users, FileText, Settings, Shield, Activity, Bell,
   Briefcase, HeartPulse, Scale, Gavel, FileCheck, Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
   Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Headphones,
-  Phone, PhoneCall, PhoneOff, PhoneIncoming, PhoneOutgoing, UserPlus, Globe, Zap, Database, CircleCheck, ShoppingCart } from 'lucide-react';
+  Phone, PhoneCall, PhoneOff, PhoneIncoming, PhoneOutgoing, UserPlus, Globe, Zap, Database, CircleCheck, ShoppingCart, CreditCard } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { UserCalendar } from '../components/UserCalendar';
@@ -21,12 +21,14 @@ import { PostPaymentTab } from '../components/ops/PostPaymentTab';
 import { PatientCaseTracker } from '../components/patient/PatientCaseTracker';
 import { AccountLookupTab } from '../components/ops/AccountLookupTab';
 import { ProductsServicesManager } from '../components/ops/ProductsServicesManager';
+import { PaymentLookupTab } from '../components/ops/PaymentLookupTab';
 
 const NAV_ITEMS = [
   { section: 'CALL CENTER' },
   { id: 'call_center', label: 'Call Center Command', icon: Phone },
   { id: 'phone_intake', label: 'Phone Intake Form', icon: UserPlus },
   { id: 'account_lookup', label: 'Account Lookup', icon: Search },
+  { id: 'payment_lookup', label: 'Payment Lookup', icon: CreditCard },
   { section: 'SUPPORT OPERATIONS' },
   { id: 'operations_calendar', label: 'Operations Calendar', icon: Calendar },
   { id: 'support', label: 'Active Support Tickets', icon: MessageSquare, badge: '0' },
@@ -581,6 +583,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
       case 'call_center': return <CallCenterCommandTab />;
       case 'phone_intake': return <PhoneIntakeForm />;
       case 'account_lookup': return <AccountLookupTab />;
+      case 'payment_lookup': return <PaymentLookupTab />;
       case 'operations_calendar': return <div className="h-full w-full -m-10"><FounderCalendar user={user} title="Operations Calendar" /></div>;
       case 'support': return renderSupport();
       case 'it_support': return renderITSupport();
