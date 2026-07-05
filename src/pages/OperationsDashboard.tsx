@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { collection, onSnapshot, doc, setDoc, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, onSnapshot, doc, setDoc, addDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { Calendar, Building2, Users, FileText, Settings, Shield, Activity, Bell,
   Briefcase, HeartPulse, Scale, Gavel, FileCheck, Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
   Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Headphones,
-  Phone, PhoneCall, PhoneOff, PhoneIncoming, PhoneOutgoing, UserPlus, Globe, Zap, Database, CircleCheck, ShoppingCart, CreditCard } from 'lucide-react';
+  Phone, PhoneCall, PhoneOff, PhoneIncoming, PhoneOutgoing, UserPlus, Globe, Zap, Database, CircleCheck, ShoppingCart, CreditCard, Check, Copy, Save, Edit, FileEdit } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { UserCalendar } from '../components/UserCalendar';
@@ -53,6 +52,13 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
   const [liveApplications, setLiveApplications] = useState<any[]>([]);
   const [selectedPatientCase, setSelectedPatientCase] = useState<any | null>(null);
   const [appsFilter, setAppsFilter] = useState('Pending');
+  const [allContacts, setAllContacts] = useState<any[]>([]);
+  const [selectedContactId, setSelectedContactId] = useState<string | null>(null);
+  const [patientSearch, setPatientSearch] = useState('');
+  const [businessSearch, setBusinessSearch] = useState('');
+  const [editingNotesId, setEditingNotesId] = useState<string | null>(null);
+  const [notesTempText, setNotesTempText] = useState('');
+  const [copiedContactId, setCopiedContactId] = useState<string | null>(null);
 
   const isAppr = (s: string) => {
     const status = (s || '').toLowerCase();
@@ -267,7 +273,12 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
       mergeData();
     });
 
-    return () => { unsubUsers(); unsubContacts(); };
+    // Fetch all Firebase contacts in real-time for Inquiries tabs
+    const unsubAllContacts = onSnapshot(collection(db, 'contacts'), (snap) => {
+      setAllContacts(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+    });
+
+    return () => { unsubUsers(); unsubContacts(); unsubAllContacts(); };
   }, []);
 
   // Draggable nav state with localStorage persistence
@@ -688,6 +699,462 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
     </div>
   );
 
+  const updateContactField = async (contactId: string, fieldName: string, value: any) => {
+    try {
+      const contactRef = doc(db, 'contacts', contactId);
+      await updateDoc(contactRef, {
+        [fieldName]: value,
+        updatedAt: new Date().toISOString()
+      });
+      setAllContacts(prev => prev.map(c => c.id === contactId ? { ...c, [fieldName]: value } : c));
+    } catch (err: any) {
+      console.error('Error updating contact:', err);
+      alert('Failed to update: ' + err.message);
+    }
+  };
+
+  const handleCopyContactDetails = (c: any, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const text = `Name: ${c.name}
+Email: ${c.email || 'N/A'}
+Phone: ${c.phone || 'N/A'}
+Location: ${c.city || ''}, ${c.state || ''} ${c.zip || ''}
+Source: ${c.source || 'N/A'}
+Notes: ${c.notes || 'No notes'}`;
+    navigator.clipboard.writeText(text);
+    setCopiedContactId(c.id);
+    setTimeout(() => setCopiedContactId(null), 2000);
+  };
+
+  const renderPatientInquiries = () => {
+    const patients = allContacts.filter(c => {
+      const type = (c.contactType || '').toLowerCase();
+      const src = (c.source || '').toLowerCase();
+      return type === 'patient' || src.includes('patient') || type === 'intake';
+    });
+
+    const displayPatients = patients.filter(c => {
+      if (!patientSearch.trim()) return true;
+      const q = patientSearch.toLowerCase();
+      return (
+        (c.name || '').toLowerCase().includes(q) ||
+        (c.email || '').toLowerCase().includes(q) ||
+        (c.phone || '').includes(q) ||
+        (c.state || '').toLowerCase().includes(q) ||
+        (c.city || '').toLowerCase().includes(q) ||
+        (c.notes || '').toLowerCase().includes(q) ||
+        (c.source || '').toLowerCase().includes(q)
+      );
+    });
+
+    return (
+      <div className="space-y-6">
+        <div className="bg-gradient-to-r from-emerald-900 to-teal-950 rounded-2xl p-6 text-white relative overflow-hidden shadow-lg animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className="absolute top-0 right-0 p-6 opacity-10"><HeartPulse size={80} /></div>
+          <div className="relative z-10">
+            <h2 className="text-2xl font-black tracking-tight flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/10 border border-white/20 rounded-xl flex items-center justify-center">
+                <HeartPulse size={20} className="text-emerald-400" />
+              </div>
+              Patient Inquiries & Leads
+            </h2>
+            <p className="text-emerald-300 text-[10px] font-bold uppercase tracking-widest mt-1">Manage prospective patient registrations, phone intakes, and online inquiries</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+            { label: 'Total Patient Contacts', value: String(patients.length), color: 'text-emerald-600', icon: Users },
+            { label: 'Online Signups', value: String(patients.filter(p => p.source === 'patient_signup').length), color: 'text-indigo-600', icon: Globe },
+            { label: 'Phone Intakes', value: String(patients.filter(p => p.source === 'phone_intake_patient').length), color: 'text-sky-600', icon: Phone },
+            { label: 'Active Leads', value: String(patients.filter(p => p.status === 'active').length), color: 'text-amber-600', icon: Activity }
+          ].map((s, i) => (
+            <div key={i} className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+              <div className="flex justify-between items-start mb-2">
+                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{s.label}</p>
+                <s.icon size={14} className={s.color} />
+              </div>
+              <p className={cn("text-2xl font-black", s.color)}>{s.value}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div className="relative">
+            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              value={patientSearch}
+              onChange={(e) => setPatientSearch(e.target.value)}
+              placeholder="Search patients by name, email, phone, location, source, or notes..."
+              className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 font-medium"
+            />
+          </div>
+        </div>
+
+        <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm">
+          <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+            <h3 className="font-bold text-slate-800 text-sm uppercase tracking-wider">Patient Inquiries Log ({displayPatients.length})</h3>
+          </div>
+          
+          <div className="divide-y divide-slate-100">
+            {displayPatients.length === 0 ? (
+              <div className="p-16 text-center text-slate-500 font-bold">No patient inquiries found matching the query.</div>
+            ) : displayPatients.map((c) => {
+              const isSelected = selectedContactId === c.id;
+              const isEditingNotes = editingNotesId === c.id;
+
+              return (
+                <div key={c.id} className="hover:bg-slate-50/50 transition-colors">
+                  <div
+                    onClick={() => {
+                      setSelectedContactId(isSelected ? null : c.id);
+                      setEditingNotesId(null);
+                    }}
+                    className="flex items-center justify-between px-6 py-4 cursor-pointer"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-xl flex items-center justify-center font-black text-sm shrink-0">
+                        {c.name ? c.name.charAt(0).toUpperCase() : '?'}
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-bold text-slate-800">{c.name}</p>
+                          <span className="text-[9px] font-black text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100 capitalize">
+                            {(c.source || 'Lead').replace(/_/g, ' ')}
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          {c.phone || 'No phone'} • {c.email || 'No email'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs font-semibold text-slate-500">
+                        {c.city ? `${c.city}, ` : ''}{c.state || 'N/A'}
+                      </span>
+                      <span className="text-[9px] font-black uppercase px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full border border-slate-200">
+                        {c.status || 'Active'}
+                      </span>
+                      {isSelected ? <ChevronUp size={16} className="text-slate-400" /> : <ChevronDown size={16} className="text-slate-400" />}
+                    </div>
+                  </div>
+
+                  {isSelected && (
+                    <div className="bg-slate-50/50 border-t border-slate-100 p-6 space-y-4 animate-in slide-in-from-top-2 duration-200">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {[
+                          { label: 'Full Name', value: c.name, icon: User },
+                          { label: 'Email Address', value: c.email || 'None', icon: Mail },
+                          { label: 'Phone Number', value: c.phone || 'None', icon: Phone },
+                          { label: 'State Jurisdiction', value: c.state || 'N/A', icon: Globe },
+                          { label: 'City', value: c.city || 'N/A', icon: Globe },
+                          { label: 'Zip Code', value: c.zip || 'N/A', icon: Globe },
+                          { label: 'Registration Source', value: c.source || 'N/A', icon: FileText },
+                          { label: 'Date Logged', value: c.createdAt ? new Date(c.createdAt).toLocaleDateString() : 'N/A', icon: Calendar }
+                        ].map((f, i) => (
+                          <div key={i}>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 flex items-center gap-1">
+                              <f.icon size={10} /> {f.label}
+                            </p>
+                            <p className="text-xs font-semibold text-slate-700">{f.value}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-2">
+                        <div className="flex justify-between items-center">
+                          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
+                            <FileText size={12} /> Notes & Inquiries Details
+                          </p>
+                          {!isEditingNotes ? (
+                            <button
+                              onClick={() => {
+                                setEditingNotesId(c.id);
+                                setNotesTempText(c.notes || '');
+                              }}
+                              className="text-xs font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1"
+                            >
+                              <Edit size={10} /> Edit Notes
+                            </button>
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={async () => {
+                                  await updateContactField(c.id, 'notes', notesTempText);
+                                  setEditingNotesId(null);
+                                }}
+                                className="text-xs font-black text-emerald-600 hover:text-emerald-700 flex items-center gap-1"
+                              >
+                                <Save size={10} /> Save
+                              </button>
+                              <button
+                                onClick={() => setEditingNotesId(null)}
+                                className="text-xs font-bold text-slate-500 hover:text-slate-600"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                        {isEditingNotes ? (
+                          <textarea
+                            value={notesTempText}
+                            onChange={(e) => setNotesTempText(e.target.value)}
+                            rows={3}
+                            className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium outline-none focus:ring-2 focus:ring-emerald-500/20 resize-none leading-relaxed"
+                          />
+                        ) : (
+                          <p className="text-xs text-slate-600 whitespace-pre-wrap">{c.notes || 'No notes or inquiries submitted.'}</p>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-3 pt-2 border-t border-slate-200/60">
+                        {c.phone && (
+                          <button
+                            onClick={() => window.dispatchEvent(new CustomEvent('twilio-dial-out', { detail: { number: c.phone } }))}
+                            className="px-4 py-2 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 text-emerald-700 text-xs font-black uppercase tracking-wider rounded-xl transition-all flex items-center gap-1.5 shadow-sm"
+                          >
+                            <Phone size={12} /> Call Patient
+                          </button>
+                        )}
+                        <button
+                          onClick={(e) => handleCopyContactDetails(c, e)}
+                          className={cn("px-4 py-2 text-xs font-black uppercase tracking-wider rounded-xl flex items-center gap-1.5 transition-all shadow-sm border",
+                            copiedContactId === c.id
+                              ? 'bg-emerald-600 border-emerald-600 text-white'
+                              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                          )}
+                        >
+                          {copiedContactId === c.id ? <><Check size={12} /> Copied</> : <><Copy size={12} /> Copy Details</>}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderBusinessInquiries = () => {
+    const businesses = allContacts.filter(c => {
+      const type = (c.contactType || '').toLowerCase();
+      const src = (c.source || '').toLowerCase();
+      return type !== 'patient' && !src.includes('patient') && type !== 'intake';
+    });
+
+    const displayBusinesses = businesses.filter(c => {
+      if (!businessSearch.trim()) return true;
+      const q = businessSearch.toLowerCase();
+      return (
+        (c.name || '').toLowerCase().includes(q) ||
+        (c.businessName || '').toLowerCase().includes(q) ||
+        (c.email || '').toLowerCase().includes(q) ||
+        (c.phone || '').includes(q) ||
+        (c.state || '').toLowerCase().includes(q) ||
+        (c.city || '').toLowerCase().includes(q) ||
+        (c.notes || '').toLowerCase().includes(q) ||
+        (c.source || '').toLowerCase().includes(q)
+      );
+    });
+
+    return (
+      <div className="space-y-6">
+        <div className="bg-gradient-to-r from-indigo-900 to-slate-950 rounded-2xl p-6 text-white relative overflow-hidden shadow-lg animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className="absolute top-0 right-0 p-6 opacity-10"><Building2 size={80} /></div>
+          <div className="relative z-10">
+            <h2 className="text-2xl font-black tracking-tight flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/10 border border-white/20 rounded-xl flex items-center justify-center">
+                <Building2 size={20} className="text-indigo-400" />
+              </div>
+              Business Inquiries & B2B Leads
+            </h2>
+            <p className="text-indigo-300 text-[10px] font-bold uppercase tracking-widest mt-1">Track compliance inquiries, business license leads, and dispensary partnership signups</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+            { label: 'Total B2B Contacts', value: String(businesses.length), color: 'text-indigo-600', icon: Users },
+            { label: 'Dispensary Leads', value: String(businesses.filter(b => b.contactType === 'dispensary').length), color: 'text-emerald-600', icon: Store },
+            { label: 'Growers & Processors', value: String(businesses.filter(b => b.contactType === 'grower' || b.contactType === 'processor').length), color: 'text-green-600', icon: Sprout },
+            { label: 'Phone Intakes', value: String(businesses.filter(b => b.source === 'phone_intake_business').length), color: 'text-sky-600', icon: Phone }
+          ].map((s, i) => (
+            <div key={i} className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+              <div className="flex justify-between items-start mb-2">
+                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{s.label}</p>
+                <s.icon size={14} className={s.color} />
+              </div>
+              <p className={cn("text-2xl font-black", s.color)}>{s.value}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div className="relative">
+            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              value={businessSearch}
+              onChange={(e) => setBusinessSearch(e.target.value)}
+              placeholder="Search B2B leads by company name, contact, email, phone, location, notes..."
+              className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 font-medium"
+            />
+          </div>
+        </div>
+
+        <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm">
+          <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+            <h3 className="font-bold text-slate-800 text-sm uppercase tracking-wider">Business Contacts Log ({displayBusinesses.length})</h3>
+          </div>
+          
+          <div className="divide-y divide-slate-100">
+            {displayBusinesses.length === 0 ? (
+              <div className="p-16 text-center text-slate-500 font-bold">No business inquiries found matching the query.</div>
+            ) : displayBusinesses.map((c) => {
+              const isSelected = selectedContactId === c.id;
+              const isEditingNotes = editingNotesId === c.id;
+
+              return (
+                <div key={c.id} className="hover:bg-slate-50/50 transition-colors">
+                  <div
+                    onClick={() => {
+                      setSelectedContactId(isSelected ? null : c.id);
+                      setEditingNotesId(null);
+                    }}
+                    className="flex items-center justify-between px-6 py-4 cursor-pointer"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-xl flex items-center justify-center font-black text-sm shrink-0">
+                        <Building2 size={18} />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-bold text-slate-800">{c.businessName || c.name || 'Unnamed Corporate'}</p>
+                          <span className="text-[9px] font-black text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100 capitalize">
+                            {(c.contactType || 'B2B Lead').replace(/_/g, ' ')}
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          {c.name ? `${c.name} • ` : ''}{c.phone || 'No phone'} • {c.email || 'No email'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs font-semibold text-slate-500">
+                        {c.city ? `${c.city}, ` : ''}{c.state || 'N/A'}
+                      </span>
+                      <span className="text-[9px] font-black uppercase px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full border border-slate-200">
+                        {c.status || 'Active'}
+                      </span>
+                      {isSelected ? <ChevronUp size={16} className="text-slate-400" /> : <ChevronDown size={16} className="text-slate-400" />}
+                    </div>
+                  </div>
+
+                  {isSelected && (
+                    <div className="bg-slate-50/50 border-t border-slate-100 p-6 space-y-4 animate-in slide-in-from-top-2 duration-200">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {[
+                          { label: 'Business Legal Name', value: c.businessName || 'N/A', icon: Building2 },
+                          { label: 'Contact Person', value: c.name || 'N/A', icon: User },
+                          { label: 'Email Address', value: c.email || 'None', icon: Mail },
+                          { label: 'Phone Number', value: c.phone || 'None', icon: Phone },
+                          { label: 'Jurisdiction', value: c.state || 'N/A', icon: Globe },
+                          { label: 'License Type Offered', value: c.licenseType || 'N/A', icon: FileText },
+                          { label: 'License Number', value: c.licenseNumber || 'N/A', icon: FileText },
+                          { label: 'EIN Number', value: c.ein || 'N/A', icon: FileText }
+                        ].map((f, i) => (
+                          <div key={i}>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 flex items-center gap-1">
+                              <f.icon size={10} /> {f.label}
+                            </p>
+                            <p className="text-xs font-semibold text-slate-700">{f.value}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="bg-white border border-slate-200 rounded-xl p-4 space-y-2">
+                        <div className="flex justify-between items-center">
+                          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
+                            <FileText size={12} /> Notes & Inquiries Details
+                          </p>
+                          {!isEditingNotes ? (
+                            <button
+                              onClick={() => {
+                                setEditingNotesId(c.id);
+                                setNotesTempText(c.notes || '');
+                              }}
+                              className="text-xs font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1"
+                            >
+                              <Edit size={10} /> Edit Notes
+                            </button>
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={async () => {
+                                  await updateContactField(c.id, 'notes', notesTempText);
+                                  setEditingNotesId(null);
+                                }}
+                                className="text-xs font-black text-emerald-600 hover:text-emerald-700 flex items-center gap-1"
+                              >
+                                <Save size={10} /> Save
+                              </button>
+                              <button
+                                onClick={() => setEditingNotesId(null)}
+                                className="text-xs font-bold text-slate-500 hover:text-slate-600"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                        {isEditingNotes ? (
+                          <textarea
+                            value={notesTempText}
+                            onChange={(e) => setNotesTempText(e.target.value)}
+                            rows={3}
+                            className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium outline-none focus:ring-2 focus:ring-indigo-500/20 resize-none leading-relaxed"
+                          />
+                        ) : (
+                          <p className="text-xs text-slate-600 whitespace-pre-wrap">{c.notes || 'No notes or inquiries submitted.'}</p>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-3 pt-2 border-t border-slate-200/60">
+                        {c.phone && (
+                          <button
+                            onClick={() => window.dispatchEvent(new CustomEvent('twilio-dial-out', { detail: { number: c.phone } }))}
+                            className="px-4 py-2 bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 text-indigo-700 text-xs font-black uppercase tracking-wider rounded-xl transition-all flex items-center gap-1.5 shadow-sm"
+                          >
+                            <Phone size={12} /> Call Contact
+                          </button>
+                        )}
+                        <button
+                          onClick={(e) => handleCopyContactDetails(c, e)}
+                          className={cn("px-4 py-2 text-xs font-black uppercase tracking-wider rounded-xl flex items-center gap-1.5 transition-all shadow-sm border",
+                            copiedContactId === c.id
+                              ? 'bg-indigo-600 border-indigo-600 text-white'
+                              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                          )}
+                        >
+                          {copiedContactId === c.id ? <><Check size={12} /> Copied</> : <><Copy size={12} /> Copy Details</>}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const getContent = () => {
     switch (activeTab) {
       case 'call_center': return <CallCenterCommandTab />;
@@ -703,6 +1170,8 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
       case 'post_payment': return <PostPaymentTab />;
       case 'products_services': return <ProductsServicesManager />;
       case 'personnel': return renderPersonnel();
+      case 'patients': return renderPatientInquiries();
+      case 'business': return renderBusinessInquiries();
       default: return (
         <div className="flex items-center justify-center h-[60vh]">
           <div className="text-center space-y-4 max-w-sm">
