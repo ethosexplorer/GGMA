@@ -194,8 +194,6 @@ export const openFreemiusCheckout = ({
     return;
   }
 
-  const productId = import.meta.env.VITE_FREEMIUS_PLUGIN_ID || FREEMIUS_PLUGIN_ID;
-
   // Split legacy userName into first/last if separate names aren't provided
   let firstName = userFirstName;
   let lastName = userLastName;
