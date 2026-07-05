@@ -17,13 +17,26 @@ interface PaymentRecord {
   rawData?: any;
 }
 
-export const PaymentLookupTab = () => {
+interface PaymentLookupTabProps {
+  user?: any;
+}
+
+export const PaymentLookupTab = ({ user }: PaymentLookupTabProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [payments, setPayments] = useState<PaymentRecord[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  // Determine if the user is Master/Founder
+  const isMaster = user?.role === 'founder' || 
+                   user?.role === 'executive_founder' || 
+                   user?.role === 'executive' || 
+                   user?.role === 'president' ||
+                   user?.roleId === 'founder' ||
+                   (user?.displayName || user?.name || '').toLowerCase().includes('founder') ||
+                   (user?.displayName || user?.name || '').toLowerCase().includes('shantell');
 
   // Stats
   const [stats, setStats] = useState({
@@ -73,10 +86,12 @@ export const PaymentLookupTab = () => {
     }
   }, []);
 
-  // Run on mount
+  // Run on mount (Only load recent entries by default for Founder/Master)
   useEffect(() => {
-    loadAllRecentPayments();
-  }, [loadAllRecentPayments]);
+    if (isMaster) {
+      loadAllRecentPayments();
+    }
+  }, [isMaster, loadAllRecentPayments]);
 
   const calculateStats = (records: PaymentRecord[]) => {
     let revenue = 0;
@@ -105,7 +120,11 @@ export const PaymentLookupTab = () => {
     if (e) e.preventDefault();
     const q = searchQuery.trim();
     if (!q) {
-      loadAllRecentPayments();
+      if (isMaster) {
+        loadAllRecentPayments();
+      } else {
+        setPayments([]);
+      }
       setHasSearched(false);
       return;
     }
@@ -181,7 +200,6 @@ export const PaymentLookupTab = () => {
         } catch {}
       });
 
-      // Filter local state based on query if needed
       setPayments(records);
       calculateStats(records);
     } catch (err) {
@@ -236,11 +254,11 @@ Phone: 1-888-963-4447 | Email: asstsupport@gmail.com
       {/* Stats Board */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: 'Total Revenue Found', value: `$${stats.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: TrendingUp, color: 'text-emerald-600' },
+          { label: 'Total Revenue Found', value: `$${stats.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, icon: TrendingUp, color: 'text-emerald-600', hide: !isMaster },
           { label: 'Payments Count', value: String(stats.totalPayments), icon: FileText, color: 'text-indigo-600' },
           { label: 'Settled Ledger', value: String(stats.settledCount), icon: CheckCircle, color: 'text-emerald-600' },
           { label: 'Pending Audits', value: String(stats.pendingCount), icon: AlertTriangle, color: 'text-amber-500' }
-        ].map((s, i) => (
+        ].filter(s => !s.hide).map((s, i) => (
           <div key={i} className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex justify-between items-start mb-2">
               <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{s.label}</p>
@@ -273,7 +291,15 @@ Phone: 1-888-963-4447 | Email: asstsupport@gmail.com
           </button>
           <button
             type="button"
-            onClick={() => { setSearchQuery(''); loadAllRecentPayments(); setHasSearched(false); }}
+            onClick={() => {
+              setSearchQuery('');
+              if (isMaster) {
+                loadAllRecentPayments();
+              } else {
+                setPayments([]);
+              }
+              setHasSearched(false);
+            }}
             className="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-slate-500 transition-colors"
             title="Reset Filters"
           >
@@ -289,6 +315,12 @@ Phone: 1-888-963-4447 | Email: asstsupport@gmail.com
             <Loader2 size={32} className="animate-spin text-indigo-500 mx-auto" />
             <p className="text-sm font-bold text-slate-500">Querying platform ledgers...</p>
           </div>
+        </div>
+      ) : (!isMaster && !hasSearched) ? (
+        <div className="flex flex-col items-center justify-center py-16 bg-white border border-slate-200 rounded-2xl p-8">
+          <Search size={32} className="text-slate-400 mb-2" />
+          <p className="text-sm font-bold text-slate-700">Ready for Payment Lookup</p>
+          <p className="text-xs text-slate-400 mt-1">Enter a client's name, email, or transaction details above to search payment logs.</p>
         </div>
       ) : payments.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 bg-white border border-slate-200 rounded-2xl p-8">

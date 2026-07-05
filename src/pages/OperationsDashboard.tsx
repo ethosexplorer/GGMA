@@ -583,7 +583,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
       case 'call_center': return <CallCenterCommandTab />;
       case 'phone_intake': return <PhoneIntakeForm />;
       case 'account_lookup': return <AccountLookupTab />;
-      case 'payment_lookup': return <PaymentLookupTab />;
+      case 'payment_lookup': return <PaymentLookupTab user={user} />;
       case 'operations_calendar': return <div className="h-full w-full -m-10"><FounderCalendar user={user} title="Operations Calendar" /></div>;
       case 'support': return renderSupport();
       case 'it_support': return renderITSupport();
