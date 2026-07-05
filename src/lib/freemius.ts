@@ -96,6 +96,11 @@ export const FREEMIUS_PLAN_MAP: Record<string, number> = {
   // Partner plans (Ambassador/Reseller/Strategic) — removed
 };
 
+// Map platform Add-on IDs to their Freemius Product ID and Pricing ID
+export const FREEMIUS_ADDON_MAP: Record<string, { productId: number; planId: number }> = {
+  'addon_pt_provider': { productId: 55256, planId: 72873 },
+};
+
 // Reverse lookup: Freemius plan ID → platform plan key
 export const FREEMIUS_PLAN_REVERSE: Record<number, string> = Object.fromEntries(
   Object.entries(FREEMIUS_PLAN_MAP).map(([key, val]) => [val, key])
@@ -171,7 +176,18 @@ export const openFreemiusCheckout = ({
   onCancel,
   onTrack,
 }: OpenFreemiusCheckoutOptions) => {
-  const freemiusPlanId = FREEMIUS_PLAN_MAP[planId];
+  let freemiusPlanId: number | undefined;
+  let productId = import.meta.env.VITE_FREEMIUS_PLUGIN_ID || FREEMIUS_PLUGIN_ID;
+
+  // Check if it's an add-on product first
+  if (FREEMIUS_ADDON_MAP[planId]) {
+    const mapping = FREEMIUS_ADDON_MAP[planId];
+    productId = String(mapping.productId);
+    freemiusPlanId = mapping.planId;
+  } else {
+    freemiusPlanId = FREEMIUS_PLAN_MAP[planId];
+  }
+
   if (!freemiusPlanId) {
     console.error(`Unknown Freemius plan mapping for platform ID: "${planId}"`);
     alert(`Checkout error: Freemius plan mapping not found for "${planId}".`);
