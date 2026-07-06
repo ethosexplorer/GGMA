@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BizPower Payroll Savings Program — GGHP-OS Integration</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --forest: #0A3D2A;
+      --forest-deep: #061F15;
+      --gold: #D4AF77;
+      --gold-light: #E8D5B5;
+      --emerald: #10B981;
+      --slate-50: #F8FAFC;
+      --slate-100: #F1F5F9;
+      --slate-200: #E2E8F0;
+      --slate-300: #CBD5E1;
+      --slate-500: #64748B;
+      --slate-700: #334155;
+      --slate-800: #1E293B;
+      --slate-900: #0F172A;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--slate-100);
+      color: var(--slate-700);
+      line-height: 1.6;
+      padding: 40px 20px;
+    }
+
+    .email-container {
+      max-width: 680px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--slate-200);
+    }
+
+    /* ═══ HEADER ═══ */
+    .header {
+      background: linear-gradient(135deg, var(--forest-deep) 0%, var(--forest) 100%);
+      color: white;
+      padding: 40px;
+      text-align: center;
+      position: relative;
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--gold), var(--emerald), var(--gold));
+    }
+    .header .logo {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      margin-bottom: 12px;
+    }
+    .header h1 {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .header h1 span {
+      color: var(--gold);
+    }
+
+    /* ═══ CONTENT ═══ */
+    .content {
+      padding: 40px;
+    }
+
+    .memo-header {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      font-size: 13px;
+    }
+    .memo-row {
+      display: flex;
+      margin-bottom: 8px;
+    }
+    .memo-row:last-child { margin-bottom: 0; }
+    .memo-label {
+      width: 80px;
+      font-weight: 800;
+      color: var(--slate-900);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .memo-value {
+      color: var(--slate-700);
+    }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--slate-900);
+      margin-bottom: 16px;
+      letter-spacing: -0.01em;
+    }
+
+    p {
+      margin-bottom: 16px;
+      color: var(--slate-700);
+      font-size: 15px;
+    }
+
+    /* ═══ SAVINGS CARD ═══ */
+    .savings-card {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(10, 61, 42, 0.05));
+      border: 1.5px dashed var(--emerald);
+      border-radius: 16px;
+      padding: 28px;
+      margin: 24px 0;
+      text-align: center;
+    }
+    .savings-value {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--forest);
+      margin-bottom: 8px;
+    }
+    .savings-sub {
+      font-size: 14px;
+      color: var(--slate-500);
+      font-weight: 500;
+    }
+
+    /* ═══ FEATURE LIST ═══ */
+    .benefit-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .benefit-card {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      padding: 20px;
+      border-radius: 12px;
+    }
+    .benefit-card h4 {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--forest);
+      margin-bottom: 6px;
+    }
+    .benefit-card p {
+      font-size: 12px;
+      color: var(--slate-500);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    /* ═══ GGHP INTEGRATION CALLOUT ═══ */
+    .integration-box {
+      background: linear-gradient(135deg, var(--forest-deep) 0%, var(--forest) 100%);
+      color: white;
+      padding: 28px;
+      border-radius: 16px;
+      margin: 32px 0;
+      position: relative;
+      overflow: hidden;
+      border-left: 5px solid var(--gold);
+    }
+    .integration-box h3 {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--gold);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .integration-box p {
+      font-size: 13.5px;
+      color: rgba(255, 255, 255, 0.85);
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    /* ═══ VIDEO BUTTONS ═══ */
+    .btn-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 28px 0;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: var(--emerald);
+      color: white;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+    .btn-primary:hover {
+      background: #059669;
+    }
+    .btn-secondary {
+      background: var(--slate-100);
+      color: var(--slate-800);
+      border: 1px solid var(--slate-300);
+    }
+    .btn-secondary:hover {
+      background: var(--slate-200);
+    }
+
+    /* ═══ FORM SECTION ═══ */
+    .form-section {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      padding: 32px;
+      margin-top: 32px;
+    }
+    .form-section h3 {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--slate-900);
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--slate-200);
+      padding-bottom: 8px;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--slate-500);
+      margin-bottom: 6px;
+      letter-spacing: 0.05em;
+    }
+    .form-input-placeholder {
+      width: 100%;
+      height: 36px;
+      border-bottom: 1.5px solid var(--slate-300);
+      margin-top: 4px;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    /* ═══ FOOTER ═══ */
+    .footer {
+      background: var(--slate-900);
+      color: var(--slate-500);
+      padding: 40px;
+      text-align: center;
+      font-size: 12px;
+      border-top: 1px solid var(--slate-800);
+    }
+    .footer h4 {
+      color: white;
+      font-weight: 700;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    .footer-meta {
+      margin: 16px 0;
+      color: var(--slate-400);
+    }
+    .footer a {
+      color: var(--gold-light);
+      text-decoration: none;
+    }
+
+    @media (max-width: 580px) {
+      .benefit-grid, .form-grid { grid-template-columns: 1fr; }
+      .content { padding: 24px; }
+      .header { padding: 32px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="email-container">
+    <!-- ═══ HEADER ═══ -->
+    <header class="header">
+      <div class="logo">Global Green Hybrid Platform • BizPower</div>
+      <h1>BizPower Benefits <span>Payroll Savings Program</span></h1>
+    </header>
+
+    <!-- ═══ CONTENT ═══ -->
+    <main class="content">
+      <!-- MEMO BAR -->
+      <div class="memo-header">
+        <div class="memo-row">
+          <div class="memo-label">To:</div>
+          <div class="memo-value">Hemp, Cannabis, & CBD Retail Store Owners in Oklahoma</div>
+        </div>
+        <div class="memo-row">
+          <div class="memo-label">From:</div>
+          <div class="memo-value">Shantell Robinson (Chronic Cardz • Global Green)</div>
+        </div>
+        <div class="memo-row">
+          <div class="memo-label">RE:</div>
+          <div class="memo-value">BizPower Benefits Payroll Savings Program (Net Cost: ZERO)</div>
+        </div>
+      </div>
+
+      <p>Hello,</p>
+      <p>This is Shantell Robinson. I am reaching out with a program designed to add thousands of dollars back to your company's bottom line immediately, at absolutely zero cost to you.</p>
+      <p>Through the **BizPower Benefits Payroll Savings Program**, businesses can recapture FICA taxes and direct them toward employee healthcare wellness benefits, using IRS-compliant guidelines under IRC Section 105 and the Affordable Care Act.</p>
+
+      <!-- SAVINGS CALLOUT -->
+      <div class="savings-card">
+        <div class="savings-value">$400 – $550</div>
+        <div class="savings-sub">Average Annual Payroll Tax Savings Per W-2 Employee</div>
+      </div>
+
+      <p><strong>Here is how it works:</strong> You save on your payroll taxes, and your employees receive additional robust wellness benefits (accident, cancer, critical illness, life, disability, etc.)—all **without changing your employees' net take-home pay** or costing your business a single penny.</p>
+
+      <h2>Key Features of the Program:</h2>
+      <div class="benefit-grid">
+        <div class="benefit-card">
+          <h4>Immediate Bottom-Line Savings</h4>
+          <p>If you have 10 W-2 employees, you save an average of $4,500/year off your payroll taxes. That is $375/month straight to your bottom line.</p>
+        </div>
+        <div class="benefit-card">
+          <h4>$150/Mo Employee Benefits</h4>
+          <p>Each employee receives a wellness program and up to $150/month in supplemental coverage with zero change to their take-home pay.</p>
+        </div>
+        <div class="benefit-card">
+          <h4>No Provider Replacement</h4>
+          <p>This program does not replace your current healthcare provider. It simply redirects FICA tax money via IRC Section 105.</p>
+        </div>
+        <div class="benefit-card">
+          <h4>Hassle-Free Quote</h4>
+          <p>We do not need employee names or Social Security Numbers. It takes less than one hour of your HR manager's time to pre-qualify.</p>
+        </div>
+      </div>
+
+      <!-- GGHP INTEGRATION BOX -->
+      <div class="integration-box">
+        <h3>🔌 Connected to the GGHP-OS Ecosystem</h3>
+        <p>Your BizPower savings program integrates directly with the <strong>Global Green Hybrid Platform (GGHP-OS)</strong>. Track your recaptured payroll taxes, monitor compliance metrics, and manage employee wellness eligibility side-by-side with your retail and license audits inside the <strong>GGHP-OS Executive CRM & Accounting Ledger</strong>.</p>
+      </div>
+
+      <h2>Review the Brief Explainer Videos:</h2>
+      <div class="btn-container">
+        <a href="https://globalgreen.bizpowerbenefits.com/" class="btn btn-primary">Get Pre-Qualified Online (Free Quote)</a>
+        <a href="https://vimeo.com/1054493848" class="btn btn-secondary" target="_blank">🎥 Watch 2-Minute Program Intro</a>
+        <a href="https://vimeo.com/1054348048" class="btn btn-secondary" target="_blank">🎥 Watch How BizPower Works</a>
+        <a href="https://vimeo.com/1082620901" class="btn btn-secondary" target="_blank">💬 Client Testimony Video</a>
+      </div>
+
+      <p><em>Note: On the pre-qualification form, select "Yes to 10 employees" even if you currently have fewer, to enable the basic pricing calculator.</em></p>
+
+      <!-- FORM DRAFT -->
+      <div class="form-section">
+        <h3>📋 VIP Quote Request Form</h3>
+        <p style="font-size: 13px; color: var(--slate-500); margin-bottom: 20px;">Complete this section and return it to globalgreenenterprize@gmail.com to request a VIP custom quote.</p>
+        
+        <div class="form-group">
+          <label>Company Name</label>
+          <div class="form-input-placeholder"></div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Number of W-2 Employees</label>
+            <div class="form-input-placeholder"></div>
+          </div>
+          <div class="form-group">
+            <label>Company Website</label>
+            <div class="form-input-placeholder"></div>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>HR Contact Name</label>
+            <div class="form-input-placeholder"></div>
+          </div>
+          <div class="form-group">
+            <label>HR Email / Phone</label>
+            <div class="form-input-placeholder"></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Signature & Date</label>
+          <div class="form-input-placeholder"></div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ═══ FOOTER ═══ -->
+    <footer class="footer">
+      <h4>Shantell Robinson</h4>
+      <p style="color: var(--slate-300); margin-bottom: 8px;">Global Green Enterprise, Inc.</p>
+      <p>Cell: 405-492-7297 | Email: <a href="mailto:globalgreenenterprize@gmail.com">globalgreenenterprize@gmail.com</a></p>
+      
+      <div class="footer-meta">
+        <strong>Live Well USA Benefits:</strong> ID Theft Protection, Credit Monitoring, Legal Resource Access, Travel Savings.<br>
+        Learn more: <a href="https://globalgreenenterprize.livewellusa.org" target="_blank">globalgreenenterprize.livewellusa.org</a>
+      </div>
+      <p style="font-size: 10px; color: var(--slate-600);">© 2026 Global Green Enterprise, Inc. All rights reserved. To unsubscribe, email "REMOVE" in the subject line.</p>
+    </footer>
+  </div>
+
+</body>
+</html>

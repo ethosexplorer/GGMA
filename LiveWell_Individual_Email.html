@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Well USA — Premium Individual & Family Membership</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --forest: #0A3D2A;
+      --forest-deep: #061F15;
+      --gold: #D4AF77;
+      --gold-light: #E8D5B5;
+      --emerald: #10B981;
+      --slate-50: #F8FAFC;
+      --slate-100: #F1F5F9;
+      --slate-200: #E2E8F0;
+      --slate-300: #CBD5E1;
+      --slate-500: #64748B;
+      --slate-700: #334155;
+      --slate-800: #1E293B;
+      --slate-900: #0F172A;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--slate-100);
+      color: var(--slate-700);
+      line-height: 1.6;
+      padding: 40px 20px;
+    }
+
+    .email-container {
+      max-width: 680px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--slate-200);
+    }
+
+    /* ═══ HEADER ═══ */
+    .header {
+      background: linear-gradient(135deg, var(--forest-deep) 0%, var(--forest) 100%);
+      color: white;
+      padding: 40px;
+      text-align: center;
+      position: relative;
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--gold), var(--emerald), var(--gold));
+    }
+    .header .logo {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      margin-bottom: 12px;
+    }
+    .header h1 {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .header h1 span {
+      color: var(--gold);
+    }
+
+    /* ═══ CONTENT ═══ */
+    .content {
+      padding: 40px;
+    }
+
+    .memo-header {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      font-size: 13px;
+    }
+    .memo-row {
+      display: flex;
+      margin-bottom: 8px;
+    }
+    .memo-row:last-child { margin-bottom: 0; }
+    .memo-label {
+      width: 80px;
+      font-weight: 800;
+      color: var(--slate-900);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .memo-value {
+      color: var(--slate-700);
+    }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--slate-900);
+      margin-bottom: 16px;
+      letter-spacing: -0.01em;
+    }
+
+    p {
+      margin-bottom: 16px;
+      color: var(--slate-700);
+      font-size: 15px;
+    }
+
+    /* ═══ PRICE BADGE ═══ */
+    .price-badge {
+      background: linear-gradient(135deg, rgba(212, 175, 119, 0.08), rgba(10, 61, 42, 0.05));
+      border: 1.5px solid var(--gold);
+      border-radius: 16px;
+      padding: 24px;
+      margin: 24px 0;
+      text-align: center;
+    }
+    .price-value {
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--forest);
+    }
+    .price-sub {
+      font-size: 14px;
+      color: var(--slate-500);
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    /* ═══ BENEFITS LIST ═══ */
+    .benefits-list {
+      margin: 24px 0;
+    }
+    .benefit-item {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--slate-200);
+    }
+    .benefit-item:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+    .benefit-num {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      background: var(--forest);
+      color: var(--gold);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .benefit-text h4 {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--slate-900);
+      margin-bottom: 4px;
+    }
+    .benefit-text p {
+      font-size: 13.5px;
+      color: var(--slate-500);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    /* ═══ C3 INTEGRATION BOX ═══ */
+    .integration-box {
+      background: linear-gradient(135deg, var(--forest-deep) 0%, var(--forest) 100%);
+      color: white;
+      padding: 28px;
+      border-radius: 16px;
+      margin: 32px 0;
+      position: relative;
+      overflow: hidden;
+      border-left: 5px solid var(--emerald);
+    }
+    .integration-box h3 {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--emerald);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .integration-box p {
+      font-size: 13.5px;
+      color: rgba(255, 255, 255, 0.85);
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    /* ═══ BUTTONS ═══ */
+    .btn-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 28px 0;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: var(--gold);
+      color: var(--forest-deep);
+      box-shadow: 0 4px 12px rgba(212, 175, 119, 0.2);
+    }
+    .btn-primary:hover {
+      background: var(--gold-light);
+    }
+    .btn-secondary {
+      background: var(--slate-100);
+      color: var(--slate-800);
+      border: 1px solid var(--slate-300);
+    }
+    .btn-secondary:hover {
+      background: var(--slate-200);
+    }
+
+    /* ═══ FOOTER ═══ */
+    .footer {
+      background: var(--slate-900);
+      color: var(--slate-500);
+      padding: 40px;
+      text-align: center;
+      font-size: 12px;
+      border-top: 1px solid var(--slate-800);
+    }
+    .footer h4 {
+      color: white;
+      font-weight: 700;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    .footer-meta {
+      margin: 16px 0;
+      color: var(--slate-400);
+    }
+    .footer a {
+      color: var(--gold-light);
+      text-decoration: none;
+    }
+
+    @media (max-width: 580px) {
+      .content { padding: 24px; }
+      .header { padding: 32px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="email-container">
+    <!-- ═══ HEADER ═══ -->
+    <header class="header">
+      <div class="logo">Global Green Hybrid Platform • Live Well USA</div>
+      <h1>Live Well USA <span>Lifestyle & Protection Benefits</span></h1>
+    </header>
+
+    <!-- ═══ CONTENT ═══ -->
+    <main class="content">
+      <!-- MEMO BAR -->
+      <div class="memo-header">
+        <div class="memo-row">
+          <div class="memo-label">To:</div>
+          <div class="memo-value">Patients, Business Owners, & the Oklahoma Cannabis Community</div>
+        </div>
+        <div class="memo-row">
+          <div class="memo-label">From:</div>
+          <div class="memo-value">Shantell Robinson (Chronic Cardz • Global Green)</div>
+        </div>
+        <div class="memo-row">
+          <div class="memo-label">RE:</div>
+          <div class="memo-value">Comprehensive Identity, Legal, and Travel Protection Program</div>
+        </div>
+      </div>
+
+      <p>Hello,</p>
+      <p>This is Shantell Robinson—the lady who helped sign up over 400,000 patients for their Oklahoma medical marijuana licenses. Over the years, I've worked to bring resources, legality, and safety to our community.</p>
+      <p>Today, I'm asking you to check out a new program that I believe provides an absolute mountain of value for your personal, family, and business protection: **Live Well USA**.</p>
+
+      <!-- PRICE CARD -->
+      <div class="price-badge">
+        <div class="price-value">$19.99 <span style="font-size: 18px; font-weight: 500; color: var(--slate-500);">/ month</span></div>
+        <div class="price-sub">Complete Coverage for You & Up to 7 Family Members</div>
+      </div>
+
+      <h2>What's Included in Your Membership:</h2>
+      <div class="benefits-list">
+        <div class="benefit-item">
+          <div class="benefit-num">1</div>
+          <div class="benefit-text">
+            <h4>Identity Theft Protection</h4>
+            <p>Full cybersecurity and identity restore coverage for you and up to 7 family members.</p>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-num">2</div>
+          <div class="benefit-text">
+            <h4>Credit Monitoring & Analysis</h4>
+            <p>Comprehensive credit alerts and active monitoring for 1 business and up to 7 individuals.</p>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-num">3</div>
+          <div class="benefit-text">
+            <h4>Legal Resource Access</h4>
+            <p>Connect with professional legal help, contract reviews, and document templates.</p>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-num">4</div>
+          <div class="benefit-text">
+            <h4>Travel Discount Program</h4>
+            <p>Access exclusive member-only hotel, flight, and resort bookings with an average of 30-50% savings.</p>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-num">5</div>
+          <div class="benefit-text">
+            <h4>AI-Powered Lifestyle Companion</h4>
+            <p>Custom daily workouts, macro tracking, nutritional plans, and recipe planners in a single app.</p>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-num">6</div>
+          <div class="benefit-text">
+            <h4>SkyMed Medical Travel Protection</h4>
+            <p>Get emergency air medical evacuation protection with a 25% discount off standard plan prices.</p>
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-num">7</div>
+          <div class="benefit-text">
+            <h4>Group-Rate Life Insurance</h4>
+            <p>Instantly access premium, low-cost group life insurance rates reserved for members.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- C3 INTEGRATION BOX -->
+      <div class="integration-box">
+        <h3>🛡️ Syncs directly with your GGHP C³ Score™</h3>
+        <p>Your Live Well USA membership connects directly to the <strong>Global Green Hybrid Platform (GGHP-OS)</strong>. Active engagement with credit monitoring, identity checks, and wellness tracking automatically updates your <strong>Care Wallet™</strong> profile, directly boosting your FICO-style <strong>C³ Score™</strong> to unlock lower state fees and physician appointment discounts!</p>
+      </div>
+
+      <h2>Get Started Today:</h2>
+      <div class="btn-container">
+        <a href="https://globalgreenenterprize.livewellusa.org" class="btn btn-primary">Learn More & Sign Up Online</a>
+        <a href="https://vimeo.com/1115310789/c69499bd20" class="btn btn-secondary" target="_blank">🎥 Watch the 2-Minute Video Tour</a>
+      </div>
+
+      <div class="memo-header" style="border-left: 4px solid var(--gold); margin-top: 32px;">
+        <h4 style="font-weight: 800; color: var(--slate-900); margin-bottom: 6px;">💼 For Cannabis & CBD Business Owners:</h4>
+        <p style="font-size: 13.5px; margin: 0;">Learn how you can save <strong>$400 to $550 per W-2 employee per year</strong> in payroll taxes (FICA recapture) and give your team $150/month in supplemental wellness benefits at <strong>net zero cost</strong>: <a href="https://globalgreen.bizpowerbenefits.com" target="_blank">globalgreen.bizpowerbenefits.com</a></p>
+      </div>
+    </main>
+
+    <!-- ═══ FOOTER ═══ -->
+    <footer class="footer">
+      <h4>Shantell Robinson</h4>
+      <p style="color: var(--slate-300); margin-bottom: 8px;">Global Green Enterprise, Inc. / Chronic Cardz</p>
+      <p>Cell: 405-492-7297 | Email: <a href="mailto:globalgreenenterprize@gmail.com">globalgreenenterprize@gmail.com</a></p>
+      <p style="font-size: 10px; color: var(--slate-600); margin-top: 24px;">© 2026 Global Green Enterprise, Inc. All rights reserved. To unsubscribe, email "REMOVE" in the subject line.</p>
+    </footer>
+  </div>
+
+</body>
+</html>
