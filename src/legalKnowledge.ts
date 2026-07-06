@@ -958,4 +958,18 @@ A: The DEA has only released instructions for dispensaries. Additional analysis 
 
 Q: Will OMMA issue further guidance for OMMA-licensed businesses and patients about the reclassification or DEA registration?
 A: As a courtesy, the agency will continue to relay any updates received from the DEA to help the industry and patients stay informed. Licensees should follow all guidance released by the federal government, the U.S. Attorney General, the DEA and OBN.
-`;
+
+=== OKLAHOMA HOUSE BILL 4454 (PACKAGING & LABELING) ===
+
+LEGISLATION OVERVIEW:
+House Bill 4454 creates clarity around requirements for OMMA-licensed processors when packaging and labeling medical marijuana products. The new law gives specific instructions to the industry regarding product shapes, styles, and packaging characteristics that are considered appealing to children—including cartoons, toys, animals, or likeness to commercially available candy.
+
+RESPONSIBILITIES:
+- Processors: Responsible for ensuring compliance with HB 4454 for all products they package and label.
+- Dispensaries: Responsible for ensuring any inventory they accept complies with HB 4454.
+- Effective Date: Anything packaged and labeled on or after November 1, 2026, must meet the new requirements.
+
+ENFORCEMENT:
+As the state's medical marijuana regulatory agency, the Oklahoma Medical Marijuana Authority (OMMA) will enforce the new law beginning on November 1, 2026.
+
+Link: https://oklahoma.gov/omma/rules-and-legislation.html
