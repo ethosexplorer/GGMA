@@ -6,12 +6,12 @@
     }
   },
   "rewrites": [
-    { "source": "/api/twilio/:path*", "destination": "/api/twilio.js?__endpoint=:path*" },
-    { "source": "/api/send-sms", "destination": "/api/twilio.js?__endpoint=send-sms" },
-    { "source": "/api/gemini-stream", "destination": "/api/gemini.js?stream=true" },
-    { "source": "/api/paypal-webhook", "destination": "/api/webhook.js?type=paypal" },
-    { "source": "/api/calendly-webhook", "destination": "/api/webhook.js?type=calendly" },
-    { "source": "/api/freemius-webhook", "destination": "/api/webhook.js?type=freemius" },
+    { "source": "/api/twilio/:path*", "destination": "/api/twilio?__endpoint=:path*" },
+    { "source": "/api/send-sms", "destination": "/api/twilio?__endpoint=send-sms" },
+    { "source": "/api/gemini-stream", "destination": "/api/gemini?stream=true" },
+    { "source": "/api/paypal-webhook", "destination": "/api/webhook?type=paypal" },
+    { "source": "/api/calendly-webhook", "destination": "/api/webhook?type=calendly" },
+    { "source": "/api/freemius-webhook", "destination": "/api/webhook?type=freemius" },
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/GGHP_Agency_Valuation_Brief.html", "destination": "/GGHP_Agency_Valuation_Brief.html" },
     { "source": "/GGHP_Cannabis_Business_Valuation_Brief.html", "destination": "/GGHP_Cannabis_Business_Valuation_Brief.html" },
