@@ -795,22 +795,40 @@ export const OverviewTab = ({
             <div>
               <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-1.5"><Activity size={12} /> Live Traffic Sources</h4>
               <div className="space-y-4">
-                {[
-                  { source: 'Direct / Bookmarks', traffic: liveAnalytics.users > 0 ? '100%' : '0%', color: 'bg-indigo-500', width: liveAnalytics.users > 0 ? '100%' : '0%' },
-                  { source: 'Google Organic Search', traffic: '0%', color: 'bg-blue-500', width: '0%' },
-                  { source: 'Federal / SAM.gov Referrals', traffic: '0%', color: 'bg-amber-500', width: '0%' },
-                  { source: 'Social Media (LinkedIn, X)', traffic: '0%', color: 'bg-purple-500', width: '0%' },
-                ].map((item, i) => (
-                  <div key={i}>
-                    <div className="flex justify-between text-xs font-bold mb-1.5">
-                      <span className="text-slate-300">{item.source}</span>
-                      <span className="text-white">{item.traffic}</span>
+                {(() => {
+                  const sources = liveAnalytics.trafficSources || {};
+                  const total = Object.values(sources).reduce((a: number, b: any) => a + (Number(b) || 0), 0) || 1;
+                  
+                  const directCount = Number(sources['Direct / Bookmarks'] || 0);
+                  const googleCount = Number(sources['Google Organic Search'] || 0);
+                  const fedCount = Number(sources['Federal / SAM.gov Referrals'] || 0);
+                  const socialCount = Number(sources['Social Media (LinkedIn, X)'] || 0);
+                  
+                  // Calculate percentages
+                  const directPct = Math.round((directCount / total) * 100);
+                  const googlePct = Math.round((googleCount / total) * 100);
+                  const fedPct = Math.round((fedCount / total) * 100);
+                  const socialPct = Math.round((socialCount / total) * 100);
+
+                  const items = [
+                    { source: 'Direct / Bookmarks', pct: directPct, color: 'bg-indigo-500' },
+                    { source: 'Google Organic Search', pct: googlePct, color: 'bg-blue-500' },
+                    { source: 'Federal / SAM.gov Referrals', pct: fedPct, color: 'bg-amber-500' },
+                    { source: 'Social Media (LinkedIn, X)', pct: socialPct, color: 'bg-purple-500' },
+                  ];
+
+                  return items.map((item, i) => (
+                    <div key={i}>
+                      <div className="flex justify-between text-xs font-bold mb-1.5">
+                        <span className="text-slate-300">{item.source}</span>
+                        <span className="text-white">{item.pct}%</span>
+                      </div>
+                      <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                        <div className={cn("h-full rounded-full", item.color)} style={{ width: `${item.pct}%` }}></div>
+                      </div>
                     </div>
-                    <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
-                      <div className={cn("h-full rounded-full", item.color)} style={{ width: item.width || item.traffic }}></div>
-                    </div>
-                  </div>
-                ))}
+                  ));
+                })()}
               </div>
             </div>
 

@@ -415,12 +415,31 @@ export default function App() {
         const { turso } = await import('./lib/turso');
         await turso.execute('UPDATE analytics_aggregates SET total_clicks = total_clicks + 1 WHERE id = 1');
         
+        let trafficSource = 'Direct / Bookmarks';
+        const referrer = document.referrer;
+        const urlParams = new URLSearchParams(window.location.search);
+        const utmSource = urlParams.get('utm_source') || urlParams.get('ref');
+
+        if (utmSource) {
+          if (utmSource.toLowerCase().includes('google')) trafficSource = 'Google Organic';
+          else if (utmSource.toLowerCase().includes('linkedin')) trafficSource = 'LinkedIn';
+          else if (utmSource.toLowerCase().includes('twitter') || utmSource.toLowerCase().includes('x')) trafficSource = 'X / Twitter';
+          else if (utmSource.toLowerCase().includes('sam.gov') || utmSource.toLowerCase().includes('sam')) trafficSource = 'SAM.gov Referral';
+          else trafficSource = utmSource;
+        } else if (referrer) {
+          const lowerRef = referrer.toLowerCase();
+          if (lowerRef.includes('google.com')) trafficSource = 'Google Organic';
+          else if (lowerRef.includes('linkedin.com')) trafficSource = 'LinkedIn';
+          else if (lowerRef.includes('twitter.com') || lowerRef.includes('t.co') || lowerRef.includes('x.com')) trafficSource = 'X / Twitter';
+          else if (lowerRef.includes('sam.gov') || lowerRef.includes('.gov')) trafficSource = 'SAM.gov Referral';
+        }
+
         const pathName = location.pathname === '/' ? 'Landing Page' : location.pathname;
         await turso.execute({
           sql: 'INSERT INTO analytics_events (event_type, source, path, user_type, details, created_at) VALUES (?, ?, ?, ?, ?, ?)',
           args: [
             'PAGE_VIEW',
-            'Web Frontend',
+            trafficSource,
             location.pathname,
             userProfile?.role || 'Anonymous Visitor',
             `Viewed ${pathName}`,

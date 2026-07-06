@@ -200,7 +200,8 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     conversions: 0,
     events: [] as { time: string; user: string; action: string }[],
     clicksByPath: {} as Record<string, number>,
-    clicksByUserType: {} as Record<string, number>
+    clicksByUserType: {} as Record<string, number>,
+    trafficSources: {} as Record<string, number>
   });
 
   const [pollStats, setPollStats] = useState({
@@ -301,6 +302,19 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         const clicksByUserType: Record<string, number> = {};
         utRes.rows.forEach(r => { clicksByUserType[String(r.user_type)] = Number(r.c); });
 
+        // Query real traffic sources
+        const sourceRes = await turso.execute({ sql: 'SELECT source, COUNT(*) as c FROM analytics_events WHERE created_at >= ? GROUP BY source', args: [sinceAllTime] });
+        const trafficSources: Record<string, number> = {};
+        sourceRes.rows.forEach(r => {
+          let srcName = String(r.source);
+          if (srcName === 'Web Frontend') srcName = 'Direct / Bookmarks';
+          if (srcName === 'Google Organic') srcName = 'Google Organic Search';
+          if (srcName === 'LinkedIn' || srcName === 'X / Twitter') srcName = 'Social Media (LinkedIn, X)';
+          if (srcName === 'SAM.gov Referral') srcName = 'Federal / SAM.gov Referrals';
+          
+          trafficSources[srcName] = (trafficSources[srcName] || 0) + Number(r.c);
+        });
+
         const evRes = await turso.execute('SELECT * FROM analytics_events ORDER BY created_at DESC LIMIT 20');
         const mappedEvents: any[] = [];
         evRes.rows.forEach((r: any) => {
@@ -354,7 +368,8 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           conversions: totalConversions,
           events: finalEvents.length > 0 ? finalEvents : prev.events,
           clicksByPath,
-          clicksByUserType
+          clicksByUserType,
+          trafficSources
         }));
 
         const TOTAL_ACTIVE_POLLS = POLLS.length;
