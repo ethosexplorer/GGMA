@@ -228,6 +228,8 @@ export const FREEMIUS_ADDON_MAP: Record<string, { productId: number; planId: num
   'partner_add_training': { productId: 55369, planId: 72999 },
   'partner_add_api': { productId: 55370, planId: 73001 },
   'partner_add_territory': { productId: 55371, planId: 0 }, // Free/Included
+  'addon_x_provider_view': { productId: 55372, planId: 73003 },
+  'addon_x_insurance_tracker': { productId: 55373, planId: 73004 },
 };
 
 // Reverse lookup: Freemius plan ID → platform plan key
