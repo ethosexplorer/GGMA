@@ -147,7 +147,8 @@ export const OverviewTab = ({
         sql: 'SELECT * FROM analytics_events WHERE created_at >= ? ORDER BY created_at DESC LIMIT 50',
         args: [sinceDate]
       });
-      const mapped = res.rows.map((r: any, i: number) => {
+      const mapped: any[] = [];
+      res.rows.forEach((r: any) => {
         const dateStr = r.created_at + (String(r.created_at).endsWith('Z') ? '' : 'Z');
         const date = new Date(dateStr);
         const diffSecs = Math.max(0, Math.floor((Date.now() - date.getTime()) / 1000));
@@ -156,12 +157,44 @@ export const OverviewTab = ({
         else if (diffSecs < 3600) timeStr = `${Math.floor(diffSecs / 60)}m ago`;
         else if (diffSecs < 86400) timeStr = `${Math.floor(diffSecs / 3600)}h ago`;
         else timeStr = `${Math.floor(diffSecs / 86400)}d ago`;
-        if (i === 0 && diffSecs < 10) timeStr = 'Just now';
-        return {
-          time: timeStr,
-          user: String(r.user_type || 'unknown'),
-          action: String(r.details || r.path || 'Page view')
-        };
+        if (mapped.length === 0 && diffSecs < 10) timeStr = 'Just now';
+
+        const user = String(r.user_type || 'unknown');
+        const action = String(r.details || r.path || 'Page view');
+
+        // Check if this event is a duplicate of a mapped event
+        const isDuplicate = mapped.some((prev: any) => {
+          const prevTime = prev._rawDate;
+          const timeDiff = Math.abs(prevTime.getTime() - date.getTime());
+          if (timeDiff < 5000) {
+            if (prev.user === user && prev.action === action) return true;
+            if (prev.action === action) {
+              if ((prev.user === 'Anonymous Visitor' && user !== 'Anonymous Visitor') ||
+                  (prev.user !== 'Anonymous Visitor' && user === 'Anonymous Visitor')) {
+                return true;
+              }
+            }
+          }
+          return false;
+        });
+
+        if (!isDuplicate) {
+          mapped.push({
+            time: timeStr,
+            user,
+            action,
+            _rawDate: date
+          });
+        } else {
+          // If existing is anonymous but we have real role, upgrade it
+          const idx = mapped.findIndex((prev: any) => {
+            const prevTime = prev._rawDate;
+            return Math.abs(prevTime.getTime() - date.getTime()) < 5000 && prev.action === action;
+          });
+          if (idx !== -1 && mapped[idx].user === 'Anonymous Visitor' && user !== 'Anonymous Visitor') {
+            mapped[idx].user = user;
+          }
+        }
       });
       setClickStreamEvents(mapped);
     } catch (e) {

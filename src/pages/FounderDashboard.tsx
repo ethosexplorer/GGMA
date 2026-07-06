@@ -301,26 +301,58 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         const clicksByUserType: Record<string, number> = {};
         utRes.rows.forEach(r => { clicksByUserType[String(r.user_type)] = Number(r.c); });
 
-        const evRes = await turso.execute('SELECT * FROM analytics_events ORDER BY created_at DESC LIMIT 5');
-        const mappedEvents = evRes.rows.map((r, i) => {
+        const evRes = await turso.execute('SELECT * FROM analytics_events ORDER BY created_at DESC LIMIT 20');
+        const mappedEvents: any[] = [];
+        evRes.rows.forEach((r: any) => {
           const dateStr = r.created_at + (String(r.created_at).endsWith('Z') ? '' : 'Z');
           const date = new Date(dateStr);
           const diffSecs = Math.max(0, Math.floor((Date.now() - date.getTime()) / 1000));
           let timeStr = diffSecs < 60 ? `${diffSecs}s ago` : `${Math.floor(diffSecs / 60)}m ago`;
-          if (i === 0 && diffSecs < 10) timeStr = 'Just now';
-          return {
-            time: timeStr,
-            user: String(r.user_type),
-            action: String(r.details)
-          };
+          if (mappedEvents.length === 0 && diffSecs < 10) timeStr = 'Just now';
+
+          const user = String(r.user_type || 'unknown');
+          const action = String(r.details || r.path || 'Page view');
+
+          const isDuplicate = mappedEvents.some((prev: any) => {
+            const prevTime = prev._rawDate;
+            const timeDiff = Math.abs(prevTime.getTime() - date.getTime());
+            if (timeDiff < 5000) {
+              if (prev.user === user && prev.action === action) return true;
+              if (prev.action === action) {
+                if ((prev.user === 'Anonymous Visitor' && user !== 'Anonymous Visitor') ||
+                    (prev.user !== 'Anonymous Visitor' && user === 'Anonymous Visitor')) {
+                  return true;
+                }
+              }
+            }
+            return false;
+          });
+
+          if (!isDuplicate) {
+            mappedEvents.push({
+              time: timeStr,
+              user,
+              action,
+              _rawDate: date
+            });
+          } else {
+            const idx = mappedEvents.findIndex((prev: any) => {
+              const prevTime = prev._rawDate;
+              return Math.abs(prevTime.getTime() - date.getTime()) < 5000 && prev.action === action;
+            });
+            if (idx !== -1 && mappedEvents[idx].user === 'Anonymous Visitor' && user !== 'Anonymous Visitor') {
+              mappedEvents[idx].user = user;
+            }
+          }
         });
+        const finalEvents = mappedEvents.slice(0, 5);
 
         setLiveAnalytics(prev => ({
           ...prev,
           users: activeUsers,
           clicks: totalClicks,
           conversions: totalConversions,
-          events: mappedEvents.length > 0 ? mappedEvents : prev.events,
+          events: finalEvents.length > 0 ? finalEvents : prev.events,
           clicksByPath,
           clicksByUserType
         }));

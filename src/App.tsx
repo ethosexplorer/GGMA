@@ -409,6 +409,7 @@ export default function App() {
 
   // Real-Time Analytics Tracking
   useEffect(() => {
+    if (loading) return;
     const trackEvent = async () => {
       try {
         const { turso } = await import('./lib/turso');
@@ -430,9 +431,8 @@ export default function App() {
         // Silent fail for analytics
       }
     };
-    // Only track if not a completely empty initial render to avoid double counting strict mode
     trackEvent();
-  }, [location.pathname, userProfile?.role]);
+  }, [location.pathname, userProfile?.role, loading]);
 
   // ── Real-time Presence Tracking ──────────────────────────────────────────
   usePresence(user ? {
