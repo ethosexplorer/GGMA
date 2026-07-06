@@ -21,7 +21,7 @@ interface CEYEProps {
 }
 
 // ── SIMULATED FACILITY DATA ──
-const FACILITIES = [
+export const FACILITIES = [
   { id: 'FAC-001', name: 'GreenLeaf Cultivation Center', city: 'Tulsa', state: 'OK', type: 'Cultivator', compliance: 94, risk: 'low', cameras: 12, lastInspection: '2026-06-28', lat: 36.15, lng: -95.99, alerts: 0, status: 'active' },
   { id: 'FAC-002', name: 'Oklahoma Premium Processors', city: 'Oklahoma City', state: 'OK', type: 'Processor', compliance: 87, risk: 'medium', cameras: 8, lastInspection: '2026-06-25', lat: 35.47, lng: -97.52, alerts: 2, status: 'active' },
   { id: 'FAC-003', name: 'MedRX Dispensary #14', city: 'Norman', state: 'OK', type: 'Dispensary', compliance: 91, risk: 'low', cameras: 6, lastInspection: '2026-06-30', lat: 35.22, lng: -97.44, alerts: 0, status: 'active' },
@@ -40,7 +40,7 @@ const FACILITIES = [
 ];
 
 // ── SIMULATED TRANSPORT DATA ──
-const TRANSPORTS = [
+export const TRANSPORTS = [
   { id: 'TRN-4401', driver: 'Marcus Johnson', vehicle: 'Unit 44-01 (Sprinter)', origin: 'GreenLeaf Cultivation', destination: 'MedRX Dispensary #14', status: 'in_transit', eta: '14:30 CST', weight: '12.4 lbs', manifest: 'MAN-88712', compliance: 'compliant', route: 'I-44 → US-77', progress: 72 },
   { id: 'TRN-4402', driver: 'Lisa Chen', vehicle: 'Unit 22-03 (Transit)', origin: 'OK Premium Processors', destination: 'Valley Wellness', status: 'in_transit', eta: '15:15 CST', weight: '8.2 lbs', manifest: 'MAN-88713', compliance: 'compliant', route: 'US-169 S', progress: 45 },
   { id: 'TRN-4403', driver: 'David Reyes', vehicle: 'Unit 33-07 (ProMaster)', origin: 'Pure Extract Co', destination: 'CrossState Hub', status: 'deviation', eta: '16:00 CST', weight: '22.1 lbs', manifest: 'MAN-88714', compliance: 'deviation_alert', route: 'I-44 W → DETOUR', progress: 38 },
@@ -66,7 +66,7 @@ const ALERT_TEMPLATES = [
 ];
 
 // ── CAMERA FEED DATA ──
-const CAMERA_FEEDS = [
+export const CAMERA_FEEDS = [
   { id: 'CAM-01-A', facility: 'GreenLeaf Cultivation', location: 'Main Entrance', status: 'online', aiTags: ['Motion', 'Badge'], fps: 30, resolution: '4K' },
   { id: 'CAM-01-B', facility: 'GreenLeaf Cultivation', location: 'Grow Room 1', status: 'online', aiTags: ['Plant Health', 'Climate'], fps: 15, resolution: '1080p' },
   { id: 'CAM-02-A', facility: 'OK Premium Processors', location: 'Processing Floor', status: 'online', aiTags: ['PPE Check', 'Weight'], fps: 30, resolution: '4K' },

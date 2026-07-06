@@ -10,6 +10,7 @@ import { NationalEnforcementLedger } from '../federal/NationalEnforcementLedger'
 import { RegulatoryCommandCenter } from './RegulatoryCommandCenter';
 import { collection, onSnapshot, query, orderBy, limit } from 'firebase/firestore';
 import { db } from '../../firebase';
+import { FACILITIES, TRANSPORTS, CAMERA_FEEDS } from '../ceye/CEYECommandCenter';
 
 export const OverviewTab = ({
   user,
@@ -1458,18 +1459,27 @@ export const OverviewTab = ({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          {[
-            { label: 'CEYE Avg Compliance', value: '89%', sub: 'Target: 95%', color: 'text-emerald-600', bg: 'bg-emerald-50 border-emerald-100' },
-            { label: 'Monitored Facilities', value: '15 Active', sub: 'OK, AZ, CO, MN, OR', color: 'text-cyan-600', bg: 'bg-cyan-50 border-cyan-100' },
-            { label: 'Camera Network', value: '10/12 Online', sub: '2 signal loss (Pure Extract)', color: 'text-amber-600', bg: 'bg-amber-50 border-amber-100' },
-            { label: 'Active Transports', value: '5 in Transit', sub: '1 route deviation alert', color: 'text-red-600', bg: 'bg-red-50 border-red-100' },
-          ].map((stat, i) => (
-            <div key={i} className={cn("p-4 rounded-2xl border", stat.bg)}>
-              <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{stat.label}</p>
-              <p className={cn("text-2xl font-black mt-1", stat.color)}>{stat.value}</p>
-              <p className="text-[10px] text-slate-400 mt-0.5 font-medium">{stat.sub}</p>
-            </div>
-          ))}
+          {(() => {
+            const avgComp = Math.round(FACILITIES.reduce((a, f) => a + f.compliance, 0) / FACILITIES.length);
+            const activeTransports = TRANSPORTS.filter(t => t.status === 'in_transit' || t.status === 'deviation').length;
+            const onlineCameras = CAMERA_FEEDS.filter(c => c.status === 'online').length;
+            const totalCameras = CAMERA_FEEDS.length;
+
+            const stats = [
+              { label: 'CEYE Avg Compliance', value: `${avgComp}%`, sub: 'Target: 95%', color: 'text-emerald-600', bg: 'bg-emerald-50 border-emerald-100' },
+              { label: 'Monitored Facilities', value: `${FACILITIES.length} Active`, sub: 'OK, AZ, CO, MN, OR', color: 'text-cyan-600', bg: 'bg-cyan-50 border-cyan-100' },
+              { label: 'Camera Network', value: `${onlineCameras}/${totalCameras} Online`, sub: `${totalCameras - onlineCameras} offline / degraded`, color: 'text-amber-600', bg: 'bg-amber-50 border-amber-100' },
+              { label: 'Active Transports', value: `${activeTransports} Active`, sub: `${TRANSPORTS.filter(t => t.status === 'deviation').length} route deviation alert(s)`, color: 'text-red-600', bg: 'bg-red-50 border-red-100' },
+            ];
+
+            return stats.map((stat, i) => (
+              <div key={i} className={cn("p-4 rounded-2xl border", stat.bg)}>
+                <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{stat.label}</p>
+                <p className={cn("text-2xl font-black mt-1", stat.color)}>{stat.value}</p>
+                <p className="text-[10px] text-slate-400 mt-0.5 font-medium">{stat.sub}</p>
+              </div>
+            ));
+          })()}
         </div>
 
         {/* Mini Charts & Feeds for Overview */}
@@ -1478,21 +1488,34 @@ export const OverviewTab = ({
           <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5">
             <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">Risk Category Share</h4>
             <div className="space-y-3">
-              {[
-                { label: 'Low Risk (Compliant)', pct: 60, color: 'bg-emerald-500', textColor: 'text-emerald-600' },
-                { label: 'Medium Risk (Monitored)', pct: 27, color: 'bg-amber-500', textColor: 'text-amber-600' },
-                { label: 'High Risk (Flagged)', pct: 13, color: 'bg-red-500', textColor: 'text-red-600' },
-              ].map((risk, i) => (
-                <div key={i}>
-                  <div className="flex items-center justify-between text-xs font-bold mb-1">
-                    <span className="text-slate-600">{risk.label}</span>
-                    <span className={risk.textColor}>{risk.pct}%</span>
+              {(() => {
+                const total = FACILITIES.length || 1;
+                const low = FACILITIES.filter(f => f.risk === 'low').length;
+                const med = FACILITIES.filter(f => f.risk === 'medium').length;
+                const high = FACILITIES.filter(f => f.risk === 'high' || f.risk === 'critical').length;
+                
+                const lowPct = Math.round((low / total) * 100);
+                const medPct = Math.round((med / total) * 100);
+                const highPct = 100 - lowPct - medPct; // Ensure sum is exactly 100%
+
+                const risks = [
+                  { label: 'Low Risk (Compliant)', pct: lowPct, color: 'bg-emerald-500', textColor: 'text-emerald-600' },
+                  { label: 'Medium Risk (Monitored)', pct: medPct, color: 'bg-amber-500', textColor: 'text-amber-600' },
+                  { label: 'High Risk (Flagged)', pct: highPct, color: 'bg-red-500', textColor: 'text-red-600' },
+                ];
+
+                return risks.map((risk, i) => (
+                  <div key={i}>
+                    <div className="flex items-center justify-between text-xs font-bold mb-1">
+                      <span className="text-slate-600">{risk.label}</span>
+                      <span className={risk.textColor}>{risk.pct}%</span>
+                    </div>
+                    <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
+                      <div className={cn("h-full rounded-full", risk.color)} style={{ width: `${risk.pct}%` }} />
+                    </div>
                   </div>
-                  <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
-                    <div className={cn("h-full rounded-full", risk.color)} style={{ width: `${risk.pct}%` }} />
-                  </div>
-                </div>
-              ))}
+                ));
+              })()}
             </div>
           </div>
 
