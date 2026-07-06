@@ -21,7 +21,8 @@ interface CEYEProps {
 }
 
 // ── SIMULATED FACILITY DATA ──
-export const FACILITIES = [
+// ── SIMULATED FACILITY DATA ──
+const BASE_FACILITIES = [
   { id: 'FAC-001', name: 'GreenLeaf Cultivation Center', city: 'Tulsa', state: 'OK', type: 'Cultivator', compliance: 94, risk: 'low', cameras: 12, lastInspection: '2026-06-28', lat: 36.15, lng: -95.99, alerts: 0, status: 'active' },
   { id: 'FAC-002', name: 'Oklahoma Premium Processors', city: 'Oklahoma City', state: 'OK', type: 'Processor', compliance: 87, risk: 'medium', cameras: 8, lastInspection: '2026-06-25', lat: 35.47, lng: -97.52, alerts: 2, status: 'active' },
   { id: 'FAC-003', name: 'MedRX Dispensary #14', city: 'Norman', state: 'OK', type: 'Dispensary', compliance: 91, risk: 'low', cameras: 6, lastInspection: '2026-06-30', lat: 35.22, lng: -97.44, alerts: 0, status: 'active' },
@@ -38,6 +39,69 @@ export const FACILITIES = [
   { id: 'FAC-014', name: 'NorthStar Cannabis Co', city: 'Minneapolis', state: 'MN', type: 'Cultivator', compliance: 91, risk: 'low', cameras: 12, lastInspection: '2026-06-26', lat: 44.98, lng: -93.27, alerts: 0, status: 'active' },
   { id: 'FAC-015', name: 'Pacific Coast Testing', city: 'Portland', state: 'OR', type: 'Testing Lab', compliance: 99, risk: 'low', cameras: 8, lastInspection: '2026-06-30', lat: 45.52, lng: -122.68, alerts: 0, status: 'active' },
 ];
+
+export const FACILITIES = (() => {
+  const list = [...BASE_FACILITIES];
+  const existingStates = new Set(list.map(f => f.state));
+  
+  const stateCoords: Record<string, { lat: number; lng: number }> = {
+    AL: { lat: 32.8, lng: -86.8 }, AK: { lat: 31.5, lng: -120.0 }, AR: { lat: 34.9, lng: -92.4 },
+    CA: { lat: 36.7, lng: -119.4 }, CT: { lat: 41.6, lng: -91.5 }, DE: { lat: 39.0, lng: -91.5 },
+    FL: { lat: 30.5, lng: -82.0 }, GA: { lat: 32.2, lng: -82.9 }, HI: { lat: 31.0, lng: -115.0 },
+    ID: { lat: 44.0, lng: -114.7 }, IL: { lat: 40.6, lng: -89.4 }, IN: { lat: 40.3, lng: -86.1 },
+    IA: { lat: 41.9, lng: -93.4 }, KY: { lat: 37.8, lng: -85.8 }, LA: { lat: 31.0, lng: -92.0 },
+    ME: { lat: 45.0, lng: -91.0 }, MD: { lat: 39.0, lng: -91.0 }, MA: { lat: 42.4, lng: -91.0 },
+    MI: { lat: 43.3, lng: -84.5 }, MS: { lat: 32.7, lng: -89.7 }, MO: { lat: 37.9, lng: -91.8 },
+    MT: { lat: 46.9, lng: -110.5 }, NE: { lat: 41.1, lng: -98.3 }, NV: { lat: 38.8, lng: -117.0 },
+    NH: { lat: 43.4, lng: -91.0 }, NJ: { lat: 40.1, lng: -91.0 }, NM: { lat: 34.5, lng: -106.0 },
+    NY: { lat: 43.0, lng: -91.0 }, NC: { lat: 35.8, lng: -80.0 }, ND: { lat: 47.5, lng: -101.0 },
+    OH: { lat: 40.4, lng: -83.0 }, PA: { lat: 41.2, lng: -91.0 }, RI: { lat: 41.7, lng: -91.0 },
+    SC: { lat: 33.8, lng: -81.0 }, SD: { lat: 44.3, lng: -100.0 }, TN: { lat: 35.5, lng: -86.5 },
+    UT: { lat: 39.3, lng: -111.1 }, VT: { lat: 44.0, lng: -91.5 }, VA: { lat: 37.4, lng: -91.0 },
+    WA: { lat: 47.4, lng: -120.5 }, WV: { lat: 38.6, lng: -86.0 }, WI: { lat: 44.2, lng: -89.6 },
+    WY: { lat: 43.0, lng: -107.3 }, DC: { lat: 38.9, lng: -91.2 },
+  };
+
+  let idCounter = 16;
+  Object.entries(STATE_REGULATORY_MAP).forEach(([stateName, data]) => {
+    const abbr = data.abbr;
+    if (!existingStates.has(abbr)) {
+      const coords = stateCoords[abbr] || { lat: 38.0, lng: -98.0 };
+      list.push({
+        id: `FAC-0${idCounter++}`,
+        name: `${stateName} Alliance Cultivation`,
+        city: stateName === 'District of Columbia' ? 'Washington' : 'Capital City',
+        state: abbr,
+        type: 'Cultivator',
+        compliance: Math.floor(Math.random() * 20) + 80,
+        risk: 'low',
+        cameras: Math.floor(Math.random() * 8) + 4,
+        lastInspection: '2026-06-27',
+        lat: coords.lat,
+        lng: coords.lng,
+        alerts: 0,
+        status: 'active'
+      });
+      list.push({
+        id: `FAC-0${idCounter++}`,
+        name: `${stateName} State Dispensary`,
+        city: stateName === 'District of Columbia' ? 'Washington' : 'Metro Area',
+        state: abbr,
+        type: 'Dispensary',
+        compliance: Math.floor(Math.random() * 25) + 75,
+        risk: 'low',
+        cameras: Math.floor(Math.random() * 6) + 4,
+        lastInspection: '2026-06-29',
+        lat: coords.lat + 0.3,
+        lng: coords.lng + 0.3,
+        alerts: 0,
+        status: 'active'
+      });
+    }
+  });
+
+  return list;
+})();
 
 // ── SIMULATED TRANSPORT DATA ──
 export const TRANSPORTS = [
@@ -208,7 +272,7 @@ export const CEYECommandCenter: React.FC<CEYEProps> = ({ role = 'founder', compa
         </div>
 
         {/* Facility Nodes */}
-        {FACILITIES.map((f, i) => {
+        {filteredFacilities.map((f, i) => {
           const x = 10 + ((f.lng + 122.7) / 32) * 80;
           const y = 10 + ((46 - f.lat) / 16) * 80;
           const isSelected = selectedFacility === f.id;
@@ -402,7 +466,7 @@ export const CEYECommandCenter: React.FC<CEYEProps> = ({ role = 'founder', compa
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-        {FACILITIES
+        {filteredFacilities
           .filter(f => !searchQuery || f.name.toLowerCase().includes(searchQuery.toLowerCase()) || f.state.toLowerCase().includes(searchQuery.toLowerCase()))
           .map(f => (
             <div key={f.id} className={cn("bg-white/[0.03] border rounded-2xl p-5 hover:bg-white/[0.05] transition-all cursor-pointer group", f.status === 'flagged' ? 'border-red-800/40' : 'border-white/10')}>
@@ -677,7 +741,7 @@ export const CEYECommandCenter: React.FC<CEYEProps> = ({ role = 'founder', compa
           <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-5">
             <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Compliance by Facility</h4>
             <div className="flex items-end gap-2 h-40">
-              {FACILITIES.slice(0, 12).map((f, i) => (
+              {filteredFacilities.slice(0, 12).map((f, i) => (
                 <div key={i} className="flex-1 flex flex-col items-center gap-1 group relative">
                   <div
                     className={cn("w-full rounded-t-lg transition-all group-hover:opacity-100 opacity-80",

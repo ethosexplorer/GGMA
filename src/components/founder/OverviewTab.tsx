@@ -1465,9 +1465,14 @@ export const OverviewTab = ({
             const onlineCameras = CAMERA_FEEDS.filter(c => c.status === 'online').length;
             const totalCameras = CAMERA_FEEDS.length;
 
+            const uniqueStates = Array.from(new Set(FACILITIES.map(f => f.state))).sort();
+            const statesSub = uniqueStates.length <= 6 
+              ? uniqueStates.join(', ') 
+              : `${uniqueStates.slice(0, 6).join(', ')} + ${uniqueStates.length - 6} more states`;
+
             const stats = [
               { label: 'CEYE Avg Compliance', value: `${avgComp}%`, sub: 'Target: 95%', color: 'text-emerald-600', bg: 'bg-emerald-50 border-emerald-100' },
-              { label: 'Monitored Facilities', value: `${FACILITIES.length} Active`, sub: 'OK, AZ, CO, MN, OR', color: 'text-cyan-600', bg: 'bg-cyan-50 border-cyan-100' },
+              { label: 'Monitored Facilities', value: `${FACILITIES.length} Active`, sub: statesSub, color: 'text-cyan-600', bg: 'bg-cyan-50 border-cyan-100' },
               { label: 'Camera Network', value: `${onlineCameras}/${totalCameras} Online`, sub: `${totalCameras - onlineCameras} offline / degraded`, color: 'text-amber-600', bg: 'bg-amber-50 border-amber-100' },
               { label: 'Active Transports', value: `${activeTransports} Active`, sub: `${TRANSPORTS.filter(t => t.status === 'deviation').length} route deviation alert(s)`, color: 'text-red-600', bg: 'bg-red-50 border-red-100' },
             ];
