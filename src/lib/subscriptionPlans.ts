@@ -591,6 +591,9 @@ export const getAddOnsForRole = (role: string, businessType: 'cannabis' | 'tradi
   if (role === 'external_admin' || role === 'admin') {
     addons.push(...ADMIN_ADDONS);
   }
+  if (role === 'partner') {
+    addons.push(...PARTNER_ADDONS);
+  }
   return addons;
 };
 
@@ -631,6 +634,7 @@ export const getAllAddonsForLookup = (): AddOn[] => {
     ...ADMIN_ADDONS,
     ...CROSS_DASHBOARD_ADDONS,
     ...CARE_BUILDER_ADDONS,
+    ...PARTNER_ADDONS,
   ];
 };
 
@@ -834,7 +838,7 @@ export const PARTNER_PLANS: SubscriptionPlan[] = [
 export const PARTNER_ADDONS: AddOn[] = [
   { id: 'partner_add_whitelabel', name: 'White-Label Portal (Your Brand on SINC)', price: 199, per: 'month' },
   { id: 'partner_add_demo', name: 'Dedicated Demo Environment', price: 49, per: 'month' },
-  { id: 'partner_add_comarketing', name: 'Co-Marketing Material Pack (Decks, Flyers, Emails)', price: 0, per: 'included' },
+  { id: 'partner_add_comarketing', name: 'Co-Marketing Material Pack (Decks, Flyers, Emails)', price: 0, per: 'included (monthly cap applies)' },
   { id: 'partner_add_training', name: 'Partner Sales Training & Certification', price: 500, per: 'one-time' },
   { id: 'partner_add_api', name: 'Partner API Access (Custom Integration)', price: 99, per: 'month' },
   { id: 'partner_add_territory', name: 'Exclusive Territory Protection', price: 0, per: 'Strategic tier only' },

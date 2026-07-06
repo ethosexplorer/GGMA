@@ -185,6 +185,49 @@ export const FREEMIUS_ADDON_MAP: Record<string, { productId: number; planId: num
   'state_add_fed_sync': { productId: 55326, planId: 72945 },
   'state_add_lab': { productId: 55327, planId: 72946 },
   'state_add_training': { productId: 55328, planId: 72947 },
+
+  // Admin Add-ons
+  'admin_add_business': { productId: 55333, planId: 72952 },
+  'admin_add_access': { productId: 55334, planId: 72953 },
+  'admin_add_compliance': { productId: 55336, planId: 72954 },
+  'admin_add_support': { productId: 55337, planId: 72956 },
+  'admin_add_multi': { productId: 55339, planId: 72957 },
+  'admin_add_ai': { productId: 55340, planId: 72959 },
+  'admin_add_reporting': { productId: 55342, planId: 72960 },
+
+  // Cross-Dashboard Add-ons
+  'addon_x_sylara_unlimited': { productId: 55343, planId: 72962 },
+  'addon_x_larry_engine': { productId: 55344, planId: 72964 },
+  'addon_x_sylara_exec': { productId: 55345, planId: 72965 },
+  'addon_x_sylara_admin': { productId: 55346, planId: 72973 },
+  'addon_x_patient_view': { productId: 55347, planId: 72978 },
+  'addon_x_attorney_view': { productId: 55349, planId: 72980 },
+  'addon_x_business_view': { productId: 55350, planId: 72981 },
+  'addon_x_investor_view': { productId: 55351, planId: 72982 },
+  'addon_x_health_view': { productId: 55352, planId: 72983 },
+  'addon_x_exec_rollup': { productId: 55353, planId: 72984 },
+  'addon_x_risk_monitor': { productId: 55354, planId: 72985 },
+  'addon_x_loan_compliance': { productId: 55355, planId: 72986 },
+  'addon_x_inventory_view': { productId: 55356, planId: 72987 },
+  'addon_x_vault': { productId: 55357, planId: 72988 },
+  'addon_x_audit_reports': { productId: 55358, planId: 72989 },
+  'addon_x_credit_dashboard': { productId: 55359, planId: 72990 },
+  'addon_x_multi_company': { productId: 55360, planId: 72991 },
+  'addon_x_traditional_bo': { productId: 55361, planId: 72992 },
+  'addon_x_help_dashboard': { productId: 55362, planId: 72993 },
+
+  // Care Builder Add-ons
+  'cb_basic': { productId: 55363, planId: 72994 },
+  'cb_plus': { productId: 55364, planId: 72995 },
+  'cb_premium': { productId: 55365, planId: 72996 },
+
+  // Partner Add-ons
+  'partner_add_whitelabel': { productId: 55366, planId: 72997 },
+  'partner_add_demo': { productId: 55367, planId: 72998 },
+  'partner_add_comarketing': { productId: 55368, planId: 0 }, // Free/Included (cap applies)
+  'partner_add_training': { productId: 55369, planId: 72999 },
+  'partner_add_api': { productId: 55370, planId: 73001 },
+  'partner_add_territory': { productId: 55371, planId: 0 }, // Free/Included
 };
 
 // Reverse lookup: Freemius plan ID → platform plan key

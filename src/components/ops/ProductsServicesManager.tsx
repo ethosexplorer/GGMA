@@ -952,8 +952,8 @@ export const ProductsServicesManager = () => {
 
                 {/* Expanded Tiers */}
                 {(isExpanded || tierCount === 1) && (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left">
+                  <div className="overflow-x-auto scrollbar-thin">
+                    <table className="w-full min-w-[800px] text-left">
                       {tierCount > 1 && (
                         <thead className="bg-slate-50/50 border-b border-slate-100">
                           <tr>
