@@ -973,3 +973,4 @@ ENFORCEMENT:
 As the state's medical marijuana regulatory agency, the Oklahoma Medical Marijuana Authority (OMMA) will enforce the new law beginning on November 1, 2026.
 
 Link: https://oklahoma.gov/omma/rules-and-legislation.html
+`;

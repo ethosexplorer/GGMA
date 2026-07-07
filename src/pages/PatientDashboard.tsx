@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDraggableSidebar } from '../hooks/useDraggableSidebar';
 import { Activity, Calendar, Stethoscope, Shield, FileText, Clock, Plus, LayoutDashboard, CreditCard,
   Wallet, Award, Search, FolderOpen, Heart, Bell, Sparkles, TrendingUp, Users, Briefcase, Lock, 
-  ArrowRight, Zap, Brain, Video, Globe, ChevronRight, CircleCheck, User, ExternalLink, Phone, MessageCircle } from 'lucide-react';
+  ArrowRight, Zap, Brain, Video, Globe, ChevronRight, CircleCheck, User, ExternalLink, Phone, MessageCircle, Package } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { db } from '../lib/firebase';
@@ -10,6 +10,7 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { StatCard } from '../components/StatCard';
 import { SubscriptionPortal } from '../components/SubscriptionPortal';
 import { CareWalletTab } from '../components/shared/CareWalletTab';
+import { DashboardProductMenu } from '../components/shared/DashboardProductMenu';
 import { ApplicationsTab } from '../components/patient/ApplicationsTab';
 import { MyCardsTab } from '../components/patient/MyCardsTab';
 import { CreditScoreTab } from '../components/patient/CreditScoreTab';
@@ -46,6 +47,7 @@ const DEFAULT_TABS = [
   { id: 'attorneys', label: 'Legal Counsel', icon: Briefcase },
   { id: 'documents', label: 'Vault', icon: FolderOpen },
   { id: 'regulatory', label: 'Law Updates', icon: Bell },
+  { id: 'products', label: 'Products & Services', icon: Package },
   { id: 'subscription', label: 'Membership', icon: Sparkles },
 ];
 
@@ -706,6 +708,13 @@ export const PatientDashboard = ({ user, onLogout, onSignup, onOpenConcierge, ke
                 <RegulatoryFeedWidget jurisdiction="Oklahoma" compact />
               </div>
             </div>
+          </motion.div>
+        )}
+
+        {/* ─── PRODUCTS & SERVICES TAB ─── */}
+        {activeTab === 'products' && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+            <DashboardProductMenu role="patient" />
           </motion.div>
         )}
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ShadowOverlay } from '../components/shared/ShadowOverlay';
 import { useDraggableSidebar } from '../hooks/useDraggableSidebar';
-import { Wallet, Users, Building2, Shield, Clock, TrendingUp, Plus, LayoutDashboard, CreditCard, PackageSearch, AlertCircle, ShoppingCart, Loader2, Trash2, Edit2, CheckCircle, XCircle, Sparkles, MapPin, BarChart2, Activity, MessageSquare, LogOut, FileText, ClipboardList, CheckSquare, UploadCloud, Calendar, Zap, AlertTriangle, Database, Gavel, ArrowRight, ArrowLeft, Send, User , FolderLock, Download, Eye, X, Bell } from 'lucide-react';
+import { Wallet, Users, Building2, Shield, Clock, TrendingUp, Plus, LayoutDashboard, CreditCard, PackageSearch, AlertCircle, ShoppingCart, Loader2, Trash2, Edit2, CheckCircle, XCircle, Sparkles, MapPin, BarChart2, Activity, MessageSquare, LogOut, FileText, ClipboardList, CheckSquare, UploadCloud, Calendar, Zap, AlertTriangle, Database, Gavel, ArrowRight, ArrowLeft, Send, User , FolderLock, Download, Eye, X, Bell, Package } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { db } from '../lib/firebase';
@@ -16,6 +16,7 @@ import { initializeDatabase } from '../lib/tursoMigrations';
 import { ComplianceEngineTab } from '../components/business/ComplianceEngineTab';
 import { ImportantUpdates } from '../components/ImportantUpdates';
 import { AttorneyMarketplaceTab } from '../components/shared/AttorneyMarketplaceTab';
+import { DashboardProductMenu } from '../components/shared/DashboardProductMenu';
 import { DashboardAnalytics } from '../components/DashboardAnalytics';
 
 import { RegulatoryReportingTab } from '../components/business/RegulatoryReportingTab';
@@ -64,7 +65,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
   const [demoUnlocked, setDemoUnlocked] = useState(isExecutive);
   const isSubscribed = user?.subscriptionStatus === 'Active' || user?.planId || demoUnlocked;
   const [previousTab, setPreviousTab] = useState<string>('home');
-  const [activeTab, setActiveTab] = useState<'home' | 'analytics' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'safety' | 'insurance' | 'documents' | 'subscription' | 'integrations' | 'staff' | 'traceability' | 'readiness' | 'dea' | 'wallet' | 'attorneys' | 'reporting' | 'applications' | 'regulatory'>(isSubscribed ? (initialTab || 'analytics') : 'subscription');
+  const [activeTab, setActiveTab] = useState<'home' | 'analytics' | 'pos' | 'inventory' | 'locations' | 'compliance' | 'safety' | 'insurance' | 'documents' | 'subscription' | 'integrations' | 'staff' | 'traceability' | 'readiness' | 'dea' | 'wallet' | 'attorneys' | 'reporting' | 'applications' | 'regulatory' | 'products'>(isSubscribed ? (initialTab || 'analytics') : 'subscription');
   const [localUser, setLocalUser] = useState(user || {});
   
   React.useEffect(() => {
@@ -116,6 +117,7 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
     { id: 'wallet', label: 'Care Wallet', icon: Wallet },
     { id: 'attorneys', label: 'Attorney Marketplace', icon: Gavel },
     { id: 'regulatory', label: 'Law Updates', icon: AlertCircle },
+    { id: 'products', label: 'Products & Services', icon: Package },
   ];
 
   // Drag-and-drop tab reordering
@@ -1852,6 +1854,9 @@ export const BusinessDashboard = ({ onLogout, user, initialTab, onOpenConcierge,
 
     {activeTab === 'subscription' && (
       <SubscriptionPortal userRole="business" initialPlanId="b2bc_basic" />
+    )}
+    {activeTab === 'products' && (
+      <DashboardProductMenu role="business" />
     )}
     {activeTab === 'applications' && (
       <div className="space-y-6 pt-4">

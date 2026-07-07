@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ShadowOverlay } from '../components/shared/ShadowOverlay';
 import { useDraggableSidebar } from '../hooks/useDraggableSidebar';
 import { Users, Calendar, Video, MapPin, FileText, Share2, Shield, CreditCard, 
-  BarChart, Settings, Bell, Search, Zap, Plus, PhoneCall, AlertTriangle, ChevronRight, FlaskConical, X, UserCheck, CircleCheck, ArrowRight, FolderLock, Download, Eye, ExternalLink } from 'lucide-react';
+  BarChart, Settings, Bell, Search, Zap, Plus, PhoneCall, AlertTriangle, ChevronRight, FlaskConical, X, UserCheck, CircleCheck, ArrowRight, FolderLock, Download, Eye, ExternalLink, Package } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { NotificationDropdown } from '../components/shared/NotificationDropdown';
 import { StatCard } from '../components/StatCard';
@@ -10,6 +10,7 @@ import { CannabisCertWizard } from '../components/provider/CannabisCertWizard';
 import { UserCalendar } from '../components/UserCalendar';
 import { ImportantUpdates } from '../components/ImportantUpdates';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
+import { DashboardProductMenu } from '../components/shared/DashboardProductMenu';
 
 const DEFAULT_SIDEBAR_ITEMS = [
   { id: 'queue', label: 'Patient Queue', icon: Users },
@@ -21,6 +22,7 @@ const DEFAULT_SIDEBAR_ITEMS = [
   { id: 'billing', label: 'Billing & Insurance', icon: CreditCard },
   { id: 'reports', label: 'Reports', icon: BarChart },
   { id: 'vault', label: 'Secure Vault', icon: FolderLock },
+  { id: 'products', label: 'Products & Services', icon: Package },
   { id: 'settings', label: 'Settings & Profile', icon: Settings },
 ];
 
@@ -781,6 +783,15 @@ export const ProviderDashboard = ({ onLogout, user }: { onLogout?: () => void, u
           </div>
         </div>
       </div>
+
+      {/* Products & Services Tab (full width) */}
+      {activeTab === 'products' && (
+        <div className="flex-1 overflow-y-auto p-6">
+          <div className="max-w-7xl mx-auto">
+            <DashboardProductMenu role="provider" />
+          </div>
+        </div>
+      )}
       
       {/* Wizard Modal overlay */}
       {showCertWizard && (
