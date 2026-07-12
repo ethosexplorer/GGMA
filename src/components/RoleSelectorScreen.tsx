@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, Building2, User, Stethoscope, Briefcase, Lock, Database, LogOut, Home } from 'lucide-react';
+import { Shield, Building2, User, Stethoscope, Briefcase, Lock, Database, LogOut, Home, Headset } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export const RoleSelectorScreen = ({ userProfile, onSelect, onLogout, onHome }: { userProfile: any, onSelect: (role: string) => void, onLogout?: () => void, onHome?: () => void }) => {
@@ -18,6 +18,7 @@ export const RoleSelectorScreen = ({ userProfile, onSelect, onLogout, onHome }: 
     { id: 'regulator_federal', label: 'Federal Dashboard', desc: 'National Oversight', icon: Database, color: 'slate' },
     { id: 'law_enforcement', label: 'Law Enforcement', desc: 'Real-time Intelligence & Policing', icon: Shield, color: 'red' },
     { id: 'admin_internal', label: 'Internal Team (GGE World Call Center)', desc: 'Regional Managers, Supervisors & Leads', icon: Briefcase, color: 'teal' },
+    { id: 'operations', label: 'Operations Admin (Staff View)', desc: 'See what Ops staff see — Call Center, Intake, Support', icon: Headset, color: 'cyan' },
     { id: 'attorney', label: 'Attorney Dashboard', desc: 'Legal Counsel & Review', icon: Briefcase, color: 'indigo' },
     { id: 'health_lab', label: 'Health & Laboratory', desc: 'Testing Results & Input', icon: Database, color: 'rose' },
     { id: 'provider', label: 'Medical Provider', desc: 'Telehealth & Certifications', icon: Stethoscope, color: 'rose' },
