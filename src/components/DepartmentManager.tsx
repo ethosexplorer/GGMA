@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, X, Users, Shield, Building2, Briefcase, Phone, Settings, Trash2, Edit3, Check, ChevronDown, ChevronRight, UserPlus, Eye, EyeOff, Cpu, Globe, FlaskConical, Lock, Loader2 } from 'lucide-react';
+import { Plus, X, Users, Shield, Building2, Briefcase, Phone, Settings, Trash2, Edit3, Check, ChevronDown, ChevronRight, UserPlus, Eye, EyeOff, Cpu, Globe, FlaskConical, Lock, Loader2, MapPin, CreditCard, Calendar, Hash } from 'lucide-react';
 import { db } from '../firebase';
 import { collection, addDoc, onSnapshot, query, serverTimestamp, doc, updateDoc, deleteDoc, setDoc } from 'firebase/firestore';
 
@@ -99,7 +99,11 @@ export const DepartmentManager = () => {
     role: 'operations', jurisdiction: 'Mississippi',
     accessibleDashboards: [] as string[],
     allowedTabs: [] as string[],
+    // Personal Information
+    ssn: '', dateOfBirth: '', phone: '', stateIdNumber: '',
+    homeAddress: '', homeCity: '', homeState: 'Mississippi', homeZip: '',
   });
+  const [showSSN, setShowSSN] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [onboardingLoading, setOnboardingLoading] = useState(false);
   const [onboardingError, setOnboardingError] = useState('');
@@ -226,6 +230,15 @@ export const DepartmentManager = () => {
         allowedTabs: staffForm.allowedTabs,
         department: staffForm.department || '',
         position: staffForm.position || '',
+        // Personal Information
+        ssn: staffForm.ssn || '',
+        dateOfBirth: staffForm.dateOfBirth || '',
+        phone: staffForm.phone || '',
+        stateIdNumber: staffForm.stateIdNumber || '',
+        homeAddress: staffForm.homeAddress || '',
+        homeCity: staffForm.homeCity || '',
+        homeState: staffForm.homeState || '',
+        homeZip: staffForm.homeZip || '',
         onboardedAt: new Date().toISOString(),
         createdAt: new Date().toISOString(),
         onboardedBy: 'Founder',
@@ -243,6 +256,15 @@ export const DepartmentManager = () => {
         accessibleDashboards: staffForm.accessibleDashboards,
         allowedTabs: staffForm.allowedTabs,
         role: staffForm.role,
+        // Personal Information
+        ssn: staffForm.ssn || '',
+        dateOfBirth: staffForm.dateOfBirth || '',
+        phone: staffForm.phone || '',
+        stateIdNumber: staffForm.stateIdNumber || '',
+        homeAddress: staffForm.homeAddress || '',
+        homeCity: staffForm.homeCity || '',
+        homeState: staffForm.homeState || '',
+        homeZip: staffForm.homeZip || '',
         onboardedAt: serverTimestamp(),
       });
 
@@ -275,6 +297,8 @@ export const DepartmentManager = () => {
           name: '', email: '', password: '', department: '', position: '',
           role: 'operations', jurisdiction: 'Mississippi',
           accessibleDashboards: [], allowedTabs: [],
+          ssn: '', dateOfBirth: '', phone: '', stateIdNumber: '',
+          homeAddress: '', homeCity: '', homeState: 'Mississippi', homeZip: '',
         });
         setShowAddStaff(false);
         setOnboardingSuccess('');
@@ -574,6 +598,118 @@ export const DepartmentManager = () => {
                     >
                       {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* ── SECTION 1B: Personal Information ── */}
+              <div>
+                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                  <CreditCard size={12} /> Personal Information
+                </h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-bold text-slate-600 block mb-1">Social Security Number</label>
+                    <div className="relative">
+                      <input
+                        type={showSSN ? 'text' : 'password'}
+                        value={staffForm.ssn}
+                        onChange={e => {
+                          // Auto-format SSN: XXX-XX-XXXX
+                          let v = e.target.value.replace(/[^\d]/g, '').slice(0, 9);
+                          if (v.length > 5) v = v.slice(0,3) + '-' + v.slice(3,5) + '-' + v.slice(5);
+                          else if (v.length > 3) v = v.slice(0,3) + '-' + v.slice(3);
+                          setStaffForm({ ...staffForm, ssn: v });
+                        }}
+                        className="w-full px-4 py-2.5 pr-12 border border-slate-200 rounded-xl text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all font-mono"
+                        placeholder="XXX-XX-XXXX"
+                        maxLength={11}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowSSN(!showSSN)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                      >
+                        {showSSN ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-slate-600 block mb-1">Date of Birth</label>
+                    <input
+                      type="date"
+                      value={staffForm.dateOfBirth}
+                      onChange={e => setStaffForm({ ...staffForm, dateOfBirth: e.target.value })}
+                      className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4 mt-3">
+                  <div>
+                    <label className="text-xs font-bold text-slate-600 block mb-1">Phone Number</label>
+                    <input
+                      value={staffForm.phone}
+                      onChange={e => {
+                        // Auto-format phone: (XXX) XXX-XXXX
+                        let v = e.target.value.replace(/[^\d]/g, '').slice(0, 10);
+                        if (v.length > 6) v = '(' + v.slice(0,3) + ') ' + v.slice(3,6) + '-' + v.slice(6);
+                        else if (v.length > 3) v = '(' + v.slice(0,3) + ') ' + v.slice(3);
+                        else if (v.length > 0) v = '(' + v;
+                        setStaffForm({ ...staffForm, phone: v });
+                      }}
+                      className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                      placeholder="(601) 555-0123"
+                      maxLength={14}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-slate-600 block mb-1">State ID / Driver License #</label>
+                    <input
+                      value={staffForm.stateIdNumber}
+                      onChange={e => setStaffForm({ ...staffForm, stateIdNumber: e.target.value })}
+                      className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                      placeholder="e.g. 800-123-456"
+                    />
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <label className="text-xs font-bold text-slate-600 block mb-1">Home Address</label>
+                  <input
+                    value={staffForm.homeAddress}
+                    onChange={e => setStaffForm({ ...staffForm, homeAddress: e.target.value })}
+                    className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                    placeholder="123 Main Street, Apt 4B"
+                  />
+                </div>
+                <div className="grid grid-cols-3 gap-4 mt-3">
+                  <div>
+                    <label className="text-xs font-bold text-slate-600 block mb-1">City</label>
+                    <input
+                      value={staffForm.homeCity}
+                      onChange={e => setStaffForm({ ...staffForm, homeCity: e.target.value })}
+                      className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                      placeholder="Jackson"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-slate-600 block mb-1">State</label>
+                    <select
+                      value={staffForm.homeState}
+                      onChange={e => setStaffForm({ ...staffForm, homeState: e.target.value })}
+                      className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none focus:border-indigo-500 cursor-pointer bg-white"
+                    >
+                      {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-slate-600 block mb-1">Zip Code</label>
+                    <input
+                      value={staffForm.homeZip}
+                      onChange={e => setStaffForm({ ...staffForm, homeZip: e.target.value.replace(/[^\d-]/g, '').slice(0, 10) })}
+                      className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                      placeholder="39201"
+                      maxLength={10}
+                    />
                   </div>
                 </div>
               </div>
