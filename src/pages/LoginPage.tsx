@@ -82,7 +82,7 @@ export default function LoginPage({ onNavigate, onLogin }: LoginPageProps) {
               <div className="space-y-2">
                 <div className="flex items-center justify-between ml-1">
                   <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Password</label>
-                  <button type="button" className="text-xs font-medium text-emerald-400 hover:text-emerald-300 transition-colors">
+                  <button type="button" onClick={() => onNavigate('forgot-password')} className="text-xs font-medium text-emerald-400 hover:text-emerald-300 transition-colors">
                     Forgot?
                   </button>
                 </div>

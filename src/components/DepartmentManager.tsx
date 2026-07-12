@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, X, Users, Shield, Building2, Briefcase, Phone, Settings, Trash2, Edit3, Check, ChevronDown, ChevronRight, UserPlus, Eye, EyeOff, Cpu, Globe, FlaskConical, Lock, Loader2, MapPin, CreditCard, Calendar, Hash } from 'lucide-react';
-import { db } from '../firebase';
+import { Plus, X, Users, Shield, Building2, Briefcase, Phone, Settings, Trash2, Edit3, Check, ChevronDown, ChevronRight, UserPlus, Eye, EyeOff, Cpu, Globe, FlaskConical, Lock, Loader2, MapPin, CreditCard, Calendar, Hash, KeyRound } from 'lucide-react';
+import { db, auth } from '../firebase';
 import { collection, addDoc, onSnapshot, query, serverTimestamp, doc, updateDoc, deleteDoc, setDoc } from 'firebase/firestore';
+import { sendPasswordResetEmail } from 'firebase/auth';
 
 interface Position { title: string; tabs: string[]; permissions: 'admin' | 'edit' | 'view'; }
 interface Department { id: string; name: string; head: string; icon: string; color: string; positions: Position[]; createdAt: any; }
@@ -108,6 +109,8 @@ export const DepartmentManager = () => {
   const [onboardingLoading, setOnboardingLoading] = useState(false);
   const [onboardingError, setOnboardingError] = useState('');
   const [onboardingSuccess, setOnboardingSuccess] = useState('');
+  const [resetSending, setResetSending] = useState<string | null>(null);
+  const [resetSentFor, setResetSentFor] = useState<string | null>(null);
 
   useEffect(() => {
     const u1 = onSnapshot(query(collection(db, 'departments')), snap => {
@@ -325,6 +328,24 @@ export const DepartmentManager = () => {
     await deleteDoc(doc(db, 'staff', id));
   };
 
+  const resetStaffPassword = async (staffEmail: string, staffId: string) => {
+    if (!confirm(`Send password reset email to:\n${staffEmail}?`)) return;
+    setResetSending(staffId);
+    try {
+      await sendPasswordResetEmail(auth, staffEmail);
+      setResetSentFor(staffId);
+      setTimeout(() => setResetSentFor(null), 4000);
+    } catch (err: any) {
+      if (err.code === 'auth/user-not-found') {
+        alert('No Firebase Auth account found for this email.');
+      } else {
+        alert('Failed to send reset: ' + (err.message || err));
+      }
+    } finally {
+      setResetSending(null);
+    }
+  };
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -415,6 +436,9 @@ export const DepartmentManager = () => {
                         </div>
                         <div className="flex items-center gap-2">
                           <span className={`text-[9px] font-bold uppercase px-2 py-0.5 rounded-full ${s.status === 'active' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>{s.status}</span>
+                          <button onClick={() => resetStaffPassword(s.email, s.id)} disabled={resetSending === s.id} title="Send password reset email" className={`p-1.5 rounded-lg transition-all ${resetSentFor === s.id ? 'bg-emerald-50 text-emerald-600' : 'hover:bg-indigo-50 text-slate-400 hover:text-indigo-600'} ${resetSending === s.id ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                            {resetSending === s.id ? <Loader2 size={12} className="animate-spin" /> : resetSentFor === s.id ? <Check size={12} /> : <KeyRound size={12} />}
+                          </button>
                           <button onClick={() => removeStaff(s.id)} className="p-1 hover:bg-red-50 rounded"><Trash2 size={12} className="text-red-400" /></button>
                         </div>
                       </div>
