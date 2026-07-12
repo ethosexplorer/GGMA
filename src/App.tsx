@@ -21,7 +21,7 @@ import {
   onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,
   signOut, sendPasswordResetEmail, User as FirebaseUser
 } from 'firebase/auth';
-import { doc, getDoc, setDoc, serverTimestamp, collection, addDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, serverTimestamp, collection, addDoc, getDocs, query as fsQuery, where } from 'firebase/firestore';
 import { auth, db, storage } from './firebase';
 import { usePresence } from './hooks/usePresence';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -233,6 +233,7 @@ export default function App() {
   const [larryVariant, setLarryVariant] = useState<string | undefined>(undefined);
   const [roleOverride, setRoleOverride] = useState<string | null>(() => sessionStorage.getItem('gghp_role_override'));
   const [hasBypassedSelector, setHasBypassedSelector] = useState(() => sessionStorage.getItem('gghp_has_bypassed_selector') === 'true');
+  const [impersonatedProfile, setImpersonatedProfile] = useState<any>(null);
   const [selectedPricingRole, setSelectedPricingRole] = useState<string>('patient');
   const [jurisdiction, setJurisdiction] = useState(() => sessionStorage.getItem('gghp_jurisdiction') || 'Oklahoma');
   const [jurisdictionLocked, setJurisdictionLocked] = useState(() => sessionStorage.getItem('gghp_jurisdiction_locked') === 'true');
@@ -328,6 +329,46 @@ export default function App() {
     if (roleOverride) sessionStorage.setItem('gghp_role_override', roleOverride);
     else sessionStorage.removeItem('gghp_role_override');
   }, [roleOverride]);
+
+  // When founder selects 'operations' role override, load the first ops staff profile
+  // so the dashboard renders with their actual access restrictions
+  useEffect(() => {
+    if (roleOverride === 'operations' && userProfile?.role === 'executive_founder') {
+      const loadOpsProfile = async () => {
+        try {
+          const staffSnap = await getDocs(fsQuery(collection(db, 'staff'), where('role', '==', 'operations')));
+          if (staffSnap.empty) {
+            setImpersonatedProfile(null);
+            return;
+          }
+          const firstStaff = staffSnap.docs[0].data();
+          // Load the full user profile from users collection using the staff's uid
+          if (firstStaff.uid) {
+            const userDoc = await getDoc(doc(db, 'users', firstStaff.uid));
+            if (userDoc.exists()) {
+              const profile = { uid: userDoc.id, ...userDoc.data() };
+              setImpersonatedProfile(profile);
+              return;
+            }
+          }
+          // Fallback: search users by email
+          const usersSnap = await getDocs(fsQuery(collection(db, 'users'), where('email', '==', firstStaff.email)));
+          if (!usersSnap.empty) {
+            const profile = { uid: usersSnap.docs[0].id, ...usersSnap.docs[0].data() };
+            setImpersonatedProfile(profile);
+          } else {
+            setImpersonatedProfile(null);
+          }
+        } catch (err) {
+          console.error('[Impersonate] Failed to load ops staff profile:', err);
+          setImpersonatedProfile(null);
+        }
+      };
+      loadOpsProfile();
+    } else {
+      setImpersonatedProfile(null);
+    }
+  }, [roleOverride, userProfile?.role]);
 
   useEffect(() => {
     if (hasBypassedSelector) sessionStorage.setItem('gghp_has_bypassed_selector', 'true');
@@ -633,7 +674,9 @@ export default function App() {
 
     // Oversight Portal Routing (Regulators, Admin, Operations)
     if (role === 'admin_internal' || role === 'admin_external' || role === 'admin' || role === 'regulator_state' || role?.startsWith('regulator') || role?.startsWith('backoffice') || role === 'operations' || role?.startsWith('staff')) {
-      return <OversightDashboard onLogout={handleReturnToSelector} user={profile} role={role} jurisdiction={jurisdiction} />;
+      // When founder impersonates operations staff, use the impersonated profile
+      const effectiveUser = (role === 'operations' && impersonatedProfile) ? impersonatedProfile : profile;
+      return <OversightDashboard onLogout={handleReturnToSelector} user={effectiveUser} role={role} jurisdiction={jurisdiction} />;
     }
 
     // Business Portal Routing
