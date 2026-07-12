@@ -49,7 +49,14 @@ const NAV_ITEMS = [
 ];
 
 export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void | Promise<void>, user?: any }) => {
-  const [activeTab, setActiveTab] = useState('call_center');
+  // Staff access control: if user has allowedTabs, restrict navigation
+  const hasTabRestrictions = Array.isArray(user?.allowedTabs) && user.allowedTabs.length > 0 && !user?.role?.includes('founder') && !user?.role?.includes('executive');
+  const staffAllowedTabs = hasTabRestrictions ? user.allowedTabs : null;
+  
+  const [activeTab, setActiveTab] = useState(() => {
+    if (staffAllowedTabs) return staffAllowedTabs[0];
+    return 'call_center';
+  });
   const [liveApplications, setLiveApplications] = useState<any[]>([]);
   const [selectedPatientCase, setSelectedPatientCase] = useState<any | null>(null);
   const [appsFilter, setAppsFilter] = useState('Pending');
@@ -1226,10 +1233,22 @@ Notes: ${c.notes || 'No notes'}`;
             <div className="flex items-center gap-1 min-w-max">
               {opsNavItems
                 .filter(item => {
+                  // Staff tab restrictions: only show allowed tabs
+                  if (staffAllowedTabs && item.id) {
+                    return staffAllowedTabs.includes(item.id);
+                  }
                   if (item.id === 'patients' || item.id === 'business') {
                     return isMaster;
                   }
                   return true;
+                })
+                // Filter out section headers that have no visible children
+                .filter((item, idx, arr) => {
+                  if (!('section' in item)) return true;
+                  // Check if next item(s) before next section are visible
+                  const nextIdx = idx + 1;
+                  if (nextIdx >= arr.length) return false;
+                  return !('section' in arr[nextIdx]);
                 })
                 .map((item, i) => {
                 if ('section' in item && item.section) {
