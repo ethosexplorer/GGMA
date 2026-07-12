@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, MapPin, ArrowLeft, Search, LogOut, Home } from 'lucide-react';
+import { Shield, MapPin, ArrowLeft, Search, LogOut, Home, RefreshCcw } from 'lucide-react';
 
 const STATES = [
   'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia',
@@ -34,8 +34,8 @@ export const GlobalHeader = ({
   // Only show if logged in
   if (!userProfile) return null;
 
-  // Only Founder, Ryan, Monica get God Mode
-  const isGodModeEligible = userProfile.email === 'globalgreenhp@gmail.com' && !roleOverride;
+  // Only Founder gets God Mode — case-insensitive match
+  const isGodModeEligible = userProfile.email?.toLowerCase() === 'globalgreenhp@gmail.com';
 
   return (
     <div className="fixed top-0 left-0 right-0 z-[300] bg-slate-900 border-b border-slate-700/50 shadow-lg px-6 py-2 flex justify-between items-center animate-in slide-in-from-top duration-300">
@@ -66,8 +66,8 @@ export const GlobalHeader = ({
         </div>
       </div>
 
-      {/* God Mode Simulator */}
-      {isGodModeEligible && !roleOverride && (
+      {/* God Mode Simulator — always visible for founder */}
+      {isGodModeEligible && (
         <div className="flex items-center gap-3 bg-indigo-950/50 border border-indigo-500/30 px-4 py-1.5 rounded-xl backdrop-blur-md">
           <Shield size={16} className="text-indigo-400 animate-pulse" />
           <span className="text-[10px] font-black uppercase tracking-widest text-indigo-300">Quality Assurance Simulation Mode</span>
@@ -85,6 +85,7 @@ export const GlobalHeader = ({
             <option value="regulator_federal">Federal Compliance Officer</option>
             <option value="admin_external">External Administrator (Monica)</option>
             <option value="admin_internal">Internal Executive Command</option>
+            <option value="operations">Operations Admin (Staff View)</option>
             <option value="compliance_service">Compliance Service Officer (Larry)</option>
             <option value="health">Health & Laboratory Director</option>
             <option value="enforcement_state">Law Enforcement Officer</option>
