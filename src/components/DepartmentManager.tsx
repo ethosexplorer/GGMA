@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, X, Users, Shield, Building2, Briefcase, Phone, Settings, Trash2, Edit3, Check, ChevronDown, ChevronRight, UserPlus } from 'lucide-react';
+import { Plus, X, Users, Shield, Building2, Briefcase, Phone, Settings, Trash2, Edit3, Check, ChevronDown, ChevronRight, UserPlus, Eye, EyeOff, Cpu, Globe, FlaskConical, Lock, Loader2 } from 'lucide-react';
 import { db } from '../firebase';
-import { collection, addDoc, onSnapshot, query, serverTimestamp, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, addDoc, onSnapshot, query, serverTimestamp, doc, updateDoc, deleteDoc, setDoc } from 'firebase/firestore';
 
 interface Position { title: string; tabs: string[]; permissions: 'admin' | 'edit' | 'view'; }
 interface Department { id: string; name: string; head: string; icon: string; color: string; positions: Position[]; createdAt: any; }
-interface StaffMember { id: string; name: string; email: string; department: string; position: string; status: 'active' | 'onboarding' | 'inactive'; onboardedAt: any; }
+interface StaffMember { id: string; name: string; email: string; department: string; position: string; status: 'active' | 'onboarding' | 'inactive'; onboardedAt: any; accessibleDashboards?: string[]; allowedTabs?: string[]; jurisdiction?: string; }
 
 const ICONS: Record<string, any> = { shield: Shield, building: Building2, briefcase: Briefcase, phone: Phone, users: Users, settings: Settings };
 const COLORS = ['#6366f1','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#ec4899','#14b8a6'];
@@ -27,6 +27,60 @@ const ALL_TABS = [
   { id: 'ip_monitor', label: 'IP / Patent Monitor' }, { id: 'negligence_intercept', label: 'Negligence Intercept' },
 ];
 
+// Dashboard portals available in the Oversight Hub
+const DASHBOARD_PORTALS = [
+  { id: 'operations', label: 'Ops & Support Center', icon: Cpu, color: 'indigo', description: 'Call center, support tickets, document vault, payments' },
+  { id: 'state_admin', label: 'State Licensing (Admin)', icon: Shield, color: 'slate', description: 'Manage patients, businesses, approvals, compliance' },
+  { id: 'federal', label: 'Federal Command', icon: Globe, color: 'blue', description: 'Nationwide analytics, interstate monitoring' },
+  { id: 'public_health', label: 'Public Health & Labs', icon: FlaskConical, color: 'emerald', description: 'Lab standards, exposure tracking, recalls' },
+  { id: 'overview', label: 'Master Command', icon: Building2, color: 'purple', description: 'Oversight hub home dashboard' },
+  { id: 'audit_logs', label: 'System Audit Logs', icon: Shield, color: 'amber', description: 'Full system activity audit trail' },
+  { id: 'virtual_attendant', label: 'GGE World Call Center', icon: Phone, color: 'sky', description: 'Virtual attendant & call routing' },
+  { id: 'processor', label: 'GGE Processor', icon: Cpu, color: 'rose', description: 'Private settlement rail oversight' },
+  { id: 'subscription', label: 'Billing & Tiers', icon: Settings, color: 'teal', description: 'Subscription management' },
+];
+
+// Ops Center specific modules
+const OPS_MODULES = [
+  { id: 'call_center', label: 'Call Center Command' },
+  { id: 'phone_intake', label: 'Phone Intake Form' },
+  { id: 'account_lookup', label: 'Account Lookup' },
+  { id: 'payment_lookup', label: 'Payment Lookup' },
+  { id: 'operations_calendar', label: 'Operations Calendar' },
+  { id: 'support', label: 'Active Support Tickets' },
+  { id: 'calls', label: 'Call Queue' },
+  { id: 'backoffice', label: 'Escalations Queue' },
+  { id: 'it_support', label: 'IT Support & Diagnostics' },
+  { id: 'hr_intelligence', label: 'HR Intelligence' },
+  { id: 'applications', label: 'Applications Queue' },
+  { id: 'document_vault', label: 'Document Vault' },
+  { id: 'post_payment', label: 'Post Payment' },
+  { id: 'personnel', label: 'Personnel Force' },
+  { id: 'patients', label: 'Patient Inquiries' },
+  { id: 'business', label: 'Business Inquiries' },
+  { id: 'products_services', label: 'Products & Services' },
+];
+
+const STAFF_ROLES = [
+  { value: 'operations', label: 'Operations Admin' },
+  { value: 'staff_support', label: 'Support Agent' },
+  { value: 'staff_compliance', label: 'Compliance Officer' },
+  { value: 'staff_it', label: 'IT Support' },
+  { value: 'admin_internal', label: 'Internal Admin' },
+  { value: 'regulator_state', label: 'State Regulator' },
+  { value: 'backoffice', label: 'Back Office Staff' },
+  { value: 'staff_hr', label: 'HR Personnel' },
+  { value: 'staff_finance', label: 'Finance Staff' },
+];
+
+const US_STATES = [
+  "Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia",
+  "Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland",
+  "Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey",
+  "New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina",
+  "South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"
+];
+
 export const DepartmentManager = () => {
   const [departments, setDepartments] = useState<Department[]>([]);
   const [staff, setStaff] = useState<StaffMember[]>([]);
@@ -38,7 +92,18 @@ export const DepartmentManager = () => {
 
   const [deptForm, setDeptForm] = useState({ name: '', head: '', icon: 'building', color: COLORS[0] });
   const [posForm, setPosForm] = useState({ title: '', tabs: [] as string[], permissions: 'view' as 'admin'|'edit'|'view' });
-  const [staffForm, setStaffForm] = useState({ name: '', email: '', department: '', position: '' });
+  
+  // Enhanced staff onboarding form
+  const [staffForm, setStaffForm] = useState({
+    name: '', email: '', password: '', department: '', position: '',
+    role: 'operations', jurisdiction: 'Mississippi',
+    accessibleDashboards: [] as string[],
+    allowedTabs: [] as string[],
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [onboardingLoading, setOnboardingLoading] = useState(false);
+  const [onboardingError, setOnboardingError] = useState('');
+  const [onboardingSuccess, setOnboardingSuccess] = useState('');
 
   useEffect(() => {
     const u1 = onSnapshot(query(collection(db, 'departments')), snap => {
@@ -84,11 +149,151 @@ export const DepartmentManager = () => {
     await updateDoc(doc(db, 'departments', deptId), { positions: updated });
   };
 
+  const toggleDashboard = (dashId: string) => {
+    setStaffForm(prev => ({
+      ...prev,
+      accessibleDashboards: prev.accessibleDashboards.includes(dashId)
+        ? prev.accessibleDashboards.filter(d => d !== dashId)
+        : [...prev.accessibleDashboards, dashId]
+    }));
+  };
+
+  const toggleOpsModule = (modId: string) => {
+    setStaffForm(prev => ({
+      ...prev,
+      allowedTabs: prev.allowedTabs.includes(modId)
+        ? prev.allowedTabs.filter(t => t !== modId)
+        : [...prev.allowedTabs, modId]
+    }));
+  };
+
+  const selectAllOpsModules = () => {
+    setStaffForm(prev => ({
+      ...prev,
+      allowedTabs: OPS_MODULES.map(m => m.id)
+    }));
+  };
+
+  const clearAllOpsModules = () => {
+    setStaffForm(prev => ({ ...prev, allowedTabs: [] }));
+  };
+
   const saveStaff = async () => {
-    if (!staffForm.name.trim() || !staffForm.department) return;
-    await addDoc(collection(db, 'staff'), { ...staffForm, status: 'active', onboardedAt: serverTimestamp() });
-    setStaffForm({ name: '', email: '', department: '', position: '' });
-    setShowAddStaff(false);
+    if (!staffForm.name.trim() || !staffForm.email.trim() || !staffForm.password.trim()) {
+      setOnboardingError('Name, email, and password are required.');
+      return;
+    }
+    if (staffForm.password.length < 6) {
+      setOnboardingError('Password must be at least 6 characters.');
+      return;
+    }
+    if (staffForm.accessibleDashboards.length === 0) {
+      setOnboardingError('Please select at least one dashboard to grant access.');
+      return;
+    }
+
+    setOnboardingLoading(true);
+    setOnboardingError('');
+    setOnboardingSuccess('');
+
+    try {
+      // 1. Create Firebase Auth account using a SECONDARY app instance
+      //    so the founder doesn't get signed out (createUserWithEmailAndPassword auto-signs-in)
+      const { initializeApp, deleteApp } = await import('firebase/app');
+      const { getAuth, createUserWithEmailAndPassword: createUser } = await import('firebase/auth');
+      const firebaseConfig = (await import('../../firebase-applet-config.json')).default;
+      const secondaryApp = initializeApp(firebaseConfig, 'staff-onboarding-' + Date.now());
+      const secondaryAuth = getAuth(secondaryApp);
+      
+      let newUid: string;
+      try {
+        const userCredential = await createUser(secondaryAuth, staffForm.email, staffForm.password);
+        newUid = userCredential.user.uid;
+      } finally {
+        // Always clean up the secondary app
+        await deleteApp(secondaryApp).catch(() => {});
+      }
+
+      // 2. Create user profile in Firestore with access control
+      const userProfile = {
+        uid: newUid,
+        email: staffForm.email,
+        displayName: staffForm.name,
+        role: staffForm.role,
+        status: 'Active',
+        jurisdiction: staffForm.jurisdiction,
+        accessibleDashboards: staffForm.accessibleDashboards,
+        allowedTabs: staffForm.allowedTabs,
+        department: staffForm.department || '',
+        position: staffForm.position || '',
+        onboardedAt: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        onboardedBy: 'Founder',
+      };
+      await setDoc(doc(db, 'users', newUid), userProfile);
+
+      // 3. Also save to staff collection for the department manager
+      await addDoc(collection(db, 'staff'), {
+        name: staffForm.name,
+        email: staffForm.email,
+        department: staffForm.department || '',
+        position: staffForm.position || staffForm.role,
+        status: 'active',
+        jurisdiction: staffForm.jurisdiction,
+        accessibleDashboards: staffForm.accessibleDashboards,
+        allowedTabs: staffForm.allowedTabs,
+        role: staffForm.role,
+        onboardedAt: serverTimestamp(),
+      });
+
+      // 4. Log the onboarding action
+      try {
+        const { turso } = await import('../lib/turso');
+        await turso.execute({
+          sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)",
+          args: [
+            'log-' + Math.random().toString(36).substr(2, 9),
+            'STAFF_ONBOARDED',
+            'Founder',
+            JSON.stringify({
+              name: staffForm.name,
+              email: staffForm.email,
+              role: staffForm.role,
+              jurisdiction: staffForm.jurisdiction,
+              dashboards: staffForm.accessibleDashboards,
+              modules: staffForm.allowedTabs,
+            })
+          ]
+        });
+      } catch (e) { console.error('Audit log error:', e); }
+
+      setOnboardingSuccess(`✅ ${staffForm.name} has been onboarded successfully! They can now log in with their credentials.`);
+
+      // Reset form after 2 seconds
+      setTimeout(() => {
+        setStaffForm({
+          name: '', email: '', password: '', department: '', position: '',
+          role: 'operations', jurisdiction: 'Mississippi',
+          accessibleDashboards: [], allowedTabs: [],
+        });
+        setShowAddStaff(false);
+        setOnboardingSuccess('');
+      }, 3000);
+
+    } catch (err: any) {
+      console.error('Onboarding error:', err);
+      if (err.code === 'auth/email-already-in-use') {
+        setOnboardingError('An account with this email already exists.');
+      } else if (err.code === 'auth/invalid-email') {
+        setOnboardingError('Invalid email address format.');
+      } else if (err.code === 'auth/weak-password') {
+        setOnboardingError('Password is too weak. Use at least 6 characters.');
+      } else {
+        setOnboardingError(err.message || 'Failed to onboard staff member.');
+      }
+    } finally {
+      setOnboardingLoading(false);
+    }
   };
 
   const removeStaff = async (id: string) => {
@@ -289,43 +494,256 @@ export const DepartmentManager = () => {
         </div>
       )}
 
-      {/* Onboard Staff Modal */}
+      {/* ═══════════════════════════════════════════════════════════════════ */}
+      {/* ENHANCED ONBOARD STAFF MODAL — Full Access Control Panel          */}
+      {/* ═══════════════════════════════════════════════════════════════════ */}
       {showAddStaff && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-lg font-black text-slate-800">Onboard Staff Member</h3>
-              <button onClick={() => setShowAddStaff(false)} className="p-1 hover:bg-slate-100 rounded-lg"><X size={20} /></button>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 p-6 text-white shrink-0">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-white/10 border border-white/20 rounded-xl flex items-center justify-center">
+                    <UserPlus size={20} className="text-indigo-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-black tracking-tight">Onboard Staff Member</h3>
+                    <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest">Create account · Set permissions · Assign dashboards</p>
+                  </div>
+                </div>
+                <button onClick={() => { setShowAddStaff(false); setOnboardingError(''); setOnboardingSuccess(''); }} className="p-2 hover:bg-white/10 rounded-lg transition-colors">
+                  <X size={20} className="text-white/60" />
+                </button>
+              </div>
             </div>
-            <div className="space-y-4">
+
+            {/* Scrollable Body */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-6">
+              {/* Success / Error Messages */}
+              {onboardingSuccess && (
+                <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-sm font-bold text-emerald-700 animate-in fade-in">
+                  {onboardingSuccess}
+                </div>
+              )}
+              {onboardingError && (
+                <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-sm font-bold text-red-700 animate-in fade-in">
+                  {onboardingError}
+                </div>
+              )}
+
+              {/* ── SECTION 1: Identity ── */}
               <div>
-                <label className="text-xs font-bold text-slate-500 uppercase block mb-1">Full Name *</label>
-                <input value={staffForm.name} onChange={e => setStaffForm({ ...staffForm, name: e.target.value })} className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-indigo-500" placeholder="John Doe" />
+                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                  <Users size={12} /> Identity & Credentials
+                </h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-bold text-slate-600 block mb-1">Full Name *</label>
+                    <input
+                      value={staffForm.name}
+                      onChange={e => setStaffForm({ ...staffForm, name: e.target.value })}
+                      className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                      placeholder="Shawntay Robinson"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-slate-600 block mb-1">Email *</label>
+                    <input
+                      value={staffForm.email}
+                      onChange={e => setStaffForm({ ...staffForm, email: e.target.value })}
+                      className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                      placeholder="Drobinson507@yahoo.com"
+                    />
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <label className="text-xs font-bold text-slate-600 block mb-1">Password *</label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={staffForm.password}
+                      onChange={e => setStaffForm({ ...staffForm, password: e.target.value })}
+                      className="w-full px-4 py-2.5 pr-12 border border-slate-200 rounded-xl text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                      placeholder="••••••••"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    >
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
+                </div>
               </div>
+
+              {/* ── SECTION 2: Role & Jurisdiction ── */}
               <div>
-                <label className="text-xs font-bold text-slate-500 uppercase block mb-1">Email</label>
-                <input value={staffForm.email} onChange={e => setStaffForm({ ...staffForm, email: e.target.value })} className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-indigo-500" placeholder="john@company.com" />
+                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                  <Shield size={12} /> Role & Jurisdiction
+                </h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-bold text-slate-600 block mb-1">Role / Title *</label>
+                    <select
+                      value={staffForm.role}
+                      onChange={e => setStaffForm({ ...staffForm, role: e.target.value })}
+                      className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none focus:border-indigo-500 cursor-pointer bg-white"
+                    >
+                      {STAFF_ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-slate-600 block mb-1">Jurisdiction *</label>
+                    <select
+                      value={staffForm.jurisdiction}
+                      onChange={e => setStaffForm({ ...staffForm, jurisdiction: e.target.value })}
+                      className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none focus:border-indigo-500 cursor-pointer bg-white"
+                    >
+                      {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4 mt-3">
+                  <div>
+                    <label className="text-xs font-bold text-slate-600 block mb-1">Department (Optional)</label>
+                    <select
+                      value={staffForm.department}
+                      onChange={e => setStaffForm({ ...staffForm, department: e.target.value, position: '' })}
+                      className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none focus:border-indigo-500 cursor-pointer bg-white"
+                    >
+                      <option value="">— No Department —</option>
+                      {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+                    </select>
+                  </div>
+                  {staffForm.department && (
+                    <div>
+                      <label className="text-xs font-bold text-slate-600 block mb-1">Position</label>
+                      <select
+                        value={staffForm.position}
+                        onChange={e => setStaffForm({ ...staffForm, position: e.target.value })}
+                        className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm outline-none focus:border-indigo-500 cursor-pointer bg-white"
+                      >
+                        <option value="">Select Position</option>
+                        {(departments.find(d => d.id === staffForm.department)?.positions || []).map((p, i) => (
+                          <option key={i} value={p.title}>{p.title}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                </div>
               </div>
+
+              {/* ── SECTION 3: Dashboard Access ── */}
               <div>
-                <label className="text-xs font-bold text-slate-500 uppercase block mb-1">Department *</label>
-                <select value={staffForm.department} onChange={e => setStaffForm({ ...staffForm, department: e.target.value, position: '' })} className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-indigo-500">
-                  <option value="">Select Department</option>
-                  {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
-                </select>
+                <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                  <Cpu size={12} /> Dashboard Access — Check what they can see
+                </h4>
+                <div className="grid grid-cols-1 gap-2">
+                  {DASHBOARD_PORTALS.map(dash => {
+                    const DashIcon = dash.icon;
+                    const isSelected = staffForm.accessibleDashboards.includes(dash.id);
+                    return (
+                      <label
+                        key={dash.id}
+                        className={`flex items-center gap-4 p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
+                          isSelected
+                            ? 'border-indigo-500 bg-indigo-50/50 shadow-sm'
+                            : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => toggleDashboard(dash.id)}
+                          className="w-5 h-5 rounded-md accent-indigo-600 cursor-pointer shrink-0"
+                        />
+                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
+                          isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-400'
+                        }`}>
+                          <DashIcon size={18} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className={`text-sm font-bold ${isSelected ? 'text-indigo-700' : 'text-slate-700'}`}>{dash.label}</p>
+                          <p className="text-[10px] text-slate-500 truncate">{dash.description}</p>
+                        </div>
+                        {isSelected && <Check size={16} className="text-indigo-600 shrink-0" />}
+                      </label>
+                    );
+                  })}
+                </div>
               </div>
-              {staffForm.department && (
+
+              {/* ── SECTION 4: Ops Center Module Access (only if Ops Center is selected) ── */}
+              {staffForm.accessibleDashboards.includes('operations') && (
                 <div>
-                  <label className="text-xs font-bold text-slate-500 uppercase block mb-1">Position</label>
-                  <select value={staffForm.position} onChange={e => setStaffForm({ ...staffForm, position: e.target.value })} className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-indigo-500">
-                    <option value="">Select Position</option>
-                    {(departments.find(d => d.id === staffForm.department)?.positions || []).map((p, i) => <option key={i} value={p.title}>{p.title}</option>)}
-                  </select>
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                      <Settings size={12} /> Ops Center Module Access
+                    </h4>
+                    <div className="flex gap-2">
+                      <button onClick={selectAllOpsModules} className="text-[10px] font-bold text-indigo-600 hover:underline">Select All</button>
+                      <span className="text-slate-300">|</span>
+                      <button onClick={clearAllOpsModules} className="text-[10px] font-bold text-red-500 hover:underline">Clear All</button>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {OPS_MODULES.map(mod => {
+                      const isChecked = staffForm.allowedTabs.includes(mod.id);
+                      return (
+                        <label
+                          key={mod.id}
+                          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg border cursor-pointer transition-all text-sm ${
+                            isChecked
+                              ? 'border-emerald-400 bg-emerald-50 text-emerald-700 font-bold'
+                              : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isChecked}
+                            onChange={() => toggleOpsModule(mod.id)}
+                            className="w-4 h-4 rounded accent-emerald-600 cursor-pointer shrink-0"
+                          />
+                          <span className="text-xs font-bold">{mod.label}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
             </div>
-            <div className="flex justify-end gap-3 mt-6">
-              <button onClick={() => setShowAddStaff(false)} className="px-4 py-2 text-slate-600 font-bold text-sm hover:bg-slate-100 rounded-lg">Cancel</button>
-              <button onClick={saveStaff} disabled={!staffForm.name.trim() || !staffForm.department} className="px-6 py-2 bg-emerald-600 text-white font-bold text-sm rounded-lg disabled:opacity-50 hover:bg-emerald-700">Onboard</button>
+
+            {/* Footer */}
+            <div className="border-t border-slate-200 p-5 bg-slate-50 flex justify-between items-center shrink-0">
+              <div className="text-[10px] text-slate-500 font-bold">
+                {staffForm.accessibleDashboards.length} dashboard{staffForm.accessibleDashboards.length !== 1 ? 's' : ''} selected
+                {staffForm.allowedTabs.length > 0 && ` · ${staffForm.allowedTabs.length} module${staffForm.allowedTabs.length !== 1 ? 's' : ''}`}
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => { setShowAddStaff(false); setOnboardingError(''); setOnboardingSuccess(''); }}
+                  className="px-5 py-2.5 text-slate-600 font-bold text-sm hover:bg-slate-200 rounded-xl transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={saveStaff}
+                  disabled={onboardingLoading || !staffForm.name.trim() || !staffForm.email.trim() || !staffForm.password.trim() || staffForm.accessibleDashboards.length === 0}
+                  className="px-6 py-2.5 bg-emerald-600 text-white font-black text-sm rounded-xl disabled:opacity-50 hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-600/20 flex items-center gap-2"
+                >
+                  {onboardingLoading ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin" /> Creating Account...
+                    </>
+                  ) : (
+                    <>
+                      <UserPlus size={16} /> Onboard & Create Account
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>

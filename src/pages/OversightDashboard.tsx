@@ -35,18 +35,34 @@ export const OversightDashboard = ({ onLogout, user, role, jurisdiction = 'Oklah
   const [demoUnlocked, setDemoUnlocked] = useState(isExecutive);
   const isSubscribed = user?.subscriptionStatus === 'Active' || user?.planId || demoUnlocked;
   
-  const [activeTab, setActiveTab] = useState(isExecutive || isSubscribed ? 'overview' : 'subscription');
+  // Check if user has explicit dashboard access control from onboarding
+  const hasAccessControl = Array.isArray(user?.accessibleDashboards) && user.accessibleDashboards.length > 0;
 
   const isFederalOrFounder = role === 'executive_founder' || role === 'regulator_federal';
   const roleStr = String(role).toLowerCase();
   const isFounderOrInternal = role === 'executive_founder' || roleStr.includes('admin') || roleStr.includes('operations') || roleStr.includes('staff') || roleStr.includes('support') || roleStr.includes('it');
   
   const filteredNavItems = NAV_ITEMS.filter(item => {
+    // Section headers: always pass through (we'll filter empty sections in rendering)
+    if ('section' in item) return true;
+    
+    // If user has explicit access control from onboarding, respect it strictly
+    if (hasAccessControl && !isExecutive) {
+      return user.accessibleDashboards.includes(item.id);
+    }
+    
+    // Default role-based filtering for users without explicit access control
     if (!isSubscribed && item.id !== 'subscription') return false;
     if (item.id === 'federal') return isFederalOrFounder;
     if (item.id === 'operations' || item.id === 'virtual_attendant' || item.id === 'processor') return isFounderOrInternal;
     return true;
   });
+
+  // Determine initial tab: use first accessible dashboard for restricted users
+  const defaultTab = hasAccessControl && !isExecutive
+    ? user.accessibleDashboards[0]
+    : (isExecutive || isSubscribed ? 'overview' : 'subscription');
+  const [activeTab, setActiveTab] = useState(defaultTab);
 
   const renderOverview = () => (
     <div className="space-y-6 p-8">
@@ -97,7 +113,6 @@ export const OversightDashboard = ({ onLogout, user, role, jurisdiction = 'Oklah
       case 'overview': return renderOverview();
       case 'audit_logs': return <div className="p-8 h-full overflow-hidden"><AuditLogsTab /></div>;
       case 'federal': 
-        // We use a negative margin trick to make the embedded dashboard fill the container
         return <div className="h-full w-full -m-0"><FederalDashboard user={user} onLogout={onLogout} /></div>;
       case 'public_health': 
         return <div className="h-full w-full -m-0"><PublicHealthDashboard user={user} onLogout={onLogout} /></div>;
@@ -110,7 +125,6 @@ export const OversightDashboard = ({ onLogout, user, role, jurisdiction = 'Oklah
       case 'processor':
         return (
           <div className="p-8 space-y-6 overflow-y-auto h-full">
-          
 
             <div className="flex justify-between items-center mb-8">
               <div>
@@ -189,7 +203,7 @@ export const OversightDashboard = ({ onLogout, user, role, jurisdiction = 'Oklah
             </div>
             <div>
               <p className="text-xs font-bold text-white">{isExecutive && user?.role === 'executive_founder' ? 'Live Sr Agent' : (user?.displayName || "Administrator")}</p>
-              <p className="text-[10px] text-slate-500">{isExecutive && user?.role === 'executive_founder' ? 'Support Lead' : 'Executive Access'}</p>
+              <p className="text-[10px] text-slate-500">{isExecutive && user?.role === 'executive_founder' ? 'Support Lead' : (user?.jurisdiction ? `${user.jurisdiction} · Staff` : 'Executive Access')}</p>
             </div>
           </div>
         </div>
@@ -219,7 +233,7 @@ export const OversightDashboard = ({ onLogout, user, role, jurisdiction = 'Oklah
       {/* Main Content Area */}
       <div className="flex-1 h-screen overflow-hidden flex flex-col bg-slate-50">
         {activeTab === 'calendar' && (
-                  <UserCalendar user={user} title="src\pages\Oversight Calendar" subtitle="Appointments & Scheduling" />
+                  <UserCalendar user={user} title="Oversight Calendar" subtitle="Appointments & Scheduling" />
                 )}
                 {activeTab === 'overview' && (
           <header className="h-16 border-b border-slate-200 flex items-center justify-between px-8 bg-white shrink-0 shadow-sm z-10">
