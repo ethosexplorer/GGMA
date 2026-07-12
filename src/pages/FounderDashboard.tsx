@@ -82,17 +82,19 @@ import { LaunchScriptTab } from '../components/founder/LaunchScriptTab';
 import { ApprovalsTab } from '../components/founder/ApprovalsTab';
 import { ApplicationsTab } from '../components/founder/ApplicationsTab';
 import { LarryIntelligenceMonitor } from '../components/founder/LarryIntelligenceMonitor';
+import { LitigationSabotageTab } from '../components/founder/LitigationSabotageTab';
 import { CEYECommandCenter } from '../components/ceye/CEYECommandCenter';
 
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
-const NAV_VERSION = 32; // Bumped: Added CEYE Command tab
+const NAV_VERSION = 33; // Bumped: Added Litigation Sabotage tab
 
 const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'overview', label: 'God Overview', icon: Activity },
   { id: 'larry_monitor', label: 'LARRY Intelligence', icon: Shield },
   { id: 'ai_training', label: 'My Asst AI', icon: Bot },
+  { id: 'litigation_sabotage', label: 'Litigation Sabotage', icon: Target },
   { id: 'ceye_command', label: 'CEYE Command', icon: Eye },
   { id: 'pipeline_revenue', label: 'Pipeline & Revenue', icon: Briefcase },
   { id: 'finance_analytics', label: 'Finance & Analytics', icon: TrendingUp },
@@ -1160,6 +1162,8 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         return <div data-action-bound="true"><VaultTab /></div>;
       case 'larry_monitor':
         return <div className="h-full w-full -m-10 min-h-screen overflow-auto" data-action-bound="true"><LarryIntelligenceMonitor setActiveTab={setActiveTab} /></div>;
+      case 'litigation_sabotage':
+        return <div className="h-full w-full -m-10 min-h-screen overflow-auto" data-action-bound="true"><LitigationSabotageTab /></div>;
       case 'overview':
         return (
           <div data-action-bound="true">
