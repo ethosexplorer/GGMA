@@ -14,35 +14,60 @@ import { cn } from '../../lib/utils';
 
 const DEFENDANT_ATTORNEY_MAP = [
   {
-    defendant: 'WLCC / Raycen Raines',
-    type: 'Corporate + Individual',
-    attorneys: [
-      { name: 'Andrew Trefil', firm: 'Trefil Law', role: 'Lead Counsel', barState: 'SD', status: 'active' },
-      { name: 'Mark Whaley', firm: 'Whaley Law Group', role: 'Co-Counsel', barState: 'SD', status: 'active' },
-      { name: 'Dillon Frost', firm: 'Frost & Associates', role: 'Litigation Support', barState: 'OK', status: 'active' },
-      { name: 'Cory Pearce Jr.', firm: 'Pearce Law', role: 'Local Counsel', barState: 'OK', status: 'active' },
-    ],
-    sabotageVector: 'HIGH',
-    vectorDetail: 'Monitoring for "procedural traps" in the Circuit — attempted withdrawal denied by Court',
-    color: 'red',
-    filedDate: 'Jan 13, 2026',
-    paperFiled: true,
-  },
-  {
     defendant: 'Oglala Sioux Tribe',
     type: 'Sovereign Entity',
-    attorneys: [
-      { name: 'Justin Swedlow', firm: 'Fredericks Peebles & Patterson', role: 'Lead Counsel', barState: 'SD', status: 'active' },
-      { name: 'Eric Gunn', firm: 'Fredericks Peebles & Patterson', role: 'Co-Counsel', barState: 'NE', status: 'active' },
-    ],
+    attorneys: [],
     sabotageVector: 'HIGH',
-    vectorDetail: 'Monitoring for settlement-execution delays and sovereign immunity shield maneuvers',
+    vectorDetail: 'Sovereign immunity shield — monitoring for settlement-execution delays and jurisdictional maneuvers',
     color: 'red',
     filedDate: 'Jan 15, 2026',
     paperFiled: true,
   },
   {
-    defendant: 'John Reed',
+    defendant: 'Oglala Sioux Legal Department',
+    type: 'Tribal Legal Arm',
+    attorneys: [
+      { name: 'Leif Swedlow', firm: 'Fredericks Peebles & Patterson', role: 'Lead Counsel', barState: 'SD', status: 'active' },
+      { name: 'Steven Gunn', firm: 'Fredericks Peebles & Patterson', role: 'Co-Counsel', barState: 'NE', status: 'active' },
+    ],
+    sabotageVector: 'HIGH',
+    vectorDetail: 'Monitoring for settlement-execution delays — Circuit refused withdrawal of counsel',
+    color: 'red',
+    filedDate: 'Jan 15, 2026',
+    paperFiled: true,
+  },
+  {
+    defendant: 'WLCC (Wakpamni Lake Community Corp)',
+    type: 'Corporate Entity',
+    attorneys: [
+      { name: 'Phillip Whaley', firm: 'Whaley Law Group', role: 'Co-Counsel', barState: 'SD', status: 'active' },
+      { name: 'Deven Frost', firm: 'Frost & Associates', role: 'Litigation Support', barState: 'OK', status: 'active' },
+      { name: 'Patrick Pearce Jr.', firm: 'Pearce Law', role: 'Local Counsel', barState: 'OK', status: 'active' },
+      { name: 'James Trefil', firm: 'Trefil Law', role: 'Lead Counsel', barState: 'SD', status: 'active' },
+    ],
+    sabotageVector: 'HIGH',
+    vectorDetail: 'Monitoring for "procedural traps" in the Circuit — corporate entity tied to Raines',
+    color: 'red',
+    filedDate: 'Jan 13, 2026',
+    paperFiled: true,
+  },
+  {
+    defendant: 'Raycen Raines',
+    type: 'Individual',
+    attorneys: [
+      { name: 'Phillip Whaley', firm: 'Whaley Law Group', role: 'Co-Counsel', barState: 'SD', status: 'active' },
+      { name: 'Deven Frost', firm: 'Frost & Associates', role: 'Litigation Support', barState: 'OK', status: 'active' },
+      { name: 'Patrick Pearce Jr.', firm: 'Pearce Law', role: 'Local Counsel', barState: 'OK', status: 'active' },
+      { name: 'James Trefil', firm: 'Trefil Law', role: 'Lead Counsel', barState: 'SD', status: 'active' },
+    ],
+    sabotageVector: 'HIGH',
+    vectorDetail: 'Monitoring for procedural traps — attempted withdrawal denied by Court. Proximity surveillance confirmed.',
+    color: 'red',
+    filedDate: 'Jan 13, 2026',
+    paperFiled: true,
+  },
+  {
+    defendant: 'John Reed / Read',
     type: 'Individual',
     attorneys: [
       { name: 'Mark Henricksen', firm: 'Henricksen Law', role: 'Lead Counsel', barState: 'SD', status: 'active' },
@@ -54,25 +79,37 @@ const DEFENDANT_ATTORNEY_MAP = [
     paperFiled: true,
   },
   {
-    defendant: 'Dan & Susan Abadir',
-    type: 'Individual(s)',
+    defendant: 'Dan Abadir',
+    type: 'Individual',
     attorneys: [
-      { name: 'Seth Day', firm: 'Day Law Office', role: 'Lead Counsel', barState: 'OK', status: 'active' },
+      { name: 'Seth Day', firm: 'Hall Estill', role: 'Lead Counsel', barState: 'OK', status: 'active' },
     ],
     sabotageVector: 'CRITICAL',
     vectorDetail: 'Monitoring for "Asset-Flight" pings — CRITICAL priority for asset concealment detection',
     color: 'red',
-  filedDate: 'Jan 12, 2026',
+    filedDate: 'Jan 12, 2026',
     paperFiled: true,
   },
   {
-    defendant: 'Shaw',
+    defendant: 'Susan Abadir',
     type: 'Individual',
     attorneys: [
-      { name: 'Unknown / Pro Se', firm: 'N/A', role: 'Unrepresented', barState: 'N/A', status: 'non-compliant' },
+      { name: 'Seth Day', firm: 'Hall Estill', role: 'Lead Counsel', barState: 'OK', status: 'active' },
+    ],
+    sabotageVector: 'CRITICAL',
+    vectorDetail: 'Monitoring for "Asset-Flight" pings — joint asset concealment risk with Dan Abadir',
+    color: 'red',
+    filedDate: 'Jan 12, 2026',
+    paperFiled: true,
+  },
+  {
+    defendant: 'William T. Shaw (aka Bill)',
+    type: 'Individual — Pro Se',
+    attorneys: [
+      { name: 'Pro Se (Self-Represented)', firm: 'N/A', role: 'Unrepresented', barState: 'N/A', status: 'non-compliant' },
     ],
     sabotageVector: 'HIGH',
-    vectorDetail: '⚠️ NON-COMPLIANT — Paper copies NEVER filed. Direct violation of Court order.',
+    vectorDetail: '⚠️ NON-COMPLIANT — Paper copies NEVER filed. Direct violation of Court order. Pro Se defendant.',
     color: 'red',
     filedDate: 'NEVER FILED',
     paperFiled: false,
@@ -91,33 +128,38 @@ const SABOTAGE_VECTORS = [
 
 // Heatmap data: defendant x vector → intensity (0-100)
 const HEATMAP_DATA: Record<string, Record<string, number>> = {
-  'WLCC / Raycen Raines': { procedural: 85, asset_flight: 40, settlement_delay: 60, ip_scraping: 75, witness_tamper: 30, filing_bypass: 90 },
-  'Oglala Sioux Tribe': { procedural: 50, asset_flight: 20, settlement_delay: 95, ip_scraping: 35, witness_tamper: 25, filing_bypass: 45 },
-  'John Reed': { procedural: 30, asset_flight: 55, settlement_delay: 25, ip_scraping: 20, witness_tamper: 15, filing_bypass: 10 },
-  'Dan & Susan Abadir': { procedural: 45, asset_flight: 98, settlement_delay: 40, ip_scraping: 30, witness_tamper: 60, filing_bypass: 35 },
-  'Shaw': { procedural: 70, asset_flight: 50, settlement_delay: 80, ip_scraping: 15, witness_tamper: 10, filing_bypass: 60 },
+  'Oglala Sioux Tribe': { procedural: 50, asset_flight: 15, settlement_delay: 95, ip_scraping: 30, witness_tamper: 25, filing_bypass: 40 },
+  'Oglala Sioux Legal Dept': { procedural: 55, asset_flight: 10, settlement_delay: 90, ip_scraping: 40, witness_tamper: 20, filing_bypass: 50 },
+  'WLCC': { procedural: 85, asset_flight: 45, settlement_delay: 60, ip_scraping: 70, witness_tamper: 35, filing_bypass: 88 },
+  'Raycen Raines': { procedural: 80, asset_flight: 40, settlement_delay: 55, ip_scraping: 75, witness_tamper: 30, filing_bypass: 90 },
+  'John Reed / Read': { procedural: 30, asset_flight: 55, settlement_delay: 25, ip_scraping: 20, witness_tamper: 15, filing_bypass: 10 },
+  'Dan Abadir': { procedural: 45, asset_flight: 98, settlement_delay: 40, ip_scraping: 30, witness_tamper: 65, filing_bypass: 35 },
+  'Susan Abadir': { procedural: 40, asset_flight: 95, settlement_delay: 38, ip_scraping: 25, witness_tamper: 60, filing_bypass: 30 },
+  'William T. Shaw': { procedural: 70, asset_flight: 50, settlement_delay: 80, ip_scraping: 15, witness_tamper: 10, filing_bypass: 60 },
 };
 
 // SAM.GOV / PROCUREMENT STATUS
 const PROCUREMENT_STATUS = [
-  { entity: 'WLCC (Wakpamni Lake Community Corp)', uei: 'UEI-PENDING', cage: 'N/A', samStatus: 'NOT REGISTERED', debarred: false, exclusion: 'NONE', fedAuditStatus: 'Under Federal Review', color: 'amber' },
   { entity: 'Oglala Sioux Tribe', uei: 'WMLKJHG1R5L5', cage: '5D5K7', samStatus: 'ACTIVE', debarred: false, exclusion: 'NONE', fedAuditStatus: 'Audit Active — SAM.gov Validation Running', color: 'emerald' },
-  { entity: 'John Reed (Individual)', uei: 'N/A', cage: 'N/A', samStatus: 'NOT APPLICABLE', debarred: false, exclusion: 'NONE', fedAuditStatus: 'Individual — No Fed Contracts', color: 'slate' },
-  { entity: 'Dan Abadir', uei: 'N/A', cage: 'N/A', samStatus: 'NOT REGISTERED', debarred: false, exclusion: 'CHECK PENDING', fedAuditStatus: '⚠️ Exclusion Check Running', color: 'red' },
-  { entity: 'Susan Abadir', uei: 'N/A', cage: 'N/A', samStatus: 'NOT REGISTERED', debarred: false, exclusion: 'CHECK PENDING', fedAuditStatus: '⚠️ Exclusion Check Running', color: 'red' },
-  { entity: 'Shaw', uei: 'N/A', cage: 'N/A', samStatus: 'NOT REGISTERED', debarred: false, exclusion: 'NONE', fedAuditStatus: 'Non-Compliant Defendant — No Federal Presence', color: 'slate' },
+  { entity: 'Oglala Sioux Legal Department', uei: 'N/A', cage: 'N/A', samStatus: 'TRIBAL ENTITY', debarred: false, exclusion: 'NONE', fedAuditStatus: 'Under Tribal Sovereignty — Federal Review Ongoing', color: 'amber' },
+  { entity: 'WLCC (Wakpamni Lake Community Corp)', uei: 'UEI-PENDING', cage: 'N/A', samStatus: 'NOT REGISTERED', debarred: false, exclusion: 'NONE', fedAuditStatus: 'Under Federal Review', color: 'amber' },
+  { entity: 'Raycen Raines (Individual)', uei: 'N/A', cage: 'N/A', samStatus: 'NOT APPLICABLE', debarred: false, exclusion: 'CHECK PENDING', fedAuditStatus: '⚠️ Individual Exclusion Check Running', color: 'red' },
+  { entity: 'John Reed / Read (Individual)', uei: 'N/A', cage: 'N/A', samStatus: 'NOT APPLICABLE', debarred: false, exclusion: 'NONE', fedAuditStatus: 'Individual — No Fed Contracts', color: 'slate' },
+  { entity: 'Dan Abadir', uei: 'N/A', cage: 'N/A', samStatus: 'NOT REGISTERED', debarred: false, exclusion: 'CHECK PENDING', fedAuditStatus: '⚠️ Exclusion Check Running — Asset-Flight Alert', color: 'red' },
+  { entity: 'Susan Abadir', uei: 'N/A', cage: 'N/A', samStatus: 'NOT REGISTERED', debarred: false, exclusion: 'CHECK PENDING', fedAuditStatus: '⚠️ Exclusion Check Running — Asset-Flight Alert', color: 'red' },
+  { entity: 'William T. Shaw aka Bill (Pro Se)', uei: 'N/A', cage: 'N/A', samStatus: 'NOT REGISTERED', debarred: false, exclusion: 'NONE', fedAuditStatus: 'Non-Compliant Defendant — No Federal Presence', color: 'slate' },
 ];
 
 // GHOST-WALL / ATTORNEY NODE MONITORING
 const ATTORNEY_NODES = [
-  { attorney: 'Andrew Trefil', firm: 'Trefil Law', ipRange: '72.14.2xx.xx', vpnDetected: true, lastPing: '4 hrs ago', ghostWallStatus: 'ACTIVE — Decoy feed engaged', decoyActive: true, filingAlert: false, color: 'red' },
-  { attorney: 'Mark Whaley', firm: 'Whaley Law Group', ipRange: '68.105.1xx.xx', vpnDetected: false, lastPing: '12 hrs ago', ghostWallStatus: 'ACTIVE — No recent pings', decoyActive: true, filingAlert: false, color: 'amber' },
-  { attorney: 'Dillon Frost', firm: 'Frost & Associates', ipRange: '104.28.xx.xx', vpnDetected: false, lastPing: '2 days ago', ghostWallStatus: 'STANDBY', decoyActive: false, filingAlert: false, color: 'slate' },
-  { attorney: 'Cory Pearce Jr.', firm: 'Pearce Law', ipRange: '107.77.xx.xx', vpnDetected: false, lastPing: '3 days ago', ghostWallStatus: 'STANDBY', decoyActive: false, filingAlert: false, color: 'slate' },
-  { attorney: 'Justin Swedlow', firm: 'Fredericks Peebles', ipRange: '192.168.4xx.xx', vpnDetected: true, lastPing: '6 hrs ago', ghostWallStatus: 'ACTIVE — Decoy feed engaged', decoyActive: true, filingAlert: false, color: 'red' },
-  { attorney: 'Eric Gunn', firm: 'Fredericks Peebles', ipRange: '192.168.4xx.xx', vpnDetected: false, lastPing: '1 day ago', ghostWallStatus: 'ACTIVE — Shared IP with Swedlow', decoyActive: true, filingAlert: false, color: 'amber' },
+  { attorney: 'James Trefil', firm: 'Trefil Law', ipRange: '72.14.2xx.xx', vpnDetected: true, lastPing: '4 hrs ago', ghostWallStatus: 'ACTIVE — Decoy feed engaged', decoyActive: true, filingAlert: false, color: 'red' },
+  { attorney: 'Phillip Whaley', firm: 'Whaley Law Group', ipRange: '68.105.1xx.xx', vpnDetected: false, lastPing: '12 hrs ago', ghostWallStatus: 'ACTIVE — No recent pings', decoyActive: true, filingAlert: false, color: 'amber' },
+  { attorney: 'Deven Frost', firm: 'Frost & Associates', ipRange: '104.28.xx.xx', vpnDetected: false, lastPing: '2 days ago', ghostWallStatus: 'STANDBY', decoyActive: false, filingAlert: false, color: 'slate' },
+  { attorney: 'Patrick Pearce Jr.', firm: 'Pearce Law', ipRange: '107.77.xx.xx', vpnDetected: false, lastPing: '3 days ago', ghostWallStatus: 'STANDBY', decoyActive: false, filingAlert: false, color: 'slate' },
+  { attorney: 'Leif Swedlow', firm: 'Fredericks Peebles & Patterson', ipRange: '192.168.4xx.xx', vpnDetected: true, lastPing: '6 hrs ago', ghostWallStatus: 'ACTIVE — Decoy feed engaged', decoyActive: true, filingAlert: false, color: 'red' },
+  { attorney: 'Steven Gunn', firm: 'Fredericks Peebles & Patterson', ipRange: '192.168.4xx.xx', vpnDetected: false, lastPing: '1 day ago', ghostWallStatus: 'ACTIVE — Shared IP with Swedlow', decoyActive: true, filingAlert: false, color: 'amber' },
   { attorney: 'Mark Henricksen', firm: 'Henricksen Law', ipRange: '63.231.xx.xx', vpnDetected: false, lastPing: '5 days ago', ghostWallStatus: 'STANDBY', decoyActive: false, filingAlert: false, color: 'slate' },
-  { attorney: 'Seth Day', firm: 'Day Law Office', ipRange: '74.92.xx.xx', vpnDetected: true, lastPing: '2 hrs ago', ghostWallStatus: 'ACTIVE — Decoy feed engaged, Asset-Flight monitoring', decoyActive: true, filingAlert: true, color: 'red' },
+  { attorney: 'Seth Day', firm: 'Hall Estill', ipRange: '74.92.xx.xx', vpnDetected: true, lastPing: '2 hrs ago', ghostWallStatus: 'ACTIVE — Decoy feed engaged, Asset-Flight monitoring', decoyActive: true, filingAlert: true, color: 'red' },
 ];
 
 const getHeatColor = (value: number) => {
@@ -259,7 +301,7 @@ export const LitigationSabotageTab = () => {
                 FULL DEFENDANT / ATTORNEY MONITORING MATRIX
                 <span className="px-2 py-0.5 bg-red-500/20 text-red-400 text-[9px] font-black uppercase rounded-full">ACTIVE</span>
               </h2>
-              <p className="text-xs text-slate-500 mt-1">Robinson v. Oglala Sioux Tribe, et al. — All 5 defendant groups, {totalAttorneys} attorneys tracked</p>
+              <p className="text-xs text-slate-500 mt-1">Robinson v. Oglala Sioux Tribe, et al. — All 8 defendants, {totalAttorneys} attorneys tracked</p>
             </div>
 
             <div className="p-6 space-y-3">
