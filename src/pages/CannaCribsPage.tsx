@@ -274,6 +274,9 @@ export const CannaCribsPage = ({ onNavigate }: { onNavigate?: (view: string) => 
   const [activeFilter, setActiveFilter] = useState('All');
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [likedProperties, setLikedProperties] = useState<number[]>([]);
+  const [showWaitlist, setShowWaitlist] = useState(false);
+  const [waitlistForm, setWaitlistForm] = useState({ name: '', email: '', phone: '', type: 'Tenant' });
+  const [waitlistSubmitted, setWaitlistSubmitted] = useState(false);
 
   const filteredProperties = useMemo(() => {
     return SAMPLE_PROPERTIES.filter(p => {
@@ -340,8 +343,8 @@ export const CannaCribsPage = ({ onNavigate }: { onNavigate?: (view: string) => 
           <button className="hidden sm:flex px-4 py-2 text-sm font-bold text-green-700 hover:text-green-800 transition-colors">
             Log In
           </button>
-          <button className="px-5 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm font-bold rounded-xl hover:from-green-400 hover:to-emerald-500 transition-all shadow-lg shadow-green-500/20">
-            List Your Property
+          <button onClick={() => setShowWaitlist(true)} className="px-5 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm font-bold rounded-xl hover:from-green-400 hover:to-emerald-500 transition-all shadow-lg shadow-green-500/20">
+            Join Waitlist
           </button>
           <button className="md:hidden p-2" onClick={() => setShowMobileMenu(!showMobileMenu)}>
             {showMobileMenu ? <X size={20} /> : <Menu size={20} />}
@@ -717,7 +720,7 @@ export const CannaCribsPage = ({ onNavigate }: { onNavigate?: (view: string) => 
                   ))}
                 </ul>
 
-                <button className={`w-full py-3 rounded-xl font-bold text-sm transition-all ${
+                <button onClick={() => setShowWaitlist(true)} className={`w-full py-3 rounded-xl font-bold text-sm transition-all ${
                   tier.name === 'Executive Suite'
                     ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-400 hover:to-orange-400 shadow-lg shadow-amber-500/20'
                     : tier.popular
@@ -830,10 +833,10 @@ export const CannaCribsPage = ({ onNavigate }: { onNavigate?: (view: string) => 
             </div>
           </div>
 
-          <button className="px-10 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-black text-lg rounded-2xl hover:from-green-400 hover:to-emerald-500 transition-all shadow-xl shadow-green-500/20 flex items-center gap-3 mx-auto">
-            <Home size={20} /> List Your Property Now <ArrowRight size={20} />
+          <button onClick={() => setShowWaitlist(true)} className="px-10 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-black text-lg rounded-2xl hover:from-green-400 hover:to-emerald-500 transition-all shadow-xl shadow-green-500/20 flex items-center gap-3 mx-auto">
+            <Home size={20} /> Join the Waitlist <ArrowRight size={20} />
           </button>
-          <p className="text-xs text-slate-400 mt-3">Start with Green Listing at just $49/month • No long-term contracts</p>
+          <p className="text-xs text-slate-400 mt-3">Be first when we launch • Start at $49/month • No commitment</p>
         </div>
       </section>
 
@@ -884,6 +887,62 @@ export const CannaCribsPage = ({ onNavigate }: { onNavigate?: (view: string) => 
           </div>
         </div>
       </section>
+
+      {/* ═══ JOIN WAITLIST CTA ═══ */}
+      <section className="py-20 px-6 bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600">
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="text-5xl mb-4">🏡</div>
+          <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight mb-4">
+            Join the <span className="text-amber-300">CannaCribs</span> Waitlist
+          </h2>
+          <p className="text-lg text-green-100/70 max-w-xl mx-auto mb-8">
+            Be the first to know when we launch in your area. Tenants, landlords, and guests — everyone is welcome.
+          </p>
+          <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20 max-w-lg mx-auto">
+            <div className="space-y-3">
+              <input type="text" placeholder="Full Name" value={waitlistForm.name} onChange={e => setWaitlistForm(f => ({ ...f, name: e.target.value }))} className="w-full px-4 py-3 bg-white/10 rounded-xl text-white placeholder-white/40 font-medium focus:outline-none focus:ring-2 focus:ring-green-400/50 border border-white/10" />
+              <input type="email" placeholder="Email Address" value={waitlistForm.email} onChange={e => setWaitlistForm(f => ({ ...f, email: e.target.value }))} className="w-full px-4 py-3 bg-white/10 rounded-xl text-white placeholder-white/40 font-medium focus:outline-none focus:ring-2 focus:ring-green-400/50 border border-white/10" />
+              <input type="tel" placeholder="Phone Number" value={waitlistForm.phone} onChange={e => setWaitlistForm(f => ({ ...f, phone: e.target.value }))} className="w-full px-4 py-3 bg-white/10 rounded-xl text-white placeholder-white/40 font-medium focus:outline-none focus:ring-2 focus:ring-green-400/50 border border-white/10" />
+              <select value={waitlistForm.type} onChange={e => setWaitlistForm(f => ({ ...f, type: e.target.value }))} className="w-full px-4 py-3 bg-white/10 rounded-xl text-white font-medium focus:outline-none focus:ring-2 focus:ring-green-400/50 border border-white/10 appearance-none cursor-pointer">
+                <option value="Tenant" className="bg-slate-800">I'm a Tenant / Renter</option>
+                <option value="Landlord" className="bg-slate-800">I'm a Landlord / Property Owner</option>
+                <option value="Guest" className="bg-slate-800">I'm looking for Short-Term Stays</option>
+                <option value="Commercial" className="bg-slate-800">I need Commercial Space</option>
+              </select>
+              <button onClick={() => { if (waitlistForm.name && waitlistForm.email) { setWaitlistSubmitted(true); setTimeout(() => setWaitlistSubmitted(false), 4000); setWaitlistForm({ name: '', email: '', phone: '', type: 'Tenant' }); } }} className="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-black rounded-xl hover:from-amber-400 hover:to-orange-400 transition-all shadow-lg text-lg flex items-center justify-center gap-2">
+                {waitlistSubmitted ? <><CheckCircle size={20} /> You're on the list!</> : <><Leaf size={18} /> Join the Waitlist</>}
+              </button>
+            </div>
+          </div>
+          <p className="text-xs text-green-200/40 mt-4">Your info is private. We'll only contact you about CannaCribs launch updates.</p>
+        </div>
+      </section>
+
+      {/* ═══ WAITLIST MODAL ═══ */}
+      <AnimatePresence>
+        {showWaitlist && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowWaitlist(false)}>
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8" onClick={e => e.stopPropagation()}>
+              <div className="text-center mb-6">
+                <div className="text-4xl mb-3">🏡</div>
+                <h3 className="text-2xl font-black text-slate-900"><span className="text-green-600">Canna</span><span className="text-amber-500">Cribs</span> Waitlist</h3>
+                <p className="text-sm text-slate-500 mt-1">Be the first to access cannabis-friendly real estate</p>
+              </div>
+              <div className="space-y-3">
+                <div><label className="block text-xs font-bold text-slate-600 mb-1">Full Name *</label><input type="text" value={waitlistForm.name} onChange={e => setWaitlistForm(f => ({ ...f, name: e.target.value }))} placeholder="Your full name" className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-green-500/20 focus:border-green-500 outline-none" /></div>
+                <div><label className="block text-xs font-bold text-slate-600 mb-1">Email *</label><input type="email" value={waitlistForm.email} onChange={e => setWaitlistForm(f => ({ ...f, email: e.target.value }))} placeholder="you@email.com" className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-green-500/20 focus:border-green-500 outline-none" /></div>
+                <div><label className="block text-xs font-bold text-slate-600 mb-1">Phone</label><input type="tel" value={waitlistForm.phone} onChange={e => setWaitlistForm(f => ({ ...f, phone: e.target.value }))} placeholder="(555) 000-0000" className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-green-500/20 focus:border-green-500 outline-none" /></div>
+                <div><label className="block text-xs font-bold text-slate-600 mb-1">I am a...</label><select value={waitlistForm.type} onChange={e => setWaitlistForm(f => ({ ...f, type: e.target.value }))} className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-green-500/20 focus:border-green-500 outline-none bg-white"><option>Tenant</option><option>Landlord</option><option>Guest</option><option>Commercial</option></select></div>
+                <div className="text-[10px] text-slate-400 text-center">Added to waitlist: {new Date().toLocaleDateString()}</div>
+                <button onClick={() => { if (waitlistForm.name && waitlistForm.email) { setWaitlistSubmitted(true); setShowWaitlist(false); setTimeout(() => setWaitlistSubmitted(false), 4000); setWaitlistForm({ name: '', email: '', phone: '', type: 'Tenant' }); } }} className="w-full py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-xl hover:from-green-400 hover:to-emerald-500 transition-all shadow-lg flex items-center justify-center gap-2">
+                  <Leaf size={16} /> Join the Waitlist
+                </button>
+                <button onClick={() => setShowWaitlist(false)} className="w-full py-2 text-slate-400 text-sm font-medium hover:text-slate-600">Maybe later</button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ═══ FOOTER ═══ */}
       <footer className="bg-gradient-to-br from-[#1a0a2e] to-[#0a1f14] text-white">
