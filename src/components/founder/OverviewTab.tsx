@@ -1549,6 +1549,94 @@ export const OverviewTab = ({
         </div>
       </div>
 
+      {/* CannaCribs Real Estate Analytics */}
+      <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h3 className="text-lg font-bold text-slate-800 flex items-center gap-3">
+              <span className="text-2xl">🏠</span> <span className="text-green-600 font-black">Canna</span><span className="text-amber-500 font-black">Cribs</span> <span className="text-slate-400 font-medium text-sm">Real Estate Analytics</span>
+            </h3>
+            <p className="text-xs text-slate-500 mt-1">Cannabis-friendly property management • Inspections • Applications • Revenue</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="px-3 py-1 bg-green-50 text-green-600 text-[10px] font-black rounded-full border border-green-100 uppercase tracking-widest flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> Platform Live
+            </span>
+            <button onClick={() => setActiveTab('cannacribs_mgmt')} className="px-3 py-1.5 bg-green-600 text-white text-[10px] font-bold rounded-lg hover:bg-green-500 transition-all">
+              Open Dashboard →
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+          {[
+            { label: 'Properties Managed', value: '6', sub: '4 occupied, 2 vacant', color: 'text-green-600', bg: 'bg-green-50 border-green-100' },
+            { label: 'Active Tenants', value: '4', sub: '67% occupancy rate', color: 'text-blue-600', bg: 'bg-blue-50 border-blue-100' },
+            { label: 'Pending Applications', value: '2', sub: 'Awaiting review', color: 'text-amber-600', bg: 'bg-amber-50 border-amber-100' },
+            { label: 'Tier Revenue', value: '$1,444', sub: '/month from 4 tiers', color: 'text-emerald-600', bg: 'bg-emerald-50 border-emerald-100' },
+            { label: 'Next Inspection', value: 'Jul 15', sub: 'Desert Oasis, AZ', color: 'text-violet-600', bg: 'bg-violet-50 border-violet-100' },
+          ].map((stat, i) => (
+            <div key={i} className={cn("p-4 rounded-2xl border", stat.bg)}>
+              <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{stat.label}</p>
+              <p className={cn("text-2xl font-black mt-1", stat.color)}>{stat.value}</p>
+              <p className="text-[10px] text-slate-400 mt-0.5 font-medium">{stat.sub}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Revenue by Tier */}
+          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+            <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">Service Tier Mix</h4>
+            <div className="space-y-3">
+              {[
+                { tier: 'Green', count: 1, rev: '$49', pct: 3, color: 'bg-emerald-500' },
+                { tier: 'Gold', count: 2, rev: '$298', pct: 21, color: 'bg-amber-500' },
+                { tier: 'Platinum', count: 2, rev: '$598', pct: 41, color: 'bg-violet-500' },
+                { tier: 'Executive', count: 1, rev: '$499', pct: 35, color: 'bg-purple-500' },
+              ].map((t, i) => (
+                <div key={i}>
+                  <div className="flex items-center justify-between text-xs font-bold mb-1">
+                    <span className="text-slate-600 flex items-center gap-2">
+                      <span className={cn("w-2.5 h-2.5 rounded-full", t.color)}></span> {t.tier} ({t.count})
+                    </span>
+                    <span className="text-slate-800">{t.rev}/mo</span>
+                  </div>
+                  <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
+                    <div className={cn("h-full rounded-full", t.color)} style={{ width: `${t.pct}%` }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Pipeline Activity */}
+          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 lg:col-span-2">
+            <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">CannaCribs Pipeline Activity</h4>
+            <div className="space-y-2 max-h-[180px] overflow-y-auto pr-1">
+              {[
+                { time: '2 min ago', type: 'APPLICATION', msg: 'New tenant application: Maria Gonzalez — Downtown Studio, Tulsa', severity: 'NEW', color: 'text-amber-600 bg-amber-100 border-amber-200' },
+                { time: '1 hr ago', type: 'INSPECTION', msg: 'Modern Cannabis-Friendly Loft, OKC — 30-point inspection passed (30/30)', severity: 'PASSED', color: 'text-emerald-600 bg-emerald-100 border-emerald-200' },
+                { time: '3 hrs ago', type: 'LEASE', msg: 'Jasmine Wells signed 12-month lease — Midtown Townhome, OKC ($1,650/mo)', severity: 'SIGNED', color: 'text-blue-600 bg-blue-100 border-blue-200' },
+                { time: 'Yesterday', type: 'CLEANING', msg: 'Turnover clean + ozone treatment — Desert Oasis Cannabis Retreat, AZ', severity: 'COMPLETE', color: 'text-purple-600 bg-purple-100 border-purple-200' },
+                { time: 'Jul 11', type: 'ONBOARD', msg: 'New landlord: Tom Williams — 4-Unit, Moore OK — Gold Tier', severity: 'ONBOARDED', color: 'text-green-600 bg-green-100 border-green-200' },
+              ].map((alert, i) => (
+                <div key={i} className={cn("p-3 rounded-xl border flex items-start justify-between text-xs gap-3", alert.color)}>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-black tracking-wider uppercase text-[9px]">{alert.type}</span>
+                      <span className="text-[9px] opacity-75">{alert.time}</span>
+                    </div>
+                    <p className="font-medium text-slate-700 leading-normal">{alert.msg}</p>
+                  </div>
+                  <span className="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-wider bg-white/60 border border-current shrink-0">{alert.severity}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
 

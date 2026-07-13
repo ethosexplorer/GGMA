@@ -69,6 +69,7 @@ const RolePricingPage = React.lazy(() => import('./pages/RolePricingPage').then(
 const StateFactsPage = React.lazy(() => import('./pages/StateFactsPage').then(m => ({ default: m.StateFactsPage })));
 const IntakePage = React.lazy(() => import('./pages/IntakePage'));
 const CannaCribsPage = React.lazy(() => import('./pages/CannaCribsPage').then(m => ({ default: m.CannaCribsPage })));
+const CannaCribsApplicationPage = React.lazy(() => import('./pages/CannaCribsApplicationPage').then(m => ({ default: m.CannaCribsApplicationPage })));
 
 // --- Eagerly loaded utilities (small, needed immediately) ---
 import { initDatabase } from './lib/initDb';
@@ -434,6 +435,7 @@ export default function App() {
       '/sandbox': 'sandbox',
       '/demo': 'sandbox',
       '/cannacribs': 'cannacribs',
+      '/cannacribs-apply': 'cannacribs-apply',
     };
     const matchedView = pathToView[path] || (path.startsWith('/dashboard') ? 'dashboard' : null);
     if (matchedView) setView(matchedView);
@@ -1280,6 +1282,10 @@ export default function App() {
 
           {view === 'cannacribs' && (
             <CannaCribsPage onNavigate={(v) => handleNavigate(v as any)} />
+          )}
+
+          {view === 'cannacribs-apply' && (
+            <CannaCribsApplicationPage onNavigate={(v) => handleNavigate(v as any)} />
           )}
 
           {view === 'sandbox' && (

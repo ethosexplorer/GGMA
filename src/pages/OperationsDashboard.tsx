@@ -5,7 +5,7 @@ import { Calendar, Building2, Users, FileText, Settings, Shield, Activity, Bell,
   Briefcase, HeartPulse, Scale, Gavel, FileCheck, Wallet, MonitorPlay, MessageSquare, BarChart3, Bot, TrendingUp,
   AlertTriangle, Search, Download, Plus, MoreVertical, Eye,
   Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Headphones,
-  Phone, PhoneCall, PhoneOff, PhoneIncoming, PhoneOutgoing, UserPlus, Globe, Zap, Database, CircleCheck, ShoppingCart, CreditCard, Check, Copy, Save, Edit, FileEdit, ChevronDown, ChevronUp, Store, Sprout, User, Mail } from 'lucide-react';
+  Phone, PhoneCall, PhoneOff, PhoneIncoming, PhoneOutgoing, UserPlus, Globe, Zap, Database, CircleCheck, ShoppingCart, CreditCard, Check, Copy, Save, Edit, FileEdit, ChevronDown, ChevronUp, Store, Sprout, User, Mail, Home, Leaf, ClipboardList, CalendarCheck, MapPin, CheckCircle, XCircle } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { UserCalendar } from '../components/UserCalendar';
@@ -46,6 +46,10 @@ const NAV_ITEMS = [
   { id: 'business', label: 'Business Inquiries', icon: Building2 },
   { section: 'PRODUCTS' },
   { id: 'products_services', label: 'Products & Services', icon: ShoppingCart },
+  { section: 'CANNACRIBS' },
+  { id: 'cc_applications', label: 'CC Applications', icon: ClipboardList, badge: '2' },
+  { id: 'cc_inspections', label: 'CC Inspections', icon: CalendarCheck },
+  { id: 'cc_scheduling', label: 'CC Scheduling', icon: Calendar },
 ];
 
 export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void | Promise<void>, user?: any }) => {
@@ -574,6 +578,304 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
     setShowAddStaff(false);
     setOnboardingStep(0);
   };
+
+  // ═══ CANNACRIBS OPERATIONS RENDER FUNCTIONS ═══
+  const renderCCApplications = () => (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/20">
+            <Leaf className="text-white" size={18} />
+          </div>
+          <div>
+            <h2 className="text-xl font-black text-slate-900"><span className="text-green-600">Canna</span><span className="text-amber-500">Cribs</span> Applications</h2>
+            <p className="text-xs text-slate-500">Process tenant, landlord, and short-term guest applications</p>
+          </div>
+        </div>
+        <span className="px-3 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full border border-amber-200">2 Pending Review</span>
+      </div>
+
+      {/* Quick Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+        {[
+          { l: 'Total Applications', v: '6', color: 'text-slate-800' },
+          { l: 'Pending Review', v: '2', color: 'text-amber-600' },
+          { l: 'Background Check', v: '1', color: 'text-blue-600' },
+          { l: 'Approved', v: '2', color: 'text-emerald-600' },
+          { l: 'Verification', v: '1', color: 'text-purple-600' },
+        ].map((s, i) => (
+          <div key={i} className="bg-white border border-slate-200 rounded-xl p-4 text-center">
+            <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">{s.l}</p>
+            <p className={cn("text-2xl font-black", s.color)}>{s.v}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Applications Table */}
+      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+        <div className="bg-slate-50 px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+          <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2"><ClipboardList size={16} className="text-green-600" /> Application Queue</h3>
+          <div className="flex gap-1">
+            {['All', 'Pending', 'Approved', 'Denied'].map(f => (
+              <button key={f} className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-100 text-slate-600 hover:bg-green-100 hover:text-green-700 transition-all">{f}</button>
+            ))}
+          </div>
+        </div>
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-slate-100 text-[9px] font-black text-slate-400 uppercase tracking-widest">
+              <th className="text-left p-3">Applicant</th>
+              <th className="text-left p-3">Type</th>
+              <th className="text-left p-3">Property</th>
+              <th className="text-left p-3">Status</th>
+              <th className="text-left p-3">Submitted</th>
+              <th className="text-left p-3">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[
+              { name: 'James Carter', type: 'Tenant', property: 'Modern Cannabis-Friendly Loft', location: 'Oklahoma City, OK', status: 'Pending Review', date: 'Jul 12', card: true, credit: 720 },
+              { name: 'Sarah Mitchell', type: 'Tenant', property: 'Cozy 420-Friendly Cottage', location: 'Norman, OK', status: 'Background Check', date: 'Jul 11', card: true, credit: 685 },
+              { name: 'David Rosenberg', type: 'Landlord', property: '3BR House — Edmond, OK', location: 'Edmond, OK', status: 'Approved', date: 'Jul 9', card: false, credit: 0 },
+              { name: 'Maria Gonzalez', type: 'Tenant', property: 'Downtown Cannabis-Friendly Studio', location: 'Tulsa, OK', status: 'Pending Review', date: 'Jul 13', card: true, credit: 740 },
+              { name: 'Tom Williams', type: 'Landlord', property: '4-Unit Multi-Family', location: 'Moore, OK', status: 'Verification', date: 'Jul 10', card: false, credit: 0 },
+              { name: 'Ashley Park', type: 'Guest', property: 'Desert Oasis Cannabis Retreat', location: 'Bullhead City, AZ', status: 'Approved', date: 'Jul 8', card: true, credit: 0 },
+            ].map((app, i) => (
+              <tr key={i} className="border-b border-slate-50 hover:bg-green-50/30 transition-colors">
+                <td className="p-3">
+                  <div className="text-sm font-bold text-slate-800">{app.name}</div>
+                  {app.type === 'Tenant' && <div className="text-[10px] text-slate-400">Credit: {app.credit} • Card: {app.card ? '✅' : '❌'}</div>}
+                </td>
+                <td className="p-3">
+                  <span className={cn("px-2 py-0.5 rounded-full text-[10px] font-bold",
+                    app.type === 'Tenant' ? 'bg-blue-100 text-blue-700' :
+                    app.type === 'Landlord' ? 'bg-purple-100 text-purple-700' :
+                    'bg-amber-100 text-amber-700'
+                  )}>{app.type}</span>
+                </td>
+                <td className="p-3">
+                  <div className="text-xs font-medium text-slate-700">{app.property}</div>
+                  <div className="text-[10px] text-slate-400 flex items-center gap-0.5"><MapPin size={8} /> {app.location}</div>
+                </td>
+                <td className="p-3">
+                  <span className={cn("px-2 py-0.5 rounded-full text-[10px] font-bold border",
+                    app.status === 'Pending Review' ? 'bg-amber-100 text-amber-700 border-amber-200' :
+                    app.status === 'Background Check' ? 'bg-blue-100 text-blue-700 border-blue-200' :
+                    app.status === 'Verification' ? 'bg-purple-100 text-purple-700 border-purple-200' :
+                    'bg-emerald-100 text-emerald-700 border-emerald-200'
+                  )}>{app.status}</span>
+                </td>
+                <td className="p-3 text-xs text-slate-500">{app.date}</td>
+                <td className="p-3">
+                  <div className="flex gap-1">
+                    {app.status === 'Pending Review' && (
+                      <>
+                        <button className="p-1.5 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition-all"><CheckCircle size={12} /></button>
+                        <button className="p-1.5 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-all"><XCircle size={12} /></button>
+                      </>
+                    )}
+                    <button className="p-1.5 bg-slate-100 text-slate-500 rounded-lg hover:bg-slate-200 transition-all"><Eye size={12} /></button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+
+  const renderCCInspections = () => (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/20">
+            <Eye className="text-white" size={18} />
+          </div>
+          <div>
+            <h2 className="text-xl font-black text-slate-900"><span className="text-green-600">Canna</span><span className="text-amber-500">Cribs</span> Inspections</h2>
+            <p className="text-xs text-slate-500">30-point property inspections, cleaning schedules, and compliance tracking</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Upcoming Inspections */}
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+        <div className="bg-slate-50 px-4 py-3 border-b border-slate-200">
+          <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2"><CalendarCheck size={16} className="text-blue-600" /> Upcoming Inspections</h3>
+        </div>
+        <div className="divide-y divide-slate-100">
+          {[
+            { date: 'Jul 15', property: 'Desert Oasis Cannabis Retreat', location: 'Bullhead City, AZ', tier: 'Executive', type: 'Pre-Guest Inspection', status: 'Scheduled', inspector: 'Staff TBD' },
+            { date: 'Jul 18', property: 'Modern Cannabis-Friendly Loft', location: 'Oklahoma City, OK', tier: 'Gold', type: 'Bi-Weekly Check', status: 'Scheduled', inspector: 'Staff TBD' },
+            { date: 'Jul 20', property: 'Spacious Grow-Friendly Rancher', location: 'Edmond, OK', tier: 'Platinum', type: 'Weekly Inspection', status: 'Scheduled', inspector: 'Staff TBD' },
+            { date: 'Jul 22', property: 'Midtown 420 Friendly Townhome', location: 'Oklahoma City, OK', tier: 'Gold', type: 'Bi-Weekly Check', status: 'Scheduled', inspector: 'Staff TBD' },
+          ].map((insp, i) => (
+            <div key={i} className="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-blue-50 rounded-xl flex flex-col items-center justify-center border border-blue-100">
+                  <span className="text-[9px] font-black text-blue-400 uppercase">Jul</span>
+                  <span className="text-lg font-black text-blue-600">{insp.date.split(' ')[1]}</span>
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-slate-800">{insp.property}</div>
+                  <div className="text-xs text-slate-400 flex items-center gap-1"><MapPin size={10} /> {insp.location}</div>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className={cn("px-1.5 py-0.5 rounded text-[8px] font-black uppercase",
+                      insp.tier === 'Executive' ? 'bg-purple-100 text-purple-700' :
+                      insp.tier === 'Platinum' ? 'bg-violet-100 text-violet-700' :
+                      'bg-amber-100 text-amber-700'
+                    )}>{insp.tier}</span>
+                    <span className="text-[10px] text-slate-500">{insp.type}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="px-2.5 py-1 bg-blue-100 text-blue-700 text-[10px] font-bold rounded-lg">{insp.status}</span>
+                <button className="px-3 py-1.5 bg-green-600 text-white text-[10px] font-bold rounded-lg hover:bg-green-500 transition-all">Start Inspection</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 30-Point Checklist Reference */}
+      <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+        <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2 mb-4"><Shield size={16} className="text-emerald-600" /> 30-Point Inspection Checklist</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
+          {[
+            'Exterior', 'Interior Walls', 'Flooring', 'Windows/Locks', 'Doors/Hinges',
+            'Plumbing', 'Electrical', 'HVAC', 'Smoke Detect.', 'CO Detect.',
+            'Fire Extinguisher', 'Appliances', 'Kitchen', 'Bathroom', 'Pest Check',
+            'Cannabis Odor', 'Ventilation', 'Air Filtration', 'Grow Area', 'Waste Disposal',
+            'Yard/Exterior', 'Parking', 'Security Sys.', 'Key/Lock Check', 'Furniture',
+            'Linens', 'Supply Inv.', 'Neighbor Comp.', 'Photo Docs', 'Overall Rating',
+          ].map((item, i) => (
+            <div key={i} className="flex items-center gap-1.5 px-2 py-1.5 bg-slate-50 rounded-lg text-[10px] font-medium text-slate-600">
+              <CheckCircle size={10} className="text-emerald-500 shrink-0" /> {item}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Recent Inspection Results */}
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+        <div className="bg-slate-50 px-4 py-3 border-b border-slate-200">
+          <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2"><Activity size={16} className="text-emerald-600" /> Recent Inspection Results</h3>
+        </div>
+        <div className="divide-y divide-slate-100">
+          {[
+            { date: 'Jul 13', property: 'Modern Cannabis-Friendly Loft', score: '30/30', result: 'PASSED', notes: 'All areas clean, HVAC filter replaced, no odor issues.' },
+            { date: 'Jul 10', property: 'Desert Oasis Cannabis Retreat', score: '29/30', result: 'PASSED', notes: 'Minor: Air filtration filter at 80% life. Ordered replacement.' },
+            { date: 'Jul 6', property: 'Midtown 420 Friendly Townhome', score: '30/30', result: 'PASSED', notes: 'Excellent condition. Tenant very cooperative.' },
+          ].map((r, i) => (
+            <div key={i} className="flex items-center justify-between p-4">
+              <div>
+                <div className="text-sm font-bold text-slate-800">{r.property}</div>
+                <div className="text-xs text-slate-400">{r.date} • {r.notes}</div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-black text-emerald-600">{r.score}</span>
+                <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[9px] font-black rounded-full">{r.result}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderCCScheduling = () => (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+            <Calendar className="text-white" size={18} />
+          </div>
+          <div>
+            <h2 className="text-xl font-black text-slate-900"><span className="text-green-600">Canna</span><span className="text-amber-500">Cribs</span> Scheduling</h2>
+            <p className="text-xs text-slate-500">Cleaning services, turnovers, maintenance, and property scheduling</p>
+          </div>
+        </div>
+        <button className="px-4 py-2 bg-green-600 text-white text-xs font-bold rounded-lg hover:bg-green-500 transition-all flex items-center gap-1.5">
+          <Plus size={14} /> Schedule Service
+        </button>
+      </div>
+
+      {/* Today's Schedule */}
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-3 text-white flex items-center justify-between">
+          <h3 className="text-sm font-bold flex items-center gap-2"><Calendar size={16} /> Today's Schedule — Jul 13, 2026</h3>
+          <span className="text-[10px] font-bold bg-white/20 px-2.5 py-1 rounded-full">4 Tasks</span>
+        </div>
+        <div className="divide-y divide-slate-100">
+          {[
+            { time: '8:00 AM', task: 'Pre-Guest Turnover Clean', property: 'Desert Oasis Cannabis Retreat', type: 'Turnover + Ozone', status: 'In Progress', crew: 'Team Alpha', tier: 'Executive' },
+            { time: '10:30 AM', task: 'Bi-Weekly Inspection', property: 'Modern Cannabis-Friendly Loft', type: '30-Point Check', status: 'Completed', crew: 'Inspector J.', tier: 'Gold' },
+            { time: '1:00 PM', task: 'Maintenance - HVAC Filter', property: 'Spacious Grow-Friendly Rancher', type: 'Maintenance', status: 'Scheduled', crew: 'Maintenance', tier: 'Platinum' },
+            { time: '3:30 PM', task: 'New Tenant Move-In Inspection', property: 'Cozy 420-Friendly Cottage', type: 'Move-In Check', status: 'Scheduled', crew: 'Inspector J.', tier: 'Green' },
+          ].map((task, i) => (
+            <div key={i} className="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors">
+              <div className="flex items-center gap-4">
+                <div className="w-16 text-center">
+                  <div className="text-sm font-black text-slate-800">{task.time}</div>
+                </div>
+                <div className="w-px h-10 bg-slate-200"></div>
+                <div>
+                  <div className="text-sm font-bold text-slate-800">{task.task}</div>
+                  <div className="text-xs text-slate-400 flex items-center gap-1"><Home size={10} /> {task.property}</div>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className={cn("px-1.5 py-0.5 rounded text-[8px] font-black uppercase",
+                      task.tier === 'Executive' ? 'bg-purple-100 text-purple-700' :
+                      task.tier === 'Platinum' ? 'bg-violet-100 text-violet-700' :
+                      task.tier === 'Gold' ? 'bg-amber-100 text-amber-700' :
+                      'bg-emerald-100 text-emerald-700'
+                    )}>{task.tier}</span>
+                    <span className="text-[10px] text-slate-400">{task.type} • {task.crew}</span>
+                  </div>
+                </div>
+              </div>
+              <span className={cn("px-2.5 py-1 text-[10px] font-bold rounded-lg",
+                task.status === 'Completed' ? 'bg-emerald-100 text-emerald-700' :
+                task.status === 'In Progress' ? 'bg-blue-100 text-blue-700' :
+                'bg-slate-100 text-slate-600'
+              )}>{task.status}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Upcoming Week */}
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+        <div className="bg-slate-50 px-4 py-3 border-b border-slate-200">
+          <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2"><CalendarCheck size={16} className="text-indigo-600" /> This Week — Cleaning & Turnovers</h3>
+        </div>
+        <div className="divide-y divide-slate-100">
+          {[
+            { date: 'Jul 14 (Mon)', tasks: ['Standard Clean — Midtown Townhome', 'Odor check — Modern Loft'] },
+            { date: 'Jul 15 (Tue)', tasks: ['Guest Check-In Prep — Desert Oasis', 'Pre-Guest Inspection — Desert Oasis'] },
+            { date: 'Jul 16 (Wed)', tasks: ['Bi-weekly Inspect — Grow Rancher'] },
+            { date: 'Jul 17 (Thu)', tasks: ['Deep Clean — Cottage (turnover)', 'Supply restock — Desert Oasis'] },
+            { date: 'Jul 18 (Fri)', tasks: ['Bi-weekly Inspect — Modern Loft', 'Maintenance review — All properties'] },
+            { date: 'Jul 20 (Sun)', tasks: ['Guest Check-Out — Desert Oasis', 'Turnover Clean + Ozone — Desert Oasis'] },
+          ].map((day, i) => (
+            <div key={i} className="flex items-start gap-4 p-4">
+              <div className="w-28 shrink-0">
+                <span className="text-xs font-bold text-slate-800">{day.date}</span>
+              </div>
+              <div className="flex-1 space-y-1">
+                {day.tasks.map((t, j) => (
+                  <div key={j} className="text-xs text-slate-600 flex items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0"></div> {t}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 
   const renderPersonnel = () => (
     <div className="space-y-6">
@@ -1202,6 +1504,9 @@ Notes: ${c.notes || 'No notes'}`;
       case 'business': 
         if (!isMaster) return renderAccessRestricted();
         return renderBusinessInquiries();
+      case 'cc_applications': return renderCCApplications();
+      case 'cc_inspections': return renderCCInspections();
+      case 'cc_scheduling': return renderCCScheduling();
       default: return (
         <div className="flex items-center justify-center h-[60vh]">
           <div className="text-center space-y-4 max-w-sm">
