@@ -369,6 +369,56 @@ export const LandingPage = ({ onNavigate, jurisdiction, setJurisdiction, userPro
         </div>
       </section>
 
+      {/* ═══ CANNACRIBS TEASER SECTION ═══ */}
+      <section style={{ background: 'linear-gradient(to bottom right, #1a0a2e, #2d1b4e, #0a2e1a)' }} className="py-20 px-6 text-white relative overflow-hidden border-t border-white/10">
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 30% 50%, rgba(34,197,94,0.3), transparent 50%), radial-gradient(circle at 70% 80%, rgba(251,191,36,0.2), transparent 50%)' }} />
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12 relative z-10">
+          <div className="md:w-2/3 space-y-6">
+            <div style={{ backgroundColor: 'rgba(34, 197, 94, 0.2)' }} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-green-400/30 text-green-300 text-xs font-black uppercase tracking-widest">
+              🏠 Now Live — Cannabis-Friendly Real Estate
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-tight">
+              <span className="text-green-400">Canna</span><span className="text-amber-400">Cribs</span>
+            </h2>
+            <p className="text-lg text-green-50/80 leading-relaxed font-medium">
+              The first full-service cannabis-friendly real estate platform. Find apartments, houses, and short-term stays where you can be yourself — no judgment, no surprises. Landlords earn 20-30% above market rent with our hotel-grade inspection and cleaning services.
+            </p>
+            <div className="grid grid-cols-3 gap-4 max-w-md">
+              <div className="text-center">
+                <div className="text-2xl font-black text-green-400">500+</div>
+                <div className="text-[10px] font-bold text-white/40 uppercase tracking-wider">Properties</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-black text-amber-400">4</div>
+                <div className="text-[10px] font-bold text-white/40 uppercase tracking-wider">Service Tiers</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-black text-green-400">3x</div>
+                <div className="text-[10px] font-bold text-white/40 uppercase tracking-wider">Returns</div>
+              </div>
+            </div>
+            <div className="flex gap-4">
+              <button 
+                onClick={() => onNavigate('cannacribs' as any)}
+                className="px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white rounded-xl font-black transition-all shadow-lg shadow-green-500/20 flex items-center gap-2"
+              >
+                🌿 Visit CannaCribs <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+          <div className="md:w-1/3 flex justify-center">
+            <div className="w-full aspect-square bg-white/5 rounded-full border border-white/10 backdrop-blur-3xl flex items-center justify-center p-8 text-center relative group">
+              <div style={{ backgroundColor: 'rgba(34, 197, 94, 0.2)' }} className="absolute inset-0 blur-[60px] rounded-full scale-50 group-hover:scale-75 transition-transform duration-1000 opacity-50"></div>
+              <div className="relative">
+                <div className="text-6xl mb-2">🏠</div>
+                <div className="text-xl font-black text-green-400">Canna</div>
+                <div className="text-xl font-black text-amber-400 -mt-1">Cribs</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Partners & Paid Advertisements */}
       <section className="py-20 border-t border-slate-100 bg-slate-50/30">
         <div className="max-w-6xl mx-auto px-6">
