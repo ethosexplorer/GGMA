@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CannaCribs — Cannabis-Friendly Real Estate Platform | Business Model</title>
+  <meta name="description" content="CannaCribs: The first full-service cannabis-friendly real estate platform combining Zillow-style property search with hotel-grade management services and insurance brokering.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --canna-deep: #1a0a2e;
+      --canna-purple: #2d1b4e;
+      --canna-accent: #8b5cf6;
+      --canna-light: #c4b5fd;
+      --canna-green: #22c55e;
+      --canna-green-deep: #15803d;
+      --canna-gold: #fbbf24;
+      --canna-gold-light: #fde68a;
+      --canna-orange: #f97316;
+      --slate-50: #F8FAFC;
+      --slate-100: #F1F5F9;
+      --slate-200: #E2E8F0;
+      --slate-300: #CBD5E1;
+      --slate-400: #94A3B8;
+      --slate-500: #64748B;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-800: #1E293B;
+      --slate-900: #0F172A;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--slate-50);
+      color: var(--slate-700);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ═══ COVER HEADER ═══ */
+    .cover {
+      background: linear-gradient(135deg, var(--canna-deep) 0%, var(--canna-purple) 40%, #3b1f6e 100%);
+      color: white;
+      padding: 80px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cover::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(34,197,94,0.08) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .cover::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--canna-green), var(--canna-accent), var(--canna-gold), var(--canna-green));
+    }
+    .cover .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 100px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--canna-green);
+      margin-bottom: 24px;
+    }
+    .cover .badge .dot {
+      width: 8px; height: 8px;
+      background: var(--canna-green);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.4); }
+    }
+    .cover h1 {
+      font-size: 48px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+    .cover h1 .green { color: var(--canna-green); }
+    .cover h1 .gold { color: var(--canna-gold); }
+    .cover .subtitle {
+      font-size: 18px;
+      color: rgba(255,255,255,0.6);
+      font-weight: 500;
+      max-width: 640px;
+      margin-bottom: 40px;
+    }
+    .cover-meta {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.4);
+    }
+    .cover-meta strong { color: var(--canna-light); }
+
+    /* ═══ CONTENT ═══ */
+    .content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px 40px 80px;
+    }
+
+    /* ═══ SECTIONS ═══ */
+    .section { margin-bottom: 56px; }
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--canna-accent);
+      background: rgba(139,92,246,0.06);
+      border: 1px solid rgba(139,92,246,0.15);
+      padding: 4px 14px;
+      border-radius: 100px;
+      margin-bottom: 16px;
+    }
+    .section h2 {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--slate-900);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .section .lead {
+      font-size: 16px;
+      color: var(--slate-500);
+      font-weight: 500;
+      max-width: 720px;
+      margin-bottom: 24px;
+    }
+    .section p {
+      font-size: 15px;
+      color: var(--slate-600);
+      margin-bottom: 16px;
+      line-height: 1.8;
+    }
+
+    /* ═══ DIVIDER ═══ */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--slate-200), transparent);
+      margin: 48px 0;
+    }
+
+    /* ═══ HIGHLIGHT BOX ═══ */
+    .highlight-box {
+      background: linear-gradient(135deg, var(--canna-deep), var(--canna-purple));
+      color: white;
+      border-radius: 20px;
+      padding: 40px;
+      margin: 32px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .highlight-box::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(34,197,94,0.15), transparent);
+      border-radius: 50%;
+    }
+    .highlight-box h3 {
+      font-size: 22px;
+      font-weight: 900;
+      margin-bottom: 16px;
+      color: var(--canna-green);
+    }
+    .highlight-box p {
+      color: rgba(255,255,255,0.75);
+      font-size: 15px;
+      line-height: 1.8;
+      margin-bottom: 12px;
+    }
+    .highlight-box .stat-row {
+      display: flex;
+      gap: 40px;
+      margin-top: 24px;
+    }
+    .highlight-box .stat {
+      text-align: center;
+    }
+    .highlight-box .stat-val {
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--canna-gold);
+    }
+    .highlight-box .stat-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+    }
+
+    /* ═══ PROBLEM GRID ═══ */
+    .problem-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .problem-card {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+      padding: 24px;
+      transition: all 0.2s;
+    }
+    .problem-card:hover {
+      border-color: var(--canna-accent);
+      box-shadow: 0 4px 20px rgba(139,92,246,0.1);
+      transform: translateY(-2px);
+    }
+    .problem-card .icon { font-size: 28px; margin-bottom: 12px; }
+    .problem-card h4 {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--slate-800);
+      margin-bottom: 6px;
+    }
+    .problem-card p {
+      font-size: 13px;
+      color: var(--slate-500);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* ═══ TIER CARDS ═══ */
+    .tier-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin: 24px 0;
+    }
+    .tier-card {
+      background: white;
+      border: 2px solid var(--slate-200);
+      border-radius: 20px;
+      padding: 32px;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .tier-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+    }
+    .tier-card.featured {
+      border-color: var(--canna-green);
+      box-shadow: 0 0 0 1px var(--canna-green);
+    }
+    .tier-card.featured::before {
+      content: 'MOST POPULAR';
+      position: absolute;
+      top: 16px; right: -32px;
+      background: var(--canna-green);
+      color: white;
+      font-size: 9px;
+      font-weight: 800;
+      padding: 4px 40px;
+      transform: rotate(45deg);
+      letter-spacing: 0.1em;
+    }
+    .tier-card.premium {
+      background: linear-gradient(135deg, var(--canna-deep), var(--canna-purple));
+      color: white;
+      border-color: var(--canna-accent);
+    }
+    .tier-emoji { font-size: 32px; margin-bottom: 12px; }
+    .tier-name {
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--slate-900);
+      margin-bottom: 4px;
+    }
+    .tier-card.premium .tier-name { color: var(--canna-gold); }
+    .tier-price {
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--canna-green-deep);
+      margin-bottom: 4px;
+    }
+    .tier-card.premium .tier-price { color: var(--canna-green); }
+    .tier-price span {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--slate-400);
+    }
+    .tier-card.premium .tier-price span { color: rgba(255,255,255,0.4); }
+    .tier-tagline {
+      font-size: 13px;
+      color: var(--slate-500);
+      font-style: italic;
+      margin-bottom: 20px;
+    }
+    .tier-card.premium .tier-tagline { color: rgba(255,255,255,0.5); }
+    .tier-features { list-style: none; }
+    .tier-features li {
+      font-size: 13px;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--slate-100);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tier-card.premium .tier-features li { border-color: rgba(255,255,255,0.08); color: rgba(255,255,255,0.8); }
+    .tier-features li:last-child { border: none; }
+    .tier-features .check { color: var(--canna-green); font-weight: 900; }
+    .tier-features .x { color: var(--slate-300); }
+
+    /* ═══ REVENUE TABLE ═══ */
+    .revenue-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin: 24px 0;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--slate-200);
+    }
+    .revenue-table thead th {
+      background: var(--canna-deep);
+      color: var(--canna-green);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      padding: 16px 20px;
+      text-align: left;
+    }
+    .revenue-table tbody td {
+      padding: 14px 20px;
+      font-size: 13px;
+      border-bottom: 1px solid var(--slate-100);
+      vertical-align: top;
+      font-weight: 500;
+      color: var(--slate-700);
+    }
+    .revenue-table tbody tr:last-child td { border-bottom: none; }
+    .revenue-table tbody tr:hover { background: rgba(139,92,246,0.02); }
+    .revenue-table .amount {
+      font-weight: 800;
+      color: var(--canna-green-deep);
+    }
+    .revenue-table tfoot td {
+      background: var(--canna-deep);
+      color: white;
+      font-weight: 900;
+      font-size: 15px;
+      padding: 16px 20px;
+    }
+    .revenue-table tfoot .total-amount {
+      color: var(--canna-gold);
+      font-size: 18px;
+    }
+
+    /* ═══ COMPARISON TABLE ═══ */
+    .comparison-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin: 24px 0;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--slate-200);
+    }
+    .comparison-table thead th {
+      background: var(--canna-purple);
+      color: var(--canna-light);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      padding: 16px 20px;
+      text-align: left;
+    }
+    .comparison-table tbody td {
+      padding: 14px 20px;
+      font-size: 13px;
+      border-bottom: 1px solid var(--slate-100);
+      vertical-align: top;
+    }
+    .comparison-table tbody tr:last-child td { border-bottom: none; }
+    .comparison-table tbody tr:hover { background: rgba(139,92,246,0.02); }
+    .comparison-table .col-old { color: var(--slate-400); font-weight: 500; text-decoration: line-through; }
+    .comparison-table .col-new { color: var(--canna-green-deep); font-weight: 700; }
+
+    /* ═══ FLOW STEPS ═══ */
+    .flow-steps {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin: 24px 0;
+    }
+    .flow-step {
+      background: var(--slate-800);
+      color: white;
+      border-radius: 14px;
+      padding: 20px 12px;
+      text-align: center;
+      position: relative;
+    }
+    .flow-step::after {
+      content: '→';
+      position: absolute;
+      right: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--canna-green);
+      font-weight: 900;
+      font-size: 16px;
+      z-index: 1;
+    }
+    .flow-step:last-child::after { display: none; }
+    .flow-step .step-num {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--canna-gold);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+    }
+    .flow-step h5 {
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .flow-step p {
+      font-size: 10px;
+      opacity: 0.5;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* ═══ ARCHITECTURE ═══ */
+    .arch-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 24px 0;
+    }
+    .arch-card {
+      border-radius: 20px;
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .arch-card.consumer {
+      background: linear-gradient(135deg, #1e3a5f, #0f2942);
+      color: white;
+    }
+    .arch-card.backoffice {
+      background: linear-gradient(135deg, var(--canna-deep), var(--canna-purple));
+      color: white;
+    }
+    .arch-card h4 {
+      font-size: 20px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+    .arch-card .arch-role {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      opacity: 0.5;
+      margin-bottom: 16px;
+    }
+    .arch-card ul {
+      list-style: none;
+      font-size: 13px;
+      line-height: 2;
+      opacity: 0.8;
+    }
+    .arch-card ul li::before {
+      content: '▸ ';
+      color: var(--canna-green);
+      font-weight: 900;
+    }
+
+    /* ═══ PHASE TIMELINE ═══ */
+    .phase-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .phase-card {
+      background: white;
+      border: 2px solid var(--slate-200);
+      border-radius: 16px;
+      padding: 24px;
+      position: relative;
+    }
+    .phase-card .phase-num {
+      width: 32px; height: 32px;
+      background: var(--canna-accent);
+      color: white;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+    .phase-card h4 {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--slate-900);
+      margin-bottom: 4px;
+    }
+    .phase-card .phase-time {
+      font-size: 11px;
+      color: var(--canna-accent);
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .phase-card ul {
+      list-style: none;
+      font-size: 12px;
+      color: var(--slate-500);
+      line-height: 1.8;
+    }
+    .phase-card ul li::before {
+      content: '• ';
+      color: var(--canna-green);
+      font-weight: 900;
+    }
+
+    /* ═══ COMPETITIVE ═══ */
+    .comp-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 24px 0;
+    }
+    .comp-card {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 14px;
+      padding: 20px;
+    }
+    .comp-card.us {
+      background: linear-gradient(135deg, var(--canna-deep), var(--canna-purple));
+      color: white;
+      border: 2px solid var(--canna-green);
+    }
+    .comp-card h4 {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--slate-800);
+      margin-bottom: 4px;
+    }
+    .comp-card.us h4 { color: var(--canna-green); }
+    .comp-card .comp-type {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--slate-400);
+      margin-bottom: 12px;
+    }
+    .comp-card.us .comp-type { color: var(--canna-gold); }
+    .comp-card p {
+      font-size: 12px;
+      color: var(--slate-500);
+      line-height: 1.6;
+      margin: 0;
+    }
+    .comp-card.us p { color: rgba(255,255,255,0.7); }
+
+    /* ═══ STAT BOXES ═══ */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 24px 0;
+    }
+    .stat-box {
+      text-align: center;
+      padding: 24px 16px;
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 16px;
+    }
+    .stat-box .stat-value {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--canna-green-deep);
+      margin-bottom: 4px;
+    }
+    .stat-box .stat-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--slate-700);
+    }
+    .stat-box .stat-sub {
+      font-size: 10px;
+      color: var(--slate-400);
+      font-weight: 600;
+    }
+
+    /* ═══ INSPECTION LIST ═══ */
+    .inspect-list {
+      counter-reset: inspect;
+      margin: 24px 0;
+    }
+    .inspect-item {
+      display: flex;
+      gap: 20px;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--slate-200);
+    }
+    .inspect-item:last-child { border: none; }
+    .inspect-num {
+      flex-shrink: 0;
+      width: 44px; height: 44px;
+      background: var(--canna-accent);
+      color: white;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 900;
+    }
+    .inspect-item h4 {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--slate-900);
+      margin-bottom: 6px;
+    }
+    .inspect-item p {
+      font-size: 14px;
+      color: var(--slate-500);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* ═══ CONTACT BAR ═══ */
+    .contact-bar {
+      background: var(--canna-deep);
+      color: white;
+      padding: 48px 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+    .contact-bar h3 {
+      font-size: 20px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+    .contact-bar h3 span { color: var(--canna-green); }
+    .contact-bar p { font-size: 13px; color: rgba(255,255,255,0.5); }
+    .contact-methods {
+      display: flex;
+      gap: 24px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .contact-methods span { color: var(--canna-light); }
+
+    /* ═══ LEGAL ═══ */
+    .legal-footer {
+      background: #0d0618;
+      color: rgba(255,255,255,0.3);
+      padding: 24px 60px;
+      font-size: 11px;
+      text-align: center;
+      line-height: 1.8;
+    }
+    .legal-footer strong { color: var(--canna-green); font-weight: 700; }
+
+    /* ═══ RESPONSIVE ═══ */
+    @media print {
+      body { background: white; }
+      .cover { padding: 40px; }
+      .content { padding: 30px 20px; }
+      .tier-card:hover, .problem-card:hover, .phase-card:hover { transform: none; box-shadow: none; }
+    }
+    @media (max-width: 768px) {
+      .cover { padding: 40px 24px; }
+      .cover h1 { font-size: 28px; }
+      .content { padding: 40px 20px; }
+      .problem-grid, .tier-grid, .arch-grid, .comp-grid { grid-template-columns: 1fr; }
+      .phase-grid { grid-template-columns: 1fr 1fr; }
+      .flow-steps { grid-template-columns: 1fr; }
+      .stat-grid { grid-template-columns: 1fr 1fr; }
+      .contact-bar { padding: 32px 24px; flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ COVER ═══ -->
+  <header class="cover">
+    <div class="badge">
+      <span class="dot"></span>
+      Confidential — Business Model & Investment Overview
+    </div>
+    <h1><span class="green">Canna</span><span class="gold">Cribs</span><br>Business Model</h1>
+    <p class="subtitle">The first full-service cannabis-friendly real estate platform — combining Zillow-style property search with hotel-grade management services and insurance brokering.</p>
+    <div class="cover-meta">
+      <span><strong>Parent Entity:</strong> Global Green Enterprises</span>
+      <span><strong>Date:</strong> July 2026</span>
+      <span><strong>Model:</strong> Hybrid SaaS + Service</span>
+      <span><strong>Classification:</strong> Internal Strategy Document</span>
+    </div>
+  </header>
+
+  <!-- ═══ CONTENT ═══ -->
+  <main class="content">
+
+    <!-- THE OPPORTUNITY -->
+    <div class="section">
+      <div class="section-label">◆ Market Opportunity</div>
+      <h2>A $100B Market with No Platform</h2>
+      <p class="lead">Cannabis is legal in 24+ states recreationally and 38+ medically. Yet millions of consumers, patients, and businesses cannot find housing or commercial space that allows cannabis use. The market is massive. The solution doesn't exist yet.</p>
+
+      <div class="stat-grid">
+        <div class="stat-box">
+          <div class="stat-value">54M+</div>
+          <div class="stat-name">Cannabis Consumers</div>
+          <div class="stat-sub">U.S. Adults (2025)</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value">38</div>
+          <div class="stat-name">Medical States</div>
+          <div class="stat-sub">+ D.C. & Territories</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value">24</div>
+          <div class="stat-name">Recreational States</div>
+          <div class="stat-sub">And Growing</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value">0</div>
+          <div class="stat-name">Full-Service Platforms</div>
+          <div class="stat-sub">Listing + Services + Insurance</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- THE PROBLEM -->
+    <div class="section">
+      <div class="section-label">◆ The Problem</div>
+      <h2>Why Cannabis Consumers Can't Find Housing</h2>
+      <p class="lead">In a country where cannabis is legal in most states, millions of people are forced to hide their legal consumption or risk eviction. No platform serves them.</p>
+
+      <div class="problem-grid">
+        <div class="problem-card">
+          <div class="icon">🚫</div>
+          <h4>Landlord Prohibition</h4>
+          <p>Most lease agreements include blanket "no smoking/no cannabis" clauses — even in fully legal states</p>
+        </div>
+        <div class="problem-card">
+          <div class="icon">🏠</div>
+          <h4>Airbnb Bans Cannabis</h4>
+          <p>Cannabis use is explicitly prohibited on all Airbnb properties. Guests risk eviction and account bans</p>
+        </div>
+        <div class="problem-card">
+          <div class="icon">🏥</div>
+          <h4>Medical Patients Discriminated</h4>
+          <p>Medical cannabis cardholders face housing discrimination despite legal protections in many states</p>
+        </div>
+        <div class="problem-card">
+          <div class="icon">🏢</div>
+          <h4>Businesses Can't Find Space</h4>
+          <p>Dispensaries, growers, and processors spend months finding compliant commercial properties</p>
+        </div>
+        <div class="problem-card">
+          <div class="icon">📱</div>
+          <h4>No Dedicated Platform</h4>
+          <p>Zillow, Apartments.com, and Realtor.com don't filter for cannabis-friendly properties</p>
+        </div>
+        <div class="problem-card">
+          <div class="icon">🔒</div>
+          <h4>Insurance Gap</h4>
+          <p>Landlords can't easily find property insurance that covers cannabis-related usage. They say no by default</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- THE SOLUTION -->
+    <div class="section">
+      <div class="section-label">◆ The Solution</div>
+      <h2>CannaCribs: Zillow + Hotel Services + Insurance</h2>
+      <p class="lead">CannaCribs doesn't just list properties — it manages them. Our model eliminates the risk that keeps landlords from saying yes.</p>
+
+      <div class="highlight-box">
+        <h3>"The Landlord Pitch That Won 3x Returns"</h3>
+        <p>"Mr. Landlord, I'll bring you tenants who pay 20-30% above market rent, AND I'll inspect your property weekly and clean it like a hotel room. You make more money with LESS risk than a traditional tenant."</p>
+        <p>This isn't theory — it's a proven model. Our CEO previously brokered deals between insurance companies, Airbnb hosts, and landlords to house displaced homeowners. She secured short-term leases at 3x annual rates. She housed government students for FAA and other agencies using the same model. CannaCribs applies this exact playbook to the cannabis-friendly housing market.</p>
+        <div class="stat-row">
+          <div class="stat">
+            <div class="stat-val">3x</div>
+            <div class="stat-label">Lease Rate vs. Traditional</div>
+          </div>
+          <div class="stat">
+            <div class="stat-val">20-30%</div>
+            <div class="stat-label">Premium Over Market Rent</div>
+          </div>
+          <div class="stat">
+            <div class="stat-val">50%+</div>
+            <div class="stat-label">Service Margin on Cleaning</div>
+          </div>
+        </div>
+      </div>
+
+      <table class="comparison-table">
+        <thead>
+          <tr><th>Traditional Rental Model</th><th>CannaCribs Model</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="col-old">Just lists properties — tenant/landlord figure it out</td>
+            <td class="col-new">Lists + screens + manages + services properties end-to-end</td>
+          </tr>
+          <tr>
+            <td class="col-old">Landlord handles maintenance, inspections, cleaning</td>
+            <td class="col-new">CannaCribs handles weekly inspections and hotel-style cleaning</td>
+          </tr>
+          <tr>
+            <td class="col-old">Cannabis use = automatic lease violation</td>
+            <td class="col-new">Cannabis-friendly is the entire point of the platform</td>
+          </tr>
+          <tr>
+            <td class="col-old">No ongoing platform relationship after lease signing</td>
+            <td class="col-new">Ongoing service tier = recurring monthly revenue</td>
+          </tr>
+          <tr>
+            <td class="col-old">No insurance guidance or brokering</td>
+            <td class="col-new">Full insurance brokering built into premium tiers</td>
+          </tr>
+          <tr>
+            <td class="col-old">Landlord manages odor/damage concerns alone</td>
+            <td class="col-new">Professional odor mitigation and cannabis-specific property care</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- SERVICE TIERS -->
+    <div class="section">
+      <div class="section-label">◆ Service Tiers</div>
+      <h2>Landlord Packages — From Listing to White-Glove</h2>
+      <p class="lead">Every tier includes the base CannaCribs listing. Higher tiers add the inspection, cleaning, and insurance services that eliminate landlord risk and justify premium rents.</p>
+
+      <div class="tier-grid">
+        <!-- GREEN -->
+        <div class="tier-card">
+          <div class="tier-emoji">🟢</div>
+          <div class="tier-name">Green Listing</div>
+          <div class="tier-price">$49<span>/mo per property</span></div>
+          <div class="tier-tagline">"Get listed. Get found."</div>
+          <ul class="tier-features">
+            <li><span class="check">✓</span> Property listing on CannaCribs</li>
+            <li><span class="check">✓</span> Searchable map + filters</li>
+            <li><span class="check">✓</span> Tenant application processing</li>
+            <li><span class="check">✓</span> Background + credit checks</li>
+            <li><span class="check">✓</span> Cannabis-friendly lease template</li>
+            <li><span class="check">✓</span> Digital lease signing</li>
+            <li><span class="check">✓</span> Landlord dashboard</li>
+            <li><span class="x">✗</span> Inspections</li>
+            <li><span class="x">✗</span> Cleaning services</li>
+            <li><span class="x">✗</span> Insurance brokering</li>
+          </ul>
+        </div>
+
+        <!-- GOLD -->
+        <div class="tier-card featured">
+          <div class="tier-emoji">🟡</div>
+          <div class="tier-name">Gold Crib</div>
+          <div class="tier-price">$149<span>/mo per property</span></div>
+          <div class="tier-tagline">"We find them, screen them, and check on your property."</div>
+          <ul class="tier-features">
+            <li><span class="check">✓</span> Everything in Green Listing</li>
+            <li><span class="check">✓</span> Monthly property inspection</li>
+            <li><span class="check">✓</span> Photo inspection reports</li>
+            <li><span class="check">✓</span> Maintenance issue flagging</li>
+            <li><span class="check">✓</span> Quarterly deep cleaning</li>
+            <li><span class="check">✓</span> Tenant communication management</li>
+            <li><span class="check">✓</span> Cannabis compliance audit</li>
+            <li><span class="check">✓</span> 10% discount on insurance</li>
+            <li><span class="check">✓</span> Priority listing placement</li>
+          </ul>
+        </div>
+
+        <!-- PLATINUM -->
+        <div class="tier-card">
+          <div class="tier-emoji">💎</div>
+          <div class="tier-name">Platinum Crib</div>
+          <div class="tier-price">$299<span>/mo per property</span></div>
+          <div class="tier-tagline">"Hotel-grade management. Maximum revenue. Zero stress."</div>
+          <ul class="tier-features">
+            <li><span class="check">✓</span> Everything in Gold Crib</li>
+            <li><span class="check">✓</span> Weekly property inspections</li>
+            <li><span class="check">✓</span> Bi-weekly professional cleaning</li>
+            <li><span class="check">✓</span> Insurance brokering included</li>
+            <li><span class="check">✓</span> Odor mitigation service</li>
+            <li><span class="check">✓</span> 24/7 emergency maintenance</li>
+            <li><span class="check">✓</span> Rent collection + direct deposit</li>
+            <li><span class="check">✓</span> Eviction support</li>
+            <li><span class="check">✓</span> Featured listing</li>
+            <li><span class="check">✓</span> Revenue optimization consulting</li>
+          </ul>
+        </div>
+
+        <!-- EXECUTIVE -->
+        <div class="tier-card premium">
+          <div class="tier-emoji">👑</div>
+          <div class="tier-name">Executive Suite</div>
+          <div class="tier-price">$499<span>/mo per property</span></div>
+          <div class="tier-tagline">"White-glove, full-service luxury cannabis living."</div>
+          <ul class="tier-features">
+            <li><span class="check">✓</span> Everything in Platinum</li>
+            <li><span class="check">✓</span> Fully furnished + styled units</li>
+            <li><span class="check">✓</span> Weekly cleaning + linen service</li>
+            <li><span class="check">✓</span> Tenant welcome kit</li>
+            <li><span class="check">✓</span> Concierge services</li>
+            <li><span class="check">✓</span> Multi-platform listing optimization</li>
+            <li><span class="check">✓</span> Professional photography + virtual tour</li>
+            <li><span class="check">✓</span> Dynamic pricing engine</li>
+            <li><span class="check">✓</span> Dedicated account manager</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- TENANT FEES -->
+    <div class="section">
+      <div class="section-label">◆ Tenant & Guest Revenue</div>
+      <h2>Application Processing & Booking Fees</h2>
+      <p class="lead">Like Zillow and Apartments.com, tenants pay to apply. Short-term guests pay booking fees. Every transaction generates revenue.</p>
+
+      <table class="revenue-table">
+        <thead>
+          <tr><th>Fee Type</th><th>Amount</th><th>Who Pays</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Standard Application Fee</td>
+            <td class="amount">$45</td>
+            <td>Tenant</td>
+          </tr>
+          <tr>
+            <td>Premium Application (24hr expedited)</td>
+            <td class="amount">$75</td>
+            <td>Tenant</td>
+          </tr>
+          <tr>
+            <td>Cannabis Card Verification</td>
+            <td class="amount">$15 add-on</td>
+            <td>Tenant</td>
+          </tr>
+          <tr>
+            <td>Pet Screening</td>
+            <td class="amount">$25</td>
+            <td>Tenant</td>
+          </tr>
+          <tr>
+            <td>Lease Processing Fee</td>
+            <td class="amount">$99</td>
+            <td>Tenant</td>
+          </tr>
+          <tr>
+            <td>Short-Term Guest Service Fee</td>
+            <td class="amount">12-15%</td>
+            <td>Guest</td>
+          </tr>
+          <tr>
+            <td>Host Service Fee (short-term)</td>
+            <td class="amount">3-5%</td>
+            <td>Landlord/Host</td>
+          </tr>
+          <tr>
+            <td>Damage Protection Add-On</td>
+            <td class="amount">$12-49/stay</td>
+            <td>Guest</td>
+          </tr>
+          <tr>
+            <td>Lease Renewal Processing</td>
+            <td class="amount">$49</td>
+            <td>Tenant</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- REVENUE PROJECTIONS -->
+    <div class="section">
+      <div class="section-label">◆ Revenue Model</div>
+      <h2>Nine Revenue Streams — Year 1 Projection</h2>
+      <p class="lead">Conservative estimates based on 20 properties in Year 1, scaling to 100+ in Year 2.</p>
+
+      <table class="revenue-table">
+        <thead>
+          <tr><th>#</th><th>Revenue Stream</th><th>Monthly Est.</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Landlord Tier Subscriptions</td><td class="amount">$2,980</td><td>20 properties × $149 avg</td></tr>
+          <tr><td>2</td><td>Tenant Application Fees</td><td class="amount">$2,250</td><td>50 apps × $45 avg</td></tr>
+          <tr><td>3</td><td>Short-Term Booking Fees</td><td class="amount">$675</td><td>30 bookings, 15% fee</td></tr>
+          <tr><td>4</td><td>Lease Processing Fees</td><td class="amount">$990</td><td>10 leases × $99</td></tr>
+          <tr><td>5</td><td>Cleaning Service Margin</td><td class="amount">$800</td><td>50%+ margin on services</td></tr>
+          <tr><td>6</td><td>Inspection Service Margin</td><td class="amount">$400</td><td>Built into tiers</td></tr>
+          <tr><td>7</td><td>Insurance Brokering</td><td class="amount">$375</td><td>10-15% commission</td></tr>
+          <tr><td>8</td><td>Furnished Unit Upcharges</td><td class="amount">$500</td><td>$200-500/mo premium</td></tr>
+          <tr><td>9</td><td>Featured Listings / Ads</td><td class="amount">$300</td><td>$25-100/listing</td></tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="2"><strong>Total Monthly Revenue (Year 1)</strong></td>
+            <td class="total-amount">$9,270</td>
+            <td><strong>= $111,240/year</strong></td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <div class="highlight-box">
+        <h3>Year 2 Scale Projection — 100 Properties</h3>
+        <p>At 100 properties with established cleaning/inspection contractor networks and insurance partnerships, monthly revenue projects to <strong>$25,000-35,000/month ($300K-420K/year)</strong>. The cleaning and inspection services are where the real margin lives — contractors cost $15-25/hr while you charge $150-300 per service through the tier packages.</p>
+        <div class="stat-row">
+          <div class="stat">
+            <div class="stat-val">100+</div>
+            <div class="stat-label">Properties Under Management</div>
+          </div>
+          <div class="stat">
+            <div class="stat-val">$35K</div>
+            <div class="stat-label">Monthly Revenue Target</div>
+          </div>
+          <div class="stat">
+            <div class="stat-val">$420K</div>
+            <div class="stat-label">Annual Revenue Target</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- APPLICATION FLOW -->
+    <div class="section">
+      <div class="section-label">◆ Tenant Flow</div>
+      <h2>Application Processing — Built Like Zillow</h2>
+      <p class="lead">Every application generates revenue. The process is seamless for tenants and informative for landlords.</p>
+
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="step-num">Step 1</div>
+          <h5>Browse & Search</h5>
+          <p>Map view, filters, photos</p>
+        </div>
+        <div class="flow-step">
+          <div class="step-num">Step 2</div>
+          <h5>Apply + Pay Fee</h5>
+          <p>$45-75 application</p>
+        </div>
+        <div class="flow-step">
+          <div class="step-num">Step 3</div>
+          <h5>Screen + Verify</h5>
+          <p>Background, credit, card</p>
+        </div>
+        <div class="flow-step">
+          <div class="step-num">Step 4</div>
+          <h5>Landlord Reviews</h5>
+          <p>Accept/decline via portal</p>
+        </div>
+        <div class="flow-step">
+          <div class="step-num">Step 5</div>
+          <h5>Sign + Move In</h5>
+          <p>Digital lease, $99 fee</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- INSPECTION MODEL -->
+    <div class="section">
+      <div class="section-label">◆ Services</div>
+      <h2>Hotel-Grade Inspection & Cleaning</h2>
+      <p class="lead">This is the secret weapon that gets landlords to say yes. Weekly inspections and professional cleaning eliminate the risk of cannabis-related property damage.</p>
+
+      <div class="inspect-list">
+        <div class="inspect-item">
+          <div class="inspect-num">🔍</div>
+          <div>
+            <h4>30-Point Property Inspection</h4>
+            <p>Structural, plumbing, electrical, HVAC, plus cannabis-specific checks: odor level (1-10 scale), ventilation status, smoking area condition, grow area compliance, and consumption rule adherence. Every inspection includes photo documentation uploaded to the management portal with a report delivered to the landlord within 24 hours.</p>
+          </div>
+        </div>
+        <div class="inspect-item">
+          <div class="inspect-num">🧹</div>
+          <div>
+            <h4>Professional Cleaning Tiers</h4>
+            <p><strong>Standard Clean ($75-100 cost):</strong> Kitchen, bath, vacuum, mop, trash, surfaces. <strong>Deep Clean ($150-250 cost):</strong> Plus appliances, windows, baseboards, odor treatment. <strong>Hotel-Style Turnover ($100-175 cost):</strong> Full clean + linens + restock + odor neutralization. All billed to landlord through tier subscription at 50%+ margin.</p>
+          </div>
+        </div>
+        <div class="inspect-item">
+          <div class="inspect-num">💨</div>
+          <div>
+            <h4>Cannabis Odor Mitigation</h4>
+            <p>Specialized ozone treatment, air scrubbing, and deep fabric cleaning. Available as add-on service ($200-400 per treatment) or included in Platinum and Executive tiers. This is the #1 concern landlords have — and we solve it professionally.</p>
+          </div>
+        </div>
+        <div class="inspect-item">
+          <div class="inspect-num">🛡️</div>
+          <div>
+            <h4>Insurance Brokering</h4>
+            <p>Specialty property insurance for cannabis-friendly landlords (10-15% commission), rent guarantee insurance, property damage protection, and cannabis-friendly renters insurance for tenants. Plus our proven model: placing emergency-displaced homeowners in furnished cannabis-friendly rentals at 2-3x market rate — brokered directly with insurance companies.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- PLATFORM ARCHITECTURE -->
+    <div class="section">
+      <div class="section-label">◆ Technology</div>
+      <h2>Hybrid Platform Architecture</h2>
+      <p class="lead">Two layers working together — a consumer-facing search portal that tenants and guests love, powered by the GGP-OS enterprise back office that manages everything.</p>
+
+      <div class="arch-grid">
+        <div class="arch-card consumer">
+          <h4>CannaCribs.com</h4>
+          <div class="arch-role">Consumer-Facing Portal</div>
+          <ul>
+            <li>Interactive map with property pins</li>
+            <li>Advanced search filters (cannabis type, furnished, pets, etc.)</li>
+            <li>Property cards with photos, pricing, amenities</li>
+            <li>One-click application + payment</li>
+            <li>Short-term booking engine</li>
+            <li>Tenant portal (leases, payments, maintenance)</li>
+            <li>Landlord portal (listings, applications, earnings)</li>
+            <li>Secure messaging between parties</li>
+            <li>Review and rating system</li>
+          </ul>
+        </div>
+        <div class="arch-card backoffice">
+          <h4>GGP-OS Back Office</h4>
+          <div class="arch-role">Enterprise Operations Layer</div>
+          <ul>
+            <li>CRM — Landlord relationship management</li>
+            <li>Compliance Engine — State cannabis law tracking</li>
+            <li>Document Management — Leases, inspections, policies</li>
+            <li>Analytics Dashboard — Revenue, occupancy, KPIs</li>
+            <li>Personnel Management — Cleaning crews, inspectors</li>
+            <li>Financial Tracking — Rent collection, commissions, P&L</li>
+            <li>Communications — Automated emails, SMS alerts</li>
+            <li>Insurance Module — Policy tracking, claims management</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- COMPETITIVE LANDSCAPE -->
+    <div class="section">
+      <div class="section-label">◆ Competition</div>
+      <h2>Why Nobody Else Can Do This</h2>
+      <p class="lead">Competitors address one slice. CannaCribs combines listing, services, and insurance into one platform — with proven operational expertise.</p>
+
+      <div class="comp-grid">
+        <div class="comp-card">
+          <h4>Bud & Breakfast</h4>
+          <div class="comp-type">Cannabis Vacation Rentals</div>
+          <p>Vacation stays only. No long-term rentals. No services. No inspections. No insurance. Limited inventory.</p>
+        </div>
+        <div class="comp-card">
+          <h4>Facebook Groups</h4>
+          <div class="comp-type">Informal Listings</div>
+          <p>Unorganized, no screening, no protections, no services. Landlords and tenants take all the risk.</p>
+        </div>
+        <div class="comp-card">
+          <h4>Zillow / Apartments.com</h4>
+          <div class="comp-type">General Real Estate</div>
+          <p>No cannabis filters. No cannabis-friendly designation. Cannabis use violates most listed leases.</p>
+        </div>
+        <div class="comp-card">
+          <h4>Airbnb</h4>
+          <div class="comp-type">Short-Term Stays</div>
+          <p>Explicitly prohibits cannabis. Hosts risk deplatforming. No tolerance policy.</p>
+        </div>
+        <div class="comp-card">
+          <h4>Traditional Property Mgmt</h4>
+          <div class="comp-type">Full-Service Anti-Cannabis</div>
+          <p>Full property management but actively anti-cannabis. They reject tenants who use.</p>
+        </div>
+        <div class="comp-card us">
+          <h4>CannaCribs</h4>
+          <div class="comp-type">The Only Full-Service Solution</div>
+          <p>Listing + screening + inspection + cleaning + insurance + compliance. All property types. All lease lengths. Proven operational model. Nobody else combines all of this.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- PROPERTY CATEGORIES -->
+    <div class="section">
+      <div class="section-label">◆ Property Types</div>
+      <h2>Three Markets, One Platform</h2>
+
+      <div class="problem-grid">
+        <div class="problem-card">
+          <div class="icon">🏠</div>
+          <h4>Residential Rentals</h4>
+          <p><strong>Apartments, houses, rooms, grow-friendly properties.</strong> Long-term leases for daily consumers, medical patients, families, and home cultivators.</p>
+        </div>
+        <div class="problem-card">
+          <div class="icon">🏨</div>
+          <h4>Short-Term & Vacation</h4>
+          <p><strong>CannaCrib Stays, Retreats, Extended Stays.</strong> 1-180 night furnished rentals for cannabis tourists, conference attendees, traveling professionals.</p>
+        </div>
+        <div class="problem-card">
+          <div class="icon">🏢</div>
+          <h4>Commercial Cannabis</h4>
+          <p><strong>Dispensaries, grow facilities, processing labs, lounges, offices.</strong> Zoning-compliant commercial space for cannabis businesses.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- LAUNCH STRATEGY -->
+    <div class="section">
+      <div class="section-label">◆ Go-to-Market</div>
+      <h2>Four-Phase Launch Strategy</h2>
+      <p class="lead">Start in Oklahoma (medical market), expand to Arizona (recreational), then go national.</p>
+
+      <div class="phase-grid">
+        <div class="phase-card">
+          <div class="phase-num">1</div>
+          <h4>Foundation</h4>
+          <div class="phase-time">Weeks 1-4</div>
+          <ul>
+            <li>Secure domain</li>
+            <li>Brand identity & design</li>
+            <li>Build consumer MVP</li>
+            <li>Landlord onboarding portal</li>
+            <li>Lease template library</li>
+            <li>Contractor network (OKC)</li>
+          </ul>
+        </div>
+        <div class="phase-card">
+          <div class="phase-num">2</div>
+          <h4>Oklahoma Launch</h4>
+          <div class="phase-time">Weeks 5-8</div>
+          <ul>
+            <li>First 10 landlords onboarded</li>
+            <li>First 20 properties listed</li>
+            <li>Process tenant applications</li>
+            <li>First inspections + cleanings</li>
+            <li>Collect testimonials</li>
+          </ul>
+        </div>
+        <div class="phase-card">
+          <div class="phase-num">3</div>
+          <h4>Arizona Expansion</h4>
+          <div class="phase-time">Weeks 9-12</div>
+          <ul>
+            <li>Ryan Ferrari manages AZ ops</li>
+            <li>Bullhead City / Phoenix area</li>
+            <li>Recreational market targeting</li>
+            <li>Cannabis tourism marketing</li>
+            <li>Short-term stay focus</li>
+          </ul>
+        </div>
+        <div class="phase-card">
+          <div class="phase-num">4</div>
+          <h4>Scale Nationally</h4>
+          <div class="phase-time">Months 4-12</div>
+          <ul>
+            <li>Add Colorado & California</li>
+            <li>Commercial property listings</li>
+            <li>Insurance partnerships</li>
+            <li>Regional cleaning teams</li>
+            <li>Target 100+ properties</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- LEGAL FRAMEWORK -->
+    <div class="section">
+      <div class="section-label">◆ Legal & Compliance</div>
+      <h2>How We Stay Legal</h2>
+
+      <table class="comparison-table">
+        <thead>
+          <tr><th>Concern</th><th>CannaCribs Strategy</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Federal cannabis illegality</td>
+            <td class="col-new">CannaCribs facilitates property rental, not cannabis sales. We are a real estate services company, not a dispensary or cannabis business.</td>
+          </tr>
+          <tr>
+            <td>State-by-state regulations</td>
+            <td class="col-new">GGP-OS compliance engine tracks cannabis laws across all 50 states. Properties only listed in states where cannabis is legal (medical or recreational).</td>
+          </tr>
+          <tr>
+            <td>Landlord liability concerns</td>
+            <td class="col-new">Our compliance module manages cannabis-specific lease addendums, consumption waivers, property protection agreements, and ventilation requirements.</td>
+          </tr>
+          <tr>
+            <td>Insurance coverage gaps</td>
+            <td class="col-new">We broker specialty cannabis-friendly property insurance — turning landlord fear into landlord confidence. Insurance brokering is a core revenue stream.</td>
+          </tr>
+          <tr>
+            <td>Fair Housing for medical patients</td>
+            <td class="col-new">Medical cannabis cardholders may have ADA/Fair Housing protections. CannaCribs helps landlords navigate compliance correctly — reducing their legal risk.</td>
+          </tr>
+          <tr>
+            <td>Payment processing restrictions</td>
+            <td class="col-new">CannaCribs processes rent and service fees only — no cannabis product transactions. Standard payment processors (Stripe, ACH) apply.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <!-- ═══ CONTACT ═══ -->
+  <div class="contact-bar">
+    <div>
+      <h3><span>Canna</span>Cribs — A Global Green Enterprise</h3>
+      <p>Cannabis-friendly real estate. Powered by GGP-OS.</p>
+    </div>
+    <div class="contact-methods">
+      <span>Oklahoma City, OK</span>
+      <span>Bullhead City, AZ</span>
+    </div>
+  </div>
+
+  <!-- ═══ LEGAL ═══ -->
+  <footer class="legal-footer">
+    <strong>CONFIDENTIAL</strong> — This document contains proprietary business strategy and financial projections.<br>
+    © 2026 Global Green Enterprises, a DBA of Diversity Health and Wellness. All rights reserved.<br>
+    CannaCribs™ is a trademark of Global Green Enterprises. GGP-OS™ is a registered product of Global Green Enterprise Inc.
+  </footer>
+
+</body>
+</html>
