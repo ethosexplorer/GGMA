@@ -84,11 +84,12 @@ import { ApplicationsTab } from '../components/founder/ApplicationsTab';
 import { LarryIntelligenceMonitor } from '../components/founder/LarryIntelligenceMonitor';
 import { LitigationSabotageTab } from '../components/founder/LitigationSabotageTab';
 import { CEYECommandCenter } from '../components/ceye/CEYECommandCenter';
+import { CannaCribsManagementTab } from '../components/founder/CannaCribsManagementTab';
 
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
 
-const NAV_VERSION = 33; // Bumped: Added Litigation Sabotage tab
+const NAV_VERSION = 34; // Bumped: Added CannaCribs Management tab
 
 const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'overview', label: 'God Overview', icon: Activity },
@@ -103,6 +104,7 @@ const INITIAL_NAV_ITEMS: NavItem[] = [
   { id: 'people_hr', label: 'People & HR', icon: Users },
   { id: 'compliance_regulatory', label: 'Compliance & Regulatory', icon: FileCheck },
   { id: 'god_settings', label: 'God Settings', icon: Settings },
+  { id: 'cannacribs_mgmt', label: 'CannaCribs', icon: Home },
   { id: 'investor_sandbox', label: 'Investor Sandbox', icon: MonitorPlay },
 ];
 
@@ -1154,6 +1156,8 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         );
       case 'subscription':
         return <div data-action-bound="true"><SubscriptionPortal userRole="executive_founder" initialPlanId="fed_pro" /></div>;
+      case 'cannacribs_mgmt':
+        return <div className="h-full w-full" data-action-bound="true"><CannaCribsManagementTab /></div>;
       case 'investor_sandbox':
         return <div className="h-full w-full -m-10" data-action-bound="true"><InvestorSandboxTab isMaster={true} /></div>;
       case 'gge_world_hr':
