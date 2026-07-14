@@ -600,6 +600,15 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
   const [ccInspChecks, setCcInspChecks] = useState<boolean[]>([]);
   const [ccShowScheduleInsp, setCcShowScheduleInsp] = useState(false);
   const [ccNewInsp, setCcNewInsp] = useState({ date: '', property: '', type: 'Bi-Weekly Check', tier: 'Green', inspector: '' });
+  const [ccEditApp, setCcEditApp] = useState<any>(null);
+  const [ccShowScheduleService, setCcShowScheduleService] = useState(false);
+  const [ccNewService, setCcNewService] = useState({ date: '', time: '', property: '', task: 'Standard Clean', crew: 'Team Alpha', tier: 'Green', notes: '' });
+  const [ccScheduleItems, setCcScheduleItems] = useState([
+    { time: '8:00 AM', task: 'Pre-Guest Turnover Clean', property: 'Desert Oasis Cannabis Retreat', type: 'Turnover + Ozone', status: 'In Progress', crew: 'Team Alpha', tier: 'Executive' },
+    { time: '10:30 AM', task: 'Bi-Weekly Inspection', property: 'Modern Cannabis-Friendly Loft', type: '30-Point Check', status: 'Completed', crew: 'Inspector J.', tier: 'Gold' },
+    { time: '1:00 PM', task: 'Maintenance - HVAC Filter', property: 'Spacious Grow-Friendly Rancher', type: 'Maintenance', status: 'Scheduled', crew: 'Maintenance', tier: 'Platinum' },
+    { time: '3:30 PM', task: 'New Tenant Move-In Inspection', property: 'Cozy 420-Friendly Cottage', type: 'Move-In Check', status: 'Scheduled', crew: 'Inspector J.', tier: 'Green' },
+  ]);
 
   const CC_STATUSES = ['Pending Review', 'Background Check', 'Verification', 'Approved', 'Denied', 'On Hold', 'Waitlisted'];
   const CC_CHECKLIST = ['Exterior Condition','Interior Walls & Paint','Flooring Condition','Windows & Locks','Doors & Hinges','Plumbing & Fixtures','Electrical Outlets','HVAC System','Smoke Detectors','CO Detectors','Fire Extinguisher','Appliance Function','Kitchen Condition','Bathroom Condition','Pest Inspection','Cannabis Odor Level','Ventilation System','Air Filtration','Grow Area (if any)','Waste Disposal','Yard/Exterior Clean','Parking Area','Security System','Key/Lock Integrity','Furniture Condition','Linen/Bedding Check','Supply Inventory','Neighbor Complaints','Photo Documentation','Overall Rating'];
@@ -716,7 +725,84 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
               {/* Action Buttons */}
               <div className="flex items-center gap-3 pt-4 border-t border-slate-200">
                 <button onClick={() => { setCcApps(p => p.map(a => a.id === ccSelectedApp.id ? { ...a, status: 'Approved' } : a)); setCcSelectedApp({ ...ccSelectedApp, status: 'Approved' }); }} className="flex-1 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2"><CheckCircle size={16} /> Approve</button>
+                <button onClick={() => setCcEditApp({ ...ccSelectedApp })} className="flex-1 py-3 bg-blue-50 text-blue-600 font-bold rounded-xl border border-blue-200 text-sm flex items-center justify-center gap-2"><Edit size={16} /> Edit</button>
                 <button onClick={() => { setCcApps(p => p.map(a => a.id === ccSelectedApp.id ? { ...a, status: 'Denied' } : a)); setCcSelectedApp({ ...ccSelectedApp, status: 'Denied' }); }} className="flex-1 py-3 bg-red-50 text-red-600 font-bold rounded-xl border border-red-200 text-sm flex items-center justify-center gap-2"><XCircle size={16} /> Deny</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Application Modal */}
+      {ccEditApp && (
+        <div className="fixed inset-0 z-[250] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setCcEditApp(null)}>
+          <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-indigo-700 z-10 px-6 py-4 text-white flex items-center justify-between">
+              <div><h3 className="font-black text-lg">✏️ Edit Application — {ccEditApp.name}</h3><p className="text-xs text-blue-200">{ccEditApp.id}</p></div>
+              <button onClick={() => setCcEditApp(null)} className="p-2 hover:bg-white/10 rounded-lg"><XCircle size={18} /></button>
+            </div>
+            <div className="p-6 space-y-5">
+              <div className="text-[10px] font-black text-blue-600 uppercase tracking-widest border-b border-slate-200 pb-1">Personal Information</div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {[['name', 'Full Name'], ['email', 'Email'], ['phone', 'Phone'], ['dob', 'Date of Birth'], ['currentAddress', 'Current Address'], ['type', 'Applicant Type']].map(([key, label]) => (
+                  <div key={key}><label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">{label}</label>
+                  {key === 'type' ? (
+                    <select value={ccEditApp[key] || ''} onChange={e => setCcEditApp({ ...ccEditApp, [key]: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none bg-white">
+                      {['Tenant', 'Landlord', 'Short-Term Guest'].map(t => <option key={t}>{t}</option>)}
+                    </select>
+                  ) : (
+                    <input value={ccEditApp[key] || ''} onChange={e => setCcEditApp({ ...ccEditApp, [key]: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500/20" />
+                  )}
+                  </div>
+                ))}
+              </div>
+              <div className="text-[10px] font-black text-green-600 uppercase tracking-widest border-b border-slate-200 pb-1">Property & Lease</div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {[['property', 'Property Applied'], ['propertyType', 'Property Type'], ['location', 'Location'], ['moveInDate', 'Move-In Date'], ['leaseTerm', 'Lease Term'], ['income', 'Income']].map(([key, label]) => (
+                  <div key={key}><label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">{label}</label>
+                  {key === 'propertyType' ? (
+                    <select value={ccEditApp[key] || ''} onChange={e => setCcEditApp({ ...ccEditApp, [key]: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none bg-white">
+                      {['Apartment', 'House', 'Condo', 'Townhouse', 'Studio', 'Duplex', 'Multi-Family', 'Short-Term', 'Commercial Space'].map(t => <option key={t}>{t}</option>)}
+                    </select>
+                  ) : key === 'property' ? (
+                    <select value={ccEditApp[key] || ''} onChange={e => setCcEditApp({ ...ccEditApp, [key]: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none bg-white">
+                      {CC_PROPERTIES.map(p => <option key={p}>{p}</option>)}
+                    </select>
+                  ) : (
+                    <input value={ccEditApp[key] || ''} onChange={e => setCcEditApp({ ...ccEditApp, [key]: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500/20" />
+                  )}
+                  </div>
+                ))}
+              </div>
+              <div className="text-[10px] font-black text-violet-600 uppercase tracking-widest border-b border-slate-200 pb-1">Screening & Background</div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {[['credit', 'Credit Score'], ['employment', 'Employment'], ['previousLandlord', 'Previous Landlord'], ['previousLandlordPhone', 'LL Phone'], ['reasonForMoving', 'Reason for Moving'], ['pets', 'Pets'], ['vehicles', 'Vehicles']].map(([key, label]) => (
+                  <div key={key}><label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">{label}</label>
+                  {key === 'employment' ? (
+                    <select value={ccEditApp[key] || ''} onChange={e => setCcEditApp({ ...ccEditApp, [key]: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none bg-white">
+                      {['Verified', 'Pending', 'Unverified', 'N/A'].map(t => <option key={t}>{t}</option>)}
+                    </select>
+                  ) : (
+                    <input value={ccEditApp[key] || ''} onChange={e => setCcEditApp({ ...ccEditApp, [key]: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500/20" />
+                  )}
+                  </div>
+                ))}
+              </div>
+              <div className="text-[10px] font-black text-red-600 uppercase tracking-widest border-b border-slate-200 pb-1">Emergency Contact & Medical</div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {[['emergencyName', 'Emergency Contact'], ['emergencyPhone', 'Emergency Phone'], ['emergencyRelation', 'Relationship'], ['allergies', 'Allergies'], ['medicalConditions', 'Medical Conditions'], ['medications', 'Medications']].map(([key, label]) => (
+                  <div key={key}><label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">{label}</label>
+                  <input value={ccEditApp[key] || ''} onChange={e => setCcEditApp({ ...ccEditApp, [key]: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500/20" />
+                  </div>
+                ))}
+              </div>
+              <div className="text-[10px] font-black text-slate-600 uppercase tracking-widest border-b border-slate-200 pb-1">Status</div>
+              <select value={ccEditApp.status || ''} onChange={e => setCcEditApp({ ...ccEditApp, status: e.target.value })} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-bold outline-none bg-white">
+                {CC_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+              <div className="flex gap-3 pt-4 border-t border-slate-200">
+                <button onClick={() => { setCcApps(p => p.map(a => a.id === ccEditApp.id ? { ...ccEditApp } : a)); setCcSelectedApp(ccEditApp); setCcEditApp(null); }} className="flex-1 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2"><CheckCircle size={16} /> Save Changes</button>
+                <button onClick={() => setCcEditApp(null)} className="py-3 px-6 bg-slate-100 text-slate-600 font-bold rounded-xl text-sm">Cancel</button>
               </div>
             </div>
           </div>
@@ -950,24 +1036,47 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
             <p className="text-xs text-slate-500">Cleaning services, turnovers, maintenance, and property scheduling</p>
           </div>
         </div>
-        <button className="px-4 py-2 bg-green-600 text-white text-xs font-bold rounded-lg hover:bg-green-500 transition-all flex items-center gap-1.5">
+        <button onClick={() => setCcShowScheduleService(true)} className="px-4 py-2 bg-green-600 text-white text-xs font-bold rounded-lg hover:bg-green-500 transition-all flex items-center gap-1.5">
           <Plus size={14} /> Schedule Service
         </button>
       </div>
+
+      {/* Schedule Service Modal */}
+      {ccShowScheduleService && (
+        <div className="fixed inset-0 z-[200] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setCcShowScheduleService(false)}>
+          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full" onClick={e => e.stopPropagation()}>
+            <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+              <h3 className="font-black text-lg text-slate-900">Schedule Service</h3>
+              <button onClick={() => setCcShowScheduleService(false)} className="p-2 hover:bg-slate-100 rounded-lg"><XCircle size={18} /></button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div><label className="block text-xs font-bold text-slate-600 mb-1">Date *</label><input type="date" value={ccNewService.date} onChange={e => setCcNewService(p => ({ ...p, date: e.target.value }))} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-green-500/20" /></div>
+                <div><label className="block text-xs font-bold text-slate-600 mb-1">Time *</label><input type="time" value={ccNewService.time} onChange={e => setCcNewService(p => ({ ...p, time: e.target.value }))} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-green-500/20" /></div>
+              </div>
+              <div><label className="block text-xs font-bold text-slate-600 mb-1">Property *</label><select value={ccNewService.property} onChange={e => setCcNewService(p => ({ ...p, property: e.target.value }))} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none bg-white"><option value="">Select Property</option>{CC_PROPERTIES.map(p => <option key={p} value={p}>{p}</option>)}</select></div>
+              <div className="grid grid-cols-2 gap-4">
+                <div><label className="block text-xs font-bold text-slate-600 mb-1">Service Type</label><select value={ccNewService.task} onChange={e => setCcNewService(p => ({ ...p, task: e.target.value }))} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none bg-white"><option>Standard Clean</option><option>Deep Clean</option><option>Turnover Clean</option><option>Turnover + Ozone</option><option>Pre-Guest Inspection</option><option>Move-In Check</option><option>Move-Out Check</option><option>30-Point Check</option><option>Maintenance</option><option>Supply Restock</option><option>Guest Check-In Prep</option><option>Guest Check-Out</option><option>Odor Check</option></select></div>
+                <div><label className="block text-xs font-bold text-slate-600 mb-1">Tier</label><select value={ccNewService.tier} onChange={e => setCcNewService(p => ({ ...p, tier: e.target.value }))} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none bg-white"><option>Green</option><option>Gold</option><option>Platinum</option><option>Executive</option></select></div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div><label className="block text-xs font-bold text-slate-600 mb-1">Assign Crew</label><select value={ccNewService.crew} onChange={e => setCcNewService(p => ({ ...p, crew: e.target.value }))} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none bg-white"><option>Team Alpha</option><option>Team Bravo</option><option>Inspector J.</option><option>Maintenance</option><option>Staff TBD</option></select></div>
+                <div><label className="block text-xs font-bold text-slate-600 mb-1">Notes</label><input value={ccNewService.notes} onChange={e => setCcNewService(p => ({ ...p, notes: e.target.value }))} placeholder="Optional notes..." className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-green-500/20" /></div>
+              </div>
+              <button onClick={() => { if (!ccNewService.date || !ccNewService.time || !ccNewService.property) return alert('Date, time, and property required.'); const timeStr = new Date('2026-01-01T' + ccNewService.time).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }); setCcScheduleItems(p => [...p, { time: timeStr, task: ccNewService.task, property: ccNewService.property, type: ccNewService.task, status: 'Scheduled', crew: ccNewService.crew, tier: ccNewService.tier }]); setCcNewService({ date: '', time: '', property: '', task: 'Standard Clean', crew: 'Team Alpha', tier: 'Green', notes: '' }); setCcShowScheduleService(false); }} className="w-full py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-xl flex items-center justify-center gap-2"><Plus size={16} /> Schedule Service</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Today's Schedule */}
       <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-3 text-white flex items-center justify-between">
           <h3 className="text-sm font-bold flex items-center gap-2"><Calendar size={16} /> Today's Schedule — Jul 13, 2026</h3>
-          <span className="text-[10px] font-bold bg-white/20 px-2.5 py-1 rounded-full">4 Tasks</span>
+          <span className="text-[10px] font-bold bg-white/20 px-2.5 py-1 rounded-full">{ccScheduleItems.length} Tasks</span>
         </div>
         <div className="divide-y divide-slate-100">
-          {[
-            { time: '8:00 AM', task: 'Pre-Guest Turnover Clean', property: 'Desert Oasis Cannabis Retreat', type: 'Turnover + Ozone', status: 'In Progress', crew: 'Team Alpha', tier: 'Executive' },
-            { time: '10:30 AM', task: 'Bi-Weekly Inspection', property: 'Modern Cannabis-Friendly Loft', type: '30-Point Check', status: 'Completed', crew: 'Inspector J.', tier: 'Gold' },
-            { time: '1:00 PM', task: 'Maintenance - HVAC Filter', property: 'Spacious Grow-Friendly Rancher', type: 'Maintenance', status: 'Scheduled', crew: 'Maintenance', tier: 'Platinum' },
-            { time: '3:30 PM', task: 'New Tenant Move-In Inspection', property: 'Cozy 420-Friendly Cottage', type: 'Move-In Check', status: 'Scheduled', crew: 'Inspector J.', tier: 'Green' },
-          ].map((task, i) => (
+          {ccScheduleItems.map((task, i) => (
             <div key={i} className="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors">
               <div className="flex items-center gap-4">
                 <div className="w-16 text-center">
