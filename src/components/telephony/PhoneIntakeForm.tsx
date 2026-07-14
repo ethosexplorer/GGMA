@@ -6,7 +6,7 @@ import { db } from '../../lib/firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import { captureContact } from '../../lib/contactCapture';
 
-type IntakeType = 'patient_card' | 'business_license' | 'cannacribs_application';
+type IntakeType = 'patient_card' | 'business_license' | 'cannacribs_application' | 'provider' | 'legal_intake' | 'attorney' | 'local_enforcement' | 'state_agency' | 'federal_agency' | 'gov_office' | 'advocate';
 
 interface IntakeData {
   // Account
@@ -65,6 +65,74 @@ interface IntakeData {
   ccMedicalConditions: string;
   ccMedications: string;
   ccCannabisCard: string;
+  // Provider-specific
+  provNpi: string;
+  provDea: string;
+  provLicenseNumber: string;
+  provPracticeName: string;
+  provSpecialty: string;
+  provStatesLicensed: string;
+  provTelehealth: string;
+  provAcceptingPatients: string;
+  // Legal Intake
+  legalCaseType: string;
+  legalIncidentDate: string;
+  legalCharges: string;
+  legalCourtJurisdiction: string;
+  legalCaseNumber: string;
+  legalOpposingParty: string;
+  legalUrgency: string;
+  legalDescription: string;
+  // Attorney
+  attBarNumber: string;
+  attBarState: string;
+  attFirmName: string;
+  attPracticeAreas: string;
+  attYearsExperience: string;
+  attRateType: string;
+  attRetainer: string;
+  attMalpracticeInsurance: string;
+  // Local Enforcement
+  enfAgencyName: string;
+  enfBadgeId: string;
+  enfDepartment: string;
+  enfRankTitle: string;
+  enfJurisdictionLevel: string;
+  enfReportingReason: string;
+  enfIncidentRef: string;
+  enfDescription: string;
+  // State Agency
+  stAgencyName: string;
+  stDepartment: string;
+  stOfficialName: string;
+  stOfficialTitle: string;
+  stInquiryType: string;
+  stDescription: string;
+  // Federal Agency
+  fedAgencyName: string;
+  fedDepartment: string;
+  fedAgentName: string;
+  fedAgentBadge: string;
+  fedCaseRef: string;
+  fedInquiryType: string;
+  fedDescription: string;
+  // Government Office
+  govOfficeName: string;
+  govJurisdictionLevel: string;
+  govElectedOfficial: string;
+  govOfficeTitle: string;
+  govInquiryType: string;
+  govDescription: string;
+  // Advocate
+  advOrgName: string;
+  advOrgType: string;
+  advFocusArea: string;
+  advWebsite: string;
+  advMemberCount: string;
+  advDescription: string;
+  // Products & Services
+  selectedTier: string;
+  selectedBilling: string;
 }
 
 const US_STATES = ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming'];
@@ -76,13 +144,48 @@ const CONDITIONS = ['Chronic Pain','PTSD','Cancer','Epilepsy / Seizures','Glauco
 const PAYMENT_TYPES = ['Processing Fee', 'Application Fee', 'Consultation Fee', 'Service Fee', 'Filing Fee', 'Late Fee', 'Renewal Fee', 'Licensing Fee', 'Document Fee', 'Other'];
 const PAYMENT_METHODS = ['Chime', 'Cash App', 'Zelle', 'Venmo', 'Cash', 'Check', 'Wire Transfer', 'Credit Card', 'Bank Transfer', 'Other'];
 
-const STEPS_PATIENT = ['Intake Questionnaire', 'Payment Info', 'Schedule Doctor Visit', 'State Portal Setup', 'Review & Submit'];
-const STEPS_BUSINESS = ['Entity & Type', 'Facility & Contact', 'Primary Owner Info', 'Payment Info', 'Review & Submit'];
-const STEPS_CANNACRIBS = ['Applicant Info & Property', 'Background & Screening', 'Emergency & Medical', 'Payment Info', 'Review & Submit'];
+const STEPS_PATIENT = ['Intake Questionnaire', 'Payment Info', 'Schedule Doctor Visit', 'State Portal Setup', 'Products & Services', 'Review & Submit'];
+const STEPS_BUSINESS = ['Entity & Type', 'Facility & Contact', 'Primary Owner Info', 'Payment Info', 'Products & Services', 'Review & Submit'];
+const STEPS_CANNACRIBS = ['Applicant Info & Property', 'Background & Screening', 'Emergency & Medical', 'Payment Info', 'Products & Services', 'Review & Submit'];
+const STEPS_PROVIDER = ['Provider Info & Credentials', 'Practice Details', 'Payment Info', 'Products & Services', 'Review & Submit'];
+const STEPS_LEGAL = ['Case Details', 'Party & Jurisdiction', 'Documents & Urgency', 'Payment Info', 'Products & Services', 'Review & Submit'];
+const STEPS_ATTORNEY = ['Attorney Credentials', 'Practice & Rates', 'Payment Info', 'Products & Services', 'Review & Submit'];
+const STEPS_LOCAL_ENF = ['Agency & Officer', 'Incident Details', 'Products & Services', 'Review & Submit'];
+const STEPS_STATE_AGENCY = ['Agency & Official', 'Inquiry Details', 'Products & Services', 'Review & Submit'];
+const STEPS_FEDERAL = ['Agency & Agent', 'Case Details', 'Products & Services', 'Review & Submit'];
+const STEPS_GOV_OFFICE = ['Office & Official', 'Inquiry Details', 'Products & Services', 'Review & Submit'];
+const STEPS_ADVOCATE = ['Organization Info', 'Focus & Mission', 'Products & Services', 'Review & Submit'];
 const CC_PROPERTY_TYPES = ['Apartment', 'House', 'Condo', 'Townhouse', 'Studio', 'Duplex', 'Multi-Family', 'Short-Term Rental', 'Commercial Space'];
 const CC_APPLICANT_TYPES = ['Tenant', 'Landlord', 'Short-Term Guest'];
 
-const empty: IntakeData = { firstName:'',lastName:'',email:'',phone:'',dob:'',ssn:'',street:'',city:'',state:'Oklahoma',zip:'', isAdult:'Yes', mailingAddress:'', appointmentType:'Phone', appType:'New MMJ Card', hasPortalAccount:'No', hasPcp:'No', pcpInfo:'', conditions:[], allergies:'No', lastDoctorVisit:'', insuranceName:'', optInMessaging:'Yes', businessName:'',tradeName:'',businessType:'Dispensary',einNumber:'',licenseType:'New Application',entityType:'LLC',ownerCount:'1', ppocName:'', ppocPhone:'', ppocEmail:'', ownerShares:'', paymentPreference:'', ccApplicantType:'Tenant', ccPropertyType:'Apartment', ccDesiredProperty:'', ccMoveInDate:'', ccLeaseTerm:'12 months', ccPets:'None', ccVehicles:'', ccReasonForMoving:'', ccPreviousLandlord:'', ccPreviousLandlordPhone:'', ccEmergencyName:'', ccEmergencyPhone:'', ccEmergencyRelation:'', ccMedicalConditions:'None', ccMedications:'None', ccCannabisCard:'Yes' };
+const INTAKE_META: Record<string, { label: string; gradient: string; accent: string; icon: string }> = {
+  patient_card: { label: 'Patient Medical Card Intake', gradient: 'from-emerald-800 to-teal-700', accent: 'emerald', icon: '💊' },
+  business_license: { label: 'Business License Intake', gradient: 'from-indigo-800 to-violet-700', accent: 'indigo', icon: '🏢' },
+  cannacribs_application: { label: 'CannaCribs Housing Application', gradient: 'from-green-700 to-amber-700', accent: 'green', icon: '🏠' },
+  provider: { label: 'Provider Onboarding', gradient: 'from-teal-700 to-cyan-700', accent: 'teal', icon: '🩺' },
+  legal_intake: { label: 'Legal Case Intake', gradient: 'from-amber-700 to-orange-700', accent: 'amber', icon: '⚖️' },
+  attorney: { label: 'Attorney Onboarding', gradient: 'from-purple-800 to-fuchsia-700', accent: 'purple', icon: '👨‍⚖️' },
+  local_enforcement: { label: 'Local Enforcement Intake', gradient: 'from-orange-700 to-red-700', accent: 'orange', icon: '🚔' },
+  state_agency: { label: 'State Agency Intake', gradient: 'from-cyan-700 to-blue-700', accent: 'cyan', icon: '🏛️' },
+  federal_agency: { label: 'Federal Agency Intake', gradient: 'from-red-800 to-rose-700', accent: 'red', icon: '🦅' },
+  gov_office: { label: 'Government Office Intake', gradient: 'from-slate-700 to-zinc-700', accent: 'slate', icon: '🏦' },
+  advocate: { label: 'Advocate Onboarding', gradient: 'from-rose-700 to-pink-700', accent: 'rose', icon: '📢' },
+};
+
+const TIER_OPTIONS = [
+  { id: 'patient', label: 'Patient / Consumer', price: '$49.99/mo', icon: '🏥' },
+  { id: 'business', label: 'Business / Dispensary', price: '$199/mo', icon: '🏢' },
+  { id: 'provider', label: 'Provider / Physician', price: '$99/mo', icon: '🩺' },
+  { id: 'attorney', label: 'Attorney / Legal', price: '$149/mo', icon: '⚖️' },
+  { id: 'advocacy', label: 'Advocacy & Research', price: '$79/mo', icon: '📊' },
+  { id: 'state_authority', label: 'State Authority', price: 'From $4,999/mo', icon: '🏛️' },
+  { id: 'law_enforcement', label: 'Law Enforcement', price: 'From $999/mo', icon: '🚔' },
+  { id: 'federal_agency', label: 'Federal Agency', price: 'From $9,999/mo', icon: '🦅' },
+  { id: 'independent_lab', label: 'Independent Lab', price: '$499/mo', icon: '🧪' },
+  { id: 'care_wallet_gold', label: 'Care Wallet Gold', price: '$49/mo', icon: '💳' },
+];
+
+const empty: IntakeData = { firstName:'',lastName:'',email:'',phone:'',dob:'',ssn:'',street:'',city:'',state:'Oklahoma',zip:'', isAdult:'Yes', mailingAddress:'', appointmentType:'Phone', appType:'New MMJ Card', hasPortalAccount:'No', hasPcp:'No', pcpInfo:'', conditions:[], allergies:'No', lastDoctorVisit:'', insuranceName:'', optInMessaging:'Yes', businessName:'',tradeName:'',businessType:'Dispensary',einNumber:'',licenseType:'New Application',entityType:'LLC',ownerCount:'1', ppocName:'', ppocPhone:'', ppocEmail:'', ownerShares:'', paymentPreference:'', ccApplicantType:'Tenant', ccPropertyType:'Apartment', ccDesiredProperty:'', ccMoveInDate:'', ccLeaseTerm:'12 months', ccPets:'None', ccVehicles:'', ccReasonForMoving:'', ccPreviousLandlord:'', ccPreviousLandlordPhone:'', ccEmergencyName:'', ccEmergencyPhone:'', ccEmergencyRelation:'', ccMedicalConditions:'None', ccMedications:'None', ccCannabisCard:'Yes', provNpi:'', provDea:'', provLicenseNumber:'', provPracticeName:'', provSpecialty:'Internal Medicine', provStatesLicensed:'', provTelehealth:'Yes', provAcceptingPatients:'Yes', legalCaseType:'Criminal Defense', legalIncidentDate:'', legalCharges:'', legalCourtJurisdiction:'', legalCaseNumber:'', legalOpposingParty:'', legalUrgency:'Standard', legalDescription:'', attBarNumber:'', attBarState:'Oklahoma', attFirmName:'', attPracticeAreas:'Cannabis Law', attYearsExperience:'', attRateType:'Hourly', attRetainer:'', attMalpracticeInsurance:'Yes', enfAgencyName:'', enfBadgeId:'', enfDepartment:'', enfRankTitle:'', enfJurisdictionLevel:'City', enfReportingReason:'Inquiry', enfIncidentRef:'', enfDescription:'', stAgencyName:'', stDepartment:'', stOfficialName:'', stOfficialTitle:'', stInquiryType:'Licensing', stDescription:'', fedAgencyName:'DEA', fedDepartment:'', fedAgentName:'', fedAgentBadge:'', fedCaseRef:'', fedInquiryType:'Inquiry', fedDescription:'', govOfficeName:'', govJurisdictionLevel:'City', govElectedOfficial:'', govOfficeTitle:'', govInquiryType:'Policy Inquiry', govDescription:'', advOrgName:'', advOrgType:'Non-Profit', advFocusArea:'Patient Rights', advWebsite:'', advMemberCount:'', advDescription:'', selectedTier:'', selectedBilling:'Monthly' };
 
 // --- FORM INPUT HELPER (Moved OUTSIDE component to fix focus glitch) ---
 const Field = ({ label, value, onChange, placeholder, type = 'text', required = false }: any) => (
@@ -162,7 +265,7 @@ Phone: 1-888-963-4447 | Email: asstsupport@gmail.com
     else set('conditions', [...data.conditions, c]);
   };
 
-  const steps = intakeType === 'patient_card' ? STEPS_PATIENT : intakeType === 'cannacribs_application' ? STEPS_CANNACRIBS : STEPS_BUSINESS;
+  const steps = intakeType === 'patient_card' ? STEPS_PATIENT : intakeType === 'cannacribs_application' ? STEPS_CANNACRIBS : intakeType === 'provider' ? STEPS_PROVIDER : intakeType === 'legal_intake' ? STEPS_LEGAL : intakeType === 'attorney' ? STEPS_ATTORNEY : intakeType === 'local_enforcement' ? STEPS_LOCAL_ENF : intakeType === 'state_agency' ? STEPS_STATE_AGENCY : intakeType === 'federal_agency' ? STEPS_FEDERAL : intakeType === 'gov_office' ? STEPS_GOV_OFFICE : intakeType === 'advocate' ? STEPS_ADVOCATE : STEPS_BUSINESS;
 
   const handleSubmit = async () => {
     setSubmitting(true);
