@@ -579,6 +579,40 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
     setOnboardingStep(0);
   };
 
+  // ═══ CANNACRIBS OPERATIONS STATE ═══
+  const [ccApps, setCcApps] = useState([
+    { id: 'CC-APP-001', name: 'James Carter', type: 'Tenant', email: 'james.carter@email.com', phone: '(405) 555-0142', property: 'Modern Cannabis-Friendly Loft', propertyType: 'Apartment', location: 'Oklahoma City, OK', status: 'Pending Review', date: 'Jul 12', card: true, credit: 720, income: '$4,200/mo', employment: 'Verified', dob: '1992-03-15', currentAddress: '1234 NW 10th St, OKC, OK 73103', emergencyName: 'Linda Carter', emergencyPhone: '(405) 555-0199', emergencyRelation: 'Mother', allergies: 'None', medicalConditions: 'None', medications: 'Medical cannabis (THC)', previousLandlord: 'Mark Reynolds', previousLandlordPhone: '(405) 555-0312', reasonForMoving: 'Current landlord prohibits cannabis', pets: 'Dog — Golden Retriever, 45 lbs', vehicles: '2022 Toyota Camry', moveInDate: '2026-08-01', leaseTerm: '12 months' },
+    { id: 'CC-APP-002', name: 'Sarah Mitchell', type: 'Tenant', email: 'sarah.m@email.com', phone: '(918) 555-0387', property: 'Cozy 420-Friendly Cottage', propertyType: 'House', location: 'Norman, OK', status: 'Background Check', date: 'Jul 11', card: true, credit: 685, income: '$3,800/mo', employment: 'Verified', dob: '1995-08-22', currentAddress: '567 Elm St, Norman, OK 73071', emergencyName: 'Robert Mitchell', emergencyPhone: '(918) 555-0401', emergencyRelation: 'Father', allergies: 'Penicillin', medicalConditions: 'Asthma (mild)', medications: 'Inhaler, Medical cannabis', previousLandlord: 'Susan Blake', previousLandlordPhone: '(918) 555-0288', reasonForMoving: 'Lease ending, wants grow-friendly space', pets: 'Cat — Siamese', vehicles: '2021 Honda Civic', moveInDate: '2026-08-15', leaseTerm: '6 months' },
+    { id: 'CC-APP-003', name: 'David Rosenberg', type: 'Landlord', email: 'drosenberg@realty.com', phone: '(480) 555-0219', property: '3BR House — Edmond, OK', propertyType: 'House', location: 'Edmond, OK', status: 'Approved', date: 'Jul 9', card: false, credit: 0, income: 'N/A', employment: 'N/A', dob: '', currentAddress: '', emergencyName: '', emergencyPhone: '', emergencyRelation: '', allergies: '', medicalConditions: '', medications: '', previousLandlord: '', previousLandlordPhone: '', reasonForMoving: '', pets: '', vehicles: '', moveInDate: '', leaseTerm: '', llCompany: 'Rosenberg Realty LLC', llPropertyAddress: '789 Oak Ridge Dr, Edmond, OK 73034', llTierPreference: 'Platinum', llNumUnits: '2' },
+    { id: 'CC-APP-004', name: 'Maria Gonzalez', type: 'Tenant', email: 'mgonzalez@gmail.com', phone: '(405) 555-0901', property: 'Downtown Cannabis-Friendly Studio', propertyType: 'Apartment', location: 'Tulsa, OK', status: 'Pending Review', date: 'Jul 13', card: true, credit: 740, income: '$5,100/mo', employment: 'Pending', dob: '1990-11-03', currentAddress: '321 S Boston Ave, Tulsa, OK 74103', emergencyName: 'Carlos Gonzalez', emergencyPhone: '(405) 555-0822', emergencyRelation: 'Brother', allergies: 'Latex', medicalConditions: 'Anxiety', medications: 'Medical cannabis, Lexapro', previousLandlord: 'Heritage Apts Mgmt', previousLandlordPhone: '(918) 555-0100', reasonForMoving: 'Need cannabis-friendly policy', pets: 'None', vehicles: '2024 Tesla Model 3', moveInDate: '2026-09-01', leaseTerm: '12 months' },
+    { id: 'CC-APP-005', name: 'Tom Williams', type: 'Landlord', email: 'twilliams@okprops.com', phone: '(405) 555-0555', property: '4-Unit Multi-Family', propertyType: 'Multi-Family', location: 'Moore, OK', status: 'Verification', date: 'Jul 10', card: false, credit: 0, income: 'N/A', employment: 'N/A', dob: '', currentAddress: '', emergencyName: '', emergencyPhone: '', emergencyRelation: '', allergies: '', medicalConditions: '', medications: '', previousLandlord: '', previousLandlordPhone: '', reasonForMoving: '', pets: '', vehicles: '', moveInDate: '', leaseTerm: '', llCompany: 'OK Properties', llPropertyAddress: '456 SW 4th St, Moore, OK 73160', llTierPreference: 'Gold', llNumUnits: '4' },
+    { id: 'CC-APP-006', name: 'Ashley Park', type: 'Short-Term Guest', email: 'ashpark@travel.com', phone: '(602) 555-0733', property: 'Desert Oasis Cannabis Retreat', propertyType: 'Short-Term', location: 'Bullhead City, AZ', status: 'Approved', date: 'Jul 8', card: true, credit: 0, income: 'N/A', employment: 'N/A', dob: '1988-05-12', currentAddress: '9876 E Camelback Rd, Scottsdale, AZ 85251', emergencyName: 'Jessica Park', emergencyPhone: '(602) 555-0800', emergencyRelation: 'Sister', allergies: 'None', medicalConditions: 'None', medications: 'None', previousLandlord: '', previousLandlordPhone: '', reasonForMoving: '', pets: '', vehicles: '', moveInDate: '', leaseTerm: '', stCheckIn: '2026-07-15', stCheckOut: '2026-07-20', stGuests: '2', stPurpose: 'Vacation — cannabis retreat' },
+  ] as any[]);
+  const [ccAppFilter, setCcAppFilter] = useState('All');
+  const [ccSelectedApp, setCcSelectedApp] = useState<any>(null);
+  const [ccInspections, setCcInspections] = useState([
+    { id: 'INS-001', date: 'Jul 15', property: 'Desert Oasis Cannabis Retreat', location: 'Bullhead City, AZ', tier: 'Executive', type: 'Pre-Guest Inspection', status: 'Scheduled', inspector: 'Staff TBD', score: '' },
+    { id: 'INS-002', date: 'Jul 18', property: 'Modern Cannabis-Friendly Loft', location: 'Oklahoma City, OK', tier: 'Gold', type: 'Bi-Weekly Check', status: 'Scheduled', inspector: 'Staff TBD', score: '' },
+    { id: 'INS-003', date: 'Jul 20', property: 'Spacious Grow-Friendly Rancher', location: 'Edmond, OK', tier: 'Platinum', type: 'Weekly Inspection', status: 'Scheduled', inspector: 'Staff TBD', score: '' },
+    { id: 'INS-004', date: 'Jul 22', property: 'Midtown 420 Friendly Townhome', location: 'Oklahoma City, OK', tier: 'Gold', type: 'Bi-Weekly Check', status: 'Scheduled', inspector: 'Staff TBD', score: '' },
+  ]);
+  const [ccActiveInspection, setCcActiveInspection] = useState<any>(null);
+  const [ccInspChecks, setCcInspChecks] = useState<boolean[]>([]);
+  const [ccShowScheduleInsp, setCcShowScheduleInsp] = useState(false);
+  const [ccNewInsp, setCcNewInsp] = useState({ date: '', property: '', type: 'Bi-Weekly Check', tier: 'Green', inspector: '' });
+
+  const CC_STATUSES = ['Pending Review', 'Background Check', 'Verification', 'Approved', 'Denied', 'On Hold', 'Waitlisted'];
+  const CC_CHECKLIST = ['Exterior Condition','Interior Walls & Paint','Flooring Condition','Windows & Locks','Doors & Hinges','Plumbing & Fixtures','Electrical Outlets','HVAC System','Smoke Detectors','CO Detectors','Fire Extinguisher','Appliance Function','Kitchen Condition','Bathroom Condition','Pest Inspection','Cannabis Odor Level','Ventilation System','Air Filtration','Grow Area (if any)','Waste Disposal','Yard/Exterior Clean','Parking Area','Security System','Key/Lock Integrity','Furniture Condition','Linen/Bedding Check','Supply Inventory','Neighbor Complaints','Photo Documentation','Overall Rating'];
+  const CC_PROPERTIES = ['Modern Cannabis-Friendly Loft','Cozy 420-Friendly Cottage','Luxury CannaCrib Suite','Spacious Grow-Friendly Rancher','Cannabis-Friendly Commercial Space','Midtown 420 Friendly Townhome','Desert Oasis Cannabis Retreat'];
+
+  const filteredCcApps = ccApps.filter(a => {
+    if (ccAppFilter === 'All') return true;
+    if (ccAppFilter === 'Pending') return a.status === 'Pending Review';
+    if (ccAppFilter === 'Approved') return a.status === 'Approved';
+    if (ccAppFilter === 'Denied') return a.status === 'Denied';
+    return true;
+  });
+
   // ═══ CANNACRIBS OPERATIONS RENDER FUNCTIONS ═══
   const renderCCApplications = () => (
     <div className="space-y-6">
@@ -592,17 +626,17 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
             <p className="text-xs text-slate-500">Process tenant, landlord, and short-term guest applications</p>
           </div>
         </div>
-        <span className="px-3 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full border border-amber-200">2 Pending Review</span>
+        <span className="px-3 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full border border-amber-200">{ccApps.filter(a => a.status === 'Pending Review').length} Pending Review</span>
       </div>
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         {[
-          { l: 'Total Applications', v: '6', color: 'text-slate-800' },
-          { l: 'Pending Review', v: '2', color: 'text-amber-600' },
-          { l: 'Background Check', v: '1', color: 'text-blue-600' },
-          { l: 'Approved', v: '2', color: 'text-emerald-600' },
-          { l: 'Verification', v: '1', color: 'text-purple-600' },
+          { l: 'Total Applications', v: String(ccApps.length), color: 'text-slate-800' },
+          { l: 'Pending Review', v: String(ccApps.filter(a => a.status === 'Pending Review').length), color: 'text-amber-600' },
+          { l: 'Background Check', v: String(ccApps.filter(a => a.status === 'Background Check').length), color: 'text-blue-600' },
+          { l: 'Approved', v: String(ccApps.filter(a => a.status === 'Approved').length), color: 'text-emerald-600' },
+          { l: 'Verification', v: String(ccApps.filter(a => a.status === 'Verification').length), color: 'text-purple-600' },
         ].map((s, i) => (
           <div key={i} className="bg-white border border-slate-200 rounded-xl p-4 text-center">
             <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1">{s.l}</p>
@@ -611,13 +645,91 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
         ))}
       </div>
 
+      {/* Detail Modal */}
+      {ccSelectedApp && (
+        <div className="fixed inset-0 z-[200] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setCcSelectedApp(null)}>
+          <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <div className="sticky top-0 bg-white z-10 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+              <div><h3 className="font-black text-lg text-slate-900">{ccSelectedApp.name}</h3><p className="text-xs text-slate-500">{ccSelectedApp.id} • {ccSelectedApp.type} Application</p></div>
+              <button onClick={() => setCcSelectedApp(null)} className="p-2 hover:bg-slate-100 rounded-lg"><XCircle size={18} /></button>
+            </div>
+            <div className="p-6 space-y-5">
+              {/* Status */}
+              <div className="flex items-center gap-3 flex-wrap">
+                <select value={ccSelectedApp.status} onChange={e => { const newStatus = e.target.value; setCcApps(p => p.map(a => a.id === ccSelectedApp.id ? { ...a, status: newStatus } : a)); setCcSelectedApp({ ...ccSelectedApp, status: newStatus }); }} className="px-3 py-2 border border-slate-300 rounded-lg text-sm font-bold outline-none">
+                  {CC_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+                <span className="text-xs text-slate-400">Submitted {ccSelectedApp.date}</span>
+              </div>
+              {/* Contact */}
+              <div className="text-[10px] font-black text-blue-600 uppercase tracking-widest border-b border-slate-200 pb-1">Contact Information</div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {[['Email', ccSelectedApp.email], ['Phone', ccSelectedApp.phone], ['DOB', ccSelectedApp.dob], ['Current Address', ccSelectedApp.currentAddress], ['Type', ccSelectedApp.type], ['Property Type', ccSelectedApp.propertyType]].map(([l, v], i) => (
+                  <div key={i} className="p-2.5 bg-slate-50 rounded-lg"><div className="text-[9px] text-slate-400 uppercase font-black tracking-wider mb-0.5">{l}</div><div className="text-sm text-slate-800 font-medium">{v || '—'}</div></div>
+                ))}
+              </div>
+              {/* Property */}
+              <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+                <div className="text-[10px] text-green-600 uppercase font-bold mb-1">Property Applied For</div>
+                <div className="text-sm text-slate-900 font-bold">{ccSelectedApp.property}</div>
+                <div className="text-xs text-slate-500 flex items-center gap-1 mt-0.5"><MapPin size={10} /> {ccSelectedApp.location}</div>
+              </div>
+              {/* Tenant Screening */}
+              {ccSelectedApp.type === 'Tenant' && (<>
+                <div className="text-[10px] font-black text-green-600 uppercase tracking-widest border-b border-slate-200 pb-1">Screening & Verification</div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {[['Credit Score', ccSelectedApp.credit], ['Cannabis Card', ccSelectedApp.card ? '✅' : '❌'], ['Employment', ccSelectedApp.employment], ['Income', ccSelectedApp.income]].map(([l, v], i) => (
+                    <div key={i} className="p-3 bg-slate-50 rounded-lg text-center"><div className="text-lg font-black text-slate-900">{v}</div><div className="text-[10px] text-slate-400 font-bold uppercase">{l}</div></div>
+                  ))}
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {[['Desired Move-In', ccSelectedApp.moveInDate], ['Lease Term', ccSelectedApp.leaseTerm], ['Reason for Moving', ccSelectedApp.reasonForMoving], ['Pets', ccSelectedApp.pets], ['Vehicles', ccSelectedApp.vehicles], ['Previous Landlord', `${ccSelectedApp.previousLandlord} ${ccSelectedApp.previousLandlordPhone}`]].map(([l, v], i) => (
+                    <div key={i} className="p-2.5 bg-slate-50 rounded-lg"><div className="text-[9px] text-slate-400 uppercase font-black mb-0.5">{l}</div><div className="text-sm text-slate-800 font-medium">{v || '—'}</div></div>
+                  ))}
+                </div>
+              </>)}
+              {/* Landlord */}
+              {ccSelectedApp.type === 'Landlord' && ccSelectedApp.llCompany && (<>
+                <div className="text-[10px] font-black text-purple-600 uppercase tracking-widest border-b border-slate-200 pb-1">Landlord Details</div>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {[['Company/LLC', ccSelectedApp.llCompany], ['Property Address', ccSelectedApp.llPropertyAddress], ['Tier Preference', ccSelectedApp.llTierPreference], ['# Units', ccSelectedApp.llNumUnits]].map(([l, v], i) => (
+                    <div key={i} className="p-2.5 bg-slate-50 rounded-lg"><div className="text-[9px] text-slate-400 uppercase font-black mb-0.5">{l}</div><div className="text-sm text-slate-800 font-medium">{v || '—'}</div></div>
+                  ))}
+                </div>
+              </>)}
+              {/* Short-Term */}
+              {ccSelectedApp.type === 'Short-Term Guest' && (<>
+                <div className="text-[10px] font-black text-amber-600 uppercase tracking-widest border-b border-slate-200 pb-1">Stay Details</div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {[['Check-In', ccSelectedApp.stCheckIn], ['Check-Out', ccSelectedApp.stCheckOut], ['# Guests', ccSelectedApp.stGuests], ['Purpose', ccSelectedApp.stPurpose]].map(([l, v], i) => (
+                    <div key={i} className="p-2.5 bg-slate-50 rounded-lg"><div className="text-[9px] text-slate-400 uppercase font-black mb-0.5">{l}</div><div className="text-sm text-slate-800 font-medium">{v || '—'}</div></div>
+                  ))}
+                </div>
+              </>)}
+              {/* Emergency & Medical */}
+              <div className="text-[10px] font-black text-red-600 uppercase tracking-widest border-b border-slate-200 pb-1">Emergency Contact & Medical</div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {[['Emergency Contact', ccSelectedApp.emergencyName], ['Emergency Phone', ccSelectedApp.emergencyPhone], ['Relationship', ccSelectedApp.emergencyRelation], ['Allergies', ccSelectedApp.allergies], ['Medical Conditions', ccSelectedApp.medicalConditions], ['Medications', ccSelectedApp.medications]].map(([l, v], i) => (
+                  <div key={i} className="p-2.5 bg-slate-50 rounded-lg"><div className="text-[9px] text-slate-400 uppercase font-black mb-0.5">{l}</div><div className="text-sm text-slate-800 font-medium">{v || '—'}</div></div>
+                ))}
+              </div>
+              {/* Action Buttons */}
+              <div className="flex items-center gap-3 pt-4 border-t border-slate-200">
+                <button onClick={() => { setCcApps(p => p.map(a => a.id === ccSelectedApp.id ? { ...a, status: 'Approved' } : a)); setCcSelectedApp({ ...ccSelectedApp, status: 'Approved' }); }} className="flex-1 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2"><CheckCircle size={16} /> Approve</button>
+                <button onClick={() => { setCcApps(p => p.map(a => a.id === ccSelectedApp.id ? { ...a, status: 'Denied' } : a)); setCcSelectedApp({ ...ccSelectedApp, status: 'Denied' }); }} className="flex-1 py-3 bg-red-50 text-red-600 font-bold rounded-xl border border-red-200 text-sm flex items-center justify-center gap-2"><XCircle size={16} /> Deny</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Applications Table */}
       <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
         <div className="bg-slate-50 px-4 py-3 border-b border-slate-200 flex items-center justify-between">
           <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2"><ClipboardList size={16} className="text-green-600" /> Application Queue</h3>
           <div className="flex gap-1">
             {['All', 'Pending', 'Approved', 'Denied'].map(f => (
-              <button key={f} className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-100 text-slate-600 hover:bg-green-100 hover:text-green-700 transition-all">{f}</button>
+              <button key={f} onClick={() => setCcAppFilter(f)} className={cn("px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all", ccAppFilter === f ? 'bg-green-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-green-100 hover:text-green-700')}>{f}</button>
             ))}
           </div>
         </div>
@@ -633,17 +745,10 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
             </tr>
           </thead>
           <tbody>
-            {[
-              { name: 'James Carter', type: 'Tenant', property: 'Modern Cannabis-Friendly Loft', location: 'Oklahoma City, OK', status: 'Pending Review', date: 'Jul 12', card: true, credit: 720 },
-              { name: 'Sarah Mitchell', type: 'Tenant', property: 'Cozy 420-Friendly Cottage', location: 'Norman, OK', status: 'Background Check', date: 'Jul 11', card: true, credit: 685 },
-              { name: 'David Rosenberg', type: 'Landlord', property: '3BR House — Edmond, OK', location: 'Edmond, OK', status: 'Approved', date: 'Jul 9', card: false, credit: 0 },
-              { name: 'Maria Gonzalez', type: 'Tenant', property: 'Downtown Cannabis-Friendly Studio', location: 'Tulsa, OK', status: 'Pending Review', date: 'Jul 13', card: true, credit: 740 },
-              { name: 'Tom Williams', type: 'Landlord', property: '4-Unit Multi-Family', location: 'Moore, OK', status: 'Verification', date: 'Jul 10', card: false, credit: 0 },
-              { name: 'Ashley Park', type: 'Guest', property: 'Desert Oasis Cannabis Retreat', location: 'Bullhead City, AZ', status: 'Approved', date: 'Jul 8', card: true, credit: 0 },
-            ].map((app, i) => (
-              <tr key={i} className="border-b border-slate-50 hover:bg-green-50/30 transition-colors">
+            {filteredCcApps.map((app, i) => (
+              <tr key={i} className="border-b border-slate-50 hover:bg-green-50/30 transition-colors cursor-pointer" onClick={() => setCcSelectedApp(app)}>
                 <td className="p-3">
-                  <div className="text-sm font-bold text-slate-800">{app.name}</div>
+                  <div className="text-sm font-bold text-slate-800 hover:text-green-600">{app.name}</div>
                   {app.type === 'Tenant' && <div className="text-[10px] text-slate-400">Credit: {app.credit} • Card: {app.card ? '✅' : '❌'}</div>}
                 </td>
                 <td className="p-3">
@@ -657,24 +762,24 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
                   <div className="text-xs font-medium text-slate-700">{app.property}</div>
                   <div className="text-[10px] text-slate-400 flex items-center gap-0.5"><MapPin size={8} /> {app.location}</div>
                 </td>
-                <td className="p-3">
-                  <span className={cn("px-2 py-0.5 rounded-full text-[10px] font-bold border",
+                <td className="p-3" onClick={e => e.stopPropagation()}>
+                  <select value={app.status} onChange={e => setCcApps(p => p.map(a => a.id === app.id ? { ...a, status: e.target.value } : a))} className={cn("px-2 py-0.5 rounded-full text-[10px] font-bold border outline-none cursor-pointer",
                     app.status === 'Pending Review' ? 'bg-amber-100 text-amber-700 border-amber-200' :
                     app.status === 'Background Check' ? 'bg-blue-100 text-blue-700 border-blue-200' :
                     app.status === 'Verification' ? 'bg-purple-100 text-purple-700 border-purple-200' :
-                    'bg-emerald-100 text-emerald-700 border-emerald-200'
-                  )}>{app.status}</span>
+                    app.status === 'Approved' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' :
+                    app.status === 'Denied' ? 'bg-red-100 text-red-700 border-red-200' :
+                    'bg-slate-100 text-slate-600 border-slate-200'
+                  )}>
+                    {CC_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
                 </td>
                 <td className="p-3 text-xs text-slate-500">{app.date}</td>
-                <td className="p-3">
+                <td className="p-3" onClick={e => e.stopPropagation()}>
                   <div className="flex gap-1">
-                    {app.status === 'Pending Review' && (
-                      <>
-                        <button className="p-1.5 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition-all"><CheckCircle size={12} /></button>
-                        <button className="p-1.5 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-all"><XCircle size={12} /></button>
-                      </>
-                    )}
-                    <button className="p-1.5 bg-slate-100 text-slate-500 rounded-lg hover:bg-slate-200 transition-all"><Eye size={12} /></button>
+                    <button onClick={() => { setCcApps(p => p.map(a => a.id === app.id ? { ...a, status: 'Approved' } : a)); }} className="p-1.5 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition-all" title="Approve"><CheckCircle size={12} /></button>
+                    <button onClick={() => { setCcApps(p => p.map(a => a.id === app.id ? { ...a, status: 'Denied' } : a)); }} className="p-1.5 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-all" title="Deny"><XCircle size={12} /></button>
+                    <button onClick={() => setCcSelectedApp(app)} className="p-1.5 bg-slate-100 text-slate-500 rounded-lg hover:bg-slate-200 transition-all" title="View Full Application"><Eye size={12} /></button>
                   </div>
                 </td>
               </tr>
@@ -697,20 +802,70 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
             <p className="text-xs text-slate-500">30-point property inspections, cleaning schedules, and compliance tracking</p>
           </div>
         </div>
+        <button onClick={() => setCcShowScheduleInsp(true)} className="px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-500 transition-all flex items-center gap-1.5"><Plus size={14} /> Schedule Inspection</button>
       </div>
+
+      {/* Schedule Inspection Modal */}
+      {ccShowScheduleInsp && (
+        <div className="fixed inset-0 z-[200] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setCcShowScheduleInsp(false)}>
+          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full" onClick={e => e.stopPropagation()}>
+            <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+              <h3 className="font-black text-lg text-slate-900">Schedule Inspection</h3>
+              <button onClick={() => setCcShowScheduleInsp(false)} className="p-2 hover:bg-slate-100 rounded-lg"><XCircle size={18} /></button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div><label className="block text-xs font-bold text-slate-600 mb-1">Date *</label><input type="date" value={ccNewInsp.date} onChange={e => setCcNewInsp(p => ({ ...p, date: e.target.value }))} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500/20" /></div>
+              <div><label className="block text-xs font-bold text-slate-600 mb-1">Property *</label><select value={ccNewInsp.property} onChange={e => setCcNewInsp(p => ({ ...p, property: e.target.value }))} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none bg-white"><option value="">Select Property</option>{CC_PROPERTIES.map(p => <option key={p} value={p}>{p}</option>)}</select></div>
+              <div className="grid grid-cols-2 gap-4">
+                <div><label className="block text-xs font-bold text-slate-600 mb-1">Inspection Type</label><select value={ccNewInsp.type} onChange={e => setCcNewInsp(p => ({ ...p, type: e.target.value }))} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none bg-white"><option>Bi-Weekly Check</option><option>Weekly Inspection</option><option>Pre-Guest Inspection</option><option>Move-In Check</option><option>Move-Out Check</option><option>Quarterly Review</option></select></div>
+                <div><label className="block text-xs font-bold text-slate-600 mb-1">Tier</label><select value={ccNewInsp.tier} onChange={e => setCcNewInsp(p => ({ ...p, tier: e.target.value }))} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none bg-white"><option>Green</option><option>Gold</option><option>Platinum</option><option>Executive</option></select></div>
+              </div>
+              <div><label className="block text-xs font-bold text-slate-600 mb-1">Inspector</label><input value={ccNewInsp.inspector} onChange={e => setCcNewInsp(p => ({ ...p, inspector: e.target.value }))} placeholder="Inspector name" className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500/20" /></div>
+              <button onClick={() => { if (!ccNewInsp.date || !ccNewInsp.property) return alert('Date and property required.'); const dateStr = new Date(ccNewInsp.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); setCcInspections(p => [...p, { id: 'INS-' + String(p.length + 1).padStart(3, '0'), date: dateStr, property: ccNewInsp.property, location: '', tier: ccNewInsp.tier, type: ccNewInsp.type, status: 'Scheduled', inspector: ccNewInsp.inspector || 'Staff TBD', score: '' }]); setCcNewInsp({ date: '', property: '', type: 'Bi-Weekly Check', tier: 'Green', inspector: '' }); setCcShowScheduleInsp(false); }} className="w-full py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold rounded-xl flex items-center justify-center gap-2"><Plus size={16} /> Schedule</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Active Inspection Modal (30-point Checklist) */}
+      {ccActiveInspection && (
+        <div className="fixed inset-0 z-[200] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setCcActiveInspection(null)}>
+          <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <div className="sticky top-0 bg-gradient-to-r from-green-600 to-emerald-700 z-10 px-6 py-4 text-white flex items-center justify-between">
+              <div><h3 className="font-black text-lg">🔍 Live Inspection — {ccActiveInspection.property}</h3><p className="text-xs text-green-200">{ccActiveInspection.type} • {ccActiveInspection.date}</p></div>
+              <button onClick={() => setCcActiveInspection(null)} className="p-2 hover:bg-white/10 rounded-lg"><XCircle size={18} /></button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="flex items-center justify-between p-3 bg-blue-50 border border-blue-200 rounded-xl">
+                <span className="text-sm font-bold text-blue-700">Progress: {ccInspChecks.filter(Boolean).length} / {CC_CHECKLIST.length} Items</span>
+                <span className="text-lg font-black text-blue-700">{Math.round((ccInspChecks.filter(Boolean).length / CC_CHECKLIST.length) * 100)}%</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                {CC_CHECKLIST.map((item, i) => (
+                  <label key={i} className={cn("flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all border", ccInspChecks[i] ? "bg-emerald-50 border-emerald-200" : "bg-slate-50 border-slate-200 hover:bg-slate-100")}>
+                    <input type="checkbox" checked={!!ccInspChecks[i]} onChange={() => setCcInspChecks(p => { const n = [...p]; n[i] = !n[i]; return n; })} className="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500" />
+                    <span className={cn("text-xs font-medium", ccInspChecks[i] ? "text-emerald-700 line-through" : "text-slate-700")}>{item}</span>
+                    {ccInspChecks[i] && <CheckCircle size={12} className="text-emerald-500 ml-auto" />}
+                  </label>
+                ))}
+              </div>
+              <div className="flex gap-3 pt-4 border-t border-slate-200">
+                <button onClick={() => { const score = `${ccInspChecks.filter(Boolean).length}/${CC_CHECKLIST.length}`; setCcInspections(p => p.map(insp => insp.id === ccActiveInspection.id ? { ...insp, status: 'Completed', score } : insp)); setCcActiveInspection(null); setCcInspChecks([]); }} className="flex-1 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2"><CheckCircle size={16} /> Complete Inspection ({ccInspChecks.filter(Boolean).length}/{CC_CHECKLIST.length})</button>
+                <button onClick={() => { setCcActiveInspection(null); setCcInspChecks([]); }} className="py-3 px-6 bg-slate-100 text-slate-600 font-bold rounded-xl text-sm">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Upcoming Inspections */}
       <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-        <div className="bg-slate-50 px-4 py-3 border-b border-slate-200">
+        <div className="bg-slate-50 px-4 py-3 border-b border-slate-200 flex items-center justify-between">
           <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2"><CalendarCheck size={16} className="text-blue-600" /> Upcoming Inspections</h3>
+          <span className="text-xs text-slate-400 font-bold">{ccInspections.filter(i => i.status === 'Scheduled').length} Scheduled</span>
         </div>
         <div className="divide-y divide-slate-100">
-          {[
-            { date: 'Jul 15', property: 'Desert Oasis Cannabis Retreat', location: 'Bullhead City, AZ', tier: 'Executive', type: 'Pre-Guest Inspection', status: 'Scheduled', inspector: 'Staff TBD' },
-            { date: 'Jul 18', property: 'Modern Cannabis-Friendly Loft', location: 'Oklahoma City, OK', tier: 'Gold', type: 'Bi-Weekly Check', status: 'Scheduled', inspector: 'Staff TBD' },
-            { date: 'Jul 20', property: 'Spacious Grow-Friendly Rancher', location: 'Edmond, OK', tier: 'Platinum', type: 'Weekly Inspection', status: 'Scheduled', inspector: 'Staff TBD' },
-            { date: 'Jul 22', property: 'Midtown 420 Friendly Townhome', location: 'Oklahoma City, OK', tier: 'Gold', type: 'Bi-Weekly Check', status: 'Scheduled', inspector: 'Staff TBD' },
-          ].map((insp, i) => (
+          {ccInspections.map((insp, i) => (
             <div key={i} className="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors">
               <div className="flex items-center gap-4">
                 <div className="w-14 h-14 bg-blue-50 rounded-xl flex flex-col items-center justify-center border border-blue-100">
@@ -719,20 +874,24 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
                 </div>
                 <div>
                   <div className="text-sm font-bold text-slate-800">{insp.property}</div>
-                  <div className="text-xs text-slate-400 flex items-center gap-1"><MapPin size={10} /> {insp.location}</div>
+                  <div className="text-xs text-slate-400 flex items-center gap-1"><MapPin size={10} /> {insp.location || 'Location TBD'}</div>
                   <div className="flex items-center gap-2 mt-1">
                     <span className={cn("px-1.5 py-0.5 rounded text-[8px] font-black uppercase",
                       insp.tier === 'Executive' ? 'bg-purple-100 text-purple-700' :
                       insp.tier === 'Platinum' ? 'bg-violet-100 text-violet-700' :
-                      'bg-amber-100 text-amber-700'
+                      insp.tier === 'Gold' ? 'bg-amber-100 text-amber-700' :
+                      'bg-emerald-100 text-emerald-700'
                     )}>{insp.tier}</span>
                     <span className="text-[10px] text-slate-500">{insp.type}</span>
                   </div>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <span className="px-2.5 py-1 bg-blue-100 text-blue-700 text-[10px] font-bold rounded-lg">{insp.status}</span>
-                <button className="px-3 py-1.5 bg-green-600 text-white text-[10px] font-bold rounded-lg hover:bg-green-500 transition-all">Start Inspection</button>
+                <span className={cn("px-2.5 py-1 text-[10px] font-bold rounded-lg", insp.status === 'Completed' ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700')}>{insp.status}</span>
+                {insp.score && <span className="text-sm font-black text-emerald-600">{insp.score}</span>}
+                {insp.status === 'Scheduled' && (
+                  <button onClick={() => { setCcActiveInspection(insp); setCcInspChecks(new Array(CC_CHECKLIST.length).fill(false)); }} className="px-3 py-1.5 bg-green-600 text-white text-[10px] font-bold rounded-lg hover:bg-green-500 transition-all">Start Inspection</button>
+                )}
               </div>
             </div>
           ))}
@@ -743,14 +902,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
       <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
         <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2 mb-4"><Shield size={16} className="text-emerald-600" /> 30-Point Inspection Checklist</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
-          {[
-            'Exterior', 'Interior Walls', 'Flooring', 'Windows/Locks', 'Doors/Hinges',
-            'Plumbing', 'Electrical', 'HVAC', 'Smoke Detect.', 'CO Detect.',
-            'Fire Extinguisher', 'Appliances', 'Kitchen', 'Bathroom', 'Pest Check',
-            'Cannabis Odor', 'Ventilation', 'Air Filtration', 'Grow Area', 'Waste Disposal',
-            'Yard/Exterior', 'Parking', 'Security Sys.', 'Key/Lock Check', 'Furniture',
-            'Linens', 'Supply Inv.', 'Neighbor Comp.', 'Photo Docs', 'Overall Rating',
-          ].map((item, i) => (
+          {CC_CHECKLIST.map((item, i) => (
             <div key={i} className="flex items-center gap-1.5 px-2 py-1.5 bg-slate-50 rounded-lg text-[10px] font-medium text-slate-600">
               <CheckCircle size={10} className="text-emerald-500 shrink-0" /> {item}
             </div>
@@ -765,6 +917,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
         </div>
         <div className="divide-y divide-slate-100">
           {[
+            ...ccInspections.filter(i => i.status === 'Completed').map(i => ({ date: i.date, property: i.property, score: i.score, result: 'PASSED', notes: 'Completed via live inspection form.' })),
             { date: 'Jul 13', property: 'Modern Cannabis-Friendly Loft', score: '30/30', result: 'PASSED', notes: 'All areas clean, HVAC filter replaced, no odor issues.' },
             { date: 'Jul 10', property: 'Desert Oasis Cannabis Retreat', score: '29/30', result: 'PASSED', notes: 'Minor: Air filtration filter at 80% life. Ordered replacement.' },
             { date: 'Jul 6', property: 'Midtown 420 Friendly Townhome', score: '30/30', result: 'PASSED', notes: 'Excellent condition. Tenant very cooperative.' },

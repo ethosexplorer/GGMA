@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Phone, User, Building2, HeartPulse, FileText, CircleCheck, AlertCircle, Shield, MapPin, Mail, Calendar, CreditCard, Loader2, UserPlus, ExternalLink, PhoneIncoming, DollarSign, ClipboardList, Send } from 'lucide-react';
+import { Phone, User, Building2, HeartPulse, FileText, CircleCheck, AlertCircle, Shield, MapPin, Mail, Calendar, CreditCard, Loader2, UserPlus, ExternalLink, PhoneIncoming, DollarSign, ClipboardList, Send, Home, Leaf } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { turso } from '../../lib/turso';
 import { db } from '../../lib/firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import { captureContact } from '../../lib/contactCapture';
 
-type IntakeType = 'patient_card' | 'business_license';
+type IntakeType = 'patient_card' | 'business_license' | 'cannacribs_application';
 
 interface IntakeData {
   // Account
@@ -48,6 +48,23 @@ interface IntakeData {
   ownerShares: string;
   // Payment
   paymentPreference: string;
+  // CannaCribs-specific
+  ccApplicantType: string;
+  ccPropertyType: string;
+  ccDesiredProperty: string;
+  ccMoveInDate: string;
+  ccLeaseTerm: string;
+  ccPets: string;
+  ccVehicles: string;
+  ccReasonForMoving: string;
+  ccPreviousLandlord: string;
+  ccPreviousLandlordPhone: string;
+  ccEmergencyName: string;
+  ccEmergencyPhone: string;
+  ccEmergencyRelation: string;
+  ccMedicalConditions: string;
+  ccMedications: string;
+  ccCannabisCard: string;
 }
 
 const US_STATES = ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming'];
@@ -61,8 +78,11 @@ const PAYMENT_METHODS = ['Chime', 'Cash App', 'Zelle', 'Venmo', 'Cash', 'Check',
 
 const STEPS_PATIENT = ['Intake Questionnaire', 'Payment Info', 'Schedule Doctor Visit', 'State Portal Setup', 'Review & Submit'];
 const STEPS_BUSINESS = ['Entity & Type', 'Facility & Contact', 'Primary Owner Info', 'Payment Info', 'Review & Submit'];
+const STEPS_CANNACRIBS = ['Applicant Info & Property', 'Background & Screening', 'Emergency & Medical', 'Payment Info', 'Review & Submit'];
+const CC_PROPERTY_TYPES = ['Apartment', 'House', 'Condo', 'Townhouse', 'Studio', 'Duplex', 'Multi-Family', 'Short-Term Rental', 'Commercial Space'];
+const CC_APPLICANT_TYPES = ['Tenant', 'Landlord', 'Short-Term Guest'];
 
-const empty: IntakeData = { firstName:'',lastName:'',email:'',phone:'',dob:'',ssn:'',street:'',city:'',state:'Oklahoma',zip:'', isAdult:'Yes', mailingAddress:'', appointmentType:'Phone', appType:'New MMJ Card', hasPortalAccount:'No', hasPcp:'No', pcpInfo:'', conditions:[], allergies:'No', lastDoctorVisit:'', insuranceName:'', optInMessaging:'Yes', businessName:'',tradeName:'',businessType:'Dispensary',einNumber:'',licenseType:'New Application',entityType:'LLC',ownerCount:'1', ppocName:'', ppocPhone:'', ppocEmail:'', ownerShares:'', paymentPreference:'' };
+const empty: IntakeData = { firstName:'',lastName:'',email:'',phone:'',dob:'',ssn:'',street:'',city:'',state:'Oklahoma',zip:'', isAdult:'Yes', mailingAddress:'', appointmentType:'Phone', appType:'New MMJ Card', hasPortalAccount:'No', hasPcp:'No', pcpInfo:'', conditions:[], allergies:'No', lastDoctorVisit:'', insuranceName:'', optInMessaging:'Yes', businessName:'',tradeName:'',businessType:'Dispensary',einNumber:'',licenseType:'New Application',entityType:'LLC',ownerCount:'1', ppocName:'', ppocPhone:'', ppocEmail:'', ownerShares:'', paymentPreference:'', ccApplicantType:'Tenant', ccPropertyType:'Apartment', ccDesiredProperty:'', ccMoveInDate:'', ccLeaseTerm:'12 months', ccPets:'None', ccVehicles:'', ccReasonForMoving:'', ccPreviousLandlord:'', ccPreviousLandlordPhone:'', ccEmergencyName:'', ccEmergencyPhone:'', ccEmergencyRelation:'', ccMedicalConditions:'None', ccMedications:'None', ccCannabisCard:'Yes' };
 
 // --- FORM INPUT HELPER (Moved OUTSIDE component to fix focus glitch) ---
 const Field = ({ label, value, onChange, placeholder, type = 'text', required = false }: any) => (
@@ -142,7 +162,7 @@ Phone: 1-888-963-4447 | Email: asstsupport@gmail.com
     else set('conditions', [...data.conditions, c]);
   };
 
-  const steps = intakeType === 'patient_card' ? STEPS_PATIENT : STEPS_BUSINESS;
+  const steps = intakeType === 'patient_card' ? STEPS_PATIENT : intakeType === 'cannacribs_application' ? STEPS_CANNACRIBS : STEPS_BUSINESS;
 
   const handleSubmit = async () => {
     setSubmitting(true);
@@ -448,6 +468,59 @@ Phone: 1-888-963-4447 | Email: asstsupport@gmail.com
         </div>
       );
     }
+    // CannaCribs script
+    if (isCannaCribs) {
+      if (step === 0) return (
+        <div className="space-y-4 text-sm text-emerald-50/90 leading-relaxed">
+          <p><strong>Agent:</strong> "I can help you with our CannaCribs housing program. Are you looking to rent a cannabis-friendly property, list your property as a landlord, or book a short-term stay?"</p>
+          <p><strong>Agent:</strong> "Great! Let me get your personal information — first and last name, email, phone, and date of birth."</p>
+          <p><strong>Agent:</strong> "What type of property are you looking for — apartment, house, condo, studio?"</p>
+          <div className="mt-4 bg-[#0f291c] p-4 rounded-xl border border-emerald-800/50 shadow-inner">
+            <p className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">Agent Note</p>
+            <p className="text-xs text-emerald-100/70">Verify their cannabis card status and desired move-in date.</p>
+          </div>
+        </div>
+      );
+      if (step === 1) return (
+        <div className="space-y-4 text-sm text-emerald-50/90 leading-relaxed">
+          <p><strong>Agent:</strong> "For our screening process, I need your current address, previous landlord contact, and reason for moving."</p>
+          <p><strong>Agent:</strong> "Do you have any pets or vehicles we should note?"</p>
+          <div className="mt-4 bg-[#0f291c] p-4 rounded-xl border border-emerald-800/50 shadow-inner">
+            <p className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">Agent Note</p>
+            <p className="text-xs text-emerald-100/70">All CannaCribs tenants must pass background + credit check. Inform the caller.</p>
+          </div>
+        </div>
+      );
+      if (step === 2) return (
+        <div className="space-y-4 text-sm text-emerald-50/90 leading-relaxed">
+          <p><strong>Agent:</strong> "For safety, I need an emergency contact — name, phone, and relationship."</p>
+          <p><strong>Agent:</strong> "Do you have any allergies, medical conditions, or medications we should be aware of?"</p>
+          <div className="mt-4 bg-[#0f291c] p-4 rounded-xl border border-emerald-800/50 shadow-inner">
+            <p className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">Agent Note</p>
+            <p className="text-xs text-emerald-100/70">This is required for all applicant types per CannaCribs safety protocol.</p>
+          </div>
+        </div>
+      );
+      if (step === 3) return (
+        <div className="space-y-4 text-sm text-emerald-50/90 leading-relaxed">
+          <p><strong>Agent:</strong> "Our CannaCribs application processing fee is $75. How would you like to pay?"</p>
+          <div className="mt-4 bg-[#0f291c] p-4 rounded-xl border border-emerald-800/50 shadow-inner">
+            <p className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">Action Required</p>
+            <p className="text-xs text-emerald-100/70">Collect payment or 'Save for Later' if they need time.</p>
+          </div>
+        </div>
+      );
+      if (step === 4) return (
+        <div className="space-y-4 text-sm text-emerald-50/90 leading-relaxed">
+          <p><strong>Agent:</strong> "Let me read this back — we have you as a {data.ccApplicantType} applicant for a {data.ccPropertyType} property..."</p>
+          <p className="text-xs italic text-emerald-200">Verify name, applicant type, property preference, emergency contact, and payment.</p>
+          <div className="mt-4 bg-[#0f291c] p-4 rounded-xl border border-emerald-800/50 shadow-inner">
+            <p className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">Final Step</p>
+            <p className="text-xs text-emerald-100/70">Submit to create CannaCribs application in the system.</p>
+          </div>
+        </div>
+      );
+    }
   };
 
   // --- TYPE SELECTOR ---
@@ -484,6 +557,18 @@ Phone: 1-888-963-4447 | Email: asstsupport@gmail.com
           <p className="text-sm text-slate-500">Dispensary, cultivator, processor, transporter, or testing lab license application.</p>
           <div className="mt-4 text-[10px] font-black text-indigo-600 uppercase tracking-widest">Start Business Intake →</div>
         </button>
+        <button onClick={() => setIntakeType('cannacribs_application')} className="group bg-white border-2 border-slate-200 hover:border-green-400 rounded-2xl p-8 text-left transition-all hover:shadow-xl hover:shadow-green-100 md:col-span-2">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-gradient-to-br from-green-100 to-amber-50 rounded-2xl flex items-center justify-center group-hover:from-green-200 group-hover:to-amber-100 transition-colors">
+              <Leaf size={28} className="text-green-600" />
+            </div>
+            <div>
+              <h3 className="text-lg font-black text-slate-800 mb-1"><span className="text-green-600">Canna</span><span className="text-amber-500">Cribs</span> Application</h3>
+              <p className="text-sm text-slate-500">Tenant, landlord, or short-term guest application for cannabis-friendly housing.</p>
+              <div className="mt-2 text-[10px] font-black text-green-600 uppercase tracking-widest">Start CannaCribs Intake →</div>
+            </div>
+          </div>
+        </button>
       </div>
     </div>
   );
@@ -510,6 +595,7 @@ Phone: 1-888-963-4447 | Email: asstsupport@gmail.com
   );
 
   const isPatient = intakeType === 'patient_card';
+  const isCannaCribs = intakeType === 'cannacribs_application';
 
   // --- STEP CONTENT ---
   const renderStep = () => {
@@ -1007,6 +1093,167 @@ Phone: 1-888-963-4447 | Email: asstsupport@gmail.com
         );
       }
     }
+    // CannaCribs form steps
+    if (isCannaCribs) {
+      if (step === 0) return (
+        <div className="space-y-6">
+          <div className="p-4 bg-gradient-to-r from-green-50 to-amber-50 border border-green-200 rounded-xl text-sm text-green-800 font-medium">
+            <strong>CannaCribs Application:</strong> Cannabis-friendly housing for verified cardholders, landlords, and short-term guests.
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Select label="Applicant Type" value={data.ccApplicantType} onChange={(v: string) => set('ccApplicantType', v)} options={CC_APPLICANT_TYPES} required />
+            <Select label="Property Type" value={data.ccPropertyType} onChange={(v: string) => set('ccPropertyType', v)} options={CC_PROPERTY_TYPES} required />
+          </div>
+          <Field label="Desired Property / Area" value={data.ccDesiredProperty} onChange={(v: string) => set('ccDesiredProperty', v)} placeholder="e.g. Modern Cannabis-Friendly Loft, OKC area" />
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="First Name" value={data.firstName} onChange={(v: string) => set('firstName', v)} placeholder="John" required />
+            <Field label="Last Name" value={data.lastName} onChange={(v: string) => set('lastName', v)} placeholder="Doe" required />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Email Address" value={data.email} onChange={(v: string) => set('email', v)} placeholder="john@email.com" type="email" required />
+            <Field label="Phone Number" value={data.phone} onChange={(v: string) => set('phone', v)} placeholder="(555) 123-4567" required />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Date of Birth" value={data.dob} onChange={(v: string) => set('dob', v)} type="date" required />
+            <Select label="Do you have a Cannabis Card?" value={data.ccCannabisCard} onChange={(v: string) => set('ccCannabisCard', v)} options={['Yes', 'No', 'In Progress']} required />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Desired Move-In Date" value={data.ccMoveInDate} onChange={(v: string) => set('ccMoveInDate', v)} type="date" />
+            <Select label="Lease Term" value={data.ccLeaseTerm} onChange={(v: string) => set('ccLeaseTerm', v)} options={['Month-to-Month', '3 months', '6 months', '12 months', '24 months', 'Short-Term (1-30 days)']} />
+          </div>
+          <div>
+            <label className="text-xs font-bold text-slate-600 mb-1.5 block">Agent Notes / Remarks</label>
+            <textarea value={callerNotes} onChange={(e) => setCallerNotes(e.target.value)} rows={3} placeholder="Additional notes from the call..."
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 transition-all resize-none" />
+          </div>
+        </div>
+      );
+      if (step === 1) return (
+        <div className="space-y-6">
+          <div className="text-[10px] font-black text-green-600 uppercase tracking-widest border-b border-slate-200 pb-1 mb-2">Background & Screening</div>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Current Street Address" value={data.street} onChange={(v: string) => set('street', v)} placeholder="123 Main St" required />
+            <Field label="City" value={data.city} onChange={(v: string) => set('city', v)} placeholder="Oklahoma City" required />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Select label="State" value={data.state} onChange={(v: string) => set('state', v)} options={US_STATES} required />
+            <Field label="ZIP Code" value={data.zip} onChange={(v: string) => set('zip', v)} placeholder="73102" required />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Previous Landlord Name" value={data.ccPreviousLandlord} onChange={(v: string) => set('ccPreviousLandlord', v)} placeholder="Mark Reynolds" />
+            <Field label="Previous Landlord Phone" value={data.ccPreviousLandlordPhone} onChange={(v: string) => set('ccPreviousLandlordPhone', v)} placeholder="(555) 000-0000" />
+          </div>
+          <Field label="Reason for Moving" value={data.ccReasonForMoving} onChange={(v: string) => set('ccReasonForMoving', v)} placeholder="e.g. Current landlord prohibits cannabis" />
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Pets" value={data.ccPets} onChange={(v: string) => set('ccPets', v)} placeholder="Dog — Golden Retriever, 45 lbs" />
+            <Field label="Vehicles" value={data.ccVehicles} onChange={(v: string) => set('ccVehicles', v)} placeholder="2022 Toyota Camry" />
+          </div>
+        </div>
+      );
+      if (step === 2) return (
+        <div className="space-y-6">
+          <div className="text-[10px] font-black text-red-600 uppercase tracking-widest border-b border-slate-200 pb-1 mb-2">Emergency Contact & Medical Information</div>
+          <div className="grid grid-cols-3 gap-4">
+            <Field label="Emergency Contact Name" value={data.ccEmergencyName} onChange={(v: string) => set('ccEmergencyName', v)} placeholder="Linda Carter" required />
+            <Field label="Emergency Phone" value={data.ccEmergencyPhone} onChange={(v: string) => set('ccEmergencyPhone', v)} placeholder="(555) 000-0000" required />
+            <Select label="Relationship" value={data.ccEmergencyRelation} onChange={(v: string) => set('ccEmergencyRelation', v)} options={['Mother', 'Father', 'Spouse', 'Sibling', 'Friend', 'Other']} required />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Medical Conditions" value={data.ccMedicalConditions} onChange={(v: string) => set('ccMedicalConditions', v)} placeholder="None, or describe" />
+            <Field label="Medications" value={data.ccMedications} onChange={(v: string) => set('ccMedications', v)} placeholder="Medical cannabis, etc." />
+          </div>
+          <Select label="Allergies" value={data.allergies} onChange={(v: string) => set('allergies', v)} options={['Yes', 'No']} />
+        </div>
+      );
+      // Step 3 (Payment) reuses the same payment form as patient/business — handled in the isPatient else branch
+      if (step === 3) return (
+        <div className="space-y-4">
+          <div className="p-4 rounded-xl border text-xs font-bold flex items-start gap-2 bg-green-50 border-green-200 text-green-800 mb-4">
+            <DollarSign size={14} className="shrink-0 mt-0.5" />
+            <span>Post a one-time CannaCribs application processing fee to the accounting ledger.</span>
+          </div>
+          {paymentPosted ? (
+            <div className="flex flex-col items-center justify-center py-8 space-y-4 animate-in fade-in zoom-in duration-300">
+              <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center"><CircleCheck size={32} className="text-emerald-600" /></div>
+              <h3 className="text-lg font-black text-slate-800">Payment Posted!</h3>
+              <p className="text-sm text-slate-500 font-medium mb-2">Entry added to Accounting Ledger.</p>
+            </div>
+          ) : (
+            <div className="space-y-4 bg-slate-50 border border-slate-200 rounded-2xl p-5">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1.5">Amount *</label>
+                  <div className="relative">
+                    <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <input type="text" value={paymentForm.amount} onChange={(e) => setPaymentForm({ ...paymentForm, amount: e.target.value })} placeholder="75.00" className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-green-500/20 font-medium text-sm" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1.5">Date Received</label>
+                  <input type="date" value={paymentForm.date} onChange={(e) => setPaymentForm({ ...paymentForm, date: e.target.value })} className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-green-500/20 font-medium text-sm" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1.5">Payment Type</label>
+                  <select value={paymentForm.type} onChange={(e) => setPaymentForm({ ...paymentForm, type: e.target.value })} className="w-full px-3 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-green-500/20 font-medium text-sm">
+                    {PAYMENT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1.5">Payment Method</label>
+                  <select value={paymentForm.method} onChange={(e) => setPaymentForm({ ...paymentForm, method: e.target.value })} className="w-full px-3 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-green-500/20 font-medium text-sm">
+                    {PAYMENT_METHODS.map(m => <option key={m} value={m}>{m}</option>)}
+                  </select>
+                </div>
+              </div>
+              <button onClick={handlePostPayment} disabled={submitting} className="w-full py-3.5 text-white rounded-xl text-sm font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 mt-4 bg-green-600 hover:bg-green-700">
+                <DollarSign size={16} /> Post Payment to Ledger
+              </button>
+            </div>
+          )}
+        </div>
+      );
+      if (step === 4) return (
+        <div className="space-y-4">
+          <h3 className="font-black text-slate-900 flex items-center gap-2"><ClipboardList size={18} className="text-green-600" /> CannaCribs Application Summary</h3>
+          <div className="bg-slate-50 border border-slate-200 rounded-2xl divide-y divide-slate-200 overflow-hidden">
+            {[
+              { l: 'Applicant', v: `${data.firstName} ${data.lastName}` },
+              { l: 'Type', v: data.ccApplicantType },
+              { l: 'Email', v: data.email },
+              { l: 'Phone', v: data.phone },
+              { l: 'DOB', v: data.dob },
+              { l: 'Cannabis Card', v: data.ccCannabisCard },
+              { l: 'Property Type', v: data.ccPropertyType },
+              { l: 'Desired Property', v: data.ccDesiredProperty },
+              { l: 'Move-In Date', v: data.ccMoveInDate },
+              { l: 'Lease Term', v: data.ccLeaseTerm },
+              { l: 'Current Address', v: `${data.street}, ${data.city}, ${data.state} ${data.zip}` },
+              { l: 'Previous Landlord', v: `${data.ccPreviousLandlord} ${data.ccPreviousLandlordPhone}` },
+              { l: 'Reason for Moving', v: data.ccReasonForMoving },
+              { l: 'Pets', v: data.ccPets },
+              { l: 'Vehicles', v: data.ccVehicles },
+              { l: 'Emergency Contact', v: `${data.ccEmergencyName} (${data.ccEmergencyRelation}) — ${data.ccEmergencyPhone}` },
+              { l: 'Medical Conditions', v: data.ccMedicalConditions },
+              { l: 'Medications', v: data.ccMedications },
+              { l: 'Allergies', v: data.allergies },
+            ].map((r, i) => (
+              <div key={i} className="flex justify-between px-5 py-3 text-sm">
+                <span className="text-slate-500">{r.l}</span>
+                <span className="font-bold text-slate-800 text-right max-w-[60%]">{r.v || '—'}</span>
+              </div>
+            ))}
+          </div>
+          {callerNotes && (
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
+              <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-1">Agent Notes</p>
+              <p className="text-sm text-amber-900">{callerNotes}</p>
+            </div>
+          )}
+        </div>
+      );
+    }
   };
 
   const canNext = () => {
@@ -1015,6 +1262,11 @@ Phone: 1-888-963-4447 | Email: asstsupport@gmail.com
       if (step === 1) return true; // Payment is optional, allows skipping
       if (step === 2) return scheduledAppt;
       if (step === 3) return completedPortal;
+    } else if (isCannaCribs) {
+      if (step === 0) return data.firstName && data.lastName && data.email && data.phone;
+      if (step === 1) return data.street && data.city && data.state && data.zip;
+      if (step === 2) return data.ccEmergencyName && data.ccEmergencyPhone;
+      if (step === 3) return true;
     } else {
       if (step === 0) return data.state && data.businessName && data.licenseType && data.entityType && data.businessType;
       if (step === 1) return data.street && data.city && data.zip && data.ppocName && data.ppocPhone && data.ppocEmail;
@@ -1041,12 +1293,12 @@ Phone: 1-888-963-4447 | Email: asstsupport@gmail.com
         {/* Right Column: Form */}
         <div className="col-span-2 space-y-6">
           {/* Header */}
-          <div className={cn("rounded-2xl p-6 text-white relative overflow-hidden shadow-lg", isPatient ? "bg-gradient-to-r from-emerald-800 to-teal-700" : "bg-gradient-to-r from-indigo-800 to-violet-700")}>
-            <div className="absolute top-0 right-0 p-4 opacity-10">{isPatient ? <HeartPulse size={80} /> : <Building2 size={80} />}</div>
+          <div className={cn("rounded-2xl p-6 text-white relative overflow-hidden shadow-lg", isPatient ? "bg-gradient-to-r from-emerald-800 to-teal-700" : isCannaCribs ? "bg-gradient-to-r from-green-700 to-amber-700" : "bg-gradient-to-r from-indigo-800 to-violet-700")}>
+            <div className="absolute top-0 right-0 p-4 opacity-10">{isPatient ? <HeartPulse size={80} /> : isCannaCribs ? <Leaf size={80} /> : <Building2 size={80} />}</div>
             <div className="relative z-10 flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-black">{isPatient ? 'Patient Medical Card Intake' : 'Business License Intake'}</h2>
-                <p className={cn("text-[10px] font-bold uppercase tracking-widest mt-1", isPatient ? "text-emerald-200" : "text-indigo-200")}>Step {step + 1} of {steps.length} — {steps[step]}</p>
+                <h2 className="text-xl font-black">{isPatient ? 'Patient Medical Card Intake' : isCannaCribs ? 'CannaCribs Housing Application' : 'Business License Intake'}</h2>
+                <p className={cn("text-[10px] font-bold uppercase tracking-widest mt-1", isPatient ? "text-emerald-200" : isCannaCribs ? "text-green-200" : "text-indigo-200")}>Step {step + 1} of {steps.length} — {steps[step]}</p>
               </div>
               <button onClick={reset} className="text-white/60 hover:text-white text-xs font-bold uppercase tracking-widest">Cancel</button>
             </div>
@@ -1056,7 +1308,7 @@ Phone: 1-888-963-4447 | Email: asstsupport@gmail.com
           <div className="flex gap-2">
             {steps.map((s, i) => (
               <div key={i} className="flex-1">
-                <div className={cn("h-1.5 rounded-full transition-all", i <= step ? (isPatient ? "bg-emerald-500" : "bg-indigo-500") : "bg-slate-200")} />
+                <div className={cn("h-1.5 rounded-full transition-all", i <= step ? (isPatient ? "bg-emerald-500" : isCannaCribs ? "bg-green-500" : "bg-indigo-500") : "bg-slate-200")} />
                 <p className={cn("text-[9px] font-bold mt-1.5 uppercase tracking-widest", i <= step ? "text-slate-700" : "text-slate-400")}>{s}</p>
               </div>
             ))}
@@ -1082,13 +1334,13 @@ Phone: 1-888-963-4447 | Email: asstsupport@gmail.com
                   </button>
                 )}
                 <button onClick={() => canNext() ? setStep(step + 1) : alert('Please fill in all required fields or confirm steps to proceed.')}
-                  className={cn("px-8 py-3 text-white font-bold rounded-xl shadow-lg transition-all", isPatient ? "bg-emerald-600 hover:bg-emerald-700" : "bg-indigo-600 hover:bg-indigo-700")}>
+                  className={cn("px-8 py-3 text-white font-bold rounded-xl shadow-lg transition-all", isPatient ? "bg-emerald-600 hover:bg-emerald-700" : isCannaCribs ? "bg-green-600 hover:bg-green-700" : "bg-indigo-600 hover:bg-indigo-700")}>
                   Next Step →
                 </button>
               </div>
             ) : (
               <button onClick={handleSubmit} disabled={submitting}
-                className={cn("px-8 py-3 text-white font-black rounded-xl shadow-lg transition-all flex items-center gap-2 uppercase tracking-widest text-sm", submitting ? "opacity-60" : "", isPatient ? "bg-emerald-600 hover:bg-emerald-700" : "bg-indigo-600 hover:bg-indigo-700")}>
+                className={cn("px-8 py-3 text-white font-black rounded-xl shadow-lg transition-all flex items-center gap-2 uppercase tracking-widest text-sm", submitting ? "opacity-60" : "", isPatient ? "bg-emerald-600 hover:bg-emerald-700" : isCannaCribs ? "bg-green-600 hover:bg-green-700" : "bg-indigo-600 hover:bg-indigo-700")}>
                 {submitting ? <><Loader2 size={16} className="animate-spin" /> Submitting...</> : <><CircleCheck size={16} /> Create Account & Submit</>}
               </button>
             )}
