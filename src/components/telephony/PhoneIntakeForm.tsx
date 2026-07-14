@@ -414,7 +414,7 @@ Phone: 1-888-963-4447 | Email: asstsupport@gmail.com
           </div>
         </div>
       );
-    } else {
+    } else if (!isCannaCribs) {
       if (step === 0) return (
         <div className="space-y-4 text-sm text-emerald-50/90 leading-relaxed">
           <p><strong>Agent:</strong> "I can help with your business licensing. What state or jurisdiction are you applying in?"</p>
@@ -903,7 +903,7 @@ Phone: 1-888-963-4447 | Email: asstsupport@gmail.com
           </div>
         );
       }
-    } else {
+    } else if (!isCannaCribs) {
       // --- BUSINESS STEPS ---
       if (step === 0) return (
         <div className="space-y-4">
