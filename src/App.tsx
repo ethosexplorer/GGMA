@@ -332,45 +332,7 @@ export default function App() {
     else sessionStorage.removeItem('gghp_role_override');
   }, [roleOverride]);
 
-  // When founder selects 'operations' role override, load the first ops staff profile
-  // so the dashboard renders with their actual access restrictions
-  useEffect(() => {
-    if (roleOverride === 'operations' && userProfile?.role === 'executive_founder') {
-      const loadOpsProfile = async () => {
-        try {
-          const staffSnap = await getDocs(fsQuery(collection(db, 'staff'), where('role', '==', 'operations')));
-          if (staffSnap.empty) {
-            setImpersonatedProfile(null);
-            return;
-          }
-          const firstStaff = staffSnap.docs[0].data();
-          // Load the full user profile from users collection using the staff's uid
-          if (firstStaff.uid) {
-            const userDoc = await getDoc(doc(db, 'users', firstStaff.uid));
-            if (userDoc.exists()) {
-              const profile = { uid: userDoc.id, ...userDoc.data() };
-              setImpersonatedProfile(profile);
-              return;
-            }
-          }
-          // Fallback: search users by email
-          const usersSnap = await getDocs(fsQuery(collection(db, 'users'), where('email', '==', firstStaff.email)));
-          if (!usersSnap.empty) {
-            const profile = { uid: usersSnap.docs[0].id, ...usersSnap.docs[0].data() };
-            setImpersonatedProfile(profile);
-          } else {
-            setImpersonatedProfile(null);
-          }
-        } catch (err) {
-          console.error('[Impersonate] Failed to load ops staff profile:', err);
-          setImpersonatedProfile(null);
-        }
-      };
-      loadOpsProfile();
-    } else {
-      setImpersonatedProfile(null);
-    }
-  }, [roleOverride, userProfile?.role]);
+
 
   useEffect(() => {
     if (hasBypassedSelector) sessionStorage.setItem('gghp_has_bypassed_selector', 'true');
@@ -631,18 +593,12 @@ export default function App() {
     const validTabs = ['home', 'analytics', 'pos', 'inventory', 'locations', 'compliance', 'insurance', 'documents', 'subscription', 'integrations', 'staff', 'traceability', 'readiness', 'wallet', 'attorneys', 'reporting'];
     const initialTab = validTabs.includes(subTab || '') ? subTab : undefined;
 
-    // Rep Portal Routing (Level 1-2 in corporate hierarchy)
-    if (role === 'rep' || role === 'sales_rep') {
-      return <RepDashboard onLogout={handleReturnToSelector} user={profile} mode="human" />;
-    }
+    // Sales Rep (AI Agent) stays on RepDashboard
     if (role === 'ai_rep') {
       return <RepDashboard onLogout={handleReturnToSelector} user={profile} mode="ai" />;
     }
 
-    // Team Lead & Manager → Founder Dashboard (consolidated)
-    if (role === 'team_lead' || role === 'manager') {
-      return <FounderDashboard onLogout={handleReturnToSelector} user={profile} jurisdiction={jurisdiction} />;
-    }
+    // Team Lead & Manager consolidated under OperationsDashboard
 
     // Internal Leadership Portal Routing
     if (role === 'president') {
@@ -681,10 +637,19 @@ export default function App() {
       return <StateAuthorityDashboard onLogout={handleReturnToSelector} user={profile} />;
     }
 
-    // Operations & Internal Team → Direct to OperationsDashboard (not wrapped in Oversight)
-    if (role === 'operations' || role === 'operations_staff' || role === 'admin_internal') {
+    // Unified Operations & Staff Dashboard Routing (Hierarchy Levels 1-4)
+    if (
+      role === 'operations' || 
+      role === 'operations_staff' || 
+      role === 'admin_internal' ||
+      role === 'rep' || 
+      role === 'sales_rep' || 
+      role === 'team_lead' || 
+      role === 'manager'
+    ) {
       const effectiveUser = impersonatedProfile ? impersonatedProfile : { ...profile, role };
-      return <OperationsDashboard onLogout={handleReturnToSelector} user={effectiveUser} />;
+      const isFounderSim = profile?.email?.toLowerCase() === 'globalgreenhp@gmail.com';
+      return <OperationsDashboard onLogout={handleReturnToSelector} user={effectiveUser} isFounder={isFounderSim} />;
     }
 
     // Oversight Portal Routing (External Admin, Regulators)

@@ -52,7 +52,7 @@ const NAV_ITEMS = [
   { id: 'cc_scheduling', label: 'CC Scheduling', icon: Calendar },
 ];
 
-export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void | Promise<void>, user?: any }) => {
+export const OperationsDashboard = ({ onLogout, user, isFounder }: { onLogout?: () => void | Promise<void>, user?: any, isFounder?: boolean }) => {
   // ═══ ROLE HIERARCHY — 5 Levels ═══
   // Each level inherits all tabs from lower levels
   const LEVEL_TABS: Record<number, string[]> = {
@@ -79,6 +79,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
   // Determine natural staff level from role
   const userRole = (user?.role || '').toLowerCase();
   const getNaturalLevel = (): number => {
+    if (isFounder) return 5;
     if (userRole.includes('founder') || userRole.includes('executive_founder') || userRole.includes('president')) return 5;
     if (userRole.includes('admin_internal') || userRole.includes('manager') || userRole === 'admin') return 4;
     if (userRole.includes('team_lead') || userRole.includes('supervisor')) return 3;
@@ -89,7 +90,7 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
   };
 
   const naturalLevel = getNaturalLevel();
-  const canSwitchLevels = naturalLevel >= 5; // Only founders/executives can preview other levels
+  const canSwitchLevels = isFounder || naturalLevel >= 5; // Only founders/executives can preview other levels
 
   // Level override state — allows founder to preview any level
   const [levelOverride, setLevelOverride] = useState<number | null>(null);
@@ -153,7 +154,8 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
   };
   const isPend = (s: string) => !isAppr(s) && !isFlag(s);
 
-  const isMaster = user?.role === 'founder' || 
+  const isMaster = isFounder ||
+                   user?.role === 'founder' || 
                    user?.role === 'executive_founder' || 
                    user?.role === 'executive' || 
                    user?.role === 'president' ||
