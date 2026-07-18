@@ -53,19 +53,74 @@ const NAV_ITEMS = [
 ];
 
 export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void | Promise<void>, user?: any }) => {
-  // Detect if user entered as management vs operations staff
+  // ═══ ROLE HIERARCHY — 5 Levels ═══
+  // Each level inherits all tabs from lower levels
+  const LEVEL_TABS: Record<number, string[]> = {
+    // Level 1: New Rep / Intake Agent — Call Center basics only
+    1: ['call_center', 'phone_intake', 'account_lookup'],
+    // Level 2: Senior Agent / Operations — + Support operations
+    2: ['payment_lookup', 'operations_calendar', 'support', 'calls', 'backoffice'],
+    // Level 3: Supervisor / Team Lead — + Applications & CannaCribs
+    3: ['applications', 'products_services', 'cc_applications', 'cc_inspections', 'cc_scheduling'],
+    // Level 4: Manager / Internal Admin — + HR, Personnel, Vault
+    4: ['hr_intelligence', 'personnel', 'document_vault', 'post_payment', 'patients', 'business'],
+    // Level 5: Executive / Founder — + IT & everything else
+    5: ['it_support'],
+  };
+
+  const LEVEL_LABELS: Record<number, { title: string; subtitle: string; color: string; icon: 'headphones' | 'users' }> = {
+    1: { title: 'Call Center', subtitle: 'Intake Agent', color: 'cyan', icon: 'headphones' },
+    2: { title: 'Ops Center', subtitle: 'Senior Agent', color: 'indigo', icon: 'headphones' },
+    3: { title: 'Supervisor Hub', subtitle: 'Team Lead', color: 'blue', icon: 'headphones' },
+    4: { title: 'Management Hub', subtitle: 'Team & Personnel Management', color: 'purple', icon: 'users' },
+    5: { title: 'Master Operations', subtitle: 'Full Access', color: 'emerald', icon: 'users' },
+  };
+
+  // Determine staff level from role
   const userRole = (user?.role || '').toLowerCase();
-  const isManagement = userRole.includes('admin_internal') || userRole.includes('manager') || userRole.includes('team_lead') || userRole.includes('executive');
+  const getStaffLevel = (): number => {
+    if (userRole.includes('founder') || userRole.includes('executive_founder') || userRole.includes('president')) return 5;
+    if (userRole.includes('admin_internal') || userRole.includes('manager') || userRole === 'admin') return 4;
+    if (userRole.includes('team_lead') || userRole.includes('supervisor')) return 3;
+    if (userRole.includes('operations') || userRole.includes('senior')) return 2;
+    if (userRole.includes('rep') || userRole.includes('intake') || userRole.includes('agent')) return 1;
+    // Default: if accessed from founder simulation, show everything
+    if (userRole.includes('executive') || !userRole) return 5;
+    return 2; // Default to Level 2 for unknown ops roles
+  };
+
+  const staffLevel = getStaffLevel();
+  const isManagement = staffLevel >= 4;
+
+  // Build allowed tabs: cumulative from Level 1 up to user's level
+  const levelAllowedTabs = (() => {
+    const tabs: string[] = [];
+    for (let i = 1; i <= staffLevel; i++) {
+      tabs.push(...(LEVEL_TABS[i] || []));
+    }
+    return tabs;
+  })();
+
+  // Staff access control: explicit allowedTabs from profile override hierarchy
+  const hasExplicitRestrictions = Array.isArray(user?.allowedTabs) && user.allowedTabs.length > 0;
+  const effectiveAllowedTabs = hasExplicitRestrictions ? user.allowedTabs : (staffLevel < 5 ? levelAllowedTabs : null);
   
-  // Staff access control: if user has allowedTabs, restrict navigation
-  const hasTabRestrictions = Array.isArray(user?.allowedTabs) && user.allowedTabs.length > 0 && !user?.role?.includes('founder') && !user?.role?.includes('executive');
-  const staffAllowedTabs = hasTabRestrictions ? user.allowedTabs : null;
-  
-  const [activeTab, setActiveTab] = useState(() => {
-    if (staffAllowedTabs) return staffAllowedTabs[0];
-    // Management view defaults to HR/personnel, Ops staff defaults to Call Center
+  // For nav filtering
+  const staffAllowedTabs = effectiveAllowedTabs;
+  const hasTabRestrictions = !!effectiveAllowedTabs;
+
+  const levelLabel = LEVEL_LABELS[staffLevel] || LEVEL_LABELS[2];
+
+  const defaultTab = (() => {
+    if (effectiveAllowedTabs && effectiveAllowedTabs.length > 0) {
+      // Management defaults to hr_intelligence if available, otherwise first tab
+      if (isManagement && effectiveAllowedTabs.includes('hr_intelligence')) return 'hr_intelligence';
+      return effectiveAllowedTabs[0];
+    }
     return isManagement ? 'hr_intelligence' : 'call_center';
-  });
+  })();
+
+  const [activeTab, setActiveTab] = useState(defaultTab);
   const [liveApplications, setLiveApplications] = useState<any[]>([]);
   const [selectedPatientCase, setSelectedPatientCase] = useState<any | null>(null);
   const [appsFilter, setAppsFilter] = useState('Pending');
@@ -1792,12 +1847,17 @@ Notes: ${c.notes || 'No notes'}`;
       <div className="bg-slate-900 border-b border-slate-700 shrink-0">
         <div className="flex items-center gap-4 px-6 py-3">
           <div className="flex items-center gap-2 shrink-0">
-            <div className={`w-8 h-8 ${isManagement ? 'bg-purple-900 border-purple-700' : 'bg-indigo-900 border-indigo-700'} border flex items-center justify-center text-white rounded-lg shadow-lg`}>
-               {isManagement ? <Users size={18} /> : <Headphones size={18} />}
+            <div className={`w-8 h-8 ${levelLabel.color === 'purple' ? 'bg-purple-900 border-purple-700' : levelLabel.color === 'emerald' ? 'bg-emerald-900 border-emerald-700' : levelLabel.color === 'blue' ? 'bg-blue-900 border-blue-700' : levelLabel.color === 'cyan' ? 'bg-cyan-900 border-cyan-700' : 'bg-indigo-900 border-indigo-700'} border flex items-center justify-center text-white rounded-lg shadow-lg`}>
+               {levelLabel.icon === 'users' ? <Users size={18} /> : <Headphones size={18} />}
             </div>
             <div>
-              <h2 className="font-bold text-xs text-white leading-tight uppercase tracking-tight">{isManagement ? 'Management Hub' : 'Ops Center'}</h2>
-              <p className={`text-[9px] ${isManagement ? 'text-purple-400' : 'text-indigo-400'} font-bold uppercase tracking-wider`}>{isManagement ? 'Team & Personnel Management' : 'Internal Operations'}</p>
+              <h2 className="font-bold text-xs text-white leading-tight uppercase tracking-tight flex items-center gap-2">
+                {levelLabel.title}
+                <span className={`text-[8px] px-1.5 py-0.5 rounded-full font-black ${staffLevel >= 4 ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' : staffLevel >= 3 ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' : 'bg-slate-700 text-slate-400 border border-slate-600'}`}>
+                  LVL {staffLevel}
+                </span>
+              </h2>
+              <p className={`text-[9px] ${levelLabel.color === 'purple' ? 'text-purple-400' : levelLabel.color === 'emerald' ? 'text-emerald-400' : levelLabel.color === 'blue' ? 'text-blue-400' : levelLabel.color === 'cyan' ? 'text-cyan-400' : 'text-indigo-400'} font-bold uppercase tracking-wider`}>{levelLabel.subtitle}</p>
             </div>
           </div>
           <div className="w-px h-8 bg-slate-700 shrink-0" />
