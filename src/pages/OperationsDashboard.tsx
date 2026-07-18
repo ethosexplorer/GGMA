@@ -53,13 +53,18 @@ const NAV_ITEMS = [
 ];
 
 export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void | Promise<void>, user?: any }) => {
+  // Detect if user entered as management vs operations staff
+  const userRole = (user?.role || '').toLowerCase();
+  const isManagement = userRole.includes('admin_internal') || userRole.includes('manager') || userRole.includes('team_lead') || userRole.includes('executive');
+  
   // Staff access control: if user has allowedTabs, restrict navigation
   const hasTabRestrictions = Array.isArray(user?.allowedTabs) && user.allowedTabs.length > 0 && !user?.role?.includes('founder') && !user?.role?.includes('executive');
   const staffAllowedTabs = hasTabRestrictions ? user.allowedTabs : null;
   
   const [activeTab, setActiveTab] = useState(() => {
     if (staffAllowedTabs) return staffAllowedTabs[0];
-    return 'call_center';
+    // Management view defaults to HR/personnel, Ops staff defaults to Call Center
+    return isManagement ? 'hr_intelligence' : 'call_center';
   });
   const [liveApplications, setLiveApplications] = useState<any[]>([]);
   const [selectedPatientCase, setSelectedPatientCase] = useState<any | null>(null);
@@ -1787,12 +1792,12 @@ Notes: ${c.notes || 'No notes'}`;
       <div className="bg-slate-900 border-b border-slate-700 shrink-0">
         <div className="flex items-center gap-4 px-6 py-3">
           <div className="flex items-center gap-2 shrink-0">
-            <div className="w-8 h-8 bg-indigo-900 border border-indigo-700 flex items-center justify-center text-white rounded-lg shadow-lg">
-               <Headphones size={18} />
+            <div className={`w-8 h-8 ${isManagement ? 'bg-purple-900 border-purple-700' : 'bg-indigo-900 border-indigo-700'} border flex items-center justify-center text-white rounded-lg shadow-lg`}>
+               {isManagement ? <Users size={18} /> : <Headphones size={18} />}
             </div>
             <div>
-              <h2 className="font-bold text-xs text-white leading-tight uppercase tracking-tight">Ops Center</h2>
-              <p className="text-[9px] text-indigo-400 font-bold uppercase tracking-wider">Internal Operations</p>
+              <h2 className="font-bold text-xs text-white leading-tight uppercase tracking-tight">{isManagement ? 'Management Hub' : 'Ops Center'}</h2>
+              <p className={`text-[9px] ${isManagement ? 'text-purple-400' : 'text-indigo-400'} font-bold uppercase tracking-wider`}>{isManagement ? 'Team & Personnel Management' : 'Internal Operations'}</p>
             </div>
           </div>
           <div className="w-px h-8 bg-slate-700 shrink-0" />
