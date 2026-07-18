@@ -37,6 +37,21 @@ export const GlobalHeader = ({
   // Only Founder gets God Mode — case-insensitive match
   const isGodModeEligible = userProfile.email?.toLowerCase() === 'globalgreenhp@gmail.com';
 
+  // Parse allowed jurisdictions for this user
+  const allowedJurisdictions = React.useMemo(() => {
+    if (isGodModeEligible) return STATES;
+    const userJuris = userProfile.jurisdictions || userProfile.accessibleStates || userProfile.jurisdiction || userProfile.homeState || 'Oklahoma';
+    if (Array.isArray(userJuris)) {
+      return userJuris.map((s: string) => s.trim());
+    }
+    if (typeof userJuris === 'string') {
+      return userJuris.split(',').map((s: string) => s.trim()).filter(Boolean);
+    }
+    return ['Oklahoma'];
+  }, [userProfile, isGodModeEligible]);
+
+  const canSwitchJurisdictions = isGodModeEligible || allowedJurisdictions.length > 1;
+
   return (
     <div className="fixed top-0 left-0 right-0 z-[300] bg-slate-900 border-b border-slate-700/50 shadow-lg px-6 py-2 flex justify-between items-center animate-in slide-in-from-top duration-300">
 
@@ -57,11 +72,12 @@ export const GlobalHeader = ({
             <select
               value={jurisdiction}
               onChange={(e) => setJurisdiction(e.target.value)}
-              className="appearance-none bg-transparent text-white font-black text-sm px-1 py-1 pr-6 outline-none cursor-pointer hover:text-emerald-300 transition-colors uppercase"
+              disabled={!canSwitchJurisdictions}
+              className={`appearance-none bg-transparent text-white font-black text-sm px-1 py-1 ${canSwitchJurisdictions ? 'pr-6 cursor-pointer hover:text-emerald-300' : 'pr-1 cursor-default'} outline-none transition-colors uppercase`}
             >
-              {STATES.map(s => <option key={s} value={s} className="bg-slate-800 text-white normal-case">{s}</option>)}
+              {allowedJurisdictions.map((s: string) => <option key={s} value={s} className="bg-slate-800 text-white normal-case">{s}</option>)}
             </select>
-            <div className="absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none text-emerald-500 font-bold text-xs">▼</div>
+            {canSwitchJurisdictions && <div className="absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none text-emerald-500 font-bold text-xs">▼</div>}
           </div>
         </div>
       </div>

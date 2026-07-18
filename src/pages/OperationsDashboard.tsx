@@ -52,7 +52,7 @@ const NAV_ITEMS = [
   { id: 'cc_scheduling', label: 'CC Scheduling', icon: Calendar },
 ];
 
-export const OperationsDashboard = ({ onLogout, user, isFounder }: { onLogout?: () => void | Promise<void>, user?: any, isFounder?: boolean }) => {
+export const OperationsDashboard = ({ onLogout, user, isFounder, jurisdiction }: { onLogout?: () => void | Promise<void>, user?: any, isFounder?: boolean, jurisdiction?: string }) => {
   // ═══ ROLE HIERARCHY — 5 Levels ═══
   // Each level inherits all tabs from lower levels
   const LEVEL_TABS: Record<number, string[]> = {
@@ -163,6 +163,8 @@ export const OperationsDashboard = ({ onLogout, user, isFounder }: { onLogout?: 
                    (user?.displayName || user?.name || '').toLowerCase().includes('founder') ||
                    (user?.displayName || user?.name || '').toLowerCase().includes('shantell');
 
+  const activeJurisdiction = isMaster ? (jurisdiction || 'Oklahoma') : (user?.jurisdiction || user?.homeState || 'Oklahoma');
+
   const updateApplicationStatus = async (
     patientUid: string,
     patientName: string,
@@ -220,7 +222,7 @@ export const OperationsDashboard = ({ onLogout, user, isFounder }: { onLogout?: 
     }
   };
 
-  const pendingAppsCount = liveApplications.filter(p => isPend(p.applicationStatus)).length;
+  const pendingAppsCount = liveApplications.filter(p => isPend(p.applicationStatus) && (p.state || p.jurisdiction || 'Oklahoma').toLowerCase() === activeJurisdiction.toLowerCase()).length;
 
   useEffect(() => {
     let firebaseUsers: any[] = [];
@@ -515,9 +517,9 @@ export const OperationsDashboard = ({ onLogout, user, isFounder }: { onLogout?: 
       );
     }
     
-    const pendingApps = liveApplications.filter(p => isPend(p.applicationStatus));
-    const approvedApps = liveApplications.filter(p => isAppr(p.applicationStatus));
-    const flaggedApps = liveApplications.filter(p => isFlag(p.applicationStatus));
+    const pendingApps = liveApplications.filter(p => isPend(p.applicationStatus) && (p.state || p.jurisdiction || 'Oklahoma').toLowerCase() === activeJurisdiction.toLowerCase());
+    const approvedApps = liveApplications.filter(p => isAppr(p.applicationStatus) && (p.state || p.jurisdiction || 'Oklahoma').toLowerCase() === activeJurisdiction.toLowerCase());
+    const flaggedApps = liveApplications.filter(p => isFlag(p.applicationStatus) && (p.state || p.jurisdiction || 'Oklahoma').toLowerCase() === activeJurisdiction.toLowerCase());
     
     const displayApps = appsFilter === 'Pending' ? pendingApps : appsFilter === 'Approved' ? approvedApps : flaggedApps;
 

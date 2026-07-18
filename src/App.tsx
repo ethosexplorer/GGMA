@@ -331,8 +331,24 @@ export default function App() {
     if (roleOverride) sessionStorage.setItem('gghp_role_override', roleOverride);
     else sessionStorage.removeItem('gghp_role_override');
   }, [roleOverride]);
-
-
+  // Sync selected jurisdiction with staff member's profile jurisdictions (non-founders only)
+  useEffect(() => {
+    if (userProfile && userProfile.email?.toLowerCase() !== 'globalgreenhp@gmail.com') {
+      const userJuris = userProfile.jurisdictions || userProfile.accessibleStates || userProfile.jurisdiction || userProfile.homeState || 'Oklahoma';
+      let allowed: string[] = [];
+      if (Array.isArray(userJuris)) {
+        allowed = userJuris.map((s: string) => s.trim());
+      } else if (typeof userJuris === 'string') {
+        allowed = userJuris.split(',').map((s: string) => s.trim()).filter(Boolean);
+      }
+      
+      const firstAllowed = allowed[0] || 'Oklahoma';
+      // If the current selected state is not in their allowed list, reset to the first allowed one
+      if (allowed.length > 0 && !allowed.includes(jurisdiction)) {
+        setJurisdiction(firstAllowed);
+      }
+    }
+  }, [userProfile, jurisdiction]);
 
   useEffect(() => {
     if (hasBypassedSelector) sessionStorage.setItem('gghp_has_bypassed_selector', 'true');
@@ -649,7 +665,7 @@ export default function App() {
     ) {
       const effectiveUser = impersonatedProfile ? impersonatedProfile : { ...profile, role };
       const isFounderSim = profile?.email?.toLowerCase() === 'globalgreenhp@gmail.com';
-      return <OperationsDashboard onLogout={handleReturnToSelector} user={effectiveUser} isFounder={isFounderSim} />;
+      return <OperationsDashboard onLogout={handleReturnToSelector} user={effectiveUser} isFounder={isFounderSim} jurisdiction={jurisdiction} />;
     }
 
     // Oversight Portal Routing (External Admin, Regulators)
