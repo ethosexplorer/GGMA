@@ -1095,7 +1095,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       case 'operations':
         return <div className="h-full w-full -m-10" data-action-bound><OperationsDashboard user={user} onLogout={onLogout} /></div>;
       case 'internal_admin':
-        return <div className="h-full w-full -m-10" data-action-bound><AdminDashboard user={user} onLogout={() => setActiveTab(isExecutive ? 'ai_training' : 'overview')} /></div>;
+        return <div className="h-full w-full -m-10" data-action-bound><OperationsDashboard user={user} onLogout={() => setActiveTab(isExecutive ? 'ai_training' : 'overview')} /></div>;
       case 'external_admin':
         return <div className="h-full w-full -m-10" data-action-bound><ExternalAdminDashboard user={user} onLogout={onLogout} /></div>;
       case 'virtual_attendant':

@@ -681,11 +681,15 @@ export default function App() {
       return <StateAuthorityDashboard onLogout={handleReturnToSelector} user={profile} />;
     }
 
-    // Oversight Portal Routing (Regulators, Admin, Operations)
-    if (role === 'admin_internal' || role === 'admin_external' || role === 'admin' || role?.startsWith('regulator') || role?.startsWith('backoffice') || role === 'operations' || role?.startsWith('staff')) {
-      // When founder impersonates operations staff, use the impersonated profile
-      const effectiveUser = (role === 'operations' && impersonatedProfile) ? impersonatedProfile : profile;
-      return <OversightDashboard onLogout={handleReturnToSelector} user={effectiveUser} role={role} jurisdiction={jurisdiction} />;
+    // Operations Admin → Direct to OperationsDashboard (not wrapped in Oversight)
+    if (role === 'operations' || role === 'operations_staff') {
+      const effectiveUser = impersonatedProfile ? impersonatedProfile : profile;
+      return <OperationsDashboard onLogout={handleReturnToSelector} user={effectiveUser} />;
+    }
+
+    // Oversight Portal Routing (Regulators, Admin)
+    if (role === 'admin_internal' || role === 'admin_external' || role === 'admin' || role?.startsWith('regulator') || role?.startsWith('backoffice') || role?.startsWith('staff')) {
+      return <OversightDashboard onLogout={handleReturnToSelector} user={profile} role={role} jurisdiction={jurisdiction} />;
     }
 
     // Business Portal Routing
