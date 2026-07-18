@@ -2094,6 +2094,5 @@ Phone: 1-888-963-4447 | Email: asstsupport@gmail.com
           </div>
         </div>
       </div>
-    </div>
   );
 };

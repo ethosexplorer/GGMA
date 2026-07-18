@@ -38,12 +38,6 @@ export const OversightDashboard = ({ onLogout, user, role, jurisdiction = 'Oklah
   // Check if user has explicit dashboard access control from onboarding
   const hasAccessControl = Array.isArray(user?.accessibleDashboards) && user.accessibleDashboards.length > 0;
 
-  // STAFF SHORTCUT: If restricted staff only has access to 'operations', skip the Oversight
-  // wrapper entirely and render the OperationsDashboard directly with their tab restrictions.
-  if (hasAccessControl && !isExecutive && user.accessibleDashboards.length === 1 && user.accessibleDashboards[0] === 'operations') {
-    return <OperationsDashboard user={user} onLogout={onLogout} />;
-  }
-
   const isFederalOrFounder = role === 'executive_founder' || role === 'regulator_federal';
   const roleStr = String(role).toLowerCase();
   const isFounderOrInternal = role === 'executive_founder' || roleStr.includes('admin') || roleStr.includes('operations') || roleStr.includes('staff') || roleStr.includes('support') || roleStr.includes('it');
@@ -69,6 +63,13 @@ export const OversightDashboard = ({ onLogout, user, role, jurisdiction = 'Oklah
     ? user.accessibleDashboards[0]
     : (isExecutive || isSubscribed ? 'overview' : 'subscription');
   const [activeTab, setActiveTab] = useState(defaultTab);
+
+  // STAFF SHORTCUT: If restricted staff only has access to 'operations', skip the Oversight
+  // wrapper entirely and render the OperationsDashboard directly with their tab restrictions.
+  // NOTE: All hooks MUST be declared above this early return to satisfy Rules of Hooks.
+  if (hasAccessControl && !isExecutive && user.accessibleDashboards.length === 1 && user.accessibleDashboards[0] === 'operations') {
+    return <OperationsDashboard user={user} onLogout={onLogout} />;
+  }
 
   const renderOverview = () => (
     <div className="space-y-6 p-8">
