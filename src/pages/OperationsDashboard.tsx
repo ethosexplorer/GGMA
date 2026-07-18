@@ -372,31 +372,8 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
     return () => { unsubUsers(); unsubContacts(); unsubAllContacts(); };
   }, []);
 
-  // Draggable nav state with localStorage persistence
-  const [opsNavItems, setOpsNavItems] = useState(() => {
-    try {
-      const saved = localStorage.getItem('gghp_ops_nav_order');
-      if (saved) {
-        const savedIds = JSON.parse(saved) as string[];
-        const idToItem = new Map(NAV_ITEMS.map((item, i) => [item.id || `ops-section-${i}`, item]));
-        const ordered = savedIds.map(id => idToItem.get(id)).filter(Boolean) as typeof NAV_ITEMS;
-        NAV_ITEMS.forEach((item, i) => { const key = item.id || `ops-section-${i}`; if (!savedIds.includes(key)) ordered.push(item); });
-        return ordered;
-      }
-    } catch {}
-    return [...NAV_ITEMS];
-  });
-  const [opsDragIdx, setOpsDragIdx] = useState<number | null>(null);
-  const [opsEditIdx, setOpsEditIdx] = useState<number | null>(null);
-
-  const opsHandleDragStart = (e: any, idx: number) => { setOpsDragIdx(idx); e.dataTransfer.effectAllowed = 'move'; };
-  const opsHandleDragOver = (e: any, idx: number) => {
-    e.preventDefault();
-    if (opsDragIdx === null || opsDragIdx === idx) return;
-    const items = [...opsNavItems]; const item = items[opsDragIdx]; items.splice(opsDragIdx, 1); items.splice(idx, 0, item);
-    setOpsDragIdx(idx); setOpsNavItems(items);
-    localStorage.setItem('gghp_ops_nav_order', JSON.stringify(items.map((it, i) => it.id || `ops-section-${i}`)));
-  };
+  // Nav items — always use canonical order from NAV_ITEMS (no localStorage persistence)
+  const opsNavItems = NAV_ITEMS;
 
   const [agentStatus, setAgentStatus] = useState('Available');
 
@@ -1892,25 +1869,37 @@ Notes: ${c.notes || 'No notes'}`;
           <div className="w-px h-8 bg-slate-700 shrink-0" />
           <div className="flex-1 overflow-x-auto scrollbar-hide">
             <div className="flex items-center gap-1 min-w-max">
-              {opsNavItems
-                .filter(item => {
-                  // Staff tab restrictions: only show allowed tabs
-                  if (staffAllowedTabs && item.id) {
-                    return staffAllowedTabs.includes(item.id);
+              {(() => {
+                // Pre-compute visible tab IDs
+                const visibleIds = new Set(
+                  NAV_ITEMS
+                    .filter(item => {
+                      if (!item.id) return false; // Skip section headers
+                      if (staffAllowedTabs) return staffAllowedTabs.includes(item.id);
+                      if (item.id === 'patients' || item.id === 'business') return isMaster;
+                      return true;
+                    })
+                    .map(item => item.id!)
+                );
+
+                // Build filtered nav: include sections only if they have visible children
+                const filtered: typeof NAV_ITEMS = [];
+                for (let i = 0; i < NAV_ITEMS.length; i++) {
+                  const item = NAV_ITEMS[i];
+                  if ('section' in item) {
+                    // Look ahead: does this section have any visible children before next section?
+                    let hasVisibleChild = false;
+                    for (let j = i + 1; j < NAV_ITEMS.length; j++) {
+                      if ('section' in NAV_ITEMS[j]) break; // Hit next section
+                      if (NAV_ITEMS[j].id && visibleIds.has(NAV_ITEMS[j].id!)) { hasVisibleChild = true; break; }
+                    }
+                    if (hasVisibleChild) filtered.push(item);
+                  } else if (item.id && visibleIds.has(item.id)) {
+                    filtered.push(item);
                   }
-                  if (item.id === 'patients' || item.id === 'business') {
-                    return isMaster;
-                  }
-                  return true;
-                })
-                // Filter out section headers that have no visible children
-                .filter((item, idx, arr) => {
-                  if (!('section' in item)) return true;
-                  // Check if next item(s) before next section are visible
-                  const nextIdx = idx + 1;
-                  if (nextIdx >= arr.length) return false;
-                  return !('section' in arr[nextIdx]);
-                })
+                }
+                return filtered;
+              })()
                 .map((item, i) => {
                 if ('section' in item && item.section) {
                   return (
