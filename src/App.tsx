@@ -54,7 +54,7 @@ const OversightDashboard = React.lazy(() => import('./pages/OversightDashboard')
 const PresidentDashboard = React.lazy(() => import('./pages/PresidentDashboard').then(m => ({ default: m.PresidentDashboard })));
 const ChiefComplianceDirectorDashboard = React.lazy(() => import('./pages/ChiefComplianceDirectorDashboard').then(m => ({ default: m.ChiefComplianceDirectorDashboard })));
 const AdvisorDashboard = React.lazy(() => import('./pages/AdvisorDashboard').then(m => ({ default: m.AdvisorDashboard })));
-// PoliticalExecutiveDashboard consolidated into FounderDashboard
+const LegislatorsDashboard = React.lazy(() => import('./pages/LegislatorsDashboard').then(m => ({ default: m.LegislatorsDashboard })));
 const AdvocacyResearchDashboard = React.lazy(() => import('./pages/AdvocacyResearchDashboard').then(m => ({ default: m.AdvocacyResearchDashboard })));
 
 // --- Lazy-loaded Pages ---
@@ -668,9 +668,9 @@ export default function App() {
       return <EnforcementDashboard onLogout={handleReturnToSelector} user={profile} />;
     }
 
-    // Political Executive → Founder Dashboard (consolidated)
+    // Political Executive → Legislators & Governors Dashboard
     if (role === 'political_executive') {
-      return <FounderDashboard onLogout={handleReturnToSelector} user={profile} jurisdiction={jurisdiction} />;
+      return <LegislatorsDashboard onLogout={handleReturnToSelector} user={profile} />;
     }
     if (role === 'advocacy_research') {
       return <AdvocacyResearchDashboard onLogout={handleReturnToSelector} user={profile} />;
