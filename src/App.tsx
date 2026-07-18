@@ -676,8 +676,13 @@ export default function App() {
       return <AdvocacyResearchDashboard onLogout={handleReturnToSelector} user={profile} />;
     }
 
+    // State Regulatory Authority → Dedicated State Authority Dashboard
+    if (role === 'regulator_state') {
+      return <StateAuthorityDashboard onLogout={handleReturnToSelector} user={profile} />;
+    }
+
     // Oversight Portal Routing (Regulators, Admin, Operations)
-    if (role === 'admin_internal' || role === 'admin_external' || role === 'admin' || role === 'regulator_state' || role?.startsWith('regulator') || role?.startsWith('backoffice') || role === 'operations' || role?.startsWith('staff')) {
+    if (role === 'admin_internal' || role === 'admin_external' || role === 'admin' || role?.startsWith('regulator') || role?.startsWith('backoffice') || role === 'operations' || role?.startsWith('staff')) {
       // When founder impersonates operations staff, use the impersonated profile
       const effectiveUser = (role === 'operations' && impersonatedProfile) ? impersonatedProfile : profile;
       return <OversightDashboard onLogout={handleReturnToSelector} user={effectiveUser} role={role} jurisdiction={jurisdiction} />;
