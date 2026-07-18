@@ -798,7 +798,7 @@ export const OverviewTab = ({
               <div className="space-y-4">
                 {(() => {
                   const sources = liveAnalytics.trafficSources || {};
-                  const total = Object.values(sources).reduce((a: number, b: any) => a + (Number(b) || 0), 0) || 1;
+                  const total = Number(Object.values(sources).reduce((a: number, b: any) => a + (Number(b) || 0), 0)) || 1;
                   
                   const directCount = Number(sources['Direct / Bookmarks'] || 0);
                   const googleCount = Number(sources['Google Organic Search'] || 0);

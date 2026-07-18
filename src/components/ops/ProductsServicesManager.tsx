@@ -292,7 +292,7 @@ const buildProductsFromPlans = (): Product[] => {
   // Add-ons
   const addAddons = (addons: AddOn[], groupTitle: string) => {
     addons.forEach(addon => {
-      const details = ADDON_DETAILS[addon.id] || {};
+      const details = ADDON_DETAILS[addon.id] || { desc: '', features: [] };
       products.push({
         id: addon.id,
         category: 'Add-Ons & Modules',

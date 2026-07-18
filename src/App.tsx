@@ -50,7 +50,7 @@ const ProviderRegistrationPage = React.lazy(() => import('./pages/ProviderRegist
 const EducationPortal = React.lazy(() => import('./pages/EducationPortal').then(m => ({ default: m.EducationPortal })));
 const ProSeLegalIntake = React.lazy(() => import('./pages/ProSeLegalIntake').then(m => ({ default: m.ProSeLegalIntake })));
 const PatientDashboard = React.lazy(() => import('./pages/PatientDashboard').then(m => ({ default: m.PatientDashboard })));
-const OversightDashboard = React.lazy(() => import('./pages/OversightDashboard').then(m => ({ default: m.OversightDashboard })));
+import { OversightDashboard } from './pages/OversightDashboard';
 const PresidentDashboard = React.lazy(() => import('./pages/PresidentDashboard').then(m => ({ default: m.PresidentDashboard })));
 const ChiefComplianceDirectorDashboard = React.lazy(() => import('./pages/ChiefComplianceDirectorDashboard').then(m => ({ default: m.ChiefComplianceDirectorDashboard })));
 const AdvisorDashboard = React.lazy(() => import('./pages/AdvisorDashboard').then(m => ({ default: m.AdvisorDashboard })));
@@ -653,23 +653,29 @@ export default function App() {
       return <StateAuthorityDashboard onLogout={handleReturnToSelector} user={profile} />;
     }
 
-    // Unified Operations & Staff Dashboard Routing (Hierarchy Levels 1-4)
+    // Unified Operations & Staff Dashboard Routing (Hierarchy Levels 1-3)
     if (
       role === 'operations' || 
       role === 'operations_staff' || 
-      role === 'admin_internal' ||
       role === 'rep' || 
       role === 'sales_rep' || 
-      role === 'team_lead' || 
-      role === 'manager'
+      role === 'team_lead'
     ) {
       const effectiveUser = impersonatedProfile ? impersonatedProfile : { ...profile, role };
       const isFounderSim = profile?.email?.toLowerCase() === 'globalgreenhp@gmail.com';
       return <OperationsDashboard onLogout={handleReturnToSelector} user={effectiveUser} isFounder={isFounderSim} jurisdiction={jurisdiction} />;
     }
 
-    // Oversight Portal Routing (External Admin, Regulators)
-    if (role === 'admin_external' || role === 'admin' || role?.startsWith('regulator') || role?.startsWith('backoffice') || role?.startsWith('staff')) {
+    // Oversight & Management Portal Routing (Hierarchy Level 4)
+    if (
+      role === 'admin_internal' || 
+      role === 'manager' ||
+      role === 'admin_external' || 
+      role === 'admin' || 
+      role?.startsWith('regulator') || 
+      role?.startsWith('backoffice') || 
+      role?.startsWith('staff')
+    ) {
       return <OversightDashboard onLogout={handleReturnToSelector} user={profile} role={role} jurisdiction={jurisdiction} />;
     }
 

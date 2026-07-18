@@ -18,6 +18,7 @@ import { AdminDashboard } from './AdminDashboard';
 import { StateAuthorityDashboard } from './StateAuthorityDashboard';
 import { ExternalAdminDashboard } from './ExternalAdminDashboard';
 import { BackOfficeDashboard } from './BackOfficeDashboard';
+import { OversightDashboard } from './OversightDashboard';
 import { SubscriptionPortal } from '../components/SubscriptionPortal';
 import { InvestorSandboxTab } from '../components/founder/InvestorSandboxTab';
 import { JudicialMonitorTab } from '../components/federal/JudicialMonitorTab';
@@ -1095,7 +1096,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       case 'operations':
         return <div className="h-full w-full -m-10" data-action-bound><OperationsDashboard user={user} onLogout={onLogout} isFounder={user?.email?.toLowerCase() === 'globalgreenhp@gmail.com'} /></div>;
       case 'internal_admin':
-        return <div className="h-full w-full -m-10" data-action-bound><OperationsDashboard user={user} onLogout={() => setActiveTab(isExecutive ? 'ai_training' : 'overview')} isFounder={user?.email?.toLowerCase() === 'globalgreenhp@gmail.com'} /></div>;
+        return <div className="h-full w-full -m-10" data-action-bound><OversightDashboard user={user} onLogout={() => setActiveTab(isExecutive ? 'ai_training' : 'overview')} role="admin_internal" jurisdiction={jurisdiction} /></div>;
       case 'external_admin':
         return <div className="h-full w-full -m-10" data-action-bound><ExternalAdminDashboard user={user} onLogout={onLogout} /></div>;
       case 'virtual_attendant':

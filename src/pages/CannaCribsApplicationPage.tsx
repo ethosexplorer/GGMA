@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
-  ArrowLeft, ArrowRight, ChevronRight, Shield, CheckCircle, Leaf, Home,
+  ArrowLeft, ArrowRight, ChevronRight, Shield, CheckCircle, Leaf, Home, Award,
   Upload, User, Briefcase, CreditCard, FileText, Eye, Lock, MapPin,
   AlertCircle, Info, Loader2, Building2, Star, DollarSign, Phone, Mail,
   Calendar, Hash, Heart

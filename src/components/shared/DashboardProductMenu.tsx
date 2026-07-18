@@ -48,7 +48,7 @@ const MiniPlanTable = ({ tiers }: { tiers: PlanDetail[] }) => (
 );
 
 /* ── Product Card ── */
-const ProductCard = ({ product }: { product: { title: string; icon: string; price: string; period?: string; desc: string; features?: string[]; tag?: string; tagColor?: string } }) => (
+const ProductCard = ({ product }: { key?: any; product: { title: string; icon: string; price: string; period?: string; desc: string; features?: string[]; tag?: string; tagColor?: string } }) => (
   <div className="bg-white rounded-2xl border border-slate-200 hover:border-emerald-300 p-5 shadow-sm hover:shadow-lg transition-all group flex flex-col relative">
     {product.tag && (
       <div className={`absolute -top-2.5 right-3 px-2.5 py-0.5 bg-${product.tagColor || 'emerald'}-600 text-white text-[8px] font-black uppercase tracking-widest rounded-full shadow-md`}>
@@ -73,7 +73,7 @@ const ProductCard = ({ product }: { product: { title: string; icon: string; pric
 );
 
 /* ── Service Card ── */
-const ServiceCard = ({ svc }: { svc: { title: string; icon: string; price: string; type: string; desc: string } }) => (
+const ServiceCard = ({ svc }: { key?: any; svc: { title: string; icon: string; price: string; type: string; desc: string } }) => (
   <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:shadow-md transition-all">
     <div className="flex items-center justify-between mb-3">
       <span className="text-xl">{svc.icon}</span>
