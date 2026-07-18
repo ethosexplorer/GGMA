@@ -76,30 +76,36 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
     5: { title: 'Master Operations', subtitle: 'Full Access', color: 'emerald', icon: 'users' },
   };
 
-  // Determine staff level from role
+  // Determine natural staff level from role
   const userRole = (user?.role || '').toLowerCase();
-  const getStaffLevel = (): number => {
+  const getNaturalLevel = (): number => {
     if (userRole.includes('founder') || userRole.includes('executive_founder') || userRole.includes('president')) return 5;
     if (userRole.includes('admin_internal') || userRole.includes('manager') || userRole === 'admin') return 4;
     if (userRole.includes('team_lead') || userRole.includes('supervisor')) return 3;
     if (userRole.includes('operations') || userRole.includes('senior')) return 2;
     if (userRole.includes('rep') || userRole.includes('intake') || userRole.includes('agent')) return 1;
-    // Default: if accessed from founder simulation, show everything
     if (userRole.includes('executive') || !userRole) return 5;
-    return 2; // Default to Level 2 for unknown ops roles
+    return 2;
   };
 
-  const staffLevel = getStaffLevel();
+  const naturalLevel = getNaturalLevel();
+  const canSwitchLevels = naturalLevel >= 5; // Only founders/executives can preview other levels
+
+  // Level override state — allows founder to preview any level
+  const [levelOverride, setLevelOverride] = useState<number | null>(null);
+  const staffLevel = levelOverride ?? naturalLevel;
   const isManagement = staffLevel >= 4;
 
-  // Build allowed tabs: cumulative from Level 1 up to user's level
-  const levelAllowedTabs = (() => {
+  // Build allowed tabs: cumulative from Level 1 up to active level
+  const getTabsForLevel = (level: number): string[] => {
     const tabs: string[] = [];
-    for (let i = 1; i <= staffLevel; i++) {
+    for (let i = 1; i <= level; i++) {
       tabs.push(...(LEVEL_TABS[i] || []));
     }
     return tabs;
-  })();
+  };
+
+  const levelAllowedTabs = getTabsForLevel(staffLevel);
 
   // Staff access control: explicit allowedTabs from profile override hierarchy
   const hasExplicitRestrictions = Array.isArray(user?.allowedTabs) && user.allowedTabs.length > 0;
@@ -111,16 +117,21 @@ export const OperationsDashboard = ({ onLogout, user }: { onLogout?: () => void 
 
   const levelLabel = LEVEL_LABELS[staffLevel] || LEVEL_LABELS[2];
 
-  const defaultTab = (() => {
-    if (effectiveAllowedTabs && effectiveAllowedTabs.length > 0) {
-      // Management defaults to hr_intelligence if available, otherwise first tab
-      if (isManagement && effectiveAllowedTabs.includes('hr_intelligence')) return 'hr_intelligence';
-      return effectiveAllowedTabs[0];
-    }
-    return isManagement ? 'hr_intelligence' : 'call_center';
-  })();
+  // When level changes, reset active tab to the default for that level
+  const getDefaultTabForLevel = (level: number): string => {
+    const tabs = getTabsForLevel(level);
+    if (level >= 4 && tabs.includes('hr_intelligence')) return 'hr_intelligence';
+    return tabs[0] || 'call_center';
+  };
 
-  const [activeTab, setActiveTab] = useState(defaultTab);
+  const [activeTab, setActiveTab] = useState(() => getDefaultTabForLevel(staffLevel));
+
+  // Reset active tab when level changes (if current tab isn't allowed)
+  useEffect(() => {
+    if (effectiveAllowedTabs && !effectiveAllowedTabs.includes(activeTab)) {
+      setActiveTab(getDefaultTabForLevel(staffLevel));
+    }
+  }, [staffLevel]);
   const [liveApplications, setLiveApplications] = useState<any[]>([]);
   const [selectedPatientCase, setSelectedPatientCase] = useState<any | null>(null);
   const [appsFilter, setAppsFilter] = useState('Pending');
@@ -1860,6 +1871,24 @@ Notes: ${c.notes || 'No notes'}`;
               <p className={`text-[9px] ${levelLabel.color === 'purple' ? 'text-purple-400' : levelLabel.color === 'emerald' ? 'text-emerald-400' : levelLabel.color === 'blue' ? 'text-blue-400' : levelLabel.color === 'cyan' ? 'text-cyan-400' : 'text-indigo-400'} font-bold uppercase tracking-wider`}>{levelLabel.subtitle}</p>
             </div>
           </div>
+          {/* Level Switcher — Founder Only */}
+          {canSwitchLevels && (
+            <select
+              value={staffLevel}
+              onChange={(e) => {
+                const val = parseInt(e.target.value);
+                setLevelOverride(val === naturalLevel ? null : val);
+              }}
+              className="appearance-none bg-slate-800 text-white font-bold text-[10px] px-3 py-1.5 pr-7 rounded-lg border border-slate-600 hover:border-indigo-500 outline-none cursor-pointer transition-all shrink-0 uppercase tracking-wide"
+              title="Preview staff level views"
+            >
+              <option value={1}>⬜ LVL 1 — Intake Agent</option>
+              <option value={2}>🔷 LVL 2 — Senior Agent</option>
+              <option value={3}>🔵 LVL 3 — Team Lead</option>
+              <option value={4}>🟣 LVL 4 — Manager</option>
+              <option value={5}>🟢 LVL 5 — Full Access</option>
+            </select>
+          )}
           <div className="w-px h-8 bg-slate-700 shrink-0" />
           <div className="flex-1 overflow-x-auto scrollbar-hide">
             <div className="flex items-center gap-1 min-w-max">
