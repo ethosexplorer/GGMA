@@ -388,8 +388,8 @@ Founder & CEO, Global Green Hybrid Platform`;
           <div className="w-16 h-16 bg-slate-200 text-slate-800 rounded-2xl flex items-center justify-center mb-6 shadow-inner shrink-0">
             <Gavel size={32} />
           </div>
-          <h3 className="text-xl font-black text-slate-800 mb-2">State Regulatory Oversight</h3>
-          <p className="text-slate-500 font-medium text-sm flex-1">Present the advanced OMMA/State Regulator mock dashboard, demonstrating comprehensive ecosystem tracking and AI intervention logs.</p>
+          <h3 className="text-xl font-black text-slate-800 mb-2">Regulatory & Commerce Authority</h3>
+          <p className="text-slate-500 font-medium text-sm flex-1">Present the full-state economic ecosystem dashboard — OMES/OMMA hierarchy, cross-agency coordination, supply chain tracking, economic impact, and compliance monitoring. Dynamic for all 50 states.</p>
           <div className="mt-8 flex items-center gap-2 text-slate-800 font-black text-xs uppercase tracking-widest">
             Launch Sandbox &rarr;
           </div>
