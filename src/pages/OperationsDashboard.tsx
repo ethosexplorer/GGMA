@@ -92,6 +92,7 @@ export const OperationsDashboard = ({ onLogout, user, isFounder, jurisdiction }:
 
   // Level override state — allows founder to preview any level
   const [levelOverride, setLevelOverride] = useState<number | null>(null);
+  const [showSwitchConsole, setShowSwitchConsole] = useState(false);
   const staffLevel = levelOverride ?? naturalLevel;
   const isManagement = staffLevel >= 4;
 
@@ -1869,68 +1870,163 @@ Notes: ${c.notes || 'No notes'}`;
             </select>
           )}
           <div className="w-px h-8 bg-slate-700 shrink-0" />
-          <div className="flex-1 overflow-x-auto scrollbar-hide">
-            <div className="flex items-center gap-1 min-w-max">
-              {(() => {
-                // Pre-compute visible tab IDs
-                const visibleIds = new Set(
-                  NAV_ITEMS
-                    .filter(item => {
-                      if (!item.id) return false; // Skip section headers
-                      if (staffAllowedTabs) return staffAllowedTabs.includes(item.id);
-                      if (item.id === 'patients' || item.id === 'business') return isMaster;
-                      return true;
-                    })
-                    .map(item => item.id!)
-                );
+          <div className="flex-1 flex items-center justify-between px-4">
+            {isMaster || staffLevel === 5 ? (
+              <div className="relative">
+                <button
+                  onClick={() => setShowSwitchConsole(!showSwitchConsole)}
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-2 bg-slate-800 text-white border border-slate-700 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-700 hover:border-slate-500 hover:text-white transition-all shadow-md active:scale-95",
+                    showSwitchConsole && "ring-2 ring-indigo-500 border-indigo-500"
+                  )}
+                >
+                  <Cpu size={14} className="text-indigo-400" />
+                  Console Matrix
+                  <span className="text-[10px] text-slate-400 font-bold">({activeTab.replace(/_/g, ' ')})</span>
+                  <span className="text-[9px] text-indigo-400 font-black">▾</span>
+                </button>
 
-                // Build filtered nav: include sections only if they have visible children
-                const filtered: typeof NAV_ITEMS = [];
-                for (let i = 0; i < NAV_ITEMS.length; i++) {
-                  const item = NAV_ITEMS[i];
-                  if ('section' in item) {
-                    // Look ahead: does this section have any visible children before next section?
-                    let hasVisibleChild = false;
-                    for (let j = i + 1; j < NAV_ITEMS.length; j++) {
-                      if ('section' in NAV_ITEMS[j]) break; // Hit next section
-                      if (NAV_ITEMS[j].id && visibleIds.has(NAV_ITEMS[j].id!)) { hasVisibleChild = true; break; }
-                    }
-                    if (hasVisibleChild) filtered.push(item);
-                  } else if (item.id && visibleIds.has(item.id)) {
-                    filtered.push(item);
-                  }
-                }
-                return filtered;
-              })()
-                .map((item, i) => {
-                if ('section' in item && item.section) {
-                  return (
-                    <span key={`ops-sec-${i}`} className="text-[9px] font-bold text-slate-500 uppercase tracking-wider px-2 shrink-0">
-                      {item.section}
-                    </span>
+                {showSwitchConsole && (
+                  <>
+                    {/* Backdrop Click Dismiss */}
+                    <div className="fixed inset-0 z-[90]" onClick={() => setShowSwitchConsole(false)} />
+                    {/* MEGA MENU DIALOG */}
+                    <div className="absolute left-0 top-full mt-3 w-[840px] max-w-[calc(100vw-12rem)] bg-slate-950/95 border border-slate-800 backdrop-blur-xl rounded-[2rem] p-8 shadow-2xl z-[100] animate-in fade-in zoom-in-95 duration-200">
+                      <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
+                        <div>
+                          <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
+                            <Cpu size={16} className="text-indigo-500" /> Global Green Operations Matrix
+                          </h3>
+                          <p className="text-[10px] text-slate-400 font-bold uppercase mt-0.5">Clearance Level 5: God View Switcher</p>
+                        </div>
+                        <span className="text-[10px] font-black text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-3 py-1 rounded-full uppercase">Founder Console</span>
+                      </div>
+                      
+                      <div className="grid grid-cols-5 gap-4">
+                        {[1, 2, 3, 4, 5].map((lvl) => {
+                          const labelData = LEVEL_LABELS[lvl as keyof typeof LEVEL_LABELS];
+                          const tabIds = LEVEL_TABS[lvl];
+                          return (
+                            <div key={lvl} className="space-y-4">
+                              <div className="flex items-center gap-1.5 pb-2 border-b border-slate-800/60">
+                                <span className={cn(
+                                  "w-2 h-2 rounded-full",
+                                  lvl === 5 ? "bg-emerald-500 shadow-md shadow-emerald-500/40" : lvl === 4 ? "bg-purple-500 shadow-md shadow-purple-500/40" : lvl === 3 ? "bg-blue-500 shadow-md shadow-blue-500/40" : lvl === 2 ? "bg-indigo-500 shadow-md shadow-indigo-500/40" : "bg-cyan-500 shadow-md shadow-cyan-500/40"
+                                )} />
+                                <div className="leading-tight">
+                                  <h4 className="text-[10px] font-black text-white uppercase tracking-wider">{labelData.title}</h4>
+                                  <p className="text-[8px] text-slate-500 font-bold uppercase">Lvl {lvl}</p>
+                                </div>
+                              </div>
+                              <div className="flex flex-col gap-1">
+                                {tabIds.map(tabId => {
+                                  const navItem = NAV_ITEMS.find(n => n.id === tabId);
+                                  if (!navItem) return null;
+                                  const Icon = navItem.icon;
+                                  const isActive = activeTab === tabId;
+                                  return (
+                                    <button
+                                      key={tabId}
+                                      onClick={() => {
+                                        setActiveTab(tabId);
+                                        setShowSwitchConsole(false);
+                                      }}
+                                      className={cn(
+                                        "w-full text-left flex items-center justify-between px-3 py-2 rounded-xl text-[11px] font-bold transition-all relative group",
+                                        isActive
+                                          ? (lvl === 5 ? "bg-emerald-600 text-white shadow-lg shadow-emerald-950/40" : lvl === 4 ? "bg-purple-600 text-white shadow-lg shadow-purple-950/40" : lvl === 3 ? "bg-blue-600 text-white shadow-lg shadow-blue-950/40" : "bg-indigo-600 text-white shadow-lg shadow-indigo-950/40")
+                                          : "text-slate-400 hover:bg-white/5 hover:text-slate-200"
+                                      )}
+                                    >
+                                      <span className="flex items-center gap-2">
+                                        {Icon && <Icon size={12} className={isActive ? "text-white" : "text-slate-500 group-hover:text-slate-300 transition-colors"} />}
+                                        <span className="truncate max-w-[100px]">{navItem.label}</span>
+                                      </span>
+                                      {(navItem.badge || (navItem.id === 'applications' && pendingAppsCount > 0)) && (
+                                        <span className={cn(
+                                          "text-[8px] px-1 py-0.5 rounded-full font-black ml-1 shrink-0",
+                                          isActive ? "bg-white/30 text-white" : "bg-slate-800 text-slate-400"
+                                        )}>
+                                          {navItem.id === 'applications' ? pendingAppsCount : navItem.badge}
+                                        </span>
+                                      )}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
+                {(() => {
+                  const visibleIds = new Set(
+                    NAV_ITEMS
+                      .filter(item => {
+                        if (!item.id) return false;
+                        if (staffAllowedTabs) return staffAllowedTabs.includes(item.id);
+                        if (item.id === 'patients' || item.id === 'business') return isMaster;
+                        return true;
+                      })
+                      .map(item => item.id!)
                   );
-                }
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => setActiveTab(item.id!)}
-                    className={cn(
-                      "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap shrink-0",
-                      activeTab === item.id
-                        ? "bg-indigo-600 text-white shadow-md"
-                        : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
-                    )}
-                  >
-                    {item.icon && <item.icon size={13} />}
-                    {item.label}
-                    {(item.badge || (item.id === 'applications' && pendingAppsCount > 0)) && (
-                      <span className="text-[9px] bg-white/20 text-white px-1.5 py-0.5 rounded-full font-bold">
-                        {item.id === 'applications' ? pendingAppsCount : item.badge}
+                  const filtered: typeof NAV_ITEMS = [];
+                  for (let i = 0; i < NAV_ITEMS.length; i++) {
+                    const item = NAV_ITEMS[i];
+                    if ('section' in item) {
+                      let hasVisibleChild = false;
+                      for (let j = i + 1; j < NAV_ITEMS.length; j++) {
+                        if ('section' in NAV_ITEMS[j]) break;
+                        if (NAV_ITEMS[j].id && visibleIds.has(NAV_ITEMS[j].id!)) { hasVisibleChild = true; break; }
+                      }
+                      if (hasVisibleChild) filtered.push(item);
+                    } else if (item.id && visibleIds.has(item.id)) {
+                      filtered.push(item);
+                    }
+                  }
+                  return filtered;
+                })().map((item, i) => {
+                  if ('section' in item && item.section) {
+                    return (
+                      <span key={`ops-sec-${i}`} className="text-[9px] font-bold text-slate-500 uppercase tracking-wider px-2 shrink-0">
+                        {item.section}
                       </span>
-                    )}
-                  </button>
-                );
-              })}
+                    );
+                  }
+                  const Icon = item.icon;
+                  const isActive = activeTab === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => setActiveTab(item.id!)}
+                      className={cn(
+                        "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap shrink-0",
+                        isActive
+                          ? "bg-indigo-600 text-white shadow-md"
+                          : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
+                      )}
+                    >
+                      {Icon && <Icon size={13} />}
+                      {item.label}
+                      {(item.badge || (item.id === 'applications' && pendingAppsCount > 0)) && (
+                        <span className="text-[9px] bg-white/20 text-white px-1.5 py-0.5 rounded-full font-bold">
+                          {item.id === 'applications' ? pendingAppsCount : item.badge}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+            
+            <div className="shrink-0 flex items-center gap-3 text-[10px] font-black text-slate-400 uppercase tracking-widest pl-4">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              {activeJurisdiction} HQ
             </div>
           </div>
         </div>
