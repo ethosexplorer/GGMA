@@ -1409,6 +1409,10 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
               isHealthChecking={isHealthChecking}
               lastHealthCheck={lastHealthCheck}
               healthHistory={healthHistory}
+              onSweepComplete={async () => {
+                const s = await getLastSweep();
+                setLastRegSweepDate(s?.sweep_date || null);
+              }}
             />
           </div>
         );
@@ -1435,7 +1439,20 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       case 'marketing_hub':
         return <div className="h-full w-full -m-10 bg-[#080e1a] min-h-screen overflow-auto" data-action-bound="true"><MarketingHub /></div>;
       case 'omma_pipeline':
-        return <div className="h-full w-full -m-10" data-action-bound="true"><GlobalSweepTab isAdvisor={isBobAdvisor} isRyan={isRyan} userEmail={user?.email} jurisdiction={selectedState} /></div>;
+        return (
+          <div className="h-full w-full -m-10" data-action-bound="true">
+            <GlobalSweepTab 
+              isAdvisor={isBobAdvisor} 
+              isRyan={isRyan} 
+              userEmail={user?.email} 
+              jurisdiction={selectedState} 
+              onSweepComplete={async () => {
+                const s = await getLastSweep();
+                setLastRegSweepDate(s?.sweep_date || null);
+              }}
+            />
+          </div>
+        );
       case 'global_directory':
         return <div className="h-full w-full -m-10" data-action-bound="true"><GlobalDirectoryTab onOpenMessage={(uid) => { setActiveTab('messages'); }} /></div>;
       case 'gge_webmail':

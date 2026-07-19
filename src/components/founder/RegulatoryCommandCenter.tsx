@@ -7,7 +7,7 @@ import {
   ALL_STATES, UPDATE_TYPES, type RegSweepEntry, type StateRegUpdate
 } from '../../lib/regSweep';
 
-export const RegulatoryCommandCenter = () => {
+export const RegulatoryCommandCenter = ({ onSweepComplete }: { onSweepComplete?: () => void }) => {
   const [lastSweep, setLastSweep] = useState<RegSweepEntry | null>(null);
   const [stateUpdates, setStateUpdates] = useState<StateRegUpdate[]>([]);
   const [lastUpdateMap, setLastUpdateMap] = useState<Record<string, string>>({});
@@ -59,7 +59,10 @@ export const RegulatoryCommandCenter = () => {
     setShowLogSweep(false);
     setSubmitted(true);
     setTimeout(() => setSubmitted(false), 2000);
-    refreshData();
+    await refreshData();
+    if (onSweepComplete) {
+      onSweepComplete();
+    }
   };
 
   const handleAddUpdate = async () => {
@@ -69,7 +72,10 @@ export const RegulatoryCommandCenter = () => {
     setShowAddUpdate(false);
     setSubmitted(true);
     setTimeout(() => setSubmitted(false), 2000);
-    refreshData();
+    await refreshData();
+    if (onSweepComplete) {
+      onSweepComplete();
+    }
   };
 
   const filteredStates = ALL_STATES.filter(s => {

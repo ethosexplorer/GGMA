@@ -39,7 +39,8 @@ export const OverviewTab = ({
   healthReport,
   isHealthChecking,
   lastHealthCheck,
-  healthHistory
+  healthHistory,
+  onSweepComplete
 }: {
   user: any;
   jurisdiction?: string;
@@ -68,6 +69,7 @@ export const OverviewTab = ({
   isHealthChecking: boolean;
   lastHealthCheck: string;
   healthHistory: any[];
+  onSweepComplete?: () => void;
 }) => {
   const [hideUpdates, setHideUpdates] = useState(() => localStorage.getItem('ggp_updates_read') === 'true');
   const [isSystemFreezeExpanded, setIsSystemFreezeExpanded] = useState(false);
@@ -1763,7 +1765,7 @@ export const OverviewTab = ({
       </div>
 
       {/* 🛡️ REGULATORY SWEEP COMMAND CENTER */}
-      <RegulatoryCommandCenter />
+      <RegulatoryCommandCenter onSweepComplete={onSweepComplete} />
 
       {/* ── USER DETAIL MODAL OVERLAY ── */}
       {selectedActivityUser && (
