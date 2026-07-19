@@ -38,6 +38,7 @@ import { PatientCaseTracker } from '../components/patient/PatientCaseTracker';
 import { FounderModals } from '../components/FounderModals';
 import { ITSupportDashboard } from '../components/it/ITSupportDashboard';
 import { RolePermissionsPanel } from '../components/RolePermissionsPanel';
+import { STATE_REGULATORY_MAP } from '../lib/stateRegulatory';
 import { InternalMessenger } from '../components/messaging/InternalMessenger';
 import { CallCenterCommandTab } from '../components/telephony/CallCenterCommandTab';
 import { AITrainingTab } from '../components/AITrainingTab';
@@ -285,6 +286,17 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
 
   const fullName = isMonica ? 'Monica Green' : (isRyan ? 'Ryan Ferrari' : (isBobAdvisor ? 'Bob Moore' : (user?.displayName || 'Shantell Robinson')));
   const userTitle = isMonica ? 'Chief Compliance Director' : (isRyan ? 'President' : (isBobAdvisor ? 'Advisor' : 'Founder'));
+
+  const [showFounderMatrix, setShowFounderMatrix] = useState(false);
+  const [selectedState, setSelectedState] = useState(() => {
+    return jurisdiction || user?.jurisdiction || user?.homeState || 'Oklahoma';
+  });
+
+  useEffect(() => {
+    if (jurisdiction) {
+      setSelectedState(jurisdiction);
+    }
+  }, [jurisdiction]);
 
   const [liveStats, setLiveStats] = useState({ totalUsers: '0', netRevenue: '$0' });
   const [lastRegSweepDate, setLastRegSweepDate] = useState<string | null>(null);
@@ -834,16 +846,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   const [selectedParent, setSelectedParent] = useState<string>(isExecutive ? 'ai_training' : 'overview');
   const [selectedApplicant, setSelectedApplicant] = useState<any>(null);
 
-  const [showFounderMatrix, setShowFounderMatrix] = useState(false);
-  const [selectedState, setSelectedState] = useState(() => {
-    return jurisdiction || user?.jurisdiction || user?.homeState || 'Oklahoma';
-  });
 
-  useEffect(() => {
-    if (jurisdiction) {
-      setSelectedState(jurisdiction);
-    }
-  }, [jurisdiction]);
 
   const handleSelectTab = (tabId: string) => {
     const parent = findParentTab(tabId) || tabId;

@@ -504,19 +504,6 @@ export const OverviewTab = ({
             <p className="text-indigo-200 font-medium">Platform state: <span className="text-emerald-400 font-bold">Operational</span> • Registered Trade Name: <span className="text-white font-bold">GLOBAL GREEN HYBRID PLATFORM OPERATING SYSTEM (GGHP-OS)</span></p>
           </div>
           <div className="flex gap-4">
-            <StateJurisdictionSelector
-              value={overviewJurisdiction}
-              onChange={(val) => {
-                setOverviewJurisdiction(val);
-                if (onChangeJurisdiction) {
-                  onChangeJurisdiction(val);
-                }
-              }}
-              variant="dark"
-              showMetadata={false}
-              compact={false}
-              label="Jurisdiction"
-            />
             <div className={cn("text-center px-6", !isExecutive && "border-r border-white/10")}>
               <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-1">Total Users</p>
               <p className="text-2xl font-black">{liveStats.totalUsers}</p>

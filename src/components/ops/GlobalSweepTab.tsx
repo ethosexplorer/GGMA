@@ -4,6 +4,7 @@ import { Search, MapPin, Building2, Download, Play, ShieldAlert, CheckCircle2 } 
 import { db } from '../../firebase';
 import { collection, query, getDocs, where, limit, getCountFromServer } from 'firebase/firestore';
 import { cn } from '../../lib/utils';
+import { STATE_REGULATORY_MAP } from '../../lib/stateRegulatory';
 
 // Module-level cache to persist counts across tab switches
 let cachedLiveCounts: Record<string, number> | null = null;
