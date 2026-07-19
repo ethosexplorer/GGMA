@@ -584,11 +584,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab, embedded = false, j
     return bState === selectedState.toLowerCase().trim();
   });
 
-  const displayApprovals = pendingApprovals.filter(a => {
-    if (selectedState === 'All States Active') return true;
-    const aState = (a.state || 'Oklahoma').toLowerCase().trim();
-    return aState === selectedState.toLowerCase().trim();
-  });
+
 
   const renderPatients = () => (
     <div className="space-y-6">
@@ -682,6 +678,12 @@ export const AdminDashboard = ({ onLogout, user, initialTab, embedded = false, j
       .then(res => setPendingApprovals(res.rows))
       .catch(console.error);
   }, []);
+
+  const displayApprovals = pendingApprovals.filter(a => {
+    if (selectedState === 'All States Active') return true;
+    const aState = (a.state || 'Oklahoma').toLowerCase().trim();
+    return aState === selectedState.toLowerCase().trim();
+  });
 
   const renderApprovals = () => (
     <div className="space-y-6">
