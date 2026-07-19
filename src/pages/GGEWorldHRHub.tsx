@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { TrainingAndDictionary } from '../components/shared/TrainingAndDictionary';
 import { 
@@ -9,6 +9,8 @@ import {
   UserPlus, CheckCircle2, ChevronRight, MapPin, Key, Laptop, Calendar, ClipboardCheck
 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { db } from '../lib/firebase';
+import { collection, onSnapshot, doc, setDoc } from 'firebase/firestore';
 import { CallCenterCommandTab } from '../components/telephony/CallCenterCommandTab';
 import { ITSupportDashboard } from '../components/it/ITSupportDashboard';
 import { UserCalendar } from '../components/UserCalendar';
@@ -45,6 +47,43 @@ const NAV_ITEMS = [
 
 export const GGEWorldHRHub = ({ user }: { user?: any }) => {
   const [activeTab, setActiveTab] = useState('academy_ai');
+  const [extensionsList, setExtensionsList] = useState<any[]>([]);
+
+  // Sync VoIP Extensions from Firestore
+  useEffect(() => {
+    const unsub = onSnapshot(collection(db, 'phone_extensions'), (snap) => {
+      if (snap.empty) {
+        // Seed default extensions
+        const seedData = [
+          { ext: '100', name: 'Main Reception / IVR', dept: 'General', status: 'Active', desc: 'Auto-attendant greeting — Sylara routes to department' },
+          { ext: '101', name: 'Founder / CEO', dept: 'Executive', status: 'Active', desc: 'Direct line to Shantell Robinson' },
+          { ext: '102', name: 'Executive Office', dept: 'Executive', status: 'Active', desc: 'CEO / President overflow' },
+          { ext: '110', name: 'Medical Card Intake', dept: 'Medical', status: 'Active', desc: 'Patient med card applications & renewals' },
+          { ext: '111', name: 'Patient Support', dept: 'Medical', status: 'Active', desc: 'General patient inquiries & status updates' },
+          { ext: '112', name: 'Telehealth Scheduling', dept: 'Medical', status: 'Active', desc: 'Physician consultation bookings' },
+          { ext: '120', name: 'Business Licensing', dept: 'Licensing', status: 'Active', desc: 'New business applications & license inquiries' },
+          { ext: '121', name: 'Compliance & Regulatory', dept: 'Compliance', status: 'Active', desc: 'Compliance issues, BioTrack/Metrc questions' },
+          { ext: '130', name: 'Sales & CRM', dept: 'Sales', status: 'Active', desc: 'B2B sales inquiries & subscription questions' },
+          { ext: '131', name: 'Territory Manager — MS', dept: 'Sales', status: 'Active', desc: 'Mississippi territory operations' },
+          { ext: '132', name: 'Territory Manager — AR/LA', dept: 'Sales', status: 'Active', desc: 'Arkansas & Louisiana territory' },
+          { ext: '133', name: 'Territory Manager — AL/TN', dept: 'Sales', status: 'Active', desc: 'Alabama & Tennessee territory' },
+          { ext: '140', name: 'Legal / Attorney Support', dept: 'Legal', status: 'Active', desc: 'Attorney dashboard & legal consultation referrals' },
+          { ext: '150', name: 'Billing & Payments', dept: 'Finance', status: 'Active', desc: 'Stripe billing issues, refunds, subscription changes' },
+          { ext: '160', name: 'IT Support & Technical', dept: 'IT', status: 'Active', desc: 'Platform issues, login problems, tech support' },
+          { ext: '170', name: 'HR & Personnel', dept: 'HR', status: 'Active', desc: 'Employee inquiries, onboarding, benefits' },
+          { ext: '199', name: 'Voicemail (General)', dept: 'System', status: 'Active', desc: 'After-hours general voicemail box' },
+        ];
+        seedData.forEach(async (item) => {
+          await setDoc(doc(db, 'phone_extensions', item.ext), item);
+        });
+      } else {
+        const list = snap.docs.map(doc => doc.data());
+        list.sort((a, b) => parseInt(a.ext) - parseInt(b.ext));
+        setExtensionsList(list);
+      }
+    });
+    return unsub;
+  }, []);
   const [roster, setRoster] = useState([
     { n: 'Marcus Vance', c: 'Metrc Integration Mastery', s: 'Active', p: 65, t: '3 weeks left' },
     { n: 'Sarah Jenkins', c: 'Retail Compliance Pro', s: 'Active', p: 30, t: '1 week left' },
@@ -426,25 +465,7 @@ export const GGEWorldHRHub = ({ user }: { user?: any }) => {
     </div>
   );
 
-  const EXTENSIONS = [
-    { ext: '100', name: 'Main Reception / IVR', dept: 'General', status: 'Active', desc: 'Auto-attendant greeting — Sylara routes to department' },
-    { ext: '101', name: 'Founder / CEO', dept: 'Executive', status: 'Active', desc: 'Direct line to Shantell Robinson' },
-    { ext: '102', name: 'Executive Office', dept: 'Executive', status: 'Active', desc: 'CEO / President overflow' },
-    { ext: '110', name: 'Medical Card Intake', dept: 'Medical', status: 'Active', desc: 'Patient med card applications & renewals' },
-    { ext: '111', name: 'Patient Support', dept: 'Medical', status: 'Active', desc: 'General patient inquiries & status updates' },
-    { ext: '112', name: 'Telehealth Scheduling', dept: 'Medical', status: 'Active', desc: 'Physician consultation bookings' },
-    { ext: '120', name: 'Business Licensing', dept: 'Licensing', status: 'Active', desc: 'New business applications & license inquiries' },
-    { ext: '121', name: 'Compliance & Regulatory', dept: 'Compliance', status: 'Active', desc: 'Compliance issues, BioTrack/Metrc questions' },
-    { ext: '130', name: 'Sales & CRM', dept: 'Sales', status: 'Active', desc: 'B2B sales inquiries & subscription questions' },
-    { ext: '131', name: 'Territory Manager — MS', dept: 'Sales', status: 'Active', desc: 'Mississippi territory operations' },
-    { ext: '132', name: 'Territory Manager — AR/LA', dept: 'Sales', status: 'Active', desc: 'Arkansas & Louisiana territory' },
-    { ext: '133', name: 'Territory Manager — AL/TN', dept: 'Sales', status: 'Active', desc: 'Alabama & Tennessee territory' },
-    { ext: '140', name: 'Legal / Attorney Support', dept: 'Legal', status: 'Active', desc: 'Attorney dashboard & legal consultation referrals' },
-    { ext: '150', name: 'Billing & Payments', dept: 'Finance', status: 'Active', desc: 'Stripe billing issues, refunds, subscription changes' },
-    { ext: '160', name: 'IT Support & Technical', dept: 'IT', status: 'Active', desc: 'Platform issues, login problems, tech support' },
-    { ext: '170', name: 'HR & Personnel', dept: 'HR', status: 'Active', desc: 'Employee inquiries, onboarding, benefits' },
-    { ext: '199', name: 'Voicemail (General)', dept: 'System', status: 'Active', desc: 'After-hours general voicemail box' },
-  ];
+  const EXTENSIONS = extensionsList;
 
   const [extSearch, setExtSearch] = useState('');
   const [extFilter, setExtFilter] = useState<string | null>(null);

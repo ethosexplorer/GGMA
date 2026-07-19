@@ -88,6 +88,7 @@ import { LarryIntelligenceMonitor } from '../components/founder/LarryIntelligenc
 import { LitigationSabotageTab } from '../components/founder/LitigationSabotageTab';
 import { CEYECommandCenter } from '../components/ceye/CEYECommandCenter';
 import { CannaCribsManagementTab } from '../components/founder/CannaCribsManagementTab';
+import { VoIPExtensionsTab } from '../components/founder/VoIPExtensionsTab';
 
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
@@ -169,6 +170,7 @@ const MERGED_SUB_TABS: Record<string, { id: string, label: string, icon: any }[]
   ],
   god_settings: [
     { id: 'settings', label: 'God Settings', icon: Settings },
+    { id: 'voip_extensions', label: 'VoIP Extensions Map', icon: Phone },
     { id: 'roles_duties', label: 'My Role & Duties', icon: Shield },
     { id: 'launch_script', label: 'Master Launch Script', icon: FileText },
     { id: 'system_health', label: 'System Health / AI', icon: Zap },
@@ -1568,6 +1570,8 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
             <ProfileSettingsCard user={user} />
           </div>
         );
+      case 'voip_extensions':
+        return <div data-action-bound="true"><VoIPExtensionsTab user={user} /></div>;
       case 'call_center':
         return <div data-action-bound="true"><CallCenterCommandTab /></div>;
       case 'dept_manager':
