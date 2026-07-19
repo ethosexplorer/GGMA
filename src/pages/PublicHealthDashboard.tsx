@@ -227,7 +227,11 @@ export const PublicHealthDashboard = ({ onLogout, user, jurisdiction = 'Oklahoma
           </div>
           <div className="w-px h-8 bg-slate-700 shrink-0" />
           <div className="shrink-0 flex items-center gap-3">
-            <StateJurisdictionSelector value={selectedState} onChange={setSelectedState} variant="dark" showMetadata={true} compact={true} label="State" />
+            {hasMultiStateAccess ? (
+              <StateJurisdictionSelector value={selectedState} onChange={setSelectedState} variant="dark" showMetadata={true} compact={true} label="" />
+            ) : (
+              <span className="text-xs font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-800/30 px-3 py-1.5 rounded-full uppercase tracking-wider">{selectedState}</span>
+            )}
           </div>
         </div>
       </div>
