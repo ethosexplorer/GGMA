@@ -1209,7 +1209,7 @@ export const OverviewTab = ({
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
                   {[
-                    { label: `Total ${isOk ? 'OK' : portalInfo.badge} Recalls`, value: String(stats.totalRecalls), sub: `Since May 2022 • Source: ${portalInfo.badge}`, color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-200', icon: '⚠️' },
+                    { label: `Total SINC ${isOk ? 'OK' : portalInfo.badge} Recalls`, value: String(stats.totalRecalls), sub: `Since May 2022 • Source: ${portalInfo.badge}`, color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-200', icon: '⚠️' },
                     { label: 'Active Recalls', value: String(stats.activeRecalls), sub: activeRecallsList[0]?.businessName?.slice(0, 30) || 'None', color: stats.activeRecalls > 0 ? 'text-red-600' : 'text-emerald-600', bg: stats.activeRecalls > 0 ? 'bg-red-50' : 'bg-emerald-50', border: stats.activeRecalls > 0 ? 'border-red-200' : 'border-emerald-200', icon: '🚨' },
                     { label: 'Pesticide Recalls', value: String(stats.contaminationByType.pesticide), sub: 'Most common contaminant', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200', icon: '🧪' },
                     { label: 'Microbial Recalls', value: String(stats.contaminationByType.microbial), sub: 'Mold & yeast failures', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200', icon: '🦠' },
@@ -1230,10 +1230,10 @@ export const OverviewTab = ({
                   {/* State Regulatory Recall Ledger */}
                   <div className="lg:col-span-2 border border-slate-200 rounded-2xl overflow-hidden bg-white">
                     <div className="px-5 py-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
-                      <h4 className="text-xs font-black text-slate-600 uppercase tracking-wider flex items-center gap-2">🏛️ {isOk ? 'OMMA' : portalInfo.badge} Recall & Embargo Ledger</h4>
+                      <h4 className="text-xs font-black text-slate-600 uppercase tracking-wider flex items-center gap-2">🏛️ SINC {isOk ? 'OMMA' : portalInfo.badge} Recall & Embargo Ledger</h4>
                       <a href={portalInfo.url} target="_blank" rel="noopener noreferrer" className="text-[9px] font-bold text-emerald-500 hover:text-emerald-400 flex items-center gap-1">
                         <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
-                        Live {portalInfo.badge} Source
+                        SINC Live {isOk ? 'Oklahoma' : labState} Source
                       </a>
                     </div>
                     {!isOk && (

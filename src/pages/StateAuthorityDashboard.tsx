@@ -870,7 +870,7 @@ export const StateAuthorityDashboard = ({ onLogout, user, embedded = false, juri
               </div>
               <div>
                 <h2 className="font-bold text-xs text-white leading-tight uppercase tracking-tight">State Authority</h2>
-                <p className="text-[9px] text-emerald-500/80 font-bold tracking-widest uppercase">OMMA Regulatory Hub</p>
+                <p className="text-[9px] text-emerald-500/80 font-bold tracking-widest uppercase">SINC {stateJurisdiction} Regulatory Hub</p>
               </div>
             </div>
             <div className="w-px h-8 bg-emerald-800/40 shrink-0" />

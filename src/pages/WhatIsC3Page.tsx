@@ -109,7 +109,7 @@ export const WhatIsC3Page = ({ onNavigate }: { onNavigate: (view: string) => voi
                 color: 'from-blue-500 to-indigo-600',
                 items: [
                   'Real-time Metrc & seed-to-sale adherence',
-                  'OMMA license status & renewal tracking',
+                  'SINC State license status & renewal tracking',
                   'L.A.R.R.Y AI audit pass rates',
                   'Zero violations, zero diversions verified'
                 ]
@@ -188,7 +188,7 @@ export const WhatIsC3Page = ({ onNavigate }: { onNavigate: (view: string) => voi
             <div className="bg-slate-900 rounded-[2rem] border border-slate-700 p-8 text-white">
               <h3 className="text-xl font-black mb-4 flex items-center gap-2"><Building2 size={20} /> For Businesses</h3>
               <ul className="space-y-3 text-sm text-slate-300">
-                <li className="flex items-start gap-2"><CircleCheck size={16} className="text-emerald-400 shrink-0 mt-0.5" /> Demonstrate audit readiness to OMMA and state regulators in real-time</li>
+                <li className="flex items-start gap-2"><CircleCheck size={16} className="text-emerald-400 shrink-0 mt-0.5" /> Demonstrate audit readiness to SINC and state regulators in real-time</li>
                 <li className="flex items-start gap-2"><CircleCheck size={16} className="text-emerald-400 shrink-0 mt-0.5" /> Reduce compliance violations and avoid costly fines with AI-driven monitoring</li>
                 <li className="flex items-start gap-2"><CircleCheck size={16} className="text-emerald-400 shrink-0 mt-0.5" /> Attract investors and partners with a verified, transparent trust score</li>
                 <li className="flex items-start gap-2"><CircleCheck size={16} className="text-emerald-400 shrink-0 mt-0.5" /> Qualify for reduced insurance premiums and preferred vendor listings</li>

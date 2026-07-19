@@ -607,7 +607,7 @@ export const PublicHealthDashboard = ({ onLogout, user, jurisdiction = 'Oklahoma
                     const list = isOk && ommaRecalls.length > 0
                       ? ommaRecalls.map(r => ({
                           id: r.id,
-                          title: `OMMA Safety Recall: ${r.businessName}`,
+                          title: `SINC Safety Recall: ${r.businessName}`,
                           time: r.displayDate,
                           urgency: r.isActive ? 'critical' : 'warning',
                           desc: `${r.products} — ${r.reason} (License: ${r.licenseNumber || 'N/A'})`,
@@ -632,7 +632,7 @@ export const PublicHealthDashboard = ({ onLogout, user, jurisdiction = 'Oklahoma
                               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                             </span>
-                            Live Scraper Connected to OMMA Portal: Displaying {ommaRecalls.length} safety recalls in real-time.
+                            Live Scraper Connected to SINC Oklahoma Portal: Displaying {ommaRecalls.length} safety recalls in real-time.
                           </div>
                         )}
                         {!isOk && (
