@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { NotificationDropdown } from '../components/shared/NotificationDropdown';
+import { StateJurisdictionSelector } from '../components/shared/StateJurisdictionSelector';
 import { motion } from 'motion/react';
 import { FederalDashboard } from './FederalDashboard';
 import { PublicHealthDashboard } from './PublicHealthDashboard';
@@ -180,6 +181,98 @@ const findParentTab = (tabId: string): string | null => {
   }
   return null;
 };
+
+const MEGA_COLUMNS = [
+  {
+    title: 'Core Command',
+    color: 'emerald',
+    icon: Shield,
+    tabs: [
+      { id: 'overview', label: 'God Overview', icon: Activity },
+      { id: 'larry_monitor', label: 'LARRY Intelligence', icon: Shield },
+      { id: 'ai_training', label: 'My Asst AI', icon: Bot },
+      { id: 'litigation_sabotage', label: 'Litigation Sabotage', icon: Target },
+      { id: 'ceye_command', label: 'CEYE Command', icon: Eye },
+      { id: 'cannacribs_mgmt', label: 'CannaCribs', icon: Home },
+      { id: 'investor_sandbox', label: 'Investor Sandbox', icon: MonitorPlay }
+    ]
+  },
+  {
+    title: 'Business & Revenue',
+    color: 'cyan',
+    icon: Briefcase,
+    tabs: [
+      { id: 'patients', label: 'Registry Sovereignty', icon: HeartPulse },
+      { id: 'business', label: 'Economic Infrastructure', icon: Building2 },
+      { id: 'b2b_crm', label: 'Global CRM Pipeline', icon: Briefcase },
+      { id: 'marketing_hub', label: 'Marketing Campaigns', icon: Megaphone },
+      { id: 'omma_pipeline', label: 'Global Sweep Hub', icon: MapIcon },
+      { id: 'approvals', label: 'Agency Approvals', icon: UserCheck },
+      { id: 'applications', label: 'Applications Queue', icon: FileText },
+      { id: 'processor', label: 'GGE Processor', icon: Activity }
+    ]
+  },
+  {
+    title: 'Finance Ledger',
+    color: 'blue',
+    icon: Wallet,
+    tabs: [
+      { id: 'accounting_ledger', label: 'Accounting Ledger', icon: TrendingUp },
+      { id: 'global_financials', label: 'Global Financials', icon: TrendingUp },
+      { id: 'subscriptions', label: 'Subscriptions & Revenue', icon: CreditCard },
+      { id: 'invoices', label: 'Invoice Manager', icon: FileText },
+      { id: 'reports', label: 'Master Analytics', icon: BarChart3 },
+      { id: 'intel', label: 'Global Intelligence', icon: BookOpen },
+      { id: 'logs', label: 'System Logs', icon: Database },
+      { id: 'critical_alerts', label: 'Critical Alerts', icon: AlertTriangle }
+    ]
+  },
+  {
+    title: 'Team & Operations',
+    color: 'purple',
+    icon: Users,
+    tabs: [
+      { id: 'gge_webmail', label: 'Founder Email', icon: Mail },
+      { id: 'internal_scheduler', label: 'Operations Calendar', icon: Clock },
+      { id: 'realtime_tasks', label: 'Realtime Daily Tasks', icon: Target },
+      { id: 'messages', label: 'Messages', icon: MessageSquare },
+      { id: 'operations', label: 'Ops Center (Live)', icon: Cpu },
+      { id: 'global_directory', label: 'Global Directory', icon: Users },
+      { id: 'virtual_attendant', label: 'Call Center', icon: Phone },
+      { id: 'support_tickets', label: 'Support Tickets', icon: MessageSquare },
+      { id: 'it_support', label: 'IT Support & Diagnostics', icon: MonitorPlay },
+      { id: 'negligence_intercept', label: 'Negligence Intercept', icon: AlertTriangle },
+      { id: 'internal_admin', label: 'Internal Team', icon: Shield },
+      { id: 'dept_manager', label: 'Departments & Roles', icon: Building2 },
+      { id: 'hr_intelligence', label: 'HR Intelligence (Sylara)', icon: UserPlus },
+      { id: 'users', label: 'Personnel Force', icon: Users },
+      { id: 'gge_world_hr', label: 'GGE World Master Account', icon: Globe },
+      { id: 'external_admin', label: 'External Administrator', icon: Activity }
+    ]
+  },
+  {
+    title: 'Policy & Security',
+    color: 'rose',
+    icon: Scale,
+    tabs: [
+      { id: 'jurisdiction_map', label: 'Nationwide Oversight', icon: Globe },
+      { id: 'compliance', label: 'Compliance Monitor', icon: FileCheck },
+      { id: 'regulatory_library', label: 'Regulatory Library', icon: BookOpen },
+      { id: 'legal_oversight', label: 'Statewide Policy Hub', icon: Scale },
+      { id: 'approvals_denials', label: 'License Command (OMMA)', icon: FileCheck },
+      { id: 'judicial', label: 'Judicial Monitor', icon: Scale },
+      { id: 'ip_monitor', label: 'IP / Patent Monitor', icon: Shield },
+      { id: 'rapid_testing', label: 'Rapid Testing Hub', icon: FlaskConical },
+      { id: 'law_enforcement', label: 'Law Enforcement (RIP)', icon: Shield },
+      { id: 'sinc_ceye', label: 'SINC (CEYE)', icon: Eye },
+      { id: 'metrc_state', label: 'Metrc & State Info', icon: Database },
+      { id: 'settings', label: 'God Settings', icon: Settings },
+      { id: 'roles_duties', label: 'My Role & Duties', icon: Shield },
+      { id: 'launch_script', label: 'Master Launch Script', icon: FileText },
+      { id: 'system_health', label: 'System Health / AI', icon: Zap }
+    ]
+  }
+];
 
 export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, setMarqueeNews, marqueeSpeed, setMarqueeSpeed }: { onLogout?: () => void | Promise<void>, user?: any, jurisdiction?: any, marqueeNews?: string[], setMarqueeNews?: any, marqueeSpeed?: string, setMarqueeSpeed?: any }) => {
   const emailLower = user?.email?.toLowerCase() || '';
@@ -704,6 +797,25 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   const [selectedParent, setSelectedParent] = useState<string>(isExecutive ? 'ai_training' : 'overview');
   const [selectedApplicant, setSelectedApplicant] = useState<any>(null);
 
+  const [showFounderMatrix, setShowFounderMatrix] = useState(false);
+  const [selectedState, setSelectedState] = useState(() => {
+    return jurisdiction || user?.jurisdiction || user?.homeState || 'Oklahoma';
+  });
+
+  useEffect(() => {
+    if (jurisdiction) {
+      setSelectedState(jurisdiction);
+    }
+  }, [jurisdiction]);
+
+  const handleSelectTab = (tabId: string) => {
+    const parent = findParentTab(tabId) || tabId;
+    setSelectedParent(parent);
+    setActiveTab(tabId);
+    setNotifications(prev => prev.filter(n => n.tab !== tabId));
+    setShowFounderMatrix(false);
+  };
+
   const handleNavClick = (navId: string) => {
     if (MERGED_SUB_TABS[navId]) {
       setSelectedParent(navId);
@@ -1094,9 +1206,9 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
   const getContent = () => {
     switch (activeTab) {
       case 'operations':
-        return <div className="h-full w-full -m-10" data-action-bound><OperationsDashboard user={user} onLogout={onLogout} isFounder={user?.email?.toLowerCase() === 'globalgreenhp@gmail.com'} /></div>;
+        return <div className="h-full w-full -m-10" data-action-bound><OperationsDashboard user={user} onLogout={onLogout} isFounder={user?.email?.toLowerCase() === 'globalgreenhp@gmail.com'} jurisdiction={selectedState} /></div>;
       case 'internal_admin':
-        return <div className="h-full w-full -m-10" data-action-bound><OversightDashboard user={user} onLogout={() => setActiveTab(isExecutive ? 'ai_training' : 'overview')} role="admin_internal" jurisdiction={jurisdiction} /></div>;
+        return <div className="h-full w-full -m-10" data-action-bound><OversightDashboard user={user} onLogout={() => setActiveTab(isExecutive ? 'ai_training' : 'overview')} role="admin_internal" jurisdiction={selectedState} /></div>;
       case 'external_admin':
         return <div className="h-full w-full -m-10" data-action-bound><ExternalAdminDashboard user={user} onLogout={onLogout} /></div>;
       case 'virtual_attendant':
@@ -1681,58 +1793,128 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         </div>
       )}
 
-      <div data-action-bound="true" className={cn("w-64 bg-slate-950 border-r border-slate-900 flex flex-col hidden md:flex shrink-0 transition-all duration-500 print:hidden z-20 relative", !isUnlocked && "blur-md opacity-50 pointer-events-none")}>
-        <div className="p-6 pb-2">
-          <div className="flex items-center gap-3 mb-6">
-            <img src="/gghp-branding.png" alt="GGHP Logo" className="w-12 h-12 object-contain" />
-            <div>
-              <h2 className="font-black text-sm text-white leading-tight tracking-tight uppercase">
-                {isMonica ? 'Executive 1 Command' : (isRyan ? 'Executive.CEO Command Center' : 'Founder Command')}
-              </h2>
-              <p className="text-[10px] text-emerald-400 font-black tracking-widest uppercase">
-                {isExecutive ? 'Compliance Oversight' : 'God View • Platform Owner'}
-              </p>
-            </div>
-          </div>
-          <div className="p-3 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-3 mb-4 backdrop-blur-md">
-            <div className="w-10 h-10 rounded-xl overflow-hidden border border-white/20">
-              <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=0F172A&color=fff&size=48`} alt="" className="w-full h-full" />
-            </div>
-            <div>
-              <p className="text-xs font-black text-white">{fullName}</p>
-              <p className="text-[10px] text-slate-400 font-bold">{userTitle}</p>
-            </div>
-          </div>
-        </div>
-        <div className="flex-1 overflow-y-auto px-4 pb-6 space-y-1">
-          {filteredNavItems.map((item, gi) => {
-            const displayLabel = isExecutive ? item.label?.replace('God', 'Executive') : item.label;
-            const isActive = selectedParent === item.id;
-            const alertCount = getCategoryAlertCount(item.id!);
-            return (
-              <div key={item.id || gi} draggable onDragStart={(e) => handleDragStart(e, gi)} onDragOver={(e) => handleDragOver(e, gi)} onDrop={(e) => handleDrop(e, gi)} onDragEnd={() => setDraggedIdx(null)} className={cn("group w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-bold transition-all", isActive ? "bg-white/10 text-white" : "text-slate-400 hover:bg-white/5 hover:text-slate-100", draggedIdx === gi ? "opacity-30 border border-dashed border-indigo-400" : "")}>
-                <button onClick={() => handleNavClick(item.id!)} className="flex items-center gap-3 flex-1 text-left">
-                  <GripVertical size={14} className="text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  {item.icon && <item.icon size={16} className={isActive ? "text-white" : "text-slate-500"} />}
-                  {displayLabel}
-                </button>
-                <div className="flex items-center gap-1">
-                  {alertCount > 0 && (
-                    <span className="text-[10px] bg-red-500 text-white px-2 py-0.5 rounded-full font-black mr-1 animate-pulse">
-                      {alertCount}
-                    </span>
-                  )}
-                  {item.badge && <span className="text-[9px] bg-white/10 text-white px-2 py-0.5 rounded-full font-black mr-1">{item.badge}</span>}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
       <div className={cn("flex-1 flex flex-col h-[calc(100vh)] overflow-hidden transition-all duration-500", !isUnlocked && "blur-xl scale-[0.98] opacity-50 pointer-events-none")}>
-        <div className="h-20 border-b border-slate-200 flex items-center justify-between px-10 bg-white shrink-0 print:hidden">
-          <h1 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">{activeTab.replace('_', ' ')}</h1>
+        <div className="h-20 border-b border-slate-200 flex items-center justify-between px-8 bg-white shrink-0 print:hidden">
+          <div className="flex items-center gap-4">
+            {/* Branding badge */}
+            <div className="flex items-center gap-2.5">
+              <img src="/gghp-branding.png" alt="GGHP Logo" className="w-9 h-9 object-contain" />
+              <div className="leading-tight">
+                <h2 className="font-black text-xs text-slate-900 leading-tight uppercase tracking-tight">
+                  {isMonica ? 'Executive Command' : (isRyan ? 'Executive.CEO Command' : 'Founder Command')}
+                </h2>
+                <p className="text-[9px] text-emerald-600 font-bold uppercase tracking-wider">
+                  {isExecutive ? 'Compliance Oversight' : 'God View • Platform Owner'}
+                </p>
+              </div>
+            </div>
+
+            <div className="w-px h-8 bg-slate-200 shrink-0" />
+            
+            {/* Founder Matrix Button trigger */}
+            <div className="relative">
+              <button
+                onClick={() => setShowFounderMatrix(!showFounderMatrix)}
+                className={cn(
+                  "flex items-center gap-2 px-4 py-2 bg-slate-900 text-white border border-slate-800 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-850 hover:border-slate-700 hover:text-white transition-all shadow-md active:scale-95",
+                  showFounderMatrix && "ring-2 ring-indigo-500 border-indigo-500"
+                )}
+              >
+                <Cpu size={14} className="text-indigo-400" />
+                Founder Matrix
+                <span className="text-[10px] text-slate-400 font-bold">({activeTab.replace(/_/g, ' ')})</span>
+                <span className="text-[9px] text-indigo-400 font-black">▾</span>
+              </button>
+
+              {showFounderMatrix && (
+                <>
+                  {/* Backdrop Click Dismiss */}
+                  <div className="fixed inset-0 z-[90]" onClick={() => setShowFounderMatrix(false)} />
+                  {/* MEGA MENU DIALOG */}
+                  <div className="absolute left-0 top-full mt-3 w-[920px] max-w-[calc(100vw-4rem)] bg-slate-950/95 border border-slate-800 backdrop-blur-xl rounded-[2.5rem] p-8 shadow-2xl z-[100] animate-in fade-in zoom-in-95 duration-200 text-white">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
+                      <div>
+                        <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
+                          <Cpu size={16} className="text-indigo-500" /> Global Green System Matrix
+                        </h3>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase mt-0.5">God View • Clearance Level 5 Console</p>
+                      </div>
+                      <span className="text-[10px] font-black text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-3 py-1 rounded-full uppercase">Executive Switcher</span>
+                    </div>
+
+                    <div className="grid grid-cols-5 gap-6">
+                      {MEGA_COLUMNS.map((col, ci) => {
+                        return (
+                          <div key={ci} className="space-y-4">
+                            <div className="flex items-center gap-1.5 pb-2 border-b border-slate-800/60">
+                              <span className={cn(
+                                "w-2.5 h-2.5 rounded-full",
+                                col.color === 'emerald' ? "bg-emerald-500 shadow-md shadow-emerald-500/40" :
+                                col.color === 'cyan' ? "bg-cyan-500 shadow-md shadow-cyan-500/40" :
+                                col.color === 'blue' ? "bg-blue-500 shadow-md shadow-blue-500/40" :
+                                col.color === 'purple' ? "bg-purple-500 shadow-md shadow-purple-500/40" :
+                                "bg-rose-500 shadow-md shadow-rose-500/40"
+                              )} />
+                              <div className="leading-tight">
+                                <h4 className="text-[10px] font-black text-white uppercase tracking-wider">{col.title}</h4>
+                                <p className="text-[8px] text-slate-500 font-bold uppercase">Section 0{ci + 1}</p>
+                              </div>
+                            </div>
+                            <div className="flex flex-col gap-1.5 max-h-[50vh] overflow-y-auto pr-1 scrollbar-thin">
+                              {col.tabs.map(tab => {
+                                const TabIcon = tab.icon;
+                                const isActive = activeTab === tab.id;
+                                const alertCount = getSubTabAlertCount(tab.id);
+                                return (
+                                  <button
+                                    key={tab.id}
+                                    onClick={() => handleSelectTab(tab.id)}
+                                    className={cn(
+                                      "w-full text-left flex items-center justify-between px-3 py-2 rounded-xl text-[11px] font-bold transition-all relative group",
+                                      isActive
+                                        ? (col.color === 'emerald' ? "bg-emerald-600 text-white shadow-lg shadow-emerald-950/40" :
+                                           col.color === 'cyan' ? "bg-cyan-600 text-white shadow-lg shadow-cyan-950/40" :
+                                           col.color === 'blue' ? "bg-blue-600 text-white shadow-lg shadow-blue-950/40" :
+                                           col.color === 'purple' ? "bg-purple-600 text-white shadow-lg shadow-purple-950/40" :
+                                           "bg-rose-600 text-white shadow-lg shadow-rose-950/40")
+                                        : "text-slate-400 hover:bg-white/5 hover:text-slate-200"
+                                    )}
+                                  >
+                                    <span className="flex items-center gap-2">
+                                      {TabIcon && <TabIcon size={12} className={isActive ? "text-white" : "text-slate-500 group-hover:text-slate-300 transition-colors"} />}
+                                      <span className="truncate max-w-[120px]">{tab.label}</span>
+                                    </span>
+                                    {alertCount > 0 && (
+                                      <span className={cn(
+                                        "text-[8px] px-1 py-0.5 rounded-full font-black ml-1 shrink-0 animate-pulse",
+                                        isActive ? "bg-white text-slate-900" : "bg-red-500 text-white"
+                                      )}>
+                                        {alertCount}
+                                      </span>
+                                    )}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
+            <StateJurisdictionSelector
+              value={selectedState}
+              onChange={setSelectedState}
+              variant="light"
+              compact={true}
+              showMetadata={true}
+              label=""
+            />
+          </div>
+
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-100">
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
@@ -1767,13 +1949,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
                           e.preventDefault();
                           setShowNotifPanel(false);
                           setNotifications(prev => prev.filter(item => item.id !== n.id));
-                          const parent = findParentTab(n.tab);
-                          if (parent) {
-                            setSelectedParent(parent);
-                          } else {
-                            setSelectedParent(n.tab);
-                          }
-                          setActiveTab(n.tab);
+                          handleSelectTab(n.tab);
                         }} className="w-full px-4 py-3 hover:bg-indigo-50 cursor-pointer transition-colors group text-left">
                           <div className="flex items-start gap-3">
                             <span className="text-lg">{n.icon}</span>
@@ -1802,28 +1978,6 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         </div>
         <div className="flex-1 flex flex-row overflow-hidden min-h-0">
           <div className="flex-1 flex flex-col overflow-hidden">
-            {MERGED_SUB_TABS[selectedParent] && (
-              <div data-action-bound="true" className="flex items-center gap-1 px-6 py-3 bg-slate-50 border-b border-slate-200 overflow-x-auto shrink-0">
-                {MERGED_SUB_TABS[selectedParent].map(sub => (
-                  <button
-                    key={sub.id}
-                    onClick={() => handleSubTabClick(sub.id)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${activeTab === sub.id
-                        ? 'bg-emerald-600 text-white shadow-sm'
-                        : 'text-slate-500 hover:bg-white hover:text-slate-700 hover:shadow-sm'
-                      }`}
-                  >
-                    <sub.icon size={12} />
-                    {sub.label}
-                    {getSubTabAlertCount(sub.id) > 0 && (
-                      <span className="text-[9px] bg-red-500 text-white px-1.5 py-0.5 rounded-full font-black animate-pulse ml-1">
-                        {getSubTabAlertCount(sub.id)}
-                      </span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            )}
             <div className={cn(
               "flex-1 p-10 min-h-0",
               ['ai_training', 'messages', 'b2b_crm', 'marketing_hub', 'operations', 'internal_admin', 'external_admin', 'global_directory'].includes(activeTab)
