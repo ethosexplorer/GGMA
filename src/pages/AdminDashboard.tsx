@@ -42,8 +42,15 @@ const NAV_ITEMS = [
 ];
 
 export const AdminDashboard = ({ onLogout, user, initialTab, embedded = false, jurisdiction = 'Oklahoma' }: { onLogout?: () => void | Promise<void>, user?: any, initialTab?: string, embedded?: boolean, jurisdiction?: string }) => {
+  const isExecutive = user?.role === 'executive_founder' || user?.role === 'executive_ceo' || user?.role === 'president' || user?.role === 'chief_compliance_director' || user?.role === 'executive_advisor' || user?.role === 'advisor' || user?.email?.toLowerCase().includes('globalgreenhp') || user?.email?.toLowerCase().includes('monica') || user?.email?.toLowerCase().includes('bob');
+  const hasMultiStateAccess = isExecutive || user?.multiStateAdmin === true || (Array.isArray(user?.accessibleStates) && user.accessibleStates.length > 1);
+  const userDefaultState = user?.jurisdiction || user?.homeState || jurisdiction || 'Oklahoma';
+
   const [activeTab, setActiveTab] = useState(initialTab || 'overview');
-  const [selectedState, setSelectedState] = useState(jurisdiction || 'Oklahoma');
+  const [selectedState, setSelectedState] = useState(() => {
+    if (!hasMultiStateAccess) return userDefaultState;
+    return userDefaultState;
+  });
   
   // Draggable nav state with localStorage persistence
   const [navItems, setNavItems] = useState(() => {
@@ -128,7 +135,6 @@ export const AdminDashboard = ({ onLogout, user, initialTab, embedded = false, j
   const [regSearch, setRegSearch] = useState('');
   const [regCat, setRegCat] = useState<string | null>(null);
   
-  const isExecutive = user?.role === 'executive_founder' || user?.role === 'executive_ceo' || user?.role === 'president' || user?.role === 'chief_compliance_director' || user?.role === 'executive_advisor' || user?.role === 'advisor';
   const [isUnlocked, setIsUnlocked] = useState(isExecutive);
   const [pin, setPin] = useState('');
   const [liveAction, setLiveAction] = useState<{ title: string, message: string, type: 'warning' | 'success' | 'process' | 'info' | 'form' } | null>(null);
@@ -899,7 +905,11 @@ export const AdminDashboard = ({ onLogout, user, initialTab, embedded = false, j
             <div className="h-14 border-b border-slate-200 flex items-center justify-between px-6 bg-white shrink-0">
               <h1 className="text-lg font-black text-slate-900 tracking-tighter uppercase">{activeTab.replace('_', ' ')}</h1>
               <div className="flex items-center gap-4">
-                <StateJurisdictionSelector value={selectedState} onChange={setSelectedState} variant="light" compact={true} label="" />
+                {hasMultiStateAccess ? (
+                  <StateJurisdictionSelector value={selectedState} onChange={setSelectedState} variant="light" compact={true} label="" />
+                ) : (
+                  <span className="text-xs font-bold text-slate-500 bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-full uppercase tracking-wider">{selectedState}</span>
+                )}
                 <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-100">
                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
                    SYSTEM OPERATIONAL
@@ -1111,7 +1121,11 @@ export const AdminDashboard = ({ onLogout, user, initialTab, embedded = false, j
         <div className="h-20 border-b border-slate-200 flex items-center justify-between px-10 bg-white shrink-0">
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">{activeTab.replace('_', ' ')}</h1>
           <div className="flex items-center gap-6">
-            <StateJurisdictionSelector value={selectedState} onChange={setSelectedState} variant="light" compact={true} label="" />
+            {hasMultiStateAccess ? (
+              <StateJurisdictionSelector value={selectedState} onChange={setSelectedState} variant="light" compact={true} label="" />
+            ) : (
+              <span className="text-xs font-bold text-slate-500 bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-full uppercase tracking-wider">{selectedState}</span>
+            )}
             <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-100">
                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
                SYSTEM OPERATIONAL

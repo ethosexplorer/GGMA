@@ -22,16 +22,25 @@ import { getStateMetrics, getComparisonRow } from '../lib/stateMetrics';
 // ═══════════════════════════════════════════════════════════════════════
 
 export const StateAuthorityDashboard = ({ onLogout, user, embedded = false, jurisdiction = 'Oklahoma' }: { onLogout?: () => void, user?: any, embedded?: boolean, jurisdiction?: string }) => {
+  const isExecutive = user?.role === 'executive_founder' || user?.role === 'executive_ceo' || user?.role === 'president' || user?.role === 'chief_compliance_director' || user?.role === 'executive_advisor' || user?.role === 'advisor' || user?.email?.toLowerCase().includes('globalgreenhp') || user?.email?.toLowerCase().includes('monica') || user?.email?.toLowerCase().includes('bob');
+  const hasMultiStateAccess = isExecutive || user?.multiStateAdmin === true || (Array.isArray(user?.accessibleStates) && user.accessibleStates.length > 1);
+  const userDefaultState = user?.jurisdiction || user?.homeState || jurisdiction || 'Oklahoma';
+
   const [activeTab, setActiveTab] = useState('statewide_overview');
   const [selectedApplicant, setSelectedApplicant] = useState<any>(null);
   const [isUnlocked, setIsUnlocked] = useState(true);
   const [pin, setPin] = useState('');
   const [tier, setTier] = useState<'basic' | 'pro' | 'custom'>('pro');
-  const [stateJurisdiction, setStateJurisdiction] = useState(() => localStorage.getItem('state_authority_jurisdiction') || jurisdiction || 'Oklahoma');
+  const [stateJurisdiction, setStateJurisdiction] = useState(() => {
+    if (!hasMultiStateAccess) return userDefaultState;
+    return localStorage.getItem('state_authority_jurisdiction') || userDefaultState;
+  });
 
   useEffect(() => {
-    localStorage.setItem('state_authority_jurisdiction', stateJurisdiction);
-  }, [stateJurisdiction]);
+    if (hasMultiStateAccess) {
+      localStorage.setItem('state_authority_jurisdiction', stateJurisdiction);
+    }
+  }, [stateJurisdiction, hasMultiStateAccess]);
 
   const stateData = stateJurisdiction !== 'All States Active' ? STATE_REGULATORY_MAP[stateJurisdiction] : null;
   const m = useMemo(() => getStateMetrics(stateJurisdiction), [stateJurisdiction]);
@@ -892,7 +901,11 @@ export const StateAuthorityDashboard = ({ onLogout, user, embedded = false, juri
             </div>
             <div className="w-px h-8 bg-emerald-800/40 shrink-0" />
             <div className="shrink-0 flex items-center gap-3">
-              <StateJurisdictionSelector value={stateJurisdiction} onChange={setStateJurisdiction} variant="dark" showMetadata={true} compact={true} label="" />
+              {hasMultiStateAccess ? (
+                <StateJurisdictionSelector value={stateJurisdiction} onChange={setStateJurisdiction} variant="dark" showMetadata={true} compact={true} label="" />
+              ) : (
+                <span className="text-xs font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-800/30 px-3 py-1.5 rounded-full uppercase tracking-wider">{stateJurisdiction}</span>
+              )}
             </div>
           </div>
         </div>
@@ -1044,7 +1057,13 @@ export const StateAuthorityDashboard = ({ onLogout, user, embedded = false, juri
             <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Powered by {stateData?.abbr || 'State'} Enterprise Services</span>
           </div>
           <p className="text-[10px] text-indigo-400 font-black uppercase tracking-widest mb-3">{getJurisdiction()}</p>
-          <StateJurisdictionSelector value={stateJurisdiction} onChange={setStateJurisdiction} variant="dark" showMetadata={true} compact={true} label="State" />
+          {hasMultiStateAccess ? (
+            <StateJurisdictionSelector value={stateJurisdiction} onChange={setStateJurisdiction} variant="dark" showMetadata={true} compact={true} label="State" />
+          ) : (
+            <div className="mt-2 text-center py-2 bg-slate-900/60 rounded-xl border border-slate-800 text-[10px] font-black uppercase text-slate-400 tracking-widest">
+              Locked Region
+            </div>
+          )}
           <select value={tier} onChange={(e) => setTier(e.target.value as any)} className="w-full mt-4 bg-slate-900 border border-slate-700 text-slate-300 text-xs px-3 py-2 rounded-xl outline-none">
             <option value="basic">Basic Tier</option>
             <option value="pro">Pro Tier</option>

@@ -99,8 +99,15 @@ const patientOutcomes = [
 ];
 
 export const PublicHealthDashboard = ({ onLogout, user, jurisdiction = 'Oklahoma' }: { onLogout?: () => void, user?: any, jurisdiction?: string }) => {
+  const isExecutive = user?.role === 'executive_founder' || user?.role === 'executive_ceo' || user?.role === 'president' || user?.role === 'chief_compliance_director' || user?.role === 'executive_advisor' || user?.role === 'advisor' || user?.email?.toLowerCase().includes('globalgreenhp') || user?.email?.toLowerCase().includes('monica') || user?.email?.toLowerCase().includes('bob');
+  const hasMultiStateAccess = isExecutive || user?.multiStateAdmin === true || (Array.isArray(user?.accessibleStates) && user.accessibleStates.length > 1);
+  const userDefaultState = user?.jurisdiction || user?.homeState || jurisdiction || 'Oklahoma';
+
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [selectedState, setSelectedState] = useState(jurisdiction || 'Oklahoma');
+  const [selectedState, setSelectedState] = useState(() => {
+    if (!hasMultiStateAccess) return userDefaultState;
+    return userDefaultState;
+  });
 
   const displayAccreditations = accreditationItems.filter(item => {
     if (selectedState === 'All States Active') return true;
@@ -168,7 +175,11 @@ export const PublicHealthDashboard = ({ onLogout, user, jurisdiction = 'Oklahoma
           </div>
           <div className="w-px h-8 bg-slate-700 shrink-0" />
           <div className="shrink-0 flex items-center gap-3">
-            <StateJurisdictionSelector value={selectedState} onChange={setSelectedState} variant="dark" showMetadata={true} compact={true} label="" />
+            {hasMultiStateAccess ? (
+              <StateJurisdictionSelector value={selectedState} onChange={setSelectedState} variant="dark" showMetadata={true} compact={true} label="" />
+            ) : (
+              <span className="text-xs font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-800/30 px-3 py-1.5 rounded-full uppercase tracking-wider">{selectedState}</span>
+            )}
           </div>
         </div>
       </div>

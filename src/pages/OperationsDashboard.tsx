@@ -80,17 +80,15 @@ export const OperationsDashboard = ({ onLogout, user, isFounder, jurisdiction }:
   const userRole = (user?.role || '').toLowerCase();
   const getNaturalLevel = (): number => {
     if (isFounder) return 5;
-    if (userRole.includes('founder') || userRole.includes('executive_founder') || userRole.includes('president')) return 5;
-    if (userRole.includes('admin_internal') || userRole.includes('manager') || userRole === 'admin') return 4;
+    if (userRole.includes('founder') || userRole.includes('executive_founder') || userRole.includes('president') || userRole.includes('admin_internal') || userRole.includes('manager') || userRole === 'admin') return 4;
     if (userRole.includes('team_lead') || userRole.includes('supervisor')) return 3;
     if (userRole.includes('operations') || userRole.includes('senior')) return 2;
     if (userRole.includes('rep') || userRole.includes('intake') || userRole.includes('agent')) return 1;
-    if (userRole.includes('executive') || !userRole) return 5;
     return 2;
   };
 
   const naturalLevel = getNaturalLevel();
-  const canSwitchLevels = isFounder || naturalLevel >= 5; // Only founders/executives can preview other levels
+  const canSwitchLevels = !!isFounder; // Only the principal founder can preview or switch levels
 
   // Level override state — allows founder to preview any level
   const [levelOverride, setLevelOverride] = useState<number | null>(null);
