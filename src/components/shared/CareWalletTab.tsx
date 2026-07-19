@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { Wallet, CreditCard, ArrowUpCircle, ArrowDownCircle, Shield, Sparkles, Clock, MapPin, TrendingUp, Star, Zap, Lock, Activity, Briefcase, Database } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
+// PRODUCTION: All mock data moved to src/sandbox/demo-data.ts
+// Live data should come from Turso/Firestore when available
+
+// STRUCTURAL: Wallet tier definitions (intentionally static product configuration)
 const walletTiers = [
   { id: 'bronze', name: 'Bronze', price: 'Free', color: 'from-amber-700 to-amber-900', badge: '🟤', features: ['Compassion Balance (Cash Only)', 'Ecosystem-Only Spending', 'Basic Transaction Ledger', 'Larry Silent Compliance', 'L.A.R.R.Y Basic Guidance'] },
   { id: 'silver', name: 'Silver', price: '$19/mo', color: 'from-slate-400 to-slate-600', badge: '⚪', features: ['Everything in Bronze +', 'GGE Disposable Virtual Card', 'Care Points Tier 1 (1.5x Multiplier)', 'Categorized Spending Tracking', 'Faster Cash Clearing'] },
@@ -9,21 +13,9 @@ const walletTiers = [
   { id: 'platinum', name: 'Platinum', price: '$99/mo', color: 'from-purple-500 to-indigo-700', badge: '🔴', features: ['Everything in Gold +', 'Unlimited Virtual Cards', 'Care Points Tier 3 (5x Multiplier)', 'Full System Routing Access', 'Full L.A.R.R.Y Autonomous AI'] },
 ];
 
-const recentTransactions = [
-  { id: 1, type: 'reload', desc: 'Cash Reload — GGE Oklahoma City', amount: 200, date: '2 hours ago', location: 'GGE OKC Kiosk' },
-  { id: 2, type: 'spend', desc: 'Green Leaf Dispensary — Flower', amount: -45.00, date: 'Yesterday', location: 'Tulsa, OK' },
-  { id: 3, type: 'spend', desc: 'Telehealth Visit — Dr. Johnson', amount: -99.00, date: '3 days ago', location: 'Virtual' },
-  { id: 4, type: 'reload', desc: 'Cash Reload — Partner Store', amount: 150, date: '5 days ago', location: 'QuikTrip #441' },
-  { id: 5, type: 'spend', desc: 'Legal Consultation — Smith & Assoc.', amount: -75.00, date: '1 week ago', location: 'Virtual' },
-  { id: 6, type: 'spend', desc: 'Edibles Purchase — Canna Co.', amount: -32.50, date: '1 week ago', location: 'Norman, OK' },
-];
+const recentTransactions: any[] = [];
 
-const reloadLocations = [
-  { name: 'GGE Oklahoma City Kiosk', type: 'kiosk', distance: '2.1 mi' },
-  { name: 'Green Leaf Dispensary', type: 'dispensary', distance: '3.4 mi' },
-  { name: 'QuikTrip #441 — Memorial', type: 'partner', distance: '0.8 mi' },
-  { name: 'Cloud Nine Wellness', type: 'dispensary', distance: '5.2 mi' },
-];
+const reloadLocations: any[] = [];
 
 interface CareWalletTabProps {
   userRole?: 'patient' | 'provider' | 'business' | 'attorney';
@@ -35,11 +27,11 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
   const [showCreditModal, setShowCreditModal] = useState(false);
   const [showDisposableCard, setShowDisposableCard] = useState(false);
   const [reloadAmount, setReloadAmount] = useState('100');
-  const currentTier = 'silver';
-  const compassionBalance = 198.50;
-  const carePoints = 742;
-  const lineOfCredit = 5000;
-  const utilizedCredit = 1250;
+  const currentTier = 'bronze';
+  const compassionBalance = 0;
+  const carePoints = 0;
+  const lineOfCredit = 0;
+  const utilizedCredit = 0;
 
   return (
     <div className="space-y-6">
@@ -453,11 +445,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
               <button onClick={() => { import('../../lib/turso').then(function(m) { m.turso.execute({ sql: 'INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)', args: ['log-' + Math.random().toString(36).substr(2, 9), 'UI_Action', 'Production_User', JSON.stringify({ detail: 'Action executed' })] }).catch(function(e) { console.error(e) }) }) }} className="px-4 py-2 bg-[#1a4731] text-white rounded-lg text-xs font-bold hover:bg-[#153a28]">Add New Vendor</button>
             </div>
             <div className="space-y-4">
-              {[
-                { name: 'Apex Cultivation LLC', type: 'Inventory Purchase', amount: 4500, status: 'Pending Approval' },
-                { name: 'SecureMovers Logistics', type: 'Transport Fee', amount: 350, status: 'Scheduled' },
-                { name: 'OMMA Regulatory Fees', type: 'Compliance Payment', amount: 2500, status: 'Processing' },
-              ].map((v, i) => (
+              {([] as any[]).map((v, i) => (
                 <div key={i} className="flex items-center justify-between p-4 rounded-xl border border-slate-100 hover:bg-slate-50 transition-colors">
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600">
@@ -652,14 +640,7 @@ export const CareWalletTab = ({ userRole = 'patient' }: CareWalletTabProps) => {
             <button onClick={() => { import('../../lib/turso').then(({ turso }) => turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: ['log-' + Math.random().toString(36).substr(2, 9), "UI_Action", "Production_User", JSON.stringify({ detail: "Full transaction history exported to CSV." })] }).catch(console.error) ); alert("Full transaction history exported to CSV.\n\n[Live Production Transaction Logged]"); }} className="text-sm text-[#1a4731] font-bold hover:underline">Export All</button>
           </div>
           <div className="space-y-3">
-            {[
-              { id: 101, type: 'revenue', desc: 'POS Sale — Walk-in Customer #4821', amount: 127.50, date: '1 hour ago', method: 'Cash', ref: 'POS-4821' },
-              { id: 102, type: 'revenue', desc: 'POS Sale — Online Order #1092', amount: 89.00, date: '3 hours ago', method: 'Card (Visa)', ref: 'POS-1092' },
-              { id: 103, type: 'expense', desc: 'Vendor Payment — Green Leaf Wholesale', amount: -2400.00, date: 'Yesterday', method: 'Bank Transfer', ref: 'VND-882' },
-              { id: 104, type: 'revenue', desc: 'POS Sale — Medical Patient (Care Wallet)', amount: 45.00, date: 'Yesterday', method: 'Care Wallet', ref: 'CW-9921' },
-              { id: 105, type: 'expense', desc: 'OMMA License Renewal Fee', amount: -2500.00, date: '3 days ago', method: 'Bank Transfer', ref: 'OMMA-2026' },
-              { id: 106, type: 'revenue', desc: 'Catering Order — Event Supply', amount: 1800.00, date: '5 days ago', method: 'Invoice', ref: 'INV-0042' },
-            ].map((tx) => (
+            {([] as any[]).map((tx) => (
               <div key={tx.id} className="flex items-center justify-between p-4 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
                 <div className="flex items-center gap-4">
                   <div className={cn(

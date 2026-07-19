@@ -9,18 +9,14 @@ import { UserCalendar } from '../components/UserCalendar';
 import { ImportantUpdates } from '../components/ImportantUpdates';
 import { ProfileSettingsCard } from '../components/shared/ProfileSettingsCard';
 
-const transactions = [
-  { id: 1, type: 'reload', amount: 200, date: 'Today, 10:30 AM', merchant: 'GGP Kiosk - Tulsa', status: 'Completed' },
-  { id: 2, type: 'spend', amount: 45.50, date: 'Yesterday, 04:15 PM', merchant: 'Green Leaf Wellness', status: 'Completed' },
-  { id: 3, type: 'spend', amount: 120, date: 'Apr 17, 2026', merchant: 'Dr. Sarah Jenkins (Telehealth)', status: 'Completed' },
-  { id: 4, type: 'reward', amount: 15, date: 'Apr 15, 2026', merchant: 'Care Points Conversion', status: 'Completed' },
-];
+const transactions: any[] = []; // No hardcoded fallback — live data only from Turso wallet_transactions
 
+// PRODUCTION: C³ scores should come from live scoring engine. Mock data in src/sandbox/demo-data.ts
 const c3Factors = [
-  { name: 'Compassion Discipline', weight: '35%', score: 95, max: 100, status: 'Excellent', color: 'bg-emerald-500' },
-  { name: 'Incentive Engagement', weight: '25%', score: 88, max: 100, status: 'Good', color: 'bg-blue-500' },
-  { name: 'Larry Enforcement Node', weight: '20%', score: 100, max: 100, status: 'Secure', color: 'bg-purple-500' },
-  { name: 'System Tenure', weight: '5%', score: 70, max: 100, status: 'Growing', color: 'bg-amber-500' },
+  { name: 'Compassion Discipline', weight: '35%', score: 0, max: 100, status: '—', color: 'bg-emerald-500' },
+  { name: 'Incentive Engagement', weight: '25%', score: 0, max: 100, status: '—', color: 'bg-blue-500' },
+  { name: 'Larry Enforcement Node', weight: '20%', score: 0, max: 100, status: '—', color: 'bg-purple-500' },
+  { name: 'System Tenure', weight: '5%', score: 0, max: 100, status: '—', color: 'bg-amber-500' },
 ];
 
 const loyaltyTiers = [
@@ -130,13 +126,13 @@ export const CareWalletDashboard = ({ onLogout, onNavigate, user }: { onLogout?:
                     </div>
                     <div className="flex flex-col items-end">
                       <div className="bg-slate-800 border border-slate-600 rounded-lg px-3 py-1 text-white text-xs font-bold mb-1">
-                        Account # •••• 4092
+                        Account # Not Assigned
                       </div>
                       <span className="text-[9px] text-emerald-500 font-bold uppercase tracking-widest">Cleared Funds Only</span>
                     </div>
                   </div>
                   
-                  <h1 className="text-6xl font-black text-white mb-2">$845.50</h1>
+                  <h1 className="text-6xl font-black text-white mb-2">$0.00</h1>
                   
                   <div className="flex items-center gap-4 mt-8">
                     <button onClick={handleReload} className="flex-1 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold py-3 rounded-xl transition-colors shadow-lg flex items-center justify-center gap-2">
@@ -255,11 +251,11 @@ export const CareWalletDashboard = ({ onLogout, onNavigate, user }: { onLogout?:
                       <span className="font-black tracking-widest text-lg">GGP CARD</span>
                       <span className="px-2 py-1 bg-white/20 rounded text-[10px] font-bold uppercase backdrop-blur-md">Virtual</span>
                     </div>
-                    <p className="font-mono text-xl tracking-widest mb-2 opacity-90">4092 8812 3456 9011</p>
+                    <p className="font-mono text-xl tracking-widest mb-2 opacity-90">•••• •••• •••• ••••</p>
                     <div className="flex justify-between items-end">
                       <div>
                         <p className="text-[10px] uppercase tracking-wider opacity-70">Cardholder</p>
-                        <p className="font-bold text-sm tracking-wide uppercase">{user?.name || 'Marcus Johnson'}</p>
+                        <p className="font-bold text-sm tracking-wide uppercase">{user?.name || 'Cardholder'}</p>
                       </div>
                       <div>
                         <p className="text-[10px] uppercase tracking-wider opacity-70">Exp</p>

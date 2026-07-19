@@ -57,7 +57,7 @@ const LegislatorsDashboard = React.lazy(() => import('./pages/LegislatorsDashboa
 const AdvocacyResearchDashboard = React.lazy(() => import('./pages/AdvocacyResearchDashboard').then(m => ({ default: m.AdvocacyResearchDashboard })));
 
 // --- Lazy-loaded Pages ---
-const SettingsPreferencesMockup = React.lazy(() => import('./pages/SettingsPreferencesMockup').then(m => ({ default: m.SettingsPreferencesMockup })));
+
 const ProductsServicesPage = React.lazy(() => import('./pages/ProductsServicesPage').then(m => ({ default: m.ProductsServicesPage })));
 const FederalStatePage = React.lazy(() => import('./pages/FederalStatePage').then(m => ({ default: m.FederalStatePage })));
 const WhatIsC3Page = React.lazy(() => import('./pages/WhatIsC3Page').then(m => ({ default: m.WhatIsC3Page })));
@@ -1263,7 +1263,7 @@ export default function App() {
               variant="business"
             />
           )}
-          {view === 'settings-mockup' && <SettingsPreferencesMockup />}
+
 
           {view === 'patient-signup' && (
             <PatientSignupPage

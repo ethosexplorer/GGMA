@@ -1,18 +1,36 @@
-import React, { useState } from 'react';
-import { Search, Filter, Download, Shield, User, Clock, MapPin, Eye, FileText, AlertCircle, CheckCircle, Cpu } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Filter, Download, Shield, User, Clock, MapPin, Eye, FileText, AlertCircle, CheckCircle, Cpu, Loader2 } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { turso } from '../../lib/turso';
 
 export const AuditLogsTab = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  
-  const auditLogs = [
-    { id: 'LOG-8821', user: 'Ryan Ferrari', action: 'Executive Emergency Broadcast', entity: 'Platform Global', timestamp: '2 mins ago', status: 'Authorized', severity: 'High', details: 'Alert: Heavy Rain Expected in OK', ip: '192.168.1.42' },
-    { id: 'LOG-8820', user: 'Bob Moore', action: 'State Fact Update', entity: 'California', timestamp: '15 mins ago', status: 'Completed', severity: 'Medium', details: 'Updated Compliance Standards v4.2', ip: '172.16.0.12' },
-    { id: 'LOG-8819', user: 'System Engine', action: 'Automated METRC Sync', entity: 'Oklahoma Retail #4', timestamp: '45 mins ago', status: 'Success', severity: 'Low', details: 'Synced 4,208 tags across 4 facilities', ip: 'GGHP-BACKBONE-01' },
-    { id: 'LOG-8818', user: 'Oversight Staff', action: 'Portal Access', entity: 'Federal Command', timestamp: '1 hour ago', status: 'Authorized', severity: 'Low', details: 'Session started for ID #992', ip: '10.0.4.19' },
-    { id: 'LOG-8817', user: 'External Auditor', action: 'Document Download', entity: 'Legal Vault', timestamp: '3 hours ago', status: 'Authorized', severity: 'Medium', details: 'Downloaded P&L Trajectory 2026', ip: '45.12.8.201' },
-    { id: 'LOG-8816', user: 'Unidentified User', action: 'Failed Login Attempt', entity: 'Founder Dashboard', timestamp: '5 hours ago', status: 'Denied', severity: 'Critical', details: 'Multiple password failures detected', ip: '198.51.100.1' },
-  ];
+  const [auditLogs, setAuditLogs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    turso.execute('SELECT * FROM audit_logs ORDER BY rowid DESC LIMIT 50')
+      .then(res => {
+        const rows = res.rows.map((r: any, i: number) => {
+          let parsed: any = {};
+          try { parsed = JSON.parse(r.data || '{}'); } catch { }
+          return {
+            id: r.id || `LOG-${i}`,
+            user: r.user_id || 'System',
+            action: r.action || 'Unknown',
+            entity: parsed.entity || 'Platform',
+            timestamp: r.created_at || r.timestamp || '',
+            status: parsed.status || 'Logged',
+            severity: parsed.severity || 'Low',
+            details: parsed.detail || parsed.details || r.data || '',
+            ip: parsed.ip || '—',
+          };
+        });
+        setAuditLogs(rows);
+      })
+      .catch(e => { console.error('AuditLogsTab fetch error:', e); })
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <div className="flex flex-col h-full bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden animate-in fade-in duration-500">

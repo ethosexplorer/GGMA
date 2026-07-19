@@ -22,34 +22,20 @@ export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string,
   const [editPayableForm, setEditPayableForm] = useState({ name: '', amount: '', due_date: '', status: '' });
 
   useEffect(() => {
-    // Purge old mock seed data from Turso (one-time cleanup)
-    const mockNames = [
-      'Sylara Medical Subscriptions', 'Metrc Integration Fees', 'Care Wallet Transactions',
-      'Telehealth Consults', 'State Jurisdiction Licensing', 'Back Office Operations (Cannabis)',
-      'Back Office Operations (General)', 'Attorney / Legal Retainers (Cannabis)',
-      'Attorney / Legal Retainers (General)', 'Ecosystem Add-ons (Patient)',
-      'Ecosystem Add-ons (Cross-Dashboard)', 'Distributor / Reseller Fees',
-      'Partner Affiliate Commissions', 'Enforcement & Finance AI Bundles',
-      'Care Builder Credit Programs', 'Federal Dashboard Leases'
-    ];
-    Promise.all(mockNames.map(n =>
-      turso.execute({ sql: "DELETE FROM founder_ledger WHERE origin_vector = ?", args: [n] })
-    )).then(() => {
-      // Ensure founder_payables table exists fallback
-      turso.execute(`
-        CREATE TABLE IF NOT EXISTS founder_payables (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          name TEXT NOT NULL,
-          amount TEXT NOT NULL,
-          due_date TEXT NOT NULL,
-          status TEXT NOT NULL,
-          color TEXT NOT NULL,
-          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-      `).then(() => {
-        refreshLedger();
-        refreshPayables();
-      }).catch(console.error);
+    // Ensure founder_payables table exists
+    turso.execute(`
+      CREATE TABLE IF NOT EXISTS founder_payables (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        amount TEXT NOT NULL,
+        due_date TEXT NOT NULL,
+        status TEXT NOT NULL,
+        color TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `).then(() => {
+      refreshLedger();
+      refreshPayables();
     }).catch(console.error);
   }, []);
 
@@ -356,9 +342,10 @@ export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string,
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
-                {(founderLedger.length > 0 ? founderLedger : [
-                  { n: 'Jasmin Garrett — Patient Application Processing Fee', t: 'Service Fee (Chime)', g: '$20.00', net: '$20.00', s: 'Settled', c: 'bg-emerald-600' }
-                ]).map((u: any, i: number) => {
+                {(founderLedger.length > 0 ? founderLedger : []).length === 0 ? (
+                  <tr><td colSpan={6} className="px-6 py-8 text-center text-slate-400 font-medium">No revenue streams recorded yet. Click "+ Add Revenue Stream" to create one.</td></tr>
+                ) : null}
+                {founderLedger.map((u: any, i: number) => {
                   const isEditing = editingRevenueId === u.id && u.id != null;
 
                   if (isEditing) {
