@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
-import { ChevronLeft, ChevronRight, Plus, X, Clock, Video, MapPin, Users, Calendar as CalIcon, Trash2, CheckSquare, Bell, Search, Send, Shield } from 'lucide-react';
-import { collection, query, onSnapshot, addDoc, serverTimestamp, doc, updateDoc, deleteDoc, where, getDocs } from 'firebase/firestore';
+import React, { useState, useMemo, useEffect } from 'react';
+import { ChevronLeft, ChevronRight, Plus, X, Clock, Video, MapPin, Users, Calendar as CalIcon, Trash2, CheckSquare, Bell, Search, Send, Shield, StickyNote } from 'lucide-react';
+import { collection, query, onSnapshot, addDoc, serverTimestamp, doc, updateDoc, deleteDoc, where, getDocs, setDoc } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { cn } from '../lib/utils';
 
@@ -20,6 +20,7 @@ interface CalEvent {
   meetLink?: string; 
   source?: string; 
   isBusiness?: boolean;
+  taskType?: string;
 }
 
 export const LEVEL_CATEGORIES = [
@@ -170,13 +171,20 @@ export const UserCalendar = ({
     location: '', 
     meetLink: '',
     assignedToId: '',
-    assignedToName: ''
+    assignedToName: '',
+    taskType: ''
   });
 
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [filterCat, setFilterCat] = useState<string | null>(null);
+
+  // Note/Memo Board state variables
+  const [localMemoText, setLocalMemoText] = useState('');
+  const [dbMemoText, setDbMemoText] = useState('');
+  const [isSavingMemo, setIsSavingMemo] = useState(false);
+  const [memoLastSaved, setMemoLastSaved] = useState<string | null>(null);
 
   const isMatrix = calendarMode === 'founder';
 
@@ -630,7 +638,8 @@ export const UserCalendar = ({
             location: data.location,
             meetLink: data.meetLink,
             source: data.source || '',
-            isBusiness: !!data.isBusiness
+            isBusiness: !!data.isBusiness,
+            taskType: data.taskType || ''
           };
         });
         updateState();
@@ -656,7 +665,8 @@ export const UserCalendar = ({
               location: data.location,
               meetLink: data.meetLink,
               source: data.source || '',
-              isBusiness: !!data.isBusiness
+              isBusiness: !!data.isBusiness,
+              taskType: data.taskType || ''
             };
           });
           updateState();
@@ -706,6 +716,69 @@ export const UserCalendar = ({
     };
   }, [activeCalendarId, calendarMode, user?.uid, isFounder]);
 
+  // Sync Note/Memo Board from Firestore
+  useEffect(() => {
+    if (!db || !activeCalendarId) return;
+    
+    if (activeCalendarId.startsWith('founder_private_')) {
+      const ownerUid = activeCalendarId.split('founder_private_')[1];
+      if (user?.uid !== ownerUid && user?.email?.toLowerCase() !== 'globalgreenhp@gmail.com') {
+        setLocalMemoText('');
+        setDbMemoText('');
+        return;
+      }
+    }
+
+    const memoRef = doc(db, 'calendar_notes', activeCalendarId);
+    const unsub = onSnapshot(memoRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const text = docSnap.data().text || '';
+        setDbMemoText(text);
+        setLocalMemoText(prev => {
+          if (document.activeElement?.id === 'calendar-memo-textarea') {
+            return prev;
+          }
+          return text;
+        });
+        if (docSnap.data().updatedAt) {
+          const date = docSnap.data().updatedAt.toDate ? docSnap.data().updatedAt.toDate() : new Date(docSnap.data().updatedAt);
+          setMemoLastSaved(date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+        } else {
+          setMemoLastSaved(null);
+        }
+      } else {
+        setDbMemoText('');
+        setLocalMemoText(prev => document.activeElement?.id === 'calendar-memo-textarea' ? prev : '');
+        setMemoLastSaved(null);
+      }
+    });
+    return unsub;
+  }, [activeCalendarId, user?.uid, user?.email]);
+
+  const saveMemo = async (textToSave: string) => {
+    if (!activeCalendarId || textToSave === dbMemoText) return;
+    setIsSavingMemo(true);
+    try {
+      await setDoc(doc(db, 'calendar_notes', activeCalendarId), {
+        text: textToSave,
+        updatedAt: serverTimestamp(),
+        updatedBy: user?.displayName || user?.email || 'User'
+      }, { merge: true });
+      setDbMemoText(textToSave);
+    } catch (e) {
+      console.error('Failed to save memo:', e);
+    }
+    setIsSavingMemo(false);
+  };
+
+  useEffect(() => {
+    if (localMemoText === dbMemoText) return;
+    const timer = setTimeout(() => {
+      saveMemo(localMemoText);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [localMemoText, dbMemoText, activeCalendarId]);
+
   // Mutations
   const addEvent = async () => {
     if (!form.title || !form.date) return;
@@ -719,7 +792,7 @@ export const UserCalendar = ({
     setEditingEventId(null);
     setForm({ 
       title: '', date: '', startTime: '09:00', endTime: '10:00', category: 'personal', 
-      description: '', attendees: '', location: '', meetLink: '', assignedToId: '', assignedToName: '' 
+      description: '', attendees: '', location: '', meetLink: '', assignedToId: '', assignedToName: '', taskType: '' 
     });
 
     try {
@@ -735,7 +808,8 @@ export const UserCalendar = ({
             description: currentForm.description || '',
             attendees: currentForm.attendees || '',
             location: currentForm.location || '',
-            meetLink: currentForm.meetLink || ''
+            meetLink: currentForm.meetLink || '',
+            taskType: currentForm.taskType || ''
           });
         }
       } else {
@@ -754,7 +828,8 @@ export const UserCalendar = ({
             assignedTo: currentForm.assignedToId,
             assignedBy: user?.displayName || user?.email || 'Admin',
             calendarId: `personal_${currentForm.assignedToId}`,
-            createdAt: serverTimestamp()
+            createdAt: serverTimestamp(),
+            taskType: currentForm.taskType || ''
           });
 
           // Trigger dashboard notification
@@ -782,7 +857,8 @@ export const UserCalendar = ({
             calendarId: activeCalendarId,
             assignedTo: activeCalendarId,
             assignedBy: user?.uid || 'default',
-            createdAt: serverTimestamp()
+            createdAt: serverTimestamp(),
+            taskType: currentForm.taskType || ''
           });
         }
       }
@@ -915,6 +991,11 @@ export const UserCalendar = ({
                 <span className="w-1.5 h-1.5 rounded-full bg-white shrink-0" />
                 {getEventCategoryObj(ev).label}
               </span>
+              {ev.taskType && (
+                <span className={cn("inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border shadow-sm", isMatrix ? "bg-[#0b1326] text-blue-400 border-blue-900/30" : "bg-blue-50 text-blue-700 border-blue-200")}>
+                  {ev.taskType}
+                </span>
+              )}
             </div>
             <div className="flex flex-wrap gap-3 mt-2 text-xs text-slate-500">
               <span className="flex items-center gap-1"><Clock size={10} /> {format12h(ev.startTime)} – {format12h(ev.endTime)}</span>
@@ -950,6 +1031,11 @@ export const UserCalendar = ({
                 <span className="w-1 h-1 rounded-full bg-white shrink-0" />
                 {getEventCategoryObj(selectedEvent).label}
               </span>
+              {selectedEvent.taskType && (
+                <span className={cn("inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider border shadow-sm", isMatrix ? "bg-[#0b1326] text-blue-400 border-blue-900/30" : "bg-blue-50 text-blue-700 border-blue-200")}>
+                  {selectedEvent.taskType}
+                </span>
+              )}
             </div>
             <p className={cn("text-xs font-bold mt-1.5", isMatrix ? "text-slate-400" : "text-slate-500")}>{new Date(selectedEvent.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
           </div>
@@ -1022,7 +1108,8 @@ export const UserCalendar = ({
                 setForm({ 
                   title: selectedEvent.title, date: selectedEvent.date, startTime: selectedEvent.startTime, endTime: selectedEvent.endTime, 
                   category: selectedEvent.category, description: selectedEvent.description || '', attendees: selectedEvent.attendees || '', 
-                  location: selectedEvent.location || '', meetLink: selectedEvent.meetLink || '', assignedToId: '', assignedToName: '' 
+                  location: selectedEvent.location || '', meetLink: selectedEvent.meetLink || '', assignedToId: '', assignedToName: '',
+                  taskType: selectedEvent.taskType || ''
                 });
                 setEditingEventId(selectedEvent.id);
                 setSelectedEvent(null);
@@ -1083,6 +1170,59 @@ export const UserCalendar = ({
             ))}
           </div>
         </div>
+
+        {/* Task Type and Reminder Templates */}
+        {form.category === 'task' && (
+          <div className="space-y-1">
+            <label className={modalLabelClass}>Type of Task</label>
+            <select 
+              className={modalInputClass}
+              value={form.taskType}
+              onChange={e => setForm(f => ({ ...f, taskType: e.target.value }))}
+            >
+              <option value="" className={isMatrix ? "bg-[#0c1326] text-slate-400" : ""}>Select Task Type...</option>
+              <option value="Compliance Review" className={isMatrix ? "bg-[#0c1326] text-slate-100" : ""}>Compliance Review</option>
+              <option value="Document Verification" className={isMatrix ? "bg-[#0c1326] text-slate-100" : ""}>Document Verification</option>
+              <option value="License Renewal Filing" className={isMatrix ? "bg-[#0c1326] text-slate-100" : ""}>License Renewal Filing</option>
+              <option value="SOP Audit" className={isMatrix ? "bg-[#0c1326] text-slate-100" : ""}>SOP Audit</option>
+              <option value="Inventory Reconciliation" className={isMatrix ? "bg-[#0c1326] text-slate-100" : ""}>Inventory Reconciliation</option>
+              <option value="Security Check" className={isMatrix ? "bg-[#0c1326] text-slate-100" : ""}>Security Check</option>
+              <option value="Follow-up Call" className={isMatrix ? "bg-[#0c1326] text-slate-100" : ""}>Follow-up Call</option>
+            </select>
+          </div>
+        )}
+
+        {form.category === 'reminder' && (
+          <div className="space-y-1">
+            <label className={modalLabelClass}>Reminder Template Note</label>
+            <select 
+              className={modalInputClass}
+              onChange={e => {
+                const val = e.target.value;
+                let templateText = '';
+                if (val === 'compliance') {
+                  templateText = `[ ] Review state compliance guidelines\n[ ] Confirm all required logs are updated\n[ ] Check for tracking system/Metrc discrepancies`;
+                } else if (val === 'renewal') {
+                  templateText = `[ ] Verify upcoming license expiration dates\n[ ] Prepare renewal application documents\n[ ] Confirm fee payments are authorized`;
+                } else if (val === 'ops') {
+                  templateText = `[ ] Verify team shift schedules\n[ ] Confirm system reports from previous day\n[ ] List key blockers for operations meeting`;
+                } else if (val === 'followup') {
+                  templateText = `[ ] Contact patient / partner / customer\n[ ] Send follow-up email / message\n[ ] Log outcome in database`;
+                }
+                if (templateText) {
+                  setForm(f => ({ ...f, description: templateText }));
+                }
+              }}
+              defaultValue=""
+            >
+              <option value="" className={isMatrix ? "bg-[#0c1326] text-slate-400" : ""}>Select Pre-Note Template...</option>
+              <option value="compliance" className={isMatrix ? "bg-[#0c1326] text-slate-100" : ""}>Compliance Checkup Checklist</option>
+              <option value="renewal" className={isMatrix ? "bg-[#0c1326] text-slate-100" : ""}>License Renewal Warning Checklist</option>
+              <option value="ops" className={isMatrix ? "bg-[#0c1326] text-slate-100" : ""}>Operations Sync Agenda Template</option>
+              <option value="followup" className={isMatrix ? "bg-[#0c1326] text-slate-100" : ""}>Follow-Up Action Items</option>
+            </select>
+          </div>
+        )}
 
         <input className={modalInputClass} placeholder="Attendees (comma-separated)" value={form.attendees} onChange={e => setForm(f => ({ ...f, attendees: e.target.value }))} />
         <input className={modalInputClass} placeholder="Location" value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} />
@@ -1340,6 +1480,62 @@ export const UserCalendar = ({
               </a>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* PRIVATE & SHARED NOTES BOARD */}
+      {(calendarMode === 'founder' || calendarMode === 'operations') && (
+        <div className={cn("p-5 rounded-2xl border transition-all shadow-sm mb-6", 
+          isMatrix 
+            ? "bg-[#0b1326]/60 border-[#D4AF77]/30 text-white" 
+            : "bg-indigo-50/30 border-indigo-100 text-slate-800"
+        )}>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">
+                {isMatrix ? "🔒" : "🤝"}
+              </span>
+              <div>
+                <h4 className={cn("text-xs font-black uppercase tracking-wider flex items-center gap-1.5", isMatrix ? "text-[#D4AF77]" : "text-indigo-900")}>
+                  {calendarMode === 'founder' ? "Founder Private Board (Confidential)" : "Shared Operations Board"}
+                </h4>
+                <p className={cn("text-[10px] font-bold", isMatrix ? "text-slate-400" : "text-slate-500")}>
+                  {calendarMode === 'founder' 
+                    ? "Private notes for your eyes only. Automatically synced." 
+                    : "Shared operations notes. Visible to all authorized team members."}
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 sm:self-start">
+              {isSavingMemo ? (
+                <span className="flex items-center gap-1 text-[#D4AF77] animate-pulse">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF77] animate-ping" />
+                  Saving updates...
+                </span>
+              ) : localMemoText !== dbMemoText ? (
+                <span className="text-amber-500">Unsaved changes...</span>
+              ) : memoLastSaved ? (
+                <span className={cn("flex items-center gap-1", isMatrix ? "text-emerald-400" : "text-emerald-600")}>
+                  ✓ Auto-saved at {memoLastSaved}
+                </span>
+              ) : null}
+            </div>
+          </div>
+          
+          <textarea
+            id="calendar-memo-textarea"
+            className={cn("w-full p-4 rounded-xl text-xs font-bold focus:outline-none transition-all resize-none shadow-inner", 
+              isMatrix 
+                ? "bg-[#080d1a] border border-slate-900 text-[#D4AF77] placeholder-slate-700 focus:border-[#D4AF77]/40" 
+                : "bg-white border border-slate-200 text-slate-800 placeholder-slate-400 focus:border-indigo-300 focus:ring-1 focus:ring-indigo-100"
+            )}
+            rows={3}
+            placeholder={calendarMode === 'founder' ? "Enter strictly private notes, plans, and goals here..." : "Type updates, assignments, and shared bulletins here..."}
+            value={localMemoText}
+            onChange={(e) => setLocalMemoText(e.target.value)}
+            onBlur={() => saveMemo(localMemoText)}
+          />
         </div>
       )}
 
