@@ -141,4 +141,61 @@ export class MetrcConnector {
   async getWasteReasons() {
     return this.request('/plants/v2/waste/reasons');
   }
+
+  // --- Lab Tests (v2) ---
+  /** Get lab test results for a specific package */
+  async getLabTestResults(packageId: number) {
+    return this.request(`/labtests/v2/results?packageId=${packageId}`);
+  }
+
+  /** Get all possible lab testing states (TestPassed, TestFailed, etc.) */
+  async getLabTestStates() {
+    return this.request('/labtests/v2/states');
+  }
+
+  /** Get all available lab test types */
+  async getLabTestTypes() {
+    return this.request('/labtests/v2/types');
+  }
+
+  /** Get lab test batches */
+  async getLabTestBatches() {
+    return this.request('/labtests/v2/batches');
+  }
+
+  // --- Packages (for recall detection) ---
+  /** Get all active packages — check for administrative recall flags */
+  async getActivePackagesForRecalls() {
+    const packages = await this.request('/packages/v2/active');
+    // Filter for packages that are under recall/administrative hold
+    return packages.filter ? packages.filter((pkg: any) =>
+      pkg.IsOnAdministrativeHold || pkg.IsRecalled || 
+      (pkg.LabTestingState && pkg.LabTestingState.toLowerCase().includes('fail'))
+    ) : [];
+  }
+
+  /** Get packages on hold (potential recalls) */
+  async getOnHoldPackages() {
+    return this.request('/packages/v2/onhold');
+  }
+
+  /** 
+   * Calculate facility pass rate from lab test data
+   * Returns { passed: number, failed: number, total: number, rate: number }
+   */
+  async calculateFacilityPassRate(): Promise<{ passed: number; failed: number; total: number; rate: number }> {
+    try {
+      const packages = await this.getActivePackages();
+      let passed = 0, failed = 0;
+      for (const pkg of (packages || [])) {
+        if (pkg.LabTestingState === 'TestPassed') passed++;
+        else if (pkg.LabTestingState === 'TestFailed') failed++;
+      }
+      const total = passed + failed;
+      return { passed, failed, total, rate: total > 0 ? Math.round((passed / total) * 1000) / 10 : 0 };
+    } catch {
+      return { passed: 0, failed: 0, total: 0, rate: 0 };
+    }
+  }
 }
+

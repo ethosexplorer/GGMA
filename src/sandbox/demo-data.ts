@@ -224,3 +224,38 @@ export const DEMO_SYLARA_QUERIES = [
   'Compare patient enrollment trends between Oklahoma and Colorado.',
   'What is the average time-to-approval for new dispensary licenses?',
 ];
+
+// ─── Lab & Public Health Intelligence (OverviewTab) ─────────────────────────
+export const DEMO_LAB_KPIS = [
+  { label: 'Contamination Events', value: '3', sub: '+2 this month', color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-200', icon: '⚠️' },
+  { label: 'Active Recalls', value: '1', sub: 'Batch #882 — Microbial', color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200', icon: '🚨' },
+  { label: 'Pending COA Uploads', value: '18', sub: 'Awaiting Larry validation', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200', icon: '📄' },
+  { label: 'Statewide Pass Rate', value: '90.6%', sub: '+1.2% vs last quarter', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200', icon: '✅' },
+  { label: 'Avg Recency Index', value: '4.2', sub: 'Normal (340 samples)', color: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-200', icon: '🧪' },
+];
+
+export const DEMO_FACILITY_SCORECARDS = [
+  { name: 'GreenLeaf Testing', state: 'OK', rate: 94, grade: 'A', trend: '↑', trendColor: 'text-emerald-500' },
+  { name: 'PureTech Labs', state: 'OK', rate: 89, grade: 'B+', trend: '↓', trendColor: 'text-red-500' },
+  { name: 'SafeHarvest Analytics', state: 'CO', rate: 97, grade: 'A+', trend: '↑', trendColor: 'text-emerald-500' },
+  { name: 'CannaCheck Inc.', state: 'CA', rate: 82, grade: 'B-', trend: '↓', trendColor: 'text-red-500' },
+  { name: 'Tribal Health Labs', state: 'OK', rate: 91, grade: 'A-', trend: '↑', trendColor: 'text-emerald-500' },
+];
+
+export const DEMO_ACCREDITATION_STATUS = [
+  { lab: 'GreenLeaf', cert: 'ISO 17025', days: 267, status: 'active' },
+  { lab: 'PureTech', cert: 'DEA Sched I', days: 42, status: 'renewal' },
+  { lab: 'SafeHarvest', cert: 'State #4421', days: 195, status: 'active' },
+  { lab: 'CannaCheck', cert: 'ISO 17025', days: -28, status: 'expired' },
+  { lab: 'Tribal Health', cert: 'Compact THL-09', days: 540, status: 'active' },
+];
+
+export const DEMO_ACTIVE_RECALL = {
+  batch: '#882',
+  type: 'TYM Microbial Exceedance (18,400 CFU/g)',
+  zones: 4,
+  patientsExposed: 240,
+  notified: 198,
+  source: 'MedExtract Co. (processor stage)',
+};
+
