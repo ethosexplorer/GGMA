@@ -46,7 +46,7 @@ import { PipelineCRM } from '../components/crm/PipelineCRM';
 import { GGEWorldHRHub } from './GGEWorldHRHub';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { ImportantUpdates } from '../components/ImportantUpdates';
-import { FounderCalendar } from '../components/FounderCalendar';
+import { UserCalendar } from '../components/UserCalendar';
 import { RapidRevenueTab } from '../components/crm/RapidRevenueTab';
 import { voip800 } from '../lib/voip800';
 import { InvoiceManager } from '../components/founder/InvoiceManager';
@@ -1521,7 +1521,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       case 'support_tickets':
         return <div data-action-bound="true"><SupportTicketsTab patientList={patientList} setActiveTab={setActiveTab} /></div>;
       case 'internal_scheduler':
-        return <div data-action-bound="true"><FounderCalendar user={user} title="Founder's Master Calendar" /></div>;
+        return <div data-action-bound="true"><UserCalendar user={user} mode="founder" title="Founder's Master Calendar" /></div>;
       case 'realtime_tasks':
         return <div className="h-full w-full -m-10 bg-slate-50 p-10 min-h-screen overflow-auto" data-action-bound="true"><RapidRevenueTab /></div>;
       case 'subscriptions':

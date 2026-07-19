@@ -12,7 +12,7 @@ import { turso } from '../lib/turso';
 import { voip800 } from '../lib/voip800';
 import { InternalMessenger } from '../components/messaging/InternalMessenger';
 import { AITrainingTab } from '../components/AITrainingTab';
-import { FounderCalendar } from '../components/FounderCalendar';
+import { UserCalendar } from '../components/UserCalendar';
 // Import existing dashboard components to render as tabs
 import { PublicHealthDashboard } from './PublicHealthDashboard';
 import { ExternalAdminDashboard } from './ExternalAdminDashboard';
@@ -542,7 +542,7 @@ const PresidentDashboard = ({ user, onLogout }: { user?: any, onLogout?: () => v
                 {activeTab === 'b2b_crm' && <div className="h-full w-full -m-8 bg-slate-50 min-h-screen overflow-auto"><ExecutiveCRM defaultJurisdiction="AZ" forceJurisdiction="AZ" currentUserEmail={user?.email} /></div>}
                 {activeTab === 'ai_training' && <AITrainingTab userProfile={user} />}
                 {activeTab === 'messages' && <InternalMessenger currentUser={{ name: fullName, role: title, roleId: 'president' }} />}
-                {activeTab === 'internal_scheduler' && <div className="bg-white rounded-3xl overflow-hidden h-full"><FounderCalendar user={user} title="Operations Calendar" /></div>}
+                {activeTab === 'internal_scheduler' && <div className="bg-white rounded-3xl overflow-hidden h-full"><UserCalendar user={user} mode="operations" title="Operations Calendar" /></div>}
                 
                 {activeTab === 'patients' && <LivePatientsOversight />}
                 {activeTab === 'business' && <LiveBusinessOversight />}

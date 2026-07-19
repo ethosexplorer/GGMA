@@ -11,7 +11,7 @@ import {
 import { cn } from '../lib/utils';
 import { CallCenterCommandTab } from '../components/telephony/CallCenterCommandTab';
 import { ITSupportDashboard } from '../components/it/ITSupportDashboard';
-import { FounderCalendar } from '../components/FounderCalendar';
+import { UserCalendar } from '../components/UserCalendar';
 
 const NAV_ITEMS = [
   { section: 'THE ACADEMY' },
@@ -1219,7 +1219,7 @@ export const GGEWorldHRHub = ({ user }: { user?: any }) => {
               {activeTab === 'extension_directory' && renderExtensionDirectory()}
               {activeTab === 'new_hire_onboarding' && renderNewHireOnboarding()}
               
-              {activeTab === 'admin_support' && <div className="bg-white rounded-3xl h-full overflow-hidden shadow-sm border border-slate-100 p-6"><FounderCalendar user={user} title="Operations Calendar" /></div>}
+              {activeTab === 'admin_support' && <div className="bg-white rounded-3xl h-full overflow-hidden shadow-sm border border-slate-100 p-6"><UserCalendar user={user} mode="operations" title="Operations Calendar" /></div>}
               {activeTab === 'support_tickets' && renderPlaceholder('Support Tickets', 'Manage and escalate internal and external support tickets.', MessageSquare, 'text-emerald-500')}
               {activeTab === 'it_diagnostics' && <div className="bg-white rounded-3xl h-full overflow-hidden shadow-sm border border-slate-100 p-6"><ITSupportDashboard /></div>}
               {activeTab === 'ai_guardian' && renderPlaceholder('AI System Guardian', 'Predictive security monitoring and automated anomaly resolution.', Bot, 'text-rose-500')}

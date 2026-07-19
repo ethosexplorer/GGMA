@@ -9,7 +9,6 @@ import { Calendar, Building2, Users, FileText, Settings, Shield, Activity, Bell,
 import { cn } from '../lib/utils';
 import { motion } from 'motion/react';
 import { UserCalendar } from '../components/UserCalendar';
-import { FounderCalendar } from '../components/FounderCalendar';
 import { ITSupportDashboard } from '../components/it/ITSupportDashboard';
 import { CallCenterCommandTab } from '../components/telephony/CallCenterCommandTab';
 import { PhoneIntakeForm } from '../components/telephony/PhoneIntakeForm';
@@ -1813,7 +1812,7 @@ Notes: ${c.notes || 'No notes'}`;
       case 'phone_intake': return <PhoneIntakeForm />;
       case 'account_lookup': return <AccountLookupTab />;
       case 'payment_lookup': return <PaymentLookupTab user={user} />;
-      case 'operations_calendar': return <div className="h-full w-full -m-10"><FounderCalendar user={user} title="Operations Calendar" /></div>;
+      case 'operations_calendar': return <div className="h-full w-full -m-10"><UserCalendar user={user} mode="operations" title="Operations Calendar" /></div>;
       case 'support': return renderSupport();
       case 'it_support': return renderITSupport();
       case 'hr_intelligence': return renderHRIntelligence();

@@ -61,11 +61,19 @@ const categorizeCalendly = (name) => {
     }
   }
 
-  // User requested all Calendily events to auto-populate under green scheduled appointments (booking)
+  if (matched) {
+    return { 
+      category: matched.category, 
+      color: matched.color, 
+      label: matched.label 
+    };
+  }
+
+  // Default fallback for generic bookings
   return { 
     category: 'booking', 
     color: 'bg-emerald-600', 
-    label: matched?.label || '📅' 
+    label: '📅 Booking' 
   };
 };
 
