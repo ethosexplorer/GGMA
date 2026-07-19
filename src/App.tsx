@@ -1045,6 +1045,34 @@ export default function App() {
     window.location.href = '/login';
   };
 
+  // ── 30-Minute Inactivity Auto-Logout ──────────────────────────────────────
+  useEffect(() => {
+    if (!user) return;
+
+    const IDLE_LIMIT_MS = 30 * 60 * 1000; // 30 minutes
+    let idleTimer: ReturnType<typeof setTimeout>;
+
+    const resetTimer = () => {
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(() => {
+        console.log('[AutoLogout] 30 minutes idle — signing out');
+        handleLogout();
+      }, IDLE_LIMIT_MS);
+    };
+
+    // Activity events that reset the idle timer
+    const events = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll', 'click'];
+    events.forEach(e => window.addEventListener(e, resetTimer, { passive: true }));
+
+    // Start the timer
+    resetTimer();
+
+    return () => {
+      clearTimeout(idleTimer);
+      events.forEach(e => window.removeEventListener(e, resetTimer));
+    };
+  }, [user]);
+
   const handlePasswordReset = async (email: string) => {
     await sendPasswordResetEmail(auth, email);
   };
