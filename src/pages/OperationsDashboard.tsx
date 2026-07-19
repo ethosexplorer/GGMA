@@ -32,7 +32,6 @@ const NAV_ITEMS = [
   { id: 'payment_lookup', label: 'Payment Lookup', icon: CreditCard },
   { section: 'SUPPORT OPERATIONS' },
   { id: 'operations_calendar', label: 'Operations Calendar', icon: Calendar },
-  { id: 'messages', label: 'Internal Messenger', icon: MessageSquare },
   { id: 'support', label: 'Active Support Tickets', icon: ClipboardList, badge: '0' },
   { id: 'calls', label: 'Call Queue', icon: Headphones, badge: '0' },
   { id: 'backoffice', label: 'Escalations Queue', icon: Cpu, dot: true },
@@ -59,7 +58,7 @@ export const OperationsDashboard = ({ onLogout, user, isFounder, jurisdiction }:
   // Each level inherits all tabs from lower levels
   const LEVEL_TABS: Record<number, string[]> = {
     // Level 1: New Rep / Intake Agent — Call Center basics only
-    1: ['call_center', 'phone_intake', 'account_lookup', 'messages'],
+    1: ['call_center', 'phone_intake', 'account_lookup'],
     // Level 2: Senior Agent / Operations — + Support operations
     2: ['payment_lookup', 'operations_calendar', 'support', 'calls', 'backoffice'],
     // Level 3: Supervisor / Team Lead — + Applications & CannaCribs
@@ -1815,7 +1814,6 @@ Notes: ${c.notes || 'No notes'}`;
       case 'account_lookup': return <AccountLookupTab />;
       case 'payment_lookup': return <PaymentLookupTab user={user} />;
       case 'operations_calendar': return <div className="h-full w-full -m-10"><UserCalendar user={user} mode="operations" title="Operations Calendar" /></div>;
-      case 'messages': return <InternalMessenger currentUser={{ name: user?.displayName || user?.name || user?.email || 'Operations Staff', role: user?.role || 'Staff', roleId: user?.uid || 'staff' }} />;
       case 'support': return renderSupport();
       case 'it_support': return renderITSupport();
       case 'hr_intelligence': return renderHRIntelligence();
