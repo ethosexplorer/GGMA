@@ -58,7 +58,8 @@ export const GlobalSweepTab = ({
     if (sweepStatus === 'running') return;
     setSweepStatus('running');
     
-    const targetStateName = selectedState === 'US' ? 'National Database' : (STATE_REGULATORY_MAP[selectedState]?.name || selectedState);
+    const fullNameKey = Object.keys(STATE_NAME_TO_CODE).find(k => STATE_NAME_TO_CODE[k] === selectedState);
+    const targetStateName = selectedState === 'US' ? 'National Database' : (fullNameKey ? fullNameKey.charAt(0).toUpperCase() + fullNameKey.slice(1) : selectedState);
     setSweepConsoleLines([
       `[info] Initiating terminal traversal bypass for ${targetStateName}...`,
       `[info] Simulating client handshake...`,
