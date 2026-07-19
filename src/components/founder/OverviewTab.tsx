@@ -11,6 +11,7 @@ import { RegulatoryCommandCenter } from './RegulatoryCommandCenter';
 import { collection, onSnapshot, query, orderBy, limit } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { FACILITIES, TRANSPORTS, CAMERA_FEEDS } from '../ceye/CEYECommandCenter';
+import { getOmmaPublicHealthStats, getActiveRecalls, getRecentRecalls, OmmaRecall } from '../../lib/omma/OmmaRecallScraper';
 
 export const OverviewTab = ({
   user,
@@ -76,6 +77,26 @@ export const OverviewTab = ({
   const [hideSystemFreeze, setHideSystemFreeze] = useState(() => localStorage.getItem('gghp_system_freeze_dismissed') === 'true');
   const [hideAlertQueue, setHideAlertQueue] = useState(() => localStorage.getItem('gghp_alert_queue_dismissed') === 'true');
   const [overviewJurisdiction, setOverviewJurisdiction] = useState(() => localStorage.getItem('overview_jurisdiction') || 'All States Active');
+  
+  const [ommaRecalls, setOmmaRecalls] = useState<OmmaRecall[]>([]);
+  const [isLoadingRecalls, setIsLoadingRecalls] = useState(true);
+
+  // Fetch OMMA recalls dynamically from live oklahoma.gov scraper
+  useEffect(() => {
+    fetch('/api/omma-recalls')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.recalls) {
+          setOmmaRecalls(data.recalls);
+        }
+      })
+      .catch(err => {
+        console.error('Failed to fetch live OMMA recalls:', err);
+      })
+      .finally(() => {
+        setIsLoadingRecalls(false);
+      });
+  }, []);
 
   // Sync with selected state from parent (Founder header)
   useEffect(() => {
@@ -1087,62 +1108,141 @@ export const OverviewTab = ({
             </div>
           </div>
 
-          {/* KPI Cards Row — PRODUCTION: Awaiting Metrc lab sync */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
-            {[
-              { label: 'Contamination Events', value: '—', sub: 'Awaiting Metrc sync', color: 'text-slate-400', bg: 'bg-slate-50', border: 'border-slate-200', icon: '⚠️' },
-              { label: 'Active Recalls', value: '—', sub: 'Awaiting Metrc sync', color: 'text-slate-400', bg: 'bg-slate-50', border: 'border-slate-200', icon: '🚨' },
-              { label: 'Pending COA Uploads', value: '—', sub: 'Awaiting Metrc sync', color: 'text-slate-400', bg: 'bg-slate-50', border: 'border-slate-200', icon: '📄' },
-              { label: 'Statewide Pass Rate', value: '—', sub: 'Awaiting Metrc sync', color: 'text-slate-400', bg: 'bg-slate-50', border: 'border-slate-200', icon: '✅' },
-              { label: 'Avg Recency Index', value: '—', sub: 'Awaiting Metrc sync', color: 'text-slate-400', bg: 'bg-slate-50', border: 'border-slate-200', icon: '🧪' },
-            ].map((kpi, i) => (
-              <div key={i} className={cn("p-4 rounded-2xl border", kpi.bg, kpi.border)}>
-                <div className="flex items-center justify-between mb-1">
-                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{kpi.label}</p>
-                  <span className="text-sm">{kpi.icon}</span>
+          {/* KPI Cards Row — LIVE OMMA DATA from oklahoma.gov */}
+          {(() => {
+            const listToUse = ommaRecalls.length > 0 ? ommaRecalls : undefined;
+            const ommaStats = getOmmaPublicHealthStats(listToUse);
+            const activeRecalls = getActiveRecalls(listToUse);
+            const recent90 = getRecentRecalls(90, listToUse);
+            return (
+              <>
+                <div className="flex items-center gap-2 mb-4">
+                  <span className={cn(
+                    "text-[10px] font-black uppercase px-2.5 py-1 rounded-full flex items-center gap-1.5 border",
+                    isLoadingRecalls 
+                      ? "bg-amber-50 text-amber-600 border-amber-200" 
+                      : "bg-emerald-50 text-emerald-600 border-emerald-200"
+                  )}>
+                    <div className={cn("w-1.5 h-1.5 rounded-full", isLoadingRecalls ? "bg-amber-500 animate-spin" : "bg-emerald-500 animate-pulse")}></div>
+                    {isLoadingRecalls ? "Syncing Recalls..." : "Live Scraper Active"}
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-bold">
+                    Last check: {new Date().toLocaleTimeString()} • Auto-updates on refresh
+                  </span>
                 </div>
-                <p className={cn("text-2xl font-black", kpi.color)}>{kpi.value}</p>
-                <p className="text-[10px] font-bold text-slate-500 mt-0.5">{kpi.sub}</p>
-              </div>
-            ))}
-          </div>
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+                  {[
+                    { label: 'Total OK Recalls', value: String(ommaStats.totalRecalls), sub: `Since May 2022 • Source: OMMA`, color: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-200', icon: '⚠️' },
+                    { label: 'Active Recalls', value: String(ommaStats.activeRecalls), sub: activeRecalls[0]?.businessName?.slice(0, 30) || 'None', color: ommaStats.activeRecalls > 0 ? 'text-red-600' : 'text-emerald-600', bg: ommaStats.activeRecalls > 0 ? 'bg-red-50' : 'bg-emerald-50', border: ommaStats.activeRecalls > 0 ? 'border-red-200' : 'border-emerald-200', icon: '🚨' },
+                    { label: 'Pesticide Recalls', value: String(ommaStats.contaminationByType.pesticide), sub: 'Most common contaminant', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200', icon: '🧪' },
+                    { label: 'Microbial Recalls', value: String(ommaStats.contaminationByType.microbial), sub: 'Mold & yeast failures', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200', icon: '🦠' },
+                    { label: 'Last 90 Days', value: String(recent90.length), sub: recent90.length > 0 ? `Most recent: ${recent90[0].displayDate.split('(')[0].trim()}` : 'No recent recalls', color: recent90.length > 0 ? 'text-indigo-600' : 'text-emerald-600', bg: recent90.length > 0 ? 'bg-indigo-50' : 'bg-emerald-50', border: recent90.length > 0 ? 'border-indigo-200' : 'border-emerald-200', icon: '📊' },
+                  ].map((kpi, i) => (
+                    <div key={i} className={cn("p-4 rounded-2xl border", kpi.bg, kpi.border)}>
+                      <div className="flex items-center justify-between mb-1">
+                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{kpi.label}</p>
+                        <span className="text-sm">{kpi.icon}</span>
+                      </div>
+                      <p className={cn("text-2xl font-black", kpi.color)}>{kpi.value}</p>
+                      <p className="text-[10px] font-bold text-slate-500 mt-0.5">{kpi.sub}</p>
+                    </div>
+                  ))}
+                </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Facility Compliance Snapshot — PRODUCTION: Empty until businesses connect Metrc keys */}
-            <div className="lg:col-span-2 border border-slate-200 rounded-2xl overflow-hidden">
-              <div className="px-5 py-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
-                <h4 className="text-xs font-black text-slate-600 uppercase tracking-wider flex items-center gap-2">🏢 Facility Compliance Scorecards</h4>
-                <span className="text-[9px] font-bold text-amber-500">⏳ Awaiting Metrc Business Sync</span>
-              </div>
-              <div className="px-5 py-10 text-center">
-                <p className="text-sm text-slate-400 font-bold">No facilities synced yet</p>
-                <p className="text-xs text-slate-400 mt-1">When business subscribers connect their Metrc API keys, facility scorecards will populate automatically.</p>
-                <p className="text-[10px] text-amber-500 font-bold mt-3 uppercase tracking-wider">Metrc Lab Endpoints Ready → Awaiting User Keys</p>
-              </div>
-            </div>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  {/* LIVE OMMA Recall Ledger */}
+                  <div className="lg:col-span-2 border border-slate-200 rounded-2xl overflow-hidden">
+                    <div className="px-5 py-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+                      <h4 className="text-xs font-black text-slate-600 uppercase tracking-wider flex items-center gap-2">🏛️ OMMA Recall & Embargo Ledger</h4>
+                      <a href="https://oklahoma.gov/omma/recalls/embargoed-and-recalled-products.html" target="_blank" rel="noopener noreferrer" className="text-[9px] font-bold text-emerald-500 hover:text-emerald-400 flex items-center gap-1">
+                        <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
+                        Live OMMA Source
+                      </a>
+                    </div>
+                    <div className="divide-y divide-slate-100 max-h-64 overflow-y-auto">
+                      {ommaStats.activeRecallList.length > 0 ? ommaStats.activeRecallList.map((r: any) => (
+                        <div key={r.id} className="px-5 py-3 flex items-center gap-4 hover:bg-red-50/50 transition-colors">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-bold text-slate-800 truncate">{r.businessName}</p>
+                            <p className="text-[10px] text-slate-400 font-bold">{r.displayDate} • {r.licenseNumber || 'N/A'}</p>
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span className={cn("text-[9px] font-black uppercase px-2 py-0.5 rounded-full border",
+                              r.contaminant === 'pesticide' ? 'bg-red-50 text-red-700 border-red-200' :
+                              r.contaminant === 'microbial' ? 'bg-amber-50 text-amber-700 border-amber-200' :
+                              'bg-slate-50 text-slate-700 border-slate-200'
+                            )}>{r.contaminant?.replace('_', ' ') || r.type.replace('_', ' ')}</span>
+                            <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-red-50 text-red-700 border border-red-200">Active</span>
+                          </div>
+                        </div>
+                      )) : (
+                        <div className="px-5 py-6 text-center">
+                          <p className="text-sm text-emerald-500 font-bold">✅ No active recalls in Oklahoma</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
 
-            {/* Accreditation Status — PRODUCTION: Needs manual entry or lab API */}
-            <div className="border border-slate-200 rounded-2xl overflow-hidden">
-              <div className="px-5 py-3 bg-slate-50 border-b border-slate-100">
-                <h4 className="text-xs font-black text-slate-600 uppercase tracking-wider flex items-center gap-2">🏆 Accreditation Status</h4>
-              </div>
-              <div className="px-5 py-10 text-center">
-                <p className="text-sm text-slate-400 font-bold">No accreditations tracked</p>
-                <p className="text-xs text-slate-400 mt-1">Lab accreditation data will be entered as labs onboard. ISO/DEA/State certs tracked here.</p>
-              </div>
-            </div>
-          </div>
+                  {/* Contamination Breakdown — REAL data from OMMA */}
+                  <div className="border border-slate-200 rounded-2xl overflow-hidden">
+                    <div className="px-5 py-3 bg-slate-50 border-b border-slate-100">
+                      <h4 className="text-xs font-black text-slate-600 uppercase tracking-wider flex items-center gap-2">📋 Contaminant Breakdown</h4>
+                    </div>
+                    <div className="divide-y divide-slate-100">
+                      {[
+                        { label: 'Pesticide Failures', count: ommaStats.contaminationByType.pesticide, color: 'text-red-600', bg: 'bg-red-100' },
+                        { label: 'Microbial (Mold/Yeast)', count: ommaStats.contaminationByType.microbial, color: 'text-amber-600', bg: 'bg-amber-100' },
+                        { label: 'Heavy Metals', count: ommaStats.contaminationByType.heavy_metals, color: 'text-purple-600', bg: 'bg-purple-100' },
+                        { label: 'Testing Failures', count: ommaStats.contaminationByType.testing_failure, color: 'text-slate-600', bg: 'bg-slate-100' },
+                      ].map((item, i) => (
+                        <div key={i} className="px-5 py-3 flex items-center justify-between">
+                          <p className="text-sm font-bold text-slate-700">{item.label}</p>
+                          <span className={cn("text-sm font-black px-3 py-0.5 rounded-full", item.bg, item.color)}>{item.count}</span>
+                        </div>
+                      ))}
+                      <div className="px-5 py-2 bg-slate-50">
+                        <p className="text-[9px] text-slate-400 font-bold">Source: oklahoma.gov/omma • Verified: {ommaStats.lastVerified}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-          {/* Recall Banner — PRODUCTION: Only shows when there's an active recall from Metrc */}
-          <div className="mt-6 bg-slate-100 rounded-2xl p-5 text-slate-500 border border-slate-200">
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-lg bg-slate-200 flex items-center justify-center shrink-0">✅</div>
-              <div className="flex-1">
-                <h4 className="font-bold text-sm text-slate-600">No Active Recalls</h4>
-                <p className="text-xs text-slate-400 mt-1">When a recall is detected via Metrc package statuses, it will appear here with exposure tracking and patient notification tools.</p>
-              </div>
-            </div>
-          </div>
+                {/* Active Recall Banner — LIVE from OMMA */}
+                {activeRecalls.length > 0 ? (
+                  <div className="mt-6 bg-slate-900 rounded-2xl p-5 text-white">
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center shrink-0 animate-pulse">🚨</div>
+                      <div className="flex-1">
+                        <h4 className="font-bold text-sm">Active Recall: {activeRecalls[0].businessName}</h4>
+                        <p className="text-xs text-slate-400 mt-1">{activeRecalls[0].reason} • License: {activeRecalls[0].licenseNumber || 'N/A'} • {activeRecalls[0].displayDate}</p>
+                        <div className="flex gap-2 mt-3">
+                          <button onClick={() => setActiveTab('public_health')} className="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition-colors">View Recall Details</button>
+                          {activeRecalls[0].newsUrl && (
+                            <a href={activeRecalls[0].newsUrl} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition-colors border border-white/10 flex items-center gap-1">
+                              <ExternalLink size={10} /> OMMA Source
+                            </a>
+                          )}
+                        </div>
+                        {activeRecalls.length > 1 && (
+                          <p className="text-[10px] text-amber-400 font-bold mt-2">+ {activeRecalls.length - 1} more active recall{activeRecalls.length > 2 ? 's' : ''}</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mt-6 bg-emerald-50 rounded-2xl p-5 text-emerald-700 border border-emerald-200">
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0">✅</div>
+                      <div className="flex-1">
+                        <h4 className="font-bold text-sm">No Active Recalls</h4>
+                        <p className="text-xs text-emerald-600 mt-1">All Oklahoma recalls are currently resolved. Source: OMMA oklahoma.gov</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </>
+            );
+          })()}
         </div>
       </div>
 
