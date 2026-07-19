@@ -83,7 +83,7 @@ export const OverviewTab = ({
 
   // Fetch OMMA recalls dynamically from live oklahoma.gov scraper
   useEffect(() => {
-    fetch('/api/omma-recalls')
+    fetch('/api/rss?source=omma-recalls')
       .then(res => res.json())
       .then(data => {
         if (data && data.recalls) {
