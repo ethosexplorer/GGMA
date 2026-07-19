@@ -23,7 +23,6 @@ import {
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, serverTimestamp, collection, addDoc, getDocs, query as fsQuery, where } from 'firebase/firestore';
 import { auth, db, storage } from './firebase';
-import { usePresence } from './hooks/usePresence';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { InvestorSandboxTab } from './components/founder/InvestorSandboxTab';
 
@@ -476,13 +475,68 @@ export default function App() {
     trackEvent();
   }, [location.pathname, userProfile?.role, loading]);
 
-  // ── Real-time Presence Tracking ──────────────────────────────────────────
-  usePresence(user ? {
-    uid: (user as any)?.uid,
-    email: (user as any)?.email || userProfile?.email,
-    displayName: userProfile?.displayName || (user as any)?.displayName || (user as any)?.email,
-    role: userProfile?.role || '',
-  } : null);
+  // ── Direct Real-time Presence Tracking ────────────────────────────────────
+  // 1. Profile updates (no offline cleanup to avoid race conditions during loads)
+  useEffect(() => {
+    if (!user?.uid || !db) return;
+
+    const presenceRef = doc(db, 'presence', user.uid);
+    setDoc(presenceRef, {
+      uid: user.uid,
+      email: user.email || userProfile?.email || '',
+      displayName: userProfile?.displayName || user.displayName || user.email || 'Founder/CEO',
+      role: userProfile?.role || 'executive_founder',
+      status: 'online',
+      lastSeen: serverTimestamp(),
+    }, { merge: true }).catch(() => {});
+  }, [user?.uid, userProfile?.email, userProfile?.displayName, userProfile?.role]);
+
+  // 2. Session lifecycle (heartbeat, visibility, and tab close handlers)
+  useEffect(() => {
+    if (!user?.uid || !db) return;
+
+    const presenceRef = doc(db, 'presence', user.uid);
+
+    const writeOnline = () => {
+      setDoc(presenceRef, {
+        status: 'online',
+        lastSeen: serverTimestamp(),
+      }, { merge: true }).catch(() => {});
+    };
+
+    const writeOffline = () => {
+      setDoc(presenceRef, {
+        status: 'offline',
+        lastSeen: serverTimestamp(),
+      }, { merge: true }).catch(() => {});
+    };
+
+    // Heartbeat every 60s
+    const heartbeat = setInterval(writeOnline, 60_000);
+
+    // Tab close hook
+    const handleUnload = () => {
+      writeOffline();
+    };
+    window.addEventListener('beforeunload', handleUnload);
+
+    // Visibility change hook
+    const handleVisibility = () => {
+      if (document.visibilityState === 'hidden') {
+        setDoc(presenceRef, { status: 'away', lastSeen: serverTimestamp() }, { merge: true }).catch(() => {});
+      } else {
+        writeOnline();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      clearInterval(heartbeat);
+      window.removeEventListener('beforeunload', handleUnload);
+      document.removeEventListener('visibilitychange', handleVisibility);
+      writeOffline();
+    };
+  }, [user?.uid]);
 
   useEffect(() => {
     const FOUNDER_EMAIL = "globalgreenhp@gmail.com";
