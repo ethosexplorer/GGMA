@@ -14,11 +14,13 @@ let cachedStatusCounts: Record<string, Record<string, number>> | null = null;
 export const GlobalSweepTab = ({ 
   isAdvisor = false,
   isRyan = false,
-  userEmail
+  userEmail,
+  jurisdiction
 }: { 
   isAdvisor?: boolean;
   isRyan?: boolean;
   userEmail?: string;
+  jurisdiction?: string;
 }) => {
   const [selectedState, setSelectedState] = useState(isRyan ? 'AZ' : 'AL');
 
@@ -28,6 +30,19 @@ export const GlobalSweepTab = ({
       setSelectedState('AZ');
     }
   }, [isRyan]);
+
+  // Sync selectedState with parent chosen state
+  useEffect(() => {
+    if (jurisdiction) {
+      if (jurisdiction === 'All States Active') {
+        setSelectedState('US'); // US is the "National Database" option in GlobalSweepTab
+      } else {
+        const stateData = STATE_REGULATORY_MAP[jurisdiction];
+        const code = stateData?.abbr || jurisdiction;
+        setSelectedState(code.toUpperCase());
+      }
+    }
+  }, [jurisdiction]);
   const [liveCounts, setLiveCounts] = useState<Record<string, number>>(cachedLiveCounts || {});
   const [verifiedCounts, setVerifiedCounts] = useState<Record<string, number>>(cachedVerifiedCounts || {});
   const [typeCounts, setTypeCounts] = useState<Record<string, Record<string, number>>>(cachedTypeCounts || {});

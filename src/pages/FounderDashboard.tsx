@@ -318,14 +318,35 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     // 1. Fetch live metrics from Turso
     const fetchMetrics = async () => {
       try {
-        const pRes = await turso.execute('SELECT COUNT(*) as count FROM patients');
-        const bRes = await turso.execute('SELECT COUNT(*) as count FROM businesses');
+        let pQuery = 'SELECT COUNT(*) as count FROM patients';
+        let bQuery = 'SELECT COUNT(*) as count FROM businesses';
+        let pParams: any[] = [];
+        let bParams: any[] = [];
+
+        if (selectedState && selectedState !== 'All States Active') {
+          pQuery = 'SELECT COUNT(*) as count FROM patients WHERE LOWER(state) = ?';
+          bQuery = 'SELECT COUNT(*) as count FROM businesses WHERE LOWER(state) = ?';
+          pParams = [selectedState.toLowerCase()];
+          bParams = [selectedState.toLowerCase()];
+        }
+
+        const pRes = await turso.execute({ sql: pQuery, args: pParams });
+        const bRes = await turso.execute({ sql: bQuery, args: bParams });
         const users = (Number(pRes.rows[0].count) + Number(bRes.rows[0].count));
 
         // Revenue from founder_ledger (real payments posted)
-        const lRes = await turso.execute('SELECT gross_revenue FROM founder_ledger');
+        const lRes = await turso.execute('SELECT gross_revenue, origin_vector, type FROM founder_ledger');
         let rev = 0;
         for (const row of lRes.rows) {
+          if (selectedState && selectedState !== 'All States Active') {
+            const stLower = selectedState.toLowerCase();
+            const textToSearch = `${row.origin_vector || ''} ${row.type || ''}`.toLowerCase();
+            const stateData = STATE_REGULATORY_MAP[selectedState];
+            const abbrLower = stateData?.abbr?.toLowerCase() || '';
+            const hasMatch = textToSearch.includes(stLower) || 
+                             (abbrLower && (textToSearch.includes(`(${abbrLower})`) || textToSearch.includes(` ${abbrLower}`) || textToSearch.includes(`${abbrLower} `)));
+            if (!hasMatch) continue;
+          }
           const val = String(row.gross_revenue || '').replace(/[^0-9.]/g, '');
           rev += parseFloat(val) || 0;
         }
@@ -337,8 +358,20 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
 
         // Fetch real-time queue items (Jasmin Garrett & others)
         try {
-          const rawP = await turso.execute('SELECT id, name, created_at FROM patients ORDER BY created_at DESC LIMIT 5');
-          const rawB = await turso.execute('SELECT id, business_name as name, license_type, created_at FROM businesses ORDER BY created_at DESC LIMIT 5');
+          let rawPQuery = 'SELECT id, name, state, created_at FROM patients ORDER BY created_at DESC';
+          let rawBQuery = 'SELECT id, business_name as name, license_type, state, created_at FROM businesses ORDER BY created_at DESC';
+          let pParamsQ: any[] = [];
+          let bParamsQ: any[] = [];
+          
+          if (selectedState && selectedState !== 'All States Active') {
+            rawPQuery = 'SELECT id, name, state, created_at FROM patients WHERE LOWER(state) = ? ORDER BY created_at DESC';
+            rawBQuery = 'SELECT id, business_name as name, license_type, state, created_at FROM businesses WHERE LOWER(state) = ? ORDER BY created_at DESC';
+            pParamsQ = [selectedState.toLowerCase()];
+            bParamsQ = [selectedState.toLowerCase()];
+          }
+          
+          const rawP = await turso.execute({ sql: rawPQuery, args: pParamsQ });
+          const rawB = await turso.execute({ sql: rawBQuery, args: bParamsQ });
 
           const combined: any[] = [
             ...rawP.rows.map(r => ({ ...r, type: 'patient' })),
@@ -361,7 +394,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
               };
             });
 
-          if (combined.length > 0) setLiveQueue(combined);
+          setLiveQueue(combined);
         } catch (e) { console.error('Error loading real queue', e); }
 
       } catch (err) {
@@ -370,10 +403,15 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
     };
 
     fetchMetrics();
-    const interval = setInterval(fetchMetrics, 45000); // Scaled: 5s→45s for 100k+ user support
-
+    const interval = setInterval(fetchMetrics, 45000);
+    
     // Fetch last regulatory sweep date
     getLastSweep().then(s => setLastRegSweepDate(s?.sweep_date || null)).catch(() => { });
+
+    return () => clearInterval(interval);
+  }, [selectedState]);
+
+  useEffect(() => {
 
     // 1b. Fetch live tracking analytics — REAL data from analytics_events + Firebase presence
     const fetchAnalytics = async () => {
@@ -704,7 +742,6 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
 
     document.addEventListener('click', handleClick);
     return () => {
-      clearInterval(interval);
       clearInterval(analyticsInterval);
       document.removeEventListener('click', handleClick);
     };
@@ -1286,6 +1323,8 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           <div data-action-bound="true">
             <OverviewTab
               user={user}
+              jurisdiction={selectedState}
+              onChangeJurisdiction={setSelectedState}
               fullName={fullName}
               userTitle={userTitle}
               isExecutive={isExecutive}
@@ -1340,15 +1379,25 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       case 'marketing_hub':
         return <div className="h-full w-full -m-10 bg-[#080e1a] min-h-screen overflow-auto" data-action-bound="true"><MarketingHub /></div>;
       case 'omma_pipeline':
-        return <div className="h-full w-full -m-10" data-action-bound="true"><GlobalSweepTab isAdvisor={isBobAdvisor} isRyan={isRyan} userEmail={user?.email} /></div>;
+        return <div className="h-full w-full -m-10" data-action-bound="true"><GlobalSweepTab isAdvisor={isBobAdvisor} isRyan={isRyan} userEmail={user?.email} jurisdiction={selectedState} /></div>;
       case 'global_directory':
         return <div className="h-full w-full -m-10" data-action-bound="true"><GlobalDirectoryTab onOpenMessage={(uid) => { setActiveTab('messages'); }} /></div>;
       case 'gge_webmail':
         return <div className="h-full w-full -m-10 bg-[#080e1a] min-h-screen overflow-auto" data-action-bound="true"><GGHPWebmail /></div>;
       case 'approvals':
         return <div data-action-bound="true"><ApprovalsTab /></div>;
-      case 'applications':
-        return <div data-action-bound="true"><ApplicationsTab patientList={patientList} liveQueue={liveQueue} setActiveTab={setActiveTab} /></div>;
+      case 'applications': {
+        const filteredPList = selectedState === 'All States Active'
+          ? patientList
+          : patientList.filter((p: any) => {
+              const st = (p.state || p.jurisdiction || '').toLowerCase();
+              const target = selectedState.toLowerCase();
+              const stateData = STATE_REGULATORY_MAP[selectedState];
+              const abbr = stateData?.abbr?.toLowerCase() || '';
+              return st.includes(target) || target.includes(st) || (abbr && (st.includes(abbr) || abbr.includes(st)));
+            });
+        return <div data-action-bound="true"><ApplicationsTab patientList={filteredPList} liveQueue={liveQueue} setActiveTab={setActiveTab} /></div>;
+      }
       case 'compliance':
         return <div data-action-bound="true"><LiveComplianceMonitor /></div>;
       case 'regulatory_library':
@@ -1561,6 +1610,8 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           : (
             <OverviewTab
               user={user}
+              jurisdiction={selectedState}
+              onChangeJurisdiction={setSelectedState}
               fullName={fullName}
               userTitle={userTitle}
               isExecutive={isExecutive}

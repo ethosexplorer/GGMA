@@ -14,6 +14,8 @@ import { FACILITIES, TRANSPORTS, CAMERA_FEEDS } from '../ceye/CEYECommandCenter'
 
 export const OverviewTab = ({
   user,
+  jurisdiction,
+  onChangeJurisdiction,
   fullName,
   userTitle,
   isExecutive,
@@ -40,6 +42,8 @@ export const OverviewTab = ({
   healthHistory
 }: {
   user: any;
+  jurisdiction?: string;
+  onChangeJurisdiction?: (val: string) => void;
   fullName: string;
   userTitle: string;
   isExecutive: boolean;
@@ -71,12 +75,27 @@ export const OverviewTab = ({
   const [hideAlertQueue, setHideAlertQueue] = useState(() => localStorage.getItem('gghp_alert_queue_dismissed') === 'true');
   const [overviewJurisdiction, setOverviewJurisdiction] = useState(() => localStorage.getItem('overview_jurisdiction') || 'All States Active');
 
+  // Sync with selected state from parent (Founder header)
+  useEffect(() => {
+    if (jurisdiction) {
+      setOverviewJurisdiction(jurisdiction);
+    }
+  }, [jurisdiction]);
+
   // Persist jurisdiction
   useEffect(() => {
     localStorage.setItem('overview_jurisdiction', overviewJurisdiction);
   }, [overviewJurisdiction]);
 
   const overviewStateData = overviewJurisdiction !== 'All States Active' ? STATE_REGULATORY_MAP[overviewJurisdiction] : null;
+
+  const filteredJurisdictionStats = (() => {
+    if (!overviewJurisdiction || overviewJurisdiction === 'All States Active') return jurisdictionStats;
+    const stateData = STATE_REGULATORY_MAP[overviewJurisdiction];
+    const abbr = stateData?.abbr?.toUpperCase();
+    if (!abbr) return jurisdictionStats;
+    return jurisdictionStats.filter(r => r.s?.toUpperCase() === abbr);
+  })();
 
   // ── ACTIVE USERS PANEL STATE ──
   const [showActiveUsersPanel, setShowActiveUsersPanel] = useState(false);
@@ -353,6 +372,19 @@ export const OverviewTab = ({
 
   // Filter accounts based on selected time range
   const filteredAccounts = allAccounts.filter(acct => {
+    // 1. Filter by jurisdiction first
+    if (overviewJurisdiction && overviewJurisdiction !== 'All States Active') {
+      const state = (acct.state || acct.jurisdiction || '').toLowerCase();
+      const targetState = overviewJurisdiction.toLowerCase();
+      // Match full name or abbreviation (e.g. "oklahoma" or "ok")
+      const stateData = STATE_REGULATORY_MAP[overviewJurisdiction];
+      const abbr = stateData?.abbr?.toLowerCase() || '';
+      const matches = state.includes(targetState) || targetState.includes(state) || 
+                      (abbr && (state.includes(abbr) || abbr.includes(state)));
+      if (!matches) return false;
+    }
+
+    // 2. Filter by range
     if (activityRange === 'all') return true;
     if (!acct.createdAt) return false;
     const now = new Date();
@@ -474,7 +506,12 @@ export const OverviewTab = ({
           <div className="flex gap-4">
             <StateJurisdictionSelector
               value={overviewJurisdiction}
-              onChange={setOverviewJurisdiction}
+              onChange={(val) => {
+                setOverviewJurisdiction(val);
+                if (onChangeJurisdiction) {
+                  onChangeJurisdiction(val);
+                }
+              }}
               variant="dark"
               showMetadata={false}
               compact={false}
@@ -1260,9 +1297,9 @@ export const OverviewTab = ({
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {[
-          { label: 'Active States', value: jurisdictionStats.length > 0 ? jurisdictionStats.length.toString() : '0', trend: jurisdictionStats.length > 0 ? 'Live' : 'Awaiting data', color: 'blue' },
+          { label: 'Active States', value: filteredJurisdictionStats.length > 0 ? filteredJurisdictionStats.length.toString() : '0', trend: filteredJurisdictionStats.length > 0 ? 'Live' : 'Awaiting data', color: 'blue' },
           { label: 'AI Sync Rate', value: liveAnalytics.users > 0 || liveAnalytics.clicks > 0 ? '100%' : '—', trend: liveAnalytics.users > 0 ? 'Optimal' : 'Idle', color: 'emerald' },
-          { label: 'Compliance Alerts', value: jurisdictionStats.reduce((a: number, r: any) => a + (r.c < 100 ? 1 : 0), 0).toString(), trend: jurisdictionStats.every((r: any) => r.c >= 95) ? 'All Clear' : 'Needs Review', color: 'red' },
+          { label: 'Compliance Alerts', value: filteredJurisdictionStats.reduce((a: number, r: any) => a + (r.c < 100 ? 1 : 0), 0).toString(), trend: filteredJurisdictionStats.every((r: any) => r.c >= 95) ? 'All Clear' : 'Needs Review', color: 'red' },
           { label: 'Total Registrations', value: liveStats.totalUsers, trend: 'Patients + Businesses', color: 'indigo' },
         ].map((stat, i) => (
           <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
@@ -1658,7 +1695,7 @@ export const OverviewTab = ({
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
-                {jurisdictionStats.length > 0 ? jurisdictionStats.map((row, i) => (
+                {filteredJurisdictionStats.length > 0 ? filteredJurisdictionStats.map((row, i) => (
                   <tr key={i} className="group hover:bg-slate-100 transition-colors">
                     <td className="py-4 font-black text-slate-800">{row.s}</td>
                     <td className="py-4 text-slate-600 font-bold">{row.p.toLocaleString()}</td>
