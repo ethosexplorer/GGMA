@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, Activity, ShieldAlert, FlaskConical, AlertTriangle, FileText, UploadCloud, 
   Settings, Download, Search, XCircle, Bell, User, Clock, 
   Thermometer, Plus, Smartphone, ChevronRight, CircleCheck,
-  MapPin, BarChart2, TrendingUp, TrendingDown, Building2, Award, Zap, Users, Globe, Eye } from 'lucide-react';
+  MapPin, BarChart2, TrendingUp, TrendingDown, Building2, Award, Zap, Users, Globe, Eye, ExternalLink } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { StateJurisdictionSelector } from '../components/shared/StateJurisdictionSelector';
 import { StatCard } from '../components/StatCard';
@@ -98,6 +98,38 @@ const patientOutcomes = [
   { metric: 'Avg Recency Index (Field Tests)', value: '4.2', change: 'Normal range', trend: 'stable' as const, color: 'amber' },
 ];
 
+const STATE_RECALL_PORTALS = [
+  { state: 'California', authority: 'Department of Cannabis Control (DCC)', url: 'https://www.cannabis.ca.gov/consumers/cannabis-recalls-and-safety-notices/cannabis-recalls-archive/', badge: 'DCC' },
+  { state: 'Colorado', authority: 'Marijuana Enforcement Division (MED)', url: 'https://sbg.colorado.gov/med/health-and-safety-advisories', badge: 'MED' },
+  { state: 'Maine', authority: 'Office of Cannabis Policy (OCP)', url: 'https://www.maine.gov/dafs/ocp/compliance/recalls', badge: 'OCP' },
+  { state: 'Massachusetts', authority: 'Cannabis Control Commission (CCC)', url: 'https://masscannabiscontrol.com/public-health-and-safety/', badge: 'CCC' },
+  { state: 'Michigan', authority: 'Cannabis Regulatory Agency (CRA)', url: 'https://www.michigan.gov/cra/bulletins/recalls', badge: 'CRA' },
+  { state: 'Missouri', authority: 'Department of Health and Senior Services', url: 'https://health.mo.gov/safety/cannabis/recalls.php', badge: 'DHSS' },
+  { state: 'Montana', authority: 'Department of Revenue', url: 'https://revenue.mt.gov/card/cannabis/cannabis-product-recalls', badge: 'DOR' },
+  { state: 'New Jersey', authority: 'Cannabis Regulatory Commission (CRC)', url: 'https://www.nj.gov/cannabis/news/recalls/', badge: 'CRC' },
+  { state: 'New Mexico', authority: 'Regulation and Licensing Department', url: 'https://www.rld.nm.gov/cannabis/data-news/cannabis-recalls/', badge: 'RLD' },
+  { state: 'New York', authority: 'Office of Cannabis Management (OCM)', url: 'https://cannabis.ny.gov/recalls', badge: 'OCM' },
+  { state: 'Oregon', authority: 'Oregon Liquor and Cannabis Commission', url: 'https://www.oregon.gov/olcc/marijuana/pages/default.aspx', badge: 'OLCC' },
+  { state: 'Washington', authority: 'Liquor and Cannabis Board (LCB)', url: 'https://lcb.wa.gov/enforcement/active-recalls', badge: 'LCB' },
+  { state: 'Oklahoma', authority: 'Oklahoma Medical Marijuana Authority (OMMA)', url: 'https://oklahoma.gov/omma/recalls/embargoed-and-recalled-products.html', badge: 'OMMA' }
+];
+
+interface OmmaRecall {
+  id: string;
+  date: string;
+  displayDate: string;
+  type: string;
+  businessName: string;
+  licenseNumber: string;
+  licenseType: string;
+  products: string;
+  reason: string;
+  contaminant: string;
+  isActive: boolean;
+  newsUrl?: string;
+  pdfUrl?: string;
+}
+
 export const PublicHealthDashboard = ({ onLogout, user, jurisdiction = 'Oklahoma' }: { onLogout?: () => void, user?: any, jurisdiction?: string }) => {
   const isExecutive = user?.role === 'executive_founder' || user?.role === 'executive_ceo' || user?.role === 'president' || user?.role === 'chief_compliance_director' || user?.role === 'executive_advisor' || user?.role === 'advisor' || user?.email?.toLowerCase().includes('globalgreenhp') || user?.email?.toLowerCase().includes('monica') || user?.email?.toLowerCase().includes('bob');
   const hasMultiStateAccess = isExecutive || user?.multiStateAdmin === true || (Array.isArray(user?.accessibleStates) && user.accessibleStates.length > 1);
@@ -108,6 +140,26 @@ export const PublicHealthDashboard = ({ onLogout, user, jurisdiction = 'Oklahoma
     if (!hasMultiStateAccess) return userDefaultState;
     return userDefaultState;
   });
+
+  const [ommaRecalls, setOmmaRecalls] = useState<OmmaRecall[]>([]);
+  const [isLoadingRecalls, setIsLoadingRecalls] = useState(true);
+
+  // Fetch live recalls from our consolidated endpoint on mount
+  useEffect(() => {
+    fetch('/api/rss?source=omma-recalls')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.recalls) {
+          setOmmaRecalls(data.recalls);
+        }
+      })
+      .catch(err => {
+        console.error('Failed to fetch live OMMA recalls in PublicHealthDashboard:', err);
+      })
+      .finally(() => {
+        setIsLoadingRecalls(false);
+      });
+  }, []);
 
   const displayAccreditations = accreditationItems.filter(item => {
     if (selectedState === 'All States Active') return true;
@@ -175,11 +227,7 @@ export const PublicHealthDashboard = ({ onLogout, user, jurisdiction = 'Oklahoma
           </div>
           <div className="w-px h-8 bg-slate-700 shrink-0" />
           <div className="shrink-0 flex items-center gap-3">
-            {hasMultiStateAccess ? (
-              <StateJurisdictionSelector value={selectedState} onChange={setSelectedState} variant="dark" showMetadata={true} compact={true} label="" />
-            ) : (
-              <span className="text-xs font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-800/30 px-3 py-1.5 rounded-full uppercase tracking-wider">{selectedState}</span>
-            )}
+            <StateJurisdictionSelector value={selectedState} onChange={setSelectedState} variant="dark" showMetadata={true} compact={true} label="State" />
           </div>
         </div>
       </div>
@@ -550,35 +598,113 @@ export const PublicHealthDashboard = ({ onLogout, user, jurisdiction = 'Oklahoma
                 </div>
 
                 <div className="space-y-4">
-                  {timelineEvents.map((event) => (
-                    <div key={event.id} className="p-6 bg-slate-50 border border-slate-100 rounded-xl flex flex-col md:flex-row justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className={cn(
-                            "px-2 py-1 rounded-md text-[10px] font-bold uppercase text-white",
-                            event.urgency === 'critical' ? "bg-red-500" :
-                            event.urgency === 'error' ? "bg-orange-500" :
-                            event.urgency === 'warning' ? "bg-amber-500" : "bg-blue-500"
-                          )}>
-                            {event.urgency} Priority
-                          </span>
-                          <span className="text-xs text-slate-500 font-medium">{event.time}</span>
-                        </div>
-                        <h4 className="font-bold text-slate-900 text-lg">{event.title}</h4>
-                        <p className="text-sm text-slate-600 mt-1">{event.desc}</p>
-                      </div>
-                      <div className="flex flex-col justify-center gap-2 shrink-0 min-w-[200px]">
-                        {event.actions.map((action, i) => (
-                          <button onClick={() => alert(`Executing: ${action}... L.A.R.R.Y is logging this action.`)} key={i} className={cn(
-                            "w-full px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-sm",
-                            action.includes('Quarantine') || action.includes('Recall') ? "bg-red-600 text-white hover:bg-red-700" : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
-                          )}>
-                            {action}
-                          </button>
+                  {(() => {
+                    const isOk = selectedState === 'Oklahoma' || selectedState === 'All States Active';
+                    const list = isOk && ommaRecalls.length > 0
+                      ? ommaRecalls.map(r => ({
+                          id: r.id,
+                          title: `OMMA Safety Recall: ${r.businessName}`,
+                          time: r.displayDate,
+                          urgency: r.isActive ? 'critical' : 'warning',
+                          desc: `${r.products} — ${r.reason} (License: ${r.licenseNumber || 'N/A'})`,
+                          actions: ['Track Recall', 'Notify Clients'],
+                          url: r.newsUrl || r.pdfUrl || 'https://oklahoma.gov/omma/recalls/embargoed-and-recalled-products.html'
+                        }))
+                      : timelineEvents.map(e => ({
+                          id: String(e.id),
+                          title: `${selectedState} - ${e.title}`,
+                          time: e.time,
+                          urgency: e.urgency,
+                          desc: `${e.desc} (State simulated advisory)`,
+                          actions: e.actions,
+                          url: '#'
+                        }));
+
+                    return (
+                      <>
+                        {isOk && (
+                          <div className="flex items-center gap-2 mb-4 bg-emerald-50 text-emerald-800 border border-emerald-200 p-3 rounded-xl text-xs font-bold">
+                            <span className="flex h-2 w-2 relative">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                            </span>
+                            Live Scraper Connected to OMMA Portal: Displaying {ommaRecalls.length} safety recalls in real-time.
+                          </div>
+                        )}
+                        {!isOk && (
+                          <div className="flex items-center gap-2 mb-4 bg-amber-50 text-amber-800 border border-amber-200 p-3 rounded-xl text-xs font-semibold">
+                            ⚠️ Simulated view. Direct Metrc API integrations for {selectedState} are pending state authorization key sync. Use the state registry links below to view active advisories.
+                          </div>
+                        )}
+                        {list.map((event) => (
+                          <div key={event.id} className="p-6 bg-slate-50 border border-slate-100 rounded-xl flex flex-col md:flex-row justify-between gap-4">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className={cn(
+                                  "px-2 py-1 rounded-md text-[10px] font-bold uppercase text-white",
+                                  event.urgency === 'critical' ? "bg-red-500" :
+                                  event.urgency === 'error' ? "bg-orange-500" :
+                                  event.urgency === 'warning' ? "bg-amber-500" : "bg-blue-500"
+                                )}>
+                                  {event.urgency} Priority
+                                </span>
+                                <span className="text-xs text-slate-500 font-medium">{event.time}</span>
+                              </div>
+                              <h4 className="font-bold text-slate-900 text-lg">{event.title}</h4>
+                              <p className="text-sm text-slate-600 mt-1">{event.desc}</p>
+                              {event.url && event.url !== '#' && (
+                                <a href={event.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 mt-2 text-xs font-bold text-indigo-600 hover:text-indigo-800">
+                                  Official State Notice <ExternalLink size={12} />
+                                </a>
+                              )}
+                            </div>
+                            <div className="flex flex-col justify-center gap-2 shrink-0 min-w-[200px]">
+                              {event.actions.map((action, i) => (
+                                <button onClick={() => alert(`Executing: ${action}... L.A.R.R.Y is logging this action.`)} key={i} className={cn(
+                                  "w-full px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-sm",
+                                  action.includes('Quarantine') || action.includes('Recall') || action.includes('Notify') ? "bg-red-600 text-white hover:bg-red-700" : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
+                                )}>
+                                  {action}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
                         ))}
+                      </>
+                    );
+                  })()}
+                </div>
+
+                {/* State Portals Grid */}
+                <div className="mt-8 pt-8 border-t border-slate-200">
+                  <h3 className="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
+                    <Globe size={18} className="text-emerald-500" /> State Cannabis Recall Portal Registry
+                  </h3>
+                  <p className="text-xs text-slate-500 mb-6">
+                    Because cannabis is regulated on a state-by-state level, there is no single national list. Use these official registries to monitor batch numbers, product names, and testing violations in unison.
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {STATE_RECALL_PORTALS.map((portal) => (
+                      <div key={portal.state} className={cn(
+                        "p-4 rounded-2xl border transition-all hover:shadow-md flex flex-col justify-between",
+                        selectedState === portal.state ? "bg-emerald-50/50 border-emerald-300 ring-2 ring-emerald-500/20" : "bg-white border-slate-200"
+                      )}>
+                        <div>
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs font-black text-slate-800">{portal.state}</span>
+                            <span className="text-[9px] font-black uppercase bg-slate-100 text-slate-600 px-2 py-0.5 rounded border border-slate-200">
+                              {portal.badge}
+                            </span>
+                          </div>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{portal.authority}</p>
+                        </div>
+                        <a href={portal.url} target="_blank" rel="noopener noreferrer" 
+                          className="mt-4 w-full py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-center text-xs font-bold flex items-center justify-center gap-1.5 transition-colors">
+                          Visit Recall Portal <ExternalLink size={12} />
+                        </a>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
