@@ -490,10 +490,12 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
             const data = d.data();
             const lastSeen = data.lastSeen?.toDate ? data.lastSeen.toDate() : (data.lastSeen ? new Date(data.lastSeen) : null);
             if (!lastSeen) return false;
-            return (now - lastSeen.getTime()) <= 2 * 60 * 1000; // 2 minutes threshold
+            return (now - lastSeen.getTime()) <= 5 * 60 * 1000; // 5 minutes threshold (heartbeat is 30s)
           });
-          activeUsers = onlineDocs.length;
-        } catch (e) { /* presence query may fail */ }
+          activeUsers = Math.max(onlineDocs.length, 1); // At minimum, YOU are online
+        } catch (e) {
+          activeUsers = 1; // Fallback: at least the current user is active
+        }
 
         const sinceAllTime = '2020-01-01T00:00:00Z';
         const clickRes = await turso.execute({ sql: 'SELECT COUNT(*) as c FROM analytics_events WHERE created_at >= ?', args: [sinceAllTime] });

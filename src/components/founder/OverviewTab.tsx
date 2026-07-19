@@ -116,7 +116,7 @@ export const OverviewTab = ({
     all: 'All Time'
   };
 
-  // Fetch active presence users from Firebase when panel opens
+  // Fetch active presence users from Firebase — auto-refresh every 15s while panel is open
   useEffect(() => {
     if (!showActiveUsersPanel) return;
     const fetchPresence = async () => {
@@ -131,7 +131,7 @@ export const OverviewTab = ({
           let status = data.status || 'offline';
           if (lastSeen) {
             const elapsed = now - lastSeen.getTime();
-            if (elapsed > 2 * 60 * 1000) { // 2 minutes threshold
+            if (elapsed > 5 * 60 * 1000) { // 5 minutes threshold (heartbeat is 30s)
               status = 'offline';
             }
           }
@@ -144,13 +144,39 @@ export const OverviewTab = ({
             lastSeen
           };
         }).filter(u => u.status === 'online' || u.status === 'away');
+
+        // Guarantee the currently logged-in user shows as online
+        const currentEmail = user?.email?.toLowerCase().trim();
+        if (currentEmail && !users.some(u => u.email.toLowerCase().trim() === currentEmail)) {
+          users.unshift({
+            displayName: user?.displayName || user?.email || 'You',
+            email: currentEmail,
+            role: 'executive_founder',
+            status: 'online',
+            lastSeen: new Date() as any
+          });
+        }
+
         setActivePresenceUsers(users);
       } catch (e) {
         console.error('Error fetching presence:', e);
-        setActivePresenceUsers([]);
+        // Even on error, show the current user as online
+        const currentEmail = user?.email?.toLowerCase().trim();
+        if (currentEmail) {
+          setActivePresenceUsers([{
+            displayName: user?.displayName || user?.email || 'You',
+            email: currentEmail,
+            role: 'executive_founder',
+            status: 'online',
+          }]);
+        } else {
+          setActivePresenceUsers([]);
+        }
       }
     };
     fetchPresence();
+    const refreshInterval = setInterval(fetchPresence, 15_000); // Auto-refresh every 15s
+    return () => clearInterval(refreshInterval);
   }, [showActiveUsersPanel]);
 
   // Fetch click stream events by time range

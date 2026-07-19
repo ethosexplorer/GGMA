@@ -488,7 +488,7 @@ export default function App() {
       role: userProfile?.role || 'executive_founder',
       status: 'online',
       lastSeen: serverTimestamp(),
-    }, { merge: true }).catch(() => {});
+    }, { merge: true }).then(() => console.log('[Presence] Profile write OK for', user.email)).catch((e) => console.error('[Presence] Profile write FAILED:', e));
   }, [user?.uid, userProfile?.email, userProfile?.displayName, userProfile?.role]);
 
   // 2. Session lifecycle (heartbeat, visibility, and tab close handlers)
@@ -501,18 +501,21 @@ export default function App() {
       setDoc(presenceRef, {
         status: 'online',
         lastSeen: serverTimestamp(),
-      }, { merge: true }).catch(() => {});
+      }, { merge: true }).catch((e) => console.error('[Presence] heartbeat FAILED:', e));
     };
 
     const writeOffline = () => {
       setDoc(presenceRef, {
         status: 'offline',
         lastSeen: serverTimestamp(),
-      }, { merge: true }).catch(() => {});
+      }, { merge: true }).catch((e) => console.error('[Presence] offline FAILED:', e));
     };
 
-    // Heartbeat every 60s
-    const heartbeat = setInterval(writeOnline, 60_000);
+    // Write online IMMEDIATELY on mount, don't wait for first heartbeat
+    writeOnline();
+
+    // Heartbeat every 30s (was 60s — tightened to stay within threshold)
+    const heartbeat = setInterval(writeOnline, 30_000);
 
     // Tab close hook
     const handleUnload = () => {
