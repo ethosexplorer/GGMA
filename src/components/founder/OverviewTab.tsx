@@ -123,15 +123,27 @@ export const OverviewTab = ({
       try {
         const { getDocs, collection: fbColl, query: fbQuery, where: fbWhere } = await import('firebase/firestore');
         const presSnap = await getDocs(fbQuery(fbColl(db, 'presence'), fbWhere('status', 'in', ['online', 'away'])));
+        const now = Date.now();
         const users = presSnap.docs.map(d => {
           const data = d.data();
+          const lastSeen = data.lastSeen?.toDate ? data.lastSeen.toDate() : (data.lastSeen ? new Date(data.lastSeen) : null);
+          
+          let status = data.status || 'offline';
+          if (lastSeen) {
+            const elapsed = now - lastSeen.getTime();
+            if (elapsed > 2 * 60 * 1000) { // 2 minutes threshold
+              status = 'offline';
+            }
+          }
+          
           return {
             displayName: data.displayName || data.name || '',
             email: data.email || d.id || '',
             role: data.role || data.userType || 'user',
-            status: data.status || 'online'
+            status,
+            lastSeen
           };
-        });
+        }).filter(u => u.status === 'online' || u.status === 'away');
         setActivePresenceUsers(users);
       } catch (e) {
         console.error('Error fetching presence:', e);

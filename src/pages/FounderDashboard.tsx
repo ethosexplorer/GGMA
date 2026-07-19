@@ -485,7 +485,14 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         try {
           const { getDocs, collection: fbColl, query: fbQuery, where: fbWhere } = await import('firebase/firestore');
           const presSnap = await getDocs(fbQuery(fbColl(db, 'presence'), fbWhere('status', 'in', ['online', 'away'])));
-          activeUsers = presSnap.size;
+          const now = Date.now();
+          const onlineDocs = presSnap.docs.filter(d => {
+            const data = d.data();
+            const lastSeen = data.lastSeen?.toDate ? data.lastSeen.toDate() : (data.lastSeen ? new Date(data.lastSeen) : null);
+            if (!lastSeen) return false;
+            return (now - lastSeen.getTime()) <= 2 * 60 * 1000; // 2 minutes threshold
+          });
+          activeUsers = onlineDocs.length;
         } catch (e) { /* presence query may fail */ }
 
         const sinceAllTime = '2020-01-01T00:00:00Z';
