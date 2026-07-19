@@ -336,10 +336,14 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         let bParams: any[] = [];
 
         if (selectedState && selectedState !== 'All States Active') {
-          pQuery = 'SELECT COUNT(*) as count FROM patients WHERE LOWER(state) = ?';
-          bQuery = 'SELECT COUNT(*) as count FROM businesses WHERE LOWER(state) = ?';
-          pParams = [selectedState.toLowerCase()];
-          bParams = [selectedState.toLowerCase()];
+          const stateData = STATE_REGULATORY_MAP[selectedState];
+          const abbr = stateData?.abbr?.toLowerCase() || '';
+          const name = selectedState.toLowerCase();
+
+          pQuery = 'SELECT COUNT(*) as count FROM patients WHERE LOWER(state) = ? OR LOWER(state) = ?';
+          bQuery = 'SELECT COUNT(*) as count FROM businesses WHERE LOWER(state) = ? OR LOWER(state) = ?';
+          pParams = [name, abbr];
+          bParams = [name, abbr];
         }
 
         const pRes = await turso.execute({ sql: pQuery, args: pParams });
@@ -348,16 +352,61 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
 
         // Revenue from founder_ledger (real payments posted)
         const lRes = await turso.execute('SELECT gross_revenue, origin_vector, type FROM founder_ledger');
+        
+        // Build a map of name -> state from patients and businesses
+        const nameToStateMap: Record<string, string> = {};
+        
+        const patientsRes = await turso.execute('SELECT name, state FROM patients WHERE name IS NOT NULL AND state IS NOT NULL');
+        patientsRes.rows.forEach((r: any) => {
+          nameToStateMap[String(r.name).toLowerCase().trim()] = String(r.state).toLowerCase().trim();
+        });
+
+        const businessesRes = await turso.execute('SELECT business_name as name, state FROM businesses WHERE business_name IS NOT NULL AND state IS NOT NULL');
+        businessesRes.rows.forEach((r: any) => {
+          nameToStateMap[String(r.name).toLowerCase().trim()] = String(r.state).toLowerCase().trim();
+        });
+
+        const normalizeToStateName = (raw: string): string => {
+          const trimmed = (raw || '').trim().toLowerCase();
+          if (!trimmed) return '';
+          for (const [fullName, data] of Object.entries(STATE_REGULATORY_MAP)) {
+            if (data.abbr.toLowerCase() === trimmed || fullName.toLowerCase() === trimmed) {
+              return fullName.toLowerCase();
+            }
+          }
+          return trimmed;
+        };
+
         let rev = 0;
         for (const row of lRes.rows) {
           if (selectedState && selectedState !== 'All States Active') {
-            const stLower = selectedState.toLowerCase();
-            const textToSearch = `${row.origin_vector || ''} ${row.type || ''}`.toLowerCase();
-            const stateData = STATE_REGULATORY_MAP[selectedState];
-            const abbrLower = stateData?.abbr?.toLowerCase() || '';
-            const hasMatch = textToSearch.includes(stLower) || 
-                             (abbrLower && (textToSearch.includes(`(${abbrLower})`) || textToSearch.includes(` ${abbrLower}`) || textToSearch.includes(`${abbrLower} `)));
-            if (!hasMatch) continue;
+            const targetStateNorm = selectedState.toLowerCase();
+            const originVector = String(row.origin_vector || '').toLowerCase();
+            
+            // Find if any patient or business name is in the origin_vector
+            let matchedState = '';
+            for (const [name, rawState] of Object.entries(nameToStateMap)) {
+              if (originVector.includes(name)) {
+                matchedState = normalizeToStateName(rawState);
+                break;
+              }
+            }
+
+            // Fallback: If no name matched, try to find direct state name or abbreviation in the text
+            if (!matchedState) {
+              const stateData = STATE_REGULATORY_MAP[selectedState];
+              const abbrLower = stateData?.abbr?.toLowerCase() || '';
+              const textToSearch = `${row.origin_vector || ''} ${row.type || ''}`.toLowerCase();
+              
+              const rxAbbr = new RegExp(`\\b${abbrLower}\\b`, 'i');
+              const rxFullName = new RegExp(`\\b${targetStateNorm}\\b`, 'i');
+              
+              if (rxFullName.test(textToSearch) || rxAbbr.test(textToSearch)) {
+                matchedState = targetStateNorm;
+              }
+            }
+
+            if (matchedState !== targetStateNorm) continue;
           }
           const val = String(row.gross_revenue || '').replace(/[^0-9.]/g, '');
           rev += parseFloat(val) || 0;
@@ -376,10 +425,14 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
           let bParamsQ: any[] = [];
           
           if (selectedState && selectedState !== 'All States Active') {
-            rawPQuery = 'SELECT id, name, state, created_at FROM patients WHERE LOWER(state) = ? ORDER BY created_at DESC';
-            rawBQuery = 'SELECT id, business_name as name, license_type, state, created_at FROM businesses WHERE LOWER(state) = ? ORDER BY created_at DESC';
-            pParamsQ = [selectedState.toLowerCase()];
-            bParamsQ = [selectedState.toLowerCase()];
+            const stateData = STATE_REGULATORY_MAP[selectedState];
+            const abbr = stateData?.abbr?.toLowerCase() || '';
+            const name = selectedState.toLowerCase();
+
+            rawPQuery = 'SELECT id, name, state, created_at FROM patients WHERE LOWER(state) = ? OR LOWER(state) = ? ORDER BY created_at DESC';
+            rawBQuery = 'SELECT id, business_name as name, license_type, state, created_at FROM businesses WHERE LOWER(state) = ? OR LOWER(state) = ? ORDER BY created_at DESC';
+            pParamsQ = [name, abbr];
+            bParamsQ = [name, abbr];
           }
           
           const rawP = await turso.execute({ sql: rawPQuery, args: pParamsQ });
