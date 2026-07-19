@@ -40,7 +40,7 @@ const NAV_ITEMS = [
   { id: 'settings', label: 'Admin Settings', icon: Settings },
 ];
 
-export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () => void | Promise<void>, user?: any, initialTab?: string }) => {
+export const AdminDashboard = ({ onLogout, user, initialTab, embedded = false }: { onLogout?: () => void | Promise<void>, user?: any, initialTab?: string, embedded?: boolean }) => {
   const [activeTab, setActiveTab] = useState(initialTab || 'overview');
   
   // Draggable nav state with localStorage persistence
@@ -825,6 +825,160 @@ export const AdminDashboard = ({ onLogout, user, initialTab }: { onLogout?: () =
       default: return renderOverview();
     }
   };
+
+  if (embedded) {
+    return (
+      <div className="flex flex-col h-[calc(100vh-4rem)] bg-slate-50 overflow-hidden text-slate-800 font-sans relative">
+        {/* EMBEDDED TOP NAVIGATION BAR */}
+        <div className="bg-slate-900 border-b border-slate-700 shrink-0">
+          <div className="flex items-center gap-4 px-6 py-3">
+            <div className="flex items-center gap-2 shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-indigo-500/20 border border-indigo-500/50 flex items-center justify-center text-indigo-400">
+                <Shield size={18} />
+              </div>
+              <div>
+                <h2 className="font-bold text-xs text-white leading-tight uppercase tracking-tight">Internal Admin</h2>
+                <p className="text-[9px] text-indigo-400/80 font-bold tracking-widest uppercase">Operational Control</p>
+              </div>
+            </div>
+            <div className="w-px h-8 bg-slate-700 shrink-0" />
+            <div className="flex-1 overflow-x-auto scrollbar-hide">
+              <div className="flex items-center gap-1 min-w-max">
+                {navItems.filter(item => 'id' in item).map((item: any) => {
+                  const Icon = item.icon;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => setActiveTab(item.id)}
+                      className={cn(
+                        "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap shrink-0",
+                        activeTab === item.id
+                          ? "bg-indigo-600 text-white shadow-md"
+                          : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
+                      )}
+                    >
+                      {Icon && <Icon size={13} />} {item.label}
+                      {item.badge && <span className="text-[9px] bg-red-500 text-white px-1.5 py-0.5 rounded-full font-bold ml-1">{item.badge}</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="w-px h-8 bg-slate-700 shrink-0" />
+            <div className="shrink-0 text-right">
+              <span className="text-[10px] text-indigo-400/80 font-bold italic">🔒 Scoped Control</span>
+            </div>
+          </div>
+        </div>
+
+        {/* EMBEDDED MAIN CONTENT */}
+        <div className="flex-1 flex flex-row h-full min-h-0 overflow-hidden relative">
+          <div className="flex-1 flex flex-col h-full min-h-0 overflow-hidden">
+            <div className="h-14 border-b border-slate-200 flex items-center justify-between px-6 bg-white shrink-0">
+              <h1 className="text-lg font-black text-slate-900 tracking-tighter uppercase">{activeTab.replace('_', ' ')}</h1>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-100">
+                   <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                   SYSTEM OPERATIONAL
+                </div>
+              </div>
+            </div>
+            <div className="flex-1 overflow-y-auto p-6">{getContent()}</div>
+          </div>
+
+          {/* LIVE OPERATIONS & CLIENT ESCALATION FEED (RIGHT SIDEBAR) */}
+          {showEscPanel && (
+            <div className="w-80 bg-white border-l border-slate-200 flex flex-col shrink-0 transition-all duration-500 hidden xl:flex" style={{ WebkitOverflowScrolling: 'touch' }}>
+               <div className="h-14 border-b border-slate-200 flex items-center justify-between px-4 bg-slate-50 shrink-0">
+                  <h3 className="font-black text-sm uppercase tracking-widest text-slate-800 flex items-center gap-2"><Activity size={16} className="text-indigo-600" /> Escalations</h3>
+                  <button onClick={() => setShowEscPanel(false)} title="Collapse panel" className="p-1.5 hover:bg-slate-200 rounded-lg text-slate-400 hover:text-slate-800 transition-colors"><X size={16}/></button>
+               </div>
+               <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/50" style={{ WebkitOverflowScrolling: 'touch' }}>
+                   {dbAlerts.length > 0 ? dbAlerts.map((alert: any, i: number) => (
+                      <div key={i} className={cn("p-3 bg-white border-l-4 rounded-r-xl shadow-sm hover:shadow-md transition-all cursor-pointer", alert.severity === 'High' ? 'border-red-500' : alert.severity === 'Medium' ? 'border-amber-500' : 'border-emerald-500')}>
+                         <div className="flex justify-between items-start mb-1">
+                            <span className={cn("text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded", alert.severity === 'High' ? 'text-red-600 bg-red-50' : alert.severity === 'Medium' ? 'text-amber-600 bg-amber-50' : 'text-emerald-600 bg-emerald-50')}>Alert</span>
+                            <span className="text-[9px] text-slate-400 font-bold">{alert.date || 'Just Now'}</span>
+                         </div>
+                         <p className="text-xs font-bold text-slate-800">{alert.message}</p>
+                         <div className="mt-2 flex justify-between items-center">
+                            <button data-action-bound="true" className="text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-widest" onClick={() => triggerLiveAction("Support Ticket", "Ticket successfully claimed. Transferring context to live ops center...", "success")}>Take Ticket</button>
+                            <span className="text-[9px] font-bold text-slate-400">{alert.is_resolved ? 'Resolved' : 'Active'}</span>
+                         </div>
+                      </div>
+                   )) : <div className="text-center p-4 text-slate-400 text-xs font-bold italic">No active escalations.</div>}
+                  <div className="p-3 border-2 border-dashed border-slate-200 rounded-xl text-center text-slate-400 flex flex-col items-center justify-center">
+                     <Sprout size={20} className="mb-1 opacity-50" />
+                     <p className="text-[10px] font-black uppercase tracking-widest">Listening for incoming...</p>
+                  </div>
+               </div>
+            </div>
+          )}
+          {!showEscPanel && (
+            <button onClick={() => setShowEscPanel(true)} className="absolute bottom-6 right-6 z-50 bg-indigo-600 text-white p-3 rounded-full shadow-xl hover:bg-indigo-500 transition-all animate-bounce" title="Show Escalations">
+              <Activity size={20}/>
+            </button>
+          )}
+        </div>
+
+        {liveAction && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-slate-900/80 backdrop-blur-md animate-in fade-in">
+            <div className="bg-[#0b1525] max-w-lg w-full rounded-[2rem] shadow-2xl border border-blue-900/50 overflow-hidden flex flex-col">
+              <div className={`p-6 border-b ${liveAction.type === 'warning' ? 'bg-red-900/30 border-red-900/50' : liveAction.type === 'success' ? 'bg-emerald-900/30 border-emerald-900/50' : 'bg-[#111f36] border-blue-900/50'} flex justify-between items-center`}>
+                <div className="flex items-center gap-3">
+                  {liveAction.type === 'warning' && <AlertTriangle className="text-red-500" size={24} />}
+                  {liveAction.type === 'success' && <CircleCheck className="text-emerald-500" size={24} />}
+                  {liveAction.type === 'process' && <div className="w-6 h-6 rounded-full border-2 border-blue-500/30 border-t-blue-500 animate-spin" />}
+                  {liveAction.type === 'info' && <Search className="text-blue-400" size={24} />}
+                  {liveAction.type === 'form' && <Edit2 className="text-blue-400" size={24} />}
+                  <h3 className="font-black text-white text-lg uppercase tracking-tight">{liveAction.title}</h3>
+                </div>
+                <button onClick={() => setLiveAction(null)} className="p-2 hover:bg-blue-900/50 rounded-lg transition-colors">
+                  <X size={20} className="text-blue-400/70" />
+                </button>
+              </div>
+              <div className="p-8">
+                <p className="text-blue-100 font-medium leading-relaxed whitespace-pre-line">{liveAction.message}</p>
+                {liveAction.type === 'process' && (
+                  <div className="mt-6 space-y-2">
+                    <div className="h-2 w-full bg-[#080e1a] rounded-full overflow-hidden border border-blue-900/50">
+                      <div className="h-full bg-blue-600 w-2/3 rounded-full animate-pulse" />
+                    </div>
+                    <p className="text-[10px] font-black uppercase text-blue-400/60 tracking-widest text-right">Executing Remote Query...</p>
+                  </div>
+                )}
+              </div>
+              <div className="p-6 border-t border-blue-900/50 bg-[#080e1a] flex justify-end gap-3">
+                <button onClick={() => setLiveAction(null)} className="px-5 py-2.5 font-bold text-blue-300 hover:bg-blue-900/50 hover:text-white rounded-xl transition-colors">
+                  {liveAction.type === 'warning' ? 'Cancel' : 'Close'}
+                </button>
+                {(liveAction.type === 'warning' || liveAction.type === 'form') && (
+                  <button onClick={() => {
+                    setLiveAction({ title: "Processing Directive", type: 'process', message: 'Executing secure cross-network procedure...' });
+                    import('../lib/turso').then(({ turso }) => {
+                      const auditId = 'ADMIN-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+                      turso.execute({
+                        sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)",
+                        args: [auditId, liveAction.title, 'ADMIN_User', JSON.stringify({ detail: liveAction.message, type: liveAction.type })]
+                      }).then(() => {
+                        setLiveAction({ title: "Action Confirmed", type: 'success', message: 'The action has been permanently logged to the live audit chain.\n\nReceipt: ' + auditId });
+                        setTimeout(() => setLiveAction(null), 3500);
+                      }).catch((err) => {
+                        console.error(err);
+                        setLiveAction({ title: "Processing Failed", type: 'warning', message: 'Database transaction failed: ' + err.message });
+                      });
+                    }).catch(console.error);
+                  }} className={`px-5 py-2.5 font-black text-white rounded-xl shadow-lg transition-all uppercase text-sm ${liveAction.type === 'warning' ? 'bg-red-600 hover:bg-red-500 shadow-red-900/50' : 'bg-blue-600 hover:bg-blue-500 shadow-blue-900/50'}`}>
+                    Execute Action
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-full min-h-0 overflow-hidden bg-slate-50 text-slate-800 font-sans relative">

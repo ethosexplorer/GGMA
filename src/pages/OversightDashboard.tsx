@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { Calendar, Building2, Users, FileText, Settings, Shield, Activity, Bell,
   Globe, HeartPulse, Cpu, LayoutDashboard, LogOut, ArrowLeft, 
-  FlaskConical, CreditCard, ChevronRight, Clock, Phone
+  FlaskConical, CreditCard, ChevronRight, Clock, Phone, Landmark, FolderLock
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { FederalDashboard } from './FederalDashboard';
 import { PublicHealthDashboard } from './PublicHealthDashboard';
 import { OperationsDashboard } from './OperationsDashboard';
 import { AdminDashboard } from './AdminDashboard';
+import { StateAuthorityDashboard } from './StateAuthorityDashboard';
 import { SubscriptionPortal } from '../components/SubscriptionPortal';
 import { AuditLogsTab } from '../components/oversight/AuditLogsTab';
 import { VirtualAttendantTab } from '../components/oversight/VirtualAttendantTab';
@@ -23,7 +24,8 @@ const NAV_ITEMS = [
   { id: 'federal', label: 'Federal Command', icon: Globe },
   { id: 'public_health', label: 'Public Health & Labs', icon: FlaskConical },
   { id: 'operations', label: 'Ops & Support Center', icon: Cpu },
-  { id: 'state_admin', label: 'State Licensing (Admin)', icon: Shield },
+  { id: 'internal_admin', label: 'Internal Admin Command', icon: FolderLock },
+  { id: 'state_regulator', label: 'State Authority (OMMA)', icon: Landmark },
   { id: 'virtual_attendant', label: 'GGE World Call Center', icon: Phone },
   { id: 'processor', label: 'GGE Processor', icon: Activity },
   { section: 'SYSTEM' },
@@ -48,6 +50,9 @@ export const OversightDashboard = ({ onLogout, user, role, jurisdiction = 'Oklah
     
     // If user has explicit access control from onboarding, respect it strictly
     if (hasAccessControl && !isExecutive) {
+      if (item.id === 'internal_admin' || item.id === 'state_regulator') {
+        return user.accessibleDashboards.includes('state_admin') || user.accessibleDashboards.includes(item.id);
+      }
       return user.accessibleDashboards.includes(item.id);
     }
     
@@ -59,9 +64,15 @@ export const OversightDashboard = ({ onLogout, user, role, jurisdiction = 'Oklah
   });
 
   // Determine initial tab: use first accessible dashboard for restricted users
-  const defaultTab = hasAccessControl && !isExecutive
-    ? user.accessibleDashboards[0]
-    : (isExecutive || isSubscribed ? 'overview' : 'subscription');
+  const getInitialTab = () => {
+    if (hasAccessControl && !isExecutive) {
+      const tab = user.accessibleDashboards[0];
+      if (tab === 'state_admin') return 'internal_admin';
+      return tab;
+    }
+    return (isExecutive || isSubscribed ? 'overview' : 'subscription');
+  };
+  const defaultTab = getInitialTab();
   const [activeTab, setActiveTab] = useState(defaultTab);
 
   // STAFF SHORTCUT: If restricted staff only has access to 'operations', skip the Oversight
@@ -104,12 +115,20 @@ export const OversightDashboard = ({ onLogout, user, role, jurisdiction = 'Oklah
           </div>
         )}
 
-        <div className="bg-slate-900 p-6 rounded-3xl border border-slate-800 shadow-xl relative overflow-hidden group cursor-pointer" onClick={() => setActiveTab('state_admin')}>
-           <div className="absolute top-0 right-0 p-4 opacity-10 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform"><Shield size={120} /></div>
-           <div className="w-12 h-12 bg-slate-800 rounded-2xl flex items-center justify-center text-slate-300 mb-4 border border-slate-700"><Shield size={24} /></div>
-           <h3 className="text-xl font-bold text-white mb-2">State Licensing</h3>
-           <p className="text-sm text-slate-400 mb-6">Manage patients, businesses, approvals, and platform compliance.</p>
+        <div className="bg-slate-900 p-6 rounded-3xl border border-slate-800 shadow-xl relative overflow-hidden group cursor-pointer" onClick={() => setActiveTab('internal_admin')}>
+           <div className="absolute top-0 right-0 p-4 opacity-10 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform"><FolderLock size={120} className="text-slate-700" /></div>
+           <div className="w-12 h-12 bg-slate-800 rounded-2xl flex items-center justify-center text-slate-300 mb-4 border border-slate-700"><FolderLock size={24} /></div>
+           <h3 className="text-xl font-bold text-white mb-2">Internal Admin</h3>
+           <p className="text-sm text-slate-400 mb-6">Manage internal staff, negligence alerts, user directory, and pre-screening approvals.</p>
            <div className="flex items-center text-slate-300 font-bold text-sm">Launch Portal <ChevronRight size={16} /></div>
+        </div>
+
+        <div className="bg-[#0e2c1c] p-6 rounded-3xl border border-emerald-900/30 shadow-xl relative overflow-hidden group cursor-pointer" onClick={() => setActiveTab('state_regulator')}>
+           <div className="absolute top-0 right-0 p-4 opacity-10 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform"><Landmark size={120} className="text-emerald-800" /></div>
+           <div className="w-12 h-12 bg-emerald-900/50 rounded-2xl flex items-center justify-center text-emerald-400 mb-4 border border-emerald-700/50"><Landmark size={24} /></div>
+           <h3 className="text-xl font-bold text-white mb-2">State Authority (OMMA)</h3>
+           <p className="text-sm text-emerald-200/60 mb-6">View statewide metrics, economic impact, compliance pulse, and official state approvals.</p>
+           <div className="flex items-center text-emerald-400 font-bold text-sm">Launch Portal <ChevronRight size={16} /></div>
         </div>
       </div>
     </div>
@@ -125,8 +144,10 @@ export const OversightDashboard = ({ onLogout, user, role, jurisdiction = 'Oklah
         return <div className="h-full w-full -m-0"><PublicHealthDashboard user={user} onLogout={onLogout} /></div>;
       case 'operations': 
         return <div className="h-full w-full -m-0"><OperationsDashboard user={user} onLogout={onLogout} /></div>;
-      case 'state_admin': 
-        return <div className="h-full w-full -m-0"><AdminDashboard user={user} onLogout={onLogout} /></div>;
+      case 'internal_admin': 
+        return <div className="h-full w-full -m-0"><AdminDashboard user={user} onLogout={onLogout} embedded={true} /></div>;
+      case 'state_regulator': 
+        return <div className="h-full w-full -m-0"><StateAuthorityDashboard user={user} onLogout={onLogout} embedded={true} /></div>;
       case 'virtual_attendant':
         return <div className="p-8 h-full overflow-y-auto"><VirtualAttendantTab /></div>;
       case 'processor':

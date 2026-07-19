@@ -21,7 +21,7 @@ import { getStateMetrics, getComparisonRow } from '../lib/stateMetrics';
 //  STATE AUTHORITY DASHBOARD — Full Economic Ecosystem, Dynamic per State
 // ═══════════════════════════════════════════════════════════════════════
 
-export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
+export const StateAuthorityDashboard = ({ onLogout, user, embedded = false }: { onLogout?: () => void, user?: any, embedded?: boolean }) => {
   const [activeTab, setActiveTab] = useState('statewide_overview');
   const [selectedApplicant, setSelectedApplicant] = useState<any>(null);
   const [isUnlocked, setIsUnlocked] = useState(true);
@@ -849,12 +849,171 @@ export const StateAuthorityDashboard = ({ onLogout, user }: { onLogout?: () => v
     { id: 'subscription', label: 'Subscription', icon: CreditCard, tier: 'basic' },
   ];
 
-  // ═══════════════════════════════════════════════════════════════
-  //  MAIN LAYOUT
-  // ═══════════════════════════════════════════════════════════════
+  if (embedded) {
+    return (
+      <div className="flex flex-col h-[calc(100vh-4rem)] bg-slate-50 overflow-hidden text-slate-800 font-sans relative">
+        {/* EMBEDDED TOP NAVIGATION BAR */}
+        <div className="bg-[#10301f] border-b border-emerald-800/30 shrink-0">
+          <div className="flex items-center gap-4 px-6 py-3">
+            <div className="flex items-center gap-2 shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-center text-emerald-400">
+                <Landmark size={18} />
+              </div>
+              <div>
+                <h2 className="font-bold text-xs text-white leading-tight uppercase tracking-tight">State Authority</h2>
+                <p className="text-[9px] text-emerald-500/80 font-bold tracking-widest uppercase">OMMA Regulatory Hub</p>
+              </div>
+            </div>
+            <div className="w-px h-8 bg-emerald-800/40 shrink-0" />
+            <div className="flex-1 overflow-x-auto scrollbar-hide">
+              <div className="flex items-center gap-1 min-w-max">
+                {navItems.filter(item => 'id' in item).map((item: any) => {
+                  const allowed = hasAccess(item.tier);
+                  const Icon = item.icon;
+                  return (
+                    <button
+                      key={item.id}
+                      disabled={!allowed}
+                      onClick={() => setActiveTab(item.id)}
+                      className={cn(
+                        "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap shrink-0",
+                        activeTab === item.id
+                          ? "bg-emerald-600 text-white shadow-md"
+                          : "text-slate-400 hover:bg-white/5 hover:text-slate-200",
+                        !allowed && "opacity-50 cursor-not-allowed"
+                      )}
+                    >
+                      {Icon && <Icon size={13} />} {item.label}
+                      {!allowed && <Lock size={10} className="text-slate-500/50 ml-1" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="w-px h-8 bg-emerald-800/40 shrink-0" />
+            <div className="shrink-0 flex items-center gap-3">
+              <StateJurisdictionSelector value={stateJurisdiction} onChange={setStateJurisdiction} variant="dark" showMetadata={true} compact={true} label="" />
+            </div>
+          </div>
+        </div>
+
+        {/* EMBEDDED MAIN CONTENT */}
+        <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+          <header className="h-14 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0 z-10">
+            <h1 className="text-lg font-black text-slate-900 tracking-tight uppercase">
+              {(navItems.find((n: any) => n.id === activeTab) as any)?.label || activeTab.replace(/_/g, ' ')}
+            </h1>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-full border border-indigo-100">
+                <ShieldCheck size={14} /> JURISDICTION SECURE
+              </div>
+              <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-100">
+                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div> ALL SYSTEMS ONLINE
+              </div>
+            </div>
+          </header>
+          <div className="flex-1 overflow-y-auto p-6">
+            {(() => {
+              const allTabs = navItems.filter((n: any) => n.id);
+              const currentTab = allTabs.find((t: any) => t.id === activeTab) as any;
+              if (currentTab && !hasAccess(currentTab.tier)) {
+                return (
+                  <div className="h-full flex flex-col items-center justify-center text-center">
+                    <div className="w-20 h-20 bg-indigo-900/10 rounded-full flex items-center justify-center mb-6 border border-indigo-800/20">
+                      <Lock size={32} className="text-indigo-600" />
+                    </div>
+                    <h2 className="text-2xl font-black text-slate-800 mb-3">Tier Upgrade Required</h2>
+                    <p className="text-slate-500 max-w-md mb-8">
+                      The <strong>{currentTab.label}</strong> module is restricted to the <span className="capitalize text-indigo-600 font-bold">{currentTab.tier}</span> tier.
+                    </p>
+                    <button onClick={() => setActiveTab('subscription')} className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/20 transition-all">View Upgrade Options</button>
+                  </div>
+                );
+              }
+              return (
+                <>
+                  {activeTab === 'statewide_overview' && renderStatewideOverview()}
+                  {activeTab === 'economic_impact' && renderEconomicImpact()}
+                  {activeTab === 'approvals_denials' && renderApprovalsDenials()}
+                  {activeTab === 'compliance' && renderCompliancePulse()}
+                  {activeTab === 'jurisdiction' && renderJurisdictionDashboard()}
+                  {activeTab === 'omes_enterprise' && renderOMESEnterprise()}
+                  {activeTab === 'cross_agency' && renderCrossAgency()}
+                  {activeTab === 'commerce_supply' && renderCommerceSupplyChain()}
+                  {activeTab === 'health_labs' && <div className="h-full w-full -m-8"><PublicHealthDashboard /></div>}
+                  {activeTab === 'revenue_tax' && renderRevenueTax()}
+                  {activeTab === 'jurisdiction_trend' && <div className="text-center py-40 text-slate-400 font-bold uppercase tracking-widest italic">AI Trend Engine Generating Forecasts...</div>}
+                  {activeTab === 'ceye' && <div className="h-full w-full -m-8 min-h-screen overflow-auto bg-[#060a14]"><CEYECommandCenter role="state_authority" /></div>}
+                  {activeTab === 'subscription' && <SubscriptionPortal userRole="regulator" initialPlanId={`state_${tier}`} />}
+                </>
+              );
+            })()}
+          </div>
+        </div>
+
+        {/* APPLICANT DETAIL MODAL */}
+        {selectedApplicant && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+            <div className="bg-white rounded-[2rem] w-full max-w-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+              <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <div>
+                  <h3 className="text-2xl font-black text-slate-900 tracking-tight">{selectedApplicant.n}</h3>
+                  <p className="text-sm font-bold text-slate-500">{selectedApplicant.t} — {selectedApplicant.r}, {stateData?.abbr || stateJurisdiction}</p>
+                </div>
+                <button onClick={() => setSelectedApplicant(null)} className="text-slate-400 hover:text-slate-600"><XCircle size={28} /></button>
+              </div>
+              <div className="p-8 overflow-y-auto flex-1">
+                <div className="grid grid-cols-2 gap-8">
+                  <div>
+                    <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Contact Information</h4>
+                    <div className="space-y-4">
+                      <div><p className="text-[10px] font-bold text-slate-400 uppercase">Email</p><p className="text-sm font-bold text-slate-800">{selectedApplicant.e}</p></div>
+                      <div><p className="text-[10px] font-bold text-slate-400 uppercase">Phone</p><p className="text-sm font-bold text-slate-800">(555) 123-4567</p></div>
+                      <div><p className="text-[10px] font-bold text-slate-400 uppercase">Address</p><p className="text-sm font-bold text-slate-800">123 Commerce St, {selectedApplicant.r}, {stateData?.abbr || stateJurisdiction}</p></div>
+                    </div>
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Application Details</h4>
+                    <div className="space-y-4">
+                      <div><p className="text-[10px] font-bold text-slate-400 uppercase">Application ID</p><p className="text-sm font-bold text-slate-800">APP-{stateData?.abbr || 'ST'}-849201</p></div>
+                      <div><p className="text-[10px] font-bold text-slate-400 uppercase">Submission Date</p><p className="text-sm font-bold text-slate-800">April 22, 2026</p></div>
+                      <div><p className="text-[10px] font-bold text-slate-400 uppercase">Background Check</p><div className="flex items-center gap-1 text-emerald-600 text-sm font-bold mt-1"><CircleCheck size={16} /> Passed ({m.investigationAgency})</div></div>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-8">
+                  <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Document Vault</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    {['Identification.pdf', 'Proof_of_Residency.pdf', 'Affidavit_Lawful_Presence.pdf'].map((doc, i) => (
+                      <div key={i} className="p-4 border border-slate-200 rounded-xl flex items-center justify-between hover:bg-slate-50 cursor-pointer transition-colors group">
+                        <div className="flex items-center gap-3"><FileText size={20} className="text-indigo-500" /><span className="text-xs font-bold text-slate-700">{doc}</span></div>
+                        <Download size={16} className="text-slate-400 group-hover:text-indigo-500" />
+                      </div>
+                    ))}
+                    {(selectedApplicant.t?.includes('Cultivator') || selectedApplicant.t?.includes('Dispensary')) && (
+                      <div className="p-4 border border-slate-200 rounded-xl flex items-center justify-between hover:bg-slate-50 cursor-pointer transition-colors group">
+                        <div className="flex items-center gap-3"><FileText size={20} className="text-indigo-500" /><span className="text-xs font-bold text-slate-700">Certificate_of_Compliance.pdf</span></div>
+                        <Download size={16} className="text-slate-400 group-hover:text-indigo-500" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="p-6 border-t border-slate-100 bg-slate-50 flex justify-end gap-3 shrink-0">
+                <button onClick={() => setSelectedApplicant(null)} className="px-6 py-3 rounded-xl font-black text-slate-500 hover:bg-slate-200 uppercase text-xs transition-colors">Cancel</button>
+                <button onClick={() => setSelectedApplicant(null)} className="px-6 py-3 rounded-xl font-black text-white bg-red-600 hover:bg-red-700 uppercase text-xs shadow-lg transition-colors">Deny Application</button>
+                <button onClick={() => setSelectedApplicant(null)} className="px-6 py-3 rounded-xl font-black text-white bg-emerald-600 hover:bg-emerald-700 uppercase text-xs shadow-lg transition-colors">Approve License</button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 relative">
-      {!isUnlocked && (
+      {!isUnlocked && !embedded && (
         <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-slate-900/60 backdrop-blur-2xl animate-in fade-in duration-300">
           <div className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-2xl text-center max-w-sm w-full animate-in zoom-in-95 duration-500">
             <Lock size={48} className="text-indigo-500 mx-auto mb-6" />
