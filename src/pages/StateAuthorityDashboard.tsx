@@ -21,13 +21,13 @@ import { getStateMetrics, getComparisonRow } from '../lib/stateMetrics';
 //  STATE AUTHORITY DASHBOARD — Full Economic Ecosystem, Dynamic per State
 // ═══════════════════════════════════════════════════════════════════════
 
-export const StateAuthorityDashboard = ({ onLogout, user, embedded = false }: { onLogout?: () => void, user?: any, embedded?: boolean }) => {
+export const StateAuthorityDashboard = ({ onLogout, user, embedded = false, jurisdiction = 'Oklahoma' }: { onLogout?: () => void, user?: any, embedded?: boolean, jurisdiction?: string }) => {
   const [activeTab, setActiveTab] = useState('statewide_overview');
   const [selectedApplicant, setSelectedApplicant] = useState<any>(null);
   const [isUnlocked, setIsUnlocked] = useState(true);
   const [pin, setPin] = useState('');
   const [tier, setTier] = useState<'basic' | 'pro' | 'custom'>('pro');
-  const [stateJurisdiction, setStateJurisdiction] = useState(() => localStorage.getItem('state_authority_jurisdiction') || 'Oklahoma');
+  const [stateJurisdiction, setStateJurisdiction] = useState(() => localStorage.getItem('state_authority_jurisdiction') || jurisdiction || 'Oklahoma');
 
   useEffect(() => {
     localStorage.setItem('state_authority_jurisdiction', stateJurisdiction);

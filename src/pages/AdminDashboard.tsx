@@ -8,6 +8,7 @@ import { Building2, Users, FileText, Settings, Shield, Activity, Bell,
   Clock, UserCheck, FolderLock, Cpu, ArrowUpRight, LogOut, Headphones, Calendar,
   Zap, ShoppingCart, UserPlus, GraduationCap, FlaskConical, BookOpen, Phone, ShieldAlert, Lock, CircleCheck, Edit2, Trash2, X, Sprout } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { StateJurisdictionSelector } from '../components/shared/StateJurisdictionSelector';
 import { motion } from 'motion/react';
 import { METRC_MANUAL } from '../data/metrcManual';
 import { UserCalendar } from '../components/UserCalendar';
@@ -40,8 +41,9 @@ const NAV_ITEMS = [
   { id: 'settings', label: 'Admin Settings', icon: Settings },
 ];
 
-export const AdminDashboard = ({ onLogout, user, initialTab, embedded = false }: { onLogout?: () => void | Promise<void>, user?: any, initialTab?: string, embedded?: boolean }) => {
+export const AdminDashboard = ({ onLogout, user, initialTab, embedded = false, jurisdiction = 'Oklahoma' }: { onLogout?: () => void | Promise<void>, user?: any, initialTab?: string, embedded?: boolean, jurisdiction?: string }) => {
   const [activeTab, setActiveTab] = useState(initialTab || 'overview');
+  const [selectedState, setSelectedState] = useState(jurisdiction || 'Oklahoma');
   
   // Draggable nav state with localStorage persistence
   const [navItems, setNavItems] = useState(() => {
@@ -570,12 +572,30 @@ export const AdminDashboard = ({ onLogout, user, initialTab, embedded = false }:
     return () => unsub();
   }, []);
 
+  const displayPatients = adminPatientList.filter(p => {
+    if (selectedState === 'All States Active') return true;
+    const pState = (p.state || p.jurisdiction || 'Oklahoma').toLowerCase().trim();
+    return pState === selectedState.toLowerCase().trim();
+  });
+
+  const displayBusinesses = dbBusinesses.filter(b => {
+    if (selectedState === 'All States Active') return true;
+    const bState = (b.state || b.jurisdiction || 'Oklahoma').toLowerCase().trim();
+    return bState === selectedState.toLowerCase().trim();
+  });
+
+  const displayApprovals = pendingApprovals.filter(a => {
+    if (selectedState === 'All States Active') return true;
+    const aState = (a.state || 'Oklahoma').toLowerCase().trim();
+    return aState === selectedState.toLowerCase().trim();
+  });
+
   const renderPatients = () => (
     <div className="space-y-6">
       <div className="bg-white border border-slate-200 p-8 rounded-[2.5rem] shadow-sm">
         <div className="flex justify-between items-center mb-6">
            <h2 className="text-2xl font-black text-slate-800 tracking-tight uppercase italic">Patient Registry & Case Management</h2>
-           <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{adminPatientList.length} patients</p>
+           <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{displayPatients.length} patients</p>
         </div>
 
         {selectedAdminPatient ? (
@@ -594,9 +614,9 @@ export const AdminDashboard = ({ onLogout, user, initialTab, embedded = false }:
           </div>
         ) : (
           <div className="divide-y divide-slate-100 max-h-[600px] overflow-y-auto">
-            {adminPatientList.length === 0 ? (
+            {displayPatients.length === 0 ? (
               <div className="p-12 text-center text-slate-400 text-sm font-medium">No patients registered yet</div>
-            ) : adminPatientList.map((patient: any) => (
+            ) : displayPatients.map((patient: any) => (
               <button
                 key={patient.uid}
                 onClick={() => setSelectedAdminPatient(patient)}
@@ -636,7 +656,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab, embedded = false }:
               </tr>
            </thead>
            <tbody className="divide-y divide-slate-50">
-              {dbBusinesses.map(t => ({ n: t.name, t: t.type, l: 'Lic: ' + (t.metrc_license_number || t.id), s: t.status })).map((b: any, i: number) => (
+              {displayBusinesses.map(t => ({ n: t.name, t: t.type, l: 'Lic: ' + (t.metrc_license_number || t.id), s: t.status })).map((b: any, i: number) => (
                 <tr key={i} className="hover:bg-slate-50 group transition-colors">
                    <td className="px-6 py-4 font-bold text-slate-800">{b.n}</td>
                    <td className="px-6 py-4 font-bold text-slate-600 text-xs uppercase">{b.t}</td>
@@ -658,7 +678,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab, embedded = false }:
 
   const [pendingApprovals, setPendingApprovals] = useState<any[]>([]);
   useEffect(() => {
-    turso.execute('SELECT * FROM compliance_alerts WHERE is_resolved = 0 ORDER BY created_at DESC')
+    turso.execute('SELECT ca.*, e.state FROM compliance_alerts ca LEFT JOIN entities e ON ca.entity_id = e.id WHERE ca.is_resolved = 0 ORDER BY ca.created_at DESC')
       .then(res => setPendingApprovals(res.rows))
       .catch(console.error);
   }, []);
@@ -667,11 +687,11 @@ export const AdminDashboard = ({ onLogout, user, initialTab, embedded = false }:
     <div className="space-y-6">
        <div className="bg-slate-900 p-8 rounded-[2.5rem] shadow-sm text-white">
           <h2 className="text-2xl font-black italic uppercase tracking-tight mb-2">Agency Approvals Pipeline</h2>
-          <p className="text-slate-400 font-medium text-sm">Internal pre-screening queue before OMMA transmission. Showing {pendingApprovals.length} pending item{pendingApprovals.length !== 1 ? 's' : ''}.</p>
+          <p className="text-slate-400 font-medium text-sm">Internal pre-screening queue before OMMA transmission. Showing {displayApprovals.length} pending item{displayApprovals.length !== 1 ? 's' : ''}.</p>
        </div>
-       {pendingApprovals.length > 0 ? (
+       {displayApprovals.length > 0 ? (
          <div className="bg-white border border-slate-200 p-8 rounded-[2.5rem] shadow-sm space-y-4">
-            {pendingApprovals.map((item: any, i: number) => (
+            {displayApprovals.map((item: any, i: number) => (
               <div key={i} className={cn("p-5 border rounded-2xl flex justify-between items-center", item.severity === 'High' ? 'bg-red-50 border-red-100' : 'bg-amber-50 border-amber-100')}>
                 <div>
                   <p className="font-black text-slate-800">{item.message}</p>
@@ -715,7 +735,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab, embedded = false }:
                 </tr>
              </thead>
              <tbody className="divide-y divide-slate-50">
-                 {adminPatientList.slice(0, 5).map((p: any, i: number) => (
+                 {displayPatients.slice(0, 5).map((p: any, i: number) => (
                    <tr key={i} className="hover:bg-slate-50">
                       <td className="px-6 py-4 font-bold text-slate-600 text-xs">APP-{String(i + 1).padStart(3, '0')}</td>
                       <td className="px-6 py-4 font-black text-slate-800">{p.fullName || p.name || p.displayName || 'Unknown'}</td>
@@ -723,7 +743,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab, embedded = false }:
                       <td className="px-6 py-4 text-right"><button className="text-xs font-black text-indigo-600 uppercase hover:underline" onClick={() => setSelectedAdminPatient(p)}>Review</button></td>
                    </tr>
                  ))}
-                 {adminPatientList.length === 0 && (
+                 {displayPatients.length === 0 && (
                    <tr><td colSpan={4} className="px-6 py-8 text-center text-slate-400 font-bold text-sm">No applications in queue</td></tr>
                  )}
              </tbody>
@@ -877,6 +897,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab, embedded = false }:
             <div className="h-14 border-b border-slate-200 flex items-center justify-between px-6 bg-white shrink-0">
               <h1 className="text-lg font-black text-slate-900 tracking-tighter uppercase">{activeTab.replace('_', ' ')}</h1>
               <div className="flex items-center gap-4">
+                <StateJurisdictionSelector value={selectedState} onChange={setSelectedState} variant="light" compact={true} label="" />
                 <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-100">
                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
                    SYSTEM OPERATIONAL
@@ -1088,6 +1109,7 @@ export const AdminDashboard = ({ onLogout, user, initialTab, embedded = false }:
         <div className="h-20 border-b border-slate-200 flex items-center justify-between px-10 bg-white shrink-0">
           <h1 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">{activeTab.replace('_', ' ')}</h1>
           <div className="flex items-center gap-6">
+            <StateJurisdictionSelector value={selectedState} onChange={setSelectedState} variant="light" compact={true} label="" />
             <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-100">
                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
                SYSTEM OPERATIONAL

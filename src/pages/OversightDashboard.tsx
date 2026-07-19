@@ -141,13 +141,13 @@ export const OversightDashboard = ({ onLogout, user, role, jurisdiction = 'Oklah
       case 'federal': 
         return <div className="h-full w-full -m-0"><FederalDashboard user={user} onLogout={onLogout} /></div>;
       case 'public_health': 
-        return <div className="h-full w-full -m-0"><PublicHealthDashboard user={user} onLogout={onLogout} /></div>;
+        return <div className="h-full w-full -m-0"><PublicHealthDashboard user={user} onLogout={onLogout} jurisdiction={jurisdiction} /></div>;
       case 'operations': 
         return <div className="h-full w-full -m-0"><OperationsDashboard user={user} onLogout={onLogout} /></div>;
       case 'internal_admin': 
-        return <div className="h-full w-full -m-0"><AdminDashboard user={user} onLogout={onLogout} embedded={true} /></div>;
+        return <div className="h-full w-full -m-0"><AdminDashboard user={user} onLogout={onLogout} embedded={true} jurisdiction={jurisdiction} /></div>;
       case 'state_regulator': 
-        return <div className="h-full w-full -m-0"><StateAuthorityDashboard user={user} onLogout={onLogout} embedded={true} /></div>;
+        return <div className="h-full w-full -m-0"><StateAuthorityDashboard user={user} onLogout={onLogout} embedded={true} jurisdiction={jurisdiction} /></div>;
       case 'virtual_attendant':
         return <div className="p-8 h-full overflow-y-auto"><VirtualAttendantTab /></div>;
       case 'processor':

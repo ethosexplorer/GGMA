@@ -4,6 +4,7 @@ import { Calendar, Activity, ShieldAlert, FlaskConical, AlertTriangle, FileText,
   Thermometer, Plus, Smartphone, ChevronRight, CircleCheck,
   MapPin, BarChart2, TrendingUp, TrendingDown, Building2, Award, Zap, Users, Globe, Eye } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { StateJurisdictionSelector } from '../components/shared/StateJurisdictionSelector';
 import { StatCard } from '../components/StatCard';
 import { NotificationDropdown } from '../components/shared/NotificationDropdown';
 import { UserCalendar } from '../components/UserCalendar';
@@ -97,8 +98,21 @@ const patientOutcomes = [
   { metric: 'Avg Recency Index (Field Tests)', value: '4.2', change: 'Normal range', trend: 'stable' as const, color: 'amber' },
 ];
 
-export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => void, user?: any }) => {
+export const PublicHealthDashboard = ({ onLogout, user, jurisdiction = 'Oklahoma' }: { onLogout?: () => void, user?: any, jurisdiction?: string }) => {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [selectedState, setSelectedState] = useState(jurisdiction || 'Oklahoma');
+
+  const displayAccreditations = accreditationItems.filter(item => {
+    if (selectedState === 'All States Active') return true;
+    const stateAbbr = selectedState === 'Oklahoma' ? 'OK' : selectedState === 'Colorado' ? 'CO' : selectedState === 'California' ? 'CA' : '';
+    return item.state === stateAbbr;
+  });
+
+  const displayCompliance = facilityCompliance.filter(item => {
+    if (selectedState === 'All States Active') return true;
+    const stateAbbr = selectedState === 'Oklahoma' ? 'OK' : selectedState === 'Colorado' ? 'CO' : selectedState === 'California' ? 'CA' : '';
+    return item.state === stateAbbr;
+  });
   const [isUploading, setIsUploading] = useState(false);
   const [isPairing, setIsPairing] = useState(false);
 
@@ -151,6 +165,10 @@ export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => voi
                 </button>
               ))}
             </div>
+          </div>
+          <div className="w-px h-8 bg-slate-700 shrink-0" />
+          <div className="shrink-0 flex items-center gap-3">
+            <StateJurisdictionSelector value={selectedState} onChange={setSelectedState} variant="dark" showMetadata={true} compact={true} label="" />
           </div>
         </div>
       </div>
@@ -352,7 +370,7 @@ export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => voi
                         <button onClick={() => alert('Opening Accreditation Manager...\n\n[Live Production Transaction Logged]')} className="px-3 py-1.5 rounded-lg bg-slate-900 text-white text-xs font-bold hover:bg-slate-800">+ Add Certification</button>
                       </div>
                       <div className="divide-y divide-slate-100">
-                        {accreditationItems.map((item, i) => (
+                        {displayAccreditations.map((item, i) => (
                           <div key={i} className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
                             <div className="flex items-center gap-3">
                               <div className={cn(
@@ -762,7 +780,7 @@ export const PublicHealthDashboard = ({ onLogout, user }: { onLogout?: () => voi
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100">
-                        {facilityCompliance.map((f, i) => (
+                        {displayCompliance.map((f, i) => (
                           <tr key={i} className="hover:bg-slate-50 transition-colors cursor-pointer" onClick={() => alert(`Opening full compliance profile for ${f.name}...`)}>
                             <td className="px-5 py-4">
                               <div className="flex items-center gap-2">
