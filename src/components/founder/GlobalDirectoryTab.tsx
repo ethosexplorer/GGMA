@@ -13,6 +13,10 @@ interface User {
   status: 'online' | 'away' | 'offline';
   color: string;
   lastSeen?: Date | null;
+  extension?: string | null;
+  extDept?: string | null;
+  extDesc?: string | null;
+  extStatus?: string | null;
 }
 
 // 2 minutes — if no heartbeat in 2 min, consider offline
@@ -27,10 +31,19 @@ const CORE_TEAM_IDS: Record<string, { name: string; role: string; email: string 
 export const GlobalDirectoryTab = ({ onOpenMessage }: { onOpenMessage: (userId: string) => void }) => {
   const [users, setUsers] = useState<any[]>([]);
   const [presence, setPresence] = useState<Record<string, { status: string; lastSeen: Date | null }>>({});
+  const [extensions, setExtensions] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [now, setNow] = useState(Date.now());
+
+  // Real-time extensions list
+  useEffect(() => {
+    const unsub = onSnapshot(collection(db, 'phone_extensions'), (snapshot) => {
+      setExtensions(snapshot.docs.map(doc => doc.data()));
+    });
+    return () => unsub();
+  }, []);
 
   // Real-time user list
   useEffect(() => {
@@ -113,6 +126,17 @@ export const GlobalDirectoryTab = ({ onOpenMessage }: { onOpenMessage: (userId: 
     const list: User[] = users.map(u => {
       const uid = u.uid || u.id;
       const { status, lastSeen } = resolvePresence(uid);
+      
+      const extMatch = extensions.find(e => {
+        const nameA = (u.displayName || `${u.firstName || ''} ${u.lastName || ''}`).toLowerCase();
+        const nameB = (e.name || '').toLowerCase();
+        return nameB.includes(nameA) || nameA.includes(nameB) ||
+               (u.role === 'executive_founder' && e.ext === '101') ||
+               (u.role === 'chief_compliance_director' && e.ext === '102') ||
+               (u.role === 'president' && e.ext === '103') ||
+               (u.role === 'advisor' && e.ext === '104');
+      });
+
       return {
         id: uid,
         name: u.displayName || (u.firstName && u.lastName ? `${u.firstName} ${u.lastName}` : null) || u.email || 'Unknown User',
@@ -122,6 +146,10 @@ export const GlobalDirectoryTab = ({ onOpenMessage }: { onOpenMessage: (userId: 
         color: getRoleColor(u.role || ''),
         status,
         lastSeen,
+        extension: extMatch ? extMatch.ext : null,
+        extDept: extMatch ? extMatch.dept : null,
+        extDesc: extMatch ? extMatch.desc : null,
+        extStatus: extMatch ? extMatch.status : null,
       };
     });
 
@@ -129,6 +157,11 @@ export const GlobalDirectoryTab = ({ onOpenMessage }: { onOpenMessage: (userId: 
     Object.entries(CORE_TEAM_IDS).forEach(([id, member]) => {
       if (!list.find(u => u.name.toLowerCase() === member.name.toLowerCase() || u.id === id)) {
         const { status, lastSeen } = resolvePresence(id);
+        const extMatch = extensions.find(e => {
+          const nameB = (e.name || '').toLowerCase();
+          return nameB.includes(member.name.toLowerCase()) || (id === 'ceo' && e.ext === '103') || (id === 'compliance_director' && e.ext === '102') || (id === 'advisor' && e.ext === '104');
+        });
+
         list.push({
           id,
           name: member.name,
@@ -138,6 +171,10 @@ export const GlobalDirectoryTab = ({ onOpenMessage }: { onOpenMessage: (userId: 
           color: getRoleColor(member.role),
           status,
           lastSeen,
+          extension: extMatch ? extMatch.ext : null,
+          extDept: extMatch ? extMatch.dept : null,
+          extDesc: extMatch ? extMatch.desc : null,
+          extStatus: extMatch ? extMatch.status : null,
         });
       }
     });
@@ -156,7 +193,11 @@ export const GlobalDirectoryTab = ({ onOpenMessage }: { onOpenMessage: (userId: 
   const offlineCount = mappedUsers.filter(u => u.status === 'offline').length;
 
   const filteredUsers = mappedUsers.filter(u => {
-    const matchesSearch = u.name.toLowerCase().includes(searchQuery.toLowerCase()) || u.role.toLowerCase().includes(searchQuery.toLowerCase()) || u.email.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = u.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          u.role.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          u.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          (u.extension && u.extension.includes(searchQuery)) ||
+                          (u.extDept && u.extDept.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesRole = roleFilter === 'all' || u.role.toLowerCase().includes(roleFilter.toLowerCase());
     const matchesStatus = statusFilter === 'all' || u.status === statusFilter;
     return matchesSearch && matchesRole && matchesStatus;
@@ -291,8 +332,13 @@ export const GlobalDirectoryTab = ({ onOpenMessage }: { onOpenMessage: (userId: 
               </div>
 
               <div className="space-y-1 mb-6">
-                <h3 className={cn("font-black text-lg truncate", user.status === 'offline' ? 'text-slate-400' : 'text-slate-800')}>
-                  {user.name}
+                <h3 className={cn("font-black text-lg truncate flex items-center justify-between gap-2", user.status === 'offline' ? 'text-slate-400' : 'text-slate-800')}>
+                  <span>{user.name}</span>
+                  {user.extension && (
+                    <span className="font-mono font-black text-xs text-[#D4AF77] bg-slate-950 px-2 py-0.5 rounded-lg border border-slate-900 shrink-0">
+                      Ext {user.extension}
+                    </span>
+                  )}
                 </h3>
                 <p className="text-xs text-slate-500 font-medium flex items-center gap-1.5 truncate">
                   <Mail size={12} /> {user.email}
@@ -304,17 +350,29 @@ export const GlobalDirectoryTab = ({ onOpenMessage }: { onOpenMessage: (userId: 
                 )}
               </div>
 
-              <button
-                onClick={() => onOpenMessage(user.id)}
-                className={cn(
-                  "w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold transition-colors",
-                  user.status === 'online'
-                    ? 'bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white'
-                    : 'bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white'
+              <div className="flex gap-2">
+                <button
+                  onClick={() => onOpenMessage(user.id)}
+                  className={cn(
+                    "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-colors",
+                    user.status === 'online'
+                      ? 'bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white'
+                      : 'bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white'
+                  )}
+                >
+                  <MessageSquare size={14} /> Message
+                </button>
+                {user.extension && (
+                  <button
+                    onClick={() => {
+                      window.dispatchEvent(new CustomEvent('twilio-dial-out', { detail: { number: user.extension } }));
+                    }}
+                    className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#0A3D2A] border border-[#D4AF77]/20 hover:bg-[#134D36] text-[#D4AF77] text-xs font-black uppercase rounded-xl transition-all"
+                  >
+                    <Phone size={14} /> Dial Ext
+                  </button>
                 )}
-              >
-                <MessageSquare size={16} /> Send Direct Message
-              </button>
+              </div>
             </div>
           ))}
           

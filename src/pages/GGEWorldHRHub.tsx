@@ -14,6 +14,7 @@ import { collection, onSnapshot, doc, setDoc } from 'firebase/firestore';
 import { CallCenterCommandTab } from '../components/telephony/CallCenterCommandTab';
 import { ITSupportDashboard } from '../components/it/ITSupportDashboard';
 import { UserCalendar } from '../components/UserCalendar';
+import { VoIPExtensionsTab } from '../components/founder/VoIPExtensionsTab';
 
 const NAV_ITEMS = [
   { section: 'THE ACADEMY' },
@@ -1239,7 +1240,7 @@ export const GGEWorldHRHub = ({ user }: { user?: any }) => {
               {activeTab === 'gge_processor' && renderPlaceholder('GGE Processor', 'Real-time oversight of the standalone private settlement rail.', Cpu, 'text-purple-500')}
               
               {activeTab === 'training_docs' && renderTrainingDocs()}
-              {activeTab === 'extension_directory' && renderExtensionDirectory()}
+              {activeTab === 'extension_directory' && <VoIPExtensionsTab user={user} />}
               {activeTab === 'new_hire_onboarding' && renderNewHireOnboarding()}
               
               {activeTab === 'admin_support' && <div className="bg-white rounded-3xl h-full overflow-hidden shadow-sm border border-slate-100 p-6"><UserCalendar user={user} mode="operations" title="Operations Calendar" /></div>}

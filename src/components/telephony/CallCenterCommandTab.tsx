@@ -5,6 +5,7 @@ import { voip800 } from '../../lib/voip800';
 import { db } from '../../lib/firebase';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { InternalMessenger } from '../messaging/InternalMessenger';
+import { GlobalDirectoryTab } from '../founder/GlobalDirectoryTab';
 
 export const CallCenterCommandTab = ({ 
   staffLevel = 1, 
@@ -50,6 +51,36 @@ export const CallCenterCommandTab = ({
     const unsub = onSnapshot(collection(db, 'phone_extensions'), (snap) => {
       if (!snap.empty) {
         const list = snap.docs.map(doc => doc.data());
+        
+        // Auto-migrate extensions in Firestore if they are using the old names
+        const hasOldData = list.some(e => e.ext === '101' && e.name === 'Founder / CEO');
+        if (hasOldData) {
+          const migrationData = [
+            { ext: '100', name: 'Main Reception / IVR', dept: 'General', status: 'Active', desc: 'Auto-attendant greeting — Sylara routes to department' },
+            { ext: '101', name: 'Shantell Robinson (Founder / CEO)', dept: 'Executive', status: 'Active', desc: 'Direct line to Shantell Robinson' },
+            { ext: '102', name: 'Monica Green (Compliance Director)', dept: 'Compliance', status: 'Active', desc: 'Compliance issues, BioTrack/Metrc questions' },
+            { ext: '103', name: 'Ryan Ferrari (President / IT Lead)', dept: 'Executive', status: 'Active', desc: 'President direct line / IT system override' },
+            { ext: '104', name: 'Bob Moore (Executive Advisor)', dept: 'Executive', status: 'Active', desc: 'Advisor direct line / strategic consultation' },
+            { ext: '110', name: 'Medical Card Intake', dept: 'Medical', status: 'Active', desc: 'Patient med card applications & renewals' },
+            { ext: '111', name: 'Patient Support Team', dept: 'Medical', status: 'Active', desc: 'General patient inquiries & status updates' },
+            { ext: '112', name: 'Telehealth Schedulers', dept: 'Medical', status: 'Active', desc: 'Physician consultation bookings' },
+            { ext: '120', name: 'Business Licensing Dept', dept: 'Licensing', status: 'Active', desc: 'New business applications & license inquiries' },
+            { ext: '121', name: 'Compliance & Regulatory', dept: 'Compliance', status: 'Active', desc: 'OMMA/statewide license audits & compliance checks' },
+            { ext: '130', name: 'Sales & CRM Department', dept: 'Sales', status: 'Active', desc: 'B2B sales inquiries & subscription questions' },
+            { ext: '131', name: 'Territory Manager — MS', dept: 'Sales', status: 'Active', desc: 'Mississippi territory operations' },
+            { ext: '132', name: 'Territory Manager — AR/LA', dept: 'Sales', status: 'Active', desc: 'Arkansas & Louisiana territory' },
+            { ext: '133', name: 'Territory Manager — AL/TN', dept: 'Sales', status: 'Active', desc: 'Alabama & Tennessee territory' },
+            { ext: '140', name: 'Legal / Attorney Support', dept: 'Legal', status: 'Active', desc: 'Attorney dashboard & legal consultation referrals' },
+            { ext: '150', name: 'Billing & Payments Team', dept: 'Finance', status: 'Active', desc: 'Stripe billing issues, refunds, subscription changes' },
+            { ext: '160', name: 'IT Support & Technical', dept: 'IT', status: 'Active', desc: 'Platform issues, login problems, tech support' },
+            { ext: '170', name: 'HR & Personnel Team', dept: 'HR', status: 'Active', desc: 'Employee inquiries, onboarding, benefits' },
+            { ext: '199', name: 'Voicemail (General)', dept: 'System', status: 'Active', desc: 'After-hours general voicemail box' }
+          ];
+          migrationData.forEach(async (item) => {
+            await setDoc(doc(db, 'phone_extensions', item.ext), item);
+          });
+        }
+        
         list.sort((a, b) => parseInt(a.ext) - parseInt(b.ext));
         setExtensions(list);
       }
@@ -602,15 +633,15 @@ export const CallCenterCommandTab = ({
 
       {/* DIRECTORY MODAL POPUP */}
       {showDirectoryModal && (
-        <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="bg-[#0a1120] border border-[#D4AF77]/30 rounded-[2rem] w-full max-w-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
-            <div className="p-6 border-b border-slate-900 bg-slate-950/40 flex justify-between items-center">
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/75 backdrop-blur-sm p-6 animate-in fade-in duration-200">
+          <div className="bg-[#0a1120] border border-[#D4AF77]/20 rounded-[2.5rem] w-full max-w-6xl h-[85vh] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col">
+            <div className="p-6 border-b border-slate-800 bg-[#070b14]/50 flex justify-between items-center shrink-0">
               <div>
-                <h3 className="text-base font-black text-white tracking-tight flex items-center gap-2">
+                <h3 className="text-base font-black text-white tracking-tight flex items-center gap-2 uppercase">
                   <Users size={18} className="text-[#D4AF77]" />
-                  Staff Extensions Directory
+                  Global System Directory & Extension Map
                 </h3>
-                <p className="text-[10px] text-slate-400 font-medium uppercase mt-0.5">Click Dial to connect instantly to staff members</p>
+                <p className="text-[10px] text-slate-400 font-bold uppercase mt-0.5 tracking-wider">Real-time Presence Status & Direct VoIP Call Routing</p>
               </div>
               <button 
                 onClick={() => setShowDirectoryModal(false)} 
@@ -620,93 +651,15 @@ export const CallCenterCommandTab = ({
               </button>
             </div>
             
-            <div className="p-6 space-y-4">
-              <input
-                type="text"
-                placeholder="Search by name, department, or extension number..."
-                value={dirSearch}
-                onChange={e => setDirSearch(e.target.value)}
-                className="w-full bg-[#080d1a] border border-slate-900 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none focus:border-[#D4AF77]/40 transition-colors"
+            <div className="flex-1 overflow-hidden relative">
+              <GlobalDirectoryTab 
+                onOpenMessage={(uid) => {
+                  setShowDirectoryModal(false);
+                  sessionStorage.setItem('active_dm_target', uid);
+                  setShowMessagesModal(true);
+                  window.dispatchEvent(new CustomEvent('open-dm-chat', { detail: { userId: uid } }));
+                }} 
               />
-              
-              <div className="max-h-[380px] overflow-y-auto pr-1 space-y-6 scrollbar-thin">
-                {DEPARTMENTS.map((dept) => {
-                  const deptExts = extensions.filter(ext => {
-                    if (ext.dept !== dept) return false;
-                    const query = dirSearch.toLowerCase();
-                    return !query || 
-                           (ext.name || '').toLowerCase().includes(query) ||
-                           (ext.ext || '').includes(query) ||
-                           (ext.dept || '').toLowerCase().includes(query) ||
-                           (ext.desc || '').toLowerCase().includes(query);
-                  });
-                  
-                  if (deptExts.length === 0) return null;
-                  const activeCount = deptExts.filter(e => e.status === 'Active').length;
-                  
-                  return (
-                    <div key={dept} className="space-y-2">
-                      <div className="flex justify-between items-center border-b border-slate-900 pb-1">
-                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                          {dept} Department
-                        </span>
-                        <span className={cn(
-                          "text-[9px] font-black uppercase px-2 py-0.5 rounded-full border",
-                          activeCount > 0 ? "bg-emerald-950/20 text-emerald-400 border-emerald-900/30" : "bg-rose-950/20 text-rose-400 border-rose-900/30"
-                        )}>
-                          {activeCount} / {deptExts.length} Available
-                        </span>
-                      </div>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        {deptExts.map((ext, idx) => (
-                          <div key={idx} className="flex items-center justify-between p-3 bg-slate-950/40 border border-slate-900 rounded-xl hover:border-slate-800 transition-all group">
-                            <div className="flex items-center gap-3">
-                              <span className="font-mono font-black text-[#D4AF77] text-xs bg-slate-950 px-2 py-0.5 rounded-lg border border-slate-900">
-                                {ext.ext}
-                              </span>
-                              <div>
-                                <p className="font-bold text-white text-xs flex items-center gap-1.5">
-                                  {ext.name}
-                                </p>
-                                <p className="text-[10px] text-slate-500 mt-0.5 truncate max-w-[180px]" title={ext.desc}>{ext.desc}</p>
-                              </div>
-                            </div>
-                            
-                            <div className="flex items-center gap-2">
-                              <span className={cn(
-                                "w-2.5 h-2.5 rounded-full shrink-0",
-                                ext.status === 'Active' ? 'bg-emerald-500 shadow-md shadow-emerald-500/40 animate-pulse' :
-                                ext.status === 'Voicemail-Only' ? 'bg-amber-500 shadow-md shadow-amber-500/40' :
-                                'bg-slate-700'
-                              )} title={ext.status} />
-                              
-                              <button
-                                onClick={() => {
-                                  window.dispatchEvent(new CustomEvent('twilio-dial-out', { detail: { number: ext.ext } }));
-                                  setShowDirectoryModal(false);
-                                }}
-                                className="px-2 py-1 bg-[#0A3D2A] text-[#D4AF77] border border-[#D4AF77]/30 hover:bg-[#134D36] text-[9px] font-black uppercase rounded-lg transition-all"
-                              >
-                                Dial
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-            
-            <div className="p-4 bg-slate-950/60 border-t border-slate-900 flex justify-end">
-              <button 
-                onClick={() => setShowDirectoryModal(false)}
-                className="px-4 py-2 border border-slate-800 text-slate-400 hover:text-white font-bold text-xs rounded-xl transition-colors uppercase tracking-wider"
-              >
-                Close
-              </button>
             </div>
           </div>
         </div>

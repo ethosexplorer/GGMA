@@ -91,6 +91,19 @@ export const InternalMessenger = ({ currentUser }: Props) => {
     }
   }, [currentUser.roleId, systemUsers]);
 
+  // Open DM directly from custom events
+  useEffect(() => {
+    const handleOpenDm = (e: any) => {
+      const target = e.detail?.userId;
+      if (target) {
+        const dmId = `dm-${[currentUser.roleId, target].sort().join('-')}`;
+        setActiveDM(dmId);
+      }
+    };
+    window.addEventListener('open-dm-chat', handleOpenDm);
+    return () => window.removeEventListener('open-dm-chat', handleOpenDm);
+  }, [currentUser.roleId]);
+
   // Real-time presence listener
   useEffect(() => {
     const presenceRef = collection(db, 'presence');
@@ -457,14 +470,16 @@ export const InternalMessenger = ({ currentUser }: Props) => {
   const allChannels = [...CHANNELS, ...customGroups];
 
   return (
-    <div className="flex h-[calc(100vh-12rem)] bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+    <div className="flex h-full w-full bg-[#0a0f1d] overflow-hidden text-slate-200 font-sans">
       {/* Sidebar */}
-      <div className="w-64 bg-slate-900 text-white flex flex-col shrink-0">
-        <div className="p-5 border-b border-slate-800">
-          <h3 className="font-black text-sm uppercase tracking-widest flex items-center gap-2">
-            <MessageSquare size={16} className="text-indigo-400" /> Messenger
-          </h3>
-          <p className="text-[10px] text-slate-500 font-bold mt-1">Internal Communications</p>
+      <div className="w-64 bg-[#070b14] border-r border-slate-800/50 flex flex-col shrink-0">
+        <div className="p-5 border-b border-slate-800/40 flex items-center justify-between">
+          <div>
+            <h3 className="font-black text-xs uppercase tracking-widest text-[#D4AF77] flex items-center gap-2">
+              <MessageSquare size={14} className="text-[#D4AF77]" /> SINC Messenger
+            </h3>
+            <p className="text-[9px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">Secure Ops Channel</p>
+          </div>
         </div>
 
         {/* Broadcast Button (Founder Only) */}
@@ -472,17 +487,17 @@ export const InternalMessenger = ({ currentUser }: Props) => {
           <div className="px-4 pt-4">
             <button
               onClick={() => setShowBroadcast(true)}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-600 hover:bg-red-500 text-white rounded-xl font-black text-xs uppercase tracking-widest transition-colors shadow-lg shadow-red-600/30"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-rose-600 to-red-700 hover:from-rose-500 hover:to-red-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-md active:scale-95 border border-red-500/20"
             >
-              <Megaphone size={16} /> Mass Broadcast
+              <Megaphone size={12} /> Mass Broadcast
             </button>
           </div>
         )}
 
         {/* Channels */}
         <div className="p-4">
-          <div className="flex items-center justify-between mb-3 px-2">
-            <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Channels</h4>
+          <div className="flex items-center justify-between mb-2 px-2">
+            <h4 className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Channels</h4>
           </div>
           <div className="space-y-1">
             {allChannels.map(ch => (
@@ -490,13 +505,13 @@ export const InternalMessenger = ({ currentUser }: Props) => {
                 key={ch.id}
                 onClick={() => { setActiveChannel(ch.id); setActiveDM(null); }}
                 className={cn(
-                  "w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-bold transition-all text-left",
+                  "w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-left",
                   !activeDM && activeChannel === ch.id
-                    ? "bg-indigo-600 text-white"
-                    : "text-slate-400 hover:bg-white/5 hover:text-white"
+                    ? "bg-[#0A3D2A] text-[#D4AF77] border border-[#D4AF77]/30 shadow-md shadow-emerald-950/20"
+                    : "text-slate-400 hover:bg-slate-800/20 hover:text-slate-200"
                 )}
               >
-                <Hash size={15} className={!activeDM && activeChannel === ch.id ? "text-white" : "text-slate-600"} />
+                <Hash size={13} className={!activeDM && activeChannel === ch.id ? "text-[#D4AF77]" : "text-slate-600"} />
                 {ch.label}
               </button>
             ))}
@@ -507,17 +522,17 @@ export const InternalMessenger = ({ currentUser }: Props) => {
         <div className="px-4 pb-2">
           <button
             onClick={() => setShowGroupCreate(true)}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 border border-dashed border-slate-700 rounded-xl text-xs font-bold text-slate-500 hover:text-white hover:border-indigo-500 transition-colors"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 border border-dashed border-slate-800 hover:border-[#D4AF77]/30 rounded-xl text-[10px] font-bold text-slate-500 hover:text-[#D4AF77] transition-all"
           >
-            <Plus size={14} /> New Group
+            <Plus size={12} /> New Group
           </button>
         </div>
 
         {/* Direct Messages */}
-        <div className="p-4 border-t border-slate-800 flex-1 overflow-y-auto flex flex-col">
-          <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 px-2">Directory / DMs</h4>
-          <div className="px-2 mb-3 relative">
-            <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+        <div className="p-4 border-t border-slate-800/40 flex-1 overflow-hidden flex flex-col">
+          <h4 className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-2 px-2">Directory / DMs</h4>
+          <div className="px-1 mb-3 relative shrink-0">
+            <Search size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
             <input 
               type="text" 
               placeholder="Search directory..." 
@@ -531,10 +546,10 @@ export const InternalMessenger = ({ currentUser }: Props) => {
                   }
                 }
               }}
-              className="w-full bg-slate-800 border border-slate-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder-slate-500 outline-none focus:border-indigo-500 transition-colors"
+              className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-8 pr-3 py-1.5 text-[11px] text-slate-100 placeholder-slate-600 outline-none focus:border-[#D4AF77]/30 transition-colors"
             />
           </div>
-          <div className="space-y-1 flex-1 overflow-y-auto px-1">
+          <div className="space-y-1 flex-1 overflow-y-auto pr-1 scrollbar-thin">
             {mappedUsers
               .filter(m => m.id !== currentUser.roleId && (m.name.toLowerCase().includes(searchQuery.toLowerCase()) || m.role.toLowerCase().includes(searchQuery.toLowerCase()) || m.id === 'larry_ai'))
               .map(member => {
@@ -544,24 +559,24 @@ export const InternalMessenger = ({ currentUser }: Props) => {
                   key={member.id}
                   onClick={() => { setActiveDM(dmId); }}
                   className={cn(
-                    "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-bold transition-all text-left",
+                    "w-full flex items-center gap-3 px-2.5 py-2 rounded-lg text-xs font-bold transition-all text-left",
                     activeDM === dmId
-                      ? "bg-indigo-600 text-white shadow-md shadow-indigo-900/50"
-                      : "text-slate-400 hover:bg-white/5 hover:text-white"
+                      ? "bg-[#0A3D2A] text-[#D4AF77] border border-[#D4AF77]/30 shadow-md shadow-emerald-950/20"
+                      : "text-slate-400 hover:bg-slate-800/20 hover:text-slate-200"
                   )}
                 >
                   <div className="relative shrink-0">
-                    <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-black", member.color)}>
+                    <div className={cn("w-7 h-7 rounded-lg flex items-center justify-center text-white text-[10px] font-black", member.color)}>
                       {getInitials(member.name)}
                     </div>
                     <Circle
-                      size={10}
-                      className={cn("absolute -bottom-0.5 -right-0.5 fill-current", member.status === 'online' ? 'text-emerald-400' : 'text-amber-400')}
+                      size={8}
+                      className={cn("absolute -bottom-0.5 -right-0.5 fill-current", member.status === 'online' ? 'text-emerald-500' : 'text-amber-500')}
                     />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-xs text-white">{member.name}</p>
-                    <p className="text-[9px] text-slate-500 font-medium truncate capitalize">{member.role.replace(/_/g, ' ')}</p>
+                    <p className="truncate text-xs text-slate-200">{member.name}</p>
+                    <p className="text-[8px] text-slate-500 font-bold uppercase tracking-wider truncate mt-0.5">{member.role.replace(/_/g, ' ')}</p>
                   </div>
                 </button>
               );
@@ -570,34 +585,34 @@ export const InternalMessenger = ({ currentUser }: Props) => {
         </div>
 
         {/* Current User Footer */}
-        <div className="p-4 border-t border-slate-800">
+        <div className="p-4 border-t border-slate-800/40 bg-slate-950/20 shrink-0">
           <div className="flex items-center gap-3">
-            <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center text-white text-xs font-black", getRoleColor(currentUser.role))}>
+            <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-black", getRoleColor(currentUser.role))}>
               {getInitials(currentUser.name)}
             </div>
             <div>
-              <p className="text-xs font-bold text-white">{currentUser.name}</p>
-              <p className="text-[9px] text-slate-500 font-bold capitalize">{currentUser.role.replace(/_/g, ' ')}</p>
+              <p className="text-xs font-bold text-slate-200">{currentUser.name}</p>
+              <p className="text-[8px] text-slate-500 font-black uppercase tracking-wider mt-0.5">{currentUser.role.replace(/_/g, ' ')}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Chat Area */}
-      <div className="flex-1 flex flex-col relative">
+      <div className="flex-1 flex flex-col relative bg-[#0a0f1d]">
         {/* Channel Header */}
-        <div className="h-16 border-b border-slate-100 flex items-center justify-between px-6 bg-white shrink-0">
+        <div className="h-16 border-b border-slate-800/40 flex items-center justify-between px-6 bg-[#070b14]/50 shrink-0">
           <div className="flex items-center gap-3">
-            <Hash size={20} className="text-slate-400" />
+            <Hash size={18} className="text-[#D4AF77]" />
             <div>
-              <h4 className="font-black text-slate-800">
+              <h4 className="font-black text-slate-100 text-sm">
                 {activeDM
                   ? mappedUsers.find(m => activeDM.includes(m.id))?.name || 'Direct Message'
                   : allChannels.find(c => c.id === activeChannel)?.label}
               </h4>
-              <p className="text-[10px] text-slate-400 font-bold">
+              <p className="text-[10px] text-slate-500 font-bold">
                 {activeDM
-                  ? 'Private conversation'
+                  ? 'Secure peer-to-peer connection'
                   : allChannels.find(c => c.id === activeChannel)?.description}
               </p>
             </div>
@@ -605,45 +620,45 @@ export const InternalMessenger = ({ currentUser }: Props) => {
           <button 
             onClick={() => setShowMembers(!showMembers)} 
             className={cn(
-              "flex items-center gap-2 text-xs font-bold px-3 py-1.5 rounded-full transition-colors cursor-pointer",
-              showMembers ? "bg-indigo-100 text-indigo-700" : "bg-slate-50 text-slate-500 hover:bg-slate-100"
+              "flex items-center gap-2 text-[10px] uppercase tracking-widest font-black px-3 py-1.5 rounded-full transition-colors cursor-pointer border",
+              showMembers ? "bg-[#0A3D2A] text-[#D4AF77] border-[#D4AF77]/30" : "bg-slate-900 border-slate-800 text-slate-400 hover:text-white"
             )}
           >
-            <Users size={14} /> {activeDM ? 2 : (activeChannel.startsWith('group-') ? (customGroups.find(g => g.id === activeChannel)?.members.length || 0) + 1 : mappedUsers.length)} members
+            <Users size={12} /> {activeDM ? 2 : (activeChannel.startsWith('group-') ? (customGroups.find(g => g.id === activeChannel)?.members.length || 0) + 1 : mappedUsers.length)} members
           </button>
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/50">
+        <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-[#0a0f1d]/70 scrollbar-thin">
           {msgError && (
-            <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-4">
-              <p className="text-xs font-black text-red-600 uppercase tracking-wider mb-1">Messaging Error</p>
-              <p className="text-sm text-red-700 font-medium">{msgError}</p>
-              <p className="text-[10px] text-red-400 mt-2">Check browser console for details. You may need to create a Firestore index.</p>
+            <div className="bg-red-950/20 border border-red-900/40 rounded-xl p-4 mb-4">
+              <p className="text-xs font-black text-red-400 uppercase tracking-wider mb-1">Messaging Error</p>
+              <p className="text-sm text-red-200 font-medium">{msgError}</p>
+              <p className="text-[10px] text-red-500 mt-2">Check browser console for details. You may need to create a Firestore index.</p>
             </div>
           )}
           {messages.length === 0 && !msgError && activeChannel !== 'imessage' && (
-            <div className="flex flex-col items-center justify-center h-full text-slate-300">
-              <MessageSquare size={48} className="mb-4 opacity-50" />
-              <p className="font-bold text-sm">No messages yet</p>
-              <p className="text-xs text-slate-400 mt-1">Start the conversation</p>
+            <div className="flex flex-col items-center justify-center h-full text-slate-600">
+              <MessageSquare size={36} className="mb-3 opacity-30 text-[#D4AF77]" />
+              <p className="font-bold text-xs uppercase tracking-widest">No messages yet</p>
+              <p className="text-[10px] text-slate-500 mt-1">Start the conversation</p>
             </div>
           )}
 
-          {/* iMessage Channel — render from iMessages state */}
+          {/* iMessage Channel */}
           {activeChannel === 'imessage' && !activeDM && (
             <>
               {iMessageLoading && iMessages.length === 0 && (
-                <div className="flex flex-col items-center justify-center h-full text-slate-300">
-                  <div className="animate-spin w-8 h-8 border-2 border-blue-400 border-t-transparent rounded-full mb-4"></div>
-                  <p className="font-bold text-sm">Loading iMessages...</p>
+                <div className="flex flex-col items-center justify-center h-full text-slate-600">
+                  <div className="animate-spin w-6 h-6 border-2 border-blue-400 border-t-transparent rounded-full mb-3"></div>
+                  <p className="font-bold text-xs uppercase tracking-widest">Loading iMessages...</p>
                 </div>
               )}
               {!iMessageLoading && iMessages.length === 0 && (
-                <div className="flex flex-col items-center justify-center h-full text-slate-300">
-                  <MessageSquare size={48} className="mb-4 opacity-50" />
-                  <p className="font-bold text-sm">No iMessages yet</p>
-                  <p className="text-xs text-slate-400 mt-1">Send a message or wait for incoming texts to 645-246-8277</p>
+                <div className="flex flex-col items-center justify-center h-full text-slate-600">
+                  <MessageSquare size={36} className="mb-3 opacity-30 text-blue-500" />
+                  <p className="font-bold text-xs uppercase tracking-widest">No iMessages yet</p>
+                  <p className="text-[10px] text-slate-500 mt-1">Send a message or wait for incoming texts to 645-246-8277</p>
                 </div>
               )}
               {[...iMessages].reverse().map((msg) => {
@@ -652,20 +667,20 @@ export const InternalMessenger = ({ currentUser }: Props) => {
                 const date = msg.timestamp ? new Date(msg.timestamp).toLocaleDateString() : '';
                 return (
                   <div key={msg.id} className={cn("flex gap-3", isOutbound && "flex-row-reverse")}>
-                    <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center text-white text-xs font-black shrink-0", isOutbound ? "bg-blue-500" : "bg-emerald-500")}>
+                    <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center text-white text-[10px] font-black shrink-0", isOutbound ? "bg-blue-600" : "bg-emerald-600")}>
                       {isOutbound ? '📤' : '📥'}
                     </div>
                     <div className={cn("max-w-[70%]", isOutbound && "text-right")}>
                       <div className={cn("flex items-baseline gap-2 mb-1", isOutbound && "flex-row-reverse")}>
-                        <span className="text-xs font-black text-slate-700">{isOutbound ? 'You (645-246-8277)' : (msg.from || 'Unknown')}</span>
-                        <span className="text-[9px] text-slate-400 font-bold">{time} · {date}</span>
-                        {msg.wasDowngraded && <span className="text-[8px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full font-black">SMS fallback</span>}
+                        <span className="text-[10px] font-bold text-slate-300">{isOutbound ? 'You (645-246-8277)' : (msg.from || 'Unknown')}</span>
+                        <span className="text-[8px] text-slate-500 font-bold">{time} · {date}</span>
+                        {msg.wasDowngraded && <span className="text-[8px] bg-amber-950/20 text-amber-400 px-1.5 py-0.5 rounded-full font-black border border-amber-900/30">SMS fallback</span>}
                       </div>
                       <div className={cn(
-                        "px-4 py-3 rounded-2xl text-sm font-medium leading-relaxed",
+                        "px-3.5 py-2.5 rounded-2xl text-xs font-medium leading-relaxed shadow-md",
                         isOutbound
-                          ? "bg-blue-500 text-white rounded-tr-sm"
-                          : "bg-white border border-slate-200 text-slate-700 rounded-tl-sm shadow-sm"
+                          ? "bg-blue-600 text-white rounded-tr-none border border-blue-500/20"
+                          : "bg-slate-900/80 border border-slate-800 text-slate-200 rounded-tl-none"
                       )}>
                         {msg.content}
                       </div>
@@ -681,30 +696,30 @@ export const InternalMessenger = ({ currentUser }: Props) => {
             return (
               <div key={msg.id} className={cn("flex gap-3", isMe && "flex-row-reverse")}>
                 {msg.isBroadcast ? (
-                  <div className="w-full bg-red-50 border border-red-200 rounded-2xl p-4">
+                  <div className="w-full bg-red-950/10 border border-red-900/30 rounded-2xl p-4">
                     <div className="flex items-center gap-2 mb-2">
-                      <Megaphone size={16} className="text-red-600" />
-                      <span className="text-xs font-black text-red-700 uppercase tracking-widest">Mass Broadcast</span>
-                      <span className="text-[9px] text-red-400 font-bold ml-auto">{formatTime(msg.timestamp)}</span>
+                      <Megaphone size={14} className="text-red-500" />
+                      <span className="text-[10px] font-black text-red-400 uppercase tracking-widest">Mass Broadcast</span>
+                      <span className="text-[8px] text-red-600 font-bold ml-auto">{formatTime(msg.timestamp)}</span>
                     </div>
-                    <p className="text-sm font-bold text-red-900">{msg.text.replace('📢 BROADCAST: ', '')}</p>
-                    <p className="text-[10px] text-red-500 font-bold mt-2">— {msg.sender}</p>
+                    <p className="text-xs font-bold text-red-200">{msg.text.replace('📢 BROADCAST: ', '')}</p>
+                    <p className="text-[9px] text-red-500 font-bold mt-2">— {msg.sender}</p>
                   </div>
                 ) : (
                   <>
-                    <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center text-white text-xs font-black shrink-0", getRoleColor(msg.senderRole))}>
+                    <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center text-white text-[10px] font-black shrink-0", getRoleColor(msg.senderRole))}>
                       {getInitials(msg.sender)}
                     </div>
                     <div className={cn("max-w-[70%]", isMe && "text-right")}>
                       <div className={cn("flex items-baseline gap-2 mb-1", isMe && "flex-row-reverse")}>
-                        <span className="text-xs font-black text-slate-700">{msg.sender}</span>
-                        <span className="text-[9px] text-slate-400 font-bold">{formatTime(msg.timestamp)}</span>
+                        <span className="text-[10px] font-bold text-slate-300">{msg.sender}</span>
+                        <span className="text-[8px] text-slate-500 font-bold">{formatTime(msg.timestamp)}</span>
                       </div>
                       <div className={cn(
-                        "px-4 py-3 rounded-2xl text-sm font-medium leading-relaxed",
+                        "px-3.5 py-2.5 rounded-2xl text-xs font-medium leading-relaxed shadow-md",
                         isMe
-                          ? "bg-indigo-600 text-white rounded-tr-sm"
-                          : "bg-white border border-slate-200 text-slate-700 rounded-tl-sm shadow-sm"
+                          ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-tr-none border border-emerald-500/20"
+                          : "bg-slate-900/80 border border-slate-800/50 text-slate-200 rounded-tl-none backdrop-blur-md"
                       )}>
                         {msg.text}
                       </div>
@@ -718,10 +733,10 @@ export const InternalMessenger = ({ currentUser }: Props) => {
         </div>
 
         {/* Input */}
-        <div className="p-4 border-t border-slate-100 bg-white">
+        <div className="p-4 border-t border-slate-800/40 bg-[#070b14]/50 shrink-0">
           {!activeDM && (activeChannel === 'external-push' || activeChannel === 'private-sms' || activeChannel === 'imessage') && (
-            <div className="mb-3">
-              <label className="text-[10px] font-black text-emerald-600 uppercase tracking-widest block mb-1">
+            <div className="mb-2">
+              <label className="text-[9px] font-black text-emerald-500 uppercase tracking-widest block mb-1">
                 {activeChannel === 'imessage' ? 'iMessage Recipient Phone Number' : activeChannel === 'private-sms' ? 'Private Phone Number (Dialer)' : 'External Phone Number (Dialer)'}
               </label>
               <input
@@ -729,7 +744,7 @@ export const InternalMessenger = ({ currentUser }: Props) => {
                 value={externalPhone}
                 onChange={(e) => setExternalPhone(e.target.value)}
                 placeholder="+1 (555) 555-5555"
-                className="w-full px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-lg outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 font-mono text-emerald-900 transition-all text-sm font-bold"
+                className="w-full px-4 py-1.5 bg-slate-950 border border-slate-800 rounded-lg outline-none focus:border-[#D4AF77]/40 font-mono text-emerald-400 transition-all text-xs font-bold"
               />
             </div>
           )}
@@ -741,39 +756,39 @@ export const InternalMessenger = ({ currentUser }: Props) => {
               onChange={(e) => setMessageText(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={(activeChannel === 'external-push' || activeChannel === 'private-sms') && !activeDM ? "Type push notification message..." : `Message ${activeDM ? 'privately' : '#' + activeChannel}...`}
-              className="flex-1 px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 font-medium text-slate-700 transition-all"
+              className="flex-1 px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl outline-none focus:border-[#D4AF77]/40 font-medium text-xs text-slate-200 transition-all placeholder-slate-600"
             />
             <button
               onClick={handleSend}
               disabled={!messageText.trim()}
-              className="p-3.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-30 disabled:cursor-not-allowed text-white rounded-xl transition-colors shadow-lg shadow-indigo-600/20"
+              className="p-2.5 bg-[#0A3D2A] text-[#D4AF77] hover:bg-[#134D36] border border-[#D4AF77]/30 disabled:opacity-30 disabled:cursor-not-allowed rounded-xl transition-all shadow-md active:scale-95"
             >
-              <Send size={20} />
+              <Send size={16} />
             </button>
           </div>
         </div>
 
         {/* Broadcast Modal (Founder Only) */}
         {showBroadcast && (
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 animate-in fade-in duration-200">
-            <div className="bg-white rounded-2xl p-8 max-w-lg w-full mx-4 shadow-2xl animate-in zoom-in-95 duration-300">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-black text-slate-800 flex items-center gap-2">
-                  <Megaphone size={22} className="text-red-600" /> Mass Broadcast
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 animate-in fade-in duration-200">
+            <div className="bg-[#0a1120] border border-slate-800 rounded-[2rem] p-6 max-w-lg w-full mx-4 shadow-2xl animate-in zoom-in-95 duration-300">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-black text-white flex items-center gap-2 uppercase tracking-wide">
+                  <Megaphone size={16} className="text-red-500" /> Mass Broadcast
                 </h3>
-                <button onClick={() => setShowBroadcast(false)} className="p-2 hover:bg-slate-100 rounded-lg"><X size={20} /></button>
+                <button onClick={() => setShowBroadcast(false)} className="text-slate-400 hover:text-white transition-colors"><X size={16} /></button>
               </div>
-              <p className="text-sm text-slate-500 font-medium mb-4">This message will be sent to <span className="font-black text-red-600">ALL channels and ALL team members</span> simultaneously.</p>
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-3">This message will be sent to <span className="font-black text-red-600">ALL channels and ALL team members</span> simultaneously.</p>
               <textarea
                 value={broadcastText}
                 onChange={(e) => setBroadcastText(e.target.value)}
                 placeholder="Type your broadcast message..."
-                className="w-full px-5 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl outline-none focus:border-red-500 font-medium text-slate-700 h-32 resize-none"
+                className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl outline-none focus:border-red-500 font-medium text-slate-200 text-xs h-28 resize-none"
               />
               <button
                 onClick={handleBroadcast}
                 disabled={!broadcastText.trim()}
-                className="w-full mt-4 py-4 bg-red-600 hover:bg-red-700 disabled:opacity-30 text-white rounded-xl font-black text-sm uppercase tracking-widest transition-colors shadow-xl shadow-red-600/20"
+                className="w-full mt-4 py-3 bg-red-600 hover:bg-red-500 disabled:opacity-30 text-white rounded-xl font-black text-xs uppercase tracking-widest transition-colors shadow-lg active:scale-95 border border-red-500/20"
               >
                 Send to All Staff
               </button>
@@ -783,28 +798,28 @@ export const InternalMessenger = ({ currentUser }: Props) => {
 
         {/* Create Group Modal */}
         {showGroupCreate && (
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 animate-in fade-in duration-200">
-            <div className="bg-white rounded-2xl p-6 max-w-lg w-full mx-4 shadow-2xl animate-in zoom-in-95 duration-300 max-h-[80vh] flex flex-col">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 animate-in fade-in duration-200">
+            <div className="bg-[#0a1120] border border-slate-800 rounded-[2rem] p-6 max-w-lg w-full mx-4 shadow-2xl animate-in zoom-in-95 duration-300 max-h-[80vh] flex flex-col">
               <div className="flex items-center justify-between mb-4 shrink-0">
-                <h3 className="text-lg font-black text-slate-800 flex items-center gap-2">
-                  <Users size={20} className="text-indigo-600" /> New Group Message
+                <h3 className="text-sm font-black text-white flex items-center gap-2 uppercase tracking-wide">
+                  <Users size={16} className="text-[#D4AF77]" /> New Group Message
                 </h3>
-                <button onClick={() => setShowGroupCreate(false)} className="p-2 hover:bg-slate-100 rounded-lg"><X size={20} /></button>
+                <button onClick={() => setShowGroupCreate(false)} className="text-slate-400 hover:text-white transition-colors"><X size={16} /></button>
               </div>
               <div className="space-y-3 flex-1 min-h-0 flex flex-col">
                 <div className="shrink-0">
-                  <label className="text-xs font-black text-slate-500 uppercase tracking-widest block mb-1.5">Group Name</label>
+                  <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-1.5">Group Name</label>
                   <input
                     type="text"
                     value={groupName}
                     onChange={(e) => setGroupName(e.target.value)}
-                    placeholder="e.g. Leadership Team"
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-indigo-500 font-medium text-slate-700 text-sm"
+                    placeholder="e.g. Compliance Outpost"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-slate-200 text-xs outline-none focus:border-[#D4AF77]/30"
                   />
                 </div>
                 <div className="flex-1 min-h-0 flex flex-col">
-                  <label className="text-xs font-black text-slate-500 uppercase tracking-widest block mb-1.5 shrink-0">Add Members</label>
-                  <div className="space-y-1.5 overflow-y-auto flex-1 pr-1" style={{ maxHeight: '40vh' }}>
+                  <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-1.5 shrink-0">Add Members</label>
+                  <div className="space-y-1.5 overflow-y-auto flex-1 pr-1 scrollbar-thin" style={{ maxHeight: '40vh' }}>
                     {mappedUsers.filter(m => m.id !== currentUser.roleId).map(member => (
                       <button
                         key={member.id}
@@ -814,8 +829,8 @@ export const InternalMessenger = ({ currentUser }: Props) => {
                         className={cn(
                           "w-full flex items-center justify-between p-2.5 rounded-xl border transition-all",
                           groupMembers.includes(member.id)
-                            ? "bg-indigo-50 border-indigo-300 shadow-sm"
-                            : "bg-slate-50 border-slate-200 hover:border-indigo-200"
+                            ? "bg-[#0A3D2A] border-[#D4AF77]/30 text-[#D4AF77]"
+                            : "bg-slate-900/50 border-slate-800 hover:border-slate-700 text-slate-300"
                         )}
                       >
                         <div className="flex items-center gap-3">
@@ -823,11 +838,11 @@ export const InternalMessenger = ({ currentUser }: Props) => {
                             {getInitials(member.name)}
                           </div>
                           <div className="text-left">
-                            <p className="text-xs font-bold text-slate-700">{member.name}</p>
-                            <p className="text-[10px] text-slate-400 font-medium capitalize">{member.role.replace(/_/g, ' ')}</p>
+                            <p className="text-xs font-bold text-slate-200">{member.name}</p>
+                            <p className="text-[9px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">{member.role.replace(/_/g, ' ')}</p>
                           </div>
                         </div>
-                        {groupMembers.includes(member.id) && <Check size={16} className="text-indigo-600" />}
+                        {groupMembers.includes(member.id) && <Check size={14} className="text-[#D4AF77]" />}
                       </button>
                     ))}
                   </div>
@@ -836,7 +851,7 @@ export const InternalMessenger = ({ currentUser }: Props) => {
               <button
                 onClick={handleCreateGroup}
                 disabled={!groupName.trim() || groupMembers.length === 0}
-                className="w-full mt-4 py-3.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-30 text-white rounded-xl font-black text-sm uppercase tracking-widest transition-colors shadow-xl shadow-indigo-600/20 shrink-0"
+                className="w-full mt-4 py-3 bg-[#0A3D2A] text-[#D4AF77] border border-[#D4AF77]/30 hover:bg-[#134D36] disabled:opacity-30 text-xs font-black uppercase tracking-widest transition-colors shadow-lg shrink-0"
               >
                 Create Group ({groupMembers.length} selected)
               </button>
@@ -846,59 +861,56 @@ export const InternalMessenger = ({ currentUser }: Props) => {
       </div>
       {/* Right Sidebar - Members */}
       {showMembers && (
-        <div className="w-72 border-l border-slate-100 bg-white flex flex-col shrink-0 animate-in slide-in-from-right-8 duration-200">
-          <div className="h-16 border-b border-slate-100 flex items-center justify-between px-4 shrink-0">
-            <h3 className="font-black text-sm text-slate-800 uppercase tracking-widest">
+        <div className="w-72 border-l border-slate-800/40 bg-[#070b14] flex flex-col shrink-0 animate-in slide-in-from-right-8 duration-200">
+          <div className="h-16 border-b border-slate-800/40 flex items-center justify-between px-4 shrink-0">
+            <h3 className="font-black text-xs text-[#D4AF77] uppercase tracking-widest">
               {activeDM ? 'Conversation' : 'Channel Members'}
             </h3>
-            <button onClick={() => setShowMembers(false)} className="p-1 hover:bg-slate-100 rounded-md text-slate-400">
-              <X size={16} />
+            <button onClick={() => setShowMembers(false)} className="p-1 hover:bg-slate-800/40 rounded-md text-slate-400 hover:text-white">
+              <X size={14} />
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto p-4 space-y-1">
+          <div className="flex-1 overflow-y-auto p-4 space-y-1 scrollbar-thin">
             {activeDM ? (
-              // Show the two users in DM
               mappedUsers.filter(m => activeDM.includes(m.id) || m.id === currentUser.roleId).map(member => (
-                <div key={member.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50">
-                  <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-black", member.color)}>
+                <div key={member.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-800/10">
+                  <div className={cn("w-7 h-7 rounded-lg flex items-center justify-center text-white text-[10px] font-black", member.color)}>
                     {getInitials(member.name)}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-bold text-slate-700 truncate">{member.name}</p>
-                    <p className="text-[10px] text-slate-400 font-medium truncate capitalize">{member.role.replace(/_/g, ' ')}</p>
+                    <p className="text-xs font-bold text-slate-200 truncate">{member.name}</p>
+                    <p className="text-[8px] text-slate-500 font-bold uppercase tracking-wider truncate mt-0.5">{member.role.replace(/_/g, ' ')}</p>
                   </div>
                 </div>
               ))
             ) : (
-              // Show channel/group members
               mappedUsers
                 .filter(m => {
                   if (activeChannel.startsWith('group-')) {
                     return customGroups.find(g => g.id === activeChannel)?.members.includes(m.id) || m.id === currentUser.roleId;
                   } else {
-                    // For standard internal channels, only show internal staff (exclude patients/businesses)
                     const r = m.role.toLowerCase();
                     const isInternal = r.includes('founder') || r.includes('ceo') || r.includes('president') || r.includes('compliance') || r.includes('advisor') || r.includes('ai') || r.includes('admin') || r.includes('agent');
                     return isInternal;
                   }
                 })
                 .map(member => (
-                <div key={member.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 group">
-                  <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-black", member.color)}>
+                <div key={member.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-800/10 group">
+                  <div className={cn("w-7 h-7 rounded-lg flex items-center justify-center text-white text-[10px] font-black", member.color)}>
                     {getInitials(member.name)}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-bold text-slate-700 truncate">{member.name}</p>
-                    <p className="text-[10px] text-slate-400 font-medium truncate capitalize">{member.role.replace(/_/g, ' ')}</p>
+                    <p className="text-xs font-bold text-slate-200 truncate">{member.name}</p>
+                    <p className="text-[8px] text-slate-500 font-bold uppercase tracking-wider truncate mt-0.5">{member.role.replace(/_/g, ' ')}</p>
                   </div>
                   {member.id !== currentUser.roleId && (
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
                       <button 
                         onClick={() => { setActiveDM(`dm-${[currentUser.roleId, member.id].sort().join('-')}`); setShowMembers(false); }} 
-                        className="p-1.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-md"
+                        className="p-1.5 bg-[#0A3D2A]/60 text-[#D4AF77] hover:bg-[#0A3D2A] border border-[#D4AF77]/30 rounded-md"
                         title="Direct Message"
                       >
-                        <MessageSquare size={14} />
+                        <MessageSquare size={12} />
                       </button>
                       {activeChannel.startsWith('group-') && (
                         <button 
@@ -908,12 +920,12 @@ export const InternalMessenger = ({ currentUser }: Props) => {
                                 return { ...g, members: g.members.filter(mId => mId !== member.id), description: `${g.members.length} members` };
                               }
                               return g;
-                            }));
+                              }));
                           }} 
-                          className="p-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-md"
+                          className="p-1.5 bg-red-950/60 text-red-400 hover:bg-red-900/80 border border-red-900/30 rounded-md"
                           title="Remove from Group"
                         >
-                          <X size={14} />
+                          <X size={12} />
                         </button>
                       )}
                     </div>
@@ -922,16 +934,6 @@ export const InternalMessenger = ({ currentUser }: Props) => {
               ))
             )}
           </div>
-          {activeChannel.startsWith('group-') && !activeDM && (
-            <div className="p-4 border-t border-slate-100">
-              <button 
-                onClick={() => alert('Editing groups coming soon! For now, create a new group with the desired members.')}
-                className="w-full py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-2"
-              >
-                <Plus size={14} /> Add Members
-              </button>
-            </div>
-          )}
         </div>
       )}
     </div>
