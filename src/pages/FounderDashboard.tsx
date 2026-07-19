@@ -1573,7 +1573,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       case 'voip_extensions':
         return <div data-action-bound="true"><VoIPExtensionsTab user={user} /></div>;
       case 'call_center':
-        return <div data-action-bound="true"><CallCenterCommandTab /></div>;
+        return <div data-action-bound="true"><CallCenterCommandTab staffLevel={5} user={user} /></div>;
       case 'dept_manager':
         return <div data-action-bound="true"><DepartmentManager /></div>;
       case 'critical_alerts':

@@ -1810,7 +1810,7 @@ Notes: ${c.notes || 'No notes'}`;
 
   const getContent = () => {
     switch (activeTab) {
-      case 'call_center': return <CallCenterCommandTab />;
+      case 'call_center': return <CallCenterCommandTab staffLevel={staffLevel} user={user} />;
       case 'phone_intake': return <PhoneIntakeForm />;
       case 'account_lookup': return <AccountLookupTab />;
       case 'payment_lookup': return <PaymentLookupTab user={user} />;

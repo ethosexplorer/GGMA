@@ -1,9 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Phone, PhoneCall, PhoneOutgoing, UserPlus, Shield, Globe, Activity, Download, Zap, MessageSquare, Clock, Settings, MicOff, Pause } from 'lucide-react';
+import { Phone, PhoneCall, PhoneOutgoing, UserPlus, Shield, Globe, Activity, Download, Zap, MessageSquare, Clock, Settings, MicOff, Pause, Users, X } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { voip800 } from '../../lib/voip800';
+import { db } from '../../lib/firebase';
+import { collection, onSnapshot } from 'firebase/firestore';
+import { InternalMessenger } from '../messaging/InternalMessenger';
 
-export const CallCenterCommandTab = () => {
+export const CallCenterCommandTab = ({ 
+  staffLevel = 1, 
+  user 
+}: { 
+  staffLevel?: number; 
+  user?: any; 
+}) => {
   const [liveQueue, setLiveQueue] = useState(0);
   const [routingTab, setRoutingTab] = useState('routing');
   const [agentStatus, setAgentStatus] = useState('Ready');
@@ -26,6 +35,23 @@ export const CallCenterCommandTab = () => {
   const [recentCalls, setRecentCalls] = useState<any[]>([]);
   const [voicemails, setVoicemails] = useState<any[]>([]);
   const [dialNumber, setDialNumber] = useState('');
+  
+  const [extensions, setExtensions] = useState<any[]>([]);
+  const [showDirectoryModal, setShowDirectoryModal] = useState(false);
+  const [showMessagesModal, setShowMessagesModal] = useState(false);
+  const [dirSearch, setDirSearch] = useState('');
+
+  // Sync VoIP Extensions from Firestore
+  useEffect(() => {
+    const unsub = onSnapshot(collection(db, 'phone_extensions'), (snap) => {
+      if (!snap.empty) {
+        const list = snap.docs.map(doc => doc.data());
+        list.sort((a, b) => parseInt(a.ext) - parseInt(b.ext));
+        setExtensions(list);
+      }
+    });
+    return unsub;
+  }, []);
 
   useEffect(() => {
     setIsConnected(voip800.isConfigured());
@@ -123,6 +149,20 @@ export const CallCenterCommandTab = () => {
                   </div>
                 )}
               </div>
+
+              <button 
+                onClick={() => setShowMessagesModal(true)} 
+                className="bg-emerald-500/20 border border-emerald-500/30 px-3 py-1.5 rounded-lg flex items-center gap-1.5 hover:bg-emerald-500/40 transition-all text-emerald-300 font-bold text-[10px] uppercase tracking-widest"
+              >
+                <MessageSquare size={14} className="text-emerald-400" /> Messages
+              </button>
+
+              <button 
+                onClick={() => setShowDirectoryModal(true)} 
+                className="bg-sky-500/20 border border-sky-500/30 px-3 py-1.5 rounded-lg flex items-center gap-1.5 hover:bg-sky-500/40 transition-all text-sky-300 font-bold text-[10px] uppercase tracking-widest"
+              >
+                <Users size={14} className="text-sky-400" /> Directory
+              </button>
 
               <select 
                 value={agentStatus} 
@@ -439,11 +479,146 @@ export const CallCenterCommandTab = () => {
         </table>
       </div>
 
-      {/* Test Connection */}
-      <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center justify-between">
-        <div><h4 className="text-sm font-bold text-slate-800">API Connection Test</h4><p className="text-xs text-slate-500">Verify Twilio WebRTC integration</p></div>
-        <button onClick={async () => { const r = await voip800.verifyConnection(); alert(r.connected ? `✅ Connected\nAccount: ${r.accountId}` : (r.error?.includes('simulated data') ? `⚠️ Offline Mode Active\n${r.error}` : `❌ Failed: ${r.error}`)); }} className="px-4 py-2 bg-indigo-600 text-white font-bold text-sm rounded-lg flex items-center gap-2"><Zap size={14} /> Test</button>
-      </div>
+      {/* Test Connection (Only Level 5/IT/Founder) */}
+      {staffLevel >= 5 && (
+        <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center justify-between">
+          <div><h4 className="text-sm font-bold text-slate-800">API Connection Test</h4><p className="text-xs text-slate-500">Verify Twilio WebRTC integration</p></div>
+          <button onClick={async () => { const r = await voip800.verifyConnection(); alert(r.connected ? `✅ Connected\nAccount: ${r.accountId}` : (r.error?.includes('simulated data') ? `⚠️ Offline Mode Active\n${r.error}` : `❌ Failed: ${r.error}`)); }} className="px-4 py-2 bg-indigo-600 text-white font-bold text-sm rounded-lg flex items-center gap-2"><Zap size={14} /> Test</button>
+        </div>
+      )}
+
+      {/* DIRECTORY MODAL POPUP */}
+      {showDirectoryModal && (
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-[#0a1120] border border-[#D4AF77]/30 rounded-[2rem] w-full max-w-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+            <div className="p-6 border-b border-slate-900 bg-slate-950/40 flex justify-between items-center">
+              <div>
+                <h3 className="text-base font-black text-white tracking-tight flex items-center gap-2">
+                  <Users size={18} className="text-[#D4AF77]" />
+                  Staff Extensions Directory
+                </h3>
+                <p className="text-[10px] text-slate-400 font-medium uppercase mt-0.5">Click any extension to instantly dial or transfer</p>
+              </div>
+              <button 
+                onClick={() => setShowDirectoryModal(false)} 
+                className="text-slate-400 hover:text-white transition-colors"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            
+            <div className="p-6 space-y-4">
+              <input
+                type="text"
+                placeholder="Search by name, department, or extension number..."
+                value={dirSearch}
+                onChange={e => setDirSearch(e.target.value)}
+                className="w-full bg-[#080d1a] border border-slate-900 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none focus:border-[#D4AF77]/40 transition-colors"
+              />
+              
+              <div className="max-h-[350px] overflow-y-auto pr-1 space-y-2 scrollbar-thin">
+                {extensions.filter(ext => {
+                  const query = dirSearch.toLowerCase();
+                  return (ext.name || '').toLowerCase().includes(query) ||
+                         (ext.ext || '').includes(query) ||
+                         (ext.dept || '').toLowerCase().includes(query) ||
+                         (ext.desc || '').toLowerCase().includes(query);
+                }).map((ext, idx) => (
+                  <div key={idx} className="flex items-center justify-between p-3.5 bg-slate-950/40 border border-slate-900 rounded-xl hover:border-slate-800 transition-all group">
+                    <div className="flex items-center gap-4">
+                      <span className="font-mono font-black text-[#D4AF77] text-sm bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-900">
+                        {ext.ext}
+                      </span>
+                      <div>
+                        <p className="font-bold text-white text-sm flex items-center gap-2">
+                          {ext.name}
+                          <span className={cn(
+                            "px-2 py-0.5 text-[8px] font-black uppercase rounded-full border tracking-wider",
+                            ext.dept === 'Executive' ? 'bg-purple-950/40 text-purple-400 border-purple-900/30' :
+                            ext.dept === 'Medical' ? 'bg-emerald-950/40 text-emerald-400 border-emerald-900/30' :
+                            ext.dept === 'Sales' ? 'bg-blue-950/40 text-blue-400 border-blue-900/30' :
+                            ext.dept === 'Legal' ? 'bg-amber-950/40 text-amber-400 border-amber-900/30' :
+                            'bg-slate-950/40 text-slate-400 border-slate-900/30'
+                          )}>
+                            {ext.dept}
+                          </span>
+                        </p>
+                        <p className="text-[11px] text-slate-400 mt-0.5">{ext.desc}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => {
+                          window.dispatchEvent(new CustomEvent('twilio-dial-out', { detail: { number: ext.ext } }));
+                          setShowDirectoryModal(false);
+                        }}
+                        className="px-3 py-1.5 bg-[#0A3D2A] text-[#D4AF77] border border-[#D4AF77]/30 hover:bg-[#134D36] text-[10px] font-black uppercase rounded-lg transition-all"
+                      >
+                        Dial
+                      </button>
+                      <button
+                        onClick={() => {
+                          window.dispatchEvent(new CustomEvent('twilio-dial-out', { detail: { number: ext.ext } }));
+                          setShowDirectoryModal(false);
+                        }}
+                        className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 text-[10px] font-black uppercase rounded-lg transition-all"
+                      >
+                        Transfer
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                {extensions.length === 0 && (
+                  <p className="text-center text-slate-500 text-xs italic py-6">No extensions listed in the directory.</p>
+                )}
+              </div>
+            </div>
+            
+            <div className="p-4 bg-slate-950/60 border-t border-slate-900 flex justify-end">
+              <button 
+                onClick={() => setShowDirectoryModal(false)}
+                className="px-4 py-2 border border-slate-800 text-slate-400 hover:text-white font-bold text-xs rounded-xl transition-colors uppercase tracking-wider"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MESSAGES MODAL POPUP */}
+      {showMessagesModal && (
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-[#0a1120] border border-slate-800 rounded-[2rem] w-full max-w-5xl h-[85vh] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col">
+            <div className="p-6 border-b border-slate-900 bg-slate-950/40 flex justify-between items-center shrink-0">
+              <div>
+                <h3 className="text-base font-black text-white tracking-tight flex items-center gap-2">
+                  <MessageSquare size={18} className="text-emerald-400" />
+                  Internal Messaging Console
+                </h3>
+                <p className="text-[10px] text-slate-400 font-medium uppercase mt-0.5">Real-time team chat & secure operations channel</p>
+              </div>
+              <button 
+                onClick={() => setShowMessagesModal(false)} 
+                className="text-slate-400 hover:text-white transition-colors"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            
+            <div className="flex-1 overflow-hidden relative bg-slate-950">
+              <InternalMessenger 
+                currentUser={{
+                  name: user?.displayName || user?.name || user?.email || 'Operations Staff',
+                  role: user?.role || 'Staff',
+                  roleId: user?.uid || 'staff'
+                }} 
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
