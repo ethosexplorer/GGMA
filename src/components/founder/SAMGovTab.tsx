@@ -445,29 +445,29 @@ export const SAMGovTab = ({ user }: { user?: any }) => {
       </div>
 
       {/* SUB-NAVIGATION TABS */}
-      <div className="flex gap-1 border-b border-slate-900 pb-px">
+      <div className="bg-slate-950 p-1.5 rounded-2xl border border-slate-900 shadow-xl flex gap-1 w-fit">
         <button 
           onClick={() => setActiveSubTab('registry')}
           className={cn(
-            "px-6 py-2.5 text-xs font-black uppercase tracking-wider border-b-2 transition-all flex items-center gap-2",
+            "px-6 py-2 text-xs font-black uppercase tracking-wider rounded-xl transition-all flex items-center gap-2",
             activeSubTab === 'registry' 
-              ? "border-[#D4AF77] text-white" 
-              : "border-transparent text-slate-500 hover:text-slate-350"
+              ? "bg-[#D4AF77] text-slate-950" 
+              : "text-slate-400 hover:text-slate-200"
           )}
         >
-          <Building2 size={13} className="text-[#D4AF77]" />
+          <Building2 size={13} className={cn(activeSubTab === 'registry' ? 'text-slate-950' : 'text-[#D4AF77]')} />
           Registry & Active Bids
         </button>
         <button 
           onClick={() => setActiveSubTab('workspace')}
           className={cn(
-            "px-6 py-2.5 text-xs font-black uppercase tracking-wider border-b-2 transition-all flex items-center gap-2",
+            "px-6 py-2 text-xs font-black uppercase tracking-wider rounded-xl transition-all flex items-center gap-2",
             activeSubTab === 'workspace' 
-              ? "border-[#D4AF77] text-white" 
-              : "border-transparent text-slate-500 hover:text-slate-350"
+              ? "bg-[#D4AF77] text-slate-950" 
+              : "text-slate-400 hover:text-slate-200"
           )}
         >
-          <FileText size={13} className="text-[#D4AF77]" />
+          <FileText size={13} className={cn(activeSubTab === 'workspace' ? 'text-slate-950' : 'text-[#D4AF77]')} />
           Proposal Workspace & Templates
         </button>
       </div>
@@ -479,8 +479,8 @@ export const SAMGovTab = ({ user }: { user?: any }) => {
           <div className="space-y-3">
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="text-lg font-black text-white uppercase tracking-tight">Managed Business Registrations</h3>
-                <p className="text-xs text-slate-500 font-bold">Dynamic registration monitors syncing live with federal database</p>
+                <h3 className="text-lg font-black text-slate-800 uppercase tracking-tight">Managed Business Registrations</h3>
+                <p className="text-xs text-slate-600 font-bold">Dynamic registration monitors syncing live with federal database</p>
               </div>
               <button 
                 onClick={loadEntities} 
@@ -630,8 +630,8 @@ export const SAMGovTab = ({ user }: { user?: any }) => {
             <div className="xl:col-span-2 space-y-4">
               <div className="flex justify-between items-center">
                 <div>
-                  <h3 className="text-lg font-black text-white uppercase tracking-tight">Federal Opportunities Board</h3>
-                  <p className="text-xs text-slate-500 font-bold">Latest active procurement solicitations and awards from SAM.gov</p>
+                  <h3 className="text-lg font-black text-slate-800 uppercase tracking-tight">Federal Opportunities Board</h3>
+                  <p className="text-xs text-slate-600 font-bold">Latest active procurement solicitations and awards from SAM.gov</p>
                 </div>
                 <div className="relative">
                   <input 
@@ -710,8 +710,8 @@ export const SAMGovTab = ({ user }: { user?: any }) => {
             {/* ENTITY LOOKUP & EXCLUSIONS CHECKER */}
             <div className="space-y-4">
               <div>
-                <h3 className="text-lg font-black text-white uppercase tracking-tight">Registry Lookup & Sanctions Check</h3>
-                <p className="text-xs text-slate-500 font-bold">Validate active federal status and check exclusions for partner entities</p>
+                <h3 className="text-lg font-black text-slate-800 uppercase tracking-tight">Registry Lookup & Sanctions Check</h3>
+                <p className="text-xs text-slate-600 font-bold">Validate active federal status and check exclusions for partner entities</p>
               </div>
 
               <div className="bg-slate-950 border border-slate-900 rounded-3xl p-6 space-y-4 shadow-xl">
@@ -840,7 +840,7 @@ export const SAMGovTab = ({ user }: { user?: any }) => {
                 placeholder="Paste grant/solicitation details here, load templates, and compose your federal bids. Your drafts are automatically saved..."
                 value={draftText}
                 onChange={e => setDraftText(e.target.value)}
-                className="flex-1 w-full bg-slate-900/60 border border-slate-850 rounded-2xl p-4 text-xs font-mono text-slate-200 outline-none focus:ring-2 focus:ring-[#D4AF77] resize-none overflow-y-auto leading-relaxed"
+                className="flex-1 w-full bg-slate-900/60 border border-slate-850 rounded-2xl p-4 text-xs font-mono text-white font-semibold outline-none focus:ring-2 focus:ring-[#D4AF77] resize-none overflow-y-auto leading-relaxed"
               />
             </div>
           </div>
@@ -848,11 +848,11 @@ export const SAMGovTab = ({ user }: { user?: any }) => {
           {/* BID TEMPLATES SELECTOR */}
           <div className="space-y-4 h-[650px] flex flex-col">
             <div>
-              <h3 className="text-lg font-black text-white uppercase tracking-tight flex items-center gap-2">
+              <h3 className="text-lg font-black text-slate-800 uppercase tracking-tight flex items-center gap-2">
                 <Sparkles size={16} className="text-[#D4AF77]" />
                 Contracting Templates
               </h3>
-              <p className="text-xs text-slate-500 font-bold">Standard boilerplate structures for federal procurement proposals</p>
+              <p className="text-xs text-slate-600 font-bold">Standard boilerplate structures for federal procurement proposals</p>
             </div>
 
             <div className="flex-1 bg-slate-950 border border-slate-900 rounded-3xl p-6 shadow-xl overflow-y-auto space-y-3">
