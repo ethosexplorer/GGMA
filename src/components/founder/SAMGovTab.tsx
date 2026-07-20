@@ -259,22 +259,45 @@ export const SAMGovTab = ({ user }: { user?: any }) => {
 
         {/* CONNECTION STATS PANEL */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 pt-6 border-t border-slate-900">
-          <div className="bg-slate-900/60 backdrop-blur-sm border border-slate-800/50 rounded-2xl p-4">
-            <p className="text-[9px] font-black uppercase tracking-wider text-slate-500">Connection Status</p>
-            <div className="flex items-center gap-2 mt-1">
-              <CheckCircle size={16} className="text-emerald-400" />
-              <span className="text-xs font-black uppercase text-emerald-400 tracking-wider">LIVE & SYNCED</span>
+          <div className="bg-slate-900/60 backdrop-blur-sm border border-slate-800/50 rounded-2xl p-4 flex flex-col justify-between">
+            <div>
+              <p className="text-[9px] font-black uppercase tracking-wider text-slate-500">Connection Status</p>
+              <div className="flex items-center gap-2 mt-1">
+                <CheckCircle size={16} className="text-emerald-400" />
+                <span className="text-xs font-black uppercase text-emerald-400 tracking-wider">LIVE & SYNCED</span>
+              </div>
+            </div>
+            <p className="text-[9px] text-slate-400 font-bold mt-2">Active session connected using rotated credentials</p>
+          </div>
+
+          <div className="bg-slate-900/60 backdrop-blur-sm border border-slate-800/50 rounded-2xl p-4 space-y-2">
+            <div className="flex justify-between items-start">
+              <p className="text-[9px] font-black uppercase tracking-wider text-slate-500">API Key #1 (Primary)</p>
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-full text-[8px] font-black uppercase tracking-wider">
+                Active
+              </span>
+            </div>
+            <span className="font-mono text-[10px] font-bold text-[#D4AF77] block">SAM-0d7e5••••••••••••33647f</span>
+            <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400">
+              <Calendar size={10} className="text-emerald-400" />
+              <span className="text-emerald-400">87 Days Remaining</span>
+              <span className="text-slate-500 text-[9px]">(Expires Oct 16, 2026)</span>
             </div>
           </div>
-          <div className="bg-slate-900/60 backdrop-blur-sm border border-slate-800/50 rounded-2xl p-4">
-            <p className="text-[9px] font-black uppercase tracking-wider text-slate-500">Active API Credential</p>
-            <span className="font-mono text-[10px] font-bold text-[#D4AF77] mt-1 block">{apiKeyMasked}</span>
-          </div>
-          <div className="bg-slate-900/60 backdrop-blur-sm border border-slate-800/50 rounded-2xl p-4">
-            <p className="text-[9px] font-black uppercase tracking-wider text-slate-500">Credential Expiration</p>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="text-xs font-black text-amber-400">{apiKeyExpirationDays} Days Remaining</span>
-              <span className="text-[9px] text-slate-500 font-bold">(Expires Oct 16, 2026)</span>
+
+          <div className="bg-slate-900/60 backdrop-blur-sm border border-slate-800/50 border-amber-950/20 rounded-2xl p-4 space-y-2 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-16 h-16 -m-4 bg-amber-500/5 rounded-full blur-md" />
+            <div className="flex justify-between items-start relative z-10">
+              <p className="text-[9px] font-black uppercase tracking-wider text-slate-500">API Key #2 (Secondary)</p>
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-full text-[8px] font-black uppercase tracking-wider animate-pulse">
+                Expiring Soon
+              </span>
+            </div>
+            <span className="font-mono text-[10px] font-bold text-[#D4AF77]/80 block relative z-10">SAM-b63f6••••••••••••7ab817</span>
+            <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 relative z-10">
+              <AlertTriangle size={10} className="text-amber-400" />
+              <span className="text-amber-400 font-extrabold">13 Days Remaining</span>
+              <span className="text-slate-500 text-[9px]">(Expires Aug 2, 2026)</span>
             </div>
           </div>
         </div>
@@ -297,47 +320,54 @@ export const SAMGovTab = ({ user }: { user?: any }) => {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {entities.map((ent, idx) => {
+        <div className="space-y-4">
+          {/* PRIMARY ENTITY: DIVERSITY */}
+          {(() => {
+            const ent = entities.find(e => e.legalBusinessName.includes('DIVERSITY')) || FALLBACK_ENTITIES[0];
             const daysLeft = getDaysRemaining(ent.expirationDate);
             const pct = getProgressPercentage(daysLeft);
             return (
-              <div key={idx} className="bg-slate-950 border border-slate-900 rounded-3xl p-6 relative shadow-xl flex flex-col justify-between">
+              <div className="bg-slate-950 border-2 border-emerald-500/30 rounded-3xl p-6 relative shadow-2xl flex flex-col justify-between overflow-hidden">
+                <div className="absolute top-0 right-0 p-4 opacity-5"><Building2 size={120} className="text-emerald-400" /></div>
                 <div>
-                  <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-start justify-between gap-4 relative z-10">
                     <div>
-                      <h4 className="font-black text-sm text-white tracking-tight">{ent.legalBusinessName}</h4>
+                      <div className="flex items-center gap-2">
+                        <span className="px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 rounded-md text-[8px] font-black uppercase tracking-widest">
+                          PRIMARY ENTITY
+                        </span>
+                      </div>
+                      <h4 className="font-black text-lg text-white tracking-tight mt-1">{ent.legalBusinessName}</h4>
                       {ent.doingBusinessAs && ent.doingBusinessAs !== '(blank)' && (
                         <p className="text-[10px] font-black text-[#D4AF77] uppercase tracking-wider mt-0.5">dba: {ent.doingBusinessAs}</p>
                       )}
                     </div>
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-full text-[9px] font-black uppercase tracking-wider">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-full text-[9px] font-black uppercase tracking-wider shrink-0">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                       {ent.registrationStatus}
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4 mt-6">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 relative z-10">
                     <div className="space-y-1">
-                      <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block">Unique Entity ID (UEI)</span>
-                      <span className="font-mono text-xs font-black text-white">{ent.uei}</span>
+                      <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest block">Unique Entity ID (UEI)</span>
+                      <span className="font-mono text-sm font-black text-white">{ent.uei}</span>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block">CAGE / NCAGE</span>
-                      <span className="font-mono text-xs font-black text-white">{ent.cageCode}</span>
+                      <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest block">CAGE / NCAGE</span>
+                      <span className="font-mono text-sm font-black text-white">{ent.cageCode}</span>
                     </div>
-                  </div>
-
-                  <div className="space-y-1 mt-4">
-                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block">Physical Address</span>
-                    <p className="text-xs font-semibold text-slate-350 flex items-center gap-1">
-                      <MapPin size={10} className="text-[#D4AF77] shrink-0" />
-                      {ent.physicalAddress?.addressLine1}, {ent.physicalAddress?.city}, {ent.physicalAddress?.state} {ent.physicalAddress?.zipCode}
-                    </p>
+                    <div className="space-y-1 col-span-2">
+                      <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest block">Physical Address</span>
+                      <p className="text-xs font-semibold text-slate-350 flex items-center gap-1">
+                        <MapPin size={10} className="text-[#D4AF77] shrink-0" />
+                        {ent.physicalAddress?.addressLine1}, {ent.physicalAddress?.city}, {ent.physicalAddress?.state} {ent.physicalAddress?.zipCode}
+                      </p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-slate-900/60 space-y-2">
+                <div className="mt-6 pt-4 border-t border-slate-900/60 space-y-2 relative z-10">
                   <div className="flex justify-between items-center text-xs font-bold text-slate-400">
                     <span className="flex items-center gap-1"><Calendar size={12} className="text-[#D4AF77]" /> Expiration Date: {ent.expirationDate}</span>
                     <span className="text-[#D4AF77]">{daysLeft} Days Left</span>
@@ -354,7 +384,72 @@ export const SAMGovTab = ({ user }: { user?: any }) => {
                 </div>
               </div>
             );
-          })}
+          })()}
+
+          {/* SECONDARY ENTITY: GLOBAL GREEN */}
+          {(() => {
+            const ent = entities.find(e => e.legalBusinessName.includes('GLOBAL')) || FALLBACK_ENTITIES[1];
+            const daysLeft = getDaysRemaining(ent.expirationDate);
+            const pct = getProgressPercentage(daysLeft);
+            return (
+              <div className="bg-slate-950/60 border border-slate-900 rounded-3xl p-6 relative shadow-xl flex flex-col justify-between overflow-hidden lg:ml-8 border-l-4 border-l-[#D4AF77]/50">
+                <div className="absolute top-0 right-0 p-4 opacity-5"><Building2 size={100} className="text-slate-400" /></div>
+                <div>
+                  <div className="flex items-start justify-between gap-4 relative z-10">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="px-2 py-0.5 bg-[#D4AF77]/10 border border-[#D4AF77]/25 text-[#D4AF77] rounded-md text-[8px] font-black uppercase tracking-widest">
+                          SECONDARY ENTITY (Subsidiary)
+                        </span>
+                      </div>
+                      <h4 className="font-black text-base text-white tracking-tight mt-1">{ent.legalBusinessName}</h4>
+                      {ent.doingBusinessAs && ent.doingBusinessAs !== '(blank)' && (
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-wider mt-0.5">dba: {ent.doingBusinessAs}</p>
+                      )}
+                    </div>
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-full text-[9px] font-black uppercase tracking-wider shrink-0">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                      {ent.registrationStatus}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 relative z-10">
+                    <div className="space-y-1">
+                      <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest block">Unique Entity ID (UEI)</span>
+                      <span className="font-mono text-xs font-black text-white">{ent.uei}</span>
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest block">CAGE / NCAGE</span>
+                      <span className="font-mono text-xs font-black text-white">{ent.cageCode}</span>
+                    </div>
+                    <div className="space-y-1 col-span-2">
+                      <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest block">Physical Address</span>
+                      <p className="text-xs font-semibold text-slate-350 flex items-center gap-1">
+                        <MapPin size={10} className="text-[#D4AF77] shrink-0" />
+                        {ent.physicalAddress?.addressLine1}, {ent.physicalAddress?.city}, {ent.physicalAddress?.state} {ent.physicalAddress?.zipCode}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-6 pt-4 border-t border-slate-900/60 space-y-2 relative z-10">
+                  <div className="flex justify-between items-center text-xs font-bold text-slate-400">
+                    <span className="flex items-center gap-1"><Calendar size={12} className="text-[#D4AF77]" /> Expiration Date: {ent.expirationDate}</span>
+                    <span className="text-[#D4AF77]">{daysLeft} Days Left</span>
+                  </div>
+                  <div className="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden">
+                    <div 
+                      className={cn(
+                        "h-full rounded-full transition-all duration-1000",
+                        daysLeft > 60 ? "bg-emerald-500" : daysLeft > 30 ? "bg-amber-500" : "bg-red-500"
+                      )} 
+                      style={{ width: `${pct}%` }} 
+                    />
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
         </div>
       </div>
 
