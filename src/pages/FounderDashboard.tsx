@@ -89,6 +89,7 @@ import { LitigationSabotageTab } from '../components/founder/LitigationSabotageT
 import { CEYECommandCenter } from '../components/ceye/CEYECommandCenter';
 import { CannaCribsManagementTab } from '../components/founder/CannaCribsManagementTab';
 import { VoIPExtensionsTab } from '../components/founder/VoIPExtensionsTab';
+import { SAMGovTab } from '../components/founder/SAMGovTab';
 
 
 type NavItem = { section?: string; id?: string; label?: string; icon?: any; badge?: string };
@@ -166,6 +167,7 @@ const MERGED_SUB_TABS: Record<string, { id: string, label: string, icon: any }[]
     { id: 'law_enforcement', label: 'Law Enforcement (RIP)', icon: Shield },
     { id: 'sinc_ceye', label: 'SINC (CEYE)', icon: Eye },
     { id: 'metrc_state', label: 'Metrc & State Info', icon: Database },
+    { id: 'sam_gov', label: 'SAM.gov Oversight', icon: Shield },
   ],
   god_settings: [
     { id: 'settings', label: 'God Settings', icon: Settings },
@@ -266,6 +268,7 @@ const MEGA_COLUMNS = [
       { id: 'law_enforcement', label: 'Law Enforcement (RIP)', icon: Shield },
       { id: 'sinc_ceye', label: 'SINC (CEYE)', icon: Eye },
       { id: 'metrc_state', label: 'Metrc & State Info', icon: Database },
+      { id: 'sam_gov', label: 'SAM.gov Oversight', icon: Shield },
       { id: 'settings', label: 'God Settings', icon: Settings },
       { id: 'roles_duties', label: 'My Role & Duties', icon: Shield },
       { id: 'launch_script', label: 'Master Launch Script', icon: FileText },
@@ -1489,6 +1492,8 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
         return <div data-action-bound="true"><ApprovalsDenialsTab setSelectedApplicant={setSelectedApplicant} /></div>;
       case 'metrc_state':
         return <div className="h-full w-full -m-10 bg-slate-50 p-10 min-h-screen overflow-auto" data-action-bound="true"><ComplianceEngineTab /></div>;
+      case 'sam_gov':
+        return <div data-action-bound="true"><SAMGovTab user={user} /></div>;
       case 'reports':
         return <div data-action-bound="true"><MasterAnalyticsTab /></div>;
       case 'intel':
