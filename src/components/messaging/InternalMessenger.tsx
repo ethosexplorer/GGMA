@@ -22,7 +22,7 @@ const CHANNELS = [
   { id: 'compliance', label: 'Compliance & OMMA', description: 'Metrc, OMMA, regulatory' },
   { id: 'it-ops', label: 'IT & Operations', description: 'System issues, deployments' },
   { id: 'founder-directives', label: 'Founder Directives', description: 'Direct orders from leadership' },
-  { id: 'external-push', label: 'External Push (Global)', description: 'Team-visible SMS push notifications' },
+  { id: 'external-push', label: 'External (TextBelt)', description: 'Global SMS notifications via TextBelt' },
   { id: 'imessage', label: 'iMessage (645)', description: 'SendBlue iMessage inbox — 645-246-8277' },
   { id: 'private-sms', label: 'Private SMS', description: 'Send SMS privately (Only you see this log)' },
 ];
@@ -540,7 +540,7 @@ export const InternalMessenger = ({ currentUser }: Props) => {
                 </div>
                 <div className="space-y-1">
                   {allChannels
-                    .filter(c => c.id !== 'external-push' && c.id !== 'imessage' && c.id !== 'private-sms')
+                    .filter(c => c.id !== 'imessage' && c.id !== 'private-sms')
                     .map(ch => (
                       <button
                         key={ch.id}
