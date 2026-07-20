@@ -218,5 +218,10 @@ service cloud.firestore {
       allow read: if isAuthenticated();
       allow write: if isAuthenticated() && request.auth.uid == userId;
     }
+
+    // VoIP Phone Extensions
+    match /phone_extensions/{extId} {
+      allow read, write: if isAuthenticated();
+    }
   }
 }

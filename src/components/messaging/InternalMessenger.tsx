@@ -41,6 +41,7 @@ interface Props {
 export const InternalMessenger = ({ currentUser }: Props) => {
   const [activeChannel, setActiveChannel] = useState('general');
   const [activeDM, setActiveDM] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'channels' | 'dms' | 'gateways'>('channels');
   const [messageText, setMessageText] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [showBroadcast, setShowBroadcast] = useState(false);
@@ -87,6 +88,7 @@ export const InternalMessenger = ({ currentUser }: Props) => {
     if (target) {
       const dmId = `dm-${[currentUser.roleId, target].sort().join('-')}`;
       setActiveDM(dmId);
+      setActiveTab('dms');
       sessionStorage.removeItem('active_dm_target');
     }
   }, [currentUser.roleId, systemUsers]);
@@ -98,6 +100,7 @@ export const InternalMessenger = ({ currentUser }: Props) => {
       if (target) {
         const dmId = `dm-${[currentUser.roleId, target].sort().join('-')}`;
         setActiveDM(dmId);
+        setActiveTab('dms');
       }
     };
     window.addEventListener('open-dm-chat', handleOpenDm);
@@ -472,19 +475,189 @@ export const InternalMessenger = ({ currentUser }: Props) => {
   return (
     <div className="flex h-full w-full bg-[#0a0f1d] overflow-hidden text-slate-200 font-sans">
       {/* Sidebar */}
-      <div className="w-64 bg-[#070b14] border-r border-slate-800/50 flex flex-col shrink-0">
-        <div className="p-5 border-b border-slate-800/40 flex items-center justify-between">
-          <div>
-            <h3 className="font-black text-xs uppercase tracking-widest text-[#D4AF77] flex items-center gap-2">
-              <MessageSquare size={14} className="text-[#D4AF77]" /> SINC Messenger
-            </h3>
-            <p className="text-[9px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">Secure Ops Channel</p>
-          </div>
+      <div className="w-68 bg-[#070b14] border-r border-slate-800/50 flex flex-col shrink-0">
+        {/* Sidebar Header */}
+        <div className="p-5 border-b border-slate-800/40 flex flex-col shrink-0 bg-slate-950/20">
+          <h3 className="font-black text-xs uppercase tracking-widest text-[#D4AF77] flex items-center gap-2">
+            <MessageSquare size={14} className="text-[#D4AF77]" /> SINC Messenger
+          </h3>
+          <p className="text-[9px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">Secure Operations Console</p>
         </div>
 
-        {/* Broadcast Button (Founder Only) */}
-        {isFounder && (
-          <div className="px-4 pt-4">
+        {/* Tab Navigation Controls */}
+        <div className="grid grid-cols-3 border-b border-slate-800/40 p-2 shrink-0 gap-1 bg-[#050912]">
+          <button
+            onClick={() => { setActiveTab('channels'); setActiveDM(null); }}
+            className={cn(
+              "py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all border flex flex-col items-center justify-center gap-1",
+              activeTab === 'channels'
+                ? "bg-[#0A3D2A] text-[#D4AF77] border-[#D4AF77]/30 shadow-md shadow-emerald-950/20"
+                : "text-slate-500 hover:bg-slate-800/20 border-transparent hover:text-slate-300"
+            )}
+            title="Group announcements & team channels"
+          >
+            <Hash size={12} />
+            <span>Channels</span>
+          </button>
+          
+          <button
+            onClick={() => { setActiveTab('dms'); }}
+            className={cn(
+              "py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all border flex flex-col items-center justify-center gap-1",
+              activeTab === 'dms'
+                ? "bg-[#0A3D2A] text-[#D4AF77] border-[#D4AF77]/30 shadow-md shadow-emerald-950/20"
+                : "text-slate-500 hover:bg-slate-800/20 border-transparent hover:text-slate-300"
+            )}
+            title="Private direct messages"
+          >
+            <Users size={12} />
+            <span>Direct</span>
+          </button>
+
+          <button
+            onClick={() => { setActiveTab('gateways'); setActiveDM(null); }}
+            className={cn(
+              "py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all border flex flex-col items-center justify-center gap-1",
+              activeTab === 'gateways'
+                ? "bg-[#0A3D2A] text-[#D4AF77] border-[#D4AF77]/30 shadow-md shadow-emerald-950/20"
+                : "text-slate-500 hover:bg-slate-800/20 border-transparent hover:text-slate-300"
+            )}
+            title="External SMS & push notifications"
+          >
+            <Megaphone size={12} />
+            <span>Gateways</span>
+          </button>
+        </div>
+
+        {/* Tab Contents */}
+        <div className="flex-1 overflow-y-auto scrollbar-thin">
+          {/* CHANNELS TAB */}
+          {activeTab === 'channels' && (
+            <div className="p-4 space-y-4">
+              <div>
+                <div className="flex items-center justify-between mb-2 px-2">
+                  <h4 className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Public Channels</h4>
+                </div>
+                <div className="space-y-1">
+                  {allChannels
+                    .filter(c => c.id !== 'external-push' && c.id !== 'imessage' && c.id !== 'private-sms')
+                    .map(ch => (
+                      <button
+                        key={ch.id}
+                        onClick={() => { setActiveChannel(ch.id); setActiveDM(null); }}
+                        className={cn(
+                          "w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-left",
+                          !activeDM && activeChannel === ch.id
+                            ? "bg-[#0A3D2A] text-[#D4AF77] border border-[#D4AF77]/30 shadow-md shadow-emerald-950/20"
+                            : "text-slate-400 hover:bg-slate-800/20 hover:text-slate-200"
+                        )}
+                      >
+                        <Hash size={13} className={!activeDM && activeChannel === ch.id ? "text-[#D4AF77]" : "text-slate-600"} />
+                        {ch.label}
+                      </button>
+                    ))}
+                </div>
+              </div>
+
+              {/* Group Messages Creator */}
+              <div>
+                <button
+                  onClick={() => setShowGroupCreate(true)}
+                  className="w-full flex items-center justify-center gap-2 px-3 py-2 border border-dashed border-slate-800 hover:border-[#D4AF77]/30 rounded-xl text-[10px] font-bold text-slate-500 hover:text-[#D4AF77] transition-all"
+                >
+                  <Plus size={12} /> Create Custom Group
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* DMs TAB */}
+          {activeTab === 'dms' && (
+            <div className="p-4 flex flex-col h-full bg-[#070b14]">
+              <div className="flex items-center justify-between mb-2 px-2 shrink-0">
+                <h4 className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Private Peer Directory</h4>
+              </div>
+              <div className="px-1 mb-3 relative shrink-0">
+                <Search size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                <input 
+                  type="text" 
+                  placeholder="Search staff directory..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-8 pr-3 py-1.5 text-[11px] text-slate-100 placeholder-slate-600 outline-none focus:border-[#D4AF77]/30 transition-colors"
+                />
+              </div>
+              <div className="space-y-1 pr-1 scrollbar-thin">
+                {mappedUsers
+                  .filter(m => m.id !== currentUser.roleId && (m.name.toLowerCase().includes(searchQuery.toLowerCase()) || m.role.toLowerCase().includes(searchQuery.toLowerCase()) || m.id === 'larry_ai'))
+                  .map(member => {
+                  const dmId = `dm-${[currentUser.roleId, member.id].sort().join('-')}`;
+                  return (
+                    <button
+                      key={member.id}
+                      onClick={() => { setActiveDM(dmId); }}
+                      className={cn(
+                        "w-full flex items-center gap-3 px-2.5 py-2 rounded-lg text-xs font-bold transition-all text-left",
+                        activeDM === dmId
+                          ? "bg-[#0A3D2A] text-[#D4AF77] border border-[#D4AF77]/30 shadow-md shadow-emerald-950/20"
+                          : "text-slate-400 hover:bg-slate-800/20 hover:text-slate-200"
+                      )}
+                    >
+                      <div className="relative shrink-0">
+                        <div className={cn("w-7 h-7 rounded-lg flex items-center justify-center text-white text-[10px] font-black", member.color)}>
+                          {getInitials(member.name)}
+                        </div>
+                        <Circle
+                          size={8}
+                          className={cn("absolute -bottom-0.5 -right-0.5 fill-current", member.status === 'online' ? 'text-emerald-500' : 'text-amber-500')}
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-xs text-slate-200">{member.name}</p>
+                        <p className="text-[8px] text-slate-500 font-bold uppercase tracking-wider truncate mt-0.5">{member.role.replace(/_/g, ' ')}</p>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* GATEWAYS TAB */}
+          {activeTab === 'gateways' && (
+            <div className="p-4 space-y-3">
+              <div className="flex items-center justify-between mb-1 px-2">
+                <h4 className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Outbound Mobile Gateways</h4>
+              </div>
+              <div className="space-y-1">
+                {allChannels
+                  .filter(c => c.id === 'external-push' || c.id === 'imessage' || c.id === 'private-sms')
+                  .map(ch => (
+                    <button
+                      key={ch.id}
+                      onClick={() => { setActiveChannel(ch.id); setActiveDM(null); }}
+                      className={cn(
+                        "w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-xs font-bold transition-all text-left border",
+                        !activeDM && activeChannel === ch.id
+                          ? "bg-[#0A3D2A] text-[#D4AF77] border-[#D4AF77]/30 shadow-md shadow-emerald-950/20"
+                          : "text-slate-400 hover:bg-slate-800/20 hover:text-slate-200 border-transparent"
+                      )}
+                    >
+                      <Megaphone size={13} className={!activeDM && activeChannel === ch.id ? "text-[#D4AF77]" : "text-slate-600"} />
+                      <div>
+                        <p className="font-bold text-xs">{ch.label}</p>
+                        <p className="text-[8px] text-slate-500 font-medium leading-none mt-0.5">{ch.description}</p>
+                      </div>
+                    </button>
+                  ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Founder Mass Broadcast (Visible in Channels tab) */}
+        {isFounder && activeTab === 'channels' && (
+          <div className="p-4 border-t border-slate-800/40">
             <button
               onClick={() => setShowBroadcast(true)}
               className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-rose-600 to-red-700 hover:from-rose-500 hover:to-red-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-md active:scale-95 border border-red-500/20"
@@ -493,96 +666,6 @@ export const InternalMessenger = ({ currentUser }: Props) => {
             </button>
           </div>
         )}
-
-        {/* Channels */}
-        <div className="p-4">
-          <div className="flex items-center justify-between mb-2 px-2">
-            <h4 className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Channels</h4>
-          </div>
-          <div className="space-y-1">
-            {allChannels.map(ch => (
-              <button
-                key={ch.id}
-                onClick={() => { setActiveChannel(ch.id); setActiveDM(null); }}
-                className={cn(
-                  "w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-left",
-                  !activeDM && activeChannel === ch.id
-                    ? "bg-[#0A3D2A] text-[#D4AF77] border border-[#D4AF77]/30 shadow-md shadow-emerald-950/20"
-                    : "text-slate-400 hover:bg-slate-800/20 hover:text-slate-200"
-                )}
-              >
-                <Hash size={13} className={!activeDM && activeChannel === ch.id ? "text-[#D4AF77]" : "text-slate-600"} />
-                {ch.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Group Messages */}
-        <div className="px-4 pb-2">
-          <button
-            onClick={() => setShowGroupCreate(true)}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 border border-dashed border-slate-800 hover:border-[#D4AF77]/30 rounded-xl text-[10px] font-bold text-slate-500 hover:text-[#D4AF77] transition-all"
-          >
-            <Plus size={12} /> New Group
-          </button>
-        </div>
-
-        {/* Direct Messages */}
-        <div className="p-4 border-t border-slate-800/40 flex-1 overflow-hidden flex flex-col">
-          <h4 className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-2 px-2">Directory / DMs</h4>
-          <div className="px-1 mb-3 relative shrink-0">
-            <Search size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-            <input 
-              type="text" 
-              placeholder="Search directory..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  const firstResult = mappedUsers.filter(m => m.id !== currentUser.roleId && (m.name.toLowerCase().includes(searchQuery.toLowerCase()) || m.role.toLowerCase().includes(searchQuery.toLowerCase()) || m.id === 'larry_ai'))[0];
-                  if (firstResult) {
-                    setActiveDM(`dm-${[currentUser.roleId, firstResult.id].sort().join('-')}`);
-                  }
-                }
-              }}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-8 pr-3 py-1.5 text-[11px] text-slate-100 placeholder-slate-600 outline-none focus:border-[#D4AF77]/30 transition-colors"
-            />
-          </div>
-          <div className="space-y-1 flex-1 overflow-y-auto pr-1 scrollbar-thin">
-            {mappedUsers
-              .filter(m => m.id !== currentUser.roleId && (m.name.toLowerCase().includes(searchQuery.toLowerCase()) || m.role.toLowerCase().includes(searchQuery.toLowerCase()) || m.id === 'larry_ai'))
-              .map(member => {
-              const dmId = `dm-${[currentUser.roleId, member.id].sort().join('-')}`;
-              return (
-                <button
-                  key={member.id}
-                  onClick={() => { setActiveDM(dmId); }}
-                  className={cn(
-                    "w-full flex items-center gap-3 px-2.5 py-2 rounded-lg text-xs font-bold transition-all text-left",
-                    activeDM === dmId
-                      ? "bg-[#0A3D2A] text-[#D4AF77] border border-[#D4AF77]/30 shadow-md shadow-emerald-950/20"
-                      : "text-slate-400 hover:bg-slate-800/20 hover:text-slate-200"
-                  )}
-                >
-                  <div className="relative shrink-0">
-                    <div className={cn("w-7 h-7 rounded-lg flex items-center justify-center text-white text-[10px] font-black", member.color)}>
-                      {getInitials(member.name)}
-                    </div>
-                    <Circle
-                      size={8}
-                      className={cn("absolute -bottom-0.5 -right-0.5 fill-current", member.status === 'online' ? 'text-emerald-500' : 'text-amber-500')}
-                    />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-xs text-slate-200">{member.name}</p>
-                    <p className="text-[8px] text-slate-500 font-bold uppercase tracking-wider truncate mt-0.5">{member.role.replace(/_/g, ' ')}</p>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
 
         {/* Current User Footer */}
         <div className="p-4 border-t border-slate-800/40 bg-slate-950/20 shrink-0">
@@ -612,7 +695,7 @@ export const InternalMessenger = ({ currentUser }: Props) => {
               </h4>
               <p className="text-[10px] text-slate-500 font-bold">
                 {activeDM
-                  ? 'Secure peer-to-peer connection'
+                  ? 'Secure private peer-to-peer connection'
                   : allChannels.find(c => c.id === activeChannel)?.description}
               </p>
             </div>
@@ -628,7 +711,24 @@ export const InternalMessenger = ({ currentUser }: Props) => {
           </button>
         </div>
 
-        {/* Messages */}
+        {/* Dynamic Privacy Banner Header */}
+        <div className="bg-[#050a14] border-b border-slate-800/40 px-6 py-2 flex items-center gap-2 shrink-0">
+          <span className={cn(
+            "w-1.5 h-1.5 rounded-full",
+            activeDM ? "bg-emerald-500" :
+            (activeChannel === 'external-push' || activeChannel === 'imessage' || activeChannel === 'private-sms') ? "bg-amber-500 animate-pulse" :
+            "bg-blue-500 animate-pulse"
+          )} />
+          <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">
+            {activeDM
+              ? `🔒 Private DM: Messages are encrypted. Only you and ${mappedUsers.find(m => activeDM.includes(m.id))?.name} can view this log.`
+              : (activeChannel === 'external-push' || activeChannel === 'imessage' || activeChannel === 'private-sms')
+              ? `📞 Outbound Gateway: Connected to Twilio/SendBlue APIs. Messages push to external mobile networks.`
+              : `📢 Public Channel: Shared operational updates. Visible to all staff members in #${activeChannel}.`}
+          </p>
+        </div>
+
+        {/* Messages Feed */}
         <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-[#0a0f1d]/70 scrollbar-thin">
           {msgError && (
             <div className="bg-red-950/20 border border-red-900/40 rounded-xl p-4 mb-4">
@@ -755,7 +855,7 @@ export const InternalMessenger = ({ currentUser }: Props) => {
               value={messageText}
               onChange={(e) => setMessageText(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={(activeChannel === 'external-push' || activeChannel === 'private-sms') && !activeDM ? "Type push notification message..." : `Message ${activeDM ? 'privately' : '#' + activeChannel}...`}
+              placeholder={activeDM ? `Message ${mappedUsers.find(m => activeDM.includes(m.id))?.name} privately...` : (activeChannel === 'external-push' || activeChannel === 'private-sms') ? "Type push notification message..." : `Message #${activeChannel}...`}
               className="flex-1 px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl outline-none focus:border-[#D4AF77]/40 font-medium text-xs text-slate-200 transition-all placeholder-slate-600"
             />
             <button
@@ -870,7 +970,7 @@ export const InternalMessenger = ({ currentUser }: Props) => {
               <X size={14} />
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto p-4 space-y-1 scrollbar-thin">
+          <div className="flex-1 overflow-y-auto p-4 space-y-1 scrollbar-thin bg-slate-950/20">
             {activeDM ? (
               mappedUsers.filter(m => activeDM.includes(m.id) || m.id === currentUser.roleId).map(member => (
                 <div key={member.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-800/10">

@@ -1209,9 +1209,6 @@ export const GGEWorldHRHub = ({ user }: { user?: any }) => {
       <div className="flex-1 flex flex-col h-screen overflow-hidden bg-slate-50 relative">
         <div className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
           <h1 className="text-lg font-black text-slate-800 tracking-tight">Master Oversight Command</h1>
-          <div className="flex items-center gap-4">
-            <span className="text-xs font-bold text-amber-600 uppercase tracking-widest bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200">Sandbox Preview Mode</span>
-          </div>
         </div>
 
         <div className="flex-1 overflow-auto p-8">
