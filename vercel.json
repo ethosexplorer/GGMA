@@ -12,6 +12,7 @@
     { "source": "/api/paypal-webhook", "destination": "/api/webhook?type=paypal" },
     { "source": "/api/calendly-webhook", "destination": "/api/webhook?type=calendly" },
     { "source": "/api/freemius-webhook", "destination": "/api/webhook?type=freemius" },
+    { "source": "/api/sync-gcal", "destination": "/api/sync-calendly?type=gcal" },
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/GGHP_Agency_Valuation_Brief.html", "destination": "/GGHP_Agency_Valuation_Brief.html" },
     { "source": "/GGHP_Cannabis_Business_Valuation_Brief.html", "destination": "/GGHP_Cannabis_Business_Valuation_Brief.html" },
