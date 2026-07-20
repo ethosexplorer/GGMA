@@ -137,7 +137,6 @@ const MERGED_SUB_TABS: Record<string, { id: string, label: string, icon: any }[]
     { id: 'gge_webmail', label: 'Founder Email', icon: Mail },
     { id: 'internal_scheduler', label: 'Operations Calendar', icon: Clock },
     { id: 'realtime_tasks', label: 'Realtime Daily Tasks', icon: Target },
-    { id: 'messages', label: 'Messages', icon: MessageSquare },
     { id: 'operations', label: 'Ops Center (Live)', icon: Cpu },
   ],
   support_comms: [
@@ -237,7 +236,6 @@ const MEGA_COLUMNS = [
       { id: 'gge_webmail', label: 'Founder Email', icon: Mail },
       { id: 'internal_scheduler', label: 'Operations Calendar', icon: Clock },
       { id: 'realtime_tasks', label: 'Realtime Daily Tasks', icon: Target },
-      { id: 'messages', label: 'Messages', icon: MessageSquare },
       { id: 'operations', label: 'Ops Center (Live)', icon: Cpu },
       { id: 'global_directory', label: 'Global Directory', icon: Users },
       { id: 'virtual_attendant', label: 'Call Center', icon: Phone },
@@ -1544,7 +1542,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       case 'roles_duties':
         return <div data-action-bound="true"><RolePermissionsPanel viewerRole={isMonica ? 'compliance_director' : (isRyan ? 'ceo' : 'founder')} /></div>;
       case 'messages':
-        return <div data-action-bound="true"><InternalMessenger currentUser={{ name: fullName, role: userTitle, roleId: isMonica ? 'compliance_director' : (isRyan ? 'ceo' : 'founder') }} /></div>;
+        return <div className="h-[calc(100vh-80px)] w-full overflow-hidden" data-action-bound="true"><InternalMessenger currentUser={{ name: fullName, role: userTitle, roleId: isMonica ? 'compliance_director' : (isRyan ? 'ceo' : 'founder') }} /></div>;
       case 'ai_training':
         return (
           <div className="h-full w-full -m-10 p-10 bg-slate-50" data-action-bound="true">
