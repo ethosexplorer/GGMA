@@ -609,12 +609,16 @@ export const UserCalendar = ({
     const loadEvents = () => {
       let directEvents: CalEvent[] = [];
       let assignedEvents: CalEvent[] = [];
+      let legacyFounderEvents: CalEvent[] = [];
       let signupEvents: CalEvent[] = [];
 
       const updateState = () => {
-        const all = [...directEvents, ...assignedEvents, ...signupEvents].filter(
-          e => !dismissedList.includes(e.id)
-        );
+        const all = [
+          ...directEvents,
+          ...assignedEvents,
+          ...legacyFounderEvents,
+          ...signupEvents
+        ].filter(e => !dismissedList.includes(e.id));
         // Deduplicate
         const unique = all.filter((v, i, a) => a.findIndex(t => t.id === v.id) === i);
         setEvents(unique);
@@ -645,10 +649,11 @@ export const UserCalendar = ({
         updateState();
       });
 
-      // 2. Assignments listener (Personal Schedules only)
+      // 2. Assignments listener (runs for personal schedules and as a fallback)
       let unsubB = () => {};
-      if (calendarMode === 'personal') {
-        const qB = query(eventsRef, where('assignedTo', '==', user?.uid || 'default'));
+      if (calendarMode === 'personal' || isFounder) {
+        const targetId = user?.uid || 'default';
+        const qB = query(eventsRef, where('assignedTo', '==', targetId));
         unsubB = onSnapshot(qB, (snap) => {
           assignedEvents = snap.docs.map(doc => {
             const data = doc.data();
@@ -673,7 +678,35 @@ export const UserCalendar = ({
         });
       }
 
-      // 3. User Signups listener (Founder Master mode only)
+      // 3. Founder Legacy events (renewals, marketing tasks, etc. assigned to 'Founder')
+      let unsubFounderLegacy = () => {};
+      if (isFounder || calendarMode === 'operations') {
+        const qLegacy = query(eventsRef, where('assignedTo', '==', 'Founder'));
+        unsubFounderLegacy = onSnapshot(qLegacy, (snap) => {
+          legacyFounderEvents = snap.docs.map(doc => {
+            const data = doc.data();
+            return {
+              id: `fb_${doc.id}`,
+              title: data.title,
+              date: data.date,
+              startTime: data.startTime || '09:00',
+              endTime: data.endTime || '10:00',
+              category: data.category || 'personal',
+              color: data.color || 'bg-indigo-500',
+              description: data.description,
+              attendees: data.attendees,
+              location: data.location,
+              meetLink: data.meetLink,
+              source: data.source || '',
+              isBusiness: !!data.isBusiness,
+              taskType: data.taskType || ''
+            };
+          });
+          updateState();
+        });
+      }
+
+      // 4. User Signups listener (Founder Master mode only)
       let unsubC = () => {};
       if (calendarMode === 'founder' && isFounder) {
         unsubC = onSnapshot(collection(db, 'users'), (usersSnap) => {
@@ -706,6 +739,7 @@ export const UserCalendar = ({
       unsubscribeEvents = () => {
         unsubA();
         unsubB();
+        unsubFounderLegacy();
         unsubC();
       };
     };
