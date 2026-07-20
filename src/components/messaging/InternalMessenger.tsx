@@ -15,6 +15,10 @@ interface Message {
   text: string;
   timestamp: any;
   isBroadcast?: boolean;
+  isSMS?: boolean;
+  isIMessage?: boolean;
+  isPush?: boolean;
+  gateway?: string;
 }
 
 const CHANNELS = [
@@ -64,6 +68,10 @@ export const InternalMessenger = ({ currentUser }: Props) => {
   const [iMessages, setIMessages] = useState<any[]>([]);
   const [iMessageLoading, setIMessageLoading] = useState(false);
   const [sendMode, setSendMode] = useState<'internal' | 'sms'>('internal');
+  const [messageFoundation, setMessageFoundation] = useState<'internal' | 'push' | 'direct'>('internal');
+  const [activeGateway, setActiveGateway] = useState<'in_app' | 'textbelt' | 'sendblue' | 'fcm'>('in_app');
+  const [showGatewayPopup, setShowGatewayPopup] = useState(false);
+  const [clickedFoundation, setClickedFoundation] = useState<'internal' | 'push' | 'direct' | null>(null);
   const [smsThreads, setSmsThreads] = useState<string[]>([]);
   const [newSmsNumber, setNewSmsNumber] = useState('');
   const [showNewSmsModal, setShowNewSmsModal] = useState(false);
@@ -337,7 +345,15 @@ export const InternalMessenger = ({ currentUser }: Props) => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const sendMessage = async (text: string, channel: string, isBroadcast = false, isSMS = false) => {
+  const sendMessage = async (
+    text: string,
+    channel: string,
+    isBroadcast = false,
+    isSMS = false,
+    isIMessage = false,
+    isPush = false,
+    gateway = 'in_app'
+  ) => {
     if (!text.trim()) return;
     try {
       await addDoc(collection(db, 'internal_messages'), {
@@ -348,6 +364,9 @@ export const InternalMessenger = ({ currentUser }: Props) => {
         timestamp: serverTimestamp(),
         isBroadcast,
         isSMS,
+        isIMessage,
+        isPush,
+        gateway,
       });
     } catch (err: any) {
       console.error('Failed to send message:', err);
@@ -361,6 +380,9 @@ export const InternalMessenger = ({ currentUser }: Props) => {
         timestamp: Timestamp.now(),
         isBroadcast,
         isSMS,
+        isIMessage,
+        isPush,
+        gateway,
       }]);
     }
   };
@@ -368,46 +390,29 @@ export const InternalMessenger = ({ currentUser }: Props) => {
   const handleSend = async () => {
     if (!messageText.trim()) return;
 
-    // Case 1: Private DM with "SMS Mode" enabled
+    let targetPhone = '';
     if (activeDM) {
       const selectedMember = mappedUsers.find(m => activeDM.includes(m.id));
-      const recipientPhone = selectedMember?.phone || selectedMember?.phoneNumber || '';
-      
-      if (sendMode === 'sms') {
-        if (!recipientPhone) {
-          alert("This user does not have a phone number registered to their account.");
-          return;
-        }
-        try {
-          const smsResult = await sendSMS(recipientPhone, messageText);
-          if (smsResult.success) {
-            await sendMessage(`[SMS Sent]: ${messageText}`, activeDM, false, true);
-            setMessageText('');
-            inputRef.current?.focus();
-          } else {
-            alert(`SMS Failed: ${smsResult.error || 'Check textbelt quota'}`);
-          }
-        } catch (err) {
-          console.error(err);
-          alert("Failed to deliver SMS.");
-        }
-        return;
-      }
-      
-      // Standard Internal DM
-      await sendMessage(messageText, activeDM);
-      setMessageText('');
-      inputRef.current?.focus();
-      return;
+      targetPhone = selectedMember?.phone || selectedMember?.phoneNumber || '';
+    } else if (activeChannel.startsWith('sms-')) {
+      targetPhone = activeChannel.replace('sms-', '');
+    } else if (activeChannel === 'external-push' || activeChannel === 'private-sms' || activeChannel === 'imessage') {
+      targetPhone = externalPhone.trim();
     }
 
-    // Case 2: Individual SMS Thread (e.g. sms-+14054927297)
-    if (activeChannel.startsWith('sms-')) {
-      const phoneNumber = activeChannel.replace('sms-', '');
+    // --- GATEWAY DISPATCHER ---
+    
+    // 1. TextBelt SMS Gateway
+    if (activeGateway === 'textbelt') {
+      if (!targetPhone) {
+        alert("Please specify a phone number for direct routing.");
+        return;
+      }
       try {
-        const smsResult = await sendSMS(phoneNumber, messageText);
+        const smsResult = await sendSMS(targetPhone, messageText);
         if (smsResult.success) {
-          await sendMessage(messageText, activeChannel, false, true);
+          const targetChannel = activeDM || `sms-${targetPhone}`;
+          await sendMessage(`[SMS via TextBelt]: ${messageText}`, targetChannel, false, true, false, false, 'textbelt');
           setMessageText('');
           inputRef.current?.focus();
         } else {
@@ -420,60 +425,58 @@ export const InternalMessenger = ({ currentUser }: Props) => {
       return;
     }
 
-    // Case 3: Global / Admin SMS Send (Legacy/Fallback)
-    if (activeChannel === 'external-push' || activeChannel === 'private-sms') {
-      if (!externalPhone.trim()) {
-        alert("Please enter a valid phone number.");
+    // 2. SendBlue iMessage Bridge
+    if (activeGateway === 'sendblue') {
+      if (!targetPhone) {
+        alert("Please specify a phone number for direct routing.");
         return;
       }
       try {
-        const smsResult = await sendSMS(externalPhone, messageText);
-        if (smsResult.success) {
-          const threadChannel = `sms-${externalPhone}`;
-          await sendMessage(messageText, threadChannel, false, true);
-          setActiveChannel(threadChannel);
+        const iMsgResult = await sendIMessage(targetPhone, messageText);
+        if (iMsgResult.success) {
+          const targetChannel = activeDM || `sms-${targetPhone}`;
+          await sendMessage(`[iMessage via SendBlue]: ${messageText}`, targetChannel, false, false, true, false, 'sendblue');
+          if (activeChannel === 'imessage') {
+            setIMessages(prev => [{
+              id: `imsg-out-${Date.now()}`,
+              from: '+16452468277',
+              to: targetPhone,
+              content: messageText,
+              direction: 'outbound',
+              timestamp: new Date().toISOString(),
+              status: 'sent',
+              service: 'iMessage',
+            }, ...prev]);
+          }
           setMessageText('');
           inputRef.current?.focus();
         } else {
-          alert(`SMS Failed: ${smsResult.error || 'Check textbelt quota'}`);
+          alert(`iMessage Failed: ${iMsgResult.error || 'Check SendBlue configuration'}`);
         }
       } catch (err) {
         console.error(err);
-        alert("Failed to send message.");
+        alert("Failed to deliver iMessage.");
       }
       return;
     }
 
-    // Case 4: iMessage channel
-    if (activeChannel === 'imessage') {
-      if (!externalPhone.trim()) { alert('Enter a phone number to send a text'); return; }
+    // 3. Firebase FCM Gateway / Push Notification
+    if (activeGateway === 'fcm') {
       try {
-        const smsResult = await sendSMS(externalPhone, messageText);
-        if (smsResult.success) {
-          setIMessages(prev => [{
-            id: `imsg-out-${Date.now()}`,
-            from: '+16452468277',
-            to: externalPhone,
-            content: messageText,
-            direction: 'outbound',
-            timestamp: new Date().toISOString(),
-            status: 'sent',
-            service: 'SMS (TextBelt)',
-          }, ...prev]);
-          setMessageText('');
-          inputRef.current?.focus();
-        } else {
-          alert(`❌ SMS failed: ${smsResult.error || 'Unknown error'}`);
-        }
+        const targetChannel = activeDM || activeChannel;
+        await sendMessage(`[PUSH ALERT]: ${messageText}`, targetChannel, false, false, false, true, 'fcm');
+        setMessageText('');
+        inputRef.current?.focus();
+        alert(`🔔 Push notification alert successfully dispatched via Firebase Cloud Messaging.`);
       } catch (err) {
         console.error(err);
-        alert('Failed to send SMS');
+        alert("Failed to dispatch push notification.");
       }
       return;
     }
 
-    // Case 5: Standard Channel chat
-    await sendMessage(messageText, activeChannel);
+    // 4. In-App Secure Database Rail (Default)
+    await sendMessage(messageText, activeDM || activeChannel, false, false, false, false, 'in_app');
     const sentText = messageText;
     setMessageText('');
     inputRef.current?.focus();
@@ -557,27 +560,39 @@ export const InternalMessenger = ({ currentUser }: Props) => {
 
   const allChannels = [...CHANNELS, ...customGroups];
 
+  const selectedMember = activeDM ? mappedUsers.find(m => activeDM.includes(m.id)) : null;
+  const recipientPhone = selectedMember?.phone || selectedMember?.phoneNumber || '';
+
+  let targetPhone = '';
+  if (activeDM) {
+    targetPhone = recipientPhone;
+  } else if (activeChannel.startsWith('sms-')) {
+    targetPhone = activeChannel.replace('sms-', '');
+  } else if (activeChannel === 'external-push' || activeChannel === 'private-sms' || activeChannel === 'imessage') {
+    targetPhone = externalPhone.trim();
+  }
+
   return (
-    <div className="flex h-full w-full bg-[#0a0f1d] overflow-hidden text-slate-200 font-sans">
+    <div className="flex h-full w-full bg-[#02050a] overflow-hidden text-slate-200 font-mono border border-emerald-500/20 shadow-[0_0_20px_rgba(16,185,129,0.05)] rounded-[2rem]">
       {/* Sidebar */}
-      <div className="w-68 bg-[#070b14] border-r border-slate-800/50 flex flex-col shrink-0">
+      <div className="w-68 bg-[#04090f]/90 border-r border-emerald-500/20 flex flex-col shrink-0">
         {/* Sidebar Header */}
-        <div className="p-5 border-b border-slate-800/40 flex flex-col shrink-0 bg-slate-950/20">
-          <h3 className="font-black text-xs uppercase tracking-widest text-[#D4AF77] flex items-center gap-2">
+        <div className="p-5 border-b border-emerald-500/20 flex flex-col shrink-0 bg-emerald-950/5">
+          <h3 className="font-black text-xs uppercase tracking-widest text-[#D4AF77] flex items-center gap-2 drop-shadow-[0_0_3px_rgba(212,175,119,0.3)]">
             <MessageSquare size={14} className="text-[#D4AF77]" /> SINC Messenger
           </h3>
-          <p className="text-[9px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">Secure Operations Console</p>
+          <p className="text-[9px] text-emerald-500/50 font-bold uppercase tracking-wider mt-0.5">// Secured Matrix Node</p>
         </div>
 
         {/* Tab Navigation Controls */}
-        <div className="grid grid-cols-3 border-b border-slate-800/40 p-2 shrink-0 gap-1 bg-[#050912]">
+        <div className="grid grid-cols-3 border-b border-emerald-500/20 p-2 shrink-0 gap-1 bg-[#02050a]">
           <button
             onClick={() => { setActiveTab('channels'); setActiveDM(null); }}
             className={cn(
               "py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all border flex flex-col items-center justify-center gap-1",
               activeTab === 'channels'
-                ? "bg-[#0A3D2A] text-[#D4AF77] border-[#D4AF77]/30 shadow-md shadow-emerald-950/20"
-                : "text-slate-500 hover:bg-slate-800/20 border-transparent hover:text-slate-300"
+                ? "bg-[#042012] text-emerald-400 border-emerald-500/40 shadow-sm"
+                : "text-slate-500 hover:bg-slate-800/10 border-transparent hover:text-slate-300"
             )}
             title="Group announcements & team channels"
           >
@@ -590,8 +605,8 @@ export const InternalMessenger = ({ currentUser }: Props) => {
             className={cn(
               "py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all border flex flex-col items-center justify-center gap-1",
               activeTab === 'dms'
-                ? "bg-[#0A3D2A] text-[#D4AF77] border-[#D4AF77]/30 shadow-md shadow-emerald-950/20"
-                : "text-slate-500 hover:bg-slate-800/20 border-transparent hover:text-slate-300"
+                ? "bg-[#042012] text-emerald-400 border-emerald-500/40 shadow-sm"
+                : "text-slate-500 hover:bg-slate-800/10 border-transparent hover:text-slate-300"
             )}
             title="Private direct messages"
           >
@@ -604,8 +619,8 @@ export const InternalMessenger = ({ currentUser }: Props) => {
             className={cn(
               "py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all border flex flex-col items-center justify-center gap-1",
               activeTab === 'gateways'
-                ? "bg-[#0A3D2A] text-[#D4AF77] border-[#D4AF77]/30 shadow-md shadow-emerald-950/20"
-                : "text-slate-500 hover:bg-slate-800/20 border-transparent hover:text-slate-300"
+                ? "bg-[#042012] text-emerald-400 border-emerald-500/40 shadow-sm"
+                : "text-slate-500 hover:bg-slate-800/10 border-transparent hover:text-slate-300"
             )}
             title="External SMS & push notifications"
           >
@@ -812,16 +827,16 @@ export const InternalMessenger = ({ currentUser }: Props) => {
       </div>
 
       {/* Chat Area */}
-      <div className="flex-1 flex flex-col relative bg-[#0a0f1d] min-w-0">
+      <div className="flex-1 flex flex-col relative bg-[#02050a] min-w-0">
         {/* Channel Header */}
-        <div className="h-16 border-b border-slate-800/40 flex items-center justify-between px-6 bg-[#070b14]/50 shrink-0">
+        <div className="h-16 border-b border-emerald-500/20 flex items-center justify-between px-6 bg-[#04090f]/50 shrink-0">
           <div className="flex items-center gap-3">
             {activeDM ? (
-              <Users size={18} className="text-[#D4AF77]" />
+              <Users size={18} className="text-[#D4AF77] drop-shadow-[0_0_3px_rgba(212,175,119,0.3)]" />
             ) : activeChannel.startsWith('sms-') ? (
-              <MessageSquare size={18} className="text-emerald-400 animate-pulse" />
+              <MessageSquare size={18} className="text-emerald-400 animate-pulse drop-shadow-[0_0_3px_rgba(16,185,129,0.3)]" />
             ) : (
-              <Hash size={18} className="text-[#D4AF77]" />
+              <Hash size={18} className="text-[#D4AF77] drop-shadow-[0_0_3px_rgba(212,175,119,0.3)]" />
             )}
             <div>
               <h4 className="font-black text-slate-100 text-sm">
@@ -831,11 +846,11 @@ export const InternalMessenger = ({ currentUser }: Props) => {
                   ? `SMS: ${getThreadLabel(activeChannel.replace('sms-', ''))}`
                   : allChannels.find(c => c.id === activeChannel)?.label}
               </h4>
-              <p className="text-[10px] text-slate-500 font-bold">
+              <p className="text-[10px] text-emerald-500/50 font-bold uppercase tracking-wider">
                 {activeDM
-                  ? 'Secure private peer-to-peer connection'
+                  ? '// SECURE END-TO-END PEER TUNNEL'
                   : activeChannel.startsWith('sms-')
-                  ? 'Individual mobile phone SMS thread via TextBelt'
+                  ? '// INDIVIDUAL MOBILE SMS VIA TEXTBELT'
                   : allChannels.find(c => c.id === activeChannel)?.description}
               </p>
             </div>
@@ -843,8 +858,8 @@ export const InternalMessenger = ({ currentUser }: Props) => {
           <button 
             onClick={() => setShowMembers(!showMembers)} 
             className={cn(
-              "flex items-center gap-2 text-[10px] uppercase tracking-widest font-black px-3 py-1.5 rounded-full transition-colors cursor-pointer border",
-              showMembers ? "bg-[#0A3D2A] text-[#D4AF77] border-[#D4AF77]/30" : "bg-slate-900 border-slate-800 text-slate-400 hover:text-white"
+              "flex items-center gap-2 text-[10px] uppercase tracking-widest font-black px-3 py-1.5 rounded-full transition-colors cursor-pointer border font-mono",
+              showMembers ? "bg-[#042012] text-emerald-400 border-emerald-500/40" : "bg-slate-950 border-slate-900 text-slate-500 hover:text-slate-350"
             )}
           >
             <Users size={12} /> {activeDM ? 2 : (activeChannel.startsWith('group-') ? (customGroups.find(g => g.id === activeChannel)?.members.length || 0) + 1 : mappedUsers.length)} members
@@ -852,24 +867,24 @@ export const InternalMessenger = ({ currentUser }: Props) => {
         </div>
 
         {/* Dynamic Privacy Banner Header */}
-        <div className="bg-[#050a14] border-b border-slate-800/40 px-6 py-2 flex items-center gap-2 shrink-0">
+        <div className="bg-[#04090f]/75 border-b border-emerald-500/20 px-6 py-2 flex items-center gap-2 shrink-0">
           <span className={cn(
-            "w-1.5 h-1.5 rounded-full",
-            activeDM ? "bg-emerald-500" :
-            (activeChannel.startsWith('sms-') || activeChannel === 'external-push' || activeChannel === 'imessage' || activeChannel === 'private-sms') ? "bg-emerald-500 animate-pulse" :
-            "bg-blue-500 animate-pulse"
+            "w-1.5 h-1.5 rounded-full shadow-[0_0_5px_currentColor]",
+            activeDM ? "text-emerald-500 bg-emerald-500" :
+            (activeChannel.startsWith('sms-') || activeChannel === 'external-push' || activeChannel === 'imessage' || activeChannel === 'private-sms') ? "text-amber-500 bg-amber-500 animate-pulse" :
+            "text-emerald-500 bg-emerald-500 animate-pulse"
           )} />
-          <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">
+          <p className="text-[9px] font-black text-emerald-500/60 uppercase tracking-wider">
             {activeDM
-              ? `🔒 Private DM: Messages are encrypted. Only you and ${mappedUsers.find(m => activeDM.includes(m.id))?.name} can view this log.`
+              ? `🔒 SECURE DM: Messages encrypted. Visible only to you and ${mappedUsers.find(m => activeDM.includes(m.id))?.name}.`
               : (activeChannel.startsWith('sms-') || activeChannel === 'external-push' || activeChannel === 'imessage' || activeChannel === 'private-sms')
-              ? `📞 Outbound Gateway: Connected to TextBelt API. Messages deliver to external mobile networks.`
-              : `📢 Public Channel: Shared operational updates. Visible to all staff members in #${activeChannel}.`}
+              ? `📡 OUTBOUND GATEWAY ACTIVE: Connected to textbelt api node.`
+              : `📢 BROADCAST RAIL: Operations updates broadcasted to all active units in #${activeChannel}.`}
           </p>
         </div>
 
         {/* Messages Feed */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-[#0a0f1d]/70 scrollbar-thin">
+        <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-[#02050a] scrollbar-thin">
           {msgError && (
             <div className="bg-red-950/20 border border-red-900/40 rounded-xl p-4 mb-4">
               <p className="text-xs font-black text-red-400 uppercase tracking-wider mb-1">Messaging Error</p>
@@ -963,10 +978,10 @@ export const InternalMessenger = ({ currentUser }: Props) => {
                         <span className="text-[8px] text-slate-500 font-bold">{formatTime(msg.timestamp)}</span>
                       </div>
                       <div className={cn(
-                        "px-3.5 py-2.5 rounded-2xl text-xs font-medium leading-relaxed shadow-md",
+                        "px-3.5 py-2.5 rounded-2xl text-xs font-mono font-medium leading-relaxed shadow-md",
                         isMe
-                          ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-tr-none border border-emerald-500/20"
-                          : "bg-slate-900/80 border border-slate-800/50 text-slate-200 rounded-tl-none backdrop-blur-md"
+                          ? "bg-[#042012] border border-emerald-500/30 text-emerald-300 rounded-tr-none shadow-[0_0_8px_rgba(16,185,129,0.05)]"
+                          : "bg-[#0c141c]/80 border border-emerald-500/10 text-emerald-100/95 rounded-tl-none"
                       )}>
                         {msg.text}
                       </div>
@@ -980,51 +995,75 @@ export const InternalMessenger = ({ currentUser }: Props) => {
         </div>
 
         {/* Input */}
-        <div className="p-4 border-t border-slate-800/40 bg-[#070b14]/50 shrink-0">
-          {activeDM && recipientPhone && (
-            <div className="flex gap-2 mb-2 bg-slate-950 p-1.5 rounded-lg border border-slate-800/80 w-fit">
+        <div className="p-4 border-t border-emerald-500/20 bg-slate-950/80 shrink-0 font-mono">
+          {/* Message Transmitter Command Center */}
+          <div className="mb-3 bg-slate-950/95 border border-emerald-500/25 rounded-xl p-3 shadow-lg shadow-emerald-950/20">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest flex items-center gap-1.5 animate-pulse">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_5px_#10b981]" />
+                Transmitter Carrier: {messageFoundation.toUpperCase()} · Gateway: {activeGateway.toUpperCase()}
+              </span>
+              {recipientPhone && (
+                <span className="text-[8px] text-emerald-600 font-bold uppercase">Target mobile: {recipientPhone}</span>
+              )}
+            </div>
+            
+            <div className="grid grid-cols-3 gap-2">
               <button
                 type="button"
-                onClick={() => setSendMode('internal')}
+                onClick={() => { setClickedFoundation('internal'); setShowGatewayPopup(true); }}
                 className={cn(
-                  "px-3 py-1 rounded text-[10px] font-black uppercase tracking-wider transition-all",
-                  sendMode === 'internal'
-                    ? "bg-[#0A3D2A] text-[#D4AF77] shadow-sm"
-                    : "text-slate-500 hover:text-slate-300"
+                  "px-3 py-2 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all border flex items-center justify-center gap-1.5",
+                  messageFoundation === 'internal'
+                    ? "bg-[#042012] text-emerald-400 border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.1)]"
+                    : "bg-slate-950/40 text-slate-500 border-slate-900 hover:border-slate-800 hover:text-slate-400"
                 )}
               >
-                💬 Internal DM
+                💬 [ INTERNAL ]
               </button>
               <button
                 type="button"
-                onClick={() => setSendMode('sms')}
+                onClick={() => { setClickedFoundation('push'); setShowGatewayPopup(true); }}
                 className={cn(
-                  "px-3 py-1 rounded text-[10px] font-black uppercase tracking-wider transition-all flex items-center gap-1.5",
-                  sendMode === 'sms'
-                    ? "bg-emerald-600 text-white shadow-sm"
-                    : "text-slate-500 hover:text-slate-300"
+                  "px-3 py-2 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all border flex items-center justify-center gap-1.5",
+                  messageFoundation === 'push'
+                    ? "bg-[#042012] text-emerald-400 border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.1)]"
+                    : "bg-slate-950/40 text-slate-500 border-slate-900 hover:border-slate-800 hover:text-slate-400"
                 )}
               >
-                <span>📱 TextBelt SMS</span>
-                <span className="text-[8px] bg-black/30 px-1.5 py-0.5 rounded font-mono font-bold text-slate-350">{recipientPhone}</span>
+                🔔 [ PUSH ]
+              </button>
+              <button
+                type="button"
+                onClick={() => { setClickedFoundation('direct'); setShowGatewayPopup(true); }}
+                className={cn(
+                  "px-3 py-2 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all border flex items-center justify-center gap-1.5",
+                  messageFoundation === 'direct'
+                    ? "bg-[#042012] text-emerald-400 border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.1)]"
+                    : "bg-slate-950/40 text-slate-500 border-slate-900 hover:border-slate-800 hover:text-slate-400"
+                )}
+              >
+                📱 [ DIRECT ]
               </button>
             </div>
-          )}
+          </div>
 
-          {!activeDM && (activeChannel === 'external-push' || activeChannel === 'private-sms' || activeChannel === 'imessage') && (
+          {/* Dialer input for direct routing if no active recipient is resolved */}
+          {activeGateway !== 'in_app' && !activeDM && !activeChannel.startsWith('sms-') && (
             <div className="mb-2">
               <label className="text-[9px] font-black text-emerald-500 uppercase tracking-widest block mb-1">
-                {activeChannel === 'imessage' ? 'iMessage Recipient Phone Number' : activeChannel === 'private-sms' ? 'Private Phone Number (Dialer)' : 'External Phone Number (Dialer)'}
+                {activeGateway === 'fcm' ? 'Direct FCM Client Target ID / Token' : 'Direct Mobile Phone Dialer / Routing Node'}
               </label>
               <input
                 type="tel"
                 value={externalPhone}
                 onChange={(e) => setExternalPhone(e.target.value)}
-                placeholder="+1 (555) 555-5555"
-                className="w-full px-4 py-1.5 bg-slate-950 border border-slate-800 rounded-lg outline-none focus:border-[#D4AF77]/40 font-mono text-emerald-400 transition-all text-xs font-bold"
+                placeholder={activeGateway === 'fcm' ? "e.g. client-device-token-123" : "+1 (555) 555-5555"}
+                className="w-full px-4 py-1.5 bg-slate-950 border border-emerald-500/20 rounded-lg outline-none focus:border-emerald-500 font-mono text-emerald-400 transition-all text-xs font-bold shadow-inner"
               />
             </div>
           )}
+
           <div className="flex items-center gap-3">
             <input
               ref={inputRef}
@@ -1033,20 +1072,22 @@ export const InternalMessenger = ({ currentUser }: Props) => {
               onChange={(e) => setMessageText(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={
-                activeDM
-                  ? (sendMode === 'sms' ? `Send TextBelt SMS to ${mappedUsers.find(m => activeDM.includes(m.id))?.name}...` : `Message ${mappedUsers.find(m => activeDM.includes(m.id))?.name} privately...`)
-                  : activeChannel.startsWith('sms-')
-                  ? `Send SMS to ${getThreadLabel(activeChannel.replace('sms-', ''))}...`
-                  : (activeChannel === 'external-push' || activeChannel === 'private-sms')
-                  ? "Type push notification message..."
-                  : `Message #${activeChannel}...`
+                activeGateway === 'textbelt'
+                  ? `Send SMS to ${targetPhone || 'selected recipient'} via TextBelt Gateway...`
+                  : activeGateway === 'sendblue'
+                  ? `Send iMessage to ${targetPhone || 'selected recipient'} via SendBlue iMsg Bridge...`
+                  : activeGateway === 'fcm'
+                  ? `Dispatch Firebase high-priority FCM Push alert...`
+                  : activeDM
+                  ? `Send secure in-app message to ${mappedUsers.find(m => activeDM.includes(m.id))?.name || 'recipient'}...`
+                  : `Send secure in-app message to #${activeChannel}...`
               }
-              className="flex-1 px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl outline-none focus:border-[#D4AF77]/40 font-medium text-xs text-slate-200 transition-all placeholder-slate-600"
+              className="flex-1 px-4 py-2.5 bg-slate-950 border border-emerald-500/20 rounded-xl outline-none focus:border-emerald-500 font-mono text-xs text-emerald-200 transition-all placeholder-emerald-950/80 shadow-inner"
             />
             <button
               onClick={handleSend}
               disabled={!messageText.trim()}
-              className="p-2.5 bg-[#0A3D2A] text-[#D4AF77] hover:bg-[#134D36] border border-[#D4AF77]/30 disabled:opacity-30 disabled:cursor-not-allowed rounded-xl transition-all shadow-md active:scale-95"
+              className="p-2.5 bg-[#032014] text-emerald-400 hover:bg-[#073622] border border-emerald-500/30 disabled:opacity-30 disabled:cursor-not-allowed rounded-xl transition-all shadow-md active:scale-95"
             >
               <Send size={16} />
             </button>
@@ -1254,6 +1295,113 @@ export const InternalMessenger = ({ currentUser }: Props) => {
             >
               Open Thread
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Gateway Router Console Modal */}
+      {showGatewayPopup && clickedFoundation && (
+        <div className="fixed inset-0 z-[100000] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 font-mono animate-in fade-in duration-200">
+          <div className="bg-[#02050a] border-2 border-emerald-500/30 rounded-2xl w-full max-w-md overflow-hidden shadow-[0_0_30px_rgba(16,185,129,0.2)] animate-in zoom-in-95 duration-200 flex flex-col">
+            {/* Terminal Header */}
+            <div className="p-4 border-b border-emerald-500/20 bg-[#041a10]/50 flex justify-between items-center">
+              <div>
+                <h3 className="text-xs font-black text-emerald-400 uppercase tracking-widest flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                  Gateway Router Console
+                </h3>
+                <p className="text-[8px] text-emerald-600 uppercase mt-0.5">Select active transmission carrier</p>
+              </div>
+              <button 
+                onClick={() => { setShowGatewayPopup(false); setClickedFoundation(null); }}
+                className="text-emerald-500 hover:text-emerald-300 transition-colors"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Carrier Options List */}
+            <div className="p-5 space-y-4">
+              <p className="text-[10px] text-emerald-500/60 uppercase tracking-wider mb-2">
+                Available gateways for {clickedFoundation.toUpperCase()}:
+              </p>
+
+              <div className="space-y-2.5">
+                {clickedFoundation === 'internal' && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMessageFoundation('internal');
+                        setActiveGateway('in_app');
+                        setShowGatewayPopup(false);
+                        setClickedFoundation(null);
+                      }}
+                      className="w-full text-left p-3.5 bg-slate-950 hover:bg-[#032014] border border-slate-900 hover:border-emerald-500/30 rounded-xl transition-all group flex flex-col"
+                    >
+                      <span className="text-xs font-black text-emerald-400 group-hover:text-emerald-300">Option [1]: In-App Secure Rail</span>
+                      <span className="text-[9px] text-slate-500 mt-1">Routes messages internally to standard GGHP-OS channels and direct message logs. (Fast / Free)</span>
+                    </button>
+                  </>
+                )}
+
+                {clickedFoundation === 'push' && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMessageFoundation('push');
+                        setActiveGateway('fcm');
+                        setShowGatewayPopup(false);
+                        setClickedFoundation(null);
+                      }}
+                      className="w-full text-left p-3.5 bg-slate-950 hover:bg-[#032014] border border-slate-900 hover:border-emerald-500/30 rounded-xl transition-all group flex flex-col"
+                    >
+                      <span className="text-xs font-black text-emerald-400 group-hover:text-emerald-300">Option [1]: Firebase FCM Gateway</span>
+                      <span className="text-[9px] text-slate-500 mt-1">Triggers a high-priority system-level alert push notification to the recipient's authenticated mobile device.</span>
+                    </button>
+                  </>
+                )}
+
+                {clickedFoundation === 'direct' && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMessageFoundation('direct');
+                        setActiveGateway('textbelt');
+                        setShowGatewayPopup(false);
+                        setClickedFoundation(null);
+                      }}
+                      className="w-full text-left p-3.5 bg-slate-950 hover:bg-[#032014] border border-slate-900 hover:border-emerald-500/30 rounded-xl transition-all group flex flex-col"
+                    >
+                      <span className="text-xs font-black text-emerald-400 group-hover:text-emerald-300">Option [1]: TextBelt SMS Gateway</span>
+                      <span className="text-[9px] text-slate-500 mt-1">Dispatches SMS dynamically through TextBelt cellular routing node to any mobile number (Carrier fees apply).</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMessageFoundation('direct');
+                        setActiveGateway('sendblue');
+                        setShowGatewayPopup(false);
+                        setClickedFoundation(null);
+                      }}
+                      className="w-full text-left p-3.5 bg-slate-950 hover:bg-[#032014] border border-slate-900 hover:border-emerald-500/30 rounded-xl transition-all group flex flex-col"
+                    >
+                      <span className="text-xs font-black text-emerald-400 group-hover:text-emerald-300">Option [2]: SendBlue iMessage Bridge</span>
+                      <span className="text-[9px] text-slate-500 mt-1">Routes via Apple iMessage network with blue bubble integration and automatic standard SMS fallback.</span>
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Footer info */}
+            <div className="p-3 border-t border-emerald-500/20 bg-slate-950 flex justify-between items-center text-[8px] text-emerald-600/60 uppercase">
+              <span>GGHP Carrier Control v1.0.4</span>
+              <span>SECURE SECCOMP SHELL</span>
+            </div>
           </div>
         </div>
       )}
