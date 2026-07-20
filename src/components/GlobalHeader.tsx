@@ -31,14 +31,13 @@ export const GlobalHeader = ({
   onHome?: () => void
 }) => {
   const [searchQuery, setSearchQuery] = React.useState("");
-  // Only show if logged in
-  if (!userProfile) return null;
 
   // Only Founder gets God Mode — case-insensitive match
-  const isGodModeEligible = userProfile.email?.toLowerCase() === 'globalgreenhp@gmail.com';
+  const isGodModeEligible = userProfile?.email?.toLowerCase() === 'globalgreenhp@gmail.com';
 
   // Parse allowed jurisdictions for this user
   const allowedJurisdictions = React.useMemo(() => {
+    if (!userProfile) return ['Oklahoma'];
     if (isGodModeEligible) return STATES;
     const userJuris = userProfile.jurisdictions || userProfile.accessibleStates || userProfile.jurisdiction || userProfile.homeState || 'Oklahoma';
     if (Array.isArray(userJuris)) {
@@ -49,6 +48,9 @@ export const GlobalHeader = ({
     }
     return ['Oklahoma'];
   }, [userProfile, isGodModeEligible]);
+
+  // Only show if logged in
+  if (!userProfile) return null;
 
   const canSwitchJurisdictions = isGodModeEligible || allowedJurisdictions.length > 1;
 
