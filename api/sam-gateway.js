@@ -103,7 +103,7 @@ export default async function handler(req, res) {
       const results = [];
       for (const ent of fallbackEntities) {
         try {
-          const url = `https://api.sam.gov/prod/entity-information/v3/entities?api_key=${SAM_API_KEY}&uei=${ent.uei}`;
+          const url = `https://api.sam.gov/prod/entity-information/v3/entities?api_key=${SAM_API_KEY}&ueiSAM=${ent.uei}`;
           const response = await fetch(url);
           if (response.ok) {
             const data = await response.json();
@@ -189,7 +189,12 @@ export default async function handler(req, res) {
       }
 
       try {
-        const url = `https://api.sam.gov/prod/entity-information/v3/entities?api_key=${SAM_API_KEY}&uei=${uei}`;
+        let url = `https://api.sam.gov/prod/entity-information/v3/entities?api_key=${SAM_API_KEY}`;
+        if (uei.trim().length === 5) {
+          url += `&cageCode=${encodeURIComponent(uei.trim())}`;
+        } else {
+          url += `&ueiSAM=${encodeURIComponent(uei.trim())}`;
+        }
         const response = await fetch(url);
         if (response.ok) {
           const data = await response.json();
