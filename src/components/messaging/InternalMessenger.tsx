@@ -28,7 +28,8 @@ const CHANNELS = [
 ];
 
 const CORE_TEAM = [
-  { id: 'ceo', name: 'Ryan Ferrari', role: 'CEO', color: 'bg-blue-500', status: 'online', phone: '+14054927297' },
+  { id: 'founder', name: 'Shantell Robinson', role: 'Founder', color: 'bg-emerald-600', status: 'online', phone: '+14054927297' },
+  { id: 'ceo', name: 'Ryan Ferrari', role: 'CEO', color: 'bg-blue-500', status: 'online', phone: '' },
   { id: 'compliance_director', name: 'Monica Green', role: 'Compliance Director', color: 'bg-emerald-500', status: 'away', phone: '+17754421135' },
   { id: 'advisor', name: 'Bob Moore', role: 'Advisor', color: 'bg-slate-700', status: 'online', phone: '+12142992325' },
   { id: 'larry_ai', name: 'L.A.R.R.Y', role: 'Chief of Operations AI', color: 'bg-[#1a4731]', status: 'online', phone: '' },
