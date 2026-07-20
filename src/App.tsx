@@ -159,6 +159,16 @@ class ErrorBoundary extends Component<any, any> {
 
   componentDidCatch(error: any, errorInfo: any) {
     console.error("Uncaught error:", error, errorInfo);
+    
+    const errMessage = String(error?.message || error || '').toLowerCase();
+    if (
+      errMessage.includes('failed to fetch dynamically imported module') ||
+      errMessage.includes('loading chunk') ||
+      errMessage.includes('chunkloaderror')
+    ) {
+      console.warn("Dynamic import / chunk load error detected (deployment update). Reloading page...");
+      window.location.reload();
+    }
   }
 
   render() {
