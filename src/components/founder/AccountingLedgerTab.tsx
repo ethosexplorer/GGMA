@@ -7,7 +7,7 @@ import { MasterBankingInfo } from '../MasterBankingInfo';
 
 export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string, liveStats: { totalUsers: string; netRevenue: string } }) => {
   const [isAddingLedgerEntry, setIsAddingLedgerEntry] = useState<'revenue' | 'payable' | null>(null);
-  const [ledgerForm, setLedgerForm] = useState({ name: '', amount: '', net_profit: '', due_date: '', status: 'Unpaid' });
+  const [ledgerForm, setLedgerForm] = useState({ name: '', amount: '', net_profit: '', due_date: '', status: 'Unpaid', payment_date: '' });
   const [editingNetProfitId, setEditingNetProfitId] = useState<number | string | null>(null);
   const [editNetProfitValue, setEditNetProfitValue] = useState('');
   const [founderLedger, setFounderLedger] = useState<any[]>([]);
@@ -15,7 +15,7 @@ export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string,
 
   // Edit state for revenue entries
   const [editingRevenueId, setEditingRevenueId] = useState<number | string | null>(null);
-  const [editRevenueForm, setEditRevenueForm] = useState({ origin_vector: '', type: '', gross_revenue: '', net_profit: '', status: '' });
+  const [editRevenueForm, setEditRevenueForm] = useState({ origin_vector: '', type: '', gross_revenue: '', net_profit: '', status: '', payment_date: '' });
 
   // Edit state for payable entries
   const [editingPayableId, setEditingPayableId] = useState<number | null>(null);
@@ -51,11 +51,12 @@ export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string,
     if (isAddingLedgerEntry === 'revenue') {
       const grossAmt = ledgerForm.amount || '$0';
       const netAmt = ledgerForm.net_profit || grossAmt;
-      const newEntry = { n: ledgerForm.name || 'Custom Revenue Stream', t: 'Manual Entry', g: grossAmt, net: netAmt, s: 'Settled', c: 'bg-emerald-600' };
+      const payDate = ledgerForm.payment_date || new Date().toISOString().split('T')[0];
+      const newEntry = { n: ledgerForm.name || 'Custom Revenue Stream', t: 'Manual Entry', g: grossAmt, net: netAmt, s: 'Settled', c: 'bg-emerald-600', payment_date: payDate };
       setFounderLedger([newEntry, ...founderLedger]);
       turso.execute({
-        sql: "INSERT INTO founder_ledger (origin_vector, type, gross_revenue, net_profit, status, color, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        args: [newEntry.n, newEntry.t, newEntry.g, newEntry.net, newEntry.s, newEntry.c, new Date().toISOString()]
+        sql: "INSERT INTO founder_ledger (origin_vector, type, gross_revenue, net_profit, status, color, created_at, payment_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        args: [newEntry.n, newEntry.t, newEntry.g, newEntry.net, newEntry.s, newEntry.c, new Date().toISOString(), payDate]
       }).then(() => refreshLedger()).catch(console.error);
       turso.execute({
         sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)",
@@ -86,7 +87,7 @@ export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string,
       alert("Account payable added: " + newPayable.name + " — " + newPayable.amount + "\n\n[Live Production Transaction Logged]");
     }
     setIsAddingLedgerEntry(null);
-    setLedgerForm({ name: '', amount: '', net_profit: '', due_date: '', status: 'Unpaid' });
+    setLedgerForm({ name: '', amount: '', net_profit: '', due_date: '', status: 'Unpaid', payment_date: '' });
   };
 
   const handleTogglePayableStatus = (id: number, newStatus: 'Paid' | 'Unpaid') => {
@@ -111,7 +112,8 @@ export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string,
       type: entry.type || entry.t || '',
       gross_revenue: entry.gross_revenue || entry.g || '',
       net_profit: entry.net_profit || entry.net || '',
-      status: entry.status || entry.s || ''
+      status: entry.status || entry.s || '',
+      payment_date: entry.payment_date || ''
     });
   };
 
@@ -120,8 +122,8 @@ export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string,
     const colorMap: Record<string, string> = { 'Settled': 'bg-emerald-600', 'Pending': 'bg-amber-500', 'Refunded': 'bg-rose-500', 'Voided': 'bg-slate-500' };
     const newColor = colorMap[editRevenueForm.status] || 'bg-emerald-600';
     turso.execute({
-      sql: "UPDATE founder_ledger SET origin_vector = ?, type = ?, gross_revenue = ?, net_profit = ?, status = ?, color = ? WHERE id = ?",
-      args: [editRevenueForm.origin_vector, editRevenueForm.type, editRevenueForm.gross_revenue, editRevenueForm.net_profit, editRevenueForm.status, newColor, editingRevenueId]
+      sql: "UPDATE founder_ledger SET origin_vector = ?, type = ?, gross_revenue = ?, net_profit = ?, status = ?, color = ?, payment_date = ? WHERE id = ?",
+      args: [editRevenueForm.origin_vector, editRevenueForm.type, editRevenueForm.gross_revenue, editRevenueForm.net_profit, editRevenueForm.status, newColor, editRevenueForm.payment_date || null, editingRevenueId]
     }).then(() => {
       turso.execute({
         sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)",
@@ -243,17 +245,29 @@ export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string,
               />
             </div>
             {isAddingLedgerEntry === 'revenue' && (
-              <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Net Profit</label>
-                <input
-                  type="text"
-                  placeholder="e.g. $55.00 (leave blank to use gross)"
-                  value={ledgerForm.net_profit}
-                  onChange={(e) => setLedgerForm({ ...ledgerForm, net_profit: e.target.value })}
-                  className="w-full px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20 font-medium"
-                />
-                <p className="text-[10px] text-slate-400 mt-1 font-medium">The actual profit after costs. If blank, defaults to gross amount.</p>
-              </div>
+              <>
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Net Profit</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. $55.00 (leave blank to use gross)"
+                    value={ledgerForm.net_profit}
+                    onChange={(e) => setLedgerForm({ ...ledgerForm, net_profit: e.target.value })}
+                    className="w-full px-4 py-3 bg-emerald-50 border border-emerald-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20 font-medium"
+                  />
+                  <p className="text-[10px] text-slate-400 mt-1 font-medium">The actual profit after costs. If blank, defaults to gross amount.</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">Payment Date</label>
+                  <input
+                    type="date"
+                    value={ledgerForm.payment_date}
+                    onChange={(e) => setLedgerForm({ ...ledgerForm, payment_date: e.target.value })}
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20 font-medium"
+                  />
+                  <p className="text-[10px] text-slate-400 mt-1 font-medium">Date payment was received. Defaults to today if left blank.</p>
+                </div>
+              </>
             )}
             {isAddingLedgerEntry === 'payable' && (
               <>
@@ -316,8 +330,8 @@ export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string,
             <div className="flex justify-between items-center mb-6">
               <h3 className="font-black text-slate-800 text-lg flex items-center gap-3"><Activity size={20} className="text-emerald-600" /> Accounts Receivable (Revenue Streams)</h3>
               <div className="flex gap-2">
-                <button onClick={() => { setIsAddingLedgerEntry('revenue'); setLedgerForm({ name: '', amount: '', net_profit: '', due_date: '', status: 'Unpaid' }); }} className="px-4 py-2 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-100 transition-colors">+ Add Revenue Stream</button>
-                <button onClick={() => { setIsAddingLedgerEntry('revenue'); setLedgerForm({ name: '', amount: '', net_profit: '', due_date: '', status: 'Unpaid' }); }} className="px-4 py-2 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-100 transition-colors">💵 Post Payment</button>
+                <button onClick={() => { setIsAddingLedgerEntry('revenue'); setLedgerForm({ name: '', amount: '', net_profit: '', due_date: '', status: 'Unpaid', payment_date: '' }); }} className="px-4 py-2 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-100 transition-colors">+ Add Revenue Stream</button>
+                <button onClick={() => { setIsAddingLedgerEntry('revenue'); setLedgerForm({ name: '', amount: '', net_profit: '', due_date: '', status: 'Unpaid', payment_date: '' }); }} className="px-4 py-2 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-100 transition-colors">💵 Post Payment</button>
                 <button onClick={() => {
                   import('../../lib/turso').then(({ turso }) => {
                     return turso.execute({
@@ -335,6 +349,7 @@ export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string,
                 <tr>
                   <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest">Origin Vector</th>
                   <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest">Type</th>
+                  <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest">Date</th>
                   <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest">Gross Revenue</th>
                   <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest">Net Profit</th>
                   <th className="px-6 py-4 font-black text-slate-500 text-[10px] uppercase tracking-widest">Status</th>
@@ -343,7 +358,7 @@ export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string,
               </thead>
               <tbody className="divide-y divide-slate-50">
                 {(founderLedger.length > 0 ? founderLedger : []).length === 0 ? (
-                  <tr><td colSpan={6} className="px-6 py-8 text-center text-slate-400 font-medium">No revenue streams recorded yet. Click "+ Add Revenue Stream" to create one.</td></tr>
+                  <tr><td colSpan={7} className="px-6 py-8 text-center text-slate-400 font-medium">No revenue streams recorded yet. Click "+ Add Revenue Stream" to create one.</td></tr>
                 ) : null}
                 {founderLedger.map((u: any, i: number) => {
                   const isEditing = editingRevenueId === u.id && u.id != null;
@@ -357,6 +372,10 @@ export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string,
                         </td>
                         <td className="px-4 py-3">
                           <input type="text" value={editRevenueForm.type} onChange={e => setEditRevenueForm({ ...editRevenueForm, type: e.target.value })}
+                            className="w-full px-3 py-2 border border-indigo-300 rounded-lg text-sm font-medium bg-white focus:ring-2 focus:ring-indigo-500 outline-none" />
+                        </td>
+                        <td className="px-4 py-3">
+                          <input type="date" value={editRevenueForm.payment_date} onChange={e => setEditRevenueForm({ ...editRevenueForm, payment_date: e.target.value })}
                             className="w-full px-3 py-2 border border-indigo-300 rounded-lg text-sm font-medium bg-white focus:ring-2 focus:ring-indigo-500 outline-none" />
                         </td>
                         <td className="px-4 py-3">
@@ -399,6 +418,7 @@ export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string,
                         </div>
                       </td>
                       <td className="px-6 py-5 text-xs font-bold text-slate-500">{u.type || u.t}</td>
+                      <td className="px-6 py-5 text-xs font-bold text-slate-500">{u.payment_date ? new Date(u.payment_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}</td>
                       <td className="px-6 py-5 font-mono font-bold text-slate-700">{u.gross_revenue || u.g}</td>
                       <td className="px-6 py-5">
                         {editingNetProfitId === (u.id || i) ? (
@@ -446,7 +466,7 @@ export const AccountingLedgerTab = ({ fullName, liveStats }: { fullName: string,
                       </td>
                       <td className="px-6 py-5 text-right">
                         {u.id != null && (
-                          <div className="flex items-center justify-end gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="flex items-center justify-end gap-1.5">
                             <button onClick={() => handleStartEditRevenue(u)} className="p-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-lg transition-colors border border-indigo-200" title="Edit entry">
                               <Pencil size={13} />
                             </button>

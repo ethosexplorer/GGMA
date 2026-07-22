@@ -86,6 +86,9 @@ export const initDatabase = async () => {
       )
     `);
 
+    // Ensure payment_date column exists (added for AR date tracking)
+    try { await turso.execute('ALTER TABLE founder_ledger ADD COLUMN payment_date TEXT'); } catch (e) { /* already exists */ }
+
     // Seed founder_ledger if empty
     const ledgerCheck = await turso.execute('SELECT COUNT(*) as count FROM founder_ledger');
     if (ledgerCheck.rows[0].count === 0) {
