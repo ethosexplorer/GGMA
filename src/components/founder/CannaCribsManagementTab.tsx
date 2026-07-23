@@ -615,26 +615,26 @@ export const CannaCribsManagementTab = () => {
   const totalTierRevenue = tierRevenue.reduce((sum, t) => sum + t.revenue, 0);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg shadow-green-500/20"><Leaf className="text-white" size={24} /></div>
+        <div className="flex items-center gap-2">
+          <div className="w-9 h-9 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/20"><Leaf className="text-white" size={18} /></div>
           <div>
-            <h1 className="text-2xl font-black text-slate-900 flex items-center gap-2"><span className="text-green-600">Canna</span><span className="text-amber-500">Cribs</span><span className="text-slate-400 text-sm font-bold">Management</span></h1>
-            <p className="text-xs text-slate-500">Cannabis-Friendly Real Estate Platform — <span className="text-emerald-600 font-bold">Live Production</span></p>
+            <h1 className="text-lg font-black text-slate-900 flex items-center gap-1.5"><span className="text-green-600">Canna</span><span className="text-amber-500">Cribs</span><span className="text-slate-400 text-xs font-bold">Management</span></h1>
+            <p className="text-[10px] text-slate-500">Cannabis-Friendly Real Estate — <span className="text-emerald-600 font-bold">Live Production</span></p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <a href="/cannacribs" target="_blank" className="px-4 py-2 bg-slate-100 text-slate-600 text-xs font-bold rounded-lg hover:bg-slate-200 transition-all flex items-center gap-1.5"><Eye size={14} /> View Live Site</a>
-          <button onClick={() => setShowAddProperty(true)} className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xs font-bold rounded-lg hover:from-green-400 hover:to-emerald-500 transition-all shadow-sm flex items-center gap-1.5"><Plus size={14} /> Add Property</button>
+          <a href="/cannacribs" target="_blank" className="px-3 py-1.5 bg-slate-100 text-slate-600 text-[10px] font-bold rounded-lg hover:bg-slate-200 transition-all flex items-center gap-1"><Eye size={12} /> Live Site</a>
+          <button onClick={() => setShowAddProperty(true)} className="px-3 py-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-[10px] font-bold rounded-lg hover:from-green-400 hover:to-emerald-500 transition-all shadow-sm flex items-center gap-1"><Plus size={12} /> Add Property</button>
         </div>
       </div>
 
       {/* Sub-Tabs */}
-      <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl overflow-x-auto">
+      <div className="flex items-center gap-0.5 bg-slate-100 p-0.5 rounded-lg overflow-x-auto">
         {subTabs.map(t => (
-          <button key={t.id} onClick={() => setSubTab(t.id)} className={cn('flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap', subTab === t.id ? 'bg-white text-green-700 shadow-sm' : 'text-slate-500 hover:text-slate-700')}><t.icon size={14} />{t.label}</button>
+          <button key={t.id} onClick={() => setSubTab(t.id)} className={cn('flex items-center gap-1 px-2.5 py-1.5 rounded-md text-[11px] font-bold transition-all whitespace-nowrap', subTab === t.id ? 'bg-white text-green-700 shadow-sm' : 'text-slate-500 hover:text-slate-700')}><t.icon size={12} />{t.label}</button>
         ))}
       </div>
 
@@ -905,59 +905,63 @@ export const CannaCribsManagementTab = () => {
           </div>
 
           {/* Stats Row */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-5 gap-2">
             {[
               { label: 'Active Partners', value: String(activePartners.length), icon: Link2, color: 'text-blue-600', bg: 'bg-blue-50' },
               { label: 'Total Referrals', value: String(referralStats.totalClicks), icon: Zap, color: 'text-amber-600', bg: 'bg-amber-50' },
               { label: 'Quoted', value: String(referralStats.quoted), icon: FileText, color: 'text-purple-600', bg: 'bg-purple-50' },
               { label: 'Converted', value: String(referralStats.converted), icon: CheckCircle, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-              { label: 'Conversion Rate', value: referralStats.totalClicks > 0 ? `${Math.round((referralStats.converted / referralStats.totalClicks) * 100)}%` : '—', icon: BarChart3, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+              { label: 'Conv. Rate', value: referralStats.totalClicks > 0 ? `${Math.round((referralStats.converted / referralStats.totalClicks) * 100)}%` : '—', icon: BarChart3, color: 'text-indigo-600', bg: 'bg-indigo-50' },
             ].map((s, i) => (
-              <div key={i} className="bg-white rounded-xl border border-slate-200 p-4">
-                <div className={cn('w-9 h-9 rounded-lg flex items-center justify-center mb-2', s.bg)}><s.icon size={16} className={s.color} /></div>
-                <div className="text-xl font-black text-slate-900">{s.value}</div>
-                <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{s.label}</div>
+              <div key={i} className="bg-white rounded-lg border border-slate-200 p-2.5">
+                <div className="flex items-center gap-2">
+                  <div className={cn('w-7 h-7 rounded-md flex items-center justify-center shrink-0', s.bg)}><s.icon size={13} className={s.color} /></div>
+                  <div>
+                    <div className="text-base font-black text-slate-900 leading-tight">{s.value}</div>
+                    <div className="text-[9px] text-slate-400 font-bold uppercase">{s.label}</div>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
 
           {/* Partner Cards */}
-          <div className="bg-white rounded-xl border border-slate-200 p-6">
-            <h4 className="font-bold text-sm text-slate-900 mb-4 flex items-center gap-2"><Link2 size={16} className="text-blue-600" /> Affiliate Partners</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-white rounded-lg border border-slate-200 p-4">
+            <h4 className="font-bold text-xs text-slate-900 mb-3 flex items-center gap-2"><Link2 size={14} className="text-blue-600" /> Affiliate Partners</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {insurancePartners.map(partner => (
-                <div key={partner._docId || partner.id} className={cn('rounded-xl border-2 p-5 transition-all', partner.active ? 'border-blue-200 bg-blue-50/30 hover:shadow-md' : 'border-slate-200 bg-slate-50 opacity-60')}>
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl">{partner.logo}</span>
+                <div key={partner._docId || partner.id} className={cn('rounded-lg border p-3 transition-all', partner.active ? 'border-blue-200 bg-blue-50/30 hover:shadow-md' : 'border-slate-200 bg-slate-50 opacity-60')}>
+                  <div className="flex items-start justify-between mb-1.5">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">{partner.logo}</span>
                       <div>
-                        <div className="font-black text-slate-900">{partner.name}</div>
-                        <div className="text-[10px] text-slate-500">{partner.payoutType} • {partner.cookieDays}-day cookie</div>
+                        <div className="text-sm font-black text-slate-900">{partner.name}</div>
+                        <div className="text-[9px] text-slate-500">{partner.payoutType} • {partner.cookieDays}d cookie</div>
                       </div>
                     </div>
                     <div className="flex items-center gap-1">
-                      <button onClick={() => togglePartner(partner)} className={cn('px-2 py-1 rounded-lg text-[10px] font-bold transition-all', partner.active ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-slate-200 text-slate-500 hover:bg-slate-300')}>
-                        {partner.active ? '✓ Active' : 'Inactive'}
+                      <button onClick={() => togglePartner(partner)} className={cn('px-1.5 py-0.5 rounded text-[9px] font-bold transition-all', partner.active ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-slate-200 text-slate-500 hover:bg-slate-300')}>
+                        {partner.active ? '✓ On' : 'Off'}
                       </button>
-                      <button onClick={() => deletePartner(partner)} className="p-1 hover:bg-red-50 rounded-lg"><Trash2 size={12} className="text-red-400" /></button>
+                      <button onClick={() => deletePartner(partner)} className="p-0.5 hover:bg-red-50 rounded"><Trash2 size={11} className="text-red-400" /></button>
                     </div>
                   </div>
-                  <p className="text-xs text-slate-600 mb-3 leading-relaxed">{partner.description}</p>
+                  <p className="text-[10px] text-slate-600 mb-2 leading-relaxed line-clamp-2">{partner.description}</p>
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg font-black text-green-600">{partner.payoutAmount}</span>
-                      <span className="text-[10px] text-slate-400">per referral</span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-sm font-black text-green-600">{partner.payoutAmount}</span>
+                      <span className="text-[9px] text-slate-400">per ref</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <button onClick={() => copyAffiliateLink(partner.url, partner.id)} className="px-3 py-1.5 bg-white border border-slate-200 hover:border-blue-300 text-xs font-bold text-slate-600 rounded-lg flex items-center gap-1 transition-all">
-                        {copiedLink === partner.id ? <><CheckCircle size={12} className="text-green-500" /> Copied!</> : <><Copy size={12} /> Copy Link</>}
+                      <button onClick={() => copyAffiliateLink(partner.url, partner.id)} className="px-2 py-1 bg-white border border-slate-200 hover:border-blue-300 text-[10px] font-bold text-slate-600 rounded flex items-center gap-0.5 transition-all">
+                        {copiedLink === partner.id ? <><CheckCircle size={10} className="text-green-500" /> Copied</> : <><Copy size={10} /> Copy</>}
                       </button>
-                      <a href={partner.url} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-lg flex items-center gap-1"><ExternalLink size={12} /> Visit</a>
+                      <a href={partner.url} target="_blank" rel="noopener noreferrer" className="px-2 py-1 bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-bold rounded flex items-center gap-0.5"><ExternalLink size={10} /> Visit</a>
                     </div>
                   </div>
                 </div>
               ))}
-              {insurancePartners.length === 0 && <p className="col-span-2 text-xs text-slate-400 text-center py-6">Loading affiliate partners...</p>}
+              {insurancePartners.length === 0 && <p className="col-span-2 text-xs text-slate-400 text-center py-4">Loading affiliate partners...</p>}
             </div>
           </div>
 
@@ -1002,23 +1006,23 @@ export const CannaCribsManagementTab = () => {
                 ))}
               </tbody>
             </table>
-            {insuranceReferrals.length === 0 && <div className="p-8 text-center"><div className="text-3xl mb-2">🛡️</div><p className="text-sm text-slate-400 font-bold">No referrals yet</p><p className="text-xs text-slate-400 mt-1">Approve a tenant application to start tracking insurance referrals</p></div>}
+            {insuranceReferrals.length === 0 && <div className="p-5 text-center"><div className="text-2xl mb-1">🛡️</div><p className="text-xs text-slate-400 font-bold">No referrals yet</p><p className="text-[10px] text-slate-400">Approve a tenant to start tracking insurance referrals</p></div>}
           </div>
 
           {/* How It Works */}
-          <div className="bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl border border-slate-200 p-6">
-            <h4 className="font-bold text-sm text-slate-900 mb-4 flex items-center gap-2"><Sparkles size={16} className="text-amber-500" /> How Insurance Affiliates Work</h4>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="bg-gradient-to-r from-slate-50 to-blue-50 rounded-lg border border-slate-200 p-4">
+            <h4 className="font-bold text-xs text-slate-900 mb-3 flex items-center gap-2"><Sparkles size={14} className="text-amber-500" /> How Insurance Affiliates Work</h4>
+            <div className="grid grid-cols-4 gap-3">
               {[
-                { step: '1', title: 'Tenant Approved', desc: 'Application status changes to Approved', icon: '✅' },
-                { step: '2', title: 'Insurance Prompt', desc: 'Partner cards shown in application detail', icon: '🛡️' },
-                { step: '3', title: 'Click & Track', desc: 'Referral logged to Firestore, tenant sent to partner', icon: '🔗' },
-                { step: '4', title: 'Earn Commission', desc: '$3-$5 per lead or variable CPA on conversion', icon: '💰' },
+                { step: '1', title: 'Approved', desc: 'Tenant application approved', icon: '✅' },
+                { step: '2', title: 'Prompt', desc: 'Partner cards shown in detail', icon: '🛡️' },
+                { step: '3', title: 'Click & Track', desc: 'Logged to Firestore, opens partner', icon: '🔗' },
+                { step: '4', title: 'Commission', desc: '$3-$5/lead or CPA', icon: '💰' },
               ].map((s, i) => (
                 <div key={i} className="text-center">
-                  <div className="text-2xl mb-2">{s.icon}</div>
-                  <div className="text-xs font-black text-slate-900 mb-1">Step {s.step}: {s.title}</div>
-                  <div className="text-[10px] text-slate-500">{s.desc}</div>
+                  <div className="text-lg mb-1">{s.icon}</div>
+                  <div className="text-[10px] font-black text-slate-900 mb-0.5">{s.step}. {s.title}</div>
+                  <div className="text-[9px] text-slate-500">{s.desc}</div>
                 </div>
               ))}
             </div>
