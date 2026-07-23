@@ -253,6 +253,16 @@ service cloud.firestore {
       allow read, write: if isAuthenticated();
     }
 
+    // CannaCribs Insurance Affiliate Partners
+    match /cannacribs_insurance_partners/{partnerId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // CannaCribs Insurance Referral Tracking
+    match /cannacribs_insurance_referrals/{referralId} {
+      allow read, write: if isAuthenticated();
+    }
+
     // VoIP Phone Extensions
     match /phone_extensions/{extId} {
       allow read, write: if isAuthenticated();

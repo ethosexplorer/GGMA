@@ -6,7 +6,7 @@ import {
   TrendingUp, AlertTriangle, Mail, Phone, Download, MoreVertical, Edit, Trash2,
   Bed, Bath, Maximize, Heart, Award, Sparkles, ShieldCheck, CreditCard,
   Upload, FolderLock, Calendar, Save, Image, FileImage, Palette, User, AlertCircle,
-  Loader2, RefreshCw
+  Loader2, RefreshCw, ExternalLink, Link2, BarChart3, Zap, Copy
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { db } from '../../firebase';
@@ -38,6 +38,8 @@ type InspectionItem = string;
 type CalendarEvent = { date: string; title: string; property: string; type: 'inspection' | 'booking' | 'cleaning' | 'maintenance'; tier: string; _docId?: string };
 type VaultDoc = { id: string; name: string; type: string; property: string; date: string; size: string; _docId?: string };
 type FeeItem = { label: string; amount: string; type: string };
+type InsurancePartner = { id: string; name: string; logo: string; payoutType: string; payoutAmount: string; cookieDays: number; url: string; description: string; active: boolean; _docId?: string };
+type InsuranceReferral = { id: string; tenantName: string; tenantEmail: string; propertyName: string; partner: string; clickedAt: string; status: 'clicked' | 'quoted' | 'converted' | 'expired'; estimatedPayout: string; _docId?: string };
 
 const STATUS_OPTIONS = ['Pending Review', 'Background Check', 'Verification', 'Approved', 'Denied', 'On Hold', 'Waitlisted'];
 const PROPERTY_TYPES = ['Apartment', 'House', 'Condo', 'Townhome', 'Duplex', 'Multi-Family', 'Studio', 'Commercial', 'Short-Term', 'Mobile Home'];
@@ -46,7 +48,15 @@ const TIER_COLORS: Record<string, string> = { 'Green': 'bg-emerald-100 text-emer
 const CAL_COLORS: Record<string, string> = { inspection: 'bg-blue-500', booking: 'bg-purple-500', cleaning: 'bg-emerald-500', maintenance: 'bg-amber-500' };
 const CAL_TEXT: Record<string, string> = { inspection: 'text-blue-700 bg-blue-50 border-blue-200', booking: 'text-purple-700 bg-purple-50 border-purple-200', cleaning: 'text-emerald-700 bg-emerald-50 border-emerald-200', maintenance: 'text-amber-700 bg-amber-50 border-amber-200' };
 
-type SubTab = 'overview' | 'applications' | 'properties' | 'inspections' | 'landlords' | 'calendar' | 'vault';
+// ─── DEFAULT AFFILIATE PARTNERS ───
+const DEFAULT_PARTNERS: Omit<InsurancePartner, '_docId'>[] = [
+  { id: 'lemonade', name: 'Lemonade', logo: '🍋', payoutType: 'CPA / Referral', payoutAmount: 'Variable', cookieDays: 30, url: 'https://www.lemonade.com/renters', description: 'AI-driven renters insurance. High conversion, cannabis-friendly brand. Appeals to younger renters.', active: true },
+  { id: 'gabi', name: 'Gabi Insurance', logo: '🔍', payoutType: 'Pay Per Lead', payoutAmount: '$5/lead', cookieDays: 90, url: 'https://www.gabi.com', description: 'Compare multiple carriers in one place. $5 per qualified lead. 90-day cookie duration.', active: true },
+  { id: 'liberty-mutual', name: 'Liberty Mutual', logo: '🗽', payoutType: 'Pay Per Lead', payoutAmount: '~$3/lead', cookieDays: 45, url: 'https://www.libertymutual.com/renters-insurance', description: 'Pre-designed creatives, bonus commissions via CJ Affiliate network.', active: true },
+  { id: 'insurance-quotes', name: 'InsuranceQuotes', logo: '📊', payoutType: 'Pay Per Lead', payoutAmount: 'Variable', cookieDays: 30, url: 'https://www.insurancequotes.com', description: 'One-stop-shop for leads. Partners with State Farm, Progressive, and more.', active: false },
+];
+
+type SubTab = 'overview' | 'applications' | 'properties' | 'inspections' | 'landlords' | 'calendar' | 'vault' | 'insurance';
 
 // ─── Helpers ───
 const InfoBlock = ({ label, value }: { label: string; value: string }) => (
@@ -96,6 +106,8 @@ export const CannaCribsManagementTab = () => {
   const [calEvents, setCalEvents] = useState<CalendarEvent[]>([]);
   const [vaultDocs, setVaultDocs] = useState<VaultDoc[]>([]);
   const [fees, setFees] = useState<Record<string, FeeItem>>({});
+  const [insurancePartners, setInsurancePartners] = useState<InsurancePartner[]>([]);
+  const [insuranceReferrals, setInsuranceReferrals] = useState<InsuranceReferral[]>([]);
 
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
   const [editingApp, setEditingApp] = useState(false);
@@ -113,6 +125,9 @@ export const CannaCribsManagementTab = () => {
   const [editingFeeKey, setEditingFeeKey] = useState<string | null>(null);
   const [editingFeeVal, setEditingFeeVal] = useState('');
   const [saving, setSaving] = useState(false);
+  const [showAddPartner, setShowAddPartner] = useState(false);
+  const [newPartner, setNewPartner] = useState({ name: '', logo: '🛡️', payoutType: 'Pay Per Lead', payoutAmount: '', cookieDays: 30, url: '', description: '' });
+  const [copiedLink, setCopiedLink] = useState<string | null>(null);
 
   const [newProp, setNewProp] = useState({ name: '', location: '', type: 'House', tier: 'Green', rent: '', status: 'Vacant', tenant: '', beds: '', baths: '', sqft: '' });
   const [newApp, setNewApp] = useState<Partial<Application>>({ ...EMPTY_APP });
@@ -155,6 +170,26 @@ export const CannaCribsManagementTab = () => {
     unsubs.push(onSnapshot(collection(db, 'cannacribs_vault'), (snap) => {
       const items = snap.docs.map(d => ({ ...d.data(), _docId: d.id } as VaultDoc));
       setVaultDocs(items);
+    }));
+
+    // Insurance partners
+    unsubs.push(onSnapshot(collection(db, 'cannacribs_insurance_partners'), (snap) => {
+      if (snap.empty) {
+        // Seed default partners on first load
+        DEFAULT_PARTNERS.forEach(p => {
+          addDoc(collection(db, 'cannacribs_insurance_partners'), { ...p, createdAt: new Date().toISOString() });
+        });
+      } else {
+        const items = snap.docs.map(d => ({ ...d.data(), _docId: d.id } as InsurancePartner));
+        setInsurancePartners(items);
+      }
+    }));
+
+    // Insurance referrals
+    unsubs.push(onSnapshot(collection(db, 'cannacribs_insurance_referrals'), (snap) => {
+      const items = snap.docs.map(d => ({ ...d.data(), _docId: d.id } as InsuranceReferral));
+      items.sort((a, b) => (b.clickedAt || '').localeCompare(a.clickedAt || ''));
+      setInsuranceReferrals(items);
     }));
 
     // Config: fees
@@ -330,12 +365,64 @@ export const CannaCribsManagementTab = () => {
     setEditingFeeKey(null); setEditingFeeVal('');
   };
 
+  // Insurance affiliates
+  const addPartnerFn = async () => {
+    if (!newPartner.name || !newPartner.url) return;
+    setSaving(true);
+    try {
+      await addDoc(collection(db, 'cannacribs_insurance_partners'), {
+        id: newPartner.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+        ...newPartner, cookieDays: Number(newPartner.cookieDays) || 30,
+        active: true, createdAt: new Date().toISOString()
+      });
+      setNewPartner({ name: '', logo: '🛡️', payoutType: 'Pay Per Lead', payoutAmount: '', cookieDays: 30, url: '', description: '' });
+      setShowAddPartner(false);
+    } catch (e) { console.error(e); alert('Error adding partner'); }
+    setSaving(false);
+  };
+  const togglePartner = async (partner: InsurancePartner) => {
+    if (!partner._docId) return;
+    await updateDoc(doc(db, 'cannacribs_insurance_partners', partner._docId), { active: !partner.active, updatedAt: new Date().toISOString() });
+  };
+  const deletePartner = async (partner: InsurancePartner) => {
+    if (!partner._docId || !confirm(`Remove ${partner.name} as an affiliate partner?`)) return;
+    await deleteDoc(doc(db, 'cannacribs_insurance_partners', partner._docId));
+  };
+  const trackReferralClick = async (partner: InsurancePartner, app: Application) => {
+    await addDoc(collection(db, 'cannacribs_insurance_referrals'), {
+      id: 'REF-' + Date.now().toString(36).toUpperCase(),
+      tenantName: app.name, tenantEmail: app.email, propertyName: app.property,
+      partner: partner.name, clickedAt: new Date().toISOString(),
+      status: 'clicked', estimatedPayout: partner.payoutAmount,
+    });
+    window.open(partner.url, '_blank');
+  };
+  const updateReferralStatus = async (ref: InsuranceReferral, newStatus: InsuranceReferral['status']) => {
+    if (!ref._docId) return;
+    await updateDoc(doc(db, 'cannacribs_insurance_referrals', ref._docId), { status: newStatus, updatedAt: new Date().toISOString() });
+  };
+  const copyAffiliateLink = (url: string, partnerId: string) => {
+    const trackingUrl = `${url}?ref=cannacribs&utm_source=cannacribs&utm_medium=affiliate&utm_campaign=renters-insurance`;
+    navigator.clipboard.writeText(trackingUrl);
+    setCopiedLink(partnerId);
+    setTimeout(() => setCopiedLink(null), 2000);
+  };
+
+  const activePartners = insurancePartners.filter(p => p.active);
+  const referralStats = {
+    totalClicks: insuranceReferrals.length,
+    converted: insuranceReferrals.filter(r => r.status === 'converted').length,
+    quoted: insuranceReferrals.filter(r => r.status === 'quoted').length,
+    pending: insuranceReferrals.filter(r => r.status === 'clicked').length,
+  };
+
   const subTabs = [
     { id: 'overview' as SubTab, label: 'Overview', icon: Activity },
     { id: 'applications' as SubTab, label: 'Applications', icon: ClipboardList },
     { id: 'properties' as SubTab, label: 'Properties', icon: Home },
     { id: 'calendar' as SubTab, label: 'Calendar', icon: Calendar },
     { id: 'inspections' as SubTab, label: 'Inspections', icon: Eye },
+    { id: 'insurance' as SubTab, label: 'Insurance', icon: Shield },
     { id: 'vault' as SubTab, label: 'Vault', icon: FolderLock },
     { id: 'landlords' as SubTab, label: 'Landlords', icon: Users },
   ];
@@ -422,6 +509,33 @@ export const CannaCribsManagementTab = () => {
       </div>
 
       {app.notes && <div className="p-3 bg-amber-50 rounded-lg border border-amber-200"><div className="text-[10px] text-amber-600 uppercase font-bold mb-1">Notes</div><div className="text-sm text-slate-700">{app.notes}</div></div>}
+
+      {/* ═══ INSURANCE PROMPT — Approved Tenants Only ═══ */}
+      {app.status === 'Approved' && app.type === 'Tenant' && activePartners.length > 0 && (
+        <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-200">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center"><Shield size={16} className="text-white" /></div>
+            <div>
+              <div className="text-sm font-black text-blue-900">🏠 Renter's Insurance — Protect Your New Home</div>
+              <div className="text-[10px] text-blue-600">Required before move-in • Get covered in 2 minutes • Affiliate-tracked</div>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            {activePartners.slice(0, 3).map(partner => (
+              <button key={partner._docId || partner.id} onClick={() => trackReferralClick(partner, app)}
+                className="p-3 bg-white rounded-lg border border-blue-200 hover:border-blue-400 hover:shadow-md transition-all text-left group">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-lg">{partner.logo}</span>
+                  <span className="text-xs font-black text-slate-900">{partner.name}</span>
+                  <ExternalLink size={10} className="text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity ml-auto" />
+                </div>
+                <div className="text-[10px] text-green-600 font-bold">{partner.payoutAmount}</div>
+                <div className="text-[10px] text-slate-400">{partner.payoutType}</div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Action Buttons */}
       <div className="flex items-center gap-3 pt-4 border-t border-slate-200">
@@ -699,6 +813,38 @@ export const CannaCribsManagementTab = () => {
             <div className="bg-white rounded-xl border border-slate-200 p-6"><h3 className="font-bold text-slate-900 text-sm mb-4 flex items-center gap-2"><TrendingUp size={16} className="text-green-600" />Revenue by Service Tier</h3><div className="space-y-3">{tierRevenue.map((r, i) => (<div key={i} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg"><div className="flex items-center gap-3"><div className={cn('w-3 h-3 rounded-full', r.tier === 'Green' ? 'bg-emerald-500' : r.tier === 'Gold' ? 'bg-amber-500' : r.tier === 'Platinum' ? 'bg-violet-500' : 'bg-purple-500')} /><span className="text-sm font-bold text-slate-700">{r.tier}</span><span className="text-xs text-slate-400">{r.count} properties</span></div><span className="text-sm font-black text-slate-900">${r.revenue.toLocaleString()}/mo</span></div>))}<div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200"><span className="text-sm font-black text-green-700">Total Tier Revenue</span><span className="text-lg font-black text-green-700">${totalTierRevenue.toLocaleString()}/mo</span></div></div></div>
             <div className="bg-white rounded-xl border border-slate-200 p-6"><h3 className="font-bold text-slate-900 text-sm mb-4 flex items-center gap-2"><Activity size={16} className="text-blue-600" />Recent Applications</h3><div className="space-y-3">{applications.slice(0, 4).map((app, i) => (<div key={i} className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100" onClick={() => { setSelectedApp(app); setEditingApp(false); }}><span className={cn('px-2 py-0.5 rounded-full text-[9px] font-black uppercase', app.type === 'Tenant' ? 'bg-blue-100 text-blue-700' : app.type === 'Landlord' ? 'bg-purple-100 text-purple-700' : 'bg-amber-100 text-amber-700')}>{app.type}</span><div className="flex-1"><p className="text-xs text-slate-700 font-medium">{app.name} — {app.property}</p><p className="text-[10px] text-slate-400 mt-0.5">{app.submitted}</p></div><span className={cn('px-2 py-0.5 rounded-full text-[9px] font-bold', STATUS_COLORS[app.status])}>{app.status}</span></div>))}{applications.length === 0 && <p className="text-xs text-slate-400 text-center py-4">No applications yet</p>}</div></div>
           </div>
+
+          {/* ═══ Insurance Affiliate Revenue Card ═══ */}
+          {activePartners.length > 0 && (
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl p-6 text-white">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-black text-sm flex items-center gap-2"><Shield size={16} /> Insurance Affiliate Revenue</h3>
+                <button onClick={() => setSubTab('insurance')} className="px-3 py-1.5 bg-white/20 hover:bg-white/30 text-xs font-bold rounded-lg transition-all flex items-center gap-1"><BarChart3 size={12} /> Full Dashboard</button>
+              </div>
+              <div className="grid grid-cols-4 gap-3">
+                <div className="bg-white/10 backdrop-blur rounded-lg p-3 text-center">
+                  <div className="text-xl font-black">{referralStats.totalClicks}</div>
+                  <div className="text-[10px] text-white/70 font-bold">Total Clicks</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur rounded-lg p-3 text-center">
+                  <div className="text-xl font-black">{referralStats.quoted}</div>
+                  <div className="text-[10px] text-white/70 font-bold">Quoted</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur rounded-lg p-3 text-center">
+                  <div className="text-xl font-black">{referralStats.converted}</div>
+                  <div className="text-[10px] text-white/70 font-bold">Converted</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur rounded-lg p-3 text-center">
+                  <div className="text-xl font-black">{activePartners.length}</div>
+                  <div className="text-[10px] text-white/70 font-bold">Partners</div>
+                </div>
+              </div>
+              {insuranceReferrals.length > 0 && (
+                <div className="mt-3 text-[10px] text-white/60">Latest: {insuranceReferrals[0].tenantName} → {insuranceReferrals[0].partner} ({insuranceReferrals[0].status})</div>
+              )}
+            </div>
+          )}
+
           {/* Fee Schedule — Editable */}
           <div className="bg-white rounded-xl border border-slate-200 p-6"><h3 className="font-bold text-slate-900 text-sm mb-4 flex items-center gap-2"><CreditCard size={16} className="text-violet-600" />Tenant & Guest Fee Schedule <span className="text-[9px] text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-full font-bold ml-2">Click amount to edit</span></h3><div className="grid grid-cols-2 md:grid-cols-4 gap-4">{feeEntries.map(([key, fee]) => (<div key={key} className="p-3 bg-slate-50 rounded-lg text-center group cursor-pointer hover:bg-green-50 transition-colors" onClick={() => { if (editingFeeKey !== key) { setEditingFeeKey(key); setEditingFeeVal(fee.amount); } }}>{editingFeeKey === key ? (<div className="space-y-2" onClick={e => e.stopPropagation()}><input autoFocus value={editingFeeVal} onChange={e => setEditingFeeVal(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') saveFeeEdit(key, editingFeeVal); if (e.key === 'Escape') setEditingFeeKey(null); }} className="w-full px-2 py-1 text-center text-lg font-black text-green-600 border border-green-300 rounded-lg outline-none focus:ring-2 focus:ring-green-500/20" /><div className="flex gap-1"><button onClick={() => saveFeeEdit(key, editingFeeVal)} className="flex-1 text-[10px] font-bold text-white bg-green-600 rounded px-2 py-0.5">Save</button><button onClick={() => setEditingFeeKey(null)} className="text-[10px] font-bold text-slate-500 bg-slate-200 rounded px-2 py-0.5">Cancel</button></div></div>) : (<><div className="text-lg font-black text-green-600 group-hover:text-green-700">{fee.amount}</div><div className="text-xs font-bold text-slate-700">{fee.label}</div><div className="text-[10px] text-slate-400">{fee.type}</div></>)}</div>))}{feeEntries.length === 0 && <p className="col-span-4 text-xs text-slate-400 text-center py-4">Fee schedule loading...</p>}</div></div>
         </div>
@@ -745,6 +891,158 @@ export const CannaCribsManagementTab = () => {
 
       {/* ═══ VAULT ═══ */}
       {subTab === 'vault' && (<div className="space-y-4"><div className="flex items-center justify-between"><h3 className="font-bold text-slate-900 text-sm flex items-center gap-2"><FolderLock size={16} className="text-violet-600" /> CannaCribs Document Vault</h3><button onClick={() => setShowUploadVault(true)} className="px-4 py-2 bg-violet-600 text-white text-xs font-bold rounded-lg hover:bg-violet-500 flex items-center gap-1.5"><Upload size={14} /> Upload Document</button></div><div className="bg-white rounded-xl border border-slate-200 overflow-hidden"><table className="w-full"><thead><tr className="bg-slate-50 border-b border-slate-200"><th className="text-left p-3 text-[10px] font-black uppercase tracking-wider text-slate-500">Document</th><th className="text-left p-3 text-[10px] font-black uppercase tracking-wider text-slate-500">Type</th><th className="text-left p-3 text-[10px] font-black uppercase tracking-wider text-slate-500">Property</th><th className="text-left p-3 text-[10px] font-black uppercase tracking-wider text-slate-500">Date</th><th className="text-left p-3 text-[10px] font-black uppercase tracking-wider text-slate-500">Size</th><th className="text-left p-3 text-[10px] font-black uppercase tracking-wider text-slate-500">Actions</th></tr></thead><tbody>{vaultDocs.map((vdoc, i) => (<tr key={vdoc._docId || i} className="border-b border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer" onClick={() => setSelectedVaultDoc(vdoc)}><td className="p-3"><div className="flex items-center gap-2"><FileImage size={16} className="text-violet-500" /><span className="text-sm font-bold text-slate-800">{vdoc.name}</span></div></td><td className="p-3"><span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-violet-100 text-violet-700">{vdoc.type}</span></td><td className="p-3 text-xs text-slate-600">{vdoc.property}</td><td className="p-3 text-xs text-slate-500">{vdoc.date}</td><td className="p-3 text-xs text-slate-500">{vdoc.size}</td><td className="p-3" onClick={e => e.stopPropagation()}><div className="flex gap-1"><button className="p-1.5 hover:bg-slate-100 rounded-lg" title="Download"><Download size={14} className="text-slate-400" /></button><button onClick={() => setSelectedVaultDoc(vdoc)} className="p-1.5 hover:bg-blue-50 rounded-lg" title="View"><Eye size={14} className="text-blue-500" /></button><button onClick={() => deleteVaultDoc(vdoc)} className="p-1.5 hover:bg-red-50 rounded-lg" title="Delete"><Trash2 size={14} className="text-red-400" /></button></div></td></tr>))}</tbody></table>{vaultDocs.length === 0 && <div className="p-8 text-center text-sm text-slate-400">No documents in vault</div>}</div></div>)}
+
+      {/* ═══ INSURANCE ═══ */}
+      {subTab === 'insurance' && (
+        <div className="space-y-6">
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-bold text-lg text-slate-900 flex items-center gap-2"><Shield size={20} className="text-blue-600" /> Renter's Insurance Affiliates</h3>
+              <p className="text-xs text-slate-500 mt-0.5">Manage affiliate partners, track referrals, and monitor commission revenue</p>
+            </div>
+            <button onClick={() => setShowAddPartner(true)} className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-bold rounded-lg hover:from-blue-500 hover:to-indigo-500 shadow-sm flex items-center gap-1.5"><Plus size={14} /> Add Partner</button>
+          </div>
+
+          {/* Stats Row */}
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            {[
+              { label: 'Active Partners', value: String(activePartners.length), icon: Link2, color: 'text-blue-600', bg: 'bg-blue-50' },
+              { label: 'Total Referrals', value: String(referralStats.totalClicks), icon: Zap, color: 'text-amber-600', bg: 'bg-amber-50' },
+              { label: 'Quoted', value: String(referralStats.quoted), icon: FileText, color: 'text-purple-600', bg: 'bg-purple-50' },
+              { label: 'Converted', value: String(referralStats.converted), icon: CheckCircle, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+              { label: 'Conversion Rate', value: referralStats.totalClicks > 0 ? `${Math.round((referralStats.converted / referralStats.totalClicks) * 100)}%` : '—', icon: BarChart3, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+            ].map((s, i) => (
+              <div key={i} className="bg-white rounded-xl border border-slate-200 p-4">
+                <div className={cn('w-9 h-9 rounded-lg flex items-center justify-center mb-2', s.bg)}><s.icon size={16} className={s.color} /></div>
+                <div className="text-xl font-black text-slate-900">{s.value}</div>
+                <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{s.label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Partner Cards */}
+          <div className="bg-white rounded-xl border border-slate-200 p-6">
+            <h4 className="font-bold text-sm text-slate-900 mb-4 flex items-center gap-2"><Link2 size={16} className="text-blue-600" /> Affiliate Partners</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {insurancePartners.map(partner => (
+                <div key={partner._docId || partner.id} className={cn('rounded-xl border-2 p-5 transition-all', partner.active ? 'border-blue-200 bg-blue-50/30 hover:shadow-md' : 'border-slate-200 bg-slate-50 opacity-60')}>
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{partner.logo}</span>
+                      <div>
+                        <div className="font-black text-slate-900">{partner.name}</div>
+                        <div className="text-[10px] text-slate-500">{partner.payoutType} • {partner.cookieDays}-day cookie</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <button onClick={() => togglePartner(partner)} className={cn('px-2 py-1 rounded-lg text-[10px] font-bold transition-all', partner.active ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-slate-200 text-slate-500 hover:bg-slate-300')}>
+                        {partner.active ? '✓ Active' : 'Inactive'}
+                      </button>
+                      <button onClick={() => deletePartner(partner)} className="p-1 hover:bg-red-50 rounded-lg"><Trash2 size={12} className="text-red-400" /></button>
+                    </div>
+                  </div>
+                  <p className="text-xs text-slate-600 mb-3 leading-relaxed">{partner.description}</p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg font-black text-green-600">{partner.payoutAmount}</span>
+                      <span className="text-[10px] text-slate-400">per referral</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <button onClick={() => copyAffiliateLink(partner.url, partner.id)} className="px-3 py-1.5 bg-white border border-slate-200 hover:border-blue-300 text-xs font-bold text-slate-600 rounded-lg flex items-center gap-1 transition-all">
+                        {copiedLink === partner.id ? <><CheckCircle size={12} className="text-green-500" /> Copied!</> : <><Copy size={12} /> Copy Link</>}
+                      </button>
+                      <a href={partner.url} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-lg flex items-center gap-1"><ExternalLink size={12} /> Visit</a>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {insurancePartners.length === 0 && <p className="col-span-2 text-xs text-slate-400 text-center py-6">Loading affiliate partners...</p>}
+            </div>
+          </div>
+
+          {/* Referral Tracking Table */}
+          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+            <div className="p-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+              <h4 className="font-bold text-sm text-slate-900 flex items-center gap-2"><BarChart3 size={16} className="text-indigo-600" /> Referral Tracking</h4>
+              <span className="text-xs text-slate-400 font-bold">{insuranceReferrals.length} total referrals</span>
+            </div>
+            <table className="w-full">
+              <thead><tr className="bg-slate-50 border-b border-slate-200">
+                <th className="text-left p-3 text-[10px] font-black uppercase tracking-wider text-slate-500">Tenant</th>
+                <th className="text-left p-3 text-[10px] font-black uppercase tracking-wider text-slate-500">Property</th>
+                <th className="text-left p-3 text-[10px] font-black uppercase tracking-wider text-slate-500">Partner</th>
+                <th className="text-left p-3 text-[10px] font-black uppercase tracking-wider text-slate-500">Date</th>
+                <th className="text-left p-3 text-[10px] font-black uppercase tracking-wider text-slate-500">Est. Payout</th>
+                <th className="text-left p-3 text-[10px] font-black uppercase tracking-wider text-slate-500">Status</th>
+              </tr></thead>
+              <tbody>
+                {insuranceReferrals.map((ref, i) => (
+                  <tr key={ref._docId || i} className="border-b border-slate-100 hover:bg-slate-50">
+                    <td className="p-3"><div className="font-bold text-sm text-slate-900">{ref.tenantName}</div><div className="text-[10px] text-slate-400">{ref.tenantEmail}</div></td>
+                    <td className="p-3 text-xs text-slate-600">{ref.propertyName}</td>
+                    <td className="p-3"><span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700">{ref.partner}</span></td>
+                    <td className="p-3 text-xs text-slate-500">{ref.clickedAt ? new Date(ref.clickedAt).toLocaleDateString() : '—'}</td>
+                    <td className="p-3 text-xs font-bold text-green-600">{ref.estimatedPayout}</td>
+                    <td className="p-3">
+                      <select value={ref.status} onChange={e => updateReferralStatus(ref, e.target.value as InsuranceReferral['status'])}
+                        className={cn('px-2 py-0.5 rounded-full text-[10px] font-bold border outline-none cursor-pointer',
+                          ref.status === 'clicked' ? 'bg-amber-100 text-amber-700 border-amber-200' :
+                          ref.status === 'quoted' ? 'bg-blue-100 text-blue-700 border-blue-200' :
+                          ref.status === 'converted' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' :
+                          'bg-slate-100 text-slate-500 border-slate-200'
+                        )}>
+                        <option value="clicked">Clicked</option>
+                        <option value="quoted">Quoted</option>
+                        <option value="converted">Converted</option>
+                        <option value="expired">Expired</option>
+                      </select>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {insuranceReferrals.length === 0 && <div className="p-8 text-center"><div className="text-3xl mb-2">🛡️</div><p className="text-sm text-slate-400 font-bold">No referrals yet</p><p className="text-xs text-slate-400 mt-1">Approve a tenant application to start tracking insurance referrals</p></div>}
+          </div>
+
+          {/* How It Works */}
+          <div className="bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl border border-slate-200 p-6">
+            <h4 className="font-bold text-sm text-slate-900 mb-4 flex items-center gap-2"><Sparkles size={16} className="text-amber-500" /> How Insurance Affiliates Work</h4>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              {[
+                { step: '1', title: 'Tenant Approved', desc: 'Application status changes to Approved', icon: '✅' },
+                { step: '2', title: 'Insurance Prompt', desc: 'Partner cards shown in application detail', icon: '🛡️' },
+                { step: '3', title: 'Click & Track', desc: 'Referral logged to Firestore, tenant sent to partner', icon: '🔗' },
+                { step: '4', title: 'Earn Commission', desc: '$3-$5 per lead or variable CPA on conversion', icon: '💰' },
+              ].map((s, i) => (
+                <div key={i} className="text-center">
+                  <div className="text-2xl mb-2">{s.icon}</div>
+                  <div className="text-xs font-black text-slate-900 mb-1">Step {s.step}: {s.title}</div>
+                  <div className="text-[10px] text-slate-500">{s.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══ ADD INSURANCE PARTNER MODAL ═══ */}
+      <Modal open={showAddPartner} onClose={() => setShowAddPartner(false)} title="Add Affiliate Partner" subtitle="Add a new renter's insurance affiliate program">
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div><FieldLabel req>Partner Name</FieldLabel><Input value={newPartner.name} onChange={(e: any) => setNewPartner(p => ({ ...p, name: e.target.value }))} placeholder="e.g. Lemonade" /></div>
+            <div><FieldLabel>Logo Emoji</FieldLabel><Input value={newPartner.logo} onChange={(e: any) => setNewPartner(p => ({ ...p, logo: e.target.value }))} placeholder="🛡️" /></div>
+          </div>
+          <div><FieldLabel req>Affiliate URL</FieldLabel><Input value={newPartner.url} onChange={(e: any) => setNewPartner(p => ({ ...p, url: e.target.value }))} placeholder="https://partner.com/affiliate" /></div>
+          <div className="grid grid-cols-3 gap-4">
+            <div><FieldLabel>Payout Type</FieldLabel><Select value={newPartner.payoutType} onChange={(e: any) => setNewPartner(p => ({ ...p, payoutType: e.target.value }))}><option>Pay Per Lead</option><option>CPA / Referral</option><option>Revenue Share</option><option>Hybrid</option></Select></div>
+            <div><FieldLabel>Payout Amount</FieldLabel><Input value={newPartner.payoutAmount} onChange={(e: any) => setNewPartner(p => ({ ...p, payoutAmount: e.target.value }))} placeholder="$5/lead" /></div>
+            <div><FieldLabel>Cookie (Days)</FieldLabel><Input value={String(newPartner.cookieDays)} onChange={(e: any) => setNewPartner(p => ({ ...p, cookieDays: Number(e.target.value) || 30 }))} type="number" /></div>
+          </div>
+          <div><FieldLabel>Description</FieldLabel><textarea value={newPartner.description} onChange={(e) => setNewPartner(p => ({ ...p, description: e.target.value }))} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none resize-none" rows={2} placeholder="Brief description of this affiliate program..." /></div>
+          <button onClick={addPartnerFn} disabled={saving} className="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-xl flex items-center justify-center gap-2">{saving ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />} Add Partner</button>
+        </div>
+      </Modal>
 
       {/* ═══ LANDLORDS ═══ */}
       {subTab === 'landlords' && (<div className="space-y-4"><div className="bg-white rounded-xl border border-slate-200 overflow-hidden"><div className="p-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between"><h3 className="font-bold text-sm text-slate-900 flex items-center gap-2"><Users size={16} className="text-purple-600" /> Registered Landlords</h3><button onClick={() => setShowAddLandlord(true)} className="px-3 py-1.5 bg-green-600 text-white text-xs font-bold rounded-lg hover:bg-green-500 flex items-center gap-1"><Plus size={12} /> Onboard Landlord</button></div><table className="w-full"><thead><tr className="bg-slate-50 border-b border-slate-200"><th className="text-left p-3 text-[10px] font-black uppercase tracking-wider text-slate-500">Landlord</th><th className="text-left p-3 text-[10px] font-black uppercase tracking-wider text-slate-500">Properties</th><th className="text-left p-3 text-[10px] font-black uppercase tracking-wider text-slate-500">Tier</th><th className="text-left p-3 text-[10px] font-black uppercase tracking-wider text-slate-500">Revenue</th><th className="text-left p-3 text-[10px] font-black uppercase tracking-wider text-slate-500">Status</th><th className="text-left p-3 text-[10px] font-black uppercase tracking-wider text-slate-500">Actions</th></tr></thead><tbody>{landlords.map((ll, i) => (<tr key={ll._docId || i} className="border-b border-slate-100 hover:bg-slate-50 cursor-pointer" onClick={() => { setSelectedLandlord(ll); setEditingLL(false); }}><td className="p-3"><div className="font-bold text-sm text-slate-900 hover:text-green-600">{ll.name}</div><div className="text-xs text-slate-400">{ll.email}</div></td><td className="p-3 text-sm font-bold text-slate-700">{ll.properties}</td><td className="p-3"><span className={cn('px-2 py-0.5 rounded-full text-[9px] font-black uppercase', TIER_COLORS[ll.tier])}>{ll.tier}</span></td><td className="p-3 text-sm font-bold text-green-600">{ll.revenue}</td><td className="p-3"><span className={cn('px-2 py-0.5 rounded-full text-[10px] font-bold', ll.status === 'Active' ? 'bg-emerald-100 text-emerald-700' : ll.status === 'Onboarding' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-500')}>{ll.status}</span></td><td className="p-3" onClick={e => e.stopPropagation()}><div className="flex gap-1"><button onClick={() => { setSelectedLandlord(ll); setEditingLL(false); }} className="p-1.5 hover:bg-slate-100 rounded-lg" title="View"><Eye size={14} className="text-slate-400" /></button><button onClick={() => { setSelectedLandlord(ll); setEditingLL(true); }} className="p-1.5 hover:bg-blue-50 rounded-lg" title="Edit"><Edit size={14} className="text-blue-500" /></button><button onClick={() => deleteLandlord(ll)} className="p-1.5 hover:bg-red-50 rounded-lg" title="Delete"><Trash2 size={14} className="text-red-400" /></button></div></td></tr>))}</tbody></table>{landlords.length === 0 && <div className="p-8 text-center text-sm text-slate-400">No landlords registered</div>}</div></div>)}
