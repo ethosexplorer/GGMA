@@ -81,6 +81,18 @@ const htmlToPlainText = (html: string): string => {
 
 const JURISDICTIONS = ['AK', 'AL', 'AR', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'GA', 'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN', 'MO', 'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VA', 'VT', 'WA', 'WI', 'WV', 'WY'];
 
+// Business-license entity types (used for renewal filtering)
+const BUSINESS_LICENSE_TYPES = new Set(['dispensary', 'grower', 'processor', 'distribution', 'other', 'backoffice']);
+
+const normalizeType = (rawType: string): string => {
+  if (!rawType) return 'other';
+  // Government / enforcement → 'agency'
+  if (rawType.startsWith('gov_') || rawType.startsWith('enforcement_') || rawType === 'enforcement' || ['police', 'dea', 'obn', 'mayor', 'governor', 'senator', 'legislative', 'political', 'attorney_general'].includes(rawType)) return 'agency';
+  // Generic business types (from contactCapture) → 'other' so they map to a known entity type
+  if (rawType === 'business_owner' || rawType === 'business') return 'other';
+  return rawType;
+};
+
 const ENTITY_TYPES = [
   { id: 'dispensary', label: 'Dispensary / Retail' },
   { id: 'grower', label: 'Grower / Cultivator' },
@@ -443,7 +455,7 @@ export const MarketingHub = () => {
             const batchDeals = docsSnap.docs.map(d => {
               const data = d.data();
               const rawType = data.type || 'other';
-              const type = (rawType.startsWith('gov_') || rawType.startsWith('enforcement_') || rawType === 'enforcement' || ['police', 'dea', 'obn', 'mayor', 'governor', 'senator', 'legislative', 'political', 'attorney_general'].includes(rawType)) ? 'agency' : rawType;
+              const type = normalizeType(rawType);
               return { id: d.id, ...data, type, rawType } as any;
             });
             fetchedDeals.push(...batchDeals);
@@ -462,7 +474,7 @@ export const MarketingHub = () => {
             fetchedDeals = retrySnap.docs.map(d => {
               const data = d.data();
               const rawType = data.type || 'other';
-              const type = (rawType.startsWith('gov_') || rawType.startsWith('enforcement_') || rawType === 'enforcement' || ['police', 'dea', 'obn', 'mayor', 'governor', 'senator', 'legislative', 'political', 'attorney_general'].includes(rawType)) ? 'agency' : rawType;
+              const type = normalizeType(rawType);
               return { id: d.id, ...data, type, rawType } as any;
             });
             setIsOfflineMode(false);
@@ -477,7 +489,7 @@ export const MarketingHub = () => {
         const staticContacts = getStaticGovContacts();
         const normalizedStatic = staticContacts.map(c => {
           const rawType = c.type;
-          const type = (rawType.startsWith('gov_') || rawType.startsWith('enforcement_') || rawType === 'enforcement' || ['police', 'dea', 'obn', 'mayor', 'governor', 'senator', 'legislative', 'political', 'attorney_general'].includes(rawType)) ? 'agency' : rawType;
+          const type = normalizeType(rawType);
           return { ...c, type, rawType };
         });
 
@@ -493,6 +505,30 @@ export const MarketingHub = () => {
             allDealsMap.set(d.id, d);
           }
         });
+
+        // 3c. Also fetch from executive_crm_deals (CSV-imported records with licenseExpiration dates)
+        try {
+          const execSnap = await getDocs(query(collection(db, 'executive_crm_deals'), limit(BATCH_SIZE)));
+          const execDeals = execSnap.docs.map(d => {
+            const data = d.data();
+            const rawType = data.type || 'other';
+            const type = normalizeType(rawType);
+            return { id: d.id, ...data, type, rawType, _src: 'executive' } as any;
+          });
+          // Merge — executive_crm_deals records win (they have richer data from CSV import)
+          execDeals.forEach(d => {
+            const key = d.email ? d.email.toLowerCase() : `exec_${d.id}`;
+            const existing = allDealsMap.get(key);
+            // Prefer the record with licenseExpiration data
+            if (!existing || (d.licenseExpiration && !existing.licenseExpiration)) {
+              allDealsMap.set(key, d);
+            }
+          });
+          console.log(`[MarketingHub] ✅ Merged ${execDeals.length} executive_crm_deals records`);
+        } catch (execErr) {
+          console.warn('[MarketingHub] executive_crm_deals fetch skipped:', execErr);
+        }
+
         const combinedDeals = Array.from(allDealsMap.values());
 
         // 4. Apply remaining filters client-side on the fetched subset
@@ -549,8 +585,8 @@ export const MarketingHub = () => {
             }
           }
 
-          // Apply Business License Renewal Filter client-side
-          if (d.type !== 'patient') {
+          // Apply Business License Renewal Filter client-side (only for business entity types)
+          if (BUSINESS_LICENSE_TYPES.has(d.type)) {
             if (businessRenewalMode !== 'off') {
               const nominal = parseNominalDate(d.licenseExpiration);
               if (!nominal) return false;
