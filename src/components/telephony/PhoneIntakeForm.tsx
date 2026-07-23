@@ -213,6 +213,8 @@ export const PhoneIntakeForm = () => {
   const [submitted, setSubmitted] = useState(false);
   const [callerId, setCallerId] = useState('');
   const [callerNotes, setCallerNotes] = useState('');
+  const [mailingSame, setMailingSame] = useState(true);
+  const [quickSaved, setQuickSaved] = useState(false);
   
   // Custom step completion flags for patients
   const [scheduledAppt, setScheduledAppt] = useState(false);
@@ -442,7 +444,56 @@ Phone: 1-888-963-4447 | Email: asstsupport@gmail.com
     setSubmitting(false);
   };
 
-  const reset = () => { setIntakeType(null); setStep(0); setData({...empty}); setSubmitted(false); setCallerId(''); setCallerNotes(''); setScheduledAppt(false); setCompletedPortal(false); setPortalUsername(''); setPortalPassword(''); setPaymentPosted(false); setPaymentForm({ amount: '', type: 'Processing Fee', method: 'Chime', notes: '', date: new Date().toISOString().split('T')[0] }); };
+  const handleQuickSaveLead = async () => {
+    if (!data.firstName || !data.lastName) return alert('Please enter at least a first and last name.');
+    setSubmitting(true);
+    try {
+      const accountId = 'LEAD-' + Math.random().toString(36).substr(2, 8).toUpperCase();
+      const fullName = (data.firstName + ' ' + data.lastName).trim();
+      const stateAbbrev = US_STATES.indexOf(data.state) >= 0
+        ? ['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'][US_STATES.indexOf(data.state)]
+        : data.state;
+
+      // 1. Audit log
+      await turso.execute({ sql: "INSERT INTO audit_logs (id, action, user_id, data) VALUES (?, ?, ?, ?)", args: [
+        'log-' + Math.random().toString(36).substr(2, 9),
+        'QUICK_LEAD_SAVED',
+        'OPS_Agent',
+        JSON.stringify({ accountId, name: fullName, email: data.email, phone: data.phone, dob: data.dob, type: intakeType, state: data.state, status: 'callback', callerNotes })
+      ]});
+
+      // 2. Contact capture (partial — lead/callback)
+      try {
+        await captureContact({
+          name: fullName,
+          email: data.email || '',
+          phone: data.phone || '',
+          address: '',
+          city: data.city || '',
+          state: data.state || '',
+          zip: '',
+          contactType: intakeType === 'patient_card' ? 'patient' : 'business_owner',
+          source: 'phone_intake_lead',
+          businessName: '',
+          licenseType: intakeType === 'patient_card' ? 'Patient Card' : 'Business License',
+          ein: '',
+          jurisdiction: data.state || '',
+          tags: ['lead', 'callback', intakeType || '', stateAbbrev.toLowerCase()],
+          notes: `LEAD (Callback) | ${accountId} | DOB: ${data.dob || 'N/A'} | ${callerNotes || 'No notes'}`,
+          emailOptIn: false,
+        });
+      } catch (crmErr) {
+        console.error('Lead capture error (non-blocking):', crmErr);
+      }
+
+      setCallerId(accountId);
+      setQuickSaved(true);
+      alert(`✅ Lead Saved!\n\nName: ${fullName}\nPhone: ${data.phone || 'N/A'}\nEmail: ${data.email || 'N/A'}\nLead ID: ${accountId}\n\nThis contact is saved in the CRM. If they call back, you can look them up in Account Lookup.`);
+    } catch (e) { console.error(e); alert('Error saving lead. Check console.'); }
+    setSubmitting(false);
+  };
+
+  const reset = () => { setIntakeType(null); setStep(0); setData({...empty}); setSubmitted(false); setCallerId(''); setCallerNotes(''); setScheduledAppt(false); setCompletedPortal(false); setPortalUsername(''); setPortalPassword(''); setPaymentPosted(false); setPaymentForm({ amount: '', type: 'Processing Fee', method: 'Chime', notes: '', date: new Date().toISOString().split('T')[0] }); setMailingSame(true); setQuickSaved(false); };
 
   const renderScript = () => {
     if (intakeType === null) {
@@ -948,7 +999,20 @@ Phone: 1-888-963-4447 | Email: asstsupport@gmail.com
             <Field label="Physical Street Address" value={data.street} onChange={(v: string) => set('street', v)} placeholder="123 Main St" required />
             <Field label="ZIP Code" value={data.zip} onChange={(v: string) => set('zip', v)} placeholder="73102" required />
           </div>
-          <Field label="Mailing Address (if different)" value={data.mailingAddress} onChange={(v: string) => set('mailingAddress', v)} placeholder="Same as above, or enter new address" required />
+          <div>
+            <label className="flex items-center gap-3 cursor-pointer group mb-2">
+              <input type="checkbox" checked={mailingSame} onChange={() => {
+                const next = !mailingSame;
+                setMailingSame(next);
+                if (next) set('mailingAddress', 'SAME');
+                else set('mailingAddress', '');
+              }} className="w-5 h-5 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500 cursor-pointer" />
+              <span className="text-xs font-bold text-slate-600 group-hover:text-emerald-600 transition-colors">Mailing address is the SAME as physical address</span>
+            </label>
+            {!mailingSame && (
+              <Field label="Mailing Address (if different)" value={data.mailingAddress} onChange={(v: string) => set('mailingAddress', v)} placeholder="Enter mailing address" required />
+            )}
+          </div>
           
           <div className="grid grid-cols-2 gap-4">
             <Select label="How do you want your appointment to be done?" value={data.appointmentType} onChange={(v: string) => set('appointmentType', v)} options={['Phone', 'Video', 'In-Person']} required />
@@ -1957,7 +2021,7 @@ Phone: 1-888-963-4447 | Email: asstsupport@gmail.com
 
   const canNext = () => {
     if (isPatient) {
-      if (step === 0) return data.firstName && data.lastName && data.email && data.phone && data.ssn && data.street && data.city && data.state && data.zip && data.mailingAddress;
+      if (step === 0) return data.firstName && data.lastName && data.email && data.phone && data.ssn && data.street && data.city && data.state && data.zip && (mailingSame || data.mailingAddress);
       if (step === 1) return true;
       if (step === 2) return scheduledAppt;
       if (step === 3) return completedPortal;
@@ -2071,6 +2135,16 @@ Phone: 1-888-963-4447 | Email: asstsupport@gmail.com
                 </button>
                 {step < steps.length - 1 ? (
                   <div className="flex gap-3">
+                    {step === 0 && intakeType && (
+                      <button onClick={handleQuickSaveLead} disabled={submitting || quickSaved}
+                        className={cn("px-5 py-3 font-bold rounded-xl border transition-all flex items-center gap-2 text-sm",
+                          quickSaved
+                            ? "bg-emerald-50 text-emerald-600 border-emerald-300 cursor-default"
+                            : "bg-cyan-50 text-cyan-700 border-cyan-200 hover:bg-cyan-100"
+                        )}>
+                        {quickSaved ? <><Check size={14} /> Lead Saved</> : submitting ? <><Loader2 size={14} className="animate-spin" /> Saving...</> : <><UserPlus size={14} /> Quick Save as Lead</>}
+                      </button>
+                    )}
                     {step > 0 && (
                       <button onClick={handleSaveForLater} disabled={submitting}
                         className="px-6 py-3 bg-amber-50 text-amber-700 font-bold rounded-xl border border-amber-200 hover:bg-amber-100 transition-colors">
