@@ -533,9 +533,15 @@ export const MarketingHub = () => {
 
         // 4. Apply remaining filters client-side on the fetched subset
         const finalFiltered = combinedDeals.filter(d => {
-          // Ensure contact info is present
-          if (campaignType === 'email' && !d.email) return false;
-          if (campaignType === 'sms' && !d.phone) return false;
+          // Ensure contact info is present — BUT skip this filter when renewal mode is active
+          // so the audience count reflects the true renewal count (matching calendar).
+          // The actual send logic still skips records without contact info.
+          const isRenewalActive = (d.type === 'patient' && patientRenewalMode !== 'off') ||
+            (BUSINESS_LICENSE_TYPES.has(d.type) && businessRenewalMode !== 'off');
+          if (!isRenewalActive) {
+            if (campaignType === 'email' && !d.email) return false;
+            if (campaignType === 'sms' && !d.phone) return false;
+          }
 
           // Apply state, type, tier filters client-side (to filter server-retrieved expiring records or as double check)
           if (activeStates.length > 0) {
@@ -1885,6 +1891,19 @@ export const MarketingHub = () => {
                       <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">This Batch</p>
                       <p className="text-3xl font-black text-white">{thisBatch.toLocaleString()}</p>
                       <p className="text-xs text-slate-500 font-medium">of {filteredCount.toLocaleString()} total recipients ({sentInFilter > 0 ? `${sentInFilter} already sent` : 'none sent yet'})</p>
+                      {/* Show reachable breakdown when renewal filters show contacts without email/phone */}
+                      {(businessRenewalMode !== 'off' || patientRenewalMode !== 'off') && (() => {
+                        const reachable = filteredAudience.filter(d => campaignType === 'email' ? (d.email && d.email.trim()) : (d.phone && d.phone.trim())).length;
+                        const unreachable = filteredCount - reachable;
+                        if (unreachable > 0) return (
+                          <div className="p-2 bg-amber-500/10 border border-amber-500/20 rounded-lg mt-1">
+                            <p className="text-[10px] text-amber-400 font-bold">
+                              📧 {reachable.toLocaleString()} reachable by {campaignType} · {unreachable.toLocaleString()} need {campaignType === 'email' ? 'email enrichment' : 'phone numbers'}
+                            </p>
+                          </div>
+                        );
+                        return null;
+                      })()}
                       
                       {isOfflineMode && (
                         <div className="p-2.5 bg-amber-500/10 border border-amber-500/20 rounded-xl mt-1">
