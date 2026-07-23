@@ -219,6 +219,40 @@ service cloud.firestore {
       allow write: if isAuthenticated() && request.auth.uid == userId;
     }
 
+    // ===============================================================
+    // CannaCribs Collections
+    // ===============================================================
+
+    // CannaCribs Properties
+    match /cannacribs_properties/{propId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // CannaCribs Applications
+    match /cannacribs_applications/{appId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // CannaCribs Landlords
+    match /cannacribs_landlords/{landlordId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // CannaCribs Calendar Events
+    match /cannacribs_calendar/{eventId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // CannaCribs Document Vault
+    match /cannacribs_vault/{docId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // CannaCribs Config (fees, inspection checklist)
+    match /cannacribs_config/{configId} {
+      allow read, write: if isAuthenticated();
+    }
+
     // VoIP Phone Extensions
     match /phone_extensions/{extId} {
       allow read, write: if isAuthenticated();

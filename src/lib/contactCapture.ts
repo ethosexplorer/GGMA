@@ -30,6 +30,7 @@ export type ContactSource =
   | 'gov_advocate_import'
   | 'walk_in'
   | 'web_form'
+  | 'cannacribs_application'
   | 'other';
 
 export type ContactType =
@@ -51,6 +52,7 @@ export type ContactType =
   | 'prospect'
   | 'partner'
   | 'employee'
+  | 'cannacribs'
   | 'other';
 
 export interface UniversalContact {

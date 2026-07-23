@@ -90,6 +90,8 @@ const normalizeType = (rawType: string): string => {
   if (rawType.startsWith('gov_') || rawType.startsWith('enforcement_') || rawType === 'enforcement' || ['police', 'dea', 'obn', 'mayor', 'governor', 'senator', 'legislative', 'political', 'attorney_general'].includes(rawType)) return 'agency';
   // Generic business types (from contactCapture) → 'other' so they map to a known entity type
   if (rawType === 'business_owner' || rawType === 'business') return 'other';
+  // CannaCribs housing contacts
+  if (rawType === 'cannacribs_tenant' || rawType === 'cannacribs_landlord' || rawType === 'cannacribs_guest') return 'cannacribs';
   return rawType;
 };
 
@@ -104,6 +106,7 @@ const ENTITY_TYPES = [
   { id: 'agency', label: 'Gov / Enforcement Agency' },
   { id: 'distribution', label: 'Distribution / Transport' },
   { id: 'advocate', label: 'Advocate / Partner' },
+  { id: 'cannacribs', label: '🏠 CannaCribs Housing' },
   { id: 'other', label: 'Other Business' },
 ];
 
@@ -1833,6 +1836,68 @@ export const MarketingHub = () => {
                         setSubject('License Renewal Alert');
                         setMessage(`COMPLIANCE ALERT: Is your cannabis business license up to date? Operating on an expired license risks closure & fines. Check your renewal status now. Visit globalgreenhp.com/compliance or call 1-888-963-4447 for free compliance assistance. — Global Green Enterprise`);
                         alert('✅ SMS Business Renewal Blast Loaded!\n\n📱 Mode: SMS\n📋 Audience: ALL businesses with phone numbers (owners, dispensaries, growers, processors)\n🌐 All states — no date filter\n\nReview audience count and hit Launch.');
+                      } else if (val === 'cannacribs') {
+                        // CannaCribs Housing Campaign — Email
+                        setSelectedTypes(['cannacribs']);
+                        setSelectedStates(['All']);
+                        setSelectedTier('all');
+                        setBusinessRenewalMode('off');
+                        setPatientRenewalMode('off');
+                        setCampaignType('email');
+                        setSendMode('broadcast');
+                        setSubject('Cannabis-Friendly Housing Is Here — Meet CannaCribs by Global Green');
+                        setMessage(`<div style="font-family: 'Inter', Arial, sans-serif; max-width: 640px; margin: 0 auto; padding: 32px 0;">
+  <div style="background: linear-gradient(135deg, #064E3B, #065F46); padding: 40px 32px; border-radius: 16px; color: white; margin-bottom: 28px;">
+    <p style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #F59E0B; font-weight: 800; margin: 0 0 16px;">🏠 CannaCribs — Cannabis-Friendly Housing</p>
+    <h1 style="font-size: 26px; font-weight: 900; margin: 0 0 8px; line-height: 1.2;">Finally — Housing That Doesn't Discriminate Against Cannabis</h1>
+    <p style="color: rgba(255,255,255,0.5); font-size: 13px; margin: 0;">Tenant-friendly. Landlord-profitable. 100% cannabis-compliant.</p>
+  </div>
+  <p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">Whether you're a patient, a landlord, or someone looking for cannabis-friendly short-term stays — CannaCribs was built for you.</p>
+  <p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;"><strong>For Tenants & Patients:</strong></p>
+  <div style="background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 12px; padding: 20px 24px; margin: 0 0 24px;">
+    <p style="font-size: 14px; color: #166534; line-height: 2; margin: 0;">
+      • Browse verified 420-friendly listings nationwide<br/>
+      • No more hiding your medicine — every property welcomes cannabis use<br/>
+      • Simple application with credit & background check built in<br/>
+      • Short-term cannabis retreat bookings available
+    </p>
+  </div>
+  <p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;"><strong>For Property Owners & Landlords:</strong></p>
+  <div style="background: #FFF7ED; border: 1px solid #FED7AA; border-radius: 12px; padding: 20px 24px; margin: 0 0 24px;">
+    <p style="font-size: 14px; color: #9A3412; line-height: 2; margin: 0;">
+      • Earn 20-30% above market rent with cannabis-friendly premium pricing<br/>
+      • Choose Green ($49/mo), Gold ($149/mo), Platinum ($299/mo), or Executive ($499/mo) tiers<br/>
+      • Includes property inspections, cannabis odor management, and liability coverage<br/>
+      • Tenant screening, lease management, and compliance handled for you
+    </p>
+  </div>
+  <p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 28px;">CannaCribs is the only cannabis-specific real estate platform in America. We handle everything — from matching tenants to managing your property — so you can focus on what matters.</p>
+  <div style="text-align: center; margin: 32px 0;">
+    <a href="https://globalgreenhp.com/cannacribs" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: linear-gradient(135deg, #065F46, #047857); color: #FDE68A; padding: 16px 44px; border-radius: 12px; font-weight: 800; text-decoration: none; font-size: 14px; letter-spacing: 0.5px;">🏠 Explore CannaCribs</a>
+  </div>
+  <div style="text-align: center; margin: 16px 0;">
+    <a href="https://globalgreenhp.com/cannacribs-apply" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: linear-gradient(135deg, #D97706, #B45309); color: white; padding: 14px 38px; border-radius: 12px; font-weight: 800; text-decoration: none; font-size: 13px;">📋 Apply Now — Tenant or Landlord</a>
+  </div>
+  <div style="border-top: 1px solid #E2E8F0; padding-top: 24px; margin-top: 32px;">
+    <p style="font-size: 14px; color: #334155; margin: 0 0 4px;"><strong>Best Regards,</strong></p>
+    <p style="font-size: 15px; color: #065F46; font-weight: 800; margin: 0 0 4px;">The CannaCribs Team</p>
+    <p style="font-size: 13px; color: #64748B; margin: 0 0 12px;">A Global Green Enterprise Product</p>
+    <p style="font-size: 11px; color: #94A3B8; line-height: 1.8; margin: 0;">1-888-963-4447 | hello@canna-cribs.com<br>Fair Housing Compliant | Cannabis-Friendly Nationwide</p>
+  </div>
+</div>`);
+                        alert('✅ CannaCribs Email Campaign Loaded!\n\n🏠 Audience: CannaCribs contacts (tenants, landlords, guests)\n📧 Cannabis-friendly housing promotion template\n🌐 All states\n\nReview audience count and hit Launch.');
+                      } else if (val === 'sms_cannacribs') {
+                        // CannaCribs Housing — SMS
+                        setSelectedTypes(['cannacribs']);
+                        setSelectedStates(['All']);
+                        setSelectedTier('all');
+                        setBusinessRenewalMode('off');
+                        setPatientRenewalMode('off');
+                        setCampaignType('sms');
+                        setSendMode('broadcast');
+                        setSubject('CannaCribs Housing');
+                        setMessage(`🏠 Cannabis-friendly housing is HERE! CannaCribs by Global Green — find 420-friendly rentals or list your property for 20-30% above market rent. Tenants, landlords & short-term stays welcome. Apply now: globalgreenhp.com/cannacribs-apply or call 1-888-963-4447`);
+                        alert('✅ SMS CannaCribs Preset Loaded!\n\n📱 Mode: SMS\n🏠 Audience: CannaCribs contacts with phone numbers\n\nReview audience count and hit Launch.');
                       }
                       // Reset the value so the select acts as a trigger button
                       e.target.value = '';
@@ -1850,10 +1915,12 @@ export const MarketingHub = () => {
                       <option value="cannabis_businesses">🏢 Cannabis Operators Preset</option>
                       <option value="patient_renewal">🩺 Patient Card Renewal (Email)</option>
                       <option value="business_renewal">🏢 Business License Renewal (Email)</option>
+                      <option value="cannacribs">🏠 CannaCribs Housing Campaign (Email)</option>
                     </optgroup>
                     <optgroup label="📱 SMS Presets">
                       <option value="sms_patient_renewal">📱 Patient Card Renewal (SMS)</option>
                       <option value="sms_business_renewal">📱 Business License Renewal (SMS)</option>
+                      <option value="sms_cannacribs">📱 CannaCribs Housing (SMS)</option>
                     </optgroup>
                   </select>
                   <p className="text-[9px] text-slate-500 mt-2 font-medium text-center">SWEEP sends segmented campaigns per audience type</p>
