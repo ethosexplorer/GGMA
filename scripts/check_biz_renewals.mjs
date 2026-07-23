@@ -4,53 +4,99 @@ import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { readFileSync } from 'fs';
 
 const firebaseConfig = JSON.parse(readFileSync('./firebase-applet-config.json', 'utf-8'));
-const app = initializeApp(firebaseConfig, 'diag2');
+const app = initializeApp(firebaseConfig, 'email-audit');
 const db = getFirestore(app);
 const auth = getAuth(app);
-
 await signInWithEmailAndPassword(auth, 'globalgreenhp@gmail.com', 'Harlem2025!');
 
 const snap = await getDocs(collection(db, 'crm_deals'));
-
-// Count business types with licenseExpiration in July 2026 that ALSO have email
 const bizTypes = new Set(['dispensary', 'grower', 'processor', 'distribution', 'other', 'backoffice', 'business', 'business_owner']);
-let julyWithEmail = 0;
-let julyNoEmail = 0;
-let julyTotal = 0;
+
+let verified = 0;
+let unverified = 0;
+let fabricated = 0;
+let noEmail = 0;
+let totalBiz = 0;
+
+// Fabricated email detection (same patterns as MarketingHub)
+const isFabricated = (email, name) => {
+  if (!email) return false;
+  const em = email.toLowerCase();
+  const prefix = em.split('@')[0];
+  const domain = (em.split('@')[1] || '').replace(/\.(com|org|net|gov)$/, '');
+  if (['contact', 'appointments', 'info'].includes(prefix)) {
+    const nameSlug = (name || '').toLowerCase().replace(/[^a-z0-9]/g, '').substring(0, 40);
+    if (nameSlug && domain && (domain.includes(nameSlug.substring(0, 8)) || nameSlug.includes(domain.substring(0, 8)))) return true;
+  }
+  return false;
+};
+
+const verifiedEmails = [];
+const unverifiedSample = [];
 
 snap.docs.forEach(d => {
   const data = d.data();
   if (!bizTypes.has(data.type)) return;
-  if (!data.licenseExpiration) return;
+  totalBiz++;
   
-  const exp = data.licenseExpiration.trim();
-  if (!exp.startsWith('2026-07')) return;
+  if (!data.email || !data.email.trim()) {
+    noEmail++;
+    return;
+  }
   
-  julyTotal++;
-  if (data.email && data.email.trim()) {
-    julyWithEmail++;
-    console.log(`  ✅ [${data.type}] ${data.name} | ${data.email} | exp: ${exp}`);
+  if (data.emailFabricated === true) {
+    fabricated++;
+    return;
+  }
+  
+  if (isFabricated(data.email, data.businessName || data.name)) {
+    fabricated++;
+    return;
+  }
+  
+  if (data.emailVerified === true) {
+    verified++;
+    verifiedEmails.push({ name: data.name, email: data.email, type: data.type, exp: data.licenseExpiration || 'none' });
   } else {
-    julyNoEmail++;
+    unverified++;
+    if (unverifiedSample.length < 15) {
+      unverifiedSample.push({ name: data.name, email: data.email, type: data.type, exp: data.licenseExpiration || 'none' });
+    }
   }
 });
 
-console.log(`\nJuly 2026 Business Renewals:  ${julyTotal}`);
-console.log(`  With email:    ${julyWithEmail}`);
-console.log(`  Without email: ${julyNoEmail}`);
-console.log(`\nTHIS IS WHY THE COUNT IS ZERO - the email filter (campaignType=email && !d.email) removes all records without emails.`);
-
-// Also count how many business records total have emails vs not
-let bizWithEmail = 0;
-let bizNoEmail = 0;
-snap.docs.forEach(d => {
-  const data = d.data();
-  if (!bizTypes.has(data.type)) return;
-  if (data.email && data.email.trim()) bizWithEmail++;
-  else bizNoEmail++;
+console.log('═══════════════════════════════════════════════════');
+console.log('  BUSINESS EMAIL QUALITY AUDIT');
+console.log('═══════════════════════════════════════════════════\n');
+console.log(`Total business records:     ${totalBiz}`);
+console.log(`No email at all:            ${noEmail} (${Math.round(100*noEmail/totalBiz)}%)`);
+console.log(`Email flagged fabricated:    ${fabricated}`);
+console.log(`Email VERIFIED (✓):         ${verified}`);
+console.log(`Email unverified (no ✓):    ${unverified}`);
+console.log(`\n═══ VERIFIED BUSINESS EMAILS (safe to send) ═══`);
+verifiedEmails.slice(0, 20).forEach(e => {
+  console.log(`  ✅ [${e.type}] ${e.name} → ${e.email} (exp: ${e.exp})`);
 });
-console.log(`\nAll Business Records: ${bizWithEmail + bizNoEmail}`);
-console.log(`  With email:    ${bizWithEmail} (${Math.round(100*bizWithEmail/(bizWithEmail+bizNoEmail))}%)`);
-console.log(`  Without email: ${bizNoEmail}`);
+if (verifiedEmails.length > 20) console.log(`  ... and ${verifiedEmails.length - 20} more`);
+
+// Check how many verified have expiration dates
+const verifiedWithExp = verifiedEmails.filter(e => e.exp !== 'none');
+console.log(`\nVerified + has licenseExpiration: ${verifiedWithExp.length}`);
+const verifiedJuly2026 = verifiedWithExp.filter(e => e.exp.startsWith('2026-07'));
+const verifiedJune2026 = verifiedWithExp.filter(e => e.exp.startsWith('2026-06'));
+const verifiedAug2026 = verifiedWithExp.filter(e => e.exp.startsWith('2026-08'));
+console.log(`  June 2026:  ${verifiedJune2026.length}`);
+console.log(`  July 2026:  ${verifiedJuly2026.length}`);
+console.log(`  Aug 2026:   ${verifiedAug2026.length}`);
+
+console.log(`\n═══ SAMPLE UNVERIFIED EMAILS (risky to send) ═══`);
+unverifiedSample.forEach(e => {
+  console.log(`  ⚠️  [${e.type}] ${e.name} → ${e.email}`);
+});
+
+console.log('\n═══ BOTTOM LINE ═══');
+console.log(`Only ${verified} verified business emails exist.`);
+console.log(`${verifiedJuly2026.length} of those expire in July 2026.`);
+console.log('The renewal audience needs email enrichment + verification before campaigns can run safely.');
 
 process.exit(0);

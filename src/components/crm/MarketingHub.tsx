@@ -1694,7 +1694,7 @@ export const MarketingHub = () => {
                         setSubject('Your Patient Pipeline Deserves Real-Time Compliance Infrastructure');
                         setMessage(`<div style="font-family: 'Inter', Arial, sans-serif; max-width: 640px; margin: 0 auto; padding: 32px 0;"><div style="background: linear-gradient(135deg, #061F15, #0A3D2A); padding: 40px 32px; border-radius: 16px; color: white; margin-bottom: 28px;"><p style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #D4AF77; font-weight: 800; margin: 0 0 16px;">Strategic Valuation Brief &mdash; Healthcare Providers</p><h1 style="font-size: 26px; font-weight: 900; margin: 0 0 8px; line-height: 1.2;">Global Green Hybrid Platform</h1><p style="color: rgba(255,255,255,0.5); font-size: 13px; margin: 0;">Automated patient intake and compliance infrastructure for clinics.</p></div><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">Doctor,</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">Your patients depend on timely medical card approvals, renewal reminders, and compliant physician coordination across state lines. The current system is manual, fragmented, and slow.</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;"><strong>GGHP-OS</strong> automates the entire patient intake lifecycle &mdash; from telehealth scheduling and physician matching to state registry submission and renewal alerts &mdash; across all 50 states and 26 languages.</p><p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">The attached brief outlines how the platform's AI engine (Sylara) handles the majority of patient interactions without human escalation, and how providers like you gain real-time visibility into patient compliance status, renewal timelines, and cross-state reciprocity.</p><div style="background: #F0F9FF; border: 1px solid #BAE6FD; border-radius: 12px; padding: 16px 24px; margin: 24px 0;"><p style="font-size: 14px; color: #0C4A6E; line-height: 1.8; margin: 0;">We are scheduling provider onboarding calls this month. No obligation &mdash; just a walkthrough of what the platform does for your practice.</p></div><div style="text-align: center; margin: 32px 0;"><a href="https://globalgreenhp.com/GGHP_Agency_Valuation_Brief.html" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: linear-gradient(135deg, #0A3D2A, #134D36); color: #E8D5B5; padding: 16px 44px; border-radius: 12px; font-weight: 800; text-decoration: none; font-size: 14px;">View the Full Valuation Brief</a></div><div style="border-top: 1px solid #E2E8F0; padding-top: 24px; margin-top: 32px;"><p style="font-size: 14px; color: #334155; margin: 0 0 4px;"><strong>Best,</strong></p><p style="font-size: 15px; color: #0A3D2A; font-weight: 800; margin: 0 0 4px;">Shantell Robinson</p><p style="font-size: 13px; color: #64748B; margin: 0 0 12px;">Founder and CEO, Global Green Enterprise Inc.</p><p style="font-size: 11px; color: #94A3B8; line-height: 1.8; margin: 0;">1-888-963-4447 | 645-246-8277<br>CAGE: 9KXZ2 | SAM.gov Active | BBB A+ Rated</p></div></div>`);
                       } else if (val === 'cannabis_businesses') {
-                        setSelectedTypes(['dispensary', 'grower', 'processor', 'distribution']);
+                        setSelectedTypes(['dispensary', 'grower', 'processor', 'distribution', 'backoffice', 'other']);
                         setSelectedStates(['All']);
                         setSelectedTier('all');
                         setCampaignType('email');
@@ -1771,34 +1771,34 @@ export const MarketingHub = () => {
 </div>`);
                         alert('✅ Patient Renewal Preset Loaded!\n\n📋 Audience: All Patient types\n📅 Renewal Mode: Expiring in Selected Month\n📧 Subject & body pre-filled with patient card renewal template\n🌐 All states selected\n\nReview the audience count and hit Launch Campaign when ready.');
                       } else if (val === 'business_renewal') {
-                        setSelectedTypes(['dispensary', 'grower', 'processor', 'distribution', 'other']);
+                        // Blast ALL verified business contacts — no date filtering.
+                        // If renewal applies they'll act on it; if not, they have the info for later.
+                        setSelectedTypes(['dispensary', 'grower', 'processor', 'distribution', 'backoffice', 'other']);
                         setSelectedStates(['All']);
                         setSelectedTier('all');
-                        setBusinessRenewalMode('month');
-                        setBusinessRenewalMonth(prev => {
-                          const now = new Date();
-                          return { year: now.getFullYear(), month: now.getMonth() };
-                        }); // Default to current month
+                        setBusinessRenewalMode('off'); // No date filter — send to ALL businesses
+                        setPatientRenewalMode('off');
                         setCampaignType('email');
                         setSendMode('broadcast');
-                        setSubject('Compliance Alert: Your Cannabis Business License is Expiring Soon');
+                        setSubject('Cannabis Business License Renewal — Stay Compliant & Operational');
                         setMessage(`<div style="font-family: 'Inter', Arial, sans-serif; max-width: 640px; margin: 0 auto; padding: 32px 0;">
   <div style="background: linear-gradient(135deg, #061F15, #0A3D2A); padding: 40px 32px; border-radius: 16px; color: white; margin-bottom: 28px;">
-    <p style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #D4AF77; font-weight: 800; margin: 0 0 16px;">Compliance & Licensing Alert</p>
-    <h1 style="font-size: 26px; font-weight: 900; margin: 0 0 8px; line-height: 1.2;">Your Cannabis Business License Expiration Reminder</h1>
-    <p style="color: rgba(255,255,255,0.5); font-size: 13px; margin: 0;">Keep your operations active, compliant, and open.</p>
+    <p style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #D4AF77; font-weight: 800; margin: 0 0 16px;">Compliance & Licensing Awareness</p>
+    <h1 style="font-size: 26px; font-weight: 900; margin: 0 0 8px; line-height: 1.2;">Is Your Cannabis Business License Up to Date?</h1>
+    <p style="color: rgba(255,255,255,0.5); font-size: 13px; margin: 0;">Don't let an expired license shut down your operations.</p>
   </div>
-  <p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">To the Licensee / Compliance Officer,</p>
-  <p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">Our system has flagged that your state cannabis business license is approaching its expiration date. Operating on an expired or unrenewed license is a major compliance violation that can result in immediate closure, hefty fines, or suspension of your tracking system access.</p>
-  <p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;"><strong>Steps to secure your renewal:</strong></p>
+  <p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">To the Business Owner / Licensee / Compliance Officer,</p>
+  <p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;">State cannabis business licenses must be renewed annually in most jurisdictions. Operating on an expired or lapsed license can result in immediate closure, heavy fines, or loss of your seed-to-sale tracking system access.</p>
+  <p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 18px;"><strong>Whether your renewal is coming up soon or months away, now is the time to prepare:</strong></p>
   <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px 24px; margin: 24px 0;">
     <p style="font-size: 14px; color: #334155; line-height: 2; margin: 0;">
-      • <strong>Submit Renewal Application:</strong> Upload all tax clearance certificates, property disclosures, and local authority permits to the state registry portal.<br/>
-      • <strong>Update Track-and-Trace Integration:</strong> Ensure your Metrc/API keys are up to date and that no pending inventory transfers are halted.<br/>
-      • <strong>Audit Compliance Records:</strong> Run a pre-renewal check of your security logs and daily inventory counts to prepare for state inspection.
+      • <strong>Check Your Expiration Date:</strong> Verify your current license status and renewal deadline with your state cannabis authority.<br/>
+      • <strong>Submit Renewal Early:</strong> Upload tax clearance certificates, property disclosures, and local authority permits well before the deadline.<br/>
+      • <strong>Update Track-and-Trace:</strong> Ensure your Metrc/API keys are current and no pending inventory transfers are halted.<br/>
+      • <strong>Audit Compliance Records:</strong> Run a pre-renewal check of security logs and daily inventory counts.
     </p>
   </div>
-  <p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 28px;">If you have already submitted your renewal application, please reply to this email or update your status in the GGHP-OS compliance portal to keep our tracking logs synchronized.</p>
+  <p style="font-size: 15px; color: #334155; line-height: 1.8; margin: 0 0 28px;">Global Green tracks license renewal status across all 51 jurisdictions. If you'd like us to monitor your renewal timeline or assist with compliance preparation, reply to this email or visit our portal below.</p>
   <div style="text-align: center; margin: 32px 0;">
     <a href="https://globalgreenhp.com/compliance" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: linear-gradient(135deg, #0A3D2A, #134D36); color: #E8D5B5; padding: 16px 44px; border-radius: 12px; font-weight: 800; text-decoration: none; font-size: 14px; letter-spacing: 0.5px;">Open Compliance Dashboard</a>
   </div>
@@ -1809,7 +1809,7 @@ export const MarketingHub = () => {
     <p style="font-size: 11px; color: #94A3B8; line-height: 1.8; margin: 0;">1-888-963-4447 | compliance@globalgreenhp.com<br>WOSB Certified | SAM.gov Active | Metrc Validated Integrator</p>
   </div>
 </div>`);
-                        alert('✅ Business Renewal Preset Loaded!\n\n📋 Audience: All Cannabis Business types\n📅 Renewal Mode: Expiring in Selected Month\n📧 Subject & body pre-filled with business license renewal template\n🌐 All states selected\n\nReview the audience count and hit Launch Campaign when ready.');
+                        alert('✅ Business Renewal Email Blast Loaded!\n\n📋 Audience: ALL cannabis businesses (dispensaries, growers, processors, owners)\n📧 Sends to all verified business emails\n🌐 All states — no date filter\n\nIf renewal applies to them, great. If not, they have the info for when they\'re ready.\n\nReview audience count and hit Launch.');
                       } else if (val === 'sms_patient_renewal') {
                         setSelectedTypes(['patient']);
                         setSelectedStates(['OK']);
@@ -1822,16 +1822,17 @@ export const MarketingHub = () => {
                         setMessage(`Hi, this is Global Green & Chronic Cardz. Your Oklahoma medical cannabis card is expiring soon. To keep your patient status active, schedule your renewal consultation now at calendly.com/globalgreenhpmeet/medical-card-recommendation-clone or call 1-405-492-7487. Don't lose access — renew today!`);
                         alert('✅ SMS Patient Renewal Preset Loaded!\n\n📱 Mode: SMS (TextBelt)\n📋 Audience: Patients with expiring cards\n📅 Renewal Month filter active\n\nReview audience count and hit Launch.');
                       } else if (val === 'sms_business_renewal') {
-                        setSelectedTypes(['dispensary', 'grower', 'processor', 'distribution', 'other']);
+                        // SMS blast to ALL business contacts with phone numbers
+                        setSelectedTypes(['dispensary', 'grower', 'processor', 'distribution', 'backoffice', 'other']);
                         setSelectedStates(['All']);
                         setSelectedTier('all');
-                        setBusinessRenewalMode('month');
-                        setBusinessRenewalMonth({ year: new Date().getFullYear(), month: new Date().getMonth() });
+                        setBusinessRenewalMode('off'); // No date filter — send to ALL businesses with phones
+                        setPatientRenewalMode('off');
                         setCampaignType('sms');
                         setSendMode('broadcast');
                         setSubject('License Renewal Alert');
-                        setMessage(`COMPLIANCE ALERT: Your cannabis business license is expiring soon. Renew now to avoid suspension. Visit globalgreenhp.com/compliance or call 1-888-963-4447 for assistance. — Global Green Enterprise`);
-                        alert('✅ SMS Business Renewal Preset Loaded!\n\n📱 Mode: SMS (TextBelt)\n📋 Audience: Businesses with expiring licenses\n📅 Renewal Month filter active');
+                        setMessage(`COMPLIANCE ALERT: Is your cannabis business license up to date? Operating on an expired license risks closure & fines. Check your renewal status now. Visit globalgreenhp.com/compliance or call 1-888-963-4447 for free compliance assistance. — Global Green Enterprise`);
+                        alert('✅ SMS Business Renewal Blast Loaded!\n\n📱 Mode: SMS\n📋 Audience: ALL businesses with phone numbers (owners, dispensaries, growers, processors)\n🌐 All states — no date filter\n\nReview audience count and hit Launch.');
                       }
                       // Reset the value so the select acts as a trigger button
                       e.target.value = '';
