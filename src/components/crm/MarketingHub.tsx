@@ -183,9 +183,15 @@ export const MarketingHub = () => {
   const [selectedAgencySubtypes, setSelectedAgencySubtypes] = useState<string[]>(['All']);
   const [selectedTier, setSelectedTier] = useState<'all' | 'top_grossing' | 'standard'>('all');
   const [patientRenewalMode, setPatientRenewalMode] = useState<'off' | 'month' | 'daily'>('off');
-  const [patientRenewalMonth, setPatientRenewalMonth] = useState(() => ({ year: 2026, month: 3 }));
+  const [patientRenewalMonth, setPatientRenewalMonth] = useState(() => {
+    const now = new Date();
+    return { year: now.getFullYear(), month: now.getMonth() };
+  });
   const [businessRenewalMode, setBusinessRenewalMode] = useState<'off' | 'month' | 'daily'>('off');
-  const [businessRenewalMonth, setBusinessRenewalMonth] = useState(() => ({ year: 2026, month: 3 }));
+  const [businessRenewalMonth, setBusinessRenewalMonth] = useState(() => {
+    const now = new Date();
+    return { year: now.getFullYear(), month: now.getMonth() };
+  });
   const [showStateDropdown, setShowStateDropdown] = useState(false);
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -1687,7 +1693,10 @@ export const MarketingHub = () => {
                         setSelectedStates(['OK']);
                         setSelectedTier('all');
                         setPatientRenewalMode('month');
-                        setPatientRenewalMonth({ year: 2026, month: 3 }); // Set to April 2026 by default
+                        setPatientRenewalMonth(prev => {
+                          const now = new Date();
+                          return { year: now.getFullYear(), month: now.getMonth() };
+                        }); // Default to current month
                         setCampaignType('email');
                         setSendMode('broadcast');
                         setSubject('Action Required: Your Medical Cannabis Card is Expiring Soon');
@@ -1724,7 +1733,10 @@ export const MarketingHub = () => {
                         setSelectedStates(['All']);
                         setSelectedTier('all');
                         setBusinessRenewalMode('month');
-                        setBusinessRenewalMonth({ year: 2026, month: 3 }); // Set to April 2026 by default
+                        setBusinessRenewalMonth(prev => {
+                          const now = new Date();
+                          return { year: now.getFullYear(), month: now.getMonth() };
+                        }); // Default to current month
                         setCampaignType('email');
                         setSendMode('broadcast');
                         setSubject('Compliance Alert: Your Cannabis Business License is Expiring Soon');
@@ -1761,7 +1773,7 @@ export const MarketingHub = () => {
                         setSelectedStates(['OK']);
                         setSelectedTier('all');
                         setPatientRenewalMode('month');
-                        setPatientRenewalMonth({ year: 2026, month: 3 });
+                        setPatientRenewalMonth({ year: new Date().getFullYear(), month: new Date().getMonth() });
                         setCampaignType('sms');
                         setSendMode('broadcast');
                         setSubject('Med Card Renewal');
@@ -1772,7 +1784,7 @@ export const MarketingHub = () => {
                         setSelectedStates(['All']);
                         setSelectedTier('all');
                         setBusinessRenewalMode('month');
-                        setBusinessRenewalMonth({ year: 2026, month: 3 });
+                        setBusinessRenewalMonth({ year: new Date().getFullYear(), month: new Date().getMonth() });
                         setCampaignType('sms');
                         setSendMode('broadcast');
                         setSubject('License Renewal Alert');
