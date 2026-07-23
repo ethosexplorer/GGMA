@@ -45,6 +45,66 @@ const STATUS_OPTIONS = ['Pending Review', 'Background Check', 'Verification', 'A
 const PROPERTY_TYPES = ['Apartment', 'House', 'Condo', 'Townhome', 'Duplex', 'Multi-Family', 'Studio', 'Commercial', 'Short-Term', 'Mobile Home'];
 const STATUS_COLORS: Record<string, string> = { 'Pending Review': 'bg-amber-100 text-amber-700 border-amber-200', 'Background Check': 'bg-blue-100 text-blue-700 border-blue-200', 'Verification': 'bg-purple-100 text-purple-700 border-purple-200', 'Approved': 'bg-emerald-100 text-emerald-700 border-emerald-200', 'Denied': 'bg-red-100 text-red-700 border-red-200', 'On Hold': 'bg-slate-100 text-slate-600 border-slate-200', 'Waitlisted': 'bg-cyan-100 text-cyan-700 border-cyan-200', 'Occupied': 'bg-emerald-100 text-emerald-700', 'Vacant': 'bg-amber-100 text-amber-700', 'Booked': 'bg-blue-100 text-blue-700' };
 const TIER_COLORS: Record<string, string> = { 'Green': 'bg-emerald-100 text-emerald-700', 'Gold': 'bg-amber-100 text-amber-700', 'Platinum': 'bg-violet-100 text-violet-700', 'Executive': 'bg-purple-100 text-purple-700' };
+const TIER_DETAILS: Record<string, { price: string; tagline: string; features: string[]; bonus?: string }> = {
+  'Green': {
+    price: '$49/mo',
+    tagline: 'Essential cannabis-friendly housing',
+    features: [
+      'Cannabis-friendly verified listing',
+      'Basic tenant screening',
+      'Standard lease agreement',
+      'Monthly property check-in',
+      'Tenant support hotline',
+      'Listing on CannaCribs marketplace',
+    ],
+  },
+  'Gold': {
+    price: '$149/mo',
+    tagline: 'Enhanced property management',
+    features: [
+      'Everything in Green, plus:',
+      'Priority tenant matching',
+      'Quarterly property inspections',
+      'Maintenance coordination',
+      'Rent collection assistance',
+      'Tenant background checks (enhanced)',
+      'Legal compliance review',
+      'Dedicated account manager',
+    ],
+  },
+  'Platinum': {
+    price: '$299/mo',
+    tagline: 'Premium full-service management',
+    features: [
+      'Everything in Gold, plus:',
+      'Monthly inspections with report',
+      'Emergency maintenance 24/7',
+      'Turnover cleaning included',
+      'Professional photography',
+      'Renter\'s insurance facilitation',
+      'METRC compliance support',
+      'Revenue optimization consulting',
+      'Guest/short-term booking mgmt',
+    ],
+  },
+  'Executive': {
+    price: '$499/mo',
+    tagline: 'White-glove concierge service',
+    features: [
+      'Everything in Platinum, plus:',
+      'Dedicated property concierge',
+      'Weekly inspections',
+      'Legal representation retainer',
+      'Insurance claim management',
+      'Full bookkeeping & financials',
+      'VIP tenant placement',
+      'Multi-property portfolio dashboard',
+      'Priority marketing & featured listing',
+      'On-call emergency response team',
+    ],
+    bonus: 'Best for landlords with 3+ properties',
+  },
+};
 const CAL_COLORS: Record<string, string> = { inspection: 'bg-blue-500', booking: 'bg-purple-500', cleaning: 'bg-emerald-500', maintenance: 'bg-amber-500' };
 const CAL_TEXT: Record<string, string> = { inspection: 'text-blue-700 bg-blue-50 border-blue-200', booking: 'text-purple-700 bg-purple-50 border-purple-200', cleaning: 'text-emerald-700 bg-emerald-50 border-emerald-200', maintenance: 'text-amber-700 bg-amber-50 border-amber-200' };
 
@@ -96,6 +156,7 @@ const EMPTY_APP: Application = { id: '', name: '', type: 'Tenant', email: '', ph
 export const CannaCribsManagementTab = () => {
   const [subTab, setSubTab] = useState<SubTab>('overview');
   const [appFilter, setAppFilter] = useState('All');
+  const [expandedTier, setExpandedTier] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   // ═══ FIRESTORE-BACKED STATE ═══
@@ -819,7 +880,39 @@ export const CannaCribsManagementTab = () => {
             ))}
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-white rounded-lg border border-slate-200 p-4"><h3 className="font-bold text-slate-900 text-xs mb-2 flex items-center gap-2"><TrendingUp size={14} className="text-green-600" />Revenue by Service Tier</h3><div className="space-y-1.5">{tierRevenue.map((r, i) => (<div key={i} className="flex items-center justify-between py-1.5 px-2 bg-slate-50 rounded"><div className="flex items-center gap-2"><div className={cn('w-2.5 h-2.5 rounded-full', r.tier === 'Green' ? 'bg-emerald-500' : r.tier === 'Gold' ? 'bg-amber-500' : r.tier === 'Platinum' ? 'bg-violet-500' : 'bg-purple-500')} /><span className="text-xs font-bold text-slate-700">{r.tier}</span><span className="text-[10px] text-slate-400">{r.count} properties</span></div><span className="text-xs font-black text-slate-900">${r.revenue.toLocaleString()}/mo</span></div>))}<div className="flex items-center justify-between py-1.5 px-2 bg-green-50 rounded border border-green-200"><span className="text-xs font-black text-green-700">Total Tier Revenue</span><span className="text-sm font-black text-green-700">${totalTierRevenue.toLocaleString()}/mo</span></div></div></div>
+            <div className="bg-white rounded-lg border border-slate-200 p-4"><h3 className="font-bold text-slate-900 text-xs mb-2 flex items-center gap-2"><TrendingUp size={14} className="text-green-600" />Revenue by Service Tier <span className="text-[8px] text-blue-500 bg-blue-50 px-1.5 py-0.5 rounded-full font-bold ml-1">Click tier for details</span></h3><div className="space-y-1.5">{tierRevenue.map((r, i) => {
+              const details = TIER_DETAILS[r.tier];
+              const isExpanded = expandedTier === r.tier;
+              return (<div key={i}>
+                <div className={cn('flex items-center justify-between py-1.5 px-2 rounded cursor-pointer transition-all', isExpanded ? 'bg-slate-100 ring-1 ring-slate-300' : 'bg-slate-50 hover:bg-slate-100')} onClick={() => setExpandedTier(isExpanded ? null : r.tier)}>
+                  <div className="flex items-center gap-2">
+                    <div className={cn('w-2.5 h-2.5 rounded-full', r.tier === 'Green' ? 'bg-emerald-500' : r.tier === 'Gold' ? 'bg-amber-500' : r.tier === 'Platinum' ? 'bg-violet-500' : 'bg-purple-500')} />
+                    <span className="text-xs font-bold text-slate-700">{r.tier}</span>
+                    <span className="text-[10px] text-slate-400">{r.count} properties</span>
+                    <ChevronDown size={10} className={cn('text-slate-400 transition-transform', isExpanded && 'rotate-180')} />
+                  </div>
+                  <span className="text-xs font-black text-slate-900">${r.revenue.toLocaleString()}/mo</span>
+                </div>
+                {isExpanded && details && (
+                  <div className="mx-1 mt-1 mb-1 p-3 bg-white rounded-lg border border-slate-200 shadow-sm animate-in fade-in slide-in-from-top-1 duration-150">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className={cn('px-2 py-0.5 rounded-full text-[9px] font-black uppercase', TIER_COLORS[r.tier])}>{r.tier} Tier</span>
+                      <span className="text-sm font-black text-green-600">{details.price}</span>
+                    </div>
+                    <p className="text-[10px] text-slate-500 italic mb-2">{details.tagline}</p>
+                    <div className="grid grid-cols-2 gap-x-3 gap-y-1">
+                      {details.features.map((f, fi) => (
+                        <div key={fi} className="flex items-start gap-1">
+                          <CheckCircle size={9} className="text-green-500 mt-0.5 shrink-0" />
+                          <span className="text-[10px] text-slate-700">{f}</span>
+                        </div>
+                      ))}
+                    </div>
+                    {details.bonus && <div className="mt-2 text-[9px] text-amber-600 font-bold bg-amber-50 px-2 py-1 rounded">💡 {details.bonus}</div>}
+                  </div>
+                )}
+              </div>);
+            })}<div className="flex items-center justify-between py-1.5 px-2 bg-green-50 rounded border border-green-200"><span className="text-xs font-black text-green-700">Total Tier Revenue</span><span className="text-sm font-black text-green-700">${totalTierRevenue.toLocaleString()}/mo</span></div></div></div>
             <div className="bg-white rounded-lg border border-slate-200 p-4"><h3 className="font-bold text-slate-900 text-xs mb-2 flex items-center gap-2"><Activity size={14} className="text-blue-600" />Recent Applications</h3><div className="space-y-1.5">{applications.slice(0, 4).map((app, i) => (<div key={i} className="flex items-start gap-2 py-1.5 px-2 bg-slate-50 rounded cursor-pointer hover:bg-slate-100" onClick={() => { setSelectedApp(app); setEditingApp(false); }}><span className={cn('px-1.5 py-0.5 rounded text-[8px] font-black uppercase', app.type === 'Tenant' ? 'bg-blue-100 text-blue-700' : app.type === 'Landlord' ? 'bg-purple-100 text-purple-700' : 'bg-amber-100 text-amber-700')}>{app.type}</span><div className="flex-1 min-w-0"><p className="text-[11px] text-slate-700 font-medium truncate">{app.name} — {app.property}</p><p className="text-[9px] text-slate-400">{app.submitted}</p></div><span className={cn('px-1.5 py-0.5 rounded text-[8px] font-bold shrink-0', STATUS_COLORS[app.status])}>{app.status}</span></div>))}{applications.length === 0 && <p className="text-xs text-slate-400 text-center py-3">No applications yet</p>}</div></div>
           </div>
 
