@@ -1374,7 +1374,7 @@ export const FounderDashboard = ({ onLogout, user, jurisdiction, marqueeNews, se
       case 'subscription':
         return <div data-action-bound="true"><SubscriptionPortal userRole="executive_founder" initialPlanId="fed_pro" /></div>;
       case 'cannacribs_mgmt':
-        return <div className="w-full" data-action-bound="true"><CannaCribsManagementTab /></div>;
+        return <div className="w-full -m-10 p-6" data-action-bound="true"><CannaCribsManagementTab /></div>;
       case 'investor_sandbox':
         return <div className="h-full w-full -m-10" data-action-bound="true"><InvestorSandboxTab isMaster={true} /></div>;
       case 'gge_world_hr':
